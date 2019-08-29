@@ -1,0 +1,149 @@
+<layout xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.android.com/tools"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:CodeInputField="http://schemas.android.com/apk/res-auto"
+
+
+>
+
+    <data>
+
+        <variable
+                name="SignUpViewModel"
+                type="com.joshtalks.joshskills.ui.signup.SignUpViewModel"/>
+    </data>
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:background="@android:color/white"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:context="com.joshtalks.joshskills.ui.signup.SignUpStep3Fragment">
+
+
+        <TextView
+                android:layout_marginTop="@dimen/dp15"
+                android:textColor="@color/primary_text"
+                fontPath="fonts/OpenSans-SemiBold.ttf"
+                android:gravity="center"
+                android:textSize="@dimen/font_18"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:text="Verify +91 8432522643"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/textView"
+        />
+
+        <TextView
+                fontPath="fonts/Roboto-Regular.ttf"
+                android:textColor="@color/font_color"
+                android:layout_width="0dp"
+                app:layout_constraintWidth_default="percent"
+                app:layout_constraintWidth_percent="0.9"
+                android:id="@+id/textView2"
+                android:gravity="center"
+                android:textSize="@dimen/font_14"
+                android:layout_marginTop="@dimen/dp20"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                android:text="Waiting to automaticallly detcect an sms sent to"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/textView"
+        />
+        <TextView
+                fontPath="fonts/OpenSans-Regular.ttf"
+                android:textColor="@color/font_color"
+                android:layout_width="0dp"
+                app:layout_constraintWidth_default="percent"
+                app:layout_constraintWidth_percent="0.9"
+                android:id="@+id/tv_mobile"
+                android:gravity="center"
+                android:textSize="@dimen/font_14"
+                android:layout_marginTop="@dimen/dp10"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                android:text="+91 8433222"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/textView2"/>
+
+
+        <com.mukesh.OtpView
+
+                android:id="@+id/otp_view"
+                android:layout_height="wrap_content"
+                android:textColor="@color/font_color"
+                app:layout_constraintTop_toBottomOf="@id/tv_mobile"
+                android:layout_width="wrap_content"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                android:layout_marginTop="@dimen/dp40"
+                android:inputType="number"
+                app:itemCount="6"
+                app:lineColor="@color/colorPrimary"
+                app:viewType="line"
+                app:cursorColor="@color/pink"
+                app:cursorWidth="2dp"
+
+        />
+
+        <TextView
+                fontPath="fonts/OpenSans-Regular.ttf"
+                android:textColor="@color/font_color"
+                android:layout_width="wrap_content"
+                android:id="@+id/tv_digit"
+                android:gravity="center"
+                android:textSize="@dimen/font_12"
+                android:layout_marginTop="@dimen/dp5"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                android:text="@string/label_6_digit_code"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/otp_view"/>
+
+
+        <com.google.android.material.textview.MaterialTextView
+                app:layout_constraintWidth_default="percent"
+                app:layout_constraintWidth_percent="0.9"
+                fontPath="fonts/OpenSans-Regular.ttf"
+                app:layout_constraintRight_toRightOf="parent"
+                android:drawableLeft="@drawable/ic_message"
+                android:drawableTint="@color/button_primary_color"
+                android:textColor="@color/button_primary_color"
+                android:layout_width="0dp"
+                android:drawablePadding="@dimen/font_20"
+                android:id="@+id/tv_resend_message"
+                android:paddingTop="@dimen/dp10"
+                android:paddingBottom="@dimen/dp10"
+                android:gravity="left|center"
+                android:textSize="@dimen/font_14"
+                android:layout_marginTop="@dimen/dp10"
+                app:layout_constraintLeft_toLeftOf="parent"
+                android:text="Resend sms"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/tv_digit"/>
+
+
+
+
+
+        <!-- <com.joshtalks.joshlibrary.codeinputview.OtpTextView
+                 layout_constrainedWidth="true"
+                 android:id="@+id/otp_view"
+                 android:layout_height="wrap_content"
+                 android:textColor="@color/font_color"
+                 app:height="36dp"
+                 app:width="36dp"
+                 app:bar_enabled="true"
+                 app:bar_height="2dp"
+                 app:length="6"
+                 app:layout_constraintTop_toBottomOf="@id/tv_mobile"
+                 android:layout_width="0dp"
+                 app:layout_constraintWidth_default="wrap"
+                 app:layout_constraintWidth_percent="0.8"
+                 app:layout_constraintRight_toRightOf="parent"
+                 app:layout_constraintLeft_toLeftOf="parent"
+                 android:layout_marginTop="@dimen/dp40"
+                 app:otp_text_size="@dimen/font_20"/>
+ -->
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

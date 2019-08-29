@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        package="com.joshtalks.joshskills">
+
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+    <supports-screens
+            android:anyDensity="true"
+            android:largeScreens="true"
+            android:normalScreens="true"
+            android:resizeable="true"
+            android:smallScreens="true"
+            android:xlargeScreens="true" />
+
+    <uses-feature
+            android:name="android.hardware.microphone"
+            android:required="false" />
+    <uses-feature
+            android:name="android.hardware.camera"
+            android:required="false" />
+    <uses-feature
+            android:name="android.hardware.camera2"
+            android:required="false" />
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
+    <application
+            android:networkSecurityConfig="@xml/network_security_config"
+            android:name=".core.JoshApplication"
+            android:allowBackup="@bool/useLargeHeap"
+            android:hardwareAccelerated="@bool/useHardwareAcceleration"
+            android:icon="@mipmap/ic_launcher"
+            android:label="@string/app_name"
+            android:largeHeap="true"
+            android:roundIcon="@mipmap/ic_launcher_round"
+            android:supportsRtl="true"
+            android:theme="@style/AppTheme">
+
+
+        <activity android:name=".ui.profile.CropImageActivity" />
+
+        <meta-data
+                android:name="com.google.android.geo.API_KEY"
+                android:value="@string/google_places_api_key" />
+        <meta-data
+                android:name="com.facebook.sdk.ApplicationId"
+                android:value="@string/facebook_app_id" />
+        <meta-data
+                android:name="com.facebook.accountkit.ApplicationName"
+                android:value="@string/app_name" />
+        <meta-data
+                android:name="com.facebook.accountkit.ClientToken"
+                android:value="@string/ACCOUNT_KIT_CLIENT_TOKEN" />
+        <!--
+ <meta-data
+                 android:name="com.google.firebase.messaging.default_notification_icon"
+                 android:resource="@drawable/ic_status_bar_notification" />
+        -->
+        <meta-data
+                android:name="com.google.firebase.messaging.default_notification_channel_id"
+                android:value="id-1" />
+        <meta-data
+                android:name="com.google.firebase.messaging.default_notification_color"
+                android:resource="@color/colorAccent" />
+        <meta-data
+                android:name="firebase_performance_logcat_enabled"
+                android:value="false" />
+
+        <service
+                android:name=".messaging.SocketConnectionService"
+                android:enabled="true"
+                android:exported="true" />
+
+        <activity android:name=".ui.chat.ConversationActivity" />
+        <activity android:name=".ui.inbox.InboxActivity" />
+        <activity android:name=".ui.launcher.SplashActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+                android:name=".ui.signup.SignUpActivity"
+                android:screenOrientation="portrait"
+                android:windowSoftInputMode="stateVisible|adjustResize" />
+        <activity
+                android:name=".MainActivity"
+                android:theme="@style/AppNoBarTheme" />
+        <activity android:name="com.mabeijianxi.smallvideorecord2.MediaRecorderActivity" />
+        <activity android:name=".VideoPlayerActivity" />
+        <activity android:name=".SendSmallVideoActivity" />
+        <activity
+                android:name=".TestActivity"
+                android:screenOrientation="portrait"
+                android:windowSoftInputMode="stateVisible|adjustResize" />
+        <activity android:name=".ui.location.SelectLocationActivity" />
+        <activity android:name=".ui.location.SearchLocationActivity" />
+        <activity android:name=".ui.sign_up_old.OnBoardActivity" />
+        <activity
+                android:name="com.facebook.accountkit.ui.AccountKitActivity"
+                android:theme="@style/AccountkitTheme"
+                tools:replace="android:theme" />
+        <activity android:name=".ui.profile.ProfileActivity" />
+
+        <service
+                android:name=".core.service.FirebaseTokenService"
+                android:exported="true"
+                android:enabled="true">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+    </application>
+
+</manifest>

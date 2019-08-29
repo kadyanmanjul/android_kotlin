@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        tools:ignore="MissingPrefix">
+
+    <data>
+
+        <variable
+                name="handler"
+                type="com.joshtalks.joshskills.ui.sign_up_old.OnBoardActivity"/>
+    </data>
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:background="@color/white"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:context="com.joshtalks.joshskills.ui.signup.SignUpStep1Fragment">
+
+
+        <TextView
+
+                fontPath="fonts/OpenSans-SemiBold.ttf"
+                android:gravity="center"
+                android:textSize="@dimen/font_18"
+                android:layout_marginTop="@dimen/dp15"
+                android:textColor="@color/primary_text"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                android:text="@string/welcome_josh_skill"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/textView"
+                app:layout_constraintTop_toTopOf="parent"
+                />
+
+        <ImageView
+                android:id="@+id/image_view"
+                android:layout_width="0dp"
+                app:layout_constraintWidth_default="percent"
+                app:layout_constraintWidth_percent="0.7"
+                android:layout_height="wrap_content"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:src="@drawable/test"
+                android:adjustViewBounds="true"
+                android:scaleType="fitCenter"
+                />
+
+
+
+        <com.google.android.material.button.MaterialButton
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintWidth_default="percent"
+                app:layout_constraintWidth_percent="0.7"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:id="@+id/tvNativeLogin"
+                android:layout_gravity="center"
+                android:backgroundTint="@color/button_primary_color"
+                android:layout_marginBottom="@dimen/dp15"
+                android:background="@drawable/button_native_login"
+                android:clickable="true"
+                android:gravity="center"
+                fontPath="fonts/OpenSans-SemiBold.ttf"
+                android:onClick="@{()->handler.signUp()}"
+                android:text="@string/login"
+                android:paddingTop="@dimen/dp8"
+                android:paddingBottom="@dimen/dp8"
+                android:textColor="@color/white"
+                android:textSize="@dimen/font_14"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

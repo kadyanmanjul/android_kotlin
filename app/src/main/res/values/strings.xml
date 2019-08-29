@@ -1,0 +1,46 @@
+<resources>
+    <string name="app_name">JoshSkills</string>
+
+    <string name="login">Login</string>
+    <string name="welcome_josh_skill">Welcome to Josh Skills</string>
+    <string name="next">Next</string>
+    <string name="phone_number">phone number</string>
+    <string name="verify_your_phone_number">Verify your phone number</string>
+    <string name="sign_step_e_header">Josh skills will send a message to verify your phone number. please enter your number</string>
+
+    <string name="ok">ok</string>
+    <string name="edit">edit</string>
+    <string name="label_6_digit_code">Enter 6-digit code</string>
+
+    <string name="continue_with_number">Continue with Phone Number</string>
+
+    <string name="name">Name</string>
+    <string name="dob">Date of Birth</string>
+    <string name="gallery">Gallery</string>
+    <string name="camera">Camera</string>
+
+
+    <string-array name="velocity">
+        <item>none</item>
+        <item>ultrafast</item>
+        <item>superfast</item>
+        <item>veryfast</item>
+        <item>faster</item>
+        <item>fast</item>
+        <item>medium</item>
+        <item>slow</item>
+        <item>slower</item>
+        <item>veryslow</item>
+        <item>placebo</item>
+    </string-array>
+    <string-array name="need_full">
+        <item>false</item>
+        <item>true</item>
+    </string-array>
+
+    <string name="location_rationale">Please allow to access your location. It will help in better recommendations. </string>
+
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>

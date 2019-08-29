@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="ACCOUNT_KIT_CLIENT_TOKEN">975ff03d751b57fb66b8675ee570f915</string>
+    <string name="google_places_api_key">AIzaSyC_KjBhV_22E3S29sF0NU55bKIaqtrajwU</string>
+    <string name="facebook_app_id">503297633840171</string>
+
+</resources>

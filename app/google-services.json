@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "344962250364",
+    "firebase_url": "https://joshenglishtest.firebaseio.com",
+    "project_id": "joshenglishtest",
+    "storage_bucket": "joshenglishtest.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:344962250364:android:b1b0bd81298b8b13",
+        "android_client_info": {
+          "package_name": "com.joshtalks.joshskills"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "344962250364-0hjol1nqknkj3jet6o3134j6a912gjeg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAzEIMD_4iWsc_zLUpn4NnDHxGRBCO8fMk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "344962250364-0hjol1nqknkj3jet6o3134j6a912gjeg.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

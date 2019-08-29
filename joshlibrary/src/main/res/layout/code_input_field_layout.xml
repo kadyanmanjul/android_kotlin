@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:visibility="visible"
+        android:gravity="center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+>
+
+    <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tv_ph"
+            android:gravity="center"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:textSize="20sp"
+            android:text="-"/>
+
+    <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/et_code"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:hint=""
+            android:maxLength="1"
+            android:lines="1"
+            android:text=""
+            android:backgroundTint="@android:color/transparent"
+            android:cursorVisible="true"
+            android:textSize="20sp"/>
+
+
+</FrameLayout>

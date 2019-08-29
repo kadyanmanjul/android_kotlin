@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#008577</color>
+    <color name="colorPrimaryDark">#00574B</color>
+    <color name="colorAccent">#D81B60</color>
+
+
+    <!---START App Main color-->
+
+        <color name="font_color">#373737</color>
+
+
+
+
+    <!---END App Main color-->
+
+
+
+    <color name="white">#FFFFFF</color>
+
+    <color name="button_primary_color">#25d366</color>
+
+
+    <color name="primary_text">#28978A</color>
+    <color name="bold_text">#616161</color>
+
+    <color name="squash_light">#f8ad1c</color>
+    <color name="squash_dark">#9D7721</color>
+    <color name="pink">#f36273</color>
+
+
+    <color name="camera_progress_three">#24ff00</color>
+    <color name="color_4e3d31">#4e3d31</color>
+    <color name="grey8">#888888</color>
+    <color name="transparent_black_85">#DA000000</color>
+    <color name="gray_3B">#3B404F</color>
+    <color name="gray_53">#535664</color>
+
+    <color name="button_activated">@color/colorAccent</color>
+    <color name="gray_23">#231e36</color>
+    <color name="gray_79">#797979</color>
+    <color name="gray_48">#484848</color>
+    <color name="gray_9E">#9E9E9E</color>
+    <color name="gray_e6">#e6e6e6</color>
+    <color name="windowBackground">#1C1C1C</color>
+    <color name="overlay">#AA1C1C1C</color>
+
+    <color name="textError">@color/pink</color>
+    <color name="textSuccess">@color/colorAccent</color>
+
+
+</resources>
