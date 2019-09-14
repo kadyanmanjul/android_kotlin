@@ -31,7 +31,7 @@ import java.util.List;
 import static android.os.Build.VERSION.SDK_INT;
 import static android.os.Build.VERSION_CODES.LOLLIPOP;
 
-final class Utils {
+public final class Utils {
   static final String TAG = "Utils";
 
   static final int DONT_UPDATE_FLAG = -1;
@@ -44,7 +44,7 @@ final class Utils {
     return reference;
   }
 
-  static int dpToPx(@NonNull final Context context, final float dp) {
+  public static int dpToPx(@NonNull final Context context, final float dp) {
     return Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp,
         context.getResources().getDisplayMetrics()) + 0.5f);
   }

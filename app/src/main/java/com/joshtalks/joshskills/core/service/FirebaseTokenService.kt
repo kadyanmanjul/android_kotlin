@@ -4,6 +4,7 @@ import com.google.firebase.messaging.FirebaseMessagingService
 import com.joshtalks.joshskills.core.PrefManager
 
 const val FCM_TOKEN = "fcmToken"
+const val FCM_ID = "fcmId"
 
 class FirebaseTokenService : FirebaseMessagingService() {
 

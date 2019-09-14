@@ -26,7 +26,7 @@ open class User {
     var gender: String = ""
 
     @SerializedName("date_of_birth")
-    var dateOfBirth: String = ""
+    var dateOfBirth: String? = ""
 
     @SerializedName("first_name")
     var firstName: String = ""

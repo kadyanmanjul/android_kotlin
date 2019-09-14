@@ -6,6 +6,8 @@ import com.joshtalks.joshskills.core.PrefManager
 import java.text.SimpleDateFormat
 import java.util.*
 import java.io.*
+import com.facebook.FacebookSdk.getCacheDir
+import com.joshtalks.joshskills.core.AppObjectController
 
 
 object AppDirectory {
@@ -16,12 +18,14 @@ object AppDirectory {
     const val TODAY_IMAGE_COUNT = "today_image_count"
     const val TODAY_VIDEO_COUNT = "today_video_count"
     const val TODAY_RECORDING_COUNT = "today_recording_count"
+    const val TODAY_DOCS_COUNT = "today_docs_count"
+
     const val TODAY_DATE = "today_date"
     const val APP_SHORT_NAME = "JS"
 
 
     enum class FileType {
-        IMAGE_SENT, IMAGE_RECEIVED, RECORDING_SENT, RECORDING_RECEIVED, VIDEO_SENT, VIDEO_RECEIVED
+        IMAGE_SENT, IMAGE_RECEIVED, RECORDING_SENT, RECORDING_RECEIVED, VIDEO_SENT, VIDEO_RECEIVED,DOCS_RECEIVED
     }
 
 
@@ -30,6 +34,10 @@ object AppDirectory {
 
     val IMAGE_RECEIVED_PATH =
         Environment.getExternalStorageDirectory().toString() + File.separator + APP_DIRECTORY + File.separator + MEDIA_DIRECTORY + "/JoshApp Images/"
+
+
+    val DOCS_RECEIVED_PATH =
+        Environment.getExternalStorageDirectory().toString() + File.separator + APP_DIRECTORY + File.separator + MEDIA_DIRECTORY + "/JoshApp Documents/"
 
 
     val RECORDING_SENT_PATH =
@@ -44,6 +52,12 @@ object AppDirectory {
 
     val VIDEO_RECEIVED_PATH =
         Environment.getExternalStorageDirectory().toString() + File.separator + APP_DIRECTORY + File.separator + MEDIA_DIRECTORY + "/JoshApp Videos/"
+    val VIDEO_CACHED_RECEIVED_PATH =
+        Environment.getExternalStorageDirectory().toString() + File.separator + APP_DIRECTORY + File.separator + MEDIA_DIRECTORY + "/JoshApp/cached"
+
+
+    val TEMP_PATH =
+        Environment.getExternalStorageDirectory().toString() + File.separator + APP_DIRECTORY + File.separator + MEDIA_DIRECTORY + "/JoshApp Temp"
 
 
     private fun getImageFileName(): String {
@@ -52,12 +66,23 @@ object AppDirectory {
         ) + ".jpg"
     }
 
+    private fun getAudioFileName(): String {
+        return "RECORD".plus("-").plus(getDate()).plus("-".plus(APP_SHORT_NAME)) + getFileEndName(
+            AppDirectory.FileType.IMAGE_SENT
+        ) + ".mp3"
+    }
+
     private fun getVideoFileName(): String {
         return "VID".plus("-").plus(getDate()).plus("-".plus(APP_SHORT_NAME)) + getFileEndName(
             AppDirectory.FileType.IMAGE_SENT
         ) + ".mp4"
     }
 
+    private fun getDocsFileName(): String {
+        return "DOCS".plus("-").plus(getDate()).plus("-".plus(APP_SHORT_NAME)) + getFileEndName(
+            AppDirectory.FileType.DOCS_RECEIVED
+        ) + ".pdf"
+    }
     private fun getDate() = FORMATTER.format(Date())
 
 
@@ -69,6 +94,8 @@ object AppDirectory {
             AppDirectory.FileType.RECORDING_RECEIVED -> getFileTodayCount(TODAY_RECORDING_COUNT)
             AppDirectory.FileType.VIDEO_SENT -> getFileTodayCount(TODAY_VIDEO_COUNT)
             AppDirectory.FileType.VIDEO_RECEIVED -> getFileTodayCount(TODAY_VIDEO_COUNT)
+            AppDirectory.FileType.DOCS_RECEIVED -> getFileTodayCount(TODAY_DOCS_COUNT)
+
         }
 
 
@@ -100,9 +127,130 @@ object AppDirectory {
         return file
     }
 
+
+
+
+
     fun getImageSentFilePath(): String {
         return imageSentFile().absolutePath
     }
+
+    fun imageReceivedFile(): File {
+        val f = File(IMAGE_SENT_PATH)
+        if (f.exists().not()) {
+            f.mkdirs()
+        }
+        val file = File(IMAGE_RECEIVED_PATH + File.separator + getImageFileName())
+        file.createNewFile();
+        return file
+    }
+
+
+    fun docsReceivedFile(): File {
+        val f = File(DOCS_RECEIVED_PATH)
+        if (f.exists().not()) {
+            f.mkdirs()
+        }
+        val file = File(DOCS_RECEIVED_PATH + File.separator + getDocsFileName())
+        file.createNewFile()
+        return file
+    }
+
+
+    fun videoReceivedFile(): File {
+        val f = File(VIDEO_RECEIVED_PATH)
+        if (f.exists().not()) {
+            f.mkdirs()
+        }
+        val file = File(VIDEO_RECEIVED_PATH + File.separator + getVideoFileName())
+        file.createNewFile()
+        return file
+    }
+
+    fun videoSentFile(): File {
+        val f = File(VIDEO_SENT_PATH)
+        if (f.exists().not()) {
+            f.mkdirs()
+        }
+        val file = File(VIDEO_SENT_PATH + File.separator + getVideoFileName())
+        file.createNewFile()
+        return file
+    }
+
+
+
+    fun recordingSentFile(): File {
+        val f = File(RECORDING_SENT_PATH)
+        if (f.exists().not()) {
+            f.mkdirs()
+        }
+        val file = File(RECORDING_SENT_PATH + File.separator + getAudioFileName())
+        file.createNewFile();
+        return file
+    }
+
+
+    fun getRecordingReceivedFilePath(): String {
+        return recordingSentFile().absolutePath
+    }
+
+
+    fun recordingReceivedFile(): File {
+        val f = File(RECORDING_RECEIVED_PATH)
+        if (f.exists().not()) {
+            f.mkdirs()
+        }
+        val file = File(RECORDING_RECEIVED_PATH + File.separator + getAudioFileName())
+        file.createNewFile();
+        return file
+    }
+
+    fun tempRecordingFile(): File {
+        val outputDir =
+            AppObjectController.joshApplication.cacheDir // context being the Activity pointer
+        return File.createTempFile("record", ".amr", outputDir)
+    }
+
+    fun tempImageFile(): File {
+        val outputDir =
+            AppObjectController.joshApplication.cacheDir // context being the Activity pointer
+        return File.createTempFile("image", ".jpg", outputDir)
+    }
+
+    fun tempRecordingWavFile(): File {
+        val f = File(RECORDING_SENT_PATH)
+        if (f.exists().not()) {
+            f.mkdirs()
+        }
+        val file = File(RECORDING_SENT_PATH + File.separator + "record.amr")
+        file.createNewFile();
+        return file
+    }
+
+    fun tempRecordingVideoFile(): File {
+        val f = File(RECORDING_SENT_PATH)
+        if (f.exists().not()) {
+            f.mkdirs()
+        }
+        val file = File(RECORDING_SENT_PATH + File.separator + "record.mp4")
+        file.createNewFile();
+        return file
+    }
+
+
+    fun getVideoCacheFolder(): File {
+        val f = File(VIDEO_CACHED_RECEIVED_PATH)
+        if (f.exists().not()) {
+            f.mkdirs()
+        }
+        return f
+
+    }
+
+    fun getRecordingSentFilePath(): String {
+        return imageSentFile().absolutePath
+    }
+
 
     fun getTempImageFile() {
 
@@ -118,6 +266,7 @@ object AppDirectory {
 
     }
 
+    @JvmStatic
     fun isFileExist(path: String): Boolean {
         return File(path).exists()
     }
@@ -159,5 +308,22 @@ object AppDirectory {
             }
 
         }
+    }
+    fun getTempPath(): String {
+        val f = File(TEMP_PATH)
+        if (f.exists().not()) {
+            f.mkdirs()
+        }
+        return TEMP_PATH
+
+    }
+
+    fun getFilePathForVideoRecordCache(): File {
+       var path= Environment.getExternalStorageDirectory().toString() + File.separator + APP_DIRECTORY + File.separator + MEDIA_DIRECTORY + "/cached"
+        val f = File(path)
+        if (f.exists().not()) {
+            f.mkdirs()
+        }
+        return f
     }
 }

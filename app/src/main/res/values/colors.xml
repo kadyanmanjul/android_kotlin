@@ -1,32 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#008577</color>
-    <color name="colorPrimaryDark">#00574B</color>
-    <color name="colorAccent">#D81B60</color>
+    <color name="colorPrimary">#128C7E</color>
+    <color name="colorPrimaryDark">#075E54
+    </color>
+    <color name="colorAccent">#128C7E</color>
 
 
-    <!---START App Main color-->
-
-        <color name="font_color">#373737</color>
-
-
-
-
-    <!---END App Main color-->
-
-
-
-    <color name="white">#FFFFFF</color>
-
-    <color name="button_primary_color">#25d366</color>
-
-
-    <color name="primary_text">#28978A</color>
+    <color name="font_color">#373737</color>
     <color name="bold_text">#616161</color>
 
+    <color name="white">#FFFFFF</color>
+    <color name="button_primary_color">#25d366</color>
+    <color name="primary_text">#28978A</color>
     <color name="squash_light">#f8ad1c</color>
     <color name="squash_dark">#9D7721</color>
-    <color name="pink">#f36273</color>
+
+    <color name="checkmark_blue">#34B7F1</color>
 
 
     <color name="camera_progress_three">#24ff00</color>
@@ -45,8 +34,15 @@
     <color name="windowBackground">#1C1C1C</color>
     <color name="overlay">#AA1C1C1C</color>
 
-    <color name="textError">@color/pink</color>
+    <color name="textError">#f36273</color>
     <color name="textSuccess">@color/colorAccent</color>
+
+    <color name="out_going_chat">#DCF8C6</color>
+
+    <color name="chat_bg">#ECE5DD</color>
+    <color name="emoji_icon_color">#9E9E9E</color>
+    <color name="emoji_bg_color">#e6e6e6</color>
+    <color name="pdf_bg_color">#F7F7F7</color>
 
 
 </resources>

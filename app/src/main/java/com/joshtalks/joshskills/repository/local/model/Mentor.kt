@@ -93,7 +93,7 @@ class Mentor {
     }
 
     fun hasId(): Boolean {
-        return id != null && !id!!.isEmpty()
+        return id != null && id?.isNotEmpty()!!
     }
 
     fun getUser(): User? {

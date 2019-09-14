@@ -7,12 +7,9 @@ import android.content.IntentSender
 import android.location.Location
 import android.location.LocationManager
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
-import com.google.android.gms.common.ConnectionResult
-import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.common.api.ResolvableApiException
@@ -26,9 +23,10 @@ import kotlinx.android.synthetic.main.layout_select_location_request_permission.
 import pub.devrel.easypermissions.EasyPermissions
 
 import com.google.android.gms.location.LocationCallback;
-import com.joshtalks.joshskills.MainActivity
 import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.repository.local.model.User
+import com.joshtalks.joshskills.core.BaseActivity
+import com.joshtalks.joshskills.repository.server.ProfileResponse
+import com.joshtalks.joshskills.repository.server.SearchLocality
 import com.joshtalks.joshskills.repository.server.UpdateUserLocality
 import kotlinx.android.synthetic.main.layout_select_location_confirmation.*
 import kotlinx.coroutines.*
@@ -40,7 +38,7 @@ const val RC_LOCATION_PERMISSION = 12
 const val RC_REQUEST_CHECK_SETTINGS = 21
 
 
-class SelectLocationActivity : CoreJoshActivity(), EasyPermissions.PermissionCallbacks {
+class SelectLocationActivity : BaseActivity(), EasyPermissions.PermissionCallbacks {
 
 
     private lateinit var layout: ActivitySelectLocationBinding
@@ -55,30 +53,8 @@ class SelectLocationActivity : CoreJoshActivity(), EasyPermissions.PermissionCal
     private lateinit var mGeoLocationCallback: GeoLocationCallback
 
 
-    private val isPlayServicesPresentInPhone: Boolean
-        get() {
-            val apiAvailability = GoogleApiAvailability.getInstance()
-            val resultCode = apiAvailability.isGooglePlayServicesAvailable(this)
-
-            if (resultCode != ConnectionResult.SUCCESS) {
-
-                if (apiAvailability.isUserResolvableError(resultCode)) {
-                    apiAvailability.getErrorDialog(
-                        this,
-                        resultCode,
-                        RC_PLAY_SERVICES_RESOLUTION_REQUEST
-                    )
-                } else {
-                    finish()
-                }
-
-                return false
-            }
-
-            return true
-        }
-
     override fun onCreate(savedInstanceState: Bundle?) {
+        supportActionBar?.hide()
         super.onCreate(savedInstanceState)
         layout = DataBindingUtil.setContentView(
             this,
@@ -129,19 +105,6 @@ class SelectLocationActivity : CoreJoshActivity(), EasyPermissions.PermissionCal
 
 
     override fun onPermissionsGranted(requestCode: Int, perms: MutableList<String>) {
-        Log.e("permission", "onpre")
-
-/*
-        if (!isPlayServicesPresentInPhone) {
-            Toast.makeText(
-                this,
-                "You need to install Google Play Services to use the App properly",
-                Toast.LENGTH_SHORT
-            ).show()
-            tvEnterManually.visibility = View.VISIBLE
-            return
-        }*/
-
         enableGPSSensor()
 
     }
@@ -249,7 +212,7 @@ class SelectLocationActivity : CoreJoshActivity(), EasyPermissions.PermissionCal
             val map = mapOf("latitude" to latitude.toString(), "longitude" to longitude.toString())
             try {
                 locality =
-                    AppObjectController.networkService.confirmUserLocationAsync(map).await()
+                    AppObjectController.signUpNetworkService.confirmUserLocationAsync(map).await()
 
 
                 withContext(Dispatchers.Main) {
@@ -294,7 +257,7 @@ class SelectLocationActivity : CoreJoshActivity(), EasyPermissions.PermissionCal
                     val place = data!!.getParcelableExtra<Place>(KEY_PLACE)
                     locality = Locality()
                     locality.latitude = place.latLng?.latitude ?: 0.toDouble()
-                    locality.longitude = place.latLng?.latitude ?: 0.toDouble()
+                    locality.longitude = place.latLng?.longitude ?: 0.toDouble()
                     setLocation()
                 }
 
@@ -324,22 +287,19 @@ class SelectLocationActivity : CoreJoshActivity(), EasyPermissions.PermissionCal
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 val request = UpdateUserLocality()
-                request.locality = locality
+                request.locality = SearchLocality(locality.latitude, locality.longitude)
 
-                val response: Any =
-                    AppObjectController.networkService.updateUserAddressAsync(
-                        User.getInstance().id,
+                val response: ProfileResponse =
+                    AppObjectController.signUpNetworkService.updateUserAddressAsync(
+                        Mentor.getInstance().getId(),
                         request
                     ).await()
-                Mentor.getInstance().setLocality(locality).update()
-
-                val intent = Intent(getBaseContext(), MainActivity::class.java).apply {
-                    flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
-                }
-                startActivity(intent)
+                Mentor.getInstance().setLocality(response.locality).update()
+                startActivity(getIntentForState())
 
             } catch (e: Exception) {
-                onFailedToFetchLocation()
+                e.printStackTrace()
+                // onFailedToFetchLocation()
             }
 
         }

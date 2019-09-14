@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge >
+<com.google.android.material.appbar.MaterialToolbar xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimaryDark"
+        android:elevation="6dp"
+        android:minHeight="?attr/actionBarSize"
+        android:gravity="start|center"
+        app:theme="@style/Theme.GuidelinesCompat.Light.DarkToolbar">
+
+    <androidx.appcompat.widget.AppCompatImageView
+            android:padding="@dimen/_5sdp"
+            android:id="@+id/iv_back"
+            android:visibility="gone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="@dimen/_5sdp"
+            app:srcCompat="@drawable/ic_arrow_back" />
+
+    <de.hdodenhof.circleimageview.CircleImageView
+            android:visibility="gone"
+            android:id="@+id/image_view_logo"
+            android:layout_width="@dimen/_24sdp"
+            android:layout_height="@dimen/_24sdp"
+            android:layout_marginRight="@dimen/_10sdp"
+            android:src="@drawable/pdf_thumb" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+            android:padding="@dimen/_5sdp"
+            fontPath="fonts/OpenSans-SemiBold.ttf"
+            android:id="@+id/text_message_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical|start"
+            android:text=""
+            android:textColor="@color/white"
+            android:textSize="@dimen/font_20" />
+</com.google.android.material.appbar.MaterialToolbar>
+</merge>

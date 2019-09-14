@@ -144,8 +144,6 @@ public class CustomImageButton extends AppCompatImageView implements View.OnTouc
 
         }
         return isListenForRecord();
-
-
     }
 
 

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/root_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="@dimen/_16sdp"
+        android:paddingLeft="@dimen/_16sdp"
+        android:paddingEnd="@dimen/_48sdp"
+        android:paddingRight="@dimen/_48sdp">
+
+    <FrameLayout
+            android:id="@+id/root_sub_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            >
+
+        <FrameLayout
+                android:padding="@dimen/_2sdp"
+                android:id="@+id/message_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/_16sdp">
+
+            <com.joshtalks.joshskills.core.custom_ui.AudioView
+                    android:id="@+id/audio_view"
+                    fontPath="fonts/Roboto-Regular.ttf"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start"
+                    android:visibility="visible"
+                   />
+
+            <TextView
+                    android:drawablePadding="@dimen/_4sdp"
+                    android:id="@+id/text_message_time"
+                    fontPath="fonts/Roboto-Light.ttf"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="right|bottom"
+                    android:gravity="end"
+                    android:text="11:40"
+                    android:layout_marginRight="@dimen/_5sdp"
+                    android:textColor="@color/gray_9E"
+                    android:textSize="@dimen/font_12"
+                    android:visibility="visible"
+                     />
+        </FrameLayout>
+
+    </FrameLayout>
+</FrameLayout>

@@ -24,21 +24,23 @@ import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRe
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsResponse
 import com.google.android.libraries.places.api.net.PlacesClient
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.core.CoreJoshActivity
 import com.joshtalks.joshskills.core.custom_ui.JoshTextWatcher
 import com.joshtalks.joshskills.databinding.ActivitySearchLocationBinding
 import com.joshtalks.joshskills.messaging.RxBus
+import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.model.googlelocation.GoogleSearchLocationObj
 import com.joshtalks.joshskills.ui.location.adapter.SearchLocationAdapter
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_search_location.*
-import java.util.*
+import kotlin.collections.ArrayList
 
 
 const val KEY_PLACE = "place"
 
-class SearchLocationActivity : CoreJoshActivity(), OnFailureListener,
+class SearchLocationActivity : BaseActivity(), OnFailureListener,
     OnSuccessListener<FindAutocompletePredictionsResponse> {
 
     private lateinit var layout: ActivitySearchLocationBinding
@@ -53,6 +55,7 @@ class SearchLocationActivity : CoreJoshActivity(), OnFailureListener,
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        supportActionBar?.hide()
         super.onCreate(savedInstanceState)
 
         layout = DataBindingUtil.setContentView(this, R.layout.activity_search_location)
@@ -79,7 +82,8 @@ class SearchLocationActivity : CoreJoshActivity(), OnFailureListener,
         layout.etSearch.requestFocus()
 
 
-        compositeDisposable.add(RxBus.getDefault().toObservable()
+        compositeDisposable.add(
+            RxBus.getDefault().toObservable()
             .subscribeOn(Schedulers.io()).subscribe({
                 if (it is GoogleSearchLocationObj) {
                     onPlaceSelected(it)
@@ -89,6 +93,7 @@ class SearchLocationActivity : CoreJoshActivity(), OnFailureListener,
                 it.printStackTrace()
             })
         )
+
     }
 
     private fun performQuery(s: String) {
@@ -110,7 +115,7 @@ class SearchLocationActivity : CoreJoshActivity(), OnFailureListener,
                 .addOnSuccessListener(this@SearchLocationActivity)
                 .addOnFailureListener(this@SearchLocationActivity)
 
-        }, 300)
+        }, 1000)
 
     }
 
@@ -133,7 +138,7 @@ class SearchLocationActivity : CoreJoshActivity(), OnFailureListener,
 
     override fun onSuccess(response: FindAutocompletePredictionsResponse) {
         onClearList()
-        layout.pbLoading.setVisibility(View.INVISIBLE)
+        layout.pbLoading.visibility = View.INVISIBLE
 
         for (prediction in response.autocompletePredictions) {
 

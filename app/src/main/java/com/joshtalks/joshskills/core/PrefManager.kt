@@ -2,12 +2,13 @@ package com.joshtalks.joshskills.core
 
 import android.content.Context
 import android.content.SharedPreferences
-import androidx.core.content.edit
 import androidx.preference.PreferenceManager
 import com.joshtalks.joshskills.BuildConfig
 
 
 private const val CLIENT_TOKEN = "client token"
+const val CHAT_LAST_SYNC_TIME = "chat_sync_time"
+
 
 object PrefManager {
 
@@ -66,6 +67,9 @@ object PrefManager {
         return BuildConfig.CLIENT_TOKEN
 
     }
+
+
+
 
 
 }

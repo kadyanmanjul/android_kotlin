@@ -23,8 +23,15 @@
     <dimen name="font_15">15sp</dimen>
 
     <dimen name="font_16">16sp</dimen>
+    <dimen name="font_17">17sp</dimen>
+
     <dimen name="font_18">18sp</dimen>
+    <dimen name="font_18_2">18.2sp</dimen>
+
+    <dimen name="font_19">19sp</dimen>
+
     <dimen name="font_20">20sp</dimen>
+    <dimen name="font_24">24sp</dimen>
 
     <dimen name="emoji_size_default">20sp</dimen>
     <dimen name="emoji_size_only_emojis">40sp</dimen>

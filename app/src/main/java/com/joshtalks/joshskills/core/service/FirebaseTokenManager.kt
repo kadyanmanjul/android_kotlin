@@ -1,7 +1,12 @@
 package com.joshtalks.joshskills.core.service
 
+import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.PrefManager
-
+import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.repository.local.model.Mentor
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 
 object FCMTokenManager {
@@ -13,73 +18,46 @@ object FCMTokenManager {
         if (token.isEmpty())
             return
 
-        if (PrefManager.hasKey("fcmId")) {
-            patch(token)
+        if (PrefManager.hasKey(FCM_ID)) {
+            patchToken(token)
         } else {
-            post(token)
+            postToken(token)
         }
 
     }
 
-    private fun patch(token: String) {
+    private fun patchToken(token: String) {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val data = mapOf("registration_id" to token, "active" to "true")
+                var token=PrefManager.getLongValue(FCM_ID).toString()
+                val response: Any = AppObjectController.signUpNetworkService.updateFCMToken(token,data).await()
 
-       /* val patch = Patch(
-            BaseApplication.getContext(),
-            Endpoint.patchFcmToken(PrefManager.getLong("fcmId"))
-        )
-            .addParameter("registration_id", token)
-            .addParameter("active", "true")
-
-        patch.setCallback(object : ApiCallback() {
-            fun onSuccess(response: String, isFromCache: Boolean) {
-                super.onSuccess(response, isFromCache)
+            }catch (ex:Exception){
+                ex.printStackTrace()
             }
-        })
-
-        patch.hit()*/
-
+        }
     }
 
-    private fun post(token: String) {
+    private fun postToken(token: String) {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val data = mapOf(
+                    "registration_id" to token,
+                    "name" to Utils.getDeviceName(),
+                    "device_id" to Utils.getDeviceId(),
+                    "active" to "true",
+                    "type" to "android",
+                    "user_id" to Mentor.getInstance().getId()
+                )
+                val response: Any =
+                    AppObjectController.signUpNetworkService.uploadFCMToken(data).await()
 
-       /* val fcmApi = Post(BaseApplication.getContext(), Endpoint.postFCMToken())
-            .addParameter("registration_id", token)
-            .addParameter("name", Utils.getDeviceName())
-            .addParameter("device_id", Utils.getDeviceId())
-            .addParameter("active", "true")
-            .addParameter("type", "android")
-
-
-        val deviceApi = Post(BaseApplication.getContext(), Endpoint.postFCMToken())
-            .addParameter("name", Utils.getDeviceName())
-            .addParameter("device_id", Utils.getDeviceId())
-            .addParameter("type", "android")
-
-
-        if (Mentor.getInstance().hasId()) {
-            fcmApi.addParameter("user_id", Mentor.getInstance().getId())
-            deviceApi.addParameter("user_id", Mentor.getInstance().getId())
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+            }
         }
 
-        deviceApi.hit()
-
-        fcmApi.setCallback(object : ApiCallback() {
-            fun onSuccess(response: String, isFromCache: Boolean) {
-                super.onSuccess(response, isFromCache)
-
-                try {
-                    val jsonObject = JSONObject(response)
-                    val id = jsonObject.getInt("id")
-                    PrefManager.put("fcmId", id)
-                } catch (e: JSONException) {
-                    JoshLog.e("Exception", e.toString())
-                    Crashlytics.logException(e)
-                }
-
-            }
-        })
-
-        fcmApi.hit()*/
     }
 
 }

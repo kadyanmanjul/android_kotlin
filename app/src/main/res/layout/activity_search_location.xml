@@ -76,11 +76,12 @@
                     android:layout_height="wrap_content" />
 
             <com.pnikosis.materialishprogress.ProgressWheel
+                    android:visibility="gone"
                     android:id="@+id/progress_dialog"
-                    android:layout_width="80dp"
-                    android:layout_height="80dp"
+                    android:layout_width="@dimen/_72sdp"
+                    android:layout_height="@dimen/_72sdp"
                     android:layout_gravity="center"
-                    wheel:matProg_barColor="#5588FF"
+                    wheel:matProg_barColor="@color/colorAccent"
                     wheel:matProg_progressIndeterminate="true" />
         </FrameLayout>
 

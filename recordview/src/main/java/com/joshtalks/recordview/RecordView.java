@@ -180,8 +180,9 @@ public class RecordView extends RelativeLayout {
 
     protected void onActionDown(CustomImageButton recordBtn, MotionEvent motionEvent) {
 
-        if (recordListener != null)
+        if (recordListener != null) {
             recordListener.onStart();
+        }
 
 
         animationHelper.setStartRecorded(true);

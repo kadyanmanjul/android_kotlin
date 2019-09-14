@@ -1,12 +1,13 @@
 package com.joshtalks.joshskills.messaging;
 
-import com.jakewharton.rxrelay2.PublishRelay;
-import com.jakewharton.rxrelay2.Relay;
 import io.reactivex.Observable;
+import io.reactivex.subjects.PublishSubject;
 
 
 public final class RxBus {
-    private final Relay<Object> bus = PublishRelay.create().toSerialized();
+    private final PublishSubject<Object> bus = PublishSubject.create();
+
+    //private final Relay<Object> bus = PublishRelay.create().toSerialized();
     private static volatile RxBus defaultInstance;
 
     private RxBus() {
@@ -25,7 +26,8 @@ public final class RxBus {
 
 
     public void send(Object event) {
-        bus.accept(event);
+        //bus.accept(event);
+        bus.onNext(event);
     }
 
     public Observable<Object> toObservable() {

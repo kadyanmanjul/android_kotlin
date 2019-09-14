@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+                name="handler"
+                type="com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity" />
+
+
+    </data>
+
+    <FrameLayout
+            android:background="#000"
+
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+        <com.joshtalks.joshskills.core.custom_ui.JoshVideoPlayer
+                android:id="@+id/pvPlayer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#000"
+                android:focusable="true"
+                android:layout_gravity="center"
+                app:controller_layout_id="@layout/layout_live_player_controller"
+               />
+
+
+    </FrameLayout>
+</layout>

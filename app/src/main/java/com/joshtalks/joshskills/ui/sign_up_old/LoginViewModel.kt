@@ -4,7 +4,6 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.google.gson.Gson
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.Utils
@@ -30,7 +29,7 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
             )
             try {
                 val createAccountResponse: CreateAccountResponse =
-                    AppObjectController.networkService.accountKitAuthorizationAsync(reqObj).await()
+                    AppObjectController.signUpNetworkService.accountKitAuthorizationAsync(reqObj).await()
 
 
                 val user = User.getInstance()
@@ -60,17 +59,14 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.async(Dispatchers.IO) {
             try {
                 val mentor: Mentor =
-                    AppObjectController.networkService.getPersonalProfileAsync(Mentor.getInstance().getId())
+                    AppObjectController.signUpNetworkService.getPersonalProfileAsync(Mentor.getInstance().getId())
                         .await()
 
                 Mentor.getInstance().updateFromResponse(mentor)
                 mentor.getUser()?.let {
-                    val user = User.getInstance()
-                    user.phoneNumber=it.phoneNumber
-                    user.username=it.username
-                    user.userType=it.userType
-                    User.update(user.toString())
+                    User.getInstance().updateFromResponse(it)
                 }
+
                 withContext(Dispatchers.Main){
                     loginStatusCallback.postValue(true)
                 }

@@ -7,8 +7,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
-import coil.api.load
-import coil.transform.CircleCropTransformation
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.databinding.SignUpStep1FragmentBinding
 import kotlinx.android.synthetic.main.sign_up_step1_fragment.*

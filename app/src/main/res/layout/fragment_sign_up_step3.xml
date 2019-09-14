@@ -80,7 +80,7 @@
                 app:itemCount="6"
                 app:lineColor="@color/colorPrimary"
                 app:viewType="line"
-                app:cursorColor="@color/pink"
+                app:cursorColor="@color/error_color"
                 app:cursorWidth="2dp"
 
         />

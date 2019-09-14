@@ -6,12 +6,10 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.databinding.DataBindingUtil
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.CoreJoshActivity
 import com.joshtalks.joshskills.databinding.ActivityPersonalDetailBinding
 import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.net.Uri
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
@@ -21,35 +19,37 @@ import com.esafirm.imagepicker.features.ImagePicker
 import com.esafirm.imagepicker.features.ReturnMode
 import com.joshtalks.joshskills.databinding.FragmentMediaSelectBinding
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.viewModelScope
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import com.github.florent37.singledateandtimepicker.dialog.SingleDateAndTimePickerDialog
-import com.google.gson.Gson
 import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.core.Utils
-import com.joshtalks.joshskills.core.io.AppDirectory
-import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.core.BaseActivity
+import com.joshtalks.joshskills.repository.local.model.ImageModel
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.*
+import kotlinx.android.synthetic.main.toolbar_login_register.*
 import kotlinx.coroutines.*
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
 
-
 const val CROPPING_IMAGE_CODE = 1717
 
 
-class ProfileActivity : CoreJoshActivity(), MediaSelectCallback {
+class ProfileActivity : BaseActivity(), MediaSelectCallback {
 
     private lateinit var layout: ActivityPersonalDetailBinding
     private val DATE_FORMATTER = SimpleDateFormat("yyyy-MM-dd")
+    private val DATE_FORMATTER_2 = SimpleDateFormat("dd - MMM - yyyy")
+
     private var userDob = Date()
+    private var imageModel: ImageModel? = null
+    private var pickerStatus = false
+
+
     private var picker = SingleDateAndTimePickerDialog.Builder(this)
         .bottomSheet()
         .curved()
@@ -61,10 +61,8 @@ class ProfileActivity : CoreJoshActivity(), MediaSelectCallback {
         .displayDaysOfMonth(true)
         .listener {
             userDob = it
-            layout.etDOB.setText(DATE_FORMATTER.format(userDob))
+            layout.etDOB.setText(DATE_FORMATTER_2.format(userDob))
         }
-
-    private var pickerStatus = false
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -77,6 +75,9 @@ class ProfileActivity : CoreJoshActivity(), MediaSelectCallback {
 
         layout.lifecycleOwner = this
         layout.handler = this
+
+        ivBackButton.setOnClickListener { this@ProfileActivity.finish() }
+
 
     }
 
@@ -110,7 +111,8 @@ class ProfileActivity : CoreJoshActivity(), MediaSelectCallback {
             startActivityForResult(getCroppingActivity(images.path), CROPPING_IMAGE_CODE)
         } else if (requestCode == CROPPING_IMAGE_CODE && resultCode == Activity.RESULT_OK) {
             var image = data?.getStringExtra(SOURCE_IMAGE)
-            Glide.with(context)
+            imageModel = image?.let { ImageModel(it) }
+            Glide.with(applicationContext)
                 .load(Uri.fromFile(File(image)))
                 .listener(object : RequestListener<Drawable> {
                     override fun onLoadFailed(
@@ -161,8 +163,22 @@ class ProfileActivity : CoreJoshActivity(), MediaSelectCallback {
             showStatus("Please select Gender", STATUS_TYPE.ERROR)
             return
         }
+        if (validAge()) {
+
+        }
 
         updateProfile()
+    }
+
+    private fun validAge(): Boolean {
+        var dob = Calendar.getInstance();
+        dob.time = userDob
+        var today = Calendar.getInstance();
+        var age = today.get (Calendar.YEAR) - dob.get(Calendar.YEAR);
+        if (today.get(Calendar.DAY_OF_YEAR) < dob.get(Calendar.DAY_OF_YEAR)) {
+            age--;
+        }
+        return false
     }
 
     private fun showStatus(text: String, type: STATUS_TYPE) {
@@ -201,7 +217,6 @@ class ProfileActivity : CoreJoshActivity(), MediaSelectCallback {
             picker.dismiss()
             return
         }
-
         super.onBackPressed()
 
     }
@@ -215,12 +230,18 @@ class ProfileActivity : CoreJoshActivity(), MediaSelectCallback {
                 )
 
                 val updateProfileResponse: UpdateProfileResponse =
-                    AppObjectController.networkService.updateUserAsync(User.getInstance().id, obj)
+                    AppObjectController.signUpNetworkService.updateUserAsync(
+                        User.getInstance().id,
+                        obj
+                    )
                         .await()
 
                 User.getInstance().updateFromResponse(updateProfileResponse)
+                if (imageModel != null) {
+                 //   WorkMangerPapa.startUploadProfileinWorker(imageModel!!)
+                }
                 withContext(Dispatchers.Main) {
-                    startActivity(getConfigIntent())
+                    startActivity(getIntentForState())
                     finish()
                 }
 
@@ -282,5 +303,7 @@ enum class Media {
 private enum class STATUS_TYPE {
     ERROR, SUCCESS
 }
+
+
 
 

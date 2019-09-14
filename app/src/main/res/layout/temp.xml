@@ -1,53 +1,83 @@
-<ScrollView
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:id="@+id/scroll"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        >
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:weightSum="1.0">
 
     <LinearLayout
-            android:id="@+id/container"
-            android:layout_width="match_parent"
+            android:id="@+id/left_bubble"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-         >
-
-        <androidx.emoji.widget.EmojiTextView
-                android:text="weweewe"
-                android:id="@+id/emoji_text_view"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
-                android:textSize="@dimen/text_size"/>
-
-        <androidx.emoji.widget.EmojiEditText
-                android:id="@+id/emoji_edit_text"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
-                android:textSize="@dimen/text_size"/>
-
-        <androidx.emoji.widget.EmojiButton
-                android:id="@+id/emoji_button"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
-                android:textSize="@dimen/text_size"/>
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginLeft="10dp"
+            android:layout_marginStart="10dp"
+            android:orientation="horizontal">
 
         <TextView
-                android:id="@+id/regular_text_view"
-                android:layout_width="match_parent"
+                android:text="dwdwdwdwdw  ed ed e de d ed dw"
+                android:id="@+id/lefttext"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
-                android:textSize="@dimen/text_size"/>
+                android:gravity="center_vertical"
+                android:paddingBottom="4dp"
+                android:paddingLeft="8dp"
+                android:paddingStart="8dp"
+                android:paddingTop="4dp"
+                android:textColor="#000"
+                android:textSize="@dimen/abc_text_size_medium_material" />
 
-        <androidx.emoji.widget.EmojiTextView
-                android:id="@+id/emoji_custom_text_view"
-                android:layout_width="match_parent"
+        <TextView
+                android:text="10:50"
+                android:id="@+id/leftdate"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="@dimen/text_size"/>
-
+                android:layout_gravity="center|bottom|end"
+                android:gravity="center_vertical"
+                android:paddingBottom="2dp"
+                android:paddingEnd="8dp"
+                android:paddingLeft="8dp"
+                android:paddingRight="8dp"
+                android:paddingStart="8dp"
+                android:textSize="12sp" />
     </LinearLayout>
 
-</ScrollView>
+    <LinearLayout
+            android:id="@+id/right_bubble"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginEnd="10dp"
+            android:layout_marginRight="10dp"
+            android:orientation="horizontal">
+
+        <TextView
+
+                android:id="@+id/righttext"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:maxWidth="200dp"
+                android:paddingBottom="4dp"
+                android:paddingLeft="8dp"
+                android:paddingStart="8dp"
+                android:paddingTop="4dp"
+                android:textColor="#000"
+                android:textSize="@dimen/abc_text_size_medium_material" />
+
+        <TextView
+                android:id="@+id/rightdate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|end"
+                android:gravity="center_vertical"
+                android:paddingBottom="2dp"
+                android:paddingEnd="8dp"
+                android:paddingLeft="8dp"
+                android:paddingRight="8dp"
+                android:paddingStart="8dp"
+                android:textSize="12sp" />
+    </LinearLayout>
+</RelativeLayout>

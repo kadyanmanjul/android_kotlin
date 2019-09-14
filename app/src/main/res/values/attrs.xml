@@ -3,10 +3,33 @@
 
     <declare-styleable name="CodeInputField">
         <attr name="cell_count" format="integer"/>
-
         <attr name="left_margin" format="float"/>
         <attr name="right_margin" format="float"/>
         <attr name="font_size" format="dimension"/>
 
     </declare-styleable>
+    <declare-styleable name="SelectableRoundedImageView">
+        <attr name="sriv_left_top_corner_radius" format="dimension" />
+        <attr name="sriv_right_top_corner_radius" format="dimension" />
+        <attr name="sriv_left_bottom_corner_radius" format="dimension" />
+        <attr name="sriv_right_bottom_corner_radius" format="dimension" />
+        <attr name="sriv_border_width" format="dimension" />
+        <attr name="sriv_border_color" format="color" />
+        <attr name="sriv_oval" format="boolean" />
+        <attr name="android:scaleType" />
+    </declare-styleable>
+
+
+    <declare-styleable name="AttachmentView">
+        <attr name="image_src" format="reference"/>
+        <attr name="text" format="string"/>
+        <attr name="tag" format="string"/>
+
+    </declare-styleable>
+
+    <declare-styleable name="BlurImageView">
+        <attr name="radius" format="integer" />
+    </declare-styleable>
+
+
 </resources>

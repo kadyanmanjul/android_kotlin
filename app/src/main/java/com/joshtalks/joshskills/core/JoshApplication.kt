@@ -1,6 +1,8 @@
 package com.joshtalks.joshskills.core
 
 import android.app.Application
+import android.util.Log
+import androidx.work.Configuration
 import com.crashlytics.android.Crashlytics
 import com.crashlytics.android.core.CrashlyticsCore
 import com.facebook.stetho.Stetho
@@ -14,7 +16,8 @@ import io.github.inflationx.viewpump.ViewPump
 import kotlinx.coroutines.*
 
 
-class JoshApplication : Application() {
+class JoshApplication : Application(){
+
 
     companion object {
         @JvmStatic
@@ -60,9 +63,9 @@ class JoshApplication : Application() {
     fun fetchCoreMeta() {
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                val meta: CoreMeta = AppObjectController.networkService.getCoreMeta().await()
-              
-            }catch (ex:Exception){
+                val meta: CoreMeta = AppObjectController.signUpNetworkService.getCoreMeta().await()
+
+            } catch (ex: Exception) {
                 ex.printStackTrace()
             }
         }

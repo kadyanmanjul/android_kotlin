@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <rotate
+                android:fromDegrees="45"
+                android:pivotX="100%"
+                android:pivotY="0%"
+                android:toDegrees="0" >
+            <shape android:shape="rectangle" >
+                <solid android:color="@color/out_going_chat" />
+            </shape>
+        </rotate>
+    </item>
+    <item android:right="@dimen/_10sdp">
+        <shape android:shape="rectangle" >
+            <solid android:color="@color/out_going_chat" />
+            <corners android:radius="@dimen/_8sdp" />
+        </shape>
+    </item>
+
+</layer-list>

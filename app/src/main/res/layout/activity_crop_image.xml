@@ -182,6 +182,7 @@
                 android:orientation="horizontal">
 
             <ImageButton
+                    android:onClick="@{()->handler.cancel()}"
                     android:id="@+id/btn_cancel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -199,6 +200,8 @@
                     android:orientation="horizontal">
 
                 <ImageButton
+                        android:onClick="@{()->handler.rotateLeft()}"
+
                         android:id="@+id/buttonRotateLeft"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -207,6 +210,7 @@
                         android:src="@drawable/ic_rotate_left_black_24dp" />
 
                 <ImageButton
+                        android:onClick="@{()->handler.rotateRight()}"
                         android:id="@+id/buttonRotateRight"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"

@@ -3,9 +3,6 @@
         xmlns:tools="http://schemas.android.com/tools"
         package="com.joshtalks.joshskills">
 
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-
     <supports-screens
             android:anyDensity="true"
             android:largeScreens="true"
@@ -24,6 +21,8 @@
             android:name="android.hardware.camera2"
             android:required="false" />
 
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
@@ -41,13 +40,13 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <application
-            android:networkSecurityConfig="@xml/network_security_config"
             android:name=".core.JoshApplication"
             android:allowBackup="@bool/useLargeHeap"
             android:hardwareAccelerated="@bool/useHardwareAcceleration"
             android:icon="@mipmap/ic_launcher"
             android:label="@string/app_name"
             android:largeHeap="true"
+            android:networkSecurityConfig="@xml/network_security_config"
             android:roundIcon="@mipmap/ic_launcher_round"
             android:supportsRtl="true"
             android:theme="@style/AppTheme">
@@ -82,14 +81,25 @@
                 android:name="firebase_performance_logcat_enabled"
                 android:value="false" />
 
-        <service
-                android:name=".messaging.SocketConnectionService"
-                android:enabled="true"
-                android:exported="true" />
+        <activity
+                android:name=".ui.chat.ConversationActivity"
+                android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize"
+                android:exported="true"
+                android:launchMode="singleTask"
+                android:parentActivityName=".ui.inbox.InboxActivity"
+                android:theme="@style/AppNoBarTheme">
+            <meta-data
+                    android:name="android.support.PARENT_ACTIVITY"
+                    android:value=".ui.inbox.InboxActivity" />
 
-        <activity android:name=".ui.chat.ConversationActivity" />
-        <activity android:name=".ui.inbox.InboxActivity" />
-        <activity android:name=".ui.launcher.SplashActivity">
+
+        </activity>
+        <activity
+                android:name=".ui.inbox.InboxActivity"
+                android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize"
+                android:exported="true"
+                android:launchMode="singleTask"
+                android:theme="@style/AppNoBarTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -100,33 +110,73 @@
                 android:name=".ui.signup.SignUpActivity"
                 android:screenOrientation="portrait"
                 android:windowSoftInputMode="stateVisible|adjustResize" />
+
         <activity
-                android:name=".MainActivity"
-                android:theme="@style/AppNoBarTheme" />
-        <activity android:name="com.mabeijianxi.smallvideorecord2.MediaRecorderActivity" />
-        <activity android:name=".VideoPlayerActivity" />
-        <activity android:name=".SendSmallVideoActivity" />
+                android:name=".ui.location.SelectLocationActivity"
+                android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize"
+                android:launchMode="singleTask"
+
+                />
         <activity
-                android:name=".TestActivity"
-                android:screenOrientation="portrait"
-                android:windowSoftInputMode="stateVisible|adjustResize" />
-        <activity android:name=".ui.location.SelectLocationActivity" />
-        <activity android:name=".ui.location.SearchLocationActivity" />
-        <activity android:name=".ui.sign_up_old.OnBoardActivity" />
+                android:name=".ui.location.SearchLocationActivity"
+                android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize"
+                android:launchMode="singleTask" />
+        <activity
+                android:name=".ui.sign_up_old.OnBoardActivity"
+                android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize"
+                android:launchMode="singleTask"
+
+                />
         <activity
                 android:name="com.facebook.accountkit.ui.AccountKitActivity"
-                android:theme="@style/AccountkitTheme"
+                android:theme="@style/FBAppLoginTheme"
                 tools:replace="android:theme" />
-        <activity android:name=".ui.profile.ProfileActivity" />
+        <activity
+                android:name=".ui.profile.ProfileActivity"
+                android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize"
+                android:launchMode="singleTask"
+
+                />
+        <activity
+                android:name=".ui.sign_up_old.RegisterInfoActivity"
+                android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize"
+                android:launchMode="singleTask" />
+        <activity
+                android:name=".ui.video_player.VideoPlayerActivity"
+                android:configChanges="orientation|keyboardHidden|screenSize"
+
+                android:screenOrientation="fullSensor" />
 
         <service
                 android:name=".core.service.FirebaseTokenService"
-                android:exported="true"
-                android:enabled="true">
+                android:enabled="true"
+                android:exported="true">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
+
+        <activity
+                android:name=".ui.launcher.SplashActivity"
+                android:launchMode="singleTask">
+
+        </activity>
+
+
+
+
+        <activity
+                android:name=".ui.sign_up_old.LoginActivity"
+                android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize"
+                android:launchMode="singleTask"
+                android:windowSoftInputMode="stateHidden" />
+
+
+        <activity
+                android:name=".ui.pdfviewer.PdfViewerActivity"
+                android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize"
+                android:launchMode="singleTask"
+                android:windowSoftInputMode="stateHidden" />
     </application>
 
 </manifest>

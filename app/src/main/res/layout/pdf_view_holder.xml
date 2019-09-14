@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        xmlns:wheel="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/root_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="@dimen/_16sdp"
+        android:paddingLeft="@dimen/_16sdp"
+        android:paddingEnd="@dimen/_48sdp"
+        android:paddingRight="@dimen/_48sdp">
+
+    <FrameLayout
+            android:id="@+id/root_sub_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start">
+
+        <LinearLayout
+                android:id="@+id/message_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="@dimen/_3sdp">
+
+            <FrameLayout
+                    android:id="@+id/container_fl"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:background="@drawable/pdf_bg"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/image_view"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="start"
+                        android:adjustViewBounds="true"
+                        android:clickable="false"
+                        android:focusable="false"
+                        android:maxWidth="@dimen/_400sdp"
+                        android:scaleType="centerCrop"
+                        app:srcCompat="@drawable/pdf_thumb" />
+
+                <LinearLayout
+                        android:id="@+id/ll_container"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="bottom"
+                        android:background="@color/pdf_bg_color"
+                        android:orientation="horizontal"
+                        android:paddingTop="@dimen/_5sdp"
+                        android:paddingBottom="@dimen/_5sdp">
+
+
+                    <TextView
+                            android:id="@+id/tv_pdf_info"
+                            fontPath="fonts/Roboto-Regular.ttf"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_marginLeft="@dimen/_10sdp"
+                            android:layout_marginRight="@dimen/_10sdp"
+                            android:drawableLeft="@drawable/ic_pdf"
+                            android:drawablePadding="@dimen/_4sdp"
+                            android:gravity="start|center"
+                            android:text=""
+                            android:textColor="@color/gray_48"
+                            android:textSize="@dimen/font_16"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+
+                            />
+
+
+                    <FrameLayout
+                            android:id="@+id/download_container"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginRight="@dimen/_10sdp"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:visibility="visible">
+
+                        <androidx.appcompat.widget.AppCompatImageView
+                                android:id="@+id/iv_start_download"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center_vertical|end|center_horizontal"
+                                android:background="@drawable/circle_pdf_bg"
+                                android:clickable="true"
+                                android:focusable="true"
+                                android:padding="@dimen/_5sdp"
+                                android:src="@drawable/ic_download"
+                                android:tint="#878A91"
+                                android:visibility="gone" />
+
+
+                        <com.pnikosis.materialishprogress.ProgressWheel
+                                android:id="@+id/progress_dialog"
+                                android:layout_width="@dimen/_28sdp"
+                                android:layout_height="@dimen/_28sdp"
+                                android:layout_gravity="center_vertical|end|center_horizontal"
+                                android:visibility="gone"
+                                app:matProg_barWidth="@dimen/_2sdp"
+                                wheel:matProg_barColor="#878A91"
+                                wheel:matProg_fillRadius="true"
+                                wheel:matProg_progressIndeterminate="true" />
+
+                        <androidx.appcompat.widget.AppCompatImageView
+                                android:id="@+id/iv_cancel_download"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center_vertical|end|center_horizontal"
+                                android:clickable="true"
+                                android:focusable="true"
+                                android:padding="@dimen/_5sdp"
+                                android:src="@drawable/ic_cross"
+                                android:tint="#878A91"
+                                android:visibility="gone" />
+
+                    </FrameLayout>
+                </LinearLayout>
+
+            </FrameLayout>
+
+
+            <TextView
+                    android:id="@+id/text_message_time"
+                    fontPath="fonts/Roboto-Light.ttf"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom|end"
+                    android:drawablePadding="@dimen/_4sdp"
+                    android:text=""
+                    android:textColor="@color/gray_9E"
+                    android:textSize="@dimen/font_12"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+
+                    />
+
+        </LinearLayout>
+    </FrameLayout>
+</FrameLayout>
