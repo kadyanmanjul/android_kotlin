@@ -10,6 +10,7 @@ import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import android.os.SystemClock
 import android.text.Editable
 import android.text.TextWatcher
@@ -72,6 +73,9 @@ import kotlinx.coroutines.launch
 import java.lang.ref.WeakReference
 
 import android.provider.Settings;
+import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
+import com.joshtalks.joshskills.core.analytics.AppAnalytics
+import com.joshtalks.joshskills.core.custom_ui.SmoothLinearLayoutManager
 import com.joshtalks.joshskills.repository.server.chat_message.TVideoMessage
 
 const val CHAT_ROOM_OBJECT = "chat_room"
@@ -92,6 +96,7 @@ class ConversationActivity : BaseActivity() {
 
     private var revealAttachmentView: Boolean = false
     private lateinit var activityRef: WeakReference<FragmentActivity>
+    private val rvHandler = Handler(Looper.getMainLooper())
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -207,7 +212,6 @@ class ConversationActivity : BaseActivity() {
         conversationBinding.recordView.cancelBounds = 2f
         conversationBinding.recordView.setSmallMicColor(Color.parseColor("#c2185b"))
         conversationBinding.recordView.setLessThanSecondAllowed(false)
-
         conversationBinding.recordView.setSlideToCancelText("Slide To Cancel")
         conversationBinding.recordView.setCustomSounds(
             R.raw.record_start,
@@ -397,9 +401,7 @@ class ConversationActivity : BaseActivity() {
                             addUserImageInView((Utils.getPathFromUri(path)))
                         }
                     }
-                    println("success: $it")
                 }, {
-                    println("error: $it")
                 })
         }
 
@@ -431,10 +433,9 @@ class ConversationActivity : BaseActivity() {
 
 
     private fun initRV() {
-        val linearLayoutManager = LinearLayoutManager(this);
+        val linearLayoutManager = SmoothLinearLayoutManager(this);
         linearLayoutManager.stackFromEnd = true
         linearLayoutManager.isSmoothScrollbarEnabled = true
-
 
         conversationBinding.chatRv.layoutManager = linearLayoutManager
         conversationBinding.chatRv.setHasFixedSize(false)
@@ -447,8 +448,7 @@ class ConversationActivity : BaseActivity() {
                     4f
                 )
             )
-        );
-
+        )
     }
 
 
@@ -460,6 +460,7 @@ class ConversationActivity : BaseActivity() {
                 }
             }
             conversationBinding.chatRv.findViewHolderForAdapterPosition(conversationBinding.chatRv.viewResolverCount)
+            conversationBinding.chatRv.refresh()
         })
 
         conversationViewModel.refreshViewLiveData.observe(this, Observer { chatModel ->
@@ -507,12 +508,11 @@ class ConversationActivity : BaseActivity() {
 
     companion object {
         fun startConversionActivity(context: Context, inboxEntity: InboxEntity) {
-            var intent = Intent(context, ConversationActivity::class.java).apply {
+            val intent = Intent(context, ConversationActivity::class.java).apply {
 
             }
             intent.putExtra(CHAT_ROOM_OBJECT, inboxEntity)
             context.startActivity(intent)
-
 
         }
 
@@ -604,10 +604,9 @@ class ConversationActivity : BaseActivity() {
 
 
     private fun addUserImageInView(imagePath: String) {
-        Log.e("selectedImagePath", imagePath)
-        var imageUpdatedPath = AppDirectory.getImageSentFilePath()
-        var flag = AppDirectory.copy(imagePath, imageUpdatedPath)
-        var tImageMessage = TImageMessage(imageUpdatedPath, imageUpdatedPath)
+        val imageUpdatedPath = AppDirectory.getImageSentFilePath()
+        AppDirectory.copy(imagePath, imageUpdatedPath)
+        val tImageMessage = TImageMessage(imageUpdatedPath, imageUpdatedPath)
 
         conversationBinding.chatRv.addView(
             MessageBuilderFactory.getMessage(
@@ -681,12 +680,6 @@ class ConversationActivity : BaseActivity() {
         subscribeRXBus()
     }
 
-    private fun openSettings() {
-        val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-        val uri = Uri.fromParts("package", packageName, null);
-        intent.data = uri;
-        startActivityForResult(intent, 101);
-    }
 
     private fun checkAudioPermission(
         callback: Runnable?,

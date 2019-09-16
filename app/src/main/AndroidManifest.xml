@@ -39,6 +39,8 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
+    <uses-permission android:name="android.permission.CALL_PHONE" />
+
     <application
             android:name=".core.JoshApplication"
             android:allowBackup="@bool/useLargeHeap"
@@ -54,6 +56,13 @@
 
         <activity android:name=".ui.profile.CropImageActivity" />
 
+
+        <meta-data
+                android:name="CLEVERTAP_ACCOUNT_ID"
+                android:value="844-6K5-865Z" />
+        <meta-data
+                android:name="CLEVERTAP_TOKEN"
+                android:value="536-44b" />
         <meta-data
                 android:name="com.google.android.geo.API_KEY"
                 android:value="@string/google_places_api_key" />
@@ -163,8 +172,6 @@
         </activity>
 
 
-
-
         <activity
                 android:name=".ui.sign_up_old.LoginActivity"
                 android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize"
@@ -177,6 +184,8 @@
                 android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize"
                 android:launchMode="singleTask"
                 android:windowSoftInputMode="stateHidden" />
+
+
     </application>
 
 </manifest>

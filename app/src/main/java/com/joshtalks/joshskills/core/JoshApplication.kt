@@ -8,7 +8,9 @@ import com.crashlytics.android.core.CrashlyticsCore
 import com.facebook.stetho.Stetho
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.CoreMeta
+import com.joshtalks.joshskills.repository.server.UpdateDeviceRequest
 import io.fabric.sdk.android.Fabric
 import io.github.inflationx.calligraphy3.CalligraphyConfig
 import io.github.inflationx.calligraphy3.CalligraphyInterceptor
@@ -70,4 +72,18 @@ class JoshApplication : Application(){
             }
         }
     }
+    fun updateDeviceDetail() {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                if (Mentor.getInstance().hasId()) {
+                    val updateDetails: Any =
+                        AppObjectController.signUpNetworkService.updateDeviceDetails(UpdateDeviceRequest())
+                }
+
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+            }
+        }
+    }
+
 }

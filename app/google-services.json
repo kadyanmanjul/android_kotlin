@@ -1,34 +1,34 @@
 {
   "project_info": {
-    "project_number": "344962250364",
-    "firebase_url": "https://joshenglishtest.firebaseio.com",
-    "project_id": "joshenglishtest",
-    "storage_bucket": "joshenglishtest.appspot.com"
+    "project_number": "359106841538",
+    "firebase_url": "https://joshskills-1dd9b.firebaseio.com",
+    "project_id": "joshskills-1dd9b",
+    "storage_bucket": "joshskills-1dd9b.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:344962250364:android:b1b0bd81298b8b13",
+        "mobilesdk_app_id": "1:359106841538:android:4ecb9752697263e34aa45b",
         "android_client_info": {
           "package_name": "com.joshtalks.joshskills"
         }
       },
       "oauth_client": [
         {
-          "client_id": "344962250364-0hjol1nqknkj3jet6o3134j6a912gjeg.apps.googleusercontent.com",
+          "client_id": "359106841538-b9g8vrstg5aj9eldrg1it15estpdgjsl.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyAzEIMD_4iWsc_zLUpn4NnDHxGRBCO8fMk"
+          "current_key": "AIzaSyC_pJcdYb1uUdmKbv8w8Z-AP2k604tExPo"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "344962250364-0hjol1nqknkj3jet6o3134j6a912gjeg.apps.googleusercontent.com",
+              "client_id": "359106841538-b9g8vrstg5aj9eldrg1it15estpdgjsl.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

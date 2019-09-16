@@ -6,7 +6,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
+import com.bumptech.glide.Glide
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
+import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import kotlinx.android.synthetic.main.fragment_image_show.*
 
 
@@ -42,9 +45,10 @@ class ImageShowFragment : DialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        big_image_view.showImage(Uri.parse(imagePath));
-
-
+        Glide.with(this)
+            .load(imagePath)
+            .into(big_image_view)
+        AppAnalytics.create(AnalyticsEvent.IMAGE_OPENED.NAME).addParam("URL", imagePath)
     }
 
     companion object {

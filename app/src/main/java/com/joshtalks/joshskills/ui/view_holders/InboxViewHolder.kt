@@ -42,26 +42,22 @@ class InboxViewHolder(var inboxEntity: InboxEntity) : BaseCell() {
 
     @Resolve
     fun onResolved() {
-       // profile_image.load(R.drawable.cource_icon)
+        profile_image.setImageResource(R.mipmap.ic_launcher)
         tvName.text = inboxEntity.course_name
 
 
         inboxEntity.type?.let {
-
             if (BASE_MESSAGE_TYPE.Q == it) {
                 showRecentAsPerView(it)
             } else {
                 showRecentAsPerView(it)
             }
-
-
         }
 
         inboxEntity.created?.let {
             tv_last_message_time.text = com.joshtalks.joshskills.core.Utils.getMessageTime(it)
 
         }
-
     }
 
 

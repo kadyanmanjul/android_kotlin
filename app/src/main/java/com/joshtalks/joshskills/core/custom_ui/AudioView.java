@@ -46,6 +46,8 @@ import com.google.android.exoplayer2.util.Util;
 import com.joshtalks.joshskills.R;
 import com.joshtalks.joshskills.core.AppObjectController;
 import com.joshtalks.joshskills.core.Utils;
+import com.joshtalks.joshskills.core.analytics.AnalyticsEvent;
+import com.joshtalks.joshskills.core.analytics.AppAnalytics;
 import com.joshtalks.joshskills.core.interfaces.AudioPlayerInterface;
 import com.joshtalks.joshskills.core.io.AppDirectory;
 import com.joshtalks.joshskills.repository.local.entity.AudioType;
@@ -334,6 +336,7 @@ public class AudioView extends FrameLayout {
 
 
     private void setPlay() {
+        AppAnalytics.create(AnalyticsEvent.AUDIO_OPENED.getNAME()).addParam("ChatId",message.getChatId());
         isPlaying = true;
         audioPlayerManager.play(this.uri, eventListener);
         setProgress();

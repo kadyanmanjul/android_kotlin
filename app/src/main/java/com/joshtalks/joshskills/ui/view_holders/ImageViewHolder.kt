@@ -14,12 +14,15 @@ import com.mindorks.placeholderview.annotations.Layout
 import com.mindorks.placeholderview.annotations.Resolve
 import com.mindorks.placeholderview.annotations.View
 import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
+import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.core.service.DownloadUtils
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.DOWNLOAD_STATUS
 import com.joshtalks.joshskills.repository.local.eventbus.DownloadCompletedEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.DownloadMediaEventBus
+import com.joshtalks.joshskills.repository.local.eventbus.ImageShowEvent
 import com.mindorks.placeholderview.annotations.Click
 import com.pnikosis.materialishprogress.ProgressWheel
 import com.karumi.dexter.PermissionToken
@@ -28,13 +31,6 @@ import com.karumi.dexter.listener.PermissionGrantedResponse
 import com.karumi.dexter.listener.single.PermissionListener
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.listener.PermissionRequest
-import com.tonyodev.fetch2.Download
-import com.tonyodev.fetch2.Error
-import com.tonyodev.fetch2.FetchListener
-import com.tonyodev.fetch2core.DownloadBlock
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import java.lang.ref.WeakReference
 
 
@@ -82,81 +78,6 @@ class ImageViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
     lateinit var progress_dialog: ProgressWheel
 
     lateinit var imageViewHolder: ImageViewHolder
-
-
-    private var downloadListener = object : FetchListener {
-        override fun onAdded(download: Download) {
-
-        }
-
-        override fun onCancelled(download: Download) {
-
-        }
-
-        override fun onCompleted(download: Download) {
-            DownloadUtils.removeCallbackListener(download.tag)
-            CoroutineScope(Dispatchers.IO).launch {
-                DownloadUtils.updateDownloadStatus(download.file, download.extras).let {
-                    RxBus2.publish(DownloadCompletedEventBus(imageViewHolder, message))
-                }
-            }
-
-
-        }
-
-        override fun onDeleted(download: Download) {
-
-        }
-
-        override fun onDownloadBlockUpdated(
-            download: Download,
-            downloadBlock: DownloadBlock,
-            totalBlocks: Int
-        ) {
-
-        }
-
-        override fun onError(download: Download, error: Error, throwable: Throwable?) {
-
-        }
-
-        override fun onPaused(download: Download) {
-
-        }
-
-        override fun onProgress(
-            download: Download,
-            etaInMilliSeconds: Long,
-            downloadedBytesPerSecond: Long
-        ) {
-
-        }
-
-        override fun onQueued(download: Download, waitingOnNetwork: Boolean) {
-
-        }
-
-        override fun onRemoved(download: Download) {
-
-        }
-
-        override fun onResumed(download: Download) {
-
-        }
-
-        override fun onStarted(
-            download: Download,
-            downloadBlocks: List<DownloadBlock>,
-            totalBlocks: Int
-        ) {
-
-        }
-
-        override fun onWaitingNetwork(download: Download) {
-
-        }
-
-    }
 
 
     @Resolve
@@ -207,7 +128,7 @@ class ImageViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
             } else {
 
                 setImageView(image_view, message.url!!, true)
-                fileNotDownloadView()
+                fileNotUploadingView()
 
             }
         } else {
@@ -252,6 +173,19 @@ class ImageViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
                 }
             }
         }
+
+        if (message.text != null) {
+            text_message_body.text?.isNotEmpty()?.let {
+                text_message_body.text = message.text
+                text_message_body.visibility= GONE
+            }
+
+        } else {
+            message.question?.qText?.let {
+                text_message_body.text = it
+            }
+        }
+
         text_message_time.text = Utils.messageTimeConversion(message.created)
         updateTime(text_message_time)
     }
@@ -263,16 +197,17 @@ class ImageViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
             url,
             AppDirectory.imageReceivedFile().absolutePath
         )
-        /* DownloadUtils.downloadFile(
-             url,
-             AppDirectory.imageReceivedFile().absolutePath,
-             message.chatId,
-             message,
-             downloadListener
-         )*/
 
     }
 
+
+    private fun fileNotUploadingView() {
+        download_container.visibility = VISIBLE
+        progress_dialog.visibility = GONE
+        iv_cancel_download.visibility = GONE
+        iv_start_download.visibility = VISIBLE
+        iv_start_download.setImageResource(R.drawable.ic_file_upload)
+    }
 
     private fun fileNotDownloadView() {
         download_container.visibility = VISIBLE
@@ -301,20 +236,32 @@ class ImageViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
 
     @Click(R.id.image_view)
     fun onClick() {
-        //RxBus2.publish(DownloadMediaEventBus(this, message))
+
+        if (message.downloadedLocalPath != null && message.downloadedLocalPath?.isNotEmpty()!!) {
+            RxBus2.publish(ImageShowEvent(message.downloadedLocalPath))
+        } else if (message.url != null) {
+            RxBus2.publish(ImageShowEvent(message.url))
+        } else {
+            message.question?.imageList?.get(0)?.imageUrl?.let {
+                RxBus2.publish(ImageShowEvent(it))
+            }
+        }
+
     }
 
 
     @Click(R.id.download_container)
     fun downloadStart() {
         RxBus2.publish(DownloadMediaEventBus(this, message))
+        AppAnalytics.create(AnalyticsEvent.IMAGE_DOWNLOAD.NAME).addParam("ChatId", message.chatId)
+
 
     }
 
     @Click(R.id.iv_cancel_download)
     fun downloadCancel() {
         fileNotDownloadView()
-        message.downloadStatus=DOWNLOAD_STATUS.NOT_START
+        message.downloadStatus = DOWNLOAD_STATUS.NOT_START
 
     }
 

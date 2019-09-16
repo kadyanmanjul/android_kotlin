@@ -7,6 +7,8 @@ import es.voghdev.pdfviewpager.library.adapter.PDFPagerAdapter
 import androidx.databinding.DataBindingUtil
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.BaseActivity
+import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
+import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.databinding.ActivityPdfViewerBinding
 import com.joshtalks.joshskills.repository.local.entity.PdfType
 import es.voghdev.pdfviewpager.library.PDFViewPager
@@ -32,8 +34,10 @@ class PdfViewerActivity : BaseActivity(){
    fun showPdf(){
        val pdfViewPager = PDFViewPager(applicationContext, pdfObject.downloadedLocalPath)
        setContentView(pdfViewPager)
+       AppAnalytics.create(AnalyticsEvent.PDF_OPENED.NAME).addParam("URL",pdfObject.url)
 
-    }
+
+   }
 
     override fun onDestroy() {
         super.onDestroy()

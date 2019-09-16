@@ -2,9 +2,8 @@ package com.joshtalks.joshskills.core
 
 import android.os.Handler
 import android.os.Looper
+import com.clevertap.android.sdk.ActivityLifecycleCallback
 import com.facebook.stetho.okhttp3.StethoInterceptor
-import com.github.piasy.biv.BigImageViewer
-import com.github.piasy.biv.loader.glide.GlideImageLoader
 import com.joshtalks.joshskills.repository.local.AppDatabase
 import com.google.gson.Gson
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
@@ -103,7 +102,8 @@ internal class AppObjectController {
         fun init(context: JoshApplication): AppObjectController {
             joshApplication = context;
             appDatabase = AppDatabase.getDatabase(context)!!
-
+            com.joshtalks.joshskills.core.ActivityLifecycleCallback.register(joshApplication)
+            ActivityLifecycleCallback.register(joshApplication)
 
 
 
@@ -195,15 +195,19 @@ internal class AppObjectController {
             Fetch.setDefaultInstanceConfiguration(fetchConfiguration)
 
             fetch = Fetch.getInstance(fetchConfiguration)
-            BigImageViewer.initialize(GlideImageLoader.with(context));
 
             return INSTANCE
         }
 
         fun clearDownloadMangerCallback() {
-            DownloadUtils.objectFetchListener.forEach { (key, value) ->
-                fetch.removeListener(value)
-                DownloadUtils.objectFetchListener.remove(key)
+            try {
+                DownloadUtils.objectFetchListener.forEach { (key, value) ->
+
+                    fetch.removeListener(value)
+                    DownloadUtils.objectFetchListener.remove(key)
+                }
+            }catch (ex:Exception){
+
             }
 
         }

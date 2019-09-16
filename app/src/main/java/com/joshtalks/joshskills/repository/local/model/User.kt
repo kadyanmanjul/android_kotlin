@@ -73,6 +73,7 @@ open class User {
 
     companion object {
 
+        @JvmStatic
         fun getInstance(): User {
             return try {
                 AppObjectController.gsonMapper.fromJson(

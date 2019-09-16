@@ -13,14 +13,12 @@ const val MEDIA_OBJECT="media_object"
 object WorkMangerPapa {
 
 
-    fun startUploadProfileinWorker(imageModel: ImageModel){
+    fun startUploadProfileInWorker(imageModel: ImageModel){
         val imageData = workDataOf(MEDIA_OBJECT to AppObjectController.gsonMapper.toJson(imageModel))
         val uploadWorkRequest = OneTimeWorkRequestBuilder<UploadMediaWorker>()
             .setInputData(imageData)
             .build()
         WorkManager.getInstance(AppObjectController.joshApplication).enqueue(uploadWorkRequest)
-
-
     }
 
     fun startDeviceDetailsUpdate(){

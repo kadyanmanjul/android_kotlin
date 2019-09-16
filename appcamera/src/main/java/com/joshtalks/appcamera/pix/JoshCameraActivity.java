@@ -643,15 +643,16 @@ public class JoshCameraActivity extends AppCompatActivity implements View.OnTouc
                 cameraView.captureImage(new CameraKitEventCallback<CameraKitImage>() {
                     @Override
                     public void callback(CameraKitImage cameraKitImage) {
-                        Bitmap b = Utility.rotate(cameraKitImage.getBitmap(), 180);
+
+                       // Bitmap b = Utility.rotateBitmap(cameraKitImage.getBitmap());
                         Utility.vibe(JoshCameraActivity.this, 50);
-                        File photo = Utility.writeImage(b, options.getPath(), options.getImageQuality(),
+                        File photo = Utility.writeImage(cameraKitImage.getBitmap(), options.getPath(), options.getImageQuality(),
                                 options.getWidth(), options.getHeight());
                         Img img = new Img("", "", photo.getAbsolutePath(), "");
                         selectionList.add(img);
                         Utility.scanPhoto(JoshCameraActivity.this, photo);
-                        b.recycle();
-                        b = null;
+                        //b.recycle();
+                       // b = null;
                         Log.e("click time", "--------------------------------2");
                         returnObjects();
                     }
@@ -749,10 +750,12 @@ public class JoshCameraActivity extends AppCompatActivity implements View.OnTouc
                 if (options.isFrontfacing()) {
                     options.setFrontfacing(false);
                     cameraView.setFacing(CameraKit.Constants.FACING_BACK);
+                    flash.setVisibility(View.VISIBLE);
 
                 } else {
                     options.setFrontfacing(true);
                     cameraView.setFacing(CameraKit.Constants.FACING_FRONT);
+                    flash.setVisibility(View.GONE);
                 }
             }
         });

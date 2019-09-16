@@ -1,5 +1,6 @@
 package com.joshtalks.joshskills.ui.sign_up_old
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.databinding.DataBindingUtil
 import com.joshtalks.joshskills.R
@@ -23,7 +24,18 @@ class RegisterInfoActivity : BaseActivity(){
 
     fun registerForCourse(){
         Utils.openUrl(REDIRECT_URL)
-        this.finish()
+        //this.finish()
     }
 
+    fun callHelpLine(){
+        Utils.call(this,"7428797127")
+        //this.finish()
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        val resultIntent = Intent()
+        setResult(RESULT_OK, resultIntent)
+        finish()
+    }
 }

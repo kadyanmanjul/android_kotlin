@@ -23,7 +23,7 @@ data class ChatModel(
 
     @Ignore
     @SerializedName("question")
-    var question: Question? = Question(),
+    var question: Question? = null,
 
 
     @Embedded
@@ -44,7 +44,10 @@ data class ChatModel(
 
 
     @ColumnInfo(name = "message_deliver_status")
-    var messageDeliverStatus: MESSAGE_DELIVER_STATUS = MESSAGE_DELIVER_STATUS.READ
+    var messageDeliverStatus: MESSAGE_DELIVER_STATUS = MESSAGE_DELIVER_STATUS.READ,
+
+    @ColumnInfo(name = "is_sync")
+    var isSync: Boolean = true
 
 
 ) : DataBaseClass(), Serializable {
@@ -60,7 +63,8 @@ data class ChatModel(
         url = "",
         text = "",
         messageDeliverStatus = MESSAGE_DELIVER_STATUS.READ,
-        mediaDuration = 0
+        mediaDuration = 0,
+        isSync = true
     )
 }
 
@@ -265,7 +269,7 @@ open class DataBaseClass : Serializable {
 
     @ColumnInfo()
     @Expose
-    var downloadStatus: DOWNLOAD_STATUS = DOWNLOAD_STATUS.NOT_START
+    var downloadStatus: DOWNLOAD_STATUS = DOWNLOAD_STATUS.DOWNLOADED
 
     @ColumnInfo()
     @Expose
@@ -383,7 +387,7 @@ interface ChatDao {
                     question.material_type == BASE_MESSAGE_TYPE.PD -> question.pdfList =
                         getPdfOfQuestion(questionId = question.questionId)
                 }
-                chatModel.question=question
+                chatModel.question = question
             }
         }
         return chatModel
@@ -408,5 +412,5 @@ enum class MESSAGE_DELIVER_STATUS(val type: Int) {
 
 
 enum class DOWNLOAD_STATUS {
-    DOWNLOADED, DOWNLOADING, FAILED, NOT_START,UPLOADING,UPLOADED
+    DOWNLOADED, DOWNLOADING, FAILED, NOT_START, UPLOADING, UPLOADED
 }

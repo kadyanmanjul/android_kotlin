@@ -55,12 +55,11 @@ object MessageBuilderFactory {
 
     private fun getImageChatModel(message: BaseChatMessage): ChatModel {
         val model = ChatModel()
-        //model.url = (message as TImageMessage).url
+        model.url = (message as TImageMessage).url
         model.downloadStatus=DOWNLOAD_STATUS.DOWNLOADED
         model.messageDeliverStatus = MESSAGE_DELIVER_STATUS.SENT
         model.created = Date(System.currentTimeMillis())
-        model.downloadedLocalPath = (message as TImageMessage).url
-
+        model.downloadedLocalPath = message.localPathUrl
         model.sender = Sender(Mentor.getInstance().getId(), User(), "")
         return model
     }

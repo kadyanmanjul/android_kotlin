@@ -5,6 +5,8 @@ import androidx.lifecycle.MutableLiveData
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.CHAT_LAST_SYNC_TIME
 import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
+import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.*
 import com.joshtalks.joshskills.repository.local.eventbus.DBInsertion
@@ -121,10 +123,31 @@ object NetworkRequestHelper {
                 messageDeliverStatus = MESSAGE_DELIVER_STATUS.SENT_RECEIVED
             )
 
-            if (messageObject is BaseMediaMessage) chatModel.downloadedLocalPath = messageObject.localPathUrl
+            if (messageObject is BaseMediaMessage) chatModel.downloadedLocalPath =
+                messageObject.localPathUrl
             chatModel.downloadStatus = DOWNLOAD_STATUS.DOWNLOADED
             AppObjectController.appDatabase.chatDao().updateChatMessage(chatModel)
             refreshViewLiveData?.postValue(chatModel)
+
+            when (chatMessageReceiver.type) {
+                BASE_MESSAGE_TYPE.TX -> AppAnalytics.create(AnalyticsEvent.MESSAGE_SENT_TEXT.NAME).addParam(
+                    "ChatId",
+                    chatMessageReceiver.id
+                ).push()
+                BASE_MESSAGE_TYPE.IM -> AppAnalytics.create(AnalyticsEvent.MESSAGE_SENT_IMAGE.NAME).addParam(
+                    "ChatId",
+                    chatMessageReceiver.id
+                ).push()
+                BASE_MESSAGE_TYPE.VI -> AppAnalytics.create(AnalyticsEvent.MESSAGE_SENT_VIDEO.NAME).addParam(
+                    "ChatId",
+                    chatMessageReceiver.id
+                ).push()
+                BASE_MESSAGE_TYPE.AU -> AppAnalytics.create(AnalyticsEvent.MESSAGE_SENT_AUDIO.NAME).addParam(
+                    "ChatId",
+                    chatMessageReceiver.id
+                ).push()
+            }
+
         }
     }
 

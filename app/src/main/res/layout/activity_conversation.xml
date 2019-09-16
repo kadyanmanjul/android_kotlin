@@ -37,7 +37,6 @@
                 android:layout_height="match_parent"
                 android:layout_above="@+id/bottom_bar"
                 android:layout_below="@+id/toolbar"
-                android:clipToPadding="false"
                 android:paddingTop="@dimen/_5sdp" />
 
 
@@ -53,12 +52,16 @@
 
 
         <androidx.constraintlayout.widget.ConstraintLayout
+
+                android:background="@drawable/chat_wallpaper"
                 android:id="@+id/bottom_bar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
                 android:orientation="vertical"
                 android:paddingTop="@dimen/_5sdp">
+
+
 
             <FrameLayout
                     android:id="@+id/inputLL"

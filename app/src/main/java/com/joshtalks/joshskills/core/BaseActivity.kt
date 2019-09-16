@@ -2,7 +2,9 @@ package com.joshtalks.joshskills.core
 
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.provider.Settings
 import android.util.DisplayMetrics
 import androidx.appcompat.app.AppCompatActivity
 import com.joshtalks.joshskills.repository.local.model.Mentor
@@ -49,11 +51,11 @@ abstract class BaseActivity : AppCompatActivity() {
                 ProfileActivity::class.java
             ).apply {
             }
-            Mentor.getInstance().getLocality() == null -> Intent(
+            /*Mentor.getInstance().getLocality() == null -> Intent(
                 this,
                 SelectLocationActivity::class.java
             ).apply {
-            }
+            }*/
             else -> {
                 null
             }
@@ -77,5 +79,11 @@ abstract class BaseActivity : AppCompatActivity() {
         }
     }
 
+    protected fun openSettings() {
+        val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+        val uri = Uri.fromParts("package", packageName, null);
+        intent.data = uri;
+        startActivityForResult(intent, 101);
+    }
 
 }

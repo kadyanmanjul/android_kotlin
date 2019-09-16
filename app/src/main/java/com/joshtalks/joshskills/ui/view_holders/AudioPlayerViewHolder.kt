@@ -11,6 +11,8 @@ import androidx.fragment.app.FragmentActivity
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
+import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.custom_ui.AudioView
 import com.joshtalks.joshskills.core.interfaces.AudioPlayerInterface
 import com.joshtalks.joshskills.core.io.AppDirectory
@@ -68,6 +70,8 @@ class AudioPlayerViewHolder(activityRef: WeakReference<FragmentActivity>, messag
         }
 
         override fun onCompleted(download: Download) {
+            AppAnalytics.create(AnalyticsEvent.AUDIO_DOWNLOAD.NAME).addParam("ChatId", message.chatId)
+
             DownloadUtils.removeCallbackListener(download.tag)
             CoroutineScope(Dispatchers.IO).launch {
                 DownloadUtils.updateDownloadStatus(download.file, download.extras).let {

@@ -26,6 +26,7 @@ class Mentor {
         @JvmStatic
         private var instance: Mentor? = null
 
+        @JvmStatic
         fun getInstance(): Mentor {
 
             return try {
@@ -60,7 +61,7 @@ class Mentor {
         PrefManager.put(MENTOR_PERSISTANT_KEY, string)
     }
 
-    fun updateUser(user: User):Mentor {
+    fun updateUser(user: User): Mentor {
         this.user = user
         return this
     }

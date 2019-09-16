@@ -25,6 +25,14 @@ import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory
 import java.io.File
 import java.io.FileOutputStream
 import java.io.OutputStream
+import androidx.core.content.ContextCompat.startActivity
+import androidx.core.content.ContextCompat.startActivity
+import androidx.core.content.ContextCompat.startActivity
+import androidx.core.content.ContextCompat.startActivity
+
+
+
+
 
 
 private val CHAT_TIME_FORMATTER = SimpleDateFormat("hh:mm aa")
@@ -78,14 +86,6 @@ object Utils {
         return Build.MODEL + " - " + Build.MANUFACTURER + " - " + Build.BRAND
     }
 
-    fun openUrl(url: String) {
-        val intent = Intent(ACTION_VIEW)
-        intent.apply {
-            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        }
-        intent.data = Uri.parse(url)
-        AppObjectController.joshApplication.startActivity(intent)
-    }
 
 
     fun messageTimeConversion(date: Date): String {
@@ -130,7 +130,7 @@ object Utils {
             val durationStr = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)
             return durationStr.toLong()
         } catch (ex: Exception) {
-           // ex.printStackTrace()
+            // ex.printStackTrace()
 
         }
         return null
@@ -151,8 +151,9 @@ object Utils {
     }
 
 
-    fun getPathFromUri(path:String): String {
-        return Environment.getExternalStorageDirectory().toString().plus("/").plus(path.split(Regex("/"),3)[2])
+    fun getPathFromUri(path: String): String {
+        return Environment.getExternalStorageDirectory().toString().plus("/")
+            .plus(path.split(Regex("/"), 3)[2])
 
     }
 
@@ -161,13 +162,14 @@ object Utils {
         return audio.getStreamVolume(STREAM_MUSIC)
     }
 
-    fun getRoundedDrawable(context: Context,iconResource:Int): RoundedBitmapDrawable {
+    fun getRoundedDrawable(context: Context, iconResource: Int): RoundedBitmapDrawable {
         val res = context.resources
         val src = BitmapFactory.decodeResource(res, iconResource)
         val dr = RoundedBitmapDrawableFactory.create(res, src)
         dr.cornerRadius = Math.max(src.width, src.height) / 2.0f
         return dr
     }
+
     fun createCircleBitmap(bitmapimg: Bitmap): Bitmap {
         val output = Bitmap.createBitmap(
             bitmapimg.getWidth(),
@@ -195,7 +197,7 @@ object Utils {
     }
 
 
-    fun writeBitmapIntoFile( bitmap: Bitmap,filePath:String): String {
+    fun writeBitmapIntoFile(bitmap: Bitmap, filePath: String): String {
         var fOut: OutputStream? = null
         val file = File(filePath)
         fOut = FileOutputStream(file)
@@ -219,15 +221,34 @@ object Utils {
         return (px / Resources.getSystem().displayMetrics.density).toInt()
     }
 
-      fun dpToPx(context:Context, dp:Float):Int {
-return Math.round(
-    TypedValue.applyDimension(
-        TypedValue.COMPLEX_UNIT_DIP, dp,
-    context.resources.displayMetrics
-    ) + 0.5f
-)
-}
+    fun dpToPx(context: Context, dp: Float): Int {
+        return Math.round(
+            TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP, dp,
+                context.resources.displayMetrics
+            ) + 0.5f
+        )
+    }
 
+    fun call(context: Context, phoneNumber: String) {
+
+        val intent = Intent(Intent.ACTION_DIAL).apply {
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
+        intent.data = Uri.parse("tel:$phoneNumber")
+        context.startActivity(intent)
+    }
+
+
+
+    fun openUrl(url: String) {
+        val intent = Intent(ACTION_VIEW)
+        intent.apply {
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
+        intent.data = Uri.parse(url)
+        AppObjectController.joshApplication.startActivity(intent)
+    }
 
 
 

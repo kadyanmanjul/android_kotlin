@@ -39,7 +39,7 @@ interface SignUpNetworkService {
     @POST("$DIR/user/{id}/upload_profile_pic/")
     suspend fun uploadProfilePicture(@Part file: MultipartBody.Part): Any
 
-    @POST("$DIR/user/devices/")
+    @POST("$DIR/mentor/devices/")
     fun updateDeviceDetails(@Body obj: UpdateDeviceRequest): Deferred<Any>
 
     @FormUrlEncoded

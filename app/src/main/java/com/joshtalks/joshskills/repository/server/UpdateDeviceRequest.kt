@@ -4,6 +4,7 @@ import android.os.Build
 import com.google.gson.annotations.SerializedName
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.repository.local.model.Mentor
 
 data class UpdateDeviceRequest(
 
@@ -24,5 +25,7 @@ data class UpdateDeviceRequest(
     @SerializedName("app_version_name")
     internal var appVersionName: String = BuildConfig.VERSION_NAME,
     @SerializedName("device_id")
-    internal var deviceId: String =  Utils.getDeviceId()
+    internal var deviceId: String = Utils.getDeviceId(),
+    @SerializedName("user_id")
+    internal var user_id: String = Mentor.getInstance().getId()
 )

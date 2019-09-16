@@ -104,7 +104,6 @@ class VideoViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
         }
 
         override fun onCompleted(download: Download) {
-            Log.e("download", "onCompleted")
 
             DownloadUtils.removeCallbackListener(download.tag)
             CoroutineScope(Dispatchers.IO).launch {
@@ -142,7 +141,6 @@ class VideoViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
             downloadedBytesPerSecond: Long
         ) {
 
-            Log.e("download", "" + etaInMilliSeconds + "   " + downloadedBytesPerSecond)
         }
 
         override fun onQueued(download: Download, waitingOnNetwork: Boolean) {
@@ -207,6 +205,7 @@ class VideoViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
                         }).check()
                 } else {
                     fileNotDownloadView()
+
                 }
 
             } else if (message.downloadStatus == DOWNLOAD_STATUS.UPLOADING) {

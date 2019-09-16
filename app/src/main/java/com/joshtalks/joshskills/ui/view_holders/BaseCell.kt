@@ -52,11 +52,11 @@ abstract class BaseCell() {
         val requestOptions = RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL)
         Glide.with(getAppContext())
             .load(url)
-            .centerCrop()
-            .apply(RequestOptions.bitmapTransform(BlurTransformation(25, 3)))
+            .override((AppObjectController.screenWidth*1.55).toInt(),(AppObjectController.screenHeight*.1).toInt())            //.thumbnail(Glide.with(activityRef.get()!!).load(url))
+            //.centerCrop()
+            .apply(RequestOptions.bitmapTransform(BlurTransformation(20, 3)))
             .apply(requestOptions)
-            .centerCrop()
-            //.thumbnail(Glide.with(activityRef.get()!!).load(url))
+
             .listener(object : RequestListener<Drawable> {
                 override fun onLoadFailed(
                     e: GlideException?,

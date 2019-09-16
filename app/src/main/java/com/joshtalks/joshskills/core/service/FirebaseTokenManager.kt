@@ -12,9 +12,7 @@ import kotlinx.coroutines.launch
 object FCMTokenManager {
 
     fun pushToken() {
-
         val token = PrefManager.getStringValue(FCM_TOKEN)
-
         if (token.isEmpty())
             return
 
@@ -42,14 +40,18 @@ object FCMTokenManager {
     private fun postToken(token: String) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                val data = mapOf(
+
+                val data = mutableMapOf<String, String>(
                     "registration_id" to token,
                     "name" to Utils.getDeviceName(),
                     "device_id" to Utils.getDeviceId(),
                     "active" to "true",
-                    "type" to "android",
-                    "user_id" to Mentor.getInstance().getId()
+                    "type" to "android"
                 )
+                if (Mentor.getInstance().hasId()) {
+                    data["user_id"]=Mentor.getInstance().getId()
+
+                }
                 val response: Any =
                     AppObjectController.signUpNetworkService.uploadFCMToken(data).await()
 

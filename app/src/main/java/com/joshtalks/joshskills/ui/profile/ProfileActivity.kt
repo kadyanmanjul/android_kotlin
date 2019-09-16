@@ -1,5 +1,6 @@
 package com.joshtalks.joshskills.ui.profile
 
+import android.Manifest
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
@@ -14,6 +15,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
 import android.view.ViewGroup
+import android.widget.Toast
 import com.andrefrsousa.superbottomsheet.SuperBottomSheetFragment
 import com.esafirm.imagepicker.features.ImagePicker
 import com.esafirm.imagepicker.features.ReturnMode
@@ -27,9 +29,16 @@ import com.bumptech.glide.request.target.Target
 import com.github.florent37.singledateandtimepicker.dialog.SingleDateAndTimePickerDialog
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.BaseActivity
+import com.joshtalks.joshskills.core.analytics.AppAnalytics
+import com.joshtalks.joshskills.core.service.UploadWorker
 import com.joshtalks.joshskills.repository.local.model.ImageModel
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.*
+import com.karumi.dexter.Dexter
+import com.karumi.dexter.MultiplePermissionsReport
+import com.karumi.dexter.PermissionToken
+import com.karumi.dexter.listener.PermissionRequest
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import kotlinx.android.synthetic.main.toolbar_login_register.*
 import kotlinx.coroutines.*
 import java.io.File
@@ -83,23 +92,75 @@ class ProfileActivity : BaseActivity(), MediaSelectCallback {
 
     override fun onSelect(media: Media) {
 
+
         if (media == Media.CAMERA) {
-            ImagePicker.cameraOnly().start(this)
+            Dexter.withActivity(this)
+                .withPermissions(
+                    Manifest.permission.READ_EXTERNAL_STORAGE,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                    Manifest.permission.CAMERA
+                )
+                .withListener(object : MultiplePermissionsListener {
+                    override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
+                        report?.areAllPermissionsGranted()?.let { flag ->
+                            ImagePicker.cameraOnly().start(this@ProfileActivity)
+                        }
+                    }
+
+                    override fun onPermissionRationaleShouldBeShown(
+                        permissions: MutableList<PermissionRequest>?,
+                        token: PermissionToken?
+                    ) {
+                        token?.continuePermissionRequest();
+
+                    }
+
+                }).withErrorListener {
+                    openSettings()
+                }
+                .onSameThread()
+                .check();
         } else if (media == Media.GALLERY) {
 
-            ImagePicker.create(this)
-                .returnMode(ReturnMode.GALLERY_ONLY) // set whether pick and / or camera action should return immediate result or not.
-                .folderMode(true) // folder mode (false by default)
-                .toolbarFolderTitle("Folder") // folder selection title
-                .toolbarImageTitle("Tap to select") // image selection title
-                .toolbarArrowColor(Color.BLACK) // Toolbar 'up' arrow color
-                .includeVideo(false) // Show video on image picker
-                .single() // single mode
-                .limit(1) // max images can be selected (99 by default)
-                .imageDirectory("Camera") // directory name for captured image  ("Camera" folder by default)
-                // .theme(R.style.CustomImagePickerTheme) // must inherit ef_BaseTheme. please refer to sample
-                .enableLog(false) // disabling log
-                .start() // start
+            Dexter.withActivity(this)
+                .withPermissions(
+                    Manifest.permission.READ_EXTERNAL_STORAGE,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+
+                )
+                .withListener(object : MultiplePermissionsListener {
+                    override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
+                        report?.areAllPermissionsGranted()?.let { flag ->
+                            ImagePicker.create(this@ProfileActivity)
+                                .returnMode(ReturnMode.GALLERY_ONLY) // set whether pick and / or camera action should return immediate result or not.
+                                .folderMode(true) // folder mode (false by default)
+                                .toolbarFolderTitle("Folder") // folder selection title
+                                .toolbarImageTitle("Tap to select") // image selection title
+                                .toolbarArrowColor(Color.BLACK) // Toolbar 'up' arrow color
+                                .includeVideo(false) // Show video on image picker
+                                .single() // single mode
+                                .limit(1) // max images can be selected (99 by default)
+                                .imageDirectory("Camera") // directory name for captured image  ("Camera" folder by default)
+                                // .theme(R.style.CustomImagePickerTheme) // must inherit ef_BaseTheme. please refer to sample
+                                .enableLog(false) // disabling log
+                                .start() // start
+                        }
+                    }
+
+                    override fun onPermissionRationaleShouldBeShown(
+                        permissions: MutableList<PermissionRequest>?,
+                        token: PermissionToken?
+                    ) {
+                        token?.continuePermissionRequest();
+
+                    }
+
+                }).withErrorListener {
+                    openSettings()
+                }
+                .onSameThread()
+                .check();
+
         }
 
 
@@ -107,10 +168,10 @@ class ProfileActivity : BaseActivity(), MediaSelectCallback {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (ImagePicker.shouldHandle(requestCode, resultCode, data)) {
-            var images = ImagePicker.getFirstImageOrNull(data)
+            val images = ImagePicker.getFirstImageOrNull(data)
             startActivityForResult(getCroppingActivity(images.path), CROPPING_IMAGE_CODE)
         } else if (requestCode == CROPPING_IMAGE_CODE && resultCode == Activity.RESULT_OK) {
-            var image = data?.getStringExtra(SOURCE_IMAGE)
+            val image = data?.getStringExtra(SOURCE_IMAGE)
             imageModel = image?.let { ImageModel(it) }
             Glide.with(applicationContext)
                 .load(Uri.fromFile(File(image)))
@@ -133,6 +194,9 @@ class ProfileActivity : BaseActivity(), MediaSelectCallback {
                         isFirstResource: Boolean
                     ): Boolean {
                         layout.ivPlaceholderPic.visibility = GONE
+                        imageModel?.let {
+                            UploadWorker.uploadProfile(it)
+                        }
                         return false
                     }
 
@@ -141,6 +205,7 @@ class ProfileActivity : BaseActivity(), MediaSelectCallback {
         }
         super.onActivityResult(requestCode, resultCode, data)
     }
+
 
     fun onProfilePicClicked() {
         val sheet = MediaPickerFragment()
@@ -165,16 +230,18 @@ class ProfileActivity : BaseActivity(), MediaSelectCallback {
         }
         if (validAge()) {
 
+            Toast.makeText(applicationContext, "Age is not less then 12 years", Toast.LENGTH_SHORT)
+                .show()
         }
 
         updateProfile()
     }
 
     private fun validAge(): Boolean {
-        var dob = Calendar.getInstance();
+        val dob = Calendar.getInstance();
         dob.time = userDob
-        var today = Calendar.getInstance();
-        var age = today.get (Calendar.YEAR) - dob.get(Calendar.YEAR);
+        val today = Calendar.getInstance();
+        var age = today.get(Calendar.YEAR) - dob.get(Calendar.YEAR);
         if (today.get(Calendar.DAY_OF_YEAR) < dob.get(Calendar.DAY_OF_YEAR)) {
             age--;
         }
@@ -224,7 +291,7 @@ class ProfileActivity : BaseActivity(), MediaSelectCallback {
     private fun updateProfile() {
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                var obj = UpdateUserPersonal(
+                val obj = UpdateUserPersonal(
                     layout.etName.text.toString(),
                     DATE_FORMATTER.format(userDob), getGender()
                 )
@@ -238,10 +305,11 @@ class ProfileActivity : BaseActivity(), MediaSelectCallback {
 
                 User.getInstance().updateFromResponse(updateProfileResponse)
                 if (imageModel != null) {
-                 //   WorkMangerPapa.startUploadProfileinWorker(imageModel!!)
+                    //   WorkMangerPapa.startUploadProfileinWorker(imageModel!!)
                 }
+                AppAnalytics.updateUser()
                 withContext(Dispatchers.Main) {
-                    startActivity(getIntentForState())
+                    startActivity(getInboxActivityIntent())
                     finish()
                 }
 

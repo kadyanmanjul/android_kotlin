@@ -10,6 +10,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
+import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.coroutines.Dispatchers
@@ -30,11 +32,15 @@ import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.server.AmazonPolicyResponse
 import com.joshtalks.joshskills.repository.server.chat_message.BaseChatMessage
 import com.joshtalks.joshskills.repository.server.chat_message.BaseMediaMessage
+import io.reactivex.Observable
+import io.reactivex.functions.Consumer
+import io.reactivex.schedulers.Schedulers
 
 import kotlinx.coroutines.async
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 
 class ConversationViewModel(application: Application) : AndroidViewModel(application) {
@@ -63,8 +69,6 @@ class ConversationViewModel(application: Application) : AndroidViewModel(applica
     lateinit var inboxEntity: InboxEntity
 
     val chatObservableLiveData: MutableLiveData<List<ChatModel>> = MutableLiveData()
-
-    val chatDatabseInsertLiveData: MutableLiveData<Boolean> = MutableLiveData()
     val refreshViewLiveData: MutableLiveData<ChatModel> = MutableLiveData()
 
 
@@ -75,11 +79,9 @@ class ConversationViewModel(application: Application) : AndroidViewModel(applica
 
 
     private fun addObserver() {
-
         compositeDisposable.add(RxBus2.listen(DBInsertion::class.java).subscribe {
             getUserRecentChats()
         })
-
     }
 
 
@@ -155,19 +157,19 @@ class ConversationViewModel(application: Application) : AndroidViewModel(applica
             }
 
             override fun onTranscodeCompleted() {
-                Log.e("mediaa","onTranscodeCompleted"+"  "+mediaPath)
+                Log.e("mediaa", "onTranscodeCompleted" + "  " + mediaPath)
                 uploadCompressedMedia(mediaPath, messageObject)
             }
 
             override fun onTranscodeCanceled() {
-                Log.e("mediaa","onTranscodeCanceled"+"  "+mediaPath)
+                Log.e("mediaa", "onTranscodeCanceled" + "  " + mediaPath)
 
             }
 
             override fun onTranscodeFailed(exception: Exception) {
                 exception.printStackTrace()
                 uploadCompressedMedia(mediaPath, messageObject)
-                Log.e("mediaa","onTranscodeFailed"+"  "+mediaPath)
+                Log.e("mediaa", "onTranscodeFailed" + "  " + mediaPath)
 
 
             }
@@ -237,6 +239,24 @@ class ConversationViewModel(application: Application) : AndroidViewModel(applica
                 (PrefManager.getLongValue(CHAT_LAST_SYNC_TIME) / 1000).toString()
             NetworkRequestHelper.getUpdatedChat(inboxEntity, queryMap = arguments)
         }, 500)
+
+        refreshChatEverySomeTime()
+    }
+
+    fun refreshChatEverySomeTime() {
+        compositeDisposable.add(
+            Observable.interval(1, 1, TimeUnit.MINUTES)
+                .subscribeOn(Schedulers.computation()).timeInterval()
+                .subscribe(Consumer {
+                    val arguments = mutableMapOf<String, String>()
+                    arguments["created"] =
+                        (PrefManager.getLongValue(CHAT_LAST_SYNC_TIME) / 1000).toString()
+                    NetworkRequestHelper.getUpdatedChat(inboxEntity, queryMap = arguments)
+
+                }, Consumer {
+
+                })
+        )
 
     }
 

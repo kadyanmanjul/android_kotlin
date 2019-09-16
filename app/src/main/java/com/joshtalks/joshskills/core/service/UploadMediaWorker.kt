@@ -7,6 +7,8 @@ import androidx.work.Worker
 import androidx.work.WorkerParameters
 import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
+import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.repository.local.entity.AudioType
 import com.joshtalks.joshskills.repository.local.model.ImageModel
 import com.joshtalks.joshskills.repository.local.model.Mentor
@@ -20,6 +22,33 @@ import okhttp3.RequestBody
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 
+
+object UploadWorker {
+
+    fun uploadProfile(imageObject: ImageModel) {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                var filePart: MultipartBody.Part = createMultipartBody(imageObject.imageLocalPath)
+                val uploadProfile: Any =
+                    AppObjectController.signUpNetworkService.uploadProfilePicture(filePart)
+                AppAnalytics.create(AnalyticsEvent.PROFILE_IMAGE_UPLOAD.NAME)
+                    .push()
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+            }
+        }
+    }
+
+    private fun createMultipartBody(filePath: String): MultipartBody.Part {
+        val file = File(filePath)
+        val requestBody = createRequestBody(file)
+        return MultipartBody.Part.createFormData("file", file.name, requestBody)
+    }
+
+    private fun createRequestBody(file: File): RequestBody {
+        return file.asRequestBody("image/*".toMediaTypeOrNull())
+    }
+}
 
 class UploadProfileWorker(context: Context, var params: WorkerParameters) :
     CoroutineWorker(context, params) {

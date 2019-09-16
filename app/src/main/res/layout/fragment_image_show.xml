@@ -6,11 +6,17 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-    <com.github.piasy.biv.view.BigImageView
+    <com.joshtalks.joshskills.core.custom_ui.ZoomageView
             android:id="@+id/big_image_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:failureImageInitScaleType="center"
-            app:optimizeDisplay="true"
+            app:zoomage_restrictBounds="false"
+            app:zoomage_animateOnReset="true"
+            app:zoomage_autoResetMode="UNDER"
+            app:zoomage_autoCenter="true"
+            app:zoomage_zoomable="true"
+            app:zoomage_translatable="true"
+            app:zoomage_minScale="0.6"
+            app:zoomage_maxScale="8"
             />
 </FrameLayout>

@@ -7,21 +7,15 @@
 
 
     <color name="font_color">#373737</color>
-    <color name="bold_text">#616161</color>
 
     <color name="white">#FFFFFF</color>
     <color name="button_primary_color">#25d366</color>
     <color name="primary_text">#28978A</color>
     <color name="squash_light">#f8ad1c</color>
-    <color name="squash_dark">#9D7721</color>
 
     <color name="checkmark_blue">#34B7F1</color>
 
 
-    <color name="camera_progress_three">#24ff00</color>
-    <color name="color_4e3d31">#4e3d31</color>
-    <color name="grey8">#888888</color>
-    <color name="transparent_black_85">#DA000000</color>
     <color name="gray_3B">#3B404F</color>
     <color name="gray_53">#535664</color>
 
@@ -37,9 +31,6 @@
     <color name="textError">#f36273</color>
     <color name="textSuccess">@color/colorAccent</color>
 
-    <color name="out_going_chat">#DCF8C6</color>
-
-    <color name="chat_bg">#ECE5DD</color>
     <color name="emoji_icon_color">#9E9E9E</color>
     <color name="emoji_bg_color">#e6e6e6</color>
     <color name="pdf_bg_color">#F7F7F7</color>
