@@ -83,16 +83,13 @@ class ImageViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
     @Resolve
     fun onResolved() {
         download_container.visibility = GONE
-
         imageViewHolder = this
         message.sender?.let {
             updateView(it, root_view, root_sub_view, message_view)
         }
 
-
         if (message.url != null) {
             if (message.downloadStatus == DOWNLOAD_STATUS.DOWNLOADED) {
-                if (message.downloadedLocalPath != null) {
                     if (AppDirectory.isFileExist(message.downloadedLocalPath!!)) {
                         Dexter.withActivity(activityRef.get())
                             .withPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
@@ -117,11 +114,9 @@ class ImageViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
 
                                 }
                             }).check()
-                    }
                 } else {
                     setImageView(image_view, message.url!!, true)
-                    //fileNotDownloadView()
-
+                    fileNotDownloadView()
                 }
 
             } else if (message.downloadStatus == DOWNLOAD_STATUS.DOWNLOADING) {

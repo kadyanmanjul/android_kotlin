@@ -33,6 +33,19 @@ interface ChatNetworkService {
     @POST("$DIR/core/signed_url/")
     fun requestUploadMediaAsync(@FieldMap params: Map<String, String>): Deferred<AmazonPolicyResponse>
 
+    @POST("$DIR/skill/v1/engage/video/")
+    fun engageVideo(@Body messageObject: Any): Deferred<Any>
+
+    @POST("$DIR/skill/v1/engage/audio/")
+    fun engageAudio(@Body messageObject: Any): Deferred<Any>
+
+    @POST("$DIR/skill/v1/engage/pdf/")
+    fun engagePdf(@Body messageObject: Any): Deferred<Any>
+
+    @POST("$DIR/skill/v1/engage/image/")
+    fun engageImage(@Body messageObject: Any): Deferred<Any>
+
+
 
 
 }

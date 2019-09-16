@@ -149,7 +149,6 @@ object DownloadUtils {
                     .load(imageUrl).submit().get()
 
                 val filePath = Utils.writeBitmapIntoFile(imageBitmap, destPath)
-                imageBitmap = null
                 updateDownloadStatus(filePath, extras).let {
                     RxBus2.publish(DownloadCompletedEventBus(viewHolder, message))
                 }

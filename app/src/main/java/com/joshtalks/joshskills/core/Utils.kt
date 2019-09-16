@@ -213,7 +213,7 @@ object Utils {
         )
         fOut.flush()
         fOut.close()
-        bitmap.recycle()
+       // bitmap.recycle()
         return filePath
     }
 

@@ -16,6 +16,8 @@ import com.joshtalks.joshskills.core.custom_ui.PlayerListener
 import com.joshtalks.joshskills.databinding.ActivityVideoPlayer1Binding
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
 import com.joshtalks.joshskills.repository.local.entity.VideoType
+import com.joshtalks.joshskills.repository.server.engage.VideoEngage
+import com.joshtalks.joshskills.repository.service.EngagementNetworkHelper
 
 const val VIDEO_OBJECT = "video_"
 
@@ -89,6 +91,9 @@ class VideoPlayerActivity : BaseActivity(), PlayerListener {
 
     override fun onStop() {
         super.onStop()
+        chatObject.question?.videoList?.get(0)?.id?.let {
+            EngagementNetworkHelper.engageVideoApi(VideoEngage(emptyList(),it,binding.pvPlayer.lastPosition))
+        }
         binding.pvPlayer.onStop()
     }
 

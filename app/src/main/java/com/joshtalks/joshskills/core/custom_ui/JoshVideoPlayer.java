@@ -375,4 +375,8 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
     public void setActivity(Activity activity) {
         this.activity = activity;
     }
+
+    public long getLastPosition() {
+        return lastPosition;
+    }
 }

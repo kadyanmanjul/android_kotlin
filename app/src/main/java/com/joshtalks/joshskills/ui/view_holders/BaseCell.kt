@@ -5,6 +5,7 @@ import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
 import android.graphics.drawable.Drawable
 import android.os.Handler
+import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
@@ -48,15 +49,13 @@ abstract class BaseCell() {
         if (iv.tag != null) {
             return
         }
-
         val requestOptions = RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL)
         Glide.with(getAppContext())
             .load(url)
-            .override((AppObjectController.screenWidth*1.55).toInt(),(AppObjectController.screenHeight*.1).toInt())            //.thumbnail(Glide.with(activityRef.get()!!).load(url))
+           // .override((AppObjectController.screenWidth*.4).toInt(),(AppObjectController.screenHeight*.6).toInt())            //.thumbnail(Glide.with(activityRef.get()!!).load(url))
             //.centerCrop()
             .apply(RequestOptions.bitmapTransform(BlurTransformation(20, 3)))
             .apply(requestOptions)
-
             .listener(object : RequestListener<Drawable> {
                 override fun onLoadFailed(
                     e: GlideException?,

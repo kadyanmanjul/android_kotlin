@@ -4,45 +4,26 @@ import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
-import android.content.res.TypedArray;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
-import android.os.Handler;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.Gravity;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatImageView;
 
-import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayer;
-import com.google.android.exoplayer2.ExoPlayerFactory;
-import com.google.android.exoplayer2.LoadControl;
 import com.google.android.exoplayer2.PlaybackParameters;
-import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.Timeline;
-import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
-import com.google.android.exoplayer2.extractor.ExtractorsFactory;
-import com.google.android.exoplayer2.source.ExtractorMediaSource;
-import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.TrackGroupArray;
-import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
-import com.google.android.exoplayer2.trackselection.TrackSelector;
-import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
-import com.google.android.exoplayer2.util.Util;
 import com.joshtalks.joshskills.R;
 import com.joshtalks.joshskills.core.AppObjectController;
 import com.joshtalks.joshskills.core.Utils;
@@ -62,8 +43,6 @@ import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.single.PermissionListener;
 import com.pnikosis.materialishprogress.ProgressWheel;
 
-import org.greenrobot.eventbus.EventBus;
-
 import java.io.File;
 import java.util.Locale;
 import java.util.Objects;
@@ -71,11 +50,10 @@ import java.util.concurrent.TimeUnit;
 
 public class AudioView extends FrameLayout {
 
-    private static final String TAG = AudioView.class.getSimpleName();
     ChatModel message;
     private final AnimatingToggle controlToggle;
-    private final  ImageView playButton;
-    private final  ImageView pauseButton;
+    private final ImageView playButton;
+    private final ImageView pauseButton;
     private final ImageView downloadButton;
     private final SeekBar seekPlayerProgress;
     private final TextView timestamp;
@@ -89,7 +67,7 @@ public class AudioView extends FrameLayout {
     public static final int MAXIMUM_WORK_CYCLES = 500000;
     private static final float WORK_CYCLES_PER_STEP = MAXIMUM_WORK_CYCLES / SEEKBAR_STEPS;
     private static int workCycles = 0;
-    private static final int AUDIO_PROGRESS_UPDATE_TIME = 100;
+    private static final int AUDIO_PROGRESS_UPDATE_TIME = 50;
     private AudioPlayerInterface audioPlayerInterface;
 
 
@@ -118,26 +96,19 @@ public class AudioView extends FrameLayout {
 
         @Override
         public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
-            Log.i(TAG, "onPlayerStateChanged: playWhenReady = " + String.valueOf(playWhenReady)
-                    + " playbackState = " + playbackState);
             switch (playbackState) {
                 case ExoPlayer.STATE_ENDED:
-                    Log.i(TAG, "Playback ended!");
                     setPause();
+                    setTotalTimeStampOfAudio();
                     audioPlayerManager.seekTo(0);
                     break;
                 case ExoPlayer.STATE_READY:
-                    Log.i(TAG, "ExoPlayer ready! pos: " +
-                            audioPlayerManager.getCurrentPosition()
-                            + " max: " + (int) audioPlayerManager.getDuration());
                     setProgress();
 
                     break;
                 case ExoPlayer.STATE_BUFFERING:
-                    Log.i(TAG, "Playback buffering!");
                     break;
                 case ExoPlayer.STATE_IDLE:
-                    Log.i(TAG, "ExoPlayer idle!");
                     break;
             }
         }
@@ -253,20 +224,18 @@ public class AudioView extends FrameLayout {
         //  if (!EventBus.getDefault().isRegistered(this)) EventBus.getDefault().register(this);
     }
 
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+    }
 
     private class PlayClickedListener implements View.OnClickListener {
         @TargetApi(Build.VERSION_CODES.LOLLIPOP)
         @Override
         public void onClick(View v) {
             try {
-                // Log.d(TAG, "playbutton onClick");
-                // if (audioSlidePlayer != null) {
-                //   togglePlayToPause();
-                // audioSlidePlayer.play(getProgress());
-                // }
                 setPlay();
             } catch (Exception e) {
-                Log.w(TAG, e);
             }
         }
     }
@@ -275,15 +244,9 @@ public class AudioView extends FrameLayout {
         @TargetApi(Build.VERSION_CODES.LOLLIPOP)
         @Override
         public void onClick(View v) {
-            Log.d(TAG, "pausebutton onClick");
             setPause();
+            setTimeStampOfAudio();
             controlToggle.displayQuick(playButton);
-
-
-            /*if (audioSlidePlayer != null) {
-                togglePauseToPlay();
-                audioSlidePlayer.stop();
-            }*/
         }
     }
 
@@ -333,7 +296,14 @@ public class AudioView extends FrameLayout {
     private void setPlay() {
         AppAnalytics.create(AnalyticsEvent.AUDIO_OPENED.getNAME()).addParam("ChatId", message.getChatId());
         isPlaying = true;
-        audioPlayerManager.play(this.uri, eventListener);
+        String audioId = null;
+        try{
+            audioId=message.getQuestion().getAudioList().get(0).getId();
+        }catch (Exception e){
+
+        }
+
+        audioPlayerManager.play(this.uri, eventListener,audioId);
         setProgress();
         controlToggle.displayQuick(pauseButton);
         if (Utils.INSTANCE.getCurrentMediaVolume(getContext()) <= 0) {
@@ -347,30 +317,22 @@ public class AudioView extends FrameLayout {
         isPlaying = false;
         audioPlayerManager.pause();
         controlToggle.displayQuick(playButton);
-        setTimeStampOfAudio();
 
     }
 
 
     private void setProgress() {
-        Log.e(TAG, "PROGRESS");
-        seekPlayerProgress.setProgress(audioPlayerManager.getCurrentPosition());
-        seekPlayerProgress.setMax(audioPlayerManager.getDuration() / 1000);
-        //txtCurrentTime.setText(stringForTime((int)exoPlayer.getCurrentPosition()));
-        //txtEndTime.setText(stringForTime((int)exoPlayer.getDuration()));
-        //Make sure you update Seekbar on UI thread
+        seekPlayerProgress.setMax(audioPlayerManager.getDuration() / AUDIO_PROGRESS_UPDATE_TIME);
         AppObjectController.getUiHandler().post(new Runnable() {
             @Override
             public void run() {
                 if (audioPlayerManager != null && isPlaying) {
-                    seekPlayerProgress.setMax((int) audioPlayerManager.getDuration() / 1000);
-                    int mCurrentPosition = (int) audioPlayerManager.getCurrentPosition() / 1000;
+                    seekPlayerProgress.setMax((int) audioPlayerManager.getDuration() / AUDIO_PROGRESS_UPDATE_TIME);
+                    int mCurrentPosition = (int) audioPlayerManager.getCurrentPosition() / AUDIO_PROGRESS_UPDATE_TIME;
                     seekPlayerProgress.setProgress(mCurrentPosition);
                     timestamp.setText(String.format(Locale.getDefault(), "%02d:%02d",
                             TimeUnit.MILLISECONDS.toMinutes(audioPlayerManager.getCurrentPosition()),
                             TimeUnit.MILLISECONDS.toSeconds(audioPlayerManager.getCurrentPosition())));
-                    //  txtCurrentTime.setText(stringForTime((int)exoPlayer.getCurrentPosition()));
-                    //txtEndTime.setText(stringForTime((int)exoPlayer.getDuration()));
 
                     AppObjectController.getUiHandler().postDelayed(this, AUDIO_PROGRESS_UPDATE_TIME);
                 }
@@ -381,6 +343,28 @@ public class AudioView extends FrameLayout {
 
     void setTimeStampOfAudio() {
         try {
+
+            if (seekPlayerProgress.getProgress() > 0) {
+                duration = Long.valueOf(seekPlayerProgress.getProgress());
+            } else {
+
+                Long duration = Utils.INSTANCE.getDurationOfMedia(getContext(), uri.getPath());
+                if (duration == null) {
+                    duration = this.duration;
+
+                }
+            }
+            timestamp.setText(String.format(Locale.getDefault(), "%02d:%02d",
+                    TimeUnit.MILLISECONDS.toMinutes(duration),
+                    TimeUnit.MILLISECONDS.toSeconds(duration)));
+        } catch (Exception e) {
+            //  e.printStackTrace();
+        }
+    }
+
+    void setTotalTimeStampOfAudio() {
+        try {
+
             Long duration = Utils.INSTANCE.getDurationOfMedia(getContext(), uri.getPath());
             if (duration == null) {
                 duration = this.duration;

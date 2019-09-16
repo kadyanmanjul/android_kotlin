@@ -57,7 +57,7 @@ class FirebaseTokenService : FirebaseMessagingService() {
                 AppObjectController.appDatabase.courseDao().chooseRegisterCourseMinimal(it)
             }
             obj?.let {
-                 intent = Intent(applicationContext, InboxActivity::class.java).apply {
+                 intent = Intent(applicationContext, ConversationActivity::class.java).apply {
                      intent.putExtra(CHAT_ROOM_OBJECT, it)
                      addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
                  }

@@ -241,7 +241,10 @@ data class PdfType(
     @SerializedName("url") var url: String = "",
 
     @ColumnInfo()
-    @SerializedName("is_deleted") var is_deleted: Boolean = false
+    @SerializedName("is_deleted") var is_deleted: Boolean = false,
+
+    @ColumnInfo(name = "total_view")
+    var totalView: Int = 0
 
 ) : DataBaseClass(), Serializable
 
@@ -319,7 +322,7 @@ interface ChatDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertAMessage(chat: ChatModel)
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun updateChatMessage(chat: ChatModel)
 
     @Delete
@@ -405,6 +408,11 @@ interface ChatDao {
         return chatModel
 
     }
+
+    @Query(value = "UPDATE PdfTable SET total_view = :total_view where id= :id ")
+    suspend fun updateTotalViewForPdf(id: String, total_view: Int)
+
+
 }
 
 

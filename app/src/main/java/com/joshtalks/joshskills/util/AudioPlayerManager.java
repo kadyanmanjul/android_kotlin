@@ -15,6 +15,8 @@ import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
+import com.joshtalks.joshskills.repository.server.engage.AudioEngage;
+import com.joshtalks.joshskills.repository.service.EngagementNetworkHelper;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -25,6 +27,8 @@ public class AudioPlayerManager {
     volatile private static SimpleExoPlayer exoPlayer;
     volatile private static Context context;
     volatile private static String AUDIO_TAG = "";
+    volatile private static String LAST_ID = "";
+
     volatile static List<WeakReference<ExoPlayer.EventListener>> weakReferenceArrayList = new ArrayList<>();
 
 
@@ -41,7 +45,7 @@ public class AudioPlayerManager {
     }
 
 
-    public void play(Uri uri, ExoPlayer.EventListener eventListener) {
+    public void play(Uri uri, ExoPlayer.EventListener eventListener, String audioId) {
         if (uri == null) {
             return;
         }
@@ -53,20 +57,23 @@ public class AudioPlayerManager {
             } else if (exoPlayer.getPlaybackState() == Player.STATE_ENDED && exoPlayer.getPlayWhenReady()) {
                 exoPlayer.setPlayWhenReady(false);
                 exoPlayer.seekTo(0);
+                EngagementNetworkHelper.engageAudioApi(new AudioEngage(new ArrayList<>(), audioId, exoPlayer.getDuration()));
                 return;
             } else {
 
             }
         } else {
+            EngagementNetworkHelper.engageAudioApi(new AudioEngage(new ArrayList<>(), LAST_ID, exoPlayer.getDuration()));
             exoPlayer.seekTo(0);
             exoPlayer.setPlayWhenReady(false);
-            if (weakReferenceArrayList!=null&& weakReferenceArrayList.size()>0) {
+            if (weakReferenceArrayList != null && weakReferenceArrayList.size() > 0) {
                 for (WeakReference<ExoPlayer.EventListener> weakReference : weakReferenceArrayList) {
-                        weakReference.get().onPlayerStateChanged(false,Player.STATE_ENDED);
+                    weakReference.get().onPlayerStateChanged(false, Player.STATE_ENDED);
                 }
             }
             weakReferenceArrayList.clear();
         }
+        LAST_ID=audioId;
         weakReferenceArrayList.add(new WeakReference<>(eventListener));
         AUDIO_TAG = uri.getPathSegments().get(uri.getPathSegments().size() - 1);
         DefaultDataSourceFactory dataSourceFactory = new DefaultDataSourceFactory(context, Util.getUserAgent(context, "exoplayer2example"), null);
