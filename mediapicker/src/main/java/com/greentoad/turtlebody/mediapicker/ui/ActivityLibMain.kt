@@ -75,7 +75,7 @@ class ActivityLibMain : ActivityBase() {
                 super.onBackPressed()
                 toolbarTitle = "Select Folder"
                 vToolbarCounter.visibility = View.GONE
-                mMenuItem.isVisible = true
+               // mMenuItem.isVisible = true
                 updateCounter(0)
             }
             else -> super.onBackPressed()
@@ -83,8 +83,8 @@ class ActivityLibMain : ActivityBase() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.tb_media_picker_activity_main, menu)
-        mMenuItem = menu.getItem(0)
+       // menuInflater.inflate(R.menu.tb_media_picker_activity_main, menu)
+       // mMenuItem = menu.getItem(0)
         startFolderListFragment()
         return true
     }
@@ -159,7 +159,7 @@ class ActivityLibMain : ActivityBase() {
     private fun startFolderListFragment() {
         toolbarTitle = "Select Folder"
         vToolbarCounter.visibility = View.GONE
-        mMenuItem.isVisible = true
+        //mMenuItem.isVisible = true
 
         when (mFileType) {
             MediaPicker.MediaTypes.AUDIO -> {
@@ -207,7 +207,7 @@ class ActivityLibMain : ActivityBase() {
         }
 
         vToolbarCounter.visibility = View.VISIBLE
-        mMenuItem.isVisible = false
+      //  mMenuItem.isVisible = false
 
         val ft = supportFragmentManager.beginTransaction()
         ft.add(R.id.activity_lib_main_frame_content, fragment, fragmentTag)

@@ -66,24 +66,19 @@ import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 public class AudioView extends FrameLayout {
 
     private static final String TAG = AudioView.class.getSimpleName();
     ChatModel message;
-    private final @NonNull
-    AnimatingToggle controlToggle;
-    private final @NonNull
-    ImageView playButton;
-    private final @NonNull
-    ImageView pauseButton;
-    private final @NonNull
-    ImageView downloadButton;
-    private final @NonNull
-    SeekBar seekPlayerProgress;
-    private final @NonNull
-    TextView timestamp;
+    private final AnimatingToggle controlToggle;
+    private final  ImageView playButton;
+    private final  ImageView pauseButton;
+    private final ImageView downloadButton;
+    private final SeekBar seekPlayerProgress;
+    private final TextView timestamp;
     private int backwardsCounter;
 
     private boolean isPlaying = false;
@@ -336,7 +331,7 @@ public class AudioView extends FrameLayout {
 
 
     private void setPlay() {
-        AppAnalytics.create(AnalyticsEvent.AUDIO_OPENED.getNAME()).addParam("ChatId",message.getChatId());
+        AppAnalytics.create(AnalyticsEvent.AUDIO_OPENED.getNAME()).addParam("ChatId", message.getChatId());
         isPlaying = true;
         audioPlayerManager.play(this.uri, eventListener);
         setProgress();
@@ -507,12 +502,15 @@ public class AudioView extends FrameLayout {
         initSeekBar();
         setTimeStampOfAudio();
         try {
-            if (message.getUrl() != null) {
-                this.uri = Uri.fromFile(new File(message.getUrl()));
+            if (message.getDownloadedLocalPath() != null || Objects.requireNonNull(message.getDownloadedLocalPath()).isEmpty()) {
+                this.uri = Uri.fromFile(new File(message.getDownloadedLocalPath()));
+                this.duration = Utils.getDurationOfMedia(getContext(), message.getDownloadedLocalPath());
+            } else if (message.getUrl() != null) {
+                this.uri = Uri.parse(message.getUrl());
                 this.duration = Utils.getDurationOfMedia(getContext(), message.getUrl());
 
             } else {
-                this.uri = Uri.fromFile(new File(message.getQuestion().getAudioList().get(0).getDownloadedLocalPath()));
+                this.uri = Uri.parse(message.getQuestion().getAudioList().get(0).getDownloadedLocalPath());
                 this.duration = Utils.getDurationOfMedia(getContext(), message.getQuestion().getAudioList().get(0).getDownloadedLocalPath());
 
             }

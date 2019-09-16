@@ -19,6 +19,7 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import java.text.SimpleDateFormat
 import java.util.*
 import android.media.AudioManager.STREAM_MUSIC
+import android.net.ConnectivityManager
 import android.util.TypedValue
 import androidx.core.graphics.drawable.RoundedBitmapDrawable
 import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory
@@ -29,6 +30,9 @@ import androidx.core.content.ContextCompat.startActivity
 import androidx.core.content.ContextCompat.startActivity
 import androidx.core.content.ContextCompat.startActivity
 import androidx.core.content.ContextCompat.startActivity
+import androidx.core.content.ContextCompat.getSystemService
+
+
 
 
 
@@ -248,6 +252,12 @@ object Utils {
         }
         intent.data = Uri.parse(url)
         AppObjectController.joshApplication.startActivity(intent)
+    }
+
+    fun isInternetAvailable(): Boolean {
+        val conMgr = AppObjectController.joshApplication.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager?
+        val info = conMgr!!.activeNetworkInfo
+        return (info != null&& info.isConnected)
     }
 
 

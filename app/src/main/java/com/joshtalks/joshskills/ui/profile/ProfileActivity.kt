@@ -16,7 +16,7 @@ import android.view.View
 import android.view.View.GONE
 import android.view.ViewGroup
 import android.widget.Toast
-import com.andrefrsousa.superbottomsheet.SuperBottomSheetFragment
+import com.joshtalks.joshskills.core.custom_ui.superbottomsheet.SuperBottomSheetFragment
 import com.esafirm.imagepicker.features.ImagePicker
 import com.esafirm.imagepicker.features.ReturnMode
 import com.joshtalks.joshskills.databinding.FragmentMediaSelectBinding
@@ -103,7 +103,9 @@ class ProfileActivity : BaseActivity(), MediaSelectCallback {
                 .withListener(object : MultiplePermissionsListener {
                     override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
                         report?.areAllPermissionsGranted()?.let { flag ->
-                            ImagePicker.cameraOnly().start(this@ProfileActivity)
+                            if (flag) {
+                                ImagePicker.cameraOnly().start(this@ProfileActivity)
+                            }
                         }
                     }
 
@@ -131,19 +133,21 @@ class ProfileActivity : BaseActivity(), MediaSelectCallback {
                 .withListener(object : MultiplePermissionsListener {
                     override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
                         report?.areAllPermissionsGranted()?.let { flag ->
-                            ImagePicker.create(this@ProfileActivity)
-                                .returnMode(ReturnMode.GALLERY_ONLY) // set whether pick and / or camera action should return immediate result or not.
-                                .folderMode(true) // folder mode (false by default)
-                                .toolbarFolderTitle("Folder") // folder selection title
-                                .toolbarImageTitle("Tap to select") // image selection title
-                                .toolbarArrowColor(Color.BLACK) // Toolbar 'up' arrow color
-                                .includeVideo(false) // Show video on image picker
-                                .single() // single mode
-                                .limit(1) // max images can be selected (99 by default)
-                                .imageDirectory("Camera") // directory name for captured image  ("Camera" folder by default)
-                                // .theme(R.style.CustomImagePickerTheme) // must inherit ef_BaseTheme. please refer to sample
-                                .enableLog(false) // disabling log
-                                .start() // start
+                            if (flag) {
+                                ImagePicker.create(this@ProfileActivity)
+                                    .returnMode(ReturnMode.GALLERY_ONLY) // set whether pick and / or camera action should return immediate result or not.
+                                    .folderMode(true) // folder mode (false by default)
+                                    .toolbarFolderTitle("Folder") // folder selection title
+                                    .toolbarImageTitle("Tap to select") // image selection title
+                                    .toolbarArrowColor(Color.BLACK) // Toolbar 'up' arrow color
+                                    .includeVideo(false) // Show video on image picker
+                                    .single() // single mode
+                                    .limit(1) // max images can be selected (99 by default)
+                                    .imageDirectory("Camera") // directory name for captured image  ("Camera" folder by default)
+                                    // .theme(R.style.CustomImagePickerTheme) // must inherit ef_BaseTheme. please refer to sample
+                                    .enableLog(false) // disabling log
+                                    .start() // start
+                            }
                         }
                     }
 
@@ -228,10 +232,9 @@ class ProfileActivity : BaseActivity(), MediaSelectCallback {
             showStatus("Please select Gender", STATUS_TYPE.ERROR)
             return
         }
-        if (validAge()) {
-
-            Toast.makeText(applicationContext, "Age is not less then 12 years", Toast.LENGTH_SHORT)
-                .show()
+        if (!validAge()) {
+            Toast.makeText(applicationContext, "Age can not be less then 12 years", Toast.LENGTH_SHORT).show()
+            return
         }
 
         updateProfile()
@@ -242,8 +245,12 @@ class ProfileActivity : BaseActivity(), MediaSelectCallback {
         dob.time = userDob
         val today = Calendar.getInstance();
         var age = today.get(Calendar.YEAR) - dob.get(Calendar.YEAR);
+
         if (today.get(Calendar.DAY_OF_YEAR) < dob.get(Calendar.DAY_OF_YEAR)) {
             age--;
+        }
+        if (age>12){
+            return true
         }
         return false
     }

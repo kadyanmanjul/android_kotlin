@@ -36,10 +36,10 @@ class LoginActivity : BaseActivity() {
                 val intent = getIntentForState()
                 if (intent == null) {
                     startActivity(getInboxActivityIntent())
+                }else{
+                    startActivity(intent)
                 }
                 finish()
-            } else {
-
             }
         })
 

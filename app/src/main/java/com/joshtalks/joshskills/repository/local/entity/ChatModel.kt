@@ -3,8 +3,10 @@ package com.joshtalks.joshskills.repository.local.entity
 import androidx.room.*
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
+import com.joshtalks.joshskills.util.RandomString
 import java.io.Serializable
 import java.util.*
+
 
 @Entity(tableName = "chat_table", indices = [Index(value = ["chat_id", "conversation_id"])])
 data class ChatModel(
@@ -47,7 +49,10 @@ data class ChatModel(
     var messageDeliverStatus: MESSAGE_DELIVER_STATUS = MESSAGE_DELIVER_STATUS.READ,
 
     @ColumnInfo(name = "is_sync")
-    var isSync: Boolean = true
+    var isSync: Boolean = true,
+
+    @ColumnInfo(name = "chat_local_id")
+    var chatLocalId: String? = RandomString().nextString()
 
 
 ) : DataBaseClass(), Serializable {
@@ -64,7 +69,8 @@ data class ChatModel(
         text = "",
         messageDeliverStatus = MESSAGE_DELIVER_STATUS.READ,
         mediaDuration = 0,
-        isSync = true
+        isSync = true,
+        chatLocalId = null
     )
 }
 
@@ -288,16 +294,16 @@ open class DataBaseClass : Serializable {
 @Dao
 interface ChatDao {
 
-    @Query(value = "SELECT * FROM chat_table  ORDER BY created ASC ")
-    suspend fun getLastChats(): List<ChatModel>
+    @Query(value = "SELECT * FROM chat_table where conversation_id= :conversationId  ORDER BY created ASC ")
+    suspend fun getLastChats(conversationId: String): List<ChatModel>
 
 
     @Query(value = "SELECT * FROM chat_table  where chat_id=:chatId")
     suspend fun getChatObject(chatId: String): ChatModel
 
 
-    @Query(value = "SELECT * FROM chat_table where created > :compareTime ORDER BY created ASC")
-    suspend fun getRecentChatAfterTime(compareTime: Date?): List<ChatModel>
+    @Query(value = "SELECT * FROM chat_table where conversation_id= :conversationId AND created > :compareTime ORDER BY created ASC")
+    suspend fun getRecentChatAfterTime(conversationId: String, compareTime: Date?): List<ChatModel>
 
 
     @Query("UPDATE chat_table SET message_deliver_status = :messageDeliverStatus where created <= :compareTime ")
@@ -306,12 +312,18 @@ interface ChatDao {
         compareTime: Date
     )
 
+    @Query(value = "SELECT * FROM chat_table where  is_sync= 0")
+    suspend fun getUnSyncMessage(): List<ChatModel>
+
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertAMessage(chat: ChatModel)
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun updateChatMessage(chat: ChatModel)
+
+    @Delete
+    fun deleteChatMessage(chat: ChatModel)
 
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)

@@ -34,5 +34,7 @@
 
 
     <string name="type_message_hint">Type a Message</string>
+    <string name="profile_photo">Profile photo</string>
+
 
 </resources>

@@ -9,6 +9,7 @@ import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
+import com.joshtalks.joshskills.core.service.FCMTokenManager
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.AccountKitRequest
@@ -41,11 +42,8 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
                 Mentor.getInstance()
                     .setId(createAccountResponse.mentor_id)
                     .update()
-
                 fetchMentor()
-
                 AppAnalytics.updateUser()
-
             } catch (e: Exception) {
                 e.printStackTrace()
                 loginStatusCallback.postValue(false)
@@ -70,9 +68,9 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
 
                 AppAnalytics.updateUser()
 
-                withContext(Dispatchers.Main){
+                //withContext(Dispatchers.Main){
                     loginStatusCallback.postValue(true)
-                }
+                //}
             } catch (e: Exception) {
                 e.printStackTrace()
                 //showError("Something went wrong! Please try again!")

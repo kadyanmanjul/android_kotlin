@@ -68,8 +68,8 @@ object AppDirectory {
 
     private fun getAudioFileName(): String {
         return "RECORD".plus("-").plus(getDate()).plus("-".plus(APP_SHORT_NAME)) + getFileEndName(
-            AppDirectory.FileType.IMAGE_SENT
-        ) + ".mp3"
+            AppDirectory.FileType.RECORDING_SENT
+        ) + ".amr"
     }
 
     private fun getVideoFileName(): String {
@@ -248,7 +248,7 @@ object AppDirectory {
     }
 
     fun getRecordingSentFilePath(): String {
-        return imageSentFile().absolutePath
+        return recordingSentFile().absolutePath
     }
 
 

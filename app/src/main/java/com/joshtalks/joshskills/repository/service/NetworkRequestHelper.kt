@@ -16,6 +16,7 @@ import com.joshtalks.joshskills.repository.server.chat_message.BaseChatMessage
 import com.joshtalks.joshskills.repository.server.chat_message.BaseMediaMessage
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
 object NetworkRequestHelper {
@@ -24,16 +25,28 @@ object NetworkRequestHelper {
         inboxEntity: InboxEntity,
         queryMap: Map<String, String> = emptyMap()
     ) {
-        CoroutineScope(Dispatchers.IO).launch(Dispatchers.IO) {
+        CoroutineScope(Dispatchers.IO).launch {
 
             try {
 
                 val resp = AppObjectController.chatNetworkService.getUnReceivedMessageAsync(
                     inboxEntity.conversation_id ?: "", queryMap
                 ).await()
-                AppObjectController.appDatabase.chatDao().insertMessageList(resp.chatModelList)
 
                 for (chatModel in resp.chatModelList) {
+                    val chatObj=AppObjectController.appDatabase.chatDao().getChatObject(chatModel.chatId)
+                    if (chatObj==null){
+                        AppObjectController.appDatabase.chatDao().insertAMessage(chatModel)
+                    }else{
+                        chatObj.url=chatModel.url
+                        chatObj.conversationId=chatModel.conversationId
+                        chatObj.created=chatModel.created
+                        chatObj.messageDeliverStatus=chatModel.messageDeliverStatus
+                        chatObj.type=chatModel.type
+                        AppObjectController.appDatabase.chatDao().updateChatMessage(chatObj)
+                    }
+
+
                     chatModel.question?.let { question ->
                         question.chatId = chatModel.chatId
                         AppObjectController.appDatabase.chatDao().insertChatQuestion(question)
@@ -104,7 +117,7 @@ object NetworkRequestHelper {
     fun updateChat(
         chatMessageReceiver: ChatMessageReceiver,
         refreshViewLiveData: MutableLiveData<ChatModel>? = null,
-        messageObject: BaseChatMessage
+        messageObject: BaseChatMessage, currentChatModel: ChatModel?
     ) {
         CoroutineScope(Dispatchers.IO).launch(Dispatchers.IO) {
 
@@ -120,12 +133,20 @@ object NetworkRequestHelper {
                 url = chatMessageReceiver.url,
                 isSeen = chatMessageReceiver.isSeen,
                 created = chatMessageReceiver.created,
-                messageDeliverStatus = MESSAGE_DELIVER_STATUS.SENT_RECEIVED
+                messageDeliverStatus = MESSAGE_DELIVER_STATUS.SENT_RECEIVED,
+                isSync = true
+
             )
 
-            if (messageObject is BaseMediaMessage) chatModel.downloadedLocalPath =
-                messageObject.localPathUrl
+            if (messageObject is BaseMediaMessage)
+                chatModel.downloadedLocalPath =messageObject.localPathUrl
+
             chatModel.downloadStatus = DOWNLOAD_STATUS.DOWNLOADED
+
+            currentChatModel?.let {
+                AppObjectController.appDatabase.chatDao().deleteChatMessage(currentChatModel)
+            }
+
             AppObjectController.appDatabase.chatDao().updateChatMessage(chatModel)
             refreshViewLiveData?.postValue(chatModel)
 

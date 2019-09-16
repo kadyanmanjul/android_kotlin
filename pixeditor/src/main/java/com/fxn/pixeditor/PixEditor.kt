@@ -142,12 +142,12 @@ class PixEditor : AppCompatActivity(), View.OnClickListener, FilterImageAdapter.
             filter_list_layout.translationY = filterLayoutHeight.toFloat()
             photoEditorView =
                 mainViewPager.getChildAt(position).findViewById(R.id.photo_editor_view) as PhotoEditorView
-            var mainImageView = mainViewPager.getChildAt(position).findViewById(R.id.image_iv) as ImageViewTouch
+            val mainImageView = mainViewPager.getChildAt(position).findViewById(R.id.image_iv) as ImageViewTouch
 
 
             mainImageView.post {
                 if (listBitmap[position].mainBitmap != null) {
-                    var height = majorContainer!!.height
+                    val height = majorContainer!!.height
                     val layouparams = topPaddingView.layoutParams
                     layouparams.height = height / 2 - listBitmap[position].mainBitmap!!.height / 2
                     topPaddingView.layoutParams = layouparams

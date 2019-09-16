@@ -165,16 +165,22 @@ class ConversationActivity : BaseActivity() {
                     }
 
                     override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
-                        val pos =
-                            conversationBinding.chatRv.getViewResolverPosition(it.viewHolder)
-                        val view: BaseChatViewHolder =
-                            conversationBinding.chatRv.getViewResolverAtPosition(pos) as BaseChatViewHolder
-                        val chatModel = it.chatModel
-                        chatModel.downloadStatus = DOWNLOAD_STATUS.DOWNLOADING
-                        view.message = it.chatModel
-                        AppObjectController.uiHandler.postDelayed({
-                            conversationBinding.chatRv.refreshView(view)
-                        }, 250)
+
+                        report?.areAllPermissionsGranted()?.let { flag ->
+                            if (flag) {
+                                val pos =
+                                    conversationBinding.chatRv.getViewResolverPosition(it.viewHolder)
+                                val view: BaseChatViewHolder =
+                                    conversationBinding.chatRv.getViewResolverAtPosition(pos) as BaseChatViewHolder
+                                val chatModel = it.chatModel
+                                chatModel.downloadStatus = DOWNLOAD_STATUS.DOWNLOADING
+                                view.message = it.chatModel
+                                AppObjectController.uiHandler.postDelayed({
+                                    conversationBinding.chatRv.refreshView(view)
+                                }, 250)
+                            }
+                        }
+
                     }
 
                 }).check()
@@ -228,7 +234,7 @@ class ConversationActivity : BaseActivity() {
                 conversationBinding.recordView.visibility = VISIBLE
                 Handler().postDelayed({
                     conversationViewModel.startRecord()
-                }, 350)
+                }, 250)
 
             }
 
@@ -333,16 +339,19 @@ class ConversationActivity : BaseActivity() {
             if (cMessageType == BASE_MESSAGE_TYPE.TX) {
                 val tChatMessage =
                     TChatMessage(conversationBinding.chatEdit.text.toString())
-                conversationBinding.chatRv.addView(
-                    MessageBuilderFactory.getMessage(
-                        activityRef,
-                        BASE_MESSAGE_TYPE.TX,
-                        tChatMessage
-                    )
+                val cell = MessageBuilderFactory.getMessage(
+                    activityRef,
+                    BASE_MESSAGE_TYPE.TX,
+                    tChatMessage
                 )
+                conversationBinding.chatRv.addView(cell)
+                conversationViewModel.sendTextMessage(
+                    TChatMessage(conversationBinding.chatEdit.text.toString()),
+                    chatModel = cell.message
+                )
+
             }
 
-            conversationViewModel.sendTextMessage(TChatMessage(conversationBinding.chatEdit.text.toString()))
             conversationBinding.chatEdit.setText("")
             scrollToEnd()
         }
@@ -415,19 +424,16 @@ class ConversationActivity : BaseActivity() {
 
 
     private fun addUploadAudioMedia(mediaPath: String) {
-        val tAudioMessage =
-            TAudioMessage(mediaPath, mediaPath)
-        conversationBinding.chatRv.addView(
-            MessageBuilderFactory.getMessage(
-                activityRef,
-                BASE_MESSAGE_TYPE.AU,
-                tAudioMessage
-            )
-        )
+        val recordUpdatedPath = AppDirectory.getRecordingSentFilePath()
+        AppDirectory.copy(mediaPath, recordUpdatedPath)
+        val tAudioMessage = TAudioMessage(recordUpdatedPath, recordUpdatedPath)
+        val cell = MessageBuilderFactory.getMessage(activityRef, BASE_MESSAGE_TYPE.AU, tAudioMessage)
+        conversationBinding.chatRv.addView(cell)
         scrollToEnd()
         conversationViewModel.uploadMedia(
-            mediaPath,
-            TAudioMessage(mediaPath, mediaPath)
+            recordUpdatedPath,
+            tAudioMessage,
+            cell.message
         )
     }
 
@@ -607,16 +613,16 @@ class ConversationActivity : BaseActivity() {
         val imageUpdatedPath = AppDirectory.getImageSentFilePath()
         AppDirectory.copy(imagePath, imageUpdatedPath)
         val tImageMessage = TImageMessage(imageUpdatedPath, imageUpdatedPath)
-
+        val cell = MessageBuilderFactory.getMessage(
+            activityRef,
+            BASE_MESSAGE_TYPE.IM,
+            tImageMessage
+        )
         conversationBinding.chatRv.addView(
-            MessageBuilderFactory.getMessage(
-                activityRef,
-                BASE_MESSAGE_TYPE.IM,
-                tImageMessage
-            )
+            cell
         )
         conversationViewModel.uploadMedia(
-            imageUpdatedPath, tImageMessage
+            imageUpdatedPath, tImageMessage, cell.message
         )
 
         scrollToEnd()
@@ -624,19 +630,20 @@ class ConversationActivity : BaseActivity() {
 
     private fun addUserVideoInView(videoPath: String) {
         Log.e("selectedImagePath", videoPath)
-        var videoSentFile = AppDirectory.videoSentFile()
+        val videoSentFile = AppDirectory.videoSentFile()
         var flag = AppDirectory.copy(videoPath, videoSentFile.absolutePath)
-        var tVideoMessage = TVideoMessage(videoSentFile.absolutePath, videoSentFile.absolutePath)
+        val tVideoMessage = TVideoMessage(videoSentFile.absolutePath, videoSentFile.absolutePath)
 
+        val cell = MessageBuilderFactory.getMessage(
+            activityRef,
+            BASE_MESSAGE_TYPE.VI,
+            tVideoMessage
+        )
         conversationBinding.chatRv.addView(
-            MessageBuilderFactory.getMessage(
-                activityRef,
-                BASE_MESSAGE_TYPE.VI,
-                tVideoMessage
-            )
+            cell
         )
         conversationViewModel.uploadMedia(
-            videoSentFile.absolutePath, tVideoMessage
+            videoSentFile.absolutePath, tVideoMessage, cell.message
         )
         scrollToEnd()
     }

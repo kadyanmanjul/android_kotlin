@@ -28,7 +28,6 @@ import com.vanniktech.emoji.EmojiManager
 import java.text.DateFormat
 import com.vanniktech.emoji.google.GoogleEmojiProvider
 import okhttp3.OkHttpClient
-import com.joshtalks.joshskills.core.io.AppDirectory
 import java.lang.reflect.Modifier
 import com.google.gson.JsonParseException
 import com.google.gson.JsonDeserializationContext
@@ -37,6 +36,7 @@ import com.google.gson.JsonDeserializer
 import com.joshtalks.joshskills.core.service.DownloadUtils
 import java.lang.reflect.Type
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 
 val KEY_AUTHORIZATION = "Authorization"
@@ -92,11 +92,10 @@ internal class AppObjectController {
 
 
         @JvmStatic
-        var screenWidth:Int=0
+        var screenWidth: Int = 0
 
         @JvmStatic
-        var screenHeight:Int=0
-
+        var screenHeight: Int = 0
 
 
         fun init(context: JoshApplication): AppObjectController {
@@ -164,7 +163,6 @@ internal class AppObjectController {
 
             })
 
-            //https://live.joshtalks.org/
             retrofit = Retrofit.Builder()
                 .baseUrl(SERVER_URL)
                 .client(builder.build())
@@ -175,9 +173,24 @@ internal class AppObjectController {
 
             signUpNetworkService = retrofit.create(SignUpNetworkService::class.java)
             chatNetworkService = retrofit.create(ChatNetworkService::class.java)
+
+
+            val mediaOkhttpBuilder = OkHttpClient().newBuilder()
+            mediaOkhttpBuilder.connectTimeout(1, TimeUnit.MINUTES)
+                .writeTimeout(1, TimeUnit.MINUTES)
+                .readTimeout(1, TimeUnit.MINUTES)
+                .retryOnConnectionFailure(true)
+            if (BuildConfig.DEBUG) {
+                mediaOkhttpBuilder.addNetworkInterceptor(StethoInterceptor())
+                val logging = HttpLoggingInterceptor().apply {
+                    level = HttpLoggingInterceptor.Level.BODY
+                }
+                mediaOkhttpBuilder.addInterceptor(logging)
+            }
+
             mediaDUNetworkService = Retrofit.Builder()
                 .baseUrl(SERVER_URL)
-                .client(OkHttpClient().newBuilder().build())
+                .client(mediaOkhttpBuilder.build())
                 .build().create(MediaDUNetworkService::class.java)
 
 
@@ -206,7 +219,7 @@ internal class AppObjectController {
                     fetch.removeListener(value)
                     DownloadUtils.objectFetchListener.remove(key)
                 }
-            }catch (ex:Exception){
+            } catch (ex: Exception) {
 
             }
 

@@ -2,10 +2,14 @@
 
 <resources>
 
+    <color name="colorPrimary">#128C7E</color>
+    <color name="colorPrimaryDark">#075E54
+    </color>
+    <color name="colorAccent">#128C7E</color>
     <!--Image Picker Customization-->
-    <color name="tb_media_picker_primary">#FFFFFF</color>
-    <color name="tb_media_picker_primaryDark">#707070</color>
-    <color name="tb_media_picker_accent">#2AE2FF</color>
+    <color name="tb_media_picker_primary">#075E54</color>
+    <color name="tb_media_picker_primaryDark">#075E54</color>
+    <color name="tb_media_picker_accent">#128C7E</color>
 
     <color name="tb_media_picker_toolbar_text">#000000</color>
     <color name="tb_media_picker_toolbar_counter_text">#000000</color>

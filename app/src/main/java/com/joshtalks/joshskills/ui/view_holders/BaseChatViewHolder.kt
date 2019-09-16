@@ -80,6 +80,21 @@ abstract class BaseChatViewHolder(
     fun updateTime(text_message_time: AppCompatTextView) {
         if (message.sender?.id.equals(getUserId(), ignoreCase = true)) {
             text_message_time.compoundDrawablePadding = getDrawablePadding()
+
+
+
+            if (message.isSync.not()) {
+                text_message_time.setCompoundDrawablesWithIntrinsicBounds(
+                    0,
+                    0,
+                    R.drawable.ic_unsync_msz,
+                    0
+                )
+                return
+            }
+
+
+
             when {
                 message.messageDeliverStatus == MESSAGE_DELIVER_STATUS.SENT -> {
 

@@ -57,7 +57,7 @@ class Mentor {
     }
 
     fun update() {
-        var string: String = toString()
+        val string: String = toString()
         PrefManager.put(MENTOR_PERSISTANT_KEY, string)
     }
 

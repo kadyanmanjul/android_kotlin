@@ -92,30 +92,32 @@ class ImageViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
 
         if (message.url != null) {
             if (message.downloadStatus == DOWNLOAD_STATUS.DOWNLOADED) {
-                if (AppDirectory.isFileExist(message.downloadedLocalPath!!)) {
-                    Dexter.withActivity(activityRef.get())
-                        .withPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
-                        .withListener(object : PermissionListener {
-                            override fun onPermissionGranted(response: PermissionGrantedResponse) {
-                                if (image_view.tag != null) {
-                                    if (image_view.tag.toString() != message.downloadedLocalPath) {
-                                        image_view.tag = null
+                if (message.downloadedLocalPath != null) {
+                    if (AppDirectory.isFileExist(message.downloadedLocalPath!!)) {
+                        Dexter.withActivity(activityRef.get())
+                            .withPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
+                            .withListener(object : PermissionListener {
+                                override fun onPermissionGranted(response: PermissionGrantedResponse) {
+                                    if (image_view.tag != null) {
+                                        if (image_view.tag.toString() != message.downloadedLocalPath) {
+                                            image_view.tag = null
+                                        }
                                     }
+                                    setImageView(image_view, message.downloadedLocalPath!!, false)
                                 }
-                                setImageView(image_view, message.downloadedLocalPath!!, false)
-                            }
 
-                            override fun onPermissionDenied(response: PermissionDeniedResponse) {
-                                setImageView(image_view, message.url!!, true)
-                            }
+                                override fun onPermissionDenied(response: PermissionDeniedResponse) {
+                                    setImageView(image_view, message.url!!, true)
+                                }
 
-                            override fun onPermissionRationaleShouldBeShown(
-                                permission: PermissionRequest,
-                                token: PermissionToken
-                            ) {
+                                override fun onPermissionRationaleShouldBeShown(
+                                    permission: PermissionRequest,
+                                    token: PermissionToken
+                                ) {
 
-                            }
-                        }).check()
+                                }
+                            }).check()
+                    }
                 } else {
                     setImageView(image_view, message.url!!, true)
                     //fileNotDownloadView()
@@ -177,7 +179,7 @@ class ImageViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
         if (message.text != null) {
             text_message_body.text?.isNotEmpty()?.let {
                 text_message_body.text = message.text
-                text_message_body.visibility= GONE
+                text_message_body.visibility = GONE
             }
 
         } else {

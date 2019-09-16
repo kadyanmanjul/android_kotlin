@@ -31,7 +31,6 @@ abstract class BaseActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         val displayMetrics = DisplayMetrics()
         windowManager.defaultDisplay.getMetrics(displayMetrics)
-
         AppObjectController.screenHeight = displayMetrics.heightPixels
         AppObjectController.screenWidth = displayMetrics.widthPixels
 
@@ -40,25 +39,12 @@ abstract class BaseActivity : AppCompatActivity() {
 
     fun getIntentForState(): Intent? {
 
-        val intent = when {
-            User.getInstance().token == null -> Intent(
-                this,
-                OnBoardActivity::class.java
-            ).apply {
-            }
-            User.getInstance().dateOfBirth.isNullOrEmpty() -> Intent(
-                this,
-                ProfileActivity::class.java
-            ).apply {
-            }
-            /*Mentor.getInstance().getLocality() == null -> Intent(
-                this,
-                SelectLocationActivity::class.java
-            ).apply {
-            }*/
-            else -> {
-                null
-            }
+        var intent:Intent?=null
+        if ( User.getInstance().token == null ){
+            intent=Intent(this,OnBoardActivity::class.java)
+        }
+        else if (User.getInstance().dateOfBirth==null || User.getInstance().dateOfBirth.isNullOrEmpty()){
+            intent=Intent(this,ProfileActivity::class.java)
         }
         return intent?.apply {
             addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)

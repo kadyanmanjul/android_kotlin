@@ -27,6 +27,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="end|center_vertical"
             android:gravity="center"
+                android:visibility="gone"
             android:layout_marginEnd="@dimen/offset_8"
             android:layout_marginRight="8dp"
             android:textColor="@color/tb_media_picker_toolbar_counter_text"

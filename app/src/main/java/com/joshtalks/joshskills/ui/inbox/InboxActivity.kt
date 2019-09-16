@@ -9,6 +9,7 @@ import androidx.lifecycle.*
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.CoreJoshActivity
+import com.joshtalks.joshskills.core.service.FCMTokenManager
 import com.joshtalks.joshskills.messaging.RxBus
 import com.joshtalks.joshskills.repository.local.DatabaseUtils
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
@@ -33,6 +34,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        FCMTokenManager.pushToken()
         AppObjectController.joshApplication.updateDeviceDetail()
         DatabaseUtils.updateUserMessageSeen()
         setContentView(R.layout.activity_inbox)

@@ -12,14 +12,19 @@ import kotlinx.coroutines.launch
 object FCMTokenManager {
 
     fun pushToken() {
-        val token = PrefManager.getStringValue(FCM_TOKEN)
-        if (token.isEmpty())
-            return
+        try {
+            val token = PrefManager.getStringValue(FCM_TOKEN)
 
-        if (PrefManager.hasKey(FCM_ID)) {
-            patchToken(token)
-        } else {
-            postToken(token)
+            if (token.isEmpty())
+                return
+
+            if (PrefManager.hasKey(FCM_ID)) {
+                patchToken(token)
+            } else {
+                postToken(token)
+            }
+        }catch (ex :Exception){
+            ex.printStackTrace()
         }
 
     }
@@ -28,7 +33,7 @@ object FCMTokenManager {
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 val data = mapOf("registration_id" to token, "active" to "true")
-                var token=PrefManager.getLongValue(FCM_ID).toString()
+                val token=PrefManager.getLongValue(FCM_ID).toString()
                 val response: Any = AppObjectController.signUpNetworkService.updateFCMToken(token,data).await()
 
             }catch (ex:Exception){

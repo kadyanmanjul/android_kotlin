@@ -42,7 +42,7 @@ class InboxViewHolder(var inboxEntity: InboxEntity) : BaseCell() {
 
     @Resolve
     fun onResolved() {
-        profile_image.setImageResource(R.mipmap.ic_launcher)
+        profile_image.setImageResource(R.drawable.ic_josh_course)
         tvName.text = inboxEntity.course_name
 
 
@@ -103,8 +103,7 @@ class InboxViewHolder(var inboxEntity: InboxEntity) : BaseCell() {
             tv_last_message.setCompoundDrawablePadding(Utils.dpToPx(context, drawablePadding))
             tv_last_message.text = "Video"
 
-        }
-        else if (BASE_MESSAGE_TYPE.PD == baseMessageType) {
+        } else if (BASE_MESSAGE_TYPE.PD == baseMessageType) {
             tv_last_message.setCompoundDrawablesWithIntrinsicBounds(
                 R.drawable.ic_inbox_pdf,
                 0,

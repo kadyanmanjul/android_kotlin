@@ -35,4 +35,10 @@
     <dimen name="spacing">16dp</dimen>
     <dimen name="spacing_xlarge">24dp</dimen>
 
+
+    <dimen name="super_bottom_sheet_width">0dp</dimen>
+    <dimen name="super_bottom_sheet_radius">16dp</dimen>
+    <dimen name="super_bottom_sheet_peek_height">64dp</dimen>
+    <item name="super_bottom_sheet_dim" format="float" type="dimen">0.6</item>
+
 </resources>
