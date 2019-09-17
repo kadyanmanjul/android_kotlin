@@ -7,7 +7,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.graphics.Color
-import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -20,7 +19,6 @@ import android.view.View.VISIBLE
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.databinding.ActivityConversationBinding
 import com.joshtalks.joshskills.emoji.PageTransformer
@@ -62,9 +60,7 @@ import com.joshtalks.joshskills.util.MediaPlayerManager
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
-import com.karumi.dexter.listener.DexterError
 import com.karumi.dexter.listener.PermissionRequest
-import com.karumi.dexter.listener.PermissionRequestErrorListener
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.coroutines.CoroutineScope
@@ -72,11 +68,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.lang.ref.WeakReference
 
-import android.provider.Settings;
-import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
-import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.custom_ui.SmoothLinearLayoutManager
 import com.joshtalks.joshskills.repository.server.chat_message.TVideoMessage
+import de.hdodenhof.circleimageview.CircleImageView
 
 const val CHAT_ROOM_OBJECT = "chat_room"
 const val IMAGE_SELECT_REQUEST_CODE = 1077
@@ -122,6 +116,7 @@ class ConversationActivity : BaseActivity() {
 
     private fun setToolbar() {
         findViewById<View>(R.id.iv_back).visibility = VISIBLE
+        findViewById<CircleImageView>(R.id.image_view_logo).setImageResource(R.drawable.ic_josh_course)
         findViewById<View>(R.id.image_view_logo).visibility = VISIBLE
 
         findViewById<AppCompatTextView>(R.id.text_message_title).text = inboxEntity.course_name
@@ -136,16 +131,16 @@ class ConversationActivity : BaseActivity() {
         compositeDisposable.add(RxBus2.listen(PlayVideoEvent::class.java).subscribe {
             VideoPlayerActivity.startConversionActivity(
                 this,
-                it.chatModel
+                it.chatModel,inboxEntity.course_name
             )
         })
         compositeDisposable.add(RxBus2.listen(ImageShowEvent::class.java).subscribe {
             it.imageUrl?.let {
-                ImageShowFragment.newInstance(it).show(supportFragmentManager, "ImageShow")
+                ImageShowFragment.newInstance(it,inboxEntity.course_name).show(supportFragmentManager, "ImageShow")
             }
         })
         compositeDisposable.add(RxBus2.listen(PdfOpenEventBus::class.java).subscribe {
-            PdfViewerActivity.startPdfActivity(this, it.pdfObject)
+            PdfViewerActivity.startPdfActivity(this, it.pdfObject,inboxEntity.course_name)
         })
 
         compositeDisposable.add(RxBus2.listen(DownloadMediaEventBus::class.java).subscribe {

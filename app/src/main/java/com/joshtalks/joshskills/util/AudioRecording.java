@@ -21,7 +21,7 @@ public class AudioRecording {
         try {
             recorder.prepare();
             recorder.start();
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

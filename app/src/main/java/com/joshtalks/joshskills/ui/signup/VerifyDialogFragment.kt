@@ -22,8 +22,11 @@ class VerifyDialogFragment : DialogFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
-            phoneNumber = it.getString(ARG_PHONE_NUMBER)
+        arguments?.let { bundle ->
+            bundle.getString(ARG_PHONE_NUMBER)?.let {
+                phoneNumber = it
+            }
+
         }
     }
 
@@ -34,7 +37,6 @@ class VerifyDialogFragment : DialogFragment() {
     }
 
 
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -43,7 +45,7 @@ class VerifyDialogFragment : DialogFragment() {
         verifyPhoneBinding =
             DataBindingUtil.inflate(inflater, R.layout.fragment_verify_phone, container, false)
         verifyPhoneBinding.lifecycleOwner = this
-        verifyPhoneBinding.handler=this
+        verifyPhoneBinding.handler = this
         return verifyPhoneBinding.root;
     }
 

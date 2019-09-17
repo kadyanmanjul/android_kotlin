@@ -14,6 +14,7 @@ import com.joshtalks.joshskills.messaging.RxBus
 import com.joshtalks.joshskills.repository.local.DatabaseUtils
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.repository.service.SyncChatService
 import com.joshtalks.joshskills.ui.chat.ConversationActivity
 import com.joshtalks.joshskills.ui.sign_up_old.RegisterInfoActivity
 import com.joshtalks.joshskills.ui.view_holders.EmptyHorizontalView
@@ -45,6 +46,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver {
         if (Mentor.getInstance().hasId()) {
             viewModel.getRegisterCourses()
         }
+        SyncChatService.syncChatWithServer()
     }
 
 

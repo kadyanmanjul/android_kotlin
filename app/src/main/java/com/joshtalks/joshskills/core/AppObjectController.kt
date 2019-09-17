@@ -44,7 +44,7 @@ val KEY_APP_VERSION_CODE = "app-version-code"
 val KEY_APP_VERSION_NAME = "app-version-name"
 val REMOTE_CONFIG_PREFIX = "josh_param_"
 
-const val SERVER_URL = "http://13.127.85.171"
+const val SERVER_URL = "http://skills.joshtalks.org"
 //const val SERVER_URL = "http://192.168.14.47:8000"
 
 internal class AppObjectController {

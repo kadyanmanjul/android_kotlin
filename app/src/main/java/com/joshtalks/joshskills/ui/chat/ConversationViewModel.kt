@@ -152,7 +152,10 @@ class ConversationViewModel(application: Application) : AndroidViewModel(applica
     fun uploadMedia(mediaPath: String, messageObject: BaseChatMessage, chatModel: ChatModel) {
         chatModel.conversationId = inboxEntity.conversation_id
         viewModelScope.launch(Dispatchers.IO) {
-            val compressImagePath = getCompressImage(mediaPath)
+            var compressImagePath = mediaPath
+            if (chatModel.type == BASE_MESSAGE_TYPE.IM) {
+                compressImagePath = getCompressImage(mediaPath)
+            }
             chatModel.downloadedLocalPath = compressImagePath
             DatabaseUtils.addChat(chatModel)
             uploadCompressedMedia(compressImagePath, messageObject, chatModel)
@@ -190,8 +193,11 @@ class ConversationViewModel(application: Application) : AndroidViewModel(applica
                 AppDirectory.copy(
                     Compressor(getApplication()).setQuality(75).setMaxWidth(720).setMaxHeight(
                         1280
-                    ).compressToFile(File(path)).absolutePath, path)
-            }catch (ex:Exception){}
+                    ).compressToFile(File(path)).absolutePath, path
+                )
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+            }
             return@async path
         }.await()
     }

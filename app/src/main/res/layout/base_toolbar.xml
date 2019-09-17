@@ -23,11 +23,12 @@
                 app:srcCompat="@drawable/ic_arrow_back" />
 
         <de.hdodenhof.circleimageview.CircleImageView
+                android:background="@drawable/white_button_round_enabled"
                 android:id="@+id/image_view_logo"
-                android:layout_width="@dimen/_24sdp"
-                android:layout_height="@dimen/_24sdp"
+                android:layout_width="@dimen/_26sdp"
+                android:layout_height="@dimen/_26sdp"
                 android:layout_marginRight="@dimen/_10sdp"
-                android:src="@drawable/pdf_thumb"
+                android:src="@drawable/ic_josh_course"
                 android:visibility="gone" />
 
         <androidx.appcompat.widget.AppCompatTextView

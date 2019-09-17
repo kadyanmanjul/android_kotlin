@@ -315,6 +315,9 @@ interface ChatDao {
         compareTime: Date
     )
 
+    @Query("UPDATE chat_table SET is_sync =1 where chat_id <= :id ")
+    suspend fun forceFullySync(id:String)
+
     @Query(value = "SELECT * FROM chat_table where  is_sync= 0")
     suspend fun getUnSyncMessage(): List<ChatModel>
 

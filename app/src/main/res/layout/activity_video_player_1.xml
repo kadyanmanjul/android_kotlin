@@ -12,23 +12,55 @@
 
     </data>
 
-    <FrameLayout
-            android:background="#000"
-
+    <LinearLayout
             android:layout_width="match_parent"
+
             android:layout_height="match_parent"
+            android:background="#000"
             android:orientation="vertical">
+
+        <com.google.android.material.appbar.MaterialToolbar xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#20000000"
+                android:gravity="start|center"
+                android:minHeight="?attr/actionBarSize"
+                app:theme="@style/Theme.GuidelinesCompat.Light.DarkToolbar">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/iv_back"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="@dimen/_5sdp"
+                    android:paddingTop="@dimen/_5sdp"
+                    android:paddingBottom="@dimen/_5sdp"
+                    android:visibility="visible"
+                    app:srcCompat="@drawable/ic_arrow_back" />
+
+
+            <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/text_message_title"
+                    fontPath="fonts/OpenSans-SemiBold.ttf"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical|start"
+                    android:padding="@dimen/_5sdp"
+                    android:text=""
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/font_20" />
+        </com.google.android.material.appbar.MaterialToolbar>
 
         <com.joshtalks.joshskills.core.custom_ui.JoshVideoPlayer
                 android:id="@+id/pvPlayer"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
                 android:background="#000"
                 android:focusable="true"
-                android:layout_gravity="center"
-                app:controller_layout_id="@layout/layout_live_player_controller"
-               />
+                app:controller_layout_id="@layout/layout_live_player_controller" />
 
 
-    </FrameLayout>
+    </LinearLayout>
 </layout>

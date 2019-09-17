@@ -1,55 +1,130 @@
 package com.joshtalks.joshskills.repository.service
 
-import androidx.lifecycle.viewModelScope
+import android.content.pm.PackageManager
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.Utils
-import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.repository.local.DatabaseUtils
+import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
+import com.joshtalks.joshskills.repository.local.entity.ChatModel
 import com.joshtalks.joshskills.repository.server.AmazonPolicyResponse
-import com.joshtalks.joshskills.repository.server.chat_message.BaseMediaMessage
-import id.zelory.compressor.Compressor
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.launch
+import com.joshtalks.joshskills.repository.server.chat_message.*
+import kotlinx.coroutines.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import java.io.File
+import java.io.FileNotFoundException
+
 
 object SyncChatService {
 
-
     fun syncChatWithServer() {
         CoroutineScope(Dispatchers.IO).launch {
-            var chatModelList = AppObjectController.appDatabase.chatDao().getUnSyncMessage()
-            for (chatObject in chatModelList) {
-                val compressImagePath =
-                    Compressor(AppObjectController.joshApplication).setQuality(75)
-                        .setMaxWidth(720).setMaxHeight(1280)
-                        .compressToFile(
-                            File(chatObject.downloadedLocalPath),
-                            chatObject.downloadedLocalPath
-                        ).absolutePath
 
-                chatObject.downloadedLocalPath = compressImagePath
+            if (Utils.isInternetAvailable()) {
+                val chatModelList = AppObjectController.appDatabase.chatDao().getUnSyncMessage()
+                for (chatObject in chatModelList) {
+                    var url = ""
+                    try {
+                        if (checkReadExternalPermission() && checkWriteExternalPermission()) {
+                            chatObject.downloadedLocalPath?.let { filePath ->
+                                url = filePath
+                                if (chatObject.type == BASE_MESSAGE_TYPE.IM) {
+                                    /* AppDirectory.copy(
+                                         Compressor(AppObjectController.joshApplication).setQuality(
+                                             75
+                                         )
+                                             .setMaxWidth(720).setMaxHeight(1280)
+                                             .compressToFile(File(filePath)).absolutePath,
+                                         filePath
+                                     )
+                                     chatObject.downloadedLocalPath = filePath*/
+                                }
 
-                val obj = mapOf("media_path" to File(compressImagePath).name)
-                val responseObj =
-                    AppObjectController.chatNetworkService.requestUploadMediaAsync(obj).await()
-                val statusCode: Int = uploadOnS3Server(responseObj, compressImagePath)
-                if (statusCode in 200..210) {
-                    val url = responseObj.url.plus(File.separator).plus(responseObj.fields["key"])
+                                val obj = mapOf("media_path" to File(filePath).name)
+                                val responseObj =
+                                    AppObjectController.chatNetworkService.requestUploadMediaAsync(
+                                        obj
+                                    )
+                                        .await()
+                                val statusCode: Int =
+                                    uploadOnS3Server(responseObj, filePath).await()
+                                if (statusCode in 200..210) {
+                                    url =
+                                        responseObj.url.plus(File.separator)
+                                            .plus(responseObj.fields["key"])
+                                }
+                            }
+                        }
+                    } catch (exception: FileNotFoundException) {
+                        AppObjectController.appDatabase.chatDao().forceFullySync(chatObject.chatId)
+                        exception.printStackTrace()
+                    } catch (exception: Exception) {
+                        exception.printStackTrace()
+                    }
+                    val tChatMessage: BaseChatMessage
+
+
+                    if (url.isEmpty()) {
+                        chatObject.text?.let {
+                            tChatMessage = TChatMessage(it)
+                            sendTextMessage(tChatMessage, chatObject, chatObject.conversationId)
+                        }
+                    } else {
+                        if (chatObject.type == BASE_MESSAGE_TYPE.VI) {
+                            chatObject.downloadedLocalPath?.let { path ->
+                                tChatMessage = TVideoMessage(path, path)
+                                (tChatMessage as BaseMediaMessage).url = url
+                                sendTextMessage(tChatMessage, chatObject, chatObject.conversationId)
+                            }
+                        } else if (chatObject.type == BASE_MESSAGE_TYPE.IM) {
+                            chatObject.downloadedLocalPath?.let { path ->
+                                tChatMessage = TImageMessage(path, path)
+                                (tChatMessage as BaseMediaMessage).url = url
+                                sendTextMessage(tChatMessage, chatObject, chatObject.conversationId)
+                            }
+                        } else if (chatObject.type == BASE_MESSAGE_TYPE.AU) {
+                            chatObject.downloadedLocalPath?.let { path ->
+                                tChatMessage = TAudioMessage(path, path)
+                                (tChatMessage as BaseMediaMessage).url = url
+                                sendTextMessage(tChatMessage, chatObject, chatObject.conversationId)
+                            }
+                        }
+                    }
                 }
             }
+        }
+    }
+
+    private fun sendTextMessage(
+        messageObject: BaseChatMessage,
+        chatModel: ChatModel?,
+        conversation_id: String
+    ) {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                chatModel?.let {
+                    it.conversationId = conversation_id
+                    DatabaseUtils.addChat(it)
+                }
+                messageObject.conversation = conversation_id
+                val responseChat =
+                    AppObjectController.chatNetworkService.sendMessage(messageObject).await()
+                NetworkRequestHelper.updateChat(responseChat, null, messageObject, chatModel)
+
+            } catch (ex: Exception) {
+                //registerCourseLiveData.postValue(null)
+                ex.printStackTrace()
+            }
+
         }
     }
 
     private suspend fun uploadOnS3Server(
         responseObj: AmazonPolicyResponse,
         mediaPath: String
-    ): Int {
+    ): Deferred<Int> {
         return CoroutineScope(Dispatchers.IO).async {
             val parameters = emptyMap<String, RequestBody>().toMutableMap()
             for (entry in responseObj.fields) {
@@ -68,6 +143,19 @@ object SyncChatService {
                 body
             ).execute()
             return@async responseUpload.code()
-        }.await()
+        }
     }
+
+    private fun checkReadExternalPermission(): Boolean {
+        val permission = android.Manifest.permission.READ_EXTERNAL_STORAGE
+        val res = AppObjectController.joshApplication.checkCallingOrSelfPermission(permission)
+        return res == PackageManager.PERMISSION_GRANTED
+    }
+
+    private fun checkWriteExternalPermission(): Boolean {
+        val permission = android.Manifest.permission.WRITE_EXTERNAL_STORAGE
+        val res = AppObjectController.joshApplication.checkCallingOrSelfPermission(permission)
+        return res == PackageManager.PERMISSION_GRANTED
+    }
+
 }

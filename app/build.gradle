@@ -1,14 +1,10 @@
 apply plugin: 'com.android.application'
-
 apply plugin: 'kotlin-android'
-
 apply plugin: 'kotlin-kapt'
-
 apply plugin: 'kotlin-android-extensions'
-
-
 apply plugin: 'androidx.navigation.safeargs'
 apply plugin: 'io.fabric'
+apply plugin: 'com.google.gms.google-services'
 
 
 android {
@@ -19,10 +15,11 @@ android {
         targetSdkVersion 28
         versionCode 2
         versionName "1.0.1"
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary true
+        renderscriptTargetApi 28 as int
+        renderscriptSupportModeEnabled true
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField "String", "CLIENT_TOKEN", "\"Ctt75ss5IxyHgBJb48diBbHUXIQ1VANCYRykjdcj\""
-
         javaCompileOptions {
             annotationProcessorOptions {
                 arguments = [
@@ -34,8 +31,8 @@ android {
         ndk {
             abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64'
         }
-        renderscriptTargetApi 28 as int
-        renderscriptSupportModeEnabled true
+        resConfigs "en"
+
     }
     signingConfigs {
        /* debug {
@@ -73,7 +70,6 @@ android {
     dataBinding {
         enabled = true
     }
-
 
     configurations {
         all*.exclude group: 'com.google.guava', module: 'listenablefuture'
@@ -129,11 +125,9 @@ dependencies {
     implementation project(path: ':emoji-google')
     implementation project(path: ':joshlibrary')
     implementation project(path: ':appcamera')
-  //  implementation project(path: ':VideoRecordLibrary')
     implementation project(path: ':mediapicker')
 
     implementation 'com.googlecode.mp4parser:isoparser:1.1.22'
-
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.1'
@@ -146,9 +140,9 @@ dependencies {
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation 'androidx.browser:browser:1.0.0'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+
     implementation 'androidx.lifecycle:lifecycle-extensions:2.0.0'
     api 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.1.0'
-    implementation "androidx.lifecycle:lifecycle-extensions:2.0.0"
     implementation "androidx.lifecycle:lifecycle-common-java8:2.0.0"
 
     implementation "androidx.work:work-runtime-ktx:2.1.0"
@@ -206,9 +200,9 @@ dependencies {
 
 
     implementation 'com.crashlytics.sdk.android:crashlytics:2.10.1'
-    implementation 'org.greenrobot:eventbus:3.1.1'
+    //implementation 'org.greenrobot:eventbus:3.1.1'
     implementation 'de.hdodenhof:circleimageview:3.0.0'
-    implementation 'com.romandanylyk:pageindicatorview:1.0.3'
+    //implementation 'com.romandanylyk:pageindicatorview:1.0.3'
     implementation 'pub.devrel:easypermissions:3.0.0'
     implementation 'com.github.mukeshsolanki:android-otpview-pinview:2.0.3'
     implementation 'com.pnikosis:materialish-progress:1.7'
@@ -241,49 +235,17 @@ dependencies {
     implementation 'com.wonderkiln:camerakit:0.13.2'
     implementation 'com.camerakit:jpegkit:0.1.0'
 
-    implementation 'es.voghdev.pdfviewpager:library:1.0.6'
     implementation 'com.clevertap.android:clevertap-android-sdk:3.5.1'
 
 
 
-    //implementation 'com.github.piasy:GlideImageLoader:1.5.7'
-   // implementation 'com.github.piasy:GlideImageViewFactory:1.5.7'
-
-
-
-
-    /* implementation "com.google.dagger:dagger:2.12"
-     kapt "com.google.dagger:dagger-compiler:2.12"*/
-
-
-    //implementation 'com.github.aabhasr1:OtpView:1.0.6'
-
-
-    /*
-    // Audio recorder like whatsapp //
-
-    implementation 'com.devlomi.record-view:record-view:2.0.1'
-    https://github.com/varunjohn/Audio-Recording-Animation
-    https://github.com/adrielcafe/AndroidAudioConverter
-    https://github.com/Cleveroad/WaveInApp
-    https://github.com/Arjun-sna/Android-AudioRecorder-App
-    https://github.com/MohammadAG/Android-SoundRecorder
-    https://github.com/safetysystemtechnology/audio-recorder-button
-    https://gitlab.com/axet/android-audio-recorder
-    */
+    //implementation 'com.github.nkzawa:socket.io-client:0.6.0'
 
     /*
     * Whatsapp like file attachment
     * https://github.com/shanraisshan/WhatsApp-Conversation-Menu
     * */
 
-    /*
-    * Video recordser
-    *
-    * https://github.com/mabeijianxi/small-video-record
-    * https://github.com/amosyuen/FFmpegVideoRecorder
-    * */
-    //implementation 'com.amosyuen.ffmpegvideorecorder:ffmpeg-video-recorder:2.0.3'
 
     /*
     * File util https://github.com/takashisite/android-simple-storage
@@ -294,18 +256,6 @@ dependencies {
      * Json parsar https://github.com/cbeust/klaxon
      * https://proandroiddev.com/getting-started-using-moshi-for-json-parsing-with-kotlin-5a460bf3935a
      * */
-
-    /**
-     * Video trimmer https://github.com/titansgroup/k4l-video-trimmer
-     * https://github.com/HemendraGangwar/VideoTrimmingLikeWhatsapp
-     * https://github.com/deepandroid/video-trimmer
-     * https://github.com/iknow4/Android-Video-Trimmer
-     * https://androidadvanced.com/2017/03/17/ffmpeg-video-editor/
-     * */
-
-    //implementation 'com.mabeijianxi:small-video-record:1.2.2'
-   // implementation 'com.mabeijianxi:small-video-record2:2.0.3@aar'
-    //com.writingminds:FFmpegAndroid:0.3.2
 
 
 /*
@@ -319,14 +269,7 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.2.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
-
-    //implementation 'com.github.nkzawa:socket.io-client:0.6.0'
-
-
-
-
-
+    implementation project(path: ':pdfviewer')
 
 }
 
-apply plugin: 'com.google.gms.google-services'

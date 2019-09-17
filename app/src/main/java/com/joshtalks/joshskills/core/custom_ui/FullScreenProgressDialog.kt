@@ -18,9 +18,11 @@ class FullScreenProgressDialog : DialogFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (savedInstanceState != null) {
-            bgColor = savedInstanceState.getString(BG_COLOR)
+            savedInstanceState.getString(BG_COLOR)?.let {
+                bgColor = it
+            }
         }
-            setStyle(STYLE_NORMAL, R.style.AppTheme_FullScreenDialog)
+        setStyle(STYLE_NORMAL, R.style.AppTheme_FullScreenDialog)
 
     }
 
@@ -30,7 +32,7 @@ class FullScreenProgressDialog : DialogFragment() {
         if (dialog != null) {
             val width = ViewGroup.LayoutParams.MATCH_PARENT
             val height = ViewGroup.LayoutParams.MATCH_PARENT
-                dialog.window!!.setLayout(width, height)
+            dialog.window!!.setLayout(width, height)
             // dialog.window!!.setWindowAnimations(R.style.AppTheme_Slide)
         }
     }

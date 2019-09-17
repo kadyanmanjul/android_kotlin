@@ -21,7 +21,7 @@ class SignUpStep3Fragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            phoneNumber = it.getString(ARG_PHONE_NUMBER)
+            phoneNumber = it.getString(ARG_PHONE_NUMBER).toString()
         }
         viewModel = activity?.run {ViewModelProviders.of(this)[SignUpViewModel::class.java]} ?: throw Exception("Invalid Activity")
 

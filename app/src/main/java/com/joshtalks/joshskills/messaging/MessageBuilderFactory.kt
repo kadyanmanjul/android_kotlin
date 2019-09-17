@@ -71,10 +71,7 @@ object MessageBuilderFactory {
         model.downloadedLocalPath = message.localPathUrl
         model.isSync=false
         model.type=BASE_MESSAGE_TYPE.IM
-
-
         model.chatLocalId= RandomString().nextString()
-
         model.sender = Sender(Mentor.getInstance().getId(), User(), "")
         return model
     }

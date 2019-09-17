@@ -23,8 +23,10 @@ object DatabaseUtils {
 
     fun addChat(chatModel: ChatModel) {
         CoroutineScope(Dispatchers.IO).launch {
+            val cal = Calendar.getInstance()
+            cal.time = Date(cal.time.time/1000)
             chatModel.isSync = false
-            chatModel.created=Date()
+            chatModel.created=cal.time
             chatModel.chatLocalId?.let {
                 chatModel.chatId=it
             }

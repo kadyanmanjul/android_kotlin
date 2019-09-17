@@ -1,22 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:orientation="vertical"
-        android:background="@android:color/black"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@android:color/black"
+        android:orientation="vertical">
+
+    <com.google.android.material.appbar.MaterialToolbar xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#20000000"
+            android:gravity="start|center"
+            android:minHeight="?attr/actionBarSize"
+            app:theme="@style/Theme.GuidelinesCompat.Light.DarkToolbar">
+
+        <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/iv_back"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="@dimen/_5sdp"
+                android:paddingTop="@dimen/_5sdp"
+                android:paddingBottom="@dimen/_5sdp"
+                android:visibility="visible"
+                app:srcCompat="@drawable/ic_arrow_back" />
+
+
+        <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/text_message_title"
+                fontPath="fonts/OpenSans-SemiBold.ttf"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical|start"
+                android:padding="@dimen/_5sdp"
+                android:text=""
+                android:textColor="@color/white"
+                android:textSize="@dimen/font_20" />
+    </com.google.android.material.appbar.MaterialToolbar>
 
     <com.joshtalks.joshskills.core.custom_ui.ZoomageView
             android:id="@+id/big_image_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:zoomage_restrictBounds="false"
             app:zoomage_animateOnReset="true"
-            app:zoomage_autoResetMode="UNDER"
             app:zoomage_autoCenter="true"
-            app:zoomage_zoomable="true"
-            app:zoomage_translatable="true"
-            app:zoomage_minScale="0.6"
+            app:zoomage_autoResetMode="UNDER"
             app:zoomage_maxScale="8"
-            />
-</FrameLayout>
+            app:zoomage_minScale="0.6"
+            app:zoomage_restrictBounds="false"
+            app:zoomage_translatable="true"
+            app:zoomage_zoomable="true" />
+</LinearLayout>

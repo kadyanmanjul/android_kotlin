@@ -156,9 +156,9 @@
                 android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize"
                 android:launchMode="singleTask" />
         <activity
+                android:theme="@style/AppNoBarTheme"
                 android:name=".ui.video_player.VideoPlayerActivity"
                 android:configChanges="orientation|keyboardHidden|screenSize"
-
                 android:screenOrientation="fullSensor" />
 
         <service
@@ -185,6 +185,7 @@
 
 
         <activity
+                android:theme="@style/AppNoBarTheme"
                 android:name=".ui.pdfviewer.PdfViewerActivity"
                 android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize"
                 android:launchMode="singleTask"

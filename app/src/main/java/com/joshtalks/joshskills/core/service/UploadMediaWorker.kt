@@ -12,6 +12,7 @@ import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.repository.local.entity.AudioType
 import com.joshtalks.joshskills.repository.local.model.ImageModel
 import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.UpdateDeviceRequest
 import kotlinx.coroutines.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -30,7 +31,7 @@ object UploadWorker {
             try {
                 var filePart: MultipartBody.Part = createMultipartBody(imageObject.imageLocalPath)
                 val uploadProfile: Any =
-                    AppObjectController.signUpNetworkService.uploadProfilePicture(filePart)
+                    AppObjectController.signUpNetworkService.uploadProfilePicture(User.getInstance().id,filePart)
                 AppAnalytics.create(AnalyticsEvent.PROFILE_IMAGE_UPLOAD.NAME)
                     .push()
             } catch (ex: Exception) {
@@ -73,7 +74,7 @@ class UploadProfileWorker(context: Context, var params: WorkerParameters) :
         val job = async(Dispatchers.IO) {
             var filePart: MultipartBody.Part = createMultipartBody(imageObject.imageLocalPath)
             val uploadProfile: Any =
-                AppObjectController.signUpNetworkService.uploadProfilePicture(filePart)
+                AppObjectController.signUpNetworkService.uploadProfilePicture(User.getInstance().id,filePart)
             Log.e("dd", uploadProfile.toString())
 
 

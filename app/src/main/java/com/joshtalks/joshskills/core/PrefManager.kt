@@ -34,7 +34,7 @@ object PrefManager {
     }
 
     fun getStringValue(key: String): String {
-        return prefManager.getString(key, "")
+        return prefManager.getString(key, "").toString()
     }
 
     fun getIntValue(key: String): Int {

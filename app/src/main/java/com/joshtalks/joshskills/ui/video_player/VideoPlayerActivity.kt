@@ -3,21 +3,20 @@ package com.joshtalks.joshskills.ui.video_player
 import android.content.Context
 
 import android.content.Intent
-import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.view.Window
 import android.view.WindowManager
+import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import com.google.android.exoplayer2.ui.DefaultTimeBar
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.BaseActivity
-import com.joshtalks.joshskills.core.CoreJoshActivity
 import com.joshtalks.joshskills.core.custom_ui.PlayerListener
 import com.joshtalks.joshskills.databinding.ActivityVideoPlayer1Binding
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
-import com.joshtalks.joshskills.repository.local.entity.VideoType
 import com.joshtalks.joshskills.repository.server.engage.VideoEngage
 import com.joshtalks.joshskills.repository.service.EngagementNetworkHelper
+import com.joshtalks.joshskills.ui.pdfviewer.COURSE_NAME
 
 const val VIDEO_OBJECT = "video_"
 
@@ -52,7 +51,6 @@ class VideoPlayerActivity : BaseActivity(), PlayerListener {
             WindowManager.LayoutParams.FLAG_FULLSCREEN
         )
 
-        supportActionBar?.hide()
         binding = DataBindingUtil.setContentView(this, R.layout.activity_video_player_1)
         binding.handler = this
 
@@ -70,14 +68,33 @@ class VideoPlayerActivity : BaseActivity(), PlayerListener {
         binding.pvPlayer.play()
         binding.pvPlayer.setActivity(this)
         exoProgress = findViewById(R.id.exo_progress)
+        setToolbar()
 
     }
 
+    private fun setToolbar() {
+
+        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+        window.statusBarColor = ContextCompat.getColor(applicationContext, R.color.overlay)
+
+        intent.getStringExtra(COURSE_NAME)?.let {
+            binding.textMessageTitle.text = it
+        }
+        binding.ivBack.setOnClickListener {
+            finish()
+        }
+    }
 
     companion object {
-        fun startConversionActivity(context: Context, chatModel: ChatModel) {
+        fun startConversionActivity(
+            context: Context,
+            chatModel: ChatModel,
+            courseName: String
+        ) {
             val intent = Intent(context, VideoPlayerActivity::class.java)
             intent.putExtra(VIDEO_OBJECT, chatModel)
+            intent.putExtra(COURSE_NAME, courseName)
             context.startActivity(intent)
         }
 
