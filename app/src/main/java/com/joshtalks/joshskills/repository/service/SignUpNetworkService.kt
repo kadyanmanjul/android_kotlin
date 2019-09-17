@@ -34,6 +34,8 @@ interface SignUpNetworkService {
     fun updateUserAsync(@Path("id") id: String, @Body obj: UpdateUserPersonal): Deferred<UpdateProfileResponse>
 
 
+    @PATCH("$DIR/mentor/{id}/last_login/")
+    suspend fun userActive(@Path("id") id: String,@Body obj: Any): Deferred<Any>
 
     @Multipart
     @POST("$DIR/user/{id}/upload_profile_pic/")

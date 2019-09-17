@@ -9,6 +9,7 @@ import com.facebook.stetho.Stetho
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.CoreMeta
 import com.joshtalks.joshskills.repository.server.UpdateDeviceRequest
 import io.fabric.sdk.android.Fabric
@@ -85,5 +86,16 @@ class JoshApplication : Application(){
             }
         }
     }
+    fun userActive(){
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                if (Mentor.getInstance().hasId()) {
+                   AppObjectController.signUpNetworkService.userActive( Mentor.getInstance().getId(),Any()).await()
+                }
 
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+            }
+        }
+    }
 }
