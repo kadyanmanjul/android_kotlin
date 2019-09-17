@@ -199,7 +199,7 @@ public class AudioView extends FrameLayout {
                     return;
                 }
 
-                audioPlayerManager.seekTo(progress * 1000);
+                audioPlayerManager.seekTo(progress * AUDIO_PROGRESS_UPDATE_TIME);
             }
 
             @Override
@@ -214,7 +214,7 @@ public class AudioView extends FrameLayout {
         });
 
         seekPlayerProgress.setMax(0);
-        seekPlayerProgress.setMax((int) audioPlayerManager.getDuration() / 1000);
+        seekPlayerProgress.setMax((int) audioPlayerManager.getDuration() / AUDIO_PROGRESS_UPDATE_TIME);
 
     }
 
@@ -235,6 +235,8 @@ public class AudioView extends FrameLayout {
         public void onClick(View v) {
             try {
                 setPlay();
+                isPlaying = true;
+
             } catch (Exception e) {
             }
         }
@@ -245,7 +247,7 @@ public class AudioView extends FrameLayout {
         @Override
         public void onClick(View v) {
             setPause();
-            setTimeStampOfAudio();
+            //setTimeStampOfAudio();
             controlToggle.displayQuick(playButton);
         }
     }
@@ -294,18 +296,18 @@ public class AudioView extends FrameLayout {
 
 
     private void setPlay() {
+        controlToggle.displayQuick(pauseButton);
         AppAnalytics.create(AnalyticsEvent.AUDIO_PLAYED.getNAME()).addParam("ChatId", message.getChatId()).push();
-        isPlaying = true;
+
         String audioId = null;
-        try{
-            audioId=message.getQuestion().getAudioList().get(0).getId();
-        }catch (Exception e){
+        try {
+            audioId = message.getQuestion().getAudioList().get(0).getId();
+        } catch (Exception e) {
 
         }
 
-        audioPlayerManager.play(this.uri, eventListener,audioId);
+        audioPlayerManager.play(this.uri, eventListener, audioId);
         setProgress();
-        controlToggle.displayQuick(pauseButton);
         if (Utils.INSTANCE.getCurrentMediaVolume(getContext()) <= 0) {
             showToast();
         }
@@ -485,25 +487,37 @@ public class AudioView extends FrameLayout {
         controlToggle.setVisibility(VISIBLE);
         initSeekBar();
         setTimeStampOfAudio();
+
+        updateUri();
+
+    }
+
+    private void updateUri() {
         try {
-            if (message.getDownloadedLocalPath() != null || Objects.requireNonNull(message.getDownloadedLocalPath()).isEmpty()) {
-                this.uri = Uri.fromFile(new File(message.getDownloadedLocalPath()));
-                this.duration = Utils.getDurationOfMedia(getContext(), message.getDownloadedLocalPath());
-            } else if (message.getUrl() != null) {
-                this.uri = Uri.parse(message.getUrl());
-                this.duration = Utils.getDurationOfMedia(getContext(), message.getUrl());
+
+            if (message.getDownloadedLocalPath() == null || message.getDownloadedLocalPath().isEmpty()) {
+                if (message.getQuestion().getAudioList().get(0).getDownloadedLocalPath() == null || message.getQuestion().getAudioList().get(0).getDownloadedLocalPath().isEmpty()) {
+                    this.uri = Uri.parse(message.getQuestion().getAudioList().get(0).getAudio_url());
+                    this.duration = Utils.getDurationOfMedia(getContext(), message.getQuestion().getAudioList().get(0).getAudio_url());
+                } else {
+                    this.uri = Uri.parse(message.getQuestion().getAudioList().get(0).getDownloadedLocalPath());
+                    this.duration = Utils.getDurationOfMedia(getContext(), message.getQuestion().getAudioList().get(0).getDownloadedLocalPath());
+
+                }
 
             } else {
-                this.uri = Uri.parse(message.getQuestion().getAudioList().get(0).getDownloadedLocalPath());
-                this.duration = Utils.getDurationOfMedia(getContext(), message.getQuestion().getAudioList().get(0).getDownloadedLocalPath());
+                if (message.getDownloadedLocalPath().isEmpty()) {
+                    this.uri = Uri.parse(message.getUrl());
+                    this.duration = Utils.getDurationOfMedia(getContext(), message.getUrl());
+                } else {
+                    this.uri = Uri.fromFile(new File(message.getDownloadedLocalPath()));
+                    this.duration = Utils.getDurationOfMedia(getContext(), message.getDownloadedLocalPath());
 
+                }
             }
-
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-
     }
 
 

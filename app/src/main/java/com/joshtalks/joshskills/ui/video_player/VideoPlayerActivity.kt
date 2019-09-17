@@ -114,8 +114,17 @@ class VideoPlayerActivity : BaseActivity(), PlayerListener {
 
     override fun onStop() {
         super.onStop()
-        chatObject.question?.videoList?.get(0)?.id?.let {
-            EngagementNetworkHelper.engageVideoApi(VideoEngage(emptyList(),it,binding.pvPlayer.lastPosition))
+        try {
+            chatObject.question?.videoList?.get(0)?.id?.let {
+                EngagementNetworkHelper.engageVideoApi(
+                    VideoEngage(
+                        emptyList(),
+                        it,
+                        binding.pvPlayer.lastPosition
+                    )
+                )
+            }
+        }catch (ex:Exception){
         }
         binding.pvPlayer.onStop()
     }

@@ -154,7 +154,7 @@ class AudioPlayerViewHolder(activityRef: WeakReference<FragmentActivity>, messag
             override fun downloadStart(url:String) {
                 DownloadUtils.downloadFile(
                     url,
-                    AppDirectory.recordingReceivedFile().absolutePath,
+                    AppDirectory.recordingReceivedFile(url).absolutePath,
                     message.chatId,
                     message,
                     downloadListener

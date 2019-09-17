@@ -51,9 +51,12 @@ class FirebaseTokenService : FirebaseMessagingService() {
             style.setBigContentTitle(notificationObject.contentText)
             style.setSummaryText(notificationObject.contentText)
 
-            var intent = Intent(applicationContext, InboxActivity::class.java)
+            var intent = Intent(applicationContext, InboxActivity::class.java).apply {
+                addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
 
-            val obj = notificationObject.actionData?.let {
+            }
+
+            /*val obj = notificationObject.actionData?.let {
                 AppObjectController.appDatabase.courseDao().chooseRegisterCourseMinimal(it)
             }
             obj?.let {
@@ -61,8 +64,10 @@ class FirebaseTokenService : FirebaseMessagingService() {
                      intent.putExtra(CHAT_ROOM_OBJECT, it)
                      addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
                  }
-            }
+                intent.putExtra(CHAT_ROOM_OBJECT, it)
 
+            }
+*/
             val defaultSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
             val pendingIntent = PendingIntent.getActivity(applicationContext, 0, intent, 0)
 

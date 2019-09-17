@@ -25,7 +25,7 @@ object AppDirectory {
 
 
     enum class FileType {
-        IMAGE_SENT, IMAGE_RECEIVED, RECORDING_SENT, RECORDING_RECEIVED, VIDEO_SENT, VIDEO_RECEIVED,DOCS_RECEIVED
+        IMAGE_SENT, IMAGE_RECEIVED, RECORDING_SENT, RECORDING_RECEIVED, VIDEO_SENT, VIDEO_RECEIVED, DOCS_RECEIVED
     }
 
 
@@ -71,6 +71,11 @@ object AppDirectory {
             AppDirectory.FileType.RECORDING_SENT
         ) + ".amr"
     }
+    private fun getAudioFileName(extension:String): String {
+        return "RECORD".plus("-").plus(getDate()).plus("-".plus(APP_SHORT_NAME)) + getFileEndName(
+            AppDirectory.FileType.RECORDING_SENT
+        ) + extension
+    }
 
     private fun getVideoFileName(): String {
         return "VID".plus("-").plus(getDate()).plus("-".plus(APP_SHORT_NAME)) + getFileEndName(
@@ -83,6 +88,7 @@ object AppDirectory {
             AppDirectory.FileType.DOCS_RECEIVED
         ) + ".pdf"
     }
+
     private fun getDate() = FORMATTER.format(Date())
 
 
@@ -126,9 +132,6 @@ object AppDirectory {
         file.createNewFile();
         return file
     }
-
-
-
 
 
     fun getImageSentFilePath(): String {
@@ -178,7 +181,6 @@ object AppDirectory {
     }
 
 
-
     fun recordingSentFile(): File {
         val f = File(RECORDING_SENT_PATH)
         if (f.exists().not()) {
@@ -195,12 +197,13 @@ object AppDirectory {
     }
 
 
-    fun recordingReceivedFile(): File {
+    fun recordingReceivedFile(fileName: String): File {
+        val extension = fileName.substring(fileName.lastIndexOf("."))
         val f = File(RECORDING_RECEIVED_PATH)
         if (f.exists().not()) {
             f.mkdirs()
         }
-        val file = File(RECORDING_RECEIVED_PATH + File.separator + getAudioFileName())
+        val file = File(RECORDING_RECEIVED_PATH + File.separator + getAudioFileName(extension))
         file.createNewFile();
         return file
     }
@@ -309,6 +312,7 @@ object AppDirectory {
 
         }
     }
+
     fun getTempPath(): String {
         val f = File(TEMP_PATH)
         if (f.exists().not()) {
@@ -319,7 +323,8 @@ object AppDirectory {
     }
 
     fun getFilePathForVideoRecordCache(): File {
-       var path= Environment.getExternalStorageDirectory().toString() + File.separator + APP_DIRECTORY + File.separator + MEDIA_DIRECTORY + "/cached"
+        var path =
+            Environment.getExternalStorageDirectory().toString() + File.separator + APP_DIRECTORY + File.separator + MEDIA_DIRECTORY + "/cached"
         val f = File(path)
         if (f.exists().not()) {
             f.mkdirs()

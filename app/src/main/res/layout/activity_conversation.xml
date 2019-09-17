@@ -41,6 +41,9 @@
 
 
         <include
+                android:focusableInTouchMode="true"
+                android:focusable="true"
+                android:clickable="true"
                 android:id="@+id/attachment_container"
                 layout="@layout/attachment_bottom_view"
                 android:layout_width="match_parent"

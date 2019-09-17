@@ -355,7 +355,10 @@ class ConversationActivity : BaseActivity() {
             }
 
             conversationBinding.chatEdit.setText("")
-            scrollToEnd()
+
+            conversationBinding.chatRv?.setOnFocusChangeListener { v, hasFocus ->
+                    AttachmentUtil.revealAttachments(false, conversationBinding)
+            }
         }
 
 
@@ -466,6 +469,7 @@ class ConversationActivity : BaseActivity() {
                 )
             )
         )
+
     }
 
 
