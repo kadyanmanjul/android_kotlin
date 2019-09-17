@@ -22,6 +22,7 @@ class CropActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_crop)
 
+
         /* Utility.setupStatusBarHidden(this);*/
         try {
             supportActionBar!!.hide()

@@ -4,11 +4,74 @@ enum class AnalyticsEvent(val NAME: String) {
 
 
     BACK_PRESSED("Back Pressed"),
+    ACTIVITY_OPENED("Activity Opened"),
+    APP_INSTALLED("App Installed"),
+    LOGIN_SCREEN_1("Login Screen 1"),
+    LOGIN_CLICKED("Login Clicked"),
+    OTP_ACCOUNT_KIT_ACTIVITY("Otp Account Kit Activity"),
+    WHATSAPP_SELECTED("Whatsapp Selected"),
+
+    SMS_SELECTED("Sms Selected"),
+    OTP_VERIFICATION_SCREEN("OTP Verification Screen"),
+
+    COURSE_FAILURE_SCREEN("Course Failure Screen"),
+    CLICK_HELPLINE_SELECTED("Call Helpline Selected"),
+    CLICK_TO_PAY_SELECTED("Click to Pay Selected"),
+
+    INBOX_SCREEN("Inbox Screen"),
+    COURSE_SELECTED("Course Selected"),
+
+
+    SCROLL("Scroll"),
+
+    AUDIO_BUTTON_CLICKED("Audio Button clicked"),
+    AUDIO_SENT("Audio Sent"),
+    AUDIO_CANCELLED("Audio Cancelled"),
+
+    CAMERA_CLICKED("Camera Clicked"),
+    VIDEO_RECORDED("Video Recorded"),
+    VIDEO_SENT("Video Sent"),
+
+    IMAGE_CLICKED("Image Clicked"),
+    FILTER_SELECTED("Filter Selected"),
+    IMAGE_SENT("Image Sent"),
+    CROP_CLICKED("Crop Selected"),
+
+    ATTACHMENT_CLICKED("Attachment clicked"),
+    AUDIO_SELECTED("Audio Selected"),
+    CAMERA_SELECTED("Camera Selected"),
+    GALLERY_SELECTED("Gallery Selected"),
+    MEDIA_DOWNLOAD("Media Download"),
+    WATCH_ACTIVITY("Watch Activity"),
+
+    AUDIO_PLAYED("Audio Played"),
+
+    EMOJI_CLICKED("Emoji Clicked"),
+
+    PDF_OPENED("PDF Opened"),
+
+    LOGIN_ERROR("Login Error"),
+    LOGIN_CANCELLED("Login Cancelled"),
+    LOGIN_SUCCESS("Login Success"),
+    CHAT_SCREEN("Chat Screen"),
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     LOGIN("Login"),
     PROFILE_IMAGE_UPLOAD("Profile Image Upload"),
 
-    ACTIVITY_OPENED("Activity Opened"),
 
 
     QUESTION_SENT("Question Sent"),
@@ -22,7 +85,6 @@ enum class AnalyticsEvent(val NAME: String) {
     AUDIO_DOWNLOAD("Audio Download"),
     IMAGE_OPENED("Image Opened"),
     IMAGE_DOWNLOAD("Image Download"),
-    PDF_OPENED("PDF Opened"),
     PDF_DOWNLOAD("PDF Download"),
     VIDEO_OPENED("Video Opened"),
     VIDEO_DOWNLOAD("Video Download"),

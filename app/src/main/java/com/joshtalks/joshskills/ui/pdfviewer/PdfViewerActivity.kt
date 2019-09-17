@@ -47,6 +47,9 @@ class PdfViewerActivity : BaseActivity() {
             conversationBinding.textMessageTitle.text = it
         }
         conversationBinding.ivBack.setOnClickListener {
+            AppAnalytics.create(AnalyticsEvent.BACK_PRESSED.NAME)
+                .addParam("name", javaClass.simpleName)
+                .push()
             finish()
         }
     }
@@ -56,7 +59,7 @@ class PdfViewerActivity : BaseActivity() {
         val pdfViewPager = PDFViewPager(applicationContext, pdfObject.downloadedLocalPath)
         conversationBinding.remotePdfRoot.addView(pdfViewPager)
         //setContentView(pdfViewPager)
-        AppAnalytics.create(AnalyticsEvent.PDF_OPENED.NAME).addParam("URL", pdfObject.url)
+        AppAnalytics.create(AnalyticsEvent.PDF_OPENED.NAME).addParam("URL", pdfObject.url).push()
 
     }
 
@@ -91,4 +94,12 @@ class PdfViewerActivity : BaseActivity() {
         }
 
     }
+
+    override fun onBackPressed() {
+        AppAnalytics.create(AnalyticsEvent.BACK_PRESSED.NAME)
+            .addParam("name", javaClass.simpleName)
+            .push()
+        super.onBackPressed()
+    }
+
 }

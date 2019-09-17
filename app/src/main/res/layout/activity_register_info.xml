@@ -44,7 +44,7 @@
                 android:backgroundTint="@color/button_primary_color"
                 android:clickable="true"
                 android:gravity="center"
-                android:onClick="@{()->Handler.registerForCourse()}"
+                android:onClick="@{()->Handler.clickToPay()}"
                 android:paddingTop="@dimen/dp8"
                 android:paddingBottom="@dimen/dp8"
                 android:text="@string/click_here_to_pay"

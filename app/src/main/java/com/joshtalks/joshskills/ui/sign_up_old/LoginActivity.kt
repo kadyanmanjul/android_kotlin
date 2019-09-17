@@ -14,6 +14,8 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.core.CoreJoshActivity
 import com.joshtalks.joshskills.core.RC_ACCOUNT_KIT
+import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
+import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.custom_ui.FullScreenProgressDialog
 
 class LoginActivity : BaseActivity() {
@@ -35,6 +37,7 @@ class LoginActivity : BaseActivity() {
             if (it) {
                 val intent = getIntentForState()
                 if (intent == null) {
+                    AppAnalytics.create(AnalyticsEvent.LOGIN_SUCCESS.NAME).push()
                     startActivity(getInboxActivityIntent())
                 }else{
                     startActivity(intent)
@@ -45,7 +48,7 @@ class LoginActivity : BaseActivity() {
 
     }
 
-    fun launchFBSignUpActivity() {
+    private fun launchFBSignUpActivity() {
         val intent = Intent(this, AccountKitActivity::class.java)
         val configurationBuilder = AccountKitConfiguration.AccountKitConfigurationBuilder(
             LoginType.PHONE,
@@ -56,6 +59,8 @@ class LoginActivity : BaseActivity() {
             configurationBuilder.build()
         )
         startActivityForResult(intent, RC_ACCOUNT_KIT)
+        AppAnalytics.create(AnalyticsEvent.OTP_ACCOUNT_KIT_ACTIVITY.NAME).push()
+
 
     }
 
@@ -71,13 +76,13 @@ class LoginActivity : BaseActivity() {
 
         if (loginResult != null) {
             if (loginResult.error != null) {
-                showError(loginResult.error!!.userFacingMessage)
+                AppAnalytics.create(AnalyticsEvent.LOGIN_ERROR.NAME).addParam("Error",loginResult.error?.userFacingMessage).push()
+                showError(loginResult.error?.userFacingMessage)
                 finish()
             } else if (loginResult.wasCancelled()) {
+                AppAnalytics.create(AnalyticsEvent.LOGIN_CANCELLED.NAME).push()
                 finish()
-
-                // toastMessage = "Login Cancelled";
-
+                // toastMessage = "Login Cancelled"
             } else {
                 loginResult.authorizationCode?.let {
                     FullScreenProgressDialog.display(this)
@@ -88,8 +93,15 @@ class LoginActivity : BaseActivity() {
     }
 
 
-    private fun showError(error: String) {
+    private fun showError(error: String?) {
         Toast.makeText(this, error, Toast.LENGTH_SHORT).show()
     }
 
+    override fun onBackPressed() {
+        super.onBackPressed()
+        AppAnalytics.create(AnalyticsEvent.BACK_PRESSED.NAME)
+            .addParam("name", javaClass.simpleName)
+            .push()
+
+    }
 }

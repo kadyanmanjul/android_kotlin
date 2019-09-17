@@ -33,6 +33,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import com.google.android.gms.location.LocationRequest
+import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
+import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.patloew.rxlocation.RxLocation
 
 
@@ -56,6 +58,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver {
         setToolbar()
         addObserver()
         lifecycle.addObserver(this)
+
         AppObjectController.clearDownloadMangerCallback()
         if (Mentor.getInstance().hasId()) {
             viewModel.getRegisterCourses()
@@ -63,6 +66,9 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver {
             locationFetch()
             return
         }
+        AppAnalytics.create(AnalyticsEvent.INBOX_SCREEN.NAME).push()
+
+
 
     }
 
@@ -109,6 +115,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver {
             RxBus.getDefault().toObservable()
                 .subscribeOn(Schedulers.io()).subscribe({
                     if (it is InboxEntity) {
+                        AppAnalytics.create(AnalyticsEvent.COURSE_SELECTED.NAME).addParam("course_id",it.conversation_id).push()
                         ConversationActivity.startConversionActivity(this, it)
                     }
                 }, {
@@ -197,6 +204,15 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver {
             })
 
     }
+
+
+    override fun onBackPressed() {
+        AppAnalytics.create(AnalyticsEvent.BACK_PRESSED.NAME)
+            .addParam("name", javaClass.simpleName)
+            .push()
+        super.onBackPressed()
+    }
+
 
 
 }

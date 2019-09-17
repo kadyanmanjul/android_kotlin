@@ -294,7 +294,7 @@ public class AudioView extends FrameLayout {
 
 
     private void setPlay() {
-        AppAnalytics.create(AnalyticsEvent.AUDIO_OPENED.getNAME()).addParam("ChatId", message.getChatId());
+        AppAnalytics.create(AnalyticsEvent.AUDIO_PLAYED.getNAME()).addParam("ChatId", message.getChatId()).push();
         isPlaying = true;
         String audioId = null;
         try{

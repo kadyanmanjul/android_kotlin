@@ -34,9 +34,12 @@ class OnBoardActivity : BaseActivity() {
             R.layout.activity_onboard
         )
         layout.handler = this
+        AppAnalytics.create(AnalyticsEvent.LOGIN_SCREEN_1.NAME).push()
+
     }
 
     fun signUp() {
+        AppAnalytics.create(AnalyticsEvent.LOGIN_CLICKED.NAME).push()
         val intent = Intent(this, LoginActivity::class.java)
         startActivity(intent)
 

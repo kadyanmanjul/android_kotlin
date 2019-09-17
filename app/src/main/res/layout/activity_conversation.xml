@@ -142,7 +142,7 @@
                             android:layout_height="match_parent"
                             android:clipChildren="false"
                             android:clipToPadding="false"
-                            android:onClick="@{()->handler.uploadImageByUser()}"
+                            android:onClick="@{()->handler.uploadImageByCameraOrGallery()}"
                             android:paddingLeft="@dimen/_5sdp"
                             android:paddingTop="@dimen/_10sdp"
                             android:paddingRight="@dimen/_10sdp"

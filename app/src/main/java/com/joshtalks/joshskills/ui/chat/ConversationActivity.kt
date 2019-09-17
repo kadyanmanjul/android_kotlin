@@ -40,6 +40,8 @@ import com.joshtalks.appcamera.utility.ImageQuality
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
+import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.custom_ui.decorator.LayoutMarginDecoration
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.messaging.MessageBuilderFactory
@@ -112,6 +114,8 @@ class ConversationActivity : BaseActivity() {
         AppObjectController.uiHandler.postDelayed({
             checkAudioPermission(null)
         }, 1000)
+        AppAnalytics.create(AnalyticsEvent.CHAT_SCREEN.NAME).push()
+
     }
 
     private fun setToolbar() {
@@ -131,16 +135,17 @@ class ConversationActivity : BaseActivity() {
         compositeDisposable.add(RxBus2.listen(PlayVideoEvent::class.java).subscribe {
             VideoPlayerActivity.startConversionActivity(
                 this,
-                it.chatModel,inboxEntity.course_name
+                it.chatModel, inboxEntity.course_name
             )
         })
         compositeDisposable.add(RxBus2.listen(ImageShowEvent::class.java).subscribe {
             it.imageUrl?.let {
-                ImageShowFragment.newInstance(it,inboxEntity.course_name).show(supportFragmentManager, "ImageShow")
+                ImageShowFragment.newInstance(it, inboxEntity.course_name)
+                    .show(supportFragmentManager, "ImageShow")
             }
         })
         compositeDisposable.add(RxBus2.listen(PdfOpenEventBus::class.java).subscribe {
-            PdfViewerActivity.startPdfActivity(this, it.pdfObject,inboxEntity.course_name)
+            PdfViewerActivity.startPdfActivity(this, it.pdfObject, inboxEntity.course_name)
         })
 
         compositeDisposable.add(RxBus2.listen(DownloadMediaEventBus::class.java).subscribe {
@@ -225,6 +230,7 @@ class ConversationActivity : BaseActivity() {
 
         conversationBinding.recordView.setOnRecordListener(object : OnRecordListener {
             override fun onStart() {
+                AppAnalytics.create(AnalyticsEvent.AUDIO_BUTTON_CLICKED.NAME).push()
 
                 conversationBinding.recordView.visibility = VISIBLE
                 Handler().postDelayed({
@@ -238,6 +244,8 @@ class ConversationActivity : BaseActivity() {
             }
 
             override fun onFinish(recordTime: Long) {
+                AppAnalytics.create(AnalyticsEvent.AUDIO_SENT.NAME).push()
+
                 conversationBinding.recordView.visibility = GONE
                 conversationViewModel.stopRecording()
                 addUploadAudioMedia(conversationViewModel.recordFile.absolutePath)
@@ -247,6 +255,7 @@ class ConversationActivity : BaseActivity() {
             override fun onLessThanSecond() {
                 conversationBinding.recordView.visibility = GONE
                 conversationViewModel.stopRecording()
+                AppAnalytics.create(AnalyticsEvent.AUDIO_CANCELLED.NAME).push()
 
 
             }
@@ -256,7 +265,7 @@ class ConversationActivity : BaseActivity() {
         conversationBinding.recordView.setOnBasketAnimationEndListener {
             conversationBinding.recordView.visibility = GONE
             conversationViewModel.stopRecording()
-
+            AppAnalytics.create(AnalyticsEvent.AUDIO_CANCELLED.NAME).push()
         }
 
 
@@ -329,8 +338,6 @@ class ConversationActivity : BaseActivity() {
                 return@setOnRecordClickListener
             }
 
-
-
             if (cMessageType == BASE_MESSAGE_TYPE.TX) {
                 val tChatMessage =
                     TChatMessage(conversationBinding.chatEdit.text.toString())
@@ -353,6 +360,8 @@ class ConversationActivity : BaseActivity() {
 
 
         findViewById<View>(R.id.ll_audio).setOnClickListener {
+            AppAnalytics.create(AnalyticsEvent.AUDIO_SELECTED.NAME).push()
+
             uploadAttachment()
             val pickerConfig = MediaPickerConfig()
                 .setUriPermanentAccess(false)
@@ -370,21 +379,25 @@ class ConversationActivity : BaseActivity() {
                 .subscribe({
                     it?.let {
                         it[0].path?.let { path ->
+                            AppAnalytics.create(AnalyticsEvent.AUDIO_SENT.NAME).push()
                             addUploadAudioMedia(Utils.getPathFromUri(path))
                         }
 
                     }
                 }, {
-                    it.printStackTrace()
+                    AppAnalytics.create(AnalyticsEvent.BACK_PRESSED.NAME).push()
                 })
 
         }
         findViewById<View>(R.id.ll_camera).setOnClickListener {
+            AppAnalytics.create(AnalyticsEvent.CAMERA_SELECTED.NAME).push()
             uploadAttachment()
             uploadImageByUser()
 
         }
         findViewById<View>(R.id.ll_gallary).setOnClickListener {
+            AppAnalytics.create(AnalyticsEvent.CAMERA_SELECTED.NAME).push()
+
             uploadAttachment()
             val pickerConfig = MediaPickerConfig()
                 .setUriPermanentAccess(false)
@@ -406,6 +419,8 @@ class ConversationActivity : BaseActivity() {
                         }
                     }
                 }, {
+                    AppAnalytics.create(AnalyticsEvent.BACK_PRESSED.NAME).push()
+
                 })
         }
 
@@ -422,7 +437,8 @@ class ConversationActivity : BaseActivity() {
         val recordUpdatedPath = AppDirectory.getRecordingSentFilePath()
         AppDirectory.copy(mediaPath, recordUpdatedPath)
         val tAudioMessage = TAudioMessage(recordUpdatedPath, recordUpdatedPath)
-        val cell = MessageBuilderFactory.getMessage(activityRef, BASE_MESSAGE_TYPE.AU, tAudioMessage)
+        val cell =
+            MessageBuilderFactory.getMessage(activityRef, BASE_MESSAGE_TYPE.AU, tAudioMessage)
         conversationBinding.chatRv.addView(cell)
         scrollToEnd()
         conversationViewModel.uploadMedia(
@@ -484,7 +500,11 @@ class ConversationActivity : BaseActivity() {
                     "Clicked on Backspace"
                 )
             }
-            .setOnEmojiClickListener { ignore, ignore2 -> Log.d(TAG, "Clicked on emoji") }
+            .setOnEmojiClickListener { ignore, ignore2 ->
+                Log.d(TAG, "Clicked on emoji")
+                AppAnalytics.create(AnalyticsEvent.EMOJI_CLICKED.NAME).push()
+
+            }
             .setOnEmojiPopupShownListener { conversationBinding.ivEmoji.setImageResource(R.drawable.ic_keyboard) }
             .setOnSoftKeyboardOpenListener { ignore -> Log.d(TAG, "Opened soft keyboard") }
             .setOnEmojiPopupDismissListener { conversationBinding.ivEmoji.setImageResource(R.drawable.happy_face) }
@@ -591,7 +611,13 @@ class ConversationActivity : BaseActivity() {
         super.onActivityResult(requestCode, resultCode, data)
     }
 
-    fun uploadImageByUser() {
+    fun uploadImageByCameraOrGallery() {
+        AppAnalytics.create(AnalyticsEvent.CAMERA_CLICKED.NAME).push()
+        uploadImageByUser()
+    }
+
+
+    private fun uploadImageByUser() {
         val options = Options.init()
             .setRequestCode(IMAGE_SELECT_REQUEST_CODE)
             .setCount(1)
@@ -624,9 +650,8 @@ class ConversationActivity : BaseActivity() {
     }
 
     private fun addUserVideoInView(videoPath: String) {
-        Log.e("selectedImagePath", videoPath)
         val videoSentFile = AppDirectory.videoSentFile()
-        var flag = AppDirectory.copy(videoPath, videoSentFile.absolutePath)
+        AppDirectory.copy(videoPath, videoSentFile.absolutePath)
         val tVideoMessage = TVideoMessage(videoSentFile.absolutePath, videoSentFile.absolutePath)
 
         val cell = MessageBuilderFactory.getMessage(
@@ -654,41 +679,17 @@ class ConversationActivity : BaseActivity() {
     }
 
     fun uploadAttachment() {
+        AppAnalytics.create(AnalyticsEvent.ATTACHMENT_CLICKED.NAME).push()
         AttachmentUtil.revealAttachments(revealAttachmentView, conversationBinding)
         revealAttachmentView = !revealAttachmentView
 
     }
-
-
-    override fun onNewIntent(intent: Intent?) {
-        super.onNewIntent(intent)
-
-        /* if (intent != null) {
-             if (intent.hasExtra(MEDIA_) && intent.getBooleanExtra(MEDIA_, false)) {
-                 val videoUri = intent.getStringExtra(VideoRecordActivity.VIDEO_URI)
-                 val videoScreenshot =
-                     intent.getStringExtra(VideoRecordActivity.VIDEO_SCREENSHOT)
-                 Log.e("video path", videoUri + "   sc  " + videoScreenshot)
-
-             }
-
-
-         }*/
-    }
-
-    override fun onResume() {
-        super.onResume()
-        activityRef = WeakReference(this)
-        subscribeRXBus()
-    }
-
 
     private fun checkAudioPermission(
         callback: Runnable?,
         settingFlag: Boolean = false
     ) {
         Dexter.withActivity(this)
-
             .withPermissions(
                 Manifest.permission.READ_EXTERNAL_STORAGE,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE,
@@ -720,6 +721,21 @@ class ConversationActivity : BaseActivity() {
             }
             .onSameThread()
             .check();
+    }
+
+
+    override fun onResume() {
+        super.onResume()
+        activityRef = WeakReference(this)
+        subscribeRXBus()
+    }
+
+
+    override fun onBackPressed() {
+        AppAnalytics.create(AnalyticsEvent.BACK_PRESSED.NAME)
+            .addParam("name", javaClass.simpleName)
+            .push()
+        super.onBackPressed()
     }
 
 }

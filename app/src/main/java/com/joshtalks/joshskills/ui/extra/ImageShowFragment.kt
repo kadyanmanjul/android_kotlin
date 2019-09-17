@@ -62,10 +62,14 @@ class ImageShowFragment : DialogFragment() {
             .into(big_image_view)
         view.findViewById<AppCompatTextView>(R.id.text_message_title).text = courseName
         view.findViewById<View>(R.id.iv_back).setOnClickListener {
+            AppAnalytics.create(AnalyticsEvent.BACK_PRESSED.NAME)
+                .addParam("name", javaClass.simpleName)
+                .push()
             dismiss()
         }
-        AppAnalytics.create(AnalyticsEvent.IMAGE_OPENED.NAME).addParam("URL", imagePath)
+        AppAnalytics.create(AnalyticsEvent.IMAGE_CLICKED.NAME).push()
     }
+
 
     companion object {
         fun newInstance(path: String, courseName: String) = ImageShowFragment().apply {

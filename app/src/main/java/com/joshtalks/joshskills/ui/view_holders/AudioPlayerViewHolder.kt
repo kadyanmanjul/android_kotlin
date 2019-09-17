@@ -70,7 +70,7 @@ class AudioPlayerViewHolder(activityRef: WeakReference<FragmentActivity>, messag
         }
 
         override fun onCompleted(download: Download) {
-            AppAnalytics.create(AnalyticsEvent.AUDIO_DOWNLOAD.NAME).addParam("ChatId", message.chatId)
+            AppAnalytics.create(AnalyticsEvent.AUDIO_DOWNLOAD.NAME).addParam("ChatId", message.chatId).push()
 
             DownloadUtils.removeCallbackListener(download.tag)
             CoroutineScope(Dispatchers.IO).launch {

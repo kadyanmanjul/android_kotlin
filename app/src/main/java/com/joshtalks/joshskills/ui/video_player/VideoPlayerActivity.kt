@@ -11,6 +11,8 @@ import androidx.databinding.DataBindingUtil
 import com.google.android.exoplayer2.ui.DefaultTimeBar
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.BaseActivity
+import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
+import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.custom_ui.PlayerListener
 import com.joshtalks.joshskills.databinding.ActivityVideoPlayer1Binding
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
@@ -44,7 +46,6 @@ class VideoPlayerActivity : BaseActivity(), PlayerListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-       // setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         this.window.setFlags(
             WindowManager.LayoutParams.FLAG_FULLSCREEN,
@@ -69,6 +70,8 @@ class VideoPlayerActivity : BaseActivity(), PlayerListener {
         binding.pvPlayer.setActivity(this)
         exoProgress = findViewById(R.id.exo_progress)
         setToolbar()
+        AppAnalytics.create(AnalyticsEvent.WATCH_ACTIVITY.NAME).push()
+
 
     }
 
@@ -82,6 +85,9 @@ class VideoPlayerActivity : BaseActivity(), PlayerListener {
             binding.textMessageTitle.text = it
         }
         binding.ivBack.setOnClickListener {
+            AppAnalytics.create(AnalyticsEvent.BACK_PRESSED.NAME)
+                .addParam("name", javaClass.simpleName)
+                .push()
             finish()
         }
     }
@@ -126,6 +132,14 @@ class VideoPlayerActivity : BaseActivity(), PlayerListener {
         super.onResume()
         binding.pvPlayer.onResume()
     }
+
+    override fun onBackPressed() {
+        AppAnalytics.create(AnalyticsEvent.BACK_PRESSED.NAME)
+            .addParam("name", javaClass.simpleName)
+            .push()
+        super.onBackPressed()
+    }
+
 
 
 }
