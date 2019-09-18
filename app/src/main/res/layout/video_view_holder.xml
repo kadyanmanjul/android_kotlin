@@ -53,8 +53,7 @@
                         android:layout_gravity="start"
                         android:adjustViewBounds="true"
                         android:clickable="false"
-                        android:scaleType="fitCenter"
-                         />
+                        android:scaleType="fitCenter" />
 
                 <ImageView
                         android:layout_width="wrap_content"
@@ -120,7 +119,7 @@
             </FrameLayout>
 
 
-            <TextView
+            <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
                     android:id="@+id/text_message_body"
                     fontPath="fonts/Roboto-Regular.ttf"
                     android:layout_width="wrap_content"

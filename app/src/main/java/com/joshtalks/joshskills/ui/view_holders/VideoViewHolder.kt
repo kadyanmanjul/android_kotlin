@@ -3,6 +3,7 @@ package com.joshtalks.joshskills.ui.view_holders
 import android.Manifest
 import android.media.ThumbnailUtils
 import android.provider.MediaStore
+import android.text.Html
 import android.util.Log
 import android.view.View.GONE
 import android.view.View.VISIBLE
@@ -11,9 +12,11 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
+import androidx.core.text.HtmlCompat
 import androidx.fragment.app.FragmentActivity
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.core.service.DownloadUtils
 import com.joshtalks.joshskills.messaging.RxBus2
@@ -67,7 +70,7 @@ class VideoViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
     lateinit var text_title: TextView
 
     @View(R.id.text_message_body)
-    lateinit var text_message_body: TextView
+    lateinit var text_message_body: JoshTextView
 
 
     @View(R.id.text_message_time)
@@ -282,7 +285,7 @@ class VideoViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
 
                 }
                 question.qText?.isNotEmpty().let {
-                    text_message_body.text = question.qText
+                    text_message_body.text = HtmlCompat.fromHtml(question.qText.toString(), HtmlCompat.FROM_HTML_MODE_LEGACY)
                     text_message_body.visibility = VISIBLE
 
                 }
@@ -293,6 +296,7 @@ class VideoViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
 
 
         updateTime(text_message_time)
+        addMessageAutoLink(text_message_body)
 
     }
 

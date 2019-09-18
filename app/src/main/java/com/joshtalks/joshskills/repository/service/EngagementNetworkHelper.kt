@@ -40,8 +40,6 @@ object EngagementNetworkHelper {
     fun engagePdfApi(pdfEngage: PdfEngage) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                pdfEngage.totalView++
-                AppObjectController.appDatabase.chatDao().updateTotalViewForPdf(pdfEngage.pdfId,pdfEngage.totalView)
                 val obj = AppObjectController.chatNetworkService.engagePdf(pdfEngage)
             } catch (ex: Exception) {
                 ex.printStackTrace()

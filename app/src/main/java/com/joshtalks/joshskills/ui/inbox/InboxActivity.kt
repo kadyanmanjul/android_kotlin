@@ -56,7 +56,6 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver {
         DatabaseUtils.updateUserMessageSeen()
         setContentView(R.layout.activity_inbox)
         setToolbar()
-        addObserver()
         lifecycle.addObserver(this)
 
         AppObjectController.clearDownloadMangerCallback()
@@ -67,7 +66,6 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver {
             return
         }
         AppAnalytics.create(AnalyticsEvent.INBOX_SCREEN.NAME).push()
-
 
 
     }
@@ -115,7 +113,8 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver {
             RxBus.getDefault().toObservable()
                 .subscribeOn(Schedulers.io()).subscribe({
                     if (it is InboxEntity) {
-                        AppAnalytics.create(AnalyticsEvent.COURSE_SELECTED.NAME).addParam("course_id",it.conversation_id).push()
+                        AppAnalytics.create(AnalyticsEvent.COURSE_SELECTED.NAME)
+                            .addParam("course_id", it.conversation_id).push()
                         ConversationActivity.startConversionActivity(this, it)
                     }
                 }, {
@@ -177,29 +176,32 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver {
         val rxLocation = RxLocation(application)
         val locationRequest = LocationRequest.create()
             .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-            .setInterval(5000)
+            .setInterval(10000)
         compositeDisposable.add(rxLocation.location().updates(locationRequest).subscribeOn(
             Schedulers.io()
         )
             .subscribe { location ->
-                CoroutineScope(Dispatchers.IO).launch {
-                    try {
-                        val request = UpdateUserLocality()
-                        request.locality = SearchLocality(location.latitude, location.longitude)
+                if (Mentor.getInstance().getLocality() == null) {
+                    CoroutineScope(Dispatchers.IO).launch {
+                        try {
+                            val request = UpdateUserLocality()
+                            request.locality = SearchLocality(location.latitude, location.longitude)
 
-                        val response: ProfileResponse =
-                            AppObjectController.signUpNetworkService.updateUserAddressAsync(
-                                Mentor.getInstance().getId(),
-                                request
-                            ).await()
-                        Mentor.getInstance().setLocality(response.locality).update()
+                            val response: ProfileResponse =
+                                AppObjectController.signUpNetworkService.updateUserAddressAsync(
+                                    Mentor.getInstance().getId(),
+                                    request
+                                ).await()
+                            Mentor.getInstance().setLocality(response.locality).update()
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                            // onFailedToFetchLocation()
+                        }
                         compositeDisposable.clear()
-
-                    } catch (e: Exception) {
-                        e.printStackTrace()
-                        // onFailedToFetchLocation()
+                        CoroutineScope(Dispatchers.Main).launch {
+                            addObserver()
+                        }
                     }
-
                 }
             })
 
@@ -213,6 +215,13 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver {
         super.onBackPressed()
     }
 
+    override fun onResume() {
+        super.onResume()
+        addObserver()
+    }
 
-
+    override fun onPause() {
+        super.onPause()
+        compositeDisposable.clear()
+    }
 }

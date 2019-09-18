@@ -12,15 +12,19 @@ import com.bumptech.glide.Glide
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
+import com.joshtalks.joshskills.repository.server.engage.ImageEngage
+import com.joshtalks.joshskills.repository.service.EngagementNetworkHelper
 import com.joshtalks.joshskills.ui.pdfviewer.COURSE_NAME
 import kotlinx.android.synthetic.main.fragment_image_show.*
 
 
 const val IMAGE_SOURCE = "image_source"
+const val IMAGE_ID = "image_id"
 
 class ImageShowFragment : DialogFragment() {
     private lateinit var imagePath: String
     private lateinit var courseName: String
+    private var imageId: String?=null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -32,6 +36,9 @@ class ImageShowFragment : DialogFragment() {
 
             it.getString(COURSE_NAME)?.let { course ->
                 courseName = course
+            }
+            it.getString(IMAGE_ID)?.let {
+                imageId = it
             }
 
         }
@@ -68,16 +75,22 @@ class ImageShowFragment : DialogFragment() {
             dismiss()
         }
         AppAnalytics.create(AnalyticsEvent.IMAGE_CLICKED.NAME).push()
+        imageId?.let {
+            EngagementNetworkHelper.engageImageApi(ImageEngage(it))
+
+        }
     }
 
 
     companion object {
-        fun newInstance(path: String, courseName: String) = ImageShowFragment().apply {
-            arguments = Bundle().apply {
-                putString(IMAGE_SOURCE, path)
-                putString(COURSE_NAME, courseName)
+        fun newInstance(path: String, courseName: String, imageId: String?) =
+            ImageShowFragment().apply {
+                arguments = Bundle().apply {
+                    putString(IMAGE_SOURCE, path)
+                    putString(COURSE_NAME, courseName)
+                    putString(IMAGE_ID, imageId)
 
+                }
             }
-        }
     }
 }

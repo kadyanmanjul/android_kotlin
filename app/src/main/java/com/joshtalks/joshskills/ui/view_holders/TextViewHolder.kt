@@ -8,6 +8,7 @@ import com.mindorks.placeholderview.annotations.Resolve
 import com.mindorks.placeholderview.annotations.View
 import android.widget.FrameLayout
 import androidx.appcompat.widget.AppCompatTextView
+import androidx.core.text.HtmlCompat
 import androidx.fragment.app.FragmentActivity
 import com.joshtalks.joshskills.core.custom_ui.custom_textview.AutoLinkMode
 import com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
@@ -44,7 +45,6 @@ class TextViewHolder(activityRef: WeakReference<FragmentActivity>, message: Chat
 
     @Resolve
     fun onResolved() {
-
         message.sender?.let {
             updateView(it, root_view, root_sub_view, message_view)
         }
@@ -52,19 +52,12 @@ class TextViewHolder(activityRef: WeakReference<FragmentActivity>, message: Chat
         updateTime(text_message_time)
 
         if (message.text != null) {
-            text_message_body.text = message.text
+            text_message_body.text =  HtmlCompat.fromHtml(message.text.toString(), HtmlCompat.FROM_HTML_MODE_LEGACY)
         } else {
             message.question?.qText?.let {
-                text_message_body.text = it
+                text_message_body.text =  HtmlCompat.fromHtml(it, HtmlCompat.FROM_HTML_MODE_LEGACY)
             }
         }
-
-
-        text_message_body.setAutoLinkOnClickListener { autoLinkMode, matchedText ->
-            when(autoLinkMode){
-                AutoLinkMode.MODE_PHONE->Utils.call(getAppContext(),matchedText)
-                AutoLinkMode.MODE_URL->Utils.openUrl(matchedText)
-            }
-        }
+        addMessageAutoLink(text_message_body)
     }
 }

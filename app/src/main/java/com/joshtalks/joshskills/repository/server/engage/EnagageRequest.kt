@@ -1,6 +1,11 @@
 package com.joshtalks.joshskills.repository.server.engage
 
 import com.google.gson.annotations.SerializedName
+import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
+import com.joshtalks.joshskills.repository.local.entity.MESSAGE_DELIVER_STATUS
+import com.joshtalks.joshskills.repository.local.entity.Question
+import com.joshtalks.joshskills.repository.local.entity.Sender
+import java.util.*
 
 
 data class VideoEngage(
@@ -18,7 +23,7 @@ data class AudioEngage(
     val graph: List<Graph>,
     @SerializedName("audio_id")
     val audioId: String?,
-    @SerializedName("watch_time")
+    @SerializedName("listen_time")
     val listen_time: Long
 )
 
@@ -27,7 +32,7 @@ data class PdfEngage(
     @SerializedName("pdf_id")
     val pdfId: String,
     @SerializedName("total_view")
-    var totalView: Int
+    var totalView: Int=1
 )
 
 
@@ -35,5 +40,5 @@ data class ImageEngage(
     @SerializedName("image_id")
     val imageId: String,
     @SerializedName("total_view")
-    val totalView: Int
+    val totalView: Int=1
 )

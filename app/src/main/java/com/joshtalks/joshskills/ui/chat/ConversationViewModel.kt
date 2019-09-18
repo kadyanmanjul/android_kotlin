@@ -83,6 +83,8 @@ class ConversationViewModel(application: Application) : AndroidViewModel(applica
 
     private fun getUserRecentChats() = viewModelScope.launch(Dispatchers.IO) {
 
+        val chatReturn: MutableList<ChatModel> = mutableListOf()
+
         val listOfChat: List<ChatModel> = if (lastChatTime != null) {
             appDatabase.chatDao().getRecentChatAfterTime(inboxEntity.conversation_id, lastChatTime)
         } else {
@@ -91,7 +93,6 @@ class ConversationViewModel(application: Application) : AndroidViewModel(applica
         if (listOfChat.isNotEmpty()) {
             lastChatTime = listOfChat.last().created
         }
-        val chatReturn: MutableList<ChatModel> = mutableListOf()
         for (chat in listOfChat) {
             val question: Question? = appDatabase.chatDao().getQuestion(chat.chatId)
             if (question != null) {

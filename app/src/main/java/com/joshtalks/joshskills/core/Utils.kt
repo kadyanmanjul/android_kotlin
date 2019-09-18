@@ -236,6 +236,7 @@ object Utils {
 
     fun call(context: Context, phoneNumber: String) {
 
+
         val intent = Intent(Intent.ACTION_DIAL).apply {
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         }
@@ -246,12 +247,16 @@ object Utils {
 
 
     fun openUrl(url: String) {
-        val intent = Intent(ACTION_VIEW)
-        intent.apply {
-            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        try {
+            val intent = Intent(ACTION_VIEW)
+            intent.apply {
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
+            intent.data = Uri.parse("http://"+url.replace("https://","").trim())
+            AppObjectController.joshApplication.startActivity(intent)
+        }catch (ex:Exception){
+            ex.printStackTrace()
         }
-        intent.data = Uri.parse(url)
-        AppObjectController.joshApplication.startActivity(intent)
     }
 
     fun isInternetAvailable(): Boolean {

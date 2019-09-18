@@ -7,6 +7,7 @@ import android.widget.FrameLayout
 import android.widget.TextView
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
+import androidx.core.text.HtmlCompat
 import androidx.fragment.app.FragmentActivity
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
@@ -16,6 +17,7 @@ import com.mindorks.placeholderview.annotations.View
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
+import com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.core.service.DownloadUtils
 import com.joshtalks.joshskills.messaging.RxBus2
@@ -47,7 +49,7 @@ class ImageViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
 
 
     @View(R.id.text_message_body)
-    lateinit var text_message_body: TextView
+    lateinit var text_message_body: JoshTextView
 
 
     @View(R.id.text_message_time)
@@ -90,30 +92,30 @@ class ImageViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
 
         if (message.url != null) {
             if (message.downloadStatus == DOWNLOAD_STATUS.DOWNLOADED) {
-                    if (AppDirectory.isFileExist(message.downloadedLocalPath!!)) {
-                        Dexter.withActivity(activityRef.get())
-                            .withPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
-                            .withListener(object : PermissionListener {
-                                override fun onPermissionGranted(response: PermissionGrantedResponse) {
-                                    if (image_view.tag != null) {
-                                        if (image_view.tag.toString() != message.downloadedLocalPath) {
-                                            image_view.tag = null
-                                        }
+                if (AppDirectory.isFileExist(message.downloadedLocalPath!!)) {
+                    Dexter.withActivity(activityRef.get())
+                        .withPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
+                        .withListener(object : PermissionListener {
+                            override fun onPermissionGranted(response: PermissionGrantedResponse) {
+                                if (image_view.tag != null) {
+                                    if (image_view.tag.toString() != message.downloadedLocalPath) {
+                                        image_view.tag = null
                                     }
-                                    setImageView(image_view, message.downloadedLocalPath!!, false)
                                 }
+                                setImageView(image_view, message.downloadedLocalPath!!, false)
+                            }
 
-                                override fun onPermissionDenied(response: PermissionDeniedResponse) {
-                                    setImageView(image_view, message.url!!, true)
-                                }
+                            override fun onPermissionDenied(response: PermissionDeniedResponse) {
+                                setImageView(image_view, message.url!!, true)
+                            }
 
-                                override fun onPermissionRationaleShouldBeShown(
-                                    permission: PermissionRequest,
-                                    token: PermissionToken
-                                ) {
+                            override fun onPermissionRationaleShouldBeShown(
+                                permission: PermissionRequest,
+                                token: PermissionToken
+                            ) {
 
-                                }
-                            }).check()
+                            }
+                        }).check()
                 } else {
                     setImageView(image_view, message.url!!, true)
                     fileNotDownloadView()
@@ -156,16 +158,16 @@ class ImageViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
                                 }
                             }).check()
                     } else {
-                        fileNotDownloadView()
-                        setImageView(image_view, imageObj.imageUrl, true)
+                       // fileNotDownloadView()
+                        setImageView(image_view, imageObj.imageUrl, false)
                     }
 
                 } else if (message.downloadStatus == DOWNLOAD_STATUS.DOWNLOADING) {
-                    fileDownloadRunView()
+                   // fileDownloadRunView()
                     download(imageObj.imageUrl)
                 } else {
-                    setImageView(image_view, imageObj.imageUrl, true)
-                    fileNotDownloadView()
+                    setImageView(image_view, imageObj.imageUrl, false)
+                   // fileNotDownloadView()
 
                 }
             }
@@ -173,13 +175,14 @@ class ImageViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
 
         if (message.text != null) {
             text_message_body.text?.isNotEmpty()?.let {
-                text_message_body.text = message.text
                 text_message_body.visibility = GONE
+                addMessageAutoLink(text_message_body)
+
             }
 
         } else {
             message.question?.qText?.let {
-                text_message_body.text = it
+                text_message_body.text = HtmlCompat.fromHtml(it, HtmlCompat.FROM_HTML_MODE_LEGACY)
             }
         }
 
@@ -240,7 +243,7 @@ class ImageViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
             RxBus2.publish(ImageShowEvent(message.url))
         } else {
             message.question?.imageList?.get(0)?.imageUrl?.let {
-                RxBus2.publish(ImageShowEvent(it))
+                RxBus2.publish(ImageShowEvent(it,message.question?.imageList?.get(0)?.id))
             }
         }
 

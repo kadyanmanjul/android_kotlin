@@ -46,7 +46,7 @@
                         android:paddingEnd="5dp"
                         android:textColor="@color/gray_48"
                         android:textSize="@dimen/font_16"
-                        android:text="dwdwdw"
+                        android:text=""
                         app:layout_constraintBottom_toTopOf="@+id/text_message_time"
                         app:layout_constraintLeft_toLeftOf="parent"
                         app:layout_constraintStart_toStartOf="parent"

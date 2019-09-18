@@ -7,6 +7,9 @@ import android.widget.FrameLayout
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.fragment.app.FragmentActivity
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.custom_ui.custom_textview.AutoLinkMode
+import com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
 import com.joshtalks.joshskills.repository.local.entity.MESSAGE_DELIVER_STATUS
 import com.joshtalks.joshskills.repository.local.entity.Sender
@@ -129,6 +132,15 @@ abstract class BaseChatViewHolder(
                 0,
                 0
             )
+        }
+    }
+
+    fun addMessageAutoLink(text_message_body:JoshTextView){
+        text_message_body.setAutoLinkOnClickListener { autoLinkMode, matchedText ->
+            when(autoLinkMode){
+                AutoLinkMode.MODE_PHONE-> Utils.call(getAppContext(),matchedText)
+                AutoLinkMode.MODE_URL-> Utils.openUrl(matchedText)
+            }
         }
     }
 

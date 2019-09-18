@@ -2,25 +2,17 @@ package com.joshtalks.joshskills.ui.sign_up_old
 
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Toast
-
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
-
-import com.facebook.CallbackManager
-import com.facebook.accountkit.AccountKitLoginResult
-import com.facebook.accountkit.ui.AccountKitActivity
-import com.facebook.accountkit.ui.AccountKitConfiguration
-import com.facebook.accountkit.ui.LoginType
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.BaseActivity
-import com.joshtalks.joshskills.core.CoreJoshActivity
-import com.joshtalks.joshskills.core.RC_ACCOUNT_KIT
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
-import com.joshtalks.joshskills.core.custom_ui.FullScreenProgressDialog
 import com.joshtalks.joshskills.databinding.ActivityOnboardBinding
+import io.github.inflationx.calligraphy3.TypefaceUtils
+import io.github.inflationx.calligraphy3.CalligraphyTypefaceSpan
+import android.text.SpannableStringBuilder
+import android.text.Spanned
+import android.widget.TextView
+import com.joshtalks.joshskills.core.BaseActivity
 
 
 class OnBoardActivity : BaseActivity() {
@@ -36,6 +28,13 @@ class OnBoardActivity : BaseActivity() {
         layout.handler = this
         AppAnalytics.create(AnalyticsEvent.LOGIN_SCREEN_1.NAME).push()
 
+
+        val sBuilder = SpannableStringBuilder()
+        sBuilder.append("Welcome to ").append("Josh Skills")
+        val typefaceSpan =
+            CalligraphyTypefaceSpan(TypefaceUtils.load(assets, "fonts/OpenSans-Bold.ttf"))
+        sBuilder.setSpan(typefaceSpan, 11, 22, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+        layout.textView.setText(sBuilder, TextView.BufferType.SPANNABLE)
     }
 
     fun signUp() {
@@ -54,7 +53,6 @@ class OnBoardActivity : BaseActivity() {
         this@OnBoardActivity.finish()
 
     }
-
 
 
 }

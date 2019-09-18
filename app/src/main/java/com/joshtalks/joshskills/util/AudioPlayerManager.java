@@ -63,7 +63,9 @@ public class AudioPlayerManager {
 
             }
         } else {
-            EngagementNetworkHelper.engageAudioApi(new AudioEngage(new ArrayList<>(), LAST_ID, exoPlayer.getDuration()));
+            if (LAST_ID!=null) {
+                EngagementNetworkHelper.engageAudioApi(new AudioEngage(new ArrayList<>(), LAST_ID, exoPlayer.getCurrentPosition()));
+            }
             exoPlayer.seekTo(0);
             exoPlayer.setPlayWhenReady(false);
             if (weakReferenceArrayList != null && weakReferenceArrayList.size() > 0) {

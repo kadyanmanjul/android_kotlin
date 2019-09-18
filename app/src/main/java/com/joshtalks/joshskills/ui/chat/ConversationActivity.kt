@@ -28,6 +28,7 @@ import com.joshtalks.recordview.OnRecordListener
 import com.vanniktech.emoji.EmojiPopup
 import android.view.MotionEvent
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.ContextCompat
@@ -97,6 +98,7 @@ class ConversationActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        System.getProperty("line.separator");
         inboxEntity = intent.getSerializableExtra(CHAT_ROOM_OBJECT) as InboxEntity
         conversationViewModel.inboxEntity = inboxEntity
         conversationBinding = DataBindingUtil.setContentView(this, R.layout.activity_conversation)
@@ -133,14 +135,19 @@ class ConversationActivity : BaseActivity() {
 
 
         compositeDisposable.add(RxBus2.listen(PlayVideoEvent::class.java).subscribe {
+            if (!Utils.isInternetAvailable()) {
+                Toast.makeText(applicationContext, "No internet available", Toast.LENGTH_LONG)
+                    .show()
+                return@subscribe
+            }
             VideoPlayerActivity.startConversionActivity(
                 this,
                 it.chatModel, inboxEntity.course_name
             )
         })
         compositeDisposable.add(RxBus2.listen(ImageShowEvent::class.java).subscribe {
-            it.imageUrl?.let {
-                ImageShowFragment.newInstance(it, inboxEntity.course_name)
+            it.imageUrl?.let {imageUrl->
+                ImageShowFragment.newInstance(imageUrl, inboxEntity.course_name,it.imageId)
                     .show(supportFragmentManager, "ImageShow")
             }
         })
@@ -357,7 +364,7 @@ class ConversationActivity : BaseActivity() {
             conversationBinding.chatEdit.setText("")
 
             conversationBinding.chatRv?.setOnFocusChangeListener { v, hasFocus ->
-                    AttachmentUtil.revealAttachments(false, conversationBinding)
+                AttachmentUtil.revealAttachments(false, conversationBinding)
             }
         }
 

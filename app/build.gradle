@@ -13,8 +13,8 @@ android {
         applicationId "com.joshtalks.joshskills"
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 3
-        versionName "1.0.2"
+        versionCode 4
+        versionName "1.0.4"
         vectorDrawables.useSupportLibrary true
         renderscriptTargetApi 28 as int
         renderscriptSupportModeEnabled true
@@ -150,6 +150,8 @@ dependencies {
     implementation("androidx.work:work-runtime:2.1.0")
 
     implementation 'com.google.android.play:core:1.6.3'
+    implementation group: 'commons-lang', name: 'commons-lang', version: '2.6'
+
 
 
 
