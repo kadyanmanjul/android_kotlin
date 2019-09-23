@@ -63,10 +63,9 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver {
             viewModel.getRegisterCourses()
             SyncChatService.syncChatWithServer()
             locationFetch()
-            return
         }
         AppAnalytics.create(AnalyticsEvent.INBOX_SCREEN.NAME).push()
-
+        addObserver()
 
     }
 

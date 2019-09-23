@@ -17,23 +17,30 @@
             android:layout_gravity="start"
             >
 
-        <FrameLayout
+        <LinearLayout
+                android:orientation="vertical"
                 android:padding="@dimen/_2sdp"
                 android:id="@+id/message_view"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/_16sdp">
+                android:layout_height="wrap_content">
 
-            <com.joshtalks.joshskills.core.custom_ui.AudioView
+            <com.joshtalks.joshskills.core.custom_ui.audioplayer.view.JcPlayerView
+                    android:paddingTop="@dimen/_5sdp"
                     android:id="@+id/audio_view"
-                    fontPath="fonts/Roboto-Regular.ttf"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
                     android:layout_gravity="start"
                     android:visibility="visible"
-                   />
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:pause_icon_color="@color/grey_7A"
+                    app:play_icon_color="@color/grey_7A"
+                    app:seek_bar_color="@color/colorPrimary"
+                    app:text_audio_current_duration_color="@color/gray_48"
+                    app:text_audio_duration_color="@color/gray_48"
+                    />
+
 
             <TextView
+                    android:layout_marginTop="@dimen/_5sdp"
                     android:drawablePadding="@dimen/_4sdp"
                     android:id="@+id/text_message_time"
                     fontPath="fonts/Roboto-Light.ttf"
@@ -47,7 +54,7 @@
                     android:textSize="@dimen/font_12"
                     android:visibility="visible"
                      />
-        </FrameLayout>
+        </LinearLayout>
 
     </FrameLayout>
 </FrameLayout>

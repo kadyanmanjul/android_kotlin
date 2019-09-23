@@ -20,7 +20,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:padding="@dimen/spacing_xlarge"
+                android:padding="@dimen/_24sdp"
                 custom:scv_background_color="@color/windowBackground"
                 custom:scv_crop_mode="fit_image"
                 custom:scv_frame_color="@color/colorAccent"

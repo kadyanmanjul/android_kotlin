@@ -4,6 +4,7 @@ import android.net.Uri
 import android.view.Gravity
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.widget.AppCompatTextView
@@ -14,6 +15,9 @@ import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.custom_ui.AudioView
+import com.joshtalks.joshskills.core.custom_ui.audioplayer.JcPlayerManagerListener
+import com.joshtalks.joshskills.core.custom_ui.audioplayer.general.JcStatus
+import com.joshtalks.joshskills.core.custom_ui.audioplayer.view.JcPlayerView
 import com.joshtalks.joshskills.core.interfaces.AudioPlayerInterface
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.core.service.DownloadUtils
@@ -41,7 +45,7 @@ class AudioPlayerViewHolder(activityRef: WeakReference<FragmentActivity>, messag
     BaseChatViewHolder(activityRef, message) {
 
     @View(R.id.audio_view)
-    lateinit var audio_view: AudioView
+    lateinit var audio_view: JcPlayerView
 
 
     @View(R.id.text_message_time)
@@ -54,7 +58,7 @@ class AudioPlayerViewHolder(activityRef: WeakReference<FragmentActivity>, messag
     lateinit var root_sub_view: FrameLayout
 
     @View(R.id.message_view)
-    lateinit var message_view: FrameLayout
+    lateinit var message_view: LinearLayout
 
 
     lateinit var audioPlayerViewHolder: AudioPlayerViewHolder
@@ -70,7 +74,8 @@ class AudioPlayerViewHolder(activityRef: WeakReference<FragmentActivity>, messag
         }
 
         override fun onCompleted(download: Download) {
-            AppAnalytics.create(AnalyticsEvent.AUDIO_DOWNLOAD.NAME).addParam("ChatId", message.chatId).push()
+            AppAnalytics.create(AnalyticsEvent.AUDIO_DOWNLOAD.NAME)
+                .addParam("ChatId", message.chatId).push()
 
             DownloadUtils.removeCallbackListener(download.tag)
             CoroutineScope(Dispatchers.IO).launch {
@@ -137,21 +142,21 @@ class AudioPlayerViewHolder(activityRef: WeakReference<FragmentActivity>, messag
     }
 
 
-
     @Resolve
     fun onResolved() {
-        this.audioPlayerViewHolder=this
+        this.audioPlayerViewHolder = this
         updateTime(text_message_time)
         message.sender?.let {
             updateView(it, root_view, root_sub_view, message_view)
         }
         text_message_time.text = Utils.messageTimeConversion(message.created)
+       // audio_view.jcPlayerManagerListener = jcPlayerManagerListener
         audio_view.prepareAudioPlayer(activityRef.get(), message, object : AudioPlayerInterface {
             override fun downloadInQueue() {
                 RxBus2.publish(DownloadMediaEventBus(audioPlayerViewHolder, message))
             }
 
-            override fun downloadStart(url:String) {
+            override fun downloadStart(url: String) {
                 DownloadUtils.downloadFile(
                     url,
                     AppDirectory.recordingReceivedFile(url).absolutePath,
@@ -166,7 +171,6 @@ class AudioPlayerViewHolder(activityRef: WeakReference<FragmentActivity>, messag
             }
 
         })
-
 
     }
 

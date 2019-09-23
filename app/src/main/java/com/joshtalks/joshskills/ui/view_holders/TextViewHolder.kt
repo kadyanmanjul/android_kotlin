@@ -1,5 +1,6 @@
 package com.joshtalks.joshskills.ui.view_holders
 
+import android.view.View.VISIBLE
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
@@ -10,7 +11,6 @@ import android.widget.FrameLayout
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.text.HtmlCompat
 import androidx.fragment.app.FragmentActivity
-import com.joshtalks.joshskills.core.custom_ui.custom_textview.AutoLinkMode
 import com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
 import java.lang.ref.WeakReference
 
@@ -29,6 +29,8 @@ class TextViewHolder(activityRef: WeakReference<FragmentActivity>, message: Chat
     @View(R.id.text_message_body)
     lateinit var text_message_body: JoshTextView
 
+    @View(R.id.text_title)
+    lateinit var text_title: JoshTextView
 
     @View(R.id.text_message_time)
     lateinit var text_message_time: AppCompatTextView
@@ -57,7 +59,14 @@ class TextViewHolder(activityRef: WeakReference<FragmentActivity>, message: Chat
             message.question?.qText?.let {
                 text_message_body.text =  HtmlCompat.fromHtml(it, HtmlCompat.FROM_HTML_MODE_LEGACY)
             }
+            message.question?.title?.let {text->
+                if (text.isNotEmpty()){
+                    text_title.visibility= VISIBLE
+                    text_title.text =  HtmlCompat.fromHtml(text, HtmlCompat.FROM_HTML_MODE_LEGACY)
+                }
+            }
         }
+
         addMessageAutoLink(text_message_body)
     }
 }

@@ -21,13 +21,12 @@
     <string name="click_here_to_pay">Click here to pay</string>
     <string name="call_help_line">Call helpline </string>
 
-    <string name="incomplete_register">Sorry! Aapne abhi tak josh skills ke liye payment nahi kari hai</string>
+    <string name="incomplete_register">Sorry, aap English Course\n mein registered nahi ho</string>
 
 
     <string name="location_rationale">Please allow to access your location. It will help in better recommendations. </string>
 
 
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="short_seconds">sec</string>
 
     <string name="volume_up_message">Please turn the volume up</string>
@@ -35,6 +34,28 @@
 
     <string name="type_message_hint">Type a Message</string>
     <string name="profile_photo">Profile photo</string>
+
+    <string name="splash_sub_string">ज़िन्दगी में आगे बढ़ो, जोश के साथ</string>
+    <string name="register_number_title">Apna Registered Whatsapp Number Use Karein</string>
+
+    <string name="register_now">Register Now</string>
+    <string name="aur_koi_problem">Aur koi problem?</string>
+    <string name="kya_aapne_text">Kya aapne kisi aur Whatsapp number se register kiya hai</string>
+    <string name="continue_label">Continue</string>
+    <string name="phone_number">Phone number</string>
+    <string name="invalid_phone_number">Invalid phone number</string>
+
+<string name="anonymous_user_login">Okay! Isi Number se dubara register karein!</string>
+    <string name="register">Register</string>
+
+
+    <string name="text_test" >fadsfasdfadsf</string>
+    <string name="play_initial_time">00:00</string>
+    <string name="track_number">Track</string>
+    <string name="play_button_description">Play button</string>
+    <string name="next_button_description">Next button</string>
+    <string name="previous_button_description">Previous button</string>
+
 
 
 </resources>

@@ -57,14 +57,14 @@ public class AudioPlayerManager {
             } else if (exoPlayer.getPlaybackState() == Player.STATE_ENDED && exoPlayer.getPlayWhenReady()) {
                 exoPlayer.setPlayWhenReady(false);
                 exoPlayer.seekTo(0);
-                EngagementNetworkHelper.engageAudioApi(new AudioEngage(new ArrayList<>(), audioId, exoPlayer.getDuration()));
+               // EngagementNetworkHelper.engageAudioApi(new AudioEngage(new ArrayList<>(), audioId, exoPlayer.getDuration()));
                 return;
             } else {
 
             }
         } else {
             if (LAST_ID!=null) {
-                EngagementNetworkHelper.engageAudioApi(new AudioEngage(new ArrayList<>(), LAST_ID, exoPlayer.getCurrentPosition()));
+               // EngagementNetworkHelper.engageAudioApi(new AudioEngage(new ArrayList<>(), LAST_ID, exoPlayer.getCurrentPosition()));
             }
             exoPlayer.seekTo(0);
             exoPlayer.setPlayWhenReady(false);

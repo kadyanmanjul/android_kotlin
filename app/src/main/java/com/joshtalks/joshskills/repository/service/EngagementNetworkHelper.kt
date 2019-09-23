@@ -1,6 +1,7 @@
 package com.joshtalks.joshskills.repository.service
 
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.repository.local.eventbus.MediaEngageEventBus
 import com.joshtalks.joshskills.repository.server.engage.AudioEngage
 import com.joshtalks.joshskills.repository.server.engage.ImageEngage
 import com.joshtalks.joshskills.repository.server.engage.PdfEngage
@@ -24,13 +25,15 @@ object EngagementNetworkHelper {
     }
 
     @JvmStatic
-    fun engageAudioApi(audioEngage: AudioEngage) {
+    fun engageAudioApi(mediaEngageEventBus: MediaEngageEventBus) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                audioEngage.audioId?.let {
-                    val obj = AppObjectController.chatNetworkService.engageAudio(audioEngage)
+                var timeListen: Long = 0
+                for (graph in mediaEngageEventBus.list) {
+                    timeListen += (graph.endTime - graph.startTime)
                 }
-
+                val audioEngage = AudioEngage(emptyList(), mediaEngageEventBus.id, timeListen)
+                AppObjectController.chatNetworkService.engageAudio(audioEngage)
             } catch (ex: Exception) {
                 ex.printStackTrace()
             }

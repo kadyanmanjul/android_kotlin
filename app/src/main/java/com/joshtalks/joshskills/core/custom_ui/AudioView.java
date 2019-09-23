@@ -487,7 +487,6 @@ public class AudioView extends FrameLayout {
         controlToggle.setVisibility(VISIBLE);
         initSeekBar();
         setTimeStampOfAudio();
-
         updateUri();
 
     }

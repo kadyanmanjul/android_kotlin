@@ -278,17 +278,21 @@ class VideoViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
             }
 
             message.question?.let { question ->
-
-                question.title?.isNotEmpty().let {
-                    text_title.text = question.title
+                if (question.title?.isNotEmpty()!!) {
+                    text_title.text = HtmlCompat.fromHtml(
+                        question.title.toString(),
+                        HtmlCompat.FROM_HTML_MODE_LEGACY
+                    )
                     text_title.visibility = VISIBLE
-
                 }
-                question.qText?.isNotEmpty().let {
-                    text_message_body.text = HtmlCompat.fromHtml(question.qText.toString(), HtmlCompat.FROM_HTML_MODE_LEGACY)
+                if (question.qText?.isNotEmpty()!!) {
+                    text_message_body.text = HtmlCompat.fromHtml(
+                        question.qText.toString(),
+                        HtmlCompat.FROM_HTML_MODE_LEGACY
+                    )
                     text_message_body.visibility = VISIBLE
-
                 }
+
             }
 
 

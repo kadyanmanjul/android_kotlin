@@ -17,7 +17,6 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import com.google.gson.GsonBuilder
-import com.joshtalks.joshskills.repository.service.ChatNetworkService
 import com.joshtalks.joshskills.repository.service.MediaDUNetworkService
 import com.tonyodev.fetch2.Fetch
 import com.tonyodev.fetch2.FetchConfiguration
@@ -34,6 +33,7 @@ import com.google.gson.JsonDeserializationContext
 import com.google.gson.JsonElement
 import com.google.gson.JsonDeserializer
 import com.joshtalks.joshskills.core.service.DownloadUtils
+import com.joshtalks.joshskills.repository.service.ChatNetworkService
 import java.lang.reflect.Type
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -97,6 +97,9 @@ internal class AppObjectController {
         @JvmStatic
         var screenHeight: Int = 0
 
+        @JvmStatic
+       lateinit var okHttpClient: OkHttpClient
+
 
         fun init(context: JoshApplication): AppObjectController {
             joshApplication = context;
@@ -138,7 +141,7 @@ internal class AppObjectController {
                 .create()
 
 
-            var builder = OkHttpClient().newBuilder()
+            val builder = OkHttpClient().newBuilder()
             if (BuildConfig.DEBUG) {
                 builder.addNetworkInterceptor(StethoInterceptor())
                 val logging = HttpLoggingInterceptor().apply {
@@ -162,6 +165,7 @@ internal class AppObjectController {
                 }
 
             })
+            okHttpClient=builder.build()
 
             retrofit = Retrofit.Builder()
                 .baseUrl(SERVER_URL)

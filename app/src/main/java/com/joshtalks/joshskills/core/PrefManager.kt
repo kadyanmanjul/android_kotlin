@@ -25,7 +25,7 @@ object PrefManager {
     }
 
     fun clear() {
-        prefManager.edit().clear()
+        prefManager.edit().clear().commit()
     }
 
 

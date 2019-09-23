@@ -27,6 +27,7 @@ import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import com.github.florent37.singledateandtimepicker.dialog.SingleDateAndTimePickerDialog
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
@@ -330,7 +331,7 @@ class ProfileActivity : BaseActivity(), MediaSelectCallback {
 
 }
 
-class MediaPickerFragment : SuperBottomSheetFragment() {
+class MediaPickerFragment : BottomSheetDialogFragment() {
 
     lateinit var callback: MediaSelectCallback
     private lateinit var fragmentMediaSelectBinding: FragmentMediaSelectBinding

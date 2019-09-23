@@ -52,6 +52,11 @@ interface SignUpNetworkService {
     @POST("$DIR/mentor/fcm/")
     fun uploadFCMToken( @FieldMap params: Map<String, String>): Deferred<Any>
 
+    @FormUrlEncoded
+    @POST("$DIR/mentor/register/anonymous/")
+    fun registerAnonymousUser(@FieldMap params: Map<String, String>): Deferred<SuccessResponse>
+
+
 
 
 

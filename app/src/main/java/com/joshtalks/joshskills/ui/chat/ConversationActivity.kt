@@ -73,6 +73,7 @@ import java.lang.ref.WeakReference
 
 import com.joshtalks.joshskills.core.custom_ui.SmoothLinearLayoutManager
 import com.joshtalks.joshskills.repository.server.chat_message.TVideoMessage
+import com.joshtalks.joshskills.repository.service.EngagementNetworkHelper
 import de.hdodenhof.circleimageview.CircleImageView
 
 const val CHAT_ROOM_OBJECT = "chat_room"
@@ -211,6 +212,17 @@ class ConversationActivity : BaseActivity() {
                 } catch (ex: Exception) {
                     ex.printStackTrace()
                 }
+            }
+
+        })
+        compositeDisposable.add(RxBus2.listen(MediaEngageEventBus::class.java).subscribe {
+            CoroutineScope(Dispatchers.IO).launch {
+                if (it.type.equals("AUDIO",ignoreCase = true)){
+                    EngagementNetworkHelper.engageAudioApi(it)
+                }else{
+                    //EngagementNetworkHelper.engageVideoApi(it)
+                }
+
             }
 
         })
@@ -358,6 +370,7 @@ class ConversationActivity : BaseActivity() {
                     TChatMessage(conversationBinding.chatEdit.text.toString()),
                     chatModel = cell.message
                 )
+                scrollToEnd()
 
             }
 

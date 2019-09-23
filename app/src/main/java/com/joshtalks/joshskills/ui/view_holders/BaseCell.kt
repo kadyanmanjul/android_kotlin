@@ -23,9 +23,12 @@ import com.joshtalks.joshskills.repository.local.entity.Sender
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import androidx.core.graphics.drawable.DrawableCompat.setTint
 import com.bumptech.glide.Glide
+import com.bumptech.glide.integration.webp.decoder.WebpDrawable
+import com.bumptech.glide.integration.webp.decoder.WebpDrawableTransformation
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
@@ -55,6 +58,8 @@ abstract class BaseCell() {
            // .override((AppObjectController.screenWidth*.4).toInt(),(AppObjectController.screenHeight*.6).toInt())            //.thumbnail(Glide.with(activityRef.get()!!).load(url))
             //.centerCrop()
             .apply(RequestOptions.bitmapTransform(BlurTransformation(20, 3)))
+            .optionalTransform(WebpDrawable::class.java,  WebpDrawableTransformation(CircleCrop()))
+
             .apply(requestOptions)
             .listener(object : RequestListener<Drawable> {
                 override fun onLoadFailed(
@@ -93,6 +98,8 @@ abstract class BaseCell() {
         Glide.with(getAppContext())
             .load(url)
             .apply(requestOptions)
+            .optionalTransform(WebpDrawable::class.java,  WebpDrawableTransformation(CircleCrop()))
+
             .centerCrop()
             //.thumbnail(Glide.with(activityRef.get()!!).load(url))
             .listener(object : RequestListener<Drawable> {

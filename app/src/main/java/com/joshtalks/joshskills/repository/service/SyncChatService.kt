@@ -121,7 +121,7 @@ object SyncChatService {
         }
     }
 
-    private suspend fun uploadOnS3Server(
+    private fun uploadOnS3Server(
         responseObj: AmazonPolicyResponse,
         mediaPath: String
     ): Deferred<Int> {

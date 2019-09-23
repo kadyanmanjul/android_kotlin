@@ -33,6 +33,22 @@
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent" />
 
+
+        <TextView
+                android:layout_marginTop="@dimen/_7sdp"
+                app:layout_constraintTop_toBottomOf="@+id/textView"
+                android:id="@+id/textView_sub"
+                fontPath="fonts/OpenSans-Regular.ttf"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/splash_sub_string"
+                android:textColor="@color/button_primary_color"
+                android:textSize="@dimen/font_16"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent" />
+
+
         <ImageView
                 android:id="@+id/image_view"
                 android:layout_width="0dp"
@@ -47,6 +63,18 @@
                 app:layout_constraintWidth_default="percent"
                 app:layout_constraintWidth_percent="0.6" />
 
+
+        <TextView
+                app:layout_constraintBottom_toTopOf="@+id/tvNativeLogin"
+                fontPath="fonts/OpenSans-SemiBold.ttf"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/register_number_title"
+                android:textColor="#a8adb1"
+                android:textSize="@dimen/font_10"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent" />
 
         <com.google.android.material.button.MaterialButton
                 android:id="@+id/tvNativeLogin"
