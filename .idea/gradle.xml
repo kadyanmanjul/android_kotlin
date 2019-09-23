@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="GradleSettings">
+    <option name="linkedExternalProjectsSettings">
+      <GradleProjectSettings>
+        <option name="distributionType" value="DEFAULT_WRAPPED" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="modules">
+          <set>
+            <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/animationlibrary" />
+            <option value="$PROJECT_DIR$/app" />
+            <option value="$PROJECT_DIR$/appcamera" />
+            <option value="$PROJECT_DIR$/emoji-google" />
+            <option value="$PROJECT_DIR$/emojiBase" />
+            <option value="$PROJECT_DIR$/joshlibrary" />
+            <option value="$PROJECT_DIR$/mediapicker" />
+            <option value="$PROJECT_DIR$/pdfviewer" />
+            <option value="$PROJECT_DIR$/phone-field" />
+            <option value="$PROJECT_DIR$/pixeditor" />
+            <option value="$PROJECT_DIR$/recordview" />
+          </set>
+        </option>
+        <option name="resolveModulePerSourceSet" value="false" />
+        <option name="testRunner" value="PLATFORM" />
+      </GradleProjectSettings>
+    </option>
+  </component>
+</project>
