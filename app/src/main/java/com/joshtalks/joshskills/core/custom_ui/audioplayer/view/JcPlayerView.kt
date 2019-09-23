@@ -56,6 +56,7 @@ class JcPlayerView : LinearLayout, View.OnClickListener, SeekBar.OnSeekBarChange
     internal lateinit var message: ChatModel
     private var audioPlayerInterface: AudioPlayerInterface? = null
     private var uri: Uri? = null
+    private var isMedia = false
 
 
     val myPlaylist: List<JcAudio>?
@@ -749,6 +750,7 @@ class JcPlayerView : LinearLayout, View.OnClickListener, SeekBar.OnSeekBarChange
                 if (message.question!!.audioList!![0].downloadedLocalPath == null || message.question!!.audioList!![0].downloadedLocalPath!!.isEmpty()) {
                     this.uri = Uri.parse(message.question!!.audioList!![0].audio_url)
                     jcAudios.add(JcAudio.createFromURL(message.question!!.audioList!![0].audio_url))
+                    isMedia=true
                     this.duration = Utils.getDurationOfMedia(
                         context,
                         message.question!!.audioList!![0].audio_url
@@ -756,6 +758,8 @@ class JcPlayerView : LinearLayout, View.OnClickListener, SeekBar.OnSeekBarChange
 
                 } else {
                     jcAudios.add(JcAudio.createFromFilePath(message.question!!.audioList!![0].downloadedLocalPath!!))
+                    isMedia=true
+
                     this.duration = Utils.getDurationOfMedia(
                         context,
                         message.question!!.audioList!![0].downloadedLocalPath!!
@@ -765,10 +769,14 @@ class JcPlayerView : LinearLayout, View.OnClickListener, SeekBar.OnSeekBarChange
             } else {
                 if (message.downloadedLocalPath!!.isEmpty()) {
                     jcAudios.add(JcAudio.createFromFilePath(message.url!!))
+                    isMedia=true
+
                     this.duration = Utils.getDurationOfMedia(context, message.url!!)!!.toInt()
 
                 } else {
                     jcAudios.add(JcAudio.createFromFilePath(message.downloadedLocalPath!!))
+                    isMedia=true
+
                     this.duration =
                         Utils.getDurationOfMedia(context, message.downloadedLocalPath!!)!!.toInt()
 
@@ -787,11 +795,13 @@ class JcPlayerView : LinearLayout, View.OnClickListener, SeekBar.OnSeekBarChange
 
     private fun updateController() {
 
-        AppObjectController.uiHandler.post {
-            btnPlay?.visibility = View.VISIBLE
-            btnPause?.visibility = View.GONE
-            seekBar?.progress = 0
+        if (isMedia) {
+            AppObjectController.uiHandler.post {
+                btnPlay?.visibility = View.VISIBLE
+                btnPause?.visibility = View.GONE
+                seekBar?.progress = 0
 
+            }
         }
 
 
