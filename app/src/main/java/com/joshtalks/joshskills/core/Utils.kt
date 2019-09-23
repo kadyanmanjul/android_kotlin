@@ -252,7 +252,9 @@ object Utils {
             intent.apply {
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             }
-            intent.data = Uri.parse("http://"+url.replace("https://","").trim())
+            if (url.trim().startsWith("http://").not()){
+                intent.data = Uri.parse("http://"+url.replace("https://","").trim())
+            }
             AppObjectController.joshApplication.startActivity(intent)
         }catch (ex:Exception){
             ex.printStackTrace()

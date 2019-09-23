@@ -24,6 +24,7 @@ import java.util.concurrent.TimeUnit
  * @date 02/07/16.
  * Jesus loves you.
  */
+const val THREAD_TIME :Long=25
 class JcPlayerService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnCompletionListener,
         MediaPlayer.OnBufferingUpdateListener, MediaPlayer.OnErrorListener {
 
@@ -47,12 +48,14 @@ class JcPlayerService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.O
     var serviceListener: JcPlayerServiceListener? = null
 
 
+
     inner class JcPlayerServiceBinder : Binder() {
         val service: JcPlayerService
             get() = this@JcPlayerService
     }
 
     override fun onBind(intent: Intent): IBinder? = binder
+
 
 
     fun play(jcAudio: JcAudio): JcStatus {
@@ -233,7 +236,8 @@ class JcPlayerService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.O
                     try {
                         val status = updateStatus(currentAudio, JcStatus.PlayState.PLAYING)
                         serviceListener?.onTimeChangedListener(status)
-                        Thread.sleep(TimeUnit.SECONDS.toMillis(1))
+                        sleep(THREAD_TIME)
+                   //     sleep(TimeUnit.SECONDS.toMillis(1))
                     } catch (e: IllegalStateException) {
                         e.printStackTrace()
                     } catch (e: InterruptedException) {

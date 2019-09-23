@@ -515,6 +515,8 @@ class JcPlayerView : LinearLayout, View.OnClickListener, SeekBar.OnSeekBarChange
         }
         txtDuration?.post { txtDuration?.text = toTimeSongString(duration) }
 
+        showPlayButton()
+
     }
 
     override fun onContinueAudio(status: JcStatus) {
