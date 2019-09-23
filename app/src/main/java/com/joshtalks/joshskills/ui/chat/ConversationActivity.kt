@@ -147,8 +147,8 @@ class ConversationActivity : BaseActivity() {
             )
         })
         compositeDisposable.add(RxBus2.listen(ImageShowEvent::class.java).subscribe {
-            it.imageUrl?.let {imageUrl->
-                ImageShowFragment.newInstance(imageUrl, inboxEntity.course_name,it.imageId)
+            it.imageUrl?.let { imageUrl ->
+                ImageShowFragment.newInstance(imageUrl, inboxEntity.course_name, it.imageId)
                     .show(supportFragmentManager, "ImageShow")
             }
         })
@@ -217,9 +217,9 @@ class ConversationActivity : BaseActivity() {
         })
         compositeDisposable.add(RxBus2.listen(MediaEngageEventBus::class.java).subscribe {
             CoroutineScope(Dispatchers.IO).launch {
-                if (it.type.equals("AUDIO",ignoreCase = true)){
+                if (it.type.equals("AUDIO", ignoreCase = true)) {
                     EngagementNetworkHelper.engageAudioApi(it)
-                }else{
+                } else {
                     //EngagementNetworkHelper.engageVideoApi(it)
                 }
 
@@ -252,9 +252,12 @@ class ConversationActivity : BaseActivity() {
                 AppAnalytics.create(AnalyticsEvent.AUDIO_BUTTON_CLICKED.NAME).push()
 
                 conversationBinding.recordView.visibility = VISIBLE
-                Handler().postDelayed({
-                    conversationViewModel.startRecord()
-                }, 250)
+                conversationViewModel.startRecord().let {
+                    if (it) {
+                        conversationViewModel.startRecord()
+                    }else{
+                    }
+                }
 
             }
 
@@ -376,7 +379,7 @@ class ConversationActivity : BaseActivity() {
 
             conversationBinding.chatEdit.setText("")
 
-            conversationBinding.chatRv?.setOnFocusChangeListener { v, hasFocus ->
+            conversationBinding.chatRv.setOnFocusChangeListener { v, hasFocus ->
                 AttachmentUtil.revealAttachments(false, conversationBinding)
             }
         }
@@ -457,6 +460,8 @@ class ConversationActivity : BaseActivity() {
 
 
     private fun addUploadAudioMedia(mediaPath: String) {
+
+
         val recordUpdatedPath = AppDirectory.getRecordingSentFilePath()
         AppDirectory.copy(mediaPath, recordUpdatedPath)
         val tAudioMessage = TAudioMessage(recordUpdatedPath, recordUpdatedPath)

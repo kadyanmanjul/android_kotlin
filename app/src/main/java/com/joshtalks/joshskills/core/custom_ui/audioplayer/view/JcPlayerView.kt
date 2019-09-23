@@ -15,11 +15,10 @@ import android.graphics.PorterDuff
 import android.net.Uri
 import android.os.Build
 import android.util.AttributeSet
+import android.util.Log
 import android.view.View
-import android.widget.Button
-import android.widget.LinearLayout
-import android.widget.ProgressBar
-import android.widget.SeekBar
+import android.widget.*
+import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.custom_ui.audioplayer.JcPlayerManager
 import com.joshtalks.joshskills.core.custom_ui.audioplayer.JcPlayerManagerListener
@@ -32,14 +31,18 @@ import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
 import com.joshtalks.joshskills.repository.local.entity.DOWNLOAD_STATUS
+import com.joshtalks.joshskills.repository.local.eventbus.AudioPlayerPauseEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.MediaEngageEventBus
+import com.joshtalks.joshskills.repository.local.eventbus.PlayVideoEvent
 import com.joshtalks.joshskills.repository.local.model.ListenGraph
+import com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionDeniedResponse
 import com.karumi.dexter.listener.PermissionGrantedResponse
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.single.PermissionListener
+import io.reactivex.disposables.CompositeDisposable
 
 class JcPlayerView : LinearLayout, View.OnClickListener, SeekBar.OnSeekBarChangeListener,
     JcPlayerManagerListener {
@@ -81,6 +84,8 @@ class JcPlayerView : LinearLayout, View.OnClickListener, SeekBar.OnSeekBarChange
     var endTime: Long = 0
     var drag = false
     var audioListenList = mutableListOf<ListenGraph>()
+    private var compositeDisposable = CompositeDisposable()
+
 
     companion object {
         private const val PULSE_ANIMATION_DURATION = 200L
@@ -387,10 +392,32 @@ class JcPlayerView : LinearLayout, View.OnClickListener, SeekBar.OnSeekBarChange
     override fun onClick(view: View) {
         when (view.id) {
             R.id.btnPlay ->
+
+
                 btnPlay?.let {
-                    applyPulseAnimation(it)
-                    continueAudio()
-                    showPauseButton()
+                    Dexter.withActivity(activity)
+                        .withPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
+                        .withListener(object : PermissionListener {
+                            override fun onPermissionGranted(response: PermissionGrantedResponse) {
+                                applyPulseAnimation(it)
+                                continueAudio()
+                                showPauseButton()
+                                RxBus2.publish(AudioPlayerPauseEventBus(message.chatId))
+                            }
+
+                            override fun onPermissionDenied(response: PermissionDeniedResponse) {
+
+                            }
+
+                            override fun onPermissionRationaleShouldBeShown(
+                                permission: PermissionRequest,
+                                token: PermissionToken
+                            ) {
+                                token.continuePermissionRequest()
+                            }
+                        }).check()
+
+
                 }
 
             R.id.btnPause -> {
@@ -650,32 +677,10 @@ class JcPlayerView : LinearLayout, View.OnClickListener, SeekBar.OnSeekBarChange
         if (message.url != null) {
             if (message.downloadStatus === DOWNLOAD_STATUS.DOWNLOADED) {
                 if (message.downloadedLocalPath != null && AppDirectory.isFileExist(message.downloadedLocalPath!!)) {
-                    Dexter.withActivity(activity)
-                        .withPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
-                        .withListener(object : PermissionListener {
-                            override fun onPermissionGranted(response: PermissionGrantedResponse) {
-                                mediaDownloaded()
-                            }
-
-                            override fun onPermissionDenied(response: PermissionDeniedResponse) {
-
-                            }
-
-                            override fun onPermissionRationaleShouldBeShown(
-                                permission: PermissionRequest,
-                                token: PermissionToken
-                            ) {
-                                mediaNotDownloaded()
-                            }
-                        }).check()
-
+                    mediaDownloaded()
                 } else {
                     mediaNotDownloaded()
-
-
                 }
-
-
             } else if (message.downloadStatus === DOWNLOAD_STATUS.DOWNLOADING) {
                 mediaDownloading()
                 audioPlayerInterface?.downloadStart(message.url!!)
@@ -693,25 +698,7 @@ class JcPlayerView : LinearLayout, View.OnClickListener, SeekBar.OnSeekBarChange
                             audioTypeObj.downloadedLocalPath!!
                         )
                     ) {
-                        Dexter.withActivity(activity)
-                            .withPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
-                            .withListener(object : PermissionListener {
-                                override fun onPermissionGranted(response: PermissionGrantedResponse) {
-                                    mediaDownloaded()
-                                }
-
-                                override fun onPermissionDenied(response: PermissionDeniedResponse) {
-
-                                }
-
-                                override fun onPermissionRationaleShouldBeShown(
-                                    permission: PermissionRequest,
-                                    token: PermissionToken
-                                ) {
-                                    mediaNotDownloaded()
-                                }
-                            }).check()
-
+                        mediaDownloaded()
                     } else {
                         mediaNotDownloaded()
                     }
@@ -731,6 +718,9 @@ class JcPlayerView : LinearLayout, View.OnClickListener, SeekBar.OnSeekBarChange
         progressBarPlayer.visibility = View.GONE
         cancelDownload.visibility = View.GONE
         startDownload.visibility = View.VISIBLE
+        btnPlay?.visibility = View.GONE
+        btnPause?.visibility = View.GONE
+
 
     }
 
@@ -739,6 +729,7 @@ class JcPlayerView : LinearLayout, View.OnClickListener, SeekBar.OnSeekBarChange
         progressBarPlayer.visibility = View.VISIBLE
         cancelDownload.visibility = View.VISIBLE
         startDownload.visibility = View.GONE
+
     }
 
     private fun mediaDownloaded() {
@@ -788,7 +779,38 @@ class JcPlayerView : LinearLayout, View.OnClickListener, SeekBar.OnSeekBarChange
             e.printStackTrace()
         }
         kill()
+        // addAudio(jcAudios.get(0))
+        //   jcPlayerManagerListener=this
         initPlaylist(jcAudios, this)
+
+    }
+
+    private fun updateController() {
+
+        AppObjectController.uiHandler.post {
+            btnPlay?.visibility = View.VISIBLE
+            btnPause?.visibility = View.GONE
+            seekBar?.progress = 0
+
+        }
+
+
+    }
+
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+        compositeDisposable.add(RxBus2.listen(AudioPlayerPauseEventBus::class.java).subscribe {
+            it?.audioId?.let { audioId ->
+                if (audioId != message.chatId) {
+                    updateController()
+                }
+            }
+        })
+    }
+
+    override fun onDetachedFromWindow() {
+        super.onDetachedFromWindow()
+        compositeDisposable.clear()
     }
 
 }

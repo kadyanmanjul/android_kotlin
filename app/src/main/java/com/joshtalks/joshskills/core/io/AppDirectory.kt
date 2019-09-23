@@ -8,6 +8,7 @@ import java.util.*
 import java.io.*
 import com.facebook.FacebookSdk.getCacheDir
 import com.joshtalks.joshskills.core.AppObjectController
+import com.facebook.FacebookSdk.getCacheDir
 
 
 object AppDirectory {
@@ -71,7 +72,8 @@ object AppDirectory {
             AppDirectory.FileType.RECORDING_SENT
         ) + ".amr"
     }
-    private fun getAudioFileName(extension:String): String {
+
+    private fun getAudioFileName(extension: String): String {
         return "RECORD".plus("-").plus(getDate()).plus("-".plus(APP_SHORT_NAME)) + getFileEndName(
             AppDirectory.FileType.RECORDING_SENT
         ) + extension
@@ -221,13 +223,26 @@ object AppDirectory {
     }
 
     fun tempRecordingWavFile(): File {
-        val f = File(RECORDING_SENT_PATH)
-        if (f.exists().not()) {
-            f.mkdirs()
+        var file: File
+        try {
+            val f = File(RECORDING_SENT_PATH)
+            if (f.exists().not()) {
+                f.mkdirs()
+            }
+            file = File(RECORDING_SENT_PATH + File.separator + "record.amr")
+            file.createNewFile();
+        } catch (ex: Exception) {
+            file = getCacheFile("record", ".amr")
         }
-        val file = File(RECORDING_SENT_PATH + File.separator + "record.amr")
-        file.createNewFile();
         return file
+    }
+
+    fun getCacheFile(fileName: String, fileExtension: String): File {
+        return File.createTempFile(
+            fileName,
+            fileExtension,
+            AppObjectController.joshApplication.externalCacheDir
+        )
     }
 
     fun tempRecordingVideoFile(): File {

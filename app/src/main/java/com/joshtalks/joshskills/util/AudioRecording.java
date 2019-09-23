@@ -1,19 +1,19 @@
 package com.joshtalks.joshskills.util;
 
 import android.media.MediaRecorder;
+
 import java.io.File;
-import java.io.IOException;
 
 public class AudioRecording {
     private MediaRecorder recorder;
-    public static AudioRecording audioRecording = new AudioRecording();
+    public static final AudioRecording audioRecording = new AudioRecording();
 
 
     public void startPlayer(File recordFile) {
         recorder = new MediaRecorder();
         recorder.setAudioChannels(1);
         recorder.setAudioSamplingRate(10000);
-        recorder.setAudioEncodingBitRate(4750);
+        recorder.setAudioEncodingBitRate(5000);
         recorder.setAudioSource(MediaRecorder.AudioSource.MIC);
         recorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
         recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);

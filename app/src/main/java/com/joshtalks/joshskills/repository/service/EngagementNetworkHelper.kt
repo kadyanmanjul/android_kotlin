@@ -25,12 +25,16 @@ object EngagementNetworkHelper {
     }
 
     @JvmStatic
+    @Synchronized
     fun engageAudioApi(mediaEngageEventBus: MediaEngageEventBus) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 var timeListen: Long = 0
                 for (graph in mediaEngageEventBus.list) {
                     timeListen += (graph.endTime - graph.startTime)
+                }
+                if (timeListen<0){
+                    return@launch
                 }
                 val audioEngage = AudioEngage(emptyList(), mediaEngageEventBus.id, timeListen)
                 AppObjectController.chatNetworkService.engageAudio(audioEngage)

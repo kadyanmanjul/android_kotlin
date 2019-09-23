@@ -55,11 +55,13 @@ class ConversationViewModel(application: Application) : AndroidViewModel(applica
         addObserver()
     }
 
-    fun startRecord() {
+    fun startRecord() :Boolean {
         AppDirectory.tempRecordingWavFile().let {
             recordFile = it
             AudioRecording.audioRecording.startPlayer(recordFile)
+            return@let true
         }
+        return false
     }
 
     fun stopRecording() {
