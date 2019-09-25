@@ -50,12 +50,13 @@ class ConversationViewModel(application: Application) : AndroidViewModel(applica
     lateinit var inboxEntity: InboxEntity
     val chatObservableLiveData: MutableLiveData<List<ChatModel>> = MutableLiveData()
     val refreshViewLiveData: MutableLiveData<ChatModel> = MutableLiveData()
+    var lastMessageTime: Date? = null
 
     init {
         addObserver()
     }
 
-    fun startRecord() :Boolean {
+    fun startRecord(): Boolean {
         AppDirectory.tempRecordingWavFile().let {
             recordFile = it
             AudioRecording.audioRecording.startPlayer(recordFile)
@@ -121,6 +122,7 @@ class ConversationViewModel(application: Application) : AndroidViewModel(applica
         if (chatReturn.isNullOrEmpty()) {
             return@launch
         }
+        lastMessageTime = chatReturn.last().created
         chatObservableLiveData.postValue(chatReturn)
 
     }
@@ -233,14 +235,19 @@ class ConversationViewModel(application: Application) : AndroidViewModel(applica
 
 
     fun getAllUserMessage() {
-        getUserRecentChats()
-        if (Utils.isInternetAvailable()) {
-            Handler().postDelayed({
+        viewModelScope.launch(Dispatchers.IO) {
+            getUserRecentChats()
+            if (Utils.isInternetAvailable()) {
                 val arguments = mutableMapOf<String, String>()
-                arguments["created"] =
-                    (PrefManager.getLongValue(CHAT_LAST_SYNC_TIME) / 1000).toString()
+                //val chatModel = appDatabase.chatDao().getLastOneChat(inboxEntity.conversation_id)
+                PrefManager.getLongValue(inboxEntity.conversation_id).let {time->
+                    if (time>0) {
+                        arguments["created"] = (time/1000).toString()
+                    }
+                }
+
                 NetworkRequestHelper.getUpdatedChat(inboxEntity, queryMap = arguments)
-            }, 500)
+            }
         }
 
         refreshChatEverySomeTime()
@@ -254,8 +261,12 @@ class ConversationViewModel(application: Application) : AndroidViewModel(applica
                 .subscribe({
                     if (Utils.isInternetAvailable()) {
                         val arguments = mutableMapOf<String, String>()
-                        arguments["created"] =
-                            (PrefManager.getLongValue(CHAT_LAST_SYNC_TIME) / 1000).toString()
+
+                        PrefManager.getLongValue(inboxEntity.conversation_id).let {time->
+                            if (time>0) {
+                                arguments["created"] = (time/1000).toString()
+                            }
+                        }
                         NetworkRequestHelper.getUpdatedChat(inboxEntity, queryMap = arguments)
                     }
                 }, {

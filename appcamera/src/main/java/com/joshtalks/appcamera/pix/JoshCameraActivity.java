@@ -421,7 +421,7 @@ public class JoshCameraActivity extends AppCompatActivity implements View.OnTouc
         topbar.setVisibility(View.VISIBLE);
         instantRecyclerView.setVisibility(View.VISIBLE);
         cameraView.stop();
-        if (timer!=null) {
+        if (timer != null) {
             timer.cancel();
         }
 
@@ -592,23 +592,26 @@ public class JoshCameraActivity extends AppCompatActivity implements View.OnTouc
                         });
 
 
+                try {
+                    if (timer != null) {
+                        timer.scheduleAtFixedRate(new TimerTask() {
+                            @Override
+                            public void run() {
+                                uiHandler.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        duration += 1000;
+                                        tv_record_view.setText(String.format(Locale.getDefault(), "%02d:%02d",
+                                                TimeUnit.MILLISECONDS.toMinutes(duration),
+                                                TimeUnit.MILLISECONDS.toSeconds(duration)));
 
-                if (timer!=null) {
-                    timer.scheduleAtFixedRate(new TimerTask() {
-                        @Override
-                        public void run() {
-                            uiHandler.post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    duration += 1000;
-                                    tv_record_view.setText(String.format(Locale.getDefault(), "%02d:%02d",
-                                            TimeUnit.MILLISECONDS.toMinutes(duration),
-                                            TimeUnit.MILLISECONDS.toSeconds(duration)));
-
-                                }
-                            });
-                        }
-                    }, 1000, 1000);
+                                    }
+                                });
+                            }
+                        }, 1000, 1000);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
                 tv_record_view.setVisibility(View.VISIBLE);
 
@@ -644,7 +647,7 @@ public class JoshCameraActivity extends AppCompatActivity implements View.OnTouc
                     @Override
                     public void callback(CameraKitImage cameraKitImage) {
 
-                       // Bitmap b = Utility.rotateBitmap(cameraKitImage.getBitmap());
+                        // Bitmap b = Utility.rotateBitmap(cameraKitImage.getBitmap());
                         Utility.vibe(JoshCameraActivity.this, 50);
                         File photo = Utility.writeImage(cameraKitImage.getBitmap(), options.getPath(), options.getImageQuality(),
                                 options.getWidth(), options.getHeight());
@@ -652,7 +655,7 @@ public class JoshCameraActivity extends AppCompatActivity implements View.OnTouc
                         selectionList.add(img);
                         Utility.scanPhoto(JoshCameraActivity.this, photo);
                         //b.recycle();
-                       // b = null;
+                        // b = null;
                         Log.e("click time", "--------------------------------2");
                         returnObjects();
                     }

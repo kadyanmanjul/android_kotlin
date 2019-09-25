@@ -1,5 +1,6 @@
 package com.joshtalks.joshskills.ui.view_holders
 
+import android.view.View.GONE
 import android.view.View.VISIBLE
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.Utils
@@ -12,6 +13,8 @@ import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.text.HtmlCompat
 import androidx.fragment.app.FragmentActivity
 import com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+import com.joshtalks.joshskills.messaging.RxBus2
+import com.joshtalks.joshskills.repository.local.eventbus.RemoveViewEventBus
 import java.lang.ref.WeakReference
 
 
@@ -43,10 +46,15 @@ class TextViewHolder(activityRef: WeakReference<FragmentActivity>, message: Chat
     @View(R.id.message_view)
     lateinit var message_view: FrameLayout
 
+    lateinit var textViewHolder: TextViewHolder
 
 
     @Resolve
     fun onResolved() {
+        text_title.text=""
+        text_title.visibility = GONE
+
+        textViewHolder = this
         message.sender?.let {
             updateView(it, root_view, root_sub_view, message_view)
         }
@@ -54,15 +62,16 @@ class TextViewHolder(activityRef: WeakReference<FragmentActivity>, message: Chat
         updateTime(text_message_time)
 
         if (message.text != null) {
-            text_message_body.text =  HtmlCompat.fromHtml(message.text.toString(), HtmlCompat.FROM_HTML_MODE_LEGACY)
+            text_message_body.text =
+                HtmlCompat.fromHtml(message.text.toString(), HtmlCompat.FROM_HTML_MODE_LEGACY)
         } else {
             message.question?.qText?.let {
-                text_message_body.text =  HtmlCompat.fromHtml(it, HtmlCompat.FROM_HTML_MODE_LEGACY)
+                text_message_body.text = HtmlCompat.fromHtml(it, HtmlCompat.FROM_HTML_MODE_LEGACY)
             }
-            message.question?.title?.let {text->
-                if (text.isNotEmpty()){
-                    text_title.visibility= VISIBLE
-                    text_title.text =  HtmlCompat.fromHtml(text, HtmlCompat.FROM_HTML_MODE_LEGACY)
+            message.question?.title?.let { text ->
+                if (text.isNotEmpty()) {
+                    text_title.visibility = VISIBLE
+                    text_title.text = HtmlCompat.fromHtml(text, HtmlCompat.FROM_HTML_MODE_LEGACY)
                 }
             }
         }

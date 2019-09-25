@@ -48,85 +48,86 @@ abstract class BaseCell() {
 
 
 
-    fun setBlurImageInImageView(iv: AppCompatImageView, url: String,callback:Runnable?=null){
-        if (iv.tag != null) {
+    fun setBlurImageInImageView(iv: AppCompatImageView?, url: String,callback:Runnable?=null){
+       /* if (iv.tag != null) {
             return
-        }
+        }*/
+
         val requestOptions = RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL)
-        Glide.with(getAppContext())
-            .load(url)
-           // .override((AppObjectController.screenWidth*.4).toInt(),(AppObjectController.screenHeight*.6).toInt())            //.thumbnail(Glide.with(activityRef.get()!!).load(url))
-            //.centerCrop()
-            .apply(RequestOptions.bitmapTransform(BlurTransformation(20, 3)))
-            .optionalTransform(WebpDrawable::class.java,  WebpDrawableTransformation(CircleCrop()))
+        if (iv != null) {
+            Glide.with(getAppContext())
+                .load(url)
+                // .override((AppObjectController.screenWidth*.4).toInt(),(AppObjectController.screenHeight*.6).toInt())            //.thumbnail(Glide.with(activityRef.get()!!).load(url))
+                //.centerCrop()
+               // .apply(RequestOptions.bitmapTransform(BlurTransformation(20, 3)))
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .optionalTransform(WebpDrawable::class.java,  WebpDrawableTransformation(CircleCrop()))
+                .listener(object : RequestListener<Drawable> {
+                    override fun onLoadFailed(
+                        e: GlideException?,
+                        model: Any?,
+                        target: Target<Drawable>?,
+                        isFirstResource: Boolean
+                    ): Boolean {
+                        return false
 
-            .apply(requestOptions)
-            .listener(object : RequestListener<Drawable> {
-                override fun onLoadFailed(
-                    e: GlideException?,
-                    model: Any?,
-                    target: Target<Drawable>?,
-                    isFirstResource: Boolean
-                ): Boolean {
-                    return false
+                    }
 
-                }
+                    override fun onResourceReady(
+                        resource: Drawable?,
+                        model: Any?,
+                        target: Target<Drawable>?,
+                        dataSource: DataSource?,
+                        isFirstResource: Boolean
+                    ): Boolean {
+                        callback?.run()
+                        //iv?.tag = url
+                        return false
+                    }
 
-                override fun onResourceReady(
-                    resource: Drawable?,
-                    model: Any?,
-                    target: Target<Drawable>?,
-                    dataSource: DataSource?,
-                    isFirstResource: Boolean
-                ): Boolean {
-                    callback?.run()
-                    iv.tag = url
-                    return false
-                }
-
-            })
-            .into(iv)
+                })
+                .into(iv)
+        }
 
     }
 
-     fun setImageInImageView(iv: AppCompatImageView, url: String,callback:Runnable?=null){
-        if (iv.tag != null) {
+     fun setImageInImageView(iv: AppCompatImageView?, url: String,callback:Runnable?=null){
+       /* if (iv.tag != null) {
             return
         }
+*/
+         if (iv != null) {
+             Glide.with(getAppContext())
+                 .load(url)
+                 .diskCacheStrategy(DiskCacheStrategy.ALL)
+                 .optionalTransform(WebpDrawable::class.java,  WebpDrawableTransformation(CircleCrop()))
+                 .centerCrop()
+                 //.thumbnail(Glide.with(activityRef.get()!!).load(url))
+                 .listener(object : RequestListener<Drawable> {
+                     override fun onLoadFailed(
+                         e: GlideException?,
+                         model: Any?,
+                         target: Target<Drawable>?,
+                         isFirstResource: Boolean
+                     ): Boolean {
+                         return false
 
-        val requestOptions = RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL)
-        Glide.with(getAppContext())
-            .load(url)
-            .apply(requestOptions)
-            .optionalTransform(WebpDrawable::class.java,  WebpDrawableTransformation(CircleCrop()))
+                     }
 
-            .centerCrop()
-            //.thumbnail(Glide.with(activityRef.get()!!).load(url))
-            .listener(object : RequestListener<Drawable> {
-                override fun onLoadFailed(
-                    e: GlideException?,
-                    model: Any?,
-                    target: Target<Drawable>?,
-                    isFirstResource: Boolean
-                ): Boolean {
-                    return false
+                     override fun onResourceReady(
+                         resource: Drawable?,
+                         model: Any?,
+                         target: Target<Drawable>?,
+                         dataSource: DataSource?,
+                         isFirstResource: Boolean
+                     ): Boolean {
+                         callback?.run()
+                         return false
+                     }
 
-                }
-
-                override fun onResourceReady(
-                    resource: Drawable?,
-                    model: Any?,
-                    target: Target<Drawable>?,
-                    dataSource: DataSource?,
-                    isFirstResource: Boolean
-                ): Boolean {
-                    callback?.run()
-                    iv.tag = url
-                    return false
-                }
-
-            })
-            .into(iv)
+                 })
+                 .into(iv)
+         }
 
     }
 

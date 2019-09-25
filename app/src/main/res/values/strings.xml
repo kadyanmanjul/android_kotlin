@@ -57,5 +57,6 @@
     <string name="previous_button_description">Previous button</string>
 
 
+    <string name="incomplete_downloads">Checking for incomplete Downloads</string>
 
 </resources>

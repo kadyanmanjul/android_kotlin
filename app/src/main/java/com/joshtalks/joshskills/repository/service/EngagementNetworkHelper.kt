@@ -1,7 +1,11 @@
 package com.joshtalks.joshskills.repository.service
 
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
+import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.repository.local.eventbus.MediaEngageEventBus
+import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.repository.local.model.NotificationObject
 import com.joshtalks.joshskills.repository.server.engage.AudioEngage
 import com.joshtalks.joshskills.repository.server.engage.ImageEngage
 import com.joshtalks.joshskills.repository.server.engage.PdfEngage
@@ -16,7 +20,16 @@ object EngagementNetworkHelper {
     fun engageVideoApi(videoEngage: VideoEngage) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                val obj = AppObjectController.chatNetworkService.engageVideo(videoEngage)
+                var timeListen: Long = 0
+                for (graph in videoEngage.graph) {
+                    timeListen += (graph.endTime - graph.startTime)
+                }
+                if (timeListen <= 0) {
+                    return@launch
+                }
+                videoEngage.graph= mutableListOf()
+                videoEngage.watchTime=timeListen
+                AppObjectController.chatNetworkService.engageVideo(videoEngage)
             } catch (ex: Exception) {
                 ex.printStackTrace()
             }
@@ -33,7 +46,7 @@ object EngagementNetworkHelper {
                 for (graph in mediaEngageEventBus.list) {
                     timeListen += (graph.endTime - graph.startTime)
                 }
-                if (timeListen<0){
+                if (timeListen < 0) {
                     return@launch
                 }
                 val audioEngage = AudioEngage(emptyList(), mediaEngageEventBus.id, timeListen)
@@ -47,7 +60,7 @@ object EngagementNetworkHelper {
     fun engagePdfApi(pdfEngage: PdfEngage) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                val obj = AppObjectController.chatNetworkService.engagePdf(pdfEngage)
+                AppObjectController.chatNetworkService.engagePdf(pdfEngage)
             } catch (ex: Exception) {
                 ex.printStackTrace()
             }
@@ -57,7 +70,24 @@ object EngagementNetworkHelper {
     fun engageImageApi(imageEngage: ImageEngage) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                val obj = AppObjectController.chatNetworkService.engageImage(imageEngage)
+                AppObjectController.chatNetworkService.engageImage(imageEngage)
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+            }
+        }
+    }
+
+    fun receivedNotification(notificationObject: NotificationObject) {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                AppAnalytics.create(AnalyticsEvent.NOTIFICATION_RECEIVED.NAME)
+                    .addParam("title", notificationObject.contentTitle)
+                    .addParam("id", notificationObject.id)
+                    .push()
+                val data = mapOf("is_delivered" to "true")
+                notificationObject.id?.let {
+                    AppObjectController.chatNetworkService.engageNotificationAsync(it,data)
+                }
             } catch (ex: Exception) {
                 ex.printStackTrace()
             }
@@ -65,4 +95,20 @@ object EngagementNetworkHelper {
     }
 
 
+    fun clickNotification(notificationId: String) {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                AppAnalytics.create(AnalyticsEvent.NOTIFICATION_CLICKED.NAME).push()
+                val data = mapOf("is_clicked" to "true")
+                AppObjectController.chatNetworkService.engageNotificationAsync(
+                    notificationId,
+                    data
+                )
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+            }
+        }
+
+
+    }
 }

@@ -25,6 +25,7 @@ data class InboxEntity(
     var question_type: String? = "",
     var qText: String? = "",
     var user: User? = null,
+    var material_type: BASE_MESSAGE_TYPE?,
     var message_deliver_status: MESSAGE_DELIVER_STATUS? = MESSAGE_DELIVER_STATUS.READ
 
 ) : Serializable

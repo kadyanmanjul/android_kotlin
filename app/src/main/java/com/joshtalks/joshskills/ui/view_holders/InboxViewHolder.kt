@@ -33,6 +33,9 @@ class InboxViewHolder(var inboxEntity: InboxEntity) : BaseCell() {
     @View(R.id.tv_last_message_status)
     lateinit var tv_last_message_status: AppCompatImageView
 
+    @View(R.id.tv_notification)
+    lateinit var tv_notification: AppCompatTextView
+
 
     @JvmField
     var drawablePadding: Float = 2f;
@@ -48,7 +51,9 @@ class InboxViewHolder(var inboxEntity: InboxEntity) : BaseCell() {
 
         inboxEntity.type?.let {
             if (BASE_MESSAGE_TYPE.Q == it) {
-                showRecentAsPerView(it)
+                inboxEntity.material_type?.let { messageType ->
+                    showRecentAsPerView(messageType)
+                }
             } else {
                 showRecentAsPerView(it)
             }
@@ -56,7 +61,14 @@ class InboxViewHolder(var inboxEntity: InboxEntity) : BaseCell() {
 
         inboxEntity.created?.let {
             tv_last_message_time.text = com.joshtalks.joshskills.core.Utils.getMessageTime(it)
-
+        }
+        if (inboxEntity.chat_id.isNullOrEmpty()) {
+            tv_last_message_time.setCompoundDrawablesWithIntrinsicBounds(
+                R.drawable.ic_unread,
+                0,
+                0,
+                0
+            )
         }
     }
 
@@ -77,7 +89,7 @@ class InboxViewHolder(var inboxEntity: InboxEntity) : BaseCell() {
                 0,
                 0,
                 0
-            );
+            )
             tv_last_message.setCompoundDrawablePadding(Utils.dpToPx(context, drawablePadding))
             tv_last_message.text = "Photo"
 
@@ -88,7 +100,7 @@ class InboxViewHolder(var inboxEntity: InboxEntity) : BaseCell() {
                 0,
                 0,
                 0
-            );
+            )
             tv_last_message.setCompoundDrawablePadding(Utils.dpToPx(context, drawablePadding))
             tv_last_message.text = "Audio"
 
@@ -99,7 +111,7 @@ class InboxViewHolder(var inboxEntity: InboxEntity) : BaseCell() {
                 0,
                 0,
                 0
-            );
+            )
             tv_last_message.setCompoundDrawablePadding(Utils.dpToPx(context, drawablePadding))
             tv_last_message.text = "Video"
 
@@ -109,7 +121,7 @@ class InboxViewHolder(var inboxEntity: InboxEntity) : BaseCell() {
                 0,
                 0,
                 0
-            );
+            )
             tv_last_message.setCompoundDrawablePadding(Utils.dpToPx(context, drawablePadding))
             tv_last_message.text = "Pdf"
 

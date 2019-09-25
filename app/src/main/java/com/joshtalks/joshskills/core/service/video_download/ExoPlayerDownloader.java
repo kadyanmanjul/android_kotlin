@@ -20,6 +20,7 @@ import com.google.android.exoplayer2.source.hls.HlsMediaSource;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
+import com.google.android.exoplayer2.upstream.cache.CacheDataSourceFactory;
 
 public class ExoPlayerDownloader {
 
@@ -29,14 +30,12 @@ public class ExoPlayerDownloader {
     public static final int PLAYER_MAX_FILE_SIZE = 20 * 1024 * 1024;//30 MB MAX FILE SIZE
 
     public static void download(Context context,String url){
-
+/*
         TrackSelector trackSelector = new DefaultTrackSelector();
         downloadExoPlayer = ExoPlayerFactory.newSimpleInstance(context, trackSelector);
         downloadExoPlayer.setVolume(0);
 
-        CacheDataSourceFactory dataSourceFactory = new CacheDataSourceFactory(context,
-                PLAYER_MAX_CACHE,
-                PLAYER_MAX_FILE_SIZE);
+        CacheDataSourceFactory dataSourceFactory = new CacheDataSourceFactory();
 
         MediaSource videoSource;
 
@@ -120,7 +119,7 @@ public class ExoPlayerDownloader {
             }
         });
         downloadExoPlayer.prepare(videoSource);
-        downloadExoPlayer.setPlayWhenReady(true);
+        downloadExoPlayer.setPlayWhenReady(true);*/
 
     }
 }

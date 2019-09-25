@@ -24,44 +24,45 @@ object SyncChatService {
 
             if (Utils.isInternetAvailable()) {
                 val chatModelList = AppObjectController.appDatabase.chatDao().getUnSyncMessage()
-                for (chatObject in chatModelList) {
-                    var url = ""
-                    try {
-                        if (checkReadExternalPermission() && checkWriteExternalPermission()) {
-                            chatObject.downloadedLocalPath?.let { filePath ->
-                                url = filePath
-                                if (chatObject.type == BASE_MESSAGE_TYPE.IM) {
-                                    /* AppDirectory.copy(
-                                         Compressor(AppObjectController.joshApplication).setQuality(
-                                             75
-                                         )
-                                             .setMaxWidth(720).setMaxHeight(1280)
-                                             .compressToFile(File(filePath)).absolutePath,
-                                         filePath
-                                     )
-                                     chatObject.downloadedLocalPath = filePath*/
-                                }
 
-                                val obj = mapOf("media_path" to File(filePath).name)
-                                val responseObj =
-                                    AppObjectController.chatNetworkService.requestUploadMediaAsync(
-                                        obj
-                                    )
-                                        .await()
-                                val statusCode: Int =
-                                    uploadOnS3Server(responseObj, filePath).await()
-                                if (statusCode in 200..210) {
-                                    url =
-                                        responseObj.url.plus(File.separator)
-                                            .plus(responseObj.fields["key"])
+                for (chatObject in chatModelList) {
+                    var anyIssue: Boolean = false
+                    var url = ""
+
+                    if ((chatObject.type == BASE_MESSAGE_TYPE.TX).not()) {
+                        try {
+                            if (checkReadExternalPermission() && checkWriteExternalPermission()) {
+                                chatObject.downloadedLocalPath?.let { filePath ->
+                                    url = filePath
+                                    if (filePath.isEmpty()) {
+                                        return@launch
+                                    }
+
+                                    val obj = mapOf("media_path" to File(filePath).name)
+
+                                    val responseObj =
+                                        AppObjectController.chatNetworkService.requestUploadMediaAsync(
+                                            obj
+                                        ).await()
+                                    val statusCode: Int =
+                                        uploadOnS3Server(responseObj, filePath).await()
+                                    if (statusCode in 200..210) {
+                                        url =
+                                            responseObj.url.plus(File.separator)
+                                                .plus(responseObj.fields["key"])
+                                    }
                                 }
                             }
+                        } catch (exception: FileNotFoundException) {
+                            AppObjectController.appDatabase.chatDao()
+                                .forceFullySync(chatObject.chatId)
+                            exception.printStackTrace()
+                            anyIssue = true
+                        } catch (exception: Exception) {
+                            anyIssue = true
+
+                            exception.printStackTrace()
                         }
-                    } catch (exception: FileNotFoundException) {
-                        AppObjectController.appDatabase.chatDao().forceFullySync(chatObject.chatId)
-                        exception.printStackTrace()
-                    } catch (exception: Exception) {
-                        exception.printStackTrace()
                     }
                     val tChatMessage: BaseChatMessage
 

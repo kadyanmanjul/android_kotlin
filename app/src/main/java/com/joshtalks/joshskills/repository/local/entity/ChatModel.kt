@@ -3,6 +3,7 @@ package com.joshtalks.joshskills.repository.local.entity
 import androidx.room.*
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
+import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.util.RandomString
 import java.io.Serializable
 import java.util.*
@@ -72,6 +73,13 @@ data class ChatModel(
         isSync = true,
         chatLocalId = null
     )
+
+
+    override fun toString(): String {
+        return AppObjectController.gsonMapper.toJson(this)
+    }
+
+
 }
 
 
@@ -316,7 +324,7 @@ interface ChatDao {
     )
 
     @Query("UPDATE chat_table SET is_sync =1 where chat_id <= :id ")
-    suspend fun forceFullySync(id:String)
+    suspend fun forceFullySync(id: String)
 
     @Query(value = "SELECT * FROM chat_table where  is_sync= 0")
     suspend fun getUnSyncMessage(): List<ChatModel>
@@ -412,8 +420,53 @@ interface ChatDao {
 
     }
 
+
+    @Transaction
+    suspend fun getUpdatedChatObjectViaId(id: String): ChatModel {
+        val chatModel: ChatModel = getChatObject(chatId = id)
+        if (chatModel.type == BASE_MESSAGE_TYPE.Q) {
+            val question: Question? = getQuestion(id)
+            if (question != null) {
+                when {
+                    question.material_type == BASE_MESSAGE_TYPE.IM ->
+                        question.imageList =
+                            getImagesOfQuestion(questionId = question.questionId)
+                    question.material_type == BASE_MESSAGE_TYPE.VI -> question.videoList =
+
+                        getVideosOfQuestion(questionId = question.questionId)
+                    question.material_type == BASE_MESSAGE_TYPE.AU -> question.audioList =
+                        getAudiosOfQuestion(questionId = question.questionId)
+
+                    question.material_type == BASE_MESSAGE_TYPE.PD -> question.pdfList =
+                        getPdfOfQuestion(questionId = question.questionId)
+                }
+                chatModel.question = question
+            }
+        }
+        return chatModel
+
+    }
+
+
+    @Transaction
+    suspend fun updateDownloadVideoStatus(id: String, downloadStatus: DOWNLOAD_STATUS) {
+        val chatModel: ChatModel = getChatObject(chatId = id)
+        chatModel.downloadStatus = downloadStatus
+        updateChatMessage(chatModel)
+    }
+
+    @Query("UPDATE chat_table SET downloadStatus = :status where downloadStatus == :whereStatus")
+    suspend fun updateDownloadVideoStatusFailed(
+        status: DOWNLOAD_STATUS = DOWNLOAD_STATUS.NOT_START,
+        whereStatus: DOWNLOAD_STATUS = DOWNLOAD_STATUS.DOWNLOADING
+    )
+
+
     @Query(value = "UPDATE PdfTable SET total_view = :total_view where id= :id ")
     suspend fun updateTotalViewForPdf(id: String, total_view: Int)
+
+    @Query(value = "SELECT * FROM chat_table where conversation_id= :conversationId ORDER BY ID DESC LIMIT 1")
+    suspend fun getLastOneChat(conversationId: String): ChatModel?
 
 
 }

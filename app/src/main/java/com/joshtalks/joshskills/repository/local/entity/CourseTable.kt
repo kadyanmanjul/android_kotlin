@@ -39,7 +39,7 @@ interface CourseDao {
     suspend fun insertRegisterCourses(courseList: List<Course>)
 
 
-    @Query(value = "SELECT *,co.conversation_id,co.courseId FROM course co LEFT JOIN chat_table ct ON  co.conversation_id = ct.conversation_id LEFT JOIN question_table qt ON ct.chat_id = qt.questionId ORDER BY created DESC LIMIT 0,1")
+    @Query(value = "SELECT *,co.conversation_id,co.courseId FROM course co LEFT JOIN chat_table ct ON  co.conversation_id = ct.conversation_id LEFT JOIN question_table qt ON ct.chat_id = qt.chatId    ORDER BY created DESC LIMIT 0,1")
     suspend fun getRegisterCourseMinimal(): List<InboxEntity>
 
     @Query(value = "SELECT * FROM course co where conversation_id= :conversation_id ")

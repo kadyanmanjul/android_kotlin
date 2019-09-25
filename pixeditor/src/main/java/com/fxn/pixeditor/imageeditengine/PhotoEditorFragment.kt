@@ -80,7 +80,7 @@ class PhotoEditorFragment : BaseFragment(), View.OnClickListener, ViewTouchListe
     private val cacheStack: LruCache<Int, Bitmap>? = null
     private var filterLayoutHeight: Int = 0
     private var mListener: OnFragmentInteractionListener? = null
-    private lateinit var selectedFilter: ImageFilter
+    private  var selectedFilter: ImageFilter?=null
     private var originalBitmap: Bitmap? = null
     private var majorContainer: View? = null
     private var dir: File? = null

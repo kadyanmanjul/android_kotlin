@@ -7,6 +7,7 @@ import android.content.pm.ActivityInfo;
 import android.net.Uri;
 import android.os.Handler;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.OrientationEventListener;
 import android.view.View;
@@ -24,17 +25,23 @@ import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.hls.HlsMediaSource;
 import com.google.android.exoplayer2.source.hls.playlist.DefaultHlsPlaylistParserFactory;
+import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
+import com.google.android.exoplayer2.ui.DefaultTimeBar;
 import com.google.android.exoplayer2.ui.PlayerView;
+import com.google.android.exoplayer2.ui.TimeBar;
 import com.google.android.exoplayer2.upstream.DataSource;
+import com.google.android.exoplayer2.upstream.DefaultDataSource;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
+import com.google.android.exoplayer2.upstream.cache.CacheDataSource;
+import com.google.android.exoplayer2.upstream.cache.CacheDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 import com.google.android.exoplayer2.video.VideoListener;
 import com.joshtalks.joshskills.R;
+import com.joshtalks.joshskills.core.AppObjectController;
+import com.joshtalks.joshskills.core.service.downloader.MediaPlayerManager;
 
 import static android.content.pm.ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE;
-import static com.google.android.exoplayer2.C.VIDEO_SCALING_MODE_SCALE_TO_FIT;
-import static com.google.android.exoplayer2.C.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING;
 
 public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener, View.OnClickListener {
 
@@ -58,6 +65,7 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
     public static final int STATE_BUFFERING = 2;
     public static final int STATE_READY = 3;
     public static final int STATE_ENDED = 4;
+    private DefaultTimeBar defaultTimeBar;
 
 
     private Handler timeHandler = new Handler();
@@ -98,12 +106,12 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
     public void init() {
         fullScreenToggle = findViewById(R.id.ivFullScreenToggle);
 
-
+        defaultTimeBar = findViewById(R.id.exo_progress);
         if (player == null) {
 
-            player = ExoPlayerFactory.newSimpleInstance(getContext());
+            player = ExoPlayerFactory.newSimpleInstance(AppObjectController.getJoshApplication());
             player.setPlayWhenReady(true);
-           // player.setVideoScalingMode(VIDEO_SCALING_MODE_SCALE_TO_FIT);
+            // player.setVideoScalingMode(VIDEO_SCALING_MODE_SCALE_TO_FIT);
             //setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FILL);
             //player.setVideoScalingMode(C.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING);
             fitToScreen();
@@ -112,7 +120,6 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
             player.addAnalyticsListener(new AnalyticsListener() {
                 @Override
                 public void onPlayerStateChanged(EventTime eventTime, boolean playWhenReady, int playbackState) {
-
                     if (getContext() instanceof PlayerListener) {
 
                         PlayerListener listener = (PlayerListener) getContext();
@@ -152,7 +159,7 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
                     // Get layout params of view
                     // Use MyView.this to refer to the current MyView instance
                     // inside a callback
-                   // LayoutParams p =getLayoutParams();
+                    // LayoutParams p =getLayoutParams();
                     //int currWidth = MyView.this.getWidth();
 
                     // Set new width/height of view
@@ -169,6 +176,27 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
                 @Override
                 public void onRenderedFirstFrame() {
                     // ...
+                }
+            });
+            defaultTimeBar.addListener(new TimeBar.OnScrubListener() {
+                @Override
+                public void onScrubStart(TimeBar timeBar, long position) {
+                    try {
+                        PlayerListener listener = (PlayerListener) getContext();
+                        listener.onPositionDiscontinuity(1, player.getCurrentPosition());
+                    } catch (Exception e) {
+
+                    }
+                }
+
+                @Override
+                public void onScrubMove(TimeBar timeBar, long position) {
+
+                }
+
+                @Override
+                public void onScrubStop(TimeBar timeBar, long position, boolean canceled) {
+
                 }
             });
 
@@ -242,6 +270,12 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
         player.prepare(buildMediaSource(), true, false);
 
     }
+
+    public void downloadStreamPlay() {
+        player.prepare(buildMediaSource(), true, false);
+
+    }
+
 
     public SimpleExoPlayer getExoPlayer() {
 
@@ -319,6 +353,7 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
 
     public void setUrl(String url) {
         uri = Uri.parse(url);
+
     }
 
     @Override
@@ -344,12 +379,9 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
 
     @Override
     public void onClick(View v) {
-
-        switch (v.getId()) {
-            case R.id.ivFullScreenToggle:
-                if (getContext() instanceof FullscreenToggleListener)
-                    ((FullscreenToggleListener) getContext()).onFullscreenToggle();
-                break;
+        if (v.getId() == R.id.ivFullScreenToggle) {
+            if (getContext() instanceof FullscreenToggleListener)
+                ((FullscreenToggleListener) getContext()).onFullscreenToggle();
         }
 
     }

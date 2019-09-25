@@ -33,14 +33,9 @@ import androidx.core.content.ContextCompat.startActivity
 import androidx.core.content.ContextCompat.getSystemService
 
 
-
-
-
-
-
-
 private val CHAT_TIME_FORMATTER = SimpleDateFormat("hh:mm aa")
 private val DD_MM_YYYY = SimpleDateFormat("DD/MM/yyyy")
+private val DD_MMM = SimpleDateFormat("dd-MMM hh:mm aa")
 
 
 object Utils {
@@ -91,11 +86,14 @@ object Utils {
     }
 
 
-
-    fun messageTimeConversion(date: Date): String {
-        return CHAT_TIME_FORMATTER.format(date.time).toLowerCase()
-
+    fun messageTimeConversion(old: Date): String {
+        if (DateUtils.isToday(old.time)) {
+            return CHAT_TIME_FORMATTER.format(old.time).toLowerCase(Locale.getDefault()).replace("AM", "am").replace("PM","pm")
+        } else {
+            return DD_MMM.format(old)
+        }
     }
+
 
     fun createPartFromString(descriptionString: String): RequestBody {
         return descriptionString.toRequestBody(okhttp3.MultipartBody.FORM)
@@ -103,11 +101,11 @@ object Utils {
 
 
     fun getMessageTime(epoch: Long): String {
-        var time = epoch
-        var date = Date(time)
+        val time = epoch
+        val date = Date(time)
 
         if (DateUtils.isToday(time)) {
-            return messageTimeConversion(date);
+            return CHAT_TIME_FORMATTER.format(date.time).toLowerCase(Locale.getDefault())
         } else if (isYesterday(date)) {
             return "Yesterday"
         } else {
@@ -213,7 +211,7 @@ object Utils {
         )
         fOut.flush()
         fOut.close()
-       // bitmap.recycle()
+        // bitmap.recycle()
         return filePath
     }
 
@@ -245,28 +243,29 @@ object Utils {
     }
 
 
-
     fun openUrl(url: String) {
         try {
             val intent = Intent(ACTION_VIEW)
             intent.apply {
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             }
-            if (url.trim().startsWith("http://").not()){
-                intent.data = Uri.parse("http://"+url.replace("https://","").trim())
+            if (url.trim().startsWith("http://").not()) {
+                intent.data = Uri.parse("http://" + url.replace("https://", "").trim())
+            }else{
+                intent.data =Uri.parse(url.trim())
             }
             AppObjectController.joshApplication.startActivity(intent)
-        }catch (ex:Exception){
+        } catch (ex: Exception) {
             ex.printStackTrace()
         }
     }
 
     fun isInternetAvailable(): Boolean {
-        val conMgr = AppObjectController.joshApplication.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager?
+        val conMgr =
+            AppObjectController.joshApplication.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager?
         val info = conMgr!!.activeNetworkInfo
-        return (info != null&& info.isConnected)
+        return (info != null && info.isConnected)
     }
-
 
 
 }

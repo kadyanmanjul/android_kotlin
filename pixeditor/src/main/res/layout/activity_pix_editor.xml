@@ -38,6 +38,7 @@
             android:orientation="vertical">
 
         <LinearLayout
+                android:visibility="gone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
@@ -99,6 +100,7 @@
                 android:visibility="gone" />
 
         <ImageView
+                android:visibility="gone"
                 android:id="@+id/crop_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -110,6 +112,7 @@
 
 
         <ImageView
+
                 android:id="@+id/stickers_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -122,6 +125,7 @@
 
 
         <ImageView
+                android:visibility="gone"
                 android:id="@+id/add_text_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -132,6 +136,7 @@
                 android:src="@drawable/ic_cam_text" />
 
         <ImageView
+                android:visibility="gone"
                 android:id="@+id/paint_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -156,6 +161,7 @@
 
 
     <TextView
+            android:visibility="gone"
             android:id="@+id/filter_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -183,13 +189,14 @@
             app:borderWidth="0dp" />
 
     <RelativeLayout
+
             android:id="@+id/filter_list_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:background="@color/blackish"
             android:orientation="horizontal"
-            android:visibility="visible">
+            android:visibility="gone">
 
         <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/filter_list_rv"

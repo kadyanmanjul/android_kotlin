@@ -33,16 +33,26 @@ object NetworkRequestHelper {
                     inboxEntity.conversation_id ?: "", queryMap
                 ).await()
 
+                if (resp.chatModelList.isNotEmpty()) {
+                    PrefManager.put(
+                        inboxEntity.conversation_id,
+                        resp.chatModelList.last().created.time
+                    )
+                }
+
+
                 for (chatModel in resp.chatModelList) {
-                    val chatObj=AppObjectController.appDatabase.chatDao().getChatObject(chatModel.chatId)
-                    if (chatObj==null){
+                    val chatObj =
+                        AppObjectController.appDatabase.chatDao().getChatObject(chatModel.chatId)
+                    if (chatObj == null) {
+                        chatModel.downloadStatus = DOWNLOAD_STATUS.NOT_START
                         AppObjectController.appDatabase.chatDao().insertAMessage(chatModel)
-                    }else{
-                        chatObj.url=chatModel.url
-                        chatObj.conversationId=chatModel.conversationId
-                        chatObj.created=chatModel.created
-                        chatObj.messageDeliverStatus=chatModel.messageDeliverStatus
-                        chatObj.type=chatModel.type
+                    } else {
+                        chatObj.url = chatModel.url
+                        chatObj.conversationId = chatModel.conversationId
+                        chatObj.created = chatModel.created
+                        chatObj.messageDeliverStatus = chatModel.messageDeliverStatus
+                        chatObj.type = chatModel.type
                         AppObjectController.appDatabase.chatDao().updateChatMessage(chatObj)
                     }
 
@@ -85,22 +95,37 @@ object NetworkRequestHelper {
                         question.videoList?.let {
                             it.listIterator().forEach { videoType ->
                                 videoType.questionId = question.questionId
+                                videoType.downloadStatus = DOWNLOAD_STATUS.NOT_START
                             }
                             AppObjectController.appDatabase.chatDao().insertVideoMessageList(it)
                         }
 
+
                     }
 
                 }
-                PrefManager.put(CHAT_LAST_SYNC_TIME, System.currentTimeMillis())
                 RxBus2.publish(DBInsertion("Chat"))
 
                 resp.next?.let {
+
                     val uri = Uri.parse(it)
                     val args = uri.queryParameterNames
                     val arguments = mutableMapOf<String, String>()
-                    for (name in args) {
-                        arguments[name] = uri.getQueryParameter(name) ?: ""
+
+                    val created = uri.getQueryParameter("created")
+
+                    PrefManager.getLongValue(inboxEntity.conversation_id).let { time ->
+                        if (created.isNullOrEmpty().not()) {
+                            if (created.toLong() == (time / 1000)) {
+                                for (name in args) {
+                                    arguments[name] = uri.getQueryParameter(name) ?: ""
+                                }
+                            }
+                        }
+
+                        if (time > 0) {
+                            arguments["created"] = (time / 1000).toString()
+                        }
                     }
                     getUpdatedChat(inboxEntity, queryMap = arguments)
 
@@ -139,7 +164,7 @@ object NetworkRequestHelper {
             )
 
             if (messageObject is BaseMediaMessage)
-                chatModel.downloadedLocalPath =messageObject.localPathUrl
+                chatModel.downloadedLocalPath = messageObject.localPathUrl
 
             chatModel.downloadStatus = DOWNLOAD_STATUS.DOWNLOADED
 
@@ -171,9 +196,6 @@ object NetworkRequestHelper {
 
         }
     }
-
-
-
 
 
 }

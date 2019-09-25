@@ -11,6 +11,9 @@ enum class AnalyticsEvent(val NAME: String) {
     OTP_ACCOUNT_KIT_ACTIVITY("Otp Account Kit Activity"),
     WHATSAPP_SELECTED("Whatsapp Selected"),
 
+    UNREGISTER_USER("Unregister User"),
+
+
     SMS_SELECTED("Sms Selected"),
     OTP_VERIFICATION_SCREEN("OTP Verification Screen"),
 
@@ -56,19 +59,6 @@ enum class AnalyticsEvent(val NAME: String) {
     CHAT_SCREEN("Chat Screen"),
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
     LOGIN("Login"),
     PROFILE_IMAGE_UPLOAD("Profile Image Upload"),
 
@@ -97,5 +87,8 @@ enum class AnalyticsEvent(val NAME: String) {
 
     PERMISSION_ACCEPT("Permission accept"),
     PERMISSION_DENIED("Permission accept"),
+    NOTIFICATION_RECEIVED("Notification Received"),
+    NOTIFICATION_CLICKED("Notification Clicked"),
+
 
 }

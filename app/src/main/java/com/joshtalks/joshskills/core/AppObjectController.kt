@@ -2,8 +2,11 @@ package com.joshtalks.joshskills.core
 
 import android.os.Handler
 import android.os.Looper
+import com.bumptech.glide.request.target.ViewTarget
 import com.clevertap.android.sdk.ActivityLifecycleCallback
 import com.facebook.stetho.okhttp3.StethoInterceptor
+import com.google.android.exoplayer2.offline.DownloadManager
+import com.google.android.exoplayer2.util.Util
 import com.joshtalks.joshskills.repository.local.AppDatabase
 import com.google.gson.Gson
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
@@ -32,8 +35,13 @@ import com.google.gson.JsonParseException
 import com.google.gson.JsonDeserializationContext
 import com.google.gson.JsonElement
 import com.google.gson.JsonDeserializer
+import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.service.DownloadUtils
+import com.joshtalks.joshskills.core.service.downloader.DownloadTracker
+import com.joshtalks.joshskills.repository.local.DatabaseUtils
+import com.joshtalks.joshskills.repository.local.entity.DOWNLOAD_STATUS
 import com.joshtalks.joshskills.repository.service.ChatNetworkService
+import com.tonyodev.fetch2.FetchListener
 import java.lang.reflect.Type
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -98,16 +106,20 @@ internal class AppObjectController {
         var screenHeight: Int = 0
 
         @JvmStatic
-       lateinit var okHttpClient: OkHttpClient
+        lateinit var okHttpClient: OkHttpClient
 
+        @JvmStatic
+        lateinit var userAgent: String
+
+       /* @JvmStatic
+        val videoDownloadListener = HashMap<String, DownloadTracker.Listener>()
+*/
 
         fun init(context: JoshApplication): AppObjectController {
             joshApplication = context;
             appDatabase = AppDatabase.getDatabase(context)!!
             com.joshtalks.joshskills.core.ActivityLifecycleCallback.register(joshApplication)
             ActivityLifecycleCallback.register(joshApplication)
-
-
 
             gsonMapper = GsonBuilder()
                 .enableComplexMapKeySerialization()
@@ -165,7 +177,7 @@ internal class AppObjectController {
                 }
 
             })
-            okHttpClient=builder.build()
+            okHttpClient = builder.build()
 
             retrofit = Retrofit.Builder()
                 .baseUrl(SERVER_URL)
@@ -212,8 +224,15 @@ internal class AppObjectController {
             Fetch.setDefaultInstanceConfiguration(fetchConfiguration)
 
             fetch = Fetch.getInstance(fetchConfiguration)
+            initExoPlayer()
 
             return INSTANCE
+        }
+
+        private fun initExoPlayer() {
+            userAgent =
+                Util.getUserAgent(joshApplication, joshApplication.getString(R.string.app_name))
+
         }
 
         fun clearDownloadMangerCallback() {
@@ -237,7 +256,45 @@ internal class AppObjectController {
             )
         }
 
+        fun addVideoCallback(id: String) {
+           /* val videoDownloadCallback = object : DownloadTracker.Listener {
+                override fun onDownloadsChanged(download: com.google.android.exoplayer2.offline.Download?) {
+                    download?.let {
+                        var downloadStatus: DOWNLOAD_STATUS = DOWNLOAD_STATUS.NOT_START
 
+                        if (it.state == com.google.android.exoplayer2.offline.Download.STATE_COMPLETED) {
+                            downloadStatus = DOWNLOAD_STATUS.DOWNLOADED
+                        } else if (it.state == com.google.android.exoplayer2.offline.Download.STATE_DOWNLOADING || it.state == com.google.android.exoplayer2.offline.Download.STATE_QUEUED) {
+                            videoNotUploadFlagUpdate()
+                            downloadStatus = DOWNLOAD_STATUS.DOWNLOADING
+                        } else if (it.state == com.google.android.exoplayer2.offline.Download.STATE_REMOVING) {
+                            downloadStatus = DOWNLOAD_STATUS.FAILED
+                        } else if (it.state == com.google.android.exoplayer2.offline.Download.STATE_FAILED) {
+                            downloadStatus = DOWNLOAD_STATUS.FAILED
+                        } else if (it.state == com.google.android.exoplayer2.offline.Download.STATE_STOPPED) {
+                            downloadStatus = DOWNLOAD_STATUS.FAILED
+                        }
+                        DatabaseUtils.updateVideoDownload(download.request.id, downloadStatus)
+                    }
+                }
+
+                override fun onDownloadRemoved(download: com.google.android.exoplayer2.offline.Download?) {
+                }
+
+            }
+            VideoDownloadController.getInstance().downloadTracker.addListener(videoDownloadCallback)
+            videoDownloadListener[id] = videoDownloadCallback
+*/
+        }
+
+        fun videoNotUploadFlagUpdate() {
+            val timer = Timer()
+            timer.schedule(object : TimerTask() {
+                override fun run() {
+                    DatabaseUtils.updateAllVideoStatusWhichIsDownloading()
+                }
+            }, 0, 30 * 60 * 1000);
+
+        }
     }
-
 }

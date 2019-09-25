@@ -4,10 +4,12 @@ import android.content.Context
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.Window
 import android.view.WindowManager
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
+import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.ui.DefaultTimeBar
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.BaseActivity
@@ -16,6 +18,7 @@ import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.custom_ui.PlayerListener
 import com.joshtalks.joshskills.databinding.ActivityVideoPlayer1Binding
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
+import com.joshtalks.joshskills.repository.local.model.ListenGraph
 import com.joshtalks.joshskills.repository.server.engage.VideoEngage
 import com.joshtalks.joshskills.repository.service.EngagementNetworkHelper
 import com.joshtalks.joshskills.ui.pdfviewer.COURSE_NAME
@@ -24,24 +27,49 @@ const val VIDEO_OBJECT = "video_"
 
 class VideoPlayerActivity : BaseActivity(), PlayerListener {
 
+
     override fun onPlayerReady() {
+        if (graph != null) {
+            graph?.endTime = binding.pvPlayer.player.currentPosition
+            videoViewGraphList.add(graph!!)
+        }
+        graph = null
+
+        graph = ListenGraph(binding.pvPlayer.player.currentPosition)
+
     }
 
     override fun onBufferingUpdated(isBuffering: Boolean) {
+
+
     }
 
     override fun onCurrentTimeUpdated(time: Long) {
+        lastPos = time
     }
 
     override fun onPlayerReleased() {
+        graph?.endTime = binding.pvPlayer.player.currentPosition
+        graph?.let {
+            videoViewGraphList.add(it)
+        }
+        graph = null
     }
 
-    override fun onPositionDiscontinuity(reason: Int) {
+    override fun onPositionDiscontinuity(reason: Int, lastPos: Long) {
+        graph?.endTime = lastPos
+        graph?.let {
+            videoViewGraphList.add(it)
+        }
+        graph = null
     }
 
     private lateinit var binding: ActivityVideoPlayer1Binding
     private lateinit var chatObject: ChatModel
     private lateinit var exoProgress: DefaultTimeBar
+    var videoViewGraphList = mutableListOf<ListenGraph>()
+    var graph: ListenGraph? = null
+    var lastPos: Long = 0
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -57,16 +85,21 @@ class VideoPlayerActivity : BaseActivity(), PlayerListener {
 
         chatObject = intent.getSerializableExtra(VIDEO_OBJECT) as ChatModel
 
+        binding.pvPlayer.fitToScreen()
 
-        if (chatObject.url!=null){
-            binding.pvPlayer.setUrl(chatObject.url)
-
-        }else {
+        if (chatObject.url != null) {
+            if (chatObject.downloadedLocalPath.isNullOrEmpty()) {
+                binding.pvPlayer.setUrl(chatObject.url)
+                binding.pvPlayer.downloadStreamPlay()
+            } else {
+                binding.pvPlayer.setUrl(chatObject.downloadedLocalPath)
+                binding.pvPlayer.play()
+            }
+        } else {
             binding.pvPlayer.setUrl(chatObject.question?.videoList?.get(0)?.video_url)
+            binding.pvPlayer.downloadStreamPlay()
         }
 
-        binding.pvPlayer.fitToScreen()
-        binding.pvPlayer.play()
         binding.pvPlayer.setActivity(this)
         exoProgress = findViewById(R.id.exo_progress)
         setToolbar()
@@ -109,7 +142,11 @@ class VideoPlayerActivity : BaseActivity(), PlayerListener {
 
     override fun onStart() {
         super.onStart()
-        binding.pvPlayer.onStart()
+        try {
+            binding.pvPlayer.onStart()
+        } catch (ex: Exception) {
+
+        }
     }
 
     override fun onStop() {
@@ -118,37 +155,43 @@ class VideoPlayerActivity : BaseActivity(), PlayerListener {
             chatObject.question?.videoList?.get(0)?.id?.let {
                 EngagementNetworkHelper.engageVideoApi(
                     VideoEngage(
-                        emptyList(),
+                        videoViewGraphList,
                         it,
                         binding.pvPlayer.lastPosition
                     )
                 )
             }
-        }catch (ex:Exception){
+            binding.pvPlayer.onStop()
+
+        } catch (ex: Exception) {
         }
-        binding.pvPlayer.onStop()
     }
 
     override fun onPause() {
         super.onPause()
+        try {
+            binding.pvPlayer.onPause()
+        } catch (ex: Exception) {
 
-        binding.pvPlayer.onPause()
-
+        }
 
     }
 
     override fun onResume() {
         super.onResume()
-        binding.pvPlayer.onResume()
+        try {
+            binding.pvPlayer.onResume()
+        } catch (ex: Exception) {
+
+        }
     }
 
     override fun onBackPressed() {
         AppAnalytics.create(AnalyticsEvent.BACK_PRESSED.NAME)
             .addParam("name", javaClass.simpleName)
             .push()
-        super.onBackPressed()
+        this@VideoPlayerActivity.finish()
     }
-
 
 
 }

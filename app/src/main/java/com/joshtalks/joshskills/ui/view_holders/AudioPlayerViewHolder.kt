@@ -1,28 +1,18 @@
 package com.joshtalks.joshskills.ui.view_holders
 
-import android.net.Uri
-import android.view.Gravity
-import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.LinearLayout
-import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.fragment.app.FragmentActivity
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
-import com.joshtalks.joshskills.core.custom_ui.AudioView
-import com.joshtalks.joshskills.core.custom_ui.audioplayer.JcPlayerManagerListener
-import com.joshtalks.joshskills.core.custom_ui.audioplayer.general.JcStatus
 import com.joshtalks.joshskills.core.custom_ui.audioplayer.view.JcPlayerView
 import com.joshtalks.joshskills.core.interfaces.AudioPlayerInterface
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.core.service.DownloadUtils
 import com.joshtalks.joshskills.messaging.RxBus2
-import com.joshtalks.joshskills.repository.local.entity.AudioType
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
 import com.joshtalks.joshskills.repository.local.eventbus.DownloadCompletedEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.DownloadMediaEventBus
@@ -37,8 +27,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.lang.ref.WeakReference
-import java.util.*
-
 
 @Layout(R.layout.audio_player_view)
 class AudioPlayerViewHolder(activityRef: WeakReference<FragmentActivity>, message: ChatModel) :

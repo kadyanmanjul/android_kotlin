@@ -34,18 +34,21 @@ interface ChatNetworkService {
     fun requestUploadMediaAsync(@FieldMap params: Map<String, String>): Deferred<AmazonPolicyResponse>
 
     @POST("$DIR/engage/video/")
-    fun engageVideo(@Body messageObject: Any): Deferred<Any>
+    suspend fun engageVideo(@Body messageObject: Any)
 
     @POST("$DIR/engage/audio/")
-    fun engageAudio(@Body messageObject: Any): Deferred<Any>
+    suspend fun engageAudio(@Body messageObject: Any)
 
     @POST("$DIR/engage/pdf/")
-    fun engagePdf(@Body messageObject: Any): Deferred<Any>
+    suspend fun engagePdf(@Body messageObject: Any)
 
     @POST("$DIR/engage/image/")
-    fun engageImage(@Body messageObject: Any): Deferred<Any>
+    suspend fun engageImage(@Body messageObject: Any)
 
 
+    @FormUrlEncoded
+    @PATCH("$DIR/notification/{id}/")
+    suspend fun engageNotificationAsync(@Path("id") id: String, @FieldMap params: Map<String, String>)
 
 
 }

@@ -11,8 +11,11 @@ import com.google.android.exoplayer2.upstream.cache.LeastRecentlyUsedCacheEvicto
 import com.google.android.exoplayer2.upstream.cache.SimpleCache;
 import com.google.android.exoplayer2.util.Util;
 import com.joshtalks.joshskills.R;
+import com.joshtalks.joshskills.core.AppObjectController;
 
 import java.io.File;
+
+
 
 public class CacheDataSourceFactory implements DataSource.Factory {
 
@@ -50,3 +53,29 @@ public class CacheDataSourceFactory implements DataSource.Factory {
 
 
 }
+/*
+public class CacheDataSourceFactory implements DataSource.Factory {
+
+    private final DefaultDataSourceFactory defaultDatasourceFactory;
+    public static final int PLAYER_MAX_FILE_SIZE = 50 * 1024 * 1024;
+
+    public CacheDataSourceFactory(Context context) {
+        super();
+        defaultDatasourceFactory = new DefaultDataSourceFactory(context, VideoDownloadController.getInstance().getUserAgent());
+    }
+
+    @Override
+    public DataSource createDataSource() {
+
+
+        return new CacheDataSource(VideoDownloadController.getInstance().getDownloadCache(),
+                defaultDatasourceFactory.createDataSource(),
+                new FileDataSource(),
+                new CacheDataSink(VideoDownloadController.getInstance().getDownloadCache(), PLAYER_MAX_FILE_SIZE),
+                CacheDataSource.FLAG_BLOCK_ON_CACHE
+                        | CacheDataSource.FLAG_IGNORE_CACHE_ON_ERROR,
+                null);
+    }
+
+
+}*/

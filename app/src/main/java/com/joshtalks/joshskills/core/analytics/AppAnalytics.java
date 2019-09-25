@@ -88,7 +88,7 @@ public class AppAnalytics {
 
         HashMap<String, Object> profileUpdate = new HashMap<>();
         profileUpdate.put("Name", user.getFirstName());
-        profileUpdate.put("Identity", user.getId());
+        profileUpdate.put("Identity", mentor.getId());
         profileUpdate.put("Phone",user.getPhoneNumber());
         profileUpdate.put("MentorIdentity", mentor.getId());
         profileUpdate.put("Photo", user.getPhoto());

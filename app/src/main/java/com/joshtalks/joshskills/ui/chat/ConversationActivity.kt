@@ -75,6 +75,7 @@ import com.joshtalks.joshskills.core.custom_ui.SmoothLinearLayoutManager
 import com.joshtalks.joshskills.repository.server.chat_message.TVideoMessage
 import com.joshtalks.joshskills.repository.service.EngagementNetworkHelper
 import de.hdodenhof.circleimageview.CircleImageView
+import kotlinx.android.synthetic.main.activity_conversation.*
 
 const val CHAT_ROOM_OBJECT = "chat_room"
 const val IMAGE_SELECT_REQUEST_CODE = 1077
@@ -155,6 +156,9 @@ class ConversationActivity : BaseActivity() {
         compositeDisposable.add(RxBus2.listen(PdfOpenEventBus::class.java).subscribe {
             PdfViewerActivity.startPdfActivity(this, it.pdfObject, inboxEntity.course_name)
         })
+        compositeDisposable.add(RxBus2.listen(RemoveViewEventBus::class.java).subscribe {
+
+        })
 
         compositeDisposable.add(RxBus2.listen(DownloadMediaEventBus::class.java).subscribe {
 
@@ -222,7 +226,31 @@ class ConversationActivity : BaseActivity() {
                 } else {
                     //EngagementNetworkHelper.engageVideoApi(it)
                 }
+            }
+        })
+        compositeDisposable.add(RxBus2.listen(VideoDownloadedBus::class.java).subscribe {
 
+            CoroutineScope(Dispatchers.IO).launch {
+                it?.cId?.let { id ->
+                    try {
+                        val chatObj =
+                            AppObjectController.appDatabase.chatDao().getUpdatedChatObjectViaId(id)
+                        var tempView: BaseChatViewHolder
+                        conversationBinding.chatRv.allViewResolvers?.let {
+                            for (view in it) {
+                                tempView = view as BaseChatViewHolder
+                                if (tempView.message.chatId == chatObj.chatId) {
+                                    tempView.message = chatObj
+                                    AppObjectController.uiHandler.postDelayed({
+                                        conversationBinding.chatRv.refreshView(tempView)
+                                    }, 250)
+                                }
+                            }
+                        }
+                    } catch (ex: Exception) {
+                        ex.printStackTrace()
+                    }
+                }
             }
 
         })
@@ -255,7 +283,6 @@ class ConversationActivity : BaseActivity() {
                 conversationViewModel.startRecord().let {
                     if (it) {
                         conversationViewModel.startRecord()
-                    }else{
                     }
                 }
 
@@ -460,8 +487,6 @@ class ConversationActivity : BaseActivity() {
 
 
     private fun addUploadAudioMedia(mediaPath: String) {
-
-
         val recordUpdatedPath = AppDirectory.getRecordingSentFilePath()
         AppDirectory.copy(mediaPath, recordUpdatedPath)
         val tAudioMessage = TAudioMessage(recordUpdatedPath, recordUpdatedPath)
@@ -481,9 +506,10 @@ class ConversationActivity : BaseActivity() {
         val linearLayoutManager = SmoothLinearLayoutManager(this);
         linearLayoutManager.stackFromEnd = true
         linearLayoutManager.isSmoothScrollbarEnabled = true
-
-        conversationBinding.chatRv.layoutManager = linearLayoutManager
-        conversationBinding.chatRv.setHasFixedSize(false)
+        conversationBinding.chatRv.builder
+            .setHasFixedSize(false)
+           // .setItemViewCacheSize(10)
+            .setLayoutManager(linearLayoutManager)
 
         conversationBinding.chatRv.itemAnimator = null
         conversationBinding.chatRv.addItemDecoration(

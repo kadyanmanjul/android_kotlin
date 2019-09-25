@@ -130,6 +130,7 @@
 
 
     <TextView
+            android:visibility="gone"
             android:id="@+id/filter_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -156,13 +157,14 @@
     />
 
     <RelativeLayout
+
             android:id="@+id/filter_list_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:background="@color/blackish"
             android:orientation="horizontal"
-            android:visibility="visible"
+            android:visibility="gone"
     >
 
         <androidx.recyclerview.widget.RecyclerView

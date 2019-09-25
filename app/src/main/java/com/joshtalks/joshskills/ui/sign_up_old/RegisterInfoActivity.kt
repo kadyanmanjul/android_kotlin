@@ -80,6 +80,7 @@ class RegisterInfoActivity : BaseActivity() {
     }
 
     private fun registerAnonymousUser(phoneNumber: String) {
+        AppAnalytics.create(AnalyticsEvent.UNREGISTER_USER.NAME).push()
         CoroutineScope(Dispatchers.IO).launch {
             val map = mapOf("mobile" to phoneNumber)
             try {

@@ -35,6 +35,9 @@ import kotlinx.coroutines.launch
 import com.google.android.gms.location.LocationRequest
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
+import com.joshtalks.joshskills.core.service.HAS_NOTIFICATION
+import com.joshtalks.joshskills.core.service.NOTIFICATION_ID
+import com.joshtalks.joshskills.repository.service.EngagementNetworkHelper
 import com.patloew.rxlocation.RxLocation
 
 
@@ -64,10 +67,30 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver {
             SyncChatService.syncChatWithServer()
             locationFetch()
         }
+        AppAnalytics.updateUser()
         AppAnalytics.create(AnalyticsEvent.INBOX_SCREEN.NAME).push()
         addObserver()
 
+        processIntent(intent)
     }
+
+
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        processIntent(intent)
+    }
+
+    private fun processIntent(intent: Intent?) {
+        intent?.hasExtra(HAS_NOTIFICATION)?.let {
+            if (it) intent.hasExtra(NOTIFICATION_ID).let {
+                EngagementNetworkHelper.clickNotification(intent.run { getStringExtra(
+                    NOTIFICATION_ID
+                ) })
+            }
+        }
+    }
+
 
     private fun locationFetch() {
         if (Mentor.getInstance().getLocality() == null) {
@@ -144,6 +167,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver {
 
         viewModel.registerCourseMinimalLiveData.observe(this, Observer {
             if (it != null && it.isNotEmpty()) {
+                recycler_view_inbox.removeAllViews()
                 for (inbox in it) {
                     recycler_view_inbox.addView(
                         InboxViewHolder(
