@@ -1,8 +1,10 @@
 package com.joshtalks.joshskills.ui.chat
 
 import android.app.Application
-import android.graphics.Bitmap
-import android.os.Handler
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
@@ -30,7 +32,6 @@ import com.joshtalks.joshskills.repository.server.chat_message.BaseChatMessage
 import com.joshtalks.joshskills.repository.server.chat_message.BaseMediaMessage
 import id.zelory.compressor.Compressor
 import io.reactivex.Observable
-import io.reactivex.functions.Consumer
 import io.reactivex.schedulers.Schedulers
 
 import kotlinx.coroutines.async
@@ -38,19 +39,20 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import java.util.*
 import java.util.concurrent.TimeUnit
+import com.joshtalks.joshskills.repository.service.SyncChatService
 
 
 class ConversationViewModel(application: Application) : AndroidViewModel(application) {
     private var compositeDisposable = CompositeDisposable()
-
     lateinit var recordFile: File
-    var lastChatTime: Date? = null
+    private var lastChatTime: Date? = null
     var context: JoshApplication = getApplication()
     var appDatabase = AppObjectController.appDatabase
     lateinit var inboxEntity: InboxEntity
     val chatObservableLiveData: MutableLiveData<List<ChatModel>> = MutableLiveData()
     val refreshViewLiveData: MutableLiveData<ChatModel> = MutableLiveData()
-    var lastMessageTime: Date? = null
+    private var lastMessageTime: Date? = null
+    private var broadCastForNetwork = CheckConnectivity()
 
     init {
         addObserver()
@@ -74,6 +76,7 @@ class ConversationViewModel(application: Application) : AndroidViewModel(applica
     override fun onCleared() {
         super.onCleared()
         compositeDisposable.clear()
+        context.unregisterReceiver(broadCastForNetwork)
     }
 
 
@@ -81,6 +84,17 @@ class ConversationViewModel(application: Application) : AndroidViewModel(applica
         compositeDisposable.add(RxBus2.listen(DBInsertion::class.java).subscribeOn(Schedulers.computation()).subscribe {
             getUserRecentChats()
         })
+        val filter = IntentFilter("android.net.conn.CONNECTIVITY_CHANGE")
+        context.registerReceiver(broadCastForNetwork, filter)
+    }
+
+    inner class CheckConnectivity : BroadcastReceiver() {
+
+        override fun onReceive(context: Context, arg1: Intent) {
+            if (Utils.isInternetAvailable()) {
+                SyncChatService.syncChatWithServer(refreshViewLiveData)
+            }
+        }
     }
 
 
@@ -124,7 +138,15 @@ class ConversationViewModel(application: Application) : AndroidViewModel(applica
         }
         lastMessageTime = chatReturn.last().created
         chatObservableLiveData.postValue(chatReturn)
+        updateAllMessageReadByUser()
 
+
+    }
+
+    private fun updateAllMessageReadByUser() {
+        viewModelScope.launch(Dispatchers.IO) {
+            appDatabase.chatDao().readAllChatBYUser()
+        }
     }
 
 
@@ -240,9 +262,9 @@ class ConversationViewModel(application: Application) : AndroidViewModel(applica
             if (Utils.isInternetAvailable()) {
                 val arguments = mutableMapOf<String, String>()
                 //val chatModel = appDatabase.chatDao().getLastOneChat(inboxEntity.conversation_id)
-                PrefManager.getLongValue(inboxEntity.conversation_id).let {time->
-                    if (time>0) {
-                        arguments["created"] = (time/1000).toString()
+                PrefManager.getLongValue(inboxEntity.conversation_id).let { time ->
+                    if (time > 0) {
+                        arguments["created"] = (time / 1000).toString()
                     }
                 }
 
@@ -261,10 +283,9 @@ class ConversationViewModel(application: Application) : AndroidViewModel(applica
                 .subscribe({
                     if (Utils.isInternetAvailable()) {
                         val arguments = mutableMapOf<String, String>()
-
-                        PrefManager.getLongValue(inboxEntity.conversation_id).let {time->
-                            if (time>0) {
-                                arguments["created"] = (time/1000).toString()
+                        PrefManager.getLongValue(inboxEntity.conversation_id).let { time ->
+                            if (time > 0) {
+                                arguments["created"] = (time / 1000).toString()
                             }
                         }
                         NetworkRequestHelper.getUpdatedChat(inboxEntity, queryMap = arguments)

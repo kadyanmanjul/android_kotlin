@@ -132,15 +132,9 @@ abstract class BaseCell() {
     }
 
 
-    fun setVideoImageView(iv: AppCompatImageView, url: String,callback:Runnable?=null){
-        if (iv.tag != null) {
-            return
-        }
-
-        val requestOptions = RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL).override(600,400)
+    fun setVideoImageView(iv: AppCompatImageView, url:Int,callback:Runnable?=null){
         Glide.with(getAppContext())
             .load(url)
-            .apply(requestOptions)
             .centerCrop()
             .listener(object : RequestListener<Drawable> {
                 override fun onLoadFailed(
@@ -161,10 +155,8 @@ abstract class BaseCell() {
                     isFirstResource: Boolean
                 ): Boolean {
                     callback?.run()
-                    iv.tag = url
                     return false
                 }
-
             })
             .into(iv)
 

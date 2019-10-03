@@ -90,7 +90,7 @@ class JoshApplication : Application(){
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 if (Mentor.getInstance().hasId()) {
-                   AppObjectController.signUpNetworkService.userActive( Mentor.getInstance().getId(),Any()).await()
+                   AppObjectController.signUpNetworkService.userActive( Mentor.getInstance().getId(),Any())
                 }
 
             } catch (ex: Exception) {

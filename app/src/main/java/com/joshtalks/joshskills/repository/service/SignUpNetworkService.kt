@@ -35,7 +35,7 @@ interface SignUpNetworkService {
 
 
     @PATCH("$DIR/mentor/{id}/last_login/")
-    suspend fun userActive(@Path("id") id: String,@Body obj: Any): Deferred<Any>
+    suspend fun userActive(@Path("id") id: String,@Body obj: Any)
 
     @Multipart
     @POST("$DIR/user/{id}/upload_profile_pic/")

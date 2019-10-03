@@ -7,7 +7,7 @@ import android.content.pm.ActivityInfo;
 import android.net.Uri;
 import android.os.Handler;
 import android.util.AttributeSet;
-import android.util.Log;
+import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.OrientationEventListener;
 import android.view.View;
@@ -17,38 +17,47 @@ import android.widget.ImageView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.exoplayer2.C;
+import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayerFactory;
+import com.google.android.exoplayer2.Player;
+import com.google.android.exoplayer2.RenderersFactory;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.analytics.AnalyticsListener;
 import com.google.android.exoplayer2.audio.AudioAttributes;
-import com.google.android.exoplayer2.source.ExtractorMediaSource;
-import com.google.android.exoplayer2.source.MediaSource;
-import com.google.android.exoplayer2.source.hls.HlsMediaSource;
-import com.google.android.exoplayer2.source.hls.playlist.DefaultHlsPlaylistParserFactory;
+import com.google.android.exoplayer2.drm.DefaultDrmSessionManager;
+import com.google.android.exoplayer2.drm.FrameworkMediaCrypto;
+import com.google.android.exoplayer2.source.TrackGroupArray;
+import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
+import com.google.android.exoplayer2.trackselection.MappingTrackSelector;
+import com.google.android.exoplayer2.trackselection.TrackSelection;
+import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
 import com.google.android.exoplayer2.ui.DefaultTimeBar;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.ui.TimeBar;
-import com.google.android.exoplayer2.upstream.DataSource;
-import com.google.android.exoplayer2.upstream.DefaultDataSource;
-import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
-import com.google.android.exoplayer2.upstream.cache.CacheDataSource;
-import com.google.android.exoplayer2.upstream.cache.CacheDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
-import com.google.android.exoplayer2.video.VideoListener;
 import com.joshtalks.joshskills.R;
-import com.joshtalks.joshskills.core.AppObjectController;
-import com.joshtalks.joshskills.core.service.downloader.MediaPlayerManager;
+import com.joshtalks.joshskills.core.service.video_download.VideoDownloadController;
 
 import static android.content.pm.ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE;
 
 public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener, View.OnClickListener {
 
-    private SimpleExoPlayer player;
+
+
+    enum ScreenOrientation {
+        PORTRAIT,
+        LANDSCAPE
+    }
+
+
+    public static final int STATE_IDLE = 1;
+    public static final int STATE_BUFFERING = 2;
+    public static final int STATE_READY = 3;
+    public static final int STATE_ENDED = 4;
 
     private Uri uri;
-
     private long lastPosition = 0;
     private long currentPosition = 0;
     private Activity activity;
@@ -56,16 +65,14 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
     private OrientationEventListener mOrientationListener;
     private ScreenOrientation screenOrientation = ScreenOrientation.PORTRAIT;
 
-    enum ScreenOrientation {
-        PORTRAIT,
-        LANDSCAPE
-    }
 
-    public static final int STATE_IDLE = 1;
-    public static final int STATE_BUFFERING = 2;
-    public static final int STATE_READY = 3;
-    public static final int STATE_ENDED = 4;
-    private DefaultTimeBar defaultTimeBar;
+    private SimpleExoPlayer player;
+    private DefaultTrackSelector trackSelector;
+    private TrackGroupArray lastSeenTrackGroupArray;
+
+    private boolean startAutoPlay;
+    private int startWindow;
+    private GestureDetector gestureDetector;
 
 
     private Handler timeHandler = new Handler();
@@ -96,30 +103,51 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
         }
     };
 
+    public JoshVideoPlayer(Context context, AttributeSet attrs) {
+        super(context, attrs);
+        init();
+    }
+
+    public JoshVideoPlayer(Context context, AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+        init();
+    }
+
+
     public JoshVideoPlayer(Context context) {
         super(context);
-
         init();
     }
 
 
     public void init() {
         fullScreenToggle = findViewById(R.id.ivFullScreenToggle);
+        DefaultTimeBar defaultTimeBar = findViewById(R.id.exo_progress);
 
-        defaultTimeBar = findViewById(R.id.exo_progress);
         if (player == null) {
+            try {
+                TrackSelection.Factory trackSelectionFactory = new AdaptiveTrackSelection.Factory();
+                RenderersFactory renderersFactory = VideoDownloadController.getInstance().buildRenderersFactory(false);
+                trackSelector = new DefaultTrackSelector(trackSelectionFactory);
+                DefaultTrackSelector.Parameters trackSelectorParameters = new DefaultTrackSelector.ParametersBuilder().build();
+                trackSelector.setParameters(trackSelectorParameters);
+                lastSeenTrackGroupArray = null;
+                DefaultDrmSessionManager<FrameworkMediaCrypto> drmSessionManager = null;
+                player = ExoPlayerFactory.newSimpleInstance(getContext(), renderersFactory, trackSelector, drmSessionManager);
 
-            player = ExoPlayerFactory.newSimpleInstance(AppObjectController.getJoshApplication());
+            } catch (Exception e) {
+                player = ExoPlayerFactory.newSimpleInstance(getContext());
+                e.printStackTrace();
+            }
+
+            player.addListener(new PlayerEventListener());
             player.setPlayWhenReady(true);
-            // player.setVideoScalingMode(VIDEO_SCALING_MODE_SCALE_TO_FIT);
-            //setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FILL);
-            //player.setVideoScalingMode(C.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING);
-            fitToScreen();
-
+            setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FIXED_WIDTH);
 
             player.addAnalyticsListener(new AnalyticsListener() {
                 @Override
                 public void onPlayerStateChanged(EventTime eventTime, boolean playWhenReady, int playbackState) {
+
                     if (getContext() instanceof PlayerListener) {
 
                         PlayerListener listener = (PlayerListener) getContext();
@@ -147,37 +175,7 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
                 }
 
             });
-            player.addVideoListener(new VideoListener() {
-                // This is where we will resize view to fit aspect ratio of video
-                @Override
-                public void onVideoSizeChanged(
-                        int width,
-                        int height,
-                        int unappliedRotationDegrees,
-                        float pixelWidthHeightRatio
-                ) {
-                    // Get layout params of view
-                    // Use MyView.this to refer to the current MyView instance
-                    // inside a callback
-                    // LayoutParams p =getLayoutParams();
-                    //int currWidth = MyView.this.getWidth();
 
-                    // Set new width/height of view
-                    // height or width must be cast to float as int/int will give 0
-                    // and distort view, e.g. 9/16 = 0 but 9.0/16 = 0.5625.
-                    // p.height is int hence the final cast to int.
-                    //p.width = currWidth;
-                    //p.height = (int) ((float) height / width * currWidth);
-
-                    // Redraw myView
-                    //MyView.this.requestLayout();
-                }
-
-                @Override
-                public void onRenderedFirstFrame() {
-                    // ...
-                }
-            });
             defaultTimeBar.addListener(new TimeBar.OnScrubListener() {
                 @Override
                 public void onScrubStart(TimeBar timeBar, long position) {
@@ -185,6 +183,7 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
                         PlayerListener listener = (PlayerListener) getContext();
                         listener.onPositionDiscontinuity(1, player.getCurrentPosition());
                     } catch (Exception e) {
+                        e.printStackTrace();
 
                     }
                 }
@@ -204,7 +203,7 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
             timeHandler.post(timeRunnable);
             setPlayer(player);
 
-            checkIfFullscreenToggleSupported();
+           // checkIfFullscreenToggleSupported();
             setupAudioFocus();
             attachForwardRewindAnimator();
 
@@ -246,14 +245,11 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
     }
 
     private void setupAudioFocus() {
-
         AudioAttributes audioAttributes = new AudioAttributes.Builder()
                 .setUsage(C.USAGE_MEDIA)
                 .setContentType(C.CONTENT_TYPE_MOVIE)
                 .build();
-
         player.setAudioAttributes(audioAttributes, true);
-
     }
 
     private void attachForwardRewindAnimator() {
@@ -263,58 +259,16 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
     }
 
     public void play() {
-
         if (uri == null || player == null)
             return;
-
-        player.prepare(buildMediaSource(), true, false);
-
-    }
-
-    public void downloadStreamPlay() {
-        player.prepare(buildMediaSource(), true, false);
+        player.prepare(VideoDownloadController.getInstance().getMediaSource(uri), true, false);
 
     }
-
 
     public SimpleExoPlayer getExoPlayer() {
-
         return player;
     }
 
-    public void setVideScalingMode(@C.VideoScalingMode int scaleMode) {
-        player.setVideoScalingMode(scaleMode);
-    }
-
-    private MediaSource buildMediaSource() {
-
-        DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(getContext(),
-                Util.getUserAgent(getContext(), "joshtalks"));
-
-        if (uri.getLastPathSegment().endsWith("m3u8")) {
-
-            return new HlsMediaSource.Factory(dataSourceFactory)
-                    .setPlaylistParserFactory(new DefaultHlsPlaylistParserFactory())
-                    .createMediaSource(uri);
-
-        } else {
-
-            return new ExtractorMediaSource.Factory(dataSourceFactory)
-                    .createMediaSource(uri);
-
-        }
-
-    }
-
-    public JoshVideoPlayer(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        init();
-    }
-
-    public JoshVideoPlayer(Context context, AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
-        init();
-    }
 
     public void onStart() {
         if (Util.SDK_INT > 23) {
@@ -322,8 +276,8 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
         }
     }
 
-
     public void onPause() {
+        currentPosition = player.getCurrentPosition();
         player.setPlayWhenReady(false);
         player.getPlaybackState();
     }
@@ -331,30 +285,38 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
     public void onResume() {
         player.setPlayWhenReady(true);
         player.getPlaybackState();
-    }
+        player.seekTo(currentPosition);
 
-    private void releasePlayer() {
-        if (player != null) {
-
-            if (getContext() instanceof PlayerListener) {
-                ((PlayerListener) getContext()).onPlayerReleased();
-            }
-
-            currentPosition = player.getCurrentPosition();
-
-            player.release();
-            player = null;
-        }
     }
 
     public void onStop() {
         releasePlayer();
     }
 
+    private void releasePlayer() {
+        if (player != null) {
+            if (getContext() instanceof PlayerListener) {
+                ((PlayerListener) getContext()).onPlayerReleased();
+            }
+            currentPosition = player.getCurrentPosition();
+            player.release();
+            player = null;
+        }
+    }
+
+
     public void setUrl(String url) {
         uri = Uri.parse(url);
-
     }
+
+    public void downloadStreamPlay() {
+        boolean haveStartPosition = startWindow != C.INDEX_UNSET;
+        if (haveStartPosition) {
+            player.seekTo(startWindow, currentPosition);
+        }
+        player.prepare(VideoDownloadController.getInstance().getMediaSource(uri), !haveStartPosition, false);
+    }
+
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
@@ -379,9 +341,12 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
 
     @Override
     public void onClick(View v) {
-        if (v.getId() == R.id.ivFullScreenToggle) {
-            if (getContext() instanceof FullscreenToggleListener)
-                ((FullscreenToggleListener) getContext()).onFullscreenToggle();
+
+        switch (v.getId()) {
+            case R.id.ivFullScreenToggle:
+                if (getContext() instanceof FullscreenToggleListener)
+                    ((FullscreenToggleListener) getContext()).onFullscreenToggle();
+                break;
         }
 
     }
@@ -403,6 +368,9 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
         return null;
     }
 
+    public void setGestureDetector(GestureDetector gestureDetector) {
+        this.gestureDetector = gestureDetector;
+    }
 
     public void setActivity(Activity activity) {
         this.activity = activity;
@@ -410,5 +378,49 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
 
     public long getLastPosition() {
         return lastPosition;
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent ev) {
+        if (gestureDetector != null) {
+            gestureDetector.onTouchEvent(ev);
+        }
+        return super.onTouchEvent(ev);
+    }
+
+    private class PlayerEventListener implements Player.EventListener {
+
+        @Override
+        public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
+            if (playbackState == Player.STATE_ENDED) {
+            }
+        }
+
+        @Override
+        public void onPlayerError(ExoPlaybackException e) {
+
+        }
+
+        @Override
+        @SuppressWarnings("ReferenceEquality")
+        public void onTracksChanged(TrackGroupArray trackGroups, TrackSelectionArray trackSelections) {
+            try {
+
+                if (trackGroups != lastSeenTrackGroupArray) {
+                    MappingTrackSelector.MappedTrackInfo mappedTrackInfo = trackSelector.getCurrentMappedTrackInfo();
+                    if (mappedTrackInfo != null) {
+                        if (mappedTrackInfo.getTypeSupport(C.TRACK_TYPE_VIDEO)
+                                == MappingTrackSelector.MappedTrackInfo.RENDERER_SUPPORT_UNSUPPORTED_TRACKS) {
+                        }
+                        if (mappedTrackInfo.getTypeSupport(C.TRACK_TYPE_AUDIO)
+                                == MappingTrackSelector.MappedTrackInfo.RENDERER_SUPPORT_UNSUPPORTED_TRACKS) {
+                        }
+                    }
+                    lastSeenTrackGroupArray = trackGroups;
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

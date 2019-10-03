@@ -1,6 +1,8 @@
 package com.joshtalks.joshskills.repository.service
 
 import android.content.pm.PackageManager
+import android.util.Log
+import androidx.lifecycle.MutableLiveData
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.repository.local.DatabaseUtils
@@ -19,14 +21,13 @@ import java.io.FileNotFoundException
 
 object SyncChatService {
 
-    fun syncChatWithServer() {
+    fun syncChatWithServer(refreshViewLiveData: MutableLiveData<ChatModel>? = null) {
         CoroutineScope(Dispatchers.IO).launch {
 
             if (Utils.isInternetAvailable()) {
                 val chatModelList = AppObjectController.appDatabase.chatDao().getUnSyncMessage()
 
                 for (chatObject in chatModelList) {
-                    var anyIssue: Boolean = false
                     var url = ""
 
                     if ((chatObject.type == BASE_MESSAGE_TYPE.TX).not()) {
@@ -37,7 +38,6 @@ object SyncChatService {
                                     if (filePath.isEmpty()) {
                                         return@launch
                                     }
-
                                     val obj = mapOf("media_path" to File(filePath).name)
 
                                     val responseObj =
@@ -46,6 +46,7 @@ object SyncChatService {
                                         ).await()
                                     val statusCode: Int =
                                         uploadOnS3Server(responseObj, filePath).await()
+
                                     if (statusCode in 200..210) {
                                         url =
                                             responseObj.url.plus(File.separator)
@@ -57,10 +58,7 @@ object SyncChatService {
                             AppObjectController.appDatabase.chatDao()
                                 .forceFullySync(chatObject.chatId)
                             exception.printStackTrace()
-                            anyIssue = true
                         } catch (exception: Exception) {
-                            anyIssue = true
-
                             exception.printStackTrace()
                         }
                     }
@@ -70,26 +68,26 @@ object SyncChatService {
                     if (url.isEmpty()) {
                         chatObject.text?.let {
                             tChatMessage = TChatMessage(it)
-                            sendTextMessage(tChatMessage, chatObject, chatObject.conversationId)
+                            sendTextMessage(tChatMessage, chatObject, chatObject.conversationId,refreshViewLiveData)
                         }
                     } else {
                         if (chatObject.type == BASE_MESSAGE_TYPE.VI) {
                             chatObject.downloadedLocalPath?.let { path ->
                                 tChatMessage = TVideoMessage(path, path)
                                 (tChatMessage as BaseMediaMessage).url = url
-                                sendTextMessage(tChatMessage, chatObject, chatObject.conversationId)
+                                sendTextMessage(tChatMessage, chatObject, chatObject.conversationId,refreshViewLiveData)
                             }
                         } else if (chatObject.type == BASE_MESSAGE_TYPE.IM) {
                             chatObject.downloadedLocalPath?.let { path ->
                                 tChatMessage = TImageMessage(path, path)
                                 (tChatMessage as BaseMediaMessage).url = url
-                                sendTextMessage(tChatMessage, chatObject, chatObject.conversationId)
+                                sendTextMessage(tChatMessage, chatObject, chatObject.conversationId,refreshViewLiveData)
                             }
                         } else if (chatObject.type == BASE_MESSAGE_TYPE.AU) {
                             chatObject.downloadedLocalPath?.let { path ->
                                 tChatMessage = TAudioMessage(path, path)
                                 (tChatMessage as BaseMediaMessage).url = url
-                                sendTextMessage(tChatMessage, chatObject, chatObject.conversationId)
+                                sendTextMessage(tChatMessage, chatObject, chatObject.conversationId,refreshViewLiveData)
                             }
                         }
                     }
@@ -101,8 +99,8 @@ object SyncChatService {
     private fun sendTextMessage(
         messageObject: BaseChatMessage,
         chatModel: ChatModel?,
-        conversation_id: String
-    ) {
+        conversation_id: String, refreshViewLiveData: MutableLiveData<ChatModel>? = null
+        ) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 chatModel?.let {
@@ -112,7 +110,7 @@ object SyncChatService {
                 messageObject.conversation = conversation_id
                 val responseChat =
                     AppObjectController.chatNetworkService.sendMessage(messageObject).await()
-                NetworkRequestHelper.updateChat(responseChat, null, messageObject, chatModel)
+                NetworkRequestHelper.updateChat(responseChat, refreshViewLiveData, messageObject, chatModel)
 
             } catch (ex: Exception) {
                 //registerCourseLiveData.postValue(null)
@@ -146,6 +144,9 @@ object SyncChatService {
             return@async responseUpload.code()
         }
     }
+
+
+
 
     private fun checkReadExternalPermission(): Boolean {
         val permission = android.Manifest.permission.READ_EXTERNAL_STORAGE

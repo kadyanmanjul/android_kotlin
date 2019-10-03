@@ -9,6 +9,8 @@ import android.view.animation.OvershootInterpolator;
 import android.widget.LinearLayout;
 import com.joshtalks.joshskills.databinding.ActivityConversationBinding;
 
+import java.util.ArrayList;
+
 public class AttachmentUtil {
 
 
@@ -16,6 +18,7 @@ public class AttachmentUtil {
 
         int w = conversationBinding.attachmentContainer.getWidth();
         int h = conversationBinding.attachmentContainer.getHeight();
+
 
         int finalRadius = (int) Math.hypot(w, h);
 

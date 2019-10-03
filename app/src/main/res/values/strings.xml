@@ -59,4 +59,11 @@
 
     <string name="incomplete_downloads">Checking for incomplete Downloads</string>
 
+
+
+    <string name="message_size_limit">Message size limit exceeded</string>
+
+    <string name="unread_message">%s UNREAD MESSAGES</string>
+
+
 </resources>

@@ -16,13 +16,10 @@ import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
 import com.joshtalks.joshskills.core.io.AppDirectory
-import com.joshtalks.joshskills.core.service.DownloadUtils
-import com.joshtalks.joshskills.core.service.downloader.MediaPlayerManager
-import com.joshtalks.joshskills.core.service.listeners.DownloadListener
+import com.joshtalks.joshskills.core.service.video_download.VideoDownloadController
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
 import com.joshtalks.joshskills.repository.local.entity.DOWNLOAD_STATUS
-import com.joshtalks.joshskills.repository.local.eventbus.DownloadCompletedEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.DownloadMediaEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.PlayVideoEvent
 import com.karumi.dexter.Dexter
@@ -36,13 +33,6 @@ import com.mindorks.placeholderview.annotations.Layout
 import com.mindorks.placeholderview.annotations.Resolve
 import com.mindorks.placeholderview.annotations.View
 import com.pnikosis.materialishprogress.ProgressWheel
-import com.tonyodev.fetch2.Download
-import com.tonyodev.fetch2.Error
-import com.tonyodev.fetch2.FetchListener
-import com.tonyodev.fetch2core.DownloadBlock
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import java.lang.ref.WeakReference
 
 
@@ -101,9 +91,9 @@ class VideoViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
         image_view.setImageResource(0)
         text_title.visibility = GONE
         text_message_body.visibility = GONE
-        text_title.text =""
+        text_title.text = ""
         videoViewHolder = this
-        text_message_body.text=""
+        text_message_body.text = ""
         download_container.visibility = GONE
 
         text_message_time.text = Utils.messageTimeConversion(message.created)
@@ -140,18 +130,20 @@ class VideoViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
             } else if (message.downloadStatus == DOWNLOAD_STATUS.UPLOADING) {
                 fileDownloadingInProgressView()
                 setImageInImageView(image_view, message.downloadedLocalPath!!)
-            }else{
-               // setImageView(image_view, videoObj.video_image_url, true)
-
+            } else {
+                setVideoImageView(image_view, R.drawable.ic_file_error)
             }
         } else {
             message.question?.videoList?.getOrNull(0)?.let { videoObj ->
                 when {
-                    message.downloadStatus == DOWNLOAD_STATUS.DOWNLOADED -> setImageView(
-                        image_view,
-                        videoObj.video_image_url,
-                        false
-                    )
+                    message.downloadStatus == DOWNLOAD_STATUS.DOWNLOADED -> {
+                        setImageView(
+                            image_view,
+                            videoObj.video_image_url,
+                            false
+                        )
+                        fileDownloadSuccess()
+                    }
                     message.downloadStatus == DOWNLOAD_STATUS.DOWNLOADING -> {
                         setImageView(image_view, videoObj.video_image_url, true)
                         videoObj.video_url?.let {
@@ -202,7 +194,7 @@ class VideoViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
     }
 
     fun fileNotDownloadView() {
-        return
+
         download_container.visibility = VISIBLE
         iv_start_download.visibility = VISIBLE
         progress_dialog.visibility = GONE
@@ -211,7 +203,7 @@ class VideoViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
     }
 
     private fun fileDownloadingInProgressView() {
-        return
+
         download_container.visibility = VISIBLE
         iv_start_download.visibility = GONE
         progress_dialog.visibility = VISIBLE
@@ -221,20 +213,12 @@ class VideoViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
 
 
     private fun download(url: String) {
-        MediaPlayerManager.getInstance()
-            .downloadTracker
-            .download(url,message)
-        /*
-        val rendererFactory = VideoDownloadController.getInstance().buildRenderersFactory(false)
         AppObjectController.addVideoCallback(message.chatId)
-        VideoDownloadController.getInstance().downloadTracker
-            ?.toggleDownload(
-                message.chatId,
-                Uri.parse(url).path,
-                Uri.parse(url),
-                null,
-                rendererFactory
-            )*/
+        AppObjectController.videoDownloadTracker.download(
+            message,
+            Uri.parse(url),
+            VideoDownloadController.getInstance().buildRenderersFactory(false)
+        )
     }
 
 

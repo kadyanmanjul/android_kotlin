@@ -1,3 +1,5 @@
 package com.joshtalks.joshskills.repository.local.eventbus
 
-class VideoDownloadedBus (val cId:String)
+import com.joshtalks.joshskills.repository.local.entity.ChatModel
+
+class VideoDownloadedBus (val messageObject: ChatModel)

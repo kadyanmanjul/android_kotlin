@@ -5,13 +5,13 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.view.Window
-import android.view.WindowManager
+import android.view.*
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.ui.DefaultTimeBar
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
@@ -70,6 +70,7 @@ class VideoPlayerActivity : BaseActivity(), PlayerListener {
     var videoViewGraphList = mutableListOf<ListenGraph>()
     var graph: ListenGraph? = null
     var lastPos: Long = 0
+    var toolbarShowing = true
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -82,10 +83,26 @@ class VideoPlayerActivity : BaseActivity(), PlayerListener {
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_video_player_1)
         binding.handler = this
+        setToolbar()
 
         chatObject = intent.getSerializableExtra(VIDEO_OBJECT) as ChatModel
+        binding.pvPlayer.setGestureDetector(
+            GestureDetector(
+                applicationContext,
+                object : GestureDetector.SimpleOnGestureListener() {
+                    override fun onSingleTapConfirmed(e: MotionEvent): Boolean {
+                        if (toolbarShowing) {
+                            binding.toolbar.visibility = View.INVISIBLE
+                        } else {
+                            binding.toolbar.visibility = View.VISIBLE
+                        }
+                        toolbarShowing = !toolbarShowing
 
-        binding.pvPlayer.fitToScreen()
+
+                        return true
+                    }
+                })
+        )
 
         if (chatObject.url != null) {
             if (chatObject.downloadedLocalPath.isNullOrEmpty()) {
@@ -102,9 +119,7 @@ class VideoPlayerActivity : BaseActivity(), PlayerListener {
 
         binding.pvPlayer.setActivity(this)
         exoProgress = findViewById(R.id.exo_progress)
-        setToolbar()
         AppAnalytics.create(AnalyticsEvent.WATCH_ACTIVITY.NAME).push()
-
 
     }
 
@@ -125,6 +140,7 @@ class VideoPlayerActivity : BaseActivity(), PlayerListener {
         }
     }
 
+
     companion object {
         fun startConversionActivity(
             context: Context,
@@ -136,9 +152,7 @@ class VideoPlayerActivity : BaseActivity(), PlayerListener {
             intent.putExtra(COURSE_NAME, courseName)
             context.startActivity(intent)
         }
-
     }
-
 
     override fun onStart() {
         super.onStart()

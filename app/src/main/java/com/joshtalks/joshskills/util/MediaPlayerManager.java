@@ -31,11 +31,8 @@ public class MediaPlayerManager {
         mediaPlayer.setOnCompletionListener(completionListener);
         mediaPlayer.setOnErrorListener(errorListener);
         mediaPlayer.setOnPreparedListener(MediaPlayer::start);
-        mediaPlayer.setOnBufferingUpdateListener(new MediaPlayer.OnBufferingUpdateListener() {
-            @Override
-            public void onBufferingUpdate(MediaPlayer mp, int percent) {
+        mediaPlayer.setOnBufferingUpdateListener((mp, percent) -> {
 
-            }
         });
 
     }

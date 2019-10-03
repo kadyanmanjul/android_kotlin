@@ -43,11 +43,13 @@ object NetworkRequestHelper {
 
                 for (chatModel in resp.chatModelList) {
                     val chatObj =
-                        AppObjectController.appDatabase.chatDao().getChatObject(chatModel.chatId)
+                        AppObjectController.appDatabase.chatDao()
+                            .getNullableChatObject(chatModel.chatId)
                     if (chatObj == null) {
                         chatModel.downloadStatus = DOWNLOAD_STATUS.NOT_START
                         AppObjectController.appDatabase.chatDao().insertAMessage(chatModel)
                     } else {
+                        chatObj.chatId = chatModel.chatId
                         chatObj.url = chatModel.url
                         chatObj.conversationId = chatModel.conversationId
                         chatObj.created = chatModel.created
@@ -59,6 +61,7 @@ object NetworkRequestHelper {
 
                     chatModel.question?.let { question ->
                         question.chatId = chatModel.chatId
+
                         AppObjectController.appDatabase.chatDao().insertChatQuestion(question)
 
                         question.audioList?.let {
@@ -162,6 +165,9 @@ object NetworkRequestHelper {
                 isSync = true
 
             )
+            currentChatModel?.let { old ->
+                chatModel.isSeen = old.isSeen
+            }
 
             if (messageObject is BaseMediaMessage)
                 chatModel.downloadedLocalPath = messageObject.localPathUrl

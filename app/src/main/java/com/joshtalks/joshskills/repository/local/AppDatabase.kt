@@ -6,13 +6,15 @@ import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.repository.local.entity.*
 import java.util.*
+import androidx.sqlite.db.SupportSQLiteDatabase
+import androidx.room.migration.Migration
 
 
 const val DATABASE_NAME = "JoshEnglishDB.db"
 
 @Database(
     entities = [Course::class, ChatModel::class, Question::class, VideoType::class, AudioType::class, OptionType::class, PdfType::class, ImageType::class],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
 @TypeConverters(
@@ -38,6 +40,8 @@ abstract class AppDatabase : RoomDatabase() {
                             context.applicationContext,
                             AppDatabase::class.java, DATABASE_NAME
                         )
+                            .addMigrations(MIGRATION_1_2)
+
                             .fallbackToDestructiveMigration()
                             .addCallback(sRoomDatabaseCallback)
                             .build()
@@ -51,6 +55,11 @@ abstract class AppDatabase : RoomDatabase() {
 
         }
 
+        private val MIGRATION_1_2: Migration = object : Migration(1, 2) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("UPDATE chat_table  SET is_seen = 1")
+            }
+        }
 
     }
 

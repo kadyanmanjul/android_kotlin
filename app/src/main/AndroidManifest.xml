@@ -40,6 +40,7 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <uses-permission android:name="android.permission.CALL_PHONE" />
+
     <permission android:name="android.permission.MEDIA_CONTENT_CONTROL" />
 
 
@@ -97,21 +98,10 @@
                 android:name="firebase_performance_logcat_enabled"
                 android:value="false" />
 
-        <activity
-                android:name=".ui.chat.ConversationActivity"
-                android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize"
-                android:exported="true"
-                android:launchMode="singleTask"
-                android:parentActivityName=".ui.inbox.InboxActivity"
-                android:theme="@style/AppNoBarTheme">
-            <meta-data
-                    android:name="android.support.PARENT_ACTIVITY"
-                    android:value=".ui.inbox.InboxActivity" />
-        </activity>
+
         <activity
                 android:name=".ui.inbox.InboxActivity"
                 android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize"
-                android:exported="true"
                 android:launchMode="singleTask"
                 android:theme="@style/AppNoBarTheme">
             <intent-filter>
@@ -119,6 +109,16 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+                android:name=".ui.chat.ConversationActivity"
+                android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize"
+                android:launchMode="singleTask"
+                android:parentActivityName=".ui.inbox.InboxActivity"
+                android:theme="@style/AppNoBarTheme">
+            <meta-data
+                    android:name="android.support.PARENT_ACTIVITY"
+                    android:value=".ui.inbox.InboxActivity" />
         </activity>
         <activity
                 android:name=".ui.signup.SignUpActivity"
@@ -202,7 +202,7 @@
                 android:exported="false" />
 
         <service
-                android:name=".core.service.downloader.VideoDownloadService"
+                android:name=".core.service.video_download.VideoDownloadService"
                 android:exported="false">
             <intent-filter>
                 <action android:name="com.google.android.exoplayer.downloadService.action.RESTART" />

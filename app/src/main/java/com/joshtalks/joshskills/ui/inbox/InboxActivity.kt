@@ -81,15 +81,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver {
         processIntent(intent)
     }
 
-    private fun processIntent(intent: Intent?) {
-        intent?.hasExtra(HAS_NOTIFICATION)?.let {
-            if (it) intent.hasExtra(NOTIFICATION_ID).let {
-                EngagementNetworkHelper.clickNotification(intent.run { getStringExtra(
-                    NOTIFICATION_ID
-                ) })
-            }
-        }
-    }
+
 
 
     private fun locationFetch() {
@@ -240,6 +232,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver {
 
     override fun onResume() {
         super.onResume()
+        Runtime.getRuntime().gc()
         addObserver()
     }
 

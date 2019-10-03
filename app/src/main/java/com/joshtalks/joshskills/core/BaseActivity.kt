@@ -7,8 +7,11 @@ import android.os.Bundle
 import android.provider.Settings
 import android.util.DisplayMetrics
 import androidx.appcompat.app.AppCompatActivity
+import com.joshtalks.joshskills.core.service.HAS_NOTIFICATION
+import com.joshtalks.joshskills.core.service.NOTIFICATION_ID
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
+import com.joshtalks.joshskills.repository.service.EngagementNetworkHelper
 import com.joshtalks.joshskills.ui.inbox.InboxActivity
 import com.joshtalks.joshskills.ui.location.SelectLocationActivity
 import com.joshtalks.joshskills.ui.profile.CropImageActivity
@@ -70,6 +73,19 @@ abstract class BaseActivity : AppCompatActivity() {
         val uri = Uri.fromParts("package", packageName, null);
         intent.data = uri;
         startActivityForResult(intent, 101);
+    }
+    protected fun processIntent(intent: Intent?) {
+        intent?.hasExtra(HAS_NOTIFICATION)?.let {
+            if (it) intent.hasExtra(NOTIFICATION_ID).let {
+                if (it) {
+                    EngagementNetworkHelper.clickNotification(intent.run {
+                        getStringExtra(
+                            NOTIFICATION_ID
+                        )
+                    })
+                }
+            }
+        }
     }
 
 }

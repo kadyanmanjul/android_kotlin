@@ -11,11 +11,15 @@ import android.content.Intent
 import android.graphics.Color
 import android.media.RingtoneManager
 import android.os.Build
+import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.google.gson.Gson
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.repository.local.model.NotificationObject
 import com.joshtalks.joshskills.repository.service.EngagementNetworkHelper
+import com.joshtalks.joshskills.ui.chat.CHAT_ROOM_OBJECT
+import com.joshtalks.joshskills.ui.chat.ConversationActivity
 import com.joshtalks.joshskills.ui.inbox.InboxActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -52,25 +56,27 @@ class FirebaseTokenService : FirebaseMessagingService() {
             style.setBigContentTitle(notificationObject.contentText)
             style.setSummaryText(notificationObject.contentText)
 
-            val intent = Intent(applicationContext, InboxActivity::class.java).apply {
+            var intent = Intent(applicationContext, InboxActivity::class.java).apply {
                 addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
                 putExtra(HAS_NOTIFICATION, true)
                 putExtra(NOTIFICATION_ID,notificationObject.id)
 
             }
 
-            /*val obj = notificationObject.actionData?.let {
+            val obj = notificationObject.actionData?.let {
                 AppObjectController.appDatabase.courseDao().chooseRegisterCourseMinimal(it)
             }
             obj?.let {
                  intent = Intent(applicationContext, ConversationActivity::class.java).apply {
-                     intent.putExtra(CHAT_ROOM_OBJECT, it)
-                     addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                     putExtra(CHAT_ROOM_OBJECT, it)
+                     putExtra(HAS_NOTIFICATION, true)
+                     //flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+                    // flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
                  }
                 intent.putExtra(CHAT_ROOM_OBJECT, it)
 
             }
-*/
+
             val defaultSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
             val pendingIntent = PendingIntent.getActivity(applicationContext, 0, intent, 0)
 

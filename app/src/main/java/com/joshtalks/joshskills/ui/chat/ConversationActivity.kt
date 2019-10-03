@@ -8,8 +8,6 @@ import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.graphics.Color
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.os.SystemClock
 import android.text.Editable
 import android.text.TextWatcher
@@ -33,14 +31,15 @@ import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.greentoad.turtlebody.mediapicker.MediaPicker
 import com.greentoad.turtlebody.mediapicker.core.MediaPickerConfig
 import com.joshtalks.appcamera.pix.JoshCameraActivity
 import com.joshtalks.appcamera.pix.Options
 import com.joshtalks.appcamera.utility.ImageQuality
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.BaseActivity
-import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.custom_ui.decorator.LayoutMarginDecoration
@@ -59,7 +58,6 @@ import com.joshtalks.joshskills.ui.extra.ImageShowFragment
 import com.joshtalks.joshskills.ui.pdfviewer.PdfViewerActivity
 import com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity
 import com.joshtalks.joshskills.ui.view_holders.*
-import com.joshtalks.joshskills.util.MediaPlayerManager
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
@@ -70,17 +68,23 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.lang.ref.WeakReference
-
-import com.joshtalks.joshskills.core.custom_ui.SmoothLinearLayoutManager
 import com.joshtalks.joshskills.repository.server.chat_message.TVideoMessage
 import com.joshtalks.joshskills.repository.service.EngagementNetworkHelper
 import de.hdodenhof.circleimageview.CircleImageView
-import kotlinx.android.synthetic.main.activity_conversation.*
+import io.reactivex.schedulers.Schedulers
 
 const val CHAT_ROOM_OBJECT = "chat_room"
 const val IMAGE_SELECT_REQUEST_CODE = 1077
 
 class ConversationActivity : BaseActivity() {
+
+    companion object {
+        fun startConversionActivity(context: Context, inboxEntity: InboxEntity) {
+            val intent = Intent(context, ConversationActivity::class.java)
+            intent.putExtra(CHAT_ROOM_OBJECT, inboxEntity)
+            context.startActivity(intent)
+        }
+    }
 
     private lateinit var conversationBinding: ActivityConversationBinding
     private lateinit var inboxEntity: InboxEntity
@@ -88,37 +92,59 @@ class ConversationActivity : BaseActivity() {
         ViewModelProviders.of(this).get(ConversationViewModel::class.java)
     }
     private lateinit var emojiPopup: EmojiPopup
-    internal var editTextStatus: Boolean = false
+    private var editTextStatus: Boolean = false
 
-    var cMessageType: BASE_MESSAGE_TYPE = BASE_MESSAGE_TYPE.TX
+    private var cMessageType: BASE_MESSAGE_TYPE = BASE_MESSAGE_TYPE.TX
     private var compositeDisposable = CompositeDisposable()
-
     private var revealAttachmentView: Boolean = false
     private lateinit var activityRef: WeakReference<FragmentActivity>
-    private val rvHandler = Handler(Looper.getMainLooper())
+    private var unreadMessagePosition = -1
+    private lateinit var linearLayoutManager: LinearLayoutManager
+
+    private var unreadScrollDone: Boolean = false
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        System.getProperty("line.separator");
         inboxEntity = intent.getSerializableExtra(CHAT_ROOM_OBJECT) as InboxEntity
         conversationViewModel.inboxEntity = inboxEntity
         conversationBinding = DataBindingUtil.setContentView(this, R.layout.activity_conversation)
         conversationBinding.viewmodel = conversationViewModel
         conversationBinding.handler = this
-        conversationBinding.inputLL
         activityRef = WeakReference(this)
+        initChat()
 
+    }
+
+    private fun initChat() {
         setToolbar()
-        addListenerObservable()
         initRV()
         setUpEmojiPopup()
+        addListenerObservable()
         initView()
         conversationViewModel.getAllUserMessage()
         AppObjectController.uiHandler.postDelayed({
             checkAudioPermission(null)
         }, 1000)
         AppAnalytics.create(AnalyticsEvent.CHAT_SCREEN.NAME).push()
+        processIntent(intent)
+    }
+
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        processIntent(intent)
+        intent?.hasExtra(CHAT_ROOM_OBJECT)?.let {
+            if (it) {
+                val temp = intent.getSerializableExtra(CHAT_ROOM_OBJECT) as InboxEntity
+                if (inboxEntity.conversation_id != temp.conversation_id) {
+                    inboxEntity = temp
+                    conversationViewModel.inboxEntity = inboxEntity
+                    initChat()
+                }
+            }
+        }
+
 
     }
 
@@ -133,134 +159,89 @@ class ConversationActivity : BaseActivity() {
         }
     }
 
-    private fun subscribeRXBus() {
+    private fun initRV() {
+        linearLayoutManager = LinearLayoutManager(this)
+        linearLayoutManager.stackFromEnd = true
+        linearLayoutManager.isSmoothScrollbarEnabled = true
+        conversationBinding.chatRv.builder
+            .setHasFixedSize(false)
+            .setLayoutManager(linearLayoutManager)
 
-
-        compositeDisposable.add(RxBus2.listen(PlayVideoEvent::class.java).subscribe {
-            if (!Utils.isInternetAvailable()) {
-                Toast.makeText(applicationContext, "No internet available", Toast.LENGTH_LONG)
-                    .show()
-                return@subscribe
-            }
-            VideoPlayerActivity.startConversionActivity(
-                this,
-                it.chatModel, inboxEntity.course_name
-            )
-        })
-        compositeDisposable.add(RxBus2.listen(ImageShowEvent::class.java).subscribe {
-            it.imageUrl?.let { imageUrl ->
-                ImageShowFragment.newInstance(imageUrl, inboxEntity.course_name, it.imageId)
-                    .show(supportFragmentManager, "ImageShow")
-            }
-        })
-        compositeDisposable.add(RxBus2.listen(PdfOpenEventBus::class.java).subscribe {
-            PdfViewerActivity.startPdfActivity(this, it.pdfObject, inboxEntity.course_name)
-        })
-        compositeDisposable.add(RxBus2.listen(RemoveViewEventBus::class.java).subscribe {
-
-        })
-
-        compositeDisposable.add(RxBus2.listen(DownloadMediaEventBus::class.java).subscribe {
-
-            Dexter.withActivity(this)
-                .withPermissions(
-                    Manifest.permission.READ_EXTERNAL_STORAGE,
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE
-
+        conversationBinding.chatRv.itemAnimator = null
+        conversationBinding.chatRv.addItemDecoration(
+            LayoutMarginDecoration(
+                com.vanniktech.emoji.Utils.dpToPx(
+                    this,
+                    4f
                 )
-                .withListener(object : MultiplePermissionsListener {
-                    override fun onPermissionRationaleShouldBeShown(
-                        permissions: MutableList<PermissionRequest>?,
-                        token: PermissionToken?
-                    ) {
-                        token?.continuePermissionRequest()
-                    }
+            )
+        )
+        conversationBinding.chatRv.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
 
-                    override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
+                /*
+                  private var HIDE_THRESHOLD = 20
+     private var scrolledDistance = 0
+     private var controlsVisible = true
+                 if (scrolledDistance > HIDE_THRESHOLD && controlsVisible) {
+                     //onHide()
+                     controlsVisible = false;
+                     scrolledDistance = 0
+                 } else if (scrolledDistance < -HIDE_THRESHOLD && !controlsVisible) {
+                     // onShow();
+                     controlsVisible = true;
+                     scrolledDistance = 0;
+                 }
 
-                        report?.areAllPermissionsGranted()?.let { flag ->
-                            if (flag) {
-                                val pos =
-                                    conversationBinding.chatRv.getViewResolverPosition(it.viewHolder)
-                                val view: BaseChatViewHolder =
-                                    conversationBinding.chatRv.getViewResolverAtPosition(pos) as BaseChatViewHolder
-                                val chatModel = it.chatModel
-                                chatModel.downloadStatus = DOWNLOAD_STATUS.DOWNLOADING
-                                view.message = it.chatModel
-                                AppObjectController.uiHandler.postDelayed({
-                                    conversationBinding.chatRv.refreshView(view)
-                                }, 250)
-                            }
-                        }
-
-                    }
-
-                }).check()
-
-        })
-
-        compositeDisposable.add(RxBus2.listen(DownloadCompletedEventBus::class.java).subscribe {
-            CoroutineScope(Dispatchers.IO).launch {
-
-                try {
-                    val obj =
-                        AppObjectController.appDatabase.chatDao()
-                            .getUpdatedChatObject(it.chatModel)
-                    val pos = conversationBinding.chatRv.getViewResolverPosition(it.viewHolder)
-                    val view: BaseChatViewHolder =
-                        conversationBinding.chatRv.getViewResolverAtPosition(pos) as BaseChatViewHolder
-                    view.message = obj
-                    AppObjectController.uiHandler.postDelayed({
-                        conversationBinding.chatRv.refreshView(view)
-                    }, 250)
-                } catch (ex: Exception) {
-                    ex.printStackTrace()
-                }
+                 if ((controlsVisible && dy > 0) || (!controlsVisible && dy < 0)) {
+                     scrolledDistance += dy;
+                 }*/
             }
 
-        })
-        compositeDisposable.add(RxBus2.listen(MediaEngageEventBus::class.java).subscribe {
-            CoroutineScope(Dispatchers.IO).launch {
-                if (it.type.equals("AUDIO", ignoreCase = true)) {
-                    EngagementNetworkHelper.engageAudioApi(it)
-                } else {
-                    //EngagementNetworkHelper.engageVideoApi(it)
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                super.onScrollStateChanged(recyclerView, newState)
+                if (!recyclerView.canScrollVertically(1) && newState == RecyclerView.SCROLL_STATE_IDLE) {
+                    conversationBinding.scrollToEndButton.visibility = GONE
+                } else if (recyclerView.canScrollVertically(-1) && newState == RecyclerView.SCROLL_STATE_IDLE) {
+                    conversationBinding.scrollToEndButton.visibility = VISIBLE
                 }
-            }
-        })
-        compositeDisposable.add(RxBus2.listen(VideoDownloadedBus::class.java).subscribe {
 
-            CoroutineScope(Dispatchers.IO).launch {
-                it?.cId?.let { id ->
-                    try {
-                        val chatObj =
-                            AppObjectController.appDatabase.chatDao().getUpdatedChatObjectViaId(id)
-                        var tempView: BaseChatViewHolder
-                        conversationBinding.chatRv.allViewResolvers?.let {
-                            for (view in it) {
-                                tempView = view as BaseChatViewHolder
-                                if (tempView.message.chatId == chatObj.chatId) {
-                                    tempView.message = chatObj
-                                    AppObjectController.uiHandler.postDelayed({
-                                        conversationBinding.chatRv.refreshView(tempView)
-                                    }, 250)
-                                }
-                            }
-                        }
-                    } catch (ex: Exception) {
-                        ex.printStackTrace()
-                    }
-                }
             }
-
         })
 
 
     }
 
-    @SuppressLint("ClickableViewAccessibility")
-    private fun initView() {
+    private fun setUpEmojiPopup() {
+        emojiPopup = EmojiPopup.Builder.fromRootView(conversationBinding.root)
+            .setOnEmojiBackspaceClickListener {
+            }
+            .setOnEmojiClickListener { _, _ ->
+                AppAnalytics.create(AnalyticsEvent.EMOJI_CLICKED.NAME).push()
+            }
+            .setOnEmojiPopupShownListener { conversationBinding.ivEmoji.setImageResource(R.drawable.ic_keyboard) }
+            .setOnSoftKeyboardOpenListener { ignore -> Log.d(TAG, "Opened soft keyboard") }
+            .setOnEmojiPopupDismissListener { conversationBinding.ivEmoji.setImageResource(R.drawable.happy_face) }
+            .setOnSoftKeyboardCloseListener { Log.d(TAG, "Closed soft keyboard") }
+            .setKeyboardAnimationStyle(R.style.emoji_fade_animation_style)
+            .setPageTransformer(PageTransformer())
+            .setBackgroundColor(
+                ContextCompat.getColor(
+                    applicationContext,
+                    R.color.emoji_bg_color
+                )
+            )
+            .setIconColor(
+                ContextCompat.getColor(
+                    applicationContext,
+                    R.color.emoji_icon_color
+                )
+            )
+            .build(conversationBinding.chatEdit)
+    }
 
+    private fun initView() {
         conversationBinding.recordButton.setRecordView(conversationBinding.recordView)
         conversationBinding.recordView.cancelBounds = 2f
         conversationBinding.recordView.setSmallMicColor(Color.parseColor("#c2185b"))
@@ -272,9 +253,6 @@ class ConversationActivity : BaseActivity() {
             0
         )
         conversationBinding.recordButton.isListenForRecord = false
-
-
-
         conversationBinding.recordView.setOnRecordListener(object : OnRecordListener {
             override fun onStart() {
                 AppAnalytics.create(AnalyticsEvent.AUDIO_BUTTON_CLICKED.NAME).push()
@@ -285,7 +263,6 @@ class ConversationActivity : BaseActivity() {
                         conversationViewModel.startRecord()
                     }
                 }
-
             }
 
             override fun onCancel() {
@@ -294,7 +271,6 @@ class ConversationActivity : BaseActivity() {
 
             override fun onFinish(recordTime: Long) {
                 AppAnalytics.create(AnalyticsEvent.AUDIO_SENT.NAME).push()
-
                 conversationBinding.recordView.visibility = GONE
                 conversationViewModel.stopRecording()
                 addUploadAudioMedia(conversationViewModel.recordFile.absolutePath)
@@ -305,8 +281,6 @@ class ConversationActivity : BaseActivity() {
                 conversationBinding.recordView.visibility = GONE
                 conversationViewModel.stopRecording()
                 AppAnalytics.create(AnalyticsEvent.AUDIO_CANCELLED.NAME).push()
-
-
             }
         })
 
@@ -359,7 +333,7 @@ class ConversationActivity : BaseActivity() {
 
         })
 
-        conversationBinding.chatEdit.setOnTouchListener { v, event ->
+        conversationBinding.chatEdit.setOnTouchListener { _, event ->
             if (MotionEvent.ACTION_UP == event.action) {
                 if (emojiPopup.isShowing) {
                     emojiPopup.toggle()
@@ -387,6 +361,15 @@ class ConversationActivity : BaseActivity() {
                 return@setOnRecordClickListener
             }
 
+            if (conversationBinding.chatEdit.text!!.length > MESSAGE_CHAT_SIZE_LIMIT) {
+                Toast.makeText(
+                    applicationContext,
+                    getString(R.string.message_size_limit),
+                    Toast.LENGTH_SHORT
+                ).show()
+                return@setOnRecordClickListener
+            }
+
             if (cMessageType == BASE_MESSAGE_TYPE.TX) {
                 val tChatMessage =
                     TChatMessage(conversationBinding.chatEdit.text.toString())
@@ -396,17 +379,16 @@ class ConversationActivity : BaseActivity() {
                     tChatMessage
                 )
                 conversationBinding.chatRv.addView(cell)
+                scrollToEnd()
                 conversationViewModel.sendTextMessage(
                     TChatMessage(conversationBinding.chatEdit.text.toString()),
                     chatModel = cell.message
                 )
-                scrollToEnd()
 
             }
 
-            conversationBinding.chatEdit.setText("")
-
-            conversationBinding.chatRv.setOnFocusChangeListener { v, hasFocus ->
+            conversationBinding.chatEdit.setText(EMPTY)
+            conversationBinding.chatRv.setOnFocusChangeListener { _, _ ->
                 AttachmentUtil.revealAttachments(false, conversationBinding)
             }
         }
@@ -414,7 +396,6 @@ class ConversationActivity : BaseActivity() {
 
         findViewById<View>(R.id.ll_audio).setOnClickListener {
             AppAnalytics.create(AnalyticsEvent.AUDIO_SELECTED.NAME).push()
-
             uploadAttachment()
             val pickerConfig = MediaPickerConfig()
                 .setUriPermanentAccess(false)
@@ -476,9 +457,178 @@ class ConversationActivity : BaseActivity() {
 
                 })
         }
+        conversationBinding.scrollToEndButton.setOnClickListener {
+            scrollToEnd()
+        }
+    }
 
+    private fun addListenerObservable() {
+        conversationViewModel.chatObservableLiveData.observe(this, Observer {
+
+
+            it.forEach { chatModel ->
+                if (chatModel.isSeen.not() && unreadMessagePosition == -1) {
+                    val count = conversationBinding.chatRv.adapter?.itemCount ?: 0
+                    unreadMessagePosition = count - it.indexOf(chatModel)
+                }
+
+                getView(chatModel)?.let { cell ->
+                    conversationBinding.chatRv.addView(cell)
+                }
+            }
+
+            /*if (unreadMessagePosition > -1) {
+                val totalUnreadMessage = it.size - unreadMessagePosition
+                conversationBinding.chatRv.addView(
+                    unreadMessagePosition,
+                    UnreadMessageViewHolder(totalUnreadMessage)
+                )
+            }*/
+            conversationBinding.chatRv.refresh()
+            if (unreadMessagePosition == -1) {
+                scrollToEnd()
+            } else {
+                if (unreadScrollDone.not()) {
+                    unreadScrollDone = true
+                    AppObjectController.uiHandler.postDelayed({
+                        linearLayoutManager.scrollToPosition(unreadMessagePosition)
+                    }, 250)
+                }
+            }
+        })
+
+        conversationViewModel.refreshViewLiveData.observe(this, Observer { chatModel ->
+            val view: BaseChatViewHolder =
+                conversationBinding.chatRv.getViewResolverAtPosition(conversationBinding.chatRv.viewResolverCount - 1) as BaseChatViewHolder
+            view.message = chatModel
+            AppObjectController.uiHandler.postDelayed({
+                conversationBinding.chatRv.refreshView(view)
+            }, 250)
+        })
+    }
+
+    private fun subscribeRXBus() {
+
+
+        compositeDisposable.add(RxBus2.listen(PlayVideoEvent::class.java).subscribe {
+            VideoPlayerActivity.startConversionActivity(
+                this,
+                it.chatModel, inboxEntity.course_name
+            )
+        })
+        compositeDisposable.add(RxBus2.listen(ImageShowEvent::class.java).subscribe {
+            it.imageUrl?.let { imageUrl ->
+                ImageShowFragment.newInstance(imageUrl, inboxEntity.course_name, it.imageId)
+                    .show(supportFragmentManager, "ImageShow")
+            }
+        })
+        compositeDisposable.add(RxBus2.listen(PdfOpenEventBus::class.java).subscribe {
+            PdfViewerActivity.startPdfActivity(this, it.pdfObject, inboxEntity.course_name)
+        })
+        compositeDisposable.add(RxBus2.listen(RemoveViewEventBus::class.java).subscribe {
+
+        })
+
+        compositeDisposable.add(RxBus2.listen(DownloadMediaEventBus::class.java).subscribe {
+
+            Dexter.withActivity(this)
+                .withPermissions(
+                    Manifest.permission.READ_EXTERNAL_STORAGE,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+
+                )
+                .withListener(object : MultiplePermissionsListener {
+                    override fun onPermissionRationaleShouldBeShown(
+                        permissions: MutableList<PermissionRequest>?,
+                        token: PermissionToken?
+                    ) {
+                        token?.continuePermissionRequest()
+                    }
+
+                    override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
+
+                        report?.areAllPermissionsGranted()?.let { flag ->
+                            if (flag) {
+                                val pos =
+                                    conversationBinding.chatRv.getViewResolverPosition(it.viewHolder)
+                                val view: BaseChatViewHolder =
+                                    conversationBinding.chatRv.getViewResolverAtPosition(pos) as BaseChatViewHolder
+                                val chatModel = it.chatModel
+                                chatModel.downloadStatus = DOWNLOAD_STATUS.DOWNLOADING
+                                view.message = it.chatModel
+                                AppObjectController.uiHandler.postDelayed({
+                                    conversationBinding.chatRv.refreshView(view)
+                                }, 250)
+                            }
+                        }
+
+                    }
+
+                }).check()
+
+        })
+
+        compositeDisposable.add(RxBus2.listen(DownloadCompletedEventBus::class.java)
+            .subscribeOn(Schedulers.computation())
+            .subscribe {
+                CoroutineScope(Dispatchers.IO).launch {
+
+                    try {
+                        val obj =
+                            AppObjectController.appDatabase.chatDao()
+                                .getUpdatedChatObject(it.chatModel)
+                        val pos = conversationBinding.chatRv.getViewResolverPosition(it.viewHolder)
+                        val view: BaseChatViewHolder =
+                            conversationBinding.chatRv.getViewResolverAtPosition(pos) as BaseChatViewHolder
+                        view.message = obj
+                        AppObjectController.uiHandler.postDelayed({
+                            conversationBinding.chatRv.refreshView(view)
+                        }, 250)
+                    } catch (ex: Exception) {
+                        ex.printStackTrace()
+                    }
+                }
+
+            })
+        compositeDisposable.add(RxBus2.listen(MediaEngageEventBus::class.java).subscribe {
+            CoroutineScope(Dispatchers.IO).launch {
+                if (it.type.equals("AUDIO", ignoreCase = true)) {
+                    EngagementNetworkHelper.engageAudioApi(it)
+                }
+            }
+        })
+        compositeDisposable.add(RxBus2.listen(VideoDownloadedBus::class.java)
+            .subscribeOn(Schedulers.computation())
+            .subscribe {
+                CoroutineScope(Dispatchers.IO).launch {
+                    try {
+                        val chatObj = AppObjectController.appDatabase.chatDao()
+                            .getUpdatedChatObjectViaId(it.messageObject.chatId)
+                        var tempView: BaseChatViewHolder
+                        conversationBinding.chatRv.allViewResolvers?.let {
+
+                            it.forEachIndexed { index, view ->
+                                tempView = view as BaseChatViewHolder
+                                if (chatObj.chatId.equals(
+                                        tempView.message.chatId
+                                    )
+                                ) {
+                                    tempView.message = chatObj
+                                    AppObjectController.uiHandler.postDelayed({
+                                        conversationBinding.chatRv.refreshView(index)
+                                    }, 500)
+                                }
+                            }
+                        }
+                    } catch (ex: Exception) {
+                        ex.printStackTrace()
+                    }
+                }
+
+            })
 
     }
+
 
     fun emojiToggle() {
         emojiPopup.toggle()
@@ -499,109 +649,6 @@ class ConversationActivity : BaseActivity() {
             tAudioMessage,
             cell.message
         )
-    }
-
-
-    private fun initRV() {
-        val linearLayoutManager = SmoothLinearLayoutManager(this);
-        linearLayoutManager.stackFromEnd = true
-        linearLayoutManager.isSmoothScrollbarEnabled = true
-        conversationBinding.chatRv.builder
-            .setHasFixedSize(false)
-           // .setItemViewCacheSize(10)
-            .setLayoutManager(linearLayoutManager)
-
-        conversationBinding.chatRv.itemAnimator = null
-        conversationBinding.chatRv.addItemDecoration(
-            LayoutMarginDecoration(
-                com.vanniktech.emoji.Utils.dpToPx(
-                    this,
-                    4f
-                )
-            )
-        )
-
-    }
-
-
-    private fun addListenerObservable() {
-        conversationViewModel.chatObservableLiveData.observe(this, Observer {
-            it.forEach { chatModel ->
-                getView(chatModel)?.let {
-                    conversationBinding.chatRv.addView(it)
-                }
-            }
-            conversationBinding.chatRv.findViewHolderForAdapterPosition(conversationBinding.chatRv.viewResolverCount)
-            conversationBinding.chatRv.refresh()
-        })
-
-        conversationViewModel.refreshViewLiveData.observe(this, Observer { chatModel ->
-            AppObjectController.uiHandler.postDelayed({
-                val view: BaseChatViewHolder =
-                    conversationBinding.chatRv.getViewResolverAtPosition(conversationBinding.chatRv.viewResolverCount - 1) as BaseChatViewHolder
-                view.message = chatModel
-                conversationBinding.chatRv.refreshView(view)
-            }, 250)
-        })
-
-    }
-
-
-    private fun setUpEmojiPopup() {
-        emojiPopup = EmojiPopup.Builder.fromRootView(conversationBinding.root)
-            .setOnEmojiBackspaceClickListener { ignore ->
-                Log.d(
-                    TAG,
-                    "Clicked on Backspace"
-                )
-            }
-            .setOnEmojiClickListener { ignore, ignore2 ->
-                Log.d(TAG, "Clicked on emoji")
-                AppAnalytics.create(AnalyticsEvent.EMOJI_CLICKED.NAME).push()
-
-            }
-            .setOnEmojiPopupShownListener { conversationBinding.ivEmoji.setImageResource(R.drawable.ic_keyboard) }
-            .setOnSoftKeyboardOpenListener { ignore -> Log.d(TAG, "Opened soft keyboard") }
-            .setOnEmojiPopupDismissListener { conversationBinding.ivEmoji.setImageResource(R.drawable.happy_face) }
-            .setOnSoftKeyboardCloseListener { Log.d(TAG, "Closed soft keyboard") }
-            .setKeyboardAnimationStyle(R.style.emoji_fade_animation_style)
-            .setPageTransformer(PageTransformer())
-            .setBackgroundColor(
-                ContextCompat.getColor(
-                    applicationContext,
-                    R.color.emoji_bg_color
-                )
-            )
-            .setIconColor(
-                ContextCompat.getColor(
-                    applicationContext,
-                    R.color.emoji_icon_color
-                )
-            )
-            .build(conversationBinding.chatEdit)
-    }
-
-
-    companion object {
-        fun startConversionActivity(context: Context, inboxEntity: InboxEntity) {
-            val intent = Intent(context, ConversationActivity::class.java).apply {
-
-            }
-            intent.putExtra(CHAT_ROOM_OBJECT, inboxEntity)
-            context.startActivity(intent)
-
-        }
-
-    }
-
-    override fun onPause() {
-        super.onPause()
-        MediaPlayerManager.getInstance().release()
-    }
-
-    override fun onStop() {
-        super.onStop()
-        compositeDisposable.clear()
     }
 
 
@@ -644,25 +691,21 @@ class ConversationActivity : BaseActivity() {
         data: Intent?
     ) {
         if (requestCode == IMAGE_SELECT_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-
             data?.let { intent ->
-                if (intent.hasExtra(JoshCameraActivity.IMAGE_RESULTS)) {
-                    val returnValue =
-                        intent.getStringArrayListExtra(JoshCameraActivity.IMAGE_RESULTS);
-                    returnValue?.get(0)?.let { addUserImageInView(it) }
-                } else if (intent.hasExtra(JoshCameraActivity.VIDEO_RESULTS)) {
-                    val videoPath = intent.getStringExtra(JoshCameraActivity.VIDEO_RESULTS)
-                    addUserVideoInView(videoPath)
-
-                } else {
-
+                when {
+                    intent.hasExtra(JoshCameraActivity.IMAGE_RESULTS) -> {
+                        val returnValue =
+                            intent.getStringArrayListExtra(JoshCameraActivity.IMAGE_RESULTS)
+                        returnValue?.get(0)?.let { addUserImageInView(it) }
+                    }
+                    intent.hasExtra(JoshCameraActivity.VIDEO_RESULTS) -> {
+                        val videoPath = intent.getStringExtra(JoshCameraActivity.VIDEO_RESULTS)
+                        addUserVideoInView(videoPath)
+                    }
+                    else -> return
                 }
             }
-
-
         }
-
-
         super.onActivityResult(requestCode, resultCode, data)
     }
 
@@ -697,11 +740,12 @@ class ConversationActivity : BaseActivity() {
         conversationBinding.chatRv.addView(
             cell
         )
+        scrollToEnd()
+
         conversationViewModel.uploadMedia(
             imageUpdatedPath, tImageMessage, cell.message
         )
 
-        scrollToEnd()
     }
 
     private fun addUserVideoInView(videoPath: String) {
@@ -717,26 +761,28 @@ class ConversationActivity : BaseActivity() {
         conversationBinding.chatRv.addView(
             cell
         )
+        scrollToEnd()
+
         conversationViewModel.uploadMedia(
             videoSentFile.absolutePath, tVideoMessage, cell.message
         )
-        scrollToEnd()
     }
 
 
     private fun scrollToEnd() {
         AppObjectController.uiHandler.postDelayed({
-            conversationBinding.chatRv.smoothScrollToPosition(
-                conversationBinding.chatRv.adapter?.itemCount ?: 0
-            )
-        }, 250)
+            val count = conversationBinding.chatRv.adapter?.itemCount ?: 0
+            linearLayoutManager.scrollToPosition(count - 1)
+            conversationBinding.scrollToEndButton.visibility = GONE
+
+        }, 150)
 
     }
 
     fun uploadAttachment() {
         AppAnalytics.create(AnalyticsEvent.ATTACHMENT_CLICKED.NAME).push()
         AttachmentUtil.revealAttachments(revealAttachmentView, conversationBinding)
-        revealAttachmentView = !revealAttachmentView
+        this.revealAttachmentView = !revealAttachmentView
 
     }
 
@@ -764,7 +810,7 @@ class ConversationActivity : BaseActivity() {
                     permissions: MutableList<PermissionRequest>?,
                     token: PermissionToken?
                 ) {
-                    token?.continuePermissionRequest();
+                    token?.continuePermissionRequest()
 
                 }
 
@@ -775,7 +821,7 @@ class ConversationActivity : BaseActivity() {
 
             }
             .onSameThread()
-            .check();
+            .check()
     }
 
 
@@ -786,11 +832,17 @@ class ConversationActivity : BaseActivity() {
     }
 
 
+    override fun onStop() {
+        super.onStop()
+        compositeDisposable.clear()
+    }
+
+
     override fun onBackPressed() {
         AppAnalytics.create(AnalyticsEvent.BACK_PRESSED.NAME)
             .addParam("name", javaClass.simpleName)
             .push()
-        super.onBackPressed()
+        this@ConversationActivity.finishAndRemoveTask()
     }
 
 }

@@ -22,13 +22,13 @@ abstract class BaseChatViewHolder(
 ) : BaseCell() {
 
 
-    fun getLeftPaddingForReceiver() = com.vanniktech.emoji.Utils.dpToPx(getAppContext(), 0f)
+    fun getLeftPaddingForReceiver() = com.vanniktech.emoji.Utils.dpToPx(getAppContext(), 7f)
     fun getRightPaddingForReceiver() = com.vanniktech.emoji.Utils.dpToPx(getAppContext(), 80f)
     fun getMarginForReceiver() = com.vanniktech.emoji.Utils.dpToPx(getAppContext(), 0f)
 
 
     fun getLeftPaddingForSender() = com.vanniktech.emoji.Utils.dpToPx(getAppContext(), 80f)
-    fun getRightPaddingForSender() = com.vanniktech.emoji.Utils.dpToPx(getAppContext(), 0f)
+    fun getRightPaddingForSender() = com.vanniktech.emoji.Utils.dpToPx(getAppContext(), 7f)
     fun getMarginForSender() = com.vanniktech.emoji.Utils.dpToPx(getAppContext(), 0f)
 
 
@@ -83,9 +83,6 @@ abstract class BaseChatViewHolder(
     fun updateTime(text_message_time: AppCompatTextView) {
         if (message.sender?.id.equals(getUserId(), ignoreCase = true)) {
             text_message_time.compoundDrawablePadding = getDrawablePadding()
-
-
-
             if (message.isSync.not()) {
                 text_message_time.setCompoundDrawablesWithIntrinsicBounds(
                     0,

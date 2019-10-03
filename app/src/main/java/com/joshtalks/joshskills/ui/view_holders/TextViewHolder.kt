@@ -12,6 +12,7 @@ import android.widget.FrameLayout
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.text.HtmlCompat
 import androidx.fragment.app.FragmentActivity
+import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.RemoveViewEventBus
@@ -51,20 +52,16 @@ class TextViewHolder(activityRef: WeakReference<FragmentActivity>, message: Chat
 
     @Resolve
     fun onResolved() {
-        text_title.text=""
+        text_title.text= EMPTY
         text_title.visibility = GONE
 
         textViewHolder = this
         message.sender?.let {
             updateView(it, root_view, root_sub_view, message_view)
         }
-        text_message_time.text = Utils.messageTimeConversion(message.created)
-        updateTime(text_message_time)
 
-        if (message.text != null) {
-            text_message_body.text =
-                HtmlCompat.fromHtml(message.text.toString(), HtmlCompat.FROM_HTML_MODE_LEGACY)
-        } else {
+
+        if (message.text.isNullOrEmpty()) {
             message.question?.qText?.let {
                 text_message_body.text = HtmlCompat.fromHtml(it, HtmlCompat.FROM_HTML_MODE_LEGACY)
             }
@@ -74,8 +71,13 @@ class TextViewHolder(activityRef: WeakReference<FragmentActivity>, message: Chat
                     text_title.text = HtmlCompat.fromHtml(text, HtmlCompat.FROM_HTML_MODE_LEGACY)
                 }
             }
+        } else {
+            text_message_body.text =
+                HtmlCompat.fromHtml(message.text.toString(), HtmlCompat.FROM_HTML_MODE_LEGACY)
         }
 
+        text_message_time.text = Utils.messageTimeConversion(message.created)
+        updateTime(text_message_time)
         addMessageAutoLink(text_message_body)
     }
 }

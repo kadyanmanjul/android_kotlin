@@ -2,10 +2,8 @@ package com.joshtalks.joshskills.core
 
 import android.os.Handler
 import android.os.Looper
-import com.bumptech.glide.request.target.ViewTarget
 import com.clevertap.android.sdk.ActivityLifecycleCallback
 import com.facebook.stetho.okhttp3.StethoInterceptor
-import com.google.android.exoplayer2.offline.DownloadManager
 import com.google.android.exoplayer2.util.Util
 import com.joshtalks.joshskills.repository.local.AppDatabase
 import com.google.gson.Gson
@@ -37,7 +35,8 @@ import com.google.gson.JsonElement
 import com.google.gson.JsonDeserializer
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.service.DownloadUtils
-import com.joshtalks.joshskills.core.service.downloader.DownloadTracker
+import com.joshtalks.joshskills.core.service.video_download.DownloadTracker
+import com.joshtalks.joshskills.core.service.video_download.VideoDownloadController
 import com.joshtalks.joshskills.repository.local.DatabaseUtils
 import com.joshtalks.joshskills.repository.local.entity.DOWNLOAD_STATUS
 import com.joshtalks.joshskills.repository.service.ChatNetworkService
@@ -53,7 +52,7 @@ val KEY_APP_VERSION_NAME = "app-version-name"
 val REMOTE_CONFIG_PREFIX = "josh_param_"
 
 const val SERVER_URL = "http://skills.joshtalks.org"
-//const val SERVER_URL = "http://192.168.14.47:8000"
+//const val SERVER_URL = "http://192.168.14.60:8000"
 
 internal class AppObjectController {
 
@@ -111,7 +110,10 @@ internal class AppObjectController {
         @JvmStatic
         lateinit var userAgent: String
 
-       /* @JvmStatic
+        @JvmStatic
+        lateinit var videoDownloadTracker: DownloadTracker
+
+        /* @JvmStatic
         val videoDownloadListener = HashMap<String, DownloadTracker.Listener>()
 */
 
@@ -224,6 +226,7 @@ internal class AppObjectController {
             Fetch.setDefaultInstanceConfiguration(fetchConfiguration)
 
             fetch = Fetch.getInstance(fetchConfiguration)
+            videoDownloadTracker= VideoDownloadController.getInstance().downloadTracker
             initExoPlayer()
 
             return INSTANCE
@@ -257,34 +260,34 @@ internal class AppObjectController {
         }
 
         fun addVideoCallback(id: String) {
-           /* val videoDownloadCallback = object : DownloadTracker.Listener {
-                override fun onDownloadsChanged(download: com.google.android.exoplayer2.offline.Download?) {
-                    download?.let {
-                        var downloadStatus: DOWNLOAD_STATUS = DOWNLOAD_STATUS.NOT_START
+            /* val videoDownloadCallback = object : DownloadTracker.Listener {
+                 override fun onDownloadsChanged(download: com.google.android.exoplayer2.offline.Download?) {
+                     download?.let {
+                         var downloadStatus: DOWNLOAD_STATUS = DOWNLOAD_STATUS.NOT_START
 
-                        if (it.state == com.google.android.exoplayer2.offline.Download.STATE_COMPLETED) {
-                            downloadStatus = DOWNLOAD_STATUS.DOWNLOADED
-                        } else if (it.state == com.google.android.exoplayer2.offline.Download.STATE_DOWNLOADING || it.state == com.google.android.exoplayer2.offline.Download.STATE_QUEUED) {
-                            videoNotUploadFlagUpdate()
-                            downloadStatus = DOWNLOAD_STATUS.DOWNLOADING
-                        } else if (it.state == com.google.android.exoplayer2.offline.Download.STATE_REMOVING) {
-                            downloadStatus = DOWNLOAD_STATUS.FAILED
-                        } else if (it.state == com.google.android.exoplayer2.offline.Download.STATE_FAILED) {
-                            downloadStatus = DOWNLOAD_STATUS.FAILED
-                        } else if (it.state == com.google.android.exoplayer2.offline.Download.STATE_STOPPED) {
-                            downloadStatus = DOWNLOAD_STATUS.FAILED
-                        }
-                        DatabaseUtils.updateVideoDownload(download.request.id, downloadStatus)
-                    }
-                }
+                         if (it.state == com.google.android.exoplayer2.offline.Download.STATE_COMPLETED) {
+                             downloadStatus = DOWNLOAD_STATUS.DOWNLOADED
+                         } else if (it.state == com.google.android.exoplayer2.offline.Download.STATE_DOWNLOADING || it.state == com.google.android.exoplayer2.offline.Download.STATE_QUEUED) {
+                             videoNotUploadFlagUpdate()
+                             downloadStatus = DOWNLOAD_STATUS.DOWNLOADING
+                         } else if (it.state == com.google.android.exoplayer2.offline.Download.STATE_REMOVING) {
+                             downloadStatus = DOWNLOAD_STATUS.FAILED
+                         } else if (it.state == com.google.android.exoplayer2.offline.Download.STATE_FAILED) {
+                             downloadStatus = DOWNLOAD_STATUS.FAILED
+                         } else if (it.state == com.google.android.exoplayer2.offline.Download.STATE_STOPPED) {
+                             downloadStatus = DOWNLOAD_STATUS.FAILED
+                         }
+                         DatabaseUtils.updateVideoDownload(download.request.id, downloadStatus)
+                     }
+                 }
 
-                override fun onDownloadRemoved(download: com.google.android.exoplayer2.offline.Download?) {
-                }
+                 override fun onDownloadRemoved(download: com.google.android.exoplayer2.offline.Download?) {
+                 }
 
-            }
-            VideoDownloadController.getInstance().downloadTracker.addListener(videoDownloadCallback)
-            videoDownloadListener[id] = videoDownloadCallback
-*/
+             }
+             VideoDownloadController.getInstance().downloadTracker.addListener(videoDownloadCallback)
+             videoDownloadListener[id] = videoDownloadCallback
+ */
         }
 
         fun videoNotUploadFlagUpdate() {

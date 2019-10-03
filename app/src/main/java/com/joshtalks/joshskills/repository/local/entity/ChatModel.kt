@@ -4,6 +4,8 @@ import androidx.room.*
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.messaging.RxBus2
+import com.joshtalks.joshskills.repository.local.eventbus.VideoDownloadedBus
 import com.joshtalks.joshskills.util.RandomString
 import java.io.Serializable
 import java.util.*
@@ -312,6 +314,9 @@ interface ChatDao {
     @Query(value = "SELECT * FROM chat_table  where chat_id=:chatId")
     suspend fun getChatObject(chatId: String): ChatModel
 
+    @Query(value = "SELECT * FROM chat_table  where chat_id=:chatId")
+    suspend fun getNullableChatObject(chatId: String): ChatModel?
+
 
     @Query(value = "SELECT * FROM chat_table where conversation_id= :conversationId AND created > :compareTime ORDER BY created ASC")
     suspend fun getRecentChatAfterTime(conversationId: String, compareTime: Date?): List<ChatModel>
@@ -449,10 +454,18 @@ interface ChatDao {
 
 
     @Transaction
-    suspend fun updateDownloadVideoStatus(id: String, downloadStatus: DOWNLOAD_STATUS) {
-        val chatModel: ChatModel = getChatObject(chatId = id)
+    suspend fun updateDownloadVideoStatus(obj: ChatModel, downloadStatus: DOWNLOAD_STATUS) {
+        val chatModel: ChatModel = getChatObject(chatId = obj.chatId)
         chatModel.downloadStatus = downloadStatus
         updateChatMessage(chatModel)
+        obj.question?.videoList?.get(0)?.let {
+            it.downloadStatus = downloadStatus
+            updateVideoObject(it)
+        }
+        if (downloadStatus == DOWNLOAD_STATUS.FAILED || downloadStatus == DOWNLOAD_STATUS.DOWNLOADED) {
+            RxBus2.publish(VideoDownloadedBus(obj))
+        }
+
     }
 
     @Query("UPDATE chat_table SET downloadStatus = :status where downloadStatus == :whereStatus")
@@ -467,6 +480,9 @@ interface ChatDao {
 
     @Query(value = "SELECT * FROM chat_table where conversation_id= :conversationId ORDER BY ID DESC LIMIT 1")
     suspend fun getLastOneChat(conversationId: String): ChatModel?
+
+    @Query(value = "UPDATE chat_table  SET is_seen = 1")
+    suspend fun readAllChatBYUser()
 
 
 }
