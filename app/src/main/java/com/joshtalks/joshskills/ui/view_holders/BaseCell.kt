@@ -1,6 +1,7 @@
 package com.joshtalks.joshskills.ui.view_holders
 
 import android.content.res.Resources
+import android.graphics.Bitmap
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
 import android.graphics.drawable.Drawable
@@ -26,15 +27,24 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.integration.webp.decoder.WebpDrawable
 import com.bumptech.glide.integration.webp.decoder.WebpDrawableTransformation
 import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.MultiTransformation
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
+import com.bumptech.glide.request.RequestOptions.overrideOf
 import com.bumptech.glide.request.target.Target
+import com.joshtalks.joshskills.core.Utils
 import jp.wasabeef.glide.transformations.BlurTransformation
+import jp.wasabeef.glide.transformations.CropTransformation
+import jp.wasabeef.glide.transformations.RoundedCornersTransformation
 import java.util.concurrent.Callable
 
+const val IMAGE_SIZE=400
+const val ROUND_CORNER=8
 
 abstract class BaseCell() {
     fun getUserId() = Mentor.getInstance().getId()
@@ -47,21 +57,20 @@ abstract class BaseCell() {
     fun getAppContext() = AppObjectController.joshApplication
 
 
-
-    fun setBlurImageInImageView(iv: AppCompatImageView?, url: String,callback:Runnable?=null){
-       /* if (iv.tag != null) {
-            return
-        }*/
-
-        val requestOptions = RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL)
+    fun setBlurImageInImageView(iv: AppCompatImageView?, url: String, callback: Runnable? = null) {
         if (iv != null) {
+            val multi = MultiTransformation<Bitmap>(
+               BlurTransformation(25),
+                CropTransformation(Utils.dpToPx(IMAGE_SIZE), Utils.dpToPx(IMAGE_SIZE), CropTransformation.CropType.CENTER),
+                RoundedCornersTransformation(Utils.dpToPx(ROUND_CORNER), 0, RoundedCornersTransformation.CornerType.ALL)
+            )
             Glide.with(getAppContext())
                 .load(url)
-                // .override((AppObjectController.screenWidth*.4).toInt(),(AppObjectController.screenHeight*.6).toInt())            //.thumbnail(Glide.with(activityRef.get()!!).load(url))
-                //.centerCrop()
-               // .apply(RequestOptions.bitmapTransform(BlurTransformation(20, 3)))
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .optionalTransform(WebpDrawable::class.java,  WebpDrawableTransformation(CircleCrop()))
+                .optionalTransform(
+                    WebpDrawable::class.java,
+                    WebpDrawableTransformation(CircleCrop())
+                )
+                .apply(RequestOptions.bitmapTransform(multi))
                 .listener(object : RequestListener<Drawable> {
                     override fun onLoadFailed(
                         e: GlideException?,
@@ -91,51 +100,66 @@ abstract class BaseCell() {
 
     }
 
-     fun setImageInImageView(iv: AppCompatImageView?, url: String,callback:Runnable?=null){
-       /* if (iv.tag != null) {
-            return
+    fun setImageInImageView(iv: AppCompatImageView?, url: String, callback: Runnable? = null) {
+
+        if (iv != null) {
+
+
+            val multi = MultiTransformation<Bitmap>(
+                CropTransformation(Utils.dpToPx(IMAGE_SIZE), Utils.dpToPx(IMAGE_SIZE), CropTransformation.CropType.CENTER),
+                RoundedCornersTransformation(Utils.dpToPx(ROUND_CORNER), 0, RoundedCornersTransformation.CornerType.ALL)
+            )
+
+            Glide.with(getAppContext())
+                .load(url)
+                .optionalTransform(
+                    WebpDrawable::class.java,
+                    WebpDrawableTransformation(CircleCrop())
+                )
+                .apply(RequestOptions.bitmapTransform(multi))
+                .listener(object : RequestListener<Drawable> {
+                    override fun onLoadFailed(
+                        e: GlideException?,
+                        model: Any?,
+                        target: Target<Drawable>?,
+                        isFirstResource: Boolean
+                    ): Boolean {
+                        return false
+
+                    }
+
+                    override fun onResourceReady(
+                        resource: Drawable?,
+                        model: Any?,
+                        target: Target<Drawable>?,
+                        dataSource: DataSource?,
+                        isFirstResource: Boolean
+                    ): Boolean {
+                        callback?.run()
+                        return false
+                    }
+
+                })
+
+                .into(iv)
         }
-*/
-         if (iv != null) {
-             Glide.with(getAppContext())
-                 .load(url)
-                 .diskCacheStrategy(DiskCacheStrategy.ALL)
-                 .optionalTransform(WebpDrawable::class.java,  WebpDrawableTransformation(CircleCrop()))
-                 .centerCrop()
-                 //.thumbnail(Glide.with(activityRef.get()!!).load(url))
-                 .listener(object : RequestListener<Drawable> {
-                     override fun onLoadFailed(
-                         e: GlideException?,
-                         model: Any?,
-                         target: Target<Drawable>?,
-                         isFirstResource: Boolean
-                     ): Boolean {
-                         return false
-
-                     }
-
-                     override fun onResourceReady(
-                         resource: Drawable?,
-                         model: Any?,
-                         target: Target<Drawable>?,
-                         dataSource: DataSource?,
-                         isFirstResource: Boolean
-                     ): Boolean {
-                         callback?.run()
-                         return false
-                     }
-
-                 })
-                 .into(iv)
-         }
 
     }
 
 
-    fun setVideoImageView(iv: AppCompatImageView, url:Int,callback:Runnable?=null){
+    fun setVideoImageView(iv: AppCompatImageView, url: Int, callback: Runnable? = null) {
+
+        val multi = MultiTransformation<Bitmap>(
+            CropTransformation(Utils.dpToPx(IMAGE_SIZE), Utils.dpToPx(IMAGE_SIZE), CropTransformation.CropType.CENTER),
+            RoundedCornersTransformation(Utils.dpToPx(ROUND_CORNER), 0, RoundedCornersTransformation.CornerType.ALL)
+        )
         Glide.with(getAppContext())
             .load(url)
-            .centerCrop()
+            .optionalTransform(
+                WebpDrawable::class.java,
+                WebpDrawableTransformation(CircleCrop())
+            )
+            .apply(RequestOptions.bitmapTransform(multi))
             .listener(object : RequestListener<Drawable> {
                 override fun onLoadFailed(
                     e: GlideException?,

@@ -7,9 +7,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingStart="@dimen/_16sdp"
-        android:paddingLeft="@dimen/_16sdp"
-        android:paddingEnd="@dimen/_48sdp"
-        android:paddingRight="@dimen/_48sdp">
+        android:paddingEnd="@dimen/_48sdp">
 
     <FrameLayout
             android:id="@+id/root_sub_view"
@@ -33,7 +31,6 @@
                     android:gravity="start">
 
                 <androidx.appcompat.widget.AppCompatImageView
-                        android:maxWidth="@dimen/_400sdp"
                         android:id="@+id/image_view"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"

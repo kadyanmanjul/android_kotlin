@@ -12,10 +12,8 @@ import com.google.android.exoplayer2.ui.DownloadNotificationHelper;
 import com.google.android.exoplayer2.util.NotificationUtil;
 import com.google.android.exoplayer2.util.Util;
 import com.joshtalks.joshskills.R;
-import com.joshtalks.joshskills.core.service.downloader.DownloadNotificationUtil;
 import com.joshtalks.joshskills.repository.local.DatabaseUtils;
 import com.joshtalks.joshskills.repository.local.entity.DOWNLOAD_STATUS;
-
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -37,7 +35,6 @@ public class VideoDownloadService extends DownloadService {
                 DEFAULT_FOREGROUND_NOTIFICATION_UPDATE_INTERVAL,
                 CHANNEL_ID,
                 R.string.exo_download_notification_channel_name);
-        ///* channelDescriptionResourceId= */ 0);
         nextNotificationId = FOREGROUND_NOTIFICATION_ID + 1;
     }
 
