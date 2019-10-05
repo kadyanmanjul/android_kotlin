@@ -141,7 +141,7 @@ data class Question(
 data class Sender(
     @SerializedName("id") var id: String = "",
 
-    @SerializedName("user") var user: User = User(),
+    @SerializedName("user") var user: User? = User(),
 
     @SerializedName("user_type") var user_type: String = ""
 ) : Serializable
@@ -154,7 +154,7 @@ data class User(
 
     @SerializedName("last_name") var last_name: String = "",
 
-    @SerializedName("photo_url") var photo_url: String = "",
+    @SerializedName("photo_url") var photo_url: String? = "",
 
     @SerializedName("user_type") var user_type: String = ""
 ) : Serializable

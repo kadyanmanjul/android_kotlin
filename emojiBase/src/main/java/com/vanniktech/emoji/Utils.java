@@ -49,11 +49,11 @@ public final class Utils {
         context.getResources().getDisplayMetrics()) + 0.5f);
   }
 
-  static int getOrientation(final Context context) {
+  public static int getOrientation(final Context context) {
     return context.getResources().getConfiguration().orientation;
   }
 
-  static boolean shouldOverrideRegularCondition(@NonNull final Context context, final EditText editText) {
+  public static boolean shouldOverrideRegularCondition(@NonNull final Context context, final EditText editText) {
     if ((editText.getImeOptions() & EditorInfo.IME_FLAG_NO_EXTRACT_UI) == 0) {
       return getOrientation(context) == Configuration.ORIENTATION_LANDSCAPE;
     }
@@ -61,7 +61,8 @@ public final class Utils {
     return false;
   }
 
-  @SuppressWarnings({"unchecked", "JavaReflectionMemberAccess"}) static int getInputMethodHeight(final Context context, final View rootView) {
+  @SuppressWarnings({"unchecked", "JavaReflectionMemberAccess"})
+  public static int getInputMethodHeight(final Context context, final View rootView) {
     try {
       final InputMethodManager imm = (InputMethodManager) context.getApplicationContext().getSystemService(Context.INPUT_METHOD_SERVICE);
       final Class inputMethodManagerClass = imm.getClass();
@@ -79,7 +80,8 @@ public final class Utils {
     return alternativeInputMethodHeight(rootView);
   }
 
-  @SuppressWarnings("JavaReflectionMemberAccess") @TargetApi(LOLLIPOP) static int getViewBottomInset(final View rootView) {
+  @SuppressWarnings("JavaReflectionMemberAccess") @TargetApi(LOLLIPOP)
+  public static int getViewBottomInset(final View rootView) {
     try {
       final Field attachInfoField = View.class.getDeclaredField("mAttachInfo");
       attachInfoField.setAccessible(true);
@@ -110,7 +112,7 @@ public final class Utils {
     return availableHeight - (rect.bottom - rect.top);
   }
 
-  static int getScreenWidth(@NonNull final Activity context) {
+  public static int getScreenWidth(@NonNull final Activity context) {
     return dpToPx(context, context.getResources().getConfiguration().screenWidthDp);
   }
 
@@ -120,7 +122,8 @@ public final class Utils {
     return new Point(location[0], location[1]);
   }
 
-  @NonNull static Rect windowVisibleDisplayFrame(@NonNull final Activity context) {
+  @NonNull
+  public static Rect windowVisibleDisplayFrame(@NonNull final Activity context) {
     final Rect result = new Rect();
     context.getWindow().getDecorView().getWindowVisibleDisplayFrame(result);
     return result;

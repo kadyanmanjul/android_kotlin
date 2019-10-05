@@ -88,7 +88,8 @@ object Utils {
 
     fun messageTimeConversion(old: Date): String {
         if (DateUtils.isToday(old.time)) {
-            return CHAT_TIME_FORMATTER.format(old.time).toLowerCase(Locale.getDefault()).replace("AM", "am").replace("PM","pm")
+            return CHAT_TIME_FORMATTER.format(old.time).toLowerCase(Locale.getDefault())
+                .replace("AM", "am").replace("PM", "pm")
         } else {
             return DD_MMM.format(old)
         }
@@ -114,6 +115,11 @@ object Utils {
 
 
     }
+
+    fun getMessageTimeInHours(date: Date): String {
+        return CHAT_TIME_FORMATTER.format(date.time).toLowerCase(Locale.getDefault())
+    }
+
 
     private fun isYesterday(d: Date): Boolean {
         return DateUtils.isToday(d.time + DateUtils.DAY_IN_MILLIS)
@@ -251,8 +257,8 @@ object Utils {
             }
             if (url.trim().startsWith("http://").not()) {
                 intent.data = Uri.parse("http://" + url.replace("https://", "").trim())
-            }else{
-                intent.data =Uri.parse(url.trim())
+            } else {
+                intent.data = Uri.parse(url.trim())
             }
             AppObjectController.joshApplication.startActivity(intent)
         } catch (ex: Exception) {

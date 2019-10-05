@@ -1,6 +1,7 @@
 package com.joshtalks.joshskills.ui.view_holders
 
 import android.Manifest
+import android.graphics.Color
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.widget.FrameLayout
@@ -89,6 +90,8 @@ class ImageViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
         message.sender?.let {
             updateView(it, root_view, root_sub_view, message_view)
         }
+        text_message_body.setShadowLayer(1F, 0F, 0F, Color.RED);
+
 
         if (message.url != null) {
             if (message.downloadStatus == DOWNLOAD_STATUS.DOWNLOADED) {

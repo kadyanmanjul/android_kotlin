@@ -76,6 +76,10 @@ class VideoViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
     lateinit var iv_start_download: AppCompatImageView
 
 
+    @View(R.id.play_icon)
+    lateinit var playIcon: android.view.View
+
+
     @View(R.id.progress_dialog)
     lateinit var progress_dialog: ProgressWheel
 
@@ -109,7 +113,10 @@ class VideoViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
                         .withPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
                         .withListener(object : PermissionListener {
                             override fun onPermissionGranted(response: PermissionGrantedResponse) {
-                                setImageInImageView(image_view, message.downloadedLocalPath!!)
+                                setImageInImageView(image_view, message.downloadedLocalPath!!,
+                                    Runnable {
+                                        playIcon.visibility = VISIBLE
+                                    })
                             }
 
                             override fun onPermissionDenied(response: PermissionDeniedResponse) {
@@ -123,8 +130,7 @@ class VideoViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
                             }
                         }).check()
                 } else {
-                    fileNotDownloadView()
-
+                    download_container.visibility = GONE
                 }
 
             } else if (message.downloadStatus == DOWNLOAD_STATUS.UPLOADING) {
@@ -194,7 +200,6 @@ class VideoViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
     }
 
     fun fileNotDownloadView() {
-
         download_container.visibility = VISIBLE
         iv_start_download.visibility = VISIBLE
         progress_dialog.visibility = GONE
@@ -226,15 +231,31 @@ class VideoViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
         if (blur) {
             setBlurImageInImageView(iv, url)
         } else {
-            setImageInImageView(iv, url)
+            setImageInImageView(iv, url, Runnable {
+                playIcon.visibility = VISIBLE
+            })
         }
 
     }
 
     @Click(R.id.video_container_fl)
     fun onClick() {
-        RxBus2.publish(PlayVideoEvent(message))
-
+        if (message.url != null) {
+            if (message.downloadStatus == DOWNLOAD_STATUS.DOWNLOADED) {
+                RxBus2.publish(PlayVideoEvent(message))
+            }
+        } else {
+            message.question?.videoList?.getOrNull(0)?.let { videoObj ->
+                when {
+                    message.downloadStatus == DOWNLOAD_STATUS.DOWNLOADED -> {
+                        RxBus2.publish(PlayVideoEvent(message))
+                    }
+                    else -> {
+                        RxBus2.publish(DownloadMediaEventBus(this, message))
+                    }
+                }
+            }
+        }
     }
 
 
@@ -245,16 +266,21 @@ class VideoViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
 
     @Click(R.id.iv_cancel_download)
     fun downloadCancel() {
+        message.question?.videoList?.getOrNull(0)?.video_url?.run {
+            AppObjectController.videoDownloadTracker.download(
+                message,
+                Uri.parse(this),
+                VideoDownloadController.getInstance().buildRenderersFactory(false)
+            )
+        }
         fileNotDownloadView()
         message.downloadStatus = DOWNLOAD_STATUS.NOT_START
+
 
     }
 
     @Click(R.id.iv_start_download)
     fun downloadStart1() {
         RxBus2.publish(DownloadMediaEventBus(videoViewHolder, message))
-
     }
-
-
 }

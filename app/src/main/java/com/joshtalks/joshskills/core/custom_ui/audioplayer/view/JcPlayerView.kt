@@ -11,13 +11,12 @@ import kotlinx.android.synthetic.main.view_jcplayer.view.*
 
 import android.content.Context
 import android.content.res.TypedArray
-import android.graphics.PorterDuff
 import android.net.Uri
 import android.os.Build
 import android.util.AttributeSet
-import android.util.Log
 import android.view.View
 import android.widget.*
+import androidx.appcompat.widget.AppCompatTextView
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.custom_ui.audioplayer.JcPlayerManager
@@ -31,11 +30,11 @@ import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
 import com.joshtalks.joshskills.repository.local.entity.DOWNLOAD_STATUS
+import com.joshtalks.joshskills.repository.local.entity.MESSAGE_DELIVER_STATUS
 import com.joshtalks.joshskills.repository.local.eventbus.AudioPlayerPauseEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.MediaEngageEventBus
-import com.joshtalks.joshskills.repository.local.eventbus.PlayVideoEvent
 import com.joshtalks.joshskills.repository.local.model.ListenGraph
-import com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity
+import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionDeniedResponse
@@ -119,36 +118,31 @@ class JcPlayerView : LinearLayout, View.OnClickListener, SeekBar.OnSeekBarChange
 
     private fun init() {
         View.inflate(context, R.layout.view_jcplayer, this)
-
-        //  btnNext?.setOnClickListener(this)
-        // btnPrev?.setOnClickListener(this)
         btnPlay?.setOnClickListener(this)
         btnPause?.setOnClickListener(this)
         startDownload?.setOnClickListener(this)
         cancelDownload?.setOnClickListener(this)
-        // btnRandom?.setOnClickListener(this)
-        // btnRepeat?.setOnClickListener(this)
-        //btnRepeatOne?.setOnClickListener(this)
         seekBar?.setOnSeekBarChangeListener(this)
     }
 
     private fun setAttributes(attrs: TypedArray) {
         val defaultColor = ResourcesCompat.getColor(resources, R.color.black, null)
 
-        txtCurrentDuration?.setTextColor(
+       /* txtCurrentDuration?.setTextColor(
             attrs.getColor(
                 R.styleable.JcPlayerView_text_audio_current_duration_color,
                 defaultColor
             )
-        )
-        txtDuration?.setTextColor(
+        )*/
+        /*txtDuration?.setTextColor(
             attrs.getColor(
                 R.styleable.JcPlayerView_text_audio_duration_color,
                 defaultColor
             )
-        )
+        )*/
 
-        //progressBarPlayer?.indeterminateDrawable?.setColorFilter(attrs.getColor(R.styleable.JcPlayerView_progress_color, defaultColor), PorterDuff.Mode.SRC_ATOP)
+
+        /*//progressBarPlayer?.indeterminateDrawable?.setColorFilter(attrs.getColor(R.styleable.JcPlayerView_progress_color, defaultColor), PorterDuff.Mode.SRC_ATOP)
         seekBar?.progressDrawable?.setColorFilter(
             attrs.getColor(
                 R.styleable.JcPlayerView_seek_bar_color,
@@ -161,7 +155,7 @@ class JcPlayerView : LinearLayout, View.OnClickListener, SeekBar.OnSeekBarChange
                 R.styleable.JcPlayerView_seek_bar_color,
                 defaultColor
             ), PorterDuff.Mode.SRC_ATOP
-        )
+        )*/
         btnPlay.setColorFilter(
             attrs.getColor(
                 R.styleable.JcPlayerView_play_icon_color,
@@ -292,6 +286,9 @@ class JcPlayerView : LinearLayout, View.OnClickListener, SeekBar.OnSeekBarChange
         this.message = obj
         this.audioPlayerInterface = audioPlayerInterface
         updateUI()
+
+        updateTime(message_time)
+        //message_time
 
     }
 
@@ -501,10 +498,9 @@ class JcPlayerView : LinearLayout, View.OnClickListener, SeekBar.OnSeekBarChange
     override fun onPreparedAudio(status: JcStatus) {
         dismissProgressBar()
         resetPlayerInfo()
-
         duration = status.duration.toInt()
         seekBar?.post { seekBar?.max = duration }
-        txtDuration?.post { txtDuration?.text = toTimeSongString(duration) }
+        txtCurrentDuration?.post { txtCurrentDuration?.text = toTimeSongString(duration) }
     }
 
     override fun onProgressChanged(seekBar: SeekBar, i: Int, fromUser: Boolean) {
@@ -541,10 +537,8 @@ class JcPlayerView : LinearLayout, View.OnClickListener, SeekBar.OnSeekBarChange
         } catch (e: Exception) {
             e.printStackTrace()
         }
-        txtDuration?.post { txtDuration?.text = toTimeSongString(duration) }
-
+        txtCurrentDuration?.post { txtCurrentDuration?.text = toTimeSongString(duration) }
         showPlayButton()
-
     }
 
     override fun onContinueAudio(status: JcStatus) {
@@ -614,10 +608,11 @@ class JcPlayerView : LinearLayout, View.OnClickListener, SeekBar.OnSeekBarChange
 
     private fun resetPlayerInfo() {
         seekBar?.post { seekBar?.progress = 0 }
-        txtDuration?.post { txtDuration.text = context.getString(R.string.play_initial_time) }
-        txtCurrentDuration?.post {
+        txtCurrentDuration.text = toTimeSongString(duration);
+      //  txtCurrentDuration?.post { txtDuration.text = context.getString(R.string.play_initial_time) }
+        /*txtCurrentDuration?.post {
             txtCurrentDuration.text = context.getString(R.string.play_initial_time)
-        }
+        }*/
     }
 
     /**
@@ -675,6 +670,7 @@ class JcPlayerView : LinearLayout, View.OnClickListener, SeekBar.OnSeekBarChange
     }
 
     private fun updateUI() {
+        seekBar.visibility= View.GONE
         if (message.url != null) {
             if (message.downloadStatus === DOWNLOAD_STATUS.DOWNLOADED) {
                 if (message.downloadedLocalPath != null && AppDirectory.isFileExist(message.downloadedLocalPath!!)) {
@@ -721,7 +717,7 @@ class JcPlayerView : LinearLayout, View.OnClickListener, SeekBar.OnSeekBarChange
         startDownload.visibility = View.VISIBLE
         btnPlay?.visibility = View.GONE
         btnPause?.visibility = View.GONE
-
+        seekBar_ph?.visibility = View.VISIBLE
 
     }
 
@@ -730,6 +726,7 @@ class JcPlayerView : LinearLayout, View.OnClickListener, SeekBar.OnSeekBarChange
         progressBarPlayer.visibility = View.VISIBLE
         cancelDownload.visibility = View.VISIBLE
         startDownload.visibility = View.GONE
+        seekBar_ph?.visibility = View.VISIBLE
 
     }
 
@@ -750,7 +747,7 @@ class JcPlayerView : LinearLayout, View.OnClickListener, SeekBar.OnSeekBarChange
                 if (message.question!!.audioList!![0].downloadedLocalPath == null || message.question!!.audioList!![0].downloadedLocalPath!!.isEmpty()) {
                     this.uri = Uri.parse(message.question!!.audioList!![0].audio_url)
                     jcAudios.add(JcAudio.createFromURL(message.question!!.audioList!![0].audio_url))
-                    isMedia=true
+                    isMedia = true
                     this.duration = Utils.getDurationOfMedia(
                         context,
                         message.question!!.audioList!![0].audio_url
@@ -758,7 +755,7 @@ class JcPlayerView : LinearLayout, View.OnClickListener, SeekBar.OnSeekBarChange
 
                 } else {
                     jcAudios.add(JcAudio.createFromFilePath(message.question!!.audioList!![0].downloadedLocalPath!!))
-                    isMedia=true
+                    isMedia = true
 
                     this.duration = Utils.getDurationOfMedia(
                         context,
@@ -769,13 +766,13 @@ class JcPlayerView : LinearLayout, View.OnClickListener, SeekBar.OnSeekBarChange
             } else {
                 if (message.downloadedLocalPath!!.isEmpty()) {
                     jcAudios.add(JcAudio.createFromFilePath(message.url!!))
-                    isMedia=true
+                    isMedia = true
 
                     this.duration = Utils.getDurationOfMedia(context, message.url!!)!!.toInt()
 
                 } else {
                     jcAudios.add(JcAudio.createFromFilePath(message.downloadedLocalPath!!))
-                    isMedia=true
+                    isMedia = true
 
                     this.duration =
                         Utils.getDurationOfMedia(context, message.downloadedLocalPath!!)!!.toInt()
@@ -790,6 +787,9 @@ class JcPlayerView : LinearLayout, View.OnClickListener, SeekBar.OnSeekBarChange
         // addAudio(jcAudios.get(0))
         //   jcPlayerManagerListener=this
         initPlaylist(jcAudios, this)
+        if (duration > 0) {
+            txtCurrentDuration.text = toTimeSongString(duration);
+        }
 
     }
 
@@ -821,6 +821,62 @@ class JcPlayerView : LinearLayout, View.OnClickListener, SeekBar.OnSeekBarChange
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
         compositeDisposable.clear()
+    }
+    fun getDrawablePadding() = com.vanniktech.emoji.Utils.dpToPx(context, 4f)
+
+
+    private fun updateTime(text_message_time: TextView) {
+        text_message_time.text = Utils.getMessageTimeInHours(message.created).toUpperCase()
+
+        if (message.sender?.id.equals( Mentor.getInstance().getId(), ignoreCase = true)) {
+            text_message_time.compoundDrawablePadding = getDrawablePadding()
+            if (message.isSync.not()) {
+                text_message_time.setCompoundDrawablesWithIntrinsicBounds(
+                    0,
+                    0,
+                    R.drawable.ic_unsync_msz,
+                    0
+                )
+                return
+            }
+
+
+
+            when {
+                message.messageDeliverStatus == MESSAGE_DELIVER_STATUS.SENT -> {
+
+                    text_message_time.setCompoundDrawablesWithIntrinsicBounds(
+                        0,
+                        0,
+                        R.drawable.ic_sent_message_s_tick,
+                        0
+                    )
+                }
+                message.messageDeliverStatus == MESSAGE_DELIVER_STATUS.SENT_RECEIVED -> text_message_time.setCompoundDrawablesWithIntrinsicBounds(
+                    0,
+                    0,
+                    R.drawable.ic_sent_message_d_tick,
+                    0
+                )
+                else -> {
+                    text_message_time.setCompoundDrawablesWithIntrinsicBounds(
+                        0,
+                        0,
+                        R.drawable.ic_sent_message_s_r_tick,
+                        0
+                    )
+                }
+            }
+
+
+        } else {
+            text_message_time.setCompoundDrawablesWithIntrinsicBounds(
+                0,
+                0,
+                0,
+                0
+            )
+        }
     }
 
 }

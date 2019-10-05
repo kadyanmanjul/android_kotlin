@@ -42,24 +42,21 @@
                     android:id="@+id/chatRv"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:paddingTop="@dimen/_5sdp"
                     android:scrollbars="vertical" />
 
-            <com.google.android.material.floatingactionbutton.FloatingActionButton
+            <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/scroll_to_end_button"
-                    android:layout_width="@dimen/_28sdp"
-                    android:layout_height="@dimen/_28sdp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_gravity="end|bottom"
                     android:layout_marginEnd="@dimen/_10sdp"
                     android:layout_marginBottom="@dimen/_10sdp"
-                    android:scaleType="fitCenter"
+                    android:scaleType="centerInside"
+                    android:adjustViewBounds="true"
                     android:src="@drawable/ic_arrow_down"
                     android:visibility="gone"
-                    android:backgroundTint="#BBFFFFFF"
-                    app:backgroundTint="#BBFFFFFF"
-                    app:borderWidth="0dp"
-                    app:elevation="@dimen/_4sdp"
-                    app:fabCustomSize="@dimen/_28sdp" />
+                    android:padding="@dimen/_5sdp"
+                    app:elevation="@dimen/_4sdp" />
         </FrameLayout>
 
 
@@ -83,7 +80,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
-                android:background="@drawable/chat_wallpaper"
+                android:background="#00000000"
                 android:orientation="vertical"
                 android:paddingTop="@dimen/_5sdp">
 

@@ -78,25 +78,25 @@
 
                     <FrameLayout
                             android:id="@+id/download_container"
-                            android:layout_width="match_parent"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginRight="@dimen/_10sdp"
+                            android:layout_marginEnd="@dimen/_10sdp"
                             android:clickable="true"
                             android:focusable="true"
                             android:visibility="visible">
 
                         <androidx.appcompat.widget.AppCompatImageView
                                 android:id="@+id/iv_start_download"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center_vertical|end|center_horizontal"
+                                android:layout_width="@dimen/_24sdp"
+                                android:layout_height="@dimen/_24sdp"
+                                android:layout_gravity="end|center"
                                 android:background="@drawable/circle_pdf_bg"
                                 android:clickable="true"
                                 android:focusable="true"
                                 android:padding="@dimen/_5sdp"
                                 android:src="@drawable/ic_download"
-                                android:tint="#878A91"
-                                android:visibility="gone" />
+                                android:tint="#7A7A7A"
+                                android:visibility="visible" />
 
 
                         <com.pnikosis.materialishprogress.ProgressWheel

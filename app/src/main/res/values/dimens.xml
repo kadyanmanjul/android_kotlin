@@ -71,4 +71,6 @@
     <dimen name="spacing_larger">24dp</dimen>
     <dimen name="spacing_xlarge">32dp</dimen>
 
+    <dimen name="seek_bar_thickness">2dp</dimen>
+    <dimen name="seek_bar_thumb_size">12dp</dimen>
 </resources>

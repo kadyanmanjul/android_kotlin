@@ -186,5 +186,22 @@ abstract class BaseCell() {
 
     }
 
+    fun setUrlInImageView(iv: AppCompatImageView?, url: String){
+        iv?.let {
+            Glide.with(getAppContext())
+                .load(url)
+                .optionalTransform(
+                    WebpDrawable::class.java,
+                    WebpDrawableTransformation(CircleCrop())
+                )
+                .thumbnail(0.1f)
+
+                .override(200,200)
+                .into(it)
+        }
+
+    }
+
+
 }
 

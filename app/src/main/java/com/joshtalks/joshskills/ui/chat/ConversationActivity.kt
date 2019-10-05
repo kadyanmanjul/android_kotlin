@@ -1,7 +1,6 @@
 package com.joshtalks.joshskills.ui.chat
 
 import android.Manifest
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
@@ -102,6 +101,7 @@ class ConversationActivity : BaseActivity() {
     private lateinit var linearLayoutManager: LinearLayoutManager
 
     private var unreadScrollDone: Boolean = false
+    // private lateinit var attachmentPopup: AttachmentPopup
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -572,21 +572,8 @@ class ConversationActivity : BaseActivity() {
             .subscribeOn(Schedulers.computation())
             .subscribe {
                 CoroutineScope(Dispatchers.IO).launch {
-
-                    try {
-                        val obj =
-                            AppObjectController.appDatabase.chatDao()
-                                .getUpdatedChatObject(it.chatModel)
-                        val pos = conversationBinding.chatRv.getViewResolverPosition(it.viewHolder)
-                        val view: BaseChatViewHolder =
-                            conversationBinding.chatRv.getViewResolverAtPosition(pos) as BaseChatViewHolder
-                        view.message = obj
-                        AppObjectController.uiHandler.postDelayed({
-                            conversationBinding.chatRv.refreshView(view)
-                        }, 250)
-                    } catch (ex: Exception) {
-                        ex.printStackTrace()
-                    }
+                    val obj =AppObjectController.appDatabase.chatDao().getUpdatedChatObject(it.chatModel)
+                    refreshViewAtPos(obj)
                 }
 
             })
@@ -601,31 +588,37 @@ class ConversationActivity : BaseActivity() {
             .subscribeOn(Schedulers.computation())
             .subscribe {
                 CoroutineScope(Dispatchers.IO).launch {
-                    try {
-                        val chatObj = AppObjectController.appDatabase.chatDao()
-                            .getUpdatedChatObjectViaId(it.messageObject.chatId)
-                        var tempView: BaseChatViewHolder
-                        conversationBinding.chatRv.allViewResolvers?.let {
+                    val chatObj = AppObjectController.appDatabase.chatDao()
+                        .getUpdatedChatObjectViaId(it.messageObject.chatId)
+                    refreshViewAtPos(chatObj)
+                }
+            })
+    }
 
-                            it.forEachIndexed { index, view ->
-                                tempView = view as BaseChatViewHolder
-                                if (chatObj.chatId.equals(
-                                        tempView.message.chatId
-                                    )
-                                ) {
-                                    tempView.message = chatObj
-                                    AppObjectController.uiHandler.postDelayed({
-                                        conversationBinding.chatRv.refreshView(index)
-                                    }, 500)
-                                }
-                            }
+    fun refreshViewAtPos(chatObj: ChatModel) {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+
+                var tempView: BaseChatViewHolder
+                conversationBinding.chatRv.allViewResolvers?.let {
+
+                    it.forEachIndexed { index, view ->
+                        tempView = view as BaseChatViewHolder
+                        if (chatObj.chatId.equals(
+                                tempView.message.chatId
+                            )
+                        ) {
+                            tempView.message = chatObj
+                            AppObjectController.uiHandler.postDelayed({
+                                conversationBinding.chatRv.refreshView(index)
+                            }, 250)
                         }
-                    } catch (ex: Exception) {
-                        ex.printStackTrace()
                     }
                 }
-
-            })
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+            }
+        }
 
     }
 

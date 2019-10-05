@@ -25,13 +25,12 @@
                     android:focusable="true"
                     android:paddingStart="@dimen/_5sdp"
                     android:paddingEnd="@dimen/_5sdp"
-                    android:visibility="visible">
+                    android:visibility="gone">
 
                 <androidx.appcompat.widget.AppCompatImageView
                         android:id="@+id/iv_start_download"
-
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_width="@dimen/_28sdp"
+                        android:layout_height="@dimen/_28sdp"
                         android:layout_gravity="center"
                         android:background="@drawable/circle_pdf_bg"
                         android:clickable="true"

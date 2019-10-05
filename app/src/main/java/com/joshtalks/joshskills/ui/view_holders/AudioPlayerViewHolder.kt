@@ -1,11 +1,13 @@
 package com.joshtalks.joshskills.ui.view_holders
 
+import android.view.Gravity
+//import android.view.View
+import android.view.ViewGroup
 import android.widget.FrameLayout
-import android.widget.LinearLayout
-import androidx.appcompat.widget.AppCompatTextView
+import android.widget.RelativeLayout
+import androidx.appcompat.widget.AppCompatImageView
 import androidx.fragment.app.FragmentActivity
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.custom_ui.audioplayer.view.JcPlayerView
@@ -35,20 +37,17 @@ class AudioPlayerViewHolder(activityRef: WeakReference<FragmentActivity>, messag
     @View(R.id.audio_view)
     lateinit var audio_view: JcPlayerView
 
-
-    @View(R.id.text_message_time)
-    lateinit var text_message_time: AppCompatTextView
-
     @View(R.id.root_view)
-    lateinit var root_view: FrameLayout
+    lateinit var root_view: RelativeLayout
 
-    @View(R.id.root_sub_view)
-    lateinit var root_sub_view: FrameLayout
+    @View(R.id.audio_view_sent)
+    lateinit var audioViewSent: android.view.View
 
-    @View(R.id.message_view)
-    lateinit var message_view: LinearLayout
+    @View(R.id.audio_view_received)
+    lateinit var audioViewReceived: android.view.View
 
-
+    @View(R.id.profile_image)
+    lateinit var profileImage: AppCompatImageView
     lateinit var audioPlayerViewHolder: AudioPlayerViewHolder
 
 
@@ -132,13 +131,39 @@ class AudioPlayerViewHolder(activityRef: WeakReference<FragmentActivity>, messag
 
     @Resolve
     fun onResolved() {
+        profileImage.setImageResource(R.drawable.ic_user_rec_placeholder)
+        audioViewSent.visibility = android.view.View.GONE
+        audioViewReceived.visibility = android.view.View.GONE
         this.audioPlayerViewHolder = this
-        updateTime(text_message_time)
         message.sender?.let {
-            updateView(it, root_view, root_sub_view, message_view)
+            if (it.id.equals(getUserId(), ignoreCase = true)) {
+
+                val params = FrameLayout.LayoutParams(
+                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT
+                )
+                params.setMargins(com.vanniktech.emoji.Utils.dpToPx(getAppContext(), 80f), 0, com.vanniktech.emoji.Utils.dpToPx(getAppContext(), 7f), 0)
+                params.gravity = Gravity.END
+                root_view.layoutParams = params
+                root_view.setBackgroundResource(R.drawable.balloon_outgoing_normal)
+                audioViewSent.visibility = android.view.View.VISIBLE
+            } else {
+                val params = FrameLayout.LayoutParams(
+                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT
+                )
+                params.gravity = Gravity.START
+                params.setMargins(com.vanniktech.emoji.Utils.dpToPx(getAppContext(), 7f), 0, com.vanniktech.emoji.Utils.dpToPx(getAppContext(), 80f), 0)
+                root_view.layoutParams = params
+                root_view.setBackgroundResource(R.drawable.balloon_incoming_normal)
+                audioViewReceived.visibility = android.view.View.VISIBLE
+            }
+            it.user?.photo_url?.run {
+               // setUrlInImageView(profileImage,this)
+            }
         }
-        text_message_time.text = Utils.messageTimeConversion(message.created)
-       // audio_view.jcPlayerManagerListener = jcPlayerManagerListener
+
+
         audio_view.prepareAudioPlayer(activityRef.get(), message, object : AudioPlayerInterface {
             override fun downloadInQueue() {
                 RxBus2.publish(DownloadMediaEventBus(audioPlayerViewHolder, message))
