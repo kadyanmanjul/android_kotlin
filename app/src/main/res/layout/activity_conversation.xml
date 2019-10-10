@@ -51,11 +51,11 @@
                     android:layout_gravity="end|bottom"
                     android:layout_marginEnd="@dimen/_10sdp"
                     android:layout_marginBottom="@dimen/_10sdp"
-                    android:scaleType="centerInside"
                     android:adjustViewBounds="true"
+                    android:padding="@dimen/_5sdp"
+                    android:scaleType="centerInside"
                     android:src="@drawable/ic_arrow_down"
                     android:visibility="gone"
-                    android:padding="@dimen/_5sdp"
                     app:elevation="@dimen/_4sdp" />
         </FrameLayout>
 
@@ -75,114 +75,102 @@
 
 
         <androidx.constraintlayout.widget.ConstraintLayout
-
                 android:id="@+id/bottom_bar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
                 android:background="#00000000"
-                android:orientation="vertical"
                 android:paddingTop="@dimen/_5sdp">
 
 
-            <FrameLayout
+            <LinearLayout
                     android:id="@+id/inputLL"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/_5sdp"
                     android:background="@drawable/rect_round"
                     android:paddingStart="@dimen/_5sdp"
-                    android:paddingLeft="@dimen/_5sdp"
-                    android:paddingRight="@dimen/_5sdp"
+                    android:paddingEnd="@dimen/_5sdp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@id/record_button"
                     app:layout_constraintStart_toStartOf="parent">
 
-
-                <LinearLayout
-                        android:layout_width="match_parent"
+                <FrameLayout
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:background="@drawable/bg_white_round_36"
+                        android:onClick="@{()->handler.emojiToggle()}">
 
-                        >
-
-                    <FrameLayout
+                    <androidx.appcompat.widget.AppCompatImageView
+                            android:id="@+id/iv_emoji"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
-                            android:background="@drawable/bg_white_round_36"
-                            android:onClick="@{()->handler.emojiToggle()}">
-
-                        <androidx.appcompat.widget.AppCompatImageView
-                                android:id="@+id/iv_emoji"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center"
-                                android:clickable="false"
-                                android:scaleType="centerInside"
-                                app:srcCompat="@drawable/happy_face" />
-                    </FrameLayout>
+                            android:clickable="false"
+                            android:scaleType="centerInside"
+                            app:srcCompat="@drawable/happy_face" />
+                </FrameLayout>
 
 
-                    <com.vanniktech.emoji.EmojiEditText
-                            android:id="@+id/chat_edit"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:layout_weight="1"
-                            android:backgroundTint="@android:color/transparent"
-                            android:hint="@string/type_message_hint"
-                            android:imeOptions="actionSend"
-                            android:inputType="textCapSentences|textMultiLine"
-                            android:maxLines="3"
-                            android:textColorHint="@color/gray_9E"
-                            android:textSize="@dimen/font_17" />
+                <com.vanniktech.emoji.EmojiEditText
+                        android:id="@+id/chat_edit"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_weight="1"
+                        android:backgroundTint="@android:color/transparent"
+                        android:hint="@string/type_message_hint"
+                        android:imeOptions="actionSend"
+                        android:inputType="textCapSentences|textMultiLine"
+                        android:maxLines="3"
+                        android:textColorHint="@color/gray_9E"
+                        android:textSize="@dimen/font_17" />
 
 
-                    <FrameLayout
-                            android:id="@+id/fl_attachment"
+                <FrameLayout
+                        android:id="@+id/fl_attachment"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:onClick="@{()->handler.uploadAttachment()}"
+                        android:paddingLeft="@dimen/_10sdp"
+                        android:paddingTop="@dimen/_10sdp"
+                        android:paddingRight="@dimen/_10sdp"
+                        android:paddingBottom="@dimen/_10sdp">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                            android:id="@+id/attachment_view"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
-                            android:onClick="@{()->handler.uploadAttachment()}"
-                            android:paddingLeft="@dimen/_10sdp"
-                            android:paddingTop="@dimen/_10sdp"
-                            android:paddingRight="@dimen/_10sdp"
-                            android:paddingBottom="@dimen/_10sdp">
+                            android:scaleType="centerInside"
+                            app:srcCompat="@drawable/ic_attachment" />
+                </FrameLayout>
 
-                        <androidx.appcompat.widget.AppCompatImageView
-                                android:id="@+id/attachment_view"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center"
-                                android:scaleType="centerInside"
-                                app:srcCompat="@drawable/ic_attachment" />
-                    </FrameLayout>
+                <com.joshtalks.joshskills.core.custom_ui.HidingLinearLayout
+                        android:id="@+id/quick_toggle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:clipChildren="false"
+                        android:clipToPadding="false"
+                        android:onClick="@{()->handler.uploadImageByCameraOrGallery()}"
+                        android:paddingStart="@dimen/_5sdp"
+                        android:paddingTop="@dimen/_10sdp"
+                        android:paddingEnd="@dimen/_10sdp"
+                        android:paddingBottom="@dimen/_10sdp"
+                        android:visibility="visible">
 
-                    <com.joshtalks.joshskills.core.custom_ui.HidingLinearLayout
-                            android:id="@+id/quick_toggle"
+                    <androidx.appcompat.widget.AppCompatImageView
                             android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:clipChildren="false"
-                            android:clipToPadding="false"
-                            android:onClick="@{()->handler.uploadImageByCameraOrGallery()}"
-                            android:paddingLeft="@dimen/_5sdp"
-                            android:paddingTop="@dimen/_10sdp"
-                            android:paddingRight="@dimen/_10sdp"
-                            android:paddingBottom="@dimen/_10sdp"
-                            android:visibility="visible">
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:scaleType="centerInside"
+                            app:srcCompat="@drawable/ic_camera_message" />
 
-                        <androidx.appcompat.widget.AppCompatImageView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center"
-                                android:scaleType="centerInside"
-                                app:srcCompat="@drawable/ic_camera_message" />
+                </com.joshtalks.joshskills.core.custom_ui.HidingLinearLayout>
 
-                    </com.joshtalks.joshskills.core.custom_ui.HidingLinearLayout>
-
-                </LinearLayout>
-
-            </FrameLayout>
+            </LinearLayout>
 
             <com.joshtalks.recordview.RecordView
                     android:id="@+id/record_view"
@@ -202,24 +190,24 @@
                     app:slide_to_cancel_text="Slide To Cancel" />
 
 
-            <com.joshtalks.recordview.CustomImageButton
+                <com.joshtalks.recordview.CustomImageButton
+                        app:layout_constraintBottom_toBottomOf="@+id/inputLL"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintTop_toTopOf="@+id/inputLL"
+                        android:id="@+id/record_button"
+                        android:layout_width="@dimen/_40sdp"
+                        android:layout_height="@dimen/_40sdp"
+                        android:layout_gravity="end"
+                        android:background="@drawable/recv_bg_mic"
+                        android:scaleType="centerInside"
+                        android:textColor="#fff"
+                        android:visibility="visible"
+                        app:image_first="@drawable/recv_ic_mic_white"
+                        app:image_second="@drawable/ic_send"
 
-                    android:id="@+id/record_button"
-                    android:layout_width="@dimen/_36sdp"
-                    android:layout_height="@dimen/_36sdp"
-                    android:layout_marginRight="@dimen/_5sdp"
-                    android:background="@drawable/recv_bg_mic"
-                    android:scaleType="centerInside"
-                    android:textColor="#fff"
-                    android:visibility="visible"
-                    app:image_first="@drawable/recv_ic_mic_white"
-                    app:image_second="@drawable/ic_send"
-                    app:layout_constraintBottom_toBottomOf="@+id/inputLL"
-                    app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toTopOf="@+id/inputLL"
+                        />
 
 
-                    />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </RelativeLayout>

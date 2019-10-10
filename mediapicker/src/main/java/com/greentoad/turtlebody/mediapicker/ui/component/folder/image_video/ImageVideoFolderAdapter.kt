@@ -6,12 +6,9 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.greentoad.turtlebody.mediapicker.R
-import kotlinx.android.synthetic.main.tb_media_picker_item_folder.view.*
+import kotlinx.android.synthetic.main.tb_media_picker_image_video.view.*
 import java.io.File
 
-/**
- * Created by WANGSUN on 26-Mar-19.
- */
 class ImageVideoFolderAdapter: RecyclerView.Adapter<ImageVideoFolderAdapter.FolderVewHolder>() {
 
 
@@ -19,7 +16,7 @@ class ImageVideoFolderAdapter: RecyclerView.Adapter<ImageVideoFolderAdapter.Fold
     private var mOnFolderClickListener: OnFolderClickListener? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FolderVewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.tb_media_picker_item_folder, parent, false)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.tb_media_picker_image_video, parent, false)
         return FolderVewHolder(view)
     }
 
@@ -49,17 +46,23 @@ class ImageVideoFolderAdapter: RecyclerView.Adapter<ImageVideoFolderAdapter.Fold
         notifyDataSetChanged()
     }
 
+    /**
+     * @param pData mutable-list-of ImageVideoFolder
+     */
+    fun setDataMultiple(pData: MutableList<ImageVideoFolder>){
+        mData.addAll(pData)
+        notifyDataSetChanged()
+    }
+
     inner class FolderVewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
         fun bind(pData: ImageVideoFolder){
 
             itemView.item_folder_txt_folder_name.text = pData.name
-            itemView.item_folder_txt_total_items.text = "${pData.contentCount} items"
-
-            itemView.item_folder_small_icon.visibility = View.VISIBLE
+            itemView.item_folder_txt_total_items.text = "${pData.contentCount}"
 
             Glide.with(itemView)
                     .load(File( pData.coverImageFilePath))
-                    .into(itemView.item_folder_icon)
+                    .into(itemView.item_image_cover_image)
 
             itemView.setOnClickListener {
                 mOnFolderClickListener?.onFolderClick(pData)

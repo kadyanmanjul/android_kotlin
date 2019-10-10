@@ -179,7 +179,13 @@ abstract class BaseVideoTrimmerView @JvmOverloads constructor(
         //notify that video trimming started
         if (videoTrimmingListener != null)
             videoTrimmingListener!!.onTrimStarted()
-        BackgroundExecutor.execute(
+
+        videoTrimmingListener?.onTrimStarting(src!!,
+            dstFile!!,startPosition.toLong(),
+            endPosition.toLong())
+
+
+        /*BackgroundExecutor.execute(
             object : BackgroundExecutor.Task(null, 0L, null) {
                 override fun execute() {
                     try {
@@ -197,7 +203,7 @@ abstract class BaseVideoTrimmerView @JvmOverloads constructor(
                     }
                 }
             }
-        )
+        )*/
     }
 
     private fun onClickVideoPlayPause() {

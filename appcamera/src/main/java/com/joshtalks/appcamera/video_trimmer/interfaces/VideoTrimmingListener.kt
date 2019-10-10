@@ -25,6 +25,7 @@ package com.joshtalks.appcamera.video_trimmer.interfaces
 
 import android.net.Uri
 import androidx.annotation.UiThread
+import java.io.File
 
 interface VideoTrimmingListener {
     @UiThread
@@ -32,6 +33,10 @@ interface VideoTrimmingListener {
 
     @UiThread
     fun onTrimStarted()
+
+
+    @UiThread
+    fun onTrimStarting(srcPath:Uri, destPath: File, startTime: Long, endTime: Long)
 
     /**
      * @param uri the result, trimmed video, or null if failed

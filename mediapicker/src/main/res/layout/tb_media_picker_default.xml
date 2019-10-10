@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/offset_1"
+        android:orientation="vertical">
+
+    <com.greentoad.turtlebody.mediapicker.widget.SquareImage
+            android:id="@+id/tb_media_picker_item_image"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:scaleType="centerCrop" />
+
+    <com.greentoad.turtlebody.mediapicker.widget.ImageViewCheckable
+            android:id="@+id/tb_media_picker_item_checkbox"
+            android:layout_width="@dimen/length_32"
+            android:layout_height="@dimen/length_32"
+            android:layout_gravity="end|top"
+            android:layout_margin="@dimen/offset_4"
+            android:src="@drawable/tb_media_picker_sc_check_file" />
+
+    <FrameLayout
+            android:id="@+id/mediatype_fl"
+            android:padding="@dimen/offset_8"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/length_40"
+            android:layout_gravity="bottom"
+            android:background="@drawable/tb_media_picker_dr_rect_gradient_black"
+            android:orientation="horizontal">
+
+        <ImageView
+                android:layout_width="@dimen/offset_20"
+                android:layout_height="@dimen/length_20"
+                android:layout_gravity="center_vertical"
+                app:srcCompat="@drawable/ic_videocam" />
+    </FrameLayout>
+
+</FrameLayout>

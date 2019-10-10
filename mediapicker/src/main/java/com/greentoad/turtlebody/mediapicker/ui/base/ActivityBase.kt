@@ -41,10 +41,10 @@ abstract class ActivityBase : AppCompatActivity(), AnkoLogger {
 
     override fun setContentView(layoutResID: Int) {
         super.setContentView(layoutResID)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+       /* if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             window.statusBarColor = ContextCompat.getColor(applicationContext, R.color.md_white_1000)
-        }
-       setLightStatusBar(window.decorView, this)
+        }*/
+      // setLightStatusBar(window.decorView, this)
 
     }
 

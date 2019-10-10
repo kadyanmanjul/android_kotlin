@@ -10,12 +10,10 @@
     <androidx.recyclerview.widget.RecyclerView
         android:paddingTop="@dimen/offset_2"
         android:paddingBottom="@dimen/offset_2"
-        android:paddingStart="@dimen/offset_16"
-        android:paddingEnd="@dimen/offset_16"
         android:id="@+id/folder_fragment_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:listitem="@layout/tb_media_picker_item_folder"/>
+       />
 
     <include layout="@layout/tb_media_picker_frame_progress"/>
 </FrameLayout>

@@ -1,48 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:id="@+id/activity_lib_main_ll"
-    tools:context=".ui.ActivityLibMain">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/activity_lib_main_ll"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        tools:context=".ui.ActivityLibMain">
 
     <androidx.appcompat.widget.Toolbar
-        app:title="@string/app_name"
-        android:id="@+id/activity_lib_main_toolbar"
-        app:layout_collapseMode="pin"
-        app:titleTextAppearance="@style/App.TextAppearance.h4.Title"
-        app:popupTheme="@style/AppTheme.PopupOverlay"
-        app:titleTextColor="@color/md_white_1000"
-        android:layout_width="match_parent"
-        android:layout_height="?android:attr/actionBarSize"
-        android:background="@color/tb_media_picker_primary"
-        android:theme="@style/ThemeOverlay.AppCompat.Light">
+            android:id="@+id/activity_lib_main_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?android:attr/actionBarSize"
+            android:background="@color/tb_media_picker_primary"
+            android:theme="@style/ThemeOverlay.AppCompat.Light"
+            app:layout_collapseMode="pin"
+            app:popupTheme="@style/AppTheme.PopupOverlay"
+            app:title="@string/app_name"
+            app:titleTextAppearance="@style/App.TextAppearance.h4.Title"
+            app:titleTextColor="@color/md_white_1000">
 
         <TextView
-            android:id="@+id/activity_lib_main_toolbar_txt_count"
-            android:layout_width="@dimen/length_36"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end|center_vertical"
-            android:gravity="center"
-                android:visibility="gone"
-            android:layout_marginEnd="@dimen/offset_8"
-            android:layout_marginRight="8dp"
-            android:textColor="@color/md_white_1000"
-            android:background="@drawable/tb_media_picker_dr_rect_round_light_grey"
-            android:padding="@dimen/offset_4"
-            android:text="0"
-            android:textSize="@dimen/font_16"/>
+                android:id="@+id/activity_lib_main_toolbar_txt_count"
+                android:layout_width="@dimen/length_36"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end|center_vertical"
+                android:layout_marginEnd="@dimen/offset_8"
+                android:layout_marginRight="8dp"
+                android:background="@drawable/tb_media_picker_dr_rect_round_light_grey"
+                android:gravity="center"
+                android:padding="@dimen/offset_4"
+                android:text="0"
+                android:textColor="@color/md_white_1000"
+                android:textSize="@dimen/font_16"
+                android:visibility="gone" />
     </androidx.appcompat.widget.Toolbar>
+
     <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/md_black_1000_15"/>
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/md_black_1000_15" />
 
     <FrameLayout
-        android:id="@+id/activity_lib_main_frame_content"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+            android:id="@+id/activity_lib_main_frame_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
 </LinearLayout>

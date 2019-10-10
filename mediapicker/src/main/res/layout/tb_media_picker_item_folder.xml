@@ -1,59 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="horizontal"
-    android:layout_width="match_parent"
-    android:gravity="center"
-    android:layout_height="wrap_content"
-    android:paddingBottom="@dimen/offset_14">
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:gravity="center"
+        android:layout_height="wrap_content"
+        android:paddingBottom="@dimen/offset_14">
 
 
     <FrameLayout
-        android:layout_width="@dimen/length_40"
-        android:layout_height="@dimen/length_40"
-        android:layout_margin="@dimen/offset_8">
-
-        <ImageView
             android:layout_width="@dimen/length_40"
             android:layout_height="@dimen/length_40"
-            android:id="@+id/item_folder_icon"
-            android:scaleType="centerCrop"/>
+            android:layout_margin="@dimen/offset_8">
+
+        <ImageView
+                android:layout_width="@dimen/length_40"
+                android:layout_height="@dimen/length_40"
+                android:id="@+id/item_folder_icon"
+                android:scaleType="centerCrop"/>
 
         <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/length_20"
-            android:layout_gravity="bottom"
-            android:id="@+id/item_folder_fl"
-            android:background="@drawable/tb_media_picker_dr_rect_gradient_light_to_black">
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/length_20"
+                android:layout_gravity="bottom"
+                android:id="@+id/item_folder_fl"
+                android:background="@drawable/tb_media_picker_dr_rect_gradient_light_to_black">
 
             <ImageView
-                android:id="@+id/item_folder_small_icon"
-                android:layout_width="12dp"
-                android:layout_height="12dp"
-                android:layout_margin="@dimen/offset_2"
-                app:srcCompat="@drawable/tb_media_picker_ic_folder_48px_352374"
-                android:layout_gravity="bottom"/>
+                    android:id="@+id/item_folder_small_icon"
+                    android:layout_width="12dp"
+                    android:layout_height="12dp"
+                    android:layout_margin="@dimen/offset_2"
+                    app:srcCompat="@drawable/tb_media_picker_ic_folder_48px_352374"
+                    android:layout_gravity="bottom"/>
         </FrameLayout>
 
     </FrameLayout>
 
 
     <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
         <TextView
-            android:id="@+id/item_folder_txt_folder_name"
-            style="@style/TextTitle"
-            android:hint="Folder Name"/>
+                android:id="@+id/item_folder_txt_folder_name"
+                style="@style/TextTitle"
+                android:hint="Folder Name"/>
 
         <TextView
-            android:id="@+id/item_folder_txt_total_items"
-            style="@style/TextNormal"
-            android:hint="24 items"
-            android:textSize="@dimen/font_14"/>
+                android:id="@+id/item_folder_txt_total_items"
+                style="@style/TextNormal"
+                android:hint="24 items"
+                android:textSize="@dimen/font_14"/>
     </LinearLayout>
 
 </LinearLayout>

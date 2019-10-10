@@ -99,9 +99,7 @@ class VideoViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
         videoViewHolder = this
         text_message_body.text = ""
         download_container.visibility = GONE
-
         text_message_time.text = Utils.messageTimeConversion(message.created)
-
         message.sender?.let {
             updateView(it, root_view, root_sub_view, message_view)
         }

@@ -26,13 +26,13 @@
 
             <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/startDownload"
-                    android:layout_width="@dimen/_30sdp"
-                    android:layout_height="@dimen/_30sdp"
-                    android:layout_gravity="top|center"
+                    android:layout_width="@dimen/_20sdp"
+                    android:layout_height="@dimen/_20sdp"
+                    android:layout_gravity="center"
                     android:background="@drawable/circle_pdf_bg"
                     android:clickable="true"
                     android:focusable="true"
-                    android:padding="@dimen/_6sdp"
+                    android:padding="@dimen/_4sdp"
                     android:src="@drawable/ic_download"
                     android:tint="#7A7A7A"
                     android:visibility="gone" />

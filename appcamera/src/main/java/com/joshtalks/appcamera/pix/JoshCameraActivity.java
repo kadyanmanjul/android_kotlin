@@ -544,7 +544,7 @@ public class JoshCameraActivity extends AppCompatActivity implements View.OnTouc
                             e.printStackTrace();
                         }
 
-                        VideoTrimmerActivity.startTrimmerActivity(JoshCameraActivity.this, VIDEO_SELECT, Uri.fromFile(cameraKitVideo.getVideoFile()), file);
+                        VideoTrimmerActivity.startTrimmerActivity(JoshCameraActivity.this, VIDEO_SELECT, Uri.fromFile(cameraKitVideo.getVideoFile()), file, cameraKitVideo.getVideoFile().getAbsolutePath());
 
                     }
                 });

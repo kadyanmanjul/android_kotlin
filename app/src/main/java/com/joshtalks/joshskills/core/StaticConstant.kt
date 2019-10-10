@@ -14,9 +14,13 @@ enum class SignUpStepStatus(val dayNumber: Int) {
 const val REDIRECT_URL = "http://english.joshtalks.org/"
 
 
-const val MESSAGE_CHAT_SIZE_LIMIT=2048
-const val EMPTY=""
+const val MESSAGE_CHAT_SIZE_LIMIT = 2048
+const val EMPTY = ""
 
+const val IMAGE_PATTERN = "([^\\s]+(\\.(?i)(jpg|png|gif|bmp)|WEBP|webp|JPEG|PNG|Jpeg)$)"
+const val VIDEO_PATTERN = "([^\\s]+(\\.(?i)(mp4|MP4)$)"
+
+val IMAGE_REGEX= Regex(pattern = IMAGE_PATTERN)
 
 
 

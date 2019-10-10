@@ -49,7 +49,7 @@ object MessageBuilderFactory {
 
         model.url = (message as TAudioMessage).url
         model.created = Date(System.currentTimeMillis())
-        model.downloadStatus=DOWNLOAD_STATUS.DOWNLOADED
+        model.downloadStatus=DOWNLOAD_STATUS.UPLOADING
         model.messageDeliverStatus = MESSAGE_DELIVER_STATUS.SENT
         model.sender = Sender(Mentor.getInstance().getId(), User(), "")
         model.downloadedLocalPath = model.url

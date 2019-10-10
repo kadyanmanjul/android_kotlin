@@ -25,6 +25,7 @@ import com.joshtalks.recordview.OnRecordListener
 import com.vanniktech.emoji.EmojiPopup
 import android.view.MotionEvent
 import android.view.View
+import android.view.WindowManager
 import android.widget.Toast
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
@@ -71,6 +72,7 @@ import com.joshtalks.joshskills.repository.server.chat_message.TVideoMessage
 import com.joshtalks.joshskills.repository.service.EngagementNetworkHelper
 import de.hdodenhof.circleimageview.CircleImageView
 import io.reactivex.schedulers.Schedulers
+import java.util.*
 
 const val CHAT_ROOM_OBJECT = "chat_room"
 const val IMAGE_SELECT_REQUEST_CODE = 1077
@@ -101,6 +103,9 @@ class ConversationActivity : BaseActivity() {
     private lateinit var linearLayoutManager: LinearLayoutManager
 
     private var unreadScrollDone: Boolean = false
+    private var conversactionList = linkedSetOf<ChatModel>()
+
+
     // private lateinit var attachmentPopup: AttachmentPopup
 
 
@@ -255,8 +260,8 @@ class ConversationActivity : BaseActivity() {
         conversationBinding.recordButton.isListenForRecord = false
         conversationBinding.recordView.setOnRecordListener(object : OnRecordListener {
             override fun onStart() {
+                window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
                 AppAnalytics.create(AnalyticsEvent.AUDIO_BUTTON_CLICKED.NAME).push()
-
                 conversationBinding.recordView.visibility = VISIBLE
                 conversationViewModel.startRecord().let {
                     if (it) {
@@ -274,6 +279,7 @@ class ConversationActivity : BaseActivity() {
                 conversationBinding.recordView.visibility = GONE
                 conversationViewModel.stopRecording()
                 addUploadAudioMedia(conversationViewModel.recordFile.absolutePath)
+                window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
             }
 
@@ -285,13 +291,14 @@ class ConversationActivity : BaseActivity() {
         })
 
 
+
         conversationBinding.recordView.setOnBasketAnimationEndListener {
             conversationBinding.recordView.visibility = GONE
             conversationViewModel.stopRecording()
             AppAnalytics.create(AnalyticsEvent.AUDIO_CANCELLED.NAME).push()
+            window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
         }
-
-
         conversationBinding.chatEdit.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
                 if (s.isNullOrEmpty()) {
@@ -433,11 +440,13 @@ class ConversationActivity : BaseActivity() {
             AppAnalytics.create(AnalyticsEvent.CAMERA_SELECTED.NAME).push()
 
             uploadAttachment()
+
             val pickerConfig = MediaPickerConfig()
-                .setUriPermanentAccess(false)
+                .setUriPermanentAccess(true)
                 .setAllowMultiSelection(false)
                 //.setShowConfirmationDialog(true)
                 .setScreenOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
+
             MediaPicker.with(this, MediaPicker.MediaTypes.IMAGE)
                 .setConfig(pickerConfig)
                 .setFileMissingListener(object :
@@ -449,7 +458,11 @@ class ConversationActivity : BaseActivity() {
                 .subscribe({
                     it?.let {
                         it[0].path?.let { path ->
-                            addUserImageInView((Utils.getPathFromUri(path)))
+                            if (IMAGE_REGEX.matches(path)) {
+                                addUserImageInView(path)
+                            } else {
+                                addUserVideoInView(path)
+                            }
                         }
                     }
                 }, {
@@ -464,13 +477,12 @@ class ConversationActivity : BaseActivity() {
 
     private fun addListenerObservable() {
         conversationViewModel.chatObservableLiveData.observe(this, Observer {
-
-
-            it.forEach { chatModel ->
-                if (chatModel.isSeen.not() && unreadMessagePosition == -1) {
+            conversactionList.addAll(it)
+            conversactionList.iterator().forEach { chatModel ->
+                /*if (chatModel.isSeen.not() && unreadMessagePosition == -1) {
                     val count = conversationBinding.chatRv.adapter?.itemCount ?: 0
                     unreadMessagePosition = count - it.indexOf(chatModel)
-                }
+                }*/
 
                 getView(chatModel)?.let { cell ->
                     conversationBinding.chatRv.addView(cell)
@@ -485,6 +497,10 @@ class ConversationActivity : BaseActivity() {
                 )
             }*/
             conversationBinding.chatRv.refresh()
+            scrollToEnd()
+           /* AppObjectController.uiHandler.postDelayed({
+                linearLayoutManager.scrollToPosition(unreadMessagePosition)
+            }, 250)
             if (unreadMessagePosition == -1) {
                 scrollToEnd()
             } else {
@@ -493,8 +509,8 @@ class ConversationActivity : BaseActivity() {
                     AppObjectController.uiHandler.postDelayed({
                         linearLayoutManager.scrollToPosition(unreadMessagePosition)
                     }, 250)
-                }
-            }
+                }}*/
+
         })
 
         conversationViewModel.refreshViewLiveData.observe(this, Observer { chatModel ->
@@ -508,8 +524,6 @@ class ConversationActivity : BaseActivity() {
     }
 
     private fun subscribeRXBus() {
-
-
         compositeDisposable.add(RxBus2.listen(PlayVideoEvent::class.java).subscribe {
             VideoPlayerActivity.startConversionActivity(
                 this,
@@ -565,14 +579,14 @@ class ConversationActivity : BaseActivity() {
                     }
 
                 }).check()
-
         })
 
         compositeDisposable.add(RxBus2.listen(DownloadCompletedEventBus::class.java)
             .subscribeOn(Schedulers.computation())
             .subscribe {
                 CoroutineScope(Dispatchers.IO).launch {
-                    val obj =AppObjectController.appDatabase.chatDao().getUpdatedChatObject(it.chatModel)
+                    val obj = AppObjectController.appDatabase.chatDao()
+                        .getUpdatedChatObject(it.chatModel)
                     refreshViewAtPos(obj)
                 }
 
@@ -604,10 +618,7 @@ class ConversationActivity : BaseActivity() {
 
                     it.forEachIndexed { index, view ->
                         tempView = view as BaseChatViewHolder
-                        if (chatObj.chatId.equals(
-                                tempView.message.chatId
-                            )
-                        ) {
+                        if (chatObj.chatId.toLowerCase(Locale.getDefault()) == tempView.message.chatId.toLowerCase(Locale.getDefault())) {
                             tempView.message = chatObj
                             AppObjectController.uiHandler.postDelayed({
                                 conversationBinding.chatRv.refreshView(index)

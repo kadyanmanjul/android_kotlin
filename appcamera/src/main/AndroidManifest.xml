@@ -15,7 +15,6 @@
 
         <activity
                 android:name="com.joshtalks.appcamera.VideoTrimmerActivity"
-
                 android:screenOrientation="portrait" />
 
     </application>

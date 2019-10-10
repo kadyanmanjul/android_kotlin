@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Interpolator;
+
 import androidx.appcompat.content.res.AppCompatResources;
 import androidx.appcompat.widget.AppCompatImageView;
 
@@ -35,7 +36,7 @@ public class CustomImageButton extends AppCompatImageView implements View.OnTouc
     private Drawable secondDrawable;
 
     private int state = FIRST_STATE;
-    private int duration = 250;
+    private int duration = 200;
     private boolean init = false;
 
 
@@ -70,9 +71,7 @@ public class CustomImageButton extends AppCompatImageView implements View.OnTouc
             int second = array.getResourceId(R.styleable.CustomImageButton_image_second, -1);
             duration = array.getInteger(R.styleable.CustomImageButton_duration, duration);
 
-            if (array != null) {
-                array.recycle();
-            }
+            array.recycle();
 
             if (first > 0 && second > 0) {
                 init = true;
@@ -84,14 +83,15 @@ public class CustomImageButton extends AppCompatImageView implements View.OnTouc
 
         }
 
-
         scaleAnim = new ScaleAnim(this);
-
-
         this.setOnTouchListener(this);
         this.setOnClickListener(this);
+    }
 
-
+    @Override
+    public boolean performClick() {
+        super.performClick();
+        return true;
     }
 
     @Override
@@ -113,12 +113,6 @@ public class CustomImageButton extends AppCompatImageView implements View.OnTouc
         if (v.getParent() instanceof View) {
             setClip((View) v.getParent());
         }
-    }
-
-
-    private void setTheImageResource(int imageResource) {
-        Drawable image = AppCompatResources.getDrawable(getContext(), imageResource);
-        setImageDrawable(image);
     }
 
 
@@ -193,9 +187,6 @@ public class CustomImageButton extends AppCompatImageView implements View.OnTouc
         return state;
     }
 
-    private Drawable makeInsetDrawable(Drawable drawable, int inset) {
-        return new InsetDrawable(drawable, inset, inset, inset, inset);
-    }
 
     private void animate(final Drawable from, final Drawable to) {
         //setScaleType(ScaleType.CENTER_INSIDE);

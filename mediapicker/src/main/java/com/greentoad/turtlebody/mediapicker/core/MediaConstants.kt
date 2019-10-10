@@ -8,12 +8,30 @@ import android.provider.MediaStore
 object MediaConstants {
 
     object Queries{
+
         val imageQueryUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
         val videoQueryUri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI
         val audioQueryUri = MediaStore.Files.getContentUri("external")
     }
 
     object Projection{
+
+        /**
+         * ImageModel projections
+         */
+        val IMAGE_VIDEO_FOLDER = arrayOf(
+            MediaStore.Images.Media.BUCKET_ID,
+            MediaStore.Images.Media.BUCKET_DISPLAY_NAME,
+            MediaStore.Images.Media.DATA)
+
+        val IMAGE_VIDEO_FILE = arrayOf(
+            MediaStore.Images.Media._ID,
+            MediaStore.Images.Media.DISPLAY_NAME,
+            MediaStore.Images.Media.SIZE,
+            MediaStore.Images.Media.DATA,
+            MediaStore.Images.Media.BUCKET_ID,
+            MediaStore.Images.Thumbnails.DATA,
+            MediaStore.Video.Media.DURATION)
         /**
          * ImageModel projections
          */

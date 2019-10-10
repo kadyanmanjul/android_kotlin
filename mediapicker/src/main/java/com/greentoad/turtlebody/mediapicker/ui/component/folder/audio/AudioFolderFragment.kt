@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.greentoad.turtlebody.mediapicker.MediaPicker
 import com.greentoad.turtlebody.mediapicker.R
 import com.greentoad.turtlebody.mediapicker.core.FileManager
 import com.greentoad.turtlebody.mediapicker.ui.ActivityLibMain
@@ -57,7 +58,7 @@ class AudioFolderFragment : FragmentBase() {
         mAudioFolderAdapter.setListener(object : AudioFolderAdapter.OnAudioFolderClickListener {
             override fun onFolderClick(pData: AudioFolder) {
                 info { "folderPath: ${pData.path}" }
-                (activity as ActivityLibMain).startMediaListFragment(pData.path)
+                (activity as ActivityLibMain).startMediaListFragment(pData.path, MediaPicker.MediaTypes.AUDIO)
             }
         })
 

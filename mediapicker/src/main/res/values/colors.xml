@@ -15,6 +15,7 @@
     <color name="tb_media_picker_toolbar_counter_text">#000000</color>
     <color name="tb_media_picker_toolbar_counter_background">#eeeeee</color>
 
+    <color name="tb_media_picker_toolbar_arrow">#FFFFFF</color>
 
 
     <!--grey-->

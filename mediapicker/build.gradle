@@ -15,7 +15,7 @@ android {
     compileSdkVersion 28
 
     defaultConfig {
-        minSdkVersion 16
+        minSdkVersion 19
         targetSdkVersion 28
         vectorDrawables.useSupportLibrary = true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -33,6 +33,9 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation project(path: ':appcamera')
+    implementation project(path: ':pixeditor')
+
 
     implementation 'androidx.appcompat:appcompat:1.1.0-rc01'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
@@ -52,6 +55,9 @@ dependencies {
 
     //Permission
     implementation 'com.karumi:dexter:5.0.0'
+//    implementation 'com.github.MasayukiSuda:Mp4Composer-android:v0.3.2'
+    //implementation project(path: ':mp4compose')
+
 
 }
 

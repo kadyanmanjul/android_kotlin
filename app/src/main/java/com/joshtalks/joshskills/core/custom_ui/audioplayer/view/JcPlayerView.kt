@@ -18,6 +18,7 @@ import android.view.View
 import android.widget.*
 import androidx.appcompat.widget.AppCompatTextView
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.custom_ui.audioplayer.JcPlayerManager
 import com.joshtalks.joshskills.core.custom_ui.audioplayer.JcPlayerManagerListener
@@ -128,12 +129,12 @@ class JcPlayerView : LinearLayout, View.OnClickListener, SeekBar.OnSeekBarChange
     private fun setAttributes(attrs: TypedArray) {
         val defaultColor = ResourcesCompat.getColor(resources, R.color.black, null)
 
-       /* txtCurrentDuration?.setTextColor(
-            attrs.getColor(
-                R.styleable.JcPlayerView_text_audio_current_duration_color,
-                defaultColor
-            )
-        )*/
+        /* txtCurrentDuration?.setTextColor(
+             attrs.getColor(
+                 R.styleable.JcPlayerView_text_audio_current_duration_color,
+                 defaultColor
+             )
+         )*/
         /*txtDuration?.setTextColor(
             attrs.getColor(
                 R.styleable.JcPlayerView_text_audio_duration_color,
@@ -609,7 +610,7 @@ class JcPlayerView : LinearLayout, View.OnClickListener, SeekBar.OnSeekBarChange
     private fun resetPlayerInfo() {
         seekBar?.post { seekBar?.progress = 0 }
         txtCurrentDuration.text = toTimeSongString(duration);
-      //  txtCurrentDuration?.post { txtDuration.text = context.getString(R.string.play_initial_time) }
+        //  txtCurrentDuration?.post { txtDuration.text = context.getString(R.string.play_initial_time) }
         /*txtCurrentDuration?.post {
             txtCurrentDuration.text = context.getString(R.string.play_initial_time)
         }*/
@@ -670,9 +671,9 @@ class JcPlayerView : LinearLayout, View.OnClickListener, SeekBar.OnSeekBarChange
     }
 
     private fun updateUI() {
-        seekBar.visibility= View.GONE
+        duration = 0
         if (message.url != null) {
-            if (message.downloadStatus === DOWNLOAD_STATUS.DOWNLOADED) {
+            if (message.downloadStatus === DOWNLOAD_STATUS.DOWNLOADED || message.downloadStatus === DOWNLOAD_STATUS.UPLOADED) {
                 if (message.downloadedLocalPath != null && AppDirectory.isFileExist(message.downloadedLocalPath!!)) {
                     mediaDownloaded()
                 } else {
@@ -681,14 +682,16 @@ class JcPlayerView : LinearLayout, View.OnClickListener, SeekBar.OnSeekBarChange
             } else if (message.downloadStatus === DOWNLOAD_STATUS.DOWNLOADING) {
                 mediaDownloading()
                 audioPlayerInterface?.downloadStart(message.url!!)
+            } else if (message.downloadStatus === DOWNLOAD_STATUS.UPLOADING) {
+                mediaUploading()
             } else {
                 mediaNotDownloaded()
 
             }
         } else {
-
             if (message.question != null && message.question!!.audioList != null && message.question!!.audioList!!.size > 0) {
                 val audioTypeObj = message.question!!.audioList!![0]
+                this.duration = audioTypeObj.duration
                 if (message.downloadStatus === DOWNLOAD_STATUS.DOWNLOADED) {
 
                     if (audioTypeObj.downloadedLocalPath != null && AppDirectory.isFileExist(
@@ -710,7 +713,19 @@ class JcPlayerView : LinearLayout, View.OnClickListener, SeekBar.OnSeekBarChange
         }
     }
 
+    private fun mediaUploading() {
+        download_container.visibility = View.VISIBLE
+        progressBarPlayer.visibility = View.VISIBLE
+        cancelDownload.visibility = View.VISIBLE
+        startDownload.visibility = View.GONE
+        btnPlay?.visibility = View.GONE
+        btnPause?.visibility = View.GONE
+        seekBar_ph?.visibility = View.VISIBLE
+
+    }
+
     private fun mediaNotDownloaded() {
+        seekBar.visibility = View.VISIBLE
         download_container.visibility = View.VISIBLE
         progressBarPlayer.visibility = View.GONE
         cancelDownload.visibility = View.GONE
@@ -718,7 +733,10 @@ class JcPlayerView : LinearLayout, View.OnClickListener, SeekBar.OnSeekBarChange
         btnPlay?.visibility = View.GONE
         btnPause?.visibility = View.GONE
         seekBar_ph?.visibility = View.VISIBLE
-
+        txtCurrentDuration.text = EMPTY
+        if (duration > 0) {
+            txtCurrentDuration.text = toTimeSongString(duration)
+        }
     }
 
     private fun mediaDownloading() {
@@ -821,14 +839,16 @@ class JcPlayerView : LinearLayout, View.OnClickListener, SeekBar.OnSeekBarChange
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
         compositeDisposable.clear()
+        pause()
     }
-    fun getDrawablePadding() = com.vanniktech.emoji.Utils.dpToPx(context, 4f)
+
+    private fun getDrawablePadding() = com.vanniktech.emoji.Utils.dpToPx(context, 4f)
 
 
     private fun updateTime(text_message_time: TextView) {
         text_message_time.text = Utils.getMessageTimeInHours(message.created).toUpperCase()
 
-        if (message.sender?.id.equals( Mentor.getInstance().getId(), ignoreCase = true)) {
+        if (message.sender?.id.equals(Mentor.getInstance().getId(), ignoreCase = true)) {
             text_message_time.compoundDrawablePadding = getDrawablePadding()
             if (message.isSync.not()) {
                 text_message_time.setCompoundDrawablesWithIntrinsicBounds(

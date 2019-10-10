@@ -2,15 +2,18 @@ package com.greentoad.turtlebody.mediapicker.ui
 
 import android.app.Activity
 import android.content.Intent
-import android.content.pm.ActivityInfo
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.Environment
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import com.fxn.pixeditor.EditOptions
+import com.fxn.pixeditor.PixEditor
 import com.greentoad.turtlebody.mediapicker.MediaPicker
 import com.greentoad.turtlebody.mediapicker.R
 import com.greentoad.turtlebody.mediapicker.core.FileHelper
@@ -22,13 +25,23 @@ import com.greentoad.turtlebody.mediapicker.ui.component.folder.audio.AudioFolde
 import com.greentoad.turtlebody.mediapicker.ui.component.folder.image_video.ImageVideoFolder
 import com.greentoad.turtlebody.mediapicker.ui.component.folder.image_video.ImageVideoFolderFragment
 import com.greentoad.turtlebody.mediapicker.ui.component.media.audio.AudioListFragment
+import com.greentoad.turtlebody.mediapicker.ui.component.media.audiovideo.DefaultListFragment
 import com.greentoad.turtlebody.mediapicker.ui.component.media.image.ImageListFragment
 import com.greentoad.turtlebody.mediapicker.ui.component.media.video.VideoListFragment
 import com.greentoad.turtlebody.mediapicker.util.UtilMime
+import com.joshtalks.appcamera.VideoTrimmerActivity
+import com.joshtalks.appcamera.pix.JoshCameraActivity.IMAGE_RESULTS
+import com.joshtalks.appcamera.pix.JoshCameraActivity.VIDEO_RESULTS
 import org.jetbrains.anko.find
 import org.jetbrains.anko.info
+import java.io.File
+import java.io.IOException
 import java.io.Serializable
+import kotlin.collections.ArrayList
 
+
+private val IMAGE_SELECT = 124
+private val VIDEO_SELECT = 125
 
 class ActivityLibMain : ActivityBase() {
 
@@ -50,13 +63,17 @@ class ActivityLibMain : ActivityBase() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.tb_media_picker_activity_lib_main)
 
-        initToolbar(R.drawable.tb_media_picker_ic_arrow_back_black_24dp, find(R.id.activity_lib_main_toolbar))
+        initToolbar(
+            R.drawable.tb_media_picker_ic_arrow_back_black_24dp,
+            find(R.id.activity_lib_main_toolbar)
+        )
 
         toolbarTitle = "Select Folder"
         vToolbarCounter = find<TextView>(R.id.activity_lib_main_toolbar_txt_count)
 
         if (intent.extras != null) {
-            mMediaPickerConfig = intent.getSerializableExtra(MediaPickerConfig.ARG_BUNDLE) as MediaPickerConfig
+            mMediaPickerConfig =
+                intent.getSerializableExtra(MediaPickerConfig.ARG_BUNDLE) as MediaPickerConfig
             mFileType = intent.getIntExtra(B_ARG_FILE_TYPE, MediaPicker.MediaTypes.IMAGE)
 
             mMediaPickerConfig.mScreenOrientation?.let {
@@ -75,7 +92,7 @@ class ActivityLibMain : ActivityBase() {
                 super.onBackPressed()
                 toolbarTitle = "Select Folder"
                 vToolbarCounter.visibility = View.GONE
-               // mMenuItem.isVisible = true
+                // mMenuItem.isVisible = true
                 updateCounter(0)
             }
             else -> super.onBackPressed()
@@ -83,8 +100,8 @@ class ActivityLibMain : ActivityBase() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-       // menuInflater.inflate(R.menu.tb_media_picker_activity_main, menu)
-       // mMenuItem = menu.getItem(0)
+        // menuInflater.inflate(R.menu.tb_media_picker_activity_main, menu)
+        // mMenuItem = menu.getItem(0)
         startFolderListFragment()
         return true
     }
@@ -103,15 +120,6 @@ class ActivityLibMain : ActivityBase() {
         }
     }
 
-    //    @SuppressLint("CheckResult")
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (resultCode == Activity.RESULT_OK && requestCode == MEDIA_REQ_CODE) {
-            info { "data: ${data?.data}" }
-            handleFileData(data)
-        } else
-            super.onActivityResult(requestCode, resultCode, data)
-    }
-
 
     private fun handleFileData(intent: Intent?) {
         val uriList: ArrayList<Uri> = arrayListOf()
@@ -120,25 +128,22 @@ class ActivityLibMain : ActivityBase() {
             if (intent.data != null) {
                 val uri = intent.data
                 info { "handleFileData: $uri" }
-                if(FileHelper.isFileExist(this,uri))
+                if (FileHelper.isFileExist(this, uri))
                     uriList.add(uri)
-            }
-            else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
                 if (intent.clipData != null) {
                     val clipData = intent.clipData
-                    info { "handleFileData: Multiple files with ClipData"}
+                    info { "handleFileData: Multiple files with ClipData" }
                     for (i in 0 until clipData!!.itemCount) {
                         val item = clipData.getItemAt(i)
-                        info { "Item [" + i + "]: " + item.uri.toString()}
-                        if(FileHelper.isFileExist(this,item.uri)){
+                        info { "Item [" + i + "]: " + item.uri.toString() }
+                        if (FileHelper.isFileExist(this, item.uri)) {
                             //important as many time android return duplicate uri when selecting multiple media files
-                            if(!uriList.contains(item.uri)){
+                            if (!uriList.contains(item.uri)) {
                                 uriList.add(item.uri)
-                            }
-                            else
+                            } else
                                 info { "duplicate uri found" }
-                        }
-                        else
+                        } else
                             isMissing = true
                     }
                 }
@@ -149,8 +154,8 @@ class ActivityLibMain : ActivityBase() {
                     uriList.add(paths[i])
                 }
             }
-            if(uriList.isNotEmpty()){
-                sendBackData(uriList,isMissing)
+            if (uriList.isNotEmpty()) {
+                sendBackData(uriList, isMissing)
             }
         }
     }
@@ -172,10 +177,12 @@ class ActivityLibMain : ActivityBase() {
     /**
      * @param folderInfo if(audio) then folderPath else folderInfo
      */
-    fun startMediaListFragment(folderInfo: String) {
+    fun startMediaListFragment(folderInfo: String, mTempFileType: Int?) {
         val bundle = Bundle()
         bundle.putSerializable(MediaListFragment.B_ARG_PICKER_CONFIG, mMediaPickerConfig)
-
+        mTempFileType?.let {
+            mFileType = it
+        }
 
         val fragment: Fragment
         val fragmentTag: String
@@ -201,33 +208,35 @@ class ActivityLibMain : ActivityBase() {
             else -> {
                 toolbarTitle = "Choose Image"
                 bundle.putString(ImageVideoFolder.FOLDER_ID, folderInfo)
-                fragment = ImageListFragment.newInstance(MediaConstants.Fragment.IMAGE_LIST, bundle)
-                fragmentTag = ImageListFragment::class.java.simpleName
+                fragment = DefaultListFragment.newInstance(bundle)
+                fragmentTag = DefaultListFragment::class.java.simpleName
             }
         }
 
-        vToolbarCounter.visibility = View.VISIBLE
-      //  mMenuItem.isVisible = false
+        vToolbarCounter.visibility = View.GONE
+        //  mMenuItem.isVisible = false
 
         val ft = supportFragmentManager.beginTransaction()
         ft.add(R.id.activity_lib_main_frame_content, fragment, fragmentTag)
-                .addToBackStack(null)
-                .commit()
+            .addToBackStack(null)
+            .commit()
     }
 
     /**
      * @param counter counter for selecting multiple media files
      */
     fun updateCounter(counter: Int) {
+        vToolbarCounter.visibility = View.GONE
+
         vToolbarCounter.text = "$counter"
     }
 
-    fun sendBackData(list: ArrayList<Uri>,isFileMissing: Boolean=false) {
+    fun sendBackData(list: ArrayList<Uri>, isFileMissing: Boolean = false) {
         if (list.isNotEmpty()) {
             val intent = Intent()
             intent.putExtra(B_ARG_URI_LIST, list as Serializable)
 
-            if(isFileMissing)
+            if (isFileMissing)
                 intent.putExtra(B_ARG_FILE_MISSING, true)
             setResult(Activity.RESULT_OK, intent)
         }
@@ -260,7 +269,7 @@ class ActivityLibMain : ActivityBase() {
 
         val intent: Intent
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            intent = if(mMediaPickerConfig.mUriPermanentAccess)
+            intent = if (mMediaPickerConfig.mUriPermanentAccess)
                 Intent(Intent.ACTION_OPEN_DOCUMENT)
             else
                 Intent(Intent.ACTION_GET_CONTENT)
@@ -281,18 +290,79 @@ class ActivityLibMain : ActivityBase() {
         val bundle = Bundle()
         bundle.putInt(B_ARG_FILE_TYPE, mFileType)
 
-        val fragment = ImageVideoFolderFragment.newInstance(MediaConstants.Fragment.IMAGE_VIDEO_FOLDER, bundle)
+        val fragment =
+            ImageVideoFolderFragment.newInstance(MediaConstants.Fragment.IMAGE_VIDEO_FOLDER, bundle)
         val ft = supportFragmentManager.beginTransaction()
-        ft.add(R.id.activity_lib_main_frame_content, fragment, ImageVideoFolderFragment::class.java.simpleName)
-                .addToBackStack(null)
-                .commit()
+        ft.add(
+            R.id.activity_lib_main_frame_content,
+            fragment,
+            ImageVideoFolderFragment::class.java.simpleName
+        )
+            .addToBackStack(null)
+            .commit()
     }
 
     private fun startAudioFolderFragment() {
-        val fragment = AudioFolderFragment.newInstance(MediaConstants.Fragment.AUDIO_FOLDER, Bundle())
+        val fragment =
+            AudioFolderFragment.newInstance(MediaConstants.Fragment.AUDIO_FOLDER, Bundle())
         val ft = supportFragmentManager.beginTransaction()
-        ft.add(R.id.activity_lib_main_frame_content, fragment, AudioFolderFragment::class.java.simpleName)
-                .addToBackStack(null)
-                .commit()
+        ft.add(
+            R.id.activity_lib_main_frame_content,
+            fragment,
+            AudioFolderFragment::class.java.simpleName
+        )
+            .addToBackStack(null)
+            .commit()
     }
+
+
+    fun processImage(path: String) {
+        val list = java.util.ArrayList<String>()
+        list.add(path)
+        val editoptions = EditOptions.init()
+        editoptions.requestCode = IMAGE_SELECT
+        editoptions.selectedlist = list
+        PixEditor.start(this, editoptions)
+
+    }
+
+
+    fun processVideo(uri: Uri, filePath: String) {
+        val f =
+            File(Environment.getExternalStorageDirectory().toString() + File.separator + "JoshSkill" + File.separator + "Media" + "/cached")
+        if (!f.exists()) {
+            f.mkdirs()
+        }
+        val file = File(f.absolutePath + File.separator + "record.mp4")
+        try {
+            file.createNewFile()
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+
+        VideoTrimmerActivity.startTrimmerActivity(
+            this@ActivityLibMain,
+            VIDEO_SELECT,
+            uri,
+            file, filePath
+        )
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (resultCode == Activity.RESULT_OK && requestCode == MEDIA_REQ_CODE) {
+            info { "data: ${data?.data}" }
+            handleFileData(data)
+        } else if (data != null && resultCode == Activity.RESULT_OK) {
+            val uriList: ArrayList<Uri> = arrayListOf()
+            if (requestCode == IMAGE_SELECT) {
+                uriList.add(Uri.parse(data.getStringArrayListExtra(IMAGE_RESULTS)[0]))
+            } else if (requestCode == VIDEO_SELECT) {
+                uriList.add(Uri.parse(data.getStringExtra("video_uri")))
+            }
+            sendBackData(uriList)
+        } else {
+            super.onActivityResult(requestCode, resultCode, data)
+        }
+    }
+
 }

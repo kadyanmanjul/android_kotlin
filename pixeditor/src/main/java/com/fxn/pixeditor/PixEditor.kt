@@ -508,15 +508,15 @@ class PixEditor : AppCompatActivity(), View.OnClickListener, FilterImageAdapter.
         super.onActivityResult(requestCode1, resultCode, data)
         if (resultCode == Activity.RESULT_OK && requestCode1 == CropActivity.CROP_NUM) {
             //  var b = data!!.getByteArrayExtra(("cropdata")
-            var bytes = data!!.getByteArrayExtra("cropdata") as ByteArray
-            var bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
+            val bytes = data!!.getByteArrayExtra("cropdata") as ByteArray
+            val bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
             listBitmap[mainViewPager.currentItem].orignalBitmap = bmp
             listBitmap[mainViewPager.currentItem].mainBitmap = bmp
             setupimageFilter(mainViewPager.currentItem)
         }
         if (resultCode == Activity.RESULT_OK && requestCode1 == requestCodePix) {
-            var list = data!!.getStringArrayListExtra("image_results")
-            var Extraimages = ArrayList<BitmapObject>()
+            val list = data!!.getStringArrayListExtra("image_results")
+            val Extraimages = ArrayList<BitmapObject>()
             for (l in list) {
                 var check = true
                 Log.e("new List", "-> " + l)

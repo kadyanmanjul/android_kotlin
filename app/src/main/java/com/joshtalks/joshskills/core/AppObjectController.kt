@@ -38,9 +38,7 @@ import com.joshtalks.joshskills.core.service.DownloadUtils
 import com.joshtalks.joshskills.core.service.video_download.DownloadTracker
 import com.joshtalks.joshskills.core.service.video_download.VideoDownloadController
 import com.joshtalks.joshskills.repository.local.DatabaseUtils
-import com.joshtalks.joshskills.repository.local.entity.DOWNLOAD_STATUS
 import com.joshtalks.joshskills.repository.service.ChatNetworkService
-import com.tonyodev.fetch2.FetchListener
 import java.lang.reflect.Type
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -228,6 +226,7 @@ internal class AppObjectController {
             fetch = Fetch.getInstance(fetchConfiguration)
             videoDownloadTracker= VideoDownloadController.getInstance().downloadTracker
             initExoPlayer()
+
 
             return INSTANCE
         }

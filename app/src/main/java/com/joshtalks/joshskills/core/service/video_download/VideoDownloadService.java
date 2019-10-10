@@ -58,7 +58,7 @@ public class VideoDownloadService extends DownloadService {
     protected Notification getForegroundNotification(List<Download> downloads) {
 
         return notificationHelper.buildProgressNotification(
-                R.drawable.ic_download, null, "Downloadinggg", downloads);
+                R.drawable.ic_download, null, "", downloads);
     }
 
     @Override
