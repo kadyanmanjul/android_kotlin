@@ -1,21 +1,21 @@
 package com.joshtalks.joshskills.ui.view_holders
 
+import android.graphics.drawable.ColorDrawable
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
-import com.mindorks.placeholderview.annotations.Layout
-import com.mindorks.placeholderview.annotations.Resolve
-import com.mindorks.placeholderview.annotations.View
 import android.widget.FrameLayout
 import androidx.appcompat.widget.AppCompatTextView
+import androidx.core.content.ContextCompat
 import androidx.core.text.HtmlCompat
 import androidx.fragment.app.FragmentActivity
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
 import com.joshtalks.joshskills.messaging.RxBus2
-import com.joshtalks.joshskills.repository.local.eventbus.RemoveViewEventBus
+import com.joshtalks.joshskills.repository.local.eventbus.DeleteMessageEventBus
+import com.mindorks.placeholderview.annotations.*
 import java.lang.ref.WeakReference
 
 
@@ -52,14 +52,14 @@ class TextViewHolder(activityRef: WeakReference<FragmentActivity>, message: Chat
 
     @Resolve
     fun onResolved() {
-        text_title.text= EMPTY
+
+        text_title.text = EMPTY
         text_title.visibility = GONE
 
         textViewHolder = this
         message.sender?.let {
             updateView(it, root_view, root_sub_view, message_view)
         }
-
 
         if (message.text.isNullOrEmpty()) {
             message.question?.qText?.let {
@@ -79,5 +79,41 @@ class TextViewHolder(activityRef: WeakReference<FragmentActivity>, message: Chat
         text_message_time.text = Utils.messageTimeConversion(message.created)
         updateTime(text_message_time)
         addMessageAutoLink(text_message_body)
+       // updateForegroundView()
     }
+
+
+
+
+   /* private fun updateForegroundView() {
+        if (message.isSelected) {
+            root_view.foreground = ColorDrawable(
+                ContextCompat.getColor(
+                    getAppContext(),
+                    R.color.select_forground_color
+                )
+            )
+        } else {
+            root_view.foreground =
+                ColorDrawable(ContextCompat.getColor(getAppContext(), R.color.transparent))
+        }
+    }
+
+    @LongClick(R.id.root_view)
+    fun onLongClick() {
+        message.isSelected = message.isSelected.not()
+        updateForegroundView()
+        RxBus2.publish(DeleteMessageEventBus(message))
+
+    }
+
+    @Click(R.id.root_view)
+    fun onSelect() {
+        message.isSelected = false
+        root_view.foreground =
+            ColorDrawable(ContextCompat.getColor(getAppContext(), R.color.transparent))
+        RxBus2.publish(DeleteMessageEventBus(message))
+
+    }
+*/
 }

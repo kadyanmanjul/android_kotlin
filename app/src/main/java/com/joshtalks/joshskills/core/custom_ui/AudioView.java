@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatImageView;
+import androidx.core.content.ContextCompat;
 
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayer;
@@ -81,7 +82,6 @@ public class AudioView extends FrameLayout {
     private ExoPlayer.EventListener eventListener = new ExoPlayer.EventListener() {
         @Override
         public void onTimelineChanged(Timeline timeline, @Nullable Object manifest, int reason) {
-
         }
 
         @Override

@@ -23,6 +23,8 @@ object AppDirectory {
 
     const val TODAY_DATE = "today_date"
     const val APP_SHORT_NAME = "JS"
+    @Volatile
+    private var downloadDirectory: File? = null
 
 
     enum class FileType {
@@ -225,6 +227,9 @@ object AppDirectory {
     fun tempRecordingWavFile(): File {
         var file: File
         try {
+            file = getCacheFile("record", ".amr")
+
+
             val f = File(RECORDING_SENT_PATH)
             if (f.exists().not()) {
                 f.mkdirs()
@@ -345,5 +350,23 @@ object AppDirectory {
             f.mkdirs()
         }
         return f
+    }
+
+    fun getInternalDirectory() {
+        val downloadContentDirectory = File(getAppDirectory(), "TempMedia")
+
+
+    }
+
+
+    private fun getAppDirectory(): File? {
+
+        if (downloadDirectory == null) {
+            downloadDirectory = AppObjectController.joshApplication.getExternalFilesDir(null)
+            if (downloadDirectory == null) {
+                downloadDirectory = AppObjectController.joshApplication.filesDir
+            }
+        }
+        return downloadDirectory
     }
 }

@@ -8,7 +8,7 @@
     <string name="verify_your_phone_number">Verify your phone number</string>
     <string name="sign_step_e_header">Josh skills will send a message to verify your phone number. please enter your number</string>
 
-    <string name="ok">ok</string>
+    <string name="ok">OK</string>
     <string name="edit">edit</string>
     <string name="label_6_digit_code">Enter 6-digit code</string>
 
@@ -64,6 +64,8 @@
     <string name="message_size_limit">Message size limit exceeded</string>
 
     <string name="unread_message">%s UNREAD MESSAGES</string>
+    <string name="media_not_found_message">Sorry, this media file doesn\'t exist on your internal storage</string>
+
 
 
 </resources>

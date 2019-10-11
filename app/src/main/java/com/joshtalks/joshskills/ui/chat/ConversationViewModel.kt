@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.os.Handler
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
@@ -40,6 +41,7 @@ import okhttp3.RequestBody
 import java.util.*
 import java.util.concurrent.TimeUnit
 import com.joshtalks.joshskills.repository.service.SyncChatService
+import kotlinx.coroutines.delay
 
 
 class ConversationViewModel(application: Application) : AndroidViewModel(application) {
@@ -59,7 +61,7 @@ class ConversationViewModel(application: Application) : AndroidViewModel(applica
     }
 
     fun startRecord(): Boolean {
-        AppDirectory.tempRecordingWavFile().let {
+        AppDirectory.tempRecordingFile().let {
             recordFile = it
             AudioRecording.audioRecording.startPlayer(recordFile)
             return@let true
@@ -259,19 +261,17 @@ class ConversationViewModel(application: Application) : AndroidViewModel(applica
     fun getAllUserMessage() {
         viewModelScope.launch(Dispatchers.IO) {
             getUserRecentChats()
+            delay(2500)
             if (Utils.isInternetAvailable()) {
                 val arguments = mutableMapOf<String, String>()
-                //val chatModel = appDatabase.chatDao().getLastOneChat(inboxEntity.conversation_id)
                 PrefManager.getLongValue(inboxEntity.conversation_id).let { time ->
                     if (time > 0) {
                         arguments["created"] = (time / 1000).toString()
                     }
                 }
-
                 NetworkRequestHelper.getUpdatedChat(inboxEntity, queryMap = arguments)
             }
         }
-
         refreshChatEverySomeTime()
     }
 
@@ -296,6 +296,56 @@ class ConversationViewModel(application: Application) : AndroidViewModel(applica
         )
 
     }
+
+
+    fun deleteMessages(ids: List<String>? = null) {
+        viewModelScope.launch(Dispatchers.IO) {
+            if (ids.isNullOrEmpty()) {
+                deleteMessageAndMedia()
+            } else {
+                appDatabase.chatDao().changeStatusForDeleteMessage(ids).let {
+                    deleteMessageAndMedia()
+                }
+
+            }
+        }
+    }
+
+    private fun deleteMessageAndMedia() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val data = mapOf("is_deleted" to "true")
+
+            val listIds: MutableList<String> = mutableListOf()
+            val chatReturn: List<ChatModel> = appDatabase.chatDao().getUnsyncDeletesMessage()
+            if (chatReturn.isNotEmpty()) {
+                chatReturn.forEach { chatModel ->
+                    try {
+                        chatModel.downloadedLocalPath?.let {
+                            File(it).deleteOnExit()
+                        }
+                    } catch (ex: Exception) {
+
+                    }
+
+                    try {
+                        val responseObj =
+                            AppObjectController.chatNetworkService.deleteMessage(
+                                chatModel.chatId,
+                                data
+                            )
+                        listIds.add(chatModel.chatId)
+                    } catch (ex: Exception) {
+
+                    }
+
+
+                }
+                appDatabase.chatDao().deleteUserMessages(listIds)
+            }
+        }
+
+    }
+
 
     private fun compressMedia(
         mediaPath: String,

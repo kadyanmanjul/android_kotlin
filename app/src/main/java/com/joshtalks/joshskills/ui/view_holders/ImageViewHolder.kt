@@ -2,6 +2,7 @@ package com.joshtalks.joshskills.ui.view_holders
 
 import android.Manifest
 import android.graphics.Color
+import android.util.Log
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.widget.FrameLayout
@@ -12,9 +13,6 @@ import androidx.core.text.HtmlCompat
 import androidx.fragment.app.FragmentActivity
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
-import com.mindorks.placeholderview.annotations.Layout
-import com.mindorks.placeholderview.annotations.Resolve
-import com.mindorks.placeholderview.annotations.View
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
@@ -23,10 +21,8 @@ import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.core.service.DownloadUtils
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.DOWNLOAD_STATUS
-import com.joshtalks.joshskills.repository.local.eventbus.DownloadCompletedEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.DownloadMediaEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.ImageShowEvent
-import com.mindorks.placeholderview.annotations.Click
 import com.pnikosis.materialishprogress.ProgressWheel
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionDeniedResponse
@@ -34,8 +30,8 @@ import com.karumi.dexter.listener.PermissionGrantedResponse
 import com.karumi.dexter.listener.single.PermissionListener
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.listener.PermissionRequest
+import com.mindorks.placeholderview.annotations.*
 import java.lang.ref.WeakReference
-
 
 @Layout(R.layout.image_view_holder)
 class ImageViewHolder(activityRef: WeakReference<FragmentActivity>, message: ChatModel) :
@@ -120,17 +116,20 @@ class ImageViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
                             }
                         }).check()
                 } else {
-                    setImageView(image_view, message.url!!, true)
-                    fileNotDownloadView()
+                    setImageViewImageNotFound(image_view)
+                    message.disable=true
+                    //   fileNotDownloadView()
                 }
 
             } else if (message.downloadStatus == DOWNLOAD_STATUS.DOWNLOADING) {
                 fileDownloadRunView()
                 download(message.url!!)
             } else {
+                setImageViewImageNotFound(image_view)
+                message.disable=true
 
-                setImageView(image_view, message.url!!, true)
-                fileNotUploadingView()
+               // setImageView(image_view, message.url!!, true)
+               // fileNotUploadingView()
 
             }
         } else {
@@ -161,16 +160,16 @@ class ImageViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
                                 }
                             }).check()
                     } else {
-                       // fileNotDownloadView()
+                        // fileNotDownloadView()
                         setImageView(image_view, imageObj.imageUrl, false)
                     }
 
                 } else if (message.downloadStatus == DOWNLOAD_STATUS.DOWNLOADING) {
-                   // fileDownloadRunView()
+                    // fileDownloadRunView()
                     download(imageObj.imageUrl)
                 } else {
                     setImageView(image_view, imageObj.imageUrl, false)
-                   // fileNotDownloadView()
+                    // fileNotDownloadView()
 
                 }
             }
@@ -239,6 +238,9 @@ class ImageViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
 
     @Click(R.id.image_view)
     fun onClick() {
+        if (message.disable) {
+            return
+        }
 
         if (message.downloadedLocalPath != null && message.downloadedLocalPath?.isNotEmpty()!!) {
             RxBus2.publish(ImageShowEvent(message.downloadedLocalPath))
@@ -246,7 +248,7 @@ class ImageViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
             RxBus2.publish(ImageShowEvent(message.url))
         } else {
             message.question?.imageList?.get(0)?.imageUrl?.let {
-                RxBus2.publish(ImageShowEvent(it,message.question?.imageList?.get(0)?.id))
+                RxBus2.publish(ImageShowEvent(it, message.question?.imageList?.get(0)?.id))
             }
         }
 

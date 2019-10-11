@@ -24,9 +24,10 @@ import java.util.concurrent.TimeUnit
  * @date 02/07/16.
  * Jesus loves you.
  */
-const val THREAD_TIME :Long=25
+const val THREAD_TIME: Long = 25
+
 class JcPlayerService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.OnCompletionListener,
-        MediaPlayer.OnBufferingUpdateListener, MediaPlayer.OnErrorListener {
+    MediaPlayer.OnBufferingUpdateListener, MediaPlayer.OnErrorListener {
 
     private val binder = JcPlayerServiceBinder()
 
@@ -48,14 +49,12 @@ class JcPlayerService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.O
     var serviceListener: JcPlayerServiceListener? = null
 
 
-
     inner class JcPlayerServiceBinder : Binder() {
         val service: JcPlayerService
             get() = this@JcPlayerService
     }
 
     override fun onBind(intent: Intent): IBinder? = binder
-
 
 
     fun play(jcAudio: JcAudio): JcStatus {
@@ -84,31 +83,31 @@ class JcPlayerService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.O
                         when {
                             jcAudio.origin == Origin.URL -> it.setDataSource(jcAudio.path)
                             jcAudio.origin == Origin.RAW -> assetFileDescriptor =
-                                    applicationContext.resources.openRawResourceFd(
-                                            Integer.parseInt(jcAudio.path)
-                                    ).also { descriptor ->
-                                        it.setDataSource(
-                                                descriptor.fileDescriptor,
-                                                descriptor.startOffset,
-                                                descriptor.length
-                                        )
-                                        descriptor.close()
-                                        assetFileDescriptor = null
-                                    }
+                                applicationContext.resources.openRawResourceFd(
+                                    Integer.parseInt(jcAudio.path)
+                                ).also { descriptor ->
+                                    it.setDataSource(
+                                        descriptor.fileDescriptor,
+                                        descriptor.startOffset,
+                                        descriptor.length
+                                    )
+                                    descriptor.close()
+                                    assetFileDescriptor = null
+                                }
 
 
                             jcAudio.origin == Origin.ASSETS -> {
                                 assetFileDescriptor = applicationContext.assets.openFd(jcAudio.path)
-                                        .also { descriptor ->
-                                            it.setDataSource(
-                                                    descriptor.fileDescriptor,
-                                                    descriptor.startOffset,
-                                                    descriptor.length
-                                            )
+                                    .also { descriptor ->
+                                        it.setDataSource(
+                                            descriptor.fileDescriptor,
+                                            descriptor.startOffset,
+                                            descriptor.length
+                                        )
 
-                                            descriptor.close()
-                                            assetFileDescriptor = null
-                                        }
+                                        descriptor.close()
+                                        assetFileDescriptor = null
+                                    }
                             }
 
                             jcAudio.origin == Origin.FILE_PATH ->
@@ -174,9 +173,13 @@ class JcPlayerService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.O
         jcStatus.jcAudio = jcAudio
         jcStatus.playState = status
 
-        mediaPlayer?.let {
-            jcStatus.duration = it.duration.toLong()
-            jcStatus.currentPosition = it.currentPosition.toLong()
+        try {
+            mediaPlayer?.let {
+                jcStatus.duration = it.duration.toLong()
+                jcStatus.currentPosition = it.currentPosition.toLong()
+            }
+        } catch (ex: Exception) {
+
         }
 
         when (status) {
@@ -237,7 +240,7 @@ class JcPlayerService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.O
                         val status = updateStatus(currentAudio, JcStatus.PlayState.PLAYING)
                         serviceListener?.onTimeChangedListener(status)
                         sleep(THREAD_TIME)
-                   //     sleep(TimeUnit.SECONDS.toMillis(1))
+                        //     sleep(TimeUnit.SECONDS.toMillis(1))
                     } catch (e: IllegalStateException) {
                         e.printStackTrace()
                     } catch (e: InterruptedException) {
@@ -257,7 +260,7 @@ class JcPlayerService : Service(), MediaPlayer.OnPreparedListener, MediaPlayer.O
             Origin.RAW -> {
                 assetFileDescriptor = null
                 assetFileDescriptor =
-                        applicationContext.resources.openRawResourceFd(Integer.parseInt(path))
+                    applicationContext.resources.openRawResourceFd(Integer.parseInt(path))
                 return assetFileDescriptor != null
             }
 

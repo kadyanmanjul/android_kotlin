@@ -42,13 +42,11 @@ class RegisterInfoActivity : BaseActivity() {
             val builder = AlertDialog.Builder(it)
             builder.apply {
                 setMessage(getString(R.string.anonymous_user_login))
-                setPositiveButton(R.string.register,
-                    { dialog, id ->
-                        dialog.dismiss()
-                        registerAnonymousUser(phoneNumber)
-
-                    })
-
+                setPositiveButton(R.string.register
+                ) { dialog, _ ->
+                    dialog.dismiss()
+                    registerAnonymousUser(phoneNumber)
+                }
             }
             builder.create()
         }
@@ -60,7 +58,7 @@ class RegisterInfoActivity : BaseActivity() {
 
     fun clickToPay() {
         AppAnalytics.create(AnalyticsEvent.CLICK_TO_PAY_SELECTED.NAME).push()
-        Utils.openUrl(REDIRECT_URL)
+        Utils.openUrl(REDIRECT_URL,this@RegisterInfoActivity)
     }
 
     fun callHelpLine() {

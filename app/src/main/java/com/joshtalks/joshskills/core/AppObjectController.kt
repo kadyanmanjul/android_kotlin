@@ -1,7 +1,9 @@
 package com.joshtalks.joshskills.core
 
+import android.graphics.Bitmap
 import android.os.Handler
 import android.os.Looper
+import com.bumptech.glide.load.MultiTransformation
 import com.clevertap.android.sdk.ActivityLifecycleCallback
 import com.facebook.stetho.okhttp3.StethoInterceptor
 import com.google.android.exoplayer2.util.Util
@@ -39,6 +41,10 @@ import com.joshtalks.joshskills.core.service.video_download.DownloadTracker
 import com.joshtalks.joshskills.core.service.video_download.VideoDownloadController
 import com.joshtalks.joshskills.repository.local.DatabaseUtils
 import com.joshtalks.joshskills.repository.service.ChatNetworkService
+import com.joshtalks.joshskills.ui.view_holders.IMAGE_SIZE
+import com.joshtalks.joshskills.ui.view_holders.ROUND_CORNER
+import jp.wasabeef.glide.transformations.CropTransformation
+import jp.wasabeef.glide.transformations.RoundedCornersTransformation
 import java.lang.reflect.Type
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -110,6 +116,9 @@ internal class AppObjectController {
 
         @JvmStatic
         lateinit var videoDownloadTracker: DownloadTracker
+
+        @JvmStatic
+        lateinit var multiTransformation: MultiTransformation<Bitmap>
 
         /* @JvmStatic
         val videoDownloadListener = HashMap<String, DownloadTracker.Listener>()
@@ -224,8 +233,20 @@ internal class AppObjectController {
             Fetch.setDefaultInstanceConfiguration(fetchConfiguration)
 
             fetch = Fetch.getInstance(fetchConfiguration)
-            videoDownloadTracker= VideoDownloadController.getInstance().downloadTracker
+            videoDownloadTracker = VideoDownloadController.getInstance().downloadTracker
             initExoPlayer()
+            multiTransformation = MultiTransformation<Bitmap>(
+                CropTransformation(
+                    Utils.dpToPx(IMAGE_SIZE),
+                    Utils.dpToPx(IMAGE_SIZE),
+                    CropTransformation.CropType.CENTER
+                ),
+                RoundedCornersTransformation(
+                    Utils.dpToPx(ROUND_CORNER),
+                    0,
+                    RoundedCornersTransformation.CornerType.ALL
+                )
+            )
 
 
             return INSTANCE

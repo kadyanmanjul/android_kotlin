@@ -79,6 +79,9 @@ class InboxViewHolder(var inboxEntity: InboxEntity) : BaseCell() {
 
 
         if (BASE_MESSAGE_TYPE.TX == baseMessageType) {
+            inboxEntity.qText?.let { text ->
+                tv_last_message.text = text
+            }
             inboxEntity.text?.let { text ->
                 tv_last_message.text = text
             }

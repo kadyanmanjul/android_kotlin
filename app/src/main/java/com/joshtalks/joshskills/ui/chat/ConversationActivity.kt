@@ -33,6 +33,7 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.appbar.MaterialToolbar
 import com.greentoad.turtlebody.mediapicker.MediaPicker
 import com.greentoad.turtlebody.mediapicker.core.MediaPickerConfig
 import com.joshtalks.appcamera.pix.JoshCameraActivity
@@ -42,7 +43,10 @@ import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
+import com.joshtalks.joshskills.core.custom_ui.audioplayer.JcPlayerManager
 import com.joshtalks.joshskills.core.custom_ui.decorator.LayoutMarginDecoration
+import com.joshtalks.joshskills.core.interfaces.ClickListener
+import com.joshtalks.joshskills.core.interfaces.RecyclerTouchListener
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.messaging.MessageBuilderFactory
 import com.joshtalks.joshskills.messaging.RxBus2
@@ -71,13 +75,15 @@ import java.lang.ref.WeakReference
 import com.joshtalks.joshskills.repository.server.chat_message.TVideoMessage
 import com.joshtalks.joshskills.repository.service.EngagementNetworkHelper
 import de.hdodenhof.circleimageview.CircleImageView
+import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import java.util.*
 
 const val CHAT_ROOM_OBJECT = "chat_room"
 const val IMAGE_SELECT_REQUEST_CODE = 1077
 
-class ConversationActivity : BaseActivity() {
+class ConversationActivity() : BaseActivity() {
 
     companion object {
         fun startConversionActivity(context: Context, inboxEntity: InboxEntity) {
@@ -95,15 +101,15 @@ class ConversationActivity : BaseActivity() {
     private lateinit var emojiPopup: EmojiPopup
     private var editTextStatus: Boolean = false
 
-    private var cMessageType: BASE_MESSAGE_TYPE = BASE_MESSAGE_TYPE.TX
-    private var compositeDisposable = CompositeDisposable()
+    private val cMessageType: BASE_MESSAGE_TYPE = BASE_MESSAGE_TYPE.TX
+    private val compositeDisposable = CompositeDisposable()
     private var revealAttachmentView: Boolean = false
     private lateinit var activityRef: WeakReference<FragmentActivity>
     private var unreadMessagePosition = -1
     private lateinit var linearLayoutManager: LinearLayoutManager
 
-    private var unreadScrollDone: Boolean = false
-    private var conversactionList = linkedSetOf<ChatModel>()
+    private var conversationList = linkedSetOf<ChatModel>()
+    private var removeingConversationList = linkedSetOf<ChatModel>()
 
 
     // private lateinit var attachmentPopup: AttachmentPopup
@@ -214,6 +220,21 @@ class ConversationActivity : BaseActivity() {
 
             }
         })
+        /*conversationBinding.chatRv.addOnItemTouchListener(
+            RecyclerTouchListener(
+                applicationContext,
+                conversationBinding.chatRv,
+                object : ClickListener {
+                    override fun onClick(view: View?, position: Int) {
+
+                    }
+
+                    override fun onLongClick(view: View?, position: Int) {
+                        isLongPress=!isLongPress
+                    }
+
+                })
+        )*/
 
 
     }
@@ -473,12 +494,61 @@ class ConversationActivity : BaseActivity() {
         conversationBinding.scrollToEndButton.setOnClickListener {
             scrollToEnd()
         }
+
+        findViewById<View>(R.id.iv_cancel_delete).setOnClickListener {
+            removeingConversationList.forEach {
+                refreshViewAtPos(it)
+            }
+            removeingConversationList.clear()
+            findViewById<MaterialToolbar>(R.id.toolbar_delete_chat).visibility = GONE
+
+        }
+        findViewById<View>(R.id.iv_delete_chat).setOnClickListener {
+            CoroutineScope(Dispatchers.IO).launch {
+                val listIds: MutableList<String> = mutableListOf()
+                removeingConversationList.forEach {
+                    removeViewAtPos(it)
+                    listIds.add(it.chatId)
+                }
+                conversationViewModel.deleteMessages(listIds)
+                removeingConversationList.clear()
+            }
+            findViewById<MaterialToolbar>(R.id.toolbar_delete_chat).visibility = GONE
+
+        }
+    }
+
+    private fun removeViewAtPos(chatObj: ChatModel) {
+        try {
+            var tempView: BaseChatViewHolder
+            conversationBinding.chatRv.allViewResolvers?.let {
+                it.listIterator().forEach {
+                    tempView = it as BaseChatViewHolder
+                    if (chatObj.chatId.toLowerCase(Locale.getDefault()) == tempView.message.chatId.toLowerCase(
+                            Locale.getDefault()
+                        )
+                    ) {
+                        AppObjectController.uiHandler.postDelayed({
+                            try {
+                                conversationBinding.chatRv.removeView(tempView)
+                            } catch (e: IndexOutOfBoundsException) {
+                                e.printStackTrace()
+                            }
+                        },100)
+                    }
+                }
+
+            }
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+        }
+
     }
 
     private fun addListenerObservable() {
         conversationViewModel.chatObservableLiveData.observe(this, Observer {
-            conversactionList.addAll(it)
-            conversactionList.iterator().forEach { chatModel ->
+            conversationList.addAll(it)
+            conversationList.iterator().forEach { chatModel ->
                 /*if (chatModel.isSeen.not() && unreadMessagePosition == -1) {
                     val count = conversationBinding.chatRv.adapter?.itemCount ?: 0
                     unreadMessagePosition = count - it.indexOf(chatModel)
@@ -498,18 +568,18 @@ class ConversationActivity : BaseActivity() {
             }*/
             conversationBinding.chatRv.refresh()
             scrollToEnd()
-           /* AppObjectController.uiHandler.postDelayed({
-                linearLayoutManager.scrollToPosition(unreadMessagePosition)
-            }, 250)
-            if (unreadMessagePosition == -1) {
-                scrollToEnd()
-            } else {
-                if (unreadScrollDone.not()) {
-                    unreadScrollDone = true
-                    AppObjectController.uiHandler.postDelayed({
-                        linearLayoutManager.scrollToPosition(unreadMessagePosition)
-                    }, 250)
-                }}*/
+            /* AppObjectController.uiHandler.postDelayed({
+                 linearLayoutManager.scrollToPosition(unreadMessagePosition)
+             }, 250)
+             if (unreadMessagePosition == -1) {
+                 scrollToEnd()
+             } else {
+                 if (unreadScrollDone.not()) {
+                     unreadScrollDone = true
+                     AppObjectController.uiHandler.postDelayed({
+                         linearLayoutManager.scrollToPosition(unreadMessagePosition)
+                     }, 250)
+                 }}*/
 
         })
 
@@ -525,6 +595,7 @@ class ConversationActivity : BaseActivity() {
 
     private fun subscribeRXBus() {
         compositeDisposable.add(RxBus2.listen(PlayVideoEvent::class.java).subscribe {
+            pauseAudioPlayer()
             VideoPlayerActivity.startConversionActivity(
                 this,
                 it.chatModel, inboxEntity.course_name
@@ -607,6 +678,29 @@ class ConversationActivity : BaseActivity() {
                     refreshViewAtPos(chatObj)
                 }
             })
+
+        compositeDisposable.add(RxBus2.listen(DeleteMessageEventBus::class.java)
+            .subscribeOn(Schedulers.computation())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+
+                if (removeingConversationList.contains(it.chatModel)) {
+                    removeingConversationList.remove(it.chatModel)
+                } else {
+                    if (it.chatModel.isSelected) {
+                        removeingConversationList.add(it.chatModel)
+                    }
+                }
+                if (removeingConversationList.size > 0) {
+                    findViewById<MaterialToolbar>(R.id.toolbar_delete_chat).visibility = VISIBLE
+                } else {
+                    findViewById<MaterialToolbar>(R.id.toolbar_delete_chat).visibility = GONE
+                }
+                findViewById<AppCompatTextView>(R.id.message_delete_count).text =
+                    removeingConversationList.size.toString()
+            })
+
+
     }
 
     fun refreshViewAtPos(chatObj: ChatModel) {
@@ -618,8 +712,12 @@ class ConversationActivity : BaseActivity() {
 
                     it.forEachIndexed { index, view ->
                         tempView = view as BaseChatViewHolder
-                        if (chatObj.chatId.toLowerCase(Locale.getDefault()) == tempView.message.chatId.toLowerCase(Locale.getDefault())) {
+                        if (chatObj.chatId.toLowerCase(Locale.getDefault()) == tempView.message.chatId.toLowerCase(
+                                Locale.getDefault()
+                            )
+                        ) {
                             tempView.message = chatObj
+                            tempView.message.isSelected = false
                             AppObjectController.uiHandler.postDelayed({
                                 conversationBinding.chatRv.refreshView(index)
                             }, 250)
@@ -847,6 +945,22 @@ class ConversationActivity : BaseActivity() {
             .addParam("name", javaClass.simpleName)
             .push()
         this@ConversationActivity.finishAndRemoveTask()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        pauseAudioPlayer()
+    }
+
+    fun pauseAudioPlayer(){
+        try {
+            val jcPlayerManager: JcPlayerManager by lazy {
+                JcPlayerManager.getInstance(applicationContext).get()!!
+            }
+            jcPlayerManager.pauseAudio()
+        }catch (ex:Exception){
+
+        }
     }
 
 }

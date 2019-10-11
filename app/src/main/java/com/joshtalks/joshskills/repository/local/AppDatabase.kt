@@ -57,9 +57,8 @@ abstract class AppDatabase : RoomDatabase() {
 
         private val MIGRATION_1_2: Migration = object : Migration(1, 2) {
             override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("ALTER TABLE chat_table ADD COLUMN is_delete_message Integer")
                 database.execSQL("UPDATE chat_table  SET is_seen = 1")
-               // database.execSQL("ALTER TABLE chat_table ADD COLUMN duration LONG")
-
             }
         }
 

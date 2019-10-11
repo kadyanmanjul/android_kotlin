@@ -74,5 +74,9 @@
     <style name="superBottomSheetDialog" parent="Theme.Design.Light.BottomSheetDialog">
         <item name="android:windowIsFloating">false</item>
     </style>
+    <style name="AppTheme.Custom" parent="Theme.AppCompat">
+        <item name="md_color_content">@color/font_color</item>
+        <item name="md_color_button_text">@color/colorAccent</item>
 
+    </style>
 </resources>

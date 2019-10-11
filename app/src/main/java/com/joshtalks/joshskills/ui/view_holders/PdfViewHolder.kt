@@ -35,15 +35,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.lang.ref.WeakReference
-import android.view.ViewGroup.LayoutParams.FILL_PARENT
 import android.widget.LinearLayout
-import android.opengl.ETC1.getHeight
-import android.opengl.ETC1.getWidth
-import android.util.Log
-import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
-import android.view.ViewTreeObserver
-import com.joshtalks.joshskills.core.Utils
-
 
 @Layout(R.layout.pdf_view_holder)
 class PdfViewHolder(activityRef: WeakReference<FragmentActivity>, message: ChatModel) :
@@ -175,12 +167,12 @@ class PdfViewHolder(activityRef: WeakReference<FragmentActivity>, message: ChatM
         message.sender?.let {
             updateView(it, root_view, root_sub_view, message_view)
         }
-        message.question?.pdfList?.get(0)?.let {
+        message.question?.pdfList?.getOrNull(0)?.let {
             updateTime(text_message_time)
         }
         updateTime(text_message_time)
 
-        message.question?.pdfList?.get(0)?.let { pdfObj ->
+        message.question?.pdfList?.getOrNull(0)?.let { pdfObj ->
 
 
             message_view.addOnLayoutChangeListener { _, _, _, _, _, _, _, _, _ ->
@@ -325,32 +317,5 @@ class PdfViewHolder(activityRef: WeakReference<FragmentActivity>, message: ChatM
         )
 
     }
-
-
-/* message_view.addOnLayoutChangeListener(object:android.view.View.OnLayoutChangeListener {
-     override fun onLayoutChange(
-         v: android.view.View?,
-         left: Int,
-         top: Int,
-         right: Int,
-         bottom: Int,
-         oldLeft: Int,
-         oldTop: Int,
-         oldRight: Int,
-         oldBottom: Int
-     ) {
-         Log.e("wwiwiwi", "" + left+ "  " + right)
-
-     }
-
- })*/
-
-/* pdfObj.thumbnailUrl?.let {
-           setImageInImageView(image_view, it, callback = Runnable {
-               download_container.layoutParams.width =  (AppObjectController.screenWidth / 3 - 50)
-
-           })
-       }*/
-
 
 }

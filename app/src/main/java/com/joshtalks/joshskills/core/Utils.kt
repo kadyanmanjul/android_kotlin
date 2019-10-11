@@ -1,5 +1,6 @@
 package com.joshtalks.joshskills.core
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Build
@@ -21,6 +22,8 @@ import java.util.*
 import android.media.AudioManager.STREAM_MUSIC
 import android.net.ConnectivityManager
 import android.util.TypedValue
+import androidx.browser.customtabs.CustomTabsIntent
+import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.RoundedBitmapDrawable
 import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory
 import java.io.File
@@ -31,6 +34,8 @@ import androidx.core.content.ContextCompat.startActivity
 import androidx.core.content.ContextCompat.startActivity
 import androidx.core.content.ContextCompat.startActivity
 import androidx.core.content.ContextCompat.getSystemService
+import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.custom_ui.CustomTabHelper
 
 
 private val CHAT_TIME_FORMATTER = SimpleDateFormat("hh:mm aa")
@@ -249,8 +254,10 @@ object Utils {
     }
 
 
-    fun openUrl(url: String) {
-        try {
+    fun openUrl(url: String,activity: Activity) {
+        openInApplicationBrowser(url,activity)
+
+       /* try {
             val intent = Intent(ACTION_VIEW)
             intent.apply {
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
@@ -263,7 +270,32 @@ object Utils {
             AppObjectController.joshApplication.startActivity(intent)
         } catch (ex: Exception) {
             ex.printStackTrace()
+        }*/
+    }
+    private fun openInApplicationBrowser(url: String,activity: Activity){
+        val updateUrl:String = if (url.trim().startsWith("http://").not()) {
+            "http://" + url.replace("https://", "").trim()
+        } else {
+            url.trim()
         }
+        val builder = CustomTabsIntent.Builder()
+        builder.setToolbarColor(ContextCompat.getColor(AppObjectController.joshApplication, R.color.colorPrimary))
+        builder.setShowTitle(true)
+        builder.setExitAnimations(activity, android.R.anim.fade_in, android.R.anim.fade_out)
+        val packageName = CustomTabHelper.getPackageNameToUse(activity, updateUrl)
+        val customTabsIntent = builder.build()
+        if (packageName == null) {
+            val intent = Intent(ACTION_VIEW)
+            intent.apply {
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
+            intent.data = Uri.parse(updateUrl)
+            activity.startActivity(intent)
+        } else {
+            customTabsIntent.intent.setPackage(packageName)
+            customTabsIntent.launchUrl(activity, Uri.parse(updateUrl))
+        }
+
     }
 
     fun isInternetAvailable(): Boolean {

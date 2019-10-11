@@ -55,7 +55,10 @@ data class ChatModel(
     var isSync: Boolean = true,
 
     @ColumnInfo(name = "chat_local_id")
-    var chatLocalId: String? = RandomString().nextString()
+    var chatLocalId: String? = RandomString().nextString(),
+
+    @ColumnInfo(name = "is_delete_message")
+    var isDeleteMessage: Boolean = false
 
 
 ) : DataBaseClass(), Serializable {
@@ -301,13 +304,21 @@ open class DataBaseClass : Serializable {
     @ColumnInfo()
     @Expose
     var thumbnailUrl: String? = ""
+
+    @Ignore
+    @Expose
+    var isSelected: Boolean = false
+
+    @Ignore
+    @Expose
+    var disable: Boolean = false
 }
 
 
 @Dao
 interface ChatDao {
 
-    @Query(value = "SELECT * FROM chat_table where conversation_id= :conversationId  ORDER BY created ASC ")
+    @Query(value = "SELECT * FROM chat_table where conversation_id= :conversationId AND is_delete_message=0   ORDER BY created ASC ")
     suspend fun getLastChats(conversationId: String): List<ChatModel>
 
 
@@ -318,7 +329,7 @@ interface ChatDao {
     suspend fun getNullableChatObject(chatId: String): ChatModel?
 
 
-    @Query(value = "SELECT * FROM chat_table where conversation_id= :conversationId AND created > :compareTime ORDER BY created ASC")
+    @Query(value = "SELECT * FROM chat_table where conversation_id= :conversationId AND created > :compareTime AND is_delete_message=0  ORDER BY created ASC")
     suspend fun getRecentChatAfterTime(conversationId: String, compareTime: Date?): List<ChatModel>
 
 
@@ -483,6 +494,15 @@ interface ChatDao {
 
     @Query(value = "UPDATE chat_table  SET is_seen = 1")
     suspend fun readAllChatBYUser()
+
+    @Query("UPDATE chat_table SET is_delete_message =1 WHERE chat_id IN (:ids)")
+    suspend fun changeStatusForDeleteMessage(ids: List<String>)
+
+    @Query(value = "SELECT * FROM chat_table where is_delete_message=1 ")
+    suspend fun getUnsyncDeletesMessage(): List<ChatModel>
+
+    @Query("DELETE FROM chat_table where  chat_id IN (:ids)")
+    suspend fun deleteUserMessages(ids: List<String>)
 
 
 }

@@ -16,7 +16,7 @@ import android.os.Build
 import android.util.AttributeSet
 import android.view.View
 import android.widget.*
-import androidx.appcompat.widget.AppCompatTextView
+import com.afollestad.materialdialogs.MaterialDialog
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.Utils
@@ -29,6 +29,7 @@ import com.joshtalks.joshskills.core.custom_ui.audioplayer.model.JcAudio
 import com.joshtalks.joshskills.core.interfaces.AudioPlayerInterface
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.messaging.RxBus2
+import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
 import com.joshtalks.joshskills.repository.local.entity.DOWNLOAD_STATUS
 import com.joshtalks.joshskills.repository.local.entity.MESSAGE_DELIVER_STATUS
@@ -43,6 +44,8 @@ import com.karumi.dexter.listener.PermissionGrantedResponse
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.single.PermissionListener
 import io.reactivex.disposables.CompositeDisposable
+import java.util.*
+import kotlin.collections.ArrayList
 
 class JcPlayerView : LinearLayout, View.OnClickListener, SeekBar.OnSeekBarChangeListener,
     JcPlayerManagerListener {
@@ -86,11 +89,17 @@ class JcPlayerView : LinearLayout, View.OnClickListener, SeekBar.OnSeekBarChange
     var drag = false
     var audioListenList = mutableListOf<ListenGraph>()
     private var compositeDisposable = CompositeDisposable()
+    private var cAudioObj: JcAudio? = null
 
 
     companion object {
         private const val PULSE_ANIMATION_DURATION = 200L
         private const val TITLE_ANIMATION_DURATION = 600
+        @JvmStatic
+        @Volatile
+        private var videoId: String? = ""
+
+
     }
 
     constructor(context: Context) : super(context) {
@@ -128,54 +137,12 @@ class JcPlayerView : LinearLayout, View.OnClickListener, SeekBar.OnSeekBarChange
 
     private fun setAttributes(attrs: TypedArray) {
         val defaultColor = ResourcesCompat.getColor(resources, R.color.black, null)
-
-        /* txtCurrentDuration?.setTextColor(
-             attrs.getColor(
-                 R.styleable.JcPlayerView_text_audio_current_duration_color,
-                 defaultColor
-             )
-         )*/
-        /*txtDuration?.setTextColor(
-            attrs.getColor(
-                R.styleable.JcPlayerView_text_audio_duration_color,
-                defaultColor
-            )
-        )*/
-
-
-        /*//progressBarPlayer?.indeterminateDrawable?.setColorFilter(attrs.getColor(R.styleable.JcPlayerView_progress_color, defaultColor), PorterDuff.Mode.SRC_ATOP)
-        seekBar?.progressDrawable?.setColorFilter(
-            attrs.getColor(
-                R.styleable.JcPlayerView_seek_bar_color,
-                defaultColor
-            ), PorterDuff.Mode.SRC_ATOP
-        )
-
-        seekBar?.thumb?.setColorFilter(
-            attrs.getColor(
-                R.styleable.JcPlayerView_seek_bar_color,
-                defaultColor
-            ), PorterDuff.Mode.SRC_ATOP
-        )*/
         btnPlay.setColorFilter(
             attrs.getColor(
                 R.styleable.JcPlayerView_play_icon_color,
                 defaultColor
             )
         )
-        /* btnPlay.setImageResource(
-             attrs.getResourceId(
-                 R.styleable.JcPlayerView_play_icon,
-                 R.drawable.ic_play
-             )
-         )*/
-
-        /*btnPause.setImageResource(
-            attrs.getResourceId(
-                R.styleable.JcPlayerView_pause_icon,
-                R.drawable.ic_pause
-            )
-        )*/
         btnPause.setColorFilter(
             attrs.getColor(
                 R.styleable.JcPlayerView_pause_icon_color,
@@ -191,16 +158,16 @@ class JcPlayerView : LinearLayout, View.OnClickListener, SeekBar.OnSeekBarChange
      * @param playlist List of JcAudio objects that you want play
      * @param jcPlayerManagerListener The view status jcPlayerManagerListener (optional)
      */
-    fun initPlaylist(
+    private fun initPlaylist(
         playlist: List<JcAudio>,
         jcPlayerManagerListener: JcPlayerManagerListener? = null
     ) {
         /*Don't sort if the playlist have position number.
         We need to do this because there is a possibility that the user reload previous playlist
         from persistence storage like sharedPreference or SQLite.*/
-        if (isAlreadySorted(playlist).not()) {
-            sortPlaylist(playlist)
-        }
+        /* if (isAlreadySorted(playlist).not()) {
+             sortPlaylist(playlist)
+         }*/
 
         jcPlayerManager.playlist = playlist as ArrayList<JcAudio>
         jcPlayerManager.jcPlayerManagerListener = jcPlayerManagerListener
@@ -286,11 +253,24 @@ class JcPlayerView : LinearLayout, View.OnClickListener, SeekBar.OnSeekBarChange
         this.activity = activity
         this.message = obj
         this.audioPlayerInterface = audioPlayerInterface
+        cAudioObj=null
+        setDefaultUi()
         updateUI()
-
         updateTime(message_time)
         //message_time
 
+    }
+
+    private fun setDefaultUi() {
+        seekBar.visibility = View.GONE
+        download_container.visibility = View.GONE
+        progressBarPlayer.visibility = View.GONE
+        cancelDownload.visibility = View.GONE
+        startDownload.visibility = View.GONE
+        btnPlay?.visibility = View.GONE
+        btnPause?.visibility = View.GONE
+        seekBar_ph?.visibility = View.GONE
+        txtCurrentDuration.text = EMPTY
     }
 
     /**
@@ -299,13 +279,10 @@ class JcPlayerView : LinearLayout, View.OnClickListener, SeekBar.OnSeekBarChange
      */
     fun playAudio(jcAudio: JcAudio) {
         showProgressBar()
-
         jcPlayerManager.playlist.let {
             if (it.contains(jcAudio).not()) {
                 it.add(jcAudio)
             }
-
-
             jcPlayerManager.playAudio(jcAudio)
         }
     }
@@ -388,9 +365,27 @@ class JcPlayerView : LinearLayout, View.OnClickListener, SeekBar.OnSeekBarChange
 
     }
 
+
+
     override fun onClick(view: View) {
         when (view.id) {
-            R.id.btnPlay ->
+            R.id.btnPlay -> {
+
+                if (videoId.isNullOrEmpty().not() && videoId.equals(
+                        message.chatId,
+                        ignoreCase = true
+                    ).not()
+                ) {
+                    updateUri()
+                }
+                if (cAudioObj == null || AppDirectory.isFileExist(cAudioObj!!.path).not()) {
+                    MaterialDialog(context).show {
+                        message(R.string.media_not_found_message)
+                        positiveButton(R.string.ok)
+
+                    }
+                    return
+                }
 
 
                 btnPlay?.let {
@@ -398,10 +393,11 @@ class JcPlayerView : LinearLayout, View.OnClickListener, SeekBar.OnSeekBarChange
                         .withPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
                         .withListener(object : PermissionListener {
                             override fun onPermissionGranted(response: PermissionGrantedResponse) {
-                                applyPulseAnimation(it)
+                                //  applyPulseAnimation(it)
                                 continueAudio()
                                 showPauseButton()
                                 RxBus2.publish(AudioPlayerPauseEventBus(message.chatId))
+                                videoId = message.chatId
                             }
 
                             override fun onPermissionDenied(response: PermissionDeniedResponse) {
@@ -418,12 +414,14 @@ class JcPlayerView : LinearLayout, View.OnClickListener, SeekBar.OnSeekBarChange
 
 
                 }
+            }
 
             R.id.btnPause -> {
                 btnPause?.let {
                     applyPulseAnimation(it)
                     pause()
                     showPlayButton()
+
                 }
             }
             R.id.startDownload -> {
@@ -433,41 +431,11 @@ class JcPlayerView : LinearLayout, View.OnClickListener, SeekBar.OnSeekBarChange
                 audioPlayerInterface?.downloadStop()
             }
 
-            /*  R.id.btnNext ->
-                  btnNext?.let {
-                      applyPulseAnimation(it)
-                      next()
-                  }
-
-              R.id.btnPrev ->
-                  btnPrev?.let {
-                      applyPulseAnimation(it)
-                      previous()
-                  }
-
-              R.id.btnRandom -> {
-                  jcPlayerManager.onShuffleMode = jcPlayerManager.onShuffleMode.not()
-                  btnRandomIndicator.visibility = if (jcPlayerManager.onShuffleMode) View.VISIBLE else View.GONE
-              }
-  */
 
             else -> { // Repeat case
                 jcPlayerManager.activeRepeat()
                 val active = jcPlayerManager.repeatPlaylist or jcPlayerManager.repeatCurrAudio
 
-                //  btnRepeat?.visibility = View.VISIBLE
-                // btnRepeatOne?.visibility = View.GONE
-/*
-                if (active) {
-                    btnRepeatIndicator?.visibility = View.VISIBLE
-                } else {
-                    btnRepeatIndicator?.visibility = View.GONE
-                }
-
-                if (jcPlayerManager.repeatCurrAudio) {
-                    btnRepeatOne?.visibility = View.VISIBLE
-                    btnRepeat?.visibility = View.GONE
-                }*/
             }
         }
     }
@@ -567,10 +535,14 @@ class JcPlayerView : LinearLayout, View.OnClickListener, SeekBar.OnSeekBarChange
 
     override fun onPaused(status: JcStatus) {
         endTime = status.currentPosition
+        txtCurrentDuration?.post { txtCurrentDuration?.text = toTimeSongString(duration) }
+
+
     }
 
     override fun onStopped(status: JcStatus) {
         try {
+            txtCurrentDuration?.post { txtCurrentDuration?.text = toTimeSongString(duration) }
             audioListenList.add(ListenGraph(startTime, endTime))
             startTime = 0
             endTime = 0
@@ -609,11 +581,7 @@ class JcPlayerView : LinearLayout, View.OnClickListener, SeekBar.OnSeekBarChange
 
     private fun resetPlayerInfo() {
         seekBar?.post { seekBar?.progress = 0 }
-        txtCurrentDuration.text = toTimeSongString(duration);
-        //  txtCurrentDuration?.post { txtDuration.text = context.getString(R.string.play_initial_time) }
-        /*txtCurrentDuration?.post {
-            txtCurrentDuration.text = context.getString(R.string.play_initial_time)
-        }*/
+        txtCurrentDuration.text = toTimeSongString(duration)
     }
 
     /**
@@ -672,12 +640,32 @@ class JcPlayerView : LinearLayout, View.OnClickListener, SeekBar.OnSeekBarChange
 
     private fun updateUI() {
         duration = 0
-        if (message.url != null) {
+        if (message.type == BASE_MESSAGE_TYPE.Q) {
+            val audioTypeObj = message.question!!.audioList!![0]
+            this.duration = audioTypeObj.duration
+            if (message.downloadStatus === DOWNLOAD_STATUS.DOWNLOADED) {
+                if (audioTypeObj.downloadedLocalPath.isNullOrEmpty().not() && AppDirectory.isFileExist(
+                        audioTypeObj.downloadedLocalPath!!
+                    )
+                ) {
+                    mediaDownloaded()
+                } else {
+                    mediaNotDownloaded()
+                }
+
+            } else if (message.downloadStatus === DOWNLOAD_STATUS.DOWNLOADING) {
+                mediaDownloading()
+                audioPlayerInterface?.downloadStart(audioTypeObj.audio_url)
+            } else {
+                mediaNotDownloaded()
+            }
+
+        } else {
             if (message.downloadStatus === DOWNLOAD_STATUS.DOWNLOADED || message.downloadStatus === DOWNLOAD_STATUS.UPLOADED) {
                 if (message.downloadedLocalPath != null && AppDirectory.isFileExist(message.downloadedLocalPath!!)) {
                     mediaDownloaded()
                 } else {
-                    mediaNotDownloaded()
+                    mediaNotAvailableDownloaded()
                 }
             } else if (message.downloadStatus === DOWNLOAD_STATUS.DOWNLOADING) {
                 mediaDownloading()
@@ -686,53 +674,47 @@ class JcPlayerView : LinearLayout, View.OnClickListener, SeekBar.OnSeekBarChange
                 mediaUploading()
             } else {
                 mediaNotDownloaded()
-
-            }
-        } else {
-            if (message.question != null && message.question!!.audioList != null && message.question!!.audioList!!.size > 0) {
-                val audioTypeObj = message.question!!.audioList!![0]
-                this.duration = audioTypeObj.duration
-                if (message.downloadStatus === DOWNLOAD_STATUS.DOWNLOADED) {
-
-                    if (audioTypeObj.downloadedLocalPath != null && AppDirectory.isFileExist(
-                            audioTypeObj.downloadedLocalPath!!
-                        )
-                    ) {
-                        mediaDownloaded()
-                    } else {
-                        mediaNotDownloaded()
-                    }
-
-                } else if (message.downloadStatus === DOWNLOAD_STATUS.DOWNLOADING) {
-                    mediaDownloading()
-                    audioPlayerInterface?.downloadStart(audioTypeObj.audio_url)
-                } else {
-                    mediaNotDownloaded()
-                }
             }
         }
     }
 
     private fun mediaUploading() {
+        seekBar_ph?.visibility = View.VISIBLE
         download_container.visibility = View.VISIBLE
         progressBarPlayer.visibility = View.VISIBLE
         cancelDownload.visibility = View.VISIBLE
         startDownload.visibility = View.GONE
         btnPlay?.visibility = View.GONE
         btnPause?.visibility = View.GONE
-        seekBar_ph?.visibility = View.VISIBLE
 
     }
 
-    private fun mediaNotDownloaded() {
+    private fun mediaNotAvailableDownloaded() {
         seekBar.visibility = View.VISIBLE
-        download_container.visibility = View.VISIBLE
+        seekBar_ph?.visibility = View.GONE
+        download_container.visibility = View.GONE
+        startDownload.visibility = View.GONE
         progressBarPlayer.visibility = View.GONE
         cancelDownload.visibility = View.GONE
+        btnPlay?.visibility = View.VISIBLE
+        btnPause?.visibility = View.GONE
+        txtCurrentDuration.text = EMPTY
+        if (duration > 0) {
+            txtCurrentDuration.text = toTimeSongString(duration)
+        } else {
+            txtCurrentDuration.text = "00:00"
+        }
+    }
+
+    private fun mediaNotDownloaded() {
+        seekBar_ph?.visibility = View.VISIBLE
+        download_container.visibility = View.VISIBLE
         startDownload.visibility = View.VISIBLE
+        seekBar.visibility = View.GONE
+        progressBarPlayer.visibility = View.GONE
+        cancelDownload.visibility = View.GONE
         btnPlay?.visibility = View.GONE
         btnPause?.visibility = View.GONE
-        seekBar_ph?.visibility = View.VISIBLE
         txtCurrentDuration.text = EMPTY
         if (duration > 0) {
             txtCurrentDuration.text = toTimeSongString(duration)
@@ -743,81 +725,64 @@ class JcPlayerView : LinearLayout, View.OnClickListener, SeekBar.OnSeekBarChange
         download_container.visibility = View.VISIBLE
         progressBarPlayer.visibility = View.VISIBLE
         cancelDownload.visibility = View.VISIBLE
-        startDownload.visibility = View.GONE
         seekBar_ph?.visibility = View.VISIBLE
-
+        startDownload.visibility = View.GONE
     }
 
     private fun mediaDownloaded() {
-        download_container.visibility = View.GONE
         btnPlay?.visibility = View.VISIBLE
         seekBar?.visibility = View.VISIBLE
         btnPause?.visibility = View.GONE
         seekBar_ph?.visibility = View.GONE
+        download_container.visibility = View.GONE
         updateUri()
     }
 
     private fun updateUri() {
-        val jcAudios = java.util.ArrayList<JcAudio>()
+        cAudioObj = getAudioObject()
+        kill()
+
+        if (cAudioObj != null) {
+            val jcAudios = java.util.ArrayList<JcAudio>()
+            jcAudios.add(cAudioObj!!)
+            initPlaylist(jcAudios, this@JcPlayerView)
+        }
+        if (duration > 0) {
+            txtCurrentDuration.text = toTimeSongString(duration)
+        }
+    }
+
+
+    private fun getAudioObject(): JcAudio? {
         try {
-
-            if (message.downloadedLocalPath == null || message.downloadedLocalPath!!.isEmpty()) {
-                if (message.question!!.audioList!![0].downloadedLocalPath == null || message.question!!.audioList!![0].downloadedLocalPath!!.isEmpty()) {
-                    this.uri = Uri.parse(message.question!!.audioList!![0].audio_url)
-                    jcAudios.add(JcAudio.createFromURL(message.question!!.audioList!![0].audio_url))
-                    isMedia = true
-                    this.duration = Utils.getDurationOfMedia(
-                        context,
-                        message.question!!.audioList!![0].audio_url
-                    )!!.toInt()
-
-                } else {
-                    jcAudios.add(JcAudio.createFromFilePath(message.question!!.audioList!![0].downloadedLocalPath!!))
-                    isMedia = true
-
-                    this.duration = Utils.getDurationOfMedia(
-                        context,
-                        message.question!!.audioList!![0].downloadedLocalPath!!
-                    )!!.toInt()
-
-                }
+            if (message.type == BASE_MESSAGE_TYPE.Q) {
+                cAudioObj =
+                    JcAudio.createFromFilePath(message.question!!.audioList!![0].downloadedLocalPath!!)
+                isMedia = true
+                this.duration = Utils.getDurationOfMedia(
+                    context,
+                    message.question!!.audioList!![0].downloadedLocalPath!!
+                )!!.toInt()
             } else {
-                if (message.downloadedLocalPath!!.isEmpty()) {
-                    jcAudios.add(JcAudio.createFromFilePath(message.url!!))
-                    isMedia = true
-
-                    this.duration = Utils.getDurationOfMedia(context, message.url!!)!!.toInt()
-
-                } else {
-                    jcAudios.add(JcAudio.createFromFilePath(message.downloadedLocalPath!!))
-                    isMedia = true
-
-                    this.duration =
-                        Utils.getDurationOfMedia(context, message.downloadedLocalPath!!)!!.toInt()
-
-                }
+                cAudioObj = JcAudio.createFromFilePath(message.downloadedLocalPath!!)
+                isMedia = true
+                this.duration =
+                    Utils.getDurationOfMedia(context, message.downloadedLocalPath!!)!!.toInt()
             }
 
         } catch (e: Exception) {
             e.printStackTrace()
         }
-        kill()
-        // addAudio(jcAudios.get(0))
-        //   jcPlayerManagerListener=this
-        initPlaylist(jcAudios, this)
-        if (duration > 0) {
-            txtCurrentDuration.text = toTimeSongString(duration);
-        }
-
+        return cAudioObj
     }
 
-    private fun updateController() {
 
+    private fun updateController() {
         if (isMedia) {
             AppObjectController.uiHandler.post {
                 btnPlay?.visibility = View.VISIBLE
                 btnPause?.visibility = View.GONE
-                seekBar?.progress = 0
+                //seekBar?.progress = 0
 
             }
         }
@@ -846,7 +811,8 @@ class JcPlayerView : LinearLayout, View.OnClickListener, SeekBar.OnSeekBarChange
 
 
     private fun updateTime(text_message_time: TextView) {
-        text_message_time.text = Utils.getMessageTimeInHours(message.created).toUpperCase()
+        text_message_time.text =
+            Utils.getMessageTimeInHours(message.created).toUpperCase(Locale.getDefault())
 
         if (message.sender?.id.equals(Mentor.getInstance().getId(), ignoreCase = true)) {
             text_message_time.compoundDrawablePadding = getDrawablePadding()

@@ -201,6 +201,17 @@ abstract class BaseCell() {
         }
 
     }
+    fun setImageViewImageNotFound(iv: AppCompatImageView) {
+        Glide.with(getAppContext())
+            .load(R.drawable.ic_file_error)
+            .optionalTransform(
+                WebpDrawable::class.java,
+                WebpDrawableTransformation(CircleCrop())
+            )
+            .apply(RequestOptions.bitmapTransform(AppObjectController.multiTransformation))
+            .into(iv)
+
+    }
 
 
 }

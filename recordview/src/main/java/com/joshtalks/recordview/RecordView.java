@@ -197,7 +197,7 @@ public class RecordView extends RelativeLayout {
 
         basketInitialY = basketImg.getY() + 90;
 
-        playSound(RECORD_START);
+        //playSound(RECORD_START);
 
         showViews();
 

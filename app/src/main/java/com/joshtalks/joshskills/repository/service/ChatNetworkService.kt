@@ -22,6 +22,11 @@ interface ChatNetworkService {
     @POST("$DIR/chat/message/")
     fun sendMessage(@Body messageObject: Any): Deferred<ChatMessageReceiver>
 
+
+    @PATCH("$DIR/chat/message/{id}")
+    suspend fun deleteMessage(@Path("id") id: String, @FieldMap params: Map<String, String>): ChatMessageReceiver
+
+
     @GET("$DIR/chat/{id}/")
     fun getUnReceivedMessageAsync(@Path("id") id: String, @QueryMap params: Map<String, String>): Deferred<ResponseChatMessage>
 

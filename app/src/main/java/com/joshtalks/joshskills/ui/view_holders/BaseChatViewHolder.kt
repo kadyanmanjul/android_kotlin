@@ -5,6 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.appcompat.widget.AppCompatTextView
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.Utils
@@ -41,13 +42,13 @@ abstract class BaseChatViewHolder(
         if (sender.id.equals(getUserId(), ignoreCase = true)) {
 
             root_view.setPadding(getLeftPaddingForSender(), 0, getRightPaddingForSender(), 0)
-
             val params = FrameLayout.LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT
             )
             params.gravity = Gravity.END
             root_sub_view.layoutParams = params
+            // root_sub_view.setBackgroundResource(R.drawable.recived_message_selector)
             root_sub_view.setBackgroundResource(R.drawable.balloon_outgoing_normal)
 
 
@@ -132,11 +133,11 @@ abstract class BaseChatViewHolder(
         }
     }
 
-    fun addMessageAutoLink(text_message_body:JoshTextView){
+    fun addMessageAutoLink(text_message_body: JoshTextView) {
         text_message_body.setAutoLinkOnClickListener { autoLinkMode, matchedText ->
-            when(autoLinkMode){
-                AutoLinkMode.MODE_PHONE-> Utils.call(getAppContext(),matchedText)
-                AutoLinkMode.MODE_URL-> Utils.openUrl(matchedText)
+            when (autoLinkMode) {
+                AutoLinkMode.MODE_PHONE -> Utils.call(getAppContext(), matchedText)
+                AutoLinkMode.MODE_URL -> activityRef.get()?.let { Utils.openUrl(matchedText, it) }
             }
         }
     }

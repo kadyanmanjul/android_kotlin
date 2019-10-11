@@ -43,14 +43,10 @@ import com.joshtalks.joshskills.core.service.video_download.VideoDownloadControl
 import static android.content.pm.ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE;
 
 public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener, View.OnClickListener {
-
-
-
     enum ScreenOrientation {
         PORTRAIT,
         LANDSCAPE
     }
-
 
     public static final int STATE_IDLE = 1;
     public static final int STATE_BUFFERING = 2;
@@ -203,7 +199,7 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
             timeHandler.post(timeRunnable);
             setPlayer(player);
 
-           // checkIfFullscreenToggleSupported();
+            // checkIfFullscreenToggleSupported();
             setupAudioFocus();
             attachForwardRewindAnimator();
 
@@ -277,15 +273,19 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
     }
 
     public void onPause() {
-        currentPosition = player.getCurrentPosition();
-        player.setPlayWhenReady(false);
-        player.getPlaybackState();
+        if (player != null) {
+            currentPosition = player.getCurrentPosition();
+            player.setPlayWhenReady(false);
+            player.getPlaybackState();
+        }
     }
 
     public void onResume() {
-        player.setPlayWhenReady(true);
-        player.getPlaybackState();
-        player.seekTo(currentPosition);
+        if (player != null) {
+            player.setPlayWhenReady(true);
+            player.getPlaybackState();
+            player.seekTo(currentPosition);
+        }
 
     }
 
@@ -300,8 +300,9 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
             }
             currentPosition = player.getCurrentPosition();
             player.release();
-            player = null;
         }
+        player = null;
+
     }
 
 
@@ -310,11 +311,13 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
     }
 
     public void downloadStreamPlay() {
-        boolean haveStartPosition = startWindow != C.INDEX_UNSET;
-        if (haveStartPosition) {
-            player.seekTo(startWindow, currentPosition);
+        if (player != null) {
+            boolean haveStartPosition = startWindow != C.INDEX_UNSET;
+            if (haveStartPosition) {
+                player.seekTo(startWindow, currentPosition);
+            }
+            player.prepare(VideoDownloadController.getInstance().getMediaSource(uri), !haveStartPosition, false);
         }
-        player.prepare(VideoDownloadController.getInstance().getMediaSource(uri), !haveStartPosition, false);
     }
 
 
