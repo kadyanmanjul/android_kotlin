@@ -14,6 +14,7 @@ import com.google.android.exoplayer2.util.Util;
 import com.joshtalks.joshskills.R;
 import com.joshtalks.joshskills.repository.local.DatabaseUtils;
 import com.joshtalks.joshskills.repository.local.entity.DOWNLOAD_STATUS;
+
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -63,7 +64,7 @@ public class VideoDownloadService extends DownloadService {
 
     @Override
     protected void onDownloadChanged(Download download) {
-        Log.e("onDownloadChanged", "onDownloadChanged " + download.state);
+        //Log.e("onDownloadChanged", "onDownloadChanged " + download.state);
         DOWNLOAD_STATUS downloadStatus = DOWNLOAD_STATUS.NOT_START;
 
         if (download.state == Download.STATE_DOWNLOADING || download.state == Download.STATE_QUEUED) {
@@ -81,9 +82,9 @@ public class VideoDownloadService extends DownloadService {
         DatabaseUtils.updateVideoDownload(Util.fromUtf8Bytes(download.request.data), downloadStatus);
         Notification notification;
         if (download.state == Download.STATE_COMPLETED) {
-            notification = notificationHelper.buildDownloadCompletedNotification(R.mipmap.ic_launcher, null, Util.fromUtf8Bytes(download.request.data));
+            notification = notificationHelper.buildDownloadCompletedNotification(R.mipmap.ic_launcher, null, "Download completed");
         } else if (download.state == Download.STATE_FAILED) {
-            notification = notificationHelper.buildDownloadFailedNotification(R.mipmap.ic_launcher, null, Util.fromUtf8Bytes(download.request.data));
+            notification = notificationHelper.buildDownloadFailedNotification(R.mipmap.ic_launcher, null, "Download failed");
         } else {
             return;
         }

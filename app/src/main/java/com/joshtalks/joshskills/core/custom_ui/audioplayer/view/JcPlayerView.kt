@@ -254,7 +254,7 @@ class JcPlayerView : LinearLayout, View.OnClickListener, SeekBar.OnSeekBarChange
         this.message = obj
         this.audioPlayerInterface = audioPlayerInterface
         cAudioObj=null
-        setDefaultUi()
+      //  setDefaultUi()
         updateUI()
         updateTime(message_time)
         //message_time
@@ -429,6 +429,7 @@ class JcPlayerView : LinearLayout, View.OnClickListener, SeekBar.OnSeekBarChange
             }
             R.id.cancelDownload -> {
                 audioPlayerInterface?.downloadStop()
+                //updateUI()
             }
 
 
@@ -686,7 +687,6 @@ class JcPlayerView : LinearLayout, View.OnClickListener, SeekBar.OnSeekBarChange
         startDownload.visibility = View.GONE
         btnPlay?.visibility = View.GONE
         btnPause?.visibility = View.GONE
-
     }
 
     private fun mediaNotAvailableDownloaded() {
@@ -716,6 +716,11 @@ class JcPlayerView : LinearLayout, View.OnClickListener, SeekBar.OnSeekBarChange
         btnPlay?.visibility = View.GONE
         btnPause?.visibility = View.GONE
         txtCurrentDuration.text = EMPTY
+
+
+
+
+
         if (duration > 0) {
             txtCurrentDuration.text = toTimeSongString(duration)
         }
@@ -730,8 +735,8 @@ class JcPlayerView : LinearLayout, View.OnClickListener, SeekBar.OnSeekBarChange
     }
 
     private fun mediaDownloaded() {
+        seekBar.visibility = View.VISIBLE
         btnPlay?.visibility = View.VISIBLE
-        seekBar?.visibility = View.VISIBLE
         btnPause?.visibility = View.GONE
         seekBar_ph?.visibility = View.GONE
         download_container.visibility = View.GONE

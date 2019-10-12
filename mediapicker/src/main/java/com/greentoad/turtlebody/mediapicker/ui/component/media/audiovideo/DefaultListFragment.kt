@@ -156,12 +156,17 @@ class DefaultListFragment : MediaListFragment(), DefaultAdapter.OnMediaSelectCli
                 }
 
                 override fun onSuccess(t: Boolean) {
+
                     mDefaultAdapter.setData(mImageModelList)
-                    frame_progress.visibility = View.GONE
+                    if (frame_progress!=null) {
+                        frame_progress.visibility = View.GONE
+                    }
                 }
 
                 override fun onError(@NonNull e: Throwable) {
-                    frame_progress.visibility = View.GONE
+                    if (frame_progress!=null) {
+                        frame_progress.visibility = View.GONE
+                    }
                     info { "error: ${e.message}" }
                 }
             })

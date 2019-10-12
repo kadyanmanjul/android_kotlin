@@ -3,6 +3,7 @@ package com.joshtalks.appcamera
 import android.app.Activity
 import android.content.Intent
 import android.graphics.Color
+import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -29,7 +30,6 @@ class VideoTrimmerActivity : AppCompatActivity(), VideoTrimmingListener {
         setContentView(R.layout.activity_trimmer)
         val inputVideoUri: Uri? = intent?.getParcelableExtra(VIDEO_URI)
         val destFile = intent?.getSerializableExtra(DEST_VIDEO_FILE) as File
-
         if (inputVideoUri == null) {
             finish()
             return
@@ -45,13 +45,11 @@ class VideoTrimmerActivity : AppCompatActivity(), VideoTrimmingListener {
         progress_bar.rimColor = Color.parseColor("#33128C7E")
 
 
-
     }
 
     override fun onTrimStarting(srcPath: Uri, destPath: File, startTime: Long, endTime: Long) {
         try {
             window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-
             val srcVideoPath = intent?.getStringExtra(SRC_VIDEO_PATH)
             Mp4Composer(srcVideoPath, destPath.absolutePath)
                 .size(360, 640)
@@ -94,38 +92,33 @@ class VideoTrimmerActivity : AppCompatActivity(), VideoTrimmingListener {
 
     }
 
+    fun getVideoFileDetails(path:String){
+        var retriever =  MediaMetadataRetriever();
+        retriever.setDataSource(path);
+        var duration  =retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)
+        var width  =retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH)
+        var height =retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_HEIGHT)
+        var bitrate =retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_BITRATE)
+
+        retriever.release()
+    }
 
     override fun onTrimStarted() {
         trimmingProgressView.visibility = View.VISIBLE
     }
 
-    fun finishTrimming(url:String?){
-        window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-        if (url == null) {
-            val resultIntent = Intent()
-            setResult(Activity.RESULT_CANCELED, resultIntent)
-            finish()
-        } else {
-            val resultIntent = Intent()
-            resultIntent.putExtra(VIDEO_URI, url)
-            setResult(Activity.RESULT_OK, resultIntent)
-            finish()
-        }
-        finish()
-    }
-
-    override fun onFinishedTrimming(uri: Uri?) {
-        trimmingProgressView.visibility = View.GONE
-        if (uri == null) {
-            val resultIntent = Intent()
-            setResult(Activity.RESULT_CANCELED, resultIntent)
-            finish()
-            Log.e("Error", "failed trimming")
-        } else {
-            val resultIntent = Intent()
-            resultIntent.putExtra(VIDEO_URI, uri.path)
-            setResult(Activity.RESULT_OK, resultIntent)
-            finish()
+    fun finishTrimming(url: String?) {
+        runOnUiThread {
+            if (url == null) {
+                val resultIntent = Intent()
+                setResult(Activity.RESULT_CANCELED, resultIntent)
+                finish()
+            } else {
+                val resultIntent = Intent()
+                resultIntent.putExtra(VIDEO_URI, url)
+                setResult(Activity.RESULT_OK, resultIntent)
+                finish()
+            }
         }
     }
 

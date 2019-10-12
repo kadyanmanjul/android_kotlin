@@ -254,7 +254,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal|bottom"
                     android:layout_marginBottom="5dp"
-                    android:text="@string/message_to_drag_up"
+                    android:text="@string/hold_for_video"
                     android:textColor="#fff"
                     android:textSize="12sp" />
 

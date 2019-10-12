@@ -8,5 +8,6 @@
     <string name="pix_last_month">Last Month</string>
     <string name="pix_last_week">Last Week</string>
     <string name="short_seconds">sec</string>
+    <string name="hold_for_video">Hold for video, tap for photo</string>
 
 </resources>

@@ -12,7 +12,11 @@ import com.joshtalks.appcamera.video_trimmer.view.TimeLineView
 import kotlinx.android.synthetic.main.video_trimmer.view.*
 
 
-class VideoTrimmerView @JvmOverloads constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int = 0) : BaseVideoTrimmerView(context, attrs, defStyleAttr) {
+class VideoTrimmerView @JvmOverloads constructor(
+    context: Context,
+    attrs: AttributeSet,
+    defStyleAttr: Int = 0
+) : BaseVideoTrimmerView(context, attrs, defStyleAttr) {
     private fun stringForTime(timeMs: Int): String {
         val totalSeconds = timeMs / 1000
         val seconds = totalSeconds % 60
@@ -45,7 +49,8 @@ class VideoTrimmerView @JvmOverloads constructor(context: Context, attrs: Attrib
 
     override fun onRangeUpdated(startTimeInMs: Int, endTimeInMs: Int) {
         val seconds = context.getString(R.string.short_seconds)
-        trimTimeRangeTextView.text = "${stringForTime(startTimeInMs)} $seconds - ${stringForTime(endTimeInMs)} $seconds"
+        trimTimeRangeTextView.text =
+            "${stringForTime(startTimeInMs)} $seconds - ${stringForTime(endTimeInMs)} $seconds"
     }
 
     override fun onVideoPlaybackReachingTime(timeInMs: Int) {

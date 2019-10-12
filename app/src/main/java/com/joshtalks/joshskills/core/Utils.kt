@@ -36,6 +36,8 @@ import androidx.core.content.ContextCompat.startActivity
 import androidx.core.content.ContextCompat.getSystemService
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.custom_ui.CustomTabHelper
+import saschpe.android.customtabs.CustomTabsHelper
+import saschpe.android.customtabs.WebViewFallback
 
 
 private val CHAT_TIME_FORMATTER = SimpleDateFormat("hh:mm aa")
@@ -254,49 +256,53 @@ object Utils {
     }
 
 
-    fun openUrl(url: String,activity: Activity) {
-        openInApplicationBrowser(url,activity)
-
-       /* try {
-            val intent = Intent(ACTION_VIEW)
-            intent.apply {
-                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            }
-            if (url.trim().startsWith("http://").not()) {
-                intent.data = Uri.parse("http://" + url.replace("https://", "").trim())
-            } else {
-                intent.data = Uri.parse(url.trim())
-            }
-            AppObjectController.joshApplication.startActivity(intent)
-        } catch (ex: Exception) {
-            ex.printStackTrace()
-        }*/
-    }
-    private fun openInApplicationBrowser(url: String,activity: Activity){
-        val updateUrl:String = if (url.trim().startsWith("http://").not()) {
+    fun openUrl(url: String, activity: Activity) {
+        val updateUrl: String = if (url.trim().startsWith("http://").not()) {
             "http://" + url.replace("https://", "").trim()
         } else {
             url.trim()
         }
-        val builder = CustomTabsIntent.Builder()
-        builder.setToolbarColor(ContextCompat.getColor(AppObjectController.joshApplication, R.color.colorPrimary))
-        builder.setShowTitle(true)
-        builder.setExitAnimations(activity, android.R.anim.fade_in, android.R.anim.fade_out)
-        val packageName = CustomTabHelper.getPackageNameToUse(activity, updateUrl)
-        val customTabsIntent = builder.build()
-        if (packageName == null) {
-            val intent = Intent(ACTION_VIEW)
-            intent.apply {
-                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            }
-            intent.data = Uri.parse(updateUrl)
-            activity.startActivity(intent)
-        } else {
-            customTabsIntent.intent.setPackage(packageName)
-            customTabsIntent.launchUrl(activity, Uri.parse(updateUrl))
-        }
+        val customTabsIntent = CustomTabsIntent.Builder()
+            .addDefaultShareMenuItem()
+            .setToolbarColor(ContextCompat.getColor(activity, R.color.colorPrimaryDark))
+            .setShowTitle(true)
+            .build()
+
+        CustomTabsHelper.addKeepAliveExtra(activity, customTabsIntent.intent)
+
+        CustomTabsHelper.openCustomTab(
+            activity,
+            customTabsIntent,
+            Uri.parse(updateUrl),
+            WebViewFallback()
+        )
 
     }
+    /* private fun openInApplicationBrowser(url: String,activity: Activity){
+         val updateUrl:String = if (url.trim().startsWith("http://").not()) {
+             "http://" + url.replace("https://", "").trim()
+         } else {
+             url.trim()
+         }
+         val builder = CustomTabsIntent.Builder()
+         builder.setToolbarColor(ContextCompat.getColor(AppObjectController.joshApplication, R.color.colorPrimary))
+         builder.setShowTitle(true)
+         builder.setExitAnimations(activity, android.R.anim.fade_in, android.R.anim.fade_out)
+         val packageName = CustomTabHelper.getPackageNameToUse(activity, updateUrl)
+         val customTabsIntent = builder.build()
+         if (packageName == null) {
+             val intent = Intent(ACTION_VIEW)
+             intent.apply {
+                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+             }
+             intent.data = Uri.parse(updateUrl)
+             activity.startActivity(intent)
+         } else {
+             customTabsIntent.intent.setPackage(packageName)
+             customTabsIntent.launchUrl(activity, Uri.parse(updateUrl))
+         }
+
+     }*/
 
     fun isInternetAvailable(): Boolean {
         val conMgr =

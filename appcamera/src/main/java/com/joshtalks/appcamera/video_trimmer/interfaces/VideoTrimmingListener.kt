@@ -40,9 +40,9 @@ interface VideoTrimmingListener {
 
     /**
      * @param uri the result, trimmed video, or null if failed
-     */
+     *//*
     @UiThread
-    fun onFinishedTrimming(uri: Uri?)
+    fun onFinishedTrimming(uri: Uri?)*/
 
     /**
      * check {[android.media.MediaPlayer.OnErrorListener]}

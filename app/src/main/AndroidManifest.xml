@@ -38,13 +38,9 @@
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-
     <uses-permission android:name="android.permission.CALL_PHONE" />
-
     <permission android:name="android.permission.MEDIA_CONTENT_CONTROL" />
-    <uses-feature
-            android:glEsVersion="0x00030001"
-            android:required="true" />
+
     <application
             android:name=".core.JoshApplication"
             android:allowBackup="@bool/useLargeHeap"
@@ -114,7 +110,7 @@
         <activity
                 android:name=".ui.chat.ConversationActivity"
                 android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize"
-                android:launchMode="singleTask"
+                android:launchMode="singleTop"
                 android:parentActivityName=".ui.inbox.InboxActivity"
                 android:theme="@style/AppNoBarTheme">
             <meta-data

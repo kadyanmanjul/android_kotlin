@@ -76,10 +76,10 @@ object TrimVideoUtils {
             succeeded = genVideoUsingMuxer(context, inputVideoUri, outputTrimmedVideoFile.absolutePath, startMs, endMs, true, true)
 //            Log.d("AppLog", "succeeded trimming using Android framework API?$succeeded")
         }
-        Handler(Looper.getMainLooper()).post {
+        /*Handler(Looper.getMainLooper()).post {
             //            callback.onFinishedTrimming(if (succeeded) Uri.parse(outputTrimmedVideoFile.toString()) else null)
             callback.onFinishedTrimming(if (succeeded) Uri.parse(outputTrimmedVideoFile.absolutePath) else null)
-        }
+        }*/
     }
 
     @Throws(IOException::class)

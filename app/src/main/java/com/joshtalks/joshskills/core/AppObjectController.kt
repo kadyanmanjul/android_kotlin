@@ -3,6 +3,7 @@ package com.joshtalks.joshskills.core
 import android.graphics.Bitmap
 import android.os.Handler
 import android.os.Looper
+import androidx.appcompat.app.AppCompatDelegate
 import com.bumptech.glide.load.MultiTransformation
 import com.clevertap.android.sdk.ActivityLifecycleCallback
 import com.facebook.stetho.okhttp3.StethoInterceptor
@@ -247,6 +248,7 @@ internal class AppObjectController {
                     RoundedCornersTransformation.CornerType.ALL
                 )
             )
+          //  AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)
 
 
             return INSTANCE

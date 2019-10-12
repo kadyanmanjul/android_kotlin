@@ -348,7 +348,7 @@ class PixEditor : AppCompatActivity(), View.OnClickListener, FilterImageAdapter.
         this.currentMode = mode
     }
 
-    protected fun onModeChanged(currentMode: Int) {
+    private fun onModeChanged(currentMode: Int) {
         Log.i(ImageEditActivity::class.java.simpleName, "CM: $currentMode")
         mainViewPager.scrollerEnabled = currentMode == 0
         onStickerMode(currentMode == PhotoEditorFragment.MODE_STICKER)

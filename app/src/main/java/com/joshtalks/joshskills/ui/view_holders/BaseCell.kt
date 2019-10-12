@@ -66,6 +66,7 @@ abstract class BaseCell() {
             )
             Glide.with(getAppContext())
                 .load(url)
+                .override(Target.SIZE_ORIGINAL)
                 .optionalTransform(
                     WebpDrawable::class.java,
                     WebpDrawableTransformation(CircleCrop())
@@ -112,6 +113,7 @@ abstract class BaseCell() {
 
             Glide.with(getAppContext())
                 .load(url)
+                .override(Target.SIZE_ORIGINAL)
                 .optionalTransform(
                     WebpDrawable::class.java,
                     WebpDrawableTransformation(CircleCrop())
@@ -155,6 +157,8 @@ abstract class BaseCell() {
         )
         Glide.with(getAppContext())
             .load(url)
+            .override(Target.SIZE_ORIGINAL)
+
             .optionalTransform(
                 WebpDrawable::class.java,
                 WebpDrawableTransformation(CircleCrop())
@@ -190,6 +194,7 @@ abstract class BaseCell() {
         iv?.let {
             Glide.with(getAppContext())
                 .load(url)
+                .override(Target.SIZE_ORIGINAL)
                 .optionalTransform(
                     WebpDrawable::class.java,
                     WebpDrawableTransformation(CircleCrop())
@@ -204,6 +209,7 @@ abstract class BaseCell() {
     fun setImageViewImageNotFound(iv: AppCompatImageView) {
         Glide.with(getAppContext())
             .load(R.drawable.ic_file_error)
+            .override(Target.SIZE_ORIGINAL)
             .optionalTransform(
                 WebpDrawable::class.java,
                 WebpDrawableTransformation(CircleCrop())
