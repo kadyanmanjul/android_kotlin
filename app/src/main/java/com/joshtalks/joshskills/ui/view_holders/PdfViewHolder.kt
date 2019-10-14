@@ -1,6 +1,7 @@
 package com.joshtalks.joshskills.ui.view_holders
 
 import android.Manifest
+import android.net.Uri
 import android.widget.FrameLayout
 import android.widget.TextView
 import androidx.appcompat.widget.AppCompatImageView
@@ -36,6 +37,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.lang.ref.WeakReference
 import android.widget.LinearLayout
+import android.widget.RelativeLayout
 
 @Layout(R.layout.pdf_view_holder)
 class PdfViewHolder(activityRef: WeakReference<FragmentActivity>, message: ChatModel) :
@@ -60,6 +62,11 @@ class PdfViewHolder(activityRef: WeakReference<FragmentActivity>, message: ChatM
     @View(R.id.text_message_time)
     lateinit var text_message_time: AppCompatTextView
 
+
+    @View(R.id.tv_message_detail)
+    lateinit var messageDetail: AppCompatTextView
+
+
     @View(R.id.image_view)
     lateinit var image_view: AppCompatImageView
 
@@ -78,7 +85,7 @@ class PdfViewHolder(activityRef: WeakReference<FragmentActivity>, message: ChatM
     lateinit var progress_dialog: ProgressWheel
 
     @View(R.id.ll_container)
-    lateinit var ll_container: LinearLayout
+    lateinit var ll_container: RelativeLayout
 
 
     lateinit var pdfViewHolder: PdfViewHolder
@@ -173,14 +180,15 @@ class PdfViewHolder(activityRef: WeakReference<FragmentActivity>, message: ChatM
         updateTime(text_message_time)
 
         message.question?.pdfList?.getOrNull(0)?.let { pdfObj ->
+            pdfObj.thumbnail?.let {
+                setImageInImageView(image_view, it);
+            }
 
-
-            message_view.addOnLayoutChangeListener { _, _, _, _, _, _, _, _, _ ->
-                if (ll_container.tag == null) {
-                    ll_container.layoutParams.width = message_view.width
-                    ll_container.requestLayout()
-                    ll_container.tag = "Ok"
-                }
+            pdfObj.pages?.let {
+                messageDetail.text = context.getString(R.string.pdf_desc, it)
+            }
+            Uri.parse(pdfObj.url).let {
+                tv_pdf_info.text = it.pathSegments[it.pathSegments.size-1].split(".")[0]
             }
 
             if (message.downloadStatus == DOWNLOAD_STATUS.DOWNLOADED) {

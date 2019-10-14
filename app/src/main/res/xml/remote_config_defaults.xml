@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<defaultsMap>
+    <entry>
+        <key>registration_url</key>
+        <value>http://english.joshtalks.org/</value>
+    </entry>
+    <entry>
+        <key>self_register_text</key>
+        <value>Kya aapne kisi aur Whatsapp number se register kiya hai</value>
+    </entry>
+    <entry>
+        <key>helpline_number</key>
+        <value>7428797127</value>
+    </entry>
+
+</defaultsMap>

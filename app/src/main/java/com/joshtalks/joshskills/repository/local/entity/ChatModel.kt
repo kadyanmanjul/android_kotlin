@@ -260,13 +260,13 @@ data class PdfType(
     var totalView: Int = 0,
 
     @ColumnInfo(name = "thumbnail")
-    var thumbnail: String = "",
+    var thumbnail: String? = "",
 
     @ColumnInfo(name = "size")
     var size: String = "",
 
     @ColumnInfo(name = "pages")
-    var pages: String = ""
+    var pages: String? = ""
 
 ) : DataBaseClass(), Serializable
 

@@ -8,6 +8,8 @@ import java.io.Serializable
 
 
 data class InboxEntity(
+
+    val course_icon: String? = "",
     val courseId: String = "",
     val duration: Int = 0,
     val is_deleted: Boolean? = false,

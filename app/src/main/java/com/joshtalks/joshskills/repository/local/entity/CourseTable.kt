@@ -24,7 +24,9 @@ data class Course(
 
 
     @ColumnInfo(name = "conversation_id")
-    @SerializedName("conversation_id") val conversationId: String?
+    @SerializedName("conversation_id") val conversationId: String?,
+    @ColumnInfo(name = "course_icon")
+    @SerializedName("icon") val courseIcon: String?
 
 
 ) : Serializable

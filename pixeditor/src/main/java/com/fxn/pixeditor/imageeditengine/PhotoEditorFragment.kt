@@ -266,7 +266,7 @@ class PhotoEditorFragment : BaseFragment(), View.OnClickListener, ViewTouchListe
                         }
 
                         setImageBitmap(mainBitmap)
-                        GetFiltersTask(object : TaskCallback<ArrayList<ImageFilter>> {
+                       /* GetFiltersTask(object : TaskCallback<ArrayList<ImageFilter>> {
                             override fun onTaskDone(data: ArrayList<ImageFilter>) {
                                 val filterImageAdapter = filterRecylerview.adapter as FilterImageAdapter
                                 if (filterImageAdapter != null) {
@@ -274,7 +274,7 @@ class PhotoEditorFragment : BaseFragment(), View.OnClickListener, ViewTouchListe
                                     filterImageAdapter.notifyDataSetChanged()
                                 }
                             }
-                        }, mainBitmap!!).execute()
+                        }, mainBitmap!!).execute()*/
                     }
                 })
 

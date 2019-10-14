@@ -2,8 +2,10 @@ package com.joshtalks.joshskills.ui.inbox
 
 import android.Manifest
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import androidx.appcompat.widget.AppCompatTextView
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.*
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
@@ -75,13 +77,10 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver {
     }
 
 
-
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
         processIntent(intent)
     }
-
-
 
 
     private fun locationFetch() {

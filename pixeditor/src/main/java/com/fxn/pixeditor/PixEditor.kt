@@ -172,7 +172,7 @@ class PixEditor : AppCompatActivity(), View.OnClickListener, FilterImageAdapter.
                     )
                     (filter_list_rv.adapter as FilterImageAdapter).lastCheckedPostion =
                         listBitmap[position].filterSelection
-                    GetFiltersTask(object : TaskCallback<ArrayList<ImageFilter>> {
+                   /* GetFiltersTask(object : TaskCallback<ArrayList<ImageFilter>> {
                         override fun onTaskDone(data: ArrayList<ImageFilter>) {
                             val filterImageAdapter = filter_list_rv.adapter as FilterImageAdapter?
                             if (filterImageAdapter != null) {
@@ -180,7 +180,7 @@ class PixEditor : AppCompatActivity(), View.OnClickListener, FilterImageAdapter.
                                 filterImageAdapter.notifyDataSetChanged()
                             }
                         }
-                    }, listBitmap[position].mainBitmap!!).execute()
+                    }, listBitmap[position].mainBitmap!!).execute()*/
                 }
             }
 

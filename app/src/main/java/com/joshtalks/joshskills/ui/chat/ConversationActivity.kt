@@ -112,9 +112,6 @@ class ConversationActivity() : BaseActivity() {
     private var removeingConversationList = linkedSetOf<ChatModel>()
 
 
-    // private lateinit var attachmentPopup: AttachmentPopup
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         inboxEntity = intent.getSerializableExtra(CHAT_ROOM_OBJECT) as InboxEntity

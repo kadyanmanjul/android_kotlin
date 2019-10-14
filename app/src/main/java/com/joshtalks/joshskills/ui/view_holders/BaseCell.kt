@@ -11,6 +11,7 @@ import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import android.widget.ImageView
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
@@ -102,10 +103,7 @@ abstract class BaseCell() {
     }
 
     fun setImageInImageView(iv: AppCompatImageView?, url: String, callback: Runnable? = null) {
-
         if (iv != null) {
-
-
             val multi = MultiTransformation<Bitmap>(
                 CropTransformation(Utils.dpToPx(IMAGE_SIZE), Utils.dpToPx(IMAGE_SIZE), CropTransformation.CropType.CENTER),
                 RoundedCornersTransformation(Utils.dpToPx(ROUND_CORNER), 0, RoundedCornersTransformation.CornerType.ALL)
@@ -216,6 +214,25 @@ abstract class BaseCell() {
             )
             .apply(RequestOptions.bitmapTransform(AppObjectController.multiTransformation))
             .into(iv)
+
+    }
+    fun setImageInImageView(iv: ImageView?, url: String) {
+        if (iv != null) {
+            val multi = MultiTransformation<Bitmap>(
+                CropTransformation(Utils.dpToPx(IMAGE_SIZE), Utils.dpToPx(IMAGE_SIZE), CropTransformation.CropType.CENTER),
+                RoundedCornersTransformation(Utils.dpToPx(ROUND_CORNER), 0, RoundedCornersTransformation.CornerType.ALL)
+            )
+
+            Glide.with(getAppContext())
+                .load(url)
+                .override(Target.SIZE_ORIGINAL)
+                .optionalTransform(
+                    WebpDrawable::class.java,
+                    WebpDrawableTransformation(CircleCrop())
+                )
+                .apply(RequestOptions.bitmapTransform(multi))
+                .into(iv)
+        }
 
     }
 

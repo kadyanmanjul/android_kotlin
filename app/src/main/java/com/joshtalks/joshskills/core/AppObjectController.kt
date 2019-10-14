@@ -8,6 +8,7 @@ import com.bumptech.glide.load.MultiTransformation
 import com.clevertap.android.sdk.ActivityLifecycleCallback
 import com.facebook.stetho.okhttp3.StethoInterceptor
 import com.google.android.exoplayer2.util.Util
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.joshtalks.joshskills.repository.local.AppDatabase
 import com.google.gson.Gson
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
@@ -120,6 +121,10 @@ internal class AppObjectController {
 
         @JvmStatic
         lateinit var multiTransformation: MultiTransformation<Bitmap>
+
+        @JvmStatic
+        var firebaseRemoteConfig: FirebaseRemoteConfig = FirebaseRemoteConfig.getInstance()
+
 
         /* @JvmStatic
         val videoDownloadListener = HashMap<String, DownloadTracker.Listener>()

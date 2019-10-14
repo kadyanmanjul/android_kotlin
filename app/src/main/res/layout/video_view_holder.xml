@@ -161,7 +161,7 @@
                     android:layout_gravity="start"
                     android:gravity="center_vertical|start"
                     android:paddingTop="@dimen/_5sdp"
-                    android:paddingEnd="10dp"
+                    android:paddingEnd="@dimen/_10sdp"
                     android:textColor="@color/gray_48"
                     android:textSize="@dimen/font_16"
                     android:visibility="gone"

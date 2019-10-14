@@ -14,6 +14,7 @@ import android.content.res.TypedArray
 import android.net.Uri
 import android.os.Build
 import android.util.AttributeSet
+import android.util.Log
 import android.view.View
 import android.widget.*
 import com.afollestad.materialdialogs.MaterialDialog
@@ -529,6 +530,7 @@ class JcPlayerView : LinearLayout, View.OnClickListener, SeekBar.OnSeekBarChange
                 endTime = status.currentPosition
             }
         }
+        Log.e("ontime",status.toString())
 
         seekBar?.post { seekBar?.progress = currentPosition }
         txtCurrentDuration?.post { txtCurrentDuration?.text = toTimeSongString(currentPosition) }
@@ -764,10 +766,7 @@ class JcPlayerView : LinearLayout, View.OnClickListener, SeekBar.OnSeekBarChange
                 cAudioObj =
                     JcAudio.createFromFilePath(message.question!!.audioList!![0].downloadedLocalPath!!)
                 isMedia = true
-                this.duration = Utils.getDurationOfMedia(
-                    context,
-                    message.question!!.audioList!![0].downloadedLocalPath!!
-                )!!.toInt()
+                this.duration = message.question!!.audioList!![0].duration
             } else {
                 cAudioObj = JcAudio.createFromFilePath(message.downloadedLocalPath!!)
                 isMedia = true

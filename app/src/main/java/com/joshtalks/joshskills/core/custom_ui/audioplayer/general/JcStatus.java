@@ -57,4 +57,14 @@ public class JcStatus {
     public enum PlayState {
         PLAY, PAUSE, STOP, CONTINUE, PREPARING, PLAYING
     }
+/*
+    @Override
+    public String toString() {
+        return "JcStatus{" +
+                "jcAudio=" + jcAudio +
+                ", duration=" + duration +
+                ", currentPosition=" + currentPosition +
+                ", playState=" + playState +
+                '}';
+    }*/
 }

@@ -40,4 +40,7 @@
     <color name="seek_bar_secondary_progress">#3399CC</color>
 
     <color name="select_forground_color">#2505A8F5</color>
+
+    <color name="status_bar_color">#054C44</color>
+
 </resources>

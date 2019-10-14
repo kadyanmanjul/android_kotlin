@@ -48,6 +48,10 @@ class InboxViewHolder(var inboxEntity: InboxEntity) : BaseCell() {
         profile_image.setImageResource(R.drawable.ic_josh_course)
         tvName.text = inboxEntity.course_name
 
+        inboxEntity.course_icon?.let {
+            setImageInImageView(profile_image,it)
+        }
+
 
         inboxEntity.type?.let {
             if (BASE_MESSAGE_TYPE.Q == it) {
