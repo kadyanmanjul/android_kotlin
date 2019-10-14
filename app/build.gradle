@@ -79,6 +79,11 @@ android {
         jvmTarget = "1.8"
     }
 
+    dexOptions {
+        maxProcessCount 8
+        javaMaxHeapSize "4g"
+        preDexLibraries true
+    }
     packagingOptions {
         exclude 'META-INF/LICENSE'
         exclude 'META-INF/proguard/androidx-annotations.pro'
@@ -91,6 +96,12 @@ android {
         exclude 'META-INF/notice.txt'
         exclude 'META-INF/ASL2.0'
         exclude 'META-INF/notice.txt'
+        exclude 'META-INF/main.kotlin_module'
+        pickFirst 'lib/armeabi-v7a/libc++_shared.so'
+        pickFirst 'lib/armeabi/libc++_shared.so'
+        pickFirst 'lib/arm64-v8a/libc++_shared.so'
+        pickFirst 'lib/x86/libc++_shared.so'
+        pickFirst 'lib/x86_64/libc++_shared.so'
 
 
     }
@@ -250,7 +261,13 @@ dependencies {
     implementation 'com.afollestad.material-dialogs:core:3.1.1'
     implementation 'saschpe.android:customtabs:2.0.0'
 
+   // implementation 'org.videolan.android:libvlc-all:3.1.12'
 
+
+/*
+    releaseImplementation "org.videolan.android:libvlc-all:$rootProject.ext.libvlcVersion"
+    releaseImplementation "org.videolan.android:medialibrary-all:$rootProject.ext.medialibraryVersion"
+*/
 
     // implementation 'com.yanzhenjie:album:2.1.3'
 

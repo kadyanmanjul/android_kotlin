@@ -257,7 +257,16 @@ data class PdfType(
     @SerializedName("is_deleted") var is_deleted: Boolean = false,
 
     @ColumnInfo(name = "total_view")
-    var totalView: Int = 0
+    var totalView: Int = 0,
+
+    @ColumnInfo(name = "thumbnail")
+    var thumbnail: String = "",
+
+    @ColumnInfo(name = "size")
+    var size: String = "",
+
+    @ColumnInfo(name = "pages")
+    var pages: String = ""
 
 ) : DataBaseClass(), Serializable
 
