@@ -26,6 +26,8 @@ class RegisterInfoActivity : BaseActivity() {
         supportActionBar?.hide()
         AppAnalytics.create(AnalyticsEvent.COURSE_FAILURE_SCREEN.NAME).push()
         layout.phoneNumberEt.prefix = "+91"
+
+        layout.tv2.text = AppObjectController.firebaseRemoteConfig.getString("self_register_text")
     }
 
     fun registerUser() {
@@ -42,7 +44,8 @@ class RegisterInfoActivity : BaseActivity() {
             val builder = AlertDialog.Builder(it)
             builder.apply {
                 setMessage(getString(R.string.anonymous_user_login))
-                setPositiveButton(R.string.register
+                setPositiveButton(
+                    R.string.register
                 ) { dialog, _ ->
                     dialog.dismiss()
                     registerAnonymousUser(phoneNumber)
@@ -50,20 +53,21 @@ class RegisterInfoActivity : BaseActivity() {
             }
             builder.create()
         }
-        //val pbutton = alertDialog?.getButton(DialogInterface.BUTTON_POSITIVE)
-       // pbutton?.setBackgroundColor(Color.YELLOW)
         alertDialog?.show()
 
     }
 
     fun clickToPay() {
         AppAnalytics.create(AnalyticsEvent.CLICK_TO_PAY_SELECTED.NAME).push()
-        Utils.openUrl(REDIRECT_URL,this@RegisterInfoActivity)
+        Utils.openUrl(
+            AppObjectController.firebaseRemoteConfig.getString("registration_url"),
+            this@RegisterInfoActivity
+        )
     }
 
     fun callHelpLine() {
         AppAnalytics.create(AnalyticsEvent.CLICK_HELPLINE_SELECTED.NAME).push()
-        Utils.call(this, "7428797127")
+        Utils.call(this, AppObjectController.firebaseRemoteConfig.getString("helpline_number"))
     }
 
     override fun onBackPressed() {

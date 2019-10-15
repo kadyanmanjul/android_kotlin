@@ -60,7 +60,7 @@ abstract class AppDatabase : RoomDatabase() {
                 database.execSQL("ALTER TABLE course ADD COLUMN course_icon TEXT")
                 database.execSQL("ALTER TABLE chat_table ADD COLUMN is_delete_message INTEGER NOT NULL DEFAULT 0 ")
                 database.execSQL("ALTER TABLE PdfTable ADD COLUMN thumbnail TEXT")
-                database.execSQL("ALTER TABLE PdfTable ADD COLUMN size TEXT")
+                database.execSQL("ALTER TABLE PdfTable ADD COLUMN size TEXT NOT NULL DEFAULT ''")
                 database.execSQL("ALTER TABLE PdfTable ADD COLUMN pages TEXT")
                 database.execSQL("UPDATE chat_table  SET is_seen = 1")
             }

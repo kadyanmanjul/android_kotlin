@@ -28,8 +28,6 @@ object DatabaseUtils {
     }
 
     suspend fun addChat(chatModel: ChatModel): Long {
-
-
         return CoroutineScope(Dispatchers.IO).async {
             val cal = Calendar.getInstance()
             cal.time = Date(cal.time.time)

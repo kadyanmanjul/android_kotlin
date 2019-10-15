@@ -136,6 +136,7 @@ class ConversationActivity() : BaseActivity() {
         }, 1000)
         AppAnalytics.create(AnalyticsEvent.CHAT_SCREEN.NAME).push()
         processIntent(intent)
+
     }
 
 

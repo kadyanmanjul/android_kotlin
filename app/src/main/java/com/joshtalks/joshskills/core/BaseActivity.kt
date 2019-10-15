@@ -45,6 +45,7 @@ abstract class BaseActivity : AppCompatActivity() {
         windowManager.defaultDisplay.getMetrics(displayMetrics)
         AppObjectController.screenHeight = displayMetrics.heightPixels
         AppObjectController.screenWidth = displayMetrics.widthPixels
+        getConfig()
 
 
     }
@@ -97,7 +98,7 @@ abstract class BaseActivity : AppCompatActivity() {
         }
     }
 
-    fun getConfig() {
+    private fun getConfig() {
         val configSettings = FirebaseRemoteConfigSettings.Builder()
             .setMinimumFetchIntervalInSeconds(10 * 3600)
             .build()
