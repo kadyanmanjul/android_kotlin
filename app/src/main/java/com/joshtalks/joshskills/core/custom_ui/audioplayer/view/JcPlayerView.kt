@@ -45,6 +45,10 @@ import com.karumi.dexter.listener.PermissionGrantedResponse
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.single.PermissionListener
 import io.reactivex.disposables.CompositeDisposable
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -782,17 +786,19 @@ class JcPlayerView : LinearLayout, View.OnClickListener, SeekBar.OnSeekBarChange
 
 
     }
-/*
+
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
-        compositeDisposable.add(RxBus2.listen(AudioPlayerPauseEventBus::class.java).subscribe {
-            it?.audioId?.let { audioId ->
-                if (audioId != message.chatId) {
-                 //   updateController()
-                }
-            }
-        })
-    }*/
+        setDefaultUi()
+        updateUI()
+        /* compositeDisposable.add(RxBus2.listen(AudioPlayerPauseEventBus::class.java).subscribe {
+             it?.audioId?.let { audioId ->
+                 if (audioId != message.chatId) {
+                  //   updateController()
+                 }
+             }
+         })*/
+    }
 
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
