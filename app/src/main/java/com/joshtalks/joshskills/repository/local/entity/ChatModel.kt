@@ -356,7 +356,7 @@ interface ChatDao {
 
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insertAMessage(chat: ChatModel): Long
+    suspend fun insertAMessage(chat: ChatModel)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun updateChatMessage(chat: ChatModel)
