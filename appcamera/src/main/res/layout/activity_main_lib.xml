@@ -46,7 +46,6 @@
 
 
         <androidx.coordinatorlayout.widget.CoordinatorLayout
-                android:id="@+id/main_content"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginTop="@dimen/margin_top"
@@ -94,7 +93,6 @@
                         android:visibility="gone">
 
                     <ImageView
-                            android:id="@+id/fastscroll_track"
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:layout_gravity="right"

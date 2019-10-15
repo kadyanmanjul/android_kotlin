@@ -112,10 +112,10 @@ class ActivityLibMain : ActivityBase() {
                 onBackPressed()
                 true
             }
-            R.id.action_open -> {
+            /*R.id.action_open -> {
                 createPickFromDocumentsIntent()
                 true
-            }
+            }*/
             else -> super.onOptionsItemSelected(item)
         }
     }

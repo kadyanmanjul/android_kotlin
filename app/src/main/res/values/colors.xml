@@ -36,10 +36,7 @@
     <color name="grey_7A">#7A7A7A</color>
 
     <color name="seek_bar_background">#CCababab</color>
-    <color name="seek_bar_progress">#ffb600</color>
     <color name="seek_bar_secondary_progress">#3399CC</color>
-
-    <color name="select_forground_color">#2505A8F5</color>
 
     <color name="status_bar_color">#054C44</color>
 

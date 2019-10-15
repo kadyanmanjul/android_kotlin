@@ -9,8 +9,7 @@
     android:background="@color/md_grey_50">
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
-        android:id="@+id/file_fragment_coordinator_layout"
-        android:layout_width="match_parent"
+            android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <androidx.recyclerview.widget.RecyclerView
