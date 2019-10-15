@@ -193,6 +193,7 @@
 
 
                 <com.joshtalks.recordview.CustomImageButton
+                        android:layout_marginEnd="@dimen/_5sdp"
                         app:layout_constraintBottom_toBottomOf="@+id/inputLL"
                         app:layout_constraintRight_toRightOf="parent"
                         app:layout_constraintTop_toTopOf="@+id/inputLL"
@@ -206,10 +207,7 @@
                         android:visibility="visible"
                         app:image_first="@drawable/recv_ic_mic_white"
                         app:image_second="@drawable/ic_send"
-
                         />
-
-
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </RelativeLayout>

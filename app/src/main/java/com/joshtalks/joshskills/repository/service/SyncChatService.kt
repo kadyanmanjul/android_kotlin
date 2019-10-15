@@ -103,10 +103,6 @@ object SyncChatService {
         ) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                chatModel?.let {
-                    it.conversationId = conversation_id
-                    DatabaseUtils.addChat(it)
-                }
                 messageObject.conversation = conversation_id
                 val responseChat =
                     AppObjectController.chatNetworkService.sendMessage(messageObject).await()

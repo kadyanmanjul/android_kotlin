@@ -157,7 +157,9 @@ class ConversationViewModel(application: Application) : AndroidViewModel(applica
             try {
                 chatModel?.let {
                     it.conversationId = inboxEntity.conversation_id
-                    DatabaseUtils.addChat(it)
+                    if (Utils.isInternetAvailable().not()) {
+                        DatabaseUtils.addChat(it)
+                    }
                 }
                 messageObject.conversation = inboxEntity.conversation_id
                 val responseChat =
@@ -186,7 +188,9 @@ class ConversationViewModel(application: Application) : AndroidViewModel(applica
                 compressImagePath = getCompressImage(mediaPath)
             }
             chatModel.downloadedLocalPath = compressImagePath
-            DatabaseUtils.addChat(chatModel)
+            if (Utils.isInternetAvailable().not()){
+                DatabaseUtils.addChat(chatModel)
+            }
             uploadCompressedMedia(compressImagePath, messageObject, chatModel)
 
         }

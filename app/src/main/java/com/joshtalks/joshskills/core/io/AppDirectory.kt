@@ -274,6 +274,17 @@ object AppDirectory {
         return recordingSentFile().absolutePath
     }
 
+    fun getFilePath(sentFile: String): String {
+        val f = File(RECORDING_SENT_PATH)
+        if (f.exists().not()) {
+            f.mkdirs()
+        }
+        val file =
+            File(RECORDING_SENT_PATH + File.separator + sentFile.substring(sentFile.lastIndexOf("/") + 1))
+        file.createNewFile();
+        return file.absolutePath
+    }
+
 
     fun getTempImageFile() {
 

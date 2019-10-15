@@ -254,8 +254,7 @@ class JcPlayerView : LinearLayout, View.OnClickListener, SeekBar.OnSeekBarChange
         this.activity = activity
         this.message = obj
         this.audioPlayerInterface = audioPlayerInterface
-        cAudioObj=null
-      //  setDefaultUi()
+        setDefaultUi()
         updateUI()
         updateTime(message_time)
         //message_time
@@ -263,14 +262,14 @@ class JcPlayerView : LinearLayout, View.OnClickListener, SeekBar.OnSeekBarChange
     }
 
     private fun setDefaultUi() {
-        seekBar.visibility = View.GONE
-        download_container.visibility = View.GONE
-        progressBarPlayer.visibility = View.GONE
-        cancelDownload.visibility = View.GONE
-        startDownload.visibility = View.GONE
-        btnPlay?.visibility = View.GONE
-        btnPause?.visibility = View.GONE
-        seekBar_ph?.visibility = View.GONE
+        seekBar.visibility = View.INVISIBLE
+        download_container.visibility = View.INVISIBLE
+        progressBarPlayer.visibility = View.INVISIBLE
+        cancelDownload.visibility = View.INVISIBLE
+        startDownload.visibility = View.INVISIBLE
+        btnPlay?.visibility = View.INVISIBLE
+        btnPause?.visibility = View.INVISIBLE
+        seekBar_ph?.visibility = View.INVISIBLE
         txtCurrentDuration.text = EMPTY
     }
 
@@ -294,9 +293,9 @@ class JcPlayerView : LinearLayout, View.OnClickListener, SeekBar.OnSeekBarChange
     private fun showPlayButton() {
         btnPlay?.visibility = View.VISIBLE
         seekBar?.visibility = View.VISIBLE
-        btnPause?.visibility = View.GONE
-        download_container?.visibility = View.GONE
-        seekBar_ph?.visibility = View.GONE
+        btnPause?.visibility = View.INVISIBLE
+        download_container?.visibility = View.INVISIBLE
+        seekBar_ph?.visibility = View.INVISIBLE
 
     }
 
@@ -304,7 +303,7 @@ class JcPlayerView : LinearLayout, View.OnClickListener, SeekBar.OnSeekBarChange
      * Shows the pause button on player.
      */
     private fun showPauseButton() {
-        btnPlay?.visibility = View.GONE
+        btnPlay?.visibility = View.INVISIBLE
         btnPause?.visibility = View.VISIBLE
     }
 
@@ -365,7 +364,6 @@ class JcPlayerView : LinearLayout, View.OnClickListener, SeekBar.OnSeekBarChange
         }
 
     }
-
 
 
     override fun onClick(view: View) {
@@ -530,7 +528,7 @@ class JcPlayerView : LinearLayout, View.OnClickListener, SeekBar.OnSeekBarChange
                 endTime = status.currentPosition
             }
         }
-        Log.e("ontime",status.toString())
+        Log.e("ontime", status.toString())
 
         seekBar?.post { seekBar?.progress = currentPosition }
         txtCurrentDuration?.post { txtCurrentDuration?.text = toTimeSongString(currentPosition) }
@@ -572,12 +570,12 @@ class JcPlayerView : LinearLayout, View.OnClickListener, SeekBar.OnSeekBarChange
 
     private fun showProgressBar() {
         progressBarPlayer?.visibility = ProgressBar.VISIBLE
-        btnPlay?.visibility = Button.GONE
-        btnPause?.visibility = Button.GONE
+        btnPlay?.visibility = Button.INVISIBLE
+        btnPause?.visibility = Button.INVISIBLE
     }
 
     private fun dismissProgressBar() {
-        progressBarPlayer?.visibility = ProgressBar.GONE
+        progressBarPlayer?.visibility = ProgressBar.INVISIBLE
         showPauseButton()
     }
 
@@ -665,11 +663,7 @@ class JcPlayerView : LinearLayout, View.OnClickListener, SeekBar.OnSeekBarChange
 
         } else {
             if (message.downloadStatus === DOWNLOAD_STATUS.DOWNLOADED || message.downloadStatus === DOWNLOAD_STATUS.UPLOADED) {
-                if (message.downloadedLocalPath != null && AppDirectory.isFileExist(message.downloadedLocalPath!!)) {
-                    mediaDownloaded()
-                } else {
-                    mediaNotAvailableDownloaded()
-                }
+                mediaDownloaded()
             } else if (message.downloadStatus === DOWNLOAD_STATUS.DOWNLOADING) {
                 mediaDownloading()
                 audioPlayerInterface?.downloadStart(message.url!!)
@@ -682,24 +676,25 @@ class JcPlayerView : LinearLayout, View.OnClickListener, SeekBar.OnSeekBarChange
     }
 
     private fun mediaUploading() {
+        seekBar.visibility = View.INVISIBLE
         seekBar_ph?.visibility = View.VISIBLE
         download_container.visibility = View.VISIBLE
         progressBarPlayer.visibility = View.VISIBLE
         cancelDownload.visibility = View.VISIBLE
-        startDownload.visibility = View.GONE
-        btnPlay?.visibility = View.GONE
-        btnPause?.visibility = View.GONE
+        startDownload.visibility = View.INVISIBLE
+        btnPlay?.visibility = View.INVISIBLE
+        btnPause?.visibility = View.INVISIBLE
     }
 
     private fun mediaNotAvailableDownloaded() {
         seekBar.visibility = View.VISIBLE
-        seekBar_ph?.visibility = View.GONE
-        download_container.visibility = View.GONE
-        startDownload.visibility = View.GONE
-        progressBarPlayer.visibility = View.GONE
-        cancelDownload.visibility = View.GONE
+        seekBar_ph?.visibility = View.INVISIBLE
+        download_container.visibility = View.INVISIBLE
+        startDownload.visibility = View.INVISIBLE
+        progressBarPlayer.visibility = View.INVISIBLE
+        cancelDownload.visibility = View.INVISIBLE
         btnPlay?.visibility = View.VISIBLE
-        btnPause?.visibility = View.GONE
+        btnPause?.visibility = View.INVISIBLE
         txtCurrentDuration.text = EMPTY
         if (duration > 0) {
             txtCurrentDuration.text = toTimeSongString(duration)
@@ -709,20 +704,15 @@ class JcPlayerView : LinearLayout, View.OnClickListener, SeekBar.OnSeekBarChange
     }
 
     private fun mediaNotDownloaded() {
-        seekBar_ph?.visibility = View.VISIBLE
         download_container.visibility = View.VISIBLE
+        seekBar_ph?.visibility = View.VISIBLE
         startDownload.visibility = View.VISIBLE
-        seekBar.visibility = View.GONE
-        progressBarPlayer.visibility = View.GONE
-        cancelDownload.visibility = View.GONE
-        btnPlay?.visibility = View.GONE
-        btnPause?.visibility = View.GONE
+        seekBar.visibility = View.INVISIBLE
+        progressBarPlayer.visibility = View.INVISIBLE
+        cancelDownload.visibility = View.INVISIBLE
+        btnPlay?.visibility = View.INVISIBLE
+        btnPause?.visibility = View.INVISIBLE
         txtCurrentDuration.text = EMPTY
-
-
-
-
-
         if (duration > 0) {
             txtCurrentDuration.text = toTimeSongString(duration)
         }
@@ -733,22 +723,21 @@ class JcPlayerView : LinearLayout, View.OnClickListener, SeekBar.OnSeekBarChange
         progressBarPlayer.visibility = View.VISIBLE
         cancelDownload.visibility = View.VISIBLE
         seekBar_ph?.visibility = View.VISIBLE
-        startDownload.visibility = View.GONE
+        startDownload.visibility = View.INVISIBLE
     }
 
     private fun mediaDownloaded() {
-        seekBar.visibility = View.VISIBLE
         btnPlay?.visibility = View.VISIBLE
-        btnPause?.visibility = View.GONE
-        seekBar_ph?.visibility = View.GONE
-        download_container.visibility = View.GONE
+        seekBar.visibility = View.VISIBLE
+        btnPause?.visibility = View.INVISIBLE
+        seekBar_ph?.visibility = View.INVISIBLE
+        download_container.visibility = View.INVISIBLE
         updateUri()
     }
 
     private fun updateUri() {
         cAudioObj = getAudioObject()
         kill()
-
         if (cAudioObj != null) {
             val jcAudios = java.util.ArrayList<JcAudio>()
             jcAudios.add(cAudioObj!!)
@@ -785,7 +774,7 @@ class JcPlayerView : LinearLayout, View.OnClickListener, SeekBar.OnSeekBarChange
         if (isMedia) {
             AppObjectController.uiHandler.post {
                 btnPlay?.visibility = View.VISIBLE
-                btnPause?.visibility = View.GONE
+                btnPause?.visibility = View.INVISIBLE
                 //seekBar?.progress = 0
 
             }
@@ -793,17 +782,17 @@ class JcPlayerView : LinearLayout, View.OnClickListener, SeekBar.OnSeekBarChange
 
 
     }
-
+/*
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
         compositeDisposable.add(RxBus2.listen(AudioPlayerPauseEventBus::class.java).subscribe {
             it?.audioId?.let { audioId ->
                 if (audioId != message.chatId) {
-                    updateController()
+                 //   updateController()
                 }
             }
         })
-    }
+    }*/
 
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
@@ -829,9 +818,6 @@ class JcPlayerView : LinearLayout, View.OnClickListener, SeekBar.OnSeekBarChange
                 )
                 return
             }
-
-
-
             when {
                 message.messageDeliverStatus == MESSAGE_DELIVER_STATUS.SENT -> {
 

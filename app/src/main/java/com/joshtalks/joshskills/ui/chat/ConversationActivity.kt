@@ -174,7 +174,6 @@ class ConversationActivity() : BaseActivity() {
         conversationBinding.chatRv.builder
             .setHasFixedSize(false)
             .setLayoutManager(linearLayoutManager)
-
         conversationBinding.chatRv.itemAnimator = null
         conversationBinding.chatRv.addItemDecoration(
             LayoutMarginDecoration(
@@ -439,7 +438,7 @@ class ConversationActivity() : BaseActivity() {
                     it?.let {
                         it[0].path?.let { path ->
                             AppAnalytics.create(AnalyticsEvent.AUDIO_SENT.NAME).push()
-                            addUploadAudioMedia(Utils.getPathFromUri(path))
+                            addUploadAnyAudioMedia(Utils.getPathFromUri(path))
                         }
 
                     }
@@ -700,7 +699,7 @@ class ConversationActivity() : BaseActivity() {
 
     }
 
-    fun refreshViewAtPos(chatObj: ChatModel) {
+    private fun refreshViewAtPos(chatObj: ChatModel) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
 
@@ -734,6 +733,21 @@ class ConversationActivity() : BaseActivity() {
 
     }
 
+
+    private fun addUploadAnyAudioMedia(audioFilePath: String) {
+        val recordUpdatedPath = AppDirectory.getFilePath(audioFilePath)
+        AppDirectory.copy(audioFilePath, recordUpdatedPath)
+        val tAudioMessage = TAudioMessage(recordUpdatedPath, recordUpdatedPath)
+        val cell =
+            MessageBuilderFactory.getMessage(activityRef, BASE_MESSAGE_TYPE.AU, tAudioMessage)
+        conversationBinding.chatRv.addView(cell)
+        scrollToEnd()
+        conversationViewModel.uploadMedia(
+            recordUpdatedPath,
+            tAudioMessage,
+            cell.message
+        )
+    }
 
     private fun addUploadAudioMedia(mediaPath: String) {
         val recordUpdatedPath = AppDirectory.getRecordingSentFilePath()
@@ -873,7 +887,6 @@ class ConversationActivity() : BaseActivity() {
             val count = conversationBinding.chatRv.adapter?.itemCount ?: 0
             linearLayoutManager.scrollToPosition(count - 1)
             conversationBinding.scrollToEndButton.visibility = GONE
-
         }, 150)
 
     }
@@ -949,7 +962,7 @@ class ConversationActivity() : BaseActivity() {
         pauseAudioPlayer()
     }
 
-    fun pauseAudioPlayer(){
+    private fun pauseAudioPlayer(){
         try {
             val jcPlayerManager: JcPlayerManager by lazy {
                 JcPlayerManager.getInstance(applicationContext).get()!!

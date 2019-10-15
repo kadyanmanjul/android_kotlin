@@ -1,11 +1,16 @@
 package com.joshtalks.joshskills.repository.local
 
+import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
 import com.joshtalks.joshskills.repository.local.entity.DOWNLOAD_STATUS
+import id.zelory.compressor.Compressor
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import java.io.File
 import java.util.*
 
 
@@ -22,8 +27,10 @@ object DatabaseUtils {
         }
     }
 
-    fun addChat(chatModel: ChatModel) {
-        CoroutineScope(Dispatchers.IO).launch {
+    suspend fun addChat(chatModel: ChatModel): Long {
+
+
+        return CoroutineScope(Dispatchers.IO).async {
             val cal = Calendar.getInstance()
             cal.time = Date(cal.time.time)
             chatModel.isSync = false
@@ -32,8 +39,9 @@ object DatabaseUtils {
             chatModel.chatLocalId?.let {
                 chatModel.chatId = it
             }
-            AppObjectController.appDatabase.chatDao().insertAMessage(chatModel)
-        }
+            return@async AppObjectController.appDatabase.chatDao().insertAMessage(chatModel)
+        }.await()
+
     }
 
     @JvmStatic
@@ -44,7 +52,7 @@ object DatabaseUtils {
                     AppObjectController.gsonMapperForLocal.fromJson(objs, ChatModel::class.java)
                 AppObjectController.appDatabase.chatDao()
                     .updateDownloadVideoStatus(chatModel, downloadStatus)
-            }catch (ex:Exception ){
+            } catch (ex: Exception) {
 
             }
         }

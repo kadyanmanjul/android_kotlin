@@ -22,7 +22,7 @@
                 android:layout_gravity="center"
                 android:clickable="true"
                 android:focusable="true"
-                android:visibility="visible">
+                android:visibility="invisible">
 
             <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/startDownload"
@@ -35,7 +35,7 @@
                     android:padding="@dimen/_4sdp"
                     android:src="@drawable/ic_download"
                     android:tint="#7A7A7A"
-                    android:visibility="gone" />
+                    android:visibility="invisible" />
 
 
             <com.pnikosis.materialishprogress.ProgressWheel
@@ -43,7 +43,7 @@
                     android:layout_width="@dimen/_36sdp"
                     android:layout_height="@dimen/_36sdp"
                     android:layout_gravity="top|center"
-                    android:visibility="gone"
+                    android:visibility="invisible"
                     wheel:matProg_barColor="@color/button_primary_color"
                     wheel:matProg_fillRadius="true"
                     wheel:matProg_progressIndeterminate="true"
@@ -60,7 +60,7 @@
                     android:padding="@dimen/_5sdp"
                     android:src="@drawable/ic_cross"
                     android:tint="#7A7A7A"
-                    android:visibility="gone" />
+                    android:visibility="invisible" />
 
 
         </FrameLayout>
@@ -72,7 +72,7 @@
                 android:layout_gravity="center"
                 android:background="@null"
                 android:contentDescription="@string/play_button_description"
-                android:visibility="visible"
+                android:visibility="invisible"
                 app:srcCompat="@drawable/ic_play_24dp" />
 
         <androidx.appcompat.widget.AppCompatImageView
@@ -100,6 +100,7 @@
             android:layout_toEndOf="@id/fl_controller">
 
         <View
+                android:visibility="invisible"
                 android:id="@+id/seekBar_ph"
                 android:layout_width="wrap_content"
                 android:layout_height="2dp"
@@ -113,7 +114,7 @@
                 android:paddingEnd="@dimen/_6sdp"
                 android:progressDrawable="@drawable/seek_bar_draw"
                 android:thumb="@drawable/seek_thumb"
-                android:visibility="gone" />
+                android:visibility="invisible" />
 
     </FrameLayout>
 
@@ -143,6 +144,7 @@
             android:layout_marginTop="@dimen/_20sdp"
             android:layout_marginEnd="@dimen/_5sdp"
             android:text=""
+            android:gravity="center|end"
             android:textAlignment="center"
             android:textColor="@color/gray_9E"
             android:textSize="@dimen/font_11"

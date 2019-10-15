@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <merge>
+
     <com.google.android.material.appbar.MaterialToolbar xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:app="http://schemas.android.com/apk/res-auto"
             android:id="@+id/toolbar"
@@ -16,20 +17,20 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/_5sdp"
-                android:paddingTop="@dimen/_5sdp"
                 android:gravity="center_vertical|start"
+                android:paddingTop="@dimen/_5sdp"
                 android:paddingBottom="@dimen/_5sdp"
                 android:visibility="gone"
                 app:srcCompat="@drawable/ic_arrow_back" />
 
         <de.hdodenhof.circleimageview.CircleImageView
-                android:background="@drawable/white_button_round_enabled"
                 android:id="@+id/image_view_logo"
                 android:layout_width="@dimen/_26sdp"
-                android:gravity="center_vertical|start"
-
                 android:layout_height="@dimen/_26sdp"
                 android:layout_marginEnd="@dimen/_5sdp"
+
+                android:background="@drawable/white_button_round_enabled"
+                android:gravity="center_vertical|start"
                 android:src="@drawable/ic_josh_course"
                 android:visibility="gone" />
 
@@ -38,8 +39,10 @@
                 fontPath="fonts/OpenSans-SemiBold.ttf"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:ellipsize="marquee"
                 android:gravity="center_vertical|start"
                 android:padding="@dimen/_5sdp"
+                android:singleLine="true"
                 android:text=""
                 android:textColor="@color/white"
                 android:textSize="@dimen/font_20" />
