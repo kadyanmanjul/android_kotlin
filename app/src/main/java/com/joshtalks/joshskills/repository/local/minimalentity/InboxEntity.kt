@@ -2,20 +2,17 @@ package com.joshtalks.joshskills.repository.local.minimalentity
 
 import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
 import com.joshtalks.joshskills.repository.local.entity.MESSAGE_DELIVER_STATUS
-import com.joshtalks.joshskills.repository.local.entity.Sender
 import com.joshtalks.joshskills.repository.local.entity.User
 import java.io.Serializable
 
-
-data class InboxEntity(
-
-    val course_icon: String? = "",
-    val courseId: String = "",
-    val duration: Int = 0,
-    val is_deleted: Boolean? = false,
+data class InboxEntity constructor(
     val course_name: String = "",
-    val teacher_id: String = "",
     val conversation_id: String = "",
+    val course_icon: String? = "",
+    val courseId: String? = "",
+    val duration: Int? = 0,
+    val is_deleted: Boolean? = false,
+    val teacher_id: String? = "",
     var chat_id: String? = "",
     var created: Long? = 0,
     var isSeen: Boolean? = false,
@@ -30,4 +27,4 @@ data class InboxEntity(
     var material_type: BASE_MESSAGE_TYPE?,
     var message_deliver_status: MESSAGE_DELIVER_STATUS? = MESSAGE_DELIVER_STATUS.READ
 
-) : Serializable
+):Serializable

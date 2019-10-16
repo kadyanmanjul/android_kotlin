@@ -14,7 +14,6 @@ import android.content.res.TypedArray
 import android.net.Uri
 import android.os.Build
 import android.util.AttributeSet
-import android.util.Log
 import android.view.View
 import android.widget.*
 import com.afollestad.materialdialogs.MaterialDialog
@@ -532,8 +531,6 @@ class JcPlayerView : LinearLayout, View.OnClickListener, SeekBar.OnSeekBarChange
                 endTime = status.currentPosition
             }
         }
-        Log.e("ontime", status.toString())
-
         seekBar?.post { seekBar?.progress = currentPosition }
         txtCurrentDuration?.post { txtCurrentDuration?.text = toTimeSongString(currentPosition) }
     }
@@ -644,38 +641,42 @@ class JcPlayerView : LinearLayout, View.OnClickListener, SeekBar.OnSeekBarChange
     }
 
     private fun updateUI() {
-        duration = 0
-        if (message.type == BASE_MESSAGE_TYPE.Q) {
-            val audioTypeObj = message.question!!.audioList!![0]
-            this.duration = audioTypeObj.duration
-            if (message.downloadStatus === DOWNLOAD_STATUS.DOWNLOADED) {
-                if (audioTypeObj.downloadedLocalPath.isNullOrEmpty().not() && AppDirectory.isFileExist(
-                        audioTypeObj.downloadedLocalPath!!
-                    )
-                ) {
-                    mediaDownloaded()
+        try {
+            duration = 0
+            if (message.type == BASE_MESSAGE_TYPE.Q) {
+                val audioTypeObj = message.question!!.audioList!![0]
+                this.duration = audioTypeObj.duration
+                if (message.downloadStatus === DOWNLOAD_STATUS.DOWNLOADED) {
+                    if (audioTypeObj.downloadedLocalPath.isNullOrEmpty().not() && AppDirectory.isFileExist(
+                            audioTypeObj.downloadedLocalPath!!
+                        )
+                    ) {
+                        mediaDownloaded()
+                    } else {
+                        mediaNotDownloaded()
+                    }
+
+                } else if (message.downloadStatus === DOWNLOAD_STATUS.DOWNLOADING) {
+                    mediaDownloading()
+                    audioPlayerInterface?.downloadStart(audioTypeObj.audio_url)
                 } else {
                     mediaNotDownloaded()
                 }
 
-            } else if (message.downloadStatus === DOWNLOAD_STATUS.DOWNLOADING) {
-                mediaDownloading()
-                audioPlayerInterface?.downloadStart(audioTypeObj.audio_url)
             } else {
-                mediaNotDownloaded()
+                if (message.downloadStatus === DOWNLOAD_STATUS.DOWNLOADED || message.downloadStatus === DOWNLOAD_STATUS.UPLOADED) {
+                    mediaDownloaded()
+                } else if (message.downloadStatus === DOWNLOAD_STATUS.DOWNLOADING) {
+                    mediaDownloading()
+                    audioPlayerInterface?.downloadStart(message.url!!)
+                } else if (message.downloadStatus === DOWNLOAD_STATUS.UPLOADING) {
+                    mediaUploading()
+                } else {
+                    mediaNotDownloaded()
+                }
             }
+        }catch (ex:Exception){
 
-        } else {
-            if (message.downloadStatus === DOWNLOAD_STATUS.DOWNLOADED || message.downloadStatus === DOWNLOAD_STATUS.UPLOADED) {
-                mediaDownloaded()
-            } else if (message.downloadStatus === DOWNLOAD_STATUS.DOWNLOADING) {
-                mediaDownloading()
-                audioPlayerInterface?.downloadStart(message.url!!)
-            } else if (message.downloadStatus === DOWNLOAD_STATUS.UPLOADING) {
-                mediaUploading()
-            } else {
-                mediaNotDownloaded()
-            }
         }
     }
 

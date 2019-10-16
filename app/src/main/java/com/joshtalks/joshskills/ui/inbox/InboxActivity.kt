@@ -41,6 +41,7 @@ import com.joshtalks.joshskills.core.service.HAS_NOTIFICATION
 import com.joshtalks.joshskills.core.service.NOTIFICATION_ID
 import com.joshtalks.joshskills.repository.service.EngagementNetworkHelper
 import com.patloew.rxlocation.RxLocation
+import io.reactivex.android.schedulers.AndroidSchedulers
 
 
 const val REGISTER_INFO_CODE = 2001
@@ -124,7 +125,9 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver {
     private fun addObserver() {
         compositeDisposable.add(
             RxBus.getDefault().toObservable()
-                .subscribeOn(Schedulers.io()).subscribe({
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({
                     if (it is InboxEntity) {
                         AppAnalytics.create(AnalyticsEvent.COURSE_SELECTED.NAME)
                             .addParam("course_id", it.conversation_id).push()

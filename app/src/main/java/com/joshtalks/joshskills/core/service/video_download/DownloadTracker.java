@@ -165,32 +165,37 @@ public class DownloadTracker {
 
         @Override
         public void onPrepared(DownloadHelper helper) {
-            if (helper.getPeriodCount() == 0) {
-                Log.d(TAG, "No periods found. Downloading entire stream.");
-                startDownload();
-                downloadHelper.release();
-                return;
-            }
-            MappedTrackInfo mappedTrackInfo = downloadHelper.getMappedTrackInfo(0);
-            if (!willHaveContent(mappedTrackInfo)) {
-                Log.d(TAG, "No dialog content. Downloading entire stream.");
-                startDownload();
-                downloadHelper.release();
-                return;
-            }
-
-            for (int periodIndex = 0; periodIndex < downloadHelper.getPeriodCount(); periodIndex++) {
-                downloadHelper.clearTrackSelections(periodIndex);
-                for (int i = 0; i < mappedTrackInfo.getRendererCount(); i++) {
-                    downloadHelper.addTrackSelectionForSingleRenderer(periodIndex, i, DownloadHelper.DEFAULT_TRACK_SELECTOR_PARAMETERS, getOverrides(i));
+            try {
+                if (helper.getPeriodCount() == 0) {
+                    Log.d(TAG, "No periods found. Downloading entire stream.");
+                    startDownload();
+                    downloadHelper.release();
+                    return;
                 }
+                MappedTrackInfo mappedTrackInfo = downloadHelper.getMappedTrackInfo(0);
+                if (!willHaveContent(mappedTrackInfo)) {
+                    Log.d(TAG, "No dialog content. Downloading entire stream.");
+                    startDownload();
+                    downloadHelper.release();
+                    return;
+                }
+
+                for (int periodIndex = 0; periodIndex < downloadHelper.getPeriodCount(); periodIndex++) {
+                    downloadHelper.clearTrackSelections(periodIndex);
+                    for (int i = 0; i < mappedTrackInfo.getRendererCount(); i++) {
+                        downloadHelper.addTrackSelectionForSingleRenderer(periodIndex, i, DownloadHelper.DEFAULT_TRACK_SELECTOR_PARAMETERS, getOverrides(i));
+                    }
+                }
+
+                DownloadRequest downloadRequest = buildDownloadRequest();
+                if (downloadRequest.streamKeys.isEmpty()) {
+                    // All tracks were deselected in the dialog. Don't start the download.
+                    return;
+                }
+                startDownload(downloadRequest);
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-            DownloadRequest downloadRequest = buildDownloadRequest();
-            if (downloadRequest.streamKeys.isEmpty()) {
-                // All tracks were deselected in the dialog. Don't start the download.
-                return;
-            }
-            startDownload(downloadRequest);
 
         }
 

@@ -45,8 +45,6 @@ import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.custom_ui.audioplayer.JcPlayerManager
 import com.joshtalks.joshskills.core.custom_ui.decorator.LayoutMarginDecoration
-import com.joshtalks.joshskills.core.interfaces.ClickListener
-import com.joshtalks.joshskills.core.interfaces.RecyclerTouchListener
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.messaging.MessageBuilderFactory
 import com.joshtalks.joshskills.messaging.RxBus2
@@ -75,7 +73,6 @@ import java.lang.ref.WeakReference
 import com.joshtalks.joshskills.repository.server.chat_message.TVideoMessage
 import com.joshtalks.joshskills.repository.service.EngagementNetworkHelper
 import de.hdodenhof.circleimageview.CircleImageView
-import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import java.util.*
@@ -92,29 +89,29 @@ class ConversationActivity() : BaseActivity() {
             context.startActivity(intent)
         }
     }
-
-    private lateinit var conversationBinding: ActivityConversationBinding
-    private lateinit var inboxEntity: InboxEntity
     private val conversationViewModel: ConversationViewModel by lazy {
         ViewModelProviders.of(this).get(ConversationViewModel::class.java)
     }
+    private lateinit var conversationBinding: ActivityConversationBinding
+    private lateinit var inboxEntity: InboxEntity
     private lateinit var emojiPopup: EmojiPopup
     private var editTextStatus: Boolean = false
-
     private val cMessageType: BASE_MESSAGE_TYPE = BASE_MESSAGE_TYPE.TX
     private val compositeDisposable = CompositeDisposable()
     private var revealAttachmentView: Boolean = false
     private lateinit var activityRef: WeakReference<FragmentActivity>
-    private var unreadMessagePosition = -1
     private lateinit var linearLayoutManager: LinearLayoutManager
-
     private var conversationList = linkedSetOf<ChatModel>()
-    private var removeingConversationList = linkedSetOf<ChatModel>()
+    private var removingConversationList = linkedSetOf<ChatModel>()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        inboxEntity = intent.getSerializableExtra(CHAT_ROOM_OBJECT) as InboxEntity
+        if (intent.hasExtra(CHAT_ROOM_OBJECT)) {
+            inboxEntity = intent.getSerializableExtra(CHAT_ROOM_OBJECT) as InboxEntity
+        } else {
+            this@ConversationActivity.finish()
+        }
         conversationViewModel.inboxEntity = inboxEntity
         conversationBinding = DataBindingUtil.setContentView(this, R.layout.activity_conversation)
         conversationBinding.viewmodel = conversationViewModel
@@ -136,25 +133,25 @@ class ConversationActivity() : BaseActivity() {
         }, 1000)
         AppAnalytics.create(AnalyticsEvent.CHAT_SCREEN.NAME).push()
         processIntent(intent)
-
+        //initSuggestionView()
     }
 
 
-    override fun onNewIntent(intent: Intent?) {
-        super.onNewIntent(intent)
-        processIntent(intent)
-        intent?.hasExtra(CHAT_ROOM_OBJECT)?.let {
+    override fun onNewIntent(mIntent: Intent?) {
+        super.onNewIntent(mIntent)
+        processIntent(mIntent)
+        mIntent?.hasExtra(CHAT_ROOM_OBJECT)?.let {
             if (it) {
-                val temp = intent.getSerializableExtra(CHAT_ROOM_OBJECT) as InboxEntity
-                if (inboxEntity.conversation_id != temp.conversation_id) {
-                    inboxEntity = temp
-                    conversationViewModel.inboxEntity = inboxEntity
-                    initChat()
+                val temp = mIntent.getSerializableExtra(CHAT_ROOM_OBJECT) as InboxEntity ?
+                temp?.let {inboxObj ->
+                    if (inboxEntity.conversation_id != inboxObj.conversation_id) {
+                        inboxEntity = inboxObj
+                        conversationViewModel.inboxEntity = inboxEntity
+                        initChat()
+                    }
                 }
             }
         }
-
-
     }
 
     private fun setToolbar() {
@@ -296,9 +293,10 @@ class ConversationActivity() : BaseActivity() {
                 AppAnalytics.create(AnalyticsEvent.AUDIO_SENT.NAME).push()
                 conversationBinding.recordView.visibility = GONE
                 conversationViewModel.stopRecording()
-                addUploadAudioMedia(conversationViewModel.recordFile.absolutePath)
-                window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-
+                conversationViewModel.recordFile.let {
+                    addUploadAudioMedia(it.absolutePath)
+                    window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+                }
             }
 
             override fun onLessThanSecond() {
@@ -493,28 +491,44 @@ class ConversationActivity() : BaseActivity() {
         }
 
         findViewById<View>(R.id.iv_cancel_delete).setOnClickListener {
-            removeingConversationList.forEach {
+            removingConversationList.forEach {
                 refreshViewAtPos(it)
             }
-            removeingConversationList.clear()
+            removingConversationList.clear()
             findViewById<MaterialToolbar>(R.id.toolbar_delete_chat).visibility = GONE
 
         }
         findViewById<View>(R.id.iv_delete_chat).setOnClickListener {
             CoroutineScope(Dispatchers.IO).launch {
                 val listIds: MutableList<String> = mutableListOf()
-                removeingConversationList.forEach {
+                removingConversationList.forEach {
                     removeViewAtPos(it)
                     listIds.add(it.chatId)
                 }
                 conversationViewModel.deleteMessages(listIds)
-                removeingConversationList.clear()
+                removingConversationList.clear()
             }
             findViewById<MaterialToolbar>(R.id.toolbar_delete_chat).visibility = GONE
 
         }
     }
 
+    /*private fun initSuggestionView() {
+       *//* conversationBinding.userReplaySuggestionRv.builder
+            .setHasFixedSize(true)
+            .setLayoutManager(linearLayoutManager)
+        conversationBinding.userReplaySuggestionRv.addItemDecoration(LayoutMarginDecoration(com.vanniktech.emoji.Utils.dpToPx(applicationContext,4f)))*//*
+        for (i in 0..5){
+            val chip = Chip(conversationBinding.userReplaySuggestionRv.context)
+            chip.text= "Item $i"
+            chip.setTextAppearance(R.style.ChipStyle)
+
+            // necessay to get single selection working
+            chip.isClickable = true
+            chip.isCheckable = true
+            conversationBinding.userReplaySuggestionRv.addView(chip)
+        }
+    }*/
     private fun removeViewAtPos(chatObj: ChatModel) {
         try {
             var tempView: BaseChatViewHolder
@@ -531,7 +545,7 @@ class ConversationActivity() : BaseActivity() {
                             } catch (e: IndexOutOfBoundsException) {
                                 e.printStackTrace()
                             }
-                        },100)
+                        }, 100)
                     }
                 }
 
@@ -681,20 +695,20 @@ class ConversationActivity() : BaseActivity() {
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe {
 
-                if (removeingConversationList.contains(it.chatModel)) {
-                    removeingConversationList.remove(it.chatModel)
+                if (removingConversationList.contains(it.chatModel)) {
+                    removingConversationList.remove(it.chatModel)
                 } else {
                     if (it.chatModel.isSelected) {
-                        removeingConversationList.add(it.chatModel)
+                        removingConversationList.add(it.chatModel)
                     }
                 }
-                if (removeingConversationList.size > 0) {
+                if (removingConversationList.size > 0) {
                     findViewById<MaterialToolbar>(R.id.toolbar_delete_chat).visibility = VISIBLE
                 } else {
                     findViewById<MaterialToolbar>(R.id.toolbar_delete_chat).visibility = GONE
                 }
                 findViewById<AppCompatTextView>(R.id.message_delete_count).text =
-                    removeingConversationList.size.toString()
+                    removingConversationList.size.toString()
             })
 
 
@@ -963,13 +977,13 @@ class ConversationActivity() : BaseActivity() {
         pauseAudioPlayer()
     }
 
-    private fun pauseAudioPlayer(){
+    private fun pauseAudioPlayer() {
         try {
             val jcPlayerManager: JcPlayerManager by lazy {
                 JcPlayerManager.getInstance(applicationContext).get()!!
             }
             jcPlayerManager.pauseAudio()
-        }catch (ex:Exception){
+        } catch (ex: Exception) {
 
         }
     }

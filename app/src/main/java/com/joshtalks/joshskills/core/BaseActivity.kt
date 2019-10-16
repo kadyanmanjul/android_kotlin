@@ -9,7 +9,7 @@ import android.provider.Settings
 import android.util.DisplayMetrics
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import com.google.firebase.remoteconfig.FirebaseRemoteConfig
+import com.crashlytics.android.Crashlytics
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.service.HAS_NOTIFICATION
@@ -18,19 +18,15 @@ import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.service.EngagementNetworkHelper
 import com.joshtalks.joshskills.ui.inbox.InboxActivity
-import com.joshtalks.joshskills.ui.location.SelectLocationActivity
 import com.joshtalks.joshskills.ui.profile.CropImageActivity
 import com.joshtalks.joshskills.ui.profile.ProfileActivity
 import com.joshtalks.joshskills.ui.profile.SOURCE_IMAGE
 import com.joshtalks.joshskills.ui.sign_up_old.OnBoardActivity
 import io.github.inflationx.viewpump.ViewPumpContextWrapper
 
-
 abstract class BaseActivity : AppCompatActivity() {
 
     protected val TAG = javaClass.canonicalName
-
-
     override fun attachBaseContext(newBase: Context?) {
         super.attachBaseContext(newBase?.let { ViewPumpContextWrapper.wrap(it) })
     }
@@ -46,9 +42,11 @@ abstract class BaseActivity : AppCompatActivity() {
         AppObjectController.screenHeight = displayMetrics.heightPixels
         AppObjectController.screenWidth = displayMetrics.widthPixels
         getConfig()
+        initUserForCrashlytics()
 
 
     }
+
 
     fun getIntentForState(): Intent? {
 
@@ -84,11 +82,11 @@ abstract class BaseActivity : AppCompatActivity() {
         startActivityForResult(intent, 101);
     }
 
-    protected fun processIntent(intent: Intent?) {
-        intent?.hasExtra(HAS_NOTIFICATION)?.let {
-            if (it) intent.hasExtra(NOTIFICATION_ID).let {
+    protected fun processIntent(mIntent: Intent?) {
+        mIntent?.hasExtra(HAS_NOTIFICATION)?.let {
+            if (it) mIntent.hasExtra(NOTIFICATION_ID).let {
                 if (it) {
-                    EngagementNetworkHelper.clickNotification(intent.run {
+                    EngagementNetworkHelper.clickNotification(mIntent.run {
                         getStringExtra(
                             NOTIFICATION_ID
                         )
@@ -105,6 +103,15 @@ abstract class BaseActivity : AppCompatActivity() {
         AppObjectController.firebaseRemoteConfig.setConfigSettingsAsync(configSettings)
         AppObjectController.firebaseRemoteConfig.setDefaultsAsync(R.xml.remote_config_defaults)
         AppObjectController.firebaseRemoteConfig.fetchAndActivate()
+    }
 
+    private fun initUserForCrashlytics() {
+        try {
+            Crashlytics.getInstance().core.setUserName(User.getInstance().firstName)
+            Crashlytics.getInstance().core.setUserEmail(User.getInstance().email)
+            Crashlytics.getInstance()
+                .core.setUserIdentifier(User.getInstance().phoneNumber + "$" + Mentor.getInstance().getId())
+        } catch (ex: Exception) {
+        }
     }
 }

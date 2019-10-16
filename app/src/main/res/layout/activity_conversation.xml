@@ -91,87 +91,102 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/_5sdp"
                     android:background="@drawable/rect_round"
+                    android:orientation="horizontal"
                     android:paddingStart="@dimen/_5sdp"
                     android:paddingEnd="@dimen/_5sdp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@id/record_button"
                     app:layout_constraintStart_toStartOf="parent">
 
-                <FrameLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:background="@drawable/bg_white_round_36"
-                        android:onClick="@{()->handler.emojiToggle()}">
+                <!--<com.google.android.material.chip.ChipGroup
+                        android:id="@+id/user_replay_suggestion_rv"
+                        app:singleSelection="true"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
 
-                    <androidx.appcompat.widget.AppCompatImageView
-                            android:id="@+id/iv_emoji"
+                </com.google.android.material.chip.ChipGroup>-->
+
+              <!--  <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+-->
+                    <FrameLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
-                            android:clickable="false"
-                            android:scaleType="centerInside"
-                            app:srcCompat="@drawable/happy_face" />
-                </FrameLayout>
+                            android:background="@drawable/bg_white_round_36"
+                            android:onClick="@{()->handler.emojiToggle()}">
+
+                        <androidx.appcompat.widget.AppCompatImageView
+                                android:id="@+id/iv_emoji"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:clickable="false"
+                                android:scaleType="centerInside"
+                                app:srcCompat="@drawable/happy_face" />
+                    </FrameLayout>
 
 
-                <com.vanniktech.emoji.EmojiEditText
-                        android:id="@+id/chat_edit"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:layout_weight="1"
-                        android:backgroundTint="@android:color/transparent"
-                        android:hint="@string/type_message_hint"
-                        android:imeOptions="actionSend"
-                        android:inputType="textCapSentences|textMultiLine"
-                        android:maxLines="3"
-                        android:textColorHint="@color/gray_9E"
-                        android:textSize="@dimen/font_17" />
+                    <com.vanniktech.emoji.EmojiEditText
+                            android:id="@+id/chat_edit"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_weight="1"
+                            android:backgroundTint="@android:color/transparent"
+                            android:hint="@string/type_message_hint"
+                            android:imeOptions="actionSend"
+                            android:inputType="textCapSentences|textMultiLine"
+                            android:maxLines="3"
+                            android:textColorHint="@color/gray_9E"
+                            android:textSize="@dimen/font_17" />
 
 
-                <FrameLayout
-                        android:id="@+id/fl_attachment"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:onClick="@{()->handler.uploadAttachment()}"
-                        android:paddingLeft="@dimen/_10sdp"
-                        android:paddingTop="@dimen/_10sdp"
-                        android:paddingRight="@dimen/_10sdp"
-                        android:paddingBottom="@dimen/_10sdp">
-
-                    <androidx.appcompat.widget.AppCompatImageView
-                            android:id="@+id/attachment_view"
+                    <FrameLayout
+                            android:id="@+id/fl_attachment"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
-                            android:scaleType="centerInside"
-                            app:srcCompat="@drawable/ic_attachment" />
-                </FrameLayout>
+                            android:onClick="@{()->handler.uploadAttachment()}"
+                            android:paddingLeft="@dimen/_10sdp"
+                            android:paddingTop="@dimen/_10sdp"
+                            android:paddingRight="@dimen/_10sdp"
+                            android:paddingBottom="@dimen/_10sdp">
 
-                <com.joshtalks.joshskills.core.custom_ui.HidingLinearLayout
-                        android:id="@+id/quick_toggle"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:clipChildren="false"
-                        android:clipToPadding="false"
-                        android:onClick="@{()->handler.uploadImageByCameraOrGallery()}"
-                        android:paddingStart="@dimen/_5sdp"
-                        android:paddingTop="@dimen/_10sdp"
-                        android:paddingEnd="@dimen/_10sdp"
-                        android:paddingBottom="@dimen/_10sdp"
-                        android:visibility="visible">
+                        <androidx.appcompat.widget.AppCompatImageView
+                                android:id="@+id/attachment_view"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:scaleType="centerInside"
+                                app:srcCompat="@drawable/ic_attachment" />
+                    </FrameLayout>
 
-                    <androidx.appcompat.widget.AppCompatImageView
+                    <com.joshtalks.joshskills.core.custom_ui.HidingLinearLayout
+                            android:id="@+id/quick_toggle"
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:scaleType="centerInside"
-                            app:srcCompat="@drawable/ic_camera_message" />
+                            android:layout_height="match_parent"
+                            android:clipChildren="false"
+                            android:clipToPadding="false"
+                            android:onClick="@{()->handler.uploadImageByCameraOrGallery()}"
+                            android:paddingStart="@dimen/_5sdp"
+                            android:paddingTop="@dimen/_10sdp"
+                            android:paddingEnd="@dimen/_10sdp"
+                            android:paddingBottom="@dimen/_10sdp"
+                            android:visibility="visible">
 
-                </com.joshtalks.joshskills.core.custom_ui.HidingLinearLayout>
+                        <androidx.appcompat.widget.AppCompatImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:scaleType="centerInside"
+                                app:srcCompat="@drawable/ic_camera_message" />
 
+                    </com.joshtalks.joshskills.core.custom_ui.HidingLinearLayout>
+<!--
+                </LinearLayout>
+-->
             </LinearLayout>
 
             <com.joshtalks.recordview.RecordView
@@ -192,22 +207,22 @@
                     app:slide_to_cancel_text="Slide To Cancel" />
 
 
-                <com.joshtalks.recordview.CustomImageButton
-                        android:layout_marginEnd="@dimen/_5sdp"
-                        app:layout_constraintBottom_toBottomOf="@+id/inputLL"
-                        app:layout_constraintRight_toRightOf="parent"
-                        app:layout_constraintTop_toTopOf="@+id/inputLL"
-                        android:id="@+id/record_button"
-                        android:layout_width="@dimen/_40sdp"
-                        android:layout_height="@dimen/_40sdp"
-                        android:layout_gravity="end"
-                        android:background="@drawable/recv_bg_mic"
-                        android:scaleType="centerInside"
-                        android:textColor="#fff"
-                        android:visibility="visible"
-                        app:image_first="@drawable/recv_ic_mic_white"
-                        app:image_second="@drawable/ic_send"
-                        />
+            <com.joshtalks.recordview.CustomImageButton
+                    android:id="@+id/record_button"
+                    android:layout_width="@dimen/_40sdp"
+                    android:layout_height="@dimen/_40sdp"
+                    android:layout_gravity="end|bottom"
+                    android:layout_marginEnd="@dimen/_5sdp"
+                    android:background="@drawable/recv_bg_mic"
+                    android:scaleType="centerInside"
+                    android:textColor="#fff"
+                    android:visibility="visible"
+                    app:image_first="@drawable/recv_ic_mic_white"
+                    app:image_second="@drawable/ic_send"
+                    app:layout_constraintBottom_toBottomOf="@+id/inputLL"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/inputLL"
+                    app:layout_constraintVertical_bias="1.0" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </RelativeLayout>
