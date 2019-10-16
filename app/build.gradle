@@ -13,8 +13,8 @@ android {
         applicationId "com.joshtalks.joshskills"
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 9
-        versionName "1.0.9"
+        versionCode 10
+        versionName "1.0.10"
         vectorDrawables.useSupportLibrary true
         renderscriptTargetApi 28 as int
         renderscriptSupportModeEnabled true
@@ -114,11 +114,15 @@ android {
             // applicationIdSuffix ".demo"
             // versionNameSuffix "-demo"
             buildConfigField "boolean", "PLAY_STORE_DISABLED", "false"
+            manifestPlaceholders = [enableCrashReporting:"false"]
+
         }
         prod {
             //applicationIdSuffix ".full"
             //versionNameSuffix "-full"
             buildConfigField "boolean", "PLAY_STORE_DISABLED", "false"
+            manifestPlaceholders = [enableCrashReporting:"true"]
+
 
         }
     }

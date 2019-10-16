@@ -34,6 +34,7 @@ import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.appbar.MaterialToolbar
+import com.google.android.material.chip.Chip
 import com.greentoad.turtlebody.mediapicker.MediaPicker
 import com.greentoad.turtlebody.mediapicker.core.MediaPickerConfig
 import com.joshtalks.appcamera.pix.JoshCameraActivity
@@ -89,6 +90,7 @@ class ConversationActivity() : BaseActivity() {
             context.startActivity(intent)
         }
     }
+
     private val conversationViewModel: ConversationViewModel by lazy {
         ViewModelProviders.of(this).get(ConversationViewModel::class.java)
     }
@@ -133,7 +135,7 @@ class ConversationActivity() : BaseActivity() {
         }, 1000)
         AppAnalytics.create(AnalyticsEvent.CHAT_SCREEN.NAME).push()
         processIntent(intent)
-        //initSuggestionView()
+       // initSuggestionView()
     }
 
 
@@ -142,8 +144,8 @@ class ConversationActivity() : BaseActivity() {
         processIntent(mIntent)
         mIntent?.hasExtra(CHAT_ROOM_OBJECT)?.let {
             if (it) {
-                val temp = mIntent.getSerializableExtra(CHAT_ROOM_OBJECT) as InboxEntity ?
-                temp?.let {inboxObj ->
+                val temp = mIntent.getSerializableExtra(CHAT_ROOM_OBJECT) as InboxEntity?
+                temp?.let { inboxObj ->
                     if (inboxEntity.conversation_id != inboxObj.conversation_id) {
                         inboxEntity = inboxObj
                         conversationViewModel.inboxEntity = inboxEntity
@@ -278,11 +280,7 @@ class ConversationActivity() : BaseActivity() {
                 window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
                 AppAnalytics.create(AnalyticsEvent.AUDIO_BUTTON_CLICKED.NAME).push()
                 conversationBinding.recordView.visibility = VISIBLE
-                conversationViewModel.startRecord().let {
-                    if (it) {
-                        conversationViewModel.startRecord()
-                    }
-                }
+                conversationViewModel.startRecord()
             }
 
             override fun onCancel() {
@@ -513,22 +511,27 @@ class ConversationActivity() : BaseActivity() {
         }
     }
 
-    /*private fun initSuggestionView() {
-       *//* conversationBinding.userReplaySuggestionRv.builder
-            .setHasFixedSize(true)
-            .setLayoutManager(linearLayoutManager)
-        conversationBinding.userReplaySuggestionRv.addItemDecoration(LayoutMarginDecoration(com.vanniktech.emoji.Utils.dpToPx(applicationContext,4f)))*//*
-        for (i in 0..5){
-            val chip = Chip(conversationBinding.userReplaySuggestionRv.context)
-            chip.text= "Item $i"
-            chip.setTextAppearance(R.style.ChipStyle)
+    private fun initSuggestionView() {
 
-            // necessay to get single selection working
-            chip.isClickable = true
-            chip.isCheckable = true
-            conversationBinding.userReplaySuggestionRv.addView(chip)
+        conversationBinding.userReplaySuggestionRv.builder
+            .setHasFixedSize(true)
+            .setLayoutManager( LinearLayoutManager(this,RecyclerView.HORIZONTAL,false))
+        conversationBinding.userReplaySuggestionRv.addItemDecoration(
+            LayoutMarginDecoration(
+                com.vanniktech.emoji.Utils.dpToPx(
+                    this,
+                    4f
+                )
+            )
+        )
+        for (i in 0..4){
+            conversationBinding.userReplaySuggestionRv.addView(SuggestionViewHolder("first $i"))
         }
-    }*/
+        conversationBinding.userReplaySuggestionRv.refresh()
+
+
+    }
+
     private fun removeViewAtPos(chatObj: ChatModel) {
         try {
             var tempView: BaseChatViewHolder

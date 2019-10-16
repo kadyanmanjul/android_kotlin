@@ -10,7 +10,7 @@
 
     </style>
 
-    <style name="AppNoBarTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppNoBarTheme" parent="Theme.MaterialComponents.Light.DarkActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
