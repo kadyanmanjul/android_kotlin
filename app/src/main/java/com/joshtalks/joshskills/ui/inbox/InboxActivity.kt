@@ -1,11 +1,10 @@
 package com.joshtalks.joshskills.ui.inbox
 
 import android.Manifest
+import android.app.Activity
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 import androidx.appcompat.widget.AppCompatTextView
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.*
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
@@ -37,21 +36,26 @@ import kotlinx.coroutines.launch
 import com.google.android.gms.location.LocationRequest
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
-import com.joshtalks.joshskills.core.service.HAS_NOTIFICATION
-import com.joshtalks.joshskills.core.service.NOTIFICATION_ID
-import com.joshtalks.joshskills.repository.service.EngagementNetworkHelper
 import com.patloew.rxlocation.RxLocation
 import io.reactivex.android.schedulers.AndroidSchedulers
-
+import com.joshtalks.joshskills.core.inapp_update.InAppUpdateManager
+import com.joshtalks.joshskills.core.inapp_update.Constants
+import com.joshtalks.joshskills.core.inapp_update.InAppUpdateStatus
+import android.view.View
+import com.google.android.material.snackbar.Snackbar
 
 const val REGISTER_INFO_CODE = 2001
 
-class InboxActivity : CoreJoshActivity(), LifecycleObserver {
+class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.InAppUpdateHandler {
+
 
     private val viewModel: InboxViewModel by lazy {
         ViewModelProviders.of(this).get(InboxViewModel::class.java)
     }
     private var compositeDisposable = CompositeDisposable()
+
+    private val REQ_CODE_VERSION_UPDATE = 530
+    private var inAppUpdateManager: InAppUpdateManager? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -73,8 +77,26 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver {
         AppAnalytics.updateUser()
         AppAnalytics.create(AnalyticsEvent.INBOX_SCREEN.NAME).push()
         addObserver()
-
         processIntent(intent)
+        checkAppUpdate()
+    }
+
+    private fun checkAppUpdate() {
+
+        var updateMode = Constants.UpdateMode.FLEXIBLE
+        if (AppObjectController.getFirebaseRemoteConfig().getBoolean("update_force")) {
+            updateMode = Constants.UpdateMode.IMMEDIATE
+        }
+
+        inAppUpdateManager = InAppUpdateManager.Builder(this, REQ_CODE_VERSION_UPDATE)
+            .resumeUpdates(true)
+            .mode(updateMode)
+            .useCustomNotification(false)
+            .snackBarMessage(getString(R.string.update_message))
+            .snackBarAction(getString(R.string.restart))
+            .handler(this)
+
+        inAppUpdateManager?.checkForAppUpdate()
     }
 
 
@@ -186,7 +208,12 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == REGISTER_INFO_CODE) {
             finish()
+        } else if (requestCode == REQ_CODE_VERSION_UPDATE) {
+            if (resultCode == Activity.RESULT_CANCELED) {
+                inAppUpdateManager?.checkForAppUpdate();
+            }
         }
+
     }
 
     private fun getLocationAndUpload() {
@@ -194,33 +221,38 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver {
         val locationRequest = LocationRequest.create()
             .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
             .setInterval(10000)
-        compositeDisposable.add(rxLocation.location().updates(locationRequest).subscribeOn(
-            Schedulers.io()
-        )
-            .subscribe { location ->
-                if (Mentor.getInstance().getLocality() == null) {
-                    CoroutineScope(Dispatchers.IO).launch {
-                        try {
-                            val request = UpdateUserLocality()
-                            request.locality = SearchLocality(location.latitude, location.longitude)
+        compositeDisposable.add(
+            rxLocation.location().updates(locationRequest)
+                .subscribeOn(Schedulers.computation())
+                .subscribe({ location ->
+                    if (Mentor.getInstance().getLocality() == null) {
+                        CoroutineScope(Dispatchers.IO).launch {
+                            try {
+                                val request = UpdateUserLocality()
+                                request.locality =
+                                    SearchLocality(location.latitude, location.longitude)
 
-                            val response: ProfileResponse =
-                                AppObjectController.signUpNetworkService.updateUserAddressAsync(
-                                    Mentor.getInstance().getId(),
-                                    request
-                                ).await()
-                            Mentor.getInstance().setLocality(response.locality).update()
-                        } catch (e: Exception) {
-                            e.printStackTrace()
-                            // onFailedToFetchLocation()
-                        }
-                        compositeDisposable.clear()
-                        CoroutineScope(Dispatchers.Main).launch {
-                            addObserver()
+                                val response: ProfileResponse =
+                                    AppObjectController.signUpNetworkService.updateUserAddressAsync(
+                                        Mentor.getInstance().getId(),
+                                        request
+                                    ).await()
+                                Mentor.getInstance().setLocality(response.locality).update()
+                            } catch (e: Exception) {
+                                e.printStackTrace()
+                                // onFailedToFetchLocation()
+                            }
+                            compositeDisposable.clear()
+                            CoroutineScope(Dispatchers.Main).launch {
+                                addObserver()
+                            }
                         }
                     }
-                }
-            })
+                }, { ex ->
+                    ex.printStackTrace()
+
+                })
+        )
 
     }
 
@@ -242,4 +274,28 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver {
         super.onPause()
         compositeDisposable.clear()
     }
+
+    override fun onInAppUpdateError(code: Int, error: Throwable?) {
+        error?.printStackTrace()
+
+    }
+
+    override fun onInAppUpdateStatus(status: InAppUpdateStatus?) {
+        if (status != null) {
+            if (status.isDownloaded) {
+                val rootView = window.decorView.findViewById<View>(android.R.id.content)
+                val snackbar = Snackbar.make(
+                    rootView,
+                    getString(R.string.update_download_success_message),
+                    Snackbar.LENGTH_INDEFINITE
+                )
+                snackbar.setAction(getString(R.string.restart)) {
+                    inAppUpdateManager?.completeUpdate()
+                }
+                snackbar.show()
+            }
+        }
+    }
+
+
 }

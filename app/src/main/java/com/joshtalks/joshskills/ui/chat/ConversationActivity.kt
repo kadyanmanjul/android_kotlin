@@ -10,7 +10,7 @@ import android.os.Bundle
 import android.os.SystemClock
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
+import android.view.*
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import androidx.databinding.DataBindingUtil
@@ -23,9 +23,6 @@ import com.joshtalks.recordview.CustomImageButton.FIRST_STATE
 import com.joshtalks.recordview.CustomImageButton.SECOND_STATE
 import com.joshtalks.recordview.OnRecordListener
 import com.vanniktech.emoji.EmojiPopup
-import android.view.MotionEvent
-import android.view.View
-import android.view.WindowManager
 import android.widget.Toast
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
@@ -34,7 +31,6 @@ import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.appbar.MaterialToolbar
-import com.google.android.material.chip.Chip
 import com.greentoad.turtlebody.mediapicker.MediaPicker
 import com.greentoad.turtlebody.mediapicker.core.MediaPickerConfig
 import com.joshtalks.appcamera.pix.JoshCameraActivity
@@ -91,9 +87,7 @@ class ConversationActivity() : BaseActivity() {
         }
     }
 
-    private val conversationViewModel: ConversationViewModel by lazy {
-        ViewModelProviders.of(this).get(ConversationViewModel::class.java)
-    }
+    private lateinit var conversationViewModel: ConversationViewModel
     private lateinit var conversationBinding: ActivityConversationBinding
     private lateinit var inboxEntity: InboxEntity
     private lateinit var emojiPopup: EmojiPopup
@@ -105,6 +99,7 @@ class ConversationActivity() : BaseActivity() {
     private lateinit var linearLayoutManager: LinearLayoutManager
     private var conversationList = linkedSetOf<ChatModel>()
     private var removingConversationList = linkedSetOf<ChatModel>()
+    private var replySuggestion: String? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -114,7 +109,13 @@ class ConversationActivity() : BaseActivity() {
         } else {
             this@ConversationActivity.finish()
         }
-        conversationViewModel.inboxEntity = inboxEntity
+        try {
+            conversationViewModel= ViewModelProviders.of(this).get(ConversationViewModel::class.java)
+            conversationViewModel.inboxEntity = inboxEntity
+        } catch (ex: UninitializedPropertyAccessException) {
+            startActivity(getInboxActivityIntent())
+            this.finishAndRemoveTask()
+        }
         conversationBinding = DataBindingUtil.setContentView(this, R.layout.activity_conversation)
         conversationBinding.viewmodel = conversationViewModel
         conversationBinding.handler = this
@@ -135,7 +136,7 @@ class ConversationActivity() : BaseActivity() {
         }, 1000)
         AppAnalytics.create(AnalyticsEvent.CHAT_SCREEN.NAME).push()
         processIntent(intent)
-       // initSuggestionView()
+        // initSuggestionView()
     }
 
 
@@ -165,6 +166,17 @@ class ConversationActivity() : BaseActivity() {
         findViewById<AppCompatImageView>(R.id.iv_back).setOnClickListener {
             finish()
         }
+
+        if (Utils.isHelplineOnline()) {
+            findViewById<MaterialToolbar>(R.id.toolbar).inflateMenu(R.menu.main_menu)
+            findViewById<MaterialToolbar>(R.id.toolbar).setOnMenuItemClickListener {
+                if (it?.itemId == R.id.menu_call_helpline) {
+                    callHelpLine()
+                }
+                return@setOnMenuItemClickListener true
+            }
+        }
+
     }
 
     private fun initRV() {
@@ -184,27 +196,6 @@ class ConversationActivity() : BaseActivity() {
             )
         )
         conversationBinding.chatRv.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                super.onScrolled(recyclerView, dx, dy)
-
-                /*
-                  private var HIDE_THRESHOLD = 20
-     private var scrolledDistance = 0
-     private var controlsVisible = true
-                 if (scrolledDistance > HIDE_THRESHOLD && controlsVisible) {
-                     //onHide()
-                     controlsVisible = false;
-                     scrolledDistance = 0
-                 } else if (scrolledDistance < -HIDE_THRESHOLD && !controlsVisible) {
-                     // onShow();
-                     controlsVisible = true;
-                     scrolledDistance = 0;
-                 }
-
-                 if ((controlsVisible && dy > 0) || (!controlsVisible && dy < 0)) {
-                     scrolledDistance += dy;
-                 }*/
-            }
 
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)
@@ -216,23 +207,6 @@ class ConversationActivity() : BaseActivity() {
 
             }
         })
-        /*conversationBinding.chatRv.addOnItemTouchListener(
-            RecyclerTouchListener(
-                applicationContext,
-                conversationBinding.chatRv,
-                object : ClickListener {
-                    override fun onClick(view: View?, position: Int) {
-
-                    }
-
-                    override fun onLongClick(view: View?, position: Int) {
-                        isLongPress=!isLongPress
-                    }
-
-                })
-        )*/
-
-
     }
 
     private fun setUpEmojiPopup() {
@@ -243,9 +217,9 @@ class ConversationActivity() : BaseActivity() {
                 AppAnalytics.create(AnalyticsEvent.EMOJI_CLICKED.NAME).push()
             }
             .setOnEmojiPopupShownListener { conversationBinding.ivEmoji.setImageResource(R.drawable.ic_keyboard) }
-            .setOnSoftKeyboardOpenListener { ignore -> Log.d(TAG, "Opened soft keyboard") }
+            .setOnSoftKeyboardOpenListener { ignore -> }
             .setOnEmojiPopupDismissListener { conversationBinding.ivEmoji.setImageResource(R.drawable.happy_face) }
-            .setOnSoftKeyboardCloseListener { Log.d(TAG, "Closed soft keyboard") }
+            .setOnSoftKeyboardCloseListener { }
             .setKeyboardAnimationStyle(R.style.emoji_fade_animation_style)
             .setPageTransformer(PageTransformer())
             .setBackgroundColor(
@@ -311,7 +285,6 @@ class ConversationActivity() : BaseActivity() {
             conversationViewModel.stopRecording()
             AppAnalytics.create(AnalyticsEvent.AUDIO_CANCELLED.NAME).push()
             window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-
         }
         conversationBinding.chatEdit.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
@@ -364,7 +337,6 @@ class ConversationActivity() : BaseActivity() {
         }
 
         conversationBinding.recordButton.setOnRecordClickListener {
-
             if (conversationBinding.chatEdit.text.toString().isEmpty()) {
                 checkAudioPermission(Runnable {
                     val downTime = SystemClock.uptimeMillis()
@@ -390,7 +362,17 @@ class ConversationActivity() : BaseActivity() {
                 ).show()
                 return@setOnRecordClickListener
             }
+            /*if (replySuggestion.isNullOrEmpty()) {
+                val toast = Toast.makeText(
+                    applicationContext,
+                    "Chacha kuch to select karo",
+                    Toast.LENGTH_LONG
+                )
+                toast.setGravity(Gravity.TOP, 0, 80)
+                toast.show()
 
+                return@setOnRecordClickListener
+            }*/
             if (cMessageType == BASE_MESSAGE_TYPE.TX) {
                 val tChatMessage =
                     TChatMessage(conversationBinding.chatEdit.text.toString())
@@ -405,13 +387,15 @@ class ConversationActivity() : BaseActivity() {
                     TChatMessage(conversationBinding.chatEdit.text.toString()),
                     chatModel = cell.message
                 )
-
             }
-
             conversationBinding.chatEdit.setText(EMPTY)
-            conversationBinding.chatRv.setOnFocusChangeListener { _, _ ->
-                AttachmentUtil.revealAttachments(false, conversationBinding)
-            }
+
+            /*replySuggestion = null
+             findViewById<View>(R.id.replay_root).visibility = GONE
+             conversationBinding.userReplaySuggestionRv.visibility = VISIBLE
+            conversationBinding.inputLL.setBackgroundResource(R.drawable.add_suggestion_bg)
+             */
+
         }
 
 
@@ -421,7 +405,6 @@ class ConversationActivity() : BaseActivity() {
             val pickerConfig = MediaPickerConfig()
                 .setUriPermanentAccess(false)
                 .setAllowMultiSelection(false)
-                //.setShowConfirmationDialog(true)
                 .setScreenOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
             MediaPicker.with(this, MediaPicker.MediaTypes.AUDIO)
                 .setConfig(pickerConfig)
@@ -452,7 +435,6 @@ class ConversationActivity() : BaseActivity() {
         }
         findViewById<View>(R.id.ll_gallary).setOnClickListener {
             AppAnalytics.create(AnalyticsEvent.CAMERA_SELECTED.NAME).push()
-
             uploadAttachment()
 
             val pickerConfig = MediaPickerConfig()
@@ -507,15 +489,41 @@ class ConversationActivity() : BaseActivity() {
                 removingConversationList.clear()
             }
             findViewById<MaterialToolbar>(R.id.toolbar_delete_chat).visibility = GONE
-
         }
+        /* findViewById<View>(R.id.replay_root).setOnClickListener {
+             findViewById<View>(R.id.replay_root).visibility = GONE
+             conversationBinding.userReplaySuggestionRv.visibility = VISIBLE
+             replySuggestion = null
+             conversationBinding.inputLL.setBackgroundResource(R.drawable.add_suggestion_bg)
+
+         }*/
+
+        /* KeyboardVisibilityEvent.setEventListener(
+             activityRef.get()
+         ) { isOpen ->
+             if (isOpen) {
+                 if (replySuggestion.isNullOrEmpty()) {
+                     findViewById<View>(R.id.replay_root).visibility = GONE
+                     conversationBinding.userReplaySuggestionRv.visibility = VISIBLE
+                 } else {
+                     conversationBinding.userReplaySuggestionRv.visibility = GONE
+                     findViewById<View>(R.id.replay_root).visibility = VISIBLE
+                 }
+                 conversationBinding.inputLL.setBackgroundResource(R.drawable.add_suggestion_bg)
+             } else {
+                 conversationBinding.userReplaySuggestionRv.visibility = GONE
+                 findViewById<View>(R.id.replay_root).visibility = GONE
+                 conversationBinding.inputLL.setBackgroundResource(R.drawable.rect_round)
+             }
+         }*/
+
     }
 
     private fun initSuggestionView() {
-
+/*
         conversationBinding.userReplaySuggestionRv.builder
             .setHasFixedSize(true)
-            .setLayoutManager( LinearLayoutManager(this,RecyclerView.HORIZONTAL,false))
+            .setLayoutManager(LinearLayoutManager(this, RecyclerView.HORIZONTAL, false))
         conversationBinding.userReplaySuggestionRv.addItemDecoration(
             LayoutMarginDecoration(
                 com.vanniktech.emoji.Utils.dpToPx(
@@ -524,12 +532,11 @@ class ConversationActivity() : BaseActivity() {
                 )
             )
         )
-        for (i in 0..4){
-            conversationBinding.userReplaySuggestionRv.addView(SuggestionViewHolder("first $i"))
+        val sug = arrayOf("Answer", "Koi preshani", "Kuch aur")
+        for (i in sug) {
+            conversationBinding.userReplaySuggestionRv.addView(SuggestionViewHolder(i))
         }
-        conversationBinding.userReplaySuggestionRv.refresh()
-
-
+        conversationBinding.userReplaySuggestionRv.refresh()*/
     }
 
     private fun removeViewAtPos(chatObj: ChatModel) {
@@ -713,6 +720,17 @@ class ConversationActivity() : BaseActivity() {
                 findViewById<AppCompatTextView>(R.id.message_delete_count).text =
                     removingConversationList.size.toString()
             })
+        /*compositeDisposable.add(RxBus2.listen(TagMessageEventBus::class.java)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                conversationBinding.inputLL.setBackgroundResource(R.drawable.add_suggestion_bg)
+                findViewById<View>(R.id.replay_root).visibility = VISIBLE
+                conversationBinding.userReplaySuggestionRv.visibility = GONE
+                findViewById<AppCompatTextView>(R.id.tv_reply_text).text = it.tag
+                replySuggestion = it.tag
+
+            })*/
 
 
     }

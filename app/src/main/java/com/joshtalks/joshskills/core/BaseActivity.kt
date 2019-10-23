@@ -12,6 +12,8 @@ import androidx.core.content.ContextCompat
 import com.crashlytics.android.Crashlytics
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
+import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.service.HAS_NOTIFICATION
 import com.joshtalks.joshskills.core.service.NOTIFICATION_ID
 import com.joshtalks.joshskills.repository.local.model.Mentor
@@ -98,11 +100,13 @@ abstract class BaseActivity : AppCompatActivity() {
 
     private fun getConfig() {
         val configSettings = FirebaseRemoteConfigSettings.Builder()
-            .setMinimumFetchIntervalInSeconds(10 * 3600)
+            .setMinimumFetchIntervalInSeconds(60*3600)
+            //.setDeveloperModeEnabled(BuildConfig.DEBUG)
             .build()
-        AppObjectController.firebaseRemoteConfig.setConfigSettingsAsync(configSettings)
-        AppObjectController.firebaseRemoteConfig.setDefaultsAsync(R.xml.remote_config_defaults)
-        AppObjectController.firebaseRemoteConfig.fetchAndActivate()
+        AppObjectController.getFirebaseRemoteConfig().setConfigSettingsAsync(configSettings)
+        AppObjectController.getFirebaseRemoteConfig().setDefaultsAsync(R.xml.remote_config_defaults)
+        AppObjectController.getFirebaseRemoteConfig().fetchAndActivate()
+
     }
 
     private fun initUserForCrashlytics() {
@@ -113,5 +117,10 @@ abstract class BaseActivity : AppCompatActivity() {
                 .core.setUserIdentifier(User.getInstance().phoneNumber + "$" + Mentor.getInstance().getId())
         } catch (ex: Exception) {
         }
+    }
+
+    fun callHelpLine() {
+        AppAnalytics.create(AnalyticsEvent.CLICK_HELPLINE_SELECTED.NAME).push()
+        Utils.call(this, AppObjectController.getFirebaseRemoteConfig().getString("helpline_number"))
     }
 }

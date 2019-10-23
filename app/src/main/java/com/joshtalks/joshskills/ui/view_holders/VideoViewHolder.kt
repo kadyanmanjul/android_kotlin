@@ -1,9 +1,9 @@
 package com.joshtalks.joshskills.ui.view_holders
 
 import android.Manifest
+import android.graphics.Color
 import android.net.Uri
-import android.view.View.GONE
-import android.view.View.VISIBLE
+import android.view.View.*
 import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -11,6 +11,7 @@ import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.text.HtmlCompat
 import androidx.fragment.app.FragmentActivity
+import com.google.android.exoplayer2.offline.Download
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.Utils
@@ -21,6 +22,7 @@ import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
 import com.joshtalks.joshskills.repository.local.entity.DOWNLOAD_STATUS
 import com.joshtalks.joshskills.repository.local.eventbus.DownloadMediaEventBus
+import com.joshtalks.joshskills.repository.local.eventbus.MediaProgressEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.PlayVideoEvent
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.PermissionToken
@@ -28,11 +30,12 @@ import com.karumi.dexter.listener.PermissionDeniedResponse
 import com.karumi.dexter.listener.PermissionGrantedResponse
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.single.PermissionListener
-import com.mindorks.placeholderview.annotations.Click
-import com.mindorks.placeholderview.annotations.Layout
-import com.mindorks.placeholderview.annotations.Resolve
-import com.mindorks.placeholderview.annotations.View
+import com.mindorks.placeholderview.annotations.*
 import com.pnikosis.materialishprogress.ProgressWheel
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
+import java.lang.Exception
 import java.lang.ref.WeakReference
 
 
@@ -86,8 +89,9 @@ class VideoViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
     @View(R.id.ll_container)
     lateinit var ll_container: LinearLayout
 
-
     lateinit var videoViewHolder: VideoViewHolder
+
+    private val compositeDisposable = CompositeDisposable()
 
 
     @Resolve
@@ -98,7 +102,7 @@ class VideoViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
         text_title.text = ""
         videoViewHolder = this
         text_message_body.text = ""
-        download_container.visibility = GONE
+        download_container.visibility = INVISIBLE
         text_message_time.text = Utils.messageTimeConversion(message.created)
         message.sender?.let {
             updateView(it, root_view, root_sub_view, message_view)
@@ -115,6 +119,8 @@ class VideoViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
                                     Runnable {
                                         playIcon.visibility = VISIBLE
                                     })
+                                download_container.visibility = GONE
+
                             }
 
                             override fun onPermissionDenied(response: PermissionDeniedResponse) {
@@ -154,7 +160,15 @@ class VideoViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
                             fileDownloadingInProgressView()
                             download(it)
                         }
-
+                        subscribeDownloader()
+                        if (message.progress == null) {
+                            progress_dialog.barColor = Color.WHITE
+                        } else {
+                            message.progress?.let {
+                                progress_dialog.resetCount()
+                                updateProgress(it)
+                            }
+                        }
                     }
                     else -> {
                         fileNotDownloadView()
@@ -189,29 +203,28 @@ class VideoViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
 
     }
 
-    fun fileDownloadSuccess() {
-        download_container.visibility = VISIBLE
+    private fun fileDownloadSuccess() {
+        download_container.visibility = GONE
         iv_start_download.visibility = GONE
         progress_dialog.visibility = GONE
         iv_cancel_download.visibility = GONE
 
     }
 
-    fun fileNotDownloadView() {
+    private fun fileNotDownloadView() {
         download_container.visibility = VISIBLE
         iv_start_download.visibility = VISIBLE
         progress_dialog.visibility = GONE
         iv_cancel_download.visibility = GONE
 
+
     }
 
     private fun fileDownloadingInProgressView() {
-
         download_container.visibility = VISIBLE
         iv_start_download.visibility = GONE
         progress_dialog.visibility = VISIBLE
         iv_cancel_download.visibility = VISIBLE
-
     }
 
 
@@ -265,11 +278,7 @@ class VideoViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
     @Click(R.id.iv_cancel_download)
     fun downloadCancel() {
         message.question?.videoList?.getOrNull(0)?.video_url?.run {
-            AppObjectController.videoDownloadTracker.download(
-                message,
-                Uri.parse(this),
-                VideoDownloadController.getInstance().buildRenderersFactory(false)
-            )
+            AppObjectController.videoDownloadTracker.cancelDownload(Uri.parse(this))
         }
         fileNotDownloadView()
         message.downloadStatus = DOWNLOAD_STATUS.NOT_START
@@ -281,4 +290,52 @@ class VideoViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
     fun downloadStart1() {
         RxBus2.publish(DownloadMediaEventBus(videoViewHolder, message))
     }
+
+    private fun updateProgress(progress: Float) {
+        progress_dialog.setLinearProgress(true)
+        progress_dialog.spinSpeed = 0.25f
+        progress_dialog.barColor = Color.parseColor("#128C7E")
+        progress_dialog.rimColor = Color.parseColor("#33128C7E")
+        progress_dialog.progress = progress / 100
+    }
+
+    private fun updateProgress() {
+        progress_dialog.barColor = Color.WHITE
+        progress_dialog.setLinearProgress(false)
+        progress_dialog.resetCount()
+    }
+
+    private fun subscribeDownloader() {
+        compositeDisposable.add(RxBus2.listen(MediaProgressEventBus::class.java)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                try {
+                    if (AppObjectController.gsonMapperForLocal.fromJson(
+                            it.id,
+                            ChatModel::class.java
+                        ).chatId == message.chatId
+                    ) {
+
+                        when {
+                            Download.STATE_STOPPED == it.state -> updateProgress()
+                            Download.STATE_DOWNLOADING == it.state -> {
+                                message.progress = it.progress
+                                updateProgress(it.progress)
+                            }
+                            Download.STATE_FAILED == it.state -> updateProgress()
+                        }
+                    }
+                } catch (ex: Exception) {
+
+                }
+
+            })
+    }
+
+    @Recycle
+    fun onRecycled() {
+        compositeDisposable.clear()
+    }
+
 }

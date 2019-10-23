@@ -58,8 +58,11 @@ data class ChatModel(
     var chatLocalId: String? = RandomString().nextString(),
 
     @ColumnInfo(name = "is_delete_message")
-    var isDeleteMessage: Boolean = false
+    var isDeleteMessage: Boolean = false,
 
+    @Ignore
+    @Expose
+    var progress: Float? = null
 
 ) : DataBaseClass(), Serializable {
 
@@ -321,6 +324,8 @@ open class DataBaseClass : Serializable {
     @Ignore
     @Expose
     var disable: Boolean = false
+
+
 }
 
 
@@ -356,7 +361,7 @@ interface ChatDao {
 
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insertAMessage(chat: ChatModel):Long
+    suspend fun insertAMessage(chat: ChatModel): Long
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun updateChatMessage(chat: ChatModel)

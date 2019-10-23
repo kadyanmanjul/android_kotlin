@@ -257,7 +257,25 @@ object Utils {
 
 
     fun openUrl(url: String, activity: Activity) {
-        val updateUrl: String = if (url.trim().startsWith("http://").not()) {
+
+        try {
+            val intent = Intent(Intent.ACTION_DIAL).apply {
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
+
+            if (url.trim().startsWith("http://").not()) {
+                intent.data = Uri.parse("http://" + url.replace("https://", "").trim())
+            } else {
+                intent.data = Uri.parse(url.trim())
+            }
+            AppObjectController.joshApplication.startActivity(intent)
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+
+        }
+
+
+        /*val updateUrl: String = if (url.trim().startsWith("http://").not()) {
             "http://" + url.replace("https://", "").trim()
         } else {
             url.trim()
@@ -275,7 +293,7 @@ object Utils {
             customTabsIntent,
             Uri.parse(updateUrl),
             WebViewFallback()
-        )
+        )*/
 
     }
     /* private fun openInApplicationBrowser(url: String,activity: Activity){
@@ -311,5 +329,28 @@ object Utils {
         return (info != null && info.isConnected)
     }
 
+    fun isHelplineOnline(): Boolean {
+        val timeFormat = "HH:mm:ss"
+        val simpleDateFormat = SimpleDateFormat(timeFormat, Locale.ENGLISH)
+        val startTime = simpleDateFormat.parse(AppObjectController.getFirebaseRemoteConfig().getString("helpline_start_time"))
+        val startCalender = Calendar.getInstance()
+        startCalender.time = startTime
+        startCalender.add(Calendar.DATE, 1)
+        val endTime = simpleDateFormat.parse(AppObjectController.getFirebaseRemoteConfig().getString("helpline_end_time"))
+        val endCalender = Calendar.getInstance()
+        endCalender.time = endTime
+        endCalender.add(Calendar.DATE, 1)
+
+
+        val cTime = simpleDateFormat.parse(simpleDateFormat.format(Date()))
+        val cCalendar = Calendar.getInstance()
+        cCalendar.time = cTime
+        cCalendar.add(Calendar.DATE, 1)
+
+        if (cCalendar.time.after(startCalender.time) && cCalendar.time.before(endCalender.time)) {
+            return true
+        }
+        return false
+    }
 
 }

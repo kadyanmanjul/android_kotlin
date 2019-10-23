@@ -7,6 +7,7 @@ import io.reactivex.subjects.PublishSubject
 object RxBus2 {
     private val publisher = PublishSubject.create<Any>()
 
+    @JvmStatic
     fun publish(event: Any) {
         publisher.onNext(event)
     }

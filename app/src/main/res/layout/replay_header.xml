@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/replay_root"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:background="@drawable/replay_bg"
+        android:orientation="horizontal">
+
+    <View
+            android:layout_width="@dimen/_2sdp"
+            android:layout_height="match_parent"
+            android:background="@drawable/replay_start_bg" />
+
+    <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_6sdp"
+            android:layout_marginTop="@dimen/_6sdp"
+            android:layout_marginBottom="@dimen/_8sdp">
+
+        <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_reply_from"
+                fontPath="fonts/Roboto-Medium.ttf"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start|center_horizontal"
+                android:ellipsize="end"
+                android:gravity="center"
+                android:lines="1"
+                android:maxLength="30"
+                android:text="@string/source_you"
+                android:textColor="@color/colorPrimary"
+                android:textSize="@dimen/font_15" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_reply_text"
+                fontPath="fonts/Roboto-Regular.ttf"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start|center_horizontal"
+                android:layout_marginTop="@dimen/_16sdp"
+                android:layout_marginEnd="@dimen/_20sdp"
+                android:ellipsize="end"
+                android:gravity="start|center_horizontal"
+                android:maxLines="3"
+                android:textColor="@color/gray_71"
+                android:textSize="@dimen/font_13" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/tv_reply_cancel"
+                android:layout_width="@dimen/_22sdp"
+                android:layout_height="@dimen/_22sdp"
+                android:layout_gravity="top|end"
+                android:paddingLeft="@dimen/_4sdp"
+                android:paddingRight="@dimen/_4sdp"
+                android:paddingBottom="@dimen/_4sdp"
+                android:scaleType="fitStart"
+                android:src="@drawable/ic_cancel_black_24dp"
+                android:tint="@color/cross_78" />
+    </FrameLayout>
+</LinearLayout>

@@ -14,4 +14,26 @@
         <value>7428797127</value>
     </entry>
 
+    <entry>
+        <key>update_force</key>
+        <value>false</value>
+    </entry>
+
+    <entry>
+        <key>helpline_start_time</key>
+        <value>10:00:00</value>
+    </entry>
+    <entry>
+        <key>helpline_end_time</key>
+        <value>18:00:00</value>
+    </entry>
+
+    <entry>
+        <key>test_no</key>
+        <value>8452</value>
+    </entry>
+
+
+
+
 </defaultsMap>

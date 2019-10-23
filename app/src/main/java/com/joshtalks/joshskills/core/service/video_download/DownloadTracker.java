@@ -23,7 +23,10 @@ import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.util.Log;
 import com.google.android.exoplayer2.util.Util;
 import com.joshtalks.joshskills.core.AppObjectController;
+import com.joshtalks.joshskills.messaging.RxBus2;
 import com.joshtalks.joshskills.repository.local.entity.ChatModel;
+import com.joshtalks.joshskills.repository.local.eventbus.MediaProgressEventBus;
+import com.joshtalks.joshskills.repository.local.model.Mentor;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -43,6 +46,8 @@ public class DownloadTracker {
         void onDownloadsChanged(Download download);
 
         void onDownloadRemoved(Download download);
+
+        void onError(String key, Exception ex);
     }
 
 
@@ -57,7 +62,7 @@ public class DownloadTracker {
     @Nullable
     private StartDownloadDialogHelper startDownloadDialogHelper;
 
-    public DownloadTracker(
+    DownloadTracker(
             Context context, DataSource.Factory dataSourceFactory, DownloadManager downloadManager) {
         this.context = context.getApplicationContext();
         this.dataSourceFactory = dataSourceFactory;
@@ -90,13 +95,18 @@ public class DownloadTracker {
                          Uri uri,
                          RenderersFactory renderersFactory) {
         Download download = downloads.get(uri);
+        if (startDownloadDialogHelper != null) {
+            startDownloadDialogHelper.release();
+        }
+        startDownloadDialogHelper = new StartDownloadDialogHelper(getDownloadHelper(uri, renderersFactory), chatObj);
+
+    }
+
+    public void cancelDownload(
+            Uri uri) {
+        Download download = downloads.get(uri);
         if (download != null) {
             DownloadService.sendRemoveDownload(context, VideoDownloadService.class, download.request.id, /* foreground= */ false);
-        } else {
-            if (startDownloadDialogHelper != null) {
-                startDownloadDialogHelper.release();
-            }
-            startDownloadDialogHelper = new StartDownloadDialogHelper(getDownloadHelper(uri, renderersFactory), chatObj);
         }
     }
 
@@ -137,6 +147,7 @@ public class DownloadTracker {
             for (Listener listener : listeners) {
                 listener.onDownloadsChanged(download);
             }
+
         }
 
         @Override
@@ -153,7 +164,7 @@ public class DownloadTracker {
         private final DownloadHelper downloadHelper;
         private final ChatModel chatObj;
 
-        public StartDownloadDialogHelper(DownloadHelper downloadHelper, ChatModel chatObj) {
+        StartDownloadDialogHelper(DownloadHelper downloadHelper, ChatModel chatObj) {
             this.downloadHelper = downloadHelper;
             this.chatObj = chatObj;
             downloadHelper.prepare(this);
@@ -204,7 +215,13 @@ public class DownloadTracker {
           /*  Toast.makeText(
                     context.getApplicationContext(), R.string.download_start_error, Toast.LENGTH_LONG)
                     .show();*/
-            Log.e(TAG, "Failed to start download", e);
+
+            for (Listener listener : listeners) {
+                listener.onError(AppObjectController.getGsonMapper().toJson(chatObj), e);
+            }
+            RxBus2.publish(new MediaProgressEventBus(Download.STATE_STOPPED, AppObjectController.getGsonMapper().toJson(chatObj), 0));
+
+
         }
 
         /**

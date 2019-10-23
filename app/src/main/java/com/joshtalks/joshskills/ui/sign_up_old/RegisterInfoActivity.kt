@@ -1,5 +1,6 @@
 package com.joshtalks.joshskills.ui.sign_up_old
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AlertDialog
@@ -13,7 +14,9 @@ import com.joshtalks.joshskills.databinding.ActivityRegisterInfoBinding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-
+import android.telephony.TelephonyManager
+import com.google.gson.reflect.TypeToken
+import com.joshtalks.joshskills.repository.local.model.CountryDetail
 
 class RegisterInfoActivity : BaseActivity() {
 
@@ -27,7 +30,25 @@ class RegisterInfoActivity : BaseActivity() {
         AppAnalytics.create(AnalyticsEvent.COURSE_FAILURE_SCREEN.NAME).push()
         layout.phoneNumberEt.prefix = "+91"
 
-        layout.tv2.text = AppObjectController.firebaseRemoteConfig.getString("self_register_text")
+        layout.tv2.text = AppObjectController.getFirebaseRemoteConfig().getString("self_register_text")
+
+
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val tm =this@RegisterInfoActivity.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
+                val countryCodeValue = tm.networkCountryIso
+                val json: String =
+                    applicationContext.assets.open("country_details.json").bufferedReader()
+                        .use { it.readText() }
+                val countryList = AppObjectController.gsonMapper.fromJson<List<CountryDetail>>(json,
+                    object : TypeToken<List<CountryDetail>>() {}.type)
+                val country= countryList.find { it.code.equals(countryCodeValue,ignoreCase = true) }
+                layout.phoneNumberEt.prefix = country?.dialCode
+
+            } catch (ex: Exception) {
+            }
+        }
+
     }
 
     fun registerUser() {
@@ -60,15 +81,11 @@ class RegisterInfoActivity : BaseActivity() {
     fun clickToPay() {
         AppAnalytics.create(AnalyticsEvent.CLICK_TO_PAY_SELECTED.NAME).push()
         Utils.openUrl(
-            AppObjectController.firebaseRemoteConfig.getString("registration_url"),
+            AppObjectController.getFirebaseRemoteConfig().getString("registration_url"),
             this@RegisterInfoActivity
         )
     }
 
-    fun callHelpLine() {
-        AppAnalytics.create(AnalyticsEvent.CLICK_HELPLINE_SELECTED.NAME).push()
-        Utils.call(this, AppObjectController.firebaseRemoteConfig.getString("helpline_number"))
-    }
 
     override fun onBackPressed() {
         AppAnalytics.create(AnalyticsEvent.BACK_PRESSED.NAME)
@@ -86,8 +103,7 @@ class RegisterInfoActivity : BaseActivity() {
         CoroutineScope(Dispatchers.IO).launch {
             val map = mapOf("mobile" to phoneNumber)
             try {
-                val resp =
-                    AppObjectController.signUpNetworkService.registerAnonymousUser(map).await()
+                AppObjectController.signUpNetworkService.registerAnonymousUser(map).await()
                 PrefManager.clear()
                 AppObjectController.appDatabase.clearAllTables()
                 val intent = Intent(applicationContext, LoginActivity::class.java).apply {

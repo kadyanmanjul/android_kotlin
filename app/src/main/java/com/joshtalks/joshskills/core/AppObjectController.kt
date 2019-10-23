@@ -57,7 +57,7 @@ val KEY_APP_VERSION_CODE = "app-version-code"
 val KEY_APP_VERSION_NAME = "app-version-name"
 val REMOTE_CONFIG_PREFIX = "josh_param_"
 
-const val SERVER_URL = "http://skills.joshtalks.org"
+const val SERVER_URL = "https://skills.joshtalks.org"
 //const val SERVER_URL = "http://192.168.14.60:8000"
 
 internal class AppObjectController {
@@ -122,8 +122,6 @@ internal class AppObjectController {
         @JvmStatic
         lateinit var multiTransformation: MultiTransformation<Bitmap>
 
-        @JvmStatic
-        var firebaseRemoteConfig: FirebaseRemoteConfig = FirebaseRemoteConfig.getInstance()
 
 
         /* @JvmStatic
@@ -262,7 +260,6 @@ internal class AppObjectController {
         private fun initExoPlayer() {
             userAgent =
                 Util.getUserAgent(joshApplication, joshApplication.getString(R.string.app_name))
-
         }
 
         fun clearDownloadMangerCallback() {
@@ -276,6 +273,9 @@ internal class AppObjectController {
 
             }
 
+        }
+        fun getFirebaseRemoteConfig(): FirebaseRemoteConfig {
+           return FirebaseRemoteConfig.getInstance()
         }
 
         private fun getOkHttpDownloader(): OkHttpDownloader {

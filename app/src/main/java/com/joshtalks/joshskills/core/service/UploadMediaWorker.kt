@@ -72,12 +72,9 @@ class UploadProfileWorker(context: Context, var params: WorkerParameters) :
             ImageModel::class.java
         )
         val job = async(Dispatchers.IO) {
-            var filePart: MultipartBody.Part = createMultipartBody(imageObject.imageLocalPath)
+            val filePart: MultipartBody.Part = createMultipartBody(imageObject.imageLocalPath)
             val uploadProfile: Any =
                 AppObjectController.signUpNetworkService.uploadProfilePicture(User.getInstance().id,filePart)
-            Log.e("dd", uploadProfile.toString())
-
-
         }
 
         job.await()

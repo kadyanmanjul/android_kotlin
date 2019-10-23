@@ -64,7 +64,6 @@
                         android:src="@drawable/ic_white_play" />
 
                 <FrameLayout
-
                         android:id="@+id/download_container"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -97,14 +96,19 @@
 
                     <com.pnikosis.materialishprogress.ProgressWheel
                             android:id="@+id/progress_dialog"
-                            android:layout_width="@dimen/_28sdp"
-                            android:layout_height="@dimen/_28sdp"
+                            android:layout_width="@dimen/_30sdp"
+                            android:layout_height="@dimen/_30sdp"
                             android:layout_gravity="center"
                             android:visibility="invisible"
                             app:matProg_barWidth="@dimen/_2sdp"
                             wheel:matProg_barColor="@color/white"
                             wheel:matProg_fillRadius="true"
-                            wheel:matProg_progressIndeterminate="true" />
+                            wheel:matProg_progressIndeterminate="true"
+                            wheel:matProg_rimColor="#33128C7E"
+                            wheel:matProg_linearProgress="false"
+                            wheel:matProg_rimWidth="@dimen/_2sdp"
+                            />
+
 
                     <androidx.appcompat.widget.AppCompatImageView
                             android:id="@+id/iv_cancel_download"

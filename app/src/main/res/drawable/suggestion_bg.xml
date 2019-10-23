@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item  android:state_pressed="false" android:state_enabled="true" android:state_selected="false">
+        <shape android:shape="rectangle">
+            <solid android:color="@color/gray_e6" />
+            <corners android:bottomLeftRadius="@dimen/_12sdp" android:bottomRightRadius="@dimen/_12sdp" android:topLeftRadius="@dimen/_12sdp" android:topRightRadius="@dimen/_12sdp" />
+        </shape>
+    </item>
+    <item android:state_pressed="true" android:state_enabled="true" android:state_selected="false">
+        <shape android:shape="rectangle">
+            <solid android:color="@color/emoji_icon_color" />
+            <corners android:bottomLeftRadius="@dimen/_12sdp" android:bottomRightRadius="@dimen/_12sdp" android:topLeftRadius="@dimen/_12sdp" android:topRightRadius="@dimen/_12sdp" />
+        </shape>
+    </item>
+
+    <item >
+        <shape android:shape="rectangle">
+            <solid android:color="@color/gray_e6" />
+            <corners android:bottomLeftRadius="@dimen/_12sdp" android:bottomRightRadius="@dimen/_12sdp" android:topLeftRadius="@dimen/_12sdp" android:topRightRadius="@dimen/_12sdp" />
+        </shape>
+    </item>
+
+
+    <!-- <item android:color="@color/colorPrimary" android:state_selected="true">
+         <shape android:shape="rectangle">
+             <solid android:color="@color/gray_e6" />
+             <corners android:bottomLeftRadius="@dimen/_12sdp" android:bottomRightRadius="@dimen/_12sdp" android:topLeftRadius="@dimen/_12sdp" android:topRightRadius="@dimen/_12sdp" />
+         </shape>
+
+     </item>
+     <item android:color="@color/red" android:state_pressed="true">
+         <shape android:shape="rectangle">
+             <solid android:color="@color/gray_e6" />
+             <corners android:bottomLeftRadius="@dimen/_12sdp" android:bottomRightRadius="@dimen/_12sdp" android:topLeftRadius="@dimen/_12sdp" android:topRightRadius="@dimen/_12sdp" />
+         </shape>
+
+     </item>
+     <item android:color="@color/squash_light" android:state_pressed="true" android:state_selected="true"
+
+             >
+         <shape android:shape="rectangle">
+             <solid android:color="@color/emoji_icon_color" />
+             <corners android:bottomLeftRadius="@dimen/_12sdp" android:bottomRightRadius="@dimen/_12sdp" android:topLeftRadius="@dimen/_12sdp" android:topRightRadius="@dimen/_12sdp" />
+         </shape>
+
+         &lt;!&ndash;<shape
+                 android:shape="rectangle">
+             <gradient android:startColor="@color/md_teal_500"
+                     android:endColor="@color/md_blue_400"
+                     android:angle="270" />
+             <corners android:radius="@dimen/fab_margin" />
+             <stroke android:width="2px"
+                     android:color="@color/md_amber_A400" />
+         </shape>&ndash;&gt;
+     </item>-->
+</selector>
+

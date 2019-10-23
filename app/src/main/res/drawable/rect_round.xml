@@ -5,6 +5,6 @@
         android:startColor="@color/white"
         android:angle="270" />
     <corners
-        android:radius="30dp" />
+        android:radius="@dimen/_24sdp" />
 
 </shape>

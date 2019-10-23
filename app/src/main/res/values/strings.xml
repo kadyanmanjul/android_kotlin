@@ -57,6 +57,13 @@
     <string name="unread_message">%s UNREAD MESSAGES</string>
     <string name="media_not_found_message">Sorry, this media file doesn\'t exist on your internal storage</string>
     <string name="pdf_desc">%s Page \u2022 PDF</string>
+    <string name="source_you">You</string>
+    <string name="call_helpline">Call helpline</string>
+    <string name="restart">Restart</string>
+    <string name="update_message">An update has just been downloaded.</string>
+    <string name="update_download_success_message">An update has just been downloaded.</string>
+
+
 
 
 </resources>

@@ -1,21 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context="com.joshtalks.joshskills.ui.inbox.InboxActivity">
 
-    <include layout="@layout/base_toolbar" />
-
-    <com.mindorks.placeholderview.PlaceHolderView
-            android:background="@android:color/white"
-            android:id="@+id/recycler_view_inbox"
+    <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="?attr/actionBarSize"
-            android:paddingTop="@dimen/_5sdp" />
+            android:layout_height="match_parent">
+
+        <include layout="@layout/base_toolbar" />
+
+        <com.mindorks.placeholderview.PlaceHolderView
+                android:id="@+id/recycler_view_inbox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="?attr/actionBarSize"
+                android:background="@android:color/white"
+                android:paddingTop="@dimen/_5sdp" />
 
 
-</FrameLayout>
+    </FrameLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
