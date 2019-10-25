@@ -11,6 +11,7 @@ import android.text.StaticLayout;
 import android.text.TextUtils;
 import android.text.style.StyleSpan;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -93,6 +94,7 @@ public class JoshTextView extends AppCompatTextView {
             int currentColor = getColorByMode(autoLinkItem.getAutoLinkMode());
 
             TouchableSpan clickableSpan = new TouchableSpan(currentColor, defaultSelectedColor, isUnderLineEnabled) {
+
                 @Override
                 public void onClick(View widget) {
                     if (autoLinkOnClickListener != null)
@@ -100,6 +102,7 @@ public class JoshTextView extends AppCompatTextView {
                                 autoLinkItem.getAutoLinkMode(),
                                 autoLinkItem.getMatchedText());
                 }
+
             };
 
             spannableString.setSpan(
