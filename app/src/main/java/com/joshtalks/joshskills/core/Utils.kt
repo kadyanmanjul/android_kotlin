@@ -259,7 +259,7 @@ object Utils {
     fun openUrl(url: String, activity: Activity) {
 
         try {
-            val intent = Intent(Intent.ACTION_DIAL).apply {
+            val intent = Intent(ACTION_VIEW).apply {
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             }
 

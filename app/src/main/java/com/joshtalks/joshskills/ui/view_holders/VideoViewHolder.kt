@@ -15,6 +15,8 @@ import com.google.android.exoplayer2.offline.Download
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
+import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.core.service.video_download.VideoDownloadController
@@ -306,31 +308,35 @@ class VideoViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
     }
 
     private fun subscribeDownloader() {
-        compositeDisposable.add(RxBus2.listen(MediaProgressEventBus::class.java)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe {
-                try {
-                    if (AppObjectController.gsonMapperForLocal.fromJson(
-                            it.id,
-                            ChatModel::class.java
-                        ).chatId == message.chatId
-                    ) {
+        compositeDisposable.add(
+            RxBus2.listen(MediaProgressEventBus::class.java)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
 
-                        when {
-                            Download.STATE_STOPPED == it.state -> updateProgress()
-                            Download.STATE_DOWNLOADING == it.state -> {
-                                message.progress = it.progress
-                                updateProgress(it.progress)
+                .subscribe({
+                    try {
+                        if (AppObjectController.gsonMapperForLocal.fromJson(
+                                it.id,
+                                ChatModel::class.java
+                            ).chatId == message.chatId
+                        ) {
+
+                            when {
+                                Download.STATE_STOPPED == it.state -> updateProgress()
+                                Download.STATE_DOWNLOADING == it.state -> {
+                                    message.progress = it.progress
+                                    updateProgress(it.progress)
+                                }
+                                Download.STATE_FAILED == it.state -> updateProgress()
                             }
-                            Download.STATE_FAILED == it.state -> updateProgress()
                         }
+                    } catch (ex: Exception) {
+
                     }
-                } catch (ex: Exception) {
-
-                }
-
-            })
+                }, {
+                    it.printStackTrace()
+                })
+        )
     }
 
     @Recycle

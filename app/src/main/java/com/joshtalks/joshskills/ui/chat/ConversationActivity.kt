@@ -30,6 +30,7 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.crashlytics.android.Crashlytics
 import com.google.android.material.appbar.MaterialToolbar
 import com.greentoad.turtlebody.mediapicker.MediaPicker
 import com.greentoad.turtlebody.mediapicker.core.MediaPickerConfig
@@ -110,7 +111,8 @@ class ConversationActivity() : BaseActivity() {
             this@ConversationActivity.finish()
         }
         try {
-            conversationViewModel= ViewModelProviders.of(this).get(ConversationViewModel::class.java)
+            conversationViewModel =
+                ViewModelProviders.of(this).get(ConversationViewModel::class.java)
             conversationViewModel.inboxEntity = inboxEntity
         } catch (ex: UninitializedPropertyAccessException) {
             startActivity(getInboxActivityIntent())
@@ -158,23 +160,27 @@ class ConversationActivity() : BaseActivity() {
     }
 
     private fun setToolbar() {
-        findViewById<View>(R.id.iv_back).visibility = VISIBLE
-        findViewById<CircleImageView>(R.id.image_view_logo).setImageResource(R.drawable.ic_josh_course)
-        findViewById<View>(R.id.image_view_logo).visibility = VISIBLE
-
-        findViewById<AppCompatTextView>(R.id.text_message_title).text = inboxEntity.course_name
-        findViewById<AppCompatImageView>(R.id.iv_back).setOnClickListener {
-            finish()
-        }
-
-        if (Utils.isHelplineOnline()) {
-            findViewById<MaterialToolbar>(R.id.toolbar).inflateMenu(R.menu.main_menu)
-            findViewById<MaterialToolbar>(R.id.toolbar).setOnMenuItemClickListener {
-                if (it?.itemId == R.id.menu_call_helpline) {
-                    callHelpLine()
-                }
-                return@setOnMenuItemClickListener true
+        try {
+            findViewById<View>(R.id.iv_back).visibility = VISIBLE
+            findViewById<CircleImageView>(R.id.image_view_logo).setImageResource(R.drawable.ic_josh_course)
+            findViewById<View>(R.id.image_view_logo).visibility = VISIBLE
+            findViewById<AppCompatImageView>(R.id.iv_back).setOnClickListener {
+                finish()
             }
+
+            if (Utils.isHelplineOnline()) {
+                findViewById<MaterialToolbar>(R.id.toolbar).inflateMenu(R.menu.main_menu)
+                findViewById<MaterialToolbar>(R.id.toolbar).setOnMenuItemClickListener {
+                    if (it?.itemId == R.id.menu_call_helpline) {
+                        callHelpLine()
+                    }
+                    return@setOnMenuItemClickListener true
+                }
+            }
+            findViewById<AppCompatTextView>(R.id.text_message_title).text = inboxEntity.course_name
+
+        } catch (ex: Exception) {
+
         }
 
     }
@@ -615,13 +621,17 @@ class ConversationActivity() : BaseActivity() {
     }
 
     private fun subscribeRXBus() {
-        compositeDisposable.add(RxBus2.listen(PlayVideoEvent::class.java).subscribe {
-            pauseAudioPlayer()
-            VideoPlayerActivity.startConversionActivity(
-                this,
-                it.chatModel, inboxEntity.course_name
-            )
-        })
+        compositeDisposable.add(RxBus2.listen(PlayVideoEvent::class.java)
+            .subscribe({
+                pauseAudioPlayer()
+                VideoPlayerActivity.startConversionActivity(
+                    this,
+                    it.chatModel, inboxEntity.course_name
+                )
+            }, {
+                it.printStackTrace()
+            })
+        )
         compositeDisposable.add(RxBus2.listen(ImageShowEvent::class.java).subscribe {
             it.imageUrl?.let { imageUrl ->
                 ImageShowFragment.newInstance(imageUrl, inboxEntity.course_name, it.imageId)
@@ -786,18 +796,22 @@ class ConversationActivity() : BaseActivity() {
     }
 
     private fun addUploadAudioMedia(mediaPath: String) {
-        val recordUpdatedPath = AppDirectory.getRecordingSentFilePath()
-        AppDirectory.copy(mediaPath, recordUpdatedPath)
-        val tAudioMessage = TAudioMessage(recordUpdatedPath, recordUpdatedPath)
-        val cell =
-            MessageBuilderFactory.getMessage(activityRef, BASE_MESSAGE_TYPE.AU, tAudioMessage)
-        conversationBinding.chatRv.addView(cell)
-        scrollToEnd()
-        conversationViewModel.uploadMedia(
-            recordUpdatedPath,
-            tAudioMessage,
-            cell.message
-        )
+        try {
+            val recordUpdatedPath = AppDirectory.getRecordingSentFilePath()
+            AppDirectory.copy(mediaPath, recordUpdatedPath)
+            val tAudioMessage = TAudioMessage(recordUpdatedPath, recordUpdatedPath)
+            val cell =
+                MessageBuilderFactory.getMessage(activityRef, BASE_MESSAGE_TYPE.AU, tAudioMessage)
+            conversationBinding.chatRv.addView(cell)
+            scrollToEnd()
+            conversationViewModel.uploadMedia(
+                recordUpdatedPath,
+                tAudioMessage,
+                cell.message
+            )
+        }catch (ex:Exception){
+            Crashlytics.logException(ex)
+        }
     }
 
 
