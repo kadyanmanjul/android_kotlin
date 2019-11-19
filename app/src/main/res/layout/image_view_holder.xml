@@ -30,7 +30,6 @@
                     android:gravity="start">
 
                 <androidx.appcompat.widget.AppCompatImageView
-                        android:src="@drawable/pdf_thumb"
                         android:id="@+id/image_view"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -39,10 +38,46 @@
                         android:clickable="true"
                         android:focusable="true"
                         android:scaleType="centerCrop"
+                        android:src="@drawable/pdf_thumb"
                         app:layout_constraintBottom_toTopOf="@+id/text_message_body"
                         app:layout_constraintLeft_toLeftOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
+
+
+                <FrameLayout
+                        app:layout_constraintBottom_toBottomOf="@+id/image_view"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="end|bottom">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/_80sdp"
+                            android:layout_gravity=""
+                            android:adjustViewBounds="true"
+                            android:clickable="false"
+                            android:focusable="false"
+                            android:scaleType="fitEnd"
+                            android:src="@drawable/bg_textview" />
+
+                    <TextView
+
+                            android:text="wdwdwd"
+                            android:id="@+id/text_message_time"
+                            fontPath="fonts/Roboto-Light.ttf"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="bottom|end"
+                            android:drawablePadding="@dimen/_4sdp"
+                            android:paddingEnd="@dimen/_10sdp"
+                            android:paddingBottom="@dimen/_5sdp"
+                            android:textColor="@color/white"
+                            android:textSize="@dimen/font_12" />
+
+                </FrameLayout>
+
 
 
                 <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
@@ -56,30 +91,31 @@
                         android:paddingEnd="@dimen/_10sdp"
                         android:textColor="@color/gray_48"
                         android:textSize="@dimen/font_16"
-                        android:visibility="gone"
+                        android:visibility="visible"
                         app:layout_constraintBottom_toBottomOf="@+id/image_view"
                         app:layout_constraintLeft_toLeftOf="parent"
-                        app:layout_constraintStart_toStartOf="parent" />
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="parent" />
 
 
-              <!--  <TextView
-                        android:id="@+id/text_message_time"
-                        fontPath="fonts/Roboto-Light.ttf"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="end"
-                        android:drawablePadding="@dimen/_4sdp"
-                        android:gravity="center"
-                        android:paddingLeft="@dimen/_20sdp"
-                        android:paddingTop="@dimen/_5sdp"
-                        android:text=""
-                        android:textColor="@color/gray_9E"
-                        android:textSize="@dimen/font_12"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
+                <!--  <TextView
+                          android:id="@+id/text_message_time"
+                          fontPath="fonts/Roboto-Light.ttf"
+                          android:layout_width="wrap_content"
+                          android:layout_height="wrap_content"
+                          android:layout_gravity="end"
+                          android:drawablePadding="@dimen/_4sdp"
+                          android:gravity="center"
+                          android:paddingLeft="@dimen/_20sdp"
+                          android:paddingTop="@dimen/_5sdp"
+                          android:text=""
+                          android:textColor="@color/gray_9E"
+                          android:textSize="@dimen/font_12"
+                          app:layout_constraintBottom_toBottomOf="parent"
+                          app:layout_constraintEnd_toEndOf="parent"
 
-                        />
--->
+                          />
+  -->
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <FrameLayout
@@ -95,15 +131,15 @@
 
                 <androidx.appcompat.widget.AppCompatImageView
                         android:id="@+id/iv_start_download"
-                        android:paddingStart="@dimen/_30sdp"
-                        android:paddingTop="@dimen/_10sdp"
-                        android:paddingEnd="@dimen/_30sdp"
-                        android:paddingBottom="@dimen/_10sdp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:clickable="true"
                         android:focusable="true"
+                        android:paddingStart="@dimen/_30sdp"
+                        android:paddingTop="@dimen/_10sdp"
+                        android:paddingEnd="@dimen/_30sdp"
+                        android:paddingBottom="@dimen/_10sdp"
                         android:src="@drawable/ic_download"
                         android:tint="@color/white"
                         android:visibility="visible" />
@@ -132,33 +168,7 @@
 
 
             </FrameLayout>
-            <FrameLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="end|bottom">
-                <androidx.appcompat.widget.AppCompatImageView
-                        android:layout_width="match_parent"
-                        android:layout_height="@dimen/_80sdp"
-                        android:layout_gravity=""
-                        android:adjustViewBounds="true"
-                        android:clickable="false"
-                        android:focusable="false"
-                        android:scaleType="fitEnd"
-                        android:src="@drawable/bg_textview" />
 
-                <TextView
-                        android:paddingBottom="@dimen/_5sdp"
-                        android:paddingEnd="@dimen/_10sdp"
-                        android:id="@+id/text_message_time"
-                        fontPath="fonts/Roboto-Light.ttf"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="bottom|end"
-                        android:drawablePadding="@dimen/_4sdp"
-                        android:textColor="@color/white"
-                        android:textSize="@dimen/font_12" />
-
-            </FrameLayout>
 
 
         </FrameLayout>

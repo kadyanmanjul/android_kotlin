@@ -82,8 +82,8 @@ class CropImageActivity : BaseActivity() {
     }
 
     fun cancel() {
-        var resultIntent = Intent();
-        setResult(Activity.RESULT_CANCELED, resultIntent);
+        val resultIntent = Intent()
+        setResult(Activity.RESULT_CANCELED, resultIntent)
         finish();
     }
 

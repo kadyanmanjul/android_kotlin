@@ -16,6 +16,7 @@
 
 
     <RelativeLayout
+            android:background="@color/chat_bg"
             android:id="@+id/root_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -25,13 +26,13 @@
 
         <include layout="@layout/remove_chat_toolbar" />
 
-        <androidx.appcompat.widget.AppCompatImageView
+       <!-- <androidx.appcompat.widget.AppCompatImageView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:adjustViewBounds="true"
                 android:scaleType="centerCrop"
                 android:src="@drawable/chat_wallpaper"
-                android:tintMode="multiply" />
+                android:tintMode="multiply" />-->
 
 
         <FrameLayout
@@ -82,7 +83,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
                 android:background="#00000000"
-                android:paddingTop="@dimen/_5sdp">
+                >
 
 
             <LinearLayout

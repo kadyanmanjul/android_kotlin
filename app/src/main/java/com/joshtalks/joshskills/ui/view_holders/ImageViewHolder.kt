@@ -86,7 +86,8 @@ class ImageViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
         message.sender?.let {
             updateView(it, root_view, root_sub_view, message_view)
         }
-        text_message_body.setShadowLayer(1F, 0F, 0F, Color.RED);
+       // text_message_body.setShadowLayer(1F, 0F, 0F, Color.RED);
+        text_message_body.visibility = GONE
 
 
         if (message.url != null) {
@@ -175,16 +176,22 @@ class ImageViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
             }
         }
 
-        if (message.text != null) {
-            text_message_body.text?.isNotEmpty()?.let {
-                text_message_body.visibility = GONE
-                addMessageAutoLink(text_message_body)
 
-            }
-
-        } else {
-            message.question?.qText?.let {
-                text_message_body.text = HtmlCompat.fromHtml(it, HtmlCompat.FROM_HTML_MODE_LEGACY)
+        message.question?.let { question ->
+            if (question.qText.isNullOrEmpty().not()) {
+                text_message_body.text = HtmlCompat.fromHtml(
+                    question.qText!!,
+                    HtmlCompat.FROM_HTML_MODE_LEGACY
+                )
+                text_message_body.visibility = VISIBLE
+            }else{
+                if (message.text.isNullOrEmpty().not()){
+                    text_message_body.text = HtmlCompat.fromHtml(
+                        question.qText!!,
+                        HtmlCompat.FROM_HTML_MODE_LEGACY
+                    )
+                    text_message_body.visibility = VISIBLE
+                }
             }
         }
 

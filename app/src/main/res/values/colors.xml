@@ -5,7 +5,8 @@
     <color name="colorAccent">#0381BD</color>
     <color name="status_bar_color">#035D88</color>
     <color name="font_color">#373737</color>
-    <color name="button_primary_color">#34B7F1</color>
+    <color name="button_primary_color">#00ACFF</color>
+    <color name="chat_bg">#F1F1F1</color>
 
     <color name="white">#FFFFFF</color>
     <color name="primary_text">#0381bd</color>
