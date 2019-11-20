@@ -104,7 +104,7 @@
                             wheel:matProg_barColor="@color/white"
                             wheel:matProg_fillRadius="true"
                             wheel:matProg_progressIndeterminate="true"
-                            wheel:matProg_rimColor="#33128C7E"
+                            wheel:matProg_rimColor="#3300ACFF"
                             wheel:matProg_linearProgress="false"
                             wheel:matProg_rimWidth="@dimen/_2sdp"
                             />

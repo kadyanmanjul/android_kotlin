@@ -42,13 +42,13 @@ import com.joshtalks.joshskills.repository.service.SyncChatService
 import kotlinx.coroutines.delay
 
 
-class ConversationViewModel(application: Application) : AndroidViewModel(application) {
+class ConversationViewModel(application: Application, private var inboxEntity: InboxEntity) :
+    AndroidViewModel(application) {
     private var compositeDisposable = CompositeDisposable()
     lateinit var recordFile: File
     private var lastChatTime: Date? = null
     var context: JoshApplication = getApplication()
     var appDatabase = AppObjectController.appDatabase
-    lateinit var inboxEntity: InboxEntity
     val chatObservableLiveData: MutableLiveData<List<ChatModel>> = MutableLiveData()
     val refreshViewLiveData: MutableLiveData<ChatModel> = MutableLiveData()
     private var lastMessageTime: Date? = null
@@ -113,19 +113,17 @@ class ConversationViewModel(application: Application) : AndroidViewModel(applica
         for (chat in listOfChat) {
             val question: Question? = appDatabase.chatDao().getQuestion(chat.chatId)
             if (question != null) {
-                when {
-                    question.material_type == BASE_MESSAGE_TYPE.IM ->
-                        question.imageList =
-                            appDatabase.chatDao()
-                                .getImagesOfQuestion(questionId = question.questionId)
-                    question.material_type == BASE_MESSAGE_TYPE.VI -> question.videoList =
+                when (question.material_type) {
+                    BASE_MESSAGE_TYPE.IM -> question.imageList =
+                        appDatabase.chatDao()
+                            .getImagesOfQuestion(questionId = question.questionId)
+                    BASE_MESSAGE_TYPE.VI -> question.videoList =
                         appDatabase.chatDao()
                             .getVideosOfQuestion(questionId = question.questionId)
-                    question.material_type == BASE_MESSAGE_TYPE.AU -> question.audioList =
+                    BASE_MESSAGE_TYPE.AU -> question.audioList =
                         appDatabase.chatDao()
                             .getAudiosOfQuestion(questionId = question.questionId)
-
-                    question.material_type == BASE_MESSAGE_TYPE.PD -> question.pdfList =
+                    BASE_MESSAGE_TYPE.PD -> question.pdfList =
                         appDatabase.chatDao()
                             .getPdfOfQuestion(questionId = question.questionId)
                 }
@@ -145,7 +143,7 @@ class ConversationViewModel(application: Application) : AndroidViewModel(applica
 
     private fun updateAllMessageReadByUser() {
         viewModelScope.launch(Dispatchers.IO) {
-            appDatabase.chatDao().readAllChatBYUser()
+            appDatabase.chatDao().readAllChatBYUser(inboxEntity.conversation_id)
         }
     }
 
@@ -186,7 +184,7 @@ class ConversationViewModel(application: Application) : AndroidViewModel(applica
                 compressImagePath = getCompressImage(mediaPath)
             }
             chatModel.downloadedLocalPath = compressImagePath
-            if (Utils.isInternetAvailable().not()){
+            if (Utils.isInternetAvailable().not()) {
                 DatabaseUtils.addChat(chatModel)
             }
             uploadCompressedMedia(compressImagePath, messageObject, chatModel)
@@ -263,7 +261,7 @@ class ConversationViewModel(application: Application) : AndroidViewModel(applica
     fun getAllUserMessage() {
         viewModelScope.launch(Dispatchers.IO) {
             getUserRecentChats()
-            delay(2500)
+            delay(1500)
             if (Utils.isInternetAvailable()) {
                 val arguments = mutableMapOf<String, String>()
                 PrefManager.getLongValue(inboxEntity.conversation_id).let { time ->
@@ -280,7 +278,8 @@ class ConversationViewModel(application: Application) : AndroidViewModel(applica
     private fun refreshChatEverySomeTime() {
         compositeDisposable.add(
             Observable.interval(1, 1, TimeUnit.MINUTES)
-                .subscribeOn(Schedulers.computation()).timeInterval()
+                .subscribeOn(Schedulers.computation())
+                .timeInterval()
                 .subscribeOn(Schedulers.computation())
                 .subscribe({
                     if (Utils.isInternetAvailable()) {
@@ -297,20 +296,6 @@ class ConversationViewModel(application: Application) : AndroidViewModel(applica
                 })
         )
 
-    }
-
-
-    fun deleteMessages(ids: List<String>? = null) {
-        viewModelScope.launch(Dispatchers.IO) {
-            if (ids.isNullOrEmpty()) {
-                deleteMessageAndMedia()
-            } else {
-                appDatabase.chatDao().changeStatusForDeleteMessage(ids).let {
-                    deleteMessageAndMedia()
-                }
-
-            }
-        }
     }
 
     private fun deleteMessageAndMedia() {
@@ -330,61 +315,17 @@ class ConversationViewModel(application: Application) : AndroidViewModel(applica
                     }
 
                     try {
-                        val responseObj =
-                            AppObjectController.chatNetworkService.deleteMessage(
-                                chatModel.chatId,
-                                data
-                            )
+                        AppObjectController.chatNetworkService.deleteMessage(
+                            chatModel.chatId,
+                            data
+                        )
                         listIds.add(chatModel.chatId)
                     } catch (ex: Exception) {
 
                     }
-
-
                 }
                 appDatabase.chatDao().deleteUserMessages(listIds)
             }
         }
-
     }
-
-
-    private fun compressMedia(
-        mediaPath: String,
-        messageObject: BaseChatMessage,
-        chatModel: ChatModel?
-    ) {
-/*
-        return
-        val listener = object : MediaTranscoder.Listener {
-            override fun onTranscodeProgress(progress: Double) {
-            }
-
-            override fun onTranscodeCompleted() {
-                Log.e("mediaa", "onTranscodeCompleted" + "  " + mediaPath)
-                uploadCompressedMedia(mediaPath, messageObject)
-            }
-
-            override fun onTranscodeCanceled() {
-                Log.e("mediaa", "onTranscodeCanceled" + "  " + mediaPath)
-
-            }
-
-            override fun onTranscodeFailed(exception: Exception) {
-                exception.printStackTrace()
-                uploadCompressedMedia(mediaPath, messageObject)
-                Log.e("mediaa", "onTranscodeFailed" + "  " + mediaPath)
-
-
-            }
-        }
-        MediaTranscoder.getInstance().transcodeVideo(
-            mediaPath,
-            mediaPath,
-            MediaFormatStrategyPresets.createAndroid720pStrategy(1200 * 1024, 96 * 1000, 1),
-            listener
-        )*/
-    }
-
-
 }

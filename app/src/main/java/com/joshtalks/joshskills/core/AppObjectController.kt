@@ -251,8 +251,6 @@ internal class AppObjectController {
                     RoundedCornersTransformation.CornerType.ALL
                 )
             )
-          //  AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)
-
 
             return INSTANCE
         }

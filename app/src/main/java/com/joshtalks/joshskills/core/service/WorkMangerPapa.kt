@@ -1,8 +1,5 @@
 package com.joshtalks.joshskills.core.service
 
-import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.WorkManager
-import androidx.work.workDataOf
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.repository.local.entity.AudioType
 import com.joshtalks.joshskills.repository.local.model.ImageModel
@@ -13,7 +10,7 @@ const val MEDIA_OBJECT="media_object"
 object WorkMangerPapa {
 
 
-    fun startUploadProfileInWorker(imageModel: ImageModel){
+   /* fun startUploadProfileInWorker(imageModel: ImageModel){
         val imageData = workDataOf(MEDIA_OBJECT to AppObjectController.gsonMapper.toJson(imageModel))
         val uploadWorkRequest = OneTimeWorkRequestBuilder<UploadMediaWorker>()
             .setInputData(imageData)
@@ -37,6 +34,6 @@ object WorkMangerPapa {
             .build()
         WorkManager.getInstance(AppObjectController.joshApplication).enqueue(jobRequest)
 
-    }
+    }*/
 
 }

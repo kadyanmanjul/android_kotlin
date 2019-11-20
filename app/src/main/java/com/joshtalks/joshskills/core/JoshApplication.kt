@@ -1,15 +1,13 @@
 package com.joshtalks.joshskills.core
 
 import android.app.Application
-import android.util.Log
-import androidx.work.Configuration
+import android.os.Debug
 import com.crashlytics.android.Crashlytics
 import com.crashlytics.android.core.CrashlyticsCore
 import com.facebook.stetho.Stetho
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.repository.local.model.Mentor
-import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.CoreMeta
 import com.joshtalks.joshskills.repository.server.UpdateDeviceRequest
 import io.fabric.sdk.android.Fabric
@@ -31,12 +29,9 @@ class JoshApplication : Application(){
 
     override fun onCreate() {
         super.onCreate()
-
         if (BuildConfig.DEBUG) {
             Stetho.initializeWithDefaults(this);
-
         }
-
         appObjectController = AppObjectController.init(this)
 
         ViewPump.init(

@@ -13,8 +13,8 @@ android {
         applicationId "com.joshtalks.joshskills"
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 14
-        versionName "1.0.14"
+        versionCode 15
+        versionName "1.0.15"
         vectorDrawables.useSupportLibrary true
         renderscriptTargetApi 28 as int
         renderscriptSupportModeEnabled true
@@ -28,9 +28,9 @@ android {
                         "room.expandProjection": "true"]
             }
         }
-        ndk {
+        /*ndk {
             abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64'
-        }
+        }*/
         resConfigs "en"
 
     }
@@ -95,11 +95,6 @@ android {
         exclude 'META-INF/ASL2.0'
         exclude 'META-INF/notice.txt'
         exclude 'META-INF/main.kotlin_module'
-        pickFirst 'lib/armeabi-v7a/libc++_shared.so'
-        pickFirst 'lib/armeabi/libc++_shared.so'
-        pickFirst 'lib/arm64-v8a/libc++_shared.so'
-        pickFirst 'lib/x86/libc++_shared.so'
-        pickFirst 'lib/x86_64/libc++_shared.so'
 
 
     }
@@ -142,28 +137,26 @@ dependencies {
     implementation project(path: ':mediapicker')
     implementation project(path: ':pdfviewer')
 
-
     implementation 'com.googlecode.mp4parser:isoparser:1.1.22'
-
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.1'
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.1'
 
 
-    implementation 'androidx.preference:preference:1.1.0-rc01'
+    implementation 'androidx.preference:preference:1.1.0'
     implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'androidx.core:core-ktx:1.1.0'
     implementation 'androidx.recyclerview:recyclerview:1.0.0'
     implementation 'androidx.cardview:cardview:1.0.0'
-    implementation 'androidx.browser:browser:1.2.0-alpha08'
+    implementation 'androidx.browser:browser:1.2.0-alpha09'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
 
-    implementation 'androidx.lifecycle:lifecycle-extensions:2.0.0'
+    implementation 'androidx.lifecycle:lifecycle-extensions:2.1.0'
     api 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.1.0'
-    implementation "androidx.lifecycle:lifecycle-common-java8:2.0.0"
+    implementation "androidx.lifecycle:lifecycle-common-java8:2.1.0"
 
-    implementation "androidx.work:work-runtime-ktx:2.1.0"
-    implementation "androidx.work:work-rxjava2:2.1.0"
+    implementation "androidx.work:work-runtime-ktx:2.2.0"
+    implementation "androidx.work:work-rxjava2:2.2.0"
     implementation("androidx.work:work-runtime:2.1.0")
 
 
@@ -172,15 +165,13 @@ dependencies {
     implementation "androidx.room:room-ktx:2.1.0-rc01"
 
 
-    implementation 'com.google.android.material:material:1.1.0-alpha9'
-   // implementation 'com.google.android:flexbox:1.1.0'
+    implementation 'com.google.android.material:material:1.2.0-alpha01'
     kapt 'com.android.databinding:compiler:3.1.4'
 
     implementation 'com.github.bumptech.glide:glide:4.9.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.9.0'
     implementation 'jp.wasabeef:glide-transformations:4.1.0'
     implementation "com.zlc.glide:webpdecoder:1.6.4.9.0"
-
     implementation ("com.github.bumptech.glide:recyclerview-integration:4.9.0") {
         transitive = false
     }
@@ -189,16 +180,16 @@ dependencies {
     implementation 'com.google.android.exoplayer:extension-workmanager:2.10.6'
 
 
-    implementation 'com.google.firebase:firebase-analytics:17.2.0'
+    implementation 'com.google.firebase:firebase-analytics:17.2.1'
     implementation 'com.crashlytics.sdk.android:crashlytics:2.10.1'
-    implementation 'com.google.firebase:firebase-core:17.2.0'
-    implementation 'com.google.firebase:firebase-messaging:20.0.0'
-    implementation 'com.google.firebase:firebase-perf:19.0.0'
-    implementation 'com.google.firebase:firebase-config:19.0.2'
+    implementation 'com.google.firebase:firebase-core:17.2.1'
+    implementation 'com.google.firebase:firebase-messaging:20.0.1'
+    implementation 'com.google.firebase:firebase-perf:19.0.2'
+    implementation 'com.google.firebase:firebase-config:19.0.3'
     implementation 'com.google.android.gms:play-services-auth:17.0.0'
     implementation 'com.google.android.gms:play-services-base:17.1.0'
-    implementation 'com.google.android.libraries.places:places:2.0.0'
-    implementation 'com.google.android.play:core:1.6.3'
+    implementation 'com.google.android.libraries.places:places:2.1.0'
+    implementation 'com.google.android.play:core:1.6.4'
 
 
     implementation 'com.facebook.shimmer:shimmer:0.4.0'
@@ -215,7 +206,7 @@ dependencies {
 
 
     implementation 'com.crashlytics.sdk.android:crashlytics:2.10.1'
-    implementation 'de.hdodenhof:circleimageview:3.0.0'
+    implementation 'de.hdodenhof:circleimageview:3.0.1'
     implementation 'pub.devrel:easypermissions:3.0.0'
     implementation 'com.github.mukeshsolanki:android-otpview-pinview:2.0.3'
     implementation 'com.pnikosis:materialish-progress:1.7'
@@ -256,15 +247,6 @@ dependencies {
     implementation 'com.afollestad.material-dialogs:core:3.1.1'
     implementation 'saschpe.android:customtabs:2.0.0'
     implementation 'net.yslibrary.keyboardvisibilityevent:keyboardvisibilityevent:2.3.0'
-
-
-    // implementation 'org.videolan.android:libvlc-all:3.1.12'
-
-
-/*
-    releaseImplementation "org.videolan.android:libvlc-all:$rootProject.ext.libvlcVersion"
-    releaseImplementation "org.videolan.android:medialibrary-all:$rootProject.ext.medialibraryVersion"
-*/
 
     // implementation 'com.yanzhenjie:album:2.1.3'
 

@@ -26,9 +26,7 @@ object NetworkRequestHelper {
         queryMap: Map<String, String> = emptyMap()
     ) {
         CoroutineScope(Dispatchers.IO).launch {
-
             try {
-
                 val resp = AppObjectController.chatNetworkService.getUnReceivedMessageAsync(
                     inboxEntity.conversation_id ?: "", queryMap
                 ).await()

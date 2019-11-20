@@ -24,15 +24,8 @@
 
         <include layout="@layout/base_toolbar" />
 
-        <include layout="@layout/remove_chat_toolbar" />
-
-       <!-- <androidx.appcompat.widget.AppCompatImageView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:adjustViewBounds="true"
-                android:scaleType="centerCrop"
-                android:src="@drawable/chat_wallpaper"
-                android:tintMode="multiply" />-->
+        <!--<include layout="@layout/remove_chat_toolbar" />
+        -->
 
 
         <FrameLayout
@@ -45,6 +38,7 @@
                     android:id="@+id/chatRv"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:paddingBottom="@dimen/_4sdp"
                     android:scrollbars="vertical" />
 
             <androidx.appcompat.widget.AppCompatImageView
@@ -134,6 +128,7 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:layout_weight="1"
+                            android:lines="1"
                             android:backgroundTint="@android:color/transparent"
                             android:hint="@string/type_message_hint"
                             android:imeOptions="actionSend"

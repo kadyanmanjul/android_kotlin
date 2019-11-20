@@ -45,13 +45,10 @@ abstract class BaseActivity : AppCompatActivity() {
         AppObjectController.screenWidth = displayMetrics.widthPixels
         getConfig()
         initUserForCrashlytics()
-
-
     }
 
 
     fun getIntentForState(): Intent? {
-
         var intent: Intent? = null
         if (User.getInstance().token == null) {
             intent = Intent(this, OnBoardActivity::class.java)
@@ -123,4 +120,5 @@ abstract class BaseActivity : AppCompatActivity() {
         AppAnalytics.create(AnalyticsEvent.CLICK_HELPLINE_SELECTED.NAME).push()
         Utils.call(this, AppObjectController.getFirebaseRemoteConfig().getString("helpline_number"))
     }
+
 }

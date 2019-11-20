@@ -8,6 +8,7 @@ import android.graphics.drawable.InsetDrawable;
 import android.graphics.drawable.LayerDrawable;
 import android.graphics.drawable.ScaleDrawable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,6 +32,8 @@ public class CustomImageButton extends AppCompatImageView implements View.OnTouc
     private RecordView recordView;
     private boolean listenForRecord = true;
     private OnRecordClickListener onRecordClickListener;
+    private OnRecordTouchListener onRecordTouchListener;
+
 
     private Drawable firstDrawable;
     private Drawable secondDrawable;
@@ -118,23 +121,29 @@ public class CustomImageButton extends AppCompatImageView implements View.OnTouc
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
-        if (isListenForRecord()) {
-            switch (event.getAction()) {
+        try {
+            if (isListenForRecord()) {
+                switch (event.getAction()) {
 
-                case MotionEvent.ACTION_DOWN:
-                    recordView.onActionDown((CustomImageButton) v, event);
-                    break;
+                    case MotionEvent.ACTION_DOWN:
+                        recordView.onActionDown((CustomImageButton) v, event);
+                        break;
 
 
-                case MotionEvent.ACTION_MOVE:
-                    recordView.onActionMove((CustomImageButton) v, event);
-                    break;
+                    case MotionEvent.ACTION_MOVE:
+                        recordView.onActionMove((CustomImageButton) v, event);
+                        break;
 
-                case MotionEvent.ACTION_UP:
-                    recordView.onActionUp((CustomImageButton) v);
-                    break;
+                    case MotionEvent.ACTION_UP:
+                        recordView.onActionUp((CustomImageButton) v);
+                        break;
 
+                }
             }
+            if (onRecordTouchListener != null) {
+                onRecordTouchListener.onTouch(event.getAction());
+            }
+        } catch (Exception e) {
 
         }
         return isListenForRecord();
@@ -159,6 +168,10 @@ public class CustomImageButton extends AppCompatImageView implements View.OnTouc
 
     public void setOnRecordClickListener(OnRecordClickListener onRecordClickListener) {
         this.onRecordClickListener = onRecordClickListener;
+    }
+
+    public void setOnTouchListener(OnRecordTouchListener onRecordTouchListener) {
+        this.onRecordTouchListener = onRecordTouchListener;
     }
 
 

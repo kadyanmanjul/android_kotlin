@@ -43,6 +43,7 @@ import com.joshtalks.joshskills.core.inapp_update.Constants
 import com.joshtalks.joshskills.core.inapp_update.InAppUpdateStatus
 import android.view.View
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.coroutines.delay
 
 const val REGISTER_INFO_CODE = 2001
 
@@ -60,6 +61,9 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        if (Mentor.getInstance().hasId().not()){
+            return
+        }
         FCMTokenManager.pushToken()
         AppObjectController.joshApplication.updateDeviceDetail()
         AppObjectController.joshApplication.userActive()
@@ -68,17 +72,25 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         setToolbar()
         lifecycle.addObserver(this)
 
-        AppObjectController.clearDownloadMangerCallback()
         if (Mentor.getInstance().hasId()) {
             viewModel.getRegisterCourses()
             SyncChatService.syncChatWithServer()
-            locationFetch()
         }
-        AppAnalytics.updateUser()
         AppAnalytics.create(AnalyticsEvent.INBOX_SCREEN.NAME).push()
         addObserver()
-        processIntent(intent)
         checkAppUpdate()
+        workInBackground()
+    }
+
+    private fun workInBackground() {
+        CoroutineScope(Dispatchers.Default).launch {
+            AppObjectController.clearDownloadMangerCallback()
+            AppAnalytics.updateUser()
+            processIntent(intent)
+            delay(1000)
+            locationFetch()
+        }
+
     }
 
     private fun checkAppUpdate() {

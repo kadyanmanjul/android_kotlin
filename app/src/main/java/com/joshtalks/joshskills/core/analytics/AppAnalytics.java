@@ -79,13 +79,11 @@ public class AppAnalytics {
         init();
         updateCleverTapUser();
         updateFabricUser();
-
     }
 
     private static void updateCleverTapUser() {
         User user = User.getInstance();
         Mentor mentor = Mentor.getInstance();
-
         HashMap<String, Object> profileUpdate = new HashMap<>();
         profileUpdate.put("Name", user.getFirstName());
         profileUpdate.put("Identity", mentor.getId());
@@ -95,7 +93,6 @@ public class AppAnalytics {
         profileUpdate.put("date_of_birth", user.getDateOfBirth());
         profileUpdate.put("Username", user.getUsername());
         profileUpdate.put("User Type", user.getUserType());
-
         cleverTapAnalytics.pushProfile(profileUpdate);
 
     }

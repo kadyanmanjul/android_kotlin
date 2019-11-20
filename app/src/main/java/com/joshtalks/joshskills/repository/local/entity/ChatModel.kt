@@ -506,8 +506,8 @@ interface ChatDao {
     @Query(value = "SELECT * FROM chat_table where conversation_id= :conversationId ORDER BY ID DESC LIMIT 1")
     suspend fun getLastOneChat(conversationId: String): ChatModel?
 
-    @Query(value = "UPDATE chat_table  SET is_seen = 1")
-    suspend fun readAllChatBYUser()
+    @Query(value = "UPDATE chat_table  SET is_seen = 1 where conversation_id= :conversationId")
+    suspend fun readAllChatBYUser(conversationId: String)
 
     @Query("UPDATE chat_table SET is_delete_message =1 WHERE chat_id IN (:ids)")
     suspend fun changeStatusForDeleteMessage(ids: List<String>)

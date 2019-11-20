@@ -296,8 +296,8 @@ class VideoViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
     private fun updateProgress(progress: Float) {
         progress_dialog.setLinearProgress(true)
         progress_dialog.spinSpeed = 0.25f
-        progress_dialog.barColor = Color.parseColor("#128C7E")
-        progress_dialog.rimColor = Color.parseColor("#33128C7E")
+        progress_dialog.barColor = Color.parseColor("#00ACFF")
+        progress_dialog.rimColor = Color.parseColor("#3300ACFF")
         progress_dialog.progress = progress / 100
     }
 
