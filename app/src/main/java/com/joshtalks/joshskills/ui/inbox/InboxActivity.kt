@@ -43,6 +43,7 @@ import com.joshtalks.joshskills.core.inapp_update.Constants
 import com.joshtalks.joshskills.core.inapp_update.InAppUpdateStatus
 import android.view.View
 import com.google.android.material.snackbar.Snackbar
+import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.ui.payment.PaymentActivity
 import kotlinx.coroutines.delay
 
@@ -159,8 +160,9 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
     private fun addLiveDataObservable() {
         viewModel.registerCourseNetworkLiveData.observe(this, Observer {
             if (it == null || it.isEmpty()) {
-                PaymentActivity.startPaymentActivity(this, REGISTER_INFO_CODE)
-
+                if (Utils.isInternetAvailable()) {
+                    PaymentActivity.startPaymentActivity(this, REGISTER_INFO_CODE)
+                }
             } else {
                 recycler_view_inbox.removeAllViews()
                 for (inbox in it) {
