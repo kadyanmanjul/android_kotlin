@@ -43,9 +43,11 @@ import com.joshtalks.joshskills.core.inapp_update.Constants
 import com.joshtalks.joshskills.core.inapp_update.InAppUpdateStatus
 import android.view.View
 import com.google.android.material.snackbar.Snackbar
+import com.joshtalks.joshskills.ui.payment.PaymentActivity
 import kotlinx.coroutines.delay
 
 const val REGISTER_INFO_CODE = 2001
+
 
 class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.InAppUpdateHandler {
 
@@ -61,7 +63,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (Mentor.getInstance().hasId().not()){
+        if (Mentor.getInstance().hasId().not()) {
             return
         }
         FCMTokenManager.pushToken()
@@ -78,6 +80,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         }
         AppAnalytics.create(AnalyticsEvent.INBOX_SCREEN.NAME).push()
         addObserver()
+        addLiveDataObservable()
         checkAppUpdate()
         workInBackground()
     }
@@ -90,11 +93,9 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
             delay(1000)
             locationFetch()
         }
-
     }
 
     private fun checkAppUpdate() {
-
         var updateMode = Constants.UpdateMode.FLEXIBLE
         if (AppObjectController.getFirebaseRemoteConfig().getBoolean("update_force")) {
             updateMode = Constants.UpdateMode.IMMEDIATE
@@ -155,31 +156,11 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
 
     }
 
-
-    private fun addObserver() {
-        compositeDisposable.add(
-            RxBus.getDefault().toObservable()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({
-                    if (it is InboxEntity) {
-                        AppAnalytics.create(AnalyticsEvent.COURSE_SELECTED.NAME)
-                            .addParam("course_id", it.conversation_id).push()
-                        ConversationActivity.startConversionActivity(this, it)
-                    }
-                }, {
-                    it.printStackTrace()
-
-                })
-        )
-
-
+    private fun addLiveDataObservable() {
         viewModel.registerCourseNetworkLiveData.observe(this, Observer {
             if (it == null || it.isEmpty()) {
-                startActivityForResult(
-                    Intent(this, RegisterInfoActivity::class.java),
-                    REGISTER_INFO_CODE
-                )
+                PaymentActivity.startPaymentActivity(this, REGISTER_INFO_CODE)
+
             } else {
                 recycler_view_inbox.removeAllViews()
                 for (inbox in it) {
@@ -207,6 +188,25 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
             }
         })
 
+    }
+
+    private fun addObserver() {
+        compositeDisposable.add(
+            RxBus.getDefault().toObservable()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({
+                    if (it is InboxEntity) {
+                        AppAnalytics.create(AnalyticsEvent.COURSE_SELECTED.NAME)
+                            .addParam("course_id", it.conversation_id).push()
+                        ConversationActivity.startConversionActivity(this, it)
+                    }
+                }, {
+                    it.printStackTrace()
+
+                })
+        )
+
 
     }
 
@@ -219,7 +219,15 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == REGISTER_INFO_CODE) {
-            finish()
+            if (resultCode == Activity.RESULT_OK) {
+                overridePendingTransition(0, 0)
+                intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
+                finish()
+                overridePendingTransition(0, 0)
+                startActivity(intent)
+            } else {
+                finish()
+            }
         } else if (requestCode == REQ_CODE_VERSION_UPDATE) {
             if (resultCode == Activity.RESULT_CANCELED) {
                 inAppUpdateManager?.checkForAppUpdate();

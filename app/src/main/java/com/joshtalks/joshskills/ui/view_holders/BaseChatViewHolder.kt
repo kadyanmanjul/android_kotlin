@@ -4,10 +4,13 @@ import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import android.widget.LinearLayout
+import android.widget.RelativeLayout
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.custom_ui.custom_textview.AutoLinkMode
 import com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
@@ -21,6 +24,11 @@ abstract class BaseChatViewHolder(
     val activityRef: WeakReference<FragmentActivity>,
     var message: ChatModel
 ) : BaseCell() {
+
+    private val params = FrameLayout.LayoutParams(
+        ViewGroup.LayoutParams.WRAP_CONTENT,
+        ViewGroup.LayoutParams.WRAP_CONTENT
+    )
 
 
     fun getLeftPaddingForReceiver() = com.vanniktech.emoji.Utils.dpToPx(getAppContext(), 7f)
@@ -141,5 +149,86 @@ abstract class BaseChatViewHolder(
             }
         }
     }
+
+
+    fun updateView(rootView: RelativeLayout, sender: Sender) {
+        if (sender.id.equals(getUserId(), ignoreCase = true)) {
+            val params = FrameLayout.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            )
+            params.setMargins(com.vanniktech.emoji.Utils.dpToPx(getAppContext(), 80f), 0, com.vanniktech.emoji.Utils.dpToPx(getAppContext(), 7f), 0)
+            params.gravity = Gravity.END
+            rootView.layoutParams = params
+            rootView.setBackgroundResource(R.drawable.balloon_outgoing_normal)
+        } else {
+            val params = FrameLayout.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            )
+            params.gravity = Gravity.START
+            params.setMargins(com.vanniktech.emoji.Utils.dpToPx(getAppContext(), 7f), 0, com.vanniktech.emoji.Utils.dpToPx(getAppContext(), 80f), 0)
+            rootView.layoutParams = params
+            rootView.setBackgroundResource(R.drawable.balloon_incoming_normal)
+        }
+    }
+
+    companion object {
+        private val senderParams = LinearLayout.LayoutParams(
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        ).apply {
+            weight = 1.0f
+            gravity = Gravity.END
+
+        }
+
+        private val receiverParam = LinearLayout.LayoutParams(
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        ).apply {
+            weight = 1.0f
+            gravity = Gravity.START
+        }
+        private var START_MARGIN = 80F
+        private var END_MARGIN = 10F
+
+
+        fun getSenderParams(): LinearLayout.LayoutParams {
+            //senderParams.resolveLayoutDirection()
+            /*senderParams.setMargins(
+                com.vanniktech.emoji.Utils.dpToPx(
+                    AppObjectController.joshApplication,
+                    80f
+                ),
+                0,
+                com.vanniktech.emoji.Utils.dpToPx(AppObjectController.joshApplication, 0f),
+                0
+            )*/
+            return senderParams
+
+        }
+
+        fun getReceiverParams(): LinearLayout.LayoutParams {
+            receiverParam.gravity = Gravity.END
+
+            /*receiverParam.setMargins(
+                com.vanniktech.emoji.Utils.dpToPx(
+                    AppObjectController.joshApplication,
+                    0f
+                ),
+                0,
+                com.vanniktech.emoji.Utils.dpToPx(
+                    AppObjectController.joshApplication,
+                    80f
+                ),
+                0
+            )*/
+            return receiverParam
+        }
+
+
+    }
+
 
 }

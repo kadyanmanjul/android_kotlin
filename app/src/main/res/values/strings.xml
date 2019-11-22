@@ -43,11 +43,11 @@
     <string name="continue_label">Continue</string>
     <string name="invalid_phone_number">Invalid phone number</string>
 
-<string name="anonymous_user_login">Okay! Isi Number se dubara register karein!</string>
+    <string name="anonymous_user_login">Okay! Isi Number se dubara register karein!</string>
     <string name="register">Register</string>
 
 
-    <string name="text_test" >fadsfasdfadsf</string>
+    <string name="text_test">fadsfasdfadsf</string>
     <string name="track_number">Track</string>
     <string name="play_button_description">Play button</string>
 
@@ -64,8 +64,6 @@
     <string name="update_download_success_message">An update has just been downloaded.</string>
 
     <string name="slide_to_cancel">Slide To Cancel</string>
-
-
 
 
 </resources>

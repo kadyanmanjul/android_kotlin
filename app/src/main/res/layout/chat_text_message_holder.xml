@@ -6,16 +6,17 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingStart="@dimen/_16sdp"
+        android:paddingLeft="@dimen/_16sdp"
         android:paddingEnd="@dimen/_32sdp"
->
-
+        android:paddingRight="@dimen/_32sdp">
+    >
 
     <FrameLayout
             android:id="@+id/root_sub_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="start"
-           >
+            >
 
         <FrameLayout
 
@@ -66,7 +67,7 @@
                         app:layout_constraintBottom_toTopOf="@+id/text_message_time"
                         app:layout_constraintLeft_toLeftOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                         />
+                        />
 
                 <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/text_message_time"

@@ -70,6 +70,7 @@ import java.lang.ref.WeakReference
 import com.joshtalks.joshskills.repository.server.chat_message.TVideoMessage
 import com.joshtalks.joshskills.repository.service.EngagementNetworkHelper
 import com.joshtalks.recordview.OnRecordTouchListener
+import com.r0adkll.slidr.Slidr
 import de.hdodenhof.circleimageview.CircleImageView
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -132,14 +133,12 @@ class ConversationActivity() : BaseActivity() {
 
 
     private fun initChat() {
+        initActivityAnimation()
         setToolbar()
         initRV()
         setUpEmojiPopup()
         liveDataObservable()
         initView()
-        /* AppObjectController.uiHandler.postDelayed({
-             checkAudioPermission(null)
-         }, 1000)*/
         AppAnalytics.create(AnalyticsEvent.CHAT_SCREEN.NAME).push()
         processIntent(intent)
         conversationViewModel.getAllUserMessage()
@@ -163,6 +162,13 @@ class ConversationActivity() : BaseActivity() {
             }
         }
     }
+
+    private fun initActivityAnimation() {
+        val primary = ContextCompat.getColor(applicationContext, R.color.colorPrimaryDark)
+        val secondary = ContextCompat.getColor(applicationContext, R.color.colorPrimary)
+        Slidr.attach(this, primary, secondary)
+    }
+
 
     private fun setToolbar() {
         try {
@@ -877,5 +883,6 @@ class ConversationActivity() : BaseActivity() {
 
         }
     }
+
 
 }

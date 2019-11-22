@@ -3,41 +3,41 @@ package com.joshtalks.joshskills.core
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.os.Build
-import android.provider.Settings
-import java.text.DecimalFormat
-import kotlin.math.pow
 import android.content.Intent.ACTION_VIEW
 import android.content.res.Resources
 import android.graphics.*
 import android.media.AudioManager
-import android.media.MediaMetadataRetriever
-import android.net.Uri
-import android.os.Environment
-import android.text.format.DateUtils
-import okhttp3.RequestBody
-import okhttp3.RequestBody.Companion.toRequestBody
-import java.text.SimpleDateFormat
-import java.util.*
 import android.media.AudioManager.STREAM_MUSIC
+import android.media.MediaMetadataRetriever
 import android.net.ConnectivityManager
+import android.net.Uri
+import android.os.Build
+import android.os.Environment
+import android.provider.Settings
+import android.text.format.DateUtils
+import android.util.Log
 import android.util.TypedValue
+import androidx.browser.customtabs.CustomTabsCallback
+import androidx.browser.customtabs.CustomTabsClient
 import androidx.browser.customtabs.CustomTabsIntent
+import androidx.browser.customtabs.CustomTabsSession
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.RoundedBitmapDrawable
 import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory
+import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.customlauncher.CustomTabsFallback
+import com.joshtalks.joshskills.core.customlauncher.CustomTabsLauncher
+import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
+import saschpe.android.customtabs.CustomTabsHelper
+import saschpe.android.customtabs.WebViewFallback
 import java.io.File
 import java.io.FileOutputStream
 import java.io.OutputStream
-import androidx.core.content.ContextCompat.startActivity
-import androidx.core.content.ContextCompat.startActivity
-import androidx.core.content.ContextCompat.startActivity
-import androidx.core.content.ContextCompat.startActivity
-import androidx.core.content.ContextCompat.getSystemService
-import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.custom_ui.CustomTabHelper
-import saschpe.android.customtabs.CustomTabsHelper
-import saschpe.android.customtabs.WebViewFallback
+import java.text.DecimalFormat
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.math.pow
 
 
 private val CHAT_TIME_FORMATTER = SimpleDateFormat("hh:mm aa")
@@ -275,25 +275,7 @@ object Utils {
         }
 
 
-        /*val updateUrl: String = if (url.trim().startsWith("http://").not()) {
-            "http://" + url.replace("https://", "").trim()
-        } else {
-            url.trim()
-        }
-        val customTabsIntent = CustomTabsIntent.Builder()
-            .addDefaultShareMenuItem()
-            .setToolbarColor(ContextCompat.getColor(activity, R.color.colorPrimaryDark))
-            .setShowTitle(true)
-            .build()
-
-        CustomTabsHelper.addKeepAliveExtra(activity, customTabsIntent.intent)
-
-        CustomTabsHelper.openCustomTab(
-            activity,
-            customTabsIntent,
-            Uri.parse(updateUrl),
-            WebViewFallback()
-        )*/
+        /**/
 
     }
     /* private fun openInApplicationBrowser(url: String,activity: Activity){
@@ -322,6 +304,71 @@ object Utils {
 
      }*/
 
+    fun openInAppBrowser(
+        url: String,
+        activity: Activity,
+        callback: CustomTabsHelper.ConnectionCallback? = null
+    ) {
+
+        val updateUrl: String = if (url.trim().startsWith("http://").not()) {
+            "http://" + url.replace("https://", "").trim()
+        } else {
+            url.trim()
+        }
+
+        val customTabsBuilder = CustomTabsIntent.Builder()
+            .enableUrlBarHiding()
+            .setShowTitle(true)
+            .addDefaultShareMenuItem()
+            .setToolbarColor(ContextCompat.getColor(activity, R.color.colorPrimaryDark))
+            .setStartAnimations(activity, R.anim.slide_in_right, R.anim.slide_out_left)
+            .setExitAnimations(
+                activity,
+                android.R.anim.slide_in_left,
+                android.R.anim.slide_out_right
+            )
+
+
+        customTabsBuilder.build()
+        CustomTabsLauncher.launch(
+            activity,
+            customTabsBuilder.build(),
+            Uri.parse(updateUrl)
+        , { context, uri, customTabsIntent ->
+            Log.e("callback", uri.path)
+        })
+
+
+        /*var mClient: CustomTabsClient?=null
+        val session: CustomTabsSession = mClient?.newSession(CustomTabsCallback())!!
+
+
+        val customTabsIntent = CustomTabsIntent.Builder()
+            .addDefaultShareMenuItem()
+            .setToolbarColor(ContextCompat.getColor(activity, R.color.colorPrimaryDark))
+            .setShowTitle(true)
+            .setStartAnimations(
+                activity,
+                android.R.anim.slide_in_left,
+                android.R.anim.slide_out_right
+            )
+            .setExitAnimations(
+                activity,
+                android.R.anim.slide_out_right,
+                android.R.anim.slide_in_left
+            )
+            .enableUrlBarHiding()
+            .build()
+
+        CustomTabsHelper.addKeepAliveExtra(activity, customTabsIntent.intent)
+        CustomTabsHelper.openCustomTab(
+            activity,
+            customTabsIntent,
+            Uri.parse(updateUrl),
+            WebViewFallback()
+        )*/
+    }
+
     fun isInternetAvailable(): Boolean {
         val conMgr =
             AppObjectController.joshApplication.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager?
@@ -332,11 +379,13 @@ object Utils {
     fun isHelplineOnline(): Boolean {
         val timeFormat = "HH:mm:ss"
         val simpleDateFormat = SimpleDateFormat(timeFormat, Locale.ENGLISH)
-        val startTime = simpleDateFormat.parse(AppObjectController.getFirebaseRemoteConfig().getString("helpline_start_time"))
+        val startTime =
+            simpleDateFormat.parse(AppObjectController.getFirebaseRemoteConfig().getString("helpline_start_time"))
         val startCalender = Calendar.getInstance()
         startCalender.time = startTime
         startCalender.add(Calendar.DATE, 1)
-        val endTime = simpleDateFormat.parse(AppObjectController.getFirebaseRemoteConfig().getString("helpline_end_time"))
+        val endTime =
+            simpleDateFormat.parse(AppObjectController.getFirebaseRemoteConfig().getString("helpline_end_time"))
         val endCalender = Calendar.getInstance()
         endCalender.time = endTime
         endCalender.add(Calendar.DATE, 1)

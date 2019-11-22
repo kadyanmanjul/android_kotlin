@@ -140,6 +140,7 @@ public class VideoDownloadService extends DownloadService {
             }
 
 
+
             if (haveDownloadTasks) {
                 int progress = (int) (totalPercentage / downloadTaskCount);
                 RxBus2.publish(new MediaProgressEventBus(Download.STATE_DOWNLOADING,Util.fromUtf8Bytes(download.request.data), progress));
