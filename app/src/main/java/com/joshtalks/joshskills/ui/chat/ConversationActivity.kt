@@ -29,6 +29,12 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.integration.webp.decoder.WebpDrawable
+import com.bumptech.glide.integration.webp.decoder.WebpDrawableTransformation
+import com.bumptech.glide.load.resource.bitmap.CircleCrop
+import com.bumptech.glide.request.RequestOptions
+import com.bumptech.glide.request.target.Target
 import com.crashlytics.android.Crashlytics
 import com.google.android.material.appbar.MaterialToolbar
 import com.greentoad.turtlebody.mediapicker.MediaPicker
@@ -126,7 +132,7 @@ class ConversationActivity() : BaseActivity() {
                     .get(ConversationViewModel::class.java)
             conversationBinding.viewmodel = conversationViewModel
 
-        } catch (ex: UninitializedPropertyAccessException) {
+        } catch (ex: Exception) {
             ex.printStackTrace()
         }
     }
@@ -174,6 +180,18 @@ class ConversationActivity() : BaseActivity() {
         try {
             findViewById<View>(R.id.iv_back).visibility = VISIBLE
             findViewById<CircleImageView>(R.id.image_view_logo).setImageResource(R.drawable.ic_josh_course)
+            inboxEntity.course_icon?.let {
+                Glide.with(applicationContext)
+                    .load(it)
+                    .override(Target.SIZE_ORIGINAL)
+                    .optionalTransform(
+                        WebpDrawable::class.java,
+                        WebpDrawableTransformation(CircleCrop())
+                    )
+                    .into(findViewById<CircleImageView>(R.id.image_view_logo))
+            }
+
+
             findViewById<View>(R.id.image_view_logo).visibility = VISIBLE
             findViewById<AppCompatImageView>(R.id.iv_back).setOnClickListener {
                 finish()
