@@ -60,9 +60,10 @@ data class ChatModel(
     @ColumnInfo(name = "is_delete_message")
     var isDeleteMessage: Boolean = false,
 
-    @Ignore
+
     @Expose
-    var progress: Float? = null
+    @ColumnInfo(name = "download_progress")
+    var progress: Int = Int.MIN_VALUE
 
 ) : DataBaseClass(), Serializable {
 
@@ -518,6 +519,9 @@ interface ChatDao {
     @Query("DELETE FROM chat_table where  chat_id IN (:ids)")
     suspend fun deleteUserMessages(ids: List<String>)
 
+
+    @Query("UPDATE chat_table SET download_progress = :progress where id= :conversationId ")
+    suspend fun videoProgressUpdate(conversationId: String,progress: Int)
 
 }
 

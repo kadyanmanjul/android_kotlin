@@ -22,6 +22,11 @@ const val VIDEO_PATTERN = "([^\\s]+(\\.(?i)(mp4|MP4)$)"
 
 val IMAGE_REGEX= Regex(pattern = IMAGE_PATTERN)
 
+const val MINIMUM_VIDEO_DOWNLOAD_PROGRESS = 20
+const val MAXIMUM_VIDEO_DOWNLOAD_PROGRESS = 50
+
+
+
 
 
 

@@ -25,6 +25,8 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import static com.joshtalks.joshskills.core.StaticConstantKt.MINIMUM_VIDEO_DOWNLOAD_PROGRESS;
+
 
 public class VideoDownloadService extends DownloadService {
 
@@ -70,7 +72,7 @@ public class VideoDownloadService extends DownloadService {
 
     @Override
     protected void onDownloadChanged(Download download) {
-        Log.i("onDownloadChanged", "onDownloadChanged " + download.state+"  "+download.getPercentDownloaded()+"  "+download.getBytesDownloaded());
+        Log.i("onDownloadChanged", "onDownloadChanged " + download.state + "  " + download.getPercentDownloaded() + "  " + download.getBytesDownloaded());
         DOWNLOAD_STATUS downloadStatus = DOWNLOAD_STATUS.NOT_START;
 
         if (download.state == Download.STATE_DOWNLOADING || download.state == Download.STATE_QUEUED) {
@@ -91,7 +93,7 @@ public class VideoDownloadService extends DownloadService {
             notification = notificationHelper.buildDownloadCompletedNotification(R.mipmap.ic_launcher, null, "Download completed");
         } else if (download.state == Download.STATE_FAILED) {
             notification = notificationHelper.buildDownloadFailedNotification(R.mipmap.ic_launcher, null, "Download failed");
-            RxBus2.publish(new MediaProgressEventBus(Download.STATE_FAILED,Util.fromUtf8Bytes(download.request.data), 0));
+            RxBus2.publish(new MediaProgressEventBus(Download.STATE_FAILED, Util.fromUtf8Bytes(download.request.data), 0));
 
         } else {
             return;
@@ -110,7 +112,7 @@ public class VideoDownloadService extends DownloadService {
 
     }
 
-    void showDownloadProgress(List<Download> downloads){
+    void showDownloadProgress(List<Download> downloads) {
         try {
             float totalPercentage = 0;
             int downloadTaskCount = 0;
@@ -120,7 +122,7 @@ public class VideoDownloadService extends DownloadService {
             boolean haveRemoveTasks = false;
             Download download = null;
             for (int i = 0; i < downloads.size(); i++) {
-                 download = downloads.get(i);
+                download = downloads.get(i);
                 if (download.state == Download.STATE_REMOVING) {
                     haveRemoveTasks = true;
                     continue;
@@ -140,11 +142,18 @@ public class VideoDownloadService extends DownloadService {
             }
 
 
-
             if (haveDownloadTasks) {
                 int progress = (int) (totalPercentage / downloadTaskCount);
-                RxBus2.publish(new MediaProgressEventBus(Download.STATE_DOWNLOADING,Util.fromUtf8Bytes(download.request.data), progress));
+                //Log.e("progress", "" + progress);
+                RxBus2.publish(new MediaProgressEventBus(Download.STATE_DOWNLOADING, Util.fromUtf8Bytes(download.request.data), progress));
+                if (progress > MINIMUM_VIDEO_DOWNLOAD_PROGRESS) {
+                  //  Log.e("gaya", "" + progress);
+                    DatabaseUtils.updateVideoProgress(Util.fromUtf8Bytes(download.request.data), progress);
+
+                }
             }
-        }catch (Exception e){}
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

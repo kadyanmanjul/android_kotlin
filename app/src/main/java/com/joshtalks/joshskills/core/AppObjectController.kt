@@ -58,7 +58,9 @@ val KEY_APP_VERSION_NAME = "app-version-name"
 val REMOTE_CONFIG_PREFIX = "josh_param_"
 
 const val SERVER_URL = "https://skills.joshtalks.org"
-//const val SERVER_URL = "http://192.168.14.60:8000"
+//const val SERVER_URL = "http://13.127.85.171:8000"
+
+//const val SERVER_URL = "http://192.168.0.141:8080"
 
 internal class AppObjectController {
 
@@ -121,7 +123,6 @@ internal class AppObjectController {
 
         @JvmStatic
         lateinit var multiTransformation: MultiTransformation<Bitmap>
-
 
 
         /* @JvmStatic
@@ -272,8 +273,9 @@ internal class AppObjectController {
             }
 
         }
+
         fun getFirebaseRemoteConfig(): FirebaseRemoteConfig {
-           return FirebaseRemoteConfig.getInstance()
+            return FirebaseRemoteConfig.getInstance()
         }
 
         private fun getOkHttpDownloader(): OkHttpDownloader {

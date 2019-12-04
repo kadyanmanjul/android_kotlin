@@ -61,6 +61,10 @@ object PrefManager {
         prefManager.edit().putLong(key, value).apply()
 
     }
+    fun put(key: String, value: Boolean) {
+        prefManager.edit().putBoolean(key, value).apply()
+
+    }
 
 
     fun getClientToken(): String {

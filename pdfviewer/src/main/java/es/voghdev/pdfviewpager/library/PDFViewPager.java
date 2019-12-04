@@ -19,10 +19,12 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
+import android.view.View;
 
 import androidx.viewpager.widget.ViewPager;
 
 import es.voghdev.pdfviewpager.library.adapter.PDFPagerAdapter;
+import es.voghdev.pdfviewpager.library.util.EmptyClickListener;
 
 public class PDFViewPager extends ViewPager {
     protected Context context;

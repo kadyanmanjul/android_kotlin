@@ -19,7 +19,6 @@ import com.joshtalks.joshskills.repository.server.SearchLocality
 import com.joshtalks.joshskills.repository.server.UpdateUserLocality
 import com.joshtalks.joshskills.repository.service.SyncChatService
 import com.joshtalks.joshskills.ui.chat.ConversationActivity
-import com.joshtalks.joshskills.ui.sign_up_old.RegisterInfoActivity
 import com.joshtalks.joshskills.ui.view_holders.EmptyHorizontalView
 import com.joshtalks.joshskills.ui.view_holders.InboxViewHolder
 import com.karumi.dexter.Dexter
@@ -44,10 +43,18 @@ import com.joshtalks.joshskills.core.inapp_update.InAppUpdateStatus
 import android.view.View
 import com.google.android.material.snackbar.Snackbar
 import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.service.WorkMangerAdmin
+import com.joshtalks.joshskills.messaging.RxBus2
+import com.joshtalks.joshskills.repository.local.eventbus.ExploreCourseEventBus
+import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
 import com.joshtalks.joshskills.ui.payment.PaymentActivity
+import com.joshtalks.joshskills.ui.view_holders.FindMoreViewHolder
 import kotlinx.coroutines.delay
 
 const val REGISTER_INFO_CODE = 2001
+const val COURSE_EXPLORER_CODE = 2002
+const val REGISTER_NEW_COURSE_CODE = 2003
+const val REQ_CODE_VERSION_UPDATE = 530
 
 
 class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.InAppUpdateHandler {
@@ -58,7 +65,6 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
     }
     private var compositeDisposable = CompositeDisposable()
 
-    private val REQ_CODE_VERSION_UPDATE = 530
     private var inAppUpdateManager: InAppUpdateManager? = null
 
 
@@ -86,6 +92,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         workInBackground()
     }
 
+
     private fun workInBackground() {
         CoroutineScope(Dispatchers.Default).launch {
             AppObjectController.clearDownloadMangerCallback()
@@ -94,6 +101,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
             delay(1000)
             locationFetch()
         }
+        WorkMangerAdmin.installReferrerWorker()
     }
 
     private fun checkAppUpdate() {
@@ -139,10 +147,9 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
                     override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
                         report?.areAllPermissionsGranted()?.let { flag ->
                             if (flag) {
-                                getLocationAndUpload();
+                                getLocationAndUpload()
                             }
                         }
-
                     }
 
                 }).check()
@@ -172,7 +179,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
                         )
                     )
                 }
-                addEmptyView()
+                addCourseExploreView()
             }
         })
 
@@ -186,7 +193,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
                         )
                     )
                 }
-                addEmptyView()
+                addCourseExploreView()
             }
         })
 
@@ -208,6 +215,11 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
 
                 })
         )
+
+        compositeDisposable.add(RxBus2.listen(ExploreCourseEventBus::class.java).subscribe {
+            WorkMangerAdmin.fineMoreEventWorker()
+            CourseExploreActivity.startCourseExploreActivity(this, COURSE_EXPLORER_CODE)
+        })
 
 
     }
@@ -232,7 +244,15 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
             }
         } else if (requestCode == REQ_CODE_VERSION_UPDATE) {
             if (resultCode == Activity.RESULT_CANCELED) {
-                inAppUpdateManager?.checkForAppUpdate();
+                inAppUpdateManager?.checkForAppUpdate()
+            }
+        }else if (requestCode == COURSE_EXPLORER_CODE) {
+            if (resultCode == Activity.RESULT_OK) {
+                overridePendingTransition(0, 0)
+                intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
+                finish()
+                overridePendingTransition(0, 0)
+                startActivity(intent)
             }
         }
 
@@ -306,18 +326,25 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         if (status != null) {
             if (status.isDownloaded) {
                 val rootView = window.decorView.findViewById<View>(android.R.id.content)
-                val snackbar = Snackbar.make(
+                val snackBar = Snackbar.make(
                     rootView,
                     getString(R.string.update_download_success_message),
                     Snackbar.LENGTH_INDEFINITE
                 )
-                snackbar.setAction(getString(R.string.restart)) {
+                snackBar.setAction(getString(R.string.restart)) {
                     inAppUpdateManager?.completeUpdate()
                 }
-                snackbar.show()
+                snackBar.show()
             }
         }
     }
 
+    private fun addCourseExploreView() {
+        if (AppObjectController.getFirebaseRemoteConfig().getBoolean("course_explore_flag")) {
+            recycler_view_inbox.addView(FindMoreViewHolder())
+        } else {
+            addEmptyView()
+        }
+    }
 
 }

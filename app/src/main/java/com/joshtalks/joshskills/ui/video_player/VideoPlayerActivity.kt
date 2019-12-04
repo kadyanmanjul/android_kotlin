@@ -86,23 +86,6 @@ class VideoPlayerActivity : BaseActivity(), PlayerListener {
         setToolbar()
 
         chatObject = intent.getSerializableExtra(VIDEO_OBJECT) as ChatModel
-        binding.pvPlayer.setGestureDetector(
-            GestureDetector(
-                applicationContext,
-                object : GestureDetector.SimpleOnGestureListener() {
-                    override fun onSingleTapConfirmed(e: MotionEvent): Boolean {
-                        if (toolbarShowing) {
-                            binding.toolbar.visibility = View.INVISIBLE
-                        } else {
-                            binding.toolbar.visibility = View.VISIBLE
-                        }
-                        toolbarShowing = !toolbarShowing
-
-
-                        return true
-                    }
-                })
-        )
 
         if (chatObject.url != null) {
             if (chatObject.downloadedLocalPath.isNullOrEmpty()) {
@@ -120,7 +103,13 @@ class VideoPlayerActivity : BaseActivity(), PlayerListener {
         binding.pvPlayer.setActivity(this)
         exoProgress = findViewById(R.id.exo_progress)
         AppAnalytics.create(AnalyticsEvent.WATCH_ACTIVITY.NAME).push()
-
+        try {
+            binding.pvPlayer.setPlayerControlViewVisibilityListener { visibility ->
+                binding.toolbar.visibility = visibility
+            }
+        }catch (ex:Exception){
+            ex.printStackTrace()
+        }
     }
 
     private fun setToolbar() {

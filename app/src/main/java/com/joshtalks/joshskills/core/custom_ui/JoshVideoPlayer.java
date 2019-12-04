@@ -34,6 +34,7 @@ import com.google.android.exoplayer2.trackselection.TrackSelection;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
 import com.google.android.exoplayer2.ui.DefaultTimeBar;
+import com.google.android.exoplayer2.ui.PlayerControlView;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.ui.TimeBar;
 import com.google.android.exoplayer2.util.Util;
@@ -69,6 +70,7 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
     private boolean startAutoPlay;
     private int startWindow;
     private GestureDetector gestureDetector;
+    private PlayerControlViewVisibilityListener playerControlViewVisibilityListener;
 
 
     private Handler timeHandler = new Handler();
@@ -197,7 +199,18 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
 
 
             timeHandler.post(timeRunnable);
+            try {
+                setControllerShowTimeoutMs(5000);
+                setControllerVisibilityListener(visibility -> {
+                    if (playerControlViewVisibilityListener != null) {
+                        playerControlViewVisibilityListener.onVisibilityChange(visibility);
+                    }
+                });
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             setPlayer(player);
+
 
             // checkIfFullscreenToggleSupported();
             setupAudioFocus();
@@ -383,6 +396,14 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
         return lastPosition;
     }
 
+    public PlayerControlViewVisibilityListener getPlayerControlViewVisibilityListener() {
+        return playerControlViewVisibilityListener;
+    }
+
+    public void setPlayerControlViewVisibilityListener(PlayerControlViewVisibilityListener playerControlViewVisibilityListener) {
+        this.playerControlViewVisibilityListener = playerControlViewVisibilityListener;
+    }
+
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
         if (gestureDetector != null) {
@@ -426,4 +447,10 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
             }
         }
     }
+
+    public interface PlayerControlViewVisibilityListener {
+        void onVisibilityChange(int visibility);
+
+    }
+
 }

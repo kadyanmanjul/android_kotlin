@@ -18,5 +18,4 @@ abstract class CoreJoshActivity : BaseActivity() {
         }
     }
 
-
 }

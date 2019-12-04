@@ -4,9 +4,11 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.KeyEvent
+import android.view.View
 import android.webkit.WebChromeClient
 import android.webkit.WebView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.AppCompatTextView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import kotlinx.android.synthetic.main.activity_payment.*
@@ -14,25 +16,40 @@ import kotlinx.android.synthetic.main.activity_payment.*
 const val PAYMENT_URL_KEY = "payment_url"
 const val PAYMENT_CHECKOUT_URL_KEY = "payment_checkout_url"
 const val PAYMENT_TITLE = "payment_title"
+const val PAYMENT_COURSE_KEY = "payment_course"
+
 
 class PaymentActivity : AppCompatActivity(), WebViewCallback {
-
 
     lateinit var paymentUrl: String
     lateinit var checkoutUrl: String
 
     companion object {
-        fun startPaymentActivity(context: Activity,requestCode:Int) {
+        fun startPaymentActivity(
+            context: Activity,
+            requestCode: Int,
+            paymentUrl: String = "",
+            courseName: String = ""
+        ) {
             val intent = Intent(context, PaymentActivity::class.java)
-            context.startActivityForResult(intent,requestCode)
+            intent.putExtra(PAYMENT_URL_KEY, paymentUrl)
+            intent.putExtra(PAYMENT_COURSE_KEY, courseName)
+            context.startActivityForResult(intent, requestCode)
         }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_payment)
-        toolbar.title =AppObjectController.getFirebaseRemoteConfig().getString(PAYMENT_TITLE)
-        paymentUrl = AppObjectController.getFirebaseRemoteConfig().getString(PAYMENT_URL_KEY)
+        initView()
+        if (intent.hasExtra(PAYMENT_URL_KEY)) {
+            paymentUrl = intent.getStringExtra(PAYMENT_URL_KEY)
+        }
+
+        if (paymentUrl.isEmpty()) {
+            paymentUrl = AppObjectController.getFirebaseRemoteConfig().getString(PAYMENT_URL_KEY)
+        }
+
         checkoutUrl =
             AppObjectController.getFirebaseRemoteConfig().getString(PAYMENT_CHECKOUT_URL_KEY)
         webView.webViewClient = MyWebViewClient(paymentUrl, this)
@@ -48,6 +65,20 @@ class PaymentActivity : AppCompatActivity(), WebViewCallback {
 
     }
 
+    private fun initView() {
+        val titleView = findViewById<AppCompatTextView>(R.id.text_message_title)
+        titleView.text = AppObjectController.getFirebaseRemoteConfig().getString(PAYMENT_TITLE)
+        if (intent.getStringExtra(PAYMENT_COURSE_KEY).isNotEmpty()) {
+            titleView.text = intent.getStringExtra(PAYMENT_COURSE_KEY)
+        }
+
+
+        findViewById<View>(R.id.iv_back).visibility = View.VISIBLE
+        findViewById<View>(R.id.iv_back).setOnClickListener {
+            this@PaymentActivity.finish()
+        }
+    }
+
     private fun setWebSetting() {
         webView.settings.domStorageEnabled = true
         webView.settings.javaScriptEnabled = true
@@ -61,7 +92,7 @@ class PaymentActivity : AppCompatActivity(), WebViewCallback {
     override fun onKeyDown(
         keyCode: Int,
         event: KeyEvent?
-    ): Boolean { // Check if the key event was the Back button and if there's history
+    ): Boolean {
         try {
             if (keyCode == KeyEvent.KEYCODE_BACK && webView.canGoBack()) {
                 webView.goBack()

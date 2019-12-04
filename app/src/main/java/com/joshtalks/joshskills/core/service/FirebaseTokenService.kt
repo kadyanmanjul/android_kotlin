@@ -4,18 +4,18 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
-import com.google.firebase.messaging.FirebaseMessagingService
-import com.google.firebase.messaging.RemoteMessage
-import com.joshtalks.joshskills.core.PrefManager
 import android.content.Intent
 import android.graphics.Color
 import android.media.RingtoneManager
 import android.os.Build
-import android.util.Log
 import androidx.core.app.NotificationCompat
+import androidx.core.content.ContextCompat
+import com.google.firebase.messaging.FirebaseMessagingService
+import com.google.firebase.messaging.RemoteMessage
 import com.google.gson.Gson
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.repository.local.model.NotificationObject
 import com.joshtalks.joshskills.repository.service.EngagementNetworkHelper
 import com.joshtalks.joshskills.ui.chat.CHAT_ROOM_OBJECT
@@ -59,7 +59,7 @@ class FirebaseTokenService : FirebaseMessagingService() {
             var intent = Intent(applicationContext, InboxActivity::class.java).apply {
                 addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
                 putExtra(HAS_NOTIFICATION, true)
-                putExtra(NOTIFICATION_ID,notificationObject.id)
+                putExtra(NOTIFICATION_ID, notificationObject.id)
 
             }
 
@@ -67,12 +67,12 @@ class FirebaseTokenService : FirebaseMessagingService() {
                 AppObjectController.appDatabase.courseDao().chooseRegisterCourseMinimal(it)
             }
             obj?.let {
-                 intent = Intent(applicationContext, ConversationActivity::class.java).apply {
-                     putExtra(CHAT_ROOM_OBJECT, it)
-                     putExtra(HAS_NOTIFICATION, true)
-                     //flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+                intent = Intent(applicationContext, ConversationActivity::class.java).apply {
+                    putExtra(CHAT_ROOM_OBJECT, it)
+                    putExtra(HAS_NOTIFICATION, true)
+                    //flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
                     // flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
-                 }
+                }
                 intent.putExtra(CHAT_ROOM_OBJECT, it)
 
             }
@@ -92,12 +92,33 @@ class FirebaseTokenService : FirebaseMessagingService() {
                     .setContentText(notificationObject.contentText)
                     .setContentIntent(pendingIntent)
                     .setStyle(style)
-                    .setColor(Color.parseColor("#128C7E"))
+                    .setColor(
+                        ContextCompat.getColor(
+                            this@FirebaseTokenService,
+                            R.color.colorAccent
+                        )
+                    )
                     .setWhen(System.currentTimeMillis())
-                    .setPriority(NotificationManager.IMPORTANCE_HIGH)
+
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                notificationBuilder.setPriority(NotificationManager.IMPORTANCE_HIGH)
+            }
 
             val notificationManager =
                 getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+            try {
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
+                    && !notificationManager.isNotificationPolicyAccessGranted
+                ) {
+                    notificationManager.setInterruptionFilter(NotificationManager.INTERRUPTION_FILTER_NONE)
+                }
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+            }
+
 
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

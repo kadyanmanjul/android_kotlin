@@ -14,7 +14,7 @@ const val DATABASE_NAME = "JoshEnglishDB.db"
 
 @Database(
     entities = [Course::class, ChatModel::class, Question::class, VideoType::class, AudioType::class, OptionType::class, PdfType::class, ImageType::class],
-    version = 2,
+    version = 3,
     exportSchema = false
 )
 @TypeConverters(
@@ -40,8 +40,7 @@ abstract class AppDatabase : RoomDatabase() {
                             context.applicationContext,
                             AppDatabase::class.java, DATABASE_NAME
                         )
-                            .addMigrations(MIGRATION_1_2)
-
+                            .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
                             .fallbackToDestructiveMigration()
                             .addCallback(sRoomDatabaseCallback)
                             .build()
@@ -65,12 +64,16 @@ abstract class AppDatabase : RoomDatabase() {
                 database.execSQL("UPDATE chat_table  SET is_seen = 1")
             }
         }
+        private val MIGRATION_2_3: Migration = object : Migration(2, 3) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("ALTER TABLE chat_table ADD COLUMN download_progress INTEGER NOT NULL DEFAULT 0 ")
+            }
+        }
 
     }
 
     abstract fun courseDao(): CourseDao
     abstract fun chatDao(): ChatDao
-
 
 }
 

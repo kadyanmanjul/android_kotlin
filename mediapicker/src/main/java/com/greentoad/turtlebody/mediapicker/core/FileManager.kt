@@ -3,7 +3,7 @@ package com.greentoad.turtlebody.mediapicker.core
 import android.content.Context
 import android.database.Cursor
 import android.net.Uri
-import android.provider.MediaStore
+import android.os.StrictMode
 import androidx.core.content.FileProvider.getUriForFile
 import com.greentoad.turtlebody.mediapicker.MediaPicker
 import com.greentoad.turtlebody.mediapicker.ui.component.folder.audio.AudioFolder
@@ -16,6 +16,7 @@ import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.info
 import java.io.File
 import java.util.*
+
 
 private const val MEDIA_PATTERN = "([^\\s]+(\\.(?i)(jpg|png|gif|bmp|mp4|MP4)|WEBP|webp|JPEG|PNG|Jpeg)$)"
 private val regex = Regex(pattern = MEDIA_PATTERN)
@@ -386,8 +387,13 @@ object FileManager : AnkoLogger {
         val SHARED_PROVIDER_AUTHORITY = context.packageName + ".greentoad.turtlebody.mediaprovider"
 
         info { "id: $SHARED_PROVIDER_AUTHORITY" }
+        try{
+            return getUriForFile(context, SHARED_PROVIDER_AUTHORITY, newFile)
 
-        return getUriForFile(context, SHARED_PROVIDER_AUTHORITY, newFile)
+        }catch (ex:Exception){
+            return Uri.fromFile(newFile)
+        }
+
     }
 }
 

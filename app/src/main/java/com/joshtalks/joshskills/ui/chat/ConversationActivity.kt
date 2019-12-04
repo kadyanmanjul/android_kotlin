@@ -9,31 +9,25 @@ import android.graphics.Color
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.view.*
+import android.view.MotionEvent
+import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
-import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
-import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.databinding.ActivityConversationBinding
-import com.joshtalks.joshskills.emoji.PageTransformer
-import com.joshtalks.recordview.CustomImageButton.FIRST_STATE
-import com.joshtalks.recordview.CustomImageButton.SECOND_STATE
-import com.joshtalks.recordview.OnRecordListener
-import com.vanniktech.emoji.EmojiPopup
+import android.view.WindowManager
 import android.widget.Toast
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.ContextCompat
+import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.integration.webp.decoder.WebpDrawable
 import com.bumptech.glide.integration.webp.decoder.WebpDrawableTransformation
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
-import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
 import com.crashlytics.android.Crashlytics
 import com.google.android.material.appbar.MaterialToolbar
@@ -42,13 +36,15 @@ import com.greentoad.turtlebody.mediapicker.core.MediaPickerConfig
 import com.joshtalks.appcamera.pix.JoshCameraActivity
 import com.joshtalks.appcamera.pix.Options
 import com.joshtalks.appcamera.utility.ImageQuality
+import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
-import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.custom_ui.audioplayer.JcPlayerManager
 import com.joshtalks.joshskills.core.custom_ui.decorator.LayoutMarginDecoration
 import com.joshtalks.joshskills.core.io.AppDirectory
+import com.joshtalks.joshskills.databinding.ActivityConversationBinding
+import com.joshtalks.joshskills.emoji.PageTransformer
 import com.joshtalks.joshskills.messaging.MessageBuilderFactory
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
@@ -59,27 +55,31 @@ import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.server.chat_message.TAudioMessage
 import com.joshtalks.joshskills.repository.server.chat_message.TChatMessage
 import com.joshtalks.joshskills.repository.server.chat_message.TImageMessage
+import com.joshtalks.joshskills.repository.server.chat_message.TVideoMessage
+import com.joshtalks.joshskills.repository.service.EngagementNetworkHelper
 import com.joshtalks.joshskills.ui.extra.ImageShowFragment
 import com.joshtalks.joshskills.ui.pdfviewer.PdfViewerActivity
 import com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity
 import com.joshtalks.joshskills.ui.view_holders.*
+import com.joshtalks.recordview.CustomImageButton.FIRST_STATE
+import com.joshtalks.recordview.CustomImageButton.SECOND_STATE
+import com.joshtalks.recordview.OnRecordListener
+import com.joshtalks.recordview.OnRecordTouchListener
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
+import com.r0adkll.slidr.Slidr
+import com.vanniktech.emoji.EmojiPopup
+import de.hdodenhof.circleimageview.CircleImageView
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.lang.ref.WeakReference
-import com.joshtalks.joshskills.repository.server.chat_message.TVideoMessage
-import com.joshtalks.joshskills.repository.service.EngagementNetworkHelper
-import com.joshtalks.recordview.OnRecordTouchListener
-import com.r0adkll.slidr.Slidr
-import de.hdodenhof.circleimageview.CircleImageView
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import java.util.*
 
 const val CHAT_ROOM_OBJECT = "chat_room"
@@ -133,7 +133,7 @@ class ConversationActivity() : BaseActivity() {
             conversationBinding.viewmodel = conversationViewModel
 
         } catch (ex: Exception) {
-            ex.printStackTrace()
+            //ex.printStackTrace()
         }
     }
 
@@ -524,6 +524,23 @@ class ConversationActivity() : BaseActivity() {
         compositeDisposable.add(RxBus2.listen(PdfOpenEventBus::class.java).subscribe {
             PdfViewerActivity.startPdfActivity(this, it.pdfObject, inboxEntity.course_name)
         })
+        compositeDisposable.add(
+            RxBus2.listen(MediaProgressEventBus::class.java)
+                .subscribeOn(Schedulers.io())
+                .subscribe({
+                    if (it.state == com.google.android.exoplayer2.offline.Download.STATE_COMPLETED) {
+                        refreshViewAtPos(
+                            AppObjectController.gsonMapperForLocal.fromJson(
+                                it.id,
+                                ChatModel::class.java
+                            )
+                        )
+                    }
+
+                }, {
+                    it.printStackTrace()
+                })
+        )
         compositeDisposable.add(RxBus2.listen(RemoveViewEventBus::class.java).subscribe {
 
         })
@@ -870,6 +887,7 @@ class ConversationActivity() : BaseActivity() {
         super.onResume()
         activityRef = WeakReference(this)
         subscribeRXBus()
+        conversationBinding.chatRv.refresh()
     }
 
 

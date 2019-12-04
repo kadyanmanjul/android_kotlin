@@ -1,14 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <LinearLayout
-            android:background="#20000000"
+    <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:background="#20000000"
             android:orientation="vertical">
 
+        <FrameLayout
+                android:id="@+id/remote_pdf_root"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/white" />
+
         <com.google.android.material.appbar.MaterialToolbar
-                xmlns:android="http://schemas.android.com/apk/res/android"
                 xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
@@ -22,10 +27,11 @@
                     android:id="@+id/iv_back"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginRight="@dimen/_5sdp"
+                    android:layout_marginEnd="@dimen/_5sdp"
                     android:paddingTop="@dimen/_5sdp"
                     android:paddingBottom="@dimen/_5sdp"
                     android:visibility="visible"
+                    android:tint="@color/gray_48"
                     app:srcCompat="@drawable/ic_arrow_back" />
 
 
@@ -37,14 +43,10 @@
                     android:gravity="center_vertical|start"
                     android:padding="@dimen/_5sdp"
                     android:text=""
-                    android:textColor="@color/white"
+                    android:lines="1"
+                    android:ellipsize="end"
+                    android:textColor="@color/gray_48"
                     android:textSize="@dimen/font_20" />
         </com.google.android.material.appbar.MaterialToolbar>
-
-        <FrameLayout
-                android:id="@+id/remote_pdf_root"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@color/white" />
-    </LinearLayout>
+    </FrameLayout>
 </layout>

@@ -2,8 +2,18 @@ package com.joshtalks.joshskills.ui.pdfviewer
 
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
-import es.voghdev.pdfviewpager.library.adapter.PDFPagerAdapter
+import android.os.Handler
+import android.os.Looper
+import android.util.Log
+import android.view.GestureDetector
+import android.view.MotionEvent
+import android.view.View
+import android.view.WindowManager
+import android.view.WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS
+import android.view.WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS
+import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.BaseActivity
@@ -14,10 +24,7 @@ import com.joshtalks.joshskills.repository.local.entity.PdfType
 import com.joshtalks.joshskills.repository.server.engage.PdfEngage
 import com.joshtalks.joshskills.repository.service.EngagementNetworkHelper
 import es.voghdev.pdfviewpager.library.PDFViewPager
-import android.view.WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS
-import android.view.WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS
-import androidx.core.content.ContextCompat
-
+import es.voghdev.pdfviewpager.library.adapter.PDFPagerAdapter
 
 
 const val PDF_URL = "pdf_url"
@@ -27,6 +34,8 @@ class PdfViewerActivity : BaseActivity() {
     private lateinit var conversationBinding: ActivityPdfViewerBinding
     private lateinit var pdfObject: PdfType
     private var pdfViewPager: PDFViewPager? = null
+    private var gestureDetector: GestureDetector? = null
+    private var uiHandler = Handler(Looper.getMainLooper())
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,13 +61,45 @@ class PdfViewerActivity : BaseActivity() {
                 .push()
             finish()
         }
+        gestureDetector = GestureDetector(this,
+            object : GestureDetector.SimpleOnGestureListener() {
+                override fun onSingleTapConfirmed(e: MotionEvent): Boolean {
+                    if (conversationBinding.toolbar.visibility == View.VISIBLE) {
+                        conversationBinding.toolbar.visibility = View.GONE
+                        enterIntoFullScreen()
+
+                    } else {
+                        exitFromFullScreen()
+                        conversationBinding.toolbar.visibility = View.VISIBLE
+                        uiHandler.postDelayed({
+                            conversationBinding.toolbar.visibility = View.GONE
+                            enterIntoFullScreen()
+                        }, 3000)
+
+                    }
+                    return true
+                }
+            }
+        )
+    }
+
+    private fun enterIntoFullScreen() {
+        window.setFlags(
+            WindowManager.LayoutParams.FLAG_FULLSCREEN,
+            WindowManager.LayoutParams.FLAG_FULLSCREEN
+        )
+    }
+
+    private fun exitFromFullScreen() {
+        window.clearFlags(
+            WindowManager.LayoutParams.FLAG_FULLSCREEN
+        )
     }
 
 
-    fun showPdf() {
+    private fun showPdf() {
         val pdfViewPager = PDFViewPager(applicationContext, pdfObject.downloadedLocalPath)
         conversationBinding.remotePdfRoot.addView(pdfViewPager)
-        //setContentView(pdfViewPager)
         AppAnalytics.create(AnalyticsEvent.PDF_OPENED.NAME).addParam("URL", pdfObject.url).push()
 
     }
@@ -66,6 +107,7 @@ class PdfViewerActivity : BaseActivity() {
     override fun onPause() {
         super.onPause()
         EngagementNetworkHelper.engagePdfApi(PdfEngage(pdfObject.id, pdfObject.totalView))
+        uiHandler.removeCallbacksAndMessages(null)
     }
 
     override fun onDestroy() {
