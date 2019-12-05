@@ -217,6 +217,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         )
 
         compositeDisposable.add(RxBus2.listen(ExploreCourseEventBus::class.java).subscribe {
+            compositeDisposable.clear()
             WorkMangerAdmin.fineMoreEventWorker()
             CourseExploreActivity.startCourseExploreActivity(this, COURSE_EXPLORER_CODE)
         })

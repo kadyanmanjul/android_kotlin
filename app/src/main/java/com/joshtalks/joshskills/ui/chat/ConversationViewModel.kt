@@ -40,6 +40,7 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 import com.joshtalks.joshskills.repository.service.SyncChatService
 import kotlinx.coroutines.delay
+import org.jetbrains.anko.collections.forEachWithIndex
 
 
 class ConversationViewModel(application: Application, private var inboxEntity: InboxEntity) :
@@ -110,7 +111,7 @@ class ConversationViewModel(application: Application, private var inboxEntity: I
         if (listOfChat.isNotEmpty()) {
             lastChatTime = listOfChat.last().created
         }
-        for (chat in listOfChat) {
+        listOfChat.forEachWithIndex { i, chat ->
             val question: Question? = appDatabase.chatDao().getQuestion(chat.chatId)
             if (question != null) {
                 when (question.material_type) {
@@ -128,6 +129,9 @@ class ConversationViewModel(application: Application, private var inboxEntity: I
                             .getPdfOfQuestion(questionId = question.questionId)
                 }
                 chat.question = question
+            }
+            if (chat.type == BASE_MESSAGE_TYPE.Q && question == null) {
+                return@forEachWithIndex
             }
             chatReturn.add(chat)
         }

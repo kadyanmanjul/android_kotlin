@@ -33,6 +33,7 @@ class CourseExploreActivity : CoreJoshActivity() {
     companion object {
         fun startCourseExploreActivity(context: Activity, requestCode: Int) {
             val intent = Intent(context, CourseExploreActivity::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
             context.startActivityForResult(intent, requestCode)
         }
     }
