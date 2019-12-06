@@ -89,6 +89,11 @@ enum class AnalyticsEvent(val NAME: String) {
     PERMISSION_DENIED("Permission accept"),
     NOTIFICATION_RECEIVED("Notification Received"),
     NOTIFICATION_CLICKED("Notification Clicked"),
+    REGISTRATION_COMPLETED("Registration_completed"),
+    COURSE_STARTED("Course_Started"),
+
+
+
 
 
 }

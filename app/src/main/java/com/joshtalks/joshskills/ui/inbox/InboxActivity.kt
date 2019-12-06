@@ -7,8 +7,6 @@ import android.os.Bundle
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.lifecycle.*
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.CoreJoshActivity
 import com.joshtalks.joshskills.core.service.FCMTokenManager
 import com.joshtalks.joshskills.messaging.RxBus
 import com.joshtalks.joshskills.repository.local.DatabaseUtils
@@ -42,7 +40,8 @@ import com.joshtalks.joshskills.core.inapp_update.Constants
 import com.joshtalks.joshskills.core.inapp_update.InAppUpdateStatus
 import android.view.View
 import com.google.android.material.snackbar.Snackbar
-import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.service.WorkMangerAdmin
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.ExploreCourseEventBus
@@ -50,6 +49,7 @@ import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
 import com.joshtalks.joshskills.ui.payment.PaymentActivity
 import com.joshtalks.joshskills.ui.view_holders.FindMoreViewHolder
 import kotlinx.coroutines.delay
+import org.jetbrains.anko.collections.forEachWithIndex
 
 const val REGISTER_INFO_CODE = 2001
 const val COURSE_EXPLORER_CODE = 2002
@@ -90,6 +90,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         addLiveDataObservable()
         checkAppUpdate()
         workInBackground()
+
     }
 
 
@@ -171,25 +172,30 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
                     PaymentActivity.startPaymentActivity(this, REGISTER_INFO_CODE)
                 }
             } else {
+                buyCourseFBEvent()
                 recycler_view_inbox.removeAllViews()
-                for (inbox in it) {
+                val total = it.size
+                it.forEachWithIndex { i, inbox ->
                     recycler_view_inbox.addView(
                         InboxViewHolder(
-                            inbox
+                            inbox, total, i
                         )
                     )
                 }
+
                 addCourseExploreView()
             }
         })
 
         viewModel.registerCourseMinimalLiveData.observe(this, Observer {
             if (it != null && it.isNotEmpty()) {
+                buyCourseFBEvent()
                 recycler_view_inbox.removeAllViews()
-                for (inbox in it) {
+                val total = it.size
+                it.forEachWithIndex { i, inbox ->
                     recycler_view_inbox.addView(
                         InboxViewHolder(
-                            inbox
+                            inbox, total, i
                         )
                     )
                 }
@@ -247,7 +253,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
             if (resultCode == Activity.RESULT_CANCELED) {
                 inAppUpdateManager?.checkForAppUpdate()
             }
-        }else if (requestCode == COURSE_EXPLORER_CODE) {
+        } else if (requestCode == COURSE_EXPLORER_CODE) {
             if (resultCode == Activity.RESULT_OK) {
                 overridePendingTransition(0, 0)
                 intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
@@ -346,6 +352,24 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         } else {
             addEmptyView()
         }
+    }
+
+    private fun buyCourseFBEvent() {
+
+        CoroutineScope(Dispatchers.Default).launch {
+            if (PrefManager.hasKey(COURSE_STARTED_FB_EVENT)) {
+                return@launch
+            }
+            val params = Bundle()
+            params.putString("mentor_id", Mentor.getInstance().getId())
+            AppObjectController.facebookEventLogger.logEvent(
+                AnalyticsEvent.COURSE_STARTED.name,
+                params
+            )
+            PrefManager.put(COURSE_STARTED_FB_EVENT, true)
+        }
+
+
     }
 
 }

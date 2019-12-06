@@ -1,30 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/parent_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="@dimen/_60sdp"
         android:layout_gravity="center"
-        android:orientation="vertical">
-
-    <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/tv_unread"
-            fontPath="fonts/OpenSans-Regular.ttf"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginTop="@dimen/_8sdp"
-            android:layout_marginBottom="@dimen/_8sdp"
-            android:gravity="center_vertical|start"
-           android:padding="@dimen/_10sdp"
-            android:text="@string/explore_course"
-            android:textColor="@color/font_color"
-            android:textSize="@dimen/font_16" />
+        android:orientation="vertical"
+        >
 
     <LinearLayout
-            android:layout_gravity="end|bottom"
             android:layout_width="match_parent"
             android:layout_height="1dp"
+            android:layout_gravity="top|bottom"
             android:background="@color/gray_e6"
             android:orientation="horizontal" />
 
+
+    <com.google.android.material.textview.MaterialTextView
+            android:layout_marginTop="@dimen/_5sdp"
+            android:id="@+id/find_more"
+            fontPath="fonts/OpenSans-SemiBold.ttf"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@drawable/round_rectangle"
+            android:backgroundTint="@color/button_primary_color"
+            android:gravity="center"
+            android:paddingStart="@dimen/_30sdp"
+            android:paddingTop="@dimen/_10sdp"
+            android:paddingEnd="@dimen/_30sdp"
+            android:paddingBottom="@dimen/_10sdp"
+            android:text="@string/find_more_courses"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:textSize="@dimen/font_15"
+            app:rippleColor="@color/white" />
 </FrameLayout>

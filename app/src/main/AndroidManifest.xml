@@ -96,6 +96,16 @@
                 android:name="firebase_crashlytics_collection_enabled"
                 android:value="${enableCrashReporting}" />
 
+        <meta-data
+                android:name="com.facebook.sdk.AutoLogAppEventsEnabled"
+                android:value="true" />
+        <meta-data
+                android:name="com.facebook.sdk.AutoInitEnabled"
+                android:value="true" />
+        <meta-data
+                android:name="com.facebook.sdk.AdvertiserIDCollectionEnabled"
+                android:value="true" />
+
         <activity
                 android:name=".ui.inbox.InboxActivity"
                 android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize"
@@ -175,7 +185,7 @@
                 android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize"
                 android:launchMode="singleTask"
                 android:theme="@style/AppNoBarTheme"
-                android:windowSoftInputMode="stateHidden" >
+                android:windowSoftInputMode="stateHidden">
 
         </activity>
         <activity android:name=".ui.profile.CropImageActivity" />
@@ -184,8 +194,8 @@
                 android:name=".ui.explore.CourseExploreActivity"
                 android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize"
                 android:launchMode="singleTask"
-                android:screenOrientation="portrait"
                 android:parentActivityName=".ui.inbox.InboxActivity"
+                android:screenOrientation="portrait"
                 android:theme="@style/ConversationTheme">
             <meta-data
                     android:name="android.support.PARENT_ACTIVITY"
@@ -228,6 +238,8 @@
                 <action android:name="com.android.vending.INSTALL_REFERRER" />
             </intent-filter>
         </receiver>
+
+
 
         <!-- <service android:name=".core.service.NotificationListener"
                  android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">

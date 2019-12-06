@@ -18,6 +18,7 @@ import com.joshtalks.joshskills.core.service.WorkMangerAdmin
 import com.joshtalks.joshskills.databinding.ActivityCourseExploreBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.model.CourseExploreModel
+import com.joshtalks.joshskills.repository.local.model.ScreenEngagementModel
 import com.joshtalks.joshskills.ui.inbox.REGISTER_NEW_COURSE_CODE
 import com.joshtalks.joshskills.ui.payment.PaymentActivity
 import com.joshtalks.joshskills.ui.view_holders.CourseExplorerViewHolder
@@ -25,10 +26,12 @@ import com.r0adkll.slidr.Slidr
 import io.reactivex.disposables.CompositeDisposable
 
 
+const val COURSE_EXPLORER_SCREEN_NAME="Course Explorer"
+
 class CourseExploreActivity : CoreJoshActivity() {
     private var compositeDisposable = CompositeDisposable()
     private lateinit var courseExploreBinding: ActivityCourseExploreBinding
-
+    var screenEngagementModel: ScreenEngagementModel = ScreenEngagementModel(COURSE_EXPLORER_SCREEN_NAME)
 
     companion object {
         fun startCourseExploreActivity(context: Activity, requestCode: Int) {
@@ -52,7 +55,7 @@ class CourseExploreActivity : CoreJoshActivity() {
     private fun initView() {
         val titleView = findViewById<AppCompatTextView>(R.id.text_message_title)
         titleView.text = getString(R.string.discover)
-        findViewById<View>(R.id.iv_back).visibility=View.VISIBLE
+        findViewById<View>(R.id.iv_back).visibility = View.VISIBLE
         findViewById<View>(R.id.iv_back).setOnClickListener {
             this@CourseExploreActivity.finish()
         }
@@ -71,15 +74,6 @@ class CourseExploreActivity : CoreJoshActivity() {
             .setHasFixedSize(true)
             .setLayoutManager(linearLayoutManager)
         courseExploreBinding.recyclerView.itemAnimator = null
-
-        /*courseExploreBinding.recyclerView.addItemDecoration(
-            LayoutMarginDecoration(
-                Utils.dpToPx(
-                    applicationContext,
-                    4f
-                )
-            )
-        )*/
     }
 
     private fun loadCourses() {
@@ -108,7 +102,6 @@ class CourseExploreActivity : CoreJoshActivity() {
 
     private fun addObserver() {
         compositeDisposable.add(RxBus2.listen(CourseExploreModel::class.java).subscribe {
-            WorkMangerAdmin.buyNowEventWorker(it.name)
             PaymentActivity.startPaymentActivity(
                 this, REGISTER_NEW_COURSE_CODE,
                 it.url, it.name
@@ -135,4 +128,17 @@ class CourseExploreActivity : CoreJoshActivity() {
             .push()
         super.onBackPressed()
     }
+
+
+    override fun onStart() {
+        super.onStart()
+        screenEngagementModel.startTime = System.currentTimeMillis()
+    }
+
+    override fun onStop() {
+        screenEngagementModel.endTime = System.currentTimeMillis()
+        WorkMangerAdmin.screenAnalyticsWorker(screenEngagementModel)
+        super.onStop()
+    }
+
 }

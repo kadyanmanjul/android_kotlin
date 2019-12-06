@@ -63,7 +63,7 @@ class FirebaseTokenService : FirebaseMessagingService() {
 
             }
 
-            val obj = notificationObject.actionData?.let {
+            /*val obj = notificationObject.actionData?.let {
                 AppObjectController.appDatabase.courseDao().chooseRegisterCourseMinimal(it)
             }
             obj?.let {
@@ -75,7 +75,7 @@ class FirebaseTokenService : FirebaseMessagingService() {
                 }
                 intent.putExtra(CHAT_ROOM_OBJECT, it)
 
-            }
+            }*/
 
             val defaultSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
             val pendingIntent = PendingIntent.getActivity(applicationContext, 0, intent, 0)

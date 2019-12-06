@@ -4,13 +4,12 @@ import android.content.Context
 import android.util.Log
 import androidx.work.Worker
 import androidx.work.WorkerParameters
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.*
+import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.repository.local.model.InstallReferrerModel
 import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.repository.local.model.ScreenEngagementModel
 
 
 const val FIREBASE_DATABASE = "install_referrer"
@@ -24,6 +23,7 @@ class JoshTalksInstallWorker(context: Context, workerParams: WorkerParameters) :
         if (PrefManager.hasKey(INSTALL_REFERRER_SYNC)) {
             return Result.success()
         }
+        val obj = InstallReferrerModel.getPrefObject() ?: return Result.failure()
         val database = FirebaseDatabase.getInstance()
         val myRef = database.getReference(FIREBASE_DATABASE)
 
@@ -37,7 +37,6 @@ class JoshTalksInstallWorker(context: Context, workerParams: WorkerParameters) :
                 Log.w("TAG", "Failed to read value.", error.toException())
             }
         })
-        val obj = InstallReferrerModel.getPrefObject()
         obj.mentorId = Mentor.getInstance().getId()
         myRef.child(obj.mentorId.toString()).setValue(obj)
         return Result.success()
@@ -75,6 +74,51 @@ class BuyNowEventWorker(context: Context, private val workerParams: WorkerParame
     }
 
 }
+
+const val BUY_IMAGE_NOW_FIREBASE_DATABASE = "course_image_select_event"
+
+class BuyNowImageEventWorker(context: Context, private val workerParams: WorkerParameters) :
+    Worker(context, workerParams) {
+
+    override fun doWork(): Result {
+        val courseName = workerParams.inputData.getString("course_name")
+        val database = FirebaseDatabase.getInstance()
+        val myRef = database.getReference(BUY_IMAGE_NOW_FIREBASE_DATABASE)
+        myRef.child(courseName + "_" + System.currentTimeMillis().toString())
+            .setValue(Mentor.getInstance().getId())
+        return Result.success()
+    }
+
+}
+
+
+const val SCREEN_ENGAGEMENT_OBJECT = "screen_engagement"
+const val SCREEN_ENGAGEMENT_FIREBASE_DATABASE = "screen_engagement"
+
+
+class ScreenEngagementWorker(context: Context, private val workerParams: WorkerParameters) :
+    Worker(context, workerParams) {
+
+    override fun doWork(): Result {
+
+        var obj = AppObjectController.gsonMapperForLocal.fromJson(
+            workerParams.inputData.getString(SCREEN_ENGAGEMENT_OBJECT),
+            ScreenEngagementModel::class.java
+        )
+
+        val database = FirebaseDatabase.getInstance()
+        val ref: DatabaseReference = database.getReference(SCREEN_ENGAGEMENT_FIREBASE_DATABASE)
+        val postsRef: DatabaseReference = ref.child(Mentor.getInstance().getId())
+        obj.totalSpendTime = obj.endTime - obj.startTime
+        postsRef.push().setValue(obj)
+        return Result.success()
+    }
+
+}
+
+
+
+
 
 
 

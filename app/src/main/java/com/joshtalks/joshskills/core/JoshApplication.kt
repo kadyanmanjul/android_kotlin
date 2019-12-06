@@ -1,15 +1,14 @@
 package com.joshtalks.joshskills.core
 
 import android.app.Application
-import android.os.Debug
-//import androidx.multidex.MultiDexApplication
 import com.crashlytics.android.Crashlytics
 import com.crashlytics.android.core.CrashlyticsCore
+import com.facebook.FacebookSdk
+import com.facebook.LoggingBehavior
 import com.facebook.stetho.Stetho
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.repository.local.model.Mentor
-import com.joshtalks.joshskills.repository.server.CoreMeta
 import com.joshtalks.joshskills.repository.server.UpdateDeviceRequest
 import io.fabric.sdk.android.Fabric
 import io.github.inflationx.calligraphy3.CalligraphyConfig
@@ -18,7 +17,7 @@ import io.github.inflationx.viewpump.ViewPump
 import kotlinx.coroutines.*
 
 
-class JoshApplication : Application(){
+class JoshApplication : Application() {
 
 
     companion object {
@@ -31,7 +30,9 @@ class JoshApplication : Application(){
     override fun onCreate() {
         super.onCreate()
         if (BuildConfig.DEBUG) {
-            Stetho.initializeWithDefaults(this);
+            FacebookSdk.setIsDebugEnabled(true)
+            FacebookSdk.addLoggingBehavior(LoggingBehavior.APP_EVENTS)
+            Stetho.initializeWithDefaults(this)
         }
         appObjectController = AppObjectController.init(this)
 
@@ -58,7 +59,7 @@ class JoshApplication : Application(){
         )
     }
 
-
+/*
     fun fetchCoreMeta() {
         CoroutineScope(Dispatchers.IO).launch {
             try {
@@ -68,13 +69,13 @@ class JoshApplication : Application(){
                 ex.printStackTrace()
             }
         }
-    }
+    }*/
+
     fun updateDeviceDetail() {
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 if (Mentor.getInstance().hasId()) {
-                    val updateDetails: Any =
-                        AppObjectController.signUpNetworkService.updateDeviceDetails(UpdateDeviceRequest())
+                    AppObjectController.signUpNetworkService.updateDeviceDetails(UpdateDeviceRequest())
                 }
 
             } catch (ex: Exception) {
@@ -82,11 +83,15 @@ class JoshApplication : Application(){
             }
         }
     }
-    fun userActive(){
+
+    fun userActive() {
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 if (Mentor.getInstance().hasId()) {
-                   AppObjectController.signUpNetworkService.userActive( Mentor.getInstance().getId(),Any())
+                    AppObjectController.signUpNetworkService.userActive(
+                        Mentor.getInstance().getId(),
+                        Any()
+                    )
                 }
 
             } catch (ex: Exception) {

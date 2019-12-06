@@ -128,7 +128,6 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:layout_weight="1"
-                            android:lines="1"
                             android:backgroundTint="@android:color/transparent"
                             android:hint="@string/type_message_hint"
                             android:imeOptions="actionSend"

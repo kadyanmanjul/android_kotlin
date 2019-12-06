@@ -29,6 +29,8 @@ class MyWebViewClient extends WebViewClient {
 
     @Override
     public void onPageStarted(WebView webView, String url, Bitmap favicon) {
+        callback.onStartPageLoad();
+
     }
 
     @Override

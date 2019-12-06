@@ -5,6 +5,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/white">
+
     <com.google.android.material.card.MaterialCardView
             android:id="@+id/card_view"
             android:layout_width="match_parent"
@@ -21,6 +22,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="start"
                 android:adjustViewBounds="true"
+                android:background="@drawable/place_holder_explore"
                 android:clickable="true"
                 android:focusable="true"
                 android:scaleType="fitCenter" />

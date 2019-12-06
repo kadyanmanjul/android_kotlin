@@ -12,19 +12,19 @@ import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import com.google.android.material.button.MaterialButton
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.service.WorkMangerAdmin
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.model.CourseExploreModel
 import com.mindorks.placeholderview.annotations.*
 
 @Layout(R.layout.course_explorer_view_holder)
-class CourseExplorerViewHolder( private val courseExploreModel: CourseExploreModel) :BaseCell()  {
+class CourseExplorerViewHolder(private val courseExploreModel: CourseExploreModel) : BaseCell() {
 
     @View(R.id.image_view)
     lateinit var imageView: AppCompatImageView
 
     @View(R.id.buy_now_button)
     lateinit var buyNow: MaterialButton
-
 
 
     @Resolve
@@ -54,7 +54,7 @@ class CourseExplorerViewHolder( private val courseExploreModel: CourseExploreMod
                     dataSource: DataSource?,
                     isFirstResource: Boolean
                 ): Boolean {
-                    buyNow.visibility=android.view.View.VISIBLE
+                    buyNow.visibility = android.view.View.VISIBLE
 
                     return false
                 }
@@ -62,16 +62,19 @@ class CourseExplorerViewHolder( private val courseExploreModel: CourseExploreMod
             }).into(imageView)
 
 
-
-
     }
 
     @Click(R.id.buy_now_button)
     fun onClick() {
+        WorkMangerAdmin.buyNowEventWorker(courseExploreModel.name)
         RxBus2.publish(courseExploreModel)
     }
 
-
+    @Click(R.id.image_view)
+    fun onClickImageView() {
+        WorkMangerAdmin.buyNowEventWorker(courseExploreModel.name)
+        RxBus2.publish(courseExploreModel)
+    }
 }
 
 

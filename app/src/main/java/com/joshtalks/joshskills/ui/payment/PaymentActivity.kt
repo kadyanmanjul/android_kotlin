@@ -11,18 +11,24 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatTextView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.service.WorkMangerAdmin
+import com.joshtalks.joshskills.repository.local.model.ScreenEngagementModel
 import kotlinx.android.synthetic.main.activity_payment.*
 
 const val PAYMENT_URL_KEY = "payment_url"
 const val PAYMENT_CHECKOUT_URL_KEY = "payment_checkout_url"
 const val PAYMENT_TITLE = "payment_title"
 const val PAYMENT_COURSE_KEY = "payment_course"
+const val SCREEN_NAME="Payment"
 
 
 class PaymentActivity : AppCompatActivity(), WebViewCallback {
 
     lateinit var paymentUrl: String
     lateinit var checkoutUrl: String
+    private var pageLoad = false
+    var screenEngagementModel: ScreenEngagementModel = ScreenEngagementModel(SCREEN_NAME)
 
     companion object {
         fun startPaymentActivity(
@@ -61,6 +67,11 @@ class PaymentActivity : AppCompatActivity(), WebViewCallback {
             ) {
             }
         }
+
+        if (Utils.isInternetAvailable().not()) {
+            return
+        }
+
         webView.loadUrl(paymentUrl)
 
     }
@@ -127,8 +138,27 @@ class PaymentActivity : AppCompatActivity(), WebViewCallback {
         }
 
     }
+
+    override fun onStartPageLoad() {
+        pageLoad = true
+        screenEngagementModel.startTime=System.currentTimeMillis()
+    }
+
+    override fun onStart() {
+        super.onStart()
+        if(pageLoad){
+            screenEngagementModel.startTime=System.currentTimeMillis()
+        }
+    }
+
+    override fun onStop() {
+        screenEngagementModel.endTime=System.currentTimeMillis()
+        WorkMangerAdmin.screenAnalyticsWorker(screenEngagementModel)
+        super.onStop()
+    }
 }
 
 interface WebViewCallback {
     fun onUrl(url: String)
+    fun onStartPageLoad()
 }

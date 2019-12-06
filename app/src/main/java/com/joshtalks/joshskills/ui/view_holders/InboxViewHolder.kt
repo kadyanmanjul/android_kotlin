@@ -1,7 +1,6 @@
 package com.joshtalks.joshskills.ui.view_holders
 
 import android.widget.ImageView
-import android.widget.TextView
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
 import com.joshtalks.joshskills.R
@@ -14,7 +13,8 @@ import com.mindorks.placeholderview.annotations.*
 import com.vanniktech.emoji.Utils
 
 @Layout(R.layout.inbox_row_layout)
-class InboxViewHolder(var inboxEntity: InboxEntity) : BaseCell() {
+class InboxViewHolder(var inboxEntity: InboxEntity, val totalItem: Int, val indexPos: Int) :
+    BaseCell() {
 
     @View(R.id.profile_image)
     lateinit var profile_image: ImageView
@@ -36,6 +36,9 @@ class InboxViewHolder(var inboxEntity: InboxEntity) : BaseCell() {
     @View(R.id.tv_notification)
     lateinit var tv_notification: AppCompatTextView
 
+    @View(R.id.horizontal_line)
+    lateinit var hLine: android.view.View
+
 
     @JvmField
     var drawablePadding: Float = 2f;
@@ -49,7 +52,7 @@ class InboxViewHolder(var inboxEntity: InboxEntity) : BaseCell() {
         tvName.text = inboxEntity.course_name
 
         inboxEntity.course_icon?.let {
-            setImageInImageView(profile_image,it)
+            setImageInImageView(profile_image, it)
         }
 
 
@@ -73,6 +76,9 @@ class InboxViewHolder(var inboxEntity: InboxEntity) : BaseCell() {
                 0,
                 0
             )
+        }
+        if ((totalItem - 1) == indexPos) {
+            hLine.visibility = android.view.View.GONE
         }
     }
 

@@ -14,7 +14,7 @@ class FindMoreViewHolder {
     fun onResolved() {
     }
 
-    @Click(R.id.parent_layout)
+    @Click(R.id.find_more)
     fun exploreCourses() {
         RxBus2.publish(ExploreCourseEventBus())
     }

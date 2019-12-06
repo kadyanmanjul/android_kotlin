@@ -22,11 +22,16 @@ open class InstallReferrerModel {
 
     companion object {
         @JvmStatic
-        fun getPrefObject(): InstallReferrerModel {
-
-            return AppObjectController.gsonMapper.fromJson(
-                PrefManager.getStringValue(INSTALL_REFERRER_OBJECT), InstallReferrerModel::class.java
-            )
+        fun getPrefObject(): InstallReferrerModel? {
+            try {
+                AppObjectController.gsonMapper.fromJson(
+                    PrefManager.getStringValue(INSTALL_REFERRER_OBJECT),
+                    InstallReferrerModel::class.java
+                )
+            } catch (ex: Exception) {
+                return null
+            }
+            return null
         }
 
         fun update(value: String) {

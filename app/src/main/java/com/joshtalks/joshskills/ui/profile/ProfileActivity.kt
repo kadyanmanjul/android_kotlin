@@ -16,7 +16,6 @@ import android.view.View
 import android.view.View.GONE
 import android.view.ViewGroup
 import android.widget.Toast
-import com.joshtalks.joshskills.core.custom_ui.superbottomsheet.SuperBottomSheetFragment
 import com.esafirm.imagepicker.features.ImagePicker
 import com.esafirm.imagepicker.features.ReturnMode
 import com.joshtalks.joshskills.databinding.FragmentMediaSelectBinding
@@ -30,9 +29,11 @@ import com.github.florent37.singledateandtimepicker.dialog.SingleDateAndTimePick
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.BaseActivity
+import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.service.UploadWorker
 import com.joshtalks.joshskills.repository.local.model.ImageModel
+import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.*
 import com.karumi.dexter.Dexter
@@ -234,7 +235,11 @@ class ProfileActivity : BaseActivity(), MediaSelectCallback {
             return
         }
         if (!validAge()) {
-            Toast.makeText(applicationContext, "Age can not be less then 12 years", Toast.LENGTH_SHORT).show()
+            Toast.makeText(
+                applicationContext,
+                "Age can not be less then 12 years",
+                Toast.LENGTH_SHORT
+            ).show()
             return
         }
 
@@ -250,7 +255,7 @@ class ProfileActivity : BaseActivity(), MediaSelectCallback {
         if (today.get(Calendar.DAY_OF_YEAR) < dob.get(Calendar.DAY_OF_YEAR)) {
             age--;
         }
-        if (age>12){
+        if (age > 12) {
             return true
         }
         return false
@@ -310,6 +315,10 @@ class ProfileActivity : BaseActivity(), MediaSelectCallback {
                         obj
                     )
                         .await()
+
+                val params = Bundle()
+                params.putString("Mentor", Mentor.getInstance().getId())
+                AppObjectController.facebookEventLogger.logEvent(AnalyticsEvent.REGISTRATION_COMPLETED.name,params)
 
                 User.getInstance().updateFromResponse(updateProfileResponse)
                 if (imageModel != null) {

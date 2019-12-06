@@ -4,6 +4,7 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.workDataOf
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.repository.local.model.ScreenEngagementModel
 
 
 const val MEDIA_K_NAME = "kClassName"
@@ -27,7 +28,21 @@ object WorkMangerAdmin {
             .build()
         WorkManager.getInstance(AppObjectController.joshApplication).enqueue(workRequest)
     }
+    fun screenAnalyticsWorker(screenEngagementModel: ScreenEngagementModel){
+        val imageData = workDataOf(SCREEN_ENGAGEMENT_OBJECT to AppObjectController.gsonMapper.toJson(screenEngagementModel))
+        val uploadWorkRequest = OneTimeWorkRequestBuilder<ScreenEngagementWorker>()
+            .setInputData(imageData)
+            .build()
+        WorkManager.getInstance(AppObjectController.joshApplication).enqueue(uploadWorkRequest)
+    }
 
+    fun buyNowImageEventWorker(courseName:String){
+        val data = workDataOf("course_name" to courseName)
+        val workRequest = OneTimeWorkRequestBuilder<BuyNowImageEventWorker>()
+            .setInputData(data)
+            .build()
+        WorkManager.getInstance(AppObjectController.joshApplication).enqueue(workRequest)
+    }
 
     /* fun startUploadProfileInWorker(imageModel: ImageModel){
          val imageData = workDataOf(MEDIA_OBJECT to AppObjectController.gsonMapper.toJson(imageModel))

@@ -3,51 +3,46 @@ package com.joshtalks.joshskills.core
 import android.graphics.Bitmap
 import android.os.Handler
 import android.os.Looper
-import androidx.appcompat.app.AppCompatDelegate
 import com.bumptech.glide.load.MultiTransformation
 import com.clevertap.android.sdk.ActivityLifecycleCallback
+import com.facebook.appevents.AppEventsLogger
 import com.facebook.stetho.okhttp3.StethoInterceptor
 import com.google.android.exoplayer2.util.Util
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
-import com.joshtalks.joshskills.repository.local.AppDatabase
-import com.google.gson.Gson
+import com.google.gson.*
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import com.joshtalks.joshskills.BuildConfig
+import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.service.DownloadUtils
+import com.joshtalks.joshskills.core.service.video_download.DownloadTracker
+import com.joshtalks.joshskills.core.service.video_download.VideoDownloadController
+import com.joshtalks.joshskills.repository.local.AppDatabase
+import com.joshtalks.joshskills.repository.local.DatabaseUtils
 import com.joshtalks.joshskills.repository.local.model.User
-import com.joshtalks.joshskills.repository.service.SignUpNetworkService
-import okhttp3.Interceptor
-import okhttp3.Request
-import okhttp3.Response
-import okhttp3.logging.HttpLoggingInterceptor
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
-import com.google.gson.GsonBuilder
+import com.joshtalks.joshskills.repository.service.ChatNetworkService
 import com.joshtalks.joshskills.repository.service.MediaDUNetworkService
+import com.joshtalks.joshskills.repository.service.SignUpNetworkService
+import com.joshtalks.joshskills.ui.view_holders.IMAGE_SIZE
+import com.joshtalks.joshskills.ui.view_holders.ROUND_CORNER
 import com.tonyodev.fetch2.Fetch
 import com.tonyodev.fetch2.FetchConfiguration
 import com.tonyodev.fetch2.HttpUrlConnectionDownloader
 import com.tonyodev.fetch2core.Downloader
 import com.tonyodev.fetch2okhttp.OkHttpDownloader
 import com.vanniktech.emoji.EmojiManager
-import java.text.DateFormat
 import com.vanniktech.emoji.google.GoogleEmojiProvider
-import okhttp3.OkHttpClient
-import java.lang.reflect.Modifier
-import com.google.gson.JsonParseException
-import com.google.gson.JsonDeserializationContext
-import com.google.gson.JsonElement
-import com.google.gson.JsonDeserializer
-import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.service.DownloadUtils
-import com.joshtalks.joshskills.core.service.video_download.DownloadTracker
-import com.joshtalks.joshskills.core.service.video_download.VideoDownloadController
-import com.joshtalks.joshskills.repository.local.DatabaseUtils
-import com.joshtalks.joshskills.repository.service.ChatNetworkService
-import com.joshtalks.joshskills.ui.view_holders.IMAGE_SIZE
-import com.joshtalks.joshskills.ui.view_holders.ROUND_CORNER
 import jp.wasabeef.glide.transformations.CropTransformation
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation
+import okhttp3.Interceptor
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.Response
+import okhttp3.logging.HttpLoggingInterceptor
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
+import java.lang.reflect.Modifier
 import java.lang.reflect.Type
+import java.text.DateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -55,7 +50,6 @@ import java.util.concurrent.TimeUnit
 val KEY_AUTHORIZATION = "Authorization"
 val KEY_APP_VERSION_CODE = "app-version-code"
 val KEY_APP_VERSION_NAME = "app-version-name"
-val REMOTE_CONFIG_PREFIX = "josh_param_"
 
 const val SERVER_URL = "https://skills.joshtalks.org"
 //const val SERVER_URL = "http://13.127.85.171:8000"
@@ -124,6 +118,9 @@ internal class AppObjectController {
         @JvmStatic
         lateinit var multiTransformation: MultiTransformation<Bitmap>
 
+        @JvmStatic
+        lateinit var facebookEventLogger: AppEventsLogger
+
 
         /* @JvmStatic
         val videoDownloadListener = HashMap<String, DownloadTracker.Listener>()
@@ -134,6 +131,10 @@ internal class AppObjectController {
             appDatabase = AppDatabase.getDatabase(context)!!
             com.joshtalks.joshskills.core.ActivityLifecycleCallback.register(joshApplication)
             ActivityLifecycleCallback.register(joshApplication)
+
+            AppEventsLogger.activateApp(joshApplication)
+            facebookEventLogger = AppEventsLogger.newLogger(joshApplication)
+
 
             gsonMapper = GsonBuilder()
                 .enableComplexMapKeySerialization()
@@ -326,5 +327,7 @@ internal class AppObjectController {
             }, 0, 30 * 60 * 1000);
 
         }
+
+
     }
 }
