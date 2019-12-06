@@ -14,6 +14,7 @@ import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.CoreJoshActivity
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
+import com.joshtalks.joshskills.core.custom_ui.decorator.LayoutMarginDecoration
 import com.joshtalks.joshskills.core.service.WorkMangerAdmin
 import com.joshtalks.joshskills.databinding.ActivityCourseExploreBinding
 import com.joshtalks.joshskills.messaging.RxBus2
@@ -23,6 +24,7 @@ import com.joshtalks.joshskills.ui.inbox.REGISTER_NEW_COURSE_CODE
 import com.joshtalks.joshskills.ui.payment.PaymentActivity
 import com.joshtalks.joshskills.ui.view_holders.CourseExplorerViewHolder
 import com.r0adkll.slidr.Slidr
+import com.vanniktech.emoji.Utils
 import io.reactivex.disposables.CompositeDisposable
 
 
@@ -74,6 +76,14 @@ class CourseExploreActivity : CoreJoshActivity() {
             .setHasFixedSize(true)
             .setLayoutManager(linearLayoutManager)
         courseExploreBinding.recyclerView.itemAnimator = null
+        courseExploreBinding.recyclerView.addItemDecoration(
+            LayoutMarginDecoration(
+                Utils.dpToPx(
+                    this,
+                    8f
+                )
+            )
+        )
     }
 
     private fun loadCourses() {

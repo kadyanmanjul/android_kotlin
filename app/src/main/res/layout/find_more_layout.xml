@@ -3,7 +3,7 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/parent_layout"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/_60sdp"
+        android:layout_height="@dimen/_80sdp"
         android:layout_gravity="center"
         android:orientation="vertical"
         >
@@ -11,13 +11,12 @@
     <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:layout_gravity="top|bottom"
+            android:layout_gravity="top"
             android:background="@color/gray_e6"
             android:orientation="horizontal" />
 
 
     <com.google.android.material.textview.MaterialTextView
-            android:layout_marginTop="@dimen/_5sdp"
             android:id="@+id/find_more"
             fontPath="fonts/OpenSans-SemiBold.ttf"
             android:layout_width="wrap_content"
@@ -35,4 +34,12 @@
             android:textColor="@color/white"
             android:textSize="@dimen/font_15"
             app:rippleColor="@color/white" />
+
+
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_gravity="bottom"
+            android:background="@color/gray_e6"
+            android:orientation="horizontal" />
 </FrameLayout>
