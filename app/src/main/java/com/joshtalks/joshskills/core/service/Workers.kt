@@ -19,11 +19,10 @@ const val INSTALL_REFERRER_SYNC = "install_referrer_sync"
 class JoshTalksInstallWorker(context: Context, workerParams: WorkerParameters) :
     Worker(context, workerParams) {
     override fun doWork(): Result {
-
         if (PrefManager.hasKey(INSTALL_REFERRER_SYNC)) {
             return Result.success()
         }
-        val obj = InstallReferrerModel.getPrefObject() ?: return Result.failure()
+        val obj = InstallReferrerModel.getPrefObject()
         val database = FirebaseDatabase.getInstance()
         val myRef = database.getReference(FIREBASE_DATABASE)
 
@@ -33,15 +32,13 @@ class JoshTalksInstallWorker(context: Context, workerParams: WorkerParameters) :
             }
 
             override fun onCancelled(error: DatabaseError) {
-                // Failed to read value
                 Log.w("TAG", "Failed to read value.", error.toException())
             }
         })
-        obj.mentorId = Mentor.getInstance().getId()
-        myRef.child(obj.mentorId.toString()).setValue(obj)
+        obj?.mentorId = Mentor.getInstance().getId()
+        myRef.child(obj?.mentorId.toString()).setValue(obj)
         return Result.success()
     }
-
 }
 
 const val FIND_MORE_FIREBASE_DATABASE = "find_more_event"

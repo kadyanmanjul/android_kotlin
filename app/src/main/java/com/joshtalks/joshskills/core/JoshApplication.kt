@@ -6,6 +6,7 @@ import com.crashlytics.android.core.CrashlyticsCore
 import com.facebook.FacebookSdk
 import com.facebook.LoggingBehavior
 import com.facebook.stetho.Stetho
+import com.google.firebase.FirebaseApp
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.repository.local.model.Mentor
@@ -30,6 +31,7 @@ class JoshApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         if (BuildConfig.DEBUG) {
+
             FacebookSdk.setIsDebugEnabled(true)
             FacebookSdk.addLoggingBehavior(LoggingBehavior.APP_EVENTS)
             Stetho.initializeWithDefaults(this)

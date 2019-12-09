@@ -24,18 +24,18 @@ open class InstallReferrerModel {
         @JvmStatic
         fun getPrefObject(): InstallReferrerModel? {
             try {
-                AppObjectController.gsonMapper.fromJson(
+                return AppObjectController.gsonMapper.fromJson(
                     PrefManager.getStringValue(INSTALL_REFERRER_OBJECT),
                     InstallReferrerModel::class.java
                 )
             } catch (ex: Exception) {
+                ex.printStackTrace()
                 return null
             }
-            return null
         }
 
-        fun update(value: String) {
-            PrefManager.put(INSTALL_REFERRER_OBJECT, value)
+        fun update(value: InstallReferrerModel) {
+            PrefManager.put(INSTALL_REFERRER_OBJECT, AppObjectController.gsonMapper.toJson(value))
         }
     }
 

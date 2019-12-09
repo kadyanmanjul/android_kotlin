@@ -4,13 +4,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.text.TextUtils
-import android.util.Log
-import androidx.work.Worker
-import androidx.work.WorkerParameters
-import com.google.firebase.database.*
-import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.repository.local.model.InstallReferrerModel
-import com.joshtalks.joshskills.repository.local.model.Mentor
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -45,7 +39,7 @@ class JoshTalksInstallListener : BroadcastReceiver() {
                 }
                 val obj = InstallReferrerModel()
                 obj.referrer = referrerMap
-                InstallReferrerModel.update(obj.toString())
+                InstallReferrerModel.update(obj)
 
             } catch (ex: Exception) {
                 ex.printStackTrace()
