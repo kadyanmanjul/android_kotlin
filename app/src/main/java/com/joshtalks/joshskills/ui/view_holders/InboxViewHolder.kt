@@ -77,7 +77,10 @@ class InboxViewHolder(var inboxEntity: InboxEntity, val totalItem: Int, val inde
                 0
             )
         }
-        if ((totalItem - 1) == indexPos) {
+        if ((totalItem - 1) == indexPos && AppObjectController.getFirebaseRemoteConfig().getBoolean(
+                "course_explore_flag"
+            )
+        ) {
             hLine.visibility = android.view.View.GONE
         }
     }

@@ -72,7 +72,7 @@ class CourseExplorerViewHolder(private val courseExploreModel: CourseExploreMode
 
     @Click(R.id.image_view)
     fun onClickImageView() {
-        WorkMangerAdmin.buyNowEventWorker(courseExploreModel.name)
+        WorkMangerAdmin.buyNowImageEventWorker(courseExploreModel.name)
         RxBus2.publish(courseExploreModel)
     }
 }
