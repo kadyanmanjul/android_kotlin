@@ -2,6 +2,8 @@ package com.joshtalks.joshskills.ui.payment
 
 import android.app.Activity
 import android.content.Intent
+import android.content.pm.ActivityInfo
+import android.os.Build
 import android.os.Bundle
 import android.view.KeyEvent
 import android.view.View
@@ -20,12 +22,12 @@ const val PAYMENT_URL_KEY = "payment_url"
 const val PAYMENT_CHECKOUT_URL_KEY = "payment_checkout_url"
 const val PAYMENT_TITLE = "payment_title"
 const val PAYMENT_COURSE_KEY = "payment_course"
-const val SCREEN_NAME="Payment"
+const val SCREEN_NAME = "Payment"
 
 
 class PaymentActivity : AppCompatActivity(), WebViewCallback {
 
-    lateinit var paymentUrl: String
+    private var paymentUrl: String? = null
     lateinit var checkoutUrl: String
     private var pageLoad = false
     var screenEngagementModel: ScreenEngagementModel = ScreenEngagementModel(SCREEN_NAME)
@@ -45,14 +47,20 @@ class PaymentActivity : AppCompatActivity(), WebViewCallback {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        requestedOrientation = if (Build.VERSION.SDK_INT == 26) {
+            ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED;
+        } else {
+            ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
+        }
         super.onCreate(savedInstanceState)
+
         setContentView(R.layout.activity_payment)
         initView()
         if (intent.hasExtra(PAYMENT_URL_KEY)) {
             paymentUrl = intent.getStringExtra(PAYMENT_URL_KEY)
         }
 
-        if (paymentUrl.isEmpty()) {
+        if (paymentUrl.isNullOrEmpty()) {
             paymentUrl = AppObjectController.getFirebaseRemoteConfig().getString(PAYMENT_URL_KEY)
         }
 
@@ -79,7 +87,7 @@ class PaymentActivity : AppCompatActivity(), WebViewCallback {
     private fun initView() {
         val titleView = findViewById<AppCompatTextView>(R.id.text_message_title)
         titleView.text = AppObjectController.getFirebaseRemoteConfig().getString(PAYMENT_TITLE)
-        if (intent.getStringExtra(PAYMENT_COURSE_KEY).isNotEmpty()) {
+        if (intent.getStringExtra(PAYMENT_COURSE_KEY).isNullOrEmpty().not()) {
             titleView.text = intent.getStringExtra(PAYMENT_COURSE_KEY)
         }
 
@@ -141,18 +149,18 @@ class PaymentActivity : AppCompatActivity(), WebViewCallback {
 
     override fun onStartPageLoad() {
         pageLoad = true
-        screenEngagementModel.startTime=System.currentTimeMillis()
+        screenEngagementModel.startTime = System.currentTimeMillis()
     }
 
     override fun onStart() {
         super.onStart()
-        if(pageLoad){
-            screenEngagementModel.startTime=System.currentTimeMillis()
+        if (pageLoad) {
+            screenEngagementModel.startTime = System.currentTimeMillis()
         }
     }
 
     override fun onStop() {
-        screenEngagementModel.endTime=System.currentTimeMillis()
+        screenEngagementModel.endTime = System.currentTimeMillis()
         WorkMangerAdmin.screenAnalyticsWorker(screenEngagementModel)
         super.onStop()
     }

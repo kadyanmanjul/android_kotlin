@@ -34,7 +34,6 @@ import com.google.android.exoplayer2.trackselection.TrackSelection;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
 import com.google.android.exoplayer2.ui.DefaultTimeBar;
-import com.google.android.exoplayer2.ui.PlayerControlView;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.ui.TimeBar;
 import com.google.android.exoplayer2.util.Util;
@@ -220,7 +219,6 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
 
         player.seekTo(currentPosition);
         play();
-        addOrientationListener();
 
     }
 
@@ -243,13 +241,6 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
             }
 
         });
-
-    }
-
-    private void addOrientationListener() {
-        if (mOrientationListener != null) {
-            return;
-        }
 
     }
 
@@ -358,11 +349,9 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
     @Override
     public void onClick(View v) {
 
-        switch (v.getId()) {
-            case R.id.ivFullScreenToggle:
-                if (getContext() instanceof FullscreenToggleListener)
-                    ((FullscreenToggleListener) getContext()).onFullscreenToggle();
-                break;
+        if (v.getId() == R.id.ivFullScreenToggle) {
+            if (getContext() instanceof FullscreenToggleListener)
+                ((FullscreenToggleListener) getContext()).onFullscreenToggle();
         }
 
     }

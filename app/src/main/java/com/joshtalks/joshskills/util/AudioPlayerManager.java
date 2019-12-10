@@ -15,8 +15,6 @@ import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
-import com.joshtalks.joshskills.repository.server.engage.AudioEngage;
-import com.joshtalks.joshskills.repository.service.EngagementNetworkHelper;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -29,7 +27,7 @@ public class AudioPlayerManager {
     volatile private static String AUDIO_TAG = "";
     volatile private static String LAST_ID = "";
 
-    volatile static List<WeakReference<ExoPlayer.EventListener>> weakReferenceArrayList = new ArrayList<>();
+    private volatile static List<WeakReference<ExoPlayer.EventListener>> weakReferenceArrayList = new ArrayList<>();
 
 
     public static AudioPlayerManager getInstance(Context context) {

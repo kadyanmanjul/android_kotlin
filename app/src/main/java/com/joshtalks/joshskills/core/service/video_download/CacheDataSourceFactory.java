@@ -11,7 +11,6 @@ import com.google.android.exoplayer2.upstream.cache.LeastRecentlyUsedCacheEvicto
 import com.google.android.exoplayer2.upstream.cache.SimpleCache;
 import com.google.android.exoplayer2.util.Util;
 import com.joshtalks.joshskills.R;
-import com.joshtalks.joshskills.core.AppObjectController;
 
 import java.io.File;
 

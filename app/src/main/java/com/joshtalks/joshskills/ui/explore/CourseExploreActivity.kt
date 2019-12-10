@@ -2,6 +2,8 @@ package com.joshtalks.joshskills.ui.explore
 
 import android.app.Activity
 import android.content.Intent
+import android.content.pm.ActivityInfo
+import android.os.Build
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.widget.AppCompatTextView
@@ -44,6 +46,11 @@ class CourseExploreActivity : CoreJoshActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        requestedOrientation = if (Build.VERSION.SDK_INT == 26) {
+            ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED;
+        } else {
+            ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
+        }
         super.onCreate(savedInstanceState)
         courseExploreBinding =
             DataBindingUtil.setContentView(this, R.layout.activity_course_explore)
@@ -87,15 +94,17 @@ class CourseExploreActivity : CoreJoshActivity() {
     }
 
     private fun loadCourses() {
-        val typeToken = object : TypeToken<List<CourseExploreModel>>() {}.type
-        val quickRepliesModelList =
-            AppObjectController.gsonMapperForLocal.fromJson<List<CourseExploreModel>>(
-                AppObjectController.getFirebaseRemoteConfig().getString("course_explorer_list"),
-                typeToken
-            )
-        quickRepliesModelList.sortedWith(compareBy { it.order }).filter { it.active }.forEach {
-            courseExploreBinding.recyclerView.addView(CourseExplorerViewHolder(it))
-        }
+        try {
+            val typeToken = object : TypeToken<List<CourseExploreModel>>() {}.type
+            val quickRepliesModelList =
+                AppObjectController.gsonMapperForLocal.fromJson<List<CourseExploreModel>>(
+                    AppObjectController.getFirebaseRemoteConfig().getString("course_explorer_list"),
+                    typeToken
+                )
+            quickRepliesModelList.sortedWith(compareBy { it.order }).filter { it.active }.forEach {
+                courseExploreBinding.recyclerView.addView(CourseExplorerViewHolder(it))
+            }
+        }catch (ex:Exception){}
     }
 
 

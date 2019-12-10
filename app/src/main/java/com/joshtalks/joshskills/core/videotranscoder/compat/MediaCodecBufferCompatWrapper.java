@@ -18,18 +18,14 @@ public class MediaCodecBufferCompatWrapper {
     public MediaCodecBufferCompatWrapper(MediaCodec mediaCodec) {
         mMediaCodec = mediaCodec;
 
-        if (Build.VERSION.SDK_INT < 21) {
-            mInputBuffers = mediaCodec.getInputBuffers();
-            mOutputBuffers = mediaCodec.getOutputBuffers();
-        } else {
-            mInputBuffers = mOutputBuffers = null;
-        }
+        mInputBuffers = mOutputBuffers = null;
     }
 
     public ByteBuffer getInputBuffer(final int index) {
         if (Build.VERSION.SDK_INT >= 21) {
             return mMediaCodec.getInputBuffer(index);
         }
+        assert mInputBuffers != null;
         return mInputBuffers[index];
     }
 
@@ -37,6 +33,7 @@ public class MediaCodecBufferCompatWrapper {
         if (Build.VERSION.SDK_INT >= 21) {
             return mMediaCodec.getOutputBuffer(index);
         }
+        assert mOutputBuffers != null;
         return mOutputBuffers[index];
     }
 }

@@ -140,15 +140,13 @@ public class MediaTranscoderEngine {
             // skip
         }
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            String locationString = mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_LOCATION);
-            if (locationString != null) {
-                float[] location = new ISO6709LocationParser().parse(locationString);
-                if (location != null) {
-                    mMuxer.setLocation(location[0], location[1]);
-                } else {
-                    Log.d(TAG, "Failed to parse the location metadata: " + locationString);
-                }
+        String locationString = mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_LOCATION);
+        if (locationString != null) {
+            float[] location = new ISO6709LocationParser().parse(locationString);
+            if (location != null) {
+                mMuxer.setLocation(location[0], location[1]);
+            } else {
+                Log.d(TAG, "Failed to parse the location metadata: " + locationString);
             }
         }
 

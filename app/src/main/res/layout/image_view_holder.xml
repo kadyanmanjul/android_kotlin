@@ -64,7 +64,6 @@
 
                     <TextView
 
-                            android:text="wdwdwd"
                             android:id="@+id/text_message_time"
                             fontPath="fonts/Roboto-Light.ttf"
                             android:layout_width="wrap_content"

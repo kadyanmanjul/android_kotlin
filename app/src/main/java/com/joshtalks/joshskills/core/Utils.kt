@@ -80,7 +80,7 @@ object Utils {
         if (PrefManager.hasKey("deviceId"))
             return PrefManager.getStringValue("deviceId")
         val deviceId = Settings.Secure.getString(
-            AppObjectController.joshApplication.getContentResolver(),
+            AppObjectController.joshApplication.contentResolver,
             Settings.Secure.ANDROID_ID
         )
         PrefManager.put("deviceId", deviceId)
@@ -187,8 +187,8 @@ object Utils {
 
     fun createCircleBitmap(bitmapimg: Bitmap): Bitmap {
         val output = Bitmap.createBitmap(
-            bitmapimg.getWidth(),
-            bitmapimg.getHeight(), Bitmap.Config.ARGB_8888
+            bitmapimg.width,
+            bitmapimg.height, Bitmap.Config.ARGB_8888
         )
         val canvas = Canvas(output)
 

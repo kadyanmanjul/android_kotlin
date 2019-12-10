@@ -9,8 +9,6 @@ import android.view.animation.OvershootInterpolator;
 import android.widget.LinearLayout;
 import com.joshtalks.joshskills.databinding.ActivityConversationBinding;
 
-import java.util.ArrayList;
-
 public class AttachmentUtil {
 
 

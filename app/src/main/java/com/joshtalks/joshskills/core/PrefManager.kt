@@ -5,12 +5,7 @@ import android.content.SharedPreferences
 import androidx.preference.PreferenceManager
 import com.joshtalks.joshskills.BuildConfig
 
-
-private const val CLIENT_TOKEN = "client token"
-const val CHAT_LAST_SYNC_TIME = "chat_sync_time"
 const val COURSE_STARTED_FB_EVENT = "course_started_event"
-
-
 
 object PrefManager {
 
@@ -27,7 +22,7 @@ object PrefManager {
     }
 
     fun clear() {
-        prefManager.edit().clear().commit()
+        prefManager.edit().clear().apply()
     }
 
 

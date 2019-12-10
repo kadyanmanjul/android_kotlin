@@ -3,7 +3,6 @@ package com.joshtalks.joshskills.repository.service
 import android.net.Uri
 import androidx.lifecycle.MutableLiveData
 import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.CHAT_LAST_SYNC_TIME
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
@@ -16,7 +15,6 @@ import com.joshtalks.joshskills.repository.server.chat_message.BaseChatMessage
 import com.joshtalks.joshskills.repository.server.chat_message.BaseMediaMessage
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
 object NetworkRequestHelper {
@@ -117,7 +115,7 @@ object NetworkRequestHelper {
 
                     PrefManager.getLongValue(inboxEntity.conversation_id).let { time ->
                         if (created.isNullOrEmpty().not()) {
-                            if (created.toLong() == (time / 1000)) {
+                            if (created?.toLong() == (time / 1000)) {
                                 for (name in args) {
                                     arguments[name] = uri.getQueryParameter(name) ?: ""
                                 }

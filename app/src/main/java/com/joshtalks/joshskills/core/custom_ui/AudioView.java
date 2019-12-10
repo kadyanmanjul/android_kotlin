@@ -17,7 +17,6 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatImageView;
-import androidx.core.content.ContextCompat;
 
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayer;
@@ -46,7 +45,6 @@ import com.pnikosis.materialishprogress.ProgressWheel;
 
 import java.io.File;
 import java.util.Locale;
-import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 public class AudioView extends FrameLayout {
@@ -104,10 +102,8 @@ public class AudioView extends FrameLayout {
                     break;
                 case ExoPlayer.STATE_READY:
                     setProgress();
-
                     break;
                 case ExoPlayer.STATE_BUFFERING:
-                    break;
                 case ExoPlayer.STATE_IDLE:
                     break;
             }
@@ -347,10 +343,10 @@ public class AudioView extends FrameLayout {
         try {
 
             if (seekPlayerProgress.getProgress() > 0) {
-                duration = Long.valueOf(seekPlayerProgress.getProgress());
+                duration = (long) seekPlayerProgress.getProgress();
             } else {
 
-                Long duration = Utils.INSTANCE.getDurationOfMedia(getContext(), uri.getPath());
+                Long duration = Utils.getDurationOfMedia(getContext(), uri.getPath());
                 if (duration == null) {
                     duration = this.duration;
 

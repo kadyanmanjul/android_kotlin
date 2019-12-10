@@ -13,7 +13,7 @@
             android:layout_height="match_parent"
             android:padding="@dimen/dp10"
             android:textSize="@dimen/font_20"
-            android:text="-"/>
+            />
 
     <androidx.appcompat.widget.AppCompatEditText
             android:id="@+id/et_code"
@@ -23,7 +23,6 @@
             android:hint=""
             android:maxLength="1"
             android:lines="1"
-            android:text="9"
             android:backgroundTint="@color/transparent"
             android:cursorVisible="true"
             android:textSize="@dimen/font_20"/>

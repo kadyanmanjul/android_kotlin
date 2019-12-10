@@ -106,7 +106,6 @@
                 fontPath="fonts/OpenSans-Regular.ttf"
                 app:layout_constraintRight_toRightOf="parent"
                 android:drawableLeft="@drawable/ic_message"
-                android:drawableTint="@color/button_primary_color"
                 android:textColor="@color/button_primary_color"
                 android:layout_width="0dp"
                 android:drawablePadding="@dimen/font_20"

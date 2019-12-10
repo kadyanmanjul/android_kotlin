@@ -20,10 +20,10 @@ data class JcAudio constructor(
 ) : Parcelable {
 
     constructor(source: Parcel) : this(
-            source.readString(),
+        source.readString()!!,
             source.readValue(Int::class.java.classLoader) as Int?,
-            source.readString(),
-            Origin.valueOf(source.readString())
+        source.readString()!!,
+            Origin.valueOf(source.readString()!!)
     )
 
     override fun describeContents() = 0

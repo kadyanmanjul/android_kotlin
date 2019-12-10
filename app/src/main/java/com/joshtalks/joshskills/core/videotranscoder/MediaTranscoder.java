@@ -45,7 +45,7 @@ public class MediaTranscoder {
     private MediaTranscoder() {
         mExecutor = new ThreadPoolExecutor(
                 0, MAXIMUM_THREAD, 60, TimeUnit.SECONDS,
-                new LinkedBlockingQueue<Runnable>(),
+                new LinkedBlockingQueue<>(),
                 new ThreadFactory() {
                     @Override
                     public Thread newThread(Runnable r) {

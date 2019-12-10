@@ -14,11 +14,13 @@ import java.util.*
 class JoshTalksInstallListener : BroadcastReceiver() {
 
     override fun onReceive(context: Context?, intent: Intent?) {
-        val rawReferrerString = intent!!.getStringExtra("referrer")
-        processReferrer(rawReferrerString)
+        intent?.hasExtra("referrer")?.let {
+            val rawReferrerString = intent.getStringExtra("referrer")
+            processReferrer(rawReferrerString)
+        }
     }
 
-    private fun processReferrer(referrerString: String) {
+    private fun processReferrer(referrerString: String?) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 val rawReferrerString = URLDecoder.decode(referrerString, "UTF-8")

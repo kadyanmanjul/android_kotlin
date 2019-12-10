@@ -9,14 +9,14 @@
         android:background="@drawable/rounded_rectangle_attach"
         android:padding="@dimen/_10sdp"
         android:layout_gravity="center"
-        android:orientation="vertical">
+       >
 
     <LinearLayout
-
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="horizontal"
-            android:weightSum="3">
+            android:weightSum="3"
+            android:baselineAligned="false">
 
 
         <LinearLayout

@@ -71,19 +71,16 @@ public class InAppUpdateManager implements LifecycleObserver {
     private InAppUpdateStatus inAppUpdateStatus = new InAppUpdateStatus();
 
 
-    private InstallStateUpdatedListener installStateUpdatedListener = new InstallStateUpdatedListener() {
-        @Override
-        public void onStateUpdate(InstallState installState) {
-            inAppUpdateStatus.setInstallState(installState);
+    private InstallStateUpdatedListener installStateUpdatedListener = installState -> {
+        inAppUpdateStatus.setInstallState(installState);
 
-            reportStatus();
+        reportStatus();
 
-            // Show module progress, log state, or install the update.
-            if (installState.installStatus() == InstallStatus.DOWNLOADED) {
-                // After the update is downloaded, show a notification
-                // and request user confirmation to restart the app.
-                popupSnackbarForUserConfirmation();
-            }
+        // Show module progress, log state, or install the update.
+        if (installState.installStatus() == InstallStatus.DOWNLOADED) {
+            // After the update is downloaded, show a notification
+            // and request user confirmation to restart the app.
+            popupSnackbarForUserConfirmation();
         }
     };
     //endregion
@@ -263,30 +260,27 @@ public class InAppUpdateManager implements LifecycleObserver {
 
 
         // Checks that the platform will allow the specified type of update.
-        appUpdateInfoTask.addOnSuccessListener(new OnSuccessListener<AppUpdateInfo>() {
-            @Override
-            public void onSuccess(AppUpdateInfo appUpdateInfo) {
-                inAppUpdateStatus.setAppUpdateInfo(appUpdateInfo);
+        appUpdateInfoTask.addOnSuccessListener(appUpdateInfo -> {
+            inAppUpdateStatus.setAppUpdateInfo(appUpdateInfo);
 
-                if (startUpdate) {
-                    if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE) {
-                        // Request the update.
-                        if (mode == Constants.UpdateMode.FLEXIBLE && appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.FLEXIBLE)) {
-                            // Start an update.
-                            startAppUpdateFlexible(appUpdateInfo);
-                        } else if (appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.IMMEDIATE)) {
-                            // Start an update.
-                            startAppUpdateImmediate(appUpdateInfo);
-                        }
-
-                        Log.d(LOG_TAG, "checkForAppUpdate(): Update available. Version Code: " + appUpdateInfo.availableVersionCode());
-                    } else if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_NOT_AVAILABLE) {
-                        Log.d(LOG_TAG, "checkForAppUpdate(): No Update available. Code: " + appUpdateInfo.updateAvailability());
+            if (startUpdate) {
+                if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE) {
+                    // Request the update.
+                    if (mode == Constants.UpdateMode.FLEXIBLE && appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.FLEXIBLE)) {
+                        // Start an update.
+                        startAppUpdateFlexible(appUpdateInfo);
+                    } else if (appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.IMMEDIATE)) {
+                        // Start an update.
+                        startAppUpdateImmediate(appUpdateInfo);
                     }
-                }
 
-                reportStatus();
+                    Log.d(LOG_TAG, "checkForAppUpdate(): Update available. Version Code: " + appUpdateInfo.availableVersionCode());
+                } else if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_NOT_AVAILABLE) {
+                    Log.d(LOG_TAG, "checkForAppUpdate(): No Update available. Code: " + appUpdateInfo.updateAvailability());
+                }
             }
+
+            reportStatus();
         });
 
     }
@@ -343,29 +337,26 @@ public class InAppUpdateManager implements LifecycleObserver {
 
         appUpdateManager
                 .getAppUpdateInfo()
-                .addOnSuccessListener(new OnSuccessListener<AppUpdateInfo>() {
-                    @Override
-                    public void onSuccess(AppUpdateInfo appUpdateInfo) {
+                .addOnSuccessListener(appUpdateInfo -> {
 
-                        inAppUpdateStatus.setAppUpdateInfo(appUpdateInfo);
+                    inAppUpdateStatus.setAppUpdateInfo(appUpdateInfo);
 
-                        //FLEXIBLE:
-                        // If the update is downloaded but not installed,
-                        // notify the user to complete the update.
-                        if (appUpdateInfo.installStatus() == InstallStatus.DOWNLOADED) {
-                            popupSnackbarForUserConfirmation();
-                            reportStatus();
-                            Log.d(LOG_TAG, "checkNewAppVersionState(): resuming flexible update. Code: " + appUpdateInfo.updateAvailability());
-                        }
+                    //FLEXIBLE:
+                    // If the update is downloaded but not installed,
+                    // notify the user to complete the update.
+                    if (appUpdateInfo.installStatus() == InstallStatus.DOWNLOADED) {
+                        popupSnackbarForUserConfirmation();
+                        reportStatus();
+                        Log.d(LOG_TAG, "checkNewAppVersionState(): resuming flexible update. Code: " + appUpdateInfo.updateAvailability());
+                    }
 
-                        //IMMEDIATE:
-                        if (appUpdateInfo.updateAvailability() == UpdateAvailability.DEVELOPER_TRIGGERED_UPDATE_IN_PROGRESS) {
-                            // If an in-app update is already running, resume the update.
-                            startAppUpdateImmediate(appUpdateInfo);
+                    //IMMEDIATE:
+                    if (appUpdateInfo.updateAvailability() == UpdateAvailability.DEVELOPER_TRIGGERED_UPDATE_IN_PROGRESS) {
+                        // If an in-app update is already running, resume the update.
+                        startAppUpdateImmediate(appUpdateInfo);
 
-                            Log.d(LOG_TAG, "checkNewAppVersionState(): resuming immediate update. Code: " + appUpdateInfo.updateAvailability());
+                        Log.d(LOG_TAG, "checkNewAppVersionState(): resuming immediate update. Code: " + appUpdateInfo.updateAvailability());
 
-                        }
                     }
                 });
 
@@ -378,12 +369,9 @@ public class InAppUpdateManager implements LifecycleObserver {
                 snackBarMessage,
                 Snackbar.LENGTH_INDEFINITE);
 
-        snackbar.setAction(snackBarAction, new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                // Triggers the completion of the update of the app for the flexible flow.
-                appUpdateManager.completeUpdate();
-            }
+        snackbar.setAction(snackBarAction, view -> {
+            // Triggers the completion of the update of the app for the flexible flow.
+            appUpdateManager.completeUpdate();
         });
     }
 

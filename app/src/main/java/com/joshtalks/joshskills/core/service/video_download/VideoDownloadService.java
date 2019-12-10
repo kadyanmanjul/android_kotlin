@@ -18,7 +18,6 @@ import com.joshtalks.joshskills.R;
 import com.joshtalks.joshskills.messaging.RxBus2;
 import com.joshtalks.joshskills.repository.local.DatabaseUtils;
 import com.joshtalks.joshskills.repository.local.entity.DOWNLOAD_STATUS;
-import com.joshtalks.joshskills.repository.local.eventbus.DownloadMediaEventBus;
 import com.joshtalks.joshskills.repository.local.eventbus.MediaProgressEventBus;
 
 import java.util.List;
@@ -43,7 +42,7 @@ public class VideoDownloadService extends DownloadService {
                 FOREGROUND_NOTIFICATION_ID,
                 DEFAULT_FOREGROUND_NOTIFICATION_UPDATE_INTERVAL,
                 CHANNEL_ID,
-                R.string.exo_download_notification_channel_name);
+                R.string.exo_download_notification_channel_name,0);
         nextNotificationId = FOREGROUND_NOTIFICATION_ID + 1;
     }
 
@@ -60,7 +59,8 @@ public class VideoDownloadService extends DownloadService {
 
     @Override
     protected Scheduler getScheduler() {
-        return Util.SDK_INT >= 21 ? new PlatformScheduler(this, JOB_ID) : null;
+        return new WorkManagerScheduler("Download Video");
+      //  return Util.SDK_INT >= 21 ? new PlatformScheduler(this, JOB_ID) : null;
     }
 
     @Override

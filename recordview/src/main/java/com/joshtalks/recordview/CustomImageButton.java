@@ -30,7 +30,7 @@ public class CustomImageButton extends AppCompatImageView implements View.OnTouc
 
     private ScaleAnim scaleAnim;
     private RecordView recordView;
-    private boolean listenForRecord = true;
+    private boolean listenForRecord = false;
     private OnRecordClickListener onRecordClickListener;
     private OnRecordTouchListener onRecordTouchListener;
 
@@ -144,7 +144,7 @@ public class CustomImageButton extends AppCompatImageView implements View.OnTouc
                 onRecordTouchListener.onTouch(event.getAction());
             }
         } catch (Exception e) {
-
+            e.printStackTrace();
         }
         return isListenForRecord();
     }

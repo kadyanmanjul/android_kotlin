@@ -63,16 +63,16 @@ public class AppAnalytics {
 
     private String format(String unformatted) {
         unformatted = unformatted.trim().toLowerCase();
-        String formatted = "";
+        StringBuilder formatted = new StringBuilder();
         for (int index = 0; index < unformatted.length(); index++) {
             char c = unformatted.charAt(index);
             if (!(c >= 'a' && c <= 'z' || c >= '0' && c <= '9')) {
                 c = '_';
             }
-            formatted += c;
+            formatted.append(c);
         }
 
-        return formatted;
+        return formatted.toString();
     }
 
     public static void updateUser() {

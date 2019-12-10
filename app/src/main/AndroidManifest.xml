@@ -60,6 +60,7 @@
             android:networkSecurityConfig="@xml/network_security_config"
             android:roundIcon="@mipmap/ic_launcher_round"
             android:supportsRtl="true"
+            android:extractNativeLibs="false"
             android:theme="@style/AppTheme">
 
         <meta-data
@@ -195,7 +196,6 @@
                 android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize"
                 android:launchMode="singleTask"
                 android:parentActivityName=".ui.inbox.InboxActivity"
-                android:screenOrientation="portrait"
                 android:theme="@style/ConversationTheme">
             <meta-data
                     android:name="android.support.PARENT_ACTIVITY"
@@ -229,7 +229,6 @@
             </intent-filter>
         </service>
         <service android:name=".core.custom_ui.audioplayer.service.JcPlayerService" />
-
 
         <receiver
                 android:name=".core.analytics.JoshTalksInstallListener"

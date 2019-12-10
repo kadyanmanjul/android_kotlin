@@ -14,7 +14,7 @@ import com.facebook.FacebookSdk.getCacheDir
 object AppDirectory {
     const val APP_DIRECTORY = "JoshSkill"
     const val MEDIA_DIRECTORY = "Media"
-    private val FORMATTER = SimpleDateFormat("yyyyMMdd")
+    private val FORMATTER = SimpleDateFormat("yyyyMMdd", Locale.US)
 
     const val TODAY_IMAGE_COUNT = "today_image_count"
     const val TODAY_VIDEO_COUNT = "today_video_count"

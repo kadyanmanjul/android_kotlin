@@ -5,6 +5,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ActivityInfo
+import android.content.pm.PackageManager
 import android.graphics.Color
 import android.os.Bundle
 import android.text.Editable
@@ -328,11 +329,11 @@ class ConversationActivity() : BaseActivity() {
             override fun afterTextChanged(s: Editable?) {
                 if (s.isNullOrEmpty()) {
                     conversationBinding.recordButton.goToState(FIRST_STATE)
-                    conversationBinding.recordButton.isListenForRecord = true
+                     conversationBinding.recordButton.isListenForRecord = checkPermissionForAudioRecord()
                     conversationBinding.quickToggle.show()
                 } else {
                     conversationBinding.recordButton.goToState(SECOND_STATE)
-                    conversationBinding.recordButton.isListenForRecord = false
+                    conversationBinding.recordButton.isListenForRecord = checkPermissionForAudioRecord()
                     conversationBinding.quickToggle.hide()
 
                 }
@@ -918,6 +919,16 @@ class ConversationActivity() : BaseActivity() {
         } catch (ex: Exception) {
 
         }
+    }
+
+    fun checkPermissionForAudioRecord(): Boolean {
+        return ContextCompat.checkSelfPermission(
+            this,
+            Manifest.permission.READ_EXTERNAL_STORAGE
+        ) + ContextCompat.checkSelfPermission(
+            this,
+            Manifest.permission.RECORD_AUDIO
+        ) + ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
     }
 
 

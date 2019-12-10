@@ -11,13 +11,10 @@ import android.text.StaticLayout;
 import android.text.TextUtils;
 import android.text.style.StyleSpan;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
-import android.widget.TextView;
 
 import androidx.annotation.ColorInt;
 import androidx.appcompat.widget.AppCompatTextView;
-import androidx.emoji.widget.EmojiTextView;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -112,7 +109,7 @@ public class JoshTextView extends AppCompatTextView {
                     Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
             // check if we should make this auto link item bold
-            if(mBoldAutoLinkModes != null && mBoldAutoLinkModes.contains(autoLinkItem.getAutoLinkMode())){
+            if (mBoldAutoLinkModes != null && mBoldAutoLinkModes.contains(autoLinkItem.getAutoLinkMode())) {
 
                 // make the auto link item bold
                 spannableString.setSpan(
@@ -241,41 +238,34 @@ public class JoshTextView extends AppCompatTextView {
      */
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        if (Build.VERSION.SDK_INT >= 16) {
-            StaticLayout layout = null;
-            Field field = null;
+        StaticLayout layout = null;
+        Field field = null;
+        try {
+            Field staticField = DynamicLayout.class.getDeclaredField("sStaticLayout");
+            staticField.setAccessible(true);
+            layout = (StaticLayout) staticField.get(DynamicLayout.class);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
+
+        if (layout != null) {
             try {
-                Field staticField = DynamicLayout.class.getDeclaredField("sStaticLayout");
-                staticField.setAccessible(true);
-                layout = (StaticLayout) staticField.get(DynamicLayout.class);
-            } catch (NoSuchFieldException e) {
+                field = StaticLayout.class.getDeclaredField("mMaximumVisibleLineCount");
+                field.setAccessible(true);
+                field.setInt(layout, getMaxLines());
+            } catch (NoSuchFieldException | IllegalAccessException e) {
                 e.printStackTrace();
+            }
+        }
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        if (layout != null && field != null) {
+            try {
+                field.setInt(layout, Integer.MAX_VALUE);
             } catch (IllegalAccessException e) {
                 e.printStackTrace();
             }
-
-            if (layout != null) {
-                try {
-                    field = StaticLayout.class.getDeclaredField("mMaximumVisibleLineCount");
-                    field.setAccessible(true);
-                    field.setInt(layout, getMaxLines());
-                } catch (NoSuchFieldException e) {
-                    e.printStackTrace();
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace();
-                }
-            }
-            super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-            if (layout != null && field != null) {
-                try {
-                    field.setInt(layout, Integer.MAX_VALUE);
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace();
-                }
-            }
-        } else {
-            super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         }
+
     }
 
     public void enableUnderLine() {

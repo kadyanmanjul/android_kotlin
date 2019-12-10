@@ -563,7 +563,7 @@ public class SelectableRoundedImageView extends AppCompatImageView {
             return mBitmapHeight;
         }
 
-        public void setCornerRadii(float[] radii) {
+        void setCornerRadii(float[] radii) {
             if (radii == null)
                 return;
 
@@ -571,9 +571,7 @@ public class SelectableRoundedImageView extends AppCompatImageView {
                 throw new ArrayIndexOutOfBoundsException("radii[] needs 8 values");
             }
 
-            for (int i = 0; i < radii.length; i++) {
-                mRadii[i] = radii[i];
-            }
+            System.arraycopy(radii, 0, mRadii, 0, radii.length);
         }
 
         public float getBorderWidth() {

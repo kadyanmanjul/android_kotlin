@@ -60,6 +60,7 @@ class CodeInputField : LinearLayout {
             addView(temp)
             list.add(temp)
         }
+        attributes.recycle()
 
     }
 
@@ -93,7 +94,6 @@ class CodeInputField : LinearLayout {
         val redPaint = Paint()
         redPaint.color = Color.RED
         redPaint.strokeWidth = 5f // set stroke so you can actually see the lines
-
         canvas?.drawLine(0f, 0f, 100f, 100f, redPaint)
 
     }

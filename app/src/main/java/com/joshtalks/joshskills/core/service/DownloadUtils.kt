@@ -19,6 +19,7 @@ import com.joshtalks.joshskills.repository.local.eventbus.DownloadCompletedEvent
 import com.joshtalks.joshskills.ui.view_holders.BaseChatViewHolder
 import com.tonyodev.fetch2core.Extras
 import kotlinx.coroutines.async
+import java.lang.reflect.Type
 import java.util.HashMap
 
 
@@ -26,7 +27,7 @@ const val DOWNLOAD_OBJECT = "DownloadObject"
 
 object DownloadUtils {
 
-    val CHAT_MODEL_TYPE_TOKEN = object : TypeToken<ChatModel>() {}.type
+    private val CHAT_MODEL_TYPE_TOKEN: Type = object : TypeToken<ChatModel>() {}.type
 
     val objectFetchListener = HashMap<String, FetchListener>()
 
@@ -90,33 +91,32 @@ object DownloadUtils {
 
             if (chatModel.type == BASE_MESSAGE_TYPE.Q) {
                 chatModel.question?.let { question ->
-                    when {
-                        question.material_type == BASE_MESSAGE_TYPE.IM ->
-
+                    when (question.material_type) {
+                        BASE_MESSAGE_TYPE.IM ->
                             question.imageList?.get(0).let { imageType ->
                                 imageType?.downloadedLocalPath = filePath
                                 appDatabase.chatDao().updateImageObject(imageType!!)
 
                             }
-                        question.material_type == BASE_MESSAGE_TYPE.VI ->
+                        BASE_MESSAGE_TYPE.VI ->
                             question.videoList?.get(0).let { videoType ->
                                 videoType?.downloadedLocalPath = filePath
                                 appDatabase.chatDao().updateVideoObject(videoType!!)
 
                             }
-                        question.material_type == BASE_MESSAGE_TYPE.AU ->
+                        BASE_MESSAGE_TYPE.AU ->
                             question.audioList?.get(0).let { audioType ->
                                 audioType?.downloadedLocalPath = filePath
                                 appDatabase.chatDao().updateAudioObject(audioType!!)
 
                             }
-
-                        question.material_type == BASE_MESSAGE_TYPE.PD ->
+                        BASE_MESSAGE_TYPE.PD ->
                             question.pdfList?.get(0).let { pdfType ->
                                 pdfType?.downloadedLocalPath = filePath
                                 appDatabase.chatDao().updatePdfObject(pdfType!!)
 
                             }
+                        else ->return@let
                     }
                 }
 
@@ -137,14 +137,14 @@ object DownloadUtils {
     ) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                val extras: Extras = Extras(
+                val extras = Extras(
                     mapOf(
                         DOWNLOAD_OBJECT to AppObjectController.gsonMapperForLocal.toJson(
                             message
                         )
                     )
                 )
-                var imageBitmap = Glide.with(AppObjectController.joshApplication)
+                val imageBitmap = Glide.with(AppObjectController.joshApplication)
                     .asBitmap()
                     .load(imageUrl).submit().get()
 
