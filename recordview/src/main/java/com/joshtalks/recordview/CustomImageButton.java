@@ -30,7 +30,7 @@ public class CustomImageButton extends AppCompatImageView implements View.OnTouc
 
     private ScaleAnim scaleAnim;
     private RecordView recordView;
-    private boolean listenForRecord = false;
+    private boolean listenForRecord = true;
     private OnRecordClickListener onRecordClickListener;
     private OnRecordTouchListener onRecordTouchListener;
 
