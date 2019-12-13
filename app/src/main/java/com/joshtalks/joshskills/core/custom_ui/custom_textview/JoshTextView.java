@@ -2,7 +2,6 @@ package com.joshtalks.joshskills.core.custom_ui.custom_textview;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.os.Build;
 import android.graphics.Typeface;
 import android.text.DynamicLayout;
 import android.text.Spannable;

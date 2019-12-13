@@ -1,18 +1,14 @@
 package com.joshtalks.joshskills.ui.view_holders
 
 import android.Manifest
-import android.graphics.Color
-import android.util.Log
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.widget.FrameLayout
-import android.widget.TextView
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.text.HtmlCompat
 import androidx.fragment.app.FragmentActivity
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.repository.local.entity.ChatModel
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
@@ -20,17 +16,21 @@ import com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.core.service.DownloadUtils
 import com.joshtalks.joshskills.messaging.RxBus2
+import com.joshtalks.joshskills.repository.local.entity.ChatModel
 import com.joshtalks.joshskills.repository.local.entity.DOWNLOAD_STATUS
 import com.joshtalks.joshskills.repository.local.eventbus.DownloadMediaEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.ImageShowEvent
-import com.pnikosis.materialishprogress.ProgressWheel
+import com.karumi.dexter.Dexter
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionDeniedResponse
 import com.karumi.dexter.listener.PermissionGrantedResponse
-import com.karumi.dexter.listener.single.PermissionListener
-import com.karumi.dexter.Dexter
 import com.karumi.dexter.listener.PermissionRequest
-import com.mindorks.placeholderview.annotations.*
+import com.karumi.dexter.listener.single.PermissionListener
+import com.mindorks.placeholderview.annotations.Click
+import com.mindorks.placeholderview.annotations.Layout
+import com.mindorks.placeholderview.annotations.Resolve
+import com.mindorks.placeholderview.annotations.View
+import com.pnikosis.materialishprogress.ProgressWheel
 import java.lang.ref.WeakReference
 
 @Layout(R.layout.image_view_holder)

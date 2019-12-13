@@ -9,7 +9,10 @@ import com.joshtalks.joshskills.messaging.RxBus
 import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
 import com.joshtalks.joshskills.repository.local.entity.MESSAGE_DELIVER_STATUS
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
-import com.mindorks.placeholderview.annotations.*
+import com.mindorks.placeholderview.annotations.Click
+import com.mindorks.placeholderview.annotations.Layout
+import com.mindorks.placeholderview.annotations.Resolve
+import com.mindorks.placeholderview.annotations.View
 import com.vanniktech.emoji.Utils
 
 @Layout(R.layout.inbox_row_layout)

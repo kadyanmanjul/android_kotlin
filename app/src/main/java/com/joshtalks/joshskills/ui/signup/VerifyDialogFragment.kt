@@ -7,7 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
-import androidx.fragment.app.Fragment
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.ARG_PHONE_NUMBER
 import com.joshtalks.joshskills.databinding.FragmentVerifyPhoneBinding

@@ -1,11 +1,9 @@
 package com.joshtalks.joshskills.repository.service
 
 import android.content.pm.PackageManager
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.Utils
-import com.joshtalks.joshskills.repository.local.DatabaseUtils
 import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
 import com.joshtalks.joshskills.repository.server.AmazonPolicyResponse

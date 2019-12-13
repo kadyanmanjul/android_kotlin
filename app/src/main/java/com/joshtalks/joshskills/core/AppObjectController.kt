@@ -51,8 +51,8 @@ val KEY_AUTHORIZATION = "Authorization"
 val KEY_APP_VERSION_CODE = "app-version-code"
 val KEY_APP_VERSION_NAME = "app-version-name"
 
-const val SERVER_URL = "https://skills.joshtalks.org"
-//const val SERVER_URL = "http://13.127.85.171:8000"
+//const val SERVER_URL = "https://skills.joshtalks.org"
+const val SERVER_URL = "http://13.127.85.171:8000"
 
 //const val SERVER_URL = "http://192.168.0.141:8080"
 
@@ -180,7 +180,7 @@ internal class AppObjectController {
                 override fun intercept(chain: Interceptor.Chain): Response {
                     val original = chain.request()
                     val newRequest: Request.Builder = original.newBuilder()
-                    if (User.getInstance() != null && User.getInstance().token != null) {
+                    if (User.getInstance().token != null) {
                         newRequest.addHeader(
                             KEY_AUTHORIZATION,
                             "Bearer " + (User.getInstance().token?.accessToken ?: "")

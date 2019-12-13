@@ -3,7 +3,7 @@ package com.joshtalks.joshskills.repository.local.model
 import com.google.gson.annotations.SerializedName
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.PrefManager
-import java.util.HashMap
+import java.util.*
 
 const val INSTALL_REFERRER_OBJECT = "install_referrer_object"
 

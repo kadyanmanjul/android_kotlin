@@ -38,8 +38,5 @@
     <color name="seek_bar_background">#CCababab</color>
     <color name="seek_bar_secondary_progress">#3399CC</color>
 
-    <color name="cross_78">#78909C</color>
-    <color name="gray_71">#717171</color>
-
 
 </resources>

@@ -19,9 +19,7 @@ import android.media.MediaExtractor;
 import android.media.MediaFormat;
 import android.media.MediaMetadataRetriever;
 import android.media.MediaMuxer;
-import android.os.Build;
 import android.util.Log;
-
 
 import com.joshtalks.joshskills.core.videotranscoder.format.MediaFormatStrategy;
 import com.joshtalks.joshskills.core.videotranscoder.utils.ISO6709LocationParser;

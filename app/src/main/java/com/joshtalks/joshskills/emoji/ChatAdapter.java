@@ -3,7 +3,9 @@ package com.joshtalks.joshskills.emoji;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.joshtalks.joshskills.R;
 import com.vanniktech.emoji.EmojiInformation;
 import com.vanniktech.emoji.EmojiTextView;

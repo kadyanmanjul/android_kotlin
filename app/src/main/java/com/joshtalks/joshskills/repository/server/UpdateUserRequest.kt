@@ -1,7 +1,6 @@
 package com.joshtalks.joshskills.repository.server
 
 import com.google.gson.annotations.SerializedName
-import com.joshtalks.joshskills.repository.local.model.googlelocation.Locality
 
 
 data class UpdateUserPersonal(

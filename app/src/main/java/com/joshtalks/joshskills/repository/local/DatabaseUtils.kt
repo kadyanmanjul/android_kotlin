@@ -1,16 +1,12 @@
 package com.joshtalks.joshskills.repository.local
 
-import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
 import com.joshtalks.joshskills.repository.local.entity.DOWNLOAD_STATUS
-import id.zelory.compressor.Compressor
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
-import java.io.File
 import java.util.*
 
 

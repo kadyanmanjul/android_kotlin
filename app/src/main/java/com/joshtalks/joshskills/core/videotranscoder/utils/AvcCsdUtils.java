@@ -17,7 +17,6 @@ package com.joshtalks.joshskills.core.videotranscoder.utils;
 
 import android.media.MediaFormat;
 
-
 import com.joshtalks.joshskills.core.videotranscoder.format.MediaFormatExtraConstants;
 
 import java.nio.ByteBuffer;

@@ -20,7 +20,6 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 
-
 import com.joshtalks.joshskills.core.videotranscoder.engine.MediaTranscoderEngine;
 import com.joshtalks.joshskills.core.videotranscoder.format.MediaFormatPresets;
 import com.joshtalks.joshskills.core.videotranscoder.format.MediaFormatStrategy;

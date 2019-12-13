@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.libraries.places.api.model.AutocompletePrediction
 import com.joshtalks.joshskills.databinding.CardLocationAutocompleteBinding
 import com.joshtalks.joshskills.ui.view_holders.PlaceApiViewHolder
-import java.util.ArrayList
+import java.util.*
 
 
 class SearchLocationAdapter(

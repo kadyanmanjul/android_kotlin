@@ -95,7 +95,4 @@
     <style name="superBottomSheetDialog" parent="Theme.Design.Light.BottomSheetDialog">
         <item name="android:windowIsFloating">false</item>
     </style>
-    <style name="ChipStyle" parent="Theme.MaterialComponents.Light.NoActionBar">
-        <!-- Your style -->
-    </style>
 </resources>

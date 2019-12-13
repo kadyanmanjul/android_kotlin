@@ -2,13 +2,11 @@ package com.joshtalks.joshskills.core.io
 
 import android.os.Environment
 import android.text.format.DateUtils
+import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.PrefManager
+import java.io.*
 import java.text.SimpleDateFormat
 import java.util.*
-import java.io.*
-import com.facebook.FacebookSdk.getCacheDir
-import com.joshtalks.joshskills.core.AppObjectController
-import com.facebook.FacebookSdk.getCacheDir
 
 
 object AppDirectory {

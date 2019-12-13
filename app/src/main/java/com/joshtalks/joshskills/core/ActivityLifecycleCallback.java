@@ -3,6 +3,7 @@ package com.joshtalks.joshskills.core;
 import android.app.Activity;
 import android.app.Application;
 import android.os.Bundle;
+
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent;
 import com.joshtalks.joshskills.core.analytics.AppAnalytics;
 

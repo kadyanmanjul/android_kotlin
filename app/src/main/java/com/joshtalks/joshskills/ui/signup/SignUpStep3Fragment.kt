@@ -2,14 +2,17 @@ package com.joshtalks.joshskills.ui.signup
 
 import android.content.Context
 import android.os.Bundle
-import androidx.fragment.app.Fragment
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.view.WindowManager
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.ARG_PHONE_NUMBER
 import com.joshtalks.joshskills.databinding.FragmentSignUpStep3Binding
 import kotlinx.android.synthetic.main.fragment_sign_up_step3.*
-import android.view.*
 
 class SignUpStep3Fragment : Fragment() {
     private lateinit var phoneNumber: String

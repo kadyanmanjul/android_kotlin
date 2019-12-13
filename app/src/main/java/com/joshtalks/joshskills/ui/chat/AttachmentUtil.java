@@ -7,6 +7,7 @@ import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
 import android.view.animation.OvershootInterpolator;
 import android.widget.LinearLayout;
+
 import com.joshtalks.joshskills.databinding.ActivityConversationBinding;
 
 public class AttachmentUtil {

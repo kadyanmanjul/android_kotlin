@@ -12,10 +12,14 @@ import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import com.google.android.material.button.MaterialButton
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.service.WorkMangerAdmin
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.model.CourseExploreModel
-import com.mindorks.placeholderview.annotations.*
+import com.mindorks.placeholderview.annotations.Click
+import com.mindorks.placeholderview.annotations.Layout
+import com.mindorks.placeholderview.annotations.Resolve
+import com.mindorks.placeholderview.annotations.View
 
 @Layout(R.layout.course_explorer_view_holder)
 class CourseExplorerViewHolder(private val courseExploreModel: CourseExploreModel) : BaseCell() {
@@ -61,6 +65,7 @@ class CourseExplorerViewHolder(private val courseExploreModel: CourseExploreMode
 
             }).into(imageView)
 
+        buyNow.text = AppObjectController.getFirebaseRemoteConfig().getString("buy_course_label")
 
     }
 

@@ -3,7 +3,6 @@ package com.joshtalks.joshskills.core.videotranscoder.engine;
 import android.media.MediaCodec;
 import android.media.MediaFormat;
 
-
 import com.joshtalks.joshskills.core.videotranscoder.compat.MediaCodecBufferCompatWrapper;
 
 import java.nio.ByteBuffer;

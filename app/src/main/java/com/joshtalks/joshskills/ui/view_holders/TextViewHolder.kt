@@ -1,25 +1,19 @@
 package com.joshtalks.joshskills.ui.view_holders
 
-import android.graphics.drawable.ColorDrawable
 import android.view.View.GONE
 import android.view.View.VISIBLE
+import android.widget.FrameLayout
+import androidx.appcompat.widget.AppCompatTextView
+import androidx.core.text.HtmlCompat
+import androidx.fragment.app.FragmentActivity
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
 import com.mindorks.placeholderview.annotations.Layout
 import com.mindorks.placeholderview.annotations.Resolve
 import com.mindorks.placeholderview.annotations.View
-import android.widget.FrameLayout
-import androidx.appcompat.widget.AppCompatTextView
-import androidx.core.content.ContextCompat
-import androidx.core.text.HtmlCompat
-import androidx.fragment.app.FragmentActivity
-import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
-import com.joshtalks.joshskills.messaging.RxBus2
-import com.joshtalks.joshskills.repository.local.eventbus.RemoveViewEventBus
-import com.joshtalks.joshskills.repository.local.eventbus.DeleteMessageEventBus
-import com.mindorks.placeholderview.annotations.*
 import java.lang.ref.WeakReference
 
 

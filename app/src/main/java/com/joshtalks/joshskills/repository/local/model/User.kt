@@ -4,7 +4,6 @@ import com.google.gson.annotations.SerializedName
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.repository.server.ProfileToken
-import java.lang.Exception
 
 
 const val USER_PERSISTANT_KEY = "user"

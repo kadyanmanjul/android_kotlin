@@ -1,15 +1,14 @@
 package com.joshtalks.joshskills.ui.signup
 
-import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProviders
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.databinding.SignUpStep1FragmentBinding
-import kotlinx.android.synthetic.main.sign_up_step1_fragment.*
 
 
 class SignUpStep1Fragment : Fragment() {

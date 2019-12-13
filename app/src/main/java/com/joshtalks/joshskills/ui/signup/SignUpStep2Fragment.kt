@@ -2,11 +2,11 @@ package com.joshtalks.joshskills.ui.signup
 
 import android.content.Context
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.databinding.FragmentSignUpStep2Binding

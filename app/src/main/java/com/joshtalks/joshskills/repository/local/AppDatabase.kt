@@ -2,12 +2,12 @@ package com.joshtalks.joshskills.repository.local
 
 import android.content.Context
 import androidx.room.*
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
 import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.repository.local.entity.*
 import java.util.*
-import androidx.sqlite.db.SupportSQLiteDatabase
-import androidx.room.migration.Migration
 
 
 const val DATABASE_NAME = "JoshEnglishDB.db"

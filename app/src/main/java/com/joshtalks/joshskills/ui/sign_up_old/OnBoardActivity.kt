@@ -2,17 +2,17 @@ package com.joshtalks.joshskills.ui.sign_up_old
 
 import android.content.Intent
 import android.os.Bundle
-import androidx.databinding.DataBindingUtil
-import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
-import com.joshtalks.joshskills.core.analytics.AppAnalytics
-import com.joshtalks.joshskills.databinding.ActivityOnboardBinding
-import io.github.inflationx.calligraphy3.TypefaceUtils
-import io.github.inflationx.calligraphy3.CalligraphyTypefaceSpan
 import android.text.SpannableStringBuilder
 import android.text.Spanned
 import android.widget.TextView
+import androidx.databinding.DataBindingUtil
+import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.BaseActivity
+import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
+import com.joshtalks.joshskills.core.analytics.AppAnalytics
+import com.joshtalks.joshskills.databinding.ActivityOnboardBinding
+import io.github.inflationx.calligraphy3.CalligraphyTypefaceSpan
+import io.github.inflationx.calligraphy3.TypefaceUtils
 
 
 class OnBoardActivity : BaseActivity() {

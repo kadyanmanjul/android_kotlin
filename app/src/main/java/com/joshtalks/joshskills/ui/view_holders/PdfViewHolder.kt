@@ -3,6 +3,7 @@ package com.joshtalks.joshskills.ui.view_holders
 import android.Manifest
 import android.net.Uri
 import android.widget.FrameLayout
+import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
@@ -36,8 +37,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.lang.ref.WeakReference
-import android.widget.LinearLayout
-import android.widget.RelativeLayout
 
 @Layout(R.layout.pdf_view_holder)
 class PdfViewHolder(activityRef: WeakReference<FragmentActivity>, message: ChatModel) :

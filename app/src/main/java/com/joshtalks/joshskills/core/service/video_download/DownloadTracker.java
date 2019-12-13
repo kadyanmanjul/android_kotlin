@@ -26,7 +26,6 @@ import com.joshtalks.joshskills.core.AppObjectController;
 import com.joshtalks.joshskills.messaging.RxBus2;
 import com.joshtalks.joshskills.repository.local.entity.ChatModel;
 import com.joshtalks.joshskills.repository.local.eventbus.MediaProgressEventBus;
-import com.joshtalks.joshskills.repository.local.model.Mentor;
 
 import java.io.IOException;
 import java.util.ArrayList;

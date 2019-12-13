@@ -3,18 +3,12 @@ package com.joshtalks.joshskills.ui.signup
 import android.app.Application
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
-import androidx.databinding.Bindable
+import androidx.databinding.ObservableField
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import com.joshtalks.joshskills.core.JoshApplication
 import com.joshtalks.joshskills.core.SignUpStepStatus
-import androidx.databinding.ObservableField
-import androidx.databinding.ObservableInt
-import java.util.*
 import com.joshtalks.joshskills.util.BindableString
-
-
 
 
 class SignUpViewModel : AndroidViewModel {

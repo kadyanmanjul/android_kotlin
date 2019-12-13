@@ -1,11 +1,14 @@
 package com.joshtalks.joshskills.core
 
 import android.app.Activity
+import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.content.Intent.ACTION_VIEW
 import android.content.res.Resources
 import android.graphics.*
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.VectorDrawable
 import android.media.AudioManager
 import android.media.AudioManager.STREAM_MUSIC
 import android.media.MediaMetadataRetriever
@@ -17,20 +20,17 @@ import android.provider.Settings
 import android.text.format.DateUtils
 import android.util.Log
 import android.util.TypedValue
-import androidx.browser.customtabs.CustomTabsCallback
-import androidx.browser.customtabs.CustomTabsClient
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.browser.customtabs.CustomTabsIntent
-import androidx.browser.customtabs.CustomTabsSession
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.RoundedBitmapDrawable
 import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory
+import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.customlauncher.CustomTabsFallback
 import com.joshtalks.joshskills.core.customlauncher.CustomTabsLauncher
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import saschpe.android.customtabs.CustomTabsHelper
-import saschpe.android.customtabs.WebViewFallback
 import java.io.File
 import java.io.FileOutputStream
 import java.io.OutputStream
@@ -334,9 +334,9 @@ object Utils {
             activity,
             customTabsBuilder.build(),
             Uri.parse(updateUrl)
-        , { context, uri, customTabsIntent ->
-            Log.e("callback", uri.path)
-        })
+            , { context, uri, customTabsIntent ->
+                Log.e("callback", uri.path)
+            })
 
 
         /*var mClient: CustomTabsClient?=null
@@ -400,6 +400,54 @@ object Utils {
             return true
         }
         return false
+    }
+
+    fun getBitmapFromDrawable(context: Context, drawableId: Int): Bitmap {
+        val drawable = AppCompatResources.getDrawable(context, drawableId)
+
+        if (drawable is BitmapDrawable) {
+            return (drawable).bitmap
+        } else if (drawable is VectorDrawableCompat || drawable is VectorDrawable) {
+            val bitmap = Bitmap.createBitmap(
+                drawable.intrinsicWidth,
+                drawable.intrinsicHeight,
+                Bitmap.Config.ARGB_8888
+            )
+            val canvas = Canvas(bitmap)
+            drawable.setBounds(0, 0, canvas.width, canvas.height)
+            drawable.draw(canvas)
+
+            return bitmap
+        } else {
+            throw  IllegalArgumentException("unsupported drawable type")
+        }
+    }
+
+    fun openWbView(url:String) {
+        val builder = CustomTabsIntent.Builder()
+        builder.setToolbarColor(
+            ContextCompat.getColor(
+                AppObjectController.joshApplication,
+                R.color.colorPrimaryDark
+            )
+        )
+        builder.setShowTitle(true)
+        val actionIntent = Intent(Intent.ACTION_DIAL).apply {
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
+        val phoneNumber = AppObjectController.getFirebaseRemoteConfig().getString("helpline_number")
+        actionIntent.data = Uri.parse("tel:$phoneNumber")
+
+        val pi = PendingIntent.getActivity(AppObjectController.joshApplication, 0, actionIntent, 0)
+        val icon = getBitmapFromDrawable(AppObjectController.joshApplication, R.drawable.ic_local_phone)
+        builder.setActionButton(icon, "Call helpline", pi, true)
+
+        builder.setStartAnimations(AppObjectController.joshApplication, R.anim.slide_in_right, R.anim.slide_out_left)
+        builder.setExitAnimations(AppObjectController.joshApplication, R.anim.slide_in_left, R.anim.slide_out_right)
+
+        val customTabsIntent = builder.build()
+        com.joshtalks.joshskills.core.chrome.CustomTabsHelper.addKeepAliveExtra(AppObjectController.joshApplication, customTabsIntent.intent)
+        customTabsIntent.launchUrl(AppObjectController.joshApplication, Uri.parse(url))
     }
 
 }

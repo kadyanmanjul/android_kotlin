@@ -3,20 +3,22 @@ package com.joshtalks.joshskills.ui.sign_up_old
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.telephony.TelephonyManager
 import androidx.appcompat.app.AlertDialog
 import androidx.databinding.DataBindingUtil
+import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.BaseActivity
+import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.databinding.ActivityRegisterInfoBinding
+import com.joshtalks.joshskills.repository.local.model.CountryDetail
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import android.telephony.TelephonyManager
-import com.google.gson.reflect.TypeToken
-import com.joshtalks.joshskills.repository.local.model.CountryDetail
 
 class RegisterInfoActivity : BaseActivity() {
 

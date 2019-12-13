@@ -7,6 +7,7 @@ import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
 import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -110,6 +111,11 @@ class ConversationActivity() : BaseActivity() {
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        requestedOrientation = if (Build.VERSION.SDK_INT == 26) {
+            ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED;
+        } else {
+            ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
+        }
         super.onCreate(savedInstanceState)
         if (intent.hasExtra(CHAT_ROOM_OBJECT)) {
             inboxEntity = intent.getSerializableExtra(CHAT_ROOM_OBJECT) as InboxEntity
@@ -329,11 +335,12 @@ class ConversationActivity() : BaseActivity() {
             override fun afterTextChanged(s: Editable?) {
                 if (s.isNullOrEmpty()) {
                     conversationBinding.recordButton.goToState(FIRST_STATE)
-                     conversationBinding.recordButton.isListenForRecord = checkPermissionForAudioRecord()
+                    conversationBinding.recordButton.isListenForRecord =
+                        checkPermissionForAudioRecord()
                     conversationBinding.quickToggle.show()
                 } else {
                     conversationBinding.recordButton.goToState(SECOND_STATE)
-                    conversationBinding.recordButton.isListenForRecord = checkPermissionForAudioRecord()
+                    conversationBinding.recordButton.isListenForRecord =false
                     conversationBinding.quickToggle.hide()
 
                 }
@@ -928,7 +935,10 @@ class ConversationActivity() : BaseActivity() {
         ) + ContextCompat.checkSelfPermission(
             this,
             Manifest.permission.RECORD_AUDIO
-        ) + ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
+        ) + ContextCompat.checkSelfPermission(
+            this,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+        ) == PackageManager.PERMISSION_GRANTED
     }
 
 

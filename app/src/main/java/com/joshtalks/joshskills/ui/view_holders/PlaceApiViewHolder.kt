@@ -4,7 +4,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.libraries.places.api.model.AutocompletePrediction
 import com.joshtalks.joshskills.databinding.CardLocationAutocompleteBinding
 import com.joshtalks.joshskills.messaging.RxBus
-import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.model.googlelocation.GoogleSearchLocationObj
 
 class PlaceApiViewHolder(

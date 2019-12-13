@@ -2,13 +2,6 @@ package com.joshtalks.joshskills.core.custom_ui.audioplayer.view
 
 import android.Manifest
 import android.app.Activity
-import androidx.core.content.res.ResourcesCompat
-import com.daimajia.androidanimations.library.Techniques
-import com.daimajia.androidanimations.library.YoYo
-import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.custom_ui.audioplayer.general.JcStatus
-import kotlinx.android.synthetic.main.view_jcplayer.view.*
-
 import android.content.Context
 import android.content.res.TypedArray
 import android.net.Uri
@@ -16,12 +9,17 @@ import android.os.Build
 import android.util.AttributeSet
 import android.view.View
 import android.widget.*
+import androidx.core.content.res.ResourcesCompat
 import com.afollestad.materialdialogs.MaterialDialog
+import com.daimajia.androidanimations.library.Techniques
+import com.daimajia.androidanimations.library.YoYo
+import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.custom_ui.audioplayer.JcPlayerManager
 import com.joshtalks.joshskills.core.custom_ui.audioplayer.JcPlayerManagerListener
+import com.joshtalks.joshskills.core.custom_ui.audioplayer.general.JcStatus
 import com.joshtalks.joshskills.core.custom_ui.audioplayer.general.PlayerUtil.toTimeSongString
 import com.joshtalks.joshskills.core.custom_ui.audioplayer.general.errors.AudioListNullPointerException
 import com.joshtalks.joshskills.core.custom_ui.audioplayer.general.errors.OnInvalidPathListener
@@ -44,12 +42,8 @@ import com.karumi.dexter.listener.PermissionGrantedResponse
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.single.PermissionListener
 import io.reactivex.disposables.CompositeDisposable
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.launch
+import kotlinx.android.synthetic.main.view_jcplayer.view.*
 import java.util.*
-import kotlin.collections.ArrayList
 
 class JcPlayerView : LinearLayout, View.OnClickListener, SeekBar.OnSeekBarChangeListener,
     JcPlayerManagerListener {

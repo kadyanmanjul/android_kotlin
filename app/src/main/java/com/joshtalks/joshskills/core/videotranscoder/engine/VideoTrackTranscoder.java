@@ -19,7 +19,6 @@ import android.media.MediaCodec;
 import android.media.MediaExtractor;
 import android.media.MediaFormat;
 
-
 import com.joshtalks.joshskills.core.videotranscoder.format.MediaFormatExtraConstants;
 
 import java.io.IOException;

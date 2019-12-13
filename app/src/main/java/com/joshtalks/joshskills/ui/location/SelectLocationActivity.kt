@@ -15,21 +15,21 @@ import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.*
 import com.google.android.libraries.places.api.model.Place
-import com.joshtalks.joshskills.core.CoreJoshActivity
+import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.databinding.ActivitySelectLocationBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.googlelocation.Locality
-import kotlinx.android.synthetic.main.layout_select_location_request_permission.*
-import pub.devrel.easypermissions.EasyPermissions
-
-import com.google.android.gms.location.LocationCallback;
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.repository.server.ProfileResponse
 import com.joshtalks.joshskills.repository.server.SearchLocality
 import com.joshtalks.joshskills.repository.server.UpdateUserLocality
 import kotlinx.android.synthetic.main.layout_select_location_confirmation.*
-import kotlinx.coroutines.*
+import kotlinx.android.synthetic.main.layout_select_location_request_permission.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import pub.devrel.easypermissions.EasyPermissions
 
 
 const val RC_PLAY_SERVICES_RESOLUTION_REQUEST = 20

@@ -4,12 +4,26 @@ import android.Manifest
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.widget.AppCompatTextView
-import androidx.lifecycle.*
+import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
+import com.google.android.gms.location.LocationRequest
+import com.google.android.material.snackbar.Snackbar
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
+import com.joshtalks.joshskills.core.analytics.AppAnalytics
+import com.joshtalks.joshskills.core.inapp_update.Constants
+import com.joshtalks.joshskills.core.inapp_update.InAppUpdateManager
+import com.joshtalks.joshskills.core.inapp_update.InAppUpdateStatus
 import com.joshtalks.joshskills.core.service.FCMTokenManager
+import com.joshtalks.joshskills.core.service.WorkMangerAdmin
 import com.joshtalks.joshskills.messaging.RxBus
+import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.DatabaseUtils
+import com.joshtalks.joshskills.repository.local.eventbus.ExploreCourseEventBus
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.ProfileResponse
@@ -17,38 +31,25 @@ import com.joshtalks.joshskills.repository.server.SearchLocality
 import com.joshtalks.joshskills.repository.server.UpdateUserLocality
 import com.joshtalks.joshskills.repository.service.SyncChatService
 import com.joshtalks.joshskills.ui.chat.ConversationActivity
+import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
+import com.joshtalks.joshskills.ui.payment.PAYMENT_URL_KEY
 import com.joshtalks.joshskills.ui.view_holders.EmptyHorizontalView
+import com.joshtalks.joshskills.ui.view_holders.FindMoreViewHolder
 import com.joshtalks.joshskills.ui.view_holders.InboxViewHolder
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
+import com.patloew.rxlocation.RxLocation
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_inbox.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import com.google.android.gms.location.LocationRequest
-import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
-import com.joshtalks.joshskills.core.analytics.AppAnalytics
-import com.patloew.rxlocation.RxLocation
-import io.reactivex.android.schedulers.AndroidSchedulers
-import com.joshtalks.joshskills.core.inapp_update.InAppUpdateManager
-import com.joshtalks.joshskills.core.inapp_update.Constants
-import com.joshtalks.joshskills.core.inapp_update.InAppUpdateStatus
-import android.view.View
-import com.google.android.material.snackbar.Snackbar
-import com.joshtalks.joshskills.core.*
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.service.WorkMangerAdmin
-import com.joshtalks.joshskills.messaging.RxBus2
-import com.joshtalks.joshskills.repository.local.eventbus.ExploreCourseEventBus
-import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
-import com.joshtalks.joshskills.ui.payment.PaymentActivity
-import com.joshtalks.joshskills.ui.view_holders.FindMoreViewHolder
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.jetbrains.anko.collections.forEachWithIndex
 
 const val REGISTER_INFO_CODE = 2001
@@ -168,9 +169,17 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
     private fun addLiveDataObservable() {
         viewModel.registerCourseNetworkLiveData.observe(this, Observer {
             if (it == null || it.isEmpty()) {
-                if (Utils.isInternetAvailable()) {
-                    PaymentActivity.startPaymentActivity(this, REGISTER_INFO_CODE)
+                if (AppObjectController.getFirebaseRemoteConfig().getBoolean("course_show_by_browser")) {
+                    Utils.openWbView(
+                        AppObjectController.getFirebaseRemoteConfig().getString(
+                            PAYMENT_URL_KEY
+                        )
+                    )
+                    viewModel.canOpenPaymentUrl = true
+                } else {
+                    openCourseExplorer()
                 }
+
             } else {
                 buyCourseFBEvent()
                 recycler_view_inbox.removeAllViews()
@@ -224,12 +233,28 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
 
         compositeDisposable.add(RxBus2.listen(ExploreCourseEventBus::class.java).subscribe {
             compositeDisposable.clear()
-            WorkMangerAdmin.fineMoreEventWorker()
-            CourseExploreActivity.startCourseExploreActivity(this, COURSE_EXPLORER_CODE)
+            openCourseExplorer()
+
         })
-
-
     }
+
+    private fun openCourseExplorer() {
+        val registerCourses: MutableSet<InboxEntity> = mutableSetOf()
+        viewModel.registerCourseMinimalLiveData.value?.let {
+            registerCourses.addAll(it)
+        }
+        viewModel.registerCourseNetworkLiveData.value?.let {
+            registerCourses.addAll(it)
+        }
+
+        WorkMangerAdmin.fineMoreEventWorker()
+        CourseExploreActivity.startCourseExploreActivity(
+            this,
+            COURSE_EXPLORER_CODE,
+            registerCourses
+        )
+    }
+
 
     private fun addEmptyView() {
         for (i in 1..8) {
@@ -317,6 +342,10 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         super.onResume()
         Runtime.getRuntime().gc()
         addObserver()
+        if (viewModel.canOpenPaymentUrl) {
+            viewModel.canOpenPaymentUrl = false
+            viewModel.getCourseFromServer()
+        }
     }
 
     override fun onPause() {

@@ -1,6 +1,7 @@
 package com.joshtalks.joshskills.emoji;
 
 import android.view.View;
+
 import androidx.viewpager.widget.ViewPager;
 
 public final class PageTransformer implements ViewPager.PageTransformer {

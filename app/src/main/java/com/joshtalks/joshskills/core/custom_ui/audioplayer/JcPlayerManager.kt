@@ -1,14 +1,14 @@
 package com.joshtalks.joshskills.core.custom_ui.audioplayer
 
 import android.content.Context
+import com.joshtalks.joshskills.core.custom_ui.audioplayer.general.JcStatus
+import com.joshtalks.joshskills.core.custom_ui.audioplayer.general.errors.AudioListNullPointerException
 import com.joshtalks.joshskills.core.custom_ui.audioplayer.general.errors.JcpServiceDisconnectedError
 import com.joshtalks.joshskills.core.custom_ui.audioplayer.model.JcAudio
 import com.joshtalks.joshskills.core.custom_ui.audioplayer.service.JcPlayerService
 import com.joshtalks.joshskills.core.custom_ui.audioplayer.service.JcPlayerServiceListener
 import com.joshtalks.joshskills.core.custom_ui.audioplayer.service.JcServiceConnection
 import com.joshtalks.joshskills.core.custom_ui.audioplayer.service.notification.JcNotificationPlayer
-import com.joshtalks.joshskills.core.custom_ui.audioplayer.general.JcStatus
-import com.joshtalks.joshskills.core.custom_ui.audioplayer.general.errors.AudioListNullPointerException
 import java.lang.ref.WeakReference
 import java.util.*
 import java.util.concurrent.CopyOnWriteArrayList

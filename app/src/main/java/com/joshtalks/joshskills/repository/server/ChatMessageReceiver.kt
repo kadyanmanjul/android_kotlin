@@ -3,7 +3,6 @@ package com.joshtalks.joshskills.repository.server
 
 import com.google.gson.annotations.SerializedName
 import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
-import org.w3c.dom.Text
 import java.util.*
 
 data class ChatMessageReceiver(

@@ -9,10 +9,10 @@ import android.text.TextWatcher
 import android.util.AttributeSet
 import android.util.TypedValue
 import android.view.LayoutInflater
-import android.widget.LinearLayout
-import androidx.appcompat.widget.AppCompatEditText
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
+import androidx.appcompat.widget.AppCompatEditText
 import com.joshtalks.joshskills.R
 
 

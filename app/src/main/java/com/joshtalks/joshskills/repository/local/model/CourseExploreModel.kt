@@ -14,5 +14,7 @@ data class CourseExploreModel(
     @SerializedName("order")
     val order: Int,
     @SerializedName("url")
-    val url: String
-):Serializable
+    val url: String,
+    @SerializedName("course_id")
+    val course_id: String
+) : Serializable

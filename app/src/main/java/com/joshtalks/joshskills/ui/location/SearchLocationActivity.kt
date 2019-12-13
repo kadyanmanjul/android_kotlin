@@ -25,17 +25,14 @@ import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRe
 import com.google.android.libraries.places.api.net.PlacesClient
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.BaseActivity
-import com.joshtalks.joshskills.core.CoreJoshActivity
 import com.joshtalks.joshskills.core.custom_ui.JoshTextWatcher
 import com.joshtalks.joshskills.databinding.ActivitySearchLocationBinding
 import com.joshtalks.joshskills.messaging.RxBus
-import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.model.googlelocation.GoogleSearchLocationObj
 import com.joshtalks.joshskills.ui.location.adapter.SearchLocationAdapter
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_search_location.*
-import kotlin.collections.ArrayList
 
 
 const val KEY_PLACE = "place"
