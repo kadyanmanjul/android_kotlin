@@ -51,8 +51,8 @@ val KEY_AUTHORIZATION = "Authorization"
 val KEY_APP_VERSION_CODE = "app-version-code"
 val KEY_APP_VERSION_NAME = "app-version-name"
 
-//const val SERVER_URL = "https://skills.joshtalks.org"
-const val SERVER_URL = "http://13.127.85.171:8000"
+const val SERVER_URL = "https://skills.joshtalks.org"
+//const val SERVER_URL = "http://13.127.85.171:8000"
 
 //const val SERVER_URL = "http://192.168.0.141:8080"
 

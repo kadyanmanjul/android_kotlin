@@ -76,7 +76,7 @@ class CourseExploreActivity : CoreJoshActivity(), ServiceConnectionCallback {
         courseExploreBinding =
             DataBindingUtil.setContentView(this, R.layout.activity_course_explore)
         courseExploreBinding.lifecycleOwner = this
-        initActivityAnimation()
+      //  initActivityAnimation()
         initRV()
         initView()
         loadCourses()

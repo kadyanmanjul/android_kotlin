@@ -196,7 +196,7 @@
                 android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize"
                 android:launchMode="singleTask"
                 android:parentActivityName=".ui.inbox.InboxActivity"
-                android:theme="@style/ConversationTheme">
+                android:theme="@style/AppNoBarTheme">
             <meta-data
                     android:name="android.support.PARENT_ACTIVITY"
                     android:value=".ui.inbox.InboxActivity" />

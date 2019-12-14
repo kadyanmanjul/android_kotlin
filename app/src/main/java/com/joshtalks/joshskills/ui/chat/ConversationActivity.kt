@@ -633,12 +633,12 @@ class ConversationActivity() : BaseActivity() {
                     }
                 }
                 if (removingConversationList.size > 0) {
-                    findViewById<MaterialToolbar>(R.id.toolbar_delete_chat).visibility = VISIBLE
+                 //   findViewById<MaterialToolbar>(R.id.toolbar_delete_chat).visibility = VISIBLE
                 } else {
-                    findViewById<MaterialToolbar>(R.id.toolbar_delete_chat).visibility = GONE
+                   // findViewById<MaterialToolbar>(R.id.toolbar_delete_chat).visibility = GONE
                 }
-                findViewById<AppCompatTextView>(R.id.message_delete_count).text =
-                    removingConversationList.size.toString()
+                /*findViewById<AppCompatTextView>(R.id.message_delete_count).text =
+                    removingConversationList.size.toString()*/
             })
 
     }

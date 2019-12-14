@@ -5,6 +5,7 @@
         tools:ignore="MissingPrefix">
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
+            android:background="@color/white"
             android:id="@+id/content"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
