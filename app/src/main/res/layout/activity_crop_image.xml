@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-       >
+        xmlns:wheel="http://schemas.android.com/apk/res-auto">
 
     <data>
 
@@ -9,33 +9,52 @@
                 type="com.joshtalks.joshskills.ui.profile.CropImageActivity" />
     </data>
 
-    <LinearLayout xmlns:custom="http://schemas.android.com/apk/res-auto"
+    <FrameLayout xmlns:custom="http://schemas.android.com/apk/res-auto"
             android:id="@+id/layout_root"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-        <com.isseiaoki.simplecropview.CropImageView
-                android:id="@+id/crop_image_view"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:padding="@dimen/_24sdp"
-                custom:scv_background_color="@color/windowBackground"
-                custom:scv_crop_mode="fit_image"
-                custom:scv_frame_color="@color/colorAccent"
-                custom:scv_frame_stroke_weight="1dp"
-                custom:scv_guide_color="@color/colorAccent"
-                custom:scv_guide_show_mode="show_always"
-                custom:scv_guide_stroke_weight="1dp"
-                custom:scv_handle_color="@color/colorAccent"
-                custom:scv_handle_show_mode="show_always"
-                custom:scv_handle_size="14dp"
-                custom:scv_min_frame_size="50dp"
-                custom:scv_overlay_color="@color/overlay"
-                custom:scv_touch_padding="8dp"
 
-                />
+
+            <com.isseiaoki.simplecropview.CropImageView
+                    android:id="@+id/crop_image_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:padding="@dimen/_24sdp"
+                    custom:scv_background_color="@color/windowBackground"
+                    custom:scv_crop_mode="fit_image"
+                    custom:scv_frame_color="@color/colorAccent"
+                    custom:scv_frame_stroke_weight="1dp"
+                    custom:scv_guide_color="@color/colorAccent"
+                    custom:scv_guide_show_mode="show_always"
+                    custom:scv_guide_stroke_weight="1dp"
+                    custom:scv_handle_color="@color/colorAccent"
+                    custom:scv_handle_show_mode="show_always"
+                    custom:scv_handle_size="14dp"
+                    custom:scv_min_frame_size="50dp"
+                    custom:scv_overlay_color="@color/overlay"
+                    custom:scv_touch_padding="8dp"
+
+                    />
+
+
+            <com.pnikosis.materialishprogress.ProgressWheel
+
+                    android:id="@+id/progress_bar"
+                    android:layout_width="@dimen/_48sdp"
+                    android:layout_height="@dimen/_48sdp"
+                    android:layout_gravity="center"
+                    android:background="@color/transparent"
+                    android:visibility="gone"
+                    wheel:matProg_barColor="@color/button_primary_color"
+                    wheel:matProg_fillRadius="true"
+                    wheel:matProg_progressIndeterminate="true"
+                    wheel:matProg_rimColor="#22000000"
+                    wheel:matProg_rimWidth="@dimen/_3sdp" />
+
+
 
 
         <!--<HorizontalScrollView
@@ -174,6 +193,7 @@
                 />
     -->
         <RelativeLayout
+                android:layout_gravity="bottom"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignBottom="@id/crop_image_view"
@@ -182,13 +202,13 @@
                 android:orientation="horizontal">
 
             <ImageButton
-                    android:onClick="@{()->handler.cancel()}"
                     android:id="@+id/btn_cancel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
                     android:layout_marginRight="@dimen/spacing"
                     android:background="?attr/selectableItemBackgroundBorderless"
+                    android:onClick="@{()->handler.cancel()}"
                     android:padding="@dimen/spacing"
                     android:src="@drawable/ic_cancel_black_24dp"
                     android:visibility="visible" />
@@ -200,35 +220,35 @@
                     android:orientation="horizontal">
 
                 <ImageButton
-                        android:onClick="@{()->handler.rotateLeft()}"
-
                         android:id="@+id/buttonRotateLeft"
+
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:background="?attr/selectableItemBackgroundBorderless"
+                        android:onClick="@{()->handler.rotateLeft()}"
                         android:padding="@dimen/spacing"
                         android:src="@drawable/ic_rotate_left_black_24dp" />
 
                 <ImageButton
-                        android:onClick="@{()->handler.rotateRight()}"
                         android:id="@+id/buttonRotateRight"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:background="?attr/selectableItemBackgroundBorderless"
+                        android:onClick="@{()->handler.rotateRight()}"
                         android:padding="@dimen/spacing"
                         android:src="@drawable/ic_rotate_right_black_24dp" />
 
             </LinearLayout>
 
             <ImageButton
-                    android:onClick="@{()->handler.cropImage()}"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
                     android:background="?attr/selectableItemBackgroundBorderless"
+                    android:onClick="@{()->handler.cropImage()}"
                     android:padding="16dp"
                     android:src="@drawable/ic_done_black_24dp" />
         </RelativeLayout>
-    </LinearLayout>
+    </FrameLayout>
 </layout>

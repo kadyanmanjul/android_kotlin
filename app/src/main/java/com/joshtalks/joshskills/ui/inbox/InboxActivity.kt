@@ -26,6 +26,7 @@ import com.joshtalks.joshskills.repository.local.DatabaseUtils
 import com.joshtalks.joshskills.repository.local.eventbus.ExploreCourseEventBus
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.ProfileResponse
 import com.joshtalks.joshskills.repository.server.SearchLocality
 import com.joshtalks.joshskills.repository.server.UpdateUserLocality
@@ -33,6 +34,7 @@ import com.joshtalks.joshskills.repository.service.SyncChatService
 import com.joshtalks.joshskills.ui.chat.ConversationActivity
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
 import com.joshtalks.joshskills.ui.payment.PAYMENT_URL_KEY
+import com.joshtalks.joshskills.ui.profile.ProfileActivity
 import com.joshtalks.joshskills.ui.view_holders.EmptyHorizontalView
 import com.joshtalks.joshskills.ui.view_holders.FindMoreViewHolder
 import com.joshtalks.joshskills.ui.view_holders.InboxViewHolder
@@ -56,6 +58,7 @@ const val REGISTER_INFO_CODE = 2001
 const val COURSE_EXPLORER_CODE = 2002
 const val REGISTER_NEW_COURSE_CODE = 2003
 const val REQ_CODE_VERSION_UPDATE = 530
+const val USER_DETAILS_CODE = 1001
 
 
 class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.InAppUpdateHandler {
@@ -171,6 +174,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
             if (it == null || it.isEmpty()) {
                 if (AppObjectController.getFirebaseRemoteConfig().getBoolean("course_show_by_browser")) {
                     Utils.openWbView(
+                        this@InboxActivity,
                         AppObjectController.getFirebaseRemoteConfig().getString(
                             PAYMENT_URL_KEY
                         )
@@ -193,6 +197,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
                 }
 
                 addCourseExploreView()
+                checkUserDetailExist()
             }
         })
 
@@ -209,6 +214,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
                     )
                 }
                 addCourseExploreView()
+                checkUserDetailExist()
             }
         })
 
@@ -286,7 +292,12 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
                 overridePendingTransition(0, 0)
                 startActivity(intent)
             }
+        } else if (requestCode == USER_DETAILS_CODE) {
+            if (resultCode == Activity.RESULT_CANCELED) {
+                finish()
+            }
         }
+
 
     }
 
@@ -343,8 +354,9 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         Runtime.getRuntime().gc()
         addObserver()
         if (viewModel.canOpenPaymentUrl) {
-            viewModel.canOpenPaymentUrl = false
-            viewModel.getCourseFromServer()
+            //viewModel.canOpenPaymentUrl = false
+            finish()
+            //viewModel.getCourseFromServer()
         }
     }
 
@@ -384,7 +396,6 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
     }
 
     private fun buyCourseFBEvent() {
-
         CoroutineScope(Dispatchers.Default).launch {
             if (PrefManager.hasKey(COURSE_STARTED_FB_EVENT)) {
                 return@launch
@@ -397,8 +408,13 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
             )
             PrefManager.put(COURSE_STARTED_FB_EVENT, true)
         }
+    }
 
 
+    private fun checkUserDetailExist() {
+        if (User.getInstance().dateOfBirth.isNullOrEmpty()) {
+            ProfileActivity.startProfileActivity(this, USER_DETAILS_CODE)
+        }
     }
 
 }

@@ -29,6 +29,8 @@ object AppDirectory {
         IMAGE_SENT, IMAGE_RECEIVED, RECORDING_SENT, RECORDING_RECEIVED, VIDEO_SENT, VIDEO_RECEIVED, DOCS_RECEIVED
     }
 
+   // var path: String =AppObjectController.joshApplication.getExternalFilesDir(null)!!.absolutePath
+
 
     val IMAGE_SENT_PATH =
         Environment.getExternalStorageDirectory().toString() + File.separator + APP_DIRECTORY + File.separator + MEDIA_DIRECTORY + "/JoshApp Images/Sent"

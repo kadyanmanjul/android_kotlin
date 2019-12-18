@@ -5,15 +5,19 @@ import android.os.Handler
 import android.os.Looper
 import com.bumptech.glide.load.MultiTransformation
 import com.clevertap.android.sdk.ActivityLifecycleCallback
+import com.crashlytics.android.Crashlytics
+import com.crashlytics.android.core.CrashlyticsCore
 import com.facebook.appevents.AppEventsLogger
 import com.facebook.stetho.okhttp3.StethoInterceptor
 import com.google.android.exoplayer2.util.Util
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
+import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
 import com.google.gson.*
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.service.DownloadUtils
+import com.joshtalks.joshskills.core.service.WorkMangerAdmin
 import com.joshtalks.joshskills.core.service.video_download.DownloadTracker
 import com.joshtalks.joshskills.core.service.video_download.VideoDownloadController
 import com.joshtalks.joshskills.repository.local.AppDatabase
@@ -31,6 +35,7 @@ import com.tonyodev.fetch2core.Downloader
 import com.tonyodev.fetch2okhttp.OkHttpDownloader
 import com.vanniktech.emoji.EmojiManager
 import com.vanniktech.emoji.google.GoogleEmojiProvider
+import io.fabric.sdk.android.Fabric
 import jp.wasabeef.glide.transformations.CropTransformation
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation
 import okhttp3.Interceptor
@@ -121,11 +126,6 @@ internal class AppObjectController {
         @JvmStatic
         lateinit var facebookEventLogger: AppEventsLogger
 
-
-        /* @JvmStatic
-        val videoDownloadListener = HashMap<String, DownloadTracker.Listener>()
-*/
-
         fun init(context: JoshApplication): AppObjectController {
             joshApplication = context;
             appDatabase = AppDatabase.getDatabase(context)!!
@@ -134,7 +134,6 @@ internal class AppObjectController {
 
             AppEventsLogger.activateApp(joshApplication)
             facebookEventLogger = AppEventsLogger.newLogger(joshApplication)
-
 
             gsonMapper = GsonBuilder()
                 .enableComplexMapKeySerialization()
@@ -253,8 +252,32 @@ internal class AppObjectController {
                     RoundedCornersTransformation.CornerType.ALL
                 )
             )
+            WorkMangerAdmin.deviceIdGenerateWorker()
+            initFirebaseRemoteConfig()
+            initCrashlytics()
 
             return INSTANCE
+        }
+
+        private fun initFirebaseRemoteConfig() {
+            val configSettingsBuilder = FirebaseRemoteConfigSettings.Builder()
+                .setMinimumFetchIntervalInSeconds(60 * 3600)
+
+            if (BuildConfig.DEBUG) {
+                configSettingsBuilder.setDeveloperModeEnabled(BuildConfig.DEBUG)
+
+            }
+            getFirebaseRemoteConfig().setConfigSettingsAsync(configSettingsBuilder.build())
+            getFirebaseRemoteConfig().setDefaultsAsync(R.xml.remote_config_defaults)
+            getFirebaseRemoteConfig().fetchAndActivate()
+        }
+
+        private fun initCrashlytics() {
+            Fabric.with(
+                joshApplication, Crashlytics.Builder()
+                    .core(CrashlyticsCore.Builder().disabled(BuildConfig.DEBUG).build())
+                    .build()
+            )
         }
 
         private fun initExoPlayer() {
@@ -317,7 +340,7 @@ internal class AppObjectController {
              videoDownloadListener[id] = videoDownloadCallback
  */
         }
-
+/*
         fun videoNotUploadFlagUpdate() {
             val timer = Timer()
             timer.schedule(object : TimerTask() {
@@ -326,8 +349,7 @@ internal class AppObjectController {
                 }
             }, 0, 30 * 60 * 1000);
 
-        }
-
-
+        }*/
     }
+
 }

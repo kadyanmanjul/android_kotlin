@@ -1,8 +1,6 @@
 package com.joshtalks.joshskills.core
 
 import android.app.Application
-import com.crashlytics.android.Crashlytics
-import com.crashlytics.android.core.CrashlyticsCore
 import com.facebook.FacebookSdk
 import com.facebook.LoggingBehavior
 import com.facebook.stetho.Stetho
@@ -10,7 +8,6 @@ import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.UpdateDeviceRequest
-import io.fabric.sdk.android.Fabric
 import io.github.inflationx.calligraphy3.CalligraphyConfig
 import io.github.inflationx.calligraphy3.CalligraphyInterceptor
 import io.github.inflationx.viewpump.ViewPump
@@ -32,7 +29,6 @@ class JoshApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         if (BuildConfig.DEBUG) {
-
             FacebookSdk.setIsDebugEnabled(true)
             FacebookSdk.addLoggingBehavior(LoggingBehavior.APP_EVENTS)
             Stetho.initializeWithDefaults(this)
@@ -51,28 +47,7 @@ class JoshApplication : Application() {
                 )
                 .build()
         )
-        Fabric.with(
-            this, Crashlytics.Builder()
-                .core(
-                    CrashlyticsCore.Builder()
-                        .disabled(BuildConfig.DEBUG)
-                        .build()
-                )
-                .build()
-        )
     }
-
-/*
-    fun fetchCoreMeta() {
-        CoroutineScope(Dispatchers.IO).launch {
-            try {
-                val meta: CoreMeta = AppObjectController.signUpNetworkService.getCoreMeta().await()
-
-            } catch (ex: Exception) {
-                ex.printStackTrace()
-            }
-        }
-    }*/
 
     fun updateDeviceDetail() {
         CoroutineScope(Dispatchers.IO).launch {

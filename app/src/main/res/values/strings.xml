@@ -7,6 +7,7 @@
     <string name="next">Next</string>
     <string name="verify_your_phone_number">Verify your phone number</string>
     <string name="sign_step_e_header">Josh skills will send a message to verify your phone number. please enter your number</string>
+    <string name="finish">Finish</string>
 
     <string name="ok">OK</string>
     <string name="edit">edit</string>
@@ -66,6 +67,7 @@
     <string name="buy_course">Buy Course</string>
     <string name="discover">Discover</string>
     <string name="find_more_courses">Find More Courses</string>
+    <string name="please_enter_detail_toast">Please enter your details to continue</string>
 
 
 

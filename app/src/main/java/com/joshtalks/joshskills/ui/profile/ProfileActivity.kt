@@ -8,6 +8,7 @@ import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
@@ -42,7 +43,6 @@ import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
-import kotlinx.android.synthetic.main.toolbar_login_register.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -63,6 +63,15 @@ class ProfileActivity : BaseActivity(), MediaSelectCallback {
     private var userDob = Date()
     private var imageModel: ImageModel? = null
     private var pickerStatus = false
+
+    companion object {
+        fun startProfileActivity(activity: Activity, requestCode: Int) {
+            val intent = Intent(activity, ProfileActivity::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
+            intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
+            activity.startActivityForResult(intent, requestCode)
+        }
+    }
 
 
     private var picker = SingleDateAndTimePickerDialog.Builder(this)
@@ -90,10 +99,6 @@ class ProfileActivity : BaseActivity(), MediaSelectCallback {
 
         layout.lifecycleOwner = this
         layout.handler = this
-
-        ivBackButton.setOnClickListener { this@ProfileActivity.finish() }
-
-
     }
 
     override fun onSelect(media: Media) {
@@ -296,14 +301,24 @@ class ProfileActivity : BaseActivity(), MediaSelectCallback {
     }
 
 
+    private var doubleBackToExitPressedOnce = false
     override fun onBackPressed() {
         if (pickerStatus) {
             picker.dismiss()
             return
         }
-        super.onBackPressed()
+        if (doubleBackToExitPressedOnce) {
+            val resultIntent = Intent()
+            setResult(RESULT_CANCELED, resultIntent)
+            finish()
+            return
+        }
 
+        this.doubleBackToExitPressedOnce = true
+        Toast.makeText(this, R.string.please_enter_detail_toast, Toast.LENGTH_SHORT).show()
+        Handler().postDelayed(Runnable { doubleBackToExitPressedOnce = false }, 1500)
     }
+
 
     private fun updateProfile() {
         CoroutineScope(Dispatchers.IO).launch {
@@ -322,7 +337,10 @@ class ProfileActivity : BaseActivity(), MediaSelectCallback {
 
                 val params = Bundle()
                 params.putString("Mentor", Mentor.getInstance().getId())
-                AppObjectController.facebookEventLogger.logEvent(AnalyticsEvent.REGISTRATION_COMPLETED.name,params)
+                AppObjectController.facebookEventLogger.logEvent(
+                    AnalyticsEvent.REGISTRATION_COMPLETED.name,
+                    params
+                )
 
                 User.getInstance().updateFromResponse(updateProfileResponse)
                 if (imageModel != null) {
@@ -330,8 +348,12 @@ class ProfileActivity : BaseActivity(), MediaSelectCallback {
                 }
                 AppAnalytics.updateUser()
                 withContext(Dispatchers.Main) {
-                    startActivity(getInboxActivityIntent())
+                    val resultIntent = Intent()
+                    setResult(RESULT_OK, resultIntent)
                     finish()
+
+                    // startActivity(getInboxActivityIntent())
+                    //finish()
                 }
 
             } catch (ex: Exception) {

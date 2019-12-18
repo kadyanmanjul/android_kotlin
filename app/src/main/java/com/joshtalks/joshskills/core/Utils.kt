@@ -13,6 +13,7 @@ import android.media.AudioManager
 import android.media.AudioManager.STREAM_MUSIC
 import android.media.MediaMetadataRetriever
 import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
@@ -27,6 +28,7 @@ import androidx.core.graphics.drawable.RoundedBitmapDrawable
 import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory
 import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.custom_ui.CustomTabHelper
 import com.joshtalks.joshskills.core.customlauncher.CustomTabsLauncher
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
@@ -273,107 +275,56 @@ object Utils {
             ex.printStackTrace()
 
         }
-
-
-        /**/
-
     }
-    /* private fun openInApplicationBrowser(url: String,activity: Activity){
-         val updateUrl:String = if (url.trim().startsWith("http://").not()) {
-             "http://" + url.replace("https://", "").trim()
-         } else {
-             url.trim()
-         }
-         val builder = CustomTabsIntent.Builder()
-         builder.setToolbarColor(ContextCompat.getColor(AppObjectController.joshApplication, R.color.colorPrimary))
-         builder.setShowTitle(true)
-         builder.setExitAnimations(activity, android.R.anim.fade_in, android.R.anim.fade_out)
-         val packageName = CustomTabHelper.getPackageNameToUse(activity, updateUrl)
-         val customTabsIntent = builder.build()
-         if (packageName == null) {
-             val intent = Intent(ACTION_VIEW)
-             intent.apply {
-                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-             }
-             intent.data = Uri.parse(updateUrl)
-             activity.startActivity(intent)
-         } else {
-             customTabsIntent.intent.setPackage(packageName)
-             customTabsIntent.launchUrl(activity, Uri.parse(updateUrl))
-         }
 
-     }*/
-
-    fun openInAppBrowser(
-        url: String,
-        activity: Activity,
-        callback: CustomTabsHelper.ConnectionCallback? = null
-    ) {
-
+    private fun openInApplicationBrowser(url: String, activity: Activity) {
         val updateUrl: String = if (url.trim().startsWith("http://").not()) {
             "http://" + url.replace("https://", "").trim()
         } else {
             url.trim()
         }
-
-        val customTabsBuilder = CustomTabsIntent.Builder()
-            .enableUrlBarHiding()
-            .setShowTitle(true)
-            .addDefaultShareMenuItem()
-            .setToolbarColor(ContextCompat.getColor(activity, R.color.colorPrimaryDark))
-            .setStartAnimations(activity, R.anim.slide_in_right, R.anim.slide_out_left)
-            .setExitAnimations(
-                activity,
-                android.R.anim.slide_in_left,
-                android.R.anim.slide_out_right
+        val builder = CustomTabsIntent.Builder()
+        builder.setToolbarColor(
+            ContextCompat.getColor(
+                AppObjectController.joshApplication,
+                R.color.colorPrimary
             )
+        )
+        builder.setShowTitle(true)
+        builder.setExitAnimations(activity, android.R.anim.fade_in, android.R.anim.fade_out)
+        val packageName = CustomTabHelper.getPackageNameToUse(activity, updateUrl)
+        val customTabsIntent = builder.build()
+        if (packageName == null) {
+            val intent = Intent(ACTION_VIEW)
+            intent.apply {
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
+            intent.data = Uri.parse(updateUrl)
+            activity.startActivity(intent)
+        } else {
+            customTabsIntent.intent.setPackage(packageName)
+            customTabsIntent.launchUrl(activity, Uri.parse(updateUrl))
+        }
 
-
-        customTabsBuilder.build()
-        CustomTabsLauncher.launch(
-            activity,
-            customTabsBuilder.build(),
-            Uri.parse(updateUrl)
-            , { context, uri, customTabsIntent ->
-                Log.e("callback", uri.path)
-            })
-
-
-        /*var mClient: CustomTabsClient?=null
-        val session: CustomTabsSession = mClient?.newSession(CustomTabsCallback())!!
-
-
-        val customTabsIntent = CustomTabsIntent.Builder()
-            .addDefaultShareMenuItem()
-            .setToolbarColor(ContextCompat.getColor(activity, R.color.colorPrimaryDark))
-            .setShowTitle(true)
-            .setStartAnimations(
-                activity,
-                android.R.anim.slide_in_left,
-                android.R.anim.slide_out_right
-            )
-            .setExitAnimations(
-                activity,
-                android.R.anim.slide_out_right,
-                android.R.anim.slide_in_left
-            )
-            .enableUrlBarHiding()
-            .build()
-
-        CustomTabsHelper.addKeepAliveExtra(activity, customTabsIntent.intent)
-        CustomTabsHelper.openCustomTab(
-            activity,
-            customTabsIntent,
-            Uri.parse(updateUrl),
-            WebViewFallback()
-        )*/
     }
 
     fun isInternetAvailable(): Boolean {
-        val conMgr =
-            AppObjectController.joshApplication.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager?
-        val info = conMgr!!.activeNetworkInfo
-        return (info != null && info.isConnected)
+        val connectivityManager =
+            AppObjectController.joshApplication.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            val nw = connectivityManager.activeNetwork ?: return false
+            val actNw = connectivityManager.getNetworkCapabilities(nw) ?: return false
+            return when {
+                actNw.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> true
+                actNw.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> true
+                //for other device how are able to connect with Ethernet
+                actNw.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> true
+                else -> false
+            }
+        } else {
+            val nwInfo = connectivityManager.activeNetworkInfo ?: return false
+            return nwInfo.isConnected
+        }
     }
 
     fun isHelplineOnline(): Boolean {
@@ -423,31 +374,56 @@ object Utils {
         }
     }
 
-    fun openWbView(url:String) {
-        val builder = CustomTabsIntent.Builder()
-        builder.setToolbarColor(
-            ContextCompat.getColor(
-                AppObjectController.joshApplication,
-                R.color.colorPrimaryDark
+    fun openWbView(activityContext: Activity, url: String) {
+        try {
+            val updateUrl: String = if (url.trim().startsWith("http://").not()) {
+                "http://" + url.replace("https://", "").trim()
+            } else {
+                url.trim()
+            }
+            val builder = CustomTabsIntent.Builder()
+            builder.setToolbarColor(
+                ContextCompat.getColor(
+                    AppObjectController.joshApplication,
+                    R.color.colorPrimaryDark
+                )
             )
-        )
-        builder.setShowTitle(true)
-        val actionIntent = Intent(Intent.ACTION_DIAL).apply {
-            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            builder.setShowTitle(true)
+            val actionIntent = Intent(Intent.ACTION_DIAL).apply {
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
+            val phoneNumber =
+                AppObjectController.getFirebaseRemoteConfig().getString("helpline_number")
+            actionIntent.data = Uri.parse("tel:$phoneNumber")
+
+            val pi =
+                PendingIntent.getActivity(activityContext, 0, actionIntent, 0)
+            val icon = getBitmapFromDrawable(
+                AppObjectController.joshApplication,
+                R.drawable.ic_local_phone
+            )
+            builder.setActionButton(icon, "Call helpline", pi, true)
+
+            builder.setStartAnimations(
+                AppObjectController.joshApplication,
+                R.anim.slide_in_right,
+                R.anim.slide_out_left
+            )
+            builder.setExitAnimations(
+                AppObjectController.joshApplication,
+                R.anim.slide_in_left,
+                R.anim.slide_out_right
+            )
+
+            val customTabsIntent = builder.build()
+            com.joshtalks.joshskills.core.chrome.CustomTabsHelper.addKeepAliveExtra(
+                activityContext,
+                customTabsIntent.intent
+            )
+            customTabsIntent.launchUrl(activityContext, Uri.parse(updateUrl))
+        } catch (ex: Exception) {
+            ex.printStackTrace()
         }
-        val phoneNumber = AppObjectController.getFirebaseRemoteConfig().getString("helpline_number")
-        actionIntent.data = Uri.parse("tel:$phoneNumber")
-
-        val pi = PendingIntent.getActivity(AppObjectController.joshApplication, 0, actionIntent, 0)
-        val icon = getBitmapFromDrawable(AppObjectController.joshApplication, R.drawable.ic_local_phone)
-        builder.setActionButton(icon, "Call helpline", pi, true)
-
-        builder.setStartAnimations(AppObjectController.joshApplication, R.anim.slide_in_right, R.anim.slide_out_left)
-        builder.setExitAnimations(AppObjectController.joshApplication, R.anim.slide_in_left, R.anim.slide_out_right)
-
-        val customTabsIntent = builder.build()
-        com.joshtalks.joshskills.core.chrome.CustomTabsHelper.addKeepAliveExtra(AppObjectController.joshApplication, customTabsIntent.intent)
-        customTabsIntent.launchUrl(AppObjectController.joshApplication, Uri.parse(url))
     }
 
 }

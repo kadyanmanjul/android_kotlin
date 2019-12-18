@@ -6,6 +6,8 @@ import androidx.preference.PreferenceManager
 import com.joshtalks.joshskills.BuildConfig
 
 const val COURSE_STARTED_FB_EVENT = "course_started_event"
+const val USER_UNIQUE_ID = "user_unique_id"
+
 
 object PrefManager {
 

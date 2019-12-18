@@ -5,6 +5,7 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
+import android.view.View
 import androidx.databinding.DataBindingUtil
 import com.isseiaoki.simplecropview.CropImageView
 import com.isseiaoki.simplecropview.callback.CropCallback
@@ -12,7 +13,6 @@ import com.isseiaoki.simplecropview.callback.LoadCallback
 import com.isseiaoki.simplecropview.callback.SaveCallback
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.BaseActivity
-import com.joshtalks.joshskills.core.custom_ui.FullScreenProgressDialog
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.databinding.ActivityCropImageBinding
 import kotlinx.android.synthetic.main.activity_crop_image.*
@@ -52,7 +52,8 @@ class CropImageActivity : BaseActivity() {
     }
 
     fun cropImage() {
-        FullScreenProgressDialog.display(this)
+        cropImageBinding.progressBar.visibility = View.VISIBLE
+        // FullScreenProgressDialog.display(this)
         CoroutineScope(Dispatchers.IO).launch {
             mSaveUri = Uri.fromFile(AppDirectory.imageSentFile())
             crop_image_view.crop(mSourceUri)

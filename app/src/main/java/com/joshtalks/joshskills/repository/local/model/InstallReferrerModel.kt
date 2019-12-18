@@ -3,17 +3,22 @@ package com.joshtalks.joshskills.repository.local.model
 import com.google.gson.annotations.SerializedName
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.PrefManager
-import java.util.*
 
 const val INSTALL_REFERRER_OBJECT = "install_referrer_object"
 
 open class InstallReferrerModel {
-    @SerializedName("mentor_id")
-    var mentorId: String? = null
-
-    @SerializedName("referrer")
-    var referrer: HashMap<String, String>? = null
-
+    @SerializedName("install_on")
+    var installOn: Long = System.currentTimeMillis()/1000
+    @SerializedName("mentor")
+    var mentor: String? = null
+    @SerializedName("other_info")
+    var otherInfo: Map<String, Any>? = null
+    @SerializedName("utm_medium")
+    var utmMedium: String? = null
+    @SerializedName("utm_source")
+    var utmSource: String? = null
+    @SerializedName("utm_term")
+    var utmTerm: String? = null
 
     override fun toString(): String {
         return AppObjectController.gsonMapper.toJson(this)

@@ -10,7 +10,6 @@ import android.util.DisplayMetrics
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.crashlytics.android.Crashlytics
-import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
@@ -28,7 +27,7 @@ import io.github.inflationx.viewpump.ViewPumpContextWrapper
 
 abstract class BaseActivity : AppCompatActivity() {
 
-    protected val TAG = javaClass.canonicalName
+    protected val TAG: String = javaClass.simpleName
     override fun attachBaseContext(newBase: Context?) {
         super.attachBaseContext(newBase?.let { ViewPumpContextWrapper.wrap(it) })
     }
@@ -43,7 +42,6 @@ abstract class BaseActivity : AppCompatActivity() {
         windowManager.defaultDisplay.getMetrics(displayMetrics)
         AppObjectController.screenHeight = displayMetrics.heightPixels
         AppObjectController.screenWidth = displayMetrics.widthPixels
-        getConfig()
         initUserForCrashlytics()
     }
 
@@ -52,9 +50,9 @@ abstract class BaseActivity : AppCompatActivity() {
         var intent: Intent? = null
         if (User.getInstance().token == null) {
             intent = Intent(this, OnBoardActivity::class.java)
-        } else if (User.getInstance().dateOfBirth == null || User.getInstance().dateOfBirth.isNullOrEmpty()) {
+        } /*else if (User.getInstance().dateOfBirth == null || User.getInstance().dateOfBirth.isNullOrEmpty()) {
             intent = Intent(this, ProfileActivity::class.java)
-        }
+        }*/
         return intent?.apply {
             addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
@@ -82,28 +80,16 @@ abstract class BaseActivity : AppCompatActivity() {
     }
 
     protected fun processIntent(mIntent: Intent?) {
-        mIntent?.hasExtra(HAS_NOTIFICATION)?.let {
-            if (it) mIntent.hasExtra(NOTIFICATION_ID).let {
-                if (it) {
-                    EngagementNetworkHelper.clickNotification(mIntent.run {
-                        getStringExtra(
-                            NOTIFICATION_ID
-                        )
-                    })
-                }
-            }
+        if (mIntent != null && mIntent.hasExtra(HAS_NOTIFICATION)
+            && mIntent.hasExtra(NOTIFICATION_ID)
+            && mIntent.getStringExtra(NOTIFICATION_ID).isNullOrEmpty().not()
+        ) {
+            EngagementNetworkHelper.clickNotification(
+                mIntent.getStringExtra(
+                    NOTIFICATION_ID
+                )
+            )
         }
-    }
-
-    private fun getConfig() {
-        val configSettings = FirebaseRemoteConfigSettings.Builder()
-            .setMinimumFetchIntervalInSeconds(60*3600)
-            //.setDeveloperModeEnabled(BuildConfig.DEBUG)
-            .build()
-        AppObjectController.getFirebaseRemoteConfig().setConfigSettingsAsync(configSettings)
-        AppObjectController.getFirebaseRemoteConfig().setDefaultsAsync(R.xml.remote_config_defaults)
-        AppObjectController.getFirebaseRemoteConfig().fetchAndActivate()
-
     }
 
     private fun initUserForCrashlytics() {

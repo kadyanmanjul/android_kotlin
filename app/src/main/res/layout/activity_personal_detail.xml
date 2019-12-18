@@ -22,10 +22,13 @@
                 android:animateLayoutChanges="true"
                 android:background="@color/gray_3B"
                 android:orientation="vertical"
-                android:paddingLeft="30dp"
-                android:paddingRight="30dp">
+                android:paddingTop="@dimen/_20sdp"
+                android:paddingStart="@dimen/_10sdp"
+                android:paddingEnd="@dimen/_10sdp">
 
-            <include layout="@layout/toolbar_login_register" />
+            <!--
+                        <include layout="@layout/toolbar_login_register" />
+            -->
 
             <ScrollView
                     android:layout_width="match_parent"
@@ -69,10 +72,10 @@
 
 
                         <FrameLayout
-                                android:visibility="visible"
                                 android:layout_width="100dp"
                                 android:layout_height="100dp"
-                                android:layout_gravity="center">
+                                android:layout_gravity="center"
+                                android:visibility="visible">
 
                             <de.hdodenhof.circleimageview.CircleImageView
                                     android:id="@+id/ivUploadedPic"
@@ -132,28 +135,28 @@
                                 android:layout_marginTop="20dp">
 
                             <ImageView
-                                    android:onClick="@{()->handler.selectDateOfBirth()}"
                                     android:layout_width="30dp"
                                     android:layout_height="30dp"
                                     android:layout_gravity="center|left"
                                     android:layout_marginLeft="10dp"
+                                    android:onClick="@{()->handler.selectDateOfBirth()}"
                                     android:tint="#777"
                                     app:srcCompat="@drawable/ic_dob" />
 
 
                             <EditText
 
-                                    android:cursorVisible="false"
                                     android:id="@+id/etDOB"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:clickable="true"
+                                    android:cursorVisible="false"
                                     android:focusable="false"
                                     android:hint="@string/dob"
                                     android:importantForAutofill="no"
                                     android:inputType="none"
                                     android:onClick="@{()->handler.selectDateOfBirth()}"
-                                    android:paddingLeft="50dp"
+                                    android:paddingStart="50dp"
                                     android:paddingTop="20dp"
                                     android:paddingBottom="20dp"
                                     android:textColor="#fff"
@@ -217,7 +220,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="10dp"
                                 android:gravity="center"
-                                android:textColor="@color/colorAccent"
+                                android:textColor="@color/button_primary_color"
                                 android:textSize="15sp"
                                 android:visibility="invisible"
                                 tools:text="Status"
@@ -234,27 +237,30 @@
                             android:layout_marginBottom="10dp"
                             android:orientation="vertical">
 
-                        <TextView
+                        <com.google.android.material.textview.MaterialTextView
                                 android:id="@+id/tvNext"
+                                fontPath="fonts/OpenSans-SemiBold.ttf"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
+
                                 android:layout_gravity="center"
-                                android:layout_marginTop="20dp"
-                                android:background="@drawable/button_round_enabled"
-                                android:clickable="true"
+                                android:layout_marginTop="@dimen/_20sdp"
+                                android:background="@drawable/round_rectangle"
+                                android:backgroundTint="@color/button_primary_color"
                                 android:gravity="center"
                                 android:onClick="@{()->handler.onNextPressed()}"
-                                android:padding="10dp"
-                                android:text="@string/next"
-                                android:textColor="#FFF"
-                                android:textSize="18sp" />
-
+                                android:paddingStart="@dimen/_30sdp"
+                                android:paddingTop="@dimen/_10sdp"
+                                android:paddingEnd="@dimen/_30sdp"
+                                android:paddingBottom="@dimen/_10sdp"
+                                android:text="@string/finish"
+                                android:textAllCaps="false"
+                                android:textColor="@color/white"
+                                android:textSize="@dimen/font_18"
+                                app:rippleColor="@color/white" />
                     </LinearLayout>
-
                 </LinearLayout>
-
             </ScrollView>
-
         </LinearLayout>
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>

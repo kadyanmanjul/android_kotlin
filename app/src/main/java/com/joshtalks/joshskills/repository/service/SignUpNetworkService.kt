@@ -1,5 +1,6 @@
 package com.joshtalks.joshskills.repository.service
 
+import com.joshtalks.joshskills.repository.local.model.InstallReferrerModel
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.googlelocation.Locality
 import com.joshtalks.joshskills.repository.server.*
@@ -55,6 +56,10 @@ interface SignUpNetworkService {
     @FormUrlEncoded
     @POST("$DIR/mentor/register/anonymous/")
     fun registerAnonymousUser(@FieldMap params: Map<String, String>): Deferred<SuccessResponse>
+
+
+    @POST("$DIR/mentor/install_source")
+    suspend fun getInstallReferrerAsync(@Body installReferrerModel: InstallReferrerModel)
 
 
 
