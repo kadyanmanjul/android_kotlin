@@ -8,7 +8,7 @@ const val INSTALL_REFERRER_OBJECT = "install_referrer_object"
 
 open class InstallReferrerModel {
     @SerializedName("install_on")
-    var installOn: Long = System.currentTimeMillis()/1000
+    var installOn: Long = System.currentTimeMillis()
     @SerializedName("mentor")
     var mentor: String? = null
     @SerializedName("other_info")
