@@ -17,6 +17,7 @@ import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.DatabaseUtils
 import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
+import com.joshtalks.joshskills.repository.local.entity.MESSAGE_STATUS
 import com.joshtalks.joshskills.repository.local.entity.Question
 import com.joshtalks.joshskills.repository.local.eventbus.DBInsertion
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
@@ -112,8 +113,8 @@ class ConversationViewModel(application: Application, private var inboxEntity: I
         if (listOfChat.isNotEmpty()) {
             lastChatTime = listOfChat.last().created
         }
-        listOfChat.forEachWithIndex { i, chat ->
-            val question: Question? = appDatabase.chatDao().getQuestion(chat.chatId)
+        listOfChat.forEachWithIndex { _, chat ->
+            var question: Question? = appDatabase.chatDao().getQuestion(chat.chatId)
             if (question != null) {
                 when (question.material_type) {
                     BASE_MESSAGE_TYPE.IM -> question.imageList =
@@ -128,6 +129,9 @@ class ConversationViewModel(application: Application, private var inboxEntity: I
                     BASE_MESSAGE_TYPE.PD -> question.pdfList =
                         appDatabase.chatDao()
                             .getPdfOfQuestion(questionId = question.questionId)
+                    else -> {
+                        question = null
+                    }
                 }
                 chat.question = question
             }
@@ -171,7 +175,6 @@ class ConversationViewModel(application: Application, private var inboxEntity: I
                     messageObject,
                     chatModel
                 )
-
             } catch (ex: Exception) {
                 //registerCourseLiveData.postValue(null)
                 ex.printStackTrace()
@@ -265,8 +268,17 @@ class ConversationViewModel(application: Application, private var inboxEntity: I
 
     fun getAllUserMessage() {
         viewModelScope.launch(Dispatchers.IO) {
+            val rows = appDatabase.chatDao().getTotalCountOfRows(inboxEntity.conversation_id)
             getUserRecentChats()
-            delay(1500)
+            try {
+                if (rows > 0) {
+                    delay(3000)
+                } else {
+                    delay(500)
+                }
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+            }
             if (Utils.isInternetAvailable()) {
                 val arguments = mutableMapOf<String, String>()
                 PrefManager.getLongValue(inboxEntity.conversation_id).let { time ->
@@ -274,11 +286,15 @@ class ConversationViewModel(application: Application, private var inboxEntity: I
                         arguments["created"] = (time / 1000).toString()
                     }
                 }
-                NetworkRequestHelper.getUpdatedChat(inboxEntity, queryMap = arguments)
+                NetworkRequestHelper.getUpdatedChat(
+                    inboxEntity.conversation_id,
+                    queryMap = arguments
+                )
             }
         }
         refreshChatEverySomeTime()
     }
+
 
     private fun refreshChatEverySomeTime() {
         compositeDisposable.add(
@@ -294,7 +310,10 @@ class ConversationViewModel(application: Application, private var inboxEntity: I
                                 arguments["created"] = (time / 1000).toString()
                             }
                         }
-                        NetworkRequestHelper.getUpdatedChat(inboxEntity, queryMap = arguments)
+                        NetworkRequestHelper.getUpdatedChat(
+                            inboxEntity.conversation_id,
+                            queryMap = arguments
+                        )
                     }
                 }, {
                     it.printStackTrace()
@@ -303,7 +322,29 @@ class ConversationViewModel(application: Application, private var inboxEntity: I
 
     }
 
-    private fun deleteMessageAndMedia() {
+    fun updateInDatabaseReadMessage(readChatList: MutableSet<ChatModel>) {
+        viewModelScope.launch(Dispatchers.IO) {
+            if (readChatList.isNullOrEmpty().not()) {
+                val idList = readChatList.map { it.chatId }.toMutableList()
+                appDatabase.chatDao().updateMessageStatus(MESSAGE_STATUS.SEEN_BY_USER, idList)
+            }
+        }
+
+    }
+     fun refreshChatOnManual(){
+        val arguments = mutableMapOf<String, String>()
+        PrefManager.getLongValue(inboxEntity.conversation_id).let { time ->
+            if (time > 0) {
+                arguments["created"] = (time / 1000).toString()
+            }
+        }
+        NetworkRequestHelper.getUpdatedChat(
+            inboxEntity.conversation_id,
+            queryMap = arguments
+        )
+    }
+
+    /*private fun deleteMessageAndMedia() {
         viewModelScope.launch(Dispatchers.IO) {
             val data = mapOf("is_deleted" to "true")
 
@@ -332,5 +373,5 @@ class ConversationViewModel(application: Application, private var inboxEntity: I
                 appDatabase.chatDao().deleteUserMessages(listIds)
             }
         }
-    }
+    }*/
 }

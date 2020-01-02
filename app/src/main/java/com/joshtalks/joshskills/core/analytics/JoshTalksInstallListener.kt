@@ -33,7 +33,7 @@ class JoshTalksInstallListener : BroadcastReceiver() {
                             splitter = "-"
                         }
                         val keyValue = referrerParam.split(splitter).toTypedArray()
-                        if (keyValue.size > 1) { // To make sure that there is one key value pair in referrer
+                        if (keyValue.size > 1) {
                             referrerMap[URLDecoder.decode(keyValue[0], "UTF-8")] =
                                 URLDecoder.decode(keyValue[1], "UTF-8")
                         }

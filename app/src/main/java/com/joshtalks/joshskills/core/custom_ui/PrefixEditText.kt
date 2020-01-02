@@ -7,69 +7,156 @@ import android.util.AttributeSet
 import androidx.appcompat.widget.AppCompatEditText
 import com.joshtalks.joshskills.R
 
-class PrefixEditText : AppCompatEditText {
+import android.content.res.TypedArray
+import android.graphics.Paint
+import android.graphics.Rect
+import android.graphics.Typeface
+import android.graphics.drawable.Drawable
+import android.os.Build
+import android.text.TextPaint
+import android.util.Log
+import android.graphics.ColorFilter
+import android.graphics.PixelFormat
+import kotlin.properties.Delegates
 
-    private var mOriginalLeftPadding = -1f
-    private var mPrefix: String? = null
+/**
+ * [AppCompatEditText] with easy prefix and suffix support.
+ *
+ * Inspired by https://gist.github.com/morristech/5480419
+ */
+class PrefixEditText @JvmOverloads constructor(
+    context: Context,
+    attrs: AttributeSet,
+    defStyle: Int = 0
+) : AppCompatEditText(context, attrs) {
 
-    var prefix: String?
-        get() = mPrefix
-        set(prefix) {
-            mPrefix = prefix
+
+    private val textPaint: TextPaint by lazy {
+        TextPaint().apply {
+            color = currentHintTextColor
+            textAlign = Paint.Align.LEFT
+            isAntiAlias = true
+            this.typeface = typeface
+        }
+    }
+
+    private val prefixDrawable: PrefixDrawable by lazy { PrefixDrawable(paint) }
+    var empty: String = " "
+
+    var prefix: String = ""
+        set(value) {
+            if (value.isNotBlank()) {
+                Log.v(TAG, "prefix: $value")
+            }
+            field = value
+            prefixDrawable.text = value + empty
+            updatePrefixDrawable()
+        }
+
+    var suffix: String? = null
+        set(value) {
+            if (!value.isNullOrBlank()) {
+                Log.v(TAG, "suffix: $value")
+            }
+            field = value
             invalidate()
         }
 
-    val completedText: String
-        get() = mPrefix!! + getText().toString()
+    // These are used to store details obtained from the EditText's rendering process
+    private val firstLineBounds = Rect()
 
-    constructor(context: Context) : super(context) {
-        init(context, null)
+    private var isInitialized = false
+
+    init {
+        textPaint.textSize = textSize
+
+        updatePrefixDrawable()
+        isInitialized = true
+
+        val typedArray: TypedArray =
+            context.obtainStyledAttributes(attrs, R.styleable.PrefixSuffixEditText)
+        prefix = typedArray.getString(R.styleable.PrefixSuffixEditText_prefix) ?: ""
+        suffix = typedArray.getString(R.styleable.PrefixSuffixEditText_suffix)
+        typedArray.recycle()
     }
 
-    constructor(context: Context, attrs: AttributeSet) : super(context, attrs) {
-        init(context, attrs)
+    override fun setTypeface(typeface: Typeface) {
+        super.setTypeface(typeface)
+
+        if (isInitialized) {
+            // this is first called from the constructor when it's not initialized, yet
+            textPaint.typeface = typeface
+        }
+
+        postInvalidate()
     }
 
-    constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int) : super(
-        context,
-        attrs,
-        defStyleAttr
-    ) {
-        init(context, attrs)
-    }
+    public override fun onDraw(c: Canvas) {
+        textPaint.color = currentHintTextColor
 
-    private fun init(context: Context, attributeSet: AttributeSet?) {
-        if (attributeSet != null) {
-            val typedArray = context.obtainStyledAttributes(attributeSet, R.styleable.EditText)
-            mPrefix = typedArray.getString(R.styleable.EditText_prefix)
-            typedArray.recycle()
+        val lineBounds = getLineBounds(0, firstLineBounds)
+        prefixDrawable.let {
+            it.lineBounds = lineBounds
+            it.paint = textPaint
+        }
+
+        super.onDraw(c)
+
+        // Now we can calculate what we need!
+        val text = text.toString()
+        val prefixText: String = prefixDrawable.text
+        val textWidth: Float = textPaint.measureText(prefixText + text) + paddingLeft
+
+        suffix?.let {
+            // We need to draw this like this because
+            // setting a right drawable doesn't work properly and we want this
+            // just after the text we are editing (but untouchable)
+            val y2 = firstLineBounds.bottom - textPaint.descent()
+            c.drawText(it, textWidth, y2, textPaint)
         }
     }
 
-    override fun onDraw(canvas: Canvas) {
-        super.onDraw(canvas)
+    private fun updatePrefixDrawable() {
+        setCompoundDrawablesRelative(prefixDrawable, null, null, null)
+    }
 
-        if (mPrefix != null) {
-            calculatePrefix()
-            canvas.drawText(mPrefix!!, mOriginalLeftPadding,
-                getLineBounds(0, null).toFloat(), getPaint())
+    companion object {
+        private const val TAG = "PrefixSuffixEditText"
+    }
+}
+
+internal class PrefixDrawable(
+    var paint: Paint,
+    var lineBounds: Int = 0
+) : Drawable() {
+
+    var text: String by Delegates.observable("") { _, _: String?, _: String? ->
+        // Tell it we need to be as big as we want to be!
+        setBounds(0, 0, intrinsicWidth, intrinsicHeight)
+        invalidateSelf()
+    }
+
+
+    override fun draw(canvas: Canvas) {
+        text.let {
+            val y = (lineBounds + canvas.clipBounds.top).toFloat()
+            canvas.drawText(it, 0f, y, paint)
         }
     }
 
-    private fun calculatePrefix() {
-        if (mOriginalLeftPadding == -1f) {
-            val widths = FloatArray(mPrefix!!.length)
-            paint.getTextWidths(mPrefix, widths)
-            var textWidth = 0f
-            for (w in widths) {
-                textWidth += w
-            }
-            mOriginalLeftPadding = compoundPaddingLeft.toFloat()
-            setPadding(
-                (textWidth + mOriginalLeftPadding).toInt(),
-                paddingRight, getPaddingTop(),
-                paddingBottom
-            )
-        }
+    override fun setAlpha(i: Int) {}
+
+    override fun setColorFilter(colorFilter: ColorFilter?) {}
+
+    override fun getOpacity(): Int {
+        return PixelFormat.OPAQUE
+    }
+
+    override fun getIntrinsicHeight(): Int {
+        return paint.textSize.toInt()
+    }
+
+    override fun getIntrinsicWidth(): Int {
+        return paint.measureText(text).toInt()
     }
 }

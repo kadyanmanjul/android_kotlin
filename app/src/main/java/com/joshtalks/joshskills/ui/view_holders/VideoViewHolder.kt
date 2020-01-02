@@ -92,7 +92,8 @@ class VideoViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
 
 
     @Resolve
-    fun onResolved() {
+    override fun onViewInflated() {
+        super.onViewInflated()
         imageView.setImageResource(0)
         textTitle.visibility = GONE
         textMessageBody.visibility = GONE

@@ -9,7 +9,7 @@ import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.*
 import com.joshtalks.joshskills.repository.local.eventbus.DBInsertion
-import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
+import com.joshtalks.joshskills.repository.local.eventbus.MessageCompleteEventBus
 import com.joshtalks.joshskills.repository.server.ChatMessageReceiver
 import com.joshtalks.joshskills.repository.server.chat_message.BaseChatMessage
 import com.joshtalks.joshskills.repository.server.chat_message.BaseMediaMessage
@@ -20,20 +20,25 @@ import kotlinx.coroutines.launch
 object NetworkRequestHelper {
 
     fun getUpdatedChat(
-        inboxEntity: InboxEntity,
+        conversation_id: String,
         queryMap: Map<String, String> = emptyMap()
     ) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 val resp = AppObjectController.chatNetworkService.getUnReceivedMessageAsync(
-                    inboxEntity.conversation_id ?: "", queryMap
-                ).await()
+                    conversation_id,
+                    queryMap
+                )
 
-                if (resp.chatModelList.isNotEmpty()) {
+                if (resp.chatModelList.isNullOrEmpty()) {
+                    RxBus2.publish(MessageCompleteEventBus(false))
+                }else{
                     PrefManager.put(
-                        inboxEntity.conversation_id,
+                        conversation_id.trim(),
                         resp.chatModelList.last().created.time
                     )
+                    RxBus2.publish(MessageCompleteEventBus(true))
+
                 }
 
 
@@ -98,8 +103,6 @@ object NetworkRequestHelper {
                             }
                             AppObjectController.appDatabase.chatDao().insertVideoMessageList(it)
                         }
-
-
                     }
 
                 }
@@ -113,7 +116,7 @@ object NetworkRequestHelper {
 
                     val created = uri.getQueryParameter("created")
 
-                    PrefManager.getLongValue(inboxEntity.conversation_id).let { time ->
+                    PrefManager.getLongValue(conversation_id).let { time ->
                         if (created.isNullOrEmpty().not()) {
                             if (created?.toLong() == (time / 1000)) {
                                 for (name in args) {
@@ -126,7 +129,7 @@ object NetworkRequestHelper {
                             arguments["created"] = (time / 1000).toString()
                         }
                     }
-                    getUpdatedChat(inboxEntity, queryMap = arguments)
+                    getUpdatedChat(conversation_id, queryMap = arguments)
 
                 }
 

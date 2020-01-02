@@ -20,7 +20,7 @@ data class ChatModel(
     @ColumnInfo(name = "conversation_id")
     @SerializedName("conversation") var conversationId: String = "",
 
-    @ColumnInfo()
+    @ColumnInfo
     @SerializedName("created") var created: Date,
 
     @ColumnInfo(name = "is_seen")
@@ -35,16 +35,16 @@ data class ChatModel(
     @SerializedName("sender")
     var sender: Sender? = Sender(),
 
-    @ColumnInfo()
+    @ColumnInfo
     @SerializedName("text") var text: String? = "",
 
-    @ColumnInfo()
+    @ColumnInfo
     @SerializedName("type") var type: BASE_MESSAGE_TYPE? = BASE_MESSAGE_TYPE.TX,
 
-    @ColumnInfo()
+    @ColumnInfo
     @SerializedName("url") var url: String?,
 
-    @ColumnInfo()
+    @ColumnInfo
     var mediaDuration: Long? = 0,
 
 
@@ -60,10 +60,13 @@ data class ChatModel(
     @ColumnInfo(name = "is_delete_message")
     var isDeleteMessage: Boolean = false,
 
-
     @Expose
     @ColumnInfo(name = "download_progress")
-    var progress: Int = Int.MIN_VALUE
+    var progress: Int = 0,
+
+    @ColumnInfo(name = "status")
+    @SerializedName("status") var status: MESSAGE_STATUS? = MESSAGE_STATUS.SEEN_BY_SERVER
+
 
 ) : DataBaseClass(), Serializable {
 
@@ -80,7 +83,8 @@ data class ChatModel(
         messageDeliverStatus = MESSAGE_DELIVER_STATUS.READ,
         mediaDuration = 0,
         isSync = true,
-        chatLocalId = null
+        chatLocalId = null,
+        status = MESSAGE_STATUS.SEEN_BY_SERVER
     )
 
 
@@ -102,30 +106,30 @@ data class Question(
     @SerializedName("id") var questionId: String = "",
 
 
-    @ColumnInfo()
+    @ColumnInfo
     @Expose var chatId: String = "",
 
     @Ignore
     @SerializedName("audios") var audioList: List<AudioType>? = null,
 
-    @ColumnInfo()
+    @ColumnInfo
     @SerializedName("course_id") var course_id: Int = 0,
 
 
     @Ignore
     @SerializedName("images") var imageList: List<ImageType>? = null,
 
-    @ColumnInfo()
+    @ColumnInfo
     @SerializedName("is_deleted") var isDeleted: Boolean = false,
 
 
-    @ColumnInfo()
+    @ColumnInfo
     @SerializedName("material_type") var material_type: BASE_MESSAGE_TYPE = BASE_MESSAGE_TYPE.TX,
 
     @Ignore
     @SerializedName("options") var optionsList: List<OptionType>? = null,
 
-    @ColumnInfo()
+    @ColumnInfo
     @SerializedName("parent_id") var parent_id: String? = "",
 
     @Ignore
@@ -134,7 +138,7 @@ data class Question(
     @ColumnInfo(name = "qText")
     @SerializedName("text") var qText: String? = "",
 
-    @ColumnInfo()
+    @ColumnInfo
     @SerializedName("title") var title: String? = "",
 
     @ColumnInfo(name = "question_type")
@@ -169,35 +173,35 @@ data class User(
 
 @Entity(tableName = "VideoTable")
 data class VideoType(
-    @ColumnInfo()
+    @ColumnInfo
     @SerializedName("video_url") var video_url: String? = "",
 
     @PrimaryKey
-    @ColumnInfo()
+    @ColumnInfo
     @SerializedName("id") var id: String = "",
 
-    @ColumnInfo()
+    @ColumnInfo
     @SerializedName("thumbnail_url") var video_image_url: String = "",
 
-    @ColumnInfo()
+    @ColumnInfo
     @SerializedName("duration") var duration: Int = 0,
 
-    @ColumnInfo()
+    @ColumnInfo
     @SerializedName("video_height") var video_height: Int = 0,
 
-    @ColumnInfo()
+    @ColumnInfo
     @SerializedName("video_width") var video_width: Int = 0,
 
-    @ColumnInfo()
+    @ColumnInfo
     @SerializedName("thumbnail_height") var thumbnail_height: Int = 0,
 
-    @ColumnInfo()
+    @ColumnInfo
     @SerializedName("thumbnail_width") var thumbnail_width: Int = 0,
 
-    @ColumnInfo()
+    @ColumnInfo
     @SerializedName("bit_rate") var bit_rate: Int = 0,
 
-    @ColumnInfo()
+    @ColumnInfo
     @SerializedName("is_deleted") var is_deleted: Boolean = false
 
 ) : DataBaseClass(), Serializable
@@ -205,7 +209,7 @@ data class VideoType(
 
 @Entity(tableName = "AudioTable")
 data class AudioType(
-    @ColumnInfo()
+    @ColumnInfo
     @SerializedName("audio_url") var audio_url: String = "",
 
     @PrimaryKey
@@ -213,13 +217,13 @@ data class AudioType(
     @SerializedName("id") var id: String = "",
 
 
-    @ColumnInfo()
+    @ColumnInfo
     @SerializedName("duration") var duration: Int = 0,
 
-    @ColumnInfo()
+    @ColumnInfo
     @SerializedName("bit_rate") var bit_rate: Int = 0,
 
-    @ColumnInfo()
+    @ColumnInfo
     @SerializedName("is_deleted") var is_deleted: Boolean = false
 
 ) : DataBaseClass(), Serializable
@@ -229,18 +233,18 @@ data class AudioType(
 data class OptionType(
 
     @PrimaryKey
-    @ColumnInfo()
+    @ColumnInfo
     @SerializedName("id") var id: String = "",
 
 
-    @ColumnInfo()
+    @ColumnInfo
     @SerializedName("type") var type: String = "",
 
-    @ColumnInfo()
+    @ColumnInfo
     @SerializedName("text") var text: String = "",
 
 
-    @ColumnInfo()
+    @ColumnInfo
     @SerializedName("order") var order: Int = 0
 
 ) : DataBaseClass(), Serializable
@@ -250,14 +254,14 @@ data class OptionType(
 data class PdfType(
 
     @PrimaryKey
-    @ColumnInfo()
+    @ColumnInfo
     @SerializedName("id") var id: String = "",
 
 
-    @ColumnInfo()
+    @ColumnInfo
     @SerializedName("url") var url: String = "",
 
-    @ColumnInfo()
+    @ColumnInfo
     @SerializedName("is_deleted") var is_deleted: Boolean = false,
 
     @ColumnInfo(name = "total_view")
@@ -279,42 +283,42 @@ data class PdfType(
 data class ImageType(
 
     @PrimaryKey
-    @ColumnInfo()
+    @ColumnInfo
     @SerializedName("id") var id: String = "",
 
-    @ColumnInfo()
+    @ColumnInfo
     @SerializedName("image_url") var imageUrl: String = "",
 
-    @ColumnInfo()
+    @ColumnInfo
     @SerializedName("is_deleted") var is_deleted: Boolean = false,
 
-    @ColumnInfo()
+    @ColumnInfo
     @SerializedName("height") var height: Int = 0,
 
-    @ColumnInfo()
+    @ColumnInfo
     @SerializedName("width") var width: Int = 0
 
 ) : DataBaseClass(), Serializable
 
 open class DataBaseClass : Serializable {
 
-    @ColumnInfo()
+    @ColumnInfo
     @Expose
     var questionId: String = ""
 
-    @ColumnInfo()
+    @ColumnInfo
     @Expose
     var downloadStatus: DOWNLOAD_STATUS = DOWNLOAD_STATUS.DOWNLOADED
 
-    @ColumnInfo()
+    @ColumnInfo
     @Expose
     var downloadedLocalPath: String? = ""
 
-    @ColumnInfo()
+    @ColumnInfo
     @Expose
     var lastDownloadStartTime: Long = 0
 
-    @ColumnInfo()
+    @ColumnInfo
     @Expose
     var thumbnailUrl: String? = ""
 
@@ -333,7 +337,7 @@ open class DataBaseClass : Serializable {
 @Dao
 interface ChatDao {
 
-    @Query(value = "SELECT * FROM chat_table where conversation_id= :conversationId AND is_delete_message=0   ORDER BY created ASC ")
+    @Query(value = "SELECT * FROM chat_table where conversation_id= :conversationId AND is_delete_message=0 ORDER BY created ASC ")
     suspend fun getLastChats(conversationId: String): List<ChatModel>
 
 
@@ -346,6 +350,10 @@ interface ChatDao {
 
     @Query(value = "SELECT * FROM chat_table where conversation_id= :conversationId AND created > :compareTime AND is_delete_message=0  ORDER BY created ASC")
     suspend fun getRecentChatAfterTime(conversationId: String, compareTime: Date?): List<ChatModel>
+
+
+    @Query(value = "SELECT COUNT(chat_id) FROM chat_table where conversation_id= :conversationId ")
+    suspend fun getTotalCountOfRows(conversationId: String): Long
 
 
     @Query("UPDATE chat_table SET message_deliver_status = :messageDeliverStatus where created <= :compareTime ")
@@ -368,7 +376,7 @@ interface ChatDao {
     suspend fun updateChatMessage(chat: ChatModel)
 
     @Delete
-    fun deleteChatMessage(chat: ChatModel)
+    suspend fun deleteChatMessage(chat: ChatModel)
 
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -431,17 +439,16 @@ interface ChatDao {
         if (chatModel.type == BASE_MESSAGE_TYPE.Q) {
             val question: Question? = getQuestion(chat.chatId)
             if (question != null) {
-                when {
-                    question.material_type == BASE_MESSAGE_TYPE.IM ->
+                when (question.material_type) {
+                    BASE_MESSAGE_TYPE.IM ->
                         question.imageList =
                             getImagesOfQuestion(questionId = question.questionId)
-                    question.material_type == BASE_MESSAGE_TYPE.VI -> question.videoList =
+                    BASE_MESSAGE_TYPE.VI -> question.videoList =
 
                         getVideosOfQuestion(questionId = question.questionId)
-                    question.material_type == BASE_MESSAGE_TYPE.AU -> question.audioList =
+                    BASE_MESSAGE_TYPE.AU -> question.audioList =
                         getAudiosOfQuestion(questionId = question.questionId)
-
-                    question.material_type == BASE_MESSAGE_TYPE.PD -> question.pdfList =
+                    BASE_MESSAGE_TYPE.PD -> question.pdfList =
                         getPdfOfQuestion(questionId = question.questionId)
                 }
                 chatModel.question = question
@@ -458,17 +465,16 @@ interface ChatDao {
         if (chatModel.type == BASE_MESSAGE_TYPE.Q) {
             val question: Question? = getQuestion(id)
             if (question != null) {
-                when {
-                    question.material_type == BASE_MESSAGE_TYPE.IM ->
+                when (question.material_type) {
+                    BASE_MESSAGE_TYPE.IM ->
                         question.imageList =
                             getImagesOfQuestion(questionId = question.questionId)
-                    question.material_type == BASE_MESSAGE_TYPE.VI -> question.videoList =
+                    BASE_MESSAGE_TYPE.VI -> question.videoList =
 
                         getVideosOfQuestion(questionId = question.questionId)
-                    question.material_type == BASE_MESSAGE_TYPE.AU -> question.audioList =
+                    BASE_MESSAGE_TYPE.AU -> question.audioList =
                         getAudiosOfQuestion(questionId = question.questionId)
-
-                    question.material_type == BASE_MESSAGE_TYPE.PD -> question.pdfList =
+                    BASE_MESSAGE_TYPE.PD -> question.pdfList =
                         getPdfOfQuestion(questionId = question.questionId)
                 }
                 chatModel.question = question
@@ -521,7 +527,18 @@ interface ChatDao {
 
 
     @Query("UPDATE chat_table SET download_progress = :progress where id= :conversationId ")
-    suspend fun videoProgressUpdate(conversationId: String,progress: Int)
+    suspend fun videoProgressUpdate(conversationId: String, progress: Int)
+
+
+    @Query("SELECT * FROM chat_table where conversation_id= :conversationId  ORDER BY created ASC LIMIT 1;")
+    suspend fun getLastRecord(conversationId: String): ChatModel
+
+    @Query("UPDATE chat_table SET status = :status WHERE chat_id IN (:ids)")
+    suspend fun updateMessageStatus(status: MESSAGE_STATUS, ids: List<String>)
+
+    @Query(value = "SELECT chat_id FROM chat_table where status=:status")
+    suspend fun getSeenByUserMessages(status: MESSAGE_STATUS=MESSAGE_STATUS.SEEN_BY_USER):List<String>
+
 
 }
 
@@ -543,4 +560,8 @@ enum class MESSAGE_DELIVER_STATUS(val type: Int) {
 
 enum class DOWNLOAD_STATUS {
     DOWNLOADED, DOWNLOADING, FAILED, NOT_START, UPLOADING, UPLOADED
+}
+
+enum class MESSAGE_STATUS(val type: String) {
+    SEEN_BY_USER("seen_by_user"), DELIVERED("delivered"), SEEN_BY_SERVER("seen")
 }

@@ -6,7 +6,10 @@
 >
 
     <data>
-
+        <import type="android.view.View"/>
+        <variable
+                name="handler"
+                type="com.joshtalks.joshskills.ui.signup.SignUpStep2Fragment" />
         <variable
                 name="SignUpViewModel"
                 type="com.joshtalks.joshskills.ui.signup.SignUpViewModel"/>
@@ -15,7 +18,7 @@
             android:background="@android:color/white"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            tools:context="com.joshtalks.joshskills.ui.signup.SignUpStep3Fragment">
+            tools:context="com.joshtalks.joshskills.ui.signup.SignUpStep2Fragment">
 
 
         <TextView
@@ -30,7 +33,7 @@
                 android:text="Verify +91 8432522643"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/textView"
+                android:id="@+id/tv_mobile"
         />
 
         <TextView
@@ -47,7 +50,7 @@
                 app:layout_constraintLeft_toLeftOf="parent"
                 android:text="Waiting to automaticallly detcect an sms sent to"
                 android:layout_height="wrap_content"
-                app:layout_constraintTop_toBottomOf="@id/textView"
+                app:layout_constraintTop_toBottomOf="@id/tv_mobile"
         />
         <TextView
                 fontPath="fonts/OpenSans-Regular.ttf"
@@ -55,19 +58,19 @@
                 android:layout_width="0dp"
                 app:layout_constraintWidth_default="percent"
                 app:layout_constraintWidth_percent="0.9"
-                android:id="@+id/tv_mobile"
+                android:id="@+id/tv_mobile_msz"
                 android:gravity="center"
                 android:textSize="@dimen/font_14"
                 android:layout_marginTop="@dimen/dp10"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
-                android:text="+91 8433222"
+                android:text=""
                 android:layout_height="wrap_content"
                 app:layout_constraintTop_toBottomOf="@id/textView2"/>
 
 
         <com.mukesh.OtpView
-
+                android:text="@={SignUpViewModel.otpField}"
                 android:id="@+id/otp_view"
                 android:layout_height="wrap_content"
                 android:textColor="@color/font_color"
@@ -77,7 +80,8 @@
                 app:layout_constraintLeft_toLeftOf="parent"
                 android:layout_marginTop="@dimen/dp40"
                 android:inputType="number"
-                app:itemCount="6"
+                app:itemCount="4"
+                android:imeOptions="actionDone"
                 app:lineColor="@color/colorPrimary"
                 app:viewType="line"
                 app:cursorColor="@color/error_color"
@@ -85,7 +89,7 @@
 
         />
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
                 fontPath="fonts/OpenSans-Regular.ttf"
                 android:textColor="@color/font_color"
                 android:layout_width="wrap_content"
@@ -119,6 +123,35 @@
                 android:text="Resend sms"
                 android:layout_height="wrap_content"
                 app:layout_constraintTop_toBottomOf="@id/tv_digit"/>
+
+
+        <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_verify"
+                style="@style/Widget.MaterialComponents.Button"
+                fontPath="fonts/OpenSans-SemiBold.ttf"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="@dimen/_40sdp"
+                android:background="@drawable/round_rectangle"
+                android:backgroundTint="@color/button_primary_color"
+                android:clickable="true"
+                android:focusable="true"
+                app:cornerRadius="@dimen/_16sdp"
+                android:gravity="center"
+                android:onClick="@{()->handler.verifyOTP()}"
+                android:paddingTop="@dimen/_8sdp"
+                android:paddingBottom="@dimen/_8sdp"
+                android:text="@string/verify"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:textSize="@dimen/font_16"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_resend_message"
+                app:layout_constraintWidth_default="percent"
+                app:layout_constraintWidth_percent="0.75"
+                app:rippleColor="@color/white" />
 
 
 

@@ -11,6 +11,7 @@ import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.databinding.ActivityOnboardBinding
+import com.joshtalks.joshskills.ui.signup.SignUpActivity
 import io.github.inflationx.calligraphy3.CalligraphyTypefaceSpan
 import io.github.inflationx.calligraphy3.TypefaceUtils
 
@@ -39,7 +40,7 @@ class OnBoardActivity : BaseActivity() {
 
     fun signUp() {
         AppAnalytics.create(AnalyticsEvent.LOGIN_CLICKED.NAME).push()
-        val intent = Intent(this, LoginActivity::class.java)
+        val intent = Intent(this, SignUpActivity::class.java)
         startActivity(intent)
 
     }

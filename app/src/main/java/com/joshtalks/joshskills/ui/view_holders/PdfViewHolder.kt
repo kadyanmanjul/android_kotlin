@@ -164,9 +164,9 @@ class PdfViewHolder(activityRef: WeakReference<FragmentActivity>, message: ChatM
 
     }
 
-
     @Resolve
-    fun onResolved() {
+    override fun onViewInflated() {
+        super.onViewInflated()
         pdfViewHolder = this
         // download_container.visibility = android.view.View.GONE
 

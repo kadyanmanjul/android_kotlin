@@ -38,7 +38,6 @@
                 android:requiresFadingEdge="horizontal"
                 android:scrollHorizontally="true"
                 android:singleLine="true"
-                android:text="@string/text_test"
                 android:textAlignment="center"
                 android:textColor="@android:color/white"
                 android:textSize="@dimen/text_size">
@@ -65,7 +64,6 @@
                 android:ellipsize="marquee"
                 android:scrollHorizontally="true"
                 android:singleLine="true"
-                android:text="@string/text_test"
                 android:textColor="@android:color/white"
                 android:textSize="@dimen/text_size" />
 

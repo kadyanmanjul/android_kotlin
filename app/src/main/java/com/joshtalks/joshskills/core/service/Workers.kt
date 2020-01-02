@@ -13,10 +13,12 @@ import com.joshtalks.joshskills.core.USER_UNIQUE_ID
 import com.joshtalks.joshskills.repository.local.model.InstallReferrerModel
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.ScreenEngagementModel
+import com.joshtalks.joshskills.repository.server.MessageStatusRequest
+import com.joshtalks.joshskills.repository.service.NetworkRequestHelper
 
 
-//const val FIREBASE_DATABASE = "install_referrer"
 const val INSTALL_REFERRER_SYNC = "install_referrer_sync"
+const val CONVERSATION_ID = "conversation_id"
 
 
 class JoshTalksInstallWorker(context: Context, workerParams: WorkerParameters) :
@@ -140,6 +142,45 @@ class UniqueIdGenerationWorker(var context: Context, workerParams: WorkerParamet
 
 }
 
+class GetUserConversationWorker(var context: Context, private var workerParams: WorkerParameters) :
+    Worker(context, workerParams) {
+
+    override fun doWork(): Result {
+        try {
+            val conversationId = workerParams.inputData.getString(CONVERSATION_ID)
+            conversationId?.run {
+                val arguments = mutableMapOf<String, String>()
+                PrefManager.getLongValue(this).let { time ->
+                    if (time > 0) {
+                        arguments["created"] = (time / 1000).toString()
+                    }
+                }
+                NetworkRequestHelper.getUpdatedChat(this, queryMap = arguments)
+            }
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+        }
+        return Result.success()
+    }
+
+}
+
+class MessageReadPeriodicWorker(context: Context, workerParams: WorkerParameters) :
+    CoroutineWorker(context, workerParams) {
+    override suspend fun doWork(): Result {
+        val chatIdList = AppObjectController.appDatabase.chatDao().getSeenByUserMessages()
+        if (chatIdList.isNullOrEmpty().not()) {
+            val messageStatusRequestList = mutableListOf<MessageStatusRequest>()
+            chatIdList.forEach {
+                messageStatusRequestList.add(MessageStatusRequest(it))
+            }
+            AppObjectController.chatNetworkService.updateMessagesStatus(messageStatusRequestList)
+        }
+        return Result.success()
+
+    }
+
+}
 
 
 

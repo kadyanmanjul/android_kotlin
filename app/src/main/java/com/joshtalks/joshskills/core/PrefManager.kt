@@ -4,6 +4,9 @@ import android.content.Context
 import android.content.SharedPreferences
 import androidx.preference.PreferenceManager
 import com.joshtalks.joshskills.BuildConfig
+import com.joshtalks.joshskills.repository.local.AppDatabase
+import com.joshtalks.joshskills.repository.local.model.MENTOR_PERSISTANT_KEY
+import com.joshtalks.joshskills.repository.local.model.USER_PERSISTANT_KEY
 
 const val COURSE_STARTED_FB_EVENT = "course_started_event"
 const val USER_UNIQUE_ID = "user_unique_id"
@@ -11,10 +14,12 @@ const val USER_UNIQUE_ID = "user_unique_id"
 
 object PrefManager {
 
+    @JvmStatic
+    private var prefManager: SharedPreferences = this.getPref(AppObjectController.joshApplication)
+
     private const val PREF_NAME = "JoshSkills"
     private lateinit var sharedPreferences: SharedPreferences
-    @JvmStatic
-    private var prefManager: SharedPreferences = getPref(AppObjectController.joshApplication)
+
 
 
     private fun getPref(context: Context): SharedPreferences {
@@ -33,7 +38,7 @@ object PrefManager {
     }
 
     fun getStringValue(key: String): String {
-        return prefManager.getString(key, "").toString()
+        return prefManager.getString(key, "") ?: EMPTY
     }
 
     fun getIntValue(key: String): Int {
@@ -60,6 +65,7 @@ object PrefManager {
         prefManager.edit().putLong(key, value).apply()
 
     }
+
     fun put(key: String, value: Boolean) {
         prefManager.edit().putBoolean(key, value).apply()
 
@@ -71,8 +77,11 @@ object PrefManager {
 
     }
 
+    fun logoutUser() {
+        prefManager.edit().clear().apply()
+        AppDatabase.clearDatabase()
 
-
+    }
 
 
 }

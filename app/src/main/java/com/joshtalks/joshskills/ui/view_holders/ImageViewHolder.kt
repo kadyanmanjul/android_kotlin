@@ -78,9 +78,9 @@ class ImageViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
 
     lateinit var imageViewHolder: ImageViewHolder
 
-
     @Resolve
-    fun onResolved() {
+    override fun onViewInflated() {
+        super.onViewInflated()
         download_container.visibility = GONE
         imageViewHolder = this
         message.sender?.let {

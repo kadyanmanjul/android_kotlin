@@ -12,6 +12,14 @@ const val DIR = "api/skill/v1"
 
 interface SignUpNetworkService {
 
+
+    @GET("$DIR/user/login/")
+    suspend fun getOtpForNumberAsync(@QueryMap params: Map<String, String>): Any
+
+    @POST("$DIR/user/otp_verify/")
+    suspend fun verifyOTP(@Body requestVerifyOTP: RequestVerifyOTP): LoginResponse
+
+
     @GET("$DIR/core/meta/")
     fun getCoreMeta(): Deferred<CoreMeta>
 
@@ -23,7 +31,7 @@ interface SignUpNetworkService {
     fun getPersonalProfileAsync(@Path("id") id: String): Deferred<Mentor>
 
 
-    @PATCH ("$DIR/mentor/{id}/")
+    @PATCH("$DIR/mentor/{id}/")
     fun updateUserAddressAsync(@Path("id") id: String, @Body params: UpdateUserLocality): Deferred<ProfileResponse>
 
 
@@ -36,22 +44,22 @@ interface SignUpNetworkService {
 
 
     @PATCH("$DIR/mentor/{id}/last_login/")
-    suspend fun userActive(@Path("id") id: String,@Body obj: Any)
+    suspend fun userActive(@Path("id") id: String, @Body obj: Any)
 
     @Multipart
     @POST("$DIR/user/{id}/upload_profile_pic/")
-    suspend fun uploadProfilePicture(@Path("id") id: String,@Part file: MultipartBody.Part): Any
+    suspend fun uploadProfilePicture(@Path("id") id: String, @Part file: MultipartBody.Part): Any
 
     @POST("$DIR/mentor/devices/")
     suspend fun updateDeviceDetails(@Body obj: UpdateDeviceRequest)
 
     @FormUrlEncoded
-    @PATCH ("$DIR/mentor/fcm/{id}/")
+    @PATCH("$DIR/mentor/fcm/{id}/")
     fun updateFCMToken(@Path("id") id: String, @FieldMap params: Map<String, String>): Deferred<Any>
 
     @FormUrlEncoded
     @POST("$DIR/mentor/fcm/")
-    fun uploadFCMToken( @FieldMap params: Map<String, String>): Deferred<Any>
+    fun uploadFCMToken(@FieldMap params: Map<String, String>): Deferred<Any>
 
     @FormUrlEncoded
     @POST("$DIR/mentor/register/anonymous/")
@@ -62,7 +70,15 @@ interface SignUpNetworkService {
     suspend fun getInstallReferrerAsync(@Body installReferrerModel: InstallReferrerModel)
 
 
+    @GET("$DIR/payment/create_order")
+    suspend fun getPaymentDetails(@QueryMap params: Map<String, String>): PaymentDetailsResponse
 
+
+    @GET("$DIR/course/test/")
+    suspend fun explorerCourse(@QueryMap params: Map<String, String> = mapOf("is_default" to "true")): List<CourseExploreModel>
+
+    @GET("$DIR/course/test_images/")
+    suspend fun explorerCourseDetails(@QueryMap params: Map<String, String>): List<CourseDetailsModel>
 
 
 }

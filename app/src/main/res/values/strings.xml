@@ -5,13 +5,15 @@
     <string name="login">Login</string>
     <string name="welcome_josh_skill">Welcome to Josh Skills</string>
     <string name="next">Next</string>
+    <string name="verify">Verify</string>
+
     <string name="verify_your_phone_number">Verify your phone number</string>
     <string name="sign_step_e_header">Josh skills will send a message to verify your phone number. please enter your number</string>
     <string name="finish">Finish</string>
 
     <string name="ok">OK</string>
     <string name="edit">edit</string>
-    <string name="label_6_digit_code">Enter 6-digit code</string>
+    <string name="label_6_digit_code">Enter 4-digit code</string>
 
     <string name="name">Name</string>
     <string name="dob">Date of Birth</string>
@@ -48,7 +50,6 @@
     <string name="register">Register</string>
 
 
-    <string name="text_test">fadsfasdfadsf</string>
     <string name="track_number">Track</string>
     <string name="play_button_description">Play button</string>
 
@@ -66,10 +67,68 @@
     <string name="slide_to_cancel">Slide To Cancel</string>
     <string name="buy_course">Buy Course</string>
     <string name="discover">Discover</string>
+    <string name="payment">Payment</string>
+    <string name="explorer_course">Explorer Course</string>
+    <string name="start_course">Start Course</string>
+
+
     <string name="find_more_courses">Find More Courses</string>
     <string name="please_enter_detail_toast">Please enter your details to continue</string>
+    <string name="internet_not_available_msz">Internet not available</string>
+
+    <string name="plz_wait">Please wait&#8230;&#8230;&#8230;</string>
+    <string name="resend_otp">Didn\'t get an otp?</string>
+    <string name="terms_and_condition_msz">By signing up, you confirm that you have read and \n  agree to our Terms &amp; Conditions </string>
+    <string name="enter_your_mobile_number">Enter your Mobile Number </string>
+    <string name="send_otp_msz">We will send you an OTP</string>
+    <string name="please_enter_your_mobile_number">Please enter your mobile number </string>
+    <string name="resend_otp_toast">OTP sent to %s</string>
+    <string name="resend_timer_text">Resend in 00:%s</string>
+
+    <string name="course_not_exist_number">Sorry! Ye Number hamare paas Registered nahi hai</string>
+    <string name="other_number_register">Kya aapne kisi or number se REGISTERED kiya tha</string>
+    <string name="relogin">Dobara Login Kare</string>
+    <string name="or">OR</string>
+    <string name="explore_more_course">EXPLORE MORE COURSES</string>
+    <string name="new_message_arrive">You have new messages</string>
 
 
+    <string name="time_ago_now">few moments ago</string>
+    <string name="time_ago_full_seconds">%1$d seconds ago</string>
+    <string name="time_ago_full_minute">%1$d minute ago</string>
+    <string name="time_ago_full_minutes">%1$d minutes ago</string>
+    <string name="time_ago_full_hour">%1$d hour ago</string>
+    <string name="time_ago_full_hours">%1$d hours ago</string>
+    <string name="time_ago_full_yesterday_at">Yesterday at %1$s</string>
+    <string name="time_ago_full_days">%1$d days ago</string>
+    <string name="time_ago_full_month">%1$d month ago</string>
+    <string name="time_ago_full_months">%1$d months ago</string>
+
+    <string name="time_ago_seconds">%1$d sec ago</string>
+    <string name="time_ago_minute">%1$d min ago</string>
+    <string name="time_ago_minutes">%1$d min ago</string>
+    <string name="time_ago_hour">%1$d h ago</string>
+    <string name="time_ago_hours">%1$d h ago</string>
+    <string name="time_ago_yesterday_at">Yesterday at %1$s</string>
+    <string name="time_ago_days">%1$d d ago</string>
+    <string name="time_ago_month">%1$d m ago</string>
+    <string name="time_ago_months">%1$d m ago</string>
+
+    <!-- Help Screen  -->
+    <string name="mobile_number">Mobile Number</string>
+    <string name="email_address">Email Address</string>
+    <string name="what_problem">What problem are you facing</string>
+    <string name="lodge_complaint">Lodge a Complaint</string>
+
+    <string name="attach_image">Attach an image</string>
+    <string name="report_problem">Report Problem</string>
+    <string name="type_your_name">Type your name</string>
+    <string name="type_your_mobile">Type your mobile</string>
+    <string name="type_your_email">Type your email</string>
+    <string name="type_problem">Please explain your problem in detail</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 
 </resources>

@@ -67,12 +67,11 @@ class VideoPlayerActivity : BaseActivity(), PlayerListener {
     var videoViewGraphList = mutableListOf<ListenGraph>()
     var graph: ListenGraph? = null
     var lastPos: Long = 0
-    var toolbarShowing = true
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        requestWindowFeature(Window.FEATURE_NO_TITLE)
         this.window.setFlags(
             WindowManager.LayoutParams.FLAG_FULLSCREEN,
             WindowManager.LayoutParams.FLAG_FULLSCREEN

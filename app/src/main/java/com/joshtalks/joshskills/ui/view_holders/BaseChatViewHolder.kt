@@ -1,5 +1,6 @@
 package com.joshtalks.joshskills.ui.view_holders
 
+import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
@@ -12,9 +13,11 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.custom_ui.custom_textview.AutoLinkMode
 import com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
 import com.joshtalks.joshskills.repository.local.entity.MESSAGE_DELIVER_STATUS
 import com.joshtalks.joshskills.repository.local.entity.Sender
+import com.mindorks.placeholderview.annotations.Resolve
 import java.lang.ref.WeakReference
 
 
@@ -155,7 +158,12 @@ abstract class BaseChatViewHolder(
                 ViewGroup.LayoutParams.WRAP_CONTENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT
             )
-            params.setMargins(com.vanniktech.emoji.Utils.dpToPx(getAppContext(), 80f), 0, com.vanniktech.emoji.Utils.dpToPx(getAppContext(), 7f), 0)
+            params.setMargins(
+                com.vanniktech.emoji.Utils.dpToPx(getAppContext(), 80f),
+                0,
+                com.vanniktech.emoji.Utils.dpToPx(getAppContext(), 7f),
+                0
+            )
             params.gravity = Gravity.END
             rootView.layoutParams = params
             rootView.setBackgroundResource(R.drawable.balloon_outgoing_normal)
@@ -165,7 +173,12 @@ abstract class BaseChatViewHolder(
                 ViewGroup.LayoutParams.WRAP_CONTENT
             )
             params.gravity = Gravity.START
-            params.setMargins(com.vanniktech.emoji.Utils.dpToPx(getAppContext(), 7f), 0, com.vanniktech.emoji.Utils.dpToPx(getAppContext(), 80f), 0)
+            params.setMargins(
+                com.vanniktech.emoji.Utils.dpToPx(getAppContext(), 7f),
+                0,
+                com.vanniktech.emoji.Utils.dpToPx(getAppContext(), 80f),
+                0
+            )
             rootView.layoutParams = params
             rootView.setBackgroundResource(R.drawable.balloon_incoming_normal)
         }
@@ -226,6 +239,11 @@ abstract class BaseChatViewHolder(
         }
 
 
+    }
+
+    open fun onViewInflated() {
+       // Log.e("getclass", javaClass.simpleName)
+        RxBus2.publish(message)
     }
 
 

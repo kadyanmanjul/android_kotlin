@@ -45,7 +45,7 @@ class RegisterInfoActivity : BaseActivity() {
                 val countryList = AppObjectController.gsonMapper.fromJson<List<CountryDetail>>(json,
                     object : TypeToken<List<CountryDetail>>() {}.type)
                 val country= countryList.find { it.code.equals(countryCodeValue,ignoreCase = true) }
-                layout.phoneNumberEt.prefix = country?.dialCode
+                layout.phoneNumberEt.prefix = country?.dialCode!!
 
             } catch (ex: Exception) {
             }

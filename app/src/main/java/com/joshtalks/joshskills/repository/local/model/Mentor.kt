@@ -12,8 +12,6 @@ class Mentor {
     @SerializedName("id")
     private var id: String? = null
 
-    @SerializedName("about")
-    private var about: String? = null
 
     @SerializedName("user")
     private var user: User? = null
@@ -75,6 +73,7 @@ class Mentor {
 
     fun updateFromResponse(mentor: Mentor) {
         setLocality(mentor.getLocality())
+        mentor.user?.let { updateUser(it) }
         update()
     }
 

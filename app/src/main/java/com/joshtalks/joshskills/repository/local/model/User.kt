@@ -9,11 +9,14 @@ import com.joshtalks.joshskills.repository.server.ProfileToken
 const val USER_PERSISTANT_KEY = "user"
 
 open class User {
-    @SerializedName("phoneNumber")
+    @SerializedName("mobile")
     var phoneNumber: String = ""
 
-    @SerializedName("token")
-    var token: ProfileToken? = null
+   /* @SerializedName("token")
+    var token: ProfileToken? = null*/
+   @SerializedName("token")
+   var token: String? = null
+
 
     @SerializedName("username")
     var username: String = ""

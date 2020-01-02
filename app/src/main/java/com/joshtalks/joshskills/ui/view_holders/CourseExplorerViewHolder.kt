@@ -15,7 +15,7 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.service.WorkMangerAdmin
 import com.joshtalks.joshskills.messaging.RxBus2
-import com.joshtalks.joshskills.repository.local.model.CourseExploreModel
+import com.joshtalks.joshskills.repository.server.CourseExploreModel
 import com.mindorks.placeholderview.annotations.Click
 import com.mindorks.placeholderview.annotations.Layout
 import com.mindorks.placeholderview.annotations.Resolve
@@ -36,6 +36,7 @@ class CourseExplorerViewHolder(private val courseExploreModel: CourseExploreMode
 
         Glide.with(getAppContext())
             .load(courseExploreModel.imageUrl)
+            .override(Target.SIZE_ORIGINAL)
             .optionalTransform(
                 WebpDrawable::class.java,
                 WebpDrawableTransformation(CircleCrop())
@@ -71,13 +72,13 @@ class CourseExplorerViewHolder(private val courseExploreModel: CourseExploreMode
 
     @Click(R.id.buy_now_button)
     fun onClick() {
-        WorkMangerAdmin.buyNowEventWorker(courseExploreModel.name)
+        WorkMangerAdmin.buyNowEventWorker(courseExploreModel.testName)
         RxBus2.publish(courseExploreModel)
     }
 
     @Click(R.id.image_view)
     fun onClickImageView() {
-        WorkMangerAdmin.buyNowImageEventWorker(courseExploreModel.name)
+        WorkMangerAdmin.buyNowImageEventWorker(courseExploreModel.testName)
         RxBus2.publish(courseExploreModel)
     }
 }

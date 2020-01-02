@@ -1,16 +1,20 @@
 package com.joshtalks.joshskills.ui.chat
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
 import android.graphics.Color
+import android.graphics.Rect
 import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.Gravity
 import android.view.MotionEvent
 import android.view.View
 import android.view.View.GONE
@@ -32,7 +36,9 @@ import com.bumptech.glide.integration.webp.decoder.WebpDrawableTransformation
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.bumptech.glide.request.target.Target
 import com.crashlytics.android.Crashlytics
+import com.github.pwittchen.reactivenetwork.library.rx2.ReactiveNetwork
 import com.google.android.material.appbar.MaterialToolbar
+import com.google.android.material.snackbar.Snackbar
 import com.greentoad.turtlebody.mediapicker.MediaPicker
 import com.greentoad.turtlebody.mediapicker.core.MediaPickerConfig
 import com.joshtalks.appcamera.pix.JoshCameraActivity
@@ -42,6 +48,7 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
+import com.joshtalks.joshskills.core.custom_ui.JoshSnackBar
 import com.joshtalks.joshskills.core.custom_ui.audioplayer.JcPlayerManager
 import com.joshtalks.joshskills.core.custom_ui.decorator.LayoutMarginDecoration
 import com.joshtalks.joshskills.core.io.AppDirectory
@@ -52,6 +59,7 @@ import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
 import com.joshtalks.joshskills.repository.local.entity.DOWNLOAD_STATUS
+import com.joshtalks.joshskills.repository.local.entity.MESSAGE_STATUS
 import com.joshtalks.joshskills.repository.local.eventbus.*
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.server.chat_message.TAudioMessage
@@ -72,22 +80,24 @@ import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
+import com.muddzdev.styleabletoast.StyleableToast
 import com.r0adkll.slidr.Slidr
 import com.vanniktech.emoji.EmojiPopup
 import de.hdodenhof.circleimageview.CircleImageView
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
+import java.lang.Runnable
 import java.lang.ref.WeakReference
 import java.util.*
+import kotlin.concurrent.scheduleAtFixedRate
 
 const val CHAT_ROOM_OBJECT = "chat_room"
 const val IMAGE_SELECT_REQUEST_CODE = 1077
+const val VISIBILE_ITEM_PERCENT = 75
 
-class ConversationActivity() : BaseActivity() {
+class ConversationActivity : BaseActivity() {
 
     companion object {
         fun startConversionActivity(context: Context, inboxEntity: InboxEntity) {
@@ -108,13 +118,16 @@ class ConversationActivity() : BaseActivity() {
     private lateinit var linearLayoutManager: LinearLayoutManager
     private var conversationList = linkedSetOf<ChatModel>()
     private var removingConversationList = linkedSetOf<ChatModel>()
+    private lateinit var internetAvailableStatus: Snackbar
+    private val readChatList: MutableSet<ChatModel> = mutableSetOf()
+    private var readMessageTimerTask: TimerTask? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         requestedOrientation = if (Build.VERSION.SDK_INT == 26) {
-            ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED;
+            ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
         } else {
-            ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
+            ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         }
         super.onCreate(savedInstanceState)
         if (intent.hasExtra(CHAT_ROOM_OBJECT)) {
@@ -128,9 +141,24 @@ class ConversationActivity() : BaseActivity() {
         conversationBinding.handler = this
         activityRef = WeakReference(this)
         initChat()
-
     }
 
+    override fun onNewIntent(mIntent: Intent?) {
+        super.onNewIntent(mIntent)
+        super.processIntent(mIntent)
+        mIntent?.hasExtra(CHAT_ROOM_OBJECT)?.let {
+            if (it) {
+                val temp = mIntent.getSerializableExtra(CHAT_ROOM_OBJECT) as InboxEntity?
+                temp?.let { inboxObj ->
+                    if (inboxEntity.conversation_id != inboxObj.conversation_id) {
+                        inboxEntity = inboxObj
+                        initViewModel()
+                        initChat()
+                    }
+                }
+            }
+        }
+    }
 
     private fun initViewModel() {
         try {
@@ -146,6 +174,7 @@ class ConversationActivity() : BaseActivity() {
 
 
     private fun initChat() {
+        initSnackBar()
         initActivityAnimation()
         setToolbar()
         initRV()
@@ -153,28 +182,23 @@ class ConversationActivity() : BaseActivity() {
         liveDataObservable()
         initView()
         AppAnalytics.create(AnalyticsEvent.CHAT_SCREEN.NAME).push()
-        processIntent(intent)
+        super.processIntent(intent)
         conversationViewModel.getAllUserMessage()
-
+        refreshChat()
     }
 
-
-    override fun onNewIntent(mIntent: Intent?) {
-        super.onNewIntent(mIntent)
-        processIntent(mIntent)
-        mIntent?.hasExtra(CHAT_ROOM_OBJECT)?.let {
-            if (it) {
-                val temp = mIntent.getSerializableExtra(CHAT_ROOM_OBJECT) as InboxEntity?
-                temp?.let { inboxObj ->
-                    if (inboxEntity.conversation_id != inboxObj.conversation_id) {
-                        inboxEntity = inboxObj
-                        initViewModel()
-                        initChat()
-                    }
-                }
+    private fun refreshChat() {
+        conversationBinding.refreshLayout.setOnRefreshListener {
+            if (Utils.isInternetAvailable()) {
+                conversationBinding.refreshLayout.isRefreshing = true
+                conversationViewModel.refreshChatOnManual()
+            } else {
+                conversationBinding.refreshLayout.isRefreshing = false
             }
+
         }
     }
+
 
     private fun initActivityAnimation() {
         val primary = ContextCompat.getColor(applicationContext, R.color.colorPrimaryDark)
@@ -221,6 +245,29 @@ class ConversationActivity() : BaseActivity() {
 
     }
 
+    private fun initSnackBar() {
+        internetAvailableStatus = JoshSnackBar.builder().setActivity(this)
+            .setBackgroundColor(ContextCompat.getColor(application, R.color.white))
+            .setActionText("Enable")
+            .setDuration(JoshSnackBar.LENGTH_INDEFINITE)
+            .setTextSize(14f)
+            .setTextColor(ContextCompat.getColor(application, R.color.gray_79))
+            .setText("Network not available!")
+            .setMaxLines(1)
+            //.centerText()
+            .setActionTextColor(ContextCompat.getColor(application, R.color.gray_79))
+            .setActionTextSize(12f)
+            .setActionClickListener {
+                val intent = Intent(Settings.ACTION_SETTINGS).apply {
+                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                }
+                startActivity(intent)
+            }
+            .build()
+        // cnack.dismiss()
+
+    }
+
     private fun initRV() {
         linearLayoutManager = LinearLayoutManager(this)
         linearLayoutManager.stackFromEnd = true
@@ -245,20 +292,21 @@ class ConversationActivity() : BaseActivity() {
                 } else if (recyclerView.canScrollVertically(-1) && newState == RecyclerView.SCROLL_STATE_IDLE) {
                     conversationBinding.scrollToEndButton.visibility = VISIBLE
                 }
-
+                visibleItem()
             }
+
         })
     }
 
     private fun setUpEmojiPopup() {
-        emojiPopup = EmojiPopup.Builder.fromRootView(conversationBinding.root)
+        emojiPopup = EmojiPopup.Builder.fromRootView(conversationBinding.rootView)
             .setOnEmojiBackspaceClickListener {
             }
             .setOnEmojiClickListener { _, _ ->
                 AppAnalytics.create(AnalyticsEvent.EMOJI_CLICKED.NAME).push()
             }
             .setOnEmojiPopupShownListener { conversationBinding.ivEmoji.setImageResource(R.drawable.ic_keyboard) }
-            .setOnSoftKeyboardOpenListener { ignore -> }
+            .setOnSoftKeyboardOpenListener { }
             .setOnEmojiPopupDismissListener { conversationBinding.ivEmoji.setImageResource(R.drawable.happy_face) }
             .setOnSoftKeyboardCloseListener { }
             .setKeyboardAnimationStyle(R.style.emoji_fade_animation_style)
@@ -278,6 +326,7 @@ class ConversationActivity() : BaseActivity() {
             .build(conversationBinding.chatEdit)
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private fun initView() {
         conversationBinding.recordButton.setRecordView(conversationBinding.recordView)
         conversationBinding.recordView.cancelBounds = 2f
@@ -309,7 +358,7 @@ class ConversationActivity() : BaseActivity() {
                     conversationViewModel.stopRecording()
                     conversationViewModel.recordFile.let {
                         addUploadAudioMedia(it.absolutePath)
-                        window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+                        window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
                     }
                 } catch (ex: Exception) {
                     ex.printStackTrace()
@@ -329,7 +378,7 @@ class ConversationActivity() : BaseActivity() {
             conversationBinding.recordView.visibility = GONE
             conversationViewModel.stopRecording()
             AppAnalytics.create(AnalyticsEvent.AUDIO_CANCELLED.NAME).push()
-            window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+            window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         }
         conversationBinding.chatEdit.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
@@ -340,7 +389,7 @@ class ConversationActivity() : BaseActivity() {
                     conversationBinding.quickToggle.show()
                 } else {
                     conversationBinding.recordButton.goToState(SECOND_STATE)
-                    conversationBinding.recordButton.isListenForRecord =false
+                    conversationBinding.recordButton.isListenForRecord = false
                     conversationBinding.quickToggle.hide()
 
                 }
@@ -379,7 +428,7 @@ class ConversationActivity() : BaseActivity() {
 
         conversationBinding.recordButton.setOnTouchListener(OnRecordTouchListener {
             if (conversationBinding.chatEdit.text.toString().isEmpty() && it == MotionEvent.ACTION_DOWN) {
-                checkAudioPermission(null, settingFlag = true)
+                checkAudioPermission(settingFlag = true)
             }
         })
 
@@ -498,6 +547,8 @@ class ConversationActivity() : BaseActivity() {
             }
             conversationBinding.chatRv.refresh()
             scrollToEnd()
+            readMessageDatabaseUpdate()
+
         })
 
         conversationViewModel.refreshViewLiveData.observe(this, Observer { chatModel ->
@@ -632,14 +683,27 @@ class ConversationActivity() : BaseActivity() {
                         removingConversationList.add(it.chatModel)
                     }
                 }
-                if (removingConversationList.size > 0) {
-                 //   findViewById<MaterialToolbar>(R.id.toolbar_delete_chat).visibility = VISIBLE
-                } else {
-                   // findViewById<MaterialToolbar>(R.id.toolbar_delete_chat).visibility = GONE
-                }
-                /*findViewById<AppCompatTextView>(R.id.message_delete_count).text =
-                    removingConversationList.size.toString()*/
             })
+
+        compositeDisposable.add(
+            RxBus2.listen(ChatModel::class.java)
+                .subscribeOn(Schedulers.computation())
+                .subscribe {
+                    visibleItem()
+                })
+
+        compositeDisposable.add(
+            RxBus2.listen(MessageCompleteEventBus::class.java)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe {
+                    if (conversationBinding.refreshLayout.isRefreshing && it.flag) {
+                        StyleableToast.Builder(this).gravity(Gravity.BOTTOM)
+                            .text(getString(R.string.new_message_arrive)).cornerRadius(16).length(Toast.LENGTH_LONG).solidBackground().show()
+                    }
+                    conversationBinding.refreshLayout.isRefreshing = false
+                })
+
 
     }
 
@@ -823,7 +887,6 @@ class ConversationActivity() : BaseActivity() {
             cell
         )
         scrollToEnd()
-
         conversationViewModel.uploadMedia(
             videoSentFile.absolutePath, tVideoMessage, cell.message
         )
@@ -847,7 +910,7 @@ class ConversationActivity() : BaseActivity() {
     }
 
     private fun checkAudioPermission(
-        callback: Runnable?,
+        callback: Runnable? = null,
         settingFlag: Boolean = false
     ) {
         Dexter.withActivity(this)
@@ -896,12 +959,15 @@ class ConversationActivity() : BaseActivity() {
         activityRef = WeakReference(this)
         subscribeRXBus()
         conversationBinding.chatRv.refresh()
+        observeNetwork()
+
     }
 
 
     override fun onStop() {
         super.onStop()
         compositeDisposable.clear()
+        readMessageTimerTask?.cancel()
     }
 
 
@@ -939,6 +1005,82 @@ class ConversationActivity() : BaseActivity() {
             this,
             Manifest.permission.WRITE_EXTERNAL_STORAGE
         ) == PackageManager.PERMISSION_GRANTED
+    }
+
+
+    private fun observeNetwork() {
+
+        compositeDisposable.add(
+            ReactiveNetwork.observeNetworkConnectivity(applicationContext)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe { connectivity ->
+                    if (connectivity.available()) {
+                        internetAvailable()
+                    } else {
+                        internetNotAvailable()
+                    }
+                    // Log.i(TAG, connectivity.toString())
+                })
+    }
+
+
+    private fun internetNotAvailable() {
+        internetAvailableStatus.show()
+
+    }
+
+    private fun internetAvailable() {
+        internetAvailableStatus.dismiss()
+
+    }
+
+    fun visibleItem() {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val firstPosition = linearLayoutManager.findFirstVisibleItemPosition()
+                val lastPosition = linearLayoutManager.findLastVisibleItemPosition()
+
+                val globalVisibleRect = Rect()
+                conversationBinding.chatRv.getGlobalVisibleRect(globalVisibleRect)
+                var rowRect: Rect
+
+                for (x in firstPosition..lastPosition step 1) {
+                    rowRect = Rect()
+                    linearLayoutManager.findViewByPosition(x)!!.getGlobalVisibleRect(rowRect)
+
+                    var percentFirst: Int?
+                    percentFirst = if (rowRect.bottom >= globalVisibleRect.bottom) {
+                        val visibleHeightFirst = globalVisibleRect.bottom - rowRect.top
+                        (visibleHeightFirst * 100) / linearLayoutManager.findViewByPosition(
+                            x
+                        )!!.height
+                    } else {
+                        val visibleHeightFirst = rowRect.bottom - globalVisibleRect.top
+                        (visibleHeightFirst * 100) / linearLayoutManager.findViewByPosition(
+                            x
+                        )!!.height
+                    }
+
+
+                    if (percentFirst > VISIBILE_ITEM_PERCENT) {
+                        val chatModel = (conversationBinding.chatRv.getViewResolverAtPosition(
+                            lastPosition
+                        ) as BaseChatViewHolder).message
+                        chatModel.status = MESSAGE_STATUS.SEEN_BY_USER
+                        readChatList.add(chatModel)
+                    }
+                }
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+            }
+        }
+    }
+
+    private fun readMessageDatabaseUpdate() {
+        readMessageTimerTask = Timer("VisibleMessage", false).scheduleAtFixedRate(5000, 1500) {
+            conversationViewModel.updateInDatabaseReadMessage(readChatList)
+        }
     }
 
 

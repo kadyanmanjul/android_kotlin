@@ -49,7 +49,9 @@ class TextViewHolder(activityRef: WeakReference<FragmentActivity>, message: Chat
 
 
     @Resolve
-    fun onResolved() {
+    override fun onViewInflated() {
+        super.onViewInflated()
+
         text_title.text= EMPTY
 
         text_title.text = EMPTY

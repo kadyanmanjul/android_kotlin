@@ -130,7 +130,8 @@ class AudioPlayerViewHolder(activityRef: WeakReference<FragmentActivity>, messag
 
 
     @Resolve
-    fun onResolved() {
+    override fun onViewInflated() {
+        super.onViewInflated()
         profileImage.setImageResource(R.drawable.ic_user_rec_placeholder)
         audioViewSent.visibility = android.view.View.GONE
         audioViewReceived.visibility = android.view.View.GONE
@@ -142,7 +143,12 @@ class AudioPlayerViewHolder(activityRef: WeakReference<FragmentActivity>, messag
                     ViewGroup.LayoutParams.WRAP_CONTENT,
                     ViewGroup.LayoutParams.WRAP_CONTENT
                 )
-                params.setMargins(com.vanniktech.emoji.Utils.dpToPx(getAppContext(), 80f), 0, com.vanniktech.emoji.Utils.dpToPx(getAppContext(), 7f), 0)
+                params.setMargins(
+                    com.vanniktech.emoji.Utils.dpToPx(getAppContext(), 80f),
+                    0,
+                    com.vanniktech.emoji.Utils.dpToPx(getAppContext(), 7f),
+                    0
+                )
                 params.gravity = Gravity.END
                 root_view.layoutParams = params
                 root_view.setBackgroundResource(R.drawable.balloon_outgoing_normal)
@@ -153,13 +159,18 @@ class AudioPlayerViewHolder(activityRef: WeakReference<FragmentActivity>, messag
                     ViewGroup.LayoutParams.WRAP_CONTENT
                 )
                 params.gravity = Gravity.START
-                params.setMargins(com.vanniktech.emoji.Utils.dpToPx(getAppContext(), 7f), 0, com.vanniktech.emoji.Utils.dpToPx(getAppContext(), 80f), 0)
+                params.setMargins(
+                    com.vanniktech.emoji.Utils.dpToPx(getAppContext(), 7f),
+                    0,
+                    com.vanniktech.emoji.Utils.dpToPx(getAppContext(), 80f),
+                    0
+                )
                 root_view.layoutParams = params
                 root_view.setBackgroundResource(R.drawable.balloon_incoming_normal)
                 audioViewReceived.visibility = android.view.View.VISIBLE
             }
             it.user?.photo_url?.run {
-               // setUrlInImageView(profileImage,this)
+                // setUrlInImageView(profileImage,this)
             }
         }
 

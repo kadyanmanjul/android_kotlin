@@ -1,6 +1,9 @@
 package com.joshtalks.joshskills.core
 
+import android.accounts.Account
+import android.accounts.AccountManager
 import android.app.Activity
+import android.app.ActivityManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
@@ -19,7 +22,6 @@ import android.os.Build
 import android.os.Environment
 import android.provider.Settings
 import android.text.format.DateUtils
-import android.util.Log
 import android.util.TypedValue
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.browser.customtabs.CustomTabsIntent
@@ -29,10 +31,10 @@ import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory
 import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.custom_ui.CustomTabHelper
-import com.joshtalks.joshskills.core.customlauncher.CustomTabsLauncher
+import com.joshtalks.joshskills.core.datetimeutils.DateTimeStyle
+import com.joshtalks.joshskills.core.datetimeutils.DateTimeUtils
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
-import saschpe.android.customtabs.CustomTabsHelper
 import java.io.File
 import java.io.FileOutputStream
 import java.io.OutputStream
@@ -119,7 +121,7 @@ object Utils {
         } else if (isYesterday(date)) {
             return "Yesterday"
         } else {
-            return DD_MM_YYYY.format(date)
+            return DateTimeUtils.formatWithStyle(date, DateTimeStyle.SHORT)
         }
 
 
@@ -424,6 +426,48 @@ object Utils {
         } catch (ex: Exception) {
             ex.printStackTrace()
         }
+    }
+
+    fun getUserPrimaryEmail(context: Context): String {
+        val email = "english@joshtalks.com"
+        try {
+            val accountManager = AccountManager.get(context)
+            val account = getAccount(accountManager)
+            return if (account == null) {
+                email
+            } else {
+                account.name
+            }
+        } catch (ex: Exception) {
+        }
+        return email
+
+    }
+
+    private fun getAccount(accountManager: AccountManager): Account? {
+        val accounts: Array<Account> = accountManager.getAccountsByType("com.google")
+        val account: Account?
+        account = if (accounts.isNotEmpty()) {
+            accounts[0]
+        } else {
+            null
+        }
+        return account
+    }
+
+    fun isAppRunning(context: Context, packageName: String): Boolean {
+        val activityManager: ActivityManager? =
+            context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager?
+        if (activityManager != null) {
+            val procInfos: List<ActivityManager.RunningAppProcessInfo> =
+                activityManager.runningAppProcesses
+            for (processInfo in procInfos) {
+                if (processInfo.processName == packageName) {
+                    return true
+                }
+            }
+        }
+        return false
     }
 
 }

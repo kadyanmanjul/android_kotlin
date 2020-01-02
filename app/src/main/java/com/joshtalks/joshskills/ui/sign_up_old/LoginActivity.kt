@@ -5,16 +5,10 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import com.facebook.accountkit.AccountKitLoginResult
-import com.facebook.accountkit.ui.AccountKitActivity
-import com.facebook.accountkit.ui.AccountKitConfiguration
-import com.facebook.accountkit.ui.LoginType
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.BaseActivity
-import com.joshtalks.joshskills.core.RC_ACCOUNT_KIT
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
-import com.joshtalks.joshskills.core.custom_ui.FullScreenProgressDialog
 
 class LoginActivity : BaseActivity() {
     private val viewModel: LoginViewModel by lazy {
@@ -24,7 +18,7 @@ class LoginActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
-        launchFBSignUpActivity()
+        //launchFBSignUpActivity()
         addObserver()
 
     }
@@ -46,7 +40,7 @@ class LoginActivity : BaseActivity() {
 
     }
 
-    private fun launchFBSignUpActivity() {
+   /* private fun launchFBSignUpActivity() {
         val intent = Intent(this, AccountKitActivity::class.java)
         val configurationBuilder = AccountKitConfiguration.AccountKitConfigurationBuilder(
             LoginType.PHONE,
@@ -60,9 +54,9 @@ class LoginActivity : BaseActivity() {
         AppAnalytics.create(AnalyticsEvent.OTP_ACCOUNT_KIT_ACTIVITY.NAME).push()
 
 
-    }
+    }*/
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+    /*override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
 
         super.onActivityResult(requestCode, resultCode, data)
 
@@ -88,7 +82,7 @@ class LoginActivity : BaseActivity() {
                 }
             }
         }
-    }
+    }*/
 
 
     private fun showError(error: String?) {

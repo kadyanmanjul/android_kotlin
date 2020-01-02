@@ -27,7 +27,6 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.core.custom_ui.JoshTextWatcher
 import com.joshtalks.joshskills.databinding.ActivitySearchLocationBinding
-import com.joshtalks.joshskills.messaging.RxBus
 import com.joshtalks.joshskills.repository.local.model.googlelocation.GoogleSearchLocationObj
 import com.joshtalks.joshskills.ui.location.adapter.SearchLocationAdapter
 import io.reactivex.disposables.CompositeDisposable
@@ -79,7 +78,7 @@ class SearchLocationActivity : BaseActivity(), OnFailureListener,
         layout.etSearch.requestFocus()
 
 
-        compositeDisposable.add(
+        /*compositeDisposable.add(
             RxBus.getDefault().toObservable()
             .subscribeOn(Schedulers.io()).subscribe({
                 if (it is GoogleSearchLocationObj) {
@@ -89,7 +88,7 @@ class SearchLocationActivity : BaseActivity(), OnFailureListener,
 
                 it.printStackTrace()
             })
-        )
+        )*/
 
     }
 

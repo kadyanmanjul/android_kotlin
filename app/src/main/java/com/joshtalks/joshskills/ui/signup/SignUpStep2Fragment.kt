@@ -1,32 +1,57 @@
 package com.joshtalks.joshskills.ui.signup
 
-import android.content.Context
+import android.graphics.Color
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
+import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import com.github.razir.progressbutton.*
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.SignUpStepStatus
+import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.databinding.FragmentSignUpStep2Binding
+import com.joshtalks.joshskills.messaging.RxBus2
+import com.joshtalks.joshskills.repository.local.eventbus.OTPReceivedEventBus
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
+import kotlinx.android.synthetic.main.fragment_sign_up_step3.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import java.util.concurrent.TimeUnit
 
 class SignUpStep2Fragment : Fragment() {
 
+    companion object {
+        @JvmStatic
+        fun newInstance() =
+            SignUpStep2Fragment().apply {
+            }
+    }
 
     private lateinit var signUpStep2Binding: FragmentSignUpStep2Binding
 
-    private lateinit var viewModel:SignUpViewModel
+    private lateinit var viewModel: SignUpViewModel
+    private val compositeDisposable = CompositeDisposable()
+    private var timer: CountDownTimer? = null
 
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel = activity?.run {ViewModelProviders.of(this)[SignUpViewModel::class.java]} ?: throw Exception("Invalid Activity")
+        activity?.window?.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+
+        viewModel = activity?.run { ViewModelProviders.of(this)[SignUpViewModel::class.java] }
+            ?: throw Exception("Invalid Activity")
 
     }
 
@@ -34,21 +59,147 @@ class SignUpStep2Fragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        signUpStep2Binding = DataBindingUtil.inflate(inflater, R.layout.fragment_sign_up_step2, container, false)
+        signUpStep2Binding =
+            DataBindingUtil.inflate(inflater, R.layout.fragment_sign_up_step2, container, false)
         signUpStep2Binding.lifecycleOwner = this
         signUpStep2Binding.signUpViewModel = viewModel
-       // signUpStep2Binding.us
-        //signUpStep2Binding.phoneNumberObservable1=viewModel.phoneNumberObservable
-       // signUpStep2Binding.textWatcher=viewModel.phoneNumberTextWatcher
+        signUpStep2Binding.handler = this
+        return signUpStep2Binding.root
+    }
 
-        return signUpStep2Binding.root;
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        signUpStep2Binding.otpView.setText(EMPTY)
+        startTimer()
+        activity?.findViewById<View>(R.id.back_tv)?.visibility = View.VISIBLE
+        otp_view.requestFocus()
+        activity?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
+        initProgressView()
+        signUpStep2Binding.otpView.setOtpCompletionListener {
+               verifyOTP()
+        }
+        viewModel.progressDialogStatus.observe(this, Observer {
+            if (it.not()) {
+                hideProgress()
+            }
+        })
+        viewModel.signUpStatus.observe(this, Observer {
+            when (it) {
+                SignUpStepStatus.SignUpResendOTP -> Toast.makeText(
+                    AppObjectController.joshApplication,
+                    getString(R.string.resend_otp_toast),
+                    Toast.LENGTH_SHORT
+                ).show()
+
+                else -> return@Observer
+            }
+        })
+        signUpStep2Binding.tvMobile.text = viewModel.countryCode + viewModel.phoneNumber
+
+    }
+
+    private fun initProgressView() {
+        bindProgressButton(signUpStep2Binding.btnVerify)
+        signUpStep2Binding.btnVerify.attachTextChangeAnimator()
+
     }
 
 
-    companion object {
+    fun verifyOTP() {
+        if (Utils.isInternetAvailable().not()) {
+            Toast.makeText(
+                AppObjectController.joshApplication,
+                getString(R.string.internet_not_available_msz),
+                Toast.LENGTH_SHORT
+            ).show()
+            return
+        }
 
-        @JvmStatic
-        fun newInstance() = SignUpStep2Fragment()
+        if (signUpStep2Binding.otpView.text.isNullOrEmpty().not() || viewModel.otpField.get().isNullOrEmpty().not()) {
+            showProgress()
+            viewModel.verifyOTP(signUpStep2Binding.otpView.text?.toString())
+        } else {
+            Toast.makeText(
+                AppObjectController.joshApplication,
+                "Please enter OTP",
+                Toast.LENGTH_SHORT
+            ).show()
+            return
+        }
+    }
 
+    fun resendOTP() {
+        showProgress()
+        viewModel.resendOTP(viewModel.phoneNumber)
+    }
+
+
+    private fun showProgress() {
+        signUpStep2Binding.btnVerify.showProgress {
+            buttonTextRes = R.string.plz_wait
+            progressColors = intArrayOf(Color.WHITE, Color.RED, Color.GREEN)
+            gravity = DrawableButton.GRAVITY_TEXT_END
+            progressRadiusRes = R.dimen.dp8
+            progressStrokeRes = R.dimen.dp2
+            textMarginRes = R.dimen.dp8
+        }
+        signUpStep2Binding.btnVerify.isEnabled = false
+        signUpStep2Binding.tvResendMessage.isEnabled = false
+    }
+
+
+    private fun hideProgress() {
+        signUpStep2Binding.tvResendMessage.isEnabled = true
+        signUpStep2Binding.btnVerify.isEnabled = true
+        signUpStep2Binding.btnVerify.hideProgress(getString(R.string.next))
+    }
+
+
+    override fun onResume() {
+        super.onResume()
+        subscribeRXBus()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        activity?.window?.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        compositeDisposable.clear()
+        timer?.cancel()
+    }
+
+    private fun subscribeRXBus() {
+        compositeDisposable.add(
+            RxBus2.listen(OTPReceivedEventBus::class.java)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({
+                    signUpStep2Binding.otpView.setText(it.otp)
+                }, {
+                    it.printStackTrace()
+                })
+        )
+    }
+
+    private fun startTimer() {
+        timer = object : CountDownTimer(60_000, 1000) {
+            override fun onTick(millisUntilFinished: Long) {
+                CoroutineScope(Dispatchers.Main).launch {
+                    signUpStep2Binding.tvResendMessage.text = getString(
+                        R.string.resend_timer_text,
+                        TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished).toString()
+                    )
+                    signUpStep2Binding.tvResendMessage.isEnabled = false
+
+                }
+            }
+
+            override fun onFinish() {
+                CoroutineScope(Dispatchers.Main).launch {
+                    signUpStep2Binding.tvResendMessage.text = getString(R.string.resend_otp)
+                    signUpStep2Binding.tvResendMessage.isEnabled = true
+                }
+            }
+        }
+        timer?.start()
     }
 }

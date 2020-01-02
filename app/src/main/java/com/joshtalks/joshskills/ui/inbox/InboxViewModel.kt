@@ -35,10 +35,10 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-     fun getCourseFromServer() {
+    private fun getCourseFromServer() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val courseList = AppObjectController.chatNetworkService.getRegisterCourses().await()
+                val courseList = AppObjectController.chatNetworkService.getRegisterCourses()
                 if (courseList.isNullOrEmpty()) {
                     registerCourseNetworkLiveData.postValue(null)
                 } else {
@@ -46,7 +46,8 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
                         registerCourseNetworkLiveData.postValue(appDatabase.courseDao().getRegisterCourseMinimal())
                     }
                 }
-            }catch (ex:Exception){}
+            } catch (ex: Exception) {
+            }
         }
     }
 

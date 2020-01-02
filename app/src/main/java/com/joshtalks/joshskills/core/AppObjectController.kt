@@ -1,8 +1,10 @@
 package com.joshtalks.joshskills.core
 
+import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import com.bumptech.glide.load.MultiTransformation
 import com.clevertap.android.sdk.ActivityLifecycleCallback
 import com.crashlytics.android.Crashlytics
@@ -10,22 +12,24 @@ import com.crashlytics.android.core.CrashlyticsCore
 import com.facebook.appevents.AppEventsLogger
 import com.facebook.stetho.okhttp3.StethoInterceptor
 import com.google.android.exoplayer2.util.Util
+import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
 import com.google.gson.*
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.datetimeutils.DateTimeUtils
 import com.joshtalks.joshskills.core.service.DownloadUtils
 import com.joshtalks.joshskills.core.service.WorkMangerAdmin
 import com.joshtalks.joshskills.core.service.video_download.DownloadTracker
 import com.joshtalks.joshskills.core.service.video_download.VideoDownloadController
 import com.joshtalks.joshskills.repository.local.AppDatabase
-import com.joshtalks.joshskills.repository.local.DatabaseUtils
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.service.ChatNetworkService
 import com.joshtalks.joshskills.repository.service.MediaDUNetworkService
 import com.joshtalks.joshskills.repository.service.SignUpNetworkService
+import com.joshtalks.joshskills.ui.signup.SignUpActivity
 import com.joshtalks.joshskills.ui.view_holders.IMAGE_SIZE
 import com.joshtalks.joshskills.ui.view_holders.ROUND_CORNER
 import com.tonyodev.fetch2.Fetch
@@ -55,11 +59,14 @@ import java.util.concurrent.TimeUnit
 val KEY_AUTHORIZATION = "Authorization"
 val KEY_APP_VERSION_CODE = "app-version-code"
 val KEY_APP_VERSION_NAME = "app-version-name"
+val KEY_APP_USER_AGENT = "HTTP_USER_AGENT"
 
-const val SERVER_URL = "https://skills.joshtalks.org"
+
+//const val SERVER_URL = "https://skills.joshtalks.org"
+//const val SERVER_URL = "http://staging.joshtalks.org"
 //const val SERVER_URL = "http://13.127.85.171:8000"
 
-//const val SERVER_URL = "http://192.168.0.141:8080"
+const val SERVER_URL = "http://192.168.0.141:8080"
 
 internal class AppObjectController {
 
@@ -126,12 +133,19 @@ internal class AppObjectController {
         @JvmStatic
         lateinit var facebookEventLogger: AppEventsLogger
 
+        @JvmStatic
+        lateinit var firebaseAnalytics: FirebaseAnalytics
+
+
         fun init(context: JoshApplication): AppObjectController {
-            joshApplication = context;
+            joshApplication = context
             appDatabase = AppDatabase.getDatabase(context)!!
             com.joshtalks.joshskills.core.ActivityLifecycleCallback.register(joshApplication)
             ActivityLifecycleCallback.register(joshApplication)
+            DateTimeUtils.setTimeZone("UTC")
 
+
+            firebaseAnalytics = FirebaseAnalytics.getInstance(joshApplication)
             AppEventsLogger.activateApp(joshApplication)
             facebookEventLogger = AppEventsLogger.newLogger(joshApplication)
 
@@ -168,6 +182,12 @@ internal class AppObjectController {
 
 
             val builder = OkHttpClient().newBuilder()
+                .connectTimeout(20, TimeUnit.SECONDS)
+                .writeTimeout(20, TimeUnit.SECONDS)
+                .readTimeout(20, TimeUnit.SECONDS)
+                .retryOnConnectionFailure(true)
+                .addInterceptor(StatusCodeInterceptor())
+
             if (BuildConfig.DEBUG) {
                 builder.addNetworkInterceptor(StethoInterceptor())
                 val logging = HttpLoggingInterceptor().apply {
@@ -182,10 +202,14 @@ internal class AppObjectController {
                     if (User.getInstance().token != null) {
                         newRequest.addHeader(
                             KEY_AUTHORIZATION,
-                            "Bearer " + (User.getInstance().token?.accessToken ?: "")
+                            "JWT " + (User.getInstance().token ?: "")
                         )
                             .addHeader(KEY_APP_VERSION_NAME, BuildConfig.VERSION_NAME)
                             .addHeader(KEY_APP_VERSION_CODE, BuildConfig.VERSION_CODE.toString())
+                            .addHeader(
+                                KEY_APP_USER_AGENT,
+                                "APP_" + BuildConfig.VERSION_NAME + "_" + BuildConfig.VERSION_CODE.toString()
+                            )
                     }
                     return chain.proceed(newRequest.build())
                 }
@@ -210,6 +234,8 @@ internal class AppObjectController {
                 .writeTimeout(1, TimeUnit.MINUTES)
                 .readTimeout(1, TimeUnit.MINUTES)
                 .retryOnConnectionFailure(true)
+                .addInterceptor(StatusCodeInterceptor())
+
             if (BuildConfig.DEBUG) {
                 mediaOkhttpBuilder.addNetworkInterceptor(StethoInterceptor())
                 val logging = HttpLoggingInterceptor().apply {
@@ -352,4 +378,29 @@ internal class AppObjectController {
         }*/
     }
 
+}
+
+
+class StatusCodeInterceptor : Interceptor {
+    override fun intercept(chain: Interceptor.Chain): Response {
+        val response = chain.proceed(chain.request())
+        if (response.code in 401..403) {
+            if (Utils.isAppRunning(
+                    AppObjectController.joshApplication,
+                    AppObjectController.joshApplication.packageName
+                )
+            ) {
+                val intent = Intent(AppObjectController.joshApplication, SignUpActivity::class.java)
+                intent.apply {
+                    addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                }
+                PrefManager.logoutUser()
+                AppObjectController.joshApplication.startActivity(intent)
+            }
+        }
+        Log.i(javaClass.simpleName, "Status code: " + response.code)
+
+        return response
+    }
 }

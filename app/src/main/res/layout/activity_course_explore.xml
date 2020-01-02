@@ -2,13 +2,14 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
+        xmlns:wheel="http://schemas.android.com/apk/res-auto"
         tools:ignore="MissingPrefix">
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
-            android:background="@color/white"
             android:id="@+id/content"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:background="@color/white">
 
         <FrameLayout
                 android:layout_width="match_parent"
@@ -17,14 +18,26 @@
             <include layout="@layout/base_toolbar" />
 
             <com.mindorks.placeholderview.PlaceHolderView
-                    android:paddingStart="@dimen/_8sdp"
-                    android:paddingEnd="@dimen/_8sdp"
                     android:id="@+id/recycler_view"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="?attr/actionBarSize"
                     android:background="@android:color/white"
-                    android:paddingTop="@dimen/_8sdp" />
+                    android:paddingStart="@dimen/_8sdp"
+                    android:paddingTop="@dimen/_8sdp"
+                    android:paddingEnd="@dimen/_8sdp" />
+
+            <com.pnikosis.materialishprogress.ProgressWheel
+                    android:id="@+id/progress_bar"
+                    wheel:matProg_fillRadius="true"
+                    android:layout_width="@dimen/_82sdp"
+                    android:layout_height="@dimen/_82sdp"
+                    android:layout_gravity="center"
+                    wheel:matProg_barColor="@color/button_primary_color"
+                    wheel:matProg_linearProgress="false"
+                    wheel:matProg_progressIndeterminate="true"
+                    wheel:matProg_rimColor="#33128C7E"
+                    wheel:matProg_rimWidth="@dimen/_2sdp" />
         </FrameLayout>
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>

@@ -14,6 +14,7 @@ import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.google.gson.Gson
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.repository.local.model.NotificationObject
 import com.joshtalks.joshskills.repository.service.EngagementNetworkHelper
@@ -53,16 +54,20 @@ class FirebaseTokenService : FirebaseMessagingService() {
             style.setBigContentTitle(notificationObject.contentText)
             style.setSummaryText(notificationObject.contentText)
 
-            var intent = Intent(applicationContext, InboxActivity::class.java).apply {
+            val intent = Intent(applicationContext, InboxActivity::class.java).apply {
                 addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
                 putExtra(HAS_NOTIFICATION, true)
                 putExtra(NOTIFICATION_ID, notificationObject.id)
 
             }
 
-            /*val obj = notificationObject.actionData?.let {
+            val obj = notificationObject.actionData?.let {
                 AppObjectController.appDatabase.courseDao().chooseRegisterCourseMinimal(it)
             }
+            obj?.run {
+                WorkMangerAdmin.updatedCourseForConversation(this.conversation_id)
+            }
+            /*
             obj?.let {
                 intent = Intent(applicationContext, ConversationActivity::class.java).apply {
                     putExtra(CHAT_ROOM_OBJECT, it)
@@ -99,7 +104,7 @@ class FirebaseTokenService : FirebaseMessagingService() {
 
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                notificationBuilder.setPriority(NotificationManager.IMPORTANCE_HIGH)
+                notificationBuilder.priority = NotificationManager.IMPORTANCE_HIGH
             }
 
             val notificationManager =

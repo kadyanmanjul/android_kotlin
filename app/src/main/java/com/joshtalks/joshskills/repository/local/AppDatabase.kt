@@ -6,6 +6,7 @@ import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.repository.local.entity.*
 import java.util.*
 
@@ -14,7 +15,7 @@ const val DATABASE_NAME = "JoshEnglishDB.db"
 
 @Database(
     entities = [Course::class, ChatModel::class, Question::class, VideoType::class, AudioType::class, OptionType::class, PdfType::class, ImageType::class],
-    version = 3,
+    version = 4,
     exportSchema = false
 )
 @TypeConverters(
@@ -22,7 +23,8 @@ const val DATABASE_NAME = "JoshEnglishDB.db"
     ConvertersForDownloadStatus::class,
     ConvertersForUser::class,
     DateConverter::class,
-    MessageDeliveryTypeConverter::class
+    MessageDeliveryTypeConverter::class,
+    MessageStatusTypeConverters::class
 
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -40,7 +42,7 @@ abstract class AppDatabase : RoomDatabase() {
                             context.applicationContext,
                             AppDatabase::class.java, DATABASE_NAME
                         )
-                            .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
+                            .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4)
                             .fallbackToDestructiveMigration()
                             .addCallback(sRoomDatabaseCallback)
                             .build()
@@ -68,6 +70,15 @@ abstract class AppDatabase : RoomDatabase() {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("ALTER TABLE chat_table ADD COLUMN download_progress INTEGER NOT NULL DEFAULT 0 ")
             }
+        }
+        private val MIGRATION_3_4: Migration = object : Migration(3, 4) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("ALTER TABLE chat_table ADD COLUMN status TEXT ")
+            }
+        }
+
+        fun clearDatabase() {
+            INSTANCE?.clearAllTables()
         }
 
     }
@@ -155,5 +166,18 @@ class MessageDeliveryTypeConverter {
 }
 
 
+class MessageStatusTypeConverters {
+    @TypeConverter
+    fun fromString(value: String?): MESSAGE_STATUS ?{
+        val matType = object : TypeToken<MESSAGE_STATUS>() {}.type
+        return AppObjectController.gsonMapper.fromJson<MESSAGE_STATUS>(
+            value?.replace("\"", EMPTY) ?: MESSAGE_STATUS.SEEN_BY_SERVER.name, matType
+        )
+    }
 
+    @TypeConverter
+    fun fromMatType(enumVal: MESSAGE_STATUS?): String? {
+        return AppObjectController.gsonMapper.toJson(enumVal)
+    }
+}
 

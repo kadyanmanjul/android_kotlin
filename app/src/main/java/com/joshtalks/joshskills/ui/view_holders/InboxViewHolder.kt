@@ -5,7 +5,7 @@ import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.messaging.RxBus
+import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
 import com.joshtalks.joshskills.repository.local.entity.MESSAGE_DELIVER_STATUS
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
@@ -173,7 +173,7 @@ class InboxViewHolder(var inboxEntity: InboxEntity, val totalItem: Int, val inde
 
     @Click(R.id.chat_row_container)
     fun onClick() {
-        RxBus.getDefault().send(inboxEntity)
+        RxBus2.publish(inboxEntity)
     }
 
 

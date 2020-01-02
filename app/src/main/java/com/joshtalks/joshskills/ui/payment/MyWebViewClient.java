@@ -1,4 +1,5 @@
 package com.joshtalks.joshskills.ui.payment;
+
 import android.graphics.Bitmap;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -7,9 +8,10 @@ class MyWebViewClient extends WebViewClient {
     public final String url;
 
     private final WebViewCallback callback;
+
     public MyWebViewClient(String url, WebViewCallback callback) {
         this.url = url;
-        this.callback=callback;
+        this.callback = callback;
     }
 
     @Override
@@ -40,5 +42,10 @@ class MyWebViewClient extends WebViewClient {
 
     }
 
+    interface WebViewCallback {
+        void onStartPageLoad();
+
+        void onUrl(String url);
+    }
 
 }

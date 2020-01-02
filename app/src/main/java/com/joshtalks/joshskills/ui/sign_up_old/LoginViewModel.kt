@@ -33,7 +33,7 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
                 val user = User.getInstance()
                 user.id = createAccountResponse.user_id
                 user.source = "OTP"
-                user.token = createAccountResponse.token
+               // user.token = createAccountResponse.token
                 User.update(user.toString())
 
                 Mentor.getInstance()

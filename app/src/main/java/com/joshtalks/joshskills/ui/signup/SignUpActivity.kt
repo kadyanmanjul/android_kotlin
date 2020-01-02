@@ -1,17 +1,29 @@
 package com.joshtalks.joshskills.ui.signup
 
 import android.os.Bundle
+import android.view.Gravity
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.commit
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import androidx.transition.ChangeBounds
+import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.BaseActivity
+import com.joshtalks.joshskills.core.SignUpStepStatus
+import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
+import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.databinding.ActivitySignUpBinding
+import com.joshtalks.joshskills.repository.local.model.InstallReferrerModel
+import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
 
-class SignUpActivity : BaseActivity(),VerifyDialogFragmentListener {
+import com.joshtalks.joshskills.ui.inbox.COURSE_EXPLORER_WITHOUT_CODE
+
+class SignUpActivity : BaseActivity() {
 
     private lateinit var layout: ActivitySignUpBinding
-
     private val viewModel: SignUpViewModel by lazy {
         ViewModelProviders.of(this).get(SignUpViewModel::class.java)
     }
@@ -19,63 +31,136 @@ class SignUpActivity : BaseActivity(),VerifyDialogFragmentListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         layout = DataBindingUtil.setContentView(this, R.layout.activity_sign_up)
+        layout.handler = this
         supportActionBar?.hide()
-/*
-        supportFragmentManager.commit(true) {
-            addToBackStack("...")
-            *//*setCustomAnimations(
-                R.anim.enter_anim,'
-                R.anim.exit_anim)*//*
-            add(R.id.container, SignUpStep1Fragment.newInstance(), SignUpStep1Fragment::class.java.name)
-        }*/
-
-
-        /*val prefs = getPref(this)
-        prefs?.edit {
-            clear()
-        }*/
         addObserver()
+        login()
+
+    }
+
+    private fun login() {
+        supportFragmentManager.commit(true) {
+            addToBackStack(SignUpStep1Fragment::class.java.name)
+            setCustomAnimations(R.anim.slide_in_left, R.anim.slide_in_right)
+            add(
+                R.id.container,
+                SignUpStep1Fragment.newInstance(),
+                SignUpStep1Fragment::class.java.name
+            )
+        }
     }
 
     private fun addObserver() {
         viewModel.signUpStatus.observe(this, Observer {
-
             when (it) {
-                /*SignUpStepStatus.SignUpStepFirst -> supportFragmentManager.commit(true) {
-                    addToBackStack(SignUpStep2Fragment::class.java.name)
-                    add(R.id.container, SignUpStep2Fragment.newInstance(), SignUpStep2Fragment::class.java.name)
+                SignUpStepStatus.SignUpStepFirst -> {
+                    supportFragmentManager.popBackStack(
+                        null,
+                        FragmentManager.POP_BACK_STACK_INCLUSIVE
+                    )
+                    login()
+                    return@Observer
+                }
+                SignUpStepStatus.SignUpStepSecond -> {
+                    addNextFragment()
+                    return@Observer
+                }
+                SignUpStepStatus.SignUpCompleted -> {
+                    val intent = getIntentForState()
+                    if (intent == null) {
+                        AppAnalytics.create(AnalyticsEvent.LOGIN_SUCCESS.NAME).push()
+                        startActivity(getInboxActivityIntent())
+                    } else {
+                        startActivity(intent)
+                    }
+                    finish()
+                    return@Observer
+                }
+                SignUpStepStatus.SignUpWithoutRegister -> {
+                    openCourseExplorerScreen()
+                    return@Observer
+                }
+                SignUpStepStatus.CoursesNotExist -> {
+                    try {
+                        val typeToken = object : TypeToken<List<String>>() {}.type
+                        val list = AppObjectController.gsonMapperForLocal.fromJson<List<String>>(
+                            AppObjectController.getFirebaseRemoteConfig().getString("utm_source_filter"),
+                            typeToken
+                        )
+                        if (list.contains(InstallReferrerModel.getPrefObject()?.utmSource)) {
+                            registerAnotherNumberFragment()
+                        } else {
+                            openCourseExplorerScreen()
+                        }
+                    } catch (ex: Exception) {
+                        openCourseExplorerScreen()
+                    }
+                    return@Observer
                 }
 
-                SignUpStepStatus.SignUpStepSecond -> confirmMobilNumberScreen()
-*/
 
-
+                else -> return@Observer
             }
-
-
         })
 
     }
 
-    private fun confirmMobilNumberScreen(){
-        var verifyDialogFragment =VerifyDialogFragment.newInstance(viewModel.phoneNumber)
-        verifyDialogFragment.show(supportFragmentManager.beginTransaction(),VerifyDialogFragment::class.java.name)
-    }
-    override fun edit() {
-
-    }
-
-    override fun ok() {
-        /*supportFragmentManager.commit(true) {
-            addToBackStack(SignUpStep3Fragment::class.java.name)
-            add(
-                R.id.container,
-                SignUpStep3Fragment.newInstance(viewModel.phoneNumber),
-                SignUpStep3Fragment::class.java.name
-            )
-        }*/
-
+    private fun openCourseExplorerScreen() {
+        CourseExploreActivity.startCourseExploreActivity(
+            this,
+            COURSE_EXPLORER_WITHOUT_CODE,
+            null, true
+        )
+        this.finish()
     }
 
+    private fun registerAnotherNumberFragment() {
+        supportFragmentManager.popBackStack(
+            null,
+            FragmentManager.POP_BACK_STACK_INCLUSIVE
+        )
 
+        val emptyCourseFragment: EmptyCourseFragment =
+            EmptyCourseFragment.newInstance()
+        val slideTransition = androidx.transition.Slide(Gravity.END)
+        slideTransition.duration = 200
+        val changeBoundsTransition = ChangeBounds()
+        changeBoundsTransition.duration = 200
+        emptyCourseFragment.enterTransition = slideTransition
+        emptyCourseFragment.sharedElementEnterTransition = changeBoundsTransition
+        emptyCourseFragment.allowEnterTransitionOverlap = false
+        emptyCourseFragment.allowReturnTransitionOverlap = false
+
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.container, emptyCourseFragment)
+            .addToBackStack(null)
+            .commitAllowingStateLoss()
+    }
+
+    private fun addNextFragment() {
+        val signUpStep2Fragment: SignUpStep2Fragment =
+            SignUpStep2Fragment.newInstance()
+        val slideTransition = androidx.transition.Slide(Gravity.END)
+        slideTransition.duration = 200
+        val changeBoundsTransition = ChangeBounds()
+        changeBoundsTransition.duration = 200
+        signUpStep2Fragment.enterTransition = slideTransition
+        signUpStep2Fragment.sharedElementEnterTransition = changeBoundsTransition
+        signUpStep2Fragment.allowEnterTransitionOverlap = false
+        signUpStep2Fragment.allowReturnTransitionOverlap = false
+
+        supportFragmentManager.beginTransaction()
+            .add(R.id.container, signUpStep2Fragment)
+            .addToBackStack(SignUpStep2Fragment::class.java.name)
+            .commitAllowingStateLoss()
+    }
+
+    override fun onBackPressed() {
+        if (supportFragmentManager.backStackEntryCount == 1) {
+            this@SignUpActivity.finish()
+            return
+        }
+        super.onBackPressed()
+
+    }
 }

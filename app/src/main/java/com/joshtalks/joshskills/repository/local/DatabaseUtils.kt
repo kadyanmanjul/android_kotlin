@@ -64,12 +64,14 @@ object DatabaseUtils {
     @JvmStatic
     fun updateVideoProgress(json: String, progress: Int) {
         CoroutineScope(Dispatchers.IO).launch {
-            AppObjectController.appDatabase.chatDao().videoProgressUpdate(
-                AppObjectController.gsonMapperForLocal.fromJson(
-                    json,
-                    ChatModel::class.java
-                ).conversationId, progress
-            )
+            try {
+                AppObjectController.appDatabase.chatDao().videoProgressUpdate(
+                    AppObjectController.gsonMapperForLocal.fromJson(
+                        json,
+                        ChatModel::class.java
+                    ).conversationId, progress
+                )
+            }catch (ex:Exception){}
         }
     }
 

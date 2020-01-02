@@ -34,8 +34,14 @@
     </entry>
 
 
-
-
+    <entry>
+        <key>terms_condition_url</key>
+        <value>https://www.joshtalks.com/privacy-policy/</value>
+    </entry>
+    <entry>
+        <key>utm_source_filter</key>
+        <value></value>
+    </entry>
 
 
 </defaultsMap>

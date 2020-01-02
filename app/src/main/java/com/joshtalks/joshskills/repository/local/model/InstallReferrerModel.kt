@@ -28,14 +28,14 @@ open class InstallReferrerModel {
     companion object {
         @JvmStatic
         fun getPrefObject(): InstallReferrerModel? {
-            try {
-                return AppObjectController.gsonMapper.fromJson(
+            return try {
+                AppObjectController.gsonMapper.fromJson(
                     PrefManager.getStringValue(INSTALL_REFERRER_OBJECT),
                     InstallReferrerModel::class.java
                 )
             } catch (ex: Exception) {
                 ex.printStackTrace()
-                return null
+                null
             }
         }
 

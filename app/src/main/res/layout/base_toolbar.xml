@@ -12,39 +12,64 @@
             android:minHeight="?attr/actionBarSize"
             app:theme="@style/Theme.GuidelinesCompat.Light.DarkToolbar">
 
-        <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/iv_back"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="@dimen/_5sdp"
-                android:gravity="center_vertical|start"
-                android:paddingTop="@dimen/_5sdp"
-                android:paddingBottom="@dimen/_5sdp"
-                android:visibility="gone"
-                app:srcCompat="@drawable/ic_arrow_back" />
+        <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
-        <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/image_view_logo"
-                android:layout_width="@dimen/_26sdp"
-                android:layout_height="@dimen/_26sdp"
-                android:layout_marginEnd="@dimen/_5sdp"
+            <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/iv_back"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="@dimen/_5sdp"
+                    android:gravity="center_vertical|start"
+                    android:paddingTop="@dimen/_5sdp"
+                    android:paddingBottom="@dimen/_5sdp"
+                    android:visibility="gone"
+                    app:srcCompat="@drawable/ic_arrow_back" />
 
-                android:background="@drawable/white_button_round_enabled"
-                android:gravity="center_vertical|start"
-                android:src="@drawable/ic_josh_course"
-                android:visibility="gone" />
+            <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/image_view_logo"
+                    android:layout_width="@dimen/_26sdp"
+                    android:layout_height="@dimen/_26sdp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="@dimen/_5sdp"
+                    android:layout_toEndOf="@id/iv_back"
+                    android:background="@drawable/white_button_round_enabled"
+                    android:gravity="center_vertical|start"
+                    android:src="@drawable/ic_josh_course"
+                    android:visibility="gone" />
 
-        <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/text_message_title"
-                fontPath="fonts/OpenSans-SemiBold.ttf"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:ellipsize="marquee"
-                android:gravity="center_vertical|start"
-                android:padding="@dimen/_5sdp"
-                android:singleLine="true"
-                android:text=""
-                android:textColor="@color/white"
-                android:textSize="@dimen/font_20" />
+            <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/text_message_title"
+                    fontPath="fonts/OpenSans-SemiBold.ttf"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="@dimen/_10sdp"
+                    android:layout_toStartOf="@id/iv_help"
+                    android:layout_toEndOf="@id/image_view_logo"
+                    android:ellipsize="marquee"
+                    android:gravity="start"
+                    android:padding="@dimen/_5sdp"
+                    android:singleLine="true"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/font_20" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/iv_help"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="@dimen/_10sdp"
+                    android:padding="@dimen/_8sdp"
+                    android:visibility="gone"
+                    android:src="@drawable/ic_help_outline"
+                    android:tint="@color/white" />
+        </RelativeLayout>
+
+
     </com.google.android.material.appbar.MaterialToolbar>
 </merge>

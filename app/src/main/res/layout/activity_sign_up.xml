@@ -1,24 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
-        xmlns:app="http://schemas.android.com/apk/res-auto">
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools">
+
     <data>
 
         <variable
-                name="SignUpViewModel"
-                type="com.joshtalks.joshskills.ui.signup.SignUpViewModel"/>
+                name="handler"
+                type="com.joshtalks.joshskills.ui.signup.SignUpActivity" />
     </data>
-    <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-    >
 
 
-
-        <FrameLayout
-                android:id="@+id/container"
+        <LinearLayout
+                android:weightSum="1"
+                android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                />
-       </androidx.constraintlayout.widget.ConstraintLayout>
+                android:background="@color/white"
+               >
+
+            <FrameLayout
+                    android:layout_gravity="center"
+                    android:layout_weight=".8"
+                    android:id="@+id/fl_logo"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                   >
+
+                <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/back_tv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="start|top"
+                        android:onClick="@{()->handler.onBackPressed()}"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:padding="@dimen/_10sdp"
+                        android:visibility="gone"
+                        android:tint="@color/gray_9E"
+                        app:srcCompat="@drawable/ic_arrow_back"
+                        />
+
+                <androidx.appcompat.widget.AppCompatImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:adjustViewBounds="true"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/josh_skill" />
+
+            </FrameLayout>
+
+
+            <FrameLayout
+                    android:layout_weight=".2"
+                    android:id="@+id/container"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:paddingBottom="@dimen/_30sdp"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/fl_logo"
+                    app:layout_constraintWidth_default="percent"
+                    app:layout_constraintWidth_percent="0.9" />
+        </LinearLayout>
+
 </layout>

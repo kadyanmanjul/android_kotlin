@@ -12,7 +12,7 @@ import retrofit2.http.*
 interface ChatNetworkService {
 
     @GET("$DIR/course/")
-    fun getRegisterCourses(): Deferred<List<Course>>
+    suspend fun getRegisterCourses(): List<Course>
 
     @POST("$DIR/chat/message/")
     fun sendMessage(@Body messageObject: Any): Deferred<ChatMessageReceiver>
@@ -23,11 +23,7 @@ interface ChatNetworkService {
 
 
     @GET("$DIR/chat/{id}/")
-    fun getUnReceivedMessageAsync(@Path("id") id: String, @QueryMap params: Map<String, String>): Deferred<ResponseChatMessage>
-
-
-    @GET
-    fun downloadFileAsync(@Url fileUrl: String): Deferred<Any>
+    suspend fun getUnReceivedMessageAsync(@Path("id") id: String, @QueryMap params: Map<String, String>): ResponseChatMessage
 
     @FormUrlEncoded
     @POST("$DIR/core/signed_url/")
@@ -49,6 +45,10 @@ interface ChatNetworkService {
     @FormUrlEncoded
     @PATCH("$DIR/notification/{id}/")
     suspend fun engageNotificationAsync(@Path("id") id: String, @FieldMap params: Map<String, String>)
+
+
+    @POST("$DIR/chat/message/list/")
+    suspend fun updateMessagesStatus(@Body messageObject: Any)
 
 
 }

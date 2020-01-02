@@ -4,7 +4,9 @@ import android.Manifest
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.view.Gravity
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.Observer
@@ -20,21 +22,17 @@ import com.joshtalks.joshskills.core.inapp_update.InAppUpdateManager
 import com.joshtalks.joshskills.core.inapp_update.InAppUpdateStatus
 import com.joshtalks.joshskills.core.service.FCMTokenManager
 import com.joshtalks.joshskills.core.service.WorkMangerAdmin
-import com.joshtalks.joshskills.messaging.RxBus
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.DatabaseUtils
 import com.joshtalks.joshskills.repository.local.eventbus.ExploreCourseEventBus
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.local.model.Mentor
-import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.ProfileResponse
 import com.joshtalks.joshskills.repository.server.SearchLocality
 import com.joshtalks.joshskills.repository.server.UpdateUserLocality
 import com.joshtalks.joshskills.repository.service.SyncChatService
 import com.joshtalks.joshskills.ui.chat.ConversationActivity
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
-import com.joshtalks.joshskills.ui.payment.PAYMENT_URL_KEY
-import com.joshtalks.joshskills.ui.profile.ProfileActivity
 import com.joshtalks.joshskills.ui.view_holders.EmptyHorizontalView
 import com.joshtalks.joshskills.ui.view_holders.FindMoreViewHolder
 import com.joshtalks.joshskills.ui.view_holders.InboxViewHolder
@@ -43,6 +41,7 @@ import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
+import com.muddzdev.styleabletoast.StyleableToast
 import com.patloew.rxlocation.RxLocation
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -56,6 +55,7 @@ import org.jetbrains.anko.collections.forEachWithIndex
 
 const val REGISTER_INFO_CODE = 2001
 const val COURSE_EXPLORER_CODE = 2002
+const val COURSE_EXPLORER_WITHOUT_CODE = 2003
 const val REGISTER_NEW_COURSE_CODE = 2003
 const val REQ_CODE_VERSION_UPDATE = 530
 const val USER_DETAILS_CODE = 1001
@@ -74,9 +74,6 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (Mentor.getInstance().hasId().not()) {
-            return
-        }
         FCMTokenManager.pushToken()
         AppObjectController.joshApplication.updateDeviceDetail()
         AppObjectController.joshApplication.userActive()
@@ -84,17 +81,12 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         setContentView(R.layout.activity_inbox)
         setToolbar()
         lifecycle.addObserver(this)
-
-        if (Mentor.getInstance().hasId()) {
-            viewModel.getRegisterCourses()
-            SyncChatService.syncChatWithServer()
-        }
         AppAnalytics.create(AnalyticsEvent.INBOX_SCREEN.NAME).push()
-        addObserver()
         addLiveDataObservable()
         checkAppUpdate()
         workInBackground()
-
+        viewModel.getRegisterCourses()
+        SyncChatService.syncChatWithServer()
     }
 
 
@@ -172,18 +164,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
     private fun addLiveDataObservable() {
         viewModel.registerCourseNetworkLiveData.observe(this, Observer {
             if (it == null || it.isEmpty()) {
-                if (AppObjectController.getFirebaseRemoteConfig().getBoolean("course_show_by_browser")) {
-                    Utils.openWbView(
-                        this@InboxActivity,
-                        AppObjectController.getFirebaseRemoteConfig().getString(
-                            PAYMENT_URL_KEY
-                        )
-                    )
-                    viewModel.canOpenPaymentUrl = true
-                } else {
-                    openCourseExplorer()
-                }
-
+                openCourseExplorer()
             } else {
                 buyCourseFBEvent()
                 recycler_view_inbox.removeAllViews()
@@ -195,9 +176,9 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
                         )
                     )
                 }
+                progress_bar.visibility = View.GONE
 
                 addCourseExploreView()
-                checkUserDetailExist()
             }
         })
 
@@ -213,8 +194,9 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
                         )
                     )
                 }
+                progress_bar.visibility = View.GONE
+
                 addCourseExploreView()
-                checkUserDetailExist()
             }
         })
 
@@ -222,21 +204,23 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
 
     private fun addObserver() {
         compositeDisposable.add(
-            RxBus.getDefault().toObservable()
+            RxBus2.listen(InboxEntity::class.java)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
-                    if (it is InboxEntity) {
-                        AppAnalytics.create(AnalyticsEvent.COURSE_SELECTED.NAME)
-                            .addParam("course_id", it.conversation_id).push()
-                        ConversationActivity.startConversionActivity(this, it)
+                    if (isUserHavePersonalDetails()) {
+                        if (it is InboxEntity) {
+                            AppAnalytics.create(AnalyticsEvent.COURSE_SELECTED.NAME)
+                                .addParam("course_id", it.conversation_id).push()
+                            ConversationActivity.startConversionActivity(this, it)
+                        }
+                    } else {
+                        startActivity(getPersonalDetailsActivityIntent())
                     }
                 }, {
                     it.printStackTrace()
-
                 })
         )
-
         compositeDisposable.add(RxBus2.listen(ExploreCourseEventBus::class.java).subscribe {
             compositeDisposable.clear()
             openCourseExplorer()
@@ -291,6 +275,10 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
                 finish()
                 overridePendingTransition(0, 0)
                 startActivity(intent)
+            } else if (resultCode == Activity.RESULT_CANCELED) {
+                if ((viewModel.registerCourseMinimalLiveData.value.isNullOrEmpty().not() or viewModel.registerCourseNetworkLiveData.value.isNullOrEmpty().not())) {
+                    this@InboxActivity.finish()
+                }
             }
         } else if (requestCode == USER_DETAILS_CODE) {
             if (resultCode == Activity.RESULT_CANCELED) {
@@ -328,9 +316,6 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
                                 // onFailedToFetchLocation()
                             }
                             compositeDisposable.clear()
-                            CoroutineScope(Dispatchers.Main).launch {
-                                addObserver()
-                            }
                         }
                     }
                 }, { ex ->
@@ -353,11 +338,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         super.onResume()
         Runtime.getRuntime().gc()
         addObserver()
-        if (viewModel.canOpenPaymentUrl) {
-            //viewModel.canOpenPaymentUrl = false
-            finish()
-            //viewModel.getCourseFromServer()
-        }
+
     }
 
     override fun onPause() {
@@ -410,11 +391,5 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         }
     }
 
-
-    private fun checkUserDetailExist() {
-        if (User.getInstance().dateOfBirth.isNullOrEmpty()) {
-            ProfileActivity.startProfileActivity(this, USER_DETAILS_CODE)
-        }
-    }
 
 }

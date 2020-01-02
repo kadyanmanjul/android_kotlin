@@ -53,13 +53,16 @@
     </style>
 
 
+   <!--
+   Remove facebook account kit
+
     <style name="FBAppLoginTheme" parent="Theme.AccountKit">
         <item name="android:windowNoTitle">true</item>
         <item name="com_accountkit_primary_color">@color/colorPrimaryDark</item>
         <item name="com_accountkit_primary_text_color">@android:color/white</item>
         <item name="com_accountkit_secondary_text_color">@color/colorPrimaryDark</item>
         <item name="com_accountkit_status_bar_color">@color/colorPrimaryDark</item>
-        <!-- Button -->
+        &lt;!&ndash; Button &ndash;&gt;
 
 
 
@@ -68,7 +71,7 @@
         <item name="com_accountkit_button_text_color">@color/colorPrimaryDark</item>
         <item name="com_accountkit_button_pressed_background_color">#917CA4</item>
 
-        <!-- input -->
+        &lt;!&ndash; input &ndash;&gt;
         <item name="com_accountkit_input_accent_color">#917CA4</item>
         <item name="com_accountkit_input_border_color">@color/colorPrimaryDark</item>
         <item name="com_accountkit_input_text_color">@color/colorPrimaryDark</item>
@@ -82,7 +85,7 @@
         <item name="com_accountkit_button_disabled_background_color">#f5f6f7</item>
         <item name="com_accountkit_button_disabled_text_color">#BEC3C9</item>
 
-    </style>
+    </style>-->
 
     <style name="Theme.GuidelinesCompat.Light.DarkToolbar" parent="Theme.AppCompat.Light.DarkActionBar">
         <item name="android:textColorSecondary">@color/white</item>
@@ -95,4 +98,20 @@
     <style name="superBottomSheetDialog" parent="Theme.Design.Light.BottomSheetDialog">
         <item name="android:windowIsFloating">false</item>
     </style>
+    <style name="NoDimDialogFragmentStyle" parent="@android:style/Theme.Holo.Light.Dialog">
+        <item name="android:backgroundDimAmount">0.0</item>
+        <item name="android:backgroundDimEnabled">false</item>
+    </style>
+    <style name="full_dialog"
+            parent="@android:style/Theme.Holo.Light.Dialog">
+        <item name="android:windowFrame">@null</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:backgroundDimEnabled">true</item>
+        <item name="android:backgroundDimAmount">0.6</item>
+    </style>
+
 </resources>
