@@ -12,6 +12,8 @@
     <string name="finish">Finish</string>
 
     <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+
     <string name="edit">edit</string>
     <string name="label_6_digit_code">Enter 4-digit code</string>
 
@@ -61,6 +63,8 @@
     <string name="pdf_desc">%s Page \u2022 PDF</string>
     <string name="call_helpline">Call helpline</string>
     <string name="restart">Restart</string>
+    <string name="logout_message">Sure you want?</string>
+    <string name="logout">Logout</string>
     <string name="update_message">An update has just been downloaded.</string>
     <string name="update_download_success_message">An update has just been downloaded.</string>
 

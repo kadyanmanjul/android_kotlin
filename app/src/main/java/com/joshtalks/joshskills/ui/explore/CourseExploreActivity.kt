@@ -9,9 +9,12 @@ import android.view.View
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.afollestad.materialdialogs.MaterialDialog
+import com.google.android.material.appbar.MaterialToolbar
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.CoreJoshActivity
+import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.custom_ui.decorator.LayoutMarginDecoration
@@ -23,6 +26,7 @@ import com.joshtalks.joshskills.repository.local.model.ScreenEngagementModel
 import com.joshtalks.joshskills.repository.server.CourseExploreModel
 import com.joshtalks.joshskills.ui.inbox.REGISTER_NEW_COURSE_CODE
 import com.joshtalks.joshskills.ui.payment.PaymentActivity
+import com.joshtalks.joshskills.ui.signup.SignUpActivity
 import com.joshtalks.joshskills.ui.view_holders.CourseExplorerViewHolder
 import com.vanniktech.emoji.Utils
 import io.reactivex.disposables.CompositeDisposable
@@ -82,6 +86,27 @@ class CourseExploreActivity : CoreJoshActivity() {
         findViewById<View>(R.id.iv_back).setOnClickListener {
             onCancelResult()
         }
+        findViewById<MaterialToolbar>(R.id.toolbar).inflateMenu(R.menu.main_menu)
+        findViewById<MaterialToolbar>(R.id.toolbar).setOnMenuItemClickListener {
+            if (it?.itemId == R.id.menu_logout) {
+                MaterialDialog(this@CourseExploreActivity).show {
+                    message(R.string.logout_message)
+                    positiveButton(R.string.ok) {
+                        val intent =
+                            Intent(AppObjectController.joshApplication, SignUpActivity::class.java)
+                        intent.apply {
+                            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                        }
+                        PrefManager.logoutUser()
+                        AppObjectController.joshApplication.startActivity(intent)
+                    }
+                    negativeButton(R.string.cancel)
+                }
+            }
+            return@setOnMenuItemClickListener true
+        }
+
     }
 
     private fun initRV() {
