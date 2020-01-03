@@ -456,17 +456,19 @@ object Utils {
     }
 
     fun isAppRunning(context: Context, packageName: String): Boolean {
-        val activityManager: ActivityManager? =
-            context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager?
-        if (activityManager != null) {
-            val procInfos: List<ActivityManager.RunningAppProcessInfo> =
-                activityManager.runningAppProcesses
-            for (processInfo in procInfos) {
-                if (processInfo.processName == packageName) {
-                    return true
+        try {
+            val activityManager: ActivityManager? =
+                context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager?
+            if (activityManager != null) {
+                val procInfos: List<ActivityManager.RunningAppProcessInfo> =
+                    activityManager.runningAppProcesses
+                for (processInfo in procInfos) {
+                    if (processInfo.processName == packageName) {
+                        return true
+                    }
                 }
             }
-        }
+        }catch (ex:Exception){}
         return false
     }
 
