@@ -24,5 +24,10 @@ data class CourseExploreModel(
     @SerializedName("thumbnail")
     val imageUrl: String,
     @SerializedName("course_name")
-    val courseName: String
-):Serializable
+    val courseName: String,
+    @SerializedName("course_duration")
+    val courseDuration: String,
+    @SerializedName("course_icon")
+    val courseIcon: String
+
+) : Serializable

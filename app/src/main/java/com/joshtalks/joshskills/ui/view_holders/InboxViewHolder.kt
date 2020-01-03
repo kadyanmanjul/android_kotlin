@@ -8,6 +8,7 @@ import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
 import com.joshtalks.joshskills.repository.local.entity.MESSAGE_DELIVER_STATUS
+import com.joshtalks.joshskills.repository.local.eventbus.OpenCourseEventBus
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.mindorks.placeholderview.annotations.Click
 import com.mindorks.placeholderview.annotations.Layout
@@ -109,7 +110,7 @@ class InboxViewHolder(var inboxEntity: InboxEntity, val totalItem: Int, val inde
                 0,
                 0
             )
-            tv_last_message.setCompoundDrawablePadding(Utils.dpToPx(context, drawablePadding))
+            tv_last_message.compoundDrawablePadding = Utils.dpToPx(context, drawablePadding)
             tv_last_message.text = "Photo"
 
 
@@ -173,7 +174,37 @@ class InboxViewHolder(var inboxEntity: InboxEntity, val totalItem: Int, val inde
 
     @Click(R.id.chat_row_container)
     fun onClick() {
-        RxBus2.publish(inboxEntity)
+        RxBus2.publish(OpenCourseEventBus(inboxEntity))
+    }
+
+    @Click(R.id.profile_image)
+    fun onClickProfileImage() {
+        RxBus2.publish(OpenCourseEventBus(inboxEntity))
+    }
+
+    @Click(R.id.tv_name)
+    fun onClickCourseName() {
+        RxBus2.publish(OpenCourseEventBus(inboxEntity))
+    }
+
+    @Click(R.id.tv_last_message_status)
+    fun onClickLastMessageStatus() {
+        RxBus2.publish(OpenCourseEventBus(inboxEntity))
+    }
+
+    @Click(R.id.tv_last_message)
+    fun onClickLastMessage() {
+        RxBus2.publish(OpenCourseEventBus(inboxEntity))
+    }
+
+    @Click(R.id.tv_last_message_time)
+    fun onClickLastMessageTime() {
+        RxBus2.publish(OpenCourseEventBus(inboxEntity))
+    }
+
+    @Click(R.id.tv_notification)
+    fun onClickNotification() {
+        RxBus2.publish(OpenCourseEventBus(inboxEntity))
     }
 
 

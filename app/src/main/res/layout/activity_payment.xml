@@ -32,7 +32,7 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
         <FrameLayout
-                android:background="#99000000"
+                android:background="#29000000"
                 android:id="@+id/progress_bar"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">

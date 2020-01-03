@@ -53,39 +53,6 @@
     </style>
 
 
-   <!--
-   Remove facebook account kit
-
-    <style name="FBAppLoginTheme" parent="Theme.AccountKit">
-        <item name="android:windowNoTitle">true</item>
-        <item name="com_accountkit_primary_color">@color/colorPrimaryDark</item>
-        <item name="com_accountkit_primary_text_color">@android:color/white</item>
-        <item name="com_accountkit_secondary_text_color">@color/colorPrimaryDark</item>
-        <item name="com_accountkit_status_bar_color">@color/colorPrimaryDark</item>
-        &lt;!&ndash; Button &ndash;&gt;
-
-
-
-        <item name="com_accountkit_button_background_color">@color/white</item>
-        <item name="com_accountkit_button_border_color">@color/colorPrimaryDark</item>
-        <item name="com_accountkit_button_text_color">@color/colorPrimaryDark</item>
-        <item name="com_accountkit_button_pressed_background_color">#917CA4</item>
-
-        &lt;!&ndash; input &ndash;&gt;
-        <item name="com_accountkit_input_accent_color">#917CA4</item>
-        <item name="com_accountkit_input_border_color">@color/colorPrimaryDark</item>
-        <item name="com_accountkit_input_text_color">@color/colorPrimaryDark</item>
-        <item name="com_accountkit_input_background_color">@color/white</item>
-        <item name="android:statusBarColor">@color/colorPrimaryDark</item>
-
-        <item name="com_accountkit_background_color">#ffffff</item>
-        <item name="com_accountkit_text_color">@color/colorPrimaryDark</item>
-
-        <item name="com_accountkit_button_disabled_border_color">#EBEDF0</item>
-        <item name="com_accountkit_button_disabled_background_color">#f5f6f7</item>
-        <item name="com_accountkit_button_disabled_text_color">#BEC3C9</item>
-
-    </style>-->
 
     <style name="Theme.GuidelinesCompat.Light.DarkToolbar" parent="Theme.AppCompat.Light.DarkActionBar">
         <item name="android:textColorSecondary">@color/white</item>
@@ -113,5 +80,39 @@
         <item name="android:backgroundDimEnabled">true</item>
         <item name="android:backgroundDimAmount">0.6</item>
     </style>
+
+    <!--
+ Remove facebook account kit
+
+  <style name="FBAppLoginTheme" parent="Theme.AccountKit">
+      <item name="android:windowNoTitle">true</item>
+      <item name="com_accountkit_primary_color">@color/colorPrimaryDark</item>
+      <item name="com_accountkit_primary_text_color">@android:color/white</item>
+      <item name="com_accountkit_secondary_text_color">@color/colorPrimaryDark</item>
+      <item name="com_accountkit_status_bar_color">@color/colorPrimaryDark</item>
+      &lt;!&ndash; Button &ndash;&gt;
+
+
+
+      <item name="com_accountkit_button_background_color">@color/white</item>
+      <item name="com_accountkit_button_border_color">@color/colorPrimaryDark</item>
+      <item name="com_accountkit_button_text_color">@color/colorPrimaryDark</item>
+      <item name="com_accountkit_button_pressed_background_color">#917CA4</item>
+
+      &lt;!&ndash; input &ndash;&gt;
+      <item name="com_accountkit_input_accent_color">#917CA4</item>
+      <item name="com_accountkit_input_border_color">@color/colorPrimaryDark</item>
+      <item name="com_accountkit_input_text_color">@color/colorPrimaryDark</item>
+      <item name="com_accountkit_input_background_color">@color/white</item>
+      <item name="android:statusBarColor">@color/colorPrimaryDark</item>
+
+      <item name="com_accountkit_background_color">#ffffff</item>
+      <item name="com_accountkit_text_color">@color/colorPrimaryDark</item>
+
+      <item name="com_accountkit_button_disabled_border_color">#EBEDF0</item>
+      <item name="com_accountkit_button_disabled_background_color">#f5f6f7</item>
+      <item name="com_accountkit_button_disabled_text_color">#BEC3C9</item>
+
+  </style>-->
 
 </resources>

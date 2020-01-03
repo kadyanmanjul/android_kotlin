@@ -84,10 +84,10 @@ abstract class BaseActivity : AppCompatActivity() {
     }
 
     protected fun openSettings() {
-        val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-        val uri = Uri.fromParts("package", packageName, null);
-        intent.data = uri;
-        startActivityForResult(intent, 101);
+        val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+        val uri = Uri.fromParts("package", packageName, null)
+        intent.data = uri
+        startActivityForResult(intent, 101)
     }
 
     protected fun processIntent(mIntent: Intent?) {

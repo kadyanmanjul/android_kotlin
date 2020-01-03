@@ -25,6 +25,7 @@ import com.joshtalks.joshskills.core.service.WorkMangerAdmin
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.DatabaseUtils
 import com.joshtalks.joshskills.repository.local.eventbus.ExploreCourseEventBus
+import com.joshtalks.joshskills.repository.local.eventbus.OpenCourseEventBus
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.ProfileResponse
@@ -204,16 +205,15 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
 
     private fun addObserver() {
         compositeDisposable.add(
-            RxBus2.listen(InboxEntity::class.java)
+            RxBus2.listen(OpenCourseEventBus::class.java)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
                     if (isUserHavePersonalDetails()) {
-                        if (it is InboxEntity) {
-                            AppAnalytics.create(AnalyticsEvent.COURSE_SELECTED.NAME)
-                                .addParam("course_id", it.conversation_id).push()
-                            ConversationActivity.startConversionActivity(this, it)
-                        }
+                        AppAnalytics.create(AnalyticsEvent.COURSE_SELECTED.NAME)
+                            .addParam("course_id", it.inboxEntity.conversation_id).push()
+                        ConversationActivity.startConversionActivity(this, it.inboxEntity)
+
                     } else {
                         startActivity(getPersonalDetailsActivityIntent())
                     }
@@ -276,8 +276,10 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
                 overridePendingTransition(0, 0)
                 startActivity(intent)
             } else if (resultCode == Activity.RESULT_CANCELED) {
-                if ((viewModel.registerCourseMinimalLiveData.value.isNullOrEmpty().not() or viewModel.registerCourseNetworkLiveData.value.isNullOrEmpty().not())) {
-                    this@InboxActivity.finish()
+                if (viewModel.registerCourseNetworkLiveData.value.isNullOrEmpty()) {
+                    if ((viewModel.registerCourseMinimalLiveData.value.isNullOrEmpty())) {
+                        this@InboxActivity.finish()
+                    }
                 }
             }
         } else if (requestCode == USER_DETAILS_CODE) {

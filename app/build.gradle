@@ -167,6 +167,7 @@ dependencies {
 
 
     implementation "androidx.room:room-runtime:2.1.0"
+    //  implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     kapt "androidx.room:room-compiler:2.1.0"
     implementation "androidx.room:room-ktx:2.1.0"
@@ -196,6 +197,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-database:19.2.0'
 
 
+    implementation 'com.google.android.gms:play-services-ads-lite:18.3.0'
     implementation 'com.google.android.gms:play-services-auth:17.0.0'
     implementation 'com.google.android.gms:play-services-base:17.1.0'
     implementation 'com.google.android.libraries.places:places:2.1.0'
@@ -308,7 +310,6 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.2.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
-    implementation 'com.google.android.gms:play-services-ads-lite:18.3.0'
 
 //    implementation 'com.google.android.gms:play-services-ads:18.3.0'
 

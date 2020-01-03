@@ -6,9 +6,13 @@ import android.content.pm.ActivityInfo
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
+import android.util.Log
+import android.view.Gravity
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.widget.AppCompatTextView
+import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.joshtalks.joshskills.R
@@ -24,6 +28,7 @@ import com.joshtalks.joshskills.repository.server.CourseExploreModel
 import com.joshtalks.joshskills.repository.server.PaymentDetailsResponse
 import com.joshtalks.joshskills.ui.view_holders.BuyCourseViewHolder
 import com.joshtalks.joshskills.ui.view_holders.CourseDetailViewHolder
+import com.muddzdev.styleabletoast.StyleableToast
 import com.razorpay.Checkout
 import com.razorpay.PaymentResultListener
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -43,6 +48,7 @@ class PaymentActivity : CoreJoshActivity(),
     private lateinit var activityPaymentBinding: ActivityPaymentBinding
     private lateinit var courseModel: CourseExploreModel
     private var compositeDisposable = CompositeDisposable()
+    private val uiHandler = Handler(Looper.getMainLooper())
 
     companion object {
         fun startPaymentActivity(
@@ -75,7 +81,6 @@ class PaymentActivity : CoreJoshActivity(),
         initView()
         getCourseDetails()
         Checkout.preload(application)
-
     }
 
     private fun initView() {
@@ -154,15 +159,24 @@ class PaymentActivity : CoreJoshActivity(),
 
 
     override fun onPaymentError(p0: Int, p1: String?) {
-        Toast.makeText(this,"Oops! Something Went Wrong",Toast.LENGTH_LONG).show()
+        StyleableToast.Builder(this).gravity(Gravity.TOP)
+            .backgroundColor(ContextCompat.getColor(applicationContext, R.color.error_color))
+            .text(getString(R.string.something_went_wrong)).cornerRadius(16)
+            .textColor(ContextCompat.getColor(applicationContext, R.color.white))
+            .length(Toast.LENGTH_LONG).solidBackground().show()
+
+        Log.e("error", p1)
     }
 
     override fun onPaymentSuccess(p0: String?) {
-        activityPaymentBinding.progressBar.visibility = View.VISIBLE
-        Handler().postDelayed({
+        uiHandler.post {
+            PaymentProcessFragment.newInstance(courseModel)
+                .show(supportFragmentManager, "Payment Process")
+        }
+        uiHandler.postDelayed({
             startActivity(getInboxActivityIntent())
             this@PaymentActivity.finish()
-        },2000)
+        }, 1000 * 60)
 
     }
 
@@ -207,6 +221,9 @@ class PaymentActivity : CoreJoshActivity(),
     override fun onDestroy() {
         super.onDestroy()
         compositeDisposable.clear()
+        Checkout.clearUserData(applicationContext)
+        uiHandler.removeCallbacksAndMessages(null)
+
     }
 
 }

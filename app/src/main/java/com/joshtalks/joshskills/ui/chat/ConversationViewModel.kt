@@ -20,6 +20,7 @@ import com.joshtalks.joshskills.repository.local.entity.ChatModel
 import com.joshtalks.joshskills.repository.local.entity.MESSAGE_STATUS
 import com.joshtalks.joshskills.repository.local.entity.Question
 import com.joshtalks.joshskills.repository.local.eventbus.DBInsertion
+import com.joshtalks.joshskills.repository.local.eventbus.MessageCompleteEventBus
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.server.AmazonPolicyResponse
 import com.joshtalks.joshskills.repository.server.chat_message.BaseChatMessage
@@ -114,7 +115,7 @@ class ConversationViewModel(application: Application, private var inboxEntity: I
             lastChatTime = listOfChat.last().created
         }
         listOfChat.forEachWithIndex { _, chat ->
-            var question: Question? = appDatabase.chatDao().getQuestion(chat.chatId)
+            val question: Question? = appDatabase.chatDao().getQuestion(chat.chatId)
             if (question != null) {
                 when (question.material_type) {
                     BASE_MESSAGE_TYPE.IM -> question.imageList =
@@ -129,9 +130,6 @@ class ConversationViewModel(application: Application, private var inboxEntity: I
                     BASE_MESSAGE_TYPE.PD -> question.pdfList =
                         appDatabase.chatDao()
                             .getPdfOfQuestion(questionId = question.questionId)
-                    else -> {
-                        question = null
-                    }
                 }
                 chat.question = question
             }
@@ -272,7 +270,7 @@ class ConversationViewModel(application: Application, private var inboxEntity: I
             getUserRecentChats()
             try {
                 if (rows > 0) {
-                    delay(3000)
+                    delay(2500)
                 } else {
                     delay(500)
                 }
@@ -290,6 +288,9 @@ class ConversationViewModel(application: Application, private var inboxEntity: I
                     inboxEntity.conversation_id,
                     queryMap = arguments
                 )
+            }else{
+                RxBus2.publish(MessageCompleteEventBus(false))
+
             }
         }
         refreshChatEverySomeTime()

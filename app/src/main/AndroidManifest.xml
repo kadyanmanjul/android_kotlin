@@ -171,6 +171,7 @@
                 android:name=".ui.video_player.VideoPlayerActivity"
                 android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
                 android:screenOrientation="fullSensor"
+                android:launchMode="singleTask"
                 android:theme="@style/AppNoBarTheme" />
         <activity
                 android:name=".ui.launcher.SplashActivity"

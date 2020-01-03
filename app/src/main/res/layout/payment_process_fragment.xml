@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:CodeInputField="http://schemas.android.com/apk/res-auto"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+                name="handler"
+                type="com.joshtalks.joshskills.ui.payment.PaymentProcessFragment" />
+    </data>
+
+    <RelativeLayout
+            android:background="@color/pdf_bg_color"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:ignore="MissingPrefix">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/profile_image"
+                android:layout_width="@dimen/_72sdp"
+                android:layout_height="@dimen/_72sdp"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="@dimen/_40sdp"
+                android:elevation="@dimen/_4sdp"
+                android:backgroundTint="#887A7A7A"
+                android:background="@drawable/timer_drawable"
+                android:src="@drawable/ic_timer_clock"
+                 />
+
+        <com.google.android.material.card.MaterialCardView
+                android:id="@+id/card_payment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/_10sdp"
+                android:layout_marginTop="@dimen/_78sdp"
+                android:layout_marginRight="@dimen/_10sdp"
+                android:background="@color/white"
+                android:backgroundTint="@color/white"
+                android:elevation="@dimen/_4sdp"
+                android:minHeight="@dimen/_140sdp"
+                app:cardBackgroundColor="@color/white"
+                app:cardCornerRadius="@dimen/_4sdp">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                    fontPath="fonts/Roboto-Bold.ttf"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_60sdp"
+                    android:text="@string/payment_processing"
+                    android:textAlignment="center"
+                    android:textColor="@color/font_color"
+                    android:textSize="@dimen/font_20" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                    fontPath="fonts/Roboto-Medium.ttf"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_100sdp"
+                    android:text="Please wait while your payment is being processed"
+                    android:textAlignment="center"
+                    android:textColor="@color/font_color"
+                    android:textSize="@dimen/font_12" />
+        </com.google.android.material.card.MaterialCardView>
+
+
+        <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/iv_course"
+                android:layout_width="@dimen/_48sdp"
+                android:layout_height="@dimen/_48sdp"
+                android:layout_below="@+id/card_payment"
+                android:layout_marginStart="@dimen/_18sdp"
+                android:layout_marginTop="@dimen/_48sdp"
+                android:elevation="@dimen/_4sdp"
+                android:src="@color/colorPrimary" />
+
+        <com.google.android.material.card.MaterialCardView
+                android:id="@+id/card_course"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/card_payment"
+                android:layout_marginLeft="@dimen/_10sdp"
+                android:layout_marginTop="@dimen/_40sdp"
+                android:layout_marginRight="@dimen/_10sdp"
+                android:elevation="@dimen/_4sdp"
+                app:cardCornerRadius="@dimen/_4sdp">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tv_course"
+                    fontPath="fonts/Roboto-Bold.ttf"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:lines="1"
+                    android:layout_marginStart="@dimen/_72sdp"
+                    android:layout_marginTop="@dimen/_14sdp"
+                    android:textColor="@color/font_color"
+                    android:textSize="@dimen/font_14" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                    fontPath="fonts/Roboto-Medium.ttf"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start"
+                    android:layout_marginStart="@dimen/_16sdp"
+                    android:layout_marginTop="@dimen/_66sdp"
+                    android:text="@string/amount"
+                    android:textColor="@color/font_color"
+                    android:textSize="@dimen/font_12" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                    fontPath="fonts/Roboto-Medium.ttf"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end"
+                    android:layout_marginTop="@dimen/_66sdp"
+                    android:layout_marginEnd="@dimen/_16sdp"
+                    android:text="@string/duration"
+
+                    android:textColor="@color/font_color"
+                    android:textSize="@dimen/font_12" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tv_amount"
+                    fontPath="fonts/Roboto-Medium.ttf"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start"
+                    android:layout_marginStart="@dimen/_16sdp"
+                    android:layout_marginTop="@dimen/_80sdp"
+                    android:layout_marginBottom="@dimen/_16sdp"
+                    android:textColor="@color/font_color"
+                    android:textSize="@dimen/font_12" />
+
+            <TextView
+                    android:id="@+id/tv_course_duration"
+                    fontPath="fonts/Roboto-Medium.ttf"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end"
+                    android:layout_marginTop="@dimen/_80sdp"
+                    android:layout_marginEnd="@dimen/_16sdp"
+                    android:textColor="@color/font_color"
+                    android:textSize="@dimen/font_12" />
+        </com.google.android.material.card.MaterialCardView>
+
+        <androidx.appcompat.widget.AppCompatTextView
+                android:layout_alignParentBottom="true"
+                fontPath="fonts/Roboto-Bold.ttf"
+                android:padding="@dimen/_8sdp"
+                android:layout_centerHorizontal="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/_24sdp"
+                android:text="@string/explore_more_course"
+                android:textAlignment="center"
+                android:textColor="@color/gray_79"
+                android:textSize="@dimen/_16sdp"
+                android:textStyle="bold"
+                android:onClick="@{()->handler.exploreMoreCourse()}"
+
+                />
+
+    </RelativeLayout>
+</layout>

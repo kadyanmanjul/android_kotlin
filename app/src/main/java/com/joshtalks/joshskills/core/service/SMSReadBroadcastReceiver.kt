@@ -23,36 +23,41 @@ class SMSReadBroadcastReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context?, intent: Intent?) {
         CoroutineScope(Dispatchers.IO).launch {
+            try {
+                if (intent != null) {
+                    if (SmsRetriever.SMS_RETRIEVED_ACTION == intent.action) {
+                        intent.extras?.run {
+                            val status = this[SmsRetriever.EXTRA_STATUS] as Status
+                            when (status.statusCode) {
+                                CommonStatusCodes.SUCCESS -> {
+                                    val message: String? =
+                                        this[SmsRetriever.EXTRA_SMS_MESSAGE] as String
+                                    if (message != null) {
+                                        val signature =
+                                            AppSignatureHelper(AppObjectController.joshApplication).appSignatures[0]
 
-            if (intent != null) {
-                if (SmsRetriever.SMS_RETRIEVED_ACTION == intent.action) {
-                    intent.extras?.run {
-                        val status = this[SmsRetriever.EXTRA_STATUS] as Status
-                        when (status.statusCode) {
-                            CommonStatusCodes.SUCCESS -> {
-                                val message: String? =
-                                    this[SmsRetriever.EXTRA_SMS_MESSAGE] as String
-                                if (message != null) {
-                                    val signature =
-                                        AppSignatureHelper(AppObjectController.joshApplication).appSignatures[0]
+                                        var otp =
+                                            message.replace(MESSAGE_START_FORMAT, EMPTY).replace(
+                                                MESSAGE_END_FORMAT, EMPTY
+                                            ).split("\n".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()[0]
+                                        otp = otp.replace(signature, EMPTY).trimStart().trimEnd()
+                                            .trim()
+                                        RxBus2.publish(OTPReceivedEventBus(otp))
+                                    }
+                                }
+                                CommonStatusCodes.TIMEOUT -> {
+                                }
+                                else -> {
 
-                                    var otp = message.replace(MESSAGE_START_FORMAT, EMPTY).replace(
-                                        MESSAGE_END_FORMAT, EMPTY
-                                    ).split("\n".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()[0]
-                                    otp = otp.replace(signature, EMPTY).trimStart().trimEnd().trim()
-                                    RxBus2.publish(OTPReceivedEventBus(otp))
                                 }
                             }
-                            CommonStatusCodes.TIMEOUT -> {
-                            }
-                            else -> {
-
-                            }
                         }
+
+
                     }
-
-
                 }
+            } catch (ex: Exception) {
+                ex.printStackTrace()
             }
         }
     }

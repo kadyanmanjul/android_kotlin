@@ -85,11 +85,14 @@ class SignUpStep2Fragment : Fragment() {
         })
         viewModel.signUpStatus.observe(this, Observer {
             when (it) {
-                SignUpStepStatus.SignUpResendOTP -> Toast.makeText(
-                    AppObjectController.joshApplication,
-                    getString(R.string.resend_otp_toast),
-                    Toast.LENGTH_SHORT
-                ).show()
+                SignUpStepStatus.SignUpResendOTP -> {
+                    Toast.makeText(
+                        AppObjectController.joshApplication,
+                        getString(R.string.resend_otp_toast),
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    startTimer()
+                }
 
                 else -> return@Observer
             }

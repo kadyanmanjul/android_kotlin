@@ -168,15 +168,23 @@ class GetUserConversationWorker(var context: Context, private var workerParams: 
 class MessageReadPeriodicWorker(context: Context, workerParams: WorkerParameters) :
     CoroutineWorker(context, workerParams) {
     override suspend fun doWork(): Result {
-        val chatIdList = AppObjectController.appDatabase.chatDao().getSeenByUserMessages()
-        if (chatIdList.isNullOrEmpty().not()) {
-            val messageStatusRequestList = mutableListOf<MessageStatusRequest>()
-            chatIdList.forEach {
-                messageStatusRequestList.add(MessageStatusRequest(it))
+        try {
+            val chatIdList = AppObjectController.appDatabase.chatDao().getSeenByUserMessages()
+            if (chatIdList.isNullOrEmpty().not()) {
+                val messageStatusRequestList = mutableListOf<MessageStatusRequest>()
+                chatIdList.forEach {
+                    messageStatusRequestList.add(MessageStatusRequest(it))
+                }
+                AppObjectController.chatNetworkService.updateMessagesStatus(messageStatusRequestList)
             }
-            AppObjectController.chatNetworkService.updateMessagesStatus(messageStatusRequestList)
+            return Result.success()
+
+
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+            return Result.retry()
+
         }
-        return Result.success()
 
     }
 

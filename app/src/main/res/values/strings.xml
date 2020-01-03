@@ -68,7 +68,7 @@
     <string name="buy_course">Buy Course</string>
     <string name="discover">Discover</string>
     <string name="payment">Payment</string>
-    <string name="explorer_course">Explorer Course</string>
+    <string name="explorer_course">Explore Courses</string>
     <string name="start_course">Start Course</string>
 
 
@@ -90,7 +90,13 @@
     <string name="relogin">Dobara Login Kare</string>
     <string name="or">OR</string>
     <string name="explore_more_course">EXPLORE MORE COURSES</string>
-    <string name="new_message_arrive">You have new messages</string>
+
+    <string name="no_new_message_arrive">No new classes</string>
+
+    <string name="new_message_arrive">New classes downloaded</string>
+
+
+    <string name="something_went_wrong">Oops! Something Went Wrong</string>
 
 
     <string name="time_ago_now">few moments ago</string>
@@ -126,6 +132,12 @@
     <string name="type_your_mobile">Type your mobile</string>
     <string name="type_your_email">Type your email</string>
     <string name="type_problem">Please explain your problem in detail</string>
+
+
+    <!-- Payment process-->
+    <string name="payment_processing">Payment Processing</string>\
+    <string name="amount">Amount</string>
+    <string name="duration">Duration</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

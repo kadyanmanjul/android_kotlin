@@ -9,5 +9,5 @@ data class MessageStatusRequest(
     val id: String
 ) {
     @SerializedName("status")
-    val status: String = MESSAGE_STATUS.SEEN_BY_SERVER.name
+    val status: String = MESSAGE_STATUS.SEEN_BY_SERVER.type
 }

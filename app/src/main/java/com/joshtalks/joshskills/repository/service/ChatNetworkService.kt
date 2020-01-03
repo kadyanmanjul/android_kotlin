@@ -47,7 +47,7 @@ interface ChatNetworkService {
     suspend fun engageNotificationAsync(@Path("id") id: String, @FieldMap params: Map<String, String>)
 
 
-    @POST("$DIR/chat/message/list/")
+    @PATCH("$DIR/chat/message/list/")
     suspend fun updateMessagesStatus(@Body messageObject: Any)
 
 

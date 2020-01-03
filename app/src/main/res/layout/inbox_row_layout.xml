@@ -14,12 +14,11 @@
     <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/profile_image"
             android:layout_width="@dimen/_48sdp"
-
             android:layout_height="@dimen/_48sdp"
             android:layout_marginEnd="@dimen/_10sdp"
             android:layout_marginBottom="@dimen/_10sdp"
-            android:clickable="false"
-            android:focusable="false" />
+            android:clickable="true"
+            android:focusable="true" />
 
     <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tv_name"
@@ -29,9 +28,9 @@
             android:layout_marginTop="@dimen/_5sdp"
             android:layout_toStartOf="@id/tv_last_message_time"
             android:layout_toEndOf="@id/profile_image"
-            android:clickable="false"
+            android:clickable="true"
             android:ellipsize="end"
-            android:focusable="false"
+            android:focusable="true"
             android:maxLines="1"
             android:paddingEnd="@dimen/_10sdp"
             android:text=""
@@ -48,8 +47,8 @@
             android:layout_marginTop="@dimen/_10sdp"
             android:layout_marginEnd="@dimen/_4sdp"
             android:layout_toEndOf="@id/profile_image"
-            android:clickable="false"
-            android:focusable="false"
+            android:clickable="true"
+            android:focusable="true"
             android:gravity="start" />
 
 
@@ -62,9 +61,10 @@
             android:layout_marginTop="@dimen/_8sdp"
             android:layout_marginEnd="@dimen/_8sdp"
             android:layout_toEndOf="@id/tv_last_message_status"
-            android:clickable="false"
+            android:clickable="true"
             android:ellipsize="end"
-            android:focusable="false"
+            android:focusable="true"
+
             android:gravity="start"
             android:maxLines="1"
             android:text=""
@@ -79,8 +79,8 @@
             android:layout_alignTop="@id/tv_name"
             android:layout_alignParentEnd="true"
             android:layout_marginTop="@dimen/_5sdp"
-            android:clickable="false"
-            android:focusable="false"
+            android:clickable="true"
+            android:focusable="true"
             android:maxLines="1"
             android:text=""
             android:textSize="@dimen/font_11_5"
@@ -94,8 +94,8 @@
             android:layout_alignTop="@id/tv_last_message"
             android:layout_alignParentEnd="true"
             android:layout_marginTop="3dp"
-            android:clickable="false"
-            android:focusable="false"
+            android:clickable="true"
+            android:focusable="true"
             android:maxLines="1"
             android:text=""
             android:textSize="@dimen/font_11_5"

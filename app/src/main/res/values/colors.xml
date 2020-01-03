@@ -46,6 +46,7 @@
     <color name="color_warning">#FF9800</color>
     <color name="color_success">#4CAF50</color>
     <color name="color_normal">#323232</color>
+    <color name="action_color">#4bb543</color>
 
     <color name="accent_color_error">#009688</color>
     <color name="accent_color_info">#FFC107</color>
@@ -53,4 +54,5 @@
     <color name="accent_color_success">#03A9F4</color>
     <color name="accent_color_normal">#323232</color>
     <color name="red_color">#FF0000</color>
+    <color name="error_color">#ff6666</color>
 </resources>

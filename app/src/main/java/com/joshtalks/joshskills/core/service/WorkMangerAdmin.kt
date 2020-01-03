@@ -58,9 +58,10 @@ object WorkMangerAdmin {
     }
 
     fun readMessageUpdating() {
+
         val workRequest = PeriodicWorkRequest.Builder(
             MessageReadPeriodicWorker::class.java,
-            60,
+            30,
             TimeUnit.MINUTES,
             PeriodicWorkRequest.MIN_PERIODIC_FLEX_MILLIS,
             TimeUnit.MILLISECONDS

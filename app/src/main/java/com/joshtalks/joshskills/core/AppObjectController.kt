@@ -63,10 +63,10 @@ val KEY_APP_USER_AGENT = "HTTP_USER_AGENT"
 
 
 //const val SERVER_URL = "https://skills.joshtalks.org"
-//const val SERVER_URL = "http://staging.joshtalks.org"
+const val SERVER_URL = "http://staging.joshtalks.org"
 //const val SERVER_URL = "http://13.127.85.171:8000"
 
-const val SERVER_URL = "http://192.168.0.141:8080"
+//const val SERVER_URL = "http://192.168.0.141:8080"
 
 internal class AppObjectController {
 

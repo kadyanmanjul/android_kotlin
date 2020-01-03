@@ -40,7 +40,7 @@ class ImageShowFragment : DialogFragment() {
             }
 
         }
-        setStyle(STYLE_NO_FRAME, R.style.AppTheme_FullScreenDialog)
+        setStyle(STYLE_NO_FRAME, R.style.full_dialog)
     }
 
     override fun onStart() {

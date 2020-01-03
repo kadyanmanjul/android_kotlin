@@ -11,6 +11,8 @@ import android.graphics.Color
 import android.graphics.Rect
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.provider.Settings
 import android.text.Editable
 import android.text.TextWatcher
@@ -121,6 +123,8 @@ class ConversationActivity : BaseActivity() {
     private lateinit var internetAvailableStatus: Snackbar
     private val readChatList: MutableSet<ChatModel> = mutableSetOf()
     private var readMessageTimerTask: TimerTask? = null
+    private val uiHandler = Handler(Looper.getMainLooper())
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -185,6 +189,9 @@ class ConversationActivity : BaseActivity() {
         super.processIntent(intent)
         conversationViewModel.getAllUserMessage()
         refreshChat()
+        uiHandler.postDelayed({
+            conversationBinding.progressBar.visibility= GONE
+        },20000)
     }
 
     private fun refreshChat() {
@@ -248,14 +255,13 @@ class ConversationActivity : BaseActivity() {
     private fun initSnackBar() {
         internetAvailableStatus = JoshSnackBar.builder().setActivity(this)
             .setBackgroundColor(ContextCompat.getColor(application, R.color.white))
-            .setActionText("Enable")
+            .setActionText("Please enable")
             .setDuration(JoshSnackBar.LENGTH_INDEFINITE)
             .setTextSize(14f)
             .setTextColor(ContextCompat.getColor(application, R.color.gray_79))
-            .setText("Network not available!")
+            .setText("Internet not available!")
             .setMaxLines(1)
-            //.centerText()
-            .setActionTextColor(ContextCompat.getColor(application, R.color.gray_79))
+            .setActionTextColor(ContextCompat.getColor(application, R.color.action_color))
             .setActionTextSize(12f)
             .setActionClickListener {
                 val intent = Intent(Settings.ACTION_SETTINGS).apply {
@@ -264,8 +270,6 @@ class ConversationActivity : BaseActivity() {
                 startActivity(intent)
             }
             .build()
-        // cnack.dismiss()
-
     }
 
     private fun initRV() {
@@ -697,9 +701,18 @@ class ConversationActivity : BaseActivity() {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
-                    if (conversationBinding.refreshLayout.isRefreshing && it.flag) {
+                    if (conversationBinding.refreshLayout.isRefreshing) {
+                        val message: String = if (it.flag) {
+                            getString(R.string.new_message_arrive)
+                        } else {
+                            getString(R.string.no_new_message_arrive)
+                        }
                         StyleableToast.Builder(this).gravity(Gravity.BOTTOM)
-                            .text(getString(R.string.new_message_arrive)).cornerRadius(16).length(Toast.LENGTH_LONG).solidBackground().show()
+                            .text(message).cornerRadius(16).length(Toast.LENGTH_LONG)
+                            .solidBackground().show()
+                    }
+                    if (it.flag.not()) {
+                        conversationBinding.progressBar.visibility = GONE
                     }
                     conversationBinding.refreshLayout.isRefreshing = false
                 })
@@ -968,6 +981,7 @@ class ConversationActivity : BaseActivity() {
         super.onStop()
         compositeDisposable.clear()
         readMessageTimerTask?.cancel()
+        uiHandler.removeCallbacksAndMessages(null)
     }
 
 

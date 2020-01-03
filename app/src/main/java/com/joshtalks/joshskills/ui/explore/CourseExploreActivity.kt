@@ -109,14 +109,31 @@ class CourseExploreActivity : CoreJoshActivity() {
                 val response: List<CourseExploreModel> =
                     AppObjectController.signUpNetworkService.explorerCourse()
                 CoroutineScope(Dispatchers.Main).launch {
-                    response.forEach {
-                        courseExploreBinding.recyclerView.addView(CourseExplorerViewHolder(it))
+                    var list: ArrayList<InboxEntity>? = null
+                    if (intent.hasExtra(USER_COURSES) && intent.getSerializableExtra(USER_COURSES) != null) {
+                        list = intent.getSerializableExtra(USER_COURSES) as ArrayList<InboxEntity>?
+                    }
+                    response.forEach { courseExploreModel ->
+                        list?.let { it ->
+                            val entity: InboxEntity? =
+                                it.find { it.courseId == courseExploreModel.course.toString() }
+                            if (entity != null) {
+                                return@forEach
+                            }
+                        }
+                        courseExploreBinding.recyclerView.addView(
+                            CourseExplorerViewHolder(
+                                courseExploreModel
+                            )
+                        )
                     }
                     courseExploreBinding.progressBar.visibility = View.GONE
                 }
 
             } catch (ex: Exception) {
-
+                CoroutineScope(Dispatchers.Main).launch {
+                    courseExploreBinding.progressBar.visibility = View.GONE
+                }
                 ex.printStackTrace()
             }
         }
@@ -173,7 +190,8 @@ class CourseExploreActivity : CoreJoshActivity() {
         WorkMangerAdmin.screenAnalyticsWorker(screenEngagementModel)
         super.onStop()
     }
-    private fun onCancelResult(){
+
+    private fun onCancelResult() {
         val resultIntent = Intent()
         setResult(Activity.RESULT_CANCELED, resultIntent)
         finish()
