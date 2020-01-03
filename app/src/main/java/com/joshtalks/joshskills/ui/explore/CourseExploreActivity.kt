@@ -86,7 +86,7 @@ class CourseExploreActivity : CoreJoshActivity() {
         findViewById<View>(R.id.iv_back).setOnClickListener {
             onCancelResult()
         }
-        findViewById<MaterialToolbar>(R.id.toolbar).inflateMenu(R.menu.main_menu)
+        findViewById<MaterialToolbar>(R.id.toolbar).inflateMenu(R.menu.logout_menu)
         findViewById<MaterialToolbar>(R.id.toolbar).setOnMenuItemClickListener {
             if (it?.itemId == R.id.menu_logout) {
                 MaterialDialog(this@CourseExploreActivity).show {
@@ -98,8 +98,10 @@ class CourseExploreActivity : CoreJoshActivity() {
                             addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
                             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                         }
-                        PrefManager.logoutUser()
-                        AppObjectController.joshApplication.startActivity(intent)
+                        CoroutineScope(Dispatchers.IO).launch {
+                            PrefManager.clearUser()
+                            AppObjectController.joshApplication.startActivity(intent)
+                        }
                     }
                     negativeButton(R.string.cancel)
                 }
