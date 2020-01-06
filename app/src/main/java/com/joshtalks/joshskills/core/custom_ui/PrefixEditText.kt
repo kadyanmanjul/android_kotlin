@@ -73,7 +73,7 @@ class PrefixEditText @JvmOverloads constructor(
         typedArray.recycle()
     }
 
-    override fun setTypeface(typeface: Typeface) {
+    /*fun setTypeface(typeface: Typeface) {
         super.setTypeface(typeface)
 
         if (isInitialized) {
@@ -82,7 +82,7 @@ class PrefixEditText @JvmOverloads constructor(
         }
 
         postInvalidate()
-    }
+    }*/
 
     public override fun onDraw(c: Canvas) {
         textPaint.color = currentHintTextColor

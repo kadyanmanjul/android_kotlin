@@ -171,7 +171,7 @@ object DownloadUtils {
 
             audioType.downloadStatus = DOWNLOAD_STATUS.DOWNLOADING
             appDatabase.chatDao().updateAudioObject(audioType)
-            val file = AppDirectory.getRecordingReceivedFilePath()
+            val file = AppDirectory.getAudioReceivedFile(audioType.audio_url).absolutePath
             if (audioType.downloadStatus == DOWNLOAD_STATUS.DOWNLOADED) {
                 return@launch
             }

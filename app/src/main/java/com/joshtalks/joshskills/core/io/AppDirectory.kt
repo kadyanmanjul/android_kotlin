@@ -3,7 +3,9 @@ package com.joshtalks.joshskills.core.io
 import android.os.Environment
 import android.text.format.DateUtils
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.Utils
 import java.io.*
 import java.text.SimpleDateFormat
 import java.util.*
@@ -29,25 +31,118 @@ object AppDirectory {
         IMAGE_SENT, IMAGE_RECEIVED, RECORDING_SENT, RECORDING_RECEIVED, VIDEO_SENT, VIDEO_RECEIVED, DOCS_RECEIVED
     }
 
-   // var path: String =AppObjectController.joshApplication.getExternalFilesDir(null)!!.absolutePath
+    // var path: String =AppObjectController.joshApplication.getExternalFilesDir(null)!!.absolutePath
 
 
-    val IMAGE_SENT_PATH =
-        Environment.getExternalStorageDirectory().toString() + File.separator + APP_DIRECTORY + File.separator + MEDIA_DIRECTORY + "/JoshApp Images/Sent"
+    /**
+     * this code is using for received audio file
+     **/
 
-    val IMAGE_RECEIVED_PATH =
-        Environment.getExternalStorageDirectory().toString() + File.separator + APP_DIRECTORY + File.separator + MEDIA_DIRECTORY + "/JoshApp Images/"
+    private val AUDIO_RECEIVED_PATH =
+        Environment.getExternalStorageDirectory().toString() + File.separator + APP_DIRECTORY + File.separator + MEDIA_DIRECTORY + "/JoshAppAudio/"
+
+    fun getAudioReceivedFile(path: String): File {
+        val f = File(AUDIO_RECEIVED_PATH)
+        if (f.exists().not()) {
+            f.mkdirs()
+        }
+        val file = File(AUDIO_RECEIVED_PATH + File.separator + Utils.getFileNameFromURL(path))
+        if (file.exists()) {
+            return file
+        }
+        file.createNewFile()
+        return file
+    }
+
+
+    /**
+     * this code is using for sent audio file
+     *
+     * */
+    private val AUDIO_SENT_PATH =
+        Environment.getExternalStorageDirectory().toString() + File.separator + APP_DIRECTORY + File.separator + MEDIA_DIRECTORY + "/JoshAppAudio/Sent"
+
+    fun getAudioSentFile(path: String?): File {
+        val f = File(AUDIO_SENT_PATH)
+        if (f.exists().not()) {
+            f.mkdirs()
+        }
+        var fileName = EMPTY
+
+        if (path.isNullOrEmpty().not()) {
+            fileName = File(path!!).name
+        }
+
+        if (fileName.isEmpty()) {
+            fileName = "Record_" + System.currentTimeMillis().toString() + ".amr"
+        }
+        val file = File(AUDIO_SENT_PATH + File.separator + fileName)
+        file.createNewFile()
+        return file
+    }
+
+
+    /**
+     * this code is using for received audio file
+     **/
+
+    private val IMAGE_RECEIVED_PATH =
+        Environment.getExternalStorageDirectory().toString() + File.separator + APP_DIRECTORY + File.separator + MEDIA_DIRECTORY + "/JoshAppImages/"
+
+    fun getImageReceivedFile(path: String?): File {
+        val f = File(IMAGE_RECEIVED_PATH)
+        if (f.exists().not()) {
+            f.mkdirs()
+        }
+        val file = File(IMAGE_RECEIVED_PATH + File.separator + Utils.getFileNameFromURL(path))
+        if (file.exists()) {
+            return file
+        }
+        file.createNewFile()
+        return file
+    }
+
+
+    /**
+     * this code is using for sent audio file
+     *
+     * */
+    private val IMAGE_SENT_PATH =
+        Environment.getExternalStorageDirectory().toString() + File.separator + APP_DIRECTORY + File.separator + MEDIA_DIRECTORY + "/JoshAppImages/Sent"
+
+    fun getImageSentFile(path: String?): File {
+        val f = File(IMAGE_SENT_PATH)
+        if (f.exists().not()) {
+            f.mkdirs()
+        }
+
+        var fileName = EMPTY
+        if (path.isNullOrEmpty().not()) {
+            fileName = File(path!!).name
+        }
+
+        if (fileName.isEmpty()) {
+            fileName = "IMG" + System.currentTimeMillis().toString() + ".jpg"
+        }
+        val file = File(IMAGE_SENT_PATH + File.separator + fileName)
+        file.createNewFile()
+        return file
+    }
 
 
     val DOCS_RECEIVED_PATH =
-        Environment.getExternalStorageDirectory().toString() + File.separator + APP_DIRECTORY + File.separator + MEDIA_DIRECTORY + "/JoshApp Documents/"
+        Environment.getExternalStorageDirectory().toString() + File.separator + APP_DIRECTORY + File.separator + MEDIA_DIRECTORY + "/JoshAppDocuments/"
 
 
-    val RECORDING_SENT_PATH =
-        Environment.getExternalStorageDirectory().toString() + File.separator + APP_DIRECTORY + File.separator + MEDIA_DIRECTORY + "/JoshApp Recordings/Sent"
-
-    val RECORDING_RECEIVED_PATH =
-        Environment.getExternalStorageDirectory().toString() + File.separator + APP_DIRECTORY + File.separator + MEDIA_DIRECTORY + "/JoshApp Recordings/"
+    fun docsReceivedFile(url: String): File {
+        val f = File(DOCS_RECEIVED_PATH)
+        if (f.exists().not()) {
+            f.mkdirs()
+        }
+        val file = File(DOCS_RECEIVED_PATH + File.separator + Utils.getFileNameFromURL(url))
+        file.createNewFile()
+        return file
+    }
 
 
     val VIDEO_SENT_PATH =
@@ -55,6 +150,7 @@ object AppDirectory {
 
     val VIDEO_RECEIVED_PATH =
         Environment.getExternalStorageDirectory().toString() + File.separator + APP_DIRECTORY + File.separator + MEDIA_DIRECTORY + "/JoshApp Videos/"
+
     val VIDEO_CACHED_RECEIVED_PATH =
         Environment.getExternalStorageDirectory().toString() + File.separator + APP_DIRECTORY + File.separator + MEDIA_DIRECTORY + "/JoshApp/cached"
 
@@ -133,7 +229,7 @@ object AppDirectory {
             f.mkdirs()
         }
         val file = File(IMAGE_SENT_PATH + File.separator + getImageFileName())
-        file.createNewFile();
+        file.createNewFile()
         return file
     }
 
@@ -148,17 +244,6 @@ object AppDirectory {
             f.mkdirs()
         }
         val file = File(IMAGE_RECEIVED_PATH + File.separator + getImageFileName())
-        file.createNewFile();
-        return file
-    }
-
-
-    fun docsReceivedFile(): File {
-        val f = File(DOCS_RECEIVED_PATH)
-        if (f.exists().not()) {
-            f.mkdirs()
-        }
-        val file = File(DOCS_RECEIVED_PATH + File.separator + getDocsFileName())
         file.createNewFile()
         return file
     }
@@ -185,32 +270,16 @@ object AppDirectory {
     }
 
 
-    fun recordingSentFile(): File {
-        val f = File(RECORDING_SENT_PATH)
-        if (f.exists().not()) {
-            f.mkdirs()
-        }
-        val file = File(RECORDING_SENT_PATH + File.separator + getAudioFileName())
-        file.createNewFile();
-        return file
-    }
-
-
-    fun getRecordingReceivedFilePath(): String {
-        return recordingSentFile().absolutePath
-    }
-
-
-    fun recordingReceivedFile(fileName: String): File {
+    /*fun recordingReceivedFile(fileName: String): File {
         val extension = fileName.substring(fileName.lastIndexOf("."))
         val f = File(RECORDING_RECEIVED_PATH)
         if (f.exists().not()) {
             f.mkdirs()
         }
         val file = File(RECORDING_RECEIVED_PATH + File.separator + getAudioFileName(extension))
-        file.createNewFile();
+        file.createNewFile()
         return file
-    }
+    }*/
 
     fun tempRecordingFile(): File {
         val outputDir =
@@ -224,23 +293,6 @@ object AppDirectory {
         return File.createTempFile("image", ".jpg", outputDir)
     }
 
-    fun tempRecordingWavFile(): File {
-        var file: File
-        try {
-            file = getCacheFile("record", ".amr")
-
-
-            val f = File(RECORDING_SENT_PATH)
-            if (f.exists().not()) {
-                f.mkdirs()
-            }
-            file = File(RECORDING_SENT_PATH + File.separator + "record.amr")
-            file.createNewFile();
-        } catch (ex: Exception) {
-            file = getCacheFile("record", ".amr")
-        }
-        return file
-    }
 
     fun getCacheFile(fileName: String, fileExtension: String): File {
         return File.createTempFile(
@@ -248,16 +300,6 @@ object AppDirectory {
             fileExtension,
             AppObjectController.joshApplication.externalCacheDir
         )
-    }
-
-    fun tempRecordingVideoFile(): File {
-        val f = File(RECORDING_SENT_PATH)
-        if (f.exists().not()) {
-            f.mkdirs()
-        }
-        val file = File(RECORDING_SENT_PATH + File.separator + "record.mp4")
-        file.createNewFile();
-        return file
     }
 
 
@@ -268,21 +310,6 @@ object AppDirectory {
         }
         return f
 
-    }
-
-    fun getRecordingSentFilePath(): String {
-        return recordingSentFile().absolutePath
-    }
-
-    fun getFilePath(sentFile: String): String {
-        val f = File(RECORDING_SENT_PATH)
-        if (f.exists().not()) {
-            f.mkdirs()
-        }
-        val file =
-            File(RECORDING_SENT_PATH + File.separator + sentFile.substring(sentFile.lastIndexOf("/") + 1))
-        file.createNewFile();
-        return file.absolutePath
     }
 
 
@@ -361,12 +388,6 @@ object AppDirectory {
             f.mkdirs()
         }
         return f
-    }
-
-    fun getInternalDirectory() {
-        val downloadContentDirectory = File(getAppDirectory(), "TempMedia")
-
-
     }
 
 

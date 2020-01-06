@@ -752,7 +752,7 @@ class ConversationActivity : CoreJoshActivity() {
 
 
     private fun addUploadAnyAudioMedia(audioFilePath: String) {
-        val recordUpdatedPath = AppDirectory.getFilePath(audioFilePath)
+        val recordUpdatedPath = AppDirectory.getAudioSentFile(audioFilePath).absolutePath
         AppDirectory.copy(audioFilePath, recordUpdatedPath)
         val tAudioMessage = TAudioMessage(recordUpdatedPath, recordUpdatedPath)
         val cell =
@@ -768,8 +768,9 @@ class ConversationActivity : CoreJoshActivity() {
 
     private fun addUploadAudioMedia(mediaPath: String) {
         try {
-            val recordUpdatedPath = AppDirectory.getRecordingSentFilePath()
+            val recordUpdatedPath = AppDirectory.getAudioSentFile(null).absolutePath
             AppDirectory.copy(mediaPath, recordUpdatedPath)
+
             val tAudioMessage = TAudioMessage(recordUpdatedPath, recordUpdatedPath)
             val cell =
                 MessageBuilderFactory.getMessage(activityRef, BASE_MESSAGE_TYPE.AU, tAudioMessage)

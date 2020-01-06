@@ -38,6 +38,7 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.File
 import java.io.FileOutputStream
 import java.io.OutputStream
+import java.net.URL
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 import java.util.*
@@ -165,7 +166,7 @@ object Utils {
         } else if (m > 0) {
             return String.format("%02d:%02d", m, s)
         }
-        m = 0;
+        m = 0
         return String.format("%02d:%02d", m, s)
     }
 
@@ -468,8 +469,43 @@ object Utils {
                     }
                 }
             }
-        }catch (ex:Exception){}
+        } catch (ex: Exception) {
+        }
         return false
     }
 
+
+    fun getFileNameFromURL(url: String?): String {
+        if (url.isNullOrEmpty()) {
+            return EMPTY
+        }
+        try {
+            val resource = URL(url)
+            val host = resource.host
+            if (host.isNotEmpty() && url.endsWith(host)) {
+                return EMPTY
+            }
+        } catch (e: Exception) {
+            return ""
+        }
+
+        val startIndex = url.lastIndexOf('/') + 1
+        val length = url.length
+
+        // find end index for ?
+        var lastQMPos = url.lastIndexOf('?')
+        if (lastQMPos == -1) {
+            lastQMPos = length
+        }
+
+        // find end index for #
+        var lastHashPos = url.lastIndexOf('#')
+        if (lastHashPos == -1) {
+            lastHashPos = length
+        }
+
+        // calculate the end index
+        val endIndex = lastQMPos.coerceAtMost(lastHashPos)
+        return url.substring(startIndex, endIndex)
+    }
 }

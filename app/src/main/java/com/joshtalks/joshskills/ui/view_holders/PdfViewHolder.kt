@@ -317,7 +317,7 @@ class PdfViewHolder(activityRef: WeakReference<FragmentActivity>, message: ChatM
 
         DownloadUtils.downloadFile(
             url,
-            AppDirectory.docsReceivedFile().absolutePath,
+            AppDirectory.docsReceivedFile(url).absolutePath,
             message.chatId,
             message,
             downloadListener

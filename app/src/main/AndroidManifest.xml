@@ -49,6 +49,7 @@
     <permission android:name="android.permission.MEDIA_CONTENT_CONTROL" />
 
     <application
+            android:requestLegacyExternalStorage="true"
             android:name=".core.JoshApplication"
             android:allowBackup="@bool/allowBackup"
             android:hardwareAccelerated="@bool/useHardwareAcceleration"
@@ -60,7 +61,7 @@
             android:supportsRtl="true"
             android:theme="@style/AppTheme"
             tools:ignore="AllowBackup,GoogleAppIndexingWarning"
-            tools:targetApi="n">
+            tools:targetApi="q">
 
         <activity
                 android:name=".ui.help.HelpActivity"

@@ -19,12 +19,12 @@ import com.joshtalks.joshskills.R
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         if (mDialog == null) {
-            mDialog = Dialog(activity, R.style.full_dialog)
+            mDialog = Dialog(activity!!, R.style.full_dialog)
             mDialog!!.setContentView(R.layout.progress_dialog_overlay)
             mDialog!!.setCanceledOnTouchOutside(isClickCancelAble)
-            mDialog!!.window.setGravity(Gravity.CENTER)
-            val view = mDialog!!.window.decorView
-            background = view.findViewById(R.id.background)
+            mDialog!!.window?.setGravity(Gravity.CENTER)
+            val view = mDialog!!.window?.decorView
+            background = view?.findViewById(R.id.background)
             if (color != 0) {
                 this.background?.setBackgroundColor(color)
             }

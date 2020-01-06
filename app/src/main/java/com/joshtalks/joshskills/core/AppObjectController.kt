@@ -63,7 +63,7 @@ val KEY_APP_VERSION_NAME = "app-version-name"
 val KEY_APP_USER_AGENT = "HTTP_USER_AGENT"
 
 
-const val SERVER_URL = "https://skills.joshtalks.org"
+//const val SERVER_URL = "https://skills.joshtalks.org"
 //const val SERVER_URL = "http://staging.joshtalks.org"
 //const val SERVER_URL = "http://13.127.85.171:8000"
 
@@ -222,7 +222,7 @@ internal class AppObjectController {
             okHttpClient = builder.build()
 
             retrofit = Retrofit.Builder()
-                .baseUrl(SERVER_URL)
+                .baseUrl(BuildConfig.BASE_URL)
                 .client(builder.build())
                 .addCallAdapterFactory(CoroutineCallAdapterFactory())
                 .addConverterFactory(GsonConverterFactory.create(gsonMapper))
@@ -250,7 +250,7 @@ internal class AppObjectController {
             }
 
             mediaDUNetworkService = Retrofit.Builder()
-                .baseUrl(SERVER_URL)
+                .baseUrl(BuildConfig.BASE_URL)
                 .client(mediaOkhttpBuilder.build())
                 .build().create(MediaDUNetworkService::class.java)
 

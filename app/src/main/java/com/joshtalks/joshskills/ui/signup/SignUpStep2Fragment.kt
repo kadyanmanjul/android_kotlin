@@ -24,7 +24,7 @@ import com.joshtalks.joshskills.repository.local.eventbus.OTPReceivedEventBus
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.fragment_sign_up_step3.*
+import kotlinx.android.synthetic.main.fragment_sign_up_step2.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

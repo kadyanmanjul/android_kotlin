@@ -8,11 +8,11 @@ apply plugin: 'com.google.gms.google-services'
 
 
 android {
-    compileSdkVersion 28
+    compileSdkVersion 29
     defaultConfig {
         applicationId "com.joshtalks.joshskills"
         minSdkVersion 21
-        targetSdkVersion 28
+        targetSdkVersion 29
         versionCode 29
         versionName "1.0.29"
         vectorDrawables.useSupportLibrary true
@@ -110,14 +110,14 @@ android {
             // versionNameSuffix "-demo"
             buildConfigField "boolean", "PLAY_STORE_DISABLED", "false"
             manifestPlaceholders = [enableCrashReporting: "false"]
-
+            buildConfigField "String", "BASE_URL", "\"http://staging.joshtalks.org\""
         }
         prod {
             //applicationIdSuffix ".full"
             //versionNameSuffix "-full"
             buildConfigField "boolean", "PLAY_STORE_DISABLED", "false"
             manifestPlaceholders = [enableCrashReporting: "true"]
-
+            buildConfigField "String", "BASE_URL", "\"https://skills.joshtalks.org\""
 
         }
     }
