@@ -3,7 +3,6 @@
 <resources>
     <bool name="allowBackup">true</bool>
     <bool name="useHardwareAcceleration">true</bool>
-    <bool name="useLargeHeap">true</bool>
     <bool name="super_bottom_sheet_isTablet">false</bool>
     <bool name="super_bottom_sheet_isAlwaysExpanded">false</bool>
     <bool name="super_bottom_sheet_cancelableOnTouchOutside">true</bool>

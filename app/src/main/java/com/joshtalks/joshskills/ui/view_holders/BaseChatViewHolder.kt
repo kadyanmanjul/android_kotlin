@@ -1,6 +1,5 @@
 package com.joshtalks.joshskills.ui.view_holders
 
-import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
@@ -17,7 +16,6 @@ import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
 import com.joshtalks.joshskills.repository.local.entity.MESSAGE_DELIVER_STATUS
 import com.joshtalks.joshskills.repository.local.entity.Sender
-import com.mindorks.placeholderview.annotations.Resolve
 import java.lang.ref.WeakReference
 
 

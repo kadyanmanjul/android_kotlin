@@ -21,25 +21,13 @@ import kotlinx.coroutines.launch
 
 
 class SignUpViewModel(application: Application) : AndroidViewModel(application) {
-
     var context: JoshApplication = getApplication()
     var text = BindableString()
-
-
     var phoneNumber = ""
     var countryCode = ""
-
-    var phoneNumberObservable = ObservableField<String>()
-
     val signUpStatus = MutableLiveData<SignUpStepStatus>()
     val progressDialogStatus = MutableLiveData<Boolean>()
     val otpField = ObservableField<String>()
-
-
-    fun registerPhone() {
-        signUpStatus.postValue(SignUpStepStatus.SignUpStepSecond)
-
-    }
 
 
     fun networkCallForOtp(country_code: String, mobileNumber: String) {

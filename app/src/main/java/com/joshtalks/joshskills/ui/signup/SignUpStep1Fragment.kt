@@ -83,8 +83,7 @@ class SignUpStep1Fragment : Fragment() {
         initTermsConditionView()
         initProgressView()
         requestHint()
-
-
+        signUpStep1FragmentBinding.mobileEt.setText(viewModel.phoneNumber)
     }
 
 
@@ -208,7 +207,7 @@ class SignUpStep1Fragment : Fragment() {
     override fun onResume() {
         super.onResume()
         try {
-            signUpStep1FragmentBinding.mobileEt.setSelection(signUpStep1FragmentBinding.mobileEt.text!!.length )
+            signUpStep1FragmentBinding.mobileEt.setSelection(signUpStep1FragmentBinding.mobileEt.text!!.length)
         } catch (ex: Exception) {
         }
 

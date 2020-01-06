@@ -39,7 +39,6 @@ import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.bumptech.glide.request.target.Target
 import com.crashlytics.android.Crashlytics
 import com.github.pwittchen.reactivenetwork.library.rx2.ReactiveNetwork
-import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.snackbar.Snackbar
 import com.greentoad.turtlebody.mediapicker.MediaPicker
 import com.greentoad.turtlebody.mediapicker.core.MediaPickerConfig
@@ -90,8 +89,9 @@ import de.hdodenhof.circleimageview.CircleImageView
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import kotlinx.coroutines.*
-import java.lang.Runnable
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.lang.ref.WeakReference
 import java.util.*
 import kotlin.concurrent.scheduleAtFixedRate
@@ -173,6 +173,7 @@ class ConversationActivity : CoreJoshActivity() {
             conversationBinding.viewmodel = conversationViewModel
 
         } catch (ex: Exception) {
+            Crashlytics.logException(ex)
             //ex.printStackTrace()
         }
     }
@@ -195,6 +196,7 @@ class ConversationActivity : CoreJoshActivity() {
             try {
                 progressDialog.dismissAllowingStateLoss()
             } catch (ex: Exception) {
+                Crashlytics.logException(ex)
                 ex.printStackTrace()
             }
             conversationBinding.progressBar.visibility = GONE
@@ -205,8 +207,7 @@ class ConversationActivity : CoreJoshActivity() {
         progressDialog = FlipProgressDialog()
         progressDialog.setCanceledOnTouchOutside(false)
         progressDialog.setDimAmount(0.8f)
-        progressDialog.show(supportFragmentManager, "ProgressDialog");
-
+        progressDialog.show(supportFragmentManager, "ProgressDialog")
     }
 
     private fun refreshChat() {
@@ -228,6 +229,9 @@ class ConversationActivity : CoreJoshActivity() {
         Slidr.attach(this, primary, secondary)
     }
 
+    fun emojiToggle() {
+        emojiPopup.toggle()
+    }
 
     private fun setToolbar() {
         try {
@@ -243,26 +247,14 @@ class ConversationActivity : CoreJoshActivity() {
                     )
                     .into(findViewById<CircleImageView>(R.id.image_view_logo))
             }
-
-
             findViewById<View>(R.id.image_view_logo).visibility = VISIBLE
             findViewById<AppCompatImageView>(R.id.iv_back).setOnClickListener {
                 finish()
             }
-
-            /* if (Utils.isHelplineOnline()) {
-                 findViewById<MaterialToolbar>(R.id.toolbar).inflateMenu(R.menu.main_menu)
-                 findViewById<MaterialToolbar>(R.id.toolbar).setOnMenuItemClickListener {
-                     if (it?.itemId == R.id.menu_call_helpline) {
-                         callHelpLine()
-                     }
-                     return@setOnMenuItemClickListener true
-                 }
-             }*/
             findViewById<AppCompatTextView>(R.id.text_message_title).text = inboxEntity.course_name
 
         } catch (ex: Exception) {
-
+            Crashlytics.logException(ex)
         }
 
     }
@@ -391,8 +383,6 @@ class ConversationActivity : CoreJoshActivity() {
             }
         })
 
-
-
         conversationBinding.recordView.setOnBasketAnimationEndListener {
             conversationBinding.recordView.visibility = GONE
             conversationViewModel.stopRecording()
@@ -410,7 +400,6 @@ class ConversationActivity : CoreJoshActivity() {
                     conversationBinding.recordButton.goToState(SECOND_STATE)
                     conversationBinding.recordButton.isListenForRecord = false
                     conversationBinding.quickToggle.hide()
-
                 }
 
             }
@@ -548,7 +537,6 @@ class ConversationActivity : CoreJoshActivity() {
                     }
                 }, {
                     AppAnalytics.create(AnalyticsEvent.BACK_PRESSED.NAME).push()
-
                 })
         }
         conversationBinding.scrollToEndButton.setOnClickListener {
@@ -593,15 +581,19 @@ class ConversationActivity : CoreJoshActivity() {
                     it.printStackTrace()
                 })
         )
-        compositeDisposable.add(RxBus2.listen(ImageShowEvent::class.java).subscribe {
+        compositeDisposable.add(RxBus2.listen(ImageShowEvent::class.java).subscribe({
             it.imageUrl?.let { imageUrl ->
                 ImageShowFragment.newInstance(imageUrl, inboxEntity.course_name, it.imageId)
                     .show(supportFragmentManager, "ImageShow")
             }
-        })
-        compositeDisposable.add(RxBus2.listen(PdfOpenEventBus::class.java).subscribe {
+        }, {
+            it.printStackTrace()
+        }))
+        compositeDisposable.add(RxBus2.listen(PdfOpenEventBus::class.java).subscribe({
             PdfViewerActivity.startPdfActivity(this, it.pdfObject, inboxEntity.course_name)
-        })
+        }, {
+            it.printStackTrace()
+        }))
         compositeDisposable.add(
             RxBus2.listen(MediaProgressEventBus::class.java)
                 .subscribeOn(Schedulers.io())
@@ -619,12 +611,8 @@ class ConversationActivity : CoreJoshActivity() {
                     it.printStackTrace()
                 })
         )
-        compositeDisposable.add(RxBus2.listen(RemoveViewEventBus::class.java).subscribe {
-
-        })
 
         compositeDisposable.add(RxBus2.listen(DownloadMediaEventBus::class.java).subscribe {
-
             Dexter.withActivity(this)
                 .withPermissions(
                     Manifest.permission.READ_EXTERNAL_STORAGE,
@@ -732,14 +720,11 @@ class ConversationActivity : CoreJoshActivity() {
                     }
                     conversationBinding.refreshLayout.isRefreshing = false
                 })
-
-
     }
 
     private fun refreshViewAtPos(chatObj: ChatModel) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
-
                 var tempView: BaseChatViewHolder
                 conversationBinding.chatRv.allViewResolvers?.let {
 
@@ -758,15 +743,10 @@ class ConversationActivity : CoreJoshActivity() {
                     }
                 }
             } catch (ex: Exception) {
+                Crashlytics.logException(ex)
                 ex.printStackTrace()
             }
         }
-
-    }
-
-
-    fun emojiToggle() {
-        emojiPopup.toggle()
 
     }
 
@@ -844,21 +824,26 @@ class ConversationActivity : CoreJoshActivity() {
         resultCode: Int,
         data: Intent?
     ) {
-        if (requestCode == IMAGE_SELECT_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-            data?.let { intent ->
-                when {
-                    intent.hasExtra(JoshCameraActivity.IMAGE_RESULTS) -> {
-                        val returnValue =
-                            intent.getStringArrayListExtra(JoshCameraActivity.IMAGE_RESULTS)
-                        returnValue?.get(0)?.let { addUserImageInView(it) }
+        try {
+            if (requestCode == IMAGE_SELECT_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+                data?.let { intent ->
+                    when {
+                        intent.hasExtra(JoshCameraActivity.IMAGE_RESULTS) -> {
+                            val returnValue =
+                                intent.getStringArrayListExtra(JoshCameraActivity.IMAGE_RESULTS)
+                            returnValue?.get(0)?.let { addUserImageInView(it) }
+                        }
+                        intent.hasExtra(JoshCameraActivity.VIDEO_RESULTS) -> {
+                            val videoPath = intent.getStringExtra(JoshCameraActivity.VIDEO_RESULTS)
+                            addUserVideoInView(videoPath)
+                        }
+                        else -> return
                     }
-                    intent.hasExtra(JoshCameraActivity.VIDEO_RESULTS) -> {
-                        val videoPath = intent.getStringExtra(JoshCameraActivity.VIDEO_RESULTS)
-                        addUserVideoInView(videoPath)
-                    }
-                    else -> return
                 }
             }
+        } catch (ex: Exception) {
+            Crashlytics.logException(ex)
+            ex.printStackTrace()
         }
         super.onActivityResult(requestCode, resultCode, data)
     }
@@ -895,7 +880,6 @@ class ConversationActivity : CoreJoshActivity() {
             cell
         )
         scrollToEnd()
-
         conversationViewModel.uploadMedia(
             imageUpdatedPath, tImageMessage, cell.message
         )
@@ -989,7 +973,6 @@ class ConversationActivity : CoreJoshActivity() {
         subscribeRXBus()
         conversationBinding.chatRv.refresh()
         observeNetwork()
-
     }
 
 

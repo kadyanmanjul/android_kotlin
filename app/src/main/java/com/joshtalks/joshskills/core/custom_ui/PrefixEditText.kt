@@ -2,21 +2,14 @@ package com.joshtalks.joshskills.core.custom_ui
 
 
 import android.content.Context
-import android.graphics.Canvas
+import android.content.res.TypedArray
+import android.graphics.*
+import android.graphics.drawable.Drawable
+import android.text.TextPaint
 import android.util.AttributeSet
+import android.util.Log
 import androidx.appcompat.widget.AppCompatEditText
 import com.joshtalks.joshskills.R
-
-import android.content.res.TypedArray
-import android.graphics.Paint
-import android.graphics.Rect
-import android.graphics.Typeface
-import android.graphics.drawable.Drawable
-import android.os.Build
-import android.text.TextPaint
-import android.util.Log
-import android.graphics.ColorFilter
-import android.graphics.PixelFormat
 import kotlin.properties.Delegates
 
 /**

@@ -8,8 +8,6 @@ import android.os.Bundle
 import android.provider.Settings
 import android.text.TextUtils
 import android.util.DisplayMetrics
-import android.util.Log
-import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.android.installreferrer.api.InstallReferrerClient
@@ -24,7 +22,6 @@ import com.joshtalks.joshskills.repository.local.model.InstallReferrerModel
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.service.EngagementNetworkHelper
-import com.joshtalks.joshskills.ui.help.HelpActivity
 import com.joshtalks.joshskills.ui.inbox.InboxActivity
 import com.joshtalks.joshskills.ui.profile.CropImageActivity
 import com.joshtalks.joshskills.ui.profile.ProfileActivity
@@ -32,7 +29,7 @@ import com.joshtalks.joshskills.ui.profile.SOURCE_IMAGE
 import com.joshtalks.joshskills.ui.sign_up_old.OnBoardActivity
 import io.github.inflationx.viewpump.ViewPumpContextWrapper
 import java.net.URLDecoder
-import java.util.HashMap
+import java.util.*
 
 const val HELP_ACTIVITY_REQUEST_CODE = 9010
 

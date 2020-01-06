@@ -2,7 +2,6 @@ package com.joshtalks.joshskills.ui.launch
 
 import android.os.Bundle
 import android.os.Handler
-import android.view.View
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.CoreJoshActivity
 import com.joshtalks.joshskills.core.service.WorkMangerAdmin

@@ -11,7 +11,6 @@ import androidx.transition.ChangeBounds
 import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.core.CoreJoshActivity
 import com.joshtalks.joshskills.core.SignUpStepStatus
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
@@ -19,7 +18,6 @@ import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.databinding.ActivitySignUpBinding
 import com.joshtalks.joshskills.repository.local.model.InstallReferrerModel
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
-
 import com.joshtalks.joshskills.ui.inbox.COURSE_EXPLORER_WITHOUT_CODE
 
 class SignUpActivity : CoreJoshActivity() {
@@ -43,7 +41,7 @@ class SignUpActivity : CoreJoshActivity() {
         supportFragmentManager.commit(true) {
             addToBackStack(SignUpStep1Fragment::class.java.name)
             setCustomAnimations(R.anim.slide_in_left, R.anim.slide_in_right)
-            add(
+            replace(
                 R.id.container,
                 SignUpStep1Fragment.newInstance(),
                 SignUpStep1Fragment::class.java.name
@@ -150,10 +148,15 @@ class SignUpActivity : CoreJoshActivity() {
         signUpStep2Fragment.allowEnterTransitionOverlap = false
         signUpStep2Fragment.allowReturnTransitionOverlap = false
 
-        supportFragmentManager.beginTransaction()
-            .add(R.id.container, signUpStep2Fragment)
-            .addToBackStack(SignUpStep2Fragment::class.java.name)
-            .commitAllowingStateLoss()
+        supportFragmentManager.commit(true) {
+            addToBackStack(signUpStep2Fragment::class.java.name)
+            replace(
+                R.id.container,
+                signUpStep2Fragment,
+                signUpStep2Fragment::class.java.name
+            )
+        }
+
     }
 
     override fun onBackPressed() {

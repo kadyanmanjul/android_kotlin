@@ -1,10 +1,8 @@
 package com.joshtalks.joshskills.repository.service
 
-import com.joshtalks.joshskills.repository.server.ChatMessageReceiver
 import com.joshtalks.joshskills.repository.server.ComplaintResponse
 import com.joshtalks.joshskills.repository.server.RequestComplaint
 import com.joshtalks.joshskills.repository.server.TypeOfHelpModel
-import kotlinx.coroutines.Deferred
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST

@@ -30,7 +30,6 @@ import com.joshtalks.joshskills.databinding.ActivitySearchLocationBinding
 import com.joshtalks.joshskills.repository.local.model.googlelocation.GoogleSearchLocationObj
 import com.joshtalks.joshskills.ui.location.adapter.SearchLocationAdapter
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_search_location.*
 
 

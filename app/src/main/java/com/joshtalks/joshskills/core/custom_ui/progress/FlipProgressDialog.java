@@ -41,7 +41,8 @@ public class FlipProgressDialog extends DialogFragment {
 
     ImageView image;
     int counter = 0;
-    Handler handler;
+    Handler handler = new Handler();
+
     Runnable r;
 
     //Set Animation stuff
@@ -175,7 +176,6 @@ public class FlipProgressDialog extends DialogFragment {
         }
         final int numberImageList = imageList.size() - 1;
 
-        handler = new Handler();
         r = new Runnable() {
             @Override
             public void run() {
@@ -227,24 +227,23 @@ public class FlipProgressDialog extends DialogFragment {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(imageSize, imageSize);
-
-        // Set margins for image
-        params.setMargins(imageMargin, imageMargin, imageMargin, imageMargin);
         try {
+            FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(imageSize, imageSize);
+            // Set margins for image
+            params.setMargins(imageMargin, imageMargin, imageMargin, imageMargin);
 
             image.setScaleType(ImageView.ScaleType.FIT_XY);
             image.setImageResource(imageList.get(0));
             image.setLayoutParams(params);
+            // Let's get the root layout and add our ImageView
+            FrameLayout layout = (FrameLayout) view.findViewById(R.id.root);
+            layout.addView(image, 0, params);
+
         } catch (Exception e) {
             e.printStackTrace();
             Log.e("image null error", "Try to set imageList!");
         }
 
-
-        // Let's get the root layout and add our ImageView
-        FrameLayout layout = (FrameLayout) view.findViewById(R.id.root);
-        layout.addView(image, 0, params);
 
         animateAnimatorSetSample(image);
 

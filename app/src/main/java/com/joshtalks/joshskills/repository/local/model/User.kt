@@ -3,7 +3,6 @@ package com.joshtalks.joshskills.repository.local.model
 import com.google.gson.annotations.SerializedName
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.repository.server.ProfileToken
 
 
 const val USER_PERSISTANT_KEY = "user"

@@ -76,7 +76,6 @@ class PaymentActivity : CoreJoshActivity(),
         activityPaymentBinding = DataBindingUtil.setContentView(this, R.layout.activity_payment)
         activityPaymentBinding.lifecycleOwner = this
         courseModel = intent.getSerializableExtra(COURSE_ID) as CourseExploreModel
-
         initRV()
         initView()
         getCourseDetails()
@@ -132,7 +131,6 @@ class PaymentActivity : CoreJoshActivity(),
 
     private fun initializeRazorpayPayment(response: PaymentDetailsResponse) {
         CoroutineScope(Dispatchers.Main).launch {
-
             activityPaymentBinding.progressBar.visibility = View.VISIBLE
             val checkout = Checkout()
             checkout.setImage(R.mipmap.ic_launcher)

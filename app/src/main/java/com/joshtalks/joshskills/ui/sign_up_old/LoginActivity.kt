@@ -1,6 +1,5 @@
 package com.joshtalks.joshskills.ui.sign_up_old
 
-import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.lifecycle.Observer

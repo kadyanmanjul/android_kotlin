@@ -2,7 +2,6 @@ package com.joshtalks.joshskills.ui.signup.countrycodepicker;
 
 import android.app.Dialog;
 import android.content.Context;
-import androidx.recyclerview.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
@@ -16,6 +15,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.futuremind.recyclerviewfastscroll.SectionTitleProvider;
 import com.joshtalks.joshskills.R;

@@ -64,7 +64,6 @@
 
         <activity
                 android:name=".ui.help.HelpActivity"
-                android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize"
                 android:launchMode="singleTask"
                 android:theme="@style/AppNoBarTheme"/>
 

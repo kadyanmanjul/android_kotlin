@@ -2,21 +2,19 @@ package com.joshtalks.joshskills.ui.help
 
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.custom_ui.decorator.LayoutMarginDecoration
-import com.joshtalks.joshskills.core.custom_ui.progress.FlipProgressDialog
 import com.joshtalks.joshskills.databinding.FragmentHelpListBinding
-import com.joshtalks.joshskills.ui.view_holders.CourseExplorerViewHolder
 import com.joshtalks.joshskills.ui.view_holders.HelpViewHolder
 import com.vanniktech.emoji.Utils
 
