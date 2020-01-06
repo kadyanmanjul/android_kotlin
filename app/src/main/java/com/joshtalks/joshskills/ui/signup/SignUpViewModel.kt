@@ -155,7 +155,10 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
 
                 }
             } catch (ex: Exception) {
+                signUpStatus.postValue(SignUpStepStatus.SignUpCompleted)
+                ex.printStackTrace()
             }
+
         }
     }
 

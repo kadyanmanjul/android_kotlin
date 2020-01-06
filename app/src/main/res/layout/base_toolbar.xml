@@ -65,7 +65,8 @@
                     android:layout_centerVertical="true"
                     android:layout_marginEnd="@dimen/_10sdp"
                     android:padding="@dimen/_8sdp"
-                    android:visibility="gone"
+                    android:visibility="visible"
+                    android:onClick="openHelp"
                     android:src="@drawable/ic_help_outline"
                     android:tint="@color/white" />
         </RelativeLayout>

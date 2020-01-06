@@ -9,6 +9,9 @@ const val RC_ACCOUNT_KIT = 16
 enum class SignUpStepStatus {
     SignUpStepFirst, SignUpStepSecond,SignUpCompleted,SignUpResendOTP,SignUpWithoutRegister,CoursesNotExist
 }
+enum class ApiCallStatus{
+    SUCCESS,FAILED
+}
 
 
 const val REDIRECT_URL = "http://english.joshtalks.org/"

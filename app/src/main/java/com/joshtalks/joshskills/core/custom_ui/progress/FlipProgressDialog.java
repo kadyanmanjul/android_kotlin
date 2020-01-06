@@ -169,6 +169,10 @@ public class FlipProgressDialog extends DialogFragment {
     }
 
     private void repeatChangeImages() {
+
+        if (imageList == null || imageList.size() == 0) {
+            return;
+        }
         final int numberImageList = imageList.size() - 1;
 
         handler = new Handler();
@@ -187,7 +191,7 @@ public class FlipProgressDialog extends DialogFragment {
                         image.setImageResource(imageList.get(counter));
                     }
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    // e.printStackTrace();
                     Log.e("image null error", "Try to set imageList!");
                 }
             }
@@ -311,4 +315,9 @@ public class FlipProgressDialog extends DialogFragment {
         this.endAngle = endAngle * 2;
     }
 
+    @Override
+    public void dismiss() {
+        super.dismiss();
+
+    }
 }

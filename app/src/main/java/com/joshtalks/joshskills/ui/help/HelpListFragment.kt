@@ -6,19 +6,80 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-
+import androidx.appcompat.widget.AppCompatTextView
+import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.custom_ui.decorator.LayoutMarginDecoration
+import com.joshtalks.joshskills.core.custom_ui.progress.FlipProgressDialog
+import com.joshtalks.joshskills.databinding.FragmentHelpListBinding
+import com.joshtalks.joshskills.ui.view_holders.CourseExplorerViewHolder
+import com.joshtalks.joshskills.ui.view_holders.HelpViewHolder
+import com.vanniktech.emoji.Utils
 
 
 class HelpListFragment : Fragment() {
+
+
+    private lateinit var viewModel: HelpViewModel
+    private lateinit var helpListBinding: FragmentHelpListBinding
+
+
+    companion object {
+        @JvmStatic
+        fun newInstance() = HelpListFragment().apply {}
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        viewModel = activity?.run { ViewModelProviders.of(this)[HelpViewModel::class.java] }
+            ?: throw Exception("Invalid Activity")
+
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_help_list, container, false)
+
+        helpListBinding =
+            DataBindingUtil.inflate(inflater, R.layout.fragment_help_list, container, false)
+        helpListBinding.lifecycleOwner = this
+        helpListBinding.handler = this
+        initRV()
+        return helpListBinding.root
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        val titleView = activity?.findViewById<AppCompatTextView>(R.id.text_message_title)
+        titleView?.text = getString(R.string.help_header)
+        if (viewModel.typeOfHelpModelLiveData.value.isNullOrEmpty()) {
+            viewModel.getAllHelpCategory()
+        }
+        viewModel.typeOfHelpModelLiveData.observe(this, Observer {
+            it.forEach { obj ->
+                helpListBinding.recyclerView.addView(HelpViewHolder(obj))
+            }
+            helpListBinding.progressBar.visibility = View.GONE
+        })
+    }
 
+    private fun initRV() {
+        val linearLayoutManager = LinearLayoutManager(activity)
+        linearLayoutManager.isSmoothScrollbarEnabled = true
+        helpListBinding.recyclerView.builder.setHasFixedSize(true)
+            .setLayoutManager(linearLayoutManager)
+        helpListBinding.recyclerView.addItemDecoration(
+            LayoutMarginDecoration(
+                Utils.dpToPx(
+                    AppObjectController.joshApplication,
+                    2f
+                )
+            )
+        )
+    }
 }

@@ -79,6 +79,7 @@ class CourseExploreActivity : CoreJoshActivity() {
         loadCourses()
     }
 
+
     private fun initView() {
         val titleView = findViewById<AppCompatTextView>(R.id.text_message_title)
         titleView.text = getString(R.string.explorer_course)
@@ -122,7 +123,7 @@ class CourseExploreActivity : CoreJoshActivity() {
             LayoutMarginDecoration(
                 Utils.dpToPx(
                     this,
-                    8f
+                    4f
                 )
             )
         )

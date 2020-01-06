@@ -7,7 +7,6 @@ import com.joshtalks.joshskills.repository.server.ResponseChatMessage
 import kotlinx.coroutines.Deferred
 import retrofit2.http.*
 
-
 @JvmSuppressWildcards
 interface ChatNetworkService {
 
@@ -17,10 +16,8 @@ interface ChatNetworkService {
     @POST("$DIR/chat/message/")
     fun sendMessage(@Body messageObject: Any): Deferred<ChatMessageReceiver>
 
-
     @PATCH("$DIR/chat/message/{id}")
     suspend fun deleteMessage(@Path("id") id: String, @FieldMap params: Map<String, String>): ChatMessageReceiver
-
 
     @GET("$DIR/chat/{id}/")
     suspend fun getUnReceivedMessageAsync(@Path("id") id: String, @QueryMap params: Map<String, String>): ResponseChatMessage
@@ -41,11 +38,9 @@ interface ChatNetworkService {
     @POST("$DIR/engage/image/")
     suspend fun engageImage(@Body messageObject: Any)
 
-
     @FormUrlEncoded
     @PATCH("$DIR/notification/{id}/")
     suspend fun engageNotificationAsync(@Path("id") id: String, @FieldMap params: Map<String, String>)
-
 
     @PATCH("$DIR/chat/message/list/")
     suspend fun updateMessagesStatus(@Body messageObject: Any)

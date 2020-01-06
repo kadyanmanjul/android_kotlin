@@ -30,6 +30,7 @@ import com.joshtalks.joshskills.databinding.SignUpStep1FragmentBinding
 const val RC_HINT = 2
 const val DEFAULT_COUNTRY_CODE = "IN"
 
+val PHONE_NUMBER_REGEX = Regex(pattern = "^[6789]\\d{9}\$")
 
 class SignUpStep1Fragment : Fragment() {
 
@@ -39,7 +40,6 @@ class SignUpStep1Fragment : Fragment() {
 
     private lateinit var signUpStep1FragmentBinding: SignUpStep1FragmentBinding
     private lateinit var viewModel: SignUpViewModel
-    private val PHONE_NUMBER_REGEX = Regex(pattern = "^[6789]\\d{9}\$")
 
 
     override fun onCreateView(

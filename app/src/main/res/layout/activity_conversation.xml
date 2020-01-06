@@ -245,11 +245,13 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <FrameLayout
+                android:focusable="true"
+                android:clickable="true"
                 android:id="@+id/progress_bar"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="#AA000000"
-                android:visibility="visible">
+                android:visibility="gone">
 
             <com.pnikosis.materialishprogress.ProgressWheel
                     android:layout_width="@dimen/_82sdp"

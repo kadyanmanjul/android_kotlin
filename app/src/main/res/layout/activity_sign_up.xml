@@ -49,6 +49,17 @@
                         android:adjustViewBounds="true"
                         android:scaleType="fitCenter"
                         android:src="@drawable/josh_skill" />
+                <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/iv_help"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="@dimen/_4sdp"
+                        android:padding="@dimen/_8sdp"
+                        android:visibility="visible"
+                        android:layout_gravity="end"
+                        android:onClick="openHelp"
+                        android:src="@drawable/ic_help_outline"
+                        android:tint="@color/gray_79" />
 
             </FrameLayout>
 

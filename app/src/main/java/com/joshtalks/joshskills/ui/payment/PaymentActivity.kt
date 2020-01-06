@@ -83,6 +83,8 @@ class PaymentActivity : CoreJoshActivity(),
         Checkout.preload(application)
     }
 
+
+
     private fun initView() {
         val titleView = findViewById<AppCompatTextView>(R.id.text_message_title)
         titleView.text = courseModel.courseName
@@ -141,7 +143,7 @@ class PaymentActivity : CoreJoshActivity(),
                     .put("contact", User.getInstance().phoneNumber)
                 val options = JSONObject()
                 options.put("key", response.razorpayKeyId)
-                options.put("name", User.getInstance().firstName)
+                options.put("name", "Josh Skills")
                 options.put("description", response.courseName + "_app")
                 options.put("order_id", response.razorpayOrderId)
                 options.put("currency", response.currency)

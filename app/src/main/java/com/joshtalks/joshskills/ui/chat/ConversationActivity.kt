@@ -53,6 +53,7 @@ import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.custom_ui.JoshSnackBar
 import com.joshtalks.joshskills.core.custom_ui.audioplayer.JcPlayerManager
 import com.joshtalks.joshskills.core.custom_ui.decorator.LayoutMarginDecoration
+import com.joshtalks.joshskills.core.custom_ui.progress.FlipProgressDialog
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.databinding.ActivityConversationBinding
 import com.joshtalks.joshskills.emoji.PageTransformer
@@ -99,7 +100,7 @@ const val CHAT_ROOM_OBJECT = "chat_room"
 const val IMAGE_SELECT_REQUEST_CODE = 1077
 const val VISIBILE_ITEM_PERCENT = 75
 
-class ConversationActivity : BaseActivity() {
+class ConversationActivity : CoreJoshActivity() {
 
     companion object {
         fun startConversionActivity(context: Context, inboxEntity: InboxEntity) {
@@ -124,7 +125,7 @@ class ConversationActivity : BaseActivity() {
     private val readChatList: MutableSet<ChatModel> = mutableSetOf()
     private var readMessageTimerTask: TimerTask? = null
     private val uiHandler = Handler(Looper.getMainLooper())
-
+    private lateinit var progressDialog: FlipProgressDialog
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -178,6 +179,7 @@ class ConversationActivity : BaseActivity() {
 
 
     private fun initChat() {
+        initProgressDialog()
         initSnackBar()
         initActivityAnimation()
         setToolbar()
@@ -190,8 +192,21 @@ class ConversationActivity : BaseActivity() {
         conversationViewModel.getAllUserMessage()
         refreshChat()
         uiHandler.postDelayed({
-            conversationBinding.progressBar.visibility= GONE
-        },20000)
+            try {
+                progressDialog.dismissAllowingStateLoss()
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+            }
+            conversationBinding.progressBar.visibility = GONE
+        }, 5000)
+    }
+
+    private fun initProgressDialog() {
+        progressDialog = FlipProgressDialog()
+        progressDialog.setCanceledOnTouchOutside(false)
+        progressDialog.setDimAmount(0.8f)
+        progressDialog.show(supportFragmentManager, "ProgressDialog");
+
     }
 
     private fun refreshChat() {
@@ -235,15 +250,15 @@ class ConversationActivity : BaseActivity() {
                 finish()
             }
 
-            if (Utils.isHelplineOnline()) {
-                findViewById<MaterialToolbar>(R.id.toolbar).inflateMenu(R.menu.main_menu)
-                findViewById<MaterialToolbar>(R.id.toolbar).setOnMenuItemClickListener {
-                    if (it?.itemId == R.id.menu_call_helpline) {
-                        callHelpLine()
-                    }
-                    return@setOnMenuItemClickListener true
-                }
-            }
+            /* if (Utils.isHelplineOnline()) {
+                 findViewById<MaterialToolbar>(R.id.toolbar).inflateMenu(R.menu.main_menu)
+                 findViewById<MaterialToolbar>(R.id.toolbar).setOnMenuItemClickListener {
+                     if (it?.itemId == R.id.menu_call_helpline) {
+                         callHelpLine()
+                     }
+                     return@setOnMenuItemClickListener true
+                 }
+             }*/
             findViewById<AppCompatTextView>(R.id.text_message_title).text = inboxEntity.course_name
 
         } catch (ex: Exception) {
@@ -712,6 +727,7 @@ class ConversationActivity : BaseActivity() {
                             .solidBackground().show()
                     }
                     if (it.flag.not()) {
+                        progressDialog.dismissAllowingStateLoss()
                         conversationBinding.progressBar.visibility = GONE
                     }
                     conversationBinding.refreshLayout.isRefreshing = false

@@ -27,6 +27,7 @@ import com.joshtalks.joshskills.core.service.video_download.VideoDownloadControl
 import com.joshtalks.joshskills.repository.local.AppDatabase
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.service.ChatNetworkService
+import com.joshtalks.joshskills.repository.service.CommonNetworkService
 import com.joshtalks.joshskills.repository.service.MediaDUNetworkService
 import com.joshtalks.joshskills.repository.service.SignUpNetworkService
 import com.joshtalks.joshskills.ui.signup.SignUpActivity
@@ -97,6 +98,9 @@ internal class AppObjectController {
 
         @JvmStatic
         lateinit var signUpNetworkService: SignUpNetworkService
+
+        @JvmStatic
+        lateinit var commonNetworkService: CommonNetworkService
 
 
         @JvmStatic
@@ -227,6 +231,7 @@ internal class AppObjectController {
 
             signUpNetworkService = retrofit.create(SignUpNetworkService::class.java)
             chatNetworkService = retrofit.create(ChatNetworkService::class.java)
+            commonNetworkService = retrofit.create(CommonNetworkService::class.java)
 
 
             val mediaOkhttpBuilder = OkHttpClient().newBuilder()

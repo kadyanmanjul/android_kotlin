@@ -12,6 +12,7 @@ import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.BaseActivity
+import com.joshtalks.joshskills.core.CoreJoshActivity
 import com.joshtalks.joshskills.core.SignUpStepStatus
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
@@ -21,7 +22,7 @@ import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
 
 import com.joshtalks.joshskills.ui.inbox.COURSE_EXPLORER_WITHOUT_CODE
 
-class SignUpActivity : BaseActivity() {
+class SignUpActivity : CoreJoshActivity() {
 
     private lateinit var layout: ActivitySignUpBinding
     private val viewModel: SignUpViewModel by lazy {

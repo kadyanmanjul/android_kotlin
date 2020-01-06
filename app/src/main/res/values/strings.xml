@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">JoshSkills</string>
     <string name="inbox_header">Josh Skills</string>
+    <string name="help_header">Help</string>
+
 
     <string name="login">Login</string>
     <string name="welcome_josh_skill">Welcome to Josh Skills</string>
@@ -51,10 +53,10 @@
     <string name="anonymous_user_login">Okay! Isi Number se dubara register karein!</string>
     <string name="register">Register</string>
 
-
+    <string name="submit">Submit</string>
     <string name="track_number">Track</string>
     <string name="play_button_description">Play button</string>
-
+    <string name="disclaimer">Disclaimer:This message will be shared directly with the Josh Talks Headquarters and will not be read by any intermediaries of Josh Skills, the course teacher or any sales or customer care executive</string>
 
     <string name="message_size_limit">Message size limit exceeded</string>
 
@@ -101,6 +103,7 @@
 
 
     <string name="something_went_wrong">Oops! Something Went Wrong</string>
+    <string name="feedback_message">Josh Talks Headquarters and will not be read by any intermediaries of Josh Skills, the course teacher or any sales or customer care executive.</string>
 
 
     <string name="time_ago_now">few moments ago</string>
@@ -127,7 +130,7 @@
     <!-- Help Screen  -->
     <string name="mobile_number">Mobile Number</string>
     <string name="email_address">Email Address</string>
-    <string name="what_problem">What problem are you facing</string>
+    <string name="what_problem">Please share your complaint:</string>
     <string name="lodge_complaint">Lodge a Complaint</string>
 
     <string name="attach_image">Attach an image</string>
@@ -143,8 +146,7 @@
     <string name="amount">Amount</string>
     <string name="duration">Duration</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="complaint_message" formatted="false">Thanks for reaching out to us. Your request has been recorded against ticket number %s. Our team will reach out to you between 24–72 hours</string>
 
 
 </resources>

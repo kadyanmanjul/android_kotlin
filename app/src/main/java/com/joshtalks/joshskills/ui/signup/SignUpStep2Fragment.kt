@@ -76,6 +76,7 @@ class SignUpStep2Fragment : Fragment() {
         activity?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
         initProgressView()
         signUpStep2Binding.otpView.setOtpCompletionListener {
+
                verifyOTP()
         }
         viewModel.progressDialogStatus.observe(this, Observer {
@@ -205,4 +206,6 @@ class SignUpStep2Fragment : Fragment() {
         }
         timer?.start()
     }
+
+
 }
