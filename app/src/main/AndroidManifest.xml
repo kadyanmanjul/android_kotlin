@@ -40,7 +40,9 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.CALL_PHONE" />
     <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY" /> <!-- showing notification on do not disturb -->
+<!--
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+-->
     <!--
         <uses-permission android:name="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE"
                 tools:ignore="ProtectedPermissions" />
@@ -59,8 +61,7 @@
             android:roundIcon="@mipmap/ic_launcher_round"
             android:supportsRtl="true"
             android:theme="@style/AppTheme"
-            tools:ignore="AllowBackup,GoogleAppIndexingWarning"
-            tools:targetApi="n">
+            tools:ignore="AllowBackup,GoogleAppIndexingWarning,UnusedAttribute">
 
         <activity
                 android:name=".ui.help.HelpActivity"
@@ -264,7 +265,6 @@
             </intent-filter>
         </receiver>
 
-        <activity android:name="com.razorpay.CheckoutActivity" />
     </application>
 
 </manifest>

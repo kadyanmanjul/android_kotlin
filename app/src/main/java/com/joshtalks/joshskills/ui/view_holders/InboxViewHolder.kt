@@ -70,8 +70,14 @@ class InboxViewHolder(var inboxEntity: InboxEntity, val totalItem: Int, val inde
             }
         }
 
+        if (inboxEntity.created != null) {
+            tv_last_message_time.text =
+                com.joshtalks.joshskills.core.Utils.getMessageTime(inboxEntity.created!!)
+        } else {
+            tv_last_message.text = getAppContext().getString(R.string.click_to_start_course)
+
+        }
         inboxEntity.created?.let {
-            tv_last_message_time.text = com.joshtalks.joshskills.core.Utils.getMessageTime(it)
         }
         if (inboxEntity.chat_id.isNullOrEmpty()) {
             tv_last_message_time.setCompoundDrawablesWithIntrinsicBounds(
@@ -87,6 +93,8 @@ class InboxViewHolder(var inboxEntity: InboxEntity, val totalItem: Int, val inde
         ) {
             hLine.visibility = android.view.View.GONE
         }
+
+
     }
 
 
@@ -146,8 +154,6 @@ class InboxViewHolder(var inboxEntity: InboxEntity, val totalItem: Int, val inde
             tv_last_message.text = "Pdf"
 
         }
-
-
 
         if (this.inboxEntity.message_deliver_status != null) {
             inboxEntity.message_deliver_status?.let { messageDeliverStatus ->
