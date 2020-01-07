@@ -240,7 +240,6 @@ abstract class BaseChatViewHolder(
     }
 
     open fun onViewInflated() {
-       // Log.e("getclass", javaClass.simpleName)
         RxBus2.publish(message)
     }
 

@@ -98,6 +98,7 @@
 
 
     <string name="something_went_wrong">Oops! Something Went Wrong</string>
+    <string name="click_to_start_course">Click to start course</string>
 
 
     <string name="time_ago_now">few moments ago</string>

@@ -24,7 +24,6 @@ import com.joshtalks.joshskills.repository.local.eventbus.OTPReceivedEventBus
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.fragment_sign_up_step2.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -72,7 +71,7 @@ class SignUpStep2Fragment : Fragment() {
         signUpStep2Binding.otpView.setText(EMPTY)
         startTimer()
         activity?.findViewById<View>(R.id.back_tv)?.visibility = View.VISIBLE
-        otp_view.requestFocus()
+        signUpStep2Binding.otpView.requestFocus()
         activity?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
         initProgressView()
         signUpStep2Binding.otpView.setOtpCompletionListener {
@@ -98,7 +97,7 @@ class SignUpStep2Fragment : Fragment() {
                 else -> return@Observer
             }
         })
-        signUpStep2Binding.tvMobile.text = viewModel.countryCode + viewModel.phoneNumber
+        signUpStep2Binding.tvMobile.text = viewModel.countryCode.plus(viewModel.phoneNumber)
 
     }
 

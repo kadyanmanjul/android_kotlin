@@ -73,8 +73,6 @@ class JcPlayerView : LinearLayout, View.OnClickListener, SeekBar.OnSeekBarChange
         get() = jcPlayerManager.currentAudio
 
     var onInvalidPathListener: OnInvalidPathListener? = null
-
-
     var jcPlayerManagerListener: JcPlayerManagerListener? = null
         set(value) {
             jcPlayerManager.jcPlayerManagerListener = value
@@ -96,8 +94,6 @@ class JcPlayerView : LinearLayout, View.OnClickListener, SeekBar.OnSeekBarChange
         @JvmStatic
         @Volatile
         private var videoId: String? = ""
-
-
     }
 
     constructor(context: Context) : super(context) {
@@ -106,9 +102,7 @@ class JcPlayerView : LinearLayout, View.OnClickListener, SeekBar.OnSeekBarChange
 
     constructor(context: Context, attrs: AttributeSet) : super(context, attrs) {
         init()
-
-        context.theme
-            .obtainStyledAttributes(attrs, R.styleable.JcPlayerView, 0, 0)
+        context.theme.obtainStyledAttributes(attrs, R.styleable.JcPlayerView, 0, 0)
             .also { setAttributes(it) }
     }
 
@@ -118,9 +112,7 @@ class JcPlayerView : LinearLayout, View.OnClickListener, SeekBar.OnSeekBarChange
         defStyle
     ) {
         init()
-
-        context.theme
-            .obtainStyledAttributes(attrs, R.styleable.JcPlayerView, defStyle, 0)
+        context.theme.obtainStyledAttributes(attrs, R.styleable.JcPlayerView, defStyle, 0)
             .also { setAttributes(it) }
     }
 
@@ -669,7 +661,7 @@ class JcPlayerView : LinearLayout, View.OnClickListener, SeekBar.OnSeekBarChange
                     mediaNotDownloaded()
                 }
             }
-        }catch (ex:Exception){
+        } catch (ex: Exception) {
 
         }
     }

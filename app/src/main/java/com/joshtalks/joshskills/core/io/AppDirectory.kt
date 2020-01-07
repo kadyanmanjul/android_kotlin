@@ -122,7 +122,7 @@ object AppDirectory {
         }
 
         if (fileName.isEmpty()) {
-            fileName = "IMG" + System.currentTimeMillis().toString() + ".jpg"
+            fileName = "IMG" + System.currentTimeMillis().toString() + ".jpeg"
         }
         val file = File(IMAGE_SENT_PATH + File.separator + fileName)
         file.createNewFile()
@@ -130,7 +130,7 @@ object AppDirectory {
     }
 
 
-    val DOCS_RECEIVED_PATH =
+    private val DOCS_RECEIVED_PATH =
         Environment.getExternalStorageDirectory().toString() + File.separator + APP_DIRECTORY + File.separator + MEDIA_DIRECTORY + "/JoshAppDocuments/"
 
 
@@ -146,17 +146,17 @@ object AppDirectory {
 
 
     val VIDEO_SENT_PATH =
-        Environment.getExternalStorageDirectory().toString() + File.separator + APP_DIRECTORY + File.separator + MEDIA_DIRECTORY + "/JoshApp Videos/Sent"
+        Environment.getExternalStorageDirectory().toString() + File.separator + APP_DIRECTORY + File.separator + MEDIA_DIRECTORY + "/JoshAppVideos/Sent"
 
     val VIDEO_RECEIVED_PATH =
-        Environment.getExternalStorageDirectory().toString() + File.separator + APP_DIRECTORY + File.separator + MEDIA_DIRECTORY + "/JoshApp Videos/"
+        Environment.getExternalStorageDirectory().toString() + File.separator + APP_DIRECTORY + File.separator + MEDIA_DIRECTORY + "/JoshAppVideos/"
 
     val VIDEO_CACHED_RECEIVED_PATH =
         Environment.getExternalStorageDirectory().toString() + File.separator + APP_DIRECTORY + File.separator + MEDIA_DIRECTORY + "/JoshApp/cached"
 
 
     val TEMP_PATH =
-        Environment.getExternalStorageDirectory().toString() + File.separator + APP_DIRECTORY + File.separator + MEDIA_DIRECTORY + "/JoshApp Temp"
+        Environment.getExternalStorageDirectory().toString() + File.separator + APP_DIRECTORY + File.separator + MEDIA_DIRECTORY + "/JoshAppTemp"
 
 
     private fun getImageFileName(): String {

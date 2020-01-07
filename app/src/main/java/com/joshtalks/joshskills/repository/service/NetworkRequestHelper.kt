@@ -6,6 +6,7 @@ import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
+import com.joshtalks.joshskills.core.service.DownloadUtils
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.*
 import com.joshtalks.joshskills.repository.local.eventbus.DBInsertion
@@ -68,9 +69,10 @@ object NetworkRequestHelper {
                         question.audioList?.let {
                             it.listIterator().forEach { audioType ->
                                 audioType.questionId = question.questionId
+                                DownloadUtils.downloadAudioFile(it)
                             }
+
                             AppObjectController.appDatabase.chatDao().insertAudioMessageList(it)
-                            //  DownloadUtils.downloadAudioFile(it)
                         }
 
                         question.imageList?.let {

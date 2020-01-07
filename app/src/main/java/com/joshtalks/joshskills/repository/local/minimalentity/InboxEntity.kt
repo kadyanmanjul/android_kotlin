@@ -15,6 +15,7 @@ data class InboxEntity constructor(
     val teacher_id: String? = "",
     var chat_id: String? = "",
     var created: Long? = 0,
+    var courseCreatedDate: Long? = 0,
     var isSeen: Boolean? = false,
     var text: String? = "",
     var type: BASE_MESSAGE_TYPE? = BASE_MESSAGE_TYPE.TX,

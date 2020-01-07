@@ -312,7 +312,6 @@ class PdfViewHolder(activityRef: WeakReference<FragmentActivity>, message: ChatM
 
     }
 
-
     private fun download(url: String) {
 
         DownloadUtils.downloadFile(

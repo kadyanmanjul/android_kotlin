@@ -4,6 +4,7 @@ import androidx.room.*
 import com.google.gson.annotations.SerializedName
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import java.io.Serializable
+import java.util.*
 
 @Entity(tableName = "course")
 data class Course(
@@ -28,8 +29,8 @@ data class Course(
     @ColumnInfo(name = "course_icon")
     @SerializedName("icon") val courseIcon: String?,
 
-    @ColumnInfo(name = "created")
-    @SerializedName("created") val created: String?
+    @ColumnInfo(name = "course_created_date")
+    @SerializedName("created") val courseCreatedDate: Date?
 
 
 ) : Serializable

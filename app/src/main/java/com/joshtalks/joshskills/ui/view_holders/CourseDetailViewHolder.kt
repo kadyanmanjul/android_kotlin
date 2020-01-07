@@ -5,6 +5,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.integration.webp.decoder.WebpDrawable
 import com.bumptech.glide.integration.webp.decoder.WebpDrawableTransformation
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
+import com.bumptech.glide.request.target.Target
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.repository.server.CourseDetailsModel
 import com.mindorks.placeholderview.annotations.Layout
@@ -23,6 +24,8 @@ class CourseDetailViewHolder(private val courseDetailsModel: CourseDetailsModel)
     fun onResolved() {
         Glide.with(getAppContext())
             .load(courseDetailsModel.imageUrl)
+            .override(Target.SIZE_ORIGINAL)
+
             .optionalTransform(
                 WebpDrawable::class.java,
                 WebpDrawableTransformation(CircleCrop())

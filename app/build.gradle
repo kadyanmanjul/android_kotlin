@@ -13,8 +13,8 @@ android {
         applicationId "com.joshtalks.joshskills"
         minSdkVersion 21
         targetSdkVersion 29
-        versionCode 29
-        versionName "1.0.29"
+        versionCode 31
+        versionName "1.0.31_dev"
         vectorDrawables.useSupportLibrary true
         renderscriptTargetApi 28 as int
         renderscriptSupportModeEnabled true

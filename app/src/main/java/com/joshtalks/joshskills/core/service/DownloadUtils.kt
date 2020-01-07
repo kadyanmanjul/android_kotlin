@@ -1,6 +1,9 @@
 package com.joshtalks.joshskills.core.service
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.util.Log
+import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
 import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.core.AppObjectController
@@ -122,7 +125,7 @@ object DownloadUtils {
                                 appDatabase.chatDao().updatePdfObject(pdfType!!)
 
                             }
-                        else ->return@let
+                        else -> return@let
                     }
                 }
 
@@ -167,45 +170,61 @@ object DownloadUtils {
 
 
     fun downloadAudioFile(listAudioData: List<AudioType>) = CoroutineScope(Dispatchers.IO).launch {
-        for (audioType in listAudioData) {
 
-            audioType.downloadStatus = DOWNLOAD_STATUS.DOWNLOADING
-            appDatabase.chatDao().updateAudioObject(audioType)
-            val file = AppDirectory.getAudioReceivedFile(audioType.audio_url).absolutePath
-            if (audioType.downloadStatus == DOWNLOAD_STATUS.DOWNLOADED) {
+        try {
+            if (checkStoragePermission().not()) {
                 return@launch
             }
+            for (audioType in listAudioData) {
 
-            Log.e("file url", file + "   " + audioType.audio_url)
-
-            val request = Request(audioType.audio_url, file)
-            request.priority = Priority.HIGH
-            request.networkType = NetworkType.ALL
-            request.tag = audioType.id
-
-
-
-            fetch.enqueue(request, Func {
-                audioType.downloadedLocalPath = it.file
-                audioType.downloadStatus = DOWNLOAD_STATUS.DOWNLOADED
-                CoroutineScope(Dispatchers.IO).launch {
-                    appDatabase.chatDao().updateAudioObject(audioType)
+                audioType.downloadStatus = DOWNLOAD_STATUS.DOWNLOADING
+                appDatabase.chatDao().updateAudioObject(audioType)
+                val file = AppDirectory.getAudioReceivedFile(audioType.audio_url).absolutePath
+                if (audioType.downloadStatus == DOWNLOAD_STATUS.DOWNLOADED) {
+                    return@launch
                 }
-                objectFetchListener.remove(it.tag)
-                Log.e("file url", it.url + "   " + it.file)
+
+                Log.e("file url", file + "   " + audioType.audio_url)
+
+                val request = Request(audioType.audio_url, file)
+                request.priority = Priority.HIGH
+                request.networkType = NetworkType.ALL
+                request.tag = audioType.id
 
 
-            },
-                Func {
-                    it.throwable?.printStackTrace()
-                    audioType.downloadStatus = DOWNLOAD_STATUS.FAILED
+
+                fetch.enqueue(request, Func {
+                    audioType.downloadedLocalPath = it.file
+                    audioType.downloadStatus = DOWNLOAD_STATUS.DOWNLOADED
                     CoroutineScope(Dispatchers.IO).launch {
                         appDatabase.chatDao().updateAudioObject(audioType)
                     }
+                    objectFetchListener.remove(it.tag)
+                    Log.e("file url", it.url + "   " + it.file)
 
-                })
+
+                },
+                    Func {
+                        it.throwable?.printStackTrace()
+                        audioType.downloadStatus = DOWNLOAD_STATUS.FAILED
+                        CoroutineScope(Dispatchers.IO).launch {
+                            appDatabase.chatDao().updateAudioObject(audioType)
+                        }
+
+                    })
+            }
+        } catch (ex: Exception) {
+            ex.printStackTrace()
         }
     }
 
-
+    private fun checkStoragePermission(): Boolean {
+        return ContextCompat.checkSelfPermission(
+            AppObjectController.joshApplication,
+            Manifest.permission.READ_EXTERNAL_STORAGE
+        ) + ContextCompat.checkSelfPermission(
+            AppObjectController.joshApplication,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+        ) == PackageManager.PERMISSION_GRANTED
+    }
 }

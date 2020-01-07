@@ -261,8 +261,7 @@ private constructor(private val serviceConnection: JcServiceConnection) : JcPlay
     override fun onTimeChangedListener(status: JcStatus) {
         for (listener in managerListeners) {
             listener.onTimeChanged(status)
-
-            if (status.currentPosition in 1..2 /* Not to call this every second */) {
+            if (status.currentPosition in 1..2 ) {
                 listener.onPlaying(status)
             }
         }
