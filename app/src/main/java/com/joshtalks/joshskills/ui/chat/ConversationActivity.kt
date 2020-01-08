@@ -6,7 +6,6 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ActivityInfo
-import android.content.pm.PackageManager
 import android.graphics.Color
 import android.graphics.Rect
 import android.os.Build
@@ -393,8 +392,7 @@ class ConversationActivity : CoreJoshActivity() {
             override fun afterTextChanged(s: Editable?) {
                 if (s.isNullOrEmpty()) {
                     conversationBinding.recordButton.goToState(FIRST_STATE)
-                    conversationBinding.recordButton.isListenForRecord =
-                        checkPermissionForAudioRecord()
+                    conversationBinding.recordButton.isListenForRecord =PermissionUtils.checkPermissionForAudioRecord(this@ConversationActivity)
                     conversationBinding.quickToggle.show()
                 } else {
                     conversationBinding.recordButton.goToState(SECOND_STATE)
@@ -581,14 +579,18 @@ class ConversationActivity : CoreJoshActivity() {
                     it.printStackTrace()
                 })
         )
-        compositeDisposable.add(RxBus2.listen(ImageShowEvent::class.java).subscribe({
-            it.imageUrl?.let { imageUrl ->
-                ImageShowFragment.newInstance(imageUrl, inboxEntity.course_name, it.imageId)
-                    .show(supportFragmentManager, "ImageShow")
-            }
-        }, {
-            it.printStackTrace()
-        }))
+        compositeDisposable.add(
+            RxBus2.listen(ImageShowEvent::class.java).subscribeOn(Schedulers.io()).subscribe(
+                {
+                    Utils.fileUrl(it.localPath, it.serverPath)?.run {
+                        ImageShowFragment.newInstance(this, inboxEntity.course_name, it.imageId)
+                            .show(supportFragmentManager, "ImageShow")
+                    }
+                },
+                {
+                    it.printStackTrace()
+                })
+        )
         compositeDisposable.add(RxBus2.listen(PdfOpenEventBus::class.java).subscribe({
             PdfViewerActivity.startPdfActivity(this, it.pdfObject, inboxEntity.course_name)
         }, {
@@ -613,22 +615,9 @@ class ConversationActivity : CoreJoshActivity() {
         )
 
         compositeDisposable.add(RxBus2.listen(DownloadMediaEventBus::class.java).subscribe {
-            Dexter.withActivity(this)
-                .withPermissions(
-                    Manifest.permission.READ_EXTERNAL_STORAGE,
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE
-
-                )
-                .withListener(object : MultiplePermissionsListener {
-                    override fun onPermissionRationaleShouldBeShown(
-                        permissions: MutableList<PermissionRequest>?,
-                        token: PermissionToken?
-                    ) {
-                        token?.continuePermissionRequest()
-                    }
-
+            PermissionUtils.storageReadAndWritePermission(this,
+                object : MultiplePermissionsListener {
                     override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
-
                         report?.areAllPermissionsGranted()?.let { flag ->
                             if (flag) {
                                 val pos =
@@ -641,15 +630,25 @@ class ConversationActivity : CoreJoshActivity() {
                                 AppObjectController.uiHandler.postDelayed({
                                     conversationBinding.chatRv.refreshView(view)
                                 }, 250)
+                                return
+
+                            }
+                            if (report.isAnyPermissionPermanentlyDenied) {
+                                PermissionUtils.storagePermissionPermanentlyDeniedDialog(
+                                    activityRef.get()!!
+                                )
+                                return
                             }
                         }
-                        if (report != null && report.isAnyPermissionPermanentlyDenied) {
-                            openSettings()
-                        }
-
                     }
 
-                }).check()
+                    override fun onPermissionRationaleShouldBeShown(
+                        permissions: MutableList<PermissionRequest>?,
+                        token: PermissionToken?
+                    ) {
+                        token?.continuePermissionRequest()
+                    }
+                })
         })
 
         compositeDisposable.add(RxBus2.listen(DownloadCompletedEventBus::class.java)
@@ -756,7 +755,11 @@ class ConversationActivity : CoreJoshActivity() {
         AppDirectory.copy(audioFilePath, recordUpdatedPath)
         val tAudioMessage = TAudioMessage(recordUpdatedPath, recordUpdatedPath)
         val cell =
-            MessageBuilderFactory.getMessage(activityRef, BASE_MESSAGE_TYPE.AU, tAudioMessage)
+            MessageBuilderFactory.getMessage(
+                activityRef,
+                BASE_MESSAGE_TYPE.AU,
+                tAudioMessage
+            )
         conversationBinding.chatRv.addView(cell)
         scrollToEnd()
         conversationViewModel.uploadMedia(
@@ -772,7 +775,11 @@ class ConversationActivity : CoreJoshActivity() {
             AppDirectory.copy(mediaPath, recordUpdatedPath)
             val tAudioMessage = TAudioMessage(recordUpdatedPath, recordUpdatedPath)
             val cell =
-                MessageBuilderFactory.getMessage(activityRef, BASE_MESSAGE_TYPE.AU, tAudioMessage)
+                MessageBuilderFactory.getMessage(
+                    activityRef,
+                    BASE_MESSAGE_TYPE.AU,
+                    tAudioMessage
+                )
             conversationBinding.chatRv.addView(cell)
             scrollToEnd()
             conversationViewModel.uploadMedia(
@@ -801,7 +808,6 @@ class ConversationActivity : CoreJoshActivity() {
         mszType: BASE_MESSAGE_TYPE?,
         chatModel: ChatModel
     ): BaseCell? {
-
         return when (mszType) {
             BASE_MESSAGE_TYPE.AU ->
                 AudioPlayerViewHolder(activityRef, chatModel)
@@ -815,7 +821,6 @@ class ConversationActivity : CoreJoshActivity() {
                 VideoViewHolder(activityRef, chatModel)
             else -> TextViewHolder(activityRef, chatModel)
         }
-
     }
 
 
@@ -834,7 +839,8 @@ class ConversationActivity : CoreJoshActivity() {
                             returnValue?.get(0)?.let { addUserImageInView(it) }
                         }
                         intent.hasExtra(JoshCameraActivity.VIDEO_RESULTS) -> {
-                            val videoPath = intent.getStringExtra(JoshCameraActivity.VIDEO_RESULTS)
+                            val videoPath =
+                                intent.getStringExtra(JoshCameraActivity.VIDEO_RESULTS)
                             addUserVideoInView(videoPath)
                         }
                         else -> return
@@ -889,7 +895,8 @@ class ConversationActivity : CoreJoshActivity() {
     private fun addUserVideoInView(videoPath: String) {
         val videoSentFile = AppDirectory.videoSentFile()
         AppDirectory.copy(videoPath, videoSentFile.absolutePath)
-        val tVideoMessage = TVideoMessage(videoSentFile.absolutePath, videoSentFile.absolutePath)
+        val tVideoMessage =
+            TVideoMessage(videoSentFile.absolutePath, videoSentFile.absolutePath)
 
         val cell = MessageBuilderFactory.getMessage(
             activityRef,
@@ -938,14 +945,15 @@ class ConversationActivity : CoreJoshActivity() {
                         if (flag) {
                             conversationBinding.recordButton.isListenForRecord = true
                             callback?.run()
+                            return@let
                         }
                     }
                     if (report != null && report.isAnyPermissionPermanentlyDenied) {
                         if (settingFlag) {
                             openSettings()
+                            return
                         }
                     }
-                    report?.deniedPermissionResponses
                 }
 
                 override fun onPermissionRationaleShouldBeShown(
@@ -953,15 +961,8 @@ class ConversationActivity : CoreJoshActivity() {
                     token: PermissionToken?
                 ) {
                     token?.continuePermissionRequest()
-
                 }
-
-            }).withErrorListener {
-                if (settingFlag) {
-                    openSettings()
-                }
-
-            }
+            })
             .onSameThread()
             .check()
     }
@@ -1006,20 +1007,6 @@ class ConversationActivity : CoreJoshActivity() {
 
         }
     }
-
-    fun checkPermissionForAudioRecord(): Boolean {
-        return ContextCompat.checkSelfPermission(
-            this,
-            Manifest.permission.READ_EXTERNAL_STORAGE
-        ) + ContextCompat.checkSelfPermission(
-            this,
-            Manifest.permission.RECORD_AUDIO
-        ) + ContextCompat.checkSelfPermission(
-            this,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE
-        ) == PackageManager.PERMISSION_GRANTED
-    }
-
 
     private fun observeNetwork() {
 
@@ -1077,24 +1064,24 @@ class ConversationActivity : CoreJoshActivity() {
 
 
                     if (percentFirst > VISIBILE_ITEM_PERCENT) {
-                        val chatModel = (conversationBinding.chatRv.getViewResolverAtPosition(
-                            lastPosition
-                        ) as BaseChatViewHolder).message
+                        val chatModel =
+                            (conversationBinding.chatRv.getViewResolverAtPosition(
+                                lastPosition
+                            ) as BaseChatViewHolder).message
                         chatModel.status = MESSAGE_STATUS.SEEN_BY_USER
                         readChatList.add(chatModel)
                     }
                 }
             } catch (ex: Exception) {
-                ex.printStackTrace()
+                //ex.printStackTrace()
             }
         }
     }
 
     private fun readMessageDatabaseUpdate() {
-        readMessageTimerTask = Timer("VisibleMessage", false).scheduleAtFixedRate(5000, 1500) {
-            conversationViewModel.updateInDatabaseReadMessage(readChatList)
-        }
+        readMessageTimerTask =
+            Timer("VisibleMessage", false).scheduleAtFixedRate(5000, 1500) {
+                conversationViewModel.updateInDatabaseReadMessage(readChatList)
+            }
     }
-
-
 }

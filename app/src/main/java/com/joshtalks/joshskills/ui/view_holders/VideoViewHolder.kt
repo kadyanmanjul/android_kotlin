@@ -8,9 +8,11 @@ import android.widget.FrameLayout
 import android.widget.TextView
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
+import androidx.core.content.ContextCompat
 import androidx.core.text.HtmlCompat
 import androidx.fragment.app.FragmentActivity
 import com.google.android.exoplayer2.offline.Download
+import com.jackandphantom.blurimage.BlurImage
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
@@ -25,12 +27,6 @@ import com.joshtalks.joshskills.repository.local.entity.DOWNLOAD_STATUS
 import com.joshtalks.joshskills.repository.local.eventbus.DownloadMediaEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.MediaProgressEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.PlayVideoEvent
-import com.karumi.dexter.Dexter
-import com.karumi.dexter.PermissionToken
-import com.karumi.dexter.listener.PermissionDeniedResponse
-import com.karumi.dexter.listener.PermissionGrantedResponse
-import com.karumi.dexter.listener.PermissionRequest
-import com.karumi.dexter.listener.single.PermissionListener
 import com.mindorks.placeholderview.annotations.*
 import com.pnikosis.materialishprogress.ProgressWheel
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -106,33 +102,20 @@ class VideoViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
             updateView(it, rootView, rootSubView, messageView)
         }
 
+
         if (message.url != null) {
             if (message.downloadStatus == DOWNLOAD_STATUS.DOWNLOADED) {
                 if (AppDirectory.isFileExist(message.downloadedLocalPath!!)) {
-                    Dexter.withActivity(activityRef.get())
-                        .withPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
-                        .withListener(object : PermissionListener {
-                            override fun onPermissionGranted(response: PermissionGrantedResponse) {
-                                setImageInImageView(imageView, message.downloadedLocalPath!!,
-                                    Runnable {
-                                        playIcon.visibility = VISIBLE
-                                    })
-                                downloadContainer.visibility = GONE
-
-                            }
-
-                            override fun onPermissionDenied(response: PermissionDeniedResponse) {
-                            }
-
-                            override fun onPermissionRationaleShouldBeShown(
-                                permission: PermissionRequest,
-                                token: PermissionToken
-                            ) {
-
-                            }
-                        }).check()
+                    Utils.fileUrl(message.downloadedLocalPath, message.url)?.run {
+                        setImageInImageView(imageView, message.downloadedLocalPath!!,
+                            Runnable {
+                                playIcon.visibility = VISIBLE
+                            })
+                        downloadContainer.visibility = GONE
+                    }
                 } else {
                     downloadContainer.visibility = GONE
+                    imageView.background=ContextCompat.getDrawable(activityRef.get()!!,R.drawable.video_placeholder)
                 }
 
             } else if (message.downloadStatus == DOWNLOAD_STATUS.UPLOADING) {
@@ -147,13 +130,12 @@ class VideoViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
                     DOWNLOAD_STATUS.DOWNLOADED -> {
                         setImageView(
                             imageView,
-                            videoObj.video_image_url,
-                            false
+                            videoObj.video_image_url
                         )
                         fileDownloadSuccess()
                     }
                     DOWNLOAD_STATUS.DOWNLOADING -> {
-                        setImageView(imageView, videoObj.video_image_url, true)
+                        setImageView(imageView, videoObj.video_image_url)
                         videoObj.video_url?.let {
                             fileDownloadingInProgressView()
                             download(it)
@@ -170,7 +152,7 @@ class VideoViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
                     }
                     else -> {
                         fileNotDownloadView()
-                        setImageView(imageView, videoObj.video_image_url, true)
+                        setImageView(imageView, videoObj.video_image_url)
 
                     }
                 }
@@ -237,69 +219,57 @@ class VideoViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
     }
 
 
-    private fun setImageView(iv: AppCompatImageView, url: String, blur: Boolean) {
-        if (blur) {
-            setBlurImageInImageView(iv, url)
-        } else {
-            setImageInImageView(iv, url, Runnable {
-                playIcon.visibility = VISIBLE
-            })
-        }
-
+    private fun setImageView(iv: AppCompatImageView, url: String) {
+        setImageInImageView(iv, url, Runnable {
+            playIcon.visibility = VISIBLE
+        })
     }
 
     @Click(R.id.video_container_fl)
     fun onClick() {
+        executeDownload()
+    }
+
+
+    @Click(R.id.iv_start_download)
+    fun downloadStart() {
+        executeDownload()
+    }
+
+    private fun executeDownload() {
         if (message.url != null) {
             if (message.downloadStatus == DOWNLOAD_STATUS.DOWNLOADED) {
                 RxBus2.publish(PlayVideoEvent(message))
             }
         } else {
             message.question?.videoList?.getOrNull(0)?.let { _ ->
-                when (message.downloadStatus) {
-                    DOWNLOAD_STATUS.DOWNLOADED -> {
-                        RxBus2.publish(PlayVideoEvent(message))
-                    }
-                    else -> {
-                        if (message.downloadStatus == DOWNLOAD_STATUS.DOWNLOADING && message.progress > MINIMUM_VIDEO_DOWNLOAD_PROGRESS) {
-                            RxBus2.publish(PlayVideoEvent(message))
-                            return
-                        }
-                        RxBus2.publish(DownloadMediaEventBus(this, message))
-                    }
+                if (message.downloadStatus == DOWNLOAD_STATUS.DOWNLOADED) {
+                    RxBus2.publish(PlayVideoEvent(message))
+                    return
                 }
+                if (message.downloadStatus == DOWNLOAD_STATUS.DOWNLOADING && message.progress > MINIMUM_VIDEO_DOWNLOAD_PROGRESS) {
+                    RxBus2.publish(PlayVideoEvent(message))
+                    return
+                }
+                if (message.downloadStatus == DOWNLOAD_STATUS.DOWNLOADING) {
+                    return
+                }
+
+                RxBus2.publish(DownloadMediaEventBus(this, message))
             }
         }
+
+
     }
 
 
-    @Click(R.id.download_container)
-    fun downloadStart() {
-        if (message.downloadStatus == DOWNLOAD_STATUS.DOWNLOADING && message.progress > MINIMUM_VIDEO_DOWNLOAD_PROGRESS) {
-            RxBus2.publish(PlayVideoEvent(message))
-            return
-        }
-        RxBus2.publish(DownloadMediaEventBus(this, message))
-    }
-
-    @Click(R.id.download_container)
+    @Click(R.id.iv_cancel_download)
     fun downloadCancel() {
         message.question?.videoList?.getOrNull(0)?.video_url?.run {
             AppObjectController.videoDownloadTracker.cancelDownload(Uri.parse(this))
         }
         fileNotDownloadView()
         message.downloadStatus = DOWNLOAD_STATUS.NOT_START
-
-
-    }
-
-    @Click(R.id.download_container)
-    fun downloadStart1() {
-        if (message.downloadStatus == DOWNLOAD_STATUS.DOWNLOADING && message.progress > MINIMUM_VIDEO_DOWNLOAD_PROGRESS) {
-            RxBus2.publish(PlayVideoEvent(message))
-            return
-        }
-        RxBus2.publish(DownloadMediaEventBus(videoViewHolder, message))
     }
 
     private fun updateProgress(progress: Int) {
@@ -312,7 +282,7 @@ class VideoViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
 
     private fun updateProgress() {
         progressDialog.barColor = Color.WHITE
-        progressDialog.setLinearProgress(false)
+        progressDialog.setLinearProgress(true)
         progressDialog.resetCount()
     }
 

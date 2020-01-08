@@ -2,6 +2,7 @@ package com.joshtalks.joshskills.ui.video_player
 
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.Window
 import android.view.WindowManager
@@ -9,10 +10,13 @@ import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import com.google.android.exoplayer2.ui.DefaultTimeBar
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.BaseActivity
+import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.custom_ui.PlayerListener
+import com.joshtalks.joshskills.core.service.video_download.VideoDownloadController
 import com.joshtalks.joshskills.databinding.ActivityVideoPlayer1Binding
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
 import com.joshtalks.joshskills.repository.local.model.ListenGraph
@@ -88,8 +92,16 @@ class VideoPlayerActivity : BaseActivity(), PlayerListener {
                 binding.pvPlayer.setUrl(chatObject.url)
                 binding.pvPlayer.downloadStreamPlay()
             } else {
-                binding.pvPlayer.setUrl(chatObject.downloadedLocalPath)
-                binding.pvPlayer.play()
+                Utils.fileUrl(chatObject.downloadedLocalPath, chatObject.url)?.run {
+                    binding.pvPlayer.setUrl(this)
+                    binding.pvPlayer.play()
+                    AppObjectController.videoDownloadTracker.download(
+                        chatObject,
+                        Uri.parse(chatObject.url),
+                        VideoDownloadController.getInstance().buildRenderersFactory(false)
+                    )
+                }
+
             }
         } else {
             binding.pvPlayer.setUrl(chatObject.question?.videoList?.get(0)?.video_url)
@@ -103,7 +115,7 @@ class VideoPlayerActivity : BaseActivity(), PlayerListener {
             binding.pvPlayer.setPlayerControlViewVisibilityListener { visibility ->
                 binding.toolbar.visibility = visibility
             }
-        }catch (ex:Exception){
+        } catch (ex: Exception) {
             ex.printStackTrace()
         }
     }

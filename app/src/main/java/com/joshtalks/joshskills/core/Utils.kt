@@ -1,5 +1,6 @@
 package com.joshtalks.joshskills.core
 
+import android.Manifest
 import android.accounts.Account
 import android.accounts.AccountManager
 import android.app.Activity
@@ -8,6 +9,7 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.content.Intent.ACTION_VIEW
+import android.content.pm.PackageManager
 import android.content.res.Resources
 import android.graphics.*
 import android.graphics.drawable.BitmapDrawable
@@ -468,8 +470,30 @@ object Utils {
                     }
                 }
             }
-        }catch (ex:Exception){}
+        } catch (ex: Exception) {
+        }
         return false
     }
+
+
+    fun fileUrl( localFile: String?, serverFile: String?): String? {
+        return if (localFile != null && File(localFile).exists() && checkFileStorage(AppObjectController.joshApplication)) {
+            localFile
+        } else {
+            serverFile
+        }
+
+    }
+
+    private fun checkFileStorage(context: Context): Boolean {
+        return ContextCompat.checkSelfPermission(
+            context,
+            Manifest.permission.READ_EXTERNAL_STORAGE
+        ) + ContextCompat.checkSelfPermission(
+            context,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+        ) == PackageManager.PERMISSION_GRANTED
+    }
+
 
 }

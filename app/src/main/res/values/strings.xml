@@ -26,14 +26,10 @@
     <string name="call_help_line">Call helpline </string>
 
     <string name="incomplete_register">Sorry, aap English Course\n mein registered nahi ho</string>
-
-
     <string name="location_rationale">Please allow to access your location. It will help in better recommendations. </string>
-
-
     <string name="short_seconds">sec</string>
-
     <string name="volume_up_message">Please turn the volume up</string>
+    <string name="permission_message">Need Permission</string>
 
 
     <string name="type_message_hint">Type a Message</string>

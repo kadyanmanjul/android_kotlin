@@ -1,6 +1,5 @@
 package com.joshtalks.joshskills.ui.view_holders
 
-import android.Manifest
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.widget.FrameLayout
@@ -20,12 +19,6 @@ import com.joshtalks.joshskills.repository.local.entity.ChatModel
 import com.joshtalks.joshskills.repository.local.entity.DOWNLOAD_STATUS
 import com.joshtalks.joshskills.repository.local.eventbus.DownloadMediaEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.ImageShowEvent
-import com.karumi.dexter.Dexter
-import com.karumi.dexter.PermissionToken
-import com.karumi.dexter.listener.PermissionDeniedResponse
-import com.karumi.dexter.listener.PermissionGrantedResponse
-import com.karumi.dexter.listener.PermissionRequest
-import com.karumi.dexter.listener.single.PermissionListener
 import com.mindorks.placeholderview.annotations.Click
 import com.mindorks.placeholderview.annotations.Layout
 import com.mindorks.placeholderview.annotations.Resolve
@@ -38,15 +31,10 @@ class ImageViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
     BaseChatViewHolder(activityRef, message) {
 
     @View(R.id.image_view)
-    lateinit var image_view: AppCompatImageView
-
-
-    @View(R.id.parent_layout)
-    lateinit var parent_layout: android.view.View
-
+    lateinit var imageView: AppCompatImageView
 
     @View(R.id.text_message_body)
-    lateinit var text_message_body: JoshTextView
+    lateinit var textMessageBody: JoshTextView
 
 
     @View(R.id.text_message_time)
@@ -74,7 +62,7 @@ class ImageViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
 
 
     @View(R.id.progress_dialog)
-    lateinit var progress_dialog: ProgressWheel
+    lateinit var progressDialog: ProgressWheel
 
     lateinit var imageViewHolder: ImageViewHolder
 
@@ -86,92 +74,31 @@ class ImageViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
         message.sender?.let {
             updateView(it, root_view, root_sub_view, message_view)
         }
-       // text_message_body.setShadowLayer(1F, 0F, 0F, Color.RED);
-        text_message_body.visibility = GONE
-
+        textMessageBody.visibility = GONE
 
         if (message.url != null) {
-            if (message.downloadStatus == DOWNLOAD_STATUS.DOWNLOADED) {
-                if (AppDirectory.isFileExist(message.downloadedLocalPath!!)) {
-                    Dexter.withActivity(activityRef.get())
-                        .withPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
-                        .withListener(object : PermissionListener {
-                            override fun onPermissionGranted(response: PermissionGrantedResponse) {
-                                if (image_view.tag != null) {
-                                    if (image_view.tag.toString() != message.downloadedLocalPath) {
-                                        image_view.tag = null
-                                    }
-                                }
-                                setImageView(image_view, message.downloadedLocalPath!!, false)
-                            }
-
-                            override fun onPermissionDenied(response: PermissionDeniedResponse) {
-                                setImageView(image_view, message.url!!, true)
-                            }
-
-                            override fun onPermissionRationaleShouldBeShown(
-                                permission: PermissionRequest,
-                                token: PermissionToken
-                            ) {
-
-                            }
-                        }).check()
-                } else {
-                    setImageViewImageNotFound(image_view)
-                    message.disable=true
-                    //   fileNotDownloadView()
-                }
-
-            } else if (message.downloadStatus == DOWNLOAD_STATUS.DOWNLOADING) {
+            if (message.downloadStatus == DOWNLOAD_STATUS.DOWNLOADING) {
                 fileDownloadRunView()
                 download(message.url!!)
             } else {
-                setImageViewImageNotFound(image_view)
-                message.disable=true
-
-               // setImageView(image_view, message.url!!, true)
-               // fileNotUploadingView()
-
+                Utils.fileUrl(message.downloadedLocalPath, message.url)?.run {
+                    setImageView(imageView, this)
+                }
             }
         } else {
             message.question?.imageList?.get(0)?.let { imageObj ->
-                if (message.downloadStatus == DOWNLOAD_STATUS.DOWNLOADED) {
-
-                    if (AppDirectory.isFileExist(imageObj.downloadedLocalPath!!)) {
-                        Dexter.withActivity(activityRef.get())
-                            .withPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
-                            .withListener(object : PermissionListener {
-                                override fun onPermissionGranted(response: PermissionGrantedResponse) {
-                                    if (image_view.tag != null) {
-                                        if (image_view.tag.toString() != message.downloadedLocalPath) {
-                                            image_view.tag = null
-                                        }
-                                    }
-                                    setImageView(image_view, imageObj.downloadedLocalPath!!, false)
-                                }
-
-                                override fun onPermissionDenied(response: PermissionDeniedResponse) {
-                                    setImageView(image_view, imageObj.imageUrl, true)
-                                }
-
-                                override fun onPermissionRationaleShouldBeShown(
-                                    permission: PermissionRequest,
-                                    token: PermissionToken
-                                ) {
-                                }
-                            }).check()
-                    } else {
-                        // fileNotDownloadView()
-                        setImageView(image_view, imageObj.imageUrl, false)
-                    }
-
-                } else if (message.downloadStatus == DOWNLOAD_STATUS.DOWNLOADING) {
-                    // fileDownloadRunView()
+                if (message.downloadStatus == DOWNLOAD_STATUS.DOWNLOADING) {
+                    fileDownloadRunView()
                     download(imageObj.imageUrl)
                 } else {
-                    setImageView(image_view, imageObj.imageUrl, false)
-                    // fileNotDownloadView()
-
+                    if (imageView.tag != null) {
+                        if (imageView.tag.toString() != message.downloadedLocalPath) {
+                            imageView.tag = null
+                        }
+                    }
+                    Utils.fileUrl(imageObj.downloadedLocalPath!!, imageObj.imageUrl)?.run {
+                        setImageView(imageView, this)
+                    }
                 }
             }
         }
@@ -179,18 +106,18 @@ class ImageViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
 
         message.question?.let { question ->
             if (question.qText.isNullOrEmpty().not()) {
-                text_message_body.text = HtmlCompat.fromHtml(
+                textMessageBody.text = HtmlCompat.fromHtml(
                     question.qText!!,
                     HtmlCompat.FROM_HTML_MODE_LEGACY
                 )
-                text_message_body.visibility = VISIBLE
-            }else{
-                if (message.text.isNullOrEmpty().not()){
-                    text_message_body.text = HtmlCompat.fromHtml(
+                textMessageBody.visibility = VISIBLE
+            } else {
+                if (message.text.isNullOrEmpty().not()) {
+                    textMessageBody.text = HtmlCompat.fromHtml(
                         question.qText!!,
                         HtmlCompat.FROM_HTML_MODE_LEGACY
                     )
-                    text_message_body.visibility = VISIBLE
+                    textMessageBody.visibility = VISIBLE
                 }
             }
         }
@@ -210,36 +137,23 @@ class ImageViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
     }
 
 
-    private fun fileNotUploadingView() {
-        download_container.visibility = VISIBLE
-        progress_dialog.visibility = GONE
-        iv_cancel_download.visibility = GONE
-        iv_start_download.visibility = VISIBLE
-        iv_start_download.setImageResource(R.drawable.ic_file_upload)
-    }
-
     private fun fileNotDownloadView() {
         download_container.visibility = VISIBLE
-        progress_dialog.visibility = GONE
+        progressDialog.visibility = GONE
         iv_cancel_download.visibility = GONE
         iv_start_download.visibility = VISIBLE
     }
 
     private fun fileDownloadRunView() {
         download_container.visibility = VISIBLE
-        progress_dialog.visibility = VISIBLE
+        progressDialog.visibility = VISIBLE
         iv_cancel_download.visibility = VISIBLE
         iv_start_download.visibility = GONE
     }
 
 
-    private fun setImageView(iv: AppCompatImageView, url: String, blur: Boolean) {
-        if (blur) {
-            setBlurImageInImageView(iv, url);
-        } else {
-            setImageInImageView(iv, url);
-        }
-
+    private fun setImageView(iv: AppCompatImageView, url: String) {
+        setImageInImageView(iv, url)
     }
 
 
@@ -248,17 +162,21 @@ class ImageViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
         if (message.disable) {
             return
         }
-
         if (message.downloadedLocalPath != null && message.downloadedLocalPath?.isNotEmpty()!!) {
-            RxBus2.publish(ImageShowEvent(message.downloadedLocalPath))
+            RxBus2.publish(ImageShowEvent(message.downloadedLocalPath, message.url))
         } else if (message.url != null) {
-            RxBus2.publish(ImageShowEvent(message.url))
+            RxBus2.publish(ImageShowEvent(message.downloadedLocalPath, message.url))
         } else {
             message.question?.imageList?.get(0)?.imageUrl?.let {
-                RxBus2.publish(ImageShowEvent(it, message.question?.imageList?.get(0)?.id))
+                RxBus2.publish(
+                    ImageShowEvent(
+                        message.question?.imageList?.get(0)?.downloadedLocalPath,
+                        it,
+                        message.question?.imageList?.get(0)?.id
+                    )
+                )
             }
         }
-
     }
 
 

@@ -7,6 +7,7 @@ import android.content.res.TypedArray
 import android.net.Uri
 import android.os.Build
 import android.util.AttributeSet
+import android.util.Log
 import android.view.View
 import android.widget.*
 import androidx.core.content.res.ResourcesCompat
@@ -41,7 +42,9 @@ import com.karumi.dexter.listener.PermissionDeniedResponse
 import com.karumi.dexter.listener.PermissionGrantedResponse
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.single.PermissionListener
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.view_jcplayer.view.*
 import java.util.*
 
@@ -378,7 +381,6 @@ class JcPlayerView : LinearLayout, View.OnClickListener, SeekBar.OnSeekBarChange
                     MaterialDialog(context).show {
                         message(R.string.media_not_found_message)
                         positiveButton(R.string.ok)
-
                     }
                     return
                 }
@@ -463,8 +465,6 @@ class JcPlayerView : LinearLayout, View.OnClickListener, SeekBar.OnSeekBarChange
 
     override fun onPreparedAudio(status: JcStatus) {
         dismissProgressBar()
-        resetPlayerInfo()
-        duration = status.duration.toInt()
         seekBar?.post { seekBar?.max = duration }
         txtCurrentDuration?.post { txtCurrentDuration?.text = toTimeSongString(duration) }
     }
@@ -669,7 +669,7 @@ class JcPlayerView : LinearLayout, View.OnClickListener, SeekBar.OnSeekBarChange
                     mediaNotDownloaded()
                 }
             }
-        }catch (ex:Exception){
+        } catch (ex: Exception) {
 
         }
     }
@@ -763,42 +763,39 @@ class JcPlayerView : LinearLayout, View.OnClickListener, SeekBar.OnSeekBarChange
             }
 
         } catch (e: Exception) {
-            e.printStackTrace()
+           // e.printStackTrace()
         }
         return cAudioObj
     }
 
 
     private fun updateController() {
-        if (isMedia) {
-            AppObjectController.uiHandler.post {
-                btnPlay?.visibility = View.VISIBLE
-                btnPause?.visibility = View.INVISIBLE
-                //seekBar?.progress = 0
-
-            }
+        AppObjectController.uiHandler.post {
+            btnPlay?.visibility = View.VISIBLE
+            btnPause?.visibility = View.INVISIBLE
         }
-
-
     }
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
         setDefaultUi()
         updateUI()
-        /* compositeDisposable.add(RxBus2.listen(AudioPlayerPauseEventBus::class.java).subscribe {
-             it?.audioId?.let { audioId ->
-                 if (audioId != message.chatId) {
-                  //   updateController()
-                 }
-             }
-         })*/
+        compositeDisposable.add(RxBus2.listen(AudioPlayerPauseEventBus::class.java)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                it?.audioId?.let { audioId ->
+                    if (audioId != message.chatId && message.downloadStatus === DOWNLOAD_STATUS.DOWNLOADED) {
+                        updateController()
+                    }
+                }
+            })
     }
 
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
         compositeDisposable.clear()
-        pause()
+        // pause()
     }
 
     private fun getDrawablePadding() = com.vanniktech.emoji.Utils.dpToPx(context, 4f)

@@ -2,12 +2,14 @@ package com.joshtalks.joshskills.core.custom_ui.audioplayer.general;
 
 import com.joshtalks.joshskills.core.custom_ui.audioplayer.model.JcAudio;
 
+import javax.annotation.Nullable;
+
 /**
  * Created by rio on 02 January 2017.
  */
 public class JcStatus {
     private JcAudio jcAudio;
-    private long duration;
+    private Long duration;
     private long currentPosition;
     private PlayState playState;
 
@@ -30,8 +32,13 @@ public class JcStatus {
         this.jcAudio = jcAudio;
     }
 
-    public long getDuration() {
+    @Nullable
+    public Long getDuration() {
         return duration;
+    }
+
+    public void setDuration(Long duration) {
+        this.duration = duration;
     }
 
     public void setDuration(long duration) {

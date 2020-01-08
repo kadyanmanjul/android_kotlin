@@ -240,7 +240,7 @@ public class FlipProgressDialog extends DialogFragment {
             layout.addView(image, 0, params);
 
         } catch (Exception e) {
-            e.printStackTrace();
+           // e.printStackTrace();
             Log.e("image null error", "Try to set imageList!");
         }
 

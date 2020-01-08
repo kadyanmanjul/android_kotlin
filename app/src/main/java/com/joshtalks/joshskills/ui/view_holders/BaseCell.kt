@@ -26,11 +26,9 @@ import jp.wasabeef.glide.transformations.RoundedCornersTransformation
 const val IMAGE_SIZE=400
 const val ROUND_CORNER=8
 
-abstract class BaseCell() {
+abstract class BaseCell {
     fun getUserId() = Mentor.getInstance().getId()
     fun getDrawablePadding() = com.vanniktech.emoji.Utils.dpToPx(getAppContext(), 4f)
-
-
 
     fun getScreenWidth() {
         Resources.getSystem().displayMetrics.widthPixels
@@ -179,7 +177,6 @@ abstract class BaseCell() {
                     WebpDrawableTransformation(CircleCrop())
                 )
                 .thumbnail(0.1f)
-
                 .override(200,200)
                 .into(it)
         }
@@ -216,12 +213,5 @@ abstract class BaseCell() {
         }
 
     }
-
-    fun setSvgImageView() {
-
-    }
-
-
-
 }
 

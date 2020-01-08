@@ -40,8 +40,6 @@ import java.util.concurrent.CopyOnWriteArraySet;
 public class DownloadTracker {
 
     public interface Listener {
-
-
         void onDownloadsChanged(Download download);
 
         void onDownloadRemoved(Download download);
@@ -141,7 +139,7 @@ public class DownloadTracker {
 
         @Override
         public void onDownloadChanged(DownloadManager downloadManager, Download download) {
-            Log.e("downloadstate", "" + download.state);
+            Log.i("download_state", "" + download.state);
             downloads.put(download.request.uri, download);
             for (Listener listener : listeners) {
                 listener.onDownloadsChanged(download);
