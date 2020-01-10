@@ -288,7 +288,7 @@ class ConversationViewModel(application: Application, private var inboxEntity: I
                     inboxEntity.conversation_id,
                     queryMap = arguments
                 )
-            }else{
+            } else {
                 RxBus2.publish(MessageCompleteEventBus(false))
 
             }
@@ -325,14 +325,19 @@ class ConversationViewModel(application: Application, private var inboxEntity: I
 
     fun updateInDatabaseReadMessage(readChatList: MutableSet<ChatModel>) {
         viewModelScope.launch(Dispatchers.IO) {
-            if (readChatList.isNullOrEmpty().not()) {
-                val idList = readChatList.map { it.chatId }.toMutableList()
-                appDatabase.chatDao().updateMessageStatus(MESSAGE_STATUS.SEEN_BY_USER, idList)
+            try {
+                if (readChatList.isNullOrEmpty().not()) {
+                    val idList = readChatList.map { it.chatId }.toMutableList()
+                    appDatabase.chatDao().updateMessageStatus(MESSAGE_STATUS.SEEN_BY_USER, idList)
+                }
+            } catch (ex: ConcurrentModificationException) {
+                ex.printStackTrace()
             }
         }
 
     }
-     fun refreshChatOnManual(){
+
+    fun refreshChatOnManual() {
         val arguments = mutableMapOf<String, String>()
         PrefManager.getLongValue(inboxEntity.conversation_id).let { time ->
             if (time > 0) {

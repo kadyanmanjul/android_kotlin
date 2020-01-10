@@ -13,6 +13,7 @@
 
     <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
+    <string name="download">Download</string>
 
     <string name="edit">edit</string>
     <string name="label_6_digit_code">Enter 4-digit code</string>
@@ -26,14 +27,10 @@
     <string name="call_help_line">Call helpline </string>
 
     <string name="incomplete_register">Sorry, aap English Course\n mein registered nahi ho</string>
-
-
     <string name="location_rationale">Please allow to access your location. It will help in better recommendations. </string>
-
-
     <string name="short_seconds">sec</string>
-
     <string name="volume_up_message">Please turn the volume up</string>
+    <string name="permission_message">Need Permission</string>
 
 
     <string name="type_message_hint">Type a Message</string>
@@ -59,7 +56,7 @@
     <string name="message_size_limit">Message size limit exceeded</string>
 
     <string name="unread_message">%s UNREAD MESSAGES</string>
-    <string name="media_not_found_message">Sorry, this media file doesn\'t exist on your internal storage</string>
+    <string name="media_not_found_message">Sorry, this media file doesn\'t exist on your internal storage. can you download it?</string>
     <string name="pdf_desc">%s Page \u2022 PDF</string>
     <string name="restart">Restart</string>
     <string name="logout_message">Are you sure you want to logout?</string>

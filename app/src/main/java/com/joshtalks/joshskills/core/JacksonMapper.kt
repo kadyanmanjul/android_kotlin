@@ -1,6 +1,3 @@
 package com.joshtalks.joshskills.core
 
-class JacksonMapper {
-
-
-}
+class JacksonMapper

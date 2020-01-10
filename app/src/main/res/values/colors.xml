@@ -46,4 +46,9 @@
 
     <color name="red_color">#FF0000</color>
     <color name="error_color">#ff6666</color>
+
+
+    <color name="audio_card_color">#F7F7F7</color>
+    <color name="controls_panel_stroke">#e6e6e6</color>
+
 </resources>

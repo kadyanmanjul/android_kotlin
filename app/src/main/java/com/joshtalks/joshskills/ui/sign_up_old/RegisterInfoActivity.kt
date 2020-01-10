@@ -55,7 +55,7 @@ class RegisterInfoActivity : BaseActivity() {
 
     fun registerUser() {
         if (layout.phoneNumberEt.text.toString().isEmpty() || layout.phoneNumberEt.text.toString().length < 10) {
-            layout.phoneNumberEt.error = getString(R.string.invalid_phone_number);
+            layout.phoneNumberEt.error = getString(R.string.invalid_phone_number)
             return
         } else {
             layout.phoneNumberEt.error = null
@@ -63,7 +63,7 @@ class RegisterInfoActivity : BaseActivity() {
         val phoneNumber = layout.phoneNumberEt.prefix + layout.phoneNumberEt.text
 
 
-        val alertDialog: AlertDialog? = this@RegisterInfoActivity?.let {
+        val alertDialog: AlertDialog? = this@RegisterInfoActivity.let {
             val builder = AlertDialog.Builder(it)
             builder.apply {
                 setMessage(getString(R.string.anonymous_user_login))

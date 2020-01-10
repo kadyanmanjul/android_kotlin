@@ -45,7 +45,7 @@ class VerifyDialogFragment : DialogFragment() {
             DataBindingUtil.inflate(inflater, R.layout.fragment_verify_phone, container, false)
         verifyPhoneBinding.lifecycleOwner = this
         verifyPhoneBinding.handler = this
-        return verifyPhoneBinding.root;
+        return verifyPhoneBinding.root
     }
 
     fun editThisNumber() {
@@ -57,10 +57,6 @@ class VerifyDialogFragment : DialogFragment() {
     fun okWithThisNumber() {
         dismiss()
         callback.ok()
-    }
-
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
     }
 
 
@@ -78,6 +74,6 @@ class VerifyDialogFragment : DialogFragment() {
 }
 
 interface VerifyDialogFragmentListener {
-    fun edit();
-    fun ok();
+    fun edit()
+    fun ok()
 }

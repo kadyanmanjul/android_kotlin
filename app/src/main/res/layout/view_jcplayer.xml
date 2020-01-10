@@ -43,7 +43,7 @@
                     android:layout_width="@dimen/_36sdp"
                     android:layout_height="@dimen/_36sdp"
                     android:layout_gravity="top|center"
-                    android:visibility="invisible"
+                    android:visibility="visible"
                     wheel:matProg_barColor="@color/button_primary_color"
                     wheel:matProg_fillRadius="true"
                     wheel:matProg_progressIndeterminate="true"

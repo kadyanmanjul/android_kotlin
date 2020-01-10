@@ -211,13 +211,13 @@ public class CountryCodePicker extends RelativeLayout {
             holderView = mInflater.inflate(R.layout.layout_code_picker, this, true);
         }
 
-        textView_selectedCountry = (TextView) holderView.findViewById(R.id.textView_selectedCountry);
-        holder = (RelativeLayout) holderView.findViewById(R.id.countryCodeHolder);
-        imageViewArrow = (ImageView) holderView.findViewById(R.id.imageView_arrow);
-        imageViewFlag = (ImageView) holderView.findViewById(R.id.image_flag);
-        linearFlagHolder = (LinearLayout) holderView.findViewById(R.id.linear_flag_holder);
-        linearFlagBorder = (LinearLayout) holderView.findViewById(R.id.linear_flag_border);
-        relativeClickConsumer = (RelativeLayout) holderView.findViewById(R.id.rlClickConsumer);
+        textView_selectedCountry = holderView.findViewById(R.id.textView_selectedCountry);
+        holder = holderView.findViewById(R.id.countryCodeHolder);
+        imageViewArrow = holderView.findViewById(R.id.imageView_arrow);
+        imageViewFlag = holderView.findViewById(R.id.image_flag);
+        linearFlagHolder = holderView.findViewById(R.id.linear_flag_holder);
+        linearFlagBorder = holderView.findViewById(R.id.linear_flag_border);
+        relativeClickConsumer = holderView.findViewById(R.id.rlClickConsumer);
         codePicker = this;
         if (attrs != null) {
             applyCustomProperty(attrs);
@@ -1704,7 +1704,7 @@ public class CountryCodePicker extends RelativeLayout {
         CCPCountry ccpCountry = CCPCountry.getCountryForCode(getContext(), getLanguageToApply(), preferredCountries, countryCode); //xml stores data in string format, but want to allow only numeric value to country code to user.
         if (ccpCountry == null) {
             if (defaultCCPCountry == null) {
-                defaultCCPCountry = ccpCountry.getCountryForCode(getContext(), getLanguageToApply(), preferredCountries, defaultCountryCode);
+                defaultCCPCountry = CCPCountry.getCountryForCode(getContext(), getLanguageToApply(), preferredCountries, defaultCountryCode);
             }
             setSelectedCountry(defaultCCPCountry);
         } else {
@@ -1723,7 +1723,7 @@ public class CountryCodePicker extends RelativeLayout {
         CCPCountry country = CCPCountry.getCountryForNameCodeFromLibraryMasterList(getContext(), getLanguageToApply(), countryNameCode); //xml stores data in string format, but want to allow only numeric value to country code to user.
         if (country == null) {
             if (defaultCCPCountry == null) {
-                defaultCCPCountry = country.getCountryForCode(getContext(), getLanguageToApply(), preferredCountries, defaultCountryCode);
+                defaultCCPCountry = CCPCountry.getCountryForCode(getContext(), getLanguageToApply(), preferredCountries, defaultCountryCode);
             }
             setSelectedCountry(defaultCCPCountry);
         } else {

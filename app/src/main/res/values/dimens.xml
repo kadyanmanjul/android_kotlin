@@ -51,4 +51,9 @@
 
     <dimen name="seek_bar_thickness">2dp</dimen>
     <dimen name="seek_bar_thumb_size">12dp</dimen>
+
+
+    <dimen name="bottom_sheet_corner_radius">16dp</dimen>
+    <dimen name="notification_large_dim">256dp</dimen>
+
 </resources>

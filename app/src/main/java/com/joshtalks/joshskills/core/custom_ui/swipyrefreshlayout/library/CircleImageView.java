@@ -69,7 +69,7 @@ class CircleImageView extends AppCompatImageView {
             ViewCompat.setLayerType(this, ViewCompat.LAYER_TYPE_SOFTWARE, circle.getPaint());
             circle.getPaint().setShadowLayer(mShadowRadius, shadowXOffset, shadowYOffset,
                     KEY_SHADOW_COLOR);
-            final int padding = (int) mShadowRadius;
+            final int padding = mShadowRadius;
             // set padding so the inner image sits correctly within the shadow.
             setPadding(padding, padding, padding, padding);
         }

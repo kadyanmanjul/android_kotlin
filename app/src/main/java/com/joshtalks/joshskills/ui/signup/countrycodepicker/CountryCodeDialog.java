@@ -93,14 +93,14 @@ class CountryCodeDialog {
 
 
         //dialog views
-        RecyclerView recyclerView_countryDialog = (RecyclerView) dialog.findViewById(R.id.recycler_countryDialog);
-        final TextView textViewTitle = (TextView) dialog.findViewById(R.id.textView_title);
-        RelativeLayout rlQueryHolder = (RelativeLayout) dialog.findViewById(R.id.rl_query_holder);
-        ImageView imgClearQuery = (ImageView) dialog.findViewById(R.id.img_clear_query);
-        final EditText editText_search = (EditText) dialog.findViewById(R.id.editText_search);
-        TextView textView_noResult = (TextView) dialog.findViewById(R.id.textView_noresult);
-        RelativeLayout rlHolder = (RelativeLayout) dialog.findViewById(R.id.rl_holder);
-        ImageView imgDismiss = (ImageView) dialog.findViewById(R.id.img_dismiss);
+        RecyclerView recyclerView_countryDialog = dialog.findViewById(R.id.recycler_countryDialog);
+        final TextView textViewTitle = dialog.findViewById(R.id.textView_title);
+        RelativeLayout rlQueryHolder = dialog.findViewById(R.id.rl_query_holder);
+        ImageView imgClearQuery = dialog.findViewById(R.id.img_clear_query);
+        final EditText editText_search = dialog.findViewById(R.id.editText_search);
+        TextView textView_noResult = dialog.findViewById(R.id.textView_noresult);
+        RelativeLayout rlHolder = dialog.findViewById(R.id.rl_holder);
+        ImageView imgDismiss = dialog.findViewById(R.id.img_dismiss);
 
         // type faces
         //set type faces
@@ -181,7 +181,7 @@ class CountryCodeDialog {
         recyclerView_countryDialog.setAdapter(cca);
 
         //fast scroller
-        FastScroller fastScroller = (FastScroller) dialog.findViewById(R.id.fastscroll);
+        FastScroller fastScroller = dialog.findViewById(R.id.fastscroll);
         fastScroller.setRecyclerView(recyclerView_countryDialog);
         if (codePicker.isShowFastScroller()) {
             if (codePicker.getFastScrollerBubbleColor() != 0) {

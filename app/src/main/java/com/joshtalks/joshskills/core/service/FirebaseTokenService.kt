@@ -18,6 +18,8 @@ import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.repository.local.model.NotificationObject
 import com.joshtalks.joshskills.repository.service.EngagementNetworkHelper
+import com.joshtalks.joshskills.ui.chat.CHAT_ROOM_OBJECT
+import com.joshtalks.joshskills.ui.chat.ConversationActivity
 import com.joshtalks.joshskills.ui.inbox.InboxActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -50,11 +52,11 @@ class FirebaseTokenService : FirebaseMessagingService() {
         CoroutineScope(Dispatchers.IO).launch {
             EngagementNetworkHelper.receivedNotification(notificationObject)
             val style = NotificationCompat.BigTextStyle()
-            style.bigText(notificationObject.contentTitle)
-            style.setBigContentTitle(notificationObject.contentText)
+            style.setBigContentTitle(notificationObject.contentTitle)
+            style.bigText(notificationObject.contentText)
             style.setSummaryText(notificationObject.contentText)
 
-            val intent = Intent(applicationContext, InboxActivity::class.java).apply {
+            var intent = Intent(applicationContext, InboxActivity::class.java).apply {
                 addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
                 putExtra(HAS_NOTIFICATION, true)
                 putExtra(NOTIFICATION_ID, notificationObject.id)
@@ -67,22 +69,29 @@ class FirebaseTokenService : FirebaseMessagingService() {
             obj?.run {
                 WorkMangerAdmin.updatedCourseForConversation(this.conversation_id)
             }
-            /*
-            obj?.let {
-                intent = Intent(applicationContext, ConversationActivity::class.java).apply {
-                    putExtra(CHAT_ROOM_OBJECT, it)
-                    putExtra(HAS_NOTIFICATION, true)
-                    //flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
-                    // flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
-                }
-                intent.putExtra(CHAT_ROOM_OBJECT, it)
 
-            }*/
+            if (obj != null) {
+                intent = Intent(applicationContext, ConversationActivity::class.java).apply {
+                    putExtra(CHAT_ROOM_OBJECT, obj)
+                    putExtra(HAS_NOTIFICATION, true)
+                    flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+                    flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
+                }
+                intent.putExtra(CHAT_ROOM_OBJECT, obj)
+
+            }
 
             val defaultSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
             val pendingIntent = PendingIntent.getActivity(applicationContext, 0, intent, 0)
 
-            val NOTIFICATION_CHANNEL_ID = "101111"
+            var NOTIFICATION_CHANNEL_ID = "101111"
+            var notificationId = 1
+            var notificationChannelName = "NOTIFICATION_CHANNEL_NAME"
+            if (obj != null) {
+                NOTIFICATION_CHANNEL_ID = obj.conversation_id
+                notificationId = obj.conversation_id.hashCode()
+                notificationChannelName = obj.course_name
+            }
 
             val notificationBuilder =
                 NotificationCompat.Builder(this@FirebaseTokenService, NOTIFICATION_CHANNEL_ID)
@@ -127,7 +136,7 @@ class FirebaseTokenService : FirebaseMessagingService() {
                 val importance = NotificationManager.IMPORTANCE_HIGH
                 val notificationChannel = NotificationChannel(
                     NOTIFICATION_CHANNEL_ID,
-                    "NOTIFICATION_CHANNEL_NAME",
+                    notificationChannelName,
                     importance
                 )
                 notificationChannel.enableLights(true)
@@ -138,7 +147,7 @@ class FirebaseTokenService : FirebaseMessagingService() {
                 notificationBuilder.setChannelId(NOTIFICATION_CHANNEL_ID)
                 notificationManager.createNotificationChannel(notificationChannel)
             }
-            notificationManager.notify(1, notificationBuilder.build())
+            notificationManager.notify(notificationId, notificationBuilder.build())
         }
     }
 

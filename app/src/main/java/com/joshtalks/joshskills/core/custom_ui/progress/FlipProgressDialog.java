@@ -236,11 +236,11 @@ public class FlipProgressDialog extends DialogFragment {
             image.setImageResource(imageList.get(0));
             image.setLayoutParams(params);
             // Let's get the root layout and add our ImageView
-            FrameLayout layout = (FrameLayout) view.findViewById(R.id.root);
+            FrameLayout layout = view.findViewById(R.id.root);
             layout.addView(image, 0, params);
 
         } catch (Exception e) {
-            e.printStackTrace();
+           // e.printStackTrace();
             Log.e("image null error", "Try to set imageList!");
         }
 

@@ -328,7 +328,10 @@ object AppDirectory {
     }
 
     @JvmStatic
-    fun isFileExist(path: String): Boolean {
+    fun isFileExist(path: String?): Boolean {
+        if (path.isNullOrEmpty()) {
+            return false
+        }
         return File(path).exists()
     }
 
@@ -364,7 +367,7 @@ object AppDirectory {
     private fun closeSilently(closeable: Closeable?) {
         if (closeable != null) {
             try {
-                closeable!!.close()
+                closeable.close()
             } catch (e: IOException) {
             }
 

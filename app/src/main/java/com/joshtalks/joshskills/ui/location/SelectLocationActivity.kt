@@ -67,11 +67,6 @@ class SelectLocationActivity : BaseActivity(), EasyPermissions.PermissionCallbac
         createLocationCallback()
     }
 
-    override fun onStart() {
-        super.onStart()
-
-    }
-
     private fun createLocationRequest() {
         mLocationRequest = LocationRequest()
             .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
@@ -195,7 +190,7 @@ class SelectLocationActivity : BaseActivity(), EasyPermissions.PermissionCallbac
         grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
+        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this)
 
     }
 
@@ -338,7 +333,7 @@ class SelectLocationActivity : BaseActivity(), EasyPermissions.PermissionCallbac
     }
 
     interface LocationUpdatedListener {
-        abstract fun onLocationReceived(lat: Double, lng: Double)
+        fun onLocationReceived(lat: Double, lng: Double)
     }
 
 }

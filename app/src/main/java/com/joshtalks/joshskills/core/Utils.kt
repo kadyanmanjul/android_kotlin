@@ -1,5 +1,6 @@
 package com.joshtalks.joshskills.core
 
+import android.Manifest
 import android.accounts.Account
 import android.accounts.AccountManager
 import android.app.Activity
@@ -8,6 +9,7 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.content.Intent.ACTION_VIEW
+import android.content.pm.PackageManager
 import android.content.res.Resources
 import android.graphics.*
 import android.graphics.drawable.BitmapDrawable
@@ -23,6 +25,7 @@ import android.os.Environment
 import android.provider.Settings
 import android.text.format.DateUtils
 import android.util.TypedValue
+import android.widget.TextView
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.content.ContextCompat
@@ -42,6 +45,7 @@ import java.net.URL
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.concurrent.TimeUnit
 import kotlin.math.pow
 
 
@@ -200,18 +204,18 @@ object Utils {
         val color = -0xbdbdbe
         val paint = Paint()
         val rect = Rect(
-            0, 0, bitmapimg.getWidth(),
-            bitmapimg.getHeight()
+            0, 0, bitmapimg.width,
+            bitmapimg.height
         )
 
-        paint.setAntiAlias(true)
+        paint.isAntiAlias = true
         canvas.drawARGB(0, 0, 0, 0)
-        paint.setColor(color)
+        paint.color = color
         canvas.drawCircle(
-            (bitmapimg.getWidth() / 2).toFloat(),
-            (bitmapimg.getHeight() / 2).toFloat(), (bitmapimg.getWidth() / 2).toFloat(), paint
+            (bitmapimg.width / 2).toFloat(),
+            (bitmapimg.height / 2).toFloat(), (bitmapimg.width / 2).toFloat(), paint
         )
-        paint.setXfermode(PorterDuffXfermode(PorterDuff.Mode.SRC_IN))
+        paint.xfermode = PorterDuffXfermode(PorterDuff.Mode.SRC_IN)
         canvas.drawBitmap(bitmapimg, rect, rect, paint)
         return output
     }
@@ -508,4 +512,42 @@ object Utils {
         val endIndex = lastQMPos.coerceAtMost(lastHashPos)
         return url.substring(startIndex, endIndex)
     }
+    fun fileUrl( localFile: String?, serverFile: String?): String? {
+        return if (localFile != null && File(localFile).exists() && checkFileStorage(AppObjectController.joshApplication)) {
+            localFile
+        } else {
+            serverFile
+        }
+
+    }
+
+    private fun checkFileStorage(context: Context): Boolean {
+        return ContextCompat.checkSelfPermission(
+            context,
+            Manifest.permission.READ_EXTERNAL_STORAGE
+        ) + ContextCompat.checkSelfPermission(
+            context,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+        ) == PackageManager.PERMISSION_GRANTED
+    }
+
+
+    fun formatDuration(duration: Int): String {
+        return String.format(
+            Locale.getDefault(), "%02d:%02d",
+            TimeUnit.MILLISECONDS.toMinutes(duration.toLong()),
+            TimeUnit.MILLISECONDS.toSeconds(duration.toLong()) -
+                    TimeUnit.MINUTES.toSeconds(
+                        TimeUnit.MILLISECONDS.toMinutes(
+                            duration.toLong()
+                        )
+                    )
+        )
+    }
+
+    fun updateTextView(textView: TextView, text: String) {
+        textView.post { textView.text = text }
+    }
+
+
 }

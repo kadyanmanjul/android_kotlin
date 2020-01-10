@@ -71,10 +71,7 @@
                             android:textSize="@dimen/font_14"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
-
                             />
-
-
 
                     <FrameLayout
                             android:layout_alignParentEnd="true"
@@ -164,7 +161,6 @@
                         android:textSize="@dimen/font_12"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
-
                         />
 
             </LinearLayout>

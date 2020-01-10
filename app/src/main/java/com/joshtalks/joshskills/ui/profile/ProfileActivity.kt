@@ -124,7 +124,7 @@ class ProfileActivity : BaseActivity(), MediaSelectCallback {
                         permissions: MutableList<PermissionRequest>?,
                         token: PermissionToken?
                     ) {
-                        token?.continuePermissionRequest();
+                        token?.continuePermissionRequest()
 
                     }
 
@@ -132,7 +132,7 @@ class ProfileActivity : BaseActivity(), MediaSelectCallback {
                     openSettings()
                 }
                 .onSameThread()
-                .check();
+                .check()
         } else if (media == Media.GALLERY) {
 
             Dexter.withActivity(this)
@@ -166,7 +166,7 @@ class ProfileActivity : BaseActivity(), MediaSelectCallback {
                         permissions: MutableList<PermissionRequest>?,
                         token: PermissionToken?
                     ) {
-                        token?.continuePermissionRequest();
+                        token?.continuePermissionRequest()
 
                     }
 
@@ -174,7 +174,7 @@ class ProfileActivity : BaseActivity(), MediaSelectCallback {
                     openSettings()
                 }
                 .onSameThread()
-                .check();
+                .check()
 
         }
 
@@ -256,13 +256,13 @@ class ProfileActivity : BaseActivity(), MediaSelectCallback {
     }
 
     private fun validAge(): Boolean {
-        val dob = Calendar.getInstance();
+        val dob = Calendar.getInstance()
         dob.time = userDob
-        val today = Calendar.getInstance();
-        var age = today.get(Calendar.YEAR) - dob.get(Calendar.YEAR);
+        val today = Calendar.getInstance()
+        var age = today.get(Calendar.YEAR) - dob.get(Calendar.YEAR)
 
         if (today.get(Calendar.DAY_OF_YEAR) < dob.get(Calendar.DAY_OF_YEAR)) {
-            age--;
+            age--
         }
         if (age > 12) {
             return true

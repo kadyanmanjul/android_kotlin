@@ -1,22 +1,27 @@
 package com.joshtalks.joshskills.core.custom_ui.audioplayer.view
 
-import android.Manifest
 import android.app.Activity
 import android.content.Context
 import android.content.res.TypedArray
 import android.net.Uri
 import android.os.Build
+import android.os.Handler
+import android.os.Looper
 import android.util.AttributeSet
+import android.util.Log
+import android.view.Gravity
 import android.view.View
 import android.widget.*
 import androidx.core.content.res.ResourcesCompat
 import com.afollestad.materialdialogs.MaterialDialog
+import com.crashlytics.android.Crashlytics
 import com.daimajia.androidanimations.library.Techniques
 import com.daimajia.androidanimations.library.YoYo
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.PermissionUtils
 import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.Utils.getCurrentMediaVolume
 import com.joshtalks.joshskills.core.custom_ui.audioplayer.JcPlayerManager
 import com.joshtalks.joshskills.core.custom_ui.audioplayer.JcPlayerManagerListener
 import com.joshtalks.joshskills.core.custom_ui.audioplayer.general.JcStatus
@@ -35,13 +40,13 @@ import com.joshtalks.joshskills.repository.local.eventbus.AudioPlayerPauseEventB
 import com.joshtalks.joshskills.repository.local.eventbus.MediaEngageEventBus
 import com.joshtalks.joshskills.repository.local.model.ListenGraph
 import com.joshtalks.joshskills.repository.local.model.Mentor
-import com.karumi.dexter.Dexter
+import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
-import com.karumi.dexter.listener.PermissionDeniedResponse
-import com.karumi.dexter.listener.PermissionGrantedResponse
 import com.karumi.dexter.listener.PermissionRequest
-import com.karumi.dexter.listener.single.PermissionListener
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener
+import com.muddzdev.styleabletoast.StyleableToast
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.view_jcplayer.view.*
 import java.util.*
 
@@ -93,7 +98,7 @@ class JcPlayerView : LinearLayout, View.OnClickListener, SeekBar.OnSeekBarChange
         private const val TITLE_ANIMATION_DURATION = 600
         @JvmStatic
         @Volatile
-        private var videoId: String? = ""
+        private var audioId: String? = ""
     }
 
     constructor(context: Context) : super(context) {
@@ -123,6 +128,7 @@ class JcPlayerView : LinearLayout, View.OnClickListener, SeekBar.OnSeekBarChange
         startDownload?.setOnClickListener(this)
         cancelDownload?.setOnClickListener(this)
         seekBar?.setOnSeekBarChangeListener(this)
+
     }
 
     private fun setAttributes(attrs: TypedArray) {
@@ -247,8 +253,8 @@ class JcPlayerView : LinearLayout, View.OnClickListener, SeekBar.OnSeekBarChange
         updateUI()
         updateTime(message_time)
         //message_time
-
     }
+
 
     private fun setDefaultUi() {
         seekBar.visibility = View.INVISIBLE
@@ -358,52 +364,36 @@ class JcPlayerView : LinearLayout, View.OnClickListener, SeekBar.OnSeekBarChange
     override fun onClick(view: View) {
         when (view.id) {
             R.id.btnPlay -> {
+                if (PermissionUtils.isStoragePermissionEnable(activity!!).not()) {
+                    PermissionUtils.storageReadAndWritePermission(activity!!,
+                        object : MultiplePermissionsListener {
+                            override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
+                                report?.areAllPermissionsGranted()?.let { flag ->
+                                    if (flag) {
+                                        playAudioInPlayer()
+                                        return
 
-                if (videoId.isNullOrEmpty().not() && videoId.equals(
-                        message.chatId,
-                        ignoreCase = true
-                    ).not()
-                ) {
-                    updateUri()
-                }
-                if (cAudioObj == null || AppDirectory.isFileExist(cAudioObj!!.path).not()) {
-                    MaterialDialog(context).show {
-                        message(R.string.media_not_found_message)
-                        positiveButton(R.string.ok)
-
-                    }
-                    return
-                }
-
-
-                btnPlay?.let {
-                    Dexter.withActivity(activity)
-                        .withPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
-                        .withListener(object : PermissionListener {
-                            override fun onPermissionGranted(response: PermissionGrantedResponse) {
-                                //  applyPulseAnimation(it)
-                                continueAudio()
-                                showPauseButton()
-                                RxBus2.publish(AudioPlayerPauseEventBus(message.chatId))
-                                videoId = message.chatId
-                            }
-
-                            override fun onPermissionDenied(response: PermissionDeniedResponse) {
-
+                                    }
+                                    if (report.isAnyPermissionPermanentlyDenied) {
+                                        PermissionUtils.storagePermissionPermanentlyDeniedDialog(
+                                            activity!!
+                                        )
+                                        return
+                                    }
+                                }
                             }
 
                             override fun onPermissionRationaleShouldBeShown(
-                                permission: PermissionRequest,
-                                token: PermissionToken
+                                permissions: MutableList<PermissionRequest>?,
+                                token: PermissionToken?
                             ) {
-                                token.continuePermissionRequest()
+                                token?.continuePermissionRequest()
                             }
-                        }).check()
-
-
+                        })
+                    return
                 }
+                playAudioInPlayer()
             }
-
             R.id.btnPause -> {
                 btnPause?.let {
                     applyPulseAnimation(it)
@@ -412,13 +402,13 @@ class JcPlayerView : LinearLayout, View.OnClickListener, SeekBar.OnSeekBarChange
 
                 }
             }
-            R.id.startDownload -> {
+           /* R.id.startDownload -> {
                 audioPlayerInterface?.downloadInQueue()
             }
             R.id.cancelDownload -> {
                 audioPlayerInterface?.downloadStop()
                 //updateUI()
-            }
+            }*/
 
 
             else -> { // Repeat case
@@ -428,6 +418,49 @@ class JcPlayerView : LinearLayout, View.OnClickListener, SeekBar.OnSeekBarChange
             }
         }
     }
+
+
+    fun playAudioInPlayer() {
+        if (message.url!=null){
+           // RxBus2.publish(AudioPlayEventBus(message, AudioType(message.downloadedLocalPath!!,"",Utils.getDurationOfMedia(context, message.downloadedLocalPath!!)!!.toInt(),0,false)))
+        }else{
+            //RxBus2.publish(AudioPlayEventBus(message, message.question!!.audioList?.get(0)!!))
+        }
+        return
+
+        if (audioId.isNullOrEmpty().not() && audioId.equals(
+                message.chatId,
+                ignoreCase = true
+            ).not()
+        ) {
+            updateUri()
+        }
+        if (cAudioObj == null || AppDirectory.isFileExist(cAudioObj!!.path).not()) {
+            MaterialDialog(context).show {
+                message(R.string.media_not_found_message)
+                positiveButton(R.string.download) {
+                    startDownload.performClick()
+                }
+                positiveButton(R.string.cancel)
+
+            }
+            return
+        }
+        btnPlay?.run {
+            continueAudio()
+            showPauseButton()
+           // RxBus2.publish(AudioPlayerPauseEventBus(audioId))
+            audioId = message.chatId
+            if (getCurrentMediaVolume(context) <= 0) {
+                StyleableToast.Builder(context).gravity(Gravity.BOTTOM)
+                    .text(context.getString(R.string.volume_up_message)).cornerRadius(16)
+                    .length(Toast.LENGTH_LONG)
+                    .solidBackground().show()
+            }
+        }
+
+    }
+
 
     /**
      * Create a notification player with same playlist with a custom icon.
@@ -455,8 +488,6 @@ class JcPlayerView : LinearLayout, View.OnClickListener, SeekBar.OnSeekBarChange
 
     override fun onPreparedAudio(status: JcStatus) {
         dismissProgressBar()
-        resetPlayerInfo()
-        duration = status.duration.toInt()
         seekBar?.post { seekBar?.max = duration }
         txtCurrentDuration?.post { txtCurrentDuration?.text = toTimeSongString(duration) }
     }
@@ -755,6 +786,7 @@ class JcPlayerView : LinearLayout, View.OnClickListener, SeekBar.OnSeekBarChange
             }
 
         } catch (e: Exception) {
+            Crashlytics.logException(e)
             e.printStackTrace()
         }
         return cAudioObj
@@ -762,35 +794,32 @@ class JcPlayerView : LinearLayout, View.OnClickListener, SeekBar.OnSeekBarChange
 
 
     private fun updateController() {
-        if (isMedia) {
-            AppObjectController.uiHandler.post {
-                btnPlay?.visibility = View.VISIBLE
-                btnPause?.visibility = View.INVISIBLE
-                //seekBar?.progress = 0
-
-            }
-        }
+        Handler(Looper.getMainLooper()).postDelayed({
+            btnPlay?.visibility = View.VISIBLE
+            btnPause?.visibility = View.INVISIBLE
+        }, 50)
 
 
     }
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
-        setDefaultUi()
-        updateUI()
-        /* compositeDisposable.add(RxBus2.listen(AudioPlayerPauseEventBus::class.java).subscribe {
-             it?.audioId?.let { audioId ->
-                 if (audioId != message.chatId) {
-                  //   updateController()
-                 }
-             }
-         })*/
+        compositeDisposable.add(RxBus2.listen(AudioPlayerPauseEventBus::class.java)
+            .subscribeOn(Schedulers.computation())
+            .subscribe {
+                Log.e("aaya", "aya")
+
+            })
+
     }
 
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
+        if (audioId == message.chatId && message.downloadStatus === DOWNLOAD_STATUS.DOWNLOADED) {
+            updateController()
+        }
         compositeDisposable.clear()
-        pause()
+        // pause()
     }
 
     private fun getDrawablePadding() = com.vanniktech.emoji.Utils.dpToPx(context, 4f)

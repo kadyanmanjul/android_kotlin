@@ -25,7 +25,7 @@
                     android:focusable="true"
                     android:paddingStart="@dimen/_5sdp"
                     android:paddingEnd="@dimen/_5sdp"
-                    android:visibility="gone">
+                    android:visibility="visible">
 
                 <androidx.appcompat.widget.AppCompatImageView
                         android:id="@+id/iv_start_download"
@@ -41,14 +41,14 @@
                         android:paddingBottom="@dimen/_5sdp"
                         android:src="@drawable/ic_download"
                         android:tint="#7A7A7A"
-                        android:visibility="gone" />
+                        android:visibility="visible" />
 
                 <com.pnikosis.materialishprogress.ProgressWheel
                         android:id="@+id/progress_dialog"
                         android:layout_width="@dimen/_36sdp"
                         android:layout_height="@dimen/_36sdp"
                         android:layout_gravity="center"
-                        android:visibility="gone"
+                        android:visibility="visible"
                         wheel:matProg_barColor="@color/button_primary_color"
                         wheel:matProg_fillRadius="false"
                         wheel:matProg_progressIndeterminate="true"

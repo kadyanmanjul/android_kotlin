@@ -6,7 +6,7 @@ import com.mindorks.placeholderview.annotations.Resolve
 
 
 @Layout(R.layout.empty_horizontal_view)
-class EmptyHorizontalView() {
+class EmptyHorizontalView {
 
     @Resolve
     fun onResolved() {

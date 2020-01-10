@@ -142,10 +142,8 @@ public class VideoDownloadService extends DownloadService {
 
             if (haveDownloadTasks) {
                 int progress = (int) (totalPercentage / downloadTaskCount);
-                //Log.e("progress", "" + progress);
                 RxBus2.publish(new MediaProgressEventBus(Download.STATE_DOWNLOADING, Util.fromUtf8Bytes(download.request.data), progress));
                 if (progress > MINIMUM_VIDEO_DOWNLOAD_PROGRESS) {
-                  //  Log.e("gaya", "" + progress);
                     DatabaseUtils.updateVideoProgress(Util.fromUtf8Bytes(download.request.data), progress);
 
                 }

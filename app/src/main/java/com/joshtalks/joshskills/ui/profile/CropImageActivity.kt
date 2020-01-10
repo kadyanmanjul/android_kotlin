@@ -37,7 +37,7 @@ class CropImageActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         cropImageBinding = DataBindingUtil.setContentView(this, R.layout.activity_crop_image)
         cropImageBinding.handler = this
-        crop_image_view.setCropMode(CropImageView.CropMode.SQUARE);
+        crop_image_view.setCropMode(CropImageView.CropMode.SQUARE)
 
 
         if (intent != null && intent.hasExtra(SOURCE_IMAGE)) {
@@ -45,7 +45,7 @@ class CropImageActivity : BaseActivity() {
             mSourceUri = Uri.fromFile(File(filePath))
             crop_image_view.load(mSourceUri)
                 .useThumbnail(true)
-                .execute(mLoadCallback);
+                .execute(mLoadCallback)
 
 
         }
@@ -72,28 +72,28 @@ class CropImageActivity : BaseActivity() {
     }
 
     fun rotateLeft() {
-        crop_image_view.rotateImage(CropImageView.RotateDegrees.ROTATE_M90D); // rotate clockwise by 90 degrees
+        crop_image_view.rotateImage(CropImageView.RotateDegrees.ROTATE_M90D) // rotate clockwise by 90 degrees
 
     }
 
     fun rotateRight() {
-        crop_image_view.rotateImage(CropImageView.RotateDegrees.ROTATE_90D); // rotate clockwise by 90 degrees
+        crop_image_view.rotateImage(CropImageView.RotateDegrees.ROTATE_90D) // rotate clockwise by 90 degrees
 
     }
 
     fun cancel() {
         val resultIntent = Intent()
         setResult(Activity.RESULT_CANCELED, resultIntent)
-        finish();
+        finish()
     }
 
 
     private val mSaveCallback = object : SaveCallback {
         override fun onSuccess(outputUri: Uri) {
-            val resultIntent = Intent();
-            resultIntent.putExtra(SOURCE_IMAGE, outputUri.path);
-            setResult(Activity.RESULT_OK, resultIntent);
-            finish();
+            val resultIntent = Intent()
+            resultIntent.putExtra(SOURCE_IMAGE, outputUri.path)
+            setResult(Activity.RESULT_OK, resultIntent)
+            finish()
         }
 
         override fun onError(e: Throwable) {

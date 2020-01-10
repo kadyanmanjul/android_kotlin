@@ -33,17 +33,7 @@ import com.joshtalks.joshskills.R
 
     }
 
-        override fun onResume() {
-            super.onResume()
-
-        }
-
-        override fun onPause() {
-            super.onPause()
-
-        }
-
-    override fun onDismiss(dialog: DialogInterface) {
+     override fun onDismiss(dialog: DialogInterface) {
         super.onDismiss(dialog)
         mDialog = null
         System.gc()

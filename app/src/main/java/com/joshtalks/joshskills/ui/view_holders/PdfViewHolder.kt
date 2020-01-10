@@ -1,6 +1,5 @@
 package com.joshtalks.joshskills.ui.view_holders
 
-import android.Manifest
 import android.net.Uri
 import android.widget.FrameLayout
 import android.widget.RelativeLayout
@@ -10,6 +9,8 @@ import androidx.appcompat.widget.AppCompatTextView
 import androidx.fragment.app.FragmentActivity
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.PermissionUtils
+import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.core.service.DownloadUtils
 import com.joshtalks.joshskills.messaging.RxBus2
@@ -18,12 +19,10 @@ import com.joshtalks.joshskills.repository.local.entity.DOWNLOAD_STATUS
 import com.joshtalks.joshskills.repository.local.eventbus.DownloadCompletedEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.DownloadMediaEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.PdfOpenEventBus
-import com.karumi.dexter.Dexter
+import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
-import com.karumi.dexter.listener.PermissionDeniedResponse
-import com.karumi.dexter.listener.PermissionGrantedResponse
 import com.karumi.dexter.listener.PermissionRequest
-import com.karumi.dexter.listener.single.PermissionListener
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.mindorks.placeholderview.annotations.Click
 import com.mindorks.placeholderview.annotations.Layout
 import com.mindorks.placeholderview.annotations.Resolve
@@ -168,7 +167,6 @@ class PdfViewHolder(activityRef: WeakReference<FragmentActivity>, message: ChatM
     override fun onViewInflated() {
         super.onViewInflated()
         pdfViewHolder = this
-        // download_container.visibility = android.view.View.GONE
 
         message.sender?.let {
             updateView(it, root_view, root_sub_view, message_view)
@@ -179,67 +177,38 @@ class PdfViewHolder(activityRef: WeakReference<FragmentActivity>, message: ChatM
         updateTime(text_message_time)
 
         message.question?.pdfList?.getOrNull(0)?.let { pdfObj ->
-            pdfObj.thumbnail?.let {
-                setImageInImageView(image_view, it);
-            }
 
             pdfObj.pages?.let {
                 messageDetail.text = context.getString(R.string.pdf_desc, it)
             }
             Uri.parse(pdfObj.url).let {
-                tv_pdf_info.text = it.pathSegments[it.pathSegments.size-1].split(".")[0]
+                tv_pdf_info.text = it.pathSegments[it.pathSegments.size - 1].split(".")[0]
+            }
+            Utils.fileUrl(pdfObj.thumbnail, pdfObj.thumbnail)?.run {
+                setImageInImageView(image_view, this)
             }
 
-            if (message.downloadStatus == DOWNLOAD_STATUS.DOWNLOADED) {
-
-                if (AppDirectory.isFileExist(pdfObj.downloadedLocalPath!!)) {
-                    Dexter.withActivity(activityRef.get())
-                        .withPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
-                        .withListener(object : PermissionListener {
-                            override fun onPermissionGranted(response: PermissionGrantedResponse) {
-                                fileDownloadSuccess()
-                            }
-
-                            override fun onPermissionDenied(response: PermissionDeniedResponse) {
-                                fileNotDownloadView()
-
-                            }
-
-                            override fun onPermissionRationaleShouldBeShown(
-                                permission: PermissionRequest,
-                                token: PermissionToken
-                            ) {
-                                fileNotDownloadView()
-
-                            }
-                        }).check()
-                } else {
-                    fileNotDownloadView()
-
-                }
-
-            } else if (message.downloadStatus == DOWNLOAD_STATUS.DOWNLOADING) {
+            if (message.downloadStatus == DOWNLOAD_STATUS.DOWNLOADING) {
                 fileDownloadingInProgressView()
                 download(pdfObj.url)
-
+            } else if (message.downloadStatus == DOWNLOAD_STATUS.DOWNLOADED && AppDirectory.isFileExist(
+                    pdfObj.downloadedLocalPath
+                )
+            ) {
+                fileDownloadSuccess()
             } else {
                 fileNotDownloadView()
             }
-
-
         }
     }
 
-    fun fileDownloadSuccess() {
-        // download_container.visibility = android.view.View.VISIBLE
+    private fun fileDownloadSuccess() {
         iv_start_download.visibility = android.view.View.GONE
         progress_dialog.visibility = android.view.View.GONE
         iv_cancel_download.visibility = android.view.View.GONE
-
     }
 
-    fun fileNotDownloadView() {
-        // download_container.visibility = android.view.View.VISIBLE
+    private fun fileNotDownloadView() {
         iv_start_download.visibility = android.view.View.VISIBLE
         progress_dialog.visibility = android.view.View.GONE
         iv_cancel_download.visibility = android.view.View.GONE
@@ -247,8 +216,6 @@ class PdfViewHolder(activityRef: WeakReference<FragmentActivity>, message: ChatM
     }
 
     private fun fileDownloadingInProgressView() {
-
-        //  download_container.visibility = android.view.View.VISIBLE
         iv_start_download.visibility = android.view.View.GONE
         progress_dialog.visibility = android.view.View.VISIBLE
         iv_cancel_download.visibility = android.view.View.VISIBLE
@@ -259,45 +226,37 @@ class PdfViewHolder(activityRef: WeakReference<FragmentActivity>, message: ChatM
     @Click(R.id.container_fl)
     fun onClickPdfContainer() {
         message.question?.pdfList?.get(0)?.let { pdfObj ->
-            if (message.downloadStatus == DOWNLOAD_STATUS.DOWNLOADED) {
-                if (AppDirectory.isFileExist(pdfObj.downloadedLocalPath!!)) {
-                    Dexter.withActivity(activityRef.get())
-                        .withPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
-                        .withListener(object : PermissionListener {
-                            override fun onPermissionGranted(response: PermissionGrantedResponse) {
-                                RxBus2.publish(PdfOpenEventBus(pdfObj))
+            if (message.downloadStatus == DOWNLOAD_STATUS.DOWNLOADED && AppDirectory.isFileExist(pdfObj.downloadedLocalPath)) {
+                PermissionUtils.storageReadAndWritePermission(activityRef.get(),
+                    object : MultiplePermissionsListener {
+                        override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
+                            report?.areAllPermissionsGranted()?.let { flag ->
+                                if (flag) {
+                                    RxBus2.publish(PdfOpenEventBus(pdfObj))
+                                    return
+                                }
+                                if (report.isAnyPermissionPermanentlyDenied) {
+                                    PermissionUtils.storagePermissionPermanentlyDeniedDialog(
+                                        activityRef.get()!!
+                                    )
+                                    return
+                                }
                             }
+                        }
 
-                            override fun onPermissionDenied(response: PermissionDeniedResponse) {
-                                RxBus2.publish(DownloadMediaEventBus(pdfViewHolder, message))
-                            }
-
-                            override fun onPermissionRationaleShouldBeShown(
-                                permission: PermissionRequest,
-                                token: PermissionToken
-                            ) {
-                                RxBus2.publish(DownloadMediaEventBus(pdfViewHolder, message))
-
-                            }
-                        }).check()
-                } else {
-
-                    RxBus2.publish(DownloadMediaEventBus(pdfViewHolder, message))
-
-                }
+                        override fun onPermissionRationaleShouldBeShown(
+                            permissions: MutableList<PermissionRequest>?,
+                            token: PermissionToken?
+                        ) {
+                            token?.continuePermissionRequest()
+                        }
+                    })
             } else {
                 RxBus2.publish(DownloadMediaEventBus(pdfViewHolder, message))
             }
         }
-
-
     }
 
-
-    @Click(R.id.download_container)
-    fun downloadStart() {
-        RxBus2.publish(DownloadMediaEventBus(this, message))
-    }
 
     @Click(R.id.iv_cancel_download)
     fun downloadCancel() {
@@ -307,13 +266,14 @@ class PdfViewHolder(activityRef: WeakReference<FragmentActivity>, message: ChatM
     }
 
     @Click(R.id.iv_start_download)
-    fun downloadStart1() {
+    fun downloadStart() {
+        if (message.downloadStatus == DOWNLOAD_STATUS.DOWNLOADING) {
+            return
+        }
         RxBus2.publish(DownloadMediaEventBus(this, message))
-
     }
 
     private fun download(url: String) {
-
         DownloadUtils.downloadFile(
             url,
             AppDirectory.docsReceivedFile(url).absolutePath,

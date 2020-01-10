@@ -3,16 +3,14 @@ package com.joshtalks.joshskills.ui.chat
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.content.ServiceConnection
 import android.content.pm.ActivityInfo
-import android.content.pm.PackageManager
 import android.graphics.Color
 import android.graphics.Rect
-import android.os.Build
-import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
+import android.os.*
 import android.provider.Settings
 import android.text.Editable
 import android.text.TextWatcher
@@ -22,7 +20,7 @@ import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.WindowManager
-import android.widget.Toast
+import android.widget.*
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.ContextCompat
@@ -39,6 +37,8 @@ import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.bumptech.glide.request.target.Target
 import com.crashlytics.android.Crashlytics
 import com.github.pwittchen.reactivenetwork.library.rx2.ReactiveNetwork
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.card.MaterialCardView
 import com.google.android.material.snackbar.Snackbar
 import com.greentoad.turtlebody.mediapicker.MediaPicker
 import com.greentoad.turtlebody.mediapicker.core.MediaPickerConfig
@@ -50,18 +50,19 @@ import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.custom_ui.JoshSnackBar
-import com.joshtalks.joshskills.core.custom_ui.audioplayer.JcPlayerManager
 import com.joshtalks.joshskills.core.custom_ui.decorator.LayoutMarginDecoration
 import com.joshtalks.joshskills.core.custom_ui.progress.FlipProgressDialog
 import com.joshtalks.joshskills.core.io.AppDirectory
+import com.joshtalks.joshskills.core.playback.MusicNotificationManager
+import com.joshtalks.joshskills.core.playback.MusicService
+import com.joshtalks.joshskills.core.playback.PlaybackInfoListener
+import com.joshtalks.joshskills.core.playback.PlaybackInfoListener.State.*
+import com.joshtalks.joshskills.core.playback.PlayerInterface
 import com.joshtalks.joshskills.databinding.ActivityConversationBinding
 import com.joshtalks.joshskills.emoji.PageTransformer
 import com.joshtalks.joshskills.messaging.MessageBuilderFactory
 import com.joshtalks.joshskills.messaging.RxBus2
-import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
-import com.joshtalks.joshskills.repository.local.entity.ChatModel
-import com.joshtalks.joshskills.repository.local.entity.DOWNLOAD_STATUS
-import com.joshtalks.joshskills.repository.local.entity.MESSAGE_STATUS
+import com.joshtalks.joshskills.repository.local.entity.*
 import com.joshtalks.joshskills.repository.local.eventbus.*
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.server.chat_message.TAudioMessage
@@ -126,6 +127,24 @@ class ConversationActivity : CoreJoshActivity() {
     private var readMessageTimerTask: TimerTask? = null
     private val uiHandler = Handler(Looper.getMainLooper())
     private lateinit var progressDialog: FlipProgressDialog
+    private lateinit var mBottomSheetBehaviour: BottomSheetBehavior<MaterialCardView>
+
+    private lateinit var mPlayingSong: TextView
+    private lateinit var mDuration: TextView
+    private lateinit var mSongPosition: TextView
+    private lateinit var mSeekBarAudio: SeekBar
+    private lateinit var mControlsContainer: LinearLayout
+    private lateinit var bottomSheetLayout: MaterialCardView
+    var mUserIsSeeking = false
+    private val mAccent = R.color.colorAccent
+    private var mPlayerInterface: PlayerInterface? = null
+    private var mMusicService: MusicService? = null
+    private var mMusicNotificationManager: MusicNotificationManager? = null
+    private lateinit var mPlayPauseButton: ImageView
+    private var mPlaybackListener: PlaybackListener? = null
+    private var sBound = false
+    private var currentAudio: String? = null
+    private var previousAudio: String? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -149,7 +168,6 @@ class ConversationActivity : CoreJoshActivity() {
     }
 
     override fun onNewIntent(mIntent: Intent?) {
-        super.onNewIntent(mIntent)
         super.processIntent(mIntent)
         mIntent?.hasExtra(CHAT_ROOM_OBJECT)?.let {
             if (it) {
@@ -163,6 +181,19 @@ class ConversationActivity : CoreJoshActivity() {
                 }
             }
         }
+        intent?.hasExtra(CHAT_ROOM_OBJECT)?.run {
+            if (this) {
+                val temp = intent.getSerializableExtra(CHAT_ROOM_OBJECT) as InboxEntity?
+                temp?.let { inboxObj ->
+                    if (inboxEntity.conversation_id != inboxObj.conversation_id) {
+                        inboxEntity = inboxObj
+                        initViewModel()
+                        initChat()
+                    }
+                }
+            }
+        }
+        super.onNewIntent(mIntent)
     }
 
     private fun initViewModel() {
@@ -173,6 +204,7 @@ class ConversationActivity : CoreJoshActivity() {
             conversationBinding.viewmodel = conversationViewModel
 
         } catch (ex: Exception) {
+            ex.printStackTrace()
             Crashlytics.logException(ex)
             //ex.printStackTrace()
         }
@@ -188,6 +220,8 @@ class ConversationActivity : CoreJoshActivity() {
         setUpEmojiPopup()
         liveDataObservable()
         initView()
+        initAudioPlayerView()
+
         AppAnalytics.create(AnalyticsEvent.CHAT_SCREEN.NAME).push()
         super.processIntent(intent)
         conversationViewModel.getAllUserMessage()
@@ -201,7 +235,81 @@ class ConversationActivity : CoreJoshActivity() {
             }
             conversationBinding.progressBar.visibility = GONE
         }, 5000)
+        doBindService()
     }
+
+    private fun initAudioPlayerView() {
+        mControlsContainer = findViewById(R.id.controls_container)
+        bottomSheetLayout = findViewById<MaterialCardView>(R.id.design_bottom_sheet)
+        mBottomSheetBehaviour = BottomSheetBehavior.from<MaterialCardView>(bottomSheetLayout)
+        mDuration = findViewById(R.id.duration)
+        mSeekBarAudio = findViewById(R.id.seekTo)
+        mSongPosition = findViewById(R.id.song_position)
+        mPlayingSong = findViewById(R.id.playing_song)
+        mPlayPauseButton = findViewById(R.id.play_pause)
+        mBottomSheetBehaviour.setPeekHeight(Utils.dpToPx(96), true)
+        initializeSeekBar()
+    }
+
+
+    private fun initializeSeekBar() {
+        mSeekBarAudio.setOnSeekBarChangeListener(
+            object : SeekBar.OnSeekBarChangeListener {
+                val currentPositionColor = mSongPosition.currentTextColor
+                var userSelectedPosition = 0
+                override fun onStartTrackingTouch(seekBar: SeekBar) {
+                    mUserIsSeeking = true
+                }
+
+                override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
+                    if (fromUser) {
+                        userSelectedPosition = progress
+                    }
+                    mSongPosition.text = Utils.formatDuration(progress)
+                }
+
+                override fun onStopTrackingTouch(seekBar: SeekBar) {
+                    if (mUserIsSeeking) {
+                        mSongPosition.setTextColor(currentPositionColor)
+                    }
+                    mUserIsSeeking = false
+                    mPlayerInterface?.seekTo(userSelectedPosition)
+                }
+            })
+    }
+
+    private fun doBindService() {
+        bindService(Intent(this, MusicService::class.java), mConnection, Context.BIND_AUTO_CREATE)
+        sBound = true
+        val startNotStickyIntent = Intent(this, MusicService::class.java)
+        startService(startNotStickyIntent)
+    }
+
+    private val mConnection: ServiceConnection =
+        object : ServiceConnection {
+            override fun onServiceConnected(componentName: ComponentName, iBinder: IBinder) {
+                mMusicService = (iBinder as MusicService.LocalBinder).instance
+                mPlayerInterface = mMusicService?.mediaPlayerHolder
+                mMusicNotificationManager = mMusicService?.musicNotificationManager
+                mMusicNotificationManager?.setAccentColor(mAccent)
+                if (mPlaybackListener == null) {
+                    mPlaybackListener = PlaybackListener()
+                    mPlayerInterface?.setPlaybackInfoListener(mPlaybackListener)
+                }
+            }
+
+            override fun onServiceDisconnected(componentName: ComponentName) {
+                mMusicService = null
+            }
+        }
+
+    private fun doUnbindService() {
+        if (sBound) {
+            unbindService(mConnection)
+            sBound = false
+        }
+    }
+
 
     private fun initProgressDialog() {
         progressDialog = FlipProgressDialog()
@@ -394,7 +502,7 @@ class ConversationActivity : CoreJoshActivity() {
                 if (s.isNullOrEmpty()) {
                     conversationBinding.recordButton.goToState(FIRST_STATE)
                     conversationBinding.recordButton.isListenForRecord =
-                        checkPermissionForAudioRecord()
+                        PermissionUtils.checkPermissionForAudioRecord(this@ConversationActivity)
                     conversationBinding.quickToggle.show()
                 } else {
                     conversationBinding.recordButton.goToState(SECOND_STATE)
@@ -572,7 +680,6 @@ class ConversationActivity : CoreJoshActivity() {
         compositeDisposable.add(
             RxBus2.listen(PlayVideoEvent::class.java)
                 .subscribe({
-                    pauseAudioPlayer()
                     VideoPlayerActivity.startConversionActivity(
                         this,
                         it.chatModel, inboxEntity.course_name
@@ -581,14 +688,18 @@ class ConversationActivity : CoreJoshActivity() {
                     it.printStackTrace()
                 })
         )
-        compositeDisposable.add(RxBus2.listen(ImageShowEvent::class.java).subscribe({
-            it.imageUrl?.let { imageUrl ->
-                ImageShowFragment.newInstance(imageUrl, inboxEntity.course_name, it.imageId)
-                    .show(supportFragmentManager, "ImageShow")
-            }
-        }, {
-            it.printStackTrace()
-        }))
+        compositeDisposable.add(
+            RxBus2.listen(ImageShowEvent::class.java).subscribeOn(Schedulers.io()).subscribe(
+                {
+                    Utils.fileUrl(it.localPath, it.serverPath)?.run {
+                        ImageShowFragment.newInstance(this, inboxEntity.course_name, it.imageId)
+                            .show(supportFragmentManager, "ImageShow")
+                    }
+                },
+                {
+                    it.printStackTrace()
+                })
+        )
         compositeDisposable.add(RxBus2.listen(PdfOpenEventBus::class.java).subscribe({
             PdfViewerActivity.startPdfActivity(this, it.pdfObject, inboxEntity.course_name)
         }, {
@@ -613,22 +724,9 @@ class ConversationActivity : CoreJoshActivity() {
         )
 
         compositeDisposable.add(RxBus2.listen(DownloadMediaEventBus::class.java).subscribe {
-            Dexter.withActivity(this)
-                .withPermissions(
-                    Manifest.permission.READ_EXTERNAL_STORAGE,
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE
-
-                )
-                .withListener(object : MultiplePermissionsListener {
-                    override fun onPermissionRationaleShouldBeShown(
-                        permissions: MutableList<PermissionRequest>?,
-                        token: PermissionToken?
-                    ) {
-                        token?.continuePermissionRequest()
-                    }
-
+            PermissionUtils.storageReadAndWritePermission(this,
+                object : MultiplePermissionsListener {
                     override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
-
                         report?.areAllPermissionsGranted()?.let { flag ->
                             if (flag) {
                                 val pos =
@@ -641,15 +739,25 @@ class ConversationActivity : CoreJoshActivity() {
                                 AppObjectController.uiHandler.postDelayed({
                                     conversationBinding.chatRv.refreshView(view)
                                 }, 250)
+                                return
+
+                            }
+                            if (report.isAnyPermissionPermanentlyDenied) {
+                                PermissionUtils.storagePermissionPermanentlyDeniedDialog(
+                                    activityRef.get()!!
+                                )
+                                return
                             }
                         }
-                        if (report != null && report.isAnyPermissionPermanentlyDenied) {
-                            openSettings()
-                        }
-
                     }
 
-                }).check()
+                    override fun onPermissionRationaleShouldBeShown(
+                        permissions: MutableList<PermissionRequest>?,
+                        token: PermissionToken?
+                    ) {
+                        token?.continuePermissionRequest()
+                    }
+                })
         })
 
         compositeDisposable.add(RxBus2.listen(DownloadCompletedEventBus::class.java)
@@ -720,6 +828,38 @@ class ConversationActivity : CoreJoshActivity() {
                     }
                     conversationBinding.refreshLayout.isRefreshing = false
                 })
+
+        compositeDisposable.add(
+            RxBus2.listen(AudioPlayEventBus::class.java)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({
+                    currentAudio = it.chatModel.chatId
+                    if (it.state == PLAYING) {
+                        onPlayAudio(it.chatModel, it.audioType!!)
+                    } else {
+                        if (checkIsPlayer()) {
+                            //mPlayerInterface?.resumeOrPause()
+                        }
+                    }
+
+                }, {
+                    it.printStackTrace()
+                })
+        )
+
+        compositeDisposable.add(
+            RxBus2.listen(InternalSeekBarProgressEventBus::class.java)
+                .subscribeOn(Schedulers.computation())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({
+                    mPlayerInterface?.seekTo(it.progress)
+                }, {
+                    it.printStackTrace()
+                })
+        )
+
+
     }
 
     private fun refreshViewAtPos(chatObj: ChatModel) {
@@ -756,7 +896,11 @@ class ConversationActivity : CoreJoshActivity() {
         AppDirectory.copy(audioFilePath, recordUpdatedPath)
         val tAudioMessage = TAudioMessage(recordUpdatedPath, recordUpdatedPath)
         val cell =
-            MessageBuilderFactory.getMessage(activityRef, BASE_MESSAGE_TYPE.AU, tAudioMessage)
+            MessageBuilderFactory.getMessage(
+                activityRef,
+                BASE_MESSAGE_TYPE.AU,
+                tAudioMessage
+            )
         conversationBinding.chatRv.addView(cell)
         scrollToEnd()
         conversationViewModel.uploadMedia(
@@ -773,7 +917,11 @@ class ConversationActivity : CoreJoshActivity() {
 
             val tAudioMessage = TAudioMessage(recordUpdatedPath, recordUpdatedPath)
             val cell =
-                MessageBuilderFactory.getMessage(activityRef, BASE_MESSAGE_TYPE.AU, tAudioMessage)
+                MessageBuilderFactory.getMessage(
+                    activityRef,
+                    BASE_MESSAGE_TYPE.AU,
+                    tAudioMessage
+                )
             conversationBinding.chatRv.addView(cell)
             scrollToEnd()
             conversationViewModel.uploadMedia(
@@ -802,7 +950,6 @@ class ConversationActivity : CoreJoshActivity() {
         mszType: BASE_MESSAGE_TYPE?,
         chatModel: ChatModel
     ): BaseCell? {
-
         return when (mszType) {
             BASE_MESSAGE_TYPE.AU ->
                 AudioPlayerViewHolder(activityRef, chatModel)
@@ -816,7 +963,6 @@ class ConversationActivity : CoreJoshActivity() {
                 VideoViewHolder(activityRef, chatModel)
             else -> TextViewHolder(activityRef, chatModel)
         }
-
     }
 
 
@@ -835,8 +981,12 @@ class ConversationActivity : CoreJoshActivity() {
                             returnValue?.get(0)?.let { addUserImageInView(it) }
                         }
                         intent.hasExtra(JoshCameraActivity.VIDEO_RESULTS) -> {
-                            val videoPath = intent.getStringExtra(JoshCameraActivity.VIDEO_RESULTS)
-                            addUserVideoInView(videoPath)
+                            val videoPath =
+                                intent.getStringExtra(JoshCameraActivity.VIDEO_RESULTS)
+                            videoPath?.run {
+                                addUserVideoInView(this)
+                            }
+
                         }
                         else -> return
                     }
@@ -890,7 +1040,8 @@ class ConversationActivity : CoreJoshActivity() {
     private fun addUserVideoInView(videoPath: String) {
         val videoSentFile = AppDirectory.videoSentFile()
         AppDirectory.copy(videoPath, videoSentFile.absolutePath)
-        val tVideoMessage = TVideoMessage(videoSentFile.absolutePath, videoSentFile.absolutePath)
+        val tVideoMessage =
+            TVideoMessage(videoSentFile.absolutePath, videoSentFile.absolutePath)
 
         val cell = MessageBuilderFactory.getMessage(
             activityRef,
@@ -939,14 +1090,15 @@ class ConversationActivity : CoreJoshActivity() {
                         if (flag) {
                             conversationBinding.recordButton.isListenForRecord = true
                             callback?.run()
+                            return@let
                         }
                     }
                     if (report != null && report.isAnyPermissionPermanentlyDenied) {
                         if (settingFlag) {
                             openSettings()
+                            return
                         }
                     }
-                    report?.deniedPermissionResponses
                 }
 
                 override fun onPermissionRationaleShouldBeShown(
@@ -954,15 +1106,8 @@ class ConversationActivity : CoreJoshActivity() {
                     token: PermissionToken?
                 ) {
                     token?.continuePermissionRequest()
-
                 }
-
-            }).withErrorListener {
-                if (settingFlag) {
-                    openSettings()
-                }
-
-            }
+            })
             .onSameThread()
             .check()
     }
@@ -974,6 +1119,16 @@ class ConversationActivity : CoreJoshActivity() {
         subscribeRXBus()
         conversationBinding.chatRv.refresh()
         observeNetwork()
+        if (mPlayerInterface != null && mPlayerInterface!!.isMediaPlayer) {
+            mPlayerInterface?.onResumeActivity()
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        if (mPlayerInterface != null && mPlayerInterface!!.isMediaPlayer) {
+            mPlayerInterface?.onPauseActivity()
+        }
     }
 
 
@@ -984,46 +1139,29 @@ class ConversationActivity : CoreJoshActivity() {
         uiHandler.removeCallbacksAndMessages(null)
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        mPlaybackListener = null
+        doUnbindService()
+    }
 
     override fun onBackPressed() {
+        if (mBottomSheetBehaviour.state == BottomSheetBehavior.STATE_EXPANDED) {
+            mBottomSheetBehaviour.state = BottomSheetBehavior.STATE_COLLAPSED
+        }
+        if (mPlayerInterface!!.isPlaying) {
+            mPlayerInterface!!.resumeOrPause()
+            return
+        }
+        mPlayerInterface!!.onPauseActivity()
         AppAnalytics.create(AnalyticsEvent.BACK_PRESSED.NAME)
             .addParam("name", javaClass.simpleName)
             .push()
         this@ConversationActivity.finishAndRemoveTask()
     }
 
-    override fun onPause() {
-        super.onPause()
-        pauseAudioPlayer()
-    }
-
-    private fun pauseAudioPlayer() {
-        try {
-            val jcPlayerManager: JcPlayerManager by lazy {
-                JcPlayerManager.getInstance(applicationContext).get()!!
-            }
-            jcPlayerManager.pauseAudio()
-        } catch (ex: Exception) {
-
-        }
-    }
-
-    fun checkPermissionForAudioRecord(): Boolean {
-        return ContextCompat.checkSelfPermission(
-            this,
-            Manifest.permission.READ_EXTERNAL_STORAGE
-        ) + ContextCompat.checkSelfPermission(
-            this,
-            Manifest.permission.RECORD_AUDIO
-        ) + ContextCompat.checkSelfPermission(
-            this,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE
-        ) == PackageManager.PERMISSION_GRANTED
-    }
-
 
     private fun observeNetwork() {
-
         compositeDisposable.add(
             ReactiveNetwork.observeNetworkConnectivity(applicationContext)
                 .subscribeOn(Schedulers.io())
@@ -1078,24 +1216,149 @@ class ConversationActivity : CoreJoshActivity() {
 
 
                     if (percentFirst > VISIBILE_ITEM_PERCENT) {
-                        val chatModel = (conversationBinding.chatRv.getViewResolverAtPosition(
-                            lastPosition
-                        ) as BaseChatViewHolder).message
+                        val chatModel =
+                            (conversationBinding.chatRv.getViewResolverAtPosition(
+                                lastPosition
+                            ) as BaseChatViewHolder).message
                         chatModel.status = MESSAGE_STATUS.SEEN_BY_USER
                         readChatList.add(chatModel)
                     }
                 }
             } catch (ex: Exception) {
-                ex.printStackTrace()
+                //ex.printStackTrace()
             }
         }
     }
 
+    private fun updateResetStatus(onPlaybackCompletion: Boolean) {
+        if (onPlaybackCompletion) {
+            if (mPlayerInterface!!.state != COMPLETED) {
+                val drawable = R.drawable.ic_play_player
+                mPlayPauseButton.post(Runnable { mPlayPauseButton.setImageResource(drawable) })
+                mPlayerInterface?.resumeOrPause()
+            }
+        }
+        /* val themeColor = R.color.white
+         val color = if (onPlaybackCompletion) {
+             themeColor
+         } else {
+             if (!mPlayerInterface!!.isReset) {
+             } else {
+                 R.color.button_primary_color
+             }
+         }*/
+    }
+
+    private fun updatePlayingStatus() {
+        val drawable =
+            if (mPlayerInterface!!.state != PAUSED) R.drawable.ic_pause_player else R.drawable.ic_play_player
+        mPlayPauseButton.post(Runnable { mPlayPauseButton.setImageResource(drawable) })
+    }
+
+
     private fun readMessageDatabaseUpdate() {
-        readMessageTimerTask = Timer("VisibleMessage", false).scheduleAtFixedRate(5000, 1500) {
-            conversationViewModel.updateInDatabaseReadMessage(readChatList)
+        readMessageTimerTask =
+            Timer("VisibleMessage", false).scheduleAtFixedRate(5000, 1500) {
+                conversationViewModel.updateInDatabaseReadMessage(readChatList)
+            }
+    }
+
+    private fun updatePlayingInfo(restore: Boolean, startPlay: Boolean) {
+        if (startPlay) {
+            mPlayerInterface?.mediaPlayer?.start()
+            Handler().postDelayed({
+                mMusicService!!.startForeground(
+                    MusicNotificationManager.NOTIFICATION_ID,
+                    mMusicNotificationManager!!.createNotification()
+                )
+            }, 250)
+        }
+        val selectedSong: AudioType = mPlayerInterface!!.currentSong
+        val duration: Int = selectedSong.duration
+        mSeekBarAudio.max = duration
+        Utils.updateTextView(mDuration, Utils.formatDuration(duration))
+//        val spanned = selectedSong.audio_url
+        // mPlayingSong.post { mPlayingSong.text = spanned }
+        if (restore) {
+            mSeekBarAudio.progress = mPlayerInterface!!.playerPosition
+            updatePlayingStatus()
+            updateResetStatus(false)
+            Handler().postDelayed({
+                //stop foreground if coming from pause state
+                if (mMusicService!!.isRestoredFromPause) {
+                    mMusicService!!.stopForeground(false)
+                    mMusicService!!.musicNotificationManager.notificationManager.notify(
+                        MusicNotificationManager.NOTIFICATION_ID,
+                        mMusicService!!.musicNotificationManager.notificationBuilder.build()
+                    )
+                    mMusicService!!.isRestoredFromPause = false
+                }
+            }, 250)
+        }
+    }
+
+    private fun onPlayAudio(chatModel: ChatModel, audioObject: AudioType) {
+        if (!mSeekBarAudio.isEnabled) {
+            mSeekBarAudio.isEnabled = true
+        }
+
+        val audioList = ArrayList<AudioType>()
+        audioList.add(audioObject)
+        bottomSheetLayout.visibility = VISIBLE
+        mPlayerInterface?.setCurrentSong(inboxEntity, chatModel, audioObject, audioList)
+        mPlayerInterface?.initMediaPlayer(chatModel, audioObject)
+
+    }
+
+
+    fun resumeOrPause(v: View) {
+        if (checkIsPlayer()) {
+            mPlayerInterface?.resumeOrPause()
+        }
+    }
+
+    fun closePlayer(v: View) {
+        if (checkIsPlayer()) {
+            if (mPlayerInterface!!.isPlaying) {
+                mPlayerInterface?.resumeOrPause()
+            }
+        }
+        bottomSheetLayout.visibility = GONE
+    }
+
+    fun hidePlayerUI() {
+        bottomSheetLayout.visibility = GONE
+        if (mPlayerInterface!!.isPlaying) {
+            mPlayerInterface?.resumeOrPause()
         }
     }
 
 
+    private fun checkIsPlayer(): Boolean {
+        return this.mPlayerInterface != null && mPlayerInterface!!.isMediaPlayer
+    }
+
+    inner class PlaybackListener : PlaybackInfoListener() {
+        override fun onPositionChanged(position: Int) {
+            if (!mUserIsSeeking) {
+                mSeekBarAudio.progress = position
+                RxBus2.publish(SeekBarProgressEventBus(currentAudio!!, position))
+            }
+        }
+
+        override fun onStateChanged(@State state: Int) {
+            updatePlayingStatus()
+            if (mPlayerInterface!!.state != RESUMED && mPlayerInterface!!.state != PAUSED) {
+                updatePlayingInfo(restore = false, startPlay = true)
+            }
+        }
+
+        override fun onPlaybackCompleted() {
+            updateResetStatus(true)
+        }
+
+        override fun onPlaybackStop() {
+            hidePlayerUI()
+        }
+    }
 }

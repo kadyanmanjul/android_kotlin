@@ -152,12 +152,12 @@ public class AudioView extends FrameLayout {
         super(context, attrs, defStyleAttr);
         inflate(context, R.layout.audio_view, this);
         audioPlayerManager = AudioPlayerManager.getInstance(getContext());
-        this.controlToggle = (AnimatingToggle) findViewById(R.id.control_toggle);
-        this.playButton = (ImageView) findViewById(R.id.play);
-        this.pauseButton = (ImageView) findViewById(R.id.pause);
-        this.downloadButton = (ImageView) findViewById(R.id.download);
-        this.seekPlayerProgress = (SeekBar) findViewById(R.id.seek);
-        this.timestamp = (TextView) findViewById(R.id.timestamp);
+        this.controlToggle = findViewById(R.id.control_toggle);
+        this.playButton = findViewById(R.id.play);
+        this.pauseButton = findViewById(R.id.pause);
+        this.downloadButton = findViewById(R.id.download);
+        this.seekPlayerProgress = findViewById(R.id.seek);
+        this.timestamp = findViewById(R.id.timestamp);
 
         this.startDownloadIV = findViewById(R.id.iv_start_download);
         this.progressWheel = findViewById(R.id.progress_dialog);
@@ -210,7 +210,7 @@ public class AudioView extends FrameLayout {
         });
 
         seekPlayerProgress.setMax(0);
-        seekPlayerProgress.setMax((int) audioPlayerManager.getDuration() / AUDIO_PROGRESS_UPDATE_TIME);
+        seekPlayerProgress.setMax(audioPlayerManager.getDuration() / AUDIO_PROGRESS_UPDATE_TIME);
 
     }
 
@@ -325,8 +325,8 @@ public class AudioView extends FrameLayout {
             @Override
             public void run() {
                 if (audioPlayerManager != null && isPlaying) {
-                    seekPlayerProgress.setMax((int) audioPlayerManager.getDuration() / AUDIO_PROGRESS_UPDATE_TIME);
-                    int mCurrentPosition = (int) audioPlayerManager.getCurrentPosition() / AUDIO_PROGRESS_UPDATE_TIME;
+                    seekPlayerProgress.setMax(audioPlayerManager.getDuration() / AUDIO_PROGRESS_UPDATE_TIME);
+                    int mCurrentPosition = audioPlayerManager.getCurrentPosition() / AUDIO_PROGRESS_UPDATE_TIME;
                     seekPlayerProgress.setProgress(mCurrentPosition);
                     timestamp.setText(String.format(Locale.getDefault(), "%02d:%02d",
                             TimeUnit.MILLISECONDS.toMinutes(audioPlayerManager.getCurrentPosition()),
@@ -363,7 +363,7 @@ public class AudioView extends FrameLayout {
     void setTotalTimeStampOfAudio() {
         try {
 
-            Long duration = Utils.INSTANCE.getDurationOfMedia(getContext(), uri.getPath());
+            Long duration = Utils.getDurationOfMedia(getContext(), uri.getPath());
             if (duration == null) {
                 duration = this.duration;
 

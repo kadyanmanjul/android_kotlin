@@ -45,7 +45,7 @@ class InboxViewHolder(var inboxEntity: InboxEntity, val totalItem: Int, val inde
 
 
     @JvmField
-    var drawablePadding: Float = 2f;
+    var drawablePadding: Float = 2f
 
     var context = AppObjectController.joshApplication
 
@@ -129,7 +129,7 @@ class InboxViewHolder(var inboxEntity: InboxEntity, val totalItem: Int, val inde
                 0,
                 0
             )
-            tv_last_message.setCompoundDrawablePadding(Utils.dpToPx(context, drawablePadding))
+            tv_last_message.compoundDrawablePadding = Utils.dpToPx(context, drawablePadding)
             tv_last_message.text = "Audio"
 
 
@@ -140,7 +140,7 @@ class InboxViewHolder(var inboxEntity: InboxEntity, val totalItem: Int, val inde
                 0,
                 0
             )
-            tv_last_message.setCompoundDrawablePadding(Utils.dpToPx(context, drawablePadding))
+            tv_last_message.compoundDrawablePadding = Utils.dpToPx(context, drawablePadding)
             tv_last_message.text = "Video"
 
         } else if (BASE_MESSAGE_TYPE.PD == baseMessageType) {
@@ -150,7 +150,7 @@ class InboxViewHolder(var inboxEntity: InboxEntity, val totalItem: Int, val inde
                 0,
                 0
             )
-            tv_last_message.setCompoundDrawablePadding(Utils.dpToPx(context, drawablePadding))
+            tv_last_message.compoundDrawablePadding = Utils.dpToPx(context, drawablePadding)
             tv_last_message.text = "Pdf"
 
         }

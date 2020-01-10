@@ -41,7 +41,7 @@ class SignUpActivity : CoreJoshActivity() {
         supportFragmentManager.commit(true) {
             addToBackStack(SignUpStep1Fragment::class.java.name)
             setCustomAnimations(R.anim.slide_in_left, R.anim.slide_in_right)
-            replace(
+            add(
                 R.id.container,
                 SignUpStep1Fragment.newInstance(),
                 SignUpStep1Fragment::class.java.name

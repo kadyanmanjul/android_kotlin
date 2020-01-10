@@ -86,7 +86,7 @@ class CodeInputField : LinearLayout {
         TypedValue.COMPLEX_UNIT_DIP,
         value,
         context.resources.displayMetrics
-    ).toInt();
+    ).toInt()
 
 
     override fun onDraw(canvas: Canvas?) {
@@ -104,7 +104,7 @@ abstract class MyTextWatcher : TextWatcher {
     var etView:View
 
     constructor(editText: View) {
-        this.etView = editText;
+        this.etView = editText
     }
 
     override fun afterTextChanged(s: Editable?) {

@@ -23,7 +23,7 @@ object CustomTabHelper {
             return it
         }
 
-        val pm = context.getPackageManager()
+        val pm = context.packageManager
 
         val activityIntent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
         val defaultViewHandlerInfo = pm.resolveActivity(activityIntent, 0)

@@ -127,7 +127,7 @@ class TextDrawable private constructor(builder: Builder) : ShapeDrawable(builder
         return height
     }
 
-    class Builder() : IConfigBuilder, IShapeBuilder, IBuilder {
+    class Builder : IConfigBuilder, IShapeBuilder, IBuilder {
 
         var text: String? = null
 

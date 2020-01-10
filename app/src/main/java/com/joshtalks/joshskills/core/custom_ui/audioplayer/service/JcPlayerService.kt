@@ -10,8 +10,8 @@ import android.os.IBinder
 import android.os.Looper
 import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory
-import com.google.android.exoplayer2.source.ExtractorMediaSource
 import com.google.android.exoplayer2.source.MediaSource
+import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.source.TrackGroupArray
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray
@@ -27,24 +27,13 @@ import java.io.File
 import java.io.IOException
 
 
-/**
- * This class is an Android [Service] that handles all player changes on background.
- * @author Jean Carlos (Github: @jeancsanchez)
- * @date 02/07/16.
- * Jesus loves you.
- */
-const val THREAD_TIME: Long = 25
+const val THREAD_TIME: Long = 50
 
-class JcPlayerService : Service(), /*MediaPlayer.OnPreparedListener, MediaPlayer.OnCompletionListener,
-    , MediaPlayer.OnErrorListener,*/ Player.EventListener {
+class JcPlayerService : Service(), Player.EventListener {
+
     private val TAG = JcPlayerService::class.java.simpleName
-
     private val binder = JcPlayerServiceBinder()
-
     private var mediaPlayer: SimpleExoPlayer? = null
-
-    // private var mediaPlayer: MediaPlayer? = null
-
     var isPlaying: Boolean = false
         private set
 
@@ -102,55 +91,11 @@ class JcPlayerService : Service(), /*MediaPlayer.OnPreparedListener, MediaPlayer
                     mediaPlayer?.addListener(this)
                     mediaPlayer?.also {
                         it.playWhenReady = true
-                        it.prepare(createMediaSource(jcAudio.path), false, false)
-                        status = updateStatus(jcAudio, JcStatus.PlayState.PREPARING)
+                        val mediaSource: MediaSource = createMediaSource(jcAudio.path)
+                        it.prepare(mediaSource, true, false)
 
+                        status = updateStatus(jcAudio, JcStatus.PlayState.PREPARING)
                     }
-
-/*
-                    mediaPlayer = MediaPlayer().also {
-                        when {
-                            jcAudio.origin == Origin.URL -> it.setDataSource(jcAudio.path)
-                            jcAudio.origin == Origin.RAW -> assetFileDescriptor =
-                                applicationContext.resources.openRawResourceFd(
-                                    Integer.parseInt(jcAudio.path)
-                                ).also { descriptor ->
-                                    it.setDataSource(
-                                        descriptor.fileDescriptor,
-                                        descriptor.startOffset,
-                                        descriptor.length
-                                    )
-                                    descriptor.close()
-                                    assetFileDescriptor = null
-                                }
-
-
-                            jcAudio.origin == Origin.ASSETS -> {
-                                assetFileDescriptor = applicationContext.assets.openFd(jcAudio.path)
-                                    .also { descriptor ->
-                                        it.setDataSource(
-                                            descriptor.fileDescriptor,
-                                            descriptor.startOffset,
-                                            descriptor.length
-                                        )
-
-                                        descriptor.close()
-                                        assetFileDescriptor = null
-                                    }
-                            }
-
-                            jcAudio.origin == Origin.FILE_PATH ->
-                                it.setDataSource(applicationContext, Uri.parse(jcAudio.path))
-                        }
-
-                        it.prepareAsync()
-                        it.setOnPreparedListener(this)
-                        it.setOnBufferingUpdateListener(this)
-                        it.setOnCompletionListener(this)
-                        it.setOnErrorListener(this)
-
-                        status = updateStatus(jcAudio, JcStatus.PlayState.PREPARING)
-                    }*/
                 }
             } catch (e: IOException) {
                 e.printStackTrace()
@@ -165,13 +110,8 @@ class JcPlayerService : Service(), /*MediaPlayer.OnPreparedListener, MediaPlayer
     private fun createMediaSource(uri: String): MediaSource {
         val extractorFactory = DefaultExtractorsFactory()
         val dataSource = DefaultDataSourceFactory(this, "GenericUserAgent", null)
-        return ExtractorMediaSource(
-            Uri.parse(uri),
-            dataSource,
-            extractorFactory,
-            null,
-            null
-        )
+        return ProgressiveMediaSource.Factory(dataSource, extractorFactory)
+            .createMediaSource(Uri.parse(uri))
     }
 
     fun pause(jcAudio: JcAudio): JcStatus {
@@ -196,13 +136,14 @@ class JcPlayerService : Service(), /*MediaPlayer.OnPreparedListener, MediaPlayer
         currentAudio = jcAudio
         jcStatus.jcAudio = jcAudio
         jcStatus.playState = status
-        jcStatus.duration=totalDuration
+        jcStatus.duration = totalDuration
 
         try {
             Handler(Looper.getMainLooper()).post {
                 mediaPlayer?.let {
-                //    jcStatus.duration = it.duration
+                    //    jcStatus.duration = it.duration
                     jcStatus.currentPosition = it.currentPosition
+
                 }
             }
         } catch (ex: Exception) {
@@ -353,60 +294,21 @@ class JcPlayerService : Service(), /*MediaPlayer.OnPreparedListener, MediaPlayer
         stopSelf()
     }
 
-    override fun onPlaybackParametersChanged(playbackParameters: PlaybackParameters?) {
-        super.onPlaybackParametersChanged(playbackParameters)
-    }
-
-    override fun onSeekProcessed() {
-        super.onSeekProcessed()
-    }
-
-    override fun onTracksChanged(
-        trackGroups: TrackGroupArray?,
-        trackSelections: TrackSelectionArray?
-    ) {
-        super.onTracksChanged(trackGroups, trackSelections)
-    }
-
-    override fun onPlayerError(error: ExoPlaybackException?) {
-        super.onPlayerError(error)
-    }
-
-    override fun onLoadingChanged(isLoading: Boolean) {
-        super.onLoadingChanged(isLoading)
-    }
-
-    override fun onPositionDiscontinuity(reason: Int) {
-        super.onPositionDiscontinuity(reason)
-    }
-
-    override fun onRepeatModeChanged(repeatMode: Int) {
-        super.onRepeatModeChanged(repeatMode)
-    }
-
-    override fun onShuffleModeEnabledChanged(shuffleModeEnabled: Boolean) {
-        super.onShuffleModeEnabledChanged(shuffleModeEnabled)
-    }
-
-    override fun onTimelineChanged(timeline: Timeline?, manifest: Any?, reason: Int) {
-        super.onTimelineChanged(timeline, manifest, reason)
-    }
 
     override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
         updateProgressBar()
-
-        //  super.onPlayerStateChanged(playWhenReady, playbackState)
-     //   Log.e(TAG, "state" + playWhenReady + "  " + playbackState)
-
         when (playbackState) {
             Player.STATE_READY -> {
-                // Log.i(TAG, "onPrepared() " + mediaPlayer!!.bufferedPercentage + "% buffered")
+                // Log.e(TAG, "onPrepared() " + mediaPlayer!!.bufferedPercentage + "% buffered")
                 synchronized(this) {
                     if (mediaPlayer == null) return
                     if (playWhenReady) {
                         isPlaying = true
                         isPaused = false
-                        totalDuration= mediaPlayer?.duration!!
+                        if (mediaPlayer?.duration != null) {
+                            totalDuration = mediaPlayer?.duration!!
+                        }
+
                         onPrepared(getMediaPlayer()!!)
 
                     } else {
@@ -416,7 +318,7 @@ class JcPlayerService : Service(), /*MediaPlayer.OnPreparedListener, MediaPlayer
                     }
 
                     if (isPlaying) {
-                    //    Log.d(TAG, "Already started. Ignoring.")
+                        //    Log.d(TAG, "Already started. Ignoring.")
                         return
                     }
 
@@ -427,7 +329,7 @@ class JcPlayerService : Service(), /*MediaPlayer.OnPreparedListener, MediaPlayer
             }
 
             Player.STATE_ENDED -> {
-             //   Log.i(TAG, "onComplete")
+                //   Log.e(TAG, "onComplete")
                 synchronized(this) {
                     mediaPlayer = null
                     serviceListener?.onCompletedListener()
@@ -451,23 +353,26 @@ class JcPlayerService : Service(), /*MediaPlayer.OnPreparedListener, MediaPlayer
     }
 
     private fun updateProgressBar() {
-        totalDuration = mediaPlayer?.duration!!
-       /* val position = mediaPlayer?.contentPosition
-        var bufferedPosition = mediaPlayer?.bufferedPosition;
-        // Schedule an update if necessary.
-        val playbackState = mediaPlayer?.playbackState ?: Player.STATE_IDLE
-        if (playbackState != Player.STATE_IDLE && playbackState != Player.STATE_ENDED) {
-            var delayMs = 0L
-            if (mediaPlayer?.playWhenReady!! && playbackState == Player.STATE_READY) {
-                delayMs = 1000 - (position!! % 1000);
-                if (delayMs < 200) {
-                    delayMs += 1000;
-                }
-            } else {
-                delayMs = 1000;
-            }
-            //   handler.postDelayed(updateProgressAction, delayMs);
-        }*/
+        if (mediaPlayer?.duration != null) {
+            totalDuration = mediaPlayer?.duration!!
+        }
+        // handler.postDelayed(updateProgressAction, delayMs);
+        /* val position = mediaPlayer?.contentPosition
+         var bufferedPosition = mediaPlayer?.bufferedPosition;
+         // Schedule an update if necessary.
+         val playbackState = mediaPlayer?.playbackState ?: Player.STATE_IDLE
+         if (playbackState != Player.STATE_IDLE && playbackState != Player.STATE_ENDED) {
+             var delayMs = 0L
+             if (mediaPlayer?.playWhenReady!! && playbackState == Player.STATE_READY) {
+                 delayMs = 1000 - (position!! % 1000);
+                 if (delayMs < 200) {
+                     delayMs += 1000;
+                 }
+             } else {
+                 delayMs = 1000;
+             }
+             //   handler.postDelayed(updateProgressAction, delayMs);
+         }*/
     }
 
     fun onPrepared(mediaPlayer: SimpleExoPlayer?) {

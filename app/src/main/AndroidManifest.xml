@@ -21,6 +21,9 @@
             android:name="android.hardware.camera2"
             android:required="false" />
 
+    <uses-permission
+            android:name="android.permission.GET_ACCOUNTS"
+            android:maxSdkVersion="22" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -40,9 +43,9 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.CALL_PHONE" />
     <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY" /> <!-- showing notification on do not disturb -->
-<!--
-    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
--->
+    <!--
+        <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    -->
     <!--
         <uses-permission android:name="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE"
                 tools:ignore="ProtectedPermissions" />
@@ -51,7 +54,6 @@
     <permission android:name="android.permission.MEDIA_CONTENT_CONTROL" />
 
     <application
-            android:requestLegacyExternalStorage="true"
             android:name=".core.JoshApplication"
             android:allowBackup="@bool/allowBackup"
             android:hardwareAccelerated="@bool/useHardwareAcceleration"
@@ -59,6 +61,7 @@
             android:label="@string/app_name"
             android:largeHeap="true"
             android:networkSecurityConfig="@xml/network_security_config"
+            android:requestLegacyExternalStorage="true"
             android:roundIcon="@mipmap/ic_launcher_round"
             android:supportsRtl="true"
             android:theme="@style/AppTheme"
@@ -67,7 +70,7 @@
         <activity
                 android:name=".ui.help.HelpActivity"
                 android:launchMode="singleTask"
-                android:theme="@style/AppNoBarTheme"/>
+                android:theme="@style/AppNoBarTheme" />
 
         <meta-data
                 android:name="CLEVERTAP_ACCOUNT_ID"
@@ -133,7 +136,7 @@
                 android:name=".ui.inbox.InboxActivity"
                 android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize"
                 android:launchMode="singleTask"
-                android:theme="@style/AppNoBarTheme"/>
+                android:theme="@style/AppNoBarTheme" />
         <activity
                 android:name=".ui.chat.ConversationActivity"
                 android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize"
@@ -143,6 +146,9 @@
             <meta-data
                     android:name="android.support.PARENT_ACTIVITY"
                     android:value=".ui.inbox.InboxActivity" />
+            <intent-filter>
+                <action android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
         </activity>
         <activity
                 android:name=".ui.signup.SignUpActivity"
@@ -171,8 +177,8 @@
         <activity
                 android:name=".ui.video_player.VideoPlayerActivity"
                 android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
-                android:screenOrientation="fullSensor"
                 android:launchMode="singleTask"
+                android:screenOrientation="fullSensor"
                 android:theme="@style/AppNoBarTheme" />
         <activity
                 android:name=".ui.launcher.SplashActivity"
@@ -265,6 +271,8 @@
                 <action android:name="com.google.android.gms.auth.api.phone.SMS_RETRIEVED" />
             </intent-filter>
         </receiver>
+
+        <service android:name=".core.playback.MusicService" />
 
     </application>
 

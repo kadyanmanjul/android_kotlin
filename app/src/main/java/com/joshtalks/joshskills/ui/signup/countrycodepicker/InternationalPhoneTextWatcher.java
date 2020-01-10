@@ -68,7 +68,7 @@ public class InternationalPhoneTextWatcher implements TextWatcher {
         mFormatter.clear();
         if (lastFormatted != null) {
             needUpdateForCountryChange = true;
-            String onlyDigits = phoneNumberUtil.normalizeDigitsOnly(lastFormatted);
+            String onlyDigits = PhoneNumberUtil.normalizeDigitsOnly(lastFormatted);
             lastFormatted.replace(0, lastFormatted.length(), onlyDigits, 0, onlyDigits.length());
             needUpdateForCountryChange = false;
         }

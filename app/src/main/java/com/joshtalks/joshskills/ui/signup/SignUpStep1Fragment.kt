@@ -71,19 +71,17 @@ class SignUpStep1Fragment : Fragment() {
                 signUpStep1FragmentBinding.countryCodePicker.selectedCountryCodeWithPlus
         }
 
-        viewModel.signUpStatus.observe(this, Observer {
 
-        })
-        viewModel.progressDialogStatus.observe(this, Observer {
-            if (it.not()) {
-                hideProgress()
-            }
-        })
 
         initTermsConditionView()
         initProgressView()
         requestHint()
         signUpStep1FragmentBinding.mobileEt.setText(viewModel.phoneNumber)
+        viewModel.progressDialogStatus.observe(this, Observer {
+            if (it.not()) {
+                hideProgress()
+            }
+        })
     }
 
 
@@ -168,8 +166,10 @@ class SignUpStep1Fragment : Fragment() {
     }
 
     private fun hideProgress() {
-        signUpStep1FragmentBinding.btnLogin.isEnabled = true
-        signUpStep1FragmentBinding.btnLogin.hideProgress(getString(R.string.next))
+        try {
+            signUpStep1FragmentBinding.btnLogin.isEnabled = true
+            signUpStep1FragmentBinding.btnLogin.hideProgress(getString(R.string.next))
+        }catch (e:Exception){}
     }
 
     private fun requestHint() {

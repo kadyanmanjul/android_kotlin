@@ -38,10 +38,6 @@ class EmptyCourseFragment : Fragment() {
     }
 
 
-    override fun onDetach() {
-        super.onDetach()
-    }
-
     fun exploreMoreCourse() {
         viewModel.signUpStatus.postValue(SignUpStepStatus.SignUpWithoutRegister)
 
