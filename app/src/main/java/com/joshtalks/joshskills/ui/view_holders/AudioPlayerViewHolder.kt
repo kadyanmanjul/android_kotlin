@@ -407,40 +407,12 @@ class AudioPlayerViewHolder(activityRef: WeakReference<FragmentActivity>, messag
 
     @Click(R.id.start_download_iv)
     fun startAudioDownload() {
-        if (PermissionUtils.isStoragePermissionEnable(activityRef.get()!!).not()) {
-            PermissionUtils.storageReadAndWritePermission(activityRef.get()!!,
-                object : MultiplePermissionsListener {
-                    override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
-                        report?.areAllPermissionsGranted()?.let { flag ->
-                            if (flag) {
-                                RxBus2.publish(
-                                    DownloadMediaEventBus(
-                                        audioPlayerViewHolder,
-                                        message
-                                    )
-                                )
-                                return
-
-                            }
-                            if (report.isAnyPermissionPermanentlyDenied) {
-                                PermissionUtils.storagePermissionPermanentlyDeniedDialog(
-                                    activityRef.get()!!
-                                )
-                                return
-                            }
-                        }
-                    }
-
-                    override fun onPermissionRationaleShouldBeShown(
-                        permissions: MutableList<PermissionRequest>?,
-                        token: PermissionToken?
-                    ) {
-                        token?.continuePermissionRequest()
-                    }
-                })
-            return
-        }
-        RxBus2.publish(DownloadMediaEventBus(audioPlayerViewHolder, message))
+        RxBus2.publish(
+            DownloadMediaEventBus(
+                audioPlayerViewHolder,
+                message
+            )
+        )
     }
 
 
@@ -482,7 +454,6 @@ class AudioPlayerViewHolder(activityRef: WeakReference<FragmentActivity>, messag
     }
 
     private fun subscribeAudioPlayer() {
-
         compositeDisposable.add(
             RxBus2.listen(SeekBarProgressEventBus::class.java)
                 .subscribeOn(Schedulers.computation())

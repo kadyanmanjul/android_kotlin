@@ -22,7 +22,7 @@ const val IMAGE_ID = "image_id"
 class ImageShowFragment : DialogFragment() {
     private lateinit var imagePath: String
     private lateinit var courseName: String
-    private var imageId: String?=null
+    private var imageId: String? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -65,6 +65,7 @@ class ImageShowFragment : DialogFragment() {
         Glide.with(this)
             .load(imagePath)
             .into(big_image_view)
+        big_image_view.doubleTapToZoom=true
         view.findViewById<AppCompatTextView>(R.id.text_message_title).text = courseName
         view.findViewById<View>(R.id.iv_back).setOnClickListener {
             AppAnalytics.create(AnalyticsEvent.BACK_PRESSED.NAME)
@@ -75,10 +76,42 @@ class ImageShowFragment : DialogFragment() {
         AppAnalytics.create(AnalyticsEvent.IMAGE_CLICKED.NAME).push()
         imageId?.let {
             EngagementNetworkHelper.engageImageApi(ImageEngage(it))
-
         }
+        /*big_image_view.setOnClickListener(object : View.OnClickListener {
+            var show = true
+            override fun onClick(v: View) {
+                show = if (show) {
+                    toolbar.animate().translationY((-toolbar.bottom).toFloat())
+                        .setInterpolator(AccelerateInterpolator()).start()
+                    hideSystemUI()
+                    false
+                } else {
+                    toolbar.animate().translationY(0f).setInterpolator(DecelerateInterpolator())
+                        .start()
+                    showSystemUI()
+                    true
+                }
+            }
+        })*/
     }
-
+   /* private fun hideSystemUI() { // Set the IMMERSIVE flag.
+// Set the content to appear under the system bars so that the content
+// doesn't resize when the system bars hide and show.
+        val decorView: View = activity!!.getWindow().getDecorView()
+        decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION // hide nav bar
+                or View.SYSTEM_UI_FLAG_FULLSCREEN // hide status bar
+                or View.SYSTEM_UI_FLAG_IMMERSIVE)
+    }
+    private fun showSystemUI() {
+        val decorView: View =  activity!!.getWindow().getDecorView()
+        decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN)
+    }
+*/
 
     companion object {
         fun newInstance(path: String, courseName: String, imageId: String?) =

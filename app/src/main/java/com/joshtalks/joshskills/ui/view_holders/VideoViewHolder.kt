@@ -2,6 +2,7 @@ package com.joshtalks.joshskills.ui.view_holders
 
 import android.graphics.Color
 import android.net.Uri
+import android.util.Log
 import android.view.View.*
 import android.widget.FrameLayout
 import android.widget.TextView
@@ -12,10 +13,8 @@ import androidx.core.text.HtmlCompat
 import androidx.fragment.app.FragmentActivity
 import com.google.android.exoplayer2.offline.Download
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.MINIMUM_VIDEO_DOWNLOAD_PROGRESS
-import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.core.service.video_download.VideoDownloadController
@@ -25,6 +24,10 @@ import com.joshtalks.joshskills.repository.local.entity.DOWNLOAD_STATUS
 import com.joshtalks.joshskills.repository.local.eventbus.DownloadMediaEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.MediaProgressEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.PlayVideoEvent
+import com.karumi.dexter.MultiplePermissionsReport
+import com.karumi.dexter.PermissionToken
+import com.karumi.dexter.listener.PermissionRequest
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.mindorks.placeholderview.annotations.*
 import com.pnikosis.materialishprogress.ProgressWheel
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -110,30 +113,33 @@ class VideoViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
                     }
                 } else {
                     downloadContainer.visibility = GONE
-                    imageView.background=ContextCompat.getDrawable(activityRef.get()!!,R.drawable.video_placeholder)
+                    imageView.background =
+                        ContextCompat.getDrawable(activityRef.get()!!, R.drawable.video_placeholder)
                 }
 
             } else if (message.downloadStatus == DOWNLOAD_STATUS.UPLOADING) {
                 fileDownloadingInProgressView()
                 setImageInImageView(imageView, message.downloadedLocalPath!!)
             } else {
-                setVideoImageView(imageView, R.drawable.ic_file_error)
+                imageView.background =
+                    ContextCompat.getDrawable(activityRef.get()!!, R.drawable.video_placeholder)
+//                setVideoImageView(imageView, R.drawable.ic_file_error)
             }
         } else {
             message.question?.videoList?.getOrNull(0)?.let { videoObj ->
+                if (videoObj.video_image_url.isEmpty()){
+                    imageView.background =ContextCompat.getDrawable(activityRef.get()!!,R.drawable.video_placeholder)
+                }else{
+                    setImageView(imageView,videoObj.video_image_url)
+                }
                 when (message.downloadStatus) {
                     DOWNLOAD_STATUS.DOWNLOADED -> {
-                        setImageView(
-                            imageView,
-                            videoObj.video_image_url
-                        )
                         fileDownloadSuccess()
                     }
                     DOWNLOAD_STATUS.DOWNLOADING -> {
-                        setImageView(imageView, videoObj.video_image_url)
-                        videoObj.video_url?.let {
+                        videoObj.video_url?.run {
                             fileDownloadingInProgressView()
-                            download(it)
+                            download(this)
                         }
                         subscribeDownloader()
                         if (message.progress == 0) {
@@ -147,8 +153,6 @@ class VideoViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
                     }
                     else -> {
                         fileNotDownloadView()
-                        setImageView(imageView, videoObj.video_image_url)
-
                     }
                 }
             }
@@ -225,6 +229,11 @@ class VideoViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
         executeDownload()
     }
 
+    @Click(R.id.play_icon)
+    fun playVideo() {
+        executeDownload()
+    }
+
 
     @Click(R.id.iv_start_download)
     fun downloadStart() {
@@ -232,9 +241,43 @@ class VideoViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
     }
 
     private fun executeDownload() {
+        if (PermissionUtils.isStoragePermissionEnable(activityRef.get()!!).not()) {
+            PermissionUtils.storageReadAndWritePermission(activityRef.get()!!,
+                object : MultiplePermissionsListener {
+                    override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
+                        report?.areAllPermissionsGranted()?.let { flag ->
+                            if (flag) {
+                                videoDownload()
+                                return
+
+                            }
+                            if (report.isAnyPermissionPermanentlyDenied) {
+                                PermissionUtils.storagePermissionPermanentlyDeniedDialog(
+                                    activityRef.get()!!
+                                )
+                                return
+                            }
+                        }
+                    }
+
+                    override fun onPermissionRationaleShouldBeShown(
+                        permissions: MutableList<PermissionRequest>?,
+                        token: PermissionToken?
+                    ) {
+                        token?.continuePermissionRequest()
+                    }
+                })
+            return
+        }
+        videoDownload()
+    }
+
+    private fun videoDownload() {
         if (message.url != null) {
             if (message.downloadStatus == DOWNLOAD_STATUS.DOWNLOADED) {
                 RxBus2.publish(PlayVideoEvent(message))
+            }else if (AppDirectory.isFileExist(message.downloadedLocalPath).not()){
+                Log.e("file not exist","file not exist")
             }
         } else {
             message.question?.videoList?.getOrNull(0)?.let { _ ->
@@ -249,12 +292,9 @@ class VideoViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
                 if (message.downloadStatus == DOWNLOAD_STATUS.DOWNLOADING) {
                     return
                 }
-
                 RxBus2.publish(DownloadMediaEventBus(this, message))
             }
         }
-
-
     }
 
 

@@ -145,8 +145,17 @@ data class Question(
     @SerializedName("type") var questionType: String = "",
 
     @Ignore
-    @SerializedName("videos") var videoList: List<VideoType>? = emptyList()
-) : Serializable
+    @SerializedName("videos") var videoList: List<VideoType>? = emptyList(),
+
+
+    @ColumnInfo(name = "question_no")
+    @SerializedName("question_no") var questionNumber: String = "",
+
+    @ColumnInfo(name = "total_question_of_day")
+    @SerializedName("total_question_of_day") var totalQuestionOfDay: String = ""
+
+
+    ) : Serializable
 
 
 data class Sender(
@@ -537,7 +546,7 @@ interface ChatDao {
     suspend fun updateMessageStatus(status: MESSAGE_STATUS, ids: List<String>)
 
     @Query(value = "SELECT chat_id FROM chat_table where status=:status")
-    suspend fun getSeenByUserMessages(status: MESSAGE_STATUS=MESSAGE_STATUS.SEEN_BY_USER):List<String>
+    suspend fun getSeenByUserMessages(status: MESSAGE_STATUS = MESSAGE_STATUS.SEEN_BY_USER): List<String>
 
 
 }

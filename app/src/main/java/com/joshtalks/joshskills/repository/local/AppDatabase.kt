@@ -15,7 +15,7 @@ const val DATABASE_NAME = "JoshEnglishDB.db"
 
 @Database(
     entities = [Course::class, ChatModel::class, Question::class, VideoType::class, AudioType::class, OptionType::class, PdfType::class, ImageType::class],
-    version = 5,
+    version = 6,
     exportSchema = false
 )
 @TypeConverters(
@@ -79,6 +79,13 @@ abstract class AppDatabase : RoomDatabase() {
         private val MIGRATION_4_5: Migration = object : Migration(4, 5) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("ALTER TABLE course ADD COLUMN course_created_date INTEGER ")
+            }
+        }
+        private val MIGRATION_5_6: Migration = object : Migration(5, 6) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("ALTER TABLE question_table ADD COLUMN question_no TEXT")
+                database.execSQL("ALTER TABLE question_table ADD COLUMN total_question_of_day TEXT")
+
             }
         }
 

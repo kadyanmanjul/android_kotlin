@@ -160,8 +160,8 @@ class ConversationActivity : CoreJoshActivity() {
         } else {
             this@ConversationActivity.finish()
         }
-        initViewModel()
         conversationBinding = DataBindingUtil.setContentView(this, R.layout.activity_conversation)
+        initViewModel()
         conversationBinding.viewmodel = conversationViewModel
         conversationBinding.handler = this
         activityRef = WeakReference(this)
@@ -205,7 +205,7 @@ class ConversationActivity : CoreJoshActivity() {
             conversationBinding.viewmodel = conversationViewModel
 
         } catch (ex: Exception) {
-            ex.printStackTrace()
+           // ex.printStackTrace()
             Crashlytics.logException(ex)
             //ex.printStackTrace()
         }
