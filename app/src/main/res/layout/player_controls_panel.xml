@@ -47,7 +47,6 @@
 
                 <TextView
                         fontPath="fonts/Roboto-Regular.ttf"
-
                         android:id="@+id/playing_song"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"

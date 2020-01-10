@@ -301,7 +301,6 @@ public class AudioView extends FrameLayout {
         } catch (Exception e) {
 
         }
-
         audioPlayerManager.play(this.uri, eventListener, audioId);
         setProgress();
         if (Utils.INSTANCE.getCurrentMediaVolume(getContext()) <= 0) {

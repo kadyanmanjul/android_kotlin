@@ -47,6 +47,7 @@ import com.joshtalks.appcamera.pix.Options
 import com.joshtalks.appcamera.utility.ImageQuality
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.Utils.getCurrentMediaVolume
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.custom_ui.JoshSnackBar
@@ -834,6 +835,12 @@ class ConversationActivity : CoreJoshActivity() {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
+                    if (getCurrentMediaVolume(applicationContext) <= 0) {
+                        StyleableToast.Builder(applicationContext).gravity(Gravity.BOTTOM)
+                            .text(getString(R.string.volume_up_message)).cornerRadius(16)
+                            .length(Toast.LENGTH_LONG)
+                            .solidBackground().show()
+                    }
                     currentAudio = it.chatModel.chatId
                     if (it.state == PLAYING) {
                         onPlayAudio(it.chatModel, it.audioType!!)
@@ -843,20 +850,26 @@ class ConversationActivity : CoreJoshActivity() {
                         }
                     }
 
-                }, {
-                    it.printStackTrace()
-                })
+                },
+                    {
+                        it.printStackTrace()
+                    })
         )
 
         compositeDisposable.add(
-            RxBus2.listen(InternalSeekBarProgressEventBus::class.java)
+            RxBus2.listen(
+                InternalSeekBarProgressEventBus::
+                class.java
+            )
                 .subscribeOn(Schedulers.computation())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({
-                    mPlayerInterface?.seekTo(it.progress)
-                }, {
-                    it.printStackTrace()
-                })
+                .subscribe(
+                    {
+                        mPlayerInterface?.seekTo(it.progress)
+                    },
+                    {
+                        it.printStackTrace()
+                    })
         )
 
 
@@ -1252,7 +1265,7 @@ class ConversationActivity : CoreJoshActivity() {
     private fun updatePlayingStatus() {
         val drawable =
             if (mPlayerInterface!!.state != PAUSED) R.drawable.ic_pause_player else R.drawable.ic_play_player
-        mPlayPauseButton.post(Runnable { mPlayPauseButton.setImageResource(drawable) })
+        mPlayPauseButton.post({ mPlayPauseButton.setImageResource(drawable) })
     }
 
 
@@ -1277,8 +1290,6 @@ class ConversationActivity : CoreJoshActivity() {
         val duration: Int = selectedSong.duration
         mSeekBarAudio.max = duration
         Utils.updateTextView(mDuration, Utils.formatDuration(duration))
-//        val spanned = selectedSong.audio_url
-        // mPlayingSong.post { mPlayingSong.text = spanned }
         if (restore) {
             mSeekBarAudio.progress = mPlayerInterface!!.playerPosition
             updatePlayingStatus()
