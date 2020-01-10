@@ -1,4 +1,4 @@
-package com.joshtalks.joshskills.core.service
+package com.joshtalks.joshskills.core.notification
 
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.PrefManager
@@ -19,9 +19,13 @@ object FCMTokenManager {
                 return
 
             if (PrefManager.hasKey(FCM_ID)) {
-                patchToken(token)
+                patchToken(
+                    token
+                )
             } else {
-                postToken(token)
+                postToken(
+                    token
+                )
             }
         }catch (ex :Exception){
             ex.printStackTrace()

@@ -14,9 +14,9 @@ class NotificationObject{
     @SerializedName("type")
      var type: String? = null
     @SerializedName("content_title")
-     var contentTitle: String? = null
+     var contentTitle: String? = ""
     @SerializedName("content_text")
-     var contentText: String? = null
+     var contentText: String? = ""
     @SerializedName("is_delivered")
      var isDelivered: Boolean = false
     @SerializedName("is_clicked")
@@ -47,3 +47,10 @@ class NotificationObject{
      var deeplink: String? = null
 
 }
+
+const val ACTION_OPEN_TEST="open_test"
+const val ACTION_OPEN_CONVERSATION="open_conversation"
+const val ACTION_OPEN_COURSE_EXPLORER="course_explorer"
+const val ACTION_OPEN_URL="open_url"
+const val ACTION_OPEN_CONVERSATION_LIST="open_conversation_list"
+const val ACTION_OPEN_DIALOG="show_dialog"

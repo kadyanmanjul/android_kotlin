@@ -28,7 +28,7 @@
                 android:layout_width="80dp"
                 android:layout_height="80dp"
                 wheel:matProg_rimColor="#33128C7E"
-                wheel:matProg_barColor="#128C7E"
+                wheel:matProg_barColor="@color/colorPrimary"
                 wheel:matProg_fillRadius="false"
                 wheel:matProg_linearProgress="true"
                 wheel:matProg_progressIndeterminate="false"

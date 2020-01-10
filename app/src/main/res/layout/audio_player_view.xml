@@ -64,11 +64,11 @@
                         android:layout_width="@dimen/_36sdp"
                         android:layout_height="@dimen/_36sdp"
                         android:layout_gravity="top|center"
-                        android:visibility="gone"
+                        android:visibility="invisible"
                         wheel:matProg_barColor="@color/button_primary_color"
                         wheel:matProg_linearProgress="false"
                         wheel:matProg_progressIndeterminate="true"
-                        wheel:matProg_rimColor="#33128C7E"
+                        wheel:matProg_rimColor="@color/button_primary_color"
                         wheel:matProg_rimWidth="@dimen/_1sdp"
                        />
 

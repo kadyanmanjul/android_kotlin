@@ -16,8 +16,8 @@ import com.crashlytics.android.Crashlytics
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
-import com.joshtalks.joshskills.core.service.HAS_NOTIFICATION
-import com.joshtalks.joshskills.core.service.NOTIFICATION_ID
+import com.joshtalks.joshskills.core.notification.HAS_NOTIFICATION
+import com.joshtalks.joshskills.core.notification.NOTIFICATION_ID
 import com.joshtalks.joshskills.repository.local.model.InstallReferrerModel
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User

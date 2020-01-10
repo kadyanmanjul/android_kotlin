@@ -72,7 +72,9 @@ class PaymentProcessFragment : DialogFragment() {
         super.onViewCreated(view, savedInstanceState)
         paymentProcessFragmentBinding.tvCourse.text = courseModel.courseName
         paymentProcessFragmentBinding.tvAmount.text = "INR " + (courseModel.amount / 100).toString()
-        paymentProcessFragmentBinding.tvCourseDuration.text = courseModel.courseDuration
+        courseModel.courseDuration?.let {
+            paymentProcessFragmentBinding.tvCourseDuration.text = it
+        }
 
         activity?.let {
             Glide.with(it)

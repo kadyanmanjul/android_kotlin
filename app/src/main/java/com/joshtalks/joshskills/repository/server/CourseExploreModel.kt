@@ -2,11 +2,12 @@ package com.joshtalks.joshskills.repository.server
 
 
 import com.google.gson.annotations.SerializedName
+import com.joshtalks.joshskills.core.EMPTY
 import java.io.Serializable
 
 data class CourseExploreModel(
     @SerializedName("amount")
-    val amount: Double,
+    var amount: Double,
     @SerializedName("batch_type")
     val batchType: Int,
     @SerializedName("course")
@@ -14,7 +15,7 @@ data class CourseExploreModel(
     @SerializedName("created")
     val created: String,
     @SerializedName("id")
-    val id: Int,
+    var id: Int,
     @SerializedName("is_default")
     val isDefault: Boolean,
     @SerializedName("modified")
@@ -24,10 +25,27 @@ data class CourseExploreModel(
     @SerializedName("thumbnail")
     val imageUrl: String,
     @SerializedName("course_name")
-    val courseName: String,
+    var courseName: String,
     @SerializedName("course_duration")
     val courseDuration: String,
     @SerializedName("course_icon")
     val courseIcon: String
 
-) : Serializable
+) : Serializable {
+
+    constructor() : this(
+        amount = 0.0,
+        batchType = 0,
+        course = 0,
+        created = EMPTY,
+        id = 0,
+        isDefault = false,
+        modified = EMPTY,
+        testName = EMPTY,
+        imageUrl = EMPTY,
+        courseName = EMPTY,
+        courseDuration = EMPTY,
+        courseIcon = EMPTY
+    )
+
+}

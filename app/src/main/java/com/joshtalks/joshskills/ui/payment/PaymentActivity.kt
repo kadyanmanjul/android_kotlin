@@ -40,15 +40,18 @@ import kotlinx.coroutines.launch
 import org.json.JSONObject
 
 
-const val COURSE_ID = "course"
+const val COURSE_OBJECT = "course"
+const val COURSE_ID = "course_ID"
+
 
 class PaymentActivity : CoreJoshActivity(),
     PaymentResultListener {
 
     private lateinit var activityPaymentBinding: ActivityPaymentBinding
-    private lateinit var courseModel: CourseExploreModel
+    private var courseModel: CourseExploreModel? = null
     private var compositeDisposable = CompositeDisposable()
     private val uiHandler = Handler(Looper.getMainLooper())
+    private var courseId: String = ""
 
     companion object {
         fun startPaymentActivity(
@@ -58,7 +61,7 @@ class PaymentActivity : CoreJoshActivity(),
         ) {
             Intent(context, PaymentActivity::class.java).apply {
                 addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
-                putExtra(COURSE_ID, courseModel)
+                putExtra(COURSE_OBJECT, courseModel)
             }.run {
                 context.startActivityForResult(this, requestCode)
             }
@@ -75,7 +78,13 @@ class PaymentActivity : CoreJoshActivity(),
         super.onCreate(savedInstanceState)
         activityPaymentBinding = DataBindingUtil.setContentView(this, R.layout.activity_payment)
         activityPaymentBinding.lifecycleOwner = this
-        courseModel = intent.getSerializableExtra(COURSE_ID) as CourseExploreModel
+        if (intent.hasExtra(COURSE_OBJECT)) {
+            courseModel = intent.getSerializableExtra(COURSE_OBJECT) as CourseExploreModel
+            courseId = courseModel?.id.toString()
+        }
+        if (intent.hasExtra(COURSE_ID)) {
+            courseId = intent.getStringExtra(COURSE_ID)!!
+        }
         initRV()
         initView()
         getCourseDetails()
@@ -83,10 +92,14 @@ class PaymentActivity : CoreJoshActivity(),
     }
 
 
-
     private fun initView() {
         val titleView = findViewById<AppCompatTextView>(R.id.text_message_title)
-        titleView.text = courseModel.courseName
+        if (courseModel != null) {
+            titleView.text = courseModel?.courseName
+        } else {
+            titleView.text = "Explorer Course"
+
+        }
         findViewById<View>(R.id.iv_back).visibility = View.VISIBLE
         findViewById<View>(R.id.iv_back).setOnClickListener {
             this@PaymentActivity.finish()
@@ -106,7 +119,7 @@ class PaymentActivity : CoreJoshActivity(),
         CoroutineScope(Dispatchers.IO).launch {
             try {
 
-                val data = mapOf("test" to courseModel.id.toString())
+                val data = mapOf("test" to courseId)
                 val courseDetailsModelList: List<CourseDetailsModel> =
                     AppObjectController.signUpNetworkService.explorerCourseDetails(data)
                 CoroutineScope(Dispatchers.Main).launch {
@@ -118,7 +131,19 @@ class PaymentActivity : CoreJoshActivity(),
                                 )
                             )
                         }
-                        activityPaymentBinding.recyclerView.addView(BuyCourseViewHolder(courseModel.id.toString()))
+                        if (courseModel != null) {
+                            activityPaymentBinding.recyclerView.addView(
+                                BuyCourseViewHolder(
+                                    courseModel?.id.toString()
+                                )
+                            )
+                        } else {
+                            activityPaymentBinding.recyclerView.addView(
+                                BuyCourseViewHolder(
+                                    courseModel?.id.toString()
+                                )
+                            )
+                        }
                     }
                     activityPaymentBinding.progressBar.visibility = View.GONE
                 }
@@ -128,6 +153,62 @@ class PaymentActivity : CoreJoshActivity(),
         }
     }
 
+
+    override fun onPaymentError(p0: Int, p1: String?) {
+        StyleableToast.Builder(this).gravity(Gravity.TOP)
+            .backgroundColor(ContextCompat.getColor(applicationContext, R.color.error_color))
+            .text(getString(R.string.something_went_wrong)).cornerRadius(16)
+            .textColor(ContextCompat.getColor(applicationContext, R.color.white))
+            .length(Toast.LENGTH_LONG).solidBackground().show()
+
+        Log.e("error", p1 ?: "")
+    }
+
+    override fun onPaymentSuccess(p0: String?) {
+        uiHandler.post {
+            courseModel?.run {
+                PaymentProcessFragment.newInstance(this)
+                    .show(supportFragmentManager, "Payment Process")
+            }
+
+        }
+        uiHandler.postDelayed({
+            startActivity(getInboxActivityIntent())
+            this@PaymentActivity.finish()
+        }, 1000 * 60)
+
+    }
+
+    private fun getPaymentDetails(testId: String?) {
+        activityPaymentBinding.progressBar.visibility = View.VISIBLE
+
+        try {
+            CoroutineScope(Dispatchers.IO).launch {
+                if (testId.isNullOrEmpty().not() && testId.equals("null").not() ){
+                    courseId=testId!!
+                }
+
+                val map = mapOf(
+                    "mobile" to User.getInstance().phoneNumber,
+                    "id" to courseId
+                )
+                val response: PaymentDetailsResponse =
+                    AppObjectController.signUpNetworkService.getPaymentDetails(map)
+
+                if (courseModel == null) {
+                    courseModel = CourseExploreModel()
+                    courseModel?.amount = response.amount.toDouble()
+                    courseModel?.courseName = response.courseName
+                    courseModel?.id = courseId.toInt()
+                }
+
+                initializeRazorpayPayment(response)
+            }
+        } catch (ex: Exception) {
+            activityPaymentBinding.progressBar.visibility = View.GONE
+            ex.printStackTrace()
+        }
+    }
 
     private fun initializeRazorpayPayment(response: PaymentDetailsResponse) {
         CoroutineScope(Dispatchers.Main).launch {
@@ -154,49 +235,6 @@ class PaymentActivity : CoreJoshActivity(),
             } catch (e: Exception) {
                 e.printStackTrace()
             }
-        }
-    }
-
-
-    override fun onPaymentError(p0: Int, p1: String?) {
-        StyleableToast.Builder(this).gravity(Gravity.TOP)
-            .backgroundColor(ContextCompat.getColor(applicationContext, R.color.error_color))
-            .text(getString(R.string.something_went_wrong)).cornerRadius(16)
-            .textColor(ContextCompat.getColor(applicationContext, R.color.white))
-            .length(Toast.LENGTH_LONG).solidBackground().show()
-
-        Log.e("error", p1)
-    }
-
-    override fun onPaymentSuccess(p0: String?) {
-        uiHandler.post {
-            PaymentProcessFragment.newInstance(courseModel)
-                .show(supportFragmentManager, "Payment Process")
-        }
-        uiHandler.postDelayed({
-            startActivity(getInboxActivityIntent())
-            this@PaymentActivity.finish()
-        }, 1000 * 60)
-
-    }
-
-    private fun getPaymentDetails(courseId: String) {
-        activityPaymentBinding.progressBar.visibility = View.VISIBLE
-
-        try {
-            CoroutineScope(Dispatchers.IO).launch {
-
-                val map = mapOf(
-                    "mobile" to User.getInstance().phoneNumber,
-                    "id" to this@PaymentActivity.courseModel.id.toString()
-                )
-                val response: PaymentDetailsResponse =
-                    AppObjectController.signUpNetworkService.getPaymentDetails(map)
-                initializeRazorpayPayment(response)
-            }
-        } catch (ex: Exception) {
-            activityPaymentBinding.progressBar.visibility = View.GONE
-            ex.printStackTrace()
         }
     }
 
