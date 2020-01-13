@@ -145,11 +145,23 @@ object AppDirectory {
     }
 
 
+    private val VIDEO_RECEIVED_PATH =
+        Environment.getExternalStorageDirectory().toString() + File.separator + APP_DIRECTORY + File.separator + MEDIA_DIRECTORY + "/JoshAppVideos/"
+
+
+    @JvmStatic
+    fun getVideoDownloadDirectory(): File {
+        val f = File(VIDEO_RECEIVED_PATH)
+        if (f.exists().not()) {
+            f.mkdirs()
+        }
+        return f
+    }
+
+
     val VIDEO_SENT_PATH =
         Environment.getExternalStorageDirectory().toString() + File.separator + APP_DIRECTORY + File.separator + MEDIA_DIRECTORY + "/JoshAppVideos/Sent"
 
-    val VIDEO_RECEIVED_PATH =
-        Environment.getExternalStorageDirectory().toString() + File.separator + APP_DIRECTORY + File.separator + MEDIA_DIRECTORY + "/JoshAppVideos/"
 
     val VIDEO_CACHED_RECEIVED_PATH =
         Environment.getExternalStorageDirectory().toString() + File.separator + APP_DIRECTORY + File.separator + MEDIA_DIRECTORY + "/JoshApp/cached"

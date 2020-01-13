@@ -36,6 +36,7 @@ import com.google.android.exoplayer2.util.Log;
 import com.google.android.exoplayer2.util.Util;
 import com.joshtalks.joshskills.R;
 import com.joshtalks.joshskills.core.AppObjectController;
+import com.joshtalks.joshskills.core.io.AppDirectory;
 
 import java.io.File;
 import java.io.IOException;
@@ -47,7 +48,7 @@ public class VideoDownloadController {
     private static final String TAG = "DemoApplication";
     private static final String DOWNLOAD_ACTION_FILE = "actions";
     private static final String DOWNLOAD_TRACKER_ACTION_FILE = "tracked_actions";
-    private static final String DOWNLOAD_CONTENT_DIRECTORY = "downloads";
+    private static final String DOWNLOAD_CONTENT_DIRECTORY = "download_video_lecture";
 
     private volatile String userAgent;
 
@@ -83,16 +84,16 @@ public class VideoDownloadController {
     }
 
 
-    public DataSource.Factory buildDataSourceFactory() {
+    private DataSource.Factory buildDataSourceFactory() {
         DefaultDataSourceFactory upstreamFactory = new DefaultDataSourceFactory(AppObjectController.getJoshApplication(), buildHttpDataSourceFactory());
         return buildReadOnlyCacheDataSource(upstreamFactory, getDownloadCache());
     }
 
-    public HttpDataSource.Factory buildHttpDataSourceFactory() {
+    private HttpDataSource.Factory buildHttpDataSourceFactory() {
         return new DefaultHttpDataSourceFactory(userAgent);
     }
 
-    public boolean useExtensionRenderers() {
+    private boolean useExtensionRenderers() {
         return false;
     }
 
@@ -169,6 +170,7 @@ public class VideoDownloadController {
     }
 
     private File getDownloadDirectory() {
+        downloadDirectory= AppDirectory.getVideoDownloadDirectory();
         if (downloadDirectory == null) {
             downloadDirectory = AppObjectController.getJoshApplication().getExternalFilesDir(null);
             if (downloadDirectory == null) {

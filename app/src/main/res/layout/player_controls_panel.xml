@@ -77,24 +77,23 @@
                         android:foreground="?android:attr/actionBarItemBackground"
                         android:padding="8dp" />--><!--
                     android:src="@drawable/ic_skip_previous"-->
-                <ImageView
+                <androidx.appcompat.widget.AppCompatImageView
                         android:id="@+id/play_pause"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:contentDescription="@string/app_name"
                         android:foreground="?android:attr/actionBarItemBackground"
-                        android:onClick="resumeOrPause"
                         android:padding="@dimen/_8sdp"
                         android:src="@drawable/ic_pause_player" />
 
                 <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/stop_player"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:contentDescription="@string/app_name"
                         android:foreground="?android:attr/actionBarItemBackground"
-                        android:onClick="closePlayer"
                         android:padding="@dimen/_8sdp"
                         android:src="@drawable/ic_stop_player"
                         android:tint="@color/grey_7A" />

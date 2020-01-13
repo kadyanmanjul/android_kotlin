@@ -14,8 +14,8 @@ abstract class CoreJoshActivity : BaseActivity() {
                 val i = Intent(this, HelpActivity::class.java)
                 startActivityForResult(i, HELP_ACTIVITY_REQUEST_CODE)
             }
+        } catch (ex: NullPointerException) {
         } catch (ex: Exception) {
-            ex.printStackTrace()
         }
     }
 }

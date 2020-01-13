@@ -44,15 +44,14 @@
                     android:focusable="true">
 
                 <androidx.appcompat.widget.AppCompatImageView
-                        android:src="@drawable/pdf_thumb"
                         android:id="@+id/image_view"
+                        android:background="@drawable/video_placeholder"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="start"
                         android:adjustViewBounds="true"
                         android:clickable="false"
                         app:radius="24"
-
                         />
 
                 <androidx.appcompat.widget.AppCompatImageView

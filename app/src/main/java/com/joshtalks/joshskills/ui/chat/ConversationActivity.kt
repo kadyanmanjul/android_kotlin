@@ -136,8 +136,7 @@ class ConversationActivity : CoreJoshActivity() {
     private lateinit var mSeekBarAudio: SeekBar
     private lateinit var mControlsContainer: LinearLayout
     private lateinit var bottomSheetLayout: MaterialCardView
-    var mUserIsSeeking = false
-    private val mAccent = R.color.colorAccent
+    private var mUserIsSeeking = false
     private var mPlayerInterface: PlayerInterface? = null
     private var mMusicService: MusicService? = null
     private var mMusicNotificationManager: MusicNotificationManager? = null
@@ -145,7 +144,6 @@ class ConversationActivity : CoreJoshActivity() {
     private var mPlaybackListener: PlaybackListener? = null
     private var sBound = false
     private var currentAudio: String? = null
-    private var previousAudio: String? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -205,7 +203,7 @@ class ConversationActivity : CoreJoshActivity() {
             conversationBinding.viewmodel = conversationViewModel
 
         } catch (ex: Exception) {
-           // ex.printStackTrace()
+            // ex.printStackTrace()
             Crashlytics.logException(ex)
             //ex.printStackTrace()
         }
@@ -213,6 +211,7 @@ class ConversationActivity : CoreJoshActivity() {
 
 
     private fun initChat() {
+        AppAnalytics.create(AnalyticsEvent.CHAT_SCREEN.NAME).push()
         initProgressDialog()
         initSnackBar()
         initActivityAnimation()
@@ -222,9 +221,6 @@ class ConversationActivity : CoreJoshActivity() {
         liveDataObservable()
         initView()
         initAudioPlayerView()
-
-        AppAnalytics.create(AnalyticsEvent.CHAT_SCREEN.NAME).push()
-        super.processIntent(intent)
         conversationViewModel.getAllUserMessage()
         refreshChat()
         uiHandler.postDelayed({
@@ -241,7 +237,7 @@ class ConversationActivity : CoreJoshActivity() {
 
     private fun initAudioPlayerView() {
         mControlsContainer = findViewById(R.id.controls_container)
-        bottomSheetLayout = findViewById<MaterialCardView>(R.id.design_bottom_sheet)
+        bottomSheetLayout = findViewById(R.id.design_bottom_sheet)
         mBottomSheetBehaviour = BottomSheetBehavior.from<MaterialCardView>(bottomSheetLayout)
         mDuration = findViewById(R.id.duration)
         mSeekBarAudio = findViewById(R.id.seekTo)
@@ -292,7 +288,7 @@ class ConversationActivity : CoreJoshActivity() {
                 mMusicService = (iBinder as MusicService.LocalBinder).instance
                 mPlayerInterface = mMusicService?.mediaPlayerHolder
                 mMusicNotificationManager = mMusicService?.musicNotificationManager
-                mMusicNotificationManager?.setAccentColor(mAccent)
+                mMusicNotificationManager?.setAccentColor(R.color.colorAccent)
                 if (mPlaybackListener == null) {
                     mPlaybackListener = PlaybackListener()
                     mPlayerInterface?.setPlaybackInfoListener(mPlaybackListener)
@@ -651,6 +647,21 @@ class ConversationActivity : CoreJoshActivity() {
         conversationBinding.scrollToEndButton.setOnClickListener {
             scrollToEnd()
         }
+
+        findViewById<View>(R.id.play_pause).setOnClickListener {
+            if (checkIsPlayer()) {
+                mPlayerInterface?.resumeOrPause()
+            }
+        }
+        findViewById<View>(R.id.stop_player).setOnClickListener {
+            if (checkIsPlayer()) {
+                if (mPlayerInterface!!.isPlaying) {
+                    mPlayerInterface?.resumeOrPause()
+                }
+            }
+            bottomSheetLayout.visibility = GONE
+        }
+
     }
 
     private fun liveDataObservable() {
@@ -846,7 +857,7 @@ class ConversationActivity : CoreJoshActivity() {
                         onPlayAudio(it.chatModel, it.audioType!!)
                     } else {
                         if (checkIsPlayer()) {
-                            //mPlayerInterface?.resumeOrPause()
+                            mPlayerInterface?.resumeOrPause()
                         }
                     }
 
@@ -1247,19 +1258,10 @@ class ConversationActivity : CoreJoshActivity() {
         if (onPlaybackCompletion) {
             if (mPlayerInterface!!.state != COMPLETED) {
                 val drawable = R.drawable.ic_play_player
-                mPlayPauseButton.post(Runnable { mPlayPauseButton.setImageResource(drawable) })
+                mPlayPauseButton.post({ mPlayPauseButton.setImageResource(drawable) })
                 mPlayerInterface?.resumeOrPause()
             }
         }
-        /* val themeColor = R.color.white
-         val color = if (onPlaybackCompletion) {
-             themeColor
-         } else {
-             if (!mPlayerInterface!!.isReset) {
-             } else {
-                 R.color.button_primary_color
-             }
-         }*/
     }
 
     private fun updatePlayingStatus() {
@@ -1277,34 +1279,37 @@ class ConversationActivity : CoreJoshActivity() {
     }
 
     private fun updatePlayingInfo(restore: Boolean, startPlay: Boolean) {
-        if (startPlay) {
-            mPlayerInterface?.mediaPlayer?.start()
-            Handler().postDelayed({
-                mMusicService!!.startForeground(
-                    MusicNotificationManager.NOTIFICATION_ID,
-                    mMusicNotificationManager!!.createNotification()
-                )
-            }, 250)
-        }
-        val selectedSong: AudioType = mPlayerInterface!!.currentSong
-        val duration: Int = selectedSong.duration
-        mSeekBarAudio.max = duration
-        Utils.updateTextView(mDuration, Utils.formatDuration(duration))
-        if (restore) {
-            mSeekBarAudio.progress = mPlayerInterface!!.playerPosition
-            updatePlayingStatus()
-            updateResetStatus(false)
-            Handler().postDelayed({
-                //stop foreground if coming from pause state
-                if (mMusicService!!.isRestoredFromPause) {
-                    mMusicService!!.stopForeground(false)
-                    mMusicService!!.musicNotificationManager.notificationManager.notify(
+        try {
+            if (startPlay) {
+                mPlayerInterface?.mediaPlayer?.start()
+                Handler().postDelayed({
+                    mMusicService!!.startForeground(
                         MusicNotificationManager.NOTIFICATION_ID,
-                        mMusicService!!.musicNotificationManager.notificationBuilder.build()
+                        mMusicNotificationManager!!.createNotification()
                     )
-                    mMusicService!!.isRestoredFromPause = false
-                }
-            }, 250)
+                }, 250)
+            }
+            val selectedSong: AudioType = mPlayerInterface!!.currentSong
+            val duration: Int = selectedSong.duration
+            mSeekBarAudio.max = duration
+            Utils.updateTextView(mDuration, Utils.formatDuration(duration))
+            if (restore) {
+                mSeekBarAudio.progress = mPlayerInterface!!.playerPosition
+                updatePlayingStatus()
+                updateResetStatus(false)
+                Handler().postDelayed({
+                    //stop foreground if coming from pause state
+                    if (mMusicService!!.isRestoredFromPause) {
+                        mMusicService!!.stopForeground(false)
+                        mMusicService!!.musicNotificationManager.notificationManager.notify(
+                            MusicNotificationManager.NOTIFICATION_ID,
+                            mMusicService!!.musicNotificationManager.notificationBuilder.build()
+                        )
+                        mMusicService!!.isRestoredFromPause = false
+                    }
+                }, 250)
+            }
+        } catch (ex: Exception) {
         }
     }
 
@@ -1321,21 +1326,6 @@ class ConversationActivity : CoreJoshActivity() {
 
     }
 
-
-    fun resumeOrPause(v: View) {
-        if (checkIsPlayer()) {
-            mPlayerInterface?.resumeOrPause()
-        }
-    }
-
-    fun closePlayer(v: View) {
-        if (checkIsPlayer()) {
-            if (mPlayerInterface!!.isPlaying) {
-                mPlayerInterface?.resumeOrPause()
-            }
-        }
-        bottomSheetLayout.visibility = GONE
-    }
 
     fun hidePlayerUI() {
         bottomSheetLayout.visibility = GONE
@@ -1358,9 +1348,13 @@ class ConversationActivity : CoreJoshActivity() {
         }
 
         override fun onStateChanged(@State state: Int) {
-            updatePlayingStatus()
-            if (mPlayerInterface!!.state != RESUMED && mPlayerInterface!!.state != PAUSED) {
-                updatePlayingInfo(restore = false, startPlay = true)
+            try {
+                updatePlayingStatus()
+                if (mPlayerInterface!!.state != RESUMED && mPlayerInterface!!.state != PAUSED) {
+                    updatePlayingInfo(restore = false, startPlay = true)
+                }
+            } catch (ex: Exception) {
+                ex.printStackTrace()
             }
         }
 
