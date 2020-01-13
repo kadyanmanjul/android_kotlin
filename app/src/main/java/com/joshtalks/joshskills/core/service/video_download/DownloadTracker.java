@@ -217,7 +217,7 @@ public class DownloadTracker {
                 listener.onError(AppObjectController.getGsonMapper().toJson(chatObj), e);
             }
             RxBus2.publish(new MediaProgressEventBus(Download.STATE_STOPPED, AppObjectController.getGsonMapper().toJson(chatObj), 0));
-
+            e.printStackTrace();
 
         }
 

@@ -31,12 +31,12 @@ class VideoPlayerActivity : BaseActivity(), PlayerListener {
 
     override fun onPlayerReady() {
         if (graph != null) {
-            graph?.endTime = binding.pvPlayer.player.currentPosition
+            graph?.endTime = binding.pvPlayer.player!!.currentPosition
             videoViewGraphList.add(graph!!)
         }
         graph = null
 
-        graph = ListenGraph(binding.pvPlayer.player.currentPosition)
+        graph = ListenGraph(binding.pvPlayer.player!!.currentPosition)
 
     }
 
@@ -50,7 +50,7 @@ class VideoPlayerActivity : BaseActivity(), PlayerListener {
     }
 
     override fun onPlayerReleased() {
-        graph?.endTime = binding.pvPlayer.player.currentPosition
+        graph?.endTime = binding.pvPlayer.player!!.currentPosition
         graph?.let {
             videoViewGraphList.add(it)
         }
