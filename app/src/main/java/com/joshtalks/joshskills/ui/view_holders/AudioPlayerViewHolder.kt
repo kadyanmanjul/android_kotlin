@@ -6,6 +6,7 @@ import android.os.Looper
 import android.view.Gravity
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import android.widget.ProgressBar
 import android.widget.RelativeLayout
 import android.widget.SeekBar
 import androidx.appcompat.widget.AppCompatImageView
@@ -32,7 +33,6 @@ import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.mindorks.placeholderview.annotations.*
-import com.pnikosis.materialishprogress.ProgressWheel
 import com.tonyodev.fetch2.Download
 import com.tonyodev.fetch2.Error
 import com.tonyodev.fetch2.FetchListener
@@ -72,7 +72,7 @@ class AudioPlayerViewHolder(activityRef: WeakReference<FragmentActivity>, messag
 
 
     @View(R.id.progress_bar)
-    lateinit var progressBar: ProgressWheel
+    lateinit var progressBar: ProgressBar
 
     @View(R.id.cancel_download_iv)
     lateinit var cancelDownloadImageView: AppCompatImageView
@@ -149,7 +149,6 @@ class AudioPlayerViewHolder(activityRef: WeakReference<FragmentActivity>, messag
             etaInMilliSeconds: Long,
             downloadedBytesPerSecond: Long
         ) {
-
         }
 
         override fun onQueued(download: Download, waitingOnNetwork: Boolean) {
@@ -232,13 +231,11 @@ class AudioPlayerViewHolder(activityRef: WeakReference<FragmentActivity>, messag
                 root_view.setBackgroundResource(R.drawable.balloon_incoming_normal)
                 audioViewReceived.visibility = android.view.View.VISIBLE
             }
-            it.user?.photo_url?.run {
-                // setUrlInImageView(profileImage,this)
-            }
+
         }
 
 
-        updateUI()
+         updateUI()
         updateTime(messageTimeTV)
         messageTimeTV.text =
             Utils.getMessageTimeInHours(message.created).toUpperCase(Locale.getDefault())

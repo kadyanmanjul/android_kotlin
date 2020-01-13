@@ -59,18 +59,6 @@
                         android:visibility="gone" />
 
 
-                <com.pnikosis.materialishprogress.ProgressWheel
-                        android:id="@+id/progress_bar"
-                        android:layout_width="@dimen/_36sdp"
-                        android:layout_height="@dimen/_36sdp"
-                        android:layout_gravity="top|center"
-                        android:visibility="invisible"
-                        wheel:matProg_barColor="@color/button_primary_color"
-                        wheel:matProg_linearProgress="false"
-                        wheel:matProg_progressIndeterminate="true"
-                        wheel:matProg_rimColor="@color/button_primary_color"
-                        wheel:matProg_rimWidth="@dimen/_1sdp"
-                       />
 
                 <androidx.appcompat.widget.AppCompatImageView
                         android:id="@+id/cancel_download_iv"
@@ -82,7 +70,17 @@
                         android:padding="@dimen/_4sdp"
                         android:src="@drawable/ic_cross"
                         android:tint="#7A7A7A"
-                        android:visibility="gone" />
+                        android:visibility="invisible" />
+                <ProgressBar
+                        android:id="@+id/progress_bar"
+                        android:indeterminate="true"
+                        android:layout_width="@dimen/_36sdp"
+                        android:layout_height="@dimen/_36sdp"
+                        android:layout_gravity="center"
+                        android:visibility="invisible"
+                        android:indeterminateTint="@color/button_primary_color"
+                        />
+
 
 
             </FrameLayout>
