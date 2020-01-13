@@ -78,27 +78,24 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                 notificationObject.actionData
             )
 
-            val stackBuilder: TaskStackBuilder = TaskStackBuilder.create(this@FirebaseNotificationService)
-            // Adds the back stack for the Intent (but not the Intent itself)
-            // Adds the back stack for the Intent (but not the Intent itself)
+            /*val stackBuilder: TaskStackBuilder = TaskStackBuilder.create(this@FirebaseNotificationService)
             stackBuilder.addParentStack(LauncherActivity::class.java)
-            // Adds the Intent that starts the Activity to the top of the stack
-            // Adds the Intent that starts the Activity to the top of the stack
             stackBuilder.addNextIntent(intent)
-            val uniqueInt = (System.currentTimeMillis() and 0xfffffff).toInt()
 
             val pendingIntent = stackBuilder.getPendingIntent(
                 uniqueInt,
                 PendingIntent.FLAG_UPDATE_CURRENT
-            )
+            )*/
+            val uniqueInt = (System.currentTimeMillis() and 0xfffffff).toInt()
+
             val defaultSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
-           /* val pendingIntent = PendingIntent.getActivity(
+           val pendingIntent = PendingIntent.getActivity(
                 applicationContext,
-                0,
+               uniqueInt,
                 intent,
                 PendingIntent.FLAG_UPDATE_CURRENT
             )
-*/
+
 
             val notificationBuilder =
                 NotificationCompat.Builder(
@@ -137,7 +134,6 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                     notificationManager.setInterruptionFilter(NotificationManager.INTERRUPTION_FILTER_NONE)
                 }
             } catch (ex: Exception) {
-                ex.printStackTrace()
             }
 
 
