@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools">
+        xmlns:tools="http://schemas.android.com/tools"
+
+        xmlns:wheel="http://schemas.android.com/apk/res-auto">
 
     <data>
 
@@ -11,22 +13,29 @@
     </data>
 
     <RelativeLayout
-            android:background="@color/pdf_bg_color"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:background="@color/pdf_bg_color"
             tools:ignore="MissingPrefix">
 
-        <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/profile_image"
-                android:layout_width="@dimen/_72sdp"
-                android:layout_height="@dimen/_72sdp"
+
+        <com.pnikosis.materialishprogress.ProgressWheel
+                android:id="@+id/progress_wheel"
+                android:layout_width="@dimen/_84sdp"
+                android:layout_height="@dimen/_84sdp"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="@dimen/_40sdp"
-                android:elevation="@dimen/_4sdp"
-                android:backgroundTint="#887A7A7A"
                 android:background="@drawable/timer_drawable"
-                android:src="@drawable/ic_timer_clock"
-                 />
+                android:backgroundTint="@color/white"
+                android:elevation="@dimen/_4sdp"
+                app:matProg_barWidth="@dimen/_5sdp"
+                app:matProg_barSpinCycleTime="100"
+                wheel:matProg_barColor="@color/button_primary_color"
+                wheel:matProg_fillRadius="true"
+                wheel:matProg_linearProgress="true"
+                wheel:matProg_progressIndeterminate="true"
+                wheel:matProg_rimColor="@color/transparent"
+                />
 
         <com.google.android.material.card.MaterialCardView
                 android:id="@+id/card_payment"
@@ -56,8 +65,9 @@
                     fontPath="fonts/Roboto-Medium.ttf"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:lineSpacingExtra="@dimen/_4sdp"
                     android:layout_marginTop="@dimen/_100sdp"
-                    android:text="Please wait while your payment is being processed"
+                    android:text="@string/waiting_course_buy_confirmation"
                     android:textAlignment="center"
                     android:textColor="@color/font_color"
                     android:textSize="@dimen/font_12" />
@@ -90,9 +100,9 @@
                     fontPath="fonts/Roboto-Bold.ttf"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:lines="1"
                     android:layout_marginStart="@dimen/_72sdp"
                     android:layout_marginTop="@dimen/_14sdp"
+                    android:lines="1"
                     android:textColor="@color/font_color"
                     android:textSize="@dimen/font_14" />
 
@@ -144,19 +154,19 @@
         </com.google.android.material.card.MaterialCardView>
 
         <androidx.appcompat.widget.AppCompatTextView
-                android:layout_alignParentBottom="true"
                 fontPath="fonts/Roboto-Bold.ttf"
-                android:padding="@dimen/_8sdp"
-                android:layout_centerHorizontal="true"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
                 android:layout_marginBottom="@dimen/_24sdp"
+                android:onClick="@{()->handler.exploreMoreCourse()}"
+                android:padding="@dimen/_8sdp"
                 android:text="@string/explore_more_course"
                 android:textAlignment="center"
                 android:textColor="@color/gray_79"
                 android:textSize="@dimen/_16sdp"
                 android:textStyle="bold"
-                android:onClick="@{()->handler.exploreMoreCourse()}"
 
                 />
 

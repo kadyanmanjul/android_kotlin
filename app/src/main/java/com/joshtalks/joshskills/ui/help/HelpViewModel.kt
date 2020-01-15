@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.crashlytics.android.Crashlytics
 import com.joshtalks.joshskills.core.ApiCallStatus
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.JoshApplication
@@ -47,10 +48,9 @@ class HelpViewModel(application: Application) : AndroidViewModel(application) {
     fun requestComplaint(requestComplaint: RequestComplaint) {
         viewModelScope.launch(Dispatchers.IO) {
             if (requestComplaint.imageUrl.isNullOrEmpty().not()) {
-                val resp = uploadAttachmentMedia(requestComplaint.imageUrl!!)
+                val resp = uploadAttachmentMedia(requestComplaint.imageUrl)
                 if (resp == null) {
                     apiCallStatusLiveData.postValue(ApiCallStatus.FAILED)
-                    return@launch
                 } else {
                     requestComplaint.imageUrl = resp as String
                 }
@@ -61,8 +61,8 @@ class HelpViewModel(application: Application) : AndroidViewModel(application) {
                     AppObjectController.commonNetworkService.submitComplaint(requestComplaint)
                 apiCallStatusLiveData.postValue(ApiCallStatus.SUCCESS)
             } catch (e: Exception) {
+                Crashlytics.logException(e)
                 apiCallStatusLiveData.postValue(ApiCallStatus.FAILED)
-
                 e.printStackTrace()
             }
 
@@ -71,10 +71,10 @@ class HelpViewModel(application: Application) : AndroidViewModel(application) {
     }
 
 
-    private suspend fun uploadAttachmentMedia(mediaPath: String): Any? {
+    private suspend fun uploadAttachmentMedia(mediaPath: String?): Any? {
         return viewModelScope.async(Dispatchers.IO) {
             try {
-                val obj = mapOf("media_path" to File(getCompressImage(mediaPath)).name)
+                val obj = mapOf("media_path" to File(getCompressImage(mediaPath!!)).name)
                 val responseObj =
                     AppObjectController.chatNetworkService.requestUploadMediaAsync(obj).await()
                 val statusCode: Int = uploadOnS3Server(responseObj, mediaPath)
@@ -86,6 +86,7 @@ class HelpViewModel(application: Application) : AndroidViewModel(application) {
                     return@async null
                 }
             } catch (ex: Exception) {
+                Crashlytics.logException(ex)
                 ex.printStackTrace()
                 apiCallStatusLiveData.postValue(ApiCallStatus.FAILED)
                 return@async null

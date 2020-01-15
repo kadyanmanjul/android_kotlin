@@ -9,6 +9,7 @@ import com.bumptech.glide.load.MultiTransformation
 import com.clevertap.android.sdk.ActivityLifecycleCallback
 import com.crashlytics.android.Crashlytics
 import com.crashlytics.android.core.CrashlyticsCore
+import com.facebook.FacebookSdk
 import com.facebook.appevents.AppEventsLogger
 import com.facebook.stetho.okhttp3.StethoInterceptor
 import com.google.android.exoplayer2.util.Util
@@ -147,7 +148,6 @@ internal class AppObjectController {
             com.joshtalks.joshskills.core.ActivityLifecycleCallback.register(joshApplication)
             ActivityLifecycleCallback.register(joshApplication)
             DateTimeUtils.setTimeZone("UTC")
-
 
             firebaseAnalytics = FirebaseAnalytics.getInstance(joshApplication)
             AppEventsLogger.activateApp(joshApplication)

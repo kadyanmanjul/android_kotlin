@@ -5,6 +5,7 @@ import androidx.databinding.ObservableField
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.facebook.appevents.AppEventsConstants.EVENT_NAME_COMPLETED_REGISTRATION
 import com.google.android.gms.auth.api.phone.SmsRetriever
 import com.google.android.gms.tasks.Task
 import com.joshtalks.joshskills.core.AppObjectController
@@ -104,6 +105,7 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
                 mentor.getUser()?.let {
                     User.getInstance().updateFromResponse(it)
                 }
+                AppObjectController.facebookEventLogger.logEvent(EVENT_NAME_COMPLETED_REGISTRATION)
                 AppAnalytics.updateUser()
                 getCourseFromServer()
 

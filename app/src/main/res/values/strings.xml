@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">JoshSkills</string>
     <string name="inbox_header">Josh Skills</string>
-    <string name="help_header">Help</string>
+    <string name="help_header">Help Student</string>
 
 
     <string name="login">Login</string>
@@ -66,8 +66,9 @@
 
     <string name="slide_to_cancel">Slide To Cancel</string>
     <string name="buy_course">Buy Course</string>
-    <string name="explorer_course">Explore Courses</string>
+    <string name="explorer_courses">Explore Courses</string>
     <string name="start_course">Start Course</string>
+    <string name="explorer_course">Explore Courses</string>
 
 
     <string name="find_more_courses">Find More Courses</string>
@@ -136,6 +137,7 @@
     <string name="duration">Duration</string>
 
     <string name="complaint_message" formatted="false">Thanks for reaching out to us. Your request has been recorded against ticket number %s. Our team will reach out to you between 24–72 hours</string>
-
+    <string name="question_count">%s / %s</string>
+    <string name="waiting_course_buy_confirmation">We are waiting for confirmation from your bank server.\n #usually it takes 30&#8211;60 seconds. </string>
 
 </resources>

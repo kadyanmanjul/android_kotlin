@@ -91,7 +91,6 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
     }
 
 
-
     private fun workInBackground() {
         CoroutineScope(Dispatchers.Default).launch {
             AppObjectController.clearDownloadMangerCallback()

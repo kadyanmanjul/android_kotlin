@@ -37,6 +37,9 @@ class TextViewHolder(activityRef: WeakReference<FragmentActivity>, message: Chat
     @View(R.id.text_message_time)
     lateinit var text_message_time: AppCompatTextView
 
+    @View(R.id.message_number)
+    lateinit var messageNumber: AppCompatTextView
+
 
     @View(R.id.root_view)
     lateinit var root_view: FrameLayout
@@ -52,7 +55,7 @@ class TextViewHolder(activityRef: WeakReference<FragmentActivity>, message: Chat
     override fun onViewInflated() {
         super.onViewInflated()
 
-        text_title.text= EMPTY
+        text_title.text = EMPTY
 
         text_title.text = EMPTY
         text_title.visibility = GONE
@@ -64,15 +67,31 @@ class TextViewHolder(activityRef: WeakReference<FragmentActivity>, message: Chat
 
 
         if (message.text.isNullOrEmpty()) {
-            message.question?.qText?.let {
-                text_message_body.text = HtmlCompat.fromHtml(it, HtmlCompat.FROM_HTML_MODE_LEGACY)
-            }
-            message.question?.title?.let { text ->
-                if (text.isNotEmpty()) {
-                    text_title.visibility = VISIBLE
-                    text_title.text = HtmlCompat.fromHtml(text, HtmlCompat.FROM_HTML_MODE_LEGACY)
+
+            message.question?.run {
+
+                this.qText?.let {
+                    text_message_body.text =
+                        HtmlCompat.fromHtml(it, HtmlCompat.FROM_HTML_MODE_LEGACY)
                 }
+                this.title?.let { text ->
+                    if (text.isNotEmpty()) {
+                        text_title.visibility = VISIBLE
+                        text_title.text =
+                            HtmlCompat.fromHtml(text, HtmlCompat.FROM_HTML_MODE_LEGACY)
+                    }
+                }
+                if (this.questionNumber.isNullOrEmpty().not() && this.totalQuestionOfDay.isNullOrEmpty().not()) {
+                    messageNumber.text = activityRef.get()?.getString(
+                        R.string.question_count,
+                        this.questionNumber,
+                        this.totalQuestionOfDay
+                    )
+                }
+
             }
+
+
         } else {
             text_message_body.text =
                 HtmlCompat.fromHtml(message.text.toString(), HtmlCompat.FROM_HTML_MODE_LEGACY)
@@ -81,10 +100,9 @@ class TextViewHolder(activityRef: WeakReference<FragmentActivity>, message: Chat
         text_message_time.text = Utils.messageTimeConversion(message.created)
         updateTime(text_message_time)
         addMessageAutoLink(text_message_body)
+
         // updateForegroundView()
     }
-
-
 
 
     /* private fun updateForegroundView() {

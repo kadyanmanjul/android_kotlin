@@ -270,6 +270,11 @@ dependencies {
     implementation 'com.muddzdev:styleabletoast:2.2.3'
 
 
+    //Appsflyer
+    //implementation 'com.appsflyer:af-android-sdk:5.0.0'
+
+
+
     // implementation 'com.yanzhenjie:album:2.1.3'
 
 

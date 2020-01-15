@@ -10,6 +10,8 @@ import androidx.appcompat.widget.AppCompatTextView
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.afollestad.materialdialogs.MaterialDialog
+import com.facebook.appevents.AppEventsConstants.EVENT_NAME_VIEWED_CONTENT
+import com.facebook.appevents.AppEventsConstants.EVENT_PARAM_CONTENT_ID
 import com.google.android.material.appbar.MaterialToolbar
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
@@ -41,7 +43,7 @@ const val USER_COURSES = "user_courses"
 class CourseExploreActivity : CoreJoshActivity() {
     private var compositeDisposable = CompositeDisposable()
     private lateinit var courseExploreBinding: ActivityCourseExploreBinding
-    var screenEngagementModel: ScreenEngagementModel =
+    private var screenEngagementModel: ScreenEngagementModel =
         ScreenEngagementModel(COURSE_EXPLORER_SCREEN_NAME)
 
     companion object {
@@ -82,7 +84,7 @@ class CourseExploreActivity : CoreJoshActivity() {
 
     private fun initView() {
         val titleView = findViewById<AppCompatTextView>(R.id.text_message_title)
-        titleView.text = getString(R.string.explorer_course)
+        titleView.text = getString(R.string.explorer_courses)
         findViewById<View>(R.id.iv_back).visibility = View.VISIBLE
         findViewById<View>(R.id.iv_back).setOnClickListener {
             onCancelResult()
@@ -181,6 +183,10 @@ class CourseExploreActivity : CoreJoshActivity() {
 
     private fun addObserver() {
         compositeDisposable.add(RxBus2.listen(CourseExploreModel::class.java).subscribe {
+            val params = Bundle().apply {
+                putString(EVENT_PARAM_CONTENT_ID, it.id.toString())
+            }
+            AppObjectController.facebookEventLogger.logEvent(EVENT_NAME_VIEWED_CONTENT, params)
             PaymentActivity.startPaymentActivity(this, REGISTER_NEW_COURSE_CODE, it)
         })
 

@@ -149,10 +149,10 @@ data class Question(
 
 
     @ColumnInfo(name = "question_no")
-    @SerializedName("question_no") var questionNumber: String = "",
+    @SerializedName("question_no") var questionNumber: String? = "",
 
     @ColumnInfo(name = "total_question_of_day")
-    @SerializedName("total_question_of_day") var totalQuestionOfDay: String = ""
+    @SerializedName("total_question_of_day") var totalQuestionOfDay: String? = ""
 
 
     ) : Serializable

@@ -164,25 +164,35 @@ abstract class BaseVideoTrimmerView @JvmOverloads constructor(
     @Suppress("unused")
     @UiThread
     fun initiateTrimming() {
-        pauseVideo()
-        val mediaMetadataRetriever = MediaMetadataRetriever()
-        mediaMetadataRetriever.setDataSource(context, src)
-        val metadataKeyDuration =
-            java.lang.Long.parseLong(mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION))
-        if (timeVideo < MIN_TIME_FRAME) {
-            if (metadataKeyDuration - endPosition > MIN_TIME_FRAME - timeVideo) {
-                endPosition += MIN_TIME_FRAME - timeVideo
-            } else if (startPosition > MIN_TIME_FRAME - timeVideo) {
-                startPosition -= MIN_TIME_FRAME - timeVideo
+        try {
+            pauseVideo()
+            val mediaMetadataRetriever = MediaMetadataRetriever()
+            mediaMetadataRetriever.setDataSource(context, src)
+            val metadataKeyDuration =
+                java.lang.Long.parseLong(
+                    mediaMetadataRetriever.extractMetadata(
+                        MediaMetadataRetriever.METADATA_KEY_DURATION
+                    )
+                )
+            if (timeVideo < MIN_TIME_FRAME) {
+                if (metadataKeyDuration - endPosition > MIN_TIME_FRAME - timeVideo) {
+                    endPosition += MIN_TIME_FRAME - timeVideo
+                } else if (startPosition > MIN_TIME_FRAME - timeVideo) {
+                    startPosition -= MIN_TIME_FRAME - timeVideo
+                }
             }
-        }
-        //notify that video trimming started
-        if (videoTrimmingListener != null)
-            videoTrimmingListener!!.onTrimStarted()
+            //notify that video trimming started
+            if (videoTrimmingListener != null)
+                videoTrimmingListener!!.onTrimStarted()
 
-        videoTrimmingListener?.onTrimStarting(src!!,
-            dstFile!!,startPosition.toLong(),
-            endPosition.toLong())
+            videoTrimmingListener?.onTrimStarting(
+                src!!,
+                dstFile!!, startPosition.toLong(),
+                endPosition.toLong()
+            )
+        }catch (ex:Exception){
+            videoTrimmingListener!!.onErrorWhileViewingVideo(0,0)
+        }
 
 
         /*BackgroundExecutor.execute(

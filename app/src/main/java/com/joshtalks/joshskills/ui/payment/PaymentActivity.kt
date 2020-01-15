@@ -15,6 +15,7 @@ import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.facebook.appevents.AppEventsConstants
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.CoreJoshActivity
@@ -38,6 +39,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.json.JSONObject
+import java.util.*
 
 
 const val COURSE_OBJECT = "course"
@@ -52,8 +54,13 @@ class PaymentActivity : CoreJoshActivity(),
     private var compositeDisposable = CompositeDisposable()
     private val uiHandler = Handler(Looper.getMainLooper())
     private var courseId: String = ""
+    private var currency: String = "INR"
+    private var amount: Long = 0L
 
-    companion object {
+
+    companion
+
+    object {
         fun startPaymentActivity(
             context: Activity,
             requestCode: Int,
@@ -97,7 +104,7 @@ class PaymentActivity : CoreJoshActivity(),
         if (courseModel != null) {
             titleView.text = courseModel?.courseName
         } else {
-            titleView.text = "Explorer Course"
+            titleView.text = getString(R.string.explorer_course)
 
         }
         findViewById<View>(R.id.iv_back).visibility = View.VISIBLE
@@ -165,8 +172,22 @@ class PaymentActivity : CoreJoshActivity(),
     }
 
     override fun onPaymentSuccess(p0: String?) {
+
+
         uiHandler.post {
             courseModel?.run {
+                try {
+                    val params = Bundle().apply {
+                        putString(AppEventsConstants.EVENT_PARAM_CONTENT_ID, courseId)
+                    }
+                    AppObjectController.facebookEventLogger.logPurchase(
+                        amount.toBigDecimal(),
+                        Currency.getInstance(currency.trim()),
+                        params
+                    )
+                } catch (ex: Exception) {
+                    ex.printStackTrace()
+                }
                 PaymentProcessFragment.newInstance(this)
                     .show(supportFragmentManager, "Payment Process")
             }
@@ -184,8 +205,8 @@ class PaymentActivity : CoreJoshActivity(),
 
         try {
             CoroutineScope(Dispatchers.IO).launch {
-                if (testId.isNullOrEmpty().not() && testId.equals("null").not() ){
-                    courseId=testId!!
+                if (testId.isNullOrEmpty().not() && testId.equals("null").not()) {
+                    courseId = testId!!
                 }
 
                 val map = mapOf(
@@ -228,10 +249,20 @@ class PaymentActivity : CoreJoshActivity(),
                 options.put("currency", response.currency)
                 options.put("amount", response.amount)
                 options.put("prefill", preFill)
-
+                currency = response.currency
+                amount = response.amount.toLong()
                 activityPaymentBinding.progressBar.visibility = View.GONE
 
                 checkout.open(this@PaymentActivity, options)
+
+                val params = Bundle().apply {
+                    putString(AppEventsConstants.EVENT_PARAM_CONTENT_ID, courseId)
+                }
+                AppObjectController.facebookEventLogger.logEvent(
+                    AppEventsConstants.EVENT_NAME_INITIATED_CHECKOUT,
+                    params
+                )
+
             } catch (e: Exception) {
                 e.printStackTrace()
             }

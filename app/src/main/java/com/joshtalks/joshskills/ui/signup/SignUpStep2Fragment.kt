@@ -76,7 +76,7 @@ class SignUpStep2Fragment : Fragment() {
         initProgressView()
         signUpStep2Binding.otpView.setOtpCompletionListener {
 
-               verifyOTP()
+            verifyOTP()
         }
         viewModel.progressDialogStatus.observe(this, Observer {
             if (it.not()) {
@@ -168,6 +168,7 @@ class SignUpStep2Fragment : Fragment() {
         activity?.window?.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         compositeDisposable.clear()
         timer?.cancel()
+        timer = null
     }
 
     private fun subscribeRXBus() {
@@ -186,13 +187,15 @@ class SignUpStep2Fragment : Fragment() {
     private fun startTimer() {
         timer = object : CountDownTimer(60_000, 1000) {
             override fun onTick(millisUntilFinished: Long) {
-                CoroutineScope(Dispatchers.Main).launch {
-                    signUpStep2Binding.tvResendMessage.text = getString(
-                        R.string.resend_timer_text,
-                        TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished).toString()
-                    )
-                    signUpStep2Binding.tvResendMessage.isEnabled = false
+                if (timer != null) {
+                    CoroutineScope(Dispatchers.Main).launch {
+                        signUpStep2Binding.tvResendMessage.text = getString(
+                            R.string.resend_timer_text,
+                            TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished).toString()
+                        )
+                        signUpStep2Binding.tvResendMessage.isEnabled = false
 
+                    }
                 }
             }
 

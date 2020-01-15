@@ -42,6 +42,13 @@ class SignUpStep1Fragment : Fragment() {
     private lateinit var viewModel: SignUpViewModel
 
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        viewModel = activity?.run { ViewModelProviders.of(this)[SignUpViewModel::class.java] }
+            ?: throw Exception("Invalid Activity")
+
+    }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -102,13 +109,6 @@ class SignUpStep1Fragment : Fragment() {
     private fun initProgressView() {
         bindProgressButton(signUpStep1FragmentBinding.btnLogin)
         signUpStep1FragmentBinding.btnLogin.attachTextChangeAnimator()
-
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        viewModel = activity?.run { ViewModelProviders.of(this)[SignUpViewModel::class.java] }
-            ?: throw Exception("Invalid Activity")
 
     }
 

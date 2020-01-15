@@ -6,6 +6,7 @@ import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
 import com.bumptech.glide.Glide
@@ -20,11 +21,17 @@ import com.joshtalks.joshskills.repository.server.CourseExploreModel
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import java.util.*
 
 class PaymentProcessFragment : DialogFragment() {
     private var compositeDisposable = CompositeDisposable()
     private lateinit var courseModel: CourseExploreModel
     private lateinit var paymentProcessFragmentBinding: PaymentProcessFragmentBinding
+    private var timer = Timer()
+    private var currentTime = 0.0F
 
 
     companion object {
@@ -39,6 +46,8 @@ class PaymentProcessFragment : DialogFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        activity?.window?.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+
         arguments?.let {
             courseModel = it.getSerializable(COURSE_ID) as CourseExploreModel
         }
@@ -70,9 +79,10 @@ class PaymentProcessFragment : DialogFragment() {
     @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         paymentProcessFragmentBinding.tvCourse.text = courseModel.courseName
-        paymentProcessFragmentBinding.tvAmount.text = "INR " + (courseModel.amount / 100).toString()
-        courseModel.courseDuration?.let {
+        paymentProcessFragmentBinding.tvAmount.text = "INR " + (courseModel.amount).toString()
+        courseModel.courseDuration.let {
             paymentProcessFragmentBinding.tvCourseDuration.text = it
         }
 
@@ -85,6 +95,21 @@ class PaymentProcessFragment : DialogFragment() {
                 )
                 .into(paymentProcessFragmentBinding.ivCourse)
         }
+        paymentProcessFragmentBinding.progressWheel.progress = currentTime
+
+        timer.scheduleAtFixedRate(object : TimerTask() {
+            override fun run() {
+                CoroutineScope(Dispatchers.Main).launch {
+                    currentTime = ((currentTime + 0.015)).toFloat()
+                    paymentProcessFragmentBinding.progressWheel.progress = currentTime
+                }
+                if (currentTime >= .98) {
+                    timer.cancel()
+                    paymentProcessFragmentBinding.progressWheel.progress = 100f
+                }
+            }
+
+        }, 0, 1000)
     }
 
     override fun onResume() {
@@ -95,6 +120,8 @@ class PaymentProcessFragment : DialogFragment() {
     override fun onDestroy() {
         super.onDestroy()
         compositeDisposable.clear()
+        activity?.window?.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        timer.cancel()
     }
 
     fun exploreMoreCourse() {

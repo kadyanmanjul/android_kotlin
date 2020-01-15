@@ -7,6 +7,7 @@ import com.joshtalks.joshskills.ui.help.HelpActivity
 
 
 abstract class CoreJoshActivity : BaseActivity() {
+
     override fun onResume() {
         super.onResume()
         try {
