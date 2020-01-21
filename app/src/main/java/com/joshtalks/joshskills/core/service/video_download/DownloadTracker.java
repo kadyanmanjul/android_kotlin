@@ -1,4 +1,3 @@
-
 package com.joshtalks.joshskills.core.service.video_download;
 
 
@@ -39,23 +38,12 @@ import java.util.concurrent.CopyOnWriteArraySet;
  */
 public class DownloadTracker {
 
-    public interface Listener {
-        void onDownloadsChanged(Download download);
-
-        void onDownloadRemoved(Download download);
-
-        void onError(String key, Exception ex);
-    }
-
-
     private static final String TAG = "DownloadTracker";
-
     private final Context context;
     private final DataSource.Factory dataSourceFactory;
     private final CopyOnWriteArraySet<Listener> listeners;
     private final HashMap<Uri, Download> downloads;
     private final DownloadIndex downloadIndex;
-
     @Nullable
     private StartDownloadDialogHelper startDownloadDialogHelper;
 
@@ -133,6 +121,14 @@ public class DownloadTracker {
             default:
                 throw new IllegalStateException("Unsupported type: " + type);
         }
+    }
+
+    public interface Listener {
+        void onDownloadsChanged(Download download);
+
+        void onDownloadRemoved(Download download);
+
+        void onError(String key, Exception ex);
     }
 
     private class DownloadManagerListener implements DownloadManager.Listener {

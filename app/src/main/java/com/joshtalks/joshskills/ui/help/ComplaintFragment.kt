@@ -26,6 +26,7 @@ import com.bumptech.glide.request.RequestOptions
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.ApiCallStatus
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.PermissionUtils
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.custom_ui.progress.FlipProgressDialog
 import com.joshtalks.joshskills.databinding.FragmentLodgeComplaintBinding
@@ -33,6 +34,10 @@ import com.joshtalks.joshskills.repository.server.RequestComplaint
 import com.joshtalks.joshskills.repository.server.TypeOfHelpModel
 import com.joshtalks.joshskills.ui.signup.PHONE_NUMBER_REGEX
 import com.joshtalks.joshskills.ui.view_holders.ROUND_CORNER
+import com.karumi.dexter.MultiplePermissionsReport
+import com.karumi.dexter.PermissionToken
+import com.karumi.dexter.listener.PermissionRequest
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.muddzdev.styleabletoast.StyleableToast
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation
 
@@ -99,14 +104,40 @@ class ComplaintFragment : Fragment() {
 
 
     fun attachMedia() {
-        val pickPhoto = Intent(
-            Intent.ACTION_PICK,
-            MediaStore.Images.Media.EXTERNAL_CONTENT_URI
-        )
-        pickPhoto.type = "image/*"
-        val mimeTypes = arrayOf("image/jpeg", "image/png")
-        pickPhoto.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes)
-        startActivityForResult(pickPhoto, 1)
+        PermissionUtils.storageReadAndWritePermission(activity,
+            object : MultiplePermissionsListener {
+                override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
+                    report?.areAllPermissionsGranted()?.let { flag ->
+                        if (flag) {
+                            val pickPhoto = Intent(
+                                Intent.ACTION_PICK,
+                                MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+                            )
+                            pickPhoto.type = "image/*"
+                            val mimeTypes = arrayOf("image/jpeg", "image/png")
+                            pickPhoto.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes)
+                            startActivityForResult(pickPhoto, 1)
+                            return
+
+                        }
+                        if (report.isAnyPermissionPermanentlyDenied) {
+                            PermissionUtils.permissionPermanentlyDeniedDialog(
+                                activity!!
+                            )
+                            return
+                        }
+                    }
+                }
+
+                override fun onPermissionRationaleShouldBeShown(
+                    permissions: MutableList<PermissionRequest>?,
+                    token: PermissionToken?
+                ) {
+                    token?.continuePermissionRequest()
+                }
+            })
+
+
     }
 
     fun removeAttachMedia() {

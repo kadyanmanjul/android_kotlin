@@ -33,7 +33,7 @@ object NetworkRequestHelper {
 
                 if (resp.chatModelList.isNullOrEmpty()) {
                     RxBus2.publish(MessageCompleteEventBus(false))
-                }else{
+                } else {
                     PrefManager.put(
                         conversation_id.trim(),
                         resp.chatModelList.last().created.time
@@ -163,7 +163,8 @@ object NetworkRequestHelper {
                 isSeen = chatMessageReceiver.isSeen,
                 created = chatMessageReceiver.created,
                 messageDeliverStatus = MESSAGE_DELIVER_STATUS.SENT_RECEIVED,
-                isSync = true
+                isSync = true,
+                question_id = null
 
             )
             currentChatModel?.let { old ->

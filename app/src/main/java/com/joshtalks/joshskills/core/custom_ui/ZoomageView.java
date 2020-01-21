@@ -35,25 +35,18 @@ public class ZoomageView extends AppCompatImageView implements OnScaleGestureLis
     private static final float MIN_SCALE = 0.6f;
     private static final float MAX_SCALE = 8f;
     private final int RESET_DURATION = 200;
-
+    private final RectF bounds = new RectF();
     private ScaleType startScaleType;
-
     // These matrices will be used to move and zoom image
     private Matrix matrix = new Matrix();
     private Matrix startMatrix = new Matrix();
-
     private float[] matrixValues = new float[9];
     private float[] startValues = null;
-
     private float minScale = MIN_SCALE;
     private float maxScale = MAX_SCALE;
-
     //the adjusted scale bounds that account for an image's starting scale values
     private float calculatedMinScale = MIN_SCALE;
     private float calculatedMaxScale = MAX_SCALE;
-
-    private final RectF bounds = new RectF();
-
     private boolean translatable;
     private boolean zoomable;
     private boolean doubleTapToZoom;
@@ -61,7 +54,8 @@ public class ZoomageView extends AppCompatImageView implements OnScaleGestureLis
     private boolean animateOnReset;
     private boolean autoCenter;
     private float doubleTapToZoomScaleFactor;
-    @AutoResetMode private int autoResetMode;
+    @AutoResetMode
+    private int autoResetMode;
 
     private PointF last = new PointF(0, 0);
     private float startScale = 1f;
@@ -75,6 +69,33 @@ public class ZoomageView extends AppCompatImageView implements OnScaleGestureLis
     private GestureDetector gestureDetector;
     private boolean doubleTapDetected = false;
     private boolean singleTapDetected = false;
+    private final GestureDetector.OnGestureListener gestureListener = new GestureDetector.SimpleOnGestureListener() {
+        @Override
+        public boolean onDoubleTapEvent(MotionEvent e) {
+            if (e.getAction() == MotionEvent.ACTION_UP) {
+                doubleTapDetected = true;
+            }
+
+            return false;
+        }
+
+        @Override
+        public boolean onSingleTapUp(MotionEvent e) {
+            singleTapDetected = true;
+            return false;
+        }
+
+        @Override
+        public boolean onSingleTapConfirmed(MotionEvent e) {
+            singleTapDetected = false;
+            return false;
+        }
+
+        @Override
+        public boolean onDown(MotionEvent e) {
+            return true;
+        }
+    };
 
     public ZoomageView(Context context) {
         super(context);
@@ -833,34 +854,6 @@ public class ZoomageView extends AppCompatImageView implements OnScaleGestureLis
     public void onScaleEnd(ScaleGestureDetector detector) {
         scaleBy = 1f;
     }
-
-    private final GestureDetector.OnGestureListener gestureListener = new GestureDetector.SimpleOnGestureListener() {
-        @Override
-        public boolean onDoubleTapEvent(MotionEvent e) {
-            if (e.getAction() == MotionEvent.ACTION_UP) {
-                doubleTapDetected = true;
-            }
-
-            return false;
-        }
-
-        @Override
-        public boolean onSingleTapUp(MotionEvent e) {
-            singleTapDetected = true;
-            return false;
-        }
-
-        @Override
-        public boolean onSingleTapConfirmed(MotionEvent e) {
-            singleTapDetected = false;
-            return false;
-        }
-
-        @Override
-        public boolean onDown(MotionEvent e) {
-            return true;
-        }
-    };
 
     private class SimpleAnimatorListener implements Animator.AnimatorListener {
         @Override

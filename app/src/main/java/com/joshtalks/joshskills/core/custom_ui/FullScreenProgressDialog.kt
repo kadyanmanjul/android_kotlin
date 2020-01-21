@@ -8,7 +8,7 @@ import android.view.View
 import androidx.fragment.app.DialogFragment
 import com.joshtalks.joshskills.R
 
- class FullScreenProgressDialog : DialogFragment() {
+class FullScreenProgressDialog : DialogFragment() {
 
     var mDialog: Dialog? = null
     var mouse: View? = null
@@ -33,7 +33,7 @@ import com.joshtalks.joshskills.R
 
     }
 
-     override fun onDismiss(dialog: DialogInterface) {
+    override fun onDismiss(dialog: DialogInterface) {
         super.onDismiss(dialog)
         mDialog = null
         System.gc()

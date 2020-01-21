@@ -28,12 +28,13 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
             )
             try {
                 val createAccountResponse: CreateAccountResponse =
-                    AppObjectController.signUpNetworkService.accountKitAuthorizationAsync(reqObj).await()
+                    AppObjectController.signUpNetworkService.accountKitAuthorizationAsync(reqObj)
+                        .await()
 
                 val user = User.getInstance()
                 user.id = createAccountResponse.user_id
                 user.source = "OTP"
-               // user.token = createAccountResponse.token
+                // user.token = createAccountResponse.token
                 User.update(user.toString())
 
                 Mentor.getInstance()
@@ -52,7 +53,7 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
 
     private fun fetchMentor() {
 
-        viewModelScope.launch (Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.IO) {
             try {
                 val mentor: Mentor =
                     AppObjectController.signUpNetworkService.getPersonalProfileAsync(Mentor.getInstance().getId())
@@ -66,7 +67,7 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
                 AppAnalytics.updateUser()
 
                 //withContext(Dispatchers.Main){
-                    loginStatusCallback.postValue(true)
+                loginStatusCallback.postValue(true)
                 //}
             } catch (e: Exception) {
                 e.printStackTrace()

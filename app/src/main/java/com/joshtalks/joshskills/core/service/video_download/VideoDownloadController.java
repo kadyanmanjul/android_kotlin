@@ -36,7 +36,6 @@ import com.google.android.exoplayer2.util.Log;
 import com.google.android.exoplayer2.util.Util;
 import com.joshtalks.joshskills.R;
 import com.joshtalks.joshskills.core.AppObjectController;
-import com.joshtalks.joshskills.core.io.AppDirectory;
 
 import java.io.File;
 import java.io.IOException;
@@ -49,16 +48,6 @@ public class VideoDownloadController {
     private static final String DOWNLOAD_ACTION_FILE = "actions";
     private static final String DOWNLOAD_TRACKER_ACTION_FILE = "tracked_actions";
     private static final String DOWNLOAD_CONTENT_DIRECTORY = "download_video_lecture";
-
-    private volatile String userAgent;
-
-    private volatile DatabaseProvider databaseProvider;
-    private volatile File downloadDirectory;
-    private volatile Cache downloadCache;
-    private volatile DownloadManager downloadManager;
-    private volatile DownloadTracker downloadTracker;
-
-    volatile private static VideoDownloadController videoDownloadController;
     private static final MediaSourceFactory DASH_FACTORY =
             getMediaSourceFactory("com.google.android.exoplayer2.source.dash.DashMediaSource$Factory");
     private static final MediaSourceFactory SS_FACTORY =
@@ -66,7 +55,18 @@ public class VideoDownloadController {
                     "com.google.android.exoplayer2.source.smoothstreaming.SsMediaSource$Factory");
     private static final MediaSourceFactory HLS_FACTORY =
             getMediaSourceFactory("com.google.android.exoplayer2.source.hls.HlsMediaSource$Factory");
+    volatile private static VideoDownloadController videoDownloadController;
+    private volatile String userAgent;
+    private volatile DatabaseProvider databaseProvider;
+    private volatile File downloadDirectory;
+    private volatile Cache downloadCache;
+    private volatile DownloadManager downloadManager;
+    private volatile DownloadTracker downloadTracker;
 
+
+    private VideoDownloadController() {
+        userAgent = Util.getUserAgent(AppObjectController.getJoshApplication(), AppObjectController.getJoshApplication().getString(R.string.app_name));
+    }
 
     public static VideoDownloadController getInstance() {
         if (videoDownloadController == null) {
@@ -75,14 +75,71 @@ public class VideoDownloadController {
         return videoDownloadController;
     }
 
-    private VideoDownloadController() {
-        userAgent = Util.getUserAgent(AppObjectController.getJoshApplication(), AppObjectController.getJoshApplication().getString(R.string.app_name));
+    protected static CacheDataSourceFactory buildReadOnlyCacheDataSource(
+            DataSource.Factory upstreamFactory, Cache cache) {
+        return new CacheDataSourceFactory(
+                cache,
+                upstreamFactory,
+                new FileDataSourceFactory(),
+                null,
+                CacheDataSource.FLAG_IGNORE_CACHE_ON_ERROR,
+                null);
+    }
+
+    /**
+     * Utility method to create a MediaSource which only contains the tracks defined in {@code
+     * downloadRequest}.
+     *
+     * @param downloadRequest   A {@link DownloadRequest}.
+     * @param dataSourceFactory A factory for {@link DataSource}s to read the media.
+     * @return A MediaSource which only contains the tracks defined in {@code downloadRequest}.
+     */
+    public static MediaSource createMediaSource(
+            DownloadRequest downloadRequest, DataSource.Factory dataSourceFactory) {
+        MediaSourceFactory factory;
+        switch (downloadRequest.type) {
+            case DownloadRequest.TYPE_DASH:
+                factory = DASH_FACTORY;
+                break;
+            case DownloadRequest.TYPE_SS:
+                factory = SS_FACTORY;
+                break;
+            case DownloadRequest.TYPE_HLS:
+                factory = HLS_FACTORY;
+                break;
+            case DownloadRequest.TYPE_PROGRESSIVE:
+                return new ProgressiveMediaSource.Factory(dataSourceFactory)
+                        .createMediaSource(downloadRequest.uri);
+            default:
+                throw new IllegalStateException("Unsupported type: " + downloadRequest.type);
+        }
+        return factory.createMediaSource(
+                downloadRequest.uri, dataSourceFactory, downloadRequest.streamKeys);
+    }
+
+    private static MediaSourceFactory getMediaSourceFactory(String className) {
+        Constructor<?> constructor = null;
+        Method setStreamKeysMethod = null;
+        Method createMethod = null;
+        try {
+            // LINT.IfChange
+            Class<?> factoryClazz = Class.forName(className);
+            constructor = factoryClazz.getConstructor(DataSource.Factory.class);
+            setStreamKeysMethod = factoryClazz.getMethod("setStreamKeys", List.class);
+            createMethod = factoryClazz.getMethod("createMediaSource", Uri.class);
+            // LINT.ThenChange(../../../../../../../../proguard-rules.txt)
+        } catch (ClassNotFoundException e) {
+            // Expected if the app was built without the respective module.
+        } catch (NoSuchMethodException | SecurityException e) {
+            // Something is wrong with the library or the proguard configuration.
+            throw new IllegalStateException(e);
+        }
+        return new MediaSourceFactory(constructor, setStreamKeysMethod, createMethod);
     }
 
     public String getUserAgent() {
         return userAgent;
     }
-
 
     private DataSource.Factory buildDataSourceFactory() {
         DefaultDataSourceFactory upstreamFactory = new DefaultDataSourceFactory(AppObjectController.getJoshApplication(), buildHttpDataSourceFactory());
@@ -146,7 +203,6 @@ public class VideoDownloadController {
         }
     }
 
-
     private void upgradeActionFile(
             String fileName, DefaultDownloadIndex downloadIndex, boolean addNewDownloadsAsCompleted) {
         try {
@@ -161,7 +217,6 @@ public class VideoDownloadController {
         }
     }
 
-
     private DatabaseProvider getDatabaseProvider() {
         if (databaseProvider == null) {
             databaseProvider = new ExoDatabaseProvider(AppObjectController.getJoshApplication());
@@ -170,7 +225,7 @@ public class VideoDownloadController {
     }
 
     private File getDownloadDirectory() {
-        downloadDirectory= AppDirectory.getVideoDownloadDirectory();
+        //downloadDirectory= AppDirectory.getVideoDownloadDirectory();
         if (downloadDirectory == null) {
             downloadDirectory = AppObjectController.getJoshApplication().getExternalFilesDir(null);
             if (downloadDirectory == null) {
@@ -180,22 +235,9 @@ public class VideoDownloadController {
         return downloadDirectory;
     }
 
-    protected static CacheDataSourceFactory buildReadOnlyCacheDataSource(
-            DataSource.Factory upstreamFactory, Cache cache) {
-        return new CacheDataSourceFactory(
-                cache,
-                upstreamFactory,
-                new FileDataSourceFactory(),
-                null,
-                CacheDataSource.FLAG_IGNORE_CACHE_ON_ERROR,
-                null);
-    }
-
-
     public MediaSource getMediaSource(String url) {
         return getMediaSource(Uri.parse(url));
     }
-
 
     public MediaSource getMediaSource(Uri uri) {
         int type = Util.inferContentType(uri, null);
@@ -218,62 +260,13 @@ public class VideoDownloadController {
         }
     }
 
-
-    /**
-     * Utility method to create a MediaSource which only contains the tracks defined in {@code
-     * downloadRequest}.
-     *
-     * @param downloadRequest A {@link DownloadRequest}.
-     * @param dataSourceFactory A factory for {@link DataSource}s to read the media.
-     * @return A MediaSource which only contains the tracks defined in {@code downloadRequest}.
-     */
-    public static MediaSource createMediaSource(
-            DownloadRequest downloadRequest, DataSource.Factory dataSourceFactory) {
-        MediaSourceFactory factory;
-        switch (downloadRequest.type) {
-            case DownloadRequest.TYPE_DASH:
-                factory = DASH_FACTORY;
-                break;
-            case DownloadRequest.TYPE_SS:
-                factory = SS_FACTORY;
-                break;
-            case DownloadRequest.TYPE_HLS:
-                factory = HLS_FACTORY;
-                break;
-            case DownloadRequest.TYPE_PROGRESSIVE:
-                return new ProgressiveMediaSource.Factory(dataSourceFactory)
-                        .createMediaSource(downloadRequest.uri);
-            default:
-                throw new IllegalStateException("Unsupported type: " + downloadRequest.type);
-        }
-        return factory.createMediaSource(
-                downloadRequest.uri, dataSourceFactory, downloadRequest.streamKeys);
-    }
-    private static MediaSourceFactory getMediaSourceFactory(String className) {
-        Constructor<?> constructor = null;
-        Method setStreamKeysMethod = null;
-        Method createMethod = null;
-        try {
-            // LINT.IfChange
-            Class<?> factoryClazz = Class.forName(className);
-            constructor = factoryClazz.getConstructor(DataSource.Factory.class);
-            setStreamKeysMethod = factoryClazz.getMethod("setStreamKeys", List.class);
-            createMethod = factoryClazz.getMethod("createMediaSource", Uri.class);
-            // LINT.ThenChange(../../../../../../../../proguard-rules.txt)
-        } catch (ClassNotFoundException e) {
-            // Expected if the app was built without the respective module.
-        } catch (NoSuchMethodException | SecurityException e) {
-            // Something is wrong with the library or the proguard configuration.
-            throw new IllegalStateException(e);
-        }
-        return new MediaSourceFactory(constructor, setStreamKeysMethod, createMethod);
-    }
-
     private static final class MediaSourceFactory {
         @Nullable
         private final Constructor<?> constructor;
-        @Nullable private final Method setStreamKeysMethod;
-        @Nullable private final Method createMethod;
+        @Nullable
+        private final Method setStreamKeysMethod;
+        @Nullable
+        private final Method createMethod;
 
         public MediaSourceFactory(
                 @Nullable Constructor<?> constructor,

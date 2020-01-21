@@ -38,8 +38,7 @@
                         android:clickable="true"
                         android:focusable="true"
                         android:scaleType="centerCrop"
-                        android:src="@drawable/pdf_thumb"
-                        app:layout_constraintBottom_toTopOf="@+id/text_message_body"
+                        android:background="@drawable/video_placeholder"                        app:layout_constraintBottom_toTopOf="@+id/text_message_body"
                         app:layout_constraintLeft_toLeftOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
@@ -90,7 +89,7 @@
                         android:paddingEnd="@dimen/_10sdp"
                         android:textColor="@color/gray_48"
                         android:textSize="@dimen/font_16"
-                        android:visibility="visible"
+                        android:visibility="gone"
                         app:layout_constraintBottom_toBottomOf="@+id/image_view"
                         app:layout_constraintLeft_toLeftOf="parent"
                         app:layout_constraintStart_toStartOf="parent"

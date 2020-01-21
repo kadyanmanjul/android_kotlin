@@ -10,11 +10,11 @@ import androidx.browser.customtabs.CustomTabsService
 
 object CustomTabHelper {
 
-        var sPackageNameToUse: String? = null
-        const val STABLE_PACKAGE = "com.android.chrome"
-        const val BETA_PACKAGE = "com.chrome.beta"
-        const val DEV_PACKAGE = "com.chrome.dev"
-        const val LOCAL_PACKAGE = "com.google.android.apps.chrome"
+    var sPackageNameToUse: String? = null
+    const val STABLE_PACKAGE = "com.android.chrome"
+    const val BETA_PACKAGE = "com.chrome.beta"
+    const val DEV_PACKAGE = "com.chrome.dev"
+    const val LOCAL_PACKAGE = "com.google.android.apps.chrome"
 
 
     fun getPackageNameToUse(context: Context, url: String): String? {
@@ -53,10 +53,12 @@ object CustomTabHelper {
                     && !hasSpecializedHandlerIntents(context, activityIntent)
                     && packagesSupportingCustomTabs.contains(defaultViewHandlerPackageName) ->
                 sPackageNameToUse = defaultViewHandlerPackageName
-            packagesSupportingCustomTabs.contains(STABLE_PACKAGE) -> sPackageNameToUse = STABLE_PACKAGE
+            packagesSupportingCustomTabs.contains(STABLE_PACKAGE) -> sPackageNameToUse =
+                STABLE_PACKAGE
             packagesSupportingCustomTabs.contains(BETA_PACKAGE) -> sPackageNameToUse = BETA_PACKAGE
             packagesSupportingCustomTabs.contains(DEV_PACKAGE) -> sPackageNameToUse = DEV_PACKAGE
-            packagesSupportingCustomTabs.contains(LOCAL_PACKAGE) -> sPackageNameToUse = LOCAL_PACKAGE
+            packagesSupportingCustomTabs.contains(LOCAL_PACKAGE) -> sPackageNameToUse =
+                LOCAL_PACKAGE
         }
         return sPackageNameToUse
     }
@@ -66,7 +68,8 @@ object CustomTabHelper {
             val pm = context.packageManager
             val handlers = pm.queryIntentActivities(
                 intent,
-                PackageManager.GET_RESOLVED_FILTER)
+                PackageManager.GET_RESOLVED_FILTER
+            )
             if (handlers == null || handlers.size == 0) {
                 return false
             }

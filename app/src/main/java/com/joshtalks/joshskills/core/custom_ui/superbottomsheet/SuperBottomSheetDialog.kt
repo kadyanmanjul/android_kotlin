@@ -60,7 +60,11 @@ internal class SuperBottomSheetDialog : AppCompatDialog {
     }
 
     @Suppress("unused")
-    constructor(context: Context?, cancelable: Boolean, cancelListener: OnCancelListener?) : super(context, cancelable, cancelListener) {
+    constructor(context: Context?, cancelable: Boolean, cancelListener: OnCancelListener?) : super(
+        context,
+        cancelable,
+        cancelListener
+    ) {
         supportRequestWindowFeature(Window.FEATURE_NO_TITLE)
         mCancelable = cancelable
     }
@@ -78,11 +82,13 @@ internal class SuperBottomSheetDialog : AppCompatDialog {
         }
     }
 
-    override fun setContentView(@LayoutRes layoutResId: Int)  = super.setContentView(wrapInBottomSheet(layoutResId, null, null))
+    override fun setContentView(@LayoutRes layoutResId: Int) =
+        super.setContentView(wrapInBottomSheet(layoutResId, null, null))
 
     override fun setContentView(view: View) = super.setContentView(wrapInBottomSheet(0, view, null))
 
-    override fun setContentView(view: View, params: ViewGroup.LayoutParams?) = super.setContentView(wrapInBottomSheet(0, view, params))
+    override fun setContentView(view: View, params: ViewGroup.LayoutParams?) =
+        super.setContentView(wrapInBottomSheet(0, view, params))
 
     override fun setCancelable(cancelable: Boolean) {
         super.setCancelable(cancelable)
@@ -116,7 +122,11 @@ internal class SuperBottomSheetDialog : AppCompatDialog {
     }
 
     @SuppressLint("ClickableViewAccessibility")
-    private fun wrapInBottomSheet(layoutResId: Int, view: View?, params: ViewGroup.LayoutParams?): View {
+    private fun wrapInBottomSheet(
+        layoutResId: Int,
+        view: View?,
+        params: ViewGroup.LayoutParams?
+    ): View {
         var supportView = view
 
         val container = View.inflate(context, R.layout.super_bottom_sheet_dialog, null)
@@ -148,7 +158,10 @@ internal class SuperBottomSheetDialog : AppCompatDialog {
         // Handle accessibility events
         ViewCompat.setAccessibilityDelegate(bottomSheet, object : AccessibilityDelegateCompat() {
 
-            override fun onInitializeAccessibilityNodeInfo(host: View, info: AccessibilityNodeInfoCompat) {
+            override fun onInitializeAccessibilityNodeInfo(
+                host: View,
+                info: AccessibilityNodeInfoCompat
+            ) {
                 super.onInitializeAccessibilityNodeInfo(host, info)
 
                 when {
@@ -161,7 +174,11 @@ internal class SuperBottomSheetDialog : AppCompatDialog {
                 }
             }
 
-            override fun performAccessibilityAction(host: View, action: Int, args: Bundle): Boolean {
+            override fun performAccessibilityAction(
+                host: View,
+                action: Int,
+                args: Bundle
+            ): Boolean {
                 if (action == AccessibilityNodeInfoCompat.ACTION_DISMISS && mCancelable) {
                     cancel()
                     return true
@@ -184,7 +201,8 @@ internal class SuperBottomSheetDialog : AppCompatDialog {
                 mCanceledOnTouchOutside = true
 
             } else {
-                val typedArray = context.obtainStyledAttributes(intArrayOf(android.R.attr.windowCloseOnTouchOutside))
+                val typedArray =
+                    context.obtainStyledAttributes(intArrayOf(android.R.attr.windowCloseOnTouchOutside))
                 mCanceledOnTouchOutside = typedArray.getBoolean(0, true)
                 typedArray.recycle()
             }

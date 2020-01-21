@@ -17,5 +17,4 @@ interface CommonNetworkService {
     suspend fun submitComplaint(@Body requestComplaint: RequestComplaint): ComplaintResponse
 
 
-
 }

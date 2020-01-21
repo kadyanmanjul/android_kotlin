@@ -74,7 +74,7 @@ public class SelectableRoundedImageView extends AppCompatImageView {
         TypedArray a = context.obtainStyledAttributes(attrs,
                 R.styleable.SelectableRoundedImageView, defStyle, 0);
 
-        final int index = a.getInt(R.styleable.SelectableRoundedImageView_android_scaleType, - 1);
+        final int index = a.getInt(R.styleable.SelectableRoundedImageView_android_scaleType, -1);
         if (index >= 0) {
             setScaleType(sScaleTypeArray[index]);
         }
@@ -127,7 +127,9 @@ public class SelectableRoundedImageView extends AppCompatImageView {
         ((SelectableRoundedCornerDrawable) mDrawable).setBorderWidth(mBorderWidth);
         ((SelectableRoundedCornerDrawable) mDrawable).setBorderColor(mBorderColor);
         ((SelectableRoundedCornerDrawable) mDrawable).setOval(isOval);
-    }    @Override
+    }
+
+    @Override
     protected void drawableStateChanged() {
         super.drawableStateChanged();
         invalidate();
@@ -141,20 +143,24 @@ public class SelectableRoundedImageView extends AppCompatImageView {
             super.setImageDrawable(mDrawable);
             updateDrawable();
         }
-    }    @Override
+    }
+
+    @Override
     public ScaleType getScaleType() {
         return mScaleType;
+    }
+
+    @Override
+    public void setScaleType(ScaleType scaleType) {
+        super.setScaleType(scaleType);
+        mScaleType = scaleType;
+        updateDrawable();
     }
 
     @Override
     public void setImageURI(Uri uri) {
         super.setImageURI(uri);
         setImageDrawable(getDrawable());
-    }    @Override
-    public void setScaleType(ScaleType scaleType) {
-        super.setScaleType(scaleType);
-        mScaleType = scaleType;
-        updateDrawable();
     }
 
     @Override
@@ -307,7 +313,7 @@ public class SelectableRoundedImageView extends AppCompatImageView {
                 mBitmapWidth = bitmap.getScaledWidth(r.getDisplayMetrics());
                 mBitmapHeight = bitmap.getScaledHeight(r.getDisplayMetrics());
             } else {
-                mBitmapWidth = mBitmapHeight = - 1;
+                mBitmapWidth = mBitmapHeight = -1;
             }
 
             mBitmapRect.set(0, 0, mBitmapWidth, mBitmapHeight);
@@ -380,7 +386,7 @@ public class SelectableRoundedImageView extends AppCompatImageView {
         @Override
         public void draw(Canvas canvas) {
             canvas.save();
-            if (! mBoundsConfigured) {
+            if (!mBoundsConfigured) {
                 configureBounds(canvas);
                 if (mBorderWidth > 0) {
                     adjustBorderWidthAndBorderBounds(canvas);
@@ -457,7 +463,7 @@ public class SelectableRoundedImageView extends AppCompatImageView {
             mBorderPaint.setStrokeWidth(mBorderWidth);
 
             mBorderBounds.set(mBounds);
-            mBorderBounds.inset(- mBorderWidth / 2, - mBorderWidth / 2);
+            mBorderBounds.inset(-mBorderWidth / 2, -mBorderWidth / 2);
         }
 
         private void setBorderRadii() {
@@ -492,10 +498,10 @@ public class SelectableRoundedImageView extends AppCompatImageView {
             } else if (ScaleType.CENTER == mScaleType || ScaleType.CENTER_CROP == mScaleType) {
                 // First, make translate values to 0
                 canvas.translate(
-                        - translateX / (newScaleX * scaleFactorX),
-                        - translateY / (newScaleY * scaleFactorY));
+                        -translateX / (newScaleX * scaleFactorX),
+                        -translateY / (newScaleY * scaleFactorY));
                 // Then, set the final translate values.
-                canvas.translate(- (mBounds.left - mBorderWidth), - (mBounds.top - mBorderWidth));
+                canvas.translate(-(mBounds.left - mBorderWidth), -(mBounds.top - mBorderWidth));
             }
         }
 
@@ -632,11 +638,6 @@ public class SelectableRoundedImageView extends AppCompatImageView {
             mScaleType = scaleType;
         }
     }
-
-
-
-
-
 
 
 }

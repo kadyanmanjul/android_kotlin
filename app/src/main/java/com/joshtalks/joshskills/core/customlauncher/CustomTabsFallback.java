@@ -11,10 +11,10 @@ import androidx.browser.customtabs.CustomTabsIntent;
  */
 public interface CustomTabsFallback {
 
-  /**
-   * @param context The source Context
-   * @param uri The Uri to load in the Custom Tab
-   * @param customTabsIntent a source CustomTabsIntent
-   */
-  void openUrl(@NonNull Context context, @NonNull Uri uri, @NonNull CustomTabsIntent customTabsIntent);
+    /**
+     * @param context          The source Context
+     * @param uri              The Uri to load in the Custom Tab
+     * @param customTabsIntent a source CustomTabsIntent
+     */
+    void openUrl(@NonNull Context context, @NonNull Uri uri, @NonNull CustomTabsIntent customTabsIntent);
 }

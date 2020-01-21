@@ -30,7 +30,7 @@ class CourseDetailViewHolder(private val courseDetailsModel: CourseDetailsModel)
                 WebpDrawable::class.java,
                 WebpDrawableTransformation(CircleCrop())
             )
-           .into(imageView)
+            .into(imageView)
 
     }
 }

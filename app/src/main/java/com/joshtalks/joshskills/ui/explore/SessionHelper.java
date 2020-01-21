@@ -1,4 +1,3 @@
-
 package com.joshtalks.joshskills.ui.explore;
 
 
@@ -24,6 +23,7 @@ public class SessionHelper {
 
     /**
      * Sets the current session to the given one.
+     *
      * @param session The current session.
      */
     public static void setCurrentSession(CustomTabsSession session) {

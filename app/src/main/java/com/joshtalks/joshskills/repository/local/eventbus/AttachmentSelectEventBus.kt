@@ -5,7 +5,7 @@ data class AttachmentSelectEventBus(var attachmentType: AttachmentType)
 
 
 enum class AttachmentType {
-    IMAGE, AUDIO,GALLERY
+    IMAGE, AUDIO, GALLERY
 
 }
 

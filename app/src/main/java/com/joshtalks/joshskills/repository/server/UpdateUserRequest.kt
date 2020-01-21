@@ -14,9 +14,8 @@ data class UpdateUserPersonal(
 
 data class UpdateUserLocality(
     @SerializedName("locality")
-    var locality: SearchLocality=SearchLocality()
+    var locality: SearchLocality = SearchLocality()
 )
-
 
 
 data class SearchLocality(
@@ -25,4 +24,4 @@ data class SearchLocality(
     var latitude: Double = 0.toDouble(),
     @SerializedName("longitude")
     var longitude: Double = 0.toDouble()
-    )
+)

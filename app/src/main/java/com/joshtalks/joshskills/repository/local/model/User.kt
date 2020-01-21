@@ -11,10 +11,10 @@ open class User {
     @SerializedName("mobile")
     var phoneNumber: String = ""
 
-   /* @SerializedName("token")
-    var token: ProfileToken? = null*/
-   @SerializedName("token")
-   var token: String? = null
+    /* @SerializedName("token")
+     var token: ProfileToken? = null*/
+    @SerializedName("token")
+    var token: String? = null
 
 
     @SerializedName("username")
@@ -31,7 +31,7 @@ open class User {
 
     @SerializedName("first_name")
     var firstName: String = ""
-       // get() = field.substring(0, 1).toUpperCase().plus(field.substring(1))
+    // get() = field.substring(0, 1).toUpperCase().plus(field.substring(1))
 
 
     @SerializedName("photo_url")

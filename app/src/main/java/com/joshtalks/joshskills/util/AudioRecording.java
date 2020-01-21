@@ -5,9 +5,8 @@ import android.media.MediaRecorder;
 import java.io.File;
 
 public class AudioRecording {
-    private MediaRecorder recorder;
     public static final AudioRecording audioRecording = new AudioRecording();
-
+    private MediaRecorder recorder;
 
     public void startPlayer(File recordFile) {
         recorder = new MediaRecorder();

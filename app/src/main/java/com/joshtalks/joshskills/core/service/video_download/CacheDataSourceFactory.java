@@ -15,7 +15,6 @@ import com.joshtalks.joshskills.R;
 import java.io.File;
 
 
-
 public class CacheDataSourceFactory implements DataSource.Factory {
 
     private static SimpleCache simpleCache;

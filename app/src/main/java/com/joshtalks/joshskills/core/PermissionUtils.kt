@@ -22,11 +22,27 @@ object PermissionUtils {
         Dexter.withActivity(activity)
             .withPermissions(
                 Manifest.permission.READ_EXTERNAL_STORAGE,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
+            )
             .withListener(multiplePermissionsListener).check()
     }
 
-    fun isStoragePermissionEnable(context: Context):Boolean{
+
+    fun audioRecordStorageReadAndWritePermission(
+        activity: Activity?,
+        multiplePermissionsListener: MultiplePermissionsListener
+    ) {
+        Dexter.withActivity(activity)
+            .withPermissions(
+                Manifest.permission.RECORD_AUDIO,
+                Manifest.permission.READ_EXTERNAL_STORAGE,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
+            )
+            .withListener(multiplePermissionsListener).check()
+    }
+
+
+    fun isStoragePermissionEnable(context: Context): Boolean {
         return ContextCompat.checkSelfPermission(
             context,
             Manifest.permission.READ_EXTERNAL_STORAGE
@@ -36,16 +52,32 @@ object PermissionUtils {
         ) == PackageManager.PERMISSION_GRANTED
     }
 
+    fun isAudioAndStoragePermissionEnable(context: Context): Boolean {
+        return ContextCompat.checkSelfPermission(
+            context,
+            Manifest.permission.RECORD_AUDIO
+        ) +
+                ContextCompat.checkSelfPermission(
+                    context,
+                    Manifest.permission.READ_EXTERNAL_STORAGE
+                ) + ContextCompat.checkSelfPermission(
+            context,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+        ) == PackageManager.PERMISSION_GRANTED
+    }
 
 
-    fun storagePermissionPermanentlyDeniedDialog(activity: Activity) {
+    fun permissionPermanentlyDeniedDialog(
+        activity: Activity,
+        message: Int = R.string.storage_permission_message
+    ) {
         MaterialDialog(activity).show {
-            message(R.string.permission_message)
-            positiveButton(R.string.ok) {
+            message(message)
+            positiveButton(R.string.settings) {
                 openSettings(activity)
 
             }
-            negativeButton(R.string.cancel)
+            negativeButton(R.string.not_now)
         }
     }
 
@@ -53,7 +85,7 @@ object PermissionUtils {
         val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
         val uri = Uri.fromParts("package", activity.packageName, null)
         intent.data = uri
-        activity.startActivityForResult(intent, 101)
+        activity.startActivity(intent)
     }
 
 
@@ -69,6 +101,53 @@ object PermissionUtils {
             Manifest.permission.WRITE_EXTERNAL_STORAGE
         ) == PackageManager.PERMISSION_GRANTED
     }
+
+
+    fun cameraStorageReadAndWritePermission(
+        activity: Activity?,
+        multiplePermissionsListener: MultiplePermissionsListener
+    ) {
+        Dexter.withActivity(activity)
+            .withPermissions(
+                Manifest.permission.CAMERA,
+                Manifest.permission.READ_EXTERNAL_STORAGE,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
+            )
+            .withListener(multiplePermissionsListener).check()
+    }
+
+
+    fun cameraStoragePermissionPermanentlyDeniedDialog(
+        activity: Activity,
+        message: Int = R.string.camera_permission_message
+    ) {
+        MaterialDialog(activity).show {
+            message(message)
+            positiveButton(R.string.settings) {
+                openSettings(activity)
+
+            }
+            negativeButton(R.string.not_now)
+        }
+    }
+
+
+
+    fun cameraRecordStorageReadAndWritePermission(
+        activity: Activity?,
+        multiplePermissionsListener: MultiplePermissionsListener
+    ) {
+        Dexter.withActivity(activity)
+            .withPermissions(
+                Manifest.permission.CAMERA,
+                Manifest.permission.READ_EXTERNAL_STORAGE,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                Manifest.permission.RECORD_AUDIO
+
+            )
+            .withListener(multiplePermissionsListener).check()
+    }
+
 
 
 }

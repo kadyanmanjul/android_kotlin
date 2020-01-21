@@ -65,7 +65,11 @@ data class ChatModel(
     var progress: Int = 0,
 
     @ColumnInfo(name = "status")
-    @SerializedName("status") var status: MESSAGE_STATUS? = MESSAGE_STATUS.SEEN_BY_SERVER
+    @SerializedName("status") var status: MESSAGE_STATUS? = MESSAGE_STATUS.SEEN_BY_SERVER,
+
+
+    @ColumnInfo
+    @SerializedName("question_id") var question_id: Int?
 
 
 ) : DataBaseClass(), Serializable {
@@ -84,7 +88,8 @@ data class ChatModel(
         mediaDuration = 0,
         isSync = true,
         chatLocalId = null,
-        status = MESSAGE_STATUS.SEEN_BY_SERVER
+        status = MESSAGE_STATUS.SEEN_BY_SERVER,
+        question_id = null
     )
 
 
@@ -145,17 +150,9 @@ data class Question(
     @SerializedName("type") var questionType: String = "",
 
     @Ignore
-    @SerializedName("videos") var videoList: List<VideoType>? = emptyList(),
+    @SerializedName("videos") var videoList: List<VideoType>? = emptyList()
 
-
-    @ColumnInfo(name = "question_no")
-    @SerializedName("question_no") var questionNumber: String? = "",
-
-    @ColumnInfo(name = "total_question_of_day")
-    @SerializedName("total_question_of_day") var totalQuestionOfDay: String? = ""
-
-
-    ) : Serializable
+) : Serializable
 
 
 data class Sender(
@@ -346,7 +343,7 @@ open class DataBaseClass : Serializable {
 @Dao
 interface ChatDao {
 
-    @Query(value = "SELECT * FROM chat_table where conversation_id= :conversationId AND is_delete_message=0 ORDER BY created ASC ")
+    @Query(value = "SELECT * FROM chat_table where conversation_id= :conversationId AND is_delete_message=0 ORDER BY created ASC,question_id ASC ")
     suspend fun getLastChats(conversationId: String): List<ChatModel>
 
 
@@ -357,7 +354,7 @@ interface ChatDao {
     suspend fun getNullableChatObject(chatId: String): ChatModel?
 
 
-    @Query(value = "SELECT * FROM chat_table where conversation_id= :conversationId AND created > :compareTime AND is_delete_message=0  ORDER BY created ASC")
+    @Query(value = "SELECT * FROM chat_table where conversation_id= :conversationId AND created > :compareTime AND is_delete_message=0  ORDER BY created ASC,question_id ASC")
     suspend fun getRecentChatAfterTime(conversationId: String, compareTime: Date?): List<ChatModel>
 
 

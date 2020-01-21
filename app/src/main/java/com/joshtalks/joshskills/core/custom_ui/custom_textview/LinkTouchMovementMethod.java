@@ -17,7 +17,7 @@ class LinkTouchMovementMethod extends LinkMovementMethod {
 
     @Override
     public boolean onTouchEvent(TextView textView, final Spannable spannable, MotionEvent event) {
-        int action  = event.getAction();
+        int action = event.getAction();
         if (action == MotionEvent.ACTION_DOWN) {
             pressedSpan = getPressedSpan(textView, spannable, event);
             if (pressedSpan != null) {

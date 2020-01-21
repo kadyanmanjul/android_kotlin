@@ -36,11 +36,12 @@ public abstract class PlaybackInfoListener {
 
     public void onPlaybackCompleted() {
     }
-    public void onPlaybackStop(){
+
+    public void onPlaybackStop() {
 
     }
 
-    @IntDef({State.INVALID, State.PLAYING, State.PAUSED, State.COMPLETED, State.RESUMED,State.STOPPED})
+    @IntDef({State.INVALID, State.PLAYING, State.PAUSED, State.COMPLETED, State.RESUMED, State.STOPPED})
     @Retention(RetentionPolicy.SOURCE)
     public @interface State {
 
@@ -49,6 +50,6 @@ public abstract class PlaybackInfoListener {
         int PAUSED = 1;
         int COMPLETED = 2;
         int RESUMED = 3;
-        int STOPPED=4;
+        int STOPPED = 4;
     }
 }

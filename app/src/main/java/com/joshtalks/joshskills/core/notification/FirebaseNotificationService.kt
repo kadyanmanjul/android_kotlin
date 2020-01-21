@@ -3,7 +3,6 @@ package com.joshtalks.joshskills.core.notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
-import android.app.TaskStackBuilder
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
@@ -48,7 +47,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
     @RequiresApi(Build.VERSION_CODES.N)
     private var importance = NotificationManager.IMPORTANCE_DEFAULT
 
-//restart_last_conversation_time
+    //restart_last_conversation_time
     override fun onNewToken(token: String) {
         super.onNewToken(token)
         PrefManager.put(FCM_TOKEN, token)
@@ -89,9 +88,9 @@ class FirebaseNotificationService : FirebaseMessagingService() {
             val uniqueInt = (System.currentTimeMillis() and 0xfffffff).toInt()
 
             val defaultSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
-           val pendingIntent = PendingIntent.getActivity(
+            val pendingIntent = PendingIntent.getActivity(
                 applicationContext,
-               uniqueInt,
+                uniqueInt,
                 intent,
                 PendingIntent.FLAG_UPDATE_CURRENT
             )

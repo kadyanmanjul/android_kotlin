@@ -1,8 +1,8 @@
 package com.joshtalks.joshskills.core.interfaces
 
-interface AudioPlayerInterface{
+interface AudioPlayerInterface {
     fun downloadInQueue()
-    fun downloadStart(url:String)
+    fun downloadStart(url: String)
     fun downloadStop()
 
 

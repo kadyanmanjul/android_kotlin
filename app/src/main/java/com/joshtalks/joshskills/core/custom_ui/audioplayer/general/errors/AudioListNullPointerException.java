@@ -2,6 +2,7 @@ package com.joshtalks.joshskills.core.custom_ui.audioplayer.general.errors;
 
 /**
  * This is a custom exception thrown when the audio list is null or empty.
+ *
  * @author Jean Carlos (Github: @jeancsanchez)
  * @date 02/08/16.
  * Jesus loves you.

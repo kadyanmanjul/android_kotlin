@@ -22,8 +22,8 @@ public class AttachmentUtil {
         int finalRadius = (int) Math.hypot(w, h);
 
 
-        int cx = (int) (conversationBinding.quickToggle.getX() + (conversationBinding.quickToggle.getWidth()/2));
-        int cy = (int) (conversationBinding.quickToggle.getY())+ conversationBinding.quickToggle.getHeight() + 56;
+        int cx = (int) (conversationBinding.quickToggle.getX() + (conversationBinding.quickToggle.getWidth() / 2));
+        int cy = (int) (conversationBinding.quickToggle.getY()) + conversationBinding.quickToggle.getHeight() + 56;
 
         if (!reveal) {
             Animator anim = ViewAnimationUtils.createCircularReveal(conversationBinding.attachmentContainer, cx, cy, 0, finalRadius);
@@ -69,10 +69,10 @@ public class AttachmentUtil {
 
     static void childAnimate(ViewGroup viewGroup) {
         LinearLayout subChild = (LinearLayout) viewGroup.getChildAt(0);
-        int startTime=0;
+        int startTime = 0;
         for (int i = 0; i < subChild.getChildCount(); i++) {
-            animateView(subChild.getChildAt(i),startTime);
-            startTime+=50;
+            animateView(subChild.getChildAt(i), startTime);
+            startTime += 50;
         }
     }
 

@@ -13,7 +13,7 @@ public class BrowserActionsReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         String toastMsg = "Chosen item Id: " + intent.getDataString();
-       // Toast.makeText(context, toastMsg, Toast.LENGTH_SHORT).show();
-        Log.e("BrowserActionsReceiver",toastMsg);
+        // Toast.makeText(context, toastMsg, Toast.LENGTH_SHORT).show();
+        Log.e("BrowserActionsReceiver", toastMsg);
     }
 }

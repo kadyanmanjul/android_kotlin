@@ -34,7 +34,12 @@ class CodeInputField : LinearLayout {
     constructor (context: Context, attrs: AttributeSet?, defStyleAttr: Int) : this(context, attrs)
 
     @JvmOverloads
-    constructor (context: Context, attrs: AttributeSet?, defStyleAttr: Int, defStyleRes: Int) : this(
+    constructor (
+        context: Context,
+        attrs: AttributeSet?,
+        defStyleAttr: Int,
+        defStyleRes: Int
+    ) : this(
         context,
         attrs,
         defStyleAttr
@@ -66,13 +71,11 @@ class CodeInputField : LinearLayout {
 
     private fun getPinCodeView(flag: Boolean): View {
         var v = LayoutInflater.from(context).inflate(R.layout.code_input_field_layout, this, false)
-        var et:AppCompatEditText=v.findViewById(R.id.et_code)
-        et.addTextChangedListener(object :MyTextWatcher(v){
+        var et: AppCompatEditText = v.findViewById(R.id.et_code)
+        et.addTextChangedListener(object : MyTextWatcher(v) {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
 
-                var temp:AppCompatEditText=etView.findViewById(R.id.et_code)
-
-
+                var temp: AppCompatEditText = etView.findViewById(R.id.et_code)
 
 
             }
@@ -98,10 +101,11 @@ class CodeInputField : LinearLayout {
 
     }
 }
+
 abstract class MyTextWatcher : TextWatcher {
 
 
-    var etView:View
+    var etView: View
 
     constructor(editText: View) {
         this.etView = editText
@@ -110,6 +114,7 @@ abstract class MyTextWatcher : TextWatcher {
     override fun afterTextChanged(s: Editable?) {
 
     }
+
     override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
 
     }

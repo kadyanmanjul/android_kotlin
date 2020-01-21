@@ -3,8 +3,6 @@ package com.joshtalks.joshskills.core.videotranscoder.engine;
 import java.nio.ShortBuffer;
 
 public interface AudioRemixer {
-    void remix(final ShortBuffer inSBuff, final ShortBuffer outSBuff);
-
     AudioRemixer DOWNMIX = new AudioRemixer() {
         private static final int SIGNED_SHORT_LIMIT = 32768;
         private static final int UNSIGNED_SHORT_MAX = 65535;
@@ -39,7 +37,6 @@ public interface AudioRemixer {
             }
         }
     };
-
     AudioRemixer UPMIX = (inSBuff, outSBuff) -> {
         // Up-mix mono to stereo
         final int inRemaining = inSBuff.remaining();
@@ -52,7 +49,6 @@ public interface AudioRemixer {
             outSBuff.put(inSample);
         }
     };
-
     AudioRemixer PASSTHROUGH = new AudioRemixer() {
         @Override
         public void remix(final ShortBuffer inSBuff, final ShortBuffer outSBuff) {
@@ -60,4 +56,6 @@ public interface AudioRemixer {
             outSBuff.put(inSBuff);
         }
     };
+
+    void remix(final ShortBuffer inSBuff, final ShortBuffer outSBuff);
 }

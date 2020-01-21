@@ -7,9 +7,8 @@ import com.joshtalks.joshskills.ui.help.HelpActivity
 
 
 abstract class CoreJoshActivity : BaseActivity() {
-
-    override fun onResume() {
-        super.onResume()
+    override fun onStart() {
+        super.onStart()
         try {
             findViewById<View>(R.id.iv_help).setOnClickListener {
                 val i = Intent(this, HelpActivity::class.java)

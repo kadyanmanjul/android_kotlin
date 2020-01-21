@@ -512,8 +512,12 @@ object Utils {
         val endIndex = lastQMPos.coerceAtMost(lastHashPos)
         return url.substring(startIndex, endIndex)
     }
-    fun fileUrl( localFile: String?, serverFile: String?): String? {
-        return if (localFile != null && File(localFile).exists() && checkFileStorage(AppObjectController.joshApplication)) {
+
+    fun fileUrl(localFile: String?, serverFile: String?): String? {
+        return if (localFile != null && File(localFile).exists() && checkFileStorage(
+                AppObjectController.joshApplication
+            )
+        ) {
             localFile
         } else {
             serverFile

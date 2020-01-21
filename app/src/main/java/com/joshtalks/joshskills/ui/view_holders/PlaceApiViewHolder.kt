@@ -11,7 +11,7 @@ class PlaceApiViewHolder(
     var googleSearchLocationObj = GoogleSearchLocationObj()
 
     fun bind(prediction: AutocompletePrediction) {
-         googleSearchLocationObj = GoogleSearchLocationObj(
+        googleSearchLocationObj = GoogleSearchLocationObj(
             prediction.getPrimaryText(null).toString(),
             prediction.getFullText(null).toString(),
             prediction.placeId

@@ -49,34 +49,29 @@ import java.util.concurrent.TimeUnit;
 
 public class AudioView extends FrameLayout {
 
-    ChatModel message;
+    public static final int MAXIMUM_WORK_CYCLES = 500000;
+    private static final int SEEKBAR_STEPS = 100;
+    private static final float WORK_CYCLES_PER_STEP = MAXIMUM_WORK_CYCLES / SEEKBAR_STEPS;
+    private static final int AUDIO_PROGRESS_UPDATE_TIME = 50;
+    private static int workCycles = 0;
     private final AnimatingToggle controlToggle;
     private final ImageView playButton;
     private final ImageView pauseButton;
     private final ImageView downloadButton;
     private final SeekBar seekPlayerProgress;
     private final TextView timestamp;
-    private int backwardsCounter;
-
-    private boolean isPlaying = false;
-    private Uri uri;
-    private AudioPlayerManager audioPlayerManager;
-    private Long duration;
-    private static final int SEEKBAR_STEPS = 100;
-    public static final int MAXIMUM_WORK_CYCLES = 500000;
-    private static final float WORK_CYCLES_PER_STEP = MAXIMUM_WORK_CYCLES / SEEKBAR_STEPS;
-    private static int workCycles = 0;
-    private static final int AUDIO_PROGRESS_UPDATE_TIME = 50;
-    private AudioPlayerInterface audioPlayerInterface;
-
-
+    ChatModel message;
     AppCompatImageView startDownloadIV;
     ProgressWheel progressWheel;
     AppCompatImageView cancelDownloadIv;
     Activity activity;
     FrameLayout downloadContainer;
-
-
+    private int backwardsCounter;
+    private boolean isPlaying = false;
+    private Uri uri;
+    private AudioPlayerManager audioPlayerManager;
+    private Long duration;
+    private AudioPlayerInterface audioPlayerInterface;
     private ExoPlayer.EventListener eventListener = new ExoPlayer.EventListener() {
         @Override
         public void onTimelineChanged(Timeline timeline, @Nullable Object manifest, int reason) {
@@ -225,72 +220,6 @@ public class AudioView extends FrameLayout {
         super.onDetachedFromWindow();
     }
 
-    private class PlayClickedListener implements View.OnClickListener {
-        @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-        @Override
-        public void onClick(View v) {
-            try {
-                setPlay();
-                isPlaying = true;
-
-            } catch (Exception e) {
-            }
-        }
-    }
-
-    private class PauseClickedListener implements View.OnClickListener {
-        @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-        @Override
-        public void onClick(View v) {
-            setPause();
-            //setTimeStampOfAudio();
-            controlToggle.displayQuick(playButton);
-        }
-    }
-
-
-    private class SeekBarModifiedListener implements SeekBar.OnSeekBarChangeListener {
-        @Override
-        public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-        }
-
-        @Override
-        public synchronized void onStartTrackingTouch(SeekBar seekBar) {
-            /*if (audioSlidePlayer != null && pauseButton.getVisibility() == View.VISIBLE) {
-                audioSlidePlayer.stop();
-            }*/
-        }
-
-        @Override
-        public synchronized void onStopTrackingTouch(SeekBar seekBar) {
-            /*try {
-                if (audioSlidePlayer != null && pauseButton.getVisibility() == View.VISIBLE) {
-                    audioSlidePlayer.play(getProgress());
-                }
-            } catch (IOException e) {
-                Log.w(TAG, e);
-            }*/
-        }
-    }
-
-    private class DownloadingStartClickedListener implements View.OnClickListener {
-        @Override
-        public void onClick(View v) {
-            audioPlayerInterface.downloadInQueue();
-        }
-    }
-
-    private class DownloadingCancelClickedListener implements View.OnClickListener {
-        @Override
-        public void onClick(View v) {
-
-            audioPlayerInterface.downloadStop();
-
-
-        }
-    }
-
-
     private void setPlay() {
         controlToggle.displayQuick(pauseButton);
         AppAnalytics.create(AnalyticsEvent.AUDIO_PLAYED.getNAME()).addParam("ChatId", message.getChatId()).push();
@@ -309,14 +238,12 @@ public class AudioView extends FrameLayout {
 
     }
 
-
     private void setPause() {
         isPlaying = false;
         audioPlayerManager.pause();
         controlToggle.displayQuick(playButton);
 
     }
-
 
     private void setProgress() {
         seekPlayerProgress.setMax(audioPlayerManager.getDuration() / AUDIO_PROGRESS_UPDATE_TIME);
@@ -336,7 +263,6 @@ public class AudioView extends FrameLayout {
             }
         });
     }
-
 
     void setTimeStampOfAudio() {
         try {
@@ -375,13 +301,11 @@ public class AudioView extends FrameLayout {
         }
     }
 
-
     private void showToast() {
         Toast toast = Toast.makeText(getContext(), getContext().getString(R.string.volume_up_message), Toast.LENGTH_LONG);
         toast.setGravity(Gravity.CENTER, 0, 0);
         toast.show();
     }
-
 
     void updateUI() {
         if (message.getUrl() != null) {
@@ -511,6 +435,70 @@ public class AudioView extends FrameLayout {
             }
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    private class PlayClickedListener implements View.OnClickListener {
+        @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+        @Override
+        public void onClick(View v) {
+            try {
+                setPlay();
+                isPlaying = true;
+
+            } catch (Exception e) {
+            }
+        }
+    }
+
+    private class PauseClickedListener implements View.OnClickListener {
+        @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+        @Override
+        public void onClick(View v) {
+            setPause();
+            //setTimeStampOfAudio();
+            controlToggle.displayQuick(playButton);
+        }
+    }
+
+    private class SeekBarModifiedListener implements SeekBar.OnSeekBarChangeListener {
+        @Override
+        public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+        }
+
+        @Override
+        public synchronized void onStartTrackingTouch(SeekBar seekBar) {
+            /*if (audioSlidePlayer != null && pauseButton.getVisibility() == View.VISIBLE) {
+                audioSlidePlayer.stop();
+            }*/
+        }
+
+        @Override
+        public synchronized void onStopTrackingTouch(SeekBar seekBar) {
+            /*try {
+                if (audioSlidePlayer != null && pauseButton.getVisibility() == View.VISIBLE) {
+                    audioSlidePlayer.play(getProgress());
+                }
+            } catch (IOException e) {
+                Log.w(TAG, e);
+            }*/
+        }
+    }
+
+    private class DownloadingStartClickedListener implements View.OnClickListener {
+        @Override
+        public void onClick(View v) {
+            audioPlayerInterface.downloadInQueue();
+        }
+    }
+
+    private class DownloadingCancelClickedListener implements View.OnClickListener {
+        @Override
+        public void onClick(View v) {
+
+            audioPlayerInterface.downloadStop();
+
+
         }
     }
 

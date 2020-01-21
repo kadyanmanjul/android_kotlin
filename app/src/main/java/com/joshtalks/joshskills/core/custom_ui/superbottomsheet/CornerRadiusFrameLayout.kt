@@ -38,14 +38,14 @@ internal class CornerRadiusFrameLayout : FrameLayout {
     private val path = Path()
     private val rect = RectF()
     private val outerRadii = floatArrayOf(
-            // Top left corner
-            0f, 0f,
-            // Top right corner
-            0f, 0f,
-            // Bottom right corner
-            0f, 0f,
-            // Bottom left corner
-            0f, 0f
+        // Top left corner
+        0f, 0f,
+        // Top right corner
+        0f, 0f,
+        // Bottom right corner
+        0f, 0f,
+        // Bottom left corner
+        0f, 0f
     )
 
     // Constructor
@@ -57,7 +57,11 @@ internal class CornerRadiusFrameLayout : FrameLayout {
         initView()
     }
 
-    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr) {
+    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
+        context,
+        attrs,
+        defStyleAttr
+    ) {
         initView()
     }
 

@@ -10,6 +10,6 @@ public interface PlayerListener {
 
     void onPlayerReleased();
 
-    void onPositionDiscontinuity(int reason,long lastPos);
+    void onPositionDiscontinuity(int reason, long lastPos);
 
 }

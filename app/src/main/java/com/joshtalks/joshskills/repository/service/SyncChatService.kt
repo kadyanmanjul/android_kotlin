@@ -66,26 +66,46 @@ object SyncChatService {
                     if (url.isEmpty()) {
                         chatObject.text?.let {
                             tChatMessage = TChatMessage(it)
-                            sendTextMessage(tChatMessage, chatObject, chatObject.conversationId,refreshViewLiveData)
+                            sendTextMessage(
+                                tChatMessage,
+                                chatObject,
+                                chatObject.conversationId,
+                                refreshViewLiveData
+                            )
                         }
                     } else {
                         if (chatObject.type == BASE_MESSAGE_TYPE.VI) {
                             chatObject.downloadedLocalPath?.let { path ->
                                 tChatMessage = TVideoMessage(path, path)
                                 (tChatMessage as BaseMediaMessage).url = url
-                                sendTextMessage(tChatMessage, chatObject, chatObject.conversationId,refreshViewLiveData)
+                                sendTextMessage(
+                                    tChatMessage,
+                                    chatObject,
+                                    chatObject.conversationId,
+                                    refreshViewLiveData
+                                )
                             }
                         } else if (chatObject.type == BASE_MESSAGE_TYPE.IM) {
                             chatObject.downloadedLocalPath?.let { path ->
                                 tChatMessage = TImageMessage(path, path)
                                 (tChatMessage as BaseMediaMessage).url = url
-                                sendTextMessage(tChatMessage, chatObject, chatObject.conversationId,refreshViewLiveData)
+                                sendTextMessage(
+                                    tChatMessage,
+                                    chatObject,
+                                    chatObject.conversationId,
+                                    refreshViewLiveData
+                                )
                             }
                         } else if (chatObject.type == BASE_MESSAGE_TYPE.AU) {
                             chatObject.downloadedLocalPath?.let { path ->
                                 tChatMessage = TAudioMessage(path, path)
                                 (tChatMessage as BaseMediaMessage).url = url
-                                sendTextMessage(tChatMessage, chatObject, chatObject.conversationId,refreshViewLiveData)
+                                sendTextMessage(
+                                    tChatMessage,
+                                    chatObject,
+                                    chatObject.conversationId,
+                                    refreshViewLiveData
+                                )
                             }
                         }
                     }
@@ -98,13 +118,18 @@ object SyncChatService {
         messageObject: BaseChatMessage,
         chatModel: ChatModel?,
         conversation_id: String, refreshViewLiveData: MutableLiveData<ChatModel>? = null
-        ) {
+    ) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 messageObject.conversation = conversation_id
                 val responseChat =
                     AppObjectController.chatNetworkService.sendMessage(messageObject).await()
-                NetworkRequestHelper.updateChat(responseChat, refreshViewLiveData, messageObject, chatModel)
+                NetworkRequestHelper.updateChat(
+                    responseChat,
+                    refreshViewLiveData,
+                    messageObject,
+                    chatModel
+                )
 
             } catch (ex: Exception) {
                 //registerCourseLiveData.postValue(null)
@@ -138,8 +163,6 @@ object SyncChatService {
             return@async responseUpload.code()
         }
     }
-
-
 
 
     private fun checkReadExternalPermission(): Boolean {

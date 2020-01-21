@@ -7,10 +7,11 @@ const val EDITTEXT = "edittext"
 const val RC_ACCOUNT_KIT = 16
 
 enum class SignUpStepStatus {
-    SignUpStepFirst, SignUpStepSecond,SignUpCompleted,SignUpResendOTP,SignUpWithoutRegister,CoursesNotExist
+    SignUpStepFirst, SignUpStepSecond, SignUpCompleted, SignUpResendOTP, SignUpWithoutRegister, CoursesNotExist
 }
-enum class ApiCallStatus{
-    SUCCESS,FAILED
+
+enum class ApiCallStatus {
+    SUCCESS, FAILED
 }
 
 
@@ -23,7 +24,7 @@ const val EMPTY = ""
 const val IMAGE_PATTERN = "([^\\s]+(\\.(?i)(jpg|png|gif|bmp)|WEBP|webp|JPEG|PNG|Jpeg)$)"
 const val VIDEO_PATTERN = "([^\\s]+(\\.(?i)(mp4|MP4)$)"
 
-val IMAGE_REGEX= Regex(pattern = IMAGE_PATTERN)
+val IMAGE_REGEX = Regex(pattern = IMAGE_PATTERN)
 
 const val MINIMUM_VIDEO_DOWNLOAD_PROGRESS = 20
 const val MAXIMUM_VIDEO_DOWNLOAD_PROGRESS = 50

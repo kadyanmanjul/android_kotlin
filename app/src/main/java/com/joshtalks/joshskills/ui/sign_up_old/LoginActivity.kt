@@ -30,7 +30,7 @@ class LoginActivity : BaseActivity() {
                 if (intent == null) {
                     AppAnalytics.create(AnalyticsEvent.LOGIN_SUCCESS.NAME).push()
                     startActivity(getInboxActivityIntent())
-                }else{
+                } else {
                     startActivity(intent)
                 }
                 finish()
@@ -39,21 +39,21 @@ class LoginActivity : BaseActivity() {
 
     }
 
-   /* private fun launchFBSignUpActivity() {
-        val intent = Intent(this, AccountKitActivity::class.java)
-        val configurationBuilder = AccountKitConfiguration.AccountKitConfigurationBuilder(
-            LoginType.PHONE,
-            AccountKitActivity.ResponseType.CODE
-        )
-        intent.putExtra(
-            AccountKitActivity.ACCOUNT_KIT_ACTIVITY_CONFIGURATION,
-            configurationBuilder.build()
-        )
-        startActivityForResult(intent, RC_ACCOUNT_KIT)
-        AppAnalytics.create(AnalyticsEvent.OTP_ACCOUNT_KIT_ACTIVITY.NAME).push()
+    /* private fun launchFBSignUpActivity() {
+         val intent = Intent(this, AccountKitActivity::class.java)
+         val configurationBuilder = AccountKitConfiguration.AccountKitConfigurationBuilder(
+             LoginType.PHONE,
+             AccountKitActivity.ResponseType.CODE
+         )
+         intent.putExtra(
+             AccountKitActivity.ACCOUNT_KIT_ACTIVITY_CONFIGURATION,
+             configurationBuilder.build()
+         )
+         startActivityForResult(intent, RC_ACCOUNT_KIT)
+         AppAnalytics.create(AnalyticsEvent.OTP_ACCOUNT_KIT_ACTIVITY.NAME).push()
 
 
-    }*/
+     }*/
 
     /*override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
 

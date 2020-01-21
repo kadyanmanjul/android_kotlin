@@ -15,7 +15,7 @@ public class Stub<T> {
 
     public T get() {
         if (view == null) {
-            view = (T)viewStub.inflate();
+            view = (T) viewStub.inflate();
             viewStub = null;
         }
 

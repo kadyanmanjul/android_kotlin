@@ -2339,6 +2339,12 @@ public class CountryCodePicker extends RelativeLayout {
         customClickListener = clickListener;
     }
 
+    @Override
+    protected void onDetachedFromWindow() {
+        CountryCodeDialog.clear();
+        super.onDetachedFromWindow();
+    }
+
     /**
      * Update every time new language is supported #languageSupport
      */
@@ -2530,11 +2536,5 @@ public class CountryCodePicker extends RelativeLayout {
         String getCCPDialogSearchHintText(Language language, String defaultSearchHintText);
 
         String getCCPDialogNoResultACK(Language language, String defaultNoResultACK);
-    }
-
-    @Override
-    protected void onDetachedFromWindow() {
-        CountryCodeDialog.clear();
-        super.onDetachedFromWindow();
     }
 }

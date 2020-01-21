@@ -15,7 +15,7 @@ public class BackgroundView {
     static Drawable setBackground(View v, int color, int borderColor, int r, int borderStroke) {
         GradientDrawable shape = new GradientDrawable();
         shape.setShape(GradientDrawable.RECTANGLE);
-        shape.setCornerRadii(new float[] { r, r, r, r, r, r, r, r });
+        shape.setCornerRadii(new float[]{r, r, r, r, r, r, r, r});
         shape.setColor(color);
         shape.setStroke(borderStroke, borderColor);
         return shape;

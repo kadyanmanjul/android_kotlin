@@ -1,12 +1,16 @@
 package com.joshtalks.joshskills.ui.payment
 
 import android.annotation.SuppressLint
+import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
 import com.bumptech.glide.Glide
@@ -14,6 +18,8 @@ import com.bumptech.glide.integration.webp.decoder.WebpDrawable
 import com.bumptech.glide.integration.webp.decoder.WebpDrawableTransformation
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.databinding.PaymentProcessFragmentBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.OTPReceivedEventBus
@@ -21,9 +27,11 @@ import com.joshtalks.joshskills.repository.server.CourseExploreModel
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import nl.dionsegijn.konfetti.KonfettiView
+import nl.dionsegijn.konfetti.ParticleSystem
+import nl.dionsegijn.konfetti.listeners.OnParticleSystemUpdateListener
+import nl.dionsegijn.konfetti.models.Shape
+import nl.dionsegijn.konfetti.models.Size
 import java.util.*
 
 class PaymentProcessFragment : DialogFragment() {
@@ -31,8 +39,9 @@ class PaymentProcessFragment : DialogFragment() {
     private lateinit var courseModel: CourseExploreModel
     private lateinit var paymentProcessFragmentBinding: PaymentProcessFragmentBinding
     private var timer = Timer()
-    private var currentTime = 0.0F
 
+    var animAlpha: Animation? = null
+    var animMoveToTop: Animation? = null
 
     companion object {
         @JvmStatic
@@ -47,6 +56,11 @@ class PaymentProcessFragment : DialogFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         activity?.window?.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        activity?.run {
+            animMoveToTop = AnimationUtils.loadAnimation(applicationContext, R.anim.translate)
+            animAlpha = AnimationUtils.loadAnimation(applicationContext, R.anim.fade_out)
+
+        }
 
         arguments?.let {
             courseModel = it.getSerializable(COURSE_ID) as CourseExploreModel
@@ -73,19 +87,17 @@ class PaymentProcessFragment : DialogFragment() {
             DataBindingUtil.inflate(inflater, R.layout.payment_process_fragment, container, false)
         paymentProcessFragmentBinding.lifecycleOwner = this
         paymentProcessFragmentBinding.handler = this
+
         return paymentProcessFragmentBinding.root
     }
 
     @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        animAlpha?.reset()
 
         paymentProcessFragmentBinding.tvCourse.text = courseModel.courseName
         paymentProcessFragmentBinding.tvAmount.text = "INR " + (courseModel.amount).toString()
-        courseModel.courseDuration.let {
-            paymentProcessFragmentBinding.tvCourseDuration.text = it
-        }
-
         activity?.let {
             Glide.with(it)
                 .load(courseModel.courseIcon)
@@ -93,24 +105,84 @@ class PaymentProcessFragment : DialogFragment() {
                     WebpDrawable::class.java,
                     WebpDrawableTransformation(CircleCrop())
                 )
-                .into(paymentProcessFragmentBinding.ivCourse)
+                .into(paymentProcessFragmentBinding.courseImage)
         }
-        paymentProcessFragmentBinding.progressWheel.progress = currentTime
 
-        timer.scheduleAtFixedRate(object : TimerTask() {
-            override fun run() {
-                CoroutineScope(Dispatchers.Main).launch {
-                    currentTime = ((currentTime + 0.015)).toFloat()
-                    paymentProcessFragmentBinding.progressWheel.progress = currentTime
-                }
-                if (currentTime >= .98) {
-                    timer.cancel()
-                    paymentProcessFragmentBinding.progressWheel.progress = 100f
-                }
+
+        animAlpha!!.setAnimationListener(object : Animation.AnimationListener {
+            override fun onAnimationRepeat(animation: Animation?) {
             }
 
-        }, 0, 1000)
+            override fun onAnimationEnd(animation: Animation?) {
+                paymentProcessFragmentBinding.viewKonfetti.performClick()
+
+            }
+
+            override fun onAnimationStart(animation: Animation?) {
+
+            }
+
+        })
+        animMoveToTop!!.setAnimationListener(object : Animation.AnimationListener {
+            override fun onAnimationRepeat(animation: Animation?) {
+            }
+
+            override fun onAnimationEnd(animation: Animation?) {
+                paymentProcessFragmentBinding.rlContainer.visibility = View.VISIBLE
+                paymentProcessFragmentBinding.successIv.visibility = View.GONE
+                paymentProcessFragmentBinding.viewKonfetti.setOnClickListener(null)
+
+            }
+
+            override fun onAnimationStart(animation: Animation?) {
+
+            }
+
+        })
+        paymentProcessFragmentBinding.viewKonfetti.onParticleSystemUpdateListener =
+            object : OnParticleSystemUpdateListener {
+                override fun onParticleSystemEnded(
+                    view: KonfettiView,
+                    system: ParticleSystem,
+                    activeSystems: Int
+                ) {
+                    paymentProcessFragmentBinding.successIv.startAnimation(animMoveToTop)
+                }
+
+                override fun onParticleSystemStarted(
+                    view: KonfettiView,
+                    system: ParticleSystem,
+                    activeSystems: Int
+                ) {
+                }
+
+            }
+
+
+
+        paymentProcessFragmentBinding.viewKonfetti.setOnClickListener {
+            paymentProcessFragmentBinding.viewKonfetti.build()
+                .addColors(Color.YELLOW, Color.GREEN, Color.MAGENTA)
+                .setDirection(0.0, 359.0)
+                .setSpeed(1f, 10f)
+                .setTimeToLive(1000L)
+                .addShapes(Shape.RECT, Shape.CIRCLE)
+                .addSizes(Size(6, 6f))
+                .setPosition(
+                    (AppObjectController.screenWidth / 2).toFloat() - Utils.dpToPx(72),
+                    (AppObjectController.screenWidth / 2).toFloat() + Utils.dpToPx(72),
+                    AppObjectController.screenHeight.toFloat() - Utils.dpToPx(124),
+                    AppObjectController.screenHeight.toFloat() - Utils.dpToPx(16)
+                )
+                .burst(800)
+        }
+
+        Handler(Looper.getMainLooper()).postDelayed({
+            paymentProcessFragmentBinding.viewKonfetti.visibility = View.VISIBLE
+            paymentProcessFragmentBinding.successIv.startAnimation(animAlpha)
+        }, 750)
     }
+
 
     override fun onResume() {
         super.onResume()

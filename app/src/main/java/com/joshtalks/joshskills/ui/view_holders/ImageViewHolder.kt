@@ -60,7 +60,6 @@ class ImageViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
     @View(R.id.iv_start_download)
     lateinit var iv_start_download: AppCompatImageView
 
-
     @View(R.id.progress_dialog)
     lateinit var progressDialog: ProgressWheel
 
@@ -86,7 +85,7 @@ class ImageViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
                 }
             }
         } else {
-            message.question?.imageList?.get(0)?.let { imageObj ->
+            message.question?.imageList?.getOrNull(0)?.let { imageObj ->
                 if (message.downloadStatus == DOWNLOAD_STATUS.DOWNLOADING) {
                     fileDownloadRunView()
                     download(imageObj.imageUrl)

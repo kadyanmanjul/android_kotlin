@@ -28,6 +28,11 @@ public class SmoothLinearLayoutManager extends LinearLayoutManager {
 
     private class TopSnappedSmoothScroller extends LinearSmoothScroller {
 
+        public TopSnappedSmoothScroller(Context context) {
+            super(context);
+
+        }
+
         @Override
         public PointF computeScrollVectorForPosition
                 (int targetPosition) {
@@ -42,12 +47,6 @@ public class SmoothLinearLayoutManager extends LinearLayoutManager {
         (DisplayMetrics displayMetrics) {
             return 250f / displayMetrics.densityDpi;
         }
-
-        public TopSnappedSmoothScroller(Context context) {
-            super(context);
-
-        }
-
 
         @Override
         protected int getVerticalSnapPreference() {

@@ -40,10 +40,10 @@ class JoshTalksInstallListener : BroadcastReceiver() {
                     }
                 }
                 val obj = InstallReferrerModel()
-                obj.otherInfo=referrerMap
-                obj.utmMedium= referrerMap["utm_medium"]
-                obj.utmSource= referrerMap["utm_source"]
-                obj.utmTerm= referrerMap["utm_term"]
+                obj.otherInfo = referrerMap
+                obj.utmMedium = referrerMap["utm_medium"]
+                obj.utmSource = referrerMap["utm_source"]
+                obj.utmTerm = referrerMap["utm_term"]
                 InstallReferrerModel.update(obj)
 
             } catch (ex: Exception) {

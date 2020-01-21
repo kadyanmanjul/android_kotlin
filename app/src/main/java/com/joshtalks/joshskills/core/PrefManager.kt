@@ -19,7 +19,6 @@ object PrefManager {
     private lateinit var sharedPreferences: SharedPreferences
 
 
-
     private fun getPref(context: Context): SharedPreferences {
         sharedPreferences = PreferenceManager(context).sharedPreferences
         PreferenceManager(context).sharedPreferencesName = PREF_NAME
@@ -84,7 +83,6 @@ object PrefManager {
         prefManager.edit().clear().apply()
         AppDatabase.clearDatabase()
     }
-
 
 
 }

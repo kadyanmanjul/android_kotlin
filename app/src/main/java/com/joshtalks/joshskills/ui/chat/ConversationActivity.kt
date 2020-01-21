@@ -1,6 +1,5 @@
 package com.joshtalks.joshskills.ui.chat
 
-import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.ComponentName
@@ -79,7 +78,6 @@ import com.joshtalks.recordview.CustomImageButton.FIRST_STATE
 import com.joshtalks.recordview.CustomImageButton.SECOND_STATE
 import com.joshtalks.recordview.OnRecordListener
 import com.joshtalks.recordview.OnRecordTouchListener
-import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
@@ -541,7 +539,35 @@ class ConversationActivity : CoreJoshActivity() {
 
         conversationBinding.recordButton.setOnTouchListener(OnRecordTouchListener {
             if (conversationBinding.chatEdit.text.toString().isEmpty() && it == MotionEvent.ACTION_DOWN) {
-                checkAudioPermission(settingFlag = true)
+                if (PermissionUtils.isAudioAndStoragePermissionEnable(this).not()) {
+                    PermissionUtils.audioRecordStorageReadAndWritePermission(activityRef.get()!!,
+                        object : MultiplePermissionsListener {
+                            override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
+                                report?.areAllPermissionsGranted()?.let { flag ->
+                                    if (flag) {
+                                        conversationBinding.recordButton.isListenForRecord = true
+                                        return@let
+                                    }
+                                    if (report.isAnyPermissionPermanentlyDenied) {
+                                        PermissionUtils.permissionPermanentlyDeniedDialog(
+                                            this@ConversationActivity,
+                                            R.string.record_permission_message
+                                        )
+                                        return
+                                    }
+                                }
+                            }
+
+                            override fun onPermissionRationaleShouldBeShown(
+                                permissions: MutableList<PermissionRequest>?,
+                                token: PermissionToken?
+                            ) {
+                                token?.continuePermissionRequest()
+                            }
+                        })
+                } else {
+                    conversationBinding.recordButton.isListenForRecord = true
+                }
             }
         })
 
@@ -580,30 +606,33 @@ class ConversationActivity : CoreJoshActivity() {
         findViewById<View>(R.id.ll_audio).setOnClickListener {
             AppAnalytics.create(AnalyticsEvent.AUDIO_SELECTED.NAME).push()
             uploadAttachment()
-            val pickerConfig = MediaPickerConfig()
-                .setUriPermanentAccess(false)
-                .setAllowMultiSelection(false)
-                .setScreenOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
 
-            MediaPicker.with(this, MediaPicker.MediaTypes.AUDIO)
-                .setConfig(pickerConfig)
-                .setFileMissingListener(object :
-                    MediaPicker.MediaPickerImpl.OnMediaListener {
-                    override fun onMissingFileWarning() {
-                    }
-                })
-                .onResult()
-                .subscribe({
-                    it?.let {
-                        it[0].path?.let { path ->
-                            AppAnalytics.create(AnalyticsEvent.AUDIO_SENT.NAME).push()
-                            addUploadAnyAudioMedia(Utils.getPathFromUri(path))
+            PermissionUtils.storageReadAndWritePermission(activityRef.get()!!,
+                object : MultiplePermissionsListener {
+                    override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
+                        report?.areAllPermissionsGranted()?.let { flag ->
+                            if (flag) {
+                                bottomAudioAttachment()
+                                return
+
+                            }
+                            if (report.isAnyPermissionPermanentlyDenied) {
+                                PermissionUtils.permissionPermanentlyDeniedDialog(
+                                    activityRef.get()!!
+                                )
+                                return
+                            }
                         }
-
                     }
-                }, {
-                    AppAnalytics.create(AnalyticsEvent.BACK_PRESSED.NAME).push()
+
+                    override fun onPermissionRationaleShouldBeShown(
+                        permissions: MutableList<PermissionRequest>?,
+                        token: PermissionToken?
+                    ) {
+                        token?.continuePermissionRequest()
+                    }
                 })
+
 
         }
         findViewById<View>(R.id.ll_camera).setOnClickListener {
@@ -612,36 +641,32 @@ class ConversationActivity : CoreJoshActivity() {
             uploadImageByUser()
 
         }
-        findViewById<View>(R.id.ll_gallary).setOnClickListener {
-            AppAnalytics.create(AnalyticsEvent.CAMERA_SELECTED.NAME).push()
+        findViewById<View>(R.id.ll_gallery).setOnClickListener {
             uploadAttachment()
+            PermissionUtils.storageReadAndWritePermission(this,
+                object : MultiplePermissionsListener {
+                    override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
+                        report?.areAllPermissionsGranted()?.let { flag ->
+                            if (flag) {
+                                bottomAttachmentViewFromGallery()
+                                return
 
-            val pickerConfig = MediaPickerConfig()
-                .setUriPermanentAccess(true)
-                .setAllowMultiSelection(false)
-                //.setShowConfirmationDialog(true)
-                .setScreenOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
-
-            MediaPicker.with(this, MediaPicker.MediaTypes.IMAGE)
-                .setConfig(pickerConfig)
-                .setFileMissingListener(object :
-                    MediaPicker.MediaPickerImpl.OnMediaListener {
-                    override fun onMissingFileWarning() {
-                    }
-                })
-                .onResult()
-                .subscribe({
-                    it?.let {
-                        it[0].path?.let { path ->
-                            if (IMAGE_REGEX.matches(path)) {
-                                addUserImageInView(path)
-                            } else {
-                                addUserVideoInView(path)
+                            }
+                            if (report.isAnyPermissionPermanentlyDenied) {
+                                PermissionUtils.permissionPermanentlyDeniedDialog(
+                                    activityRef.get()!!
+                                )
+                                return
                             }
                         }
                     }
-                }, {
-                    AppAnalytics.create(AnalyticsEvent.BACK_PRESSED.NAME).push()
+
+                    override fun onPermissionRationaleShouldBeShown(
+                        permissions: MutableList<PermissionRequest>?,
+                        token: PermissionToken?
+                    ) {
+                        token?.continuePermissionRequest()
+                    }
                 })
         }
         conversationBinding.scrollToEndButton.setOnClickListener {
@@ -663,6 +688,70 @@ class ConversationActivity : CoreJoshActivity() {
         }
 
     }
+
+    @SuppressLint("CheckResult")
+    private fun bottomAttachmentViewFromGallery() {
+        AppAnalytics.create(AnalyticsEvent.CAMERA_SELECTED.NAME).push()
+        uploadAttachment()
+
+        val pickerConfig = MediaPickerConfig()
+            .setUriPermanentAccess(true)
+            .setAllowMultiSelection(false)
+            //.setShowConfirmationDialog(true)
+            .setScreenOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
+        MediaPicker.with(this, MediaPicker.MediaTypes.IMAGE)
+            .setConfig(pickerConfig)
+            .setFileMissingListener(object :
+                MediaPicker.MediaPickerImpl.OnMediaListener {
+                override fun onMissingFileWarning() {
+                }
+            })
+            .onResult()
+            .subscribe({
+                it?.let {
+                    it[0].path?.let { path ->
+                        if (IMAGE_REGEX.matches(path)) {
+                            addUserImageInView(path)
+                        } else {
+                            addUserVideoInView(path)
+                        }
+                    }
+                }
+            }, {
+                AppAnalytics.create(AnalyticsEvent.BACK_PRESSED.NAME).push()
+            })
+    }
+
+
+    @SuppressLint("CheckResult")
+    private fun bottomAudioAttachment() {
+        uploadAttachment()
+        val pickerConfig = MediaPickerConfig()
+            .setUriPermanentAccess(true)
+            .setAllowMultiSelection(false)
+            .setScreenOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
+
+        MediaPicker.with(this, MediaPicker.MediaTypes.AUDIO)
+            .setConfig(pickerConfig)
+            .setFileMissingListener(object :
+                MediaPicker.MediaPickerImpl.OnMediaListener {
+                override fun onMissingFileWarning() {
+                }
+            })
+            .onResult()
+            .subscribe({
+                it?.let {
+                    it[0].path?.let { path ->
+                        AppAnalytics.create(AnalyticsEvent.AUDIO_SENT.NAME).push()
+                        addUploadAnyAudioMedia(Utils.getPathFromUri(path))
+                    }
+
+                }
+            }, {
+                AppAnalytics.create(AnalyticsEvent.BACK_PRESSED.NAME).push()
+            })
+    }
+
 
     private fun liveDataObservable() {
         conversationViewModel.chatObservableLiveData.observe(this, Observer {
@@ -755,7 +844,7 @@ class ConversationActivity : CoreJoshActivity() {
 
                             }
                             if (report.isAnyPermissionPermanentlyDenied) {
-                                PermissionUtils.storagePermissionPermanentlyDeniedDialog(
+                                PermissionUtils.permissionPermanentlyDeniedDialog(
                                     activityRef.get()!!
                                 )
                                 return
@@ -853,14 +942,23 @@ class ConversationActivity : CoreJoshActivity() {
                             .solidBackground().show()
                     }
                     currentAudio = it.chatModel.chatId
-                    if (it.state == PLAYING) {
+
+                    if (AppObjectController.currentPlayingAudioObject == null) {
                         onPlayAudio(it.chatModel, it.audioType!!)
                     } else {
-                        if (checkIsPlayer()) {
-                            mPlayerInterface?.resumeOrPause()
+                        AppObjectController.currentPlayingAudioObject?.run {
+                            if (this.chatId == currentAudio) {
+                                if (checkIsPlayer()) {
+                                    mPlayerInterface?.resumeOrPause()
+                                } else {
+                                    onPlayAudio(it.chatModel, it.audioType!!)
+
+                                }
+                            } else {
+                                onPlayAudio(it.chatModel, it.audioType!!)
+                            }
                         }
                     }
-
                 },
                     {
                         it.printStackTrace()
@@ -891,7 +989,6 @@ class ConversationActivity : CoreJoshActivity() {
             try {
                 var tempView: BaseChatViewHolder
                 conversationBinding.chatRv.allViewResolvers?.let {
-
                     it.forEachIndexed { index, view ->
                         tempView = view as BaseChatViewHolder
                         if (chatObj.chatId.toLowerCase(Locale.getDefault()) == tempView.message.chatId.toLowerCase(
@@ -1030,15 +1127,40 @@ class ConversationActivity : CoreJoshActivity() {
 
 
     private fun uploadImageByUser() {
-        val options = Options.init()
-            .setRequestCode(IMAGE_SELECT_REQUEST_CODE)
-            .setCount(1)
-            .setFrontfacing(false)
-            .setPath(AppDirectory.getTempPath())
-            .setImageQuality(ImageQuality.HIGH)
-            .setScreenOrientation(Options.SCREEN_ORIENTATION_PORTRAIT)
+        PermissionUtils.cameraRecordStorageReadAndWritePermission(this,
+            object : MultiplePermissionsListener {
+                override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
+                    report?.areAllPermissionsGranted()?.let { flag ->
+                        if (flag) {
+                            val options = Options.init()
+                                .setRequestCode(IMAGE_SELECT_REQUEST_CODE)
+                                .setCount(1)
+                                .setFrontfacing(false)
+                                .setPath(AppDirectory.getTempPath())
+                                .setImageQuality(ImageQuality.HIGH)
+                                .setScreenOrientation(Options.SCREEN_ORIENTATION_PORTRAIT)
 
-        JoshCameraActivity.start(this, options)
+                            JoshCameraActivity.start(this@ConversationActivity, options)
+                            return
+
+                        }
+                        if (report.isAnyPermissionPermanentlyDenied) {
+                            PermissionUtils.cameraStoragePermissionPermanentlyDeniedDialog(
+                                activityRef.get()!!
+                            )
+                            return
+                        }
+                    }
+                }
+
+                override fun onPermissionRationaleShouldBeShown(
+                    permissions: MutableList<PermissionRequest>?,
+                    token: PermissionToken?
+                ) {
+                    token?.continuePermissionRequest()
+                }
+            })
+
     }
 
 
@@ -1098,44 +1220,6 @@ class ConversationActivity : CoreJoshActivity() {
 
     }
 
-    private fun checkAudioPermission(
-        callback: Runnable? = null,
-        settingFlag: Boolean = false
-    ) {
-        Dexter.withActivity(this)
-            .withPermissions(
-                Manifest.permission.READ_EXTERNAL_STORAGE,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                Manifest.permission.RECORD_AUDIO
-            )
-            .withListener(object : MultiplePermissionsListener {
-                override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
-                    report?.areAllPermissionsGranted()?.let { flag ->
-                        if (flag) {
-                            conversationBinding.recordButton.isListenForRecord = true
-                            callback?.run()
-                            return@let
-                        }
-                    }
-                    if (report != null && report.isAnyPermissionPermanentlyDenied) {
-                        if (settingFlag) {
-                            openSettings()
-                            return
-                        }
-                    }
-                }
-
-                override fun onPermissionRationaleShouldBeShown(
-                    permissions: MutableList<PermissionRequest>?,
-                    token: PermissionToken?
-                ) {
-                    token?.continuePermissionRequest()
-                }
-            })
-            .onSameThread()
-            .check()
-    }
-
 
     override fun onResume() {
         super.onResume()
@@ -1167,6 +1251,7 @@ class ConversationActivity : CoreJoshActivity() {
         super.onDestroy()
         mPlaybackListener = null
         doUnbindService()
+        AppObjectController.currentPlayingAudioObject = null
     }
 
     override fun onBackPressed() {
@@ -1175,7 +1260,6 @@ class ConversationActivity : CoreJoshActivity() {
         }
         if (mPlayerInterface!!.isPlaying) {
             mPlayerInterface!!.resumeOrPause()
-            return
         }
         mPlayerInterface!!.onPauseActivity()
         AppAnalytics.create(AnalyticsEvent.BACK_PRESSED.NAME)
@@ -1256,18 +1340,14 @@ class ConversationActivity : CoreJoshActivity() {
 
     private fun updateResetStatus(onPlaybackCompletion: Boolean) {
         if (onPlaybackCompletion) {
-            if (mPlayerInterface!!.state != COMPLETED) {
-                val drawable = R.drawable.ic_play_player
-                mPlayPauseButton.post({ mPlayPauseButton.setImageResource(drawable) })
+            if (mPlayerInterface!!.state != COMPLETED && mPlayerInterface!!.isPlaying) {
                 mPlayerInterface?.resumeOrPause()
+                mPlayerInterface?.reset()
+            }
+            AppObjectController.currentPlayingAudioObject?.run {
+                refreshViewAtPos(this)
             }
         }
-    }
-
-    private fun updatePlayingStatus() {
-        val drawable =
-            if (mPlayerInterface!!.state != PAUSED) R.drawable.ic_pause_player else R.drawable.ic_play_player
-        mPlayPauseButton.post({ mPlayPauseButton.setImageResource(drawable) })
     }
 
 
@@ -1295,7 +1375,6 @@ class ConversationActivity : CoreJoshActivity() {
             Utils.updateTextView(mDuration, Utils.formatDuration(duration))
             if (restore) {
                 mSeekBarAudio.progress = mPlayerInterface!!.playerPosition
-                updatePlayingStatus()
                 updateResetStatus(false)
                 Handler().postDelayed({
                     //stop foreground if coming from pause state
@@ -1317,21 +1396,12 @@ class ConversationActivity : CoreJoshActivity() {
         if (!mSeekBarAudio.isEnabled) {
             mSeekBarAudio.isEnabled = true
         }
-
+        AppObjectController.currentPlayingAudioObject = chatModel
         val audioList = ArrayList<AudioType>()
         audioList.add(audioObject)
-        bottomSheetLayout.visibility = VISIBLE
         mPlayerInterface?.setCurrentSong(inboxEntity, chatModel, audioObject, audioList)
         mPlayerInterface?.initMediaPlayer(chatModel, audioObject)
 
-    }
-
-
-    fun hidePlayerUI() {
-        bottomSheetLayout.visibility = GONE
-        if (mPlayerInterface!!.isPlaying) {
-            mPlayerInterface?.resumeOrPause()
-        }
     }
 
 
@@ -1339,17 +1409,20 @@ class ConversationActivity : CoreJoshActivity() {
         return this.mPlayerInterface != null && mPlayerInterface!!.isMediaPlayer
     }
 
+    fun isAudioPlaying(): Boolean {
+        return this.checkIsPlayer() && this.mPlayerInterface!!.isPlaying
+    }
+
     inner class PlaybackListener : PlaybackInfoListener() {
         override fun onPositionChanged(position: Int) {
             if (!mUserIsSeeking) {
-                mSeekBarAudio.progress = position
                 RxBus2.publish(SeekBarProgressEventBus(currentAudio!!, position))
+                // mSeekBarAudio.progress = position
             }
         }
 
         override fun onStateChanged(@State state: Int) {
             try {
-                updatePlayingStatus()
                 if (mPlayerInterface!!.state != RESUMED && mPlayerInterface!!.state != PAUSED) {
                     updatePlayingInfo(restore = false, startPlay = true)
                 }
@@ -1363,7 +1436,8 @@ class ConversationActivity : CoreJoshActivity() {
         }
 
         override fun onPlaybackStop() {
-            hidePlayerUI()
+
         }
     }
+
 }

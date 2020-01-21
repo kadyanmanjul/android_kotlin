@@ -31,49 +31,32 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 
-
 public class JoshSnackBar {
 
-    private enum Type {
-        DEFAULT(null, null, null), GREEN(Color.parseColor("#388E3C"), 0, Color.WHITE), RED(Color.parseColor("#D50000"), 0, Color.WHITE), CYAN(Color.parseColor("#e0ffff"),0, Color.WHITE), ORANGE(Color.parseColor("#ffa500"), 0, Color.BLACK), GOOD(Color.parseColor("#C5BEBE"), 0, Color.WHITE), BAD(Color.parseColor("#C5BEBE"), 0, Color.WHITE);
-
-        private Integer color;
-        private Integer iconResId;
-        private Integer standardTextColor;
-
-        Type(@ColorInt Integer color, @DrawableRes Integer iconResId, @ColorInt Integer standardTextColor) {
-            this.color = color;
-            
-            this.iconResId = iconResId;
-            this.standardTextColor = standardTextColor;
-        }
-
-        public Integer getColor() {
-            return color;
-        }
-
-        public Drawable getIcon(Context context) {
-            if (iconResId == null)
-                return null;
-
-            Drawable drawable = ContextCompat.getDrawable(context, iconResId);
-
-            if (drawable != null)
-                drawable = tintDrawable(drawable, standardTextColor);
-
-            return drawable;
-        }
-
-
-        public Integer getStandardTextColor() {
-            return standardTextColor;
-        }
-    }
-
+    public static final int LENGTH_INDEFINITE = Snackbar.LENGTH_INDEFINITE;
+    public static final int LENGTH_SHORT = Snackbar.LENGTH_SHORT;
+    public static final int LENGTH_LONG = Snackbar.LENGTH_LONG;
     private final Builder builder;
 
     private JoshSnackBar(Builder builder) {
         this.builder = builder;
+    }
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    private static Drawable tintDrawable(@NonNull Drawable drawable, @ColorInt int color) {
+        drawable = DrawableCompat.wrap(drawable);
+        drawable = drawable.mutate();
+        DrawableCompat.setTint(drawable, color);
+        return drawable;
+    }
+
+    private static Drawable makeTransparentDrawable(Context context, int width, int height) {
+        Bitmap.Config conf = Bitmap.Config.ARGB_8888;
+        Bitmap bmp = Bitmap.createBitmap(width, height, conf);
+        return new BitmapDrawable(context.getResources(), bmp);
     }
 
     private Snackbar make() {
@@ -81,12 +64,13 @@ public class JoshSnackBar {
         Snackbar chocolate = Snackbar.make(builder.view, builder.text, builder.duration);
 
         if (builder.actionClickListener != null || builder.actionText != null) {
-            if (builder.actionClickListener == null) builder.actionClickListener = new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
+            if (builder.actionClickListener == null)
+                builder.actionClickListener = new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
 
-                }
-            };
+                    }
+                };
 
             chocolate.setAction(builder.actionText, builder.actionClickListener);
 
@@ -153,7 +137,6 @@ public class JoshSnackBar {
             text.setTypeface(textTypeface);
 
 
-
         if (builder.textColor == null)
             builder.textColor = builder.type.getStandardTextColor();
 
@@ -194,8 +177,41 @@ public class JoshSnackBar {
         return chocolate;
     }
 
-    public static Builder builder() {
-        return new Builder();
+
+    private enum Type {
+        DEFAULT(null, null, null), GREEN(Color.parseColor("#388E3C"), 0, Color.WHITE), RED(Color.parseColor("#D50000"), 0, Color.WHITE), CYAN(Color.parseColor("#e0ffff"), 0, Color.WHITE), ORANGE(Color.parseColor("#ffa500"), 0, Color.BLACK), GOOD(Color.parseColor("#C5BEBE"), 0, Color.WHITE), BAD(Color.parseColor("#C5BEBE"), 0, Color.WHITE);
+
+        private Integer color;
+        private Integer iconResId;
+        private Integer standardTextColor;
+
+        Type(@ColorInt Integer color, @DrawableRes Integer iconResId, @ColorInt Integer standardTextColor) {
+            this.color = color;
+
+            this.iconResId = iconResId;
+            this.standardTextColor = standardTextColor;
+        }
+
+        public Integer getColor() {
+            return color;
+        }
+
+        public Drawable getIcon(Context context) {
+            if (iconResId == null)
+                return null;
+
+            Drawable drawable = ContextCompat.getDrawable(context, iconResId);
+
+            if (drawable != null)
+                drawable = tintDrawable(drawable, standardTextColor);
+
+            return drawable;
+        }
+
+
+        public Integer getStandardTextColor() {
+            return standardTextColor;
+        }
     }
 
     @IntDef({LENGTH_INDEFINITE, LENGTH_SHORT, LENGTH_LONG})
@@ -203,11 +219,6 @@ public class JoshSnackBar {
     @Retention(RetentionPolicy.SOURCE)
     public @interface Duration {
     }
-
-    public static final int LENGTH_INDEFINITE = Snackbar.LENGTH_INDEFINITE;
-    public static final int LENGTH_SHORT      = Snackbar.LENGTH_SHORT;
-    public static final int LENGTH_LONG       = Snackbar.LENGTH_LONG;
-
 
     public static class Builder {
 
@@ -397,14 +408,14 @@ public class JoshSnackBar {
             return make();
         }
 
-        public Snackbar good(){
+        public Snackbar good() {
             type = Type.GOOD;
-            return  make();
+            return make();
         }
 
-        public Snackbar bad(){
+        public Snackbar bad() {
             type = Type.BAD;
-            return  make();
+            return make();
         }
 
         private Snackbar make() {
@@ -422,18 +433,6 @@ public class JoshSnackBar {
 
             return new JoshSnackBar(this).make();
         }
-    }
-    private static Drawable tintDrawable(@NonNull Drawable drawable, @ColorInt int color) {
-        drawable = DrawableCompat.wrap(drawable);
-        drawable = drawable.mutate();
-        DrawableCompat.setTint(drawable, color);
-        return drawable;
-    }
-
-    private static Drawable makeTransparentDrawable(Context context, int width, int height) {
-        Bitmap.Config conf = Bitmap.Config.ARGB_8888;
-        Bitmap bmp = Bitmap.createBitmap(width, height, conf);
-        return new BitmapDrawable(context.getResources(),bmp);
     }
 
 }

@@ -167,37 +167,36 @@ class PdfViewHolder(activityRef: WeakReference<FragmentActivity>, message: ChatM
     override fun onViewInflated() {
         super.onViewInflated()
         pdfViewHolder = this
+        text_message_time.text = Utils.messageTimeConversion(message.created)
+        updateTime(text_message_time)
 
         message.sender?.let {
             updateView(it, root_view, root_sub_view, message_view)
         }
-        message.question?.pdfList?.getOrNull(0)?.let {
-            updateTime(text_message_time)
-        }
-        updateTime(text_message_time)
 
-        message.question?.pdfList?.getOrNull(0)?.let { pdfObj ->
+        message.question?.run {
+            this.pdfList?.getOrNull(0)?.let { pdfObj ->
+                pdfObj.pages?.let {
+                    messageDetail.text = context.getString(R.string.pdf_desc, it)
+                }
+                Uri.parse(pdfObj.url).let {
+                    tv_pdf_info.text = it.pathSegments[it.pathSegments.size - 1].split(".")[0]
+                }
+                Utils.fileUrl(pdfObj.thumbnail, pdfObj.thumbnail)?.run {
+                    setImageInImageView(image_view, this)
+                }
 
-            pdfObj.pages?.let {
-                messageDetail.text = context.getString(R.string.pdf_desc, it)
-            }
-            Uri.parse(pdfObj.url).let {
-                tv_pdf_info.text = it.pathSegments[it.pathSegments.size - 1].split(".")[0]
-            }
-            Utils.fileUrl(pdfObj.thumbnail, pdfObj.thumbnail)?.run {
-                setImageInImageView(image_view, this)
-            }
-
-            if (message.downloadStatus == DOWNLOAD_STATUS.DOWNLOADING) {
-                fileDownloadingInProgressView()
-                download(pdfObj.url)
-            } else if (message.downloadStatus == DOWNLOAD_STATUS.DOWNLOADED && AppDirectory.isFileExist(
-                    pdfObj.downloadedLocalPath
-                )
-            ) {
-                fileDownloadSuccess()
-            } else {
-                fileNotDownloadView()
+                if (message.downloadStatus == DOWNLOAD_STATUS.DOWNLOADING) {
+                    fileDownloadingInProgressView()
+                    download(pdfObj.url)
+                } else if (message.downloadStatus == DOWNLOAD_STATUS.DOWNLOADED && AppDirectory.isFileExist(
+                        pdfObj.downloadedLocalPath
+                    )
+                ) {
+                    fileDownloadSuccess()
+                } else {
+                    fileNotDownloadView()
+                }
             }
         }
     }
@@ -226,7 +225,10 @@ class PdfViewHolder(activityRef: WeakReference<FragmentActivity>, message: ChatM
     @Click(R.id.container_fl)
     fun onClickPdfContainer() {
         message.question?.pdfList?.get(0)?.let { pdfObj ->
-            if (message.downloadStatus == DOWNLOAD_STATUS.DOWNLOADED && AppDirectory.isFileExist(pdfObj.downloadedLocalPath)) {
+            if (message.downloadStatus == DOWNLOAD_STATUS.DOWNLOADED && AppDirectory.isFileExist(
+                    pdfObj.downloadedLocalPath
+                )
+            ) {
                 PermissionUtils.storageReadAndWritePermission(activityRef.get(),
                     object : MultiplePermissionsListener {
                         override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
@@ -236,7 +238,7 @@ class PdfViewHolder(activityRef: WeakReference<FragmentActivity>, message: ChatM
                                     return
                                 }
                                 if (report.isAnyPermissionPermanentlyDenied) {
-                                    PermissionUtils.storagePermissionPermanentlyDeniedDialog(
+                                    PermissionUtils.permissionPermanentlyDeniedDialog(
                                         activityRef.get()!!
                                     )
                                     return

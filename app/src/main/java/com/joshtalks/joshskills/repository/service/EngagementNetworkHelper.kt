@@ -26,8 +26,8 @@ object EngagementNetworkHelper {
                 if (timeListen <= 0) {
                     return@launch
                 }
-                videoEngage.graph= mutableListOf()
-                videoEngage.watchTime=timeListen
+                videoEngage.graph = mutableListOf()
+                videoEngage.watchTime = timeListen
                 AppObjectController.chatNetworkService.engageVideo(videoEngage)
             } catch (ex: Exception) {
                 ex.printStackTrace()
@@ -85,7 +85,7 @@ object EngagementNetworkHelper {
                     .push()
                 val data = mapOf("is_delivered" to "true")
                 notificationObject.id?.let {
-                    AppObjectController.chatNetworkService.engageNotificationAsync(it,data)
+                    AppObjectController.chatNetworkService.engageNotificationAsync(it, data)
                 }
             } catch (ex: Exception) {
                 ex.printStackTrace()

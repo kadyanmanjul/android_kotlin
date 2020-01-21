@@ -21,7 +21,10 @@ object UploadWorker {
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 val filePart: MultipartBody.Part = createMultipartBody(imageObject.imageLocalPath)
-                AppObjectController.signUpNetworkService.uploadProfilePicture(User.getInstance().id,filePart)
+                AppObjectController.signUpNetworkService.uploadProfilePicture(
+                    User.getInstance().id,
+                    filePart
+                )
                 AppAnalytics.create(AnalyticsEvent.PROFILE_IMAGE_UPLOAD.NAME)
                     .push()
             } catch (ex: Exception) {

@@ -375,7 +375,7 @@ class JcPlayerView : LinearLayout, View.OnClickListener, SeekBar.OnSeekBarChange
 
                                     }
                                     if (report.isAnyPermissionPermanentlyDenied) {
-                                        PermissionUtils.storagePermissionPermanentlyDeniedDialog(
+                                        PermissionUtils.permissionPermanentlyDeniedDialog(
                                             activity!!
                                         )
                                         return
@@ -402,13 +402,13 @@ class JcPlayerView : LinearLayout, View.OnClickListener, SeekBar.OnSeekBarChange
 
                 }
             }
-           /* R.id.startDownload -> {
-                audioPlayerInterface?.downloadInQueue()
-            }
-            R.id.cancelDownload -> {
-                audioPlayerInterface?.downloadStop()
-                //updateUI()
-            }*/
+            /* R.id.startDownload -> {
+                 audioPlayerInterface?.downloadInQueue()
+             }
+             R.id.cancelDownload -> {
+                 audioPlayerInterface?.downloadStop()
+                 //updateUI()
+             }*/
 
 
             else -> { // Repeat case
@@ -421,9 +421,9 @@ class JcPlayerView : LinearLayout, View.OnClickListener, SeekBar.OnSeekBarChange
 
 
     fun playAudioInPlayer() {
-        if (message.url!=null){
-           // RxBus2.publish(AudioPlayEventBus(message, AudioType(message.downloadedLocalPath!!,"",Utils.getDurationOfMedia(context, message.downloadedLocalPath!!)!!.toInt(),0,false)))
-        }else{
+        if (message.url != null) {
+            // RxBus2.publish(AudioPlayEventBus(message, AudioType(message.downloadedLocalPath!!,"",Utils.getDurationOfMedia(context, message.downloadedLocalPath!!)!!.toInt(),0,false)))
+        } else {
             //RxBus2.publish(AudioPlayEventBus(message, message.question!!.audioList?.get(0)!!))
         }
         return
@@ -449,7 +449,7 @@ class JcPlayerView : LinearLayout, View.OnClickListener, SeekBar.OnSeekBarChange
         btnPlay?.run {
             continueAudio()
             showPauseButton()
-           // RxBus2.publish(AudioPlayerPauseEventBus(audioId))
+            // RxBus2.publish(AudioPlayerPauseEventBus(audioId))
             audioId = message.chatId
             if (getCurrentMediaVolume(context) <= 0) {
                 StyleableToast.Builder(context).gravity(Gravity.BOTTOM)

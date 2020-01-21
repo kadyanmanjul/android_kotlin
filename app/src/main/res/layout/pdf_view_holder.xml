@@ -32,7 +32,7 @@
 
                 <androidx.appcompat.widget.AppCompatImageView
                         android:id="@+id/image_view"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="start"
                         android:adjustViewBounds="true"
@@ -40,7 +40,7 @@
                         android:focusable="false"
                         android:maxWidth="@dimen/_400sdp"
                         android:scaleType="centerCrop"
-                        app:srcCompat="@drawable/pdf_thumb" />
+                        android:background="@drawable/video_placeholder" />
 
                 <RelativeLayout
                         android:id="@+id/ll_container"
@@ -49,8 +49,8 @@
                         android:layout_gravity="bottom"
                         android:background="@color/pdf_bg_color"
                         android:orientation="horizontal"
-                        android:paddingTop="@dimen/_5sdp"
-                        android:paddingBottom="@dimen/_5sdp">
+                        android:paddingTop="@dimen/_8sdp"
+                        android:paddingBottom="@dimen/_8sdp">
 
 
                     <TextView
@@ -59,7 +59,7 @@
                             fontPath="fonts/Roboto-Regular.ttf"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_gravity="center"
+                            android:layout_gravity="start|center"
                             android:layout_marginLeft="@dimen/_10sdp"
                             android:layout_marginRight="@dimen/_10sdp"
                             android:drawableStart="@drawable/ic_pdf"
@@ -127,18 +127,18 @@
 
 
             <LinearLayout
+                    android:layout_marginTop="@dimen/_2sdp"
                     android:orientation="horizontal"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
                 <TextView
-                        android:layout_marginStart="@dimen/_12sdp"
                         android:id="@+id/tv_message_detail"
+                        android:layout_marginStart="@dimen/_12sdp"
                         fontPath="fonts/Roboto-Light.ttf"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center|start"
-                        android:text=""
                         android:gravity="start|center"
                         android:textColor="@color/gray_9E"
                         android:textSize="@dimen/font_12"
@@ -148,15 +148,14 @@
                         />
 
                 <TextView
-                        android:layout_marginEnd="@dimen/_12sdp"
                         android:id="@+id/text_message_time"
+                        android:layout_marginEnd="@dimen/_2sdp"
                         fontPath="fonts/Roboto-Light.ttf"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="end"
                         android:gravity="end"
                         android:drawablePadding="@dimen/_4sdp"
-                        android:text=""
                         android:textColor="@color/gray_9E"
                         android:textSize="@dimen/font_12"
                         app:layout_constraintBottom_toBottomOf="parent"

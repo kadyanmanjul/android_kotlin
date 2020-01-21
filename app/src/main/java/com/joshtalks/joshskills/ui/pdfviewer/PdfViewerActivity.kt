@@ -42,7 +42,7 @@ class PdfViewerActivity : BaseActivity() {
         setToolbar()
         showPdf()
 
-        
+
     }
 
     private fun setToolbar() {

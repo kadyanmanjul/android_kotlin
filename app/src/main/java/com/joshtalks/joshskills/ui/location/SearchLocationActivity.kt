@@ -147,9 +147,9 @@ class SearchLocationActivity : BaseActivity(), OnFailureListener,
 
     private fun onPlaceSelected(obj: GoogleSearchLocationObj) {
 
-        if (progress_dialog.isVisible) progress_dialog.visibility=GONE
+        if (progress_dialog.isVisible) progress_dialog.visibility = GONE
 
-        progress_dialog.visibility= VISIBLE
+        progress_dialog.visibility = VISIBLE
 
         val placeFields = listOf(Place.Field.ID, Place.Field.LAT_LNG)
 

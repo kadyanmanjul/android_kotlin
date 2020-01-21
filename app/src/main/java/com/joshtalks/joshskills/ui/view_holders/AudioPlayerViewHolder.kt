@@ -1,6 +1,5 @@
 package com.joshtalks.joshskills.ui.view_holders
 
-//import android.view.View
 import android.os.Handler
 import android.os.Looper
 import android.view.Gravity
@@ -12,7 +11,9 @@ import android.widget.SeekBar
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.fragment.app.FragmentActivity
+import com.crashlytics.android.Crashlytics
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.PermissionUtils
 import com.joshtalks.joshskills.core.Utils
@@ -28,6 +29,7 @@ import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
 import com.joshtalks.joshskills.repository.local.entity.DOWNLOAD_STATUS
 import com.joshtalks.joshskills.repository.local.eventbus.*
+import com.joshtalks.joshskills.ui.chat.ConversationActivity
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
@@ -53,7 +55,7 @@ class AudioPlayerViewHolder(activityRef: WeakReference<FragmentActivity>, messag
     lateinit var audioView: RelativeLayout
 
     @View(R.id.root_view)
-    lateinit var root_view: RelativeLayout
+    lateinit var rootView: RelativeLayout
 
     @View(R.id.audio_view_sent)
     lateinit var audioViewSent: android.view.View
@@ -95,6 +97,7 @@ class AudioPlayerViewHolder(activityRef: WeakReference<FragmentActivity>, messag
 
     @View(R.id.message_time)
     lateinit var messageTimeTV: AppCompatTextView
+
 
     lateinit var audioPlayerViewHolder: AudioPlayerViewHolder
     var duration: Int = 0
@@ -212,8 +215,8 @@ class AudioPlayerViewHolder(activityRef: WeakReference<FragmentActivity>, messag
                     0
                 )
                 params.gravity = Gravity.END
-                root_view.layoutParams = params
-                root_view.setBackgroundResource(R.drawable.balloon_outgoing_normal)
+                rootView.layoutParams = params
+                rootView.setBackgroundResource(R.drawable.balloon_outgoing_normal)
                 audioViewSent.visibility = android.view.View.VISIBLE
             } else {
                 val params = FrameLayout.LayoutParams(
@@ -227,18 +230,19 @@ class AudioPlayerViewHolder(activityRef: WeakReference<FragmentActivity>, messag
                     com.vanniktech.emoji.Utils.dpToPx(getAppContext(), 80f),
                     0
                 )
-                root_view.layoutParams = params
-                root_view.setBackgroundResource(R.drawable.balloon_incoming_normal)
+                rootView.layoutParams = params
+                rootView.setBackgroundResource(R.drawable.balloon_incoming_normal)
                 audioViewReceived.visibility = android.view.View.VISIBLE
             }
 
         }
 
 
-         updateUI()
+        updateUI()
         updateTime(messageTimeTV)
         messageTimeTV.text =
             Utils.getMessageTimeInHours(message.created).toUpperCase(Locale.getDefault())
+
 
         seekBar.setOnSeekBarChangeListener(
             object : SeekBar.OnSeekBarChangeListener {
@@ -254,11 +258,31 @@ class AudioPlayerViewHolder(activityRef: WeakReference<FragmentActivity>, messag
 
                 override fun onStopTrackingTouch(seekBar: SeekBar) {
                     RxBus2.publish(InternalSeekBarProgressEventBus(userSelectedPosition))
-
                 }
             })
-        subscribeAudioPlayer()
+    }
 
+    private fun audioPlayingStatus() {
+        AppObjectController.currentPlayingAudioObject?.run {
+            try {
+                if (this.chatId == message.chatId) {
+                    val ref = activityRef.get() as ConversationActivity
+                    if (ref.isAudioPlaying()) {
+                        subscribeAudioPlayer()
+                        btnPauseImageView.visibility = android.view.View.VISIBLE
+                        btnPlayImageView.visibility = android.view.View.GONE
+                    } else {
+                        btnPauseImageView.visibility = android.view.View.GONE
+                        btnPlayImageView.visibility = android.view.View.VISIBLE
+                        seekBar.progress = 0
+                    }
+
+                }
+            } catch (ex: Exception) {
+                Crashlytics.logException(ex)
+                ex.printStackTrace()
+            }
+        }
     }
 
     private fun updateUI() {
@@ -279,6 +303,7 @@ class AudioPlayerViewHolder(activityRef: WeakReference<FragmentActivity>, messag
                         mediaNotDownloaded()
                     }
                 }
+
             } else {
                 if (message.downloadStatus === DOWNLOAD_STATUS.DOWNLOADED || message.downloadStatus === DOWNLOAD_STATUS.UPLOADED) {
                     duration = Utils.getDurationOfMedia(
@@ -331,7 +356,7 @@ class AudioPlayerViewHolder(activityRef: WeakReference<FragmentActivity>, messag
         btnPauseImageView.visibility = android.view.View.INVISIBLE
         seekBarPlaceHolder.visibility = android.view.View.INVISIBLE
         downloadContainer.visibility = android.view.View.INVISIBLE
-
+        audioPlayingStatus()
     }
 
     fun downloadStart(url: String) {
@@ -369,7 +394,7 @@ class AudioPlayerViewHolder(activityRef: WeakReference<FragmentActivity>, messag
 
                             }
                             if (report.isAnyPermissionPermanentlyDenied) {
-                                PermissionUtils.storagePermissionPermanentlyDeniedDialog(
+                                PermissionUtils.permissionPermanentlyDeniedDialog(
                                     activityRef.get()!!
                                 )
                                 return
@@ -394,6 +419,8 @@ class AudioPlayerViewHolder(activityRef: WeakReference<FragmentActivity>, messag
         RxBus2.publish(AudioPlayEventBus(PlaybackInfoListener.State.PAUSED, message, null))
         btnPauseImageView.visibility = android.view.View.GONE
         btnPlayImageView.visibility = android.view.View.VISIBLE
+        txtCurrentDurationTV.text = PlayerUtil.toTimeSongString(duration)
+
     }
 
     @Click(R.id.cancel_download_iv)
@@ -414,6 +441,8 @@ class AudioPlayerViewHolder(activityRef: WeakReference<FragmentActivity>, messag
 
 
     fun playAudioInPlayer() {
+        btnPlayImageView.visibility = android.view.View.INVISIBLE
+        btnPauseImageView.visibility = android.view.View.VISIBLE
         if (message.url != null) {
             val audioObject = AudioType(
                 message.url!!,
@@ -442,6 +471,7 @@ class AudioPlayerViewHolder(activityRef: WeakReference<FragmentActivity>, messag
                 )
             )
         }
+        subscribeAudioPlayer()
     }
 
 
@@ -458,40 +488,12 @@ class AudioPlayerViewHolder(activityRef: WeakReference<FragmentActivity>, messag
                     if (it.cId == message.chatId) {
                         Handler(Looper.getMainLooper()).post {
                             seekBar.progress = it.progress
+                            txtCurrentDurationTV.text = PlayerUtil.toTimeSongString(it.progress)
                         }
                     }
                 }, {
                     it.printStackTrace()
                 })
         )
-        /*
-        compositeDisposable.add(
-            RxBus2.listen(AudioPlayerPauseEventBus::class.java)
-                .subscribeOn(Schedulers.computation())
-                .subscribe({
-                    if (it.cId == message.chatId) {
-                        if (it.event == PlaybackInfoListener.State.STOPPED) {
-                            Handler(Looper.getMainLooper()).post {
-                                btnPlayImageView.visibility = android.view.View.VISIBLE
-                                btnPauseImageView.visibility = android.view.View.INVISIBLE
-                                seekBar.progress = 0
-                            }
-                            compositeDisposable.clear()
-                        } else {
-                            Handler(Looper.getMainLooper()).post {
-                                btnPlayImageView.visibility = android.view.View.INVISIBLE
-                                btnPauseImageView.visibility = android.view.View.VISIBLE
-                            }
-                        }
-
-                    }
-
-                }, {
-                    it.printStackTrace()
-                })
-        )
-
-*/
-
     }
 }

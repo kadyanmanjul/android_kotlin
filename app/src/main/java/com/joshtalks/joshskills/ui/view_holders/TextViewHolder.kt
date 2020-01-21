@@ -37,9 +37,6 @@ class TextViewHolder(activityRef: WeakReference<FragmentActivity>, message: Chat
     @View(R.id.text_message_time)
     lateinit var text_message_time: AppCompatTextView
 
-    @View(R.id.message_number)
-    lateinit var messageNumber: AppCompatTextView
-
 
     @View(R.id.root_view)
     lateinit var root_view: FrameLayout
@@ -65,11 +62,8 @@ class TextViewHolder(activityRef: WeakReference<FragmentActivity>, message: Chat
             updateView(it, root_view, root_sub_view, message_view)
         }
 
-
         if (message.text.isNullOrEmpty()) {
-
             message.question?.run {
-
                 this.qText?.let {
                     text_message_body.text =
                         HtmlCompat.fromHtml(it, HtmlCompat.FROM_HTML_MODE_LEGACY)
@@ -81,14 +75,6 @@ class TextViewHolder(activityRef: WeakReference<FragmentActivity>, message: Chat
                             HtmlCompat.fromHtml(text, HtmlCompat.FROM_HTML_MODE_LEGACY)
                     }
                 }
-                if (this.questionNumber.isNullOrEmpty().not() && this.totalQuestionOfDay.isNullOrEmpty().not()) {
-                    messageNumber.text = activityRef.get()?.getString(
-                        R.string.question_count,
-                        this.questionNumber,
-                        this.totalQuestionOfDay
-                    )
-                }
-
             }
 
 

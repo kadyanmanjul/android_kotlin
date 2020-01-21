@@ -42,8 +42,10 @@ abstract class AppDatabase : RoomDatabase() {
                             context.applicationContext,
                             AppDatabase::class.java, DATABASE_NAME
                         )
-                            .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4,MIGRATION_4_5,
-                                MIGRATION_5_6)
+                            .addMigrations(
+                                MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5,
+                                MIGRATION_5_6
+                            )
                             .fallbackToDestructiveMigration()
                             .addCallback(sRoomDatabaseCallback)
                             .build()
@@ -84,9 +86,7 @@ abstract class AppDatabase : RoomDatabase() {
         }
         private val MIGRATION_5_6: Migration = object : Migration(5, 6) {
             override fun migrate(database: SupportSQLiteDatabase) {
-                database.execSQL("ALTER TABLE question_table ADD COLUMN question_no TEXT")
-                database.execSQL("ALTER TABLE question_table ADD COLUMN total_question_of_day TEXT")
-
+                database.execSQL("ALTER TABLE question_table ADD COLUMN question_id INTEGER")
             }
         }
 
@@ -181,7 +181,7 @@ class MessageDeliveryTypeConverter {
 
 class MessageStatusTypeConverters {
     @TypeConverter
-    fun fromString(value: String?): MESSAGE_STATUS ?{
+    fun fromString(value: String?): MESSAGE_STATUS? {
         val matType = object : TypeToken<MESSAGE_STATUS>() {}.type
         return AppObjectController.gsonMapper.fromJson<MESSAGE_STATUS>(
             value?.replace("\"", EMPTY) ?: MESSAGE_STATUS.SEEN_BY_SERVER.name, matType

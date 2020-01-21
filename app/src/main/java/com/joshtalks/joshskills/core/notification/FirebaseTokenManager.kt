@@ -27,7 +27,7 @@ object FCMTokenManager {
                     token
                 )
             }
-        }catch (ex :Exception){
+        } catch (ex: Exception) {
             ex.printStackTrace()
         }
 
@@ -37,10 +37,11 @@ object FCMTokenManager {
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 val data = mapOf("registration_id" to token, "active" to "true")
-                val token=PrefManager.getLongValue(FCM_ID).toString()
-                val response: Any = AppObjectController.signUpNetworkService.updateFCMToken(token,data).await()
+                val token = PrefManager.getLongValue(FCM_ID).toString()
+                val response: Any =
+                    AppObjectController.signUpNetworkService.updateFCMToken(token, data).await()
 
-            }catch (ex:Exception){
+            } catch (ex: Exception) {
                 ex.printStackTrace()
             }
         }
@@ -58,7 +59,7 @@ object FCMTokenManager {
                     "type" to "android"
                 )
                 if (Mentor.getInstance().hasId()) {
-                    data["user_id"]=Mentor.getInstance().getId()
+                    data["user_id"] = Mentor.getInstance().getId()
 
                 }
                 val response: Any =

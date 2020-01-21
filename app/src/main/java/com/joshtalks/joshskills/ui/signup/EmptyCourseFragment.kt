@@ -42,7 +42,8 @@ class EmptyCourseFragment : Fragment() {
         viewModel.signUpStatus.postValue(SignUpStepStatus.SignUpWithoutRegister)
 
     }
-    fun reLogin(){
+
+    fun reLogin() {
         viewModel.signUpStatus.postValue(SignUpStepStatus.SignUpStepFirst)
     }
 

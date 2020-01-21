@@ -71,6 +71,10 @@ public class FlipProgressDialog extends DialogFragment {
     private boolean canceledOnTouchOutside = true;
 
 
+    public FlipProgressDialog() {
+
+    }
+
     public void setImage(ImageView image) {
         this.image = image;
     }
@@ -138,11 +142,6 @@ public class FlipProgressDialog extends DialogFragment {
     public void setCanceledOnTouchOutside(boolean canceledOnTouchOutside) {
         this.canceledOnTouchOutside = canceledOnTouchOutside;
     }
-
-    public FlipProgressDialog() {
-
-    }
-
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -240,7 +239,7 @@ public class FlipProgressDialog extends DialogFragment {
             layout.addView(image, 0, params);
 
         } catch (Exception e) {
-           // e.printStackTrace();
+            // e.printStackTrace();
             Log.e("image null error", "Try to set imageList!");
         }
 

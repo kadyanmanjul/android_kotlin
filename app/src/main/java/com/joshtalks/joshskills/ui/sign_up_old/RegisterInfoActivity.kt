@@ -32,19 +32,23 @@ class RegisterInfoActivity : BaseActivity() {
         AppAnalytics.create(AnalyticsEvent.COURSE_FAILURE_SCREEN.NAME).push()
         layout.phoneNumberEt.prefix = "+91"
 
-        layout.tv2.text = AppObjectController.getFirebaseRemoteConfig().getString("self_register_text")
+        layout.tv2.text =
+            AppObjectController.getFirebaseRemoteConfig().getString("self_register_text")
 
 
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                val tm =this@RegisterInfoActivity.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
+                val tm =
+                    this@RegisterInfoActivity.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
                 val countryCodeValue = tm.networkCountryIso
                 val json: String =
                     applicationContext.assets.open("country_details.json").bufferedReader()
                         .use { it.readText() }
                 val countryList = AppObjectController.gsonMapper.fromJson<List<CountryDetail>>(json,
-                    object : TypeToken<List<CountryDetail>>() {}.type)
-                val country= countryList.find { it.code.equals(countryCodeValue,ignoreCase = true) }
+                    object : TypeToken<List<CountryDetail>>() {}.type
+                )
+                val country =
+                    countryList.find { it.code.equals(countryCodeValue, ignoreCase = true) }
                 layout.phoneNumberEt.prefix = country?.dialCode!!
 
             } catch (ex: Exception) {

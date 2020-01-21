@@ -17,4 +17,4 @@ data class TypeOfHelpModel(
     val moc: List<String>,
     @SerializedName("type")
     val type: String
-):Serializable
+) : Serializable

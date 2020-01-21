@@ -41,6 +41,37 @@ public class AppAnalytics {
         return new AppAnalytics(title);
     }
 
+    public static void updateUser() {
+        init();
+        updateCleverTapUser();
+        updateFabricUser();
+    }
+
+    private static void updateCleverTapUser() {
+        User user = User.getInstance();
+        Mentor mentor = Mentor.getInstance();
+        HashMap<String, Object> profileUpdate = new HashMap<>();
+        profileUpdate.put("Name", user.getFirstName());
+        profileUpdate.put("Identity", mentor.getId());
+        profileUpdate.put("Phone", user.getPhoneNumber());
+        profileUpdate.put("MentorIdentity", mentor.getId());
+        profileUpdate.put("Photo", user.getPhoto());
+        profileUpdate.put("date_of_birth", user.getDateOfBirth());
+        profileUpdate.put("Username", user.getUsername());
+        profileUpdate.put("User Type", user.getUserType());
+        cleverTapAnalytics.pushProfile(profileUpdate);
+
+    }
+
+    private static void updateFabricUser() {
+        User user = User.getInstance();
+        Mentor mentor = Mentor.getInstance();
+        Crashlytics.setUserIdentifier(user.getId());
+        Crashlytics.setUserName(user.getFirstName());
+        Crashlytics.setString("cleverId", cleverTapAnalytics.getCleverTapID());
+
+    }
+
     public AppAnalytics addParam(String key, String value) {
         parameters.put(key, value);
         return this;
@@ -75,38 +106,6 @@ public class AppAnalytics {
         return formatted.toString();
     }
 
-    public static void updateUser() {
-        init();
-        updateCleverTapUser();
-        updateFabricUser();
-    }
-
-    private static void updateCleverTapUser() {
-        User user = User.getInstance();
-        Mentor mentor = Mentor.getInstance();
-        HashMap<String, Object> profileUpdate = new HashMap<>();
-        profileUpdate.put("Name", user.getFirstName());
-        profileUpdate.put("Identity", mentor.getId());
-        profileUpdate.put("Phone",user.getPhoneNumber());
-        profileUpdate.put("MentorIdentity", mentor.getId());
-        profileUpdate.put("Photo", user.getPhoto());
-        profileUpdate.put("date_of_birth", user.getDateOfBirth());
-        profileUpdate.put("Username", user.getUsername());
-        profileUpdate.put("User Type", user.getUserType());
-        cleverTapAnalytics.pushProfile(profileUpdate);
-
-    }
-
-    private static void updateFabricUser() {
-        User user = User.getInstance();
-        Mentor mentor = Mentor.getInstance();
-        Crashlytics.setUserIdentifier(user.getId());
-        Crashlytics.setUserName(user.getFirstName());
-        Crashlytics.setString("cleverId", cleverTapAnalytics.getCleverTapID());
-
-    }
-
-
     public void push() {
 
         if (BuildConfig.DEBUG)
@@ -132,7 +131,7 @@ public class AppAnalytics {
     }
 
     private void pushToCleverTap() {
-        cleverTapAnalytics.pushEvent(event,parameters);
+        cleverTapAnalytics.pushEvent(event, parameters);
     }
 
 

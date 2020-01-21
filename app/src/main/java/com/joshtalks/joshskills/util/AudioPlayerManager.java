@@ -55,14 +55,14 @@ public class AudioPlayerManager {
             } else if (exoPlayer.getPlaybackState() == Player.STATE_ENDED && exoPlayer.getPlayWhenReady()) {
                 exoPlayer.setPlayWhenReady(false);
                 exoPlayer.seekTo(0);
-               // EngagementNetworkHelper.engageAudioApi(new AudioEngage(new ArrayList<>(), audioId, exoPlayer.getDuration()));
+                // EngagementNetworkHelper.engageAudioApi(new AudioEngage(new ArrayList<>(), audioId, exoPlayer.getDuration()));
                 return;
             } else {
 
             }
         } else {
-            if (LAST_ID!=null) {
-               // EngagementNetworkHelper.engageAudioApi(new AudioEngage(new ArrayList<>(), LAST_ID, exoPlayer.getCurrentPosition()));
+            if (LAST_ID != null) {
+                // EngagementNetworkHelper.engageAudioApi(new AudioEngage(new ArrayList<>(), LAST_ID, exoPlayer.getCurrentPosition()));
             }
             exoPlayer.seekTo(0);
             exoPlayer.setPlayWhenReady(false);
@@ -73,7 +73,7 @@ public class AudioPlayerManager {
             }
             weakReferenceArrayList.clear();
         }
-        LAST_ID=audioId;
+        LAST_ID = audioId;
         weakReferenceArrayList.add(new WeakReference<>(eventListener));
         AUDIO_TAG = uri.getPathSegments().get(uri.getPathSegments().size() - 1);
         DefaultDataSourceFactory dataSourceFactory = new DefaultDataSourceFactory(context, Util.getUserAgent(context, "exoplayer2example"), null);

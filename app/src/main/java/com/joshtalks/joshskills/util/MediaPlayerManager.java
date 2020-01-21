@@ -6,6 +6,7 @@ import java.io.IOException;
 
 public class MediaPlayerManager {
     private static MediaPlayerManager manager;
+    private MediaPlayer mediaPlayer;
 
     public static MediaPlayerManager getInstance() {
         if (manager == null) {
@@ -13,9 +14,6 @@ public class MediaPlayerManager {
         }
         return manager;
     }
-
-    private MediaPlayer mediaPlayer;
-
 
     public void play(String src, MediaPlayer.OnCompletionListener completionListener, MediaPlayer.OnErrorListener errorListener) throws IOException {
         if (mediaPlayer != null) {

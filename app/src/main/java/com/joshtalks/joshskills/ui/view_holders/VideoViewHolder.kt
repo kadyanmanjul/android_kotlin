@@ -14,7 +14,6 @@ import androidx.fragment.app.FragmentActivity
 import com.google.android.exoplayer2.offline.Download
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
-import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.core.service.video_download.VideoDownloadController
@@ -80,6 +79,7 @@ class VideoViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
     @View(R.id.progress_dialog)
     lateinit var progressDialog: ProgressWheel
 
+
     lateinit var videoViewHolder: VideoViewHolder
 
     private val compositeDisposable = CompositeDisposable()
@@ -127,10 +127,11 @@ class VideoViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
             }
         } else {
             message.question?.videoList?.getOrNull(0)?.let { videoObj ->
-                if (videoObj.video_image_url.isEmpty()){
-                    imageView.background =ContextCompat.getDrawable(activityRef.get()!!,R.drawable.video_placeholder)
-                }else{
-                    setImageView(imageView,videoObj.video_image_url)
+                if (videoObj.video_image_url.isEmpty()) {
+                    imageView.background =
+                        ContextCompat.getDrawable(activityRef.get()!!, R.drawable.video_placeholder)
+                } else {
+                    setImageView(imageView, videoObj.video_image_url)
                 }
                 when (message.downloadStatus) {
                     DOWNLOAD_STATUS.DOWNLOADED -> {
@@ -252,7 +253,7 @@ class VideoViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
 
                             }
                             if (report.isAnyPermissionPermanentlyDenied) {
-                                PermissionUtils.storagePermissionPermanentlyDeniedDialog(
+                                PermissionUtils.permissionPermanentlyDeniedDialog(
                                     activityRef.get()!!
                                 )
                                 return
@@ -276,8 +277,8 @@ class VideoViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
         if (message.url != null) {
             if (message.downloadStatus == DOWNLOAD_STATUS.DOWNLOADED) {
                 RxBus2.publish(PlayVideoEvent(message))
-            }else if (AppDirectory.isFileExist(message.downloadedLocalPath).not()){
-                Log.e("file not exist","file not exist")
+            } else if (AppDirectory.isFileExist(message.downloadedLocalPath).not()) {
+                Log.e("file not exist", "file not exist")
             }
         } else {
             message.question?.videoList?.getOrNull(0)?.let { _ ->

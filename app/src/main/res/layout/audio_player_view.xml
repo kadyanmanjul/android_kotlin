@@ -24,8 +24,7 @@
             android:layout_toEndOf="@+id/audio_view_sent"
             android:id="@+id/audio_view"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/_2sdp">
+            android:layout_height="wrap_content">
 
         <FrameLayout
                 android:id="@+id/fl_controller"
@@ -34,7 +33,7 @@
                 android:layout_alignParentStart="true"
                 android:layout_centerHorizontal="true"
                 android:layout_centerVertical="true"
-                android:minWidth="@dimen/_48sdp">
+                android:minWidth="@dimen/_36sdp">
 
             <FrameLayout
                     android:id="@+id/download_container"
@@ -96,10 +95,10 @@
                     app:srcCompat="@drawable/ic_play_24dp" />
 
             <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_gravity="center"
                     android:id="@+id/btnPause"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
                     android:background="@null"
                     android:contentDescription="@string/play_button_description"
                     android:visibility="invisible"
@@ -138,7 +137,6 @@
 
         </FrameLayout>
 
-
         <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/txtCurrentDuration"
                 fontPath="fonts/Roboto-Regular.ttf"
@@ -147,7 +145,6 @@
                 android:layout_below="@+id/fl_seek_bar"
                 android:layout_alignStart="@id/fl_seek_bar"
                 android:layout_marginTop="@dimen/_20sdp"
-                android:text=""
                 android:textAlignment="center"
                 android:textColor="@color/gray_9E"
                 android:textSize="@dimen/font_11"

@@ -7,7 +7,7 @@ import java.util.Date;
 
 /**
  * DateTimeStyle
- *
+ * <p>
  * Defined style for parsing date into string used by {@link DateTimeUtils#formatWithStyle(Date, DateTimeStyle)}
  * and also {@link DateTimeUtils#getTimeAgo(Context, Date, DateTimeStyle)}
  *
@@ -30,7 +30,7 @@ public enum DateTimeStyle {
     /**
      * Style short e.g 06/13/17
      */
-     SHORT,
+    SHORT,
     /**
      * Style for ago time e.g 3h ago
      */

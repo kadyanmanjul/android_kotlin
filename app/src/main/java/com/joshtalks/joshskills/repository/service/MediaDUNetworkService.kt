@@ -17,6 +17,6 @@ interface MediaDUNetworkService {
 
     @Multipart
     @POST
-    fun uploadMediaAsync(@Url url: String, @PartMap messageObject:  Map<String, RequestBody>, @Part file: MultipartBody.Part): Call<ResponseBody>
+    fun uploadMediaAsync(@Url url: String, @PartMap messageObject: Map<String, RequestBody>, @Part file: MultipartBody.Part): Call<ResponseBody>
 
 }

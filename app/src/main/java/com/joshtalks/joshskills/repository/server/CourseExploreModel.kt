@@ -23,13 +23,13 @@ data class CourseExploreModel(
     @SerializedName("test_name")
     val testName: String,
     @SerializedName("thumbnail")
-    val imageUrl: String,
+    var imageUrl: String,
     @SerializedName("course_name")
     var courseName: String,
     @SerializedName("course_duration")
     val courseDuration: String,
     @SerializedName("course_icon")
-    val courseIcon: String
+    var courseIcon: String
 
 ) : Serializable {
 

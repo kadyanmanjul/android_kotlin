@@ -23,8 +23,8 @@ import jp.wasabeef.glide.transformations.BlurTransformation
 import jp.wasabeef.glide.transformations.CropTransformation
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation
 
-const val IMAGE_SIZE=400
-const val ROUND_CORNER=8
+const val IMAGE_SIZE = 400
+const val ROUND_CORNER = 8
 
 abstract class BaseCell {
     fun getUserId() = Mentor.getInstance().getId()
@@ -40,9 +40,17 @@ abstract class BaseCell {
     fun setBlurImageInImageView(iv: AppCompatImageView?, url: String, callback: Runnable? = null) {
         if (iv != null) {
             val multi = MultiTransformation<Bitmap>(
-               BlurTransformation(25),
-                CropTransformation(Utils.dpToPx(IMAGE_SIZE), Utils.dpToPx(IMAGE_SIZE), CropTransformation.CropType.CENTER),
-                RoundedCornersTransformation(Utils.dpToPx(ROUND_CORNER), 0, RoundedCornersTransformation.CornerType.ALL)
+                BlurTransformation(25),
+                CropTransformation(
+                    Utils.dpToPx(IMAGE_SIZE),
+                    Utils.dpToPx(IMAGE_SIZE),
+                    CropTransformation.CropType.CENTER
+                ),
+                RoundedCornersTransformation(
+                    Utils.dpToPx(ROUND_CORNER),
+                    0,
+                    RoundedCornersTransformation.CornerType.ALL
+                )
             )
             Glide.with(getAppContext())
                 .load(url)
@@ -84,8 +92,16 @@ abstract class BaseCell {
     fun setImageInImageView(iv: AppCompatImageView?, url: String, callback: Runnable? = null) {
         if (iv != null) {
             val multi = MultiTransformation<Bitmap>(
-                CropTransformation(Utils.dpToPx(IMAGE_SIZE), Utils.dpToPx(IMAGE_SIZE), CropTransformation.CropType.CENTER),
-                RoundedCornersTransformation(Utils.dpToPx(ROUND_CORNER), 0, RoundedCornersTransformation.CornerType.ALL)
+                CropTransformation(
+                    Utils.dpToPx(IMAGE_SIZE),
+                    Utils.dpToPx(IMAGE_SIZE),
+                    CropTransformation.CropType.CENTER
+                ),
+                RoundedCornersTransformation(
+                    Utils.dpToPx(ROUND_CORNER),
+                    0,
+                    RoundedCornersTransformation.CornerType.ALL
+                )
             )
 
             Glide.with(getAppContext())
@@ -129,8 +145,16 @@ abstract class BaseCell {
     fun setVideoImageView(iv: AppCompatImageView, url: Int, callback: Runnable? = null) {
 
         val multi = MultiTransformation<Bitmap>(
-            CropTransformation(Utils.dpToPx(IMAGE_SIZE), Utils.dpToPx(IMAGE_SIZE), CropTransformation.CropType.CENTER),
-            RoundedCornersTransformation(Utils.dpToPx(ROUND_CORNER), 0, RoundedCornersTransformation.CornerType.ALL)
+            CropTransformation(
+                Utils.dpToPx(IMAGE_SIZE),
+                Utils.dpToPx(IMAGE_SIZE),
+                CropTransformation.CropType.CENTER
+            ),
+            RoundedCornersTransformation(
+                Utils.dpToPx(ROUND_CORNER),
+                0,
+                RoundedCornersTransformation.CornerType.ALL
+            )
         )
         Glide.with(getAppContext())
             .load(url)
@@ -167,7 +191,7 @@ abstract class BaseCell {
 
     }
 
-    fun setUrlInImageView(iv: AppCompatImageView?, url: String){
+    fun setUrlInImageView(iv: AppCompatImageView?, url: String) {
         iv?.let {
             Glide.with(getAppContext())
                 .load(url)
@@ -177,11 +201,12 @@ abstract class BaseCell {
                     WebpDrawableTransformation(CircleCrop())
                 )
                 .thumbnail(0.1f)
-                .override(200,200)
+                .override(200, 200)
                 .into(it)
         }
 
     }
+
     fun setImageViewImageNotFound(iv: AppCompatImageView) {
         Glide.with(getAppContext())
             .load(R.drawable.ic_file_error)
@@ -194,11 +219,20 @@ abstract class BaseCell {
             .into(iv)
 
     }
+
     fun setImageInImageView(iv: ImageView?, url: String) {
         if (iv != null) {
             val multi = MultiTransformation<Bitmap>(
-                CropTransformation(Utils.dpToPx(IMAGE_SIZE), Utils.dpToPx(IMAGE_SIZE), CropTransformation.CropType.CENTER),
-                RoundedCornersTransformation(Utils.dpToPx(ROUND_CORNER), 0, RoundedCornersTransformation.CornerType.ALL)
+                CropTransformation(
+                    Utils.dpToPx(IMAGE_SIZE),
+                    Utils.dpToPx(IMAGE_SIZE),
+                    CropTransformation.CropType.CENTER
+                ),
+                RoundedCornersTransformation(
+                    Utils.dpToPx(ROUND_CORNER),
+                    0,
+                    RoundedCornersTransformation.CornerType.ALL
+                )
             )
 
             Glide.with(getAppContext())

@@ -43,16 +43,10 @@ import com.joshtalks.joshskills.core.service.video_download.VideoDownloadControl
 import static android.content.pm.ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE;
 
 public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener, View.OnClickListener {
-    enum ScreenOrientation {
-        PORTRAIT,
-        LANDSCAPE
-    }
-
     public static final int STATE_IDLE = 1;
     public static final int STATE_BUFFERING = 2;
     public static final int STATE_READY = 3;
     public static final int STATE_ENDED = 4;
-
     private Uri uri;
     private long lastPosition = 0;
     private long currentPosition = 0;
@@ -60,20 +54,14 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
     private ImageView fullScreenToggle;
     private OrientationEventListener mOrientationListener;
     private ScreenOrientation screenOrientation = ScreenOrientation.PORTRAIT;
-
-
     private SimpleExoPlayer player;
     private DefaultTrackSelector trackSelector;
     private TrackGroupArray lastSeenTrackGroupArray;
-
     private boolean startAutoPlay;
     private int startWindow;
     private GestureDetector gestureDetector;
     private PlayerControlViewVisibilityListener playerControlViewVisibilityListener;
-
-
     private Handler timeHandler = new Handler();
-
     private Runnable timeRunnable = new Runnable() {
         @Override
         public void run() {
@@ -110,12 +98,23 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
         init();
     }
 
-
     public JoshVideoPlayer(Context context) {
         super(context);
         init();
     }
 
+    public static AppCompatActivity getActivityFromView(View view) {
+        if (null != view) {
+            Context context = view.getContext();
+            while (context instanceof ContextWrapper) {
+                if (context instanceof AppCompatActivity) {
+                    return (AppCompatActivity) context;
+                }
+                context = ((ContextWrapper) context).getBaseContext();
+            }
+        }
+        return null;
+    }
 
     public void init() {
         fullScreenToggle = findViewById(R.id.ivFullScreenToggle);
@@ -360,19 +359,6 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
         setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FIXED_WIDTH);
     }
 
-    public static AppCompatActivity getActivityFromView(View view) {
-        if (null != view) {
-            Context context = view.getContext();
-            while (context instanceof ContextWrapper) {
-                if (context instanceof AppCompatActivity) {
-                    return (AppCompatActivity) context;
-                }
-                context = ((ContextWrapper) context).getBaseContext();
-            }
-        }
-        return null;
-    }
-
     public void setGestureDetector(GestureDetector gestureDetector) {
         this.gestureDetector = gestureDetector;
     }
@@ -399,6 +385,16 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
             gestureDetector.onTouchEvent(ev);
         }
         return super.onTouchEvent(ev);
+    }
+
+    enum ScreenOrientation {
+        PORTRAIT,
+        LANDSCAPE
+    }
+
+    public interface PlayerControlViewVisibilityListener {
+        void onVisibilityChange(int visibility);
+
     }
 
     private class PlayerEventListener implements Player.EventListener {
@@ -435,11 +431,6 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
                 e.printStackTrace();
             }
         }
-    }
-
-    public interface PlayerControlViewVisibilityListener {
-        void onVisibilityChange(int visibility);
-
     }
 
 }

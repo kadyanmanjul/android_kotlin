@@ -50,5 +50,7 @@
 
     <color name="audio_card_color">#F7F7F7</color>
     <color name="controls_panel_stroke">#e6e6e6</color>
+    <color name="success_trans">#444CAF50</color>
+
 
 </resources>

@@ -16,6 +16,7 @@ public class InternationalPhoneTextWatcher implements TextWatcher {
 
     private static final String TAG = "Int'l Phone TextWatcher";
     PhoneNumberUtil phoneNumberUtil;
+    Editable lastFormatted = null;
     /**
      * Indicates the change was caused by ourselves.
      */
@@ -26,7 +27,6 @@ public class InternationalPhoneTextWatcher implements TextWatcher {
     private boolean mStopFormatting;
     private AsYouTypeFormatter mFormatter;
     private String countryNameCode;
-    Editable lastFormatted = null;
     private int countryPhoneCode;
 
     //when country is changed, we update the number.

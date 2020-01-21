@@ -85,5 +85,6 @@ public interface PlayerInterface {
     void onResumeActivity();
 
     InboxEntity getConversation();
+
     void clearNotification();
 }

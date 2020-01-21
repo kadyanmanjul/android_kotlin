@@ -45,14 +45,13 @@
 
                 <androidx.appcompat.widget.AppCompatImageView
                         android:id="@+id/image_view"
-                        android:background="@drawable/video_placeholder"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="start"
                         android:adjustViewBounds="true"
+                        android:background="@drawable/video_placeholder"
                         android:clickable="false"
-                        app:radius="24"
-                        />
+                        app:radius="24" />
 
                 <androidx.appcompat.widget.AppCompatImageView
                         android:id="@+id/play_icon"
@@ -104,11 +103,10 @@
                             app:matProg_barWidth="@dimen/_2sdp"
                             wheel:matProg_barColor="@color/white"
                             wheel:matProg_fillRadius="true"
+                            wheel:matProg_linearProgress="false"
                             wheel:matProg_progressIndeterminate="true"
                             wheel:matProg_rimColor="#3300ACFF"
-                            wheel:matProg_linearProgress="false"
-                            wheel:matProg_rimWidth="@dimen/_2sdp"
-                            />
+                            wheel:matProg_rimWidth="@dimen/_2sdp" />
 
 
                     <androidx.appcompat.widget.AppCompatImageView
@@ -141,14 +139,14 @@
                             android:src="@drawable/bg_textview" />
 
                     <TextView
-                            android:paddingBottom="@dimen/_5sdp"
-                            android:paddingEnd="@dimen/_10sdp"
                             android:id="@+id/text_message_time"
                             fontPath="fonts/Roboto-Light.ttf"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="bottom|end"
                             android:drawablePadding="@dimen/_4sdp"
+                            android:paddingEnd="@dimen/_10sdp"
+                            android:paddingBottom="@dimen/_5sdp"
                             android:textColor="@color/white"
                             android:textSize="@dimen/font_12" />
 
@@ -175,18 +173,18 @@
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintStart_toStartOf="parent" />
 
-           <!-- <TextView
-                    android:id="@+id/text_message_time"
-                    fontPath="fonts/Roboto-Light.ttf"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="bottom|end"
-                    android:drawablePadding="@dimen/_4sdp"
-                    android:text=""
-                    android:textColor="@color/gray_9E"
-                    android:textSize="@dimen/font_12"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent" />-->
+            <!-- <TextView
+                     android:id="@+id/text_message_time"
+                     fontPath="fonts/Roboto-Light.ttf"
+                     android:layout_width="wrap_content"
+                     android:layout_height="wrap_content"
+                     android:layout_gravity="bottom|end"
+                     android:drawablePadding="@dimen/_4sdp"
+                     android:text=""
+                     android:textColor="@color/gray_9E"
+                     android:textSize="@dimen/font_12"
+                     app:layout_constraintBottom_toBottomOf="parent"
+                     app:layout_constraintEnd_toEndOf="parent" />-->
         </LinearLayout>
     </FrameLayout>
 </FrameLayout>

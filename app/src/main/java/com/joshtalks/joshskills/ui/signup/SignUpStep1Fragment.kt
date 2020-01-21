@@ -49,6 +49,7 @@ class SignUpStep1Fragment : Fragment() {
             ?: throw Exception("Invalid Activity")
 
     }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -169,7 +170,8 @@ class SignUpStep1Fragment : Fragment() {
         try {
             signUpStep1FragmentBinding.btnLogin.isEnabled = true
             signUpStep1FragmentBinding.btnLogin.hideProgress(getString(R.string.next))
-        }catch (e:Exception){}
+        } catch (e: Exception) {
+        }
     }
 
     private fun requestHint() {

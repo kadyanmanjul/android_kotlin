@@ -13,17 +13,17 @@ import com.joshtalks.joshskills.core.custom_ui.audioplayer.general.Origin
  * Jesus loves you.
  */
 data class JcAudio constructor(
-        var title: String,
-        var position: Int? = -1,
-        val path: String,
-        val origin: Origin
+    var title: String,
+    var position: Int? = -1,
+    val path: String,
+    val origin: Origin
 ) : Parcelable {
 
     constructor(source: Parcel) : this(
         source.readString()!!,
-            source.readValue(Int::class.java.classLoader) as Int?,
+        source.readValue(Int::class.java.classLoader) as Int?,
         source.readString()!!,
-            Origin.valueOf(source.readString()!!)
+        Origin.valueOf(source.readString()!!)
     )
 
     override fun describeContents() = 0

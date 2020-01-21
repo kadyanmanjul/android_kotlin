@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName
 
 data class AmazonPolicyResponse(
     @SerializedName("fields")
-    val fields: HashMap<String,String>,
+    val fields: HashMap<String, String>,
     @SerializedName("url")
     val url: String
 )

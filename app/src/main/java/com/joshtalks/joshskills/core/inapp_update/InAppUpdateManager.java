@@ -32,30 +32,10 @@ import com.google.android.play.core.tasks.Task;
  */
 public class InAppUpdateManager implements LifecycleObserver {
 
-    /**
-     * Callback methods where update events are reported.
-     */
-    public interface InAppUpdateHandler {
-        /**
-         * On update error.
-         *
-         * @param code  the code
-         * @param error the error
-         */
-        void onInAppUpdateError(int code, Throwable error);
-
-
-        /**
-         * Monitoring the update state of the flexible downloads.
-         * For immediate updates, Google Play takes care of downloading and installing the update for you.
-         *
-         * @param status the status
-         */
-        void onInAppUpdateStatus(InAppUpdateStatus status);
-    }
-
     // region Declarations
     private static final String LOG_TAG = "InAppUpdateManager";
+    //region Constructor
+    private static InAppUpdateManager instance;
     private AppCompatActivity activity;
     private AppUpdateManager appUpdateManager;
     private int requestCode = 64534;
@@ -83,8 +63,20 @@ public class InAppUpdateManager implements LifecycleObserver {
     };
     //endregion
 
-    //region Constructor
-    private static InAppUpdateManager instance;
+    private InAppUpdateManager(AppCompatActivity activity) {
+        this.activity = activity;
+        setupSnackbar();
+        activity.getLifecycle().addObserver(this);
+
+        init();
+    }
+
+    private InAppUpdateManager(AppCompatActivity activity, int requestCode) {
+        this.activity = activity;
+        this.requestCode = requestCode;
+
+        init();
+    }
 
     /**
      * Creates a builder that uses the default requestCode.
@@ -113,21 +105,6 @@ public class InAppUpdateManager implements LifecycleObserver {
         return instance;
     }
 
-    private InAppUpdateManager(AppCompatActivity activity) {
-        this.activity = activity;
-        setupSnackbar();
-        activity.getLifecycle().addObserver(this);
-
-        init();
-    }
-
-    private InAppUpdateManager(AppCompatActivity activity, int requestCode) {
-        this.activity = activity;
-        this.requestCode = requestCode;
-
-        init();
-    }
-
     private void init() {
         setupSnackbar();
         activity.getLifecycle().addObserver(this);
@@ -139,9 +116,6 @@ public class InAppUpdateManager implements LifecycleObserver {
 
         checkForUpdate(false);
     }
-    //endregion
-
-    // region Setters
 
     /**
      * Set the update mode.
@@ -153,6 +127,9 @@ public class InAppUpdateManager implements LifecycleObserver {
         this.mode = mode;
         return this;
     }
+    //endregion
+
+    // region Setters
 
     /**
      * Checks that the update is not stalled during 'onResume()'.
@@ -205,13 +182,10 @@ public class InAppUpdateManager implements LifecycleObserver {
         return this;
     }
 
-
     public InAppUpdateManager snackBarActionColor(int color) {
         snackbar.setActionTextColor(color);
         return this;
     }
-
-    //endregion
 
     //region Lifecycle
     @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
@@ -220,14 +194,12 @@ public class InAppUpdateManager implements LifecycleObserver {
             checkNewAppVersionState();
     }
 
+    //endregion
 
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
     public void onDestroy() {
         unregisterListener();
     }
-    //endregion
-
-    //region Methods
 
     /**
      * Check for update availability. If there will be an update available
@@ -236,6 +208,9 @@ public class InAppUpdateManager implements LifecycleObserver {
     public void checkForAppUpdate() {
         checkForUpdate(true);
     }
+    //endregion
+
+    //region Methods
 
     /**
      * Triggers the completion of the app update for the flexible flow.
@@ -243,9 +218,6 @@ public class InAppUpdateManager implements LifecycleObserver {
     public void completeUpdate() {
         appUpdateManager.completeUpdate();
     }
-    //endregion
-
-    //region Private Methods
 
     /**
      * Check for update availability. If there will be an update available
@@ -282,6 +254,9 @@ public class InAppUpdateManager implements LifecycleObserver {
         });
 
     }
+    //endregion
+
+    //region Private Methods
 
     private void startAppUpdateImmediate(AppUpdateInfo appUpdateInfo) {
         try {
@@ -388,6 +363,28 @@ public class InAppUpdateManager implements LifecycleObserver {
         if (handler != null) {
             handler.onInAppUpdateStatus(inAppUpdateStatus);
         }
+    }
+
+    /**
+     * Callback methods where update events are reported.
+     */
+    public interface InAppUpdateHandler {
+        /**
+         * On update error.
+         *
+         * @param code  the code
+         * @param error the error
+         */
+        void onInAppUpdateError(int code, Throwable error);
+
+
+        /**
+         * Monitoring the update state of the flexible downloads.
+         * For immediate updates, Google Play takes care of downloading and installing the update for you.
+         *
+         * @param status the status
+         */
+        void onInAppUpdateStatus(InAppUpdateStatus status);
     }
 
     //endregion

@@ -14,6 +14,9 @@
     <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
     <string name="download">Download</string>
+    <string name="not_now">Not Now</string>
+    <string name="settings">Settings</string>
+
 
     <string name="edit">edit</string>
     <string name="label_6_digit_code">Enter 4-digit code</string>
@@ -30,8 +33,9 @@
     <string name="location_rationale">Please allow to access your location. It will help in better recommendations. </string>
     <string name="short_seconds">sec</string>
     <string name="volume_up_message">Please turn the volume up</string>
-    <string name="permission_message">Need Permission</string>
-
+    <string name="storage_permission_message">JoshSkills access your device\'s  photos, media and files.</string>
+    <string name="record_permission_message">To record a Voice Message, allow JoshSkills access to your microphone and your device\'s  photos, media and files. Tap Settings > Permissions, and turn Microphone on and Storage on.</string>
+<string name="camera_permission_message">To capture photos and videos allow JoshSkills access to your camera  and your device\'s  photos, media and files.</string>
 
     <string name="type_message_hint">Type a Message</string>
     <string name="profile_photo">Profile photo</string>
@@ -69,6 +73,13 @@
     <string name="explorer_courses">Explore Courses</string>
     <string name="start_course">Start Course</string>
     <string name="explorer_course">Explore Courses</string>
+    <string name="paid">Paid</string>
+    <string name="transaction_status">Your Transaction status:</string>
+    <string name="course_payment_label">Course Payment</string>
+    <string name="done">Done</string>
+    <string name="course_started_label">Course Started</string>
+    <string name="in_progress_label">In Progress</string>
+    <string name="payment_process_info">It usually takes 2&#8211;3 minutes to complete our admission process and start your classes.</string>
 
 
     <string name="find_more_courses">Find More Courses</string>
@@ -89,14 +100,13 @@
     <string name="relogin">Dobara Login Kare</string>
     <string name="or">OR</string>
     <string name="explore_more_course">EXPLORE MORE COURSES</string>
+    <string name="explore_more_course_small">Explore More Courses</string>
 
     <string name="no_new_message_arrive">No new classes</string>
-
     <string name="new_message_arrive">New classes downloaded</string>
-
-
     <string name="something_went_wrong">Oops! Something Went Wrong</string>
     <string name="click_to_start_course">Click to start course</string>
+    <string name="thank_you">Thank you!</string>
 
 
     <string name="time_ago_now">few moments ago</string>
@@ -132,12 +142,14 @@
 
 
     <!-- Payment process-->
-    <string name="payment_processing">Payment Processing</string>\
+    <string name="payment_processing">Payment Processing</string>
     <string name="amount">Amount</string>
+    <string name="status">Status</string>
+
     <string name="duration">Duration</string>
 
     <string name="complaint_message" formatted="false">Thanks for reaching out to us. Your request has been recorded against ticket number %s. Our team will reach out to you between 24–72 hours</string>
-    <string name="question_count">%s / %s</string>
+    <string name="question_count">%s/%s</string>
     <string name="waiting_course_buy_confirmation">We are waiting for confirmation from your bank server.\n #usually it takes 30&#8211;60 seconds. </string>
-
+    <string name="payment_process_success">Your payment has been processed successfully!</string>
 </resources>

@@ -71,7 +71,8 @@ object DatabaseUtils {
                         ChatModel::class.java
                     ).conversationId, progress
                 )
-            }catch (ex:Exception){}
+            } catch (ex: Exception) {
+            }
         }
     }
 

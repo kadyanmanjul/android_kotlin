@@ -63,7 +63,6 @@ enum class AnalyticsEvent(val NAME: String) {
     PROFILE_IMAGE_UPLOAD("Profile Image Upload"),
 
 
-
     QUESTION_SENT("Question Sent"),
     QUESTION_RECEIVED("Question Received"),
     MESSAGE_SENT_AUDIO("Message Sent Audio"),
@@ -91,10 +90,6 @@ enum class AnalyticsEvent(val NAME: String) {
     NOTIFICATION_CLICKED("Notification Clicked"),
     REGISTRATION_COMPLETED("Registration_completed"),
     COURSE_STARTED("Course_Started"),
-
-
-
-
 
 
 }

@@ -133,6 +133,7 @@ public class MusicNotificationManager {
             mNotificationManager.createNotificationChannel(notificationChannel);
         }
     }
+
     private Bitmap getLargeIcon() {
         final VectorDrawable vectorDrawable = (VectorDrawable) mMusicService.getDrawable(R.drawable.ic_josh_course);
         final int largeIconSize = mMusicService.getResources().getDimensionPixelSize(R.dimen.notification_large_dim);

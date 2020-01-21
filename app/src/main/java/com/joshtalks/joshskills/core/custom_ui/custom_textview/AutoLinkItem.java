@@ -10,7 +10,7 @@ class AutoLinkItem {
 
     private String matchedText;
 
-    private int startPoint,endPoint;
+    private int startPoint, endPoint;
 
     AutoLinkItem(int startPoint, int endPoint, String matchedText, AutoLinkMode autoLinkMode) {
         this.startPoint = startPoint;

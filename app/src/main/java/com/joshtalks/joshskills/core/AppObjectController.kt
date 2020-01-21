@@ -9,7 +9,6 @@ import com.bumptech.glide.load.MultiTransformation
 import com.clevertap.android.sdk.ActivityLifecycleCallback
 import com.crashlytics.android.Crashlytics
 import com.crashlytics.android.core.CrashlyticsCore
-import com.facebook.FacebookSdk
 import com.facebook.appevents.AppEventsLogger
 import com.facebook.stetho.okhttp3.StethoInterceptor
 import com.google.android.exoplayer2.util.Util
@@ -18,6 +17,7 @@ import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
 import com.google.gson.*
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
+import com.jakewharton.threetenabp.AndroidThreeTen
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.datetimeutils.DateTimeUtils
@@ -26,6 +26,7 @@ import com.joshtalks.joshskills.core.service.WorkMangerAdmin
 import com.joshtalks.joshskills.core.service.video_download.DownloadTracker
 import com.joshtalks.joshskills.core.service.video_download.VideoDownloadController
 import com.joshtalks.joshskills.repository.local.AppDatabase
+import com.joshtalks.joshskills.repository.local.entity.ChatModel
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.service.ChatNetworkService
 import com.joshtalks.joshskills.repository.service.CommonNetworkService
@@ -142,6 +143,10 @@ internal class AppObjectController {
         lateinit var firebaseAnalytics: FirebaseAnalytics
 
 
+        @JvmStatic
+        var currentPlayingAudioObject: ChatModel? = null
+
+
         fun init(context: JoshApplication): AppObjectController {
             joshApplication = context
             appDatabase = AppDatabase.getDatabase(context)!!
@@ -152,6 +157,8 @@ internal class AppObjectController {
             firebaseAnalytics = FirebaseAnalytics.getInstance(joshApplication)
             AppEventsLogger.activateApp(joshApplication)
             facebookEventLogger = AppEventsLogger.newLogger(joshApplication)
+            AndroidThreeTen.init(joshApplication)
+
 
             gsonMapper = GsonBuilder()
                 .enableComplexMapKeySerialization()

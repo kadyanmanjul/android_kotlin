@@ -45,8 +45,6 @@ public class AttachmentView extends FrameLayout {
         attributes.recycle();
 
 
-
-
     }
 
 }

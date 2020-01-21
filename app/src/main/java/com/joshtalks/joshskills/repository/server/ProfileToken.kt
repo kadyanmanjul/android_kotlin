@@ -10,4 +10,4 @@ data class ProfileToken(
     @SerializedName("token_type") val refreshToken: String,
     @SerializedName("refresh_token") val tokenType: String,
     @SerializedName("scope") val scope: String
-    )
+)

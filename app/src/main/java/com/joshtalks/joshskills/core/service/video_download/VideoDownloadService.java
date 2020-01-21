@@ -40,7 +40,7 @@ public class VideoDownloadService extends DownloadService {
                 FOREGROUND_NOTIFICATION_ID,
                 DEFAULT_FOREGROUND_NOTIFICATION_UPDATE_INTERVAL,
                 CHANNEL_ID,
-                R.string.exo_download_notification_channel_name,0);
+                R.string.exo_download_notification_channel_name, 0);
         nextNotificationId = FOREGROUND_NOTIFICATION_ID + 1;
     }
 
@@ -58,7 +58,7 @@ public class VideoDownloadService extends DownloadService {
     @Override
     protected Scheduler getScheduler() {
         return new WorkManagerScheduler("Download Video");
-      //  return Util.SDK_INT >= 21 ? new PlatformScheduler(this, JOB_ID) : null;
+        //  return Util.SDK_INT >= 21 ? new PlatformScheduler(this, JOB_ID) : null;
     }
 
     @Override

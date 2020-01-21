@@ -19,7 +19,7 @@
                 android:id="@+id/message_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/_16sdp"
+                android:layout_marginStart="@dimen/_16sdp"
                 android:paddingLeft="@dimen/_5sdp"
                 android:paddingRight="@dimen/_5sdp"
                 android:paddingTop="@dimen/_1sdp"
@@ -59,27 +59,13 @@
                         android:paddingEnd="@dimen/_4sdp"
                         android:textColor="@color/gray_48"
                         android:textSize="@dimen/font_16"
+                        android:text="dwdwd"
                         app:layout_constraintBottom_toTopOf="@+id/text_message_time"
                         app:layout_constraintLeft_toLeftOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
+                        android:paddingBottom="@dimen/_4sdp"
                         />
 
-
-
-                <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/message_number"
-                        fontPath="fonts/Roboto-Light.ttf"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="1dp"
-                        android:paddingEnd="@dimen/_20sdp"
-                        android:drawablePadding="@dimen/_4sdp"
-                        android:gravity="center"
-                        android:textColor="@color/gray_9E"
-                        android:textSize="@dimen/font_12"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        />
 
                 <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/text_message_time"
