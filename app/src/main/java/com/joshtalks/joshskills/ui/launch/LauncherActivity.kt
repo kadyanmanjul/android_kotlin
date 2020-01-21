@@ -19,9 +19,7 @@ class LauncherActivity : CoreJoshActivity() {
         Handler().postDelayed({
             startActivity(intent)
             this@LauncherActivity.finish()
-        }, 2000)
-
-
+        }, 1500)
     }
 /*
 
