@@ -86,7 +86,7 @@ abstract class AppDatabase : RoomDatabase() {
         }
         private val MIGRATION_5_6: Migration = object : Migration(5, 6) {
             override fun migrate(database: SupportSQLiteDatabase) {
-                database.execSQL("ALTER TABLE question_table ADD COLUMN question_id INTEGER")
+                database.execSQL("ALTER TABLE chat_table ADD COLUMN question_id INTEGER")
             }
         }
 

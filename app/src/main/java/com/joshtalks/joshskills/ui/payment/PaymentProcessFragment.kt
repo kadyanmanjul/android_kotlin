@@ -5,12 +5,10 @@ import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.view.WindowManager
+import android.view.*
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
+import android.widget.FrameLayout
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
 import com.bumptech.glide.Glide
@@ -119,6 +117,7 @@ class PaymentProcessFragment : DialogFragment() {
             }
 
             override fun onAnimationStart(animation: Animation?) {
+                paymentProcessFragmentBinding.successIv.visibility = View.VISIBLE
 
             }
 
@@ -132,6 +131,11 @@ class PaymentProcessFragment : DialogFragment() {
                 paymentProcessFragmentBinding.successIv.visibility = View.GONE
                 paymentProcessFragmentBinding.viewKonfetti.setOnClickListener(null)
 
+                paymentProcessFragmentBinding.viewKonfetti.layoutParams = FrameLayout.LayoutParams(
+                    FrameLayout.LayoutParams.WRAP_CONTENT,
+                    FrameLayout.LayoutParams.WRAP_CONTENT,
+                    Gravity.TOP
+                )
             }
 
             override fun onAnimationStart(animation: Animation?) {
@@ -181,8 +185,12 @@ class PaymentProcessFragment : DialogFragment() {
             paymentProcessFragmentBinding.viewKonfetti.visibility = View.VISIBLE
             paymentProcessFragmentBinding.successIv.startAnimation(animAlpha)
         }, 750)
-    }
 
+        paymentProcessFragmentBinding.btnExploreMoreCourse.setOnClickListener {
+            activity?.finish()
+
+        }
+    }
 
     override fun onResume() {
         super.onResume()
@@ -194,10 +202,6 @@ class PaymentProcessFragment : DialogFragment() {
         compositeDisposable.clear()
         activity?.window?.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         timer.cancel()
-    }
-
-    fun exploreMoreCourse() {
-        (activity as PaymentActivity).finish()
     }
 
     private fun addObserver() {

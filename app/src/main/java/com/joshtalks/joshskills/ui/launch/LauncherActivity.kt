@@ -22,6 +22,7 @@ class LauncherActivity : CoreJoshActivity() {
 
         }, 2000)
 
+
     }
 /*
 

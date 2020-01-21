@@ -172,8 +172,6 @@ class PaymentActivity : CoreJoshActivity(),
     }
 
     override fun onPaymentSuccess(p0: String?) {
-
-
         uiHandler.post {
             courseModel?.run {
                 try {
@@ -191,12 +189,11 @@ class PaymentActivity : CoreJoshActivity(),
                 PaymentProcessFragment.newInstance(this)
                     .show(supportFragmentManager, "Payment Process")
             }
-
         }
         uiHandler.postDelayed({
             startActivity(getInboxActivityIntent())
             this@PaymentActivity.finish()
-        }, 1000 * 60)
+        }, 1000 * 59)
 
     }
 

@@ -92,48 +92,55 @@ object DownloadUtils {
     suspend fun updateDownloadStatus(filePath: String, extras: Extras): Boolean {
 
         return CoroutineScope(Dispatchers.IO).async {
-            val chatModel = AppObjectController.gsonMapperForLocal.fromJson<ChatModel>(
-                extras.map[DOWNLOAD_OBJECT],
-                CHAT_MODEL_TYPE_TOKEN
-            )
-            chatModel.downloadStatus = DOWNLOAD_STATUS.DOWNLOADED
+            try {
+                val chatModel = AppObjectController.gsonMapperForLocal.fromJson<ChatModel>(
+                    extras.map[DOWNLOAD_OBJECT],
+                    CHAT_MODEL_TYPE_TOKEN
+                )
+                chatModel.downloadStatus = DOWNLOAD_STATUS.DOWNLOADED
 
-            if (chatModel.type == BASE_MESSAGE_TYPE.Q) {
-                chatModel.question?.let { question ->
-                    when (question.material_type) {
-                        BASE_MESSAGE_TYPE.IM ->
-                            question.imageList?.get(0).let { imageType ->
-                                imageType?.downloadedLocalPath = filePath
-                                appDatabase.chatDao().updateImageObject(imageType!!)
+                if (chatModel.type == BASE_MESSAGE_TYPE.Q) {
+                    chatModel.question?.let { question ->
+                        when (question.material_type) {
+                            BASE_MESSAGE_TYPE.IM ->
+                                question.imageList?.get(0).let { imageType ->
+                                    imageType?.downloadedLocalPath = filePath
+                                    appDatabase.chatDao().updateImageObject(imageType!!)
 
-                            }
-                        BASE_MESSAGE_TYPE.VI ->
-                            question.videoList?.get(0).let { videoType ->
-                                videoType?.downloadedLocalPath = filePath
-                                appDatabase.chatDao().updateVideoObject(videoType!!)
+                                }
+                            BASE_MESSAGE_TYPE.VI ->
+                                question.videoList?.get(0).let { videoType ->
+                                    videoType?.downloadedLocalPath = filePath
+                                    appDatabase.chatDao().updateVideoObject(videoType!!)
 
-                            }
-                        BASE_MESSAGE_TYPE.AU ->
-                            question.audioList?.get(0).let { audioType ->
-                                audioType?.downloadedLocalPath = filePath
-                                appDatabase.chatDao().updateAudioObject(audioType!!)
+                                }
+                            BASE_MESSAGE_TYPE.AU ->
+                                question.audioList?.get(0).let { audioType ->
+                                    audioType?.downloadedLocalPath = filePath
+                                    appDatabase.chatDao().updateAudioObject(audioType!!)
 
-                            }
-                        BASE_MESSAGE_TYPE.PD ->
-                            question.pdfList?.get(0).let { pdfType ->
-                                pdfType?.downloadedLocalPath = filePath
-                                appDatabase.chatDao().updatePdfObject(pdfType!!)
+                                }
+                            BASE_MESSAGE_TYPE.PD ->
+                                question.pdfList?.get(0).let { pdfType ->
+                                    pdfType?.downloadedLocalPath = filePath
+                                    appDatabase.chatDao().updatePdfObject(pdfType!!)
 
-                            }
-                        else -> return@let
+                                }
+                            else -> return@let
+                        }
                     }
-                }
 
-            } else {
-                chatModel.downloadedLocalPath = filePath
+                } else {
+                    chatModel.downloadedLocalPath = filePath
+                }
+                appDatabase.chatDao().updateChatMessage(chatModel)
+                return@async true
+
+            }catch (ex:Exception){
+                ex.printStackTrace()
+                return@async false
+
             }
-            appDatabase.chatDao().updateChatMessage(chatModel)
-            return@async true
         }.await()
 
     }
