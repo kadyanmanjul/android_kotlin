@@ -5,6 +5,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".ui.launch.LauncherActivity">
+
     <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/imageView"
             android:layout_width="@dimen/_240sdp"
@@ -34,5 +35,8 @@
                 android:background="#FF7200" />
 
     </com.facebook.shimmer.ShimmerFrameLayout>
+
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

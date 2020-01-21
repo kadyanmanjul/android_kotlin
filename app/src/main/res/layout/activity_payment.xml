@@ -32,21 +32,53 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
         <FrameLayout
-                android:background="#29000000"
                 android:id="@+id/progress_bar"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:background="#29000000">
 
-        <com.pnikosis.materialishprogress.ProgressWheel
-                android:layout_width="@dimen/_82sdp"
-                android:layout_height="@dimen/_82sdp"
-                android:layout_gravity="center"
-                wheel:matProg_barColor="@color/button_primary_color"
-                wheel:matProg_fillRadius="true"
-                wheel:matProg_linearProgress="false"
-                wheel:matProg_progressIndeterminate="true"
-                wheel:matProg_rimColor="#33128C7E"
-                wheel:matProg_rimWidth="@dimen/_2sdp" />
+            <com.pnikosis.materialishprogress.ProgressWheel
+                    android:layout_width="@dimen/_82sdp"
+                    android:layout_height="@dimen/_82sdp"
+                    android:layout_gravity="center"
+                    wheel:matProg_barColor="@color/button_primary_color"
+                    wheel:matProg_fillRadius="true"
+                    wheel:matProg_linearProgress="false"
+                    wheel:matProg_progressIndeterminate="true"
+                    wheel:matProg_rimColor="#33128C7E"
+                    wheel:matProg_rimWidth="@dimen/_2sdp" />
+
+
+        </FrameLayout>
+
+
+        <FrameLayout
+                android:id="@+id/whatsapp_help_container"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end|bottom"
+                android:layout_marginEnd="@dimen/_8sdp"
+                android:layout_marginBottom="@dimen/_16sdp"
+                android:visibility="invisible">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/whatsapp_help"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/_6sdp"
+                    android:src="@drawable/ic_whatsapp" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/iv_hide_help"
+                    android:layout_width="@dimen/_14sdp"
+                    android:layout_height="@dimen/_14sdp"
+                    android:layout_gravity="end|top"
+                    android:background="@drawable/bg_white_round_36"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:padding="@dimen/_2sdp"
+                    android:src="@drawable/ic_cross"
+                    android:tint="@color/grey_7A" />
         </FrameLayout>
     </FrameLayout>
 </layout>

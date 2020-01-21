@@ -268,7 +268,6 @@ dependencies {
     //Payment Razor pay
     implementation 'com.razorpay:checkout:1.5.12'
     implementation 'com.muddzdev:styleabletoast:2.2.3'
-   // implementation 'org.threeten:threetenbp:1.4.1:no-tzdb'
     implementation 'com.jakewharton.threetenabp:threetenabp:1.2.2'
     implementation 'nl.dionsegijn:konfetti:1.1.3'
 

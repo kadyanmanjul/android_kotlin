@@ -3,6 +3,7 @@ package com.joshtalks.joshskills.ui.payment
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.ActivityInfo
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
@@ -85,6 +86,7 @@ class PaymentActivity : CoreJoshActivity(),
         super.onCreate(savedInstanceState)
         activityPaymentBinding = DataBindingUtil.setContentView(this, R.layout.activity_payment)
         activityPaymentBinding.lifecycleOwner = this
+        activityPaymentBinding.handler = this
         if (intent.hasExtra(COURSE_OBJECT)) {
             courseModel = intent.getSerializableExtra(COURSE_OBJECT) as CourseExploreModel
             courseId = courseModel?.id.toString()
@@ -96,6 +98,7 @@ class PaymentActivity : CoreJoshActivity(),
         initView()
         getCourseDetails()
         Checkout.preload(application)
+        openWhatsAppHelp()
     }
 
 
@@ -289,6 +292,27 @@ class PaymentActivity : CoreJoshActivity(),
         compositeDisposable.clear()
         Checkout.clearUserData(applicationContext)
         uiHandler.removeCallbacksAndMessages(null)
+
+    }
+
+    private fun openWhatsAppHelp() {
+        AppObjectController.uiHandler.postDelayed(Runnable {
+            if (courseModel != null && courseModel!!.whatsappUrl != null) {
+                activityPaymentBinding.whatsappHelpContainer.visibility = View.VISIBLE
+                activityPaymentBinding.whatsappHelp.setOnClickListener {
+                    val intent = Intent(Intent.ACTION_VIEW)
+                    intent.data = Uri.parse(courseModel?.whatsappUrl)
+                    intent.apply {
+                        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    }
+                    startActivity(intent)
+                }
+                activityPaymentBinding.ivHideHelp.setOnClickListener {
+                    activityPaymentBinding.whatsappHelpContainer.visibility = View.GONE
+
+                }
+            }
+        },2500)
 
     }
 
