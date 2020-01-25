@@ -1,6 +1,7 @@
 package com.joshtalks.joshskills.core
 
-import android.app.Application
+import android.content.Context
+import androidx.multidex.MultiDex
 import com.facebook.FacebookSdk
 import com.facebook.LoggingBehavior
 import com.facebook.stetho.Stetho
@@ -8,6 +9,9 @@ import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.UpdateDeviceRequest
+import io.branch.referral.Branch
+import io.branch.referral.BranchApp
+import io.branch.referral.validators.IntegrationValidator
 import io.github.inflationx.calligraphy3.CalligraphyConfig
 import io.github.inflationx.calligraphy3.CalligraphyInterceptor
 import io.github.inflationx.viewpump.ViewPump
@@ -15,8 +19,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-
-class JoshApplication : Application() {
+class JoshApplication : BranchApp() {
 
 
     companion object {
@@ -32,8 +35,11 @@ class JoshApplication : Application() {
             FacebookSdk.setIsDebugEnabled(true)
             FacebookSdk.addLoggingBehavior(LoggingBehavior.APP_EVENTS)
             Stetho.initializeWithDefaults(this)
+            Branch.enableDebugMode()
+            IntegrationValidator.validate(this)
         }
         appObjectController = AppObjectController.init(this)
+
 
         ViewPump.init(
             ViewPump.builder()
@@ -47,6 +53,11 @@ class JoshApplication : Application() {
                 )
                 .build()
         )
+    }
+
+    override fun attachBaseContext(base: Context?) {
+        super.attachBaseContext(base)
+        MultiDex.install(this)
     }
 
     fun updateDeviceDetail() {

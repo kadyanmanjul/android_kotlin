@@ -20,7 +20,9 @@ import com.facebook.appevents.AppEventsConstants
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.CoreJoshActivity
+import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.analytics.BranchIOAnalytics
 import com.joshtalks.joshskills.databinding.ActivityPaymentBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.BuyCourseEventBus
@@ -32,6 +34,7 @@ import com.joshtalks.joshskills.ui.view_holders.CourseDetailViewHolder
 import com.muddzdev.styleabletoast.StyleableToast
 import com.razorpay.Checkout
 import com.razorpay.PaymentResultListener
+import io.branch.referral.util.BRANCH_STANDARD_EVENT
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -57,11 +60,9 @@ class PaymentActivity : CoreJoshActivity(),
     private var courseId: String = ""
     private var currency: String = "INR"
     private var amount: Long = 0L
+    private var courseName = ""
 
-
-    companion
-
-    object {
+    companion object {
         fun startPaymentActivity(
             context: Activity,
             requestCode: Int,
@@ -106,6 +107,7 @@ class PaymentActivity : CoreJoshActivity(),
         val titleView = findViewById<AppCompatTextView>(R.id.text_message_title)
         if (courseModel != null) {
             titleView.text = courseModel?.courseName
+            courseName = courseModel?.courseName ?: EMPTY
         } else {
             titleView.text = getString(R.string.explorer_course)
 
@@ -176,20 +178,29 @@ class PaymentActivity : CoreJoshActivity(),
     }
 
     override fun onPaymentSuccess(p0: String?) {
+        val extras: HashMap<String, String> = HashMap()
+        extras["test_id"] = courseId
+        extras["payment_id"] = p0 ?: EMPTY
+        extras["currency"] = currency
+        extras["amount"] = amount.toString()
+        extras["course_name"] = courseName
+        BranchIOAnalytics.pushToBranch(BRANCH_STANDARD_EVENT.PURCHASE, extras)
+
+        try {
+            val params = Bundle().apply {
+                putString(AppEventsConstants.EVENT_PARAM_CONTENT_ID, courseId)
+            }
+            AppObjectController.facebookEventLogger.logPurchase(
+                amount.toBigDecimal(),
+                Currency.getInstance(currency.trim()),
+                params
+            )
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+        }
+
         uiHandler.post {
             courseModel?.run {
-                try {
-                    val params = Bundle().apply {
-                        putString(AppEventsConstants.EVENT_PARAM_CONTENT_ID, courseId)
-                    }
-                    AppObjectController.facebookEventLogger.logPurchase(
-                        amount.toBigDecimal(),
-                        Currency.getInstance(currency.trim()),
-                        params
-                    )
-                } catch (ex: Exception) {
-                    ex.printStackTrace()
-                }
                 PaymentProcessFragment.newInstance(this)
                     .show(supportFragmentManager, "Payment Process")
             }
@@ -203,7 +214,7 @@ class PaymentActivity : CoreJoshActivity(),
 
     private fun getPaymentDetails(testId: String?) {
         activityPaymentBinding.progressBar.visibility = View.VISIBLE
-
+        BranchIOAnalytics.pushToBranch(BRANCH_STANDARD_EVENT.INITIATE_PURCHASE)
         try {
             CoroutineScope(Dispatchers.IO).launch {
                 if (testId.isNullOrEmpty().not() && testId.equals("null").not()) {
@@ -302,7 +313,6 @@ class PaymentActivity : CoreJoshActivity(),
         compositeDisposable.clear()
         Checkout.clearUserData(applicationContext)
         uiHandler.removeCallbacksAndMessages(null)
-
     }
 
     private fun openWhatsAppHelp() {

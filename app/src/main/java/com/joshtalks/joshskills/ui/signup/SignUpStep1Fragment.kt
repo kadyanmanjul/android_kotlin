@@ -215,5 +215,3 @@ class SignUpStep1Fragment : Fragment() {
 
     }
 }
-
-//textview.setPaintFlags(textview.getPaintFlags() |   Paint.UNDERLINE_TEXT_FLAG);

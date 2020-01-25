@@ -1,6 +1,7 @@
 package com.joshtalks.joshskills.ui.payment
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
@@ -22,6 +23,7 @@ import com.joshtalks.joshskills.databinding.PaymentProcessFragmentBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.OTPReceivedEventBus
 import com.joshtalks.joshskills.repository.server.CourseExploreModel
+import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -187,6 +189,9 @@ class PaymentProcessFragment : DialogFragment() {
         }, 750)
 
         paymentProcessFragmentBinding.btnExploreMoreCourse.setOnClickListener {
+            startActivity(Intent(activity, CourseExploreActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
+            })
             activity?.finish()
 
         }

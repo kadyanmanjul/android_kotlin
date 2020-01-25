@@ -88,7 +88,12 @@ class ComplaintFragment : Fragment() {
             if (it == ApiCallStatus.SUCCESS) {
                 progressDialog.dismissAllowingStateLoss()
                 MaterialDialog(activity!!).show {
-                    message(R.string.complaint_message, viewModel.complaintResponse.ticketId) {
+                    message(
+                        text = getString(
+                            R.string.complaint_message,
+                            viewModel.complaintResponse.ticketId
+                        )
+                    ) {
                         lineSpacing(1.2f)
                     }
                     positiveButton(R.string.ok) {

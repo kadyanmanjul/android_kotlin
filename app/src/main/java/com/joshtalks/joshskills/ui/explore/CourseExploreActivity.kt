@@ -16,9 +16,11 @@ import com.google.android.material.appbar.MaterialToolbar
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.CoreJoshActivity
+import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
+import com.joshtalks.joshskills.core.analytics.BranchIOAnalytics
 import com.joshtalks.joshskills.core.custom_ui.decorator.LayoutMarginDecoration
 import com.joshtalks.joshskills.core.service.WorkMangerAdmin
 import com.joshtalks.joshskills.databinding.ActivityCourseExploreBinding
@@ -31,10 +33,14 @@ import com.joshtalks.joshskills.ui.payment.PaymentActivity
 import com.joshtalks.joshskills.ui.signup.SignUpActivity
 import com.joshtalks.joshskills.ui.view_holders.CourseExplorerViewHolder
 import com.vanniktech.emoji.Utils
+import io.branch.referral.util.BRANCH_STANDARD_EVENT
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.collections.set
 
 
 const val COURSE_EXPLORER_SCREEN_NAME = "Course Explorer"
@@ -186,6 +192,10 @@ class CourseExploreActivity : CoreJoshActivity() {
             val params = Bundle().apply {
                 putString(EVENT_PARAM_CONTENT_ID, it.id.toString())
             }
+            val extras: HashMap<String, String> = HashMap()
+            extras["test_id"] = it.id?.toString() ?: EMPTY
+            extras["course_name"] = it.courseName
+            BranchIOAnalytics.pushToBranch(BRANCH_STANDARD_EVENT.VIEW_ITEM, extras)
             AppObjectController.facebookEventLogger.logEvent(EVENT_NAME_VIEWED_CONTENT, params)
             PaymentActivity.startPaymentActivity(this, REGISTER_NEW_COURSE_CODE, it)
         })

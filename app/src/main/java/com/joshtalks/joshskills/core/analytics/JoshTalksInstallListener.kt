@@ -14,6 +14,7 @@ import java.util.*
 class JoshTalksInstallListener : BroadcastReceiver() {
 
     override fun onReceive(context: Context?, intent: Intent?) {
+
         intent?.hasExtra("referrer")?.let {
             val rawReferrerString = intent.getStringExtra("referrer")
             processReferrer(rawReferrerString)

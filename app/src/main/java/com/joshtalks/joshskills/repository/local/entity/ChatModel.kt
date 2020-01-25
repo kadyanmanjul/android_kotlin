@@ -70,7 +70,7 @@ data class ChatModel(
 
 
     @ColumnInfo
-    @SerializedName("question_id") var question_id: Int?
+    @SerializedName("question_id") var question_id: Int? = null
 
 
 ) : DataBaseClass(), Serializable {
@@ -154,16 +154,17 @@ data class Question(
     @Ignore
     @SerializedName("audios") var audioList: List<AudioType>? = null,
 
-
     @ColumnInfo(name = "feedback_require")
     @SerializedName("feedback_require") var feedback_require: String? = null,
 
     @ColumnInfo
     @SerializedName("expected_ans_type") var expectedEngageType: EXPECTED_ENGAGE_TYPE? = null,
 
+
     @TypeConverters(
         ConvectorForEngagement::class
     )
+    @ColumnInfo(name = "practice_engagements")
     @SerializedName("practice_engagements")
     var practiceEngagement: List<PracticeEngagement>? = emptyList()
 

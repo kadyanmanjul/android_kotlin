@@ -17,6 +17,7 @@ import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.LoginResponse
 import com.joshtalks.joshskills.repository.server.RequestVerifyOTP
 import com.joshtalks.joshskills.util.BindableString
+import io.branch.referral.Branch
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -79,7 +80,9 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
                 user.source = "OTP"
                 user.token = response.token
                 User.update(user.toString())
-
+                if (phoneNumber.isEmpty().not()) {
+                    Branch.getInstance().setIdentity(user.phoneNumber)
+                }
                 Mentor.getInstance()
                     .setId(response.mentorId)
                     .update()
@@ -106,6 +109,9 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
                     User.getInstance().updateFromResponse(it)
                 }
                 AppObjectController.facebookEventLogger.logEvent(EVENT_NAME_COMPLETED_REGISTRATION)
+                if (User.getInstance().phoneNumber.isEmpty().not()) {
+                    Branch.getInstance().setIdentity(User.getInstance().phoneNumber)
+                }
                 AppAnalytics.updateUser()
                 getCourseFromServer()
 

@@ -42,6 +42,7 @@ import com.tonyodev.fetch2core.Downloader
 import com.tonyodev.fetch2okhttp.OkHttpDownloader
 import com.vanniktech.emoji.EmojiManager
 import com.vanniktech.emoji.google.GoogleEmojiProvider
+import io.branch.referral.Branch
 import io.fabric.sdk.android.Fabric
 import jp.wasabeef.glide.transformations.CropTransformation
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation
@@ -158,7 +159,7 @@ internal class AppObjectController {
             AppEventsLogger.activateApp(joshApplication)
             facebookEventLogger = AppEventsLogger.newLogger(joshApplication)
             AndroidThreeTen.init(joshApplication)
-
+            Branch.getAutoInstance(joshApplication)
 
             gsonMapper = GsonBuilder()
                 .enableComplexMapKeySerialization()

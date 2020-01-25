@@ -5,6 +5,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.RemoteException
 import android.provider.Settings
 import android.text.TextUtils
 import android.util.DisplayMetrics
@@ -27,6 +28,7 @@ import com.joshtalks.joshskills.ui.profile.CropImageActivity
 import com.joshtalks.joshskills.ui.profile.ProfileActivity
 import com.joshtalks.joshskills.ui.profile.SOURCE_IMAGE
 import com.joshtalks.joshskills.ui.sign_up_old.OnBoardActivity
+import io.branch.referral.PrefHelper
 import io.github.inflationx.viewpump.ViewPumpContextWrapper
 import java.net.URLDecoder
 import java.util.*
@@ -124,56 +126,68 @@ abstract class BaseActivity : AppCompatActivity() {
     }
 
     private fun installReferrer() {
+        try {
+            val obj = InstallReferrerModel.getPrefObject()
+            if (obj == null) {
+                val referrerClient = InstallReferrerClient.newBuilder(application).build()
+                referrerClient.startConnection(object : InstallReferrerStateListener {
+                    override fun onInstallReferrerSetupFinished(responseCode: Int) {
+                        when (responseCode) {
+                            InstallReferrerClient.InstallReferrerResponse.OK -> try {
 
-        val obj = InstallReferrerModel.getPrefObject()
-        if (obj == null) {
-            referrerClient = InstallReferrerClient.newBuilder(this).build()
-            referrerClient.startConnection(object : InstallReferrerStateListener {
-                override fun onInstallReferrerSetupFinished(responseCode: Int) {
+                                try {
+                                    val response = referrerClient.installReferrer
 
-                    if (responseCode == InstallReferrerClient.InstallReferrerResponse.OK) {
-                        try {
-                            val response = referrerClient.installReferrer
-
-                            val rawReferrerString =
-                                URLDecoder.decode(response.installReferrer, "UTF-8")
-                            val referrerMap = HashMap<String, String>()
-                            val referralParams = rawReferrerString.split("&").toTypedArray()
-                            for (referrerParam in referralParams) {
-                                if (!TextUtils.isEmpty(referrerParam)) {
-                                    var splitter = "="
-                                    if (!referrerParam.contains("=") && referrerParam.contains("-")) {
-                                        splitter = "-"
+                                    val rawReferrerString =
+                                        URLDecoder.decode(response.installReferrer, "UTF-8")
+                                    val referrerMap = HashMap<String, String>()
+                                    val referralParams = rawReferrerString.split("&").toTypedArray()
+                                    for (referrerParam in referralParams) {
+                                        if (!TextUtils.isEmpty(referrerParam)) {
+                                            var splitter = "="
+                                            if (!referrerParam.contains("=") && referrerParam.contains(
+                                                    "-"
+                                                )
+                                            ) {
+                                                splitter = "-"
+                                            }
+                                            val keyValue =
+                                                referrerParam.split(splitter).toTypedArray()
+                                            if (keyValue.size > 1) { // To make sure that there is one key value pair in referrer
+                                                referrerMap[URLDecoder.decode(
+                                                    keyValue[0],
+                                                    "UTF-8"
+                                                )] =
+                                                    URLDecoder.decode(keyValue[1], "UTF-8")
+                                            }
+                                        }
                                     }
-                                    val keyValue = referrerParam.split(splitter).toTypedArray()
-                                    if (keyValue.size > 1) { // To make sure that there is one key value pair in referrer
-                                        referrerMap[URLDecoder.decode(keyValue[0], "UTF-8")] =
-                                            URLDecoder.decode(keyValue[1], "UTF-8")
-                                    }
+
+
+                                    val installReferrerModel = InstallReferrerModel()
+                                    installReferrerModel.otherInfo = referrerMap
+                                    installReferrerModel.utmMedium = referrerMap["utm_medium"]
+                                    installReferrerModel.utmSource = referrerMap["utm_source"]
+                                    installReferrerModel.installOn =
+                                        (response.referrerClickTimestampSeconds * 1000)
+                                    InstallReferrerModel.update(installReferrerModel)
+                                } catch (ex: Exception) {
+                                    ex.printStackTrace()
                                 }
+
+                            } catch (ex: RemoteException) {
+                                PrefHelper.Debug("onInstallReferrerSetupFinished() Exception: " + ex.message)
                             }
-
-
-                            val installReferrerModel = InstallReferrerModel()
-                            installReferrerModel.otherInfo = referrerMap
-                            installReferrerModel.utmMedium = referrerMap["utm_medium"]
-                            installReferrerModel.utmSource = referrerMap["utm_source"]
-                            installReferrerModel.installOn =
-                                (response.referrerClickTimestampSeconds * 1000)
-                            InstallReferrerModel.update(installReferrerModel)
-                        } catch (ex: Exception) {
-                            ex.printStackTrace()
                         }
-
-                        referrerClient.endConnection()
                     }
-                }
 
-                override fun onInstallReferrerServiceDisconnected() {
-                    // Try to restart the connection on the next request to
-                    // Google Play by calling the startConnection() method.
-                }
-            })
+                    override fun onInstallReferrerServiceDisconnected() {
+                        PrefHelper.Debug("onInstallReferrerServiceDisconnected()")
+                    }
+                })
+            }
+        } catch (ex: Exception) {
+            ex.printStackTrace()
         }
     }
 

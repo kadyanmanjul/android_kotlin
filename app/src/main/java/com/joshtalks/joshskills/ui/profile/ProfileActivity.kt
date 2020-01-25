@@ -30,6 +30,7 @@ import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
+import com.joshtalks.joshskills.core.analytics.BranchIOAnalytics
 import com.joshtalks.joshskills.core.service.UploadWorker
 import com.joshtalks.joshskills.databinding.ActivityPersonalDetailBinding
 import com.joshtalks.joshskills.databinding.FragmentMediaSelectBinding
@@ -43,6 +44,7 @@ import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
+import io.branch.referral.util.BRANCH_STANDARD_EVENT
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -341,6 +343,7 @@ class ProfileActivity : BaseActivity(), MediaSelectCallback {
                     AnalyticsEvent.REGISTRATION_COMPLETED.name,
                     params
                 )
+                BranchIOAnalytics.pushToBranch(BRANCH_STANDARD_EVENT.COMPLETE_REGISTRATION)
 
                 User.getInstance().updateFromResponse(updateProfileResponse)
                 if (imageModel != null) {
