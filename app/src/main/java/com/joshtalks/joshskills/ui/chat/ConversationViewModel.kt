@@ -194,7 +194,6 @@ class ConversationViewModel(application: Application, private var inboxEntity: I
                 DatabaseUtils.addChat(chatModel)
             }
             uploadCompressedMedia(compressImagePath, messageObject, chatModel)
-
         }
     }
 

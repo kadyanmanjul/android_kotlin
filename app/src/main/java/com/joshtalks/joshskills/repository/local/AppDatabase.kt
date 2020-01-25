@@ -24,7 +24,9 @@ const val DATABASE_NAME = "JoshEnglishDB.db"
     ConvertersForUser::class,
     DateConverter::class,
     MessageDeliveryTypeConverter::class,
-    MessageStatusTypeConverters::class
+    MessageStatusTypeConverters::class,
+    ExpectedEngageTypeConverter::class,
+    ConvectorForEngagement::class
 
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -103,11 +105,16 @@ abstract class AppDatabase : RoomDatabase() {
 
 class MessageTypeConverters {
     @TypeConverter
-    fun fromString(value: String?): BASE_MESSAGE_TYPE {
-        val matType = object : TypeToken<BASE_MESSAGE_TYPE>() {}.type
-        return AppObjectController.gsonMapper.fromJson<BASE_MESSAGE_TYPE>(
-            value ?: BASE_MESSAGE_TYPE.TX.name, matType
-        )
+    fun fromString(value: String?): BASE_MESSAGE_TYPE? {
+        try {
+            val matType = object : TypeToken<BASE_MESSAGE_TYPE>() {}.type
+            return AppObjectController.gsonMapper.fromJson<BASE_MESSAGE_TYPE>(
+                value ?: BASE_MESSAGE_TYPE.TX.name, matType
+            )
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+            return BASE_MESSAGE_TYPE.Q
+        }
     }
 
     @TypeConverter
@@ -193,4 +200,45 @@ class MessageStatusTypeConverters {
         return AppObjectController.gsonMapper.toJson(enumVal)
     }
 }
+
+
+class ExpectedEngageTypeConverter {
+    @TypeConverter
+    fun fromString(value: String?): EXPECTED_ENGAGE_TYPE? {
+        if (value.isNullOrEmpty()) {
+            return null
+        }
+        val matType = object : TypeToken<EXPECTED_ENGAGE_TYPE>() {}.type
+        return AppObjectController.gsonMapper.fromJson<EXPECTED_ENGAGE_TYPE>(
+            value, matType
+        )
+    }
+
+    @TypeConverter
+    fun fromType(enumVal: EXPECTED_ENGAGE_TYPE?): String? {
+        if (enumVal == null) {
+            return null
+        }
+        return AppObjectController.gsonMapper.toJson(enumVal)
+    }
+}
+
+
+class ConvectorForEngagement {
+    @TypeConverter
+    fun fromEngagement(value: List<PracticeEngagement>?): String {
+        val type = object : TypeToken<List<PracticeEngagement>>() {}.type
+        return AppObjectController.gsonMapper.toJson(value, type)
+    }
+
+    @TypeConverter
+    fun toEngagement(value: String?): List<PracticeEngagement> {
+        if (value == null) {
+            return Collections.emptyList();
+        }
+        val type = object : TypeToken<List<PracticeEngagement>>() {}.type
+        return AppObjectController.gsonMapper.fromJson(value, type)
+    }
+}
+
 

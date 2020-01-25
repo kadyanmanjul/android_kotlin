@@ -61,7 +61,7 @@ class InboxViewHolder(var inboxEntity: InboxEntity, val totalItem: Int, val inde
 
 
         inboxEntity.type?.let {
-            if (BASE_MESSAGE_TYPE.Q == it) {
+            if (BASE_MESSAGE_TYPE.Q == it || BASE_MESSAGE_TYPE.AR == it) {
                 inboxEntity.material_type?.let { messageType ->
                     showRecentAsPerView(messageType)
                 }

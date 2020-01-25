@@ -1,0 +1,388 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:card_view="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+                name="handler"
+                type="com.joshtalks.joshskills.ui.practise.PractiseSubmitActivity" />
+    </data>
+
+    <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:context=".ui.practise.PractiseSubmitActivity">
+
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingBottom="@dimen/_16sdp">
+
+            <include layout="@layout/base_toolbar" />
+
+            <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/practise_info_layout"
+                    style="@style/Widget.MaterialComponents.CardView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:contentPadding="@dimen/_8sdp"
+                    card_view:cardCornerRadius="@dimen/_4sdp"
+                    card_view:cardElevation="@dimen/_4sdp"
+                    card_view:cardUseCompatPadding="true">
+
+                <androidx.appcompat.widget.AppCompatTextView
+                        fontPath="fonts/Roboto-Bold.ttf"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="start|center"
+                        android:text="@string/today_task"
+                        android:textColor="@color/font_color"
+                        android:textSize="@dimen/font_15" />
+
+                <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/_16sdp"
+                        android:orientation="vertical"
+                        android:padding="@dimen/_8sdp">
+
+                    <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+                            android:id="@+id/info_tv"
+                            fontPath="fonts/Roboto-Regular.ttf"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/_8sdp"
+                            android:ellipsize="end"
+                            android:gravity="start|center"
+                            android:textColor="@color/font_color"
+                            android:textSize="@dimen/font_13"
+                            android:visibility="gone" />
+
+
+                    <com.joshtalks.joshskills.core.custom_ui.JoshVideoPlayer
+                            android:id="@+id/video_player"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:background="#000"
+                            android:focusable="true"
+                            android:minHeight="@dimen/_160sdp"
+                            android:visibility="gone"
+                            app:controller_layout_id="@layout/layout_live_player_controller" />
+
+
+                    <RelativeLayout
+                            android:id="@+id/audio_view_container"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:visibility="gone">
+
+                        <me.zhanghai.android.materialplaypausedrawable.MaterialPlayPauseButton
+                                android:id="@+id/btn_play_info"
+                                android:onClick="@{()->handler.playPracticeAudio()}"
+
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentStart="true"
+                                android:layout_centerInParent="true"
+                                android:layout_gravity="center"
+                                android:background="@drawable/play_pause_button_background"
+                                android:contentDescription="@string/play_button_description"
+                                android:elevation="4dp"
+                                android:padding="@dimen/_4sdp"
+                                android:theme="?actionBarTheme"
+                                android:tint="?colorControlNormal" />
+
+
+                        <SeekBar
+                                android:id="@+id/practise_seekbar"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_alignBaseline="@id/btn_play_info"
+                                android:layout_centerInParent="true"
+                                android:layout_toEndOf="@id/btn_play_info"
+                                android:paddingStart="@dimen/_6sdp"
+                                android:paddingEnd="@dimen/_6sdp"
+                                android:progressDrawable="@drawable/seek_bar_draw"
+                                android:thumb="@drawable/seek_thumb" />
+
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/txt_info_duration"
+                                fontPath="fonts/Roboto-Regular.ttf"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_below="@+id/practise_seekbar"
+                                android:layout_alignEnd="@id/practise_seekbar"
+                                android:layout_marginTop="@dimen/_20sdp"
+                                android:textColor="@color/red_color"
+                                android:textSize="@dimen/font_11"
+                                app:layout_goneMarginTop="@dimen/spacing_large" />
+                    </RelativeLayout>
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                            android:id="@+id/image_view"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:adjustViewBounds="true"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:scaleType="centerCrop"
+                            android:visibility="gone" />
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+
+            <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/practise_text_info_layout"
+                    style="@style/Widget.MaterialComponents.CardView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    app:contentPadding="@dimen/_10sdp"
+                    card_view:cardCornerRadius="@dimen/_4sdp"
+                    card_view:cardElevation="@dimen/_4sdp"
+                    card_view:cardUseCompatPadding="true">
+
+
+                <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+                        android:id="@+id/info_tv_2"
+                        fontPath="fonts/Roboto-Regular.ttf"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="start|center"
+                        android:textColor="@color/font_color"
+                        android:textSize="@dimen/font_13" />
+
+            </com.google.android.material.card.MaterialCardView>
+
+
+            <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/practise_input_layout"
+                    style="@style/Widget.MaterialComponents.CardView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="visible"
+                    app:contentPadding="@dimen/_8sdp"
+                    card_view:cardCornerRadius="@dimen/_4sdp"
+                    card_view:cardElevation="@dimen/_4sdp"
+                    card_view:cardUseCompatPadding="true">
+
+                <androidx.appcompat.widget.AppCompatTextView
+                        fontPath="fonts/Roboto-Bold.ttf"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="start|center"
+                        android:text="@string/your_answer"
+                        android:textColor="@color/font_color"
+                        android:textSize="@dimen/font_15" />
+
+                <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/_4sdp"
+                        android:orientation="vertical">
+
+                    <androidx.appcompat.widget.AppCompatEditText
+                            android:layout_marginTop="@dimen/_16sdp"
+                            android:id="@+id/et_practise"
+                            fontPath="fonts/Roboto-Regular.ttf"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/rect_with_bound"
+                            android:gravity="start|top"
+                            android:hint="@string/type_your_answer_hint"
+                            android:inputType="textCapSentences|textMultiLine"
+                            android:lines="6"
+                            android:maxLines="6"
+                            android:imeOptions="actionDone"
+                            android:singleLine="false"
+                            android:padding="@dimen/_4sdp"
+                            android:textColor="@color/font_color"
+                            android:textColorHint="@color/emoji_bg_color"
+                            android:textCursorDrawable="@drawable/cursor_drawable"
+                            android:textSize="@dimen/font_13"
+                            android:visibility="gone" />
+
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                            android:layout_marginTop="@dimen/_16sdp"
+                            android:id="@+id/upload_practise_view"
+                            android:layout_width="@dimen/_48sdp"
+                            android:layout_height="@dimen/_48sdp"
+                            android:layout_gravity="center"
+                            android:adjustViewBounds="true"
+                            android:background="@drawable/recv_bg_mic"
+                            android:scaleType="centerInside"
+                            android:src="@drawable/recv_ic_mic_white"
+                            android:tint="@color/white"
+                            android:visibility="gone" />
+
+                    <Chronometer
+                            android:layout_marginTop="@dimen/_8sdp"
+                            android:id="@+id/counter_tv"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:gravity="center"
+                            android:text="00:00"
+                            android:textSize="@dimen/_8sdp"
+                            android:visibility="gone" />
+
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                            android:layout_marginTop="@dimen/_8sdp"
+                            android:id="@+id/practise_upload_sub_header"
+                            fontPath="fonts/Roboto-Regular.ttf"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:gravity="center"
+                            android:padding="@dimen/_4sdp"
+                            android:text="@string/hold_to_record_msz"
+                            android:textColor="@color/gray_9E"
+                            android:textSize="@dimen/font_12"
+                            android:visibility="gone" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                            android:layout_marginTop="@dimen/_8sdp"
+                            android:id="@+id/upload_file_view"
+                            fontPath="fonts/Roboto-Regular.ttf"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:drawableStart="@drawable/ic_file_upload"
+                            android:gravity="center"
+                            android:onClick="@{()->handler.chooseFile()}"
+                            android:padding="@dimen/_4sdp"
+                            android:text="@string/upload_file_msz"
+                            android:textColor="@color/gray_9E"
+                            android:textSize="@dimen/font_12"
+                            android:visibility="gone" />
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+
+
+            <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/practise_submit_layout"
+                    style="@style/Widget.MaterialComponents.CardView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    app:contentPadding="@dimen/_8sdp"
+                    card_view:cardCornerRadius="@dimen/_4sdp"
+                    card_view:cardElevation="@dimen/_4sdp"
+                    card_view:cardUseCompatPadding="true">
+
+
+
+                <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/_16sdp"
+                        android:orientation="vertical"
+                        android:padding="@dimen/_8sdp">
+
+
+
+                    <com.joshtalks.joshskills.core.custom_ui.JoshVideoPlayer
+                            android:id="@+id/video_player_submit"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:background="#000"
+                            android:focusable="true"
+                            android:minHeight="@dimen/_160sdp"
+                            android:visibility="gone"
+                            app:controller_layout_id="@layout/layout_live_player_controller" />
+
+
+                    <RelativeLayout
+                            android:id="@+id/submit_audio_view_container"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:visibility="gone">
+
+                        <me.zhanghai.android.materialplaypausedrawable.MaterialPlayPauseButton
+                                android:id="@+id/submit_btn_play_info"
+                                android:onClick="@{()->handler.playSubmitPracticeAudio()}"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentStart="true"
+                                android:layout_centerInParent="true"
+                                android:layout_gravity="center"
+                                android:background="@drawable/play_pause_button_background"
+                                android:contentDescription="@string/play_button_description"
+                                android:elevation="4dp"
+                                android:padding="@dimen/_4sdp"
+                                android:theme="?actionBarTheme"
+                                android:tint="?colorControlNormal" />
+
+
+                        <SeekBar
+                                android:id="@+id/submit_practise_seekbar"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_alignBaseline="@id/submit_btn_play_info"
+                                android:layout_centerInParent="true"
+                                android:layout_toEndOf="@id/submit_btn_play_info"
+                                android:paddingStart="@dimen/_6sdp"
+                                android:paddingEnd="@dimen/_6sdp"
+                                android:progressDrawable="@drawable/seek_bar_draw"
+                                android:thumb="@drawable/seek_thumb" />
+
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/submit_txt_info_duration"
+                                fontPath="fonts/Roboto-Regular.ttf"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_below="@+id/submit_practise_seekbar"
+                                android:layout_alignEnd="@id/submit_practise_seekbar"
+                                android:layout_marginTop="@dimen/_20sdp"
+                                android:textColor="@color/red_color"
+                                android:textSize="@dimen/font_11"
+                                app:layout_goneMarginTop="@dimen/spacing_large" />
+                    </RelativeLayout>
+
+                </LinearLayout>
+
+
+
+
+
+            </com.google.android.material.card.MaterialCardView>
+
+
+            <com.google.android.material.textview.MaterialTextView
+                    fontPath="fonts/OpenSans-SemiBold.ttf"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="@dimen/_8sdp"
+                    android:background="@drawable/round_rectangle"
+                    android:backgroundTint="@color/primary_text"
+                    android:gravity="center"
+                    android:onClick="@{()->handler.submitPractise()}"
+                    android:paddingStart="@dimen/_24sdp"
+                    android:paddingTop="@dimen/_12sdp"
+                    android:paddingEnd="@dimen/_24sdp"
+                    android:paddingBottom="@dimen/_12sdp"
+                    android:text="@string/submit_answer"
+                    android:textAllCaps="false"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/font_17"
+                    app:rippleColor="@color/white" />
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+</layout>

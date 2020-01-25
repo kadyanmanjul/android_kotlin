@@ -15,7 +15,7 @@ data class CourseExploreModel(
     @SerializedName("created")
     val created: String,
     @SerializedName("id")
-    var id: Int,
+    var id: Int? = -1,
     @SerializedName("is_default")
     val isDefault: Boolean,
     @SerializedName("modified")

@@ -238,7 +238,6 @@ class AudioPlayerViewHolder(activityRef: WeakReference<FragmentActivity>, messag
         }
 
 
-        updateUI()
         updateTime(messageTimeTV)
         messageTimeTV.text =
             Utils.getMessageTimeInHours(message.created).toUpperCase(Locale.getDefault())
@@ -260,6 +259,8 @@ class AudioPlayerViewHolder(activityRef: WeakReference<FragmentActivity>, messag
                     RxBus2.publish(InternalSeekBarProgressEventBus(userSelectedPosition))
                 }
             })
+        updateUI()
+
     }
 
     private fun audioPlayingStatus() {
@@ -288,7 +289,7 @@ class AudioPlayerViewHolder(activityRef: WeakReference<FragmentActivity>, messag
     private fun updateUI() {
         try {
             duration = 0
-            if (message.type == BASE_MESSAGE_TYPE.Q) {
+            if (message.type == BASE_MESSAGE_TYPE.Q || message.type == BASE_MESSAGE_TYPE.AR) {
                 val audioTypeObj: AudioType = message.question!!.audioList!![0]
                 this.duration = audioTypeObj.duration
                 when {

@@ -1,8 +1,10 @@
 package com.joshtalks.joshskills.repository.service
 
 import com.joshtalks.joshskills.repository.local.entity.Course
+import com.joshtalks.joshskills.repository.local.entity.PracticeEngagement
 import com.joshtalks.joshskills.repository.server.AmazonPolicyResponse
 import com.joshtalks.joshskills.repository.server.ChatMessageReceiver
+import com.joshtalks.joshskills.repository.server.RequestEngage
 import com.joshtalks.joshskills.repository.server.ResponseChatMessage
 import kotlinx.coroutines.Deferred
 import retrofit2.http.*
@@ -44,6 +46,10 @@ interface ChatNetworkService {
 
     @PATCH("$DIR/chat/message/list/")
     suspend fun updateMessagesStatus(@Body messageObject: Any)
+
+
+    @POST("$DIR/practice/engagement/")
+    fun submitPracticeAsync(@Body requestEngage: RequestEngage): Deferred<PracticeEngagement>
 
 
 }

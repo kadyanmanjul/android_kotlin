@@ -52,6 +52,27 @@
         </FrameLayout>
 
 
+        <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/find_more"
+                fontPath="fonts/OpenSans-SemiBold.ttf"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center|bottom"
+                android:background="@drawable/round_rectangle"
+                android:backgroundTint="@color/color_success"
+                android:gravity="center"
+                android:onClick="@{()->handler.buyCourse()}"
+                android:paddingStart="@dimen/_36sdp"
+                android:paddingTop="@dimen/_12sdp"
+                android:paddingEnd="@dimen/_36sdp"
+                android:paddingBottom="@dimen/_12sdp"
+                android:layout_marginBottom="@dimen/_8sdp"
+                android:text="@string/start_course"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:textSize="@dimen/font_17"
+                app:rippleColor="@color/white" />
+
         <FrameLayout
                 android:id="@+id/whatsapp_help_container"
                 android:layout_width="wrap_content"

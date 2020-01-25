@@ -221,9 +221,11 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
 
     }
 
+    public void supportFullScreen() {
+        checkIfFullscreenToggleSupported();
+    }
+
     private void checkIfFullscreenToggleSupported() {
-
-
         findViewById(R.id.ivFullScreenToggle).setVisibility(
                 getContext() instanceof FullscreenToggleListener
                         ? View.VISIBLE
@@ -432,5 +434,6 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
             }
         }
     }
+
 
 }

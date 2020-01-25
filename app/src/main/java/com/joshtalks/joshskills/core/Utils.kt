@@ -3,6 +3,7 @@ package com.joshtalks.joshskills.core
 import android.Manifest
 import android.accounts.Account
 import android.accounts.AccountManager
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.ActivityManager
 import android.app.PendingIntent
@@ -11,6 +12,7 @@ import android.content.Intent
 import android.content.Intent.ACTION_VIEW
 import android.content.pm.PackageManager
 import android.content.res.Resources
+import android.database.Cursor
 import android.graphics.*
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.VectorDrawable
@@ -22,8 +24,10 @@ import android.net.NetworkCapabilities
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
+import android.provider.MediaStore
 import android.provider.Settings
 import android.text.format.DateUtils
+import android.util.Log
 import android.util.TypedValue
 import android.widget.TextView
 import androidx.appcompat.content.res.AppCompatResources
@@ -551,6 +555,41 @@ object Utils {
 
     fun updateTextView(textView: TextView, text: String) {
         textView.post { textView.text = text }
+    }
+
+    @SuppressLint("Recycle")
+    fun getRealPathFromURI(contentUri: Uri): String {
+        var cursor: Cursor? = null;
+        try {
+            val proj = arrayOf(MediaStore.Images.Media.DATA)
+            cursor = AppObjectController.joshApplication.contentResolver.query(
+                contentUri,
+                proj,
+                null,
+                null,
+                null
+            )!!;
+            val column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+            cursor.moveToFirst();
+            return cursor.getString(column_index);
+        } catch (e: Exception) {
+            Log.e("TAG", "getRealPathFromURI Exception : $e");
+            return "";
+        } finally {
+            cursor?.close()
+        }
+    }
+
+    fun printAllIntent(intent: Intent) {
+        val bundle = intent.getExtras()
+        if (bundle != null) {
+            for (key in bundle.keySet()) {
+                Log.e(
+                    "all intent",
+                    key + " : " + (bundle.get(key) != null ?: bundle.get(key) ?: "NULL")
+                );
+            }
+        }
     }
 
 

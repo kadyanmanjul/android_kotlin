@@ -4,15 +4,12 @@ import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
-import android.graphics.drawable.InsetDrawable;
 import android.graphics.drawable.LayerDrawable;
 import android.graphics.drawable.ScaleDrawable;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Interpolator;
 
@@ -123,6 +120,7 @@ public class CustomImageButton extends AppCompatImageView implements View.OnTouc
     public boolean onTouch(View v, MotionEvent event) {
         try {
             if (isListenForRecord()) {
+
                 switch (event.getAction()) {
 
                     case MotionEvent.ACTION_DOWN:
@@ -137,11 +135,10 @@ public class CustomImageButton extends AppCompatImageView implements View.OnTouc
                     case MotionEvent.ACTION_UP:
                         recordView.onActionUp((CustomImageButton) v);
                         break;
-
                 }
-            }
-            if (onRecordTouchListener != null) {
-                onRecordTouchListener.onTouch(event.getAction());
+                if (onRecordTouchListener != null) {
+                    onRecordTouchListener.onTouch(event.getAction());
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();

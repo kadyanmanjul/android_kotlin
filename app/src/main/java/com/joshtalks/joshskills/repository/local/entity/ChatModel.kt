@@ -5,6 +5,7 @@ import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.messaging.RxBus2
+import com.joshtalks.joshskills.repository.local.ConvectorForEngagement
 import com.joshtalks.joshskills.repository.local.eventbus.VideoDownloadedBus
 import com.joshtalks.joshskills.util.RandomString
 import java.io.Serializable
@@ -114,8 +115,6 @@ data class Question(
     @ColumnInfo
     @Expose var chatId: String = "",
 
-    @Ignore
-    @SerializedName("audios") var audioList: List<AudioType>? = null,
 
     @ColumnInfo
     @SerializedName("course_id") var course_id: Int = 0,
@@ -141,7 +140,7 @@ data class Question(
     @SerializedName("pdf") var pdfList: List<PdfType>? = null,
 
     @ColumnInfo(name = "qText")
-    @SerializedName("text") var qText: String? = "",
+    @SerializedName("text") var qText: String? = null,
 
     @ColumnInfo
     @SerializedName("title") var title: String? = "",
@@ -150,17 +149,24 @@ data class Question(
     @SerializedName("type") var questionType: String = "",
 
     @Ignore
-    @SerializedName("videos") var videoList: List<VideoType>? = emptyList()
+    @SerializedName("videos") var videoList: List<VideoType>? = emptyList(),
 
-) : Serializable
+    @Ignore
+    @SerializedName("audios") var audioList: List<AudioType>? = null,
 
 
-data class Sender(
-    @SerializedName("id") var id: String = "",
+    @ColumnInfo(name = "feedback_require")
+    @SerializedName("feedback_require") var feedback_require: String? = null,
 
-    @SerializedName("user") var user: User? = User(),
+    @ColumnInfo
+    @SerializedName("expected_ans_type") var expectedEngageType: EXPECTED_ENGAGE_TYPE? = null,
 
-    @SerializedName("user_type") var user_type: String = ""
+    @TypeConverters(
+        ConvectorForEngagement::class
+    )
+    @SerializedName("practice_engagements")
+    var practiceEngagement: List<PracticeEngagement>? = emptyList()
+
 ) : Serializable
 
 
@@ -305,6 +311,28 @@ data class ImageType(
     @SerializedName("width") var width: Int = 0
 
 ) : DataBaseClass(), Serializable
+
+
+data class Sender(
+    @SerializedName("id") var id: String = "",
+    @SerializedName("user") var user: User? = User(),
+    @SerializedName("user_type") var user_type: String = ""
+) : Serializable
+
+
+data class PracticeEngagement(
+    @SerializedName("answer_url") val answerUrl: String?,
+    @SerializedName("id") val id: Int?,
+    @SerializedName("text") val text: String?,
+    @Expose var localPath: String? = null
+
+) : Serializable {
+    constructor() : this(
+        answerUrl = null,
+        id = null,
+        text = null
+    )
+}
 
 open class DataBaseClass : Serializable {
 
@@ -544,8 +572,6 @@ interface ChatDao {
 
     @Query(value = "SELECT chat_id FROM chat_table where status=:status")
     suspend fun getSeenByUserMessages(status: MESSAGE_STATUS = MESSAGE_STATUS.SEEN_BY_USER): List<String>
-
-
 }
 
 
@@ -554,7 +580,13 @@ enum class OPTION_TYPE(val type: String) {
 }
 
 enum class BASE_MESSAGE_TYPE(val type: String) {
-    TX("TX"), VI("VI"), AU("AU"), IM("IM"), Q("Q"), PD("PD")
+    A("A"), TX("TX"), VI("VI"), AU("AU"), IM("IM"), Q("Q"), PD("PD"), PR("PR"), AR("AR")
+
+}
+
+
+enum class EXPECTED_ENGAGE_TYPE(val type: String) {
+    TX("TX"), VI("VI"), AU("AU"), IM("IM"), DX("DX")
 
 }
 

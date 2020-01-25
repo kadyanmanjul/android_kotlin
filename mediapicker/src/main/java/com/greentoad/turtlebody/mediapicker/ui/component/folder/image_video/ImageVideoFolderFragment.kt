@@ -79,7 +79,7 @@ class ImageVideoFolderFragment : FragmentBase() {
     private fun fetchImageVideoFolders() {
         val bucket: Single<ArrayList<ImageVideoFolder>> =
             Single.fromCallable<ArrayList<ImageVideoFolder>> {
-                FileManager.fetchImageAndVideoFolders(
+                FileManager.fetchVideoFolders(
                     context!!
                 )
             }

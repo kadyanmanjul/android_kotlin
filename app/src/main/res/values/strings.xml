@@ -35,7 +35,7 @@
     <string name="volume_up_message">Please turn the volume up</string>
     <string name="storage_permission_message">JoshSkills access your device\'s  photos, media and files.</string>
     <string name="record_permission_message">To record a Voice Message, allow JoshSkills access to your microphone and your device\'s  photos, media and files. Tap Settings > Permissions, and turn Microphone on and Storage on.</string>
-<string name="camera_permission_message">To capture photos and videos allow JoshSkills access to your camera  and your device\'s  photos, media and files.</string>
+    <string name="camera_permission_message">To capture photos and videos allow JoshSkills access to your camera  and your device\'s  photos, media and files.</string>
 
     <string name="type_message_hint">Type a Message</string>
     <string name="profile_photo">Profile photo</string>
@@ -152,4 +152,18 @@
     <string name="question_count">%s/%s</string>
     <string name="waiting_course_buy_confirmation">We are waiting for confirmation from your bank server.\n #usually it takes 30&#8211;60 seconds. </string>
     <string name="payment_process_success">Your payment has been processed successfully!</string>
+    <string name="status_with_colon">Status : </string>
+    <string name="submit_answer">Submit Answer</string>
+
+    <!-- Help Screen  -->
+    <string name="today_task">Today\'s Task</string>
+    <string name="today_task_type_audio">Today\'s Task Type - Text</string>
+
+    <string name="today_task_type">Today\'s Task Type - %s </string>
+    <string name="task_sub_title_audio">You can complete today\'s task by recording an audio</string>
+    <string name="hold_to_record_msz">Hold to record audio</string>
+    <string name="upload_file_msz">Upload a file</string>
+    <string name="your_answer">Your Answer</string>
+
+    <string name="type_your_answer_hint">Type your answer here</string>
 </resources>

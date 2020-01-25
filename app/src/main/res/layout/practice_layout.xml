@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/root_view"
+        android:layout_width="@dimen/_210sdp"
+        android:layout_height="@dimen/_190sdp"
+        android:layout_marginStart="@dimen/_16sdp"
+        android:layout_marginTop="@dimen/_8sdp"
+        android:layout_marginBottom="@dimen/_8sdp"
+        android:background="@drawable/dotted_rectangle"
+        android:clickable="true"
+        android:focusable="true"
+        android:orientation="vertical"
+        android:paddingStart="@dimen/_8sdp"
+        android:paddingEnd="@dimen/_8sdp">
+
+    <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tv_title"
+            fontPath="fonts/OpenSans-SemiBold.ttf"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_16sdp"
+            android:clickable="false"
+            android:enabled="false"
+            android:gravity="start|center"
+            android:textColor="@color/gray_48"
+            android:textSize="@dimen/font_14"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+    <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+            android:id="@+id/textview"
+            fontPath="fonts/OpenSans-SemiBold.ttf"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:layout_marginTop="@dimen/_16sdp"
+            android:clickable="false"
+            android:enabled="false"
+            android:gravity="center_vertical|start"
+            android:text="@string/status_with_colon"
+
+            android:textColor="@color/gray_48"
+            android:textSize="@dimen/font_13"
+            app:layout_constraintStart_toStartOf="@+id/tv_title"
+            app:layout_constraintTop_toBottomOf="@+id/tv_title" />
+
+
+    <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+            android:id="@+id/tv_practice_status"
+            fontPath="fonts/OpenSans-SemiBold.ttf"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+
+            android:layout_marginStart="@dimen/_4sdp"
+            android:clickable="false"
+            android:enabled="false"
+            android:gravity="center_vertical|start"
+            android:text="Answer not submitted"
+            android:textColor="@color/red"
+            android:textSize="@dimen/font_13"
+            app:layout_constraintStart_toEndOf="@+id/textview"
+            app:layout_constraintTop_toTopOf="@+id/textview" />
+
+    <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+            fontPath="fonts/Roboto-Regular.ttf"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/_16sdp"
+            android:clickable="false"
+            android:drawableEnd="@drawable/ef_ic_arrow_forward"
+            android:drawablePadding="@dimen/_4sdp"
+            android:enabled="false"
+            android:gravity="end|center"
+            android:text="@string/submit_answer"
+            android:textColor="@color/gray_48"
+            android:textSize="@dimen/font_13"
+            app:drawableTint="@color/gray_48"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+
+            />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

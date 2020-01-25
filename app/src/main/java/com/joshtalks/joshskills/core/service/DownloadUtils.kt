@@ -99,7 +99,7 @@ object DownloadUtils {
                 )
                 chatModel.downloadStatus = DOWNLOAD_STATUS.DOWNLOADED
 
-                if (chatModel.type == BASE_MESSAGE_TYPE.Q) {
+                if (chatModel.type == BASE_MESSAGE_TYPE.Q || chatModel.type == BASE_MESSAGE_TYPE.AR) {
                     chatModel.question?.let { question ->
                         when (question.material_type) {
                             BASE_MESSAGE_TYPE.IM ->
@@ -136,7 +136,7 @@ object DownloadUtils {
                 appDatabase.chatDao().updateChatMessage(chatModel)
                 return@async true
 
-            }catch (ex:Exception){
+            } catch (ex: Exception) {
                 ex.printStackTrace()
                 return@async false
 

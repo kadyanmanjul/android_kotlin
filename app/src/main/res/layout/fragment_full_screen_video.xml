@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <variable
+                name="handler"
+                type="com.joshtalks.joshskills.ui.video_player.FullScreenVideoFragment" />
+    </data>
+    <FrameLayout
+            android:layout_width="match_parent"
+            android:keepScreenOn="true"
+            android:layout_height="match_parent"
+            android:background="#000"
+            android:orientation="vertical">
+
+
+        <com.joshtalks.joshskills.core.custom_ui.JoshVideoPlayer
+                android:id="@+id/pvPlayer"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:background="#000"
+                android:focusable="true"
+                app:controller_layout_id="@layout/layout_live_player_controller" />
+
+        <com.google.android.material.appbar.MaterialToolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#20000000"
+                android:gravity="start|center|top"
+                android:minHeight="?attr/actionBarSize"
+                app:theme="@style/Theme.GuidelinesCompat.Light.DarkToolbar">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/iv_back"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/_5sdp"
+                    android:paddingTop="@dimen/_5sdp"
+                    android:paddingBottom="@dimen/_5sdp"
+                    android:visibility="visible"
+                    app:srcCompat="@drawable/ic_arrow_back" />
+
+
+            <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/text_message_title"
+                    fontPath="fonts/OpenSans-SemiBold.ttf"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical|start"
+                    android:padding="@dimen/_5sdp"
+                    android:text=""
+                    android:ellipsize="end"
+                    android:lines="1"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/font_20" />
+        </com.google.android.material.appbar.MaterialToolbar>
+
+
+    </FrameLayout>
+</layout>

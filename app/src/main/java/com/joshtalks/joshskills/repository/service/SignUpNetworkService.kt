@@ -78,7 +78,7 @@ interface SignUpNetworkService {
     suspend fun explorerCourse(@QueryMap params: Map<String, String> = mapOf("is_default" to "true")): List<CourseExploreModel>
 
     @GET("$DIR/course/test_images/")
-    suspend fun explorerCourseDetails(@QueryMap params: Map<String, String>): List<CourseDetailsModel>
+    fun explorerCourseDetails(@QueryMap params: Map<String, String>): Deferred<List<CourseDetailsModel>>
 
 
 }

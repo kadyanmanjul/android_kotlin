@@ -72,6 +72,7 @@ import com.joshtalks.joshskills.repository.server.chat_message.TVideoMessage
 import com.joshtalks.joshskills.repository.service.EngagementNetworkHelper
 import com.joshtalks.joshskills.ui.extra.ImageShowFragment
 import com.joshtalks.joshskills.ui.pdfviewer.PdfViewerActivity
+import com.joshtalks.joshskills.ui.practise.PractiseSubmitActivity
 import com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity
 import com.joshtalks.joshskills.ui.view_holders.*
 import com.joshtalks.recordview.CustomImageButton.FIRST_STATE
@@ -99,6 +100,7 @@ import kotlin.concurrent.scheduleAtFixedRate
 const val CHAT_ROOM_OBJECT = "chat_room"
 const val IMAGE_SELECT_REQUEST_CODE = 1077
 const val VISIBILE_ITEM_PERCENT = 75
+const val PRACTISE_SUBMIT_REQUEST_CODE = 1100
 
 class ConversationActivity : CoreJoshActivity() {
 
@@ -126,19 +128,11 @@ class ConversationActivity : CoreJoshActivity() {
     private var readMessageTimerTask: TimerTask? = null
     private val uiHandler = Handler(Looper.getMainLooper())
     private lateinit var progressDialog: FlipProgressDialog
-    private lateinit var mBottomSheetBehaviour: BottomSheetBehavior<MaterialCardView>
 
-    private lateinit var mPlayingSong: TextView
-    private lateinit var mDuration: TextView
-    private lateinit var mSongPosition: TextView
-    private lateinit var mSeekBarAudio: SeekBar
-    private lateinit var mControlsContainer: LinearLayout
-    private lateinit var bottomSheetLayout: MaterialCardView
     private var mUserIsSeeking = false
     private var mPlayerInterface: PlayerInterface? = null
     private var mMusicService: MusicService? = null
     private var mMusicNotificationManager: MusicNotificationManager? = null
-    private lateinit var mPlayPauseButton: ImageView
     private var mPlaybackListener: PlaybackListener? = null
     private var sBound = false
     private var currentAudio: String? = null
@@ -218,7 +212,6 @@ class ConversationActivity : CoreJoshActivity() {
         setUpEmojiPopup()
         liveDataObservable()
         initView()
-        initAudioPlayerView()
         conversationViewModel.getAllUserMessage()
         refreshChat()
         uiHandler.postDelayed({
@@ -233,45 +226,6 @@ class ConversationActivity : CoreJoshActivity() {
         doBindService()
     }
 
-    private fun initAudioPlayerView() {
-        mControlsContainer = findViewById(R.id.controls_container)
-        bottomSheetLayout = findViewById(R.id.design_bottom_sheet)
-        mBottomSheetBehaviour = BottomSheetBehavior.from<MaterialCardView>(bottomSheetLayout)
-        mDuration = findViewById(R.id.duration)
-        mSeekBarAudio = findViewById(R.id.seekTo)
-        mSongPosition = findViewById(R.id.song_position)
-        mPlayingSong = findViewById(R.id.playing_song)
-        mPlayPauseButton = findViewById(R.id.play_pause)
-        mBottomSheetBehaviour.setPeekHeight(Utils.dpToPx(96), true)
-        initializeSeekBar()
-    }
-
-
-    private fun initializeSeekBar() {
-        mSeekBarAudio.setOnSeekBarChangeListener(
-            object : SeekBar.OnSeekBarChangeListener {
-                val currentPositionColor = mSongPosition.currentTextColor
-                var userSelectedPosition = 0
-                override fun onStartTrackingTouch(seekBar: SeekBar) {
-                    mUserIsSeeking = true
-                }
-
-                override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
-                    if (fromUser) {
-                        userSelectedPosition = progress
-                    }
-                    mSongPosition.text = Utils.formatDuration(progress)
-                }
-
-                override fun onStopTrackingTouch(seekBar: SeekBar) {
-                    if (mUserIsSeeking) {
-                        mSongPosition.setTextColor(currentPositionColor)
-                    }
-                    mUserIsSeeking = false
-                    mPlayerInterface?.seekTo(userSelectedPosition)
-                }
-            })
-    }
 
     private fun doBindService() {
         bindService(Intent(this, MusicService::class.java), mConnection, Context.BIND_AUTO_CREATE)
@@ -673,20 +627,6 @@ class ConversationActivity : CoreJoshActivity() {
             scrollToEnd()
         }
 
-        findViewById<View>(R.id.play_pause).setOnClickListener {
-            if (checkIsPlayer()) {
-                mPlayerInterface?.resumeOrPause()
-            }
-        }
-        findViewById<View>(R.id.stop_player).setOnClickListener {
-            if (checkIsPlayer()) {
-                if (mPlayerInterface!!.isPlaying) {
-                    mPlayerInterface?.resumeOrPause()
-                }
-            }
-            bottomSheetLayout.visibility = GONE
-        }
-
     }
 
     @SuppressLint("CheckResult")
@@ -981,6 +921,21 @@ class ConversationActivity : CoreJoshActivity() {
                     })
         )
 
+        compositeDisposable.add(
+            RxBus2.listen(PractiseSubmitEventBus::class.java)
+                .subscribeOn(Schedulers.io())
+                .subscribe({
+                    PractiseSubmitActivity.startPractiseSubmissionActivity(
+                        activityRef.get()!!,
+                        PRACTISE_SUBMIT_REQUEST_CODE,
+                        it.chatModel
+                    )
+
+                }, {
+                    it.printStackTrace()
+                })
+        )
+
 
     }
 
@@ -1059,7 +1014,7 @@ class ConversationActivity : CoreJoshActivity() {
     private fun getView(
         chatModel: ChatModel
     ): BaseCell? {
-        return if (chatModel.type == BASE_MESSAGE_TYPE.Q) {
+        return if (chatModel.type == BASE_MESSAGE_TYPE.Q || chatModel.type == BASE_MESSAGE_TYPE.AR) {
             getGenericView(chatModel.question?.material_type, chatModel)
         } else {
             getGenericView(chatModel.type, chatModel)
@@ -1082,6 +1037,8 @@ class ConversationActivity : CoreJoshActivity() {
 
             BASE_MESSAGE_TYPE.VI ->
                 VideoViewHolder(activityRef, chatModel)
+            BASE_MESSAGE_TYPE.PR ->
+                PracticeViewHolder(activityRef, chatModel)
             else -> TextViewHolder(activityRef, chatModel)
         }
     }
@@ -1255,9 +1212,7 @@ class ConversationActivity : CoreJoshActivity() {
     }
 
     override fun onBackPressed() {
-        if (mBottomSheetBehaviour.state == BottomSheetBehavior.STATE_EXPANDED) {
-            mBottomSheetBehaviour.state = BottomSheetBehavior.STATE_COLLAPSED
-        }
+
         if (mPlayerInterface!!.isPlaying) {
             mPlayerInterface!!.resumeOrPause()
         }
@@ -1362,21 +1317,17 @@ class ConversationActivity : CoreJoshActivity() {
         try {
             if (startPlay) {
                 mPlayerInterface?.mediaPlayer?.start()
-                Handler().postDelayed({
+                AppObjectController.uiHandler.postDelayed({
                     mMusicService!!.startForeground(
                         MusicNotificationManager.NOTIFICATION_ID,
                         mMusicNotificationManager!!.createNotification()
                     )
                 }, 250)
             }
-            val selectedSong: AudioType = mPlayerInterface!!.currentSong
-            val duration: Int = selectedSong.duration
-            mSeekBarAudio.max = duration
-            Utils.updateTextView(mDuration, Utils.formatDuration(duration))
             if (restore) {
-                mSeekBarAudio.progress = mPlayerInterface!!.playerPosition
                 updateResetStatus(false)
-                Handler().postDelayed({
+                AppObjectController.uiHandler.postDelayed({
+
                     //stop foreground if coming from pause state
                     if (mMusicService!!.isRestoredFromPause) {
                         mMusicService!!.stopForeground(false)
@@ -1389,13 +1340,11 @@ class ConversationActivity : CoreJoshActivity() {
                 }, 250)
             }
         } catch (ex: Exception) {
+            Crashlytics.logException(ex)
         }
     }
 
     private fun onPlayAudio(chatModel: ChatModel, audioObject: AudioType) {
-        if (!mSeekBarAudio.isEnabled) {
-            mSeekBarAudio.isEnabled = true
-        }
         AppObjectController.currentPlayingAudioObject = chatModel
         val audioList = ArrayList<AudioType>()
         audioList.add(audioObject)
@@ -1417,7 +1366,6 @@ class ConversationActivity : CoreJoshActivity() {
         override fun onPositionChanged(position: Int) {
             if (!mUserIsSeeking) {
                 RxBus2.publish(SeekBarProgressEventBus(currentAudio!!, position))
-                // mSeekBarAudio.progress = position
             }
         }
 

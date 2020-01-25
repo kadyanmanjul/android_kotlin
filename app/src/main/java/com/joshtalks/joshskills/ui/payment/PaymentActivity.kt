@@ -28,7 +28,6 @@ import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.CourseDetailsModel
 import com.joshtalks.joshskills.repository.server.CourseExploreModel
 import com.joshtalks.joshskills.repository.server.PaymentDetailsResponse
-import com.joshtalks.joshskills.ui.view_holders.BuyCourseViewHolder
 import com.joshtalks.joshskills.ui.view_holders.CourseDetailViewHolder
 import com.muddzdev.styleabletoast.StyleableToast
 import com.razorpay.Checkout
@@ -40,6 +39,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.json.JSONObject
+import retrofit2.HttpException
 import java.util.*
 
 
@@ -131,7 +131,7 @@ class PaymentActivity : CoreJoshActivity(),
 
                 val data = mapOf("test" to courseId)
                 val courseDetailsModelList: List<CourseDetailsModel> =
-                    AppObjectController.signUpNetworkService.explorerCourseDetails(data)
+                    AppObjectController.signUpNetworkService.explorerCourseDetails(data).await()
                 CoroutineScope(Dispatchers.Main).launch {
                     if (courseDetailsModelList.isNullOrEmpty().not()) {
                         courseDetailsModelList.forEach {
@@ -141,7 +141,7 @@ class PaymentActivity : CoreJoshActivity(),
                                 )
                             )
                         }
-                        if (courseModel != null) {
+                        /*if (courseModel != null) {
                             activityPaymentBinding.recyclerView.addView(
                                 BuyCourseViewHolder(
                                     courseModel?.id.toString()
@@ -153,10 +153,11 @@ class PaymentActivity : CoreJoshActivity(),
                                     courseModel?.id.toString()
                                 )
                             )
-                        }
+                        }*/
                     }
                     activityPaymentBinding.progressBar.visibility = View.GONE
                 }
+            } catch (ex: HttpException) {
             } catch (ex: Exception) {
                 ex.printStackTrace()
             }
@@ -269,13 +270,22 @@ class PaymentActivity : CoreJoshActivity(),
         }
     }
 
+
+    fun buyCourse() {
+        if (courseModel != null) {
+            getPaymentDetails(courseModel?.id.toString())
+        } else {
+            getPaymentDetails(courseId)
+        }
+    }
+
+
     private fun addObserver() {
         compositeDisposable.add(
             RxBus2.listen(BuyCourseEventBus::class.java)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
-                    getPaymentDetails(it.courseId)
                 }, {
                     it.printStackTrace()
                 })
@@ -296,7 +306,7 @@ class PaymentActivity : CoreJoshActivity(),
     }
 
     private fun openWhatsAppHelp() {
-        AppObjectController.uiHandler.postDelayed(Runnable {
+        AppObjectController.uiHandler.postDelayed({
             if (courseModel != null && courseModel!!.whatsappUrl != null) {
                 activityPaymentBinding.whatsappHelpContainer.visibility = View.VISIBLE
                 activityPaymentBinding.whatsappHelp.setOnClickListener {
@@ -312,7 +322,7 @@ class PaymentActivity : CoreJoshActivity(),
 
                 }
             }
-        },2500)
+        }, 2500)
 
     }
 
