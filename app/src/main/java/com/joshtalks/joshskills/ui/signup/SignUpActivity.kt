@@ -1,5 +1,7 @@
 package com.joshtalks.joshskills.ui.signup
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.view.Gravity
 import androidx.databinding.DataBindingUtil
@@ -20,9 +22,14 @@ import com.joshtalks.joshskills.repository.local.model.InstallReferrerModel
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
 import com.joshtalks.joshskills.ui.inbox.COURSE_EXPLORER_WITHOUT_CODE
 
+
+const val IS_ACTIVITY_FOR_RESULT = "is_activity_for_result"
+
+
 class SignUpActivity : CoreJoshActivity() {
 
     private lateinit var layout: ActivitySignUpBinding
+    private var activityResultFlag = false
     private val viewModel: SignUpViewModel by lazy {
         ViewModelProviders.of(this).get(SignUpViewModel::class.java)
     }
@@ -32,6 +39,10 @@ class SignUpActivity : CoreJoshActivity() {
         layout = DataBindingUtil.setContentView(this, R.layout.activity_sign_up)
         layout.handler = this
         supportActionBar?.hide()
+        if (intent.hasExtra(IS_ACTIVITY_FOR_RESULT)) {
+            activityResultFlag = intent?.getBooleanExtra(IS_ACTIVITY_FOR_RESULT, false) ?: false
+        }
+
         addObserver()
         login()
 
@@ -65,6 +76,10 @@ class SignUpActivity : CoreJoshActivity() {
                     return@Observer
                 }
                 SignUpStepStatus.SignUpCompleted -> {
+                    if (activityResultFlag) {
+                        setResult()
+                        return@Observer
+                    }
                     val intent = getIntentForState()
                     if (intent == null) {
                         AppAnalytics.create(AnalyticsEvent.LOGIN_SUCCESS.NAME).push()
@@ -80,6 +95,13 @@ class SignUpActivity : CoreJoshActivity() {
                     return@Observer
                 }
                 SignUpStepStatus.CoursesNotExist -> {
+
+                    if (activityResultFlag) {
+                        setResult()
+                        return@Observer
+                    }
+
+
                     try {
                         val typeToken = object : TypeToken<List<String>>() {}.type
                         val list = AppObjectController.gsonMapperForLocal.fromJson<List<String>>(
@@ -101,7 +123,12 @@ class SignUpActivity : CoreJoshActivity() {
                 else -> return@Observer
             }
         })
+    }
 
+    private fun setResult() {
+        val resultIntent = Intent()
+        setResult(Activity.RESULT_OK, resultIntent)
+        finish()
     }
 
     private fun openCourseExplorerScreen() {

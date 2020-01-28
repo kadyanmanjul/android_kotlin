@@ -97,7 +97,7 @@ class PaymentProcessFragment : DialogFragment() {
         animAlpha?.reset()
 
         paymentProcessFragmentBinding.tvCourse.text = courseModel.courseName
-        paymentProcessFragmentBinding.tvAmount.text = "INR " + (courseModel.amount).toString()
+        paymentProcessFragmentBinding.tvAmount.text = "INR " + (courseModel.amount / 100).toString()
         activity?.let {
             Glide.with(it)
                 .load(courseModel.courseIcon)

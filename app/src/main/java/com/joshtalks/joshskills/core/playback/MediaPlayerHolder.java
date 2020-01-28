@@ -246,18 +246,26 @@ public final class MediaPlayerHolder implements PlayerInterface, MediaPlayer.OnC
     }
 
     private void resumeMediaPlayer() {
-        if (!isPlaying()) {
-            mMediaPlayer.start();
-            setStatus(PlaybackInfoListener.State.RESUMED);
-            mMusicService.startForeground(MusicNotificationManager.NOTIFICATION_ID, mMusicNotificationManager.createNotification());
+        try {
+            if (!isPlaying()) {
+                mMediaPlayer.start();
+                setStatus(PlaybackInfoListener.State.RESUMED);
+                mMusicService.startForeground(MusicNotificationManager.NOTIFICATION_ID, mMusicNotificationManager.createNotification());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
     private void pauseMediaPlayer() {
-        setStatus(PlaybackInfoListener.State.PAUSED);
-        mMediaPlayer.pause();
-        mMusicService.stopForeground(false);
-        mMusicNotificationManager.getNotificationManager().notify(MusicNotificationManager.NOTIFICATION_ID, mMusicNotificationManager.createNotification());
+        try {
+            setStatus(PlaybackInfoListener.State.PAUSED);
+            mMediaPlayer.pause();
+            mMusicService.stopForeground(false);
+            mMusicNotificationManager.getNotificationManager().notify(MusicNotificationManager.NOTIFICATION_ID, mMusicNotificationManager.createNotification());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 

@@ -30,6 +30,8 @@ import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.CourseDetailsModel
 import com.joshtalks.joshskills.repository.server.CourseExploreModel
 import com.joshtalks.joshskills.repository.server.PaymentDetailsResponse
+import com.joshtalks.joshskills.ui.signup.IS_ACTIVITY_FOR_RESULT
+import com.joshtalks.joshskills.ui.signup.SignUpActivity
 import com.joshtalks.joshskills.ui.view_holders.CourseDetailViewHolder
 import com.muddzdev.styleabletoast.StyleableToast
 import com.razorpay.Checkout
@@ -283,6 +285,16 @@ class PaymentActivity : CoreJoshActivity(),
 
 
     fun buyCourse() {
+
+        if (User.getInstance().token == null) {
+            startActivityForResult(Intent(this, SignUpActivity::class.java).apply {
+                putExtra(IS_ACTIVITY_FOR_RESULT, true)
+            }, 101)
+            return
+        }
+
+
+
         if (courseModel != null) {
             getPaymentDetails(courseModel?.id.toString())
         } else {
@@ -336,4 +348,11 @@ class PaymentActivity : CoreJoshActivity(),
 
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (requestCode == 101 && resultCode == Activity.RESULT_OK) {
+            buyCourse()
+        }
+        super.onActivityResult(requestCode, resultCode, data)
+
+    }
 }

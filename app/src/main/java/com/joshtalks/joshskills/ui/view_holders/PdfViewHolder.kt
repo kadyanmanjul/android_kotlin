@@ -176,26 +176,30 @@ class PdfViewHolder(activityRef: WeakReference<FragmentActivity>, message: ChatM
 
         message.question?.run {
             this.pdfList?.getOrNull(0)?.let { pdfObj ->
-                pdfObj.pages?.let {
-                    messageDetail.text = context.getString(R.string.pdf_desc, it)
-                }
-                Uri.parse(pdfObj.url).let {
-                    tv_pdf_info.text = it.pathSegments[it.pathSegments.size - 1].split(".")[0]
-                }
-                Utils.fileUrl(pdfObj.thumbnail, pdfObj.thumbnail)?.run {
-                    setImageInImageView(image_view, this)
-                }
+                try {
+                    pdfObj.pages?.let {
+                        messageDetail.text = context.getString(R.string.pdf_desc, it)
+                    }
+                    Uri.parse(pdfObj.url).let {
+                        tv_pdf_info.text = it.pathSegments[it.pathSegments.size - 1].split(".")[0]
+                    }
+                    Utils.fileUrl(pdfObj.thumbnail, pdfObj.thumbnail)?.run {
+                        setImageInImageView(image_view, this)
+                    }
 
-                if (message.downloadStatus == DOWNLOAD_STATUS.DOWNLOADING) {
-                    fileDownloadingInProgressView()
-                    download(pdfObj.url)
-                } else if (message.downloadStatus == DOWNLOAD_STATUS.DOWNLOADED && AppDirectory.isFileExist(
-                        pdfObj.downloadedLocalPath
-                    )
-                ) {
-                    fileDownloadSuccess()
-                } else {
-                    fileNotDownloadView()
+                    if (message.downloadStatus == DOWNLOAD_STATUS.DOWNLOADING) {
+                        fileDownloadingInProgressView()
+                        download(pdfObj.url)
+                    } else if (message.downloadStatus == DOWNLOAD_STATUS.DOWNLOADED && AppDirectory.isFileExist(
+                            pdfObj.downloadedLocalPath
+                        )
+                    ) {
+                        fileDownloadSuccess()
+                    } else {
+                        fileNotDownloadView()
+                    }
+                } catch (ex: Exception) {
+                    ex.printStackTrace()
                 }
             }
         }
