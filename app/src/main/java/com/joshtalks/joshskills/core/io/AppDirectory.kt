@@ -354,6 +354,7 @@ object AppDirectory {
     }
 
     fun copy(fromPath: String, toPath: String): Boolean {
+
         val file = File(fromPath)
         if (!file.isFile) {
             return false
@@ -367,6 +368,7 @@ object AppDirectory {
             val outChannel = outStream.channel
             inChannel.transferTo(0, inChannel.size(), outChannel)
         } catch (e: Exception) {
+            e.printStackTrace()
             return false
         } finally {
             closeSilently(inStream)
@@ -416,4 +418,6 @@ object AppDirectory {
         }
         return downloadDirectory
     }
+
+
 }

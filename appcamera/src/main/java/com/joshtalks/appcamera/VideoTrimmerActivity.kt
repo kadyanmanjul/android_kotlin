@@ -132,6 +132,7 @@ class VideoTrimmerActivity : AppCompatActivity(), VideoTrimmingListener {
 
 
     companion object {
+
         @JvmStatic
         fun startTrimmerActivity(
             context: Activity,

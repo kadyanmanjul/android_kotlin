@@ -46,8 +46,8 @@
                     tools:targetApi="m">
 
                 <TextView
-                        fontPath="fonts/Roboto-Regular.ttf"
                         android:id="@+id/playing_song"
+                        fontPath="fonts/Roboto-Regular.ttf"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:ellipsize="marquee"

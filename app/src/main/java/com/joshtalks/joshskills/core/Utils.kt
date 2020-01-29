@@ -7,6 +7,8 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.ActivityManager
 import android.app.PendingIntent
+import android.content.ActivityNotFoundException
+import android.content.ContentUris
 import android.content.Context
 import android.content.Intent
 import android.content.Intent.ACTION_VIEW
@@ -24,6 +26,7 @@ import android.net.NetworkCapabilities
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
+import android.provider.DocumentsContract
 import android.provider.MediaStore
 import android.provider.Settings
 import android.text.format.DateUtils
@@ -150,7 +153,7 @@ object Utils {
     }
 
     @JvmStatic
-    fun getDurationOfMedia(context: Context, mediaPath: String): Long? {
+    fun getDurationOfMedia(context: Context, mediaPath: String): Long {
         try {
             val uri = Uri.parse(mediaPath)
             val mmr = MediaMetadataRetriever()
@@ -161,7 +164,7 @@ object Utils {
             // ex.printStackTrace()
 
         }
-        return null
+        return 0
 
     }
 
@@ -573,12 +576,14 @@ object Utils {
             cursor.moveToFirst();
             return cursor.getString(column_index);
         } catch (e: Exception) {
+            e.printStackTrace()
             Log.e("TAG", "getRealPathFromURI Exception : $e");
             return "";
         } finally {
             cursor?.close()
         }
     }
+
 
     fun printAllIntent(intent: Intent) {
         val bundle = intent.getExtras()
@@ -589,6 +594,66 @@ object Utils {
                     key + " : " + (bundle.get(key) != null ?: bundle.get(key) ?: "NULL")
                 );
             }
+        }
+    }
+
+    fun openFile(activity: Activity, url: String) {
+
+        try {
+
+            val uri = Uri.parse(url)
+            val intent = Intent(Intent.ACTION_VIEW);
+            if (url.toString().contains(".doc") || url.toString().contains(".docx")) {
+                // Word document
+                intent.setDataAndType(uri, "application/msword");
+            } else if (url.toString().contains(".pdf")) {
+                // PDF file
+                intent.setDataAndType(uri, "application/pdf");
+            } else if (url.toString().contains(".ppt") || url.toString().contains(".pptx")) {
+                // Powerpoint file
+                intent.setDataAndType(uri, "application/vnd.ms-powerpoint");
+            } else if (url.toString().contains(".xls") || url.toString().contains(".xlsx")) {
+                // Excel file
+                intent.setDataAndType(uri, "application/vnd.ms-excel");
+            } else if (url.toString().contains(".zip")) {
+                // ZIP file
+                intent.setDataAndType(uri, "application/zip");
+            } else if (url.toString().contains(".rar")) {
+                // RAR file
+                intent.setDataAndType(uri, "application/x-rar-compressed");
+            } else if (url.toString().contains(".rtf")) {
+                // RTF file
+                intent.setDataAndType(uri, "application/rtf");
+            } else if (url.toString().contains(".wav") || url.toString().contains(".mp3")) {
+                // WAV audio file
+                intent.setDataAndType(uri, "audio/x-wav");
+            } else if (url.toString().contains(".gif")) {
+                // GIF file
+                intent.setDataAndType(uri, "image/gif");
+            } else if (url.toString().contains(".jpg") || url.toString().contains(".jpeg") || url.toString().contains(
+                    ".png"
+                )
+            ) {
+                // JPG file
+                intent.setDataAndType(uri, "image/jpeg");
+            } else if (url.toString().contains(".txt")) {
+                // Text file
+                intent.setDataAndType(uri, "text/plain");
+            } else if (url.toString().contains(".3gp") || url.toString().contains(".mpg") ||
+                url.toString().contains(".mpeg") || url.toString().contains(".mpe") || url.toString().contains(
+                    ".mp4"
+                ) || url.toString().contains(".avi")
+            ) {
+                // Video files
+                intent.setDataAndType(uri, "video/*");
+            } else {
+                intent.setDataAndType(uri, "*/*");
+            }
+
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            activity.startActivity(intent);
+        } catch (e: ActivityNotFoundException) {
+            e.printStackTrace()
         }
     }
 

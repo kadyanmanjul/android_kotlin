@@ -88,7 +88,7 @@ class SignUpStep2Fragment : Fragment() {
                 SignUpStepStatus.SignUpResendOTP -> {
                     Toast.makeText(
                         AppObjectController.joshApplication,
-                        getString(R.string.resend_otp_toast),
+                        getString(R.string.resend_otp_toast,viewModel.phoneNumber),
                         Toast.LENGTH_SHORT
                     ).show()
                     startTimer()

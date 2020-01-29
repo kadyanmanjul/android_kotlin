@@ -40,9 +40,11 @@ public class MusicService extends Service {
 
     @Override
     public void onDestroy() {
-        mMediaPlayerHolder.registerNotificationActionsReceiver(false);
-        mMusicNotificationManager = null;
-        mMediaPlayerHolder.release();
+        try {
+            mMediaPlayerHolder.registerNotificationActionsReceiver(false);
+            mMusicNotificationManager = null;
+            mMediaPlayerHolder.release();
+        }catch (Exception e){}
         super.onDestroy();
     }
 

@@ -68,7 +68,7 @@
                     android:adjustViewBounds="true"
                     android:padding="@dimen/_5sdp"
                     android:scaleType="centerCrop"
-                    android:src="@drawable/ic_camera" />
+                    android:src="@drawable/ic_camera_2" />
 
 
             <androidx.appcompat.widget.AppCompatTextView

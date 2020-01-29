@@ -4,6 +4,8 @@ import android.os.Handler
 import android.os.Looper
 import android.view.Gravity
 import android.view.ViewGroup
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
 import android.widget.FrameLayout
 import android.widget.ProgressBar
 import android.widget.RelativeLayout
@@ -98,6 +100,12 @@ class AudioPlayerViewHolder(activityRef: WeakReference<FragmentActivity>, messag
     @View(R.id.message_time)
     lateinit var messageTimeTV: AppCompatTextView
 
+    @View(R.id.seekBar_thumb_virtual)
+    lateinit var seekBarThumb: AppCompatImageView
+
+
+    var animBlink: Animation? = null
+
 
     lateinit var audioPlayerViewHolder: AudioPlayerViewHolder
     var duration: Int = 0
@@ -183,12 +191,11 @@ class AudioPlayerViewHolder(activityRef: WeakReference<FragmentActivity>, messag
     @Resolve
     override fun onViewInflated() {
         super.onViewInflated()
+        animBlink = AnimationUtils.loadAnimation(activityRef.get()!!, R.anim.blink);
         profileImage.setImageResource(R.drawable.ic_user_rec_placeholder)
         this.audioPlayerViewHolder = this
         seekBar.progress = 0
         txtCurrentDurationTV.text = EMPTY
-
-
         audioViewSent.visibility = android.view.View.GONE
         audioViewReceived.visibility = android.view.View.GONE
         seekBar.visibility = android.view.View.INVISIBLE
@@ -260,16 +267,21 @@ class AudioPlayerViewHolder(activityRef: WeakReference<FragmentActivity>, messag
                 }
             })
         updateUI()
+        audioPlayingStatus()
+
+        // subscribeAudioPlayer()
 
     }
 
     private fun audioPlayingStatus() {
+        seekBarThumb.clearAnimation()
         AppObjectController.currentPlayingAudioObject?.run {
             try {
+
                 if (this.chatId == message.chatId) {
                     val ref = activityRef.get() as ConversationActivity
                     if (ref.isAudioPlaying()) {
-                        subscribeAudioPlayer()
+                        seekBarThumb.startAnimation(animBlink)
                         btnPauseImageView.visibility = android.view.View.VISIBLE
                         btnPlayImageView.visibility = android.view.View.GONE
                     } else {
@@ -307,11 +319,11 @@ class AudioPlayerViewHolder(activityRef: WeakReference<FragmentActivity>, messag
 
             } else {
                 if (message.downloadStatus === DOWNLOAD_STATUS.DOWNLOADED || message.downloadStatus === DOWNLOAD_STATUS.UPLOADED) {
+                    mediaDownloaded()
                     duration = Utils.getDurationOfMedia(
                         activityRef.get()!!,
                         message.downloadedLocalPath!!
-                    )!!.toInt()
-                    mediaDownloaded()
+                    ).toInt()
                 } else if (message.downloadStatus === DOWNLOAD_STATUS.DOWNLOADING) {
                     mediaDownloading()
                     downloadStart(message.url!!)
@@ -353,11 +365,11 @@ class AudioPlayerViewHolder(activityRef: WeakReference<FragmentActivity>, messag
 
     private fun mediaDownloaded() {
         btnPlayImageView.visibility = android.view.View.VISIBLE
-        seekBar.visibility = android.view.View.VISIBLE
+        // seekBar.visibility = android.view.View.VISIBLE
         btnPauseImageView.visibility = android.view.View.INVISIBLE
-        seekBarPlaceHolder.visibility = android.view.View.INVISIBLE
+        seekBarPlaceHolder.visibility = android.view.View.VISIBLE
         downloadContainer.visibility = android.view.View.INVISIBLE
-        audioPlayingStatus()
+        seekBarThumb.visibility = android.view.View.VISIBLE
     }
 
     fun downloadStart(url: String) {
@@ -442,16 +454,26 @@ class AudioPlayerViewHolder(activityRef: WeakReference<FragmentActivity>, messag
 
 
     fun playAudioInPlayer() {
-        btnPlayImageView.visibility = android.view.View.INVISIBLE
-        btnPauseImageView.visibility = android.view.View.VISIBLE
-        if (message.url != null) {
+        val ref = activityRef.get() as ConversationActivity
+
+        if (AppObjectController.currentPlayingAudioObject != null && AppObjectController.currentPlayingAudioObject?.chatId == message.chatId && ref.isAudioPlaying()) {
+            btnPauseImageView.visibility = android.view.View.INVISIBLE
+            btnPlayImageView.visibility = android.view.View.VISIBLE
+
+        } else {
+            btnPauseImageView.visibility = android.view.View.VISIBLE
+            btnPlayImageView.visibility = android.view.View.INVISIBLE
+            seekBarThumb.startAnimation(animBlink)
+        }
+
+        if (message.url.isNullOrEmpty().not()) {
             val audioObject = AudioType(
                 message.url!!,
                 EMPTY,
                 Utils.getDurationOfMedia(
                     activityRef.get()!!,
                     message.downloadedLocalPath!!
-                )!!.toInt(),
+                ).toInt(),
                 0,
                 true
             )
@@ -472,7 +494,6 @@ class AudioPlayerViewHolder(activityRef: WeakReference<FragmentActivity>, messag
                 )
             )
         }
-        subscribeAudioPlayer()
     }
 
 
@@ -496,5 +517,11 @@ class AudioPlayerViewHolder(activityRef: WeakReference<FragmentActivity>, messag
                     it.printStackTrace()
                 })
         )
+        compositeDisposable.add(RxBus2.listen(AudioPlayerPauseEventBus::class.java)
+            .subscribeOn(Schedulers.computation())
+            .subscribe {
+
+
+            })
     }
 }

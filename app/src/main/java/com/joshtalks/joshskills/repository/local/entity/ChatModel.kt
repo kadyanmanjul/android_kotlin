@@ -573,6 +573,13 @@ interface ChatDao {
 
     @Query(value = "SELECT chat_id FROM chat_table where status=:status")
     suspend fun getSeenByUserMessages(status: MESSAGE_STATUS = MESSAGE_STATUS.SEEN_BY_USER): List<String>
+
+
+    @Update
+    suspend fun updateQuestionObject(vararg question: Question)
+
+
+
 }
 
 

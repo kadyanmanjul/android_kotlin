@@ -597,6 +597,7 @@ public class JoshCameraActivity extends AppCompatActivity implements View.OnTouc
 
                 try {
                     if (timer != null) {
+                        timer= new Timer();
                         timer.scheduleAtFixedRate(new TimerTask() {
                             @Override
                             public void run() {

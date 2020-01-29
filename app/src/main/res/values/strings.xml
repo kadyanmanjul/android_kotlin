@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">JoshSkills</string>
+    <string name="app_name">Josh Skills</string>
     <string name="inbox_header">Josh Skills</string>
     <string name="help_header">Student Support</string>
 
@@ -33,9 +33,9 @@
     <string name="location_rationale">Please allow to access your location. It will help in better recommendations. </string>
     <string name="short_seconds">sec</string>
     <string name="volume_up_message">Please turn the volume up</string>
-    <string name="storage_permission_message">JoshSkills access your device\'s  photos, media and files.</string>
-    <string name="record_permission_message">To record a Voice Message, allow JoshSkills access to your microphone and your device\'s  photos, media and files. Tap Settings > Permissions, and turn Microphone on and Storage on.</string>
-    <string name="camera_permission_message">To capture photos and videos allow JoshSkills access to your camera  and your device\'s  photos, media and files.</string>
+    <string name="storage_permission_message">To view or send media, allow Josh Skills access your device\'s  photos, media and files.</string>
+    <string name="record_permission_message">To record a Voice Message, allow Josh Skills access to your microphone and your device\'s  photos, media and files. Tap Settings > Permissions, and turn Microphone on and Storage on.</string>
+    <string name="camera_permission_message">To capture photos and videos allow Josh Skills access to your camera  and your device\'s  photos, media and files.</string>
 
     <string name="type_message_hint">Type a Message</string>
     <string name="profile_photo">Profile photo</string>
@@ -164,6 +164,7 @@
     <string name="hold_to_record_msz">Hold to record audio</string>
     <string name="upload_file_msz">Upload a file</string>
     <string name="your_answer">Your Answer</string>
+    <string name="your_submitted_answer">Your Submitted Answer</string>
 
     <string name="type_your_answer_hint">Type your answer here</string>
 </resources>

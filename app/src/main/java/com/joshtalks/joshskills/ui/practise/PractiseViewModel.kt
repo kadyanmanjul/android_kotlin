@@ -8,6 +8,7 @@ import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.JoshApplication
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.io.AppDirectory
+import com.joshtalks.joshskills.repository.local.entity.ChatModel
 import com.joshtalks.joshskills.repository.local.entity.PracticeEngagement
 import com.joshtalks.joshskills.repository.server.AmazonPolicyResponse
 import com.joshtalks.joshskills.repository.server.RequestEngage
@@ -46,10 +47,10 @@ class PractiseViewModel(application: Application) :
 
     }
 
-    fun submitPractise(requestEngage: RequestEngage) {
+    fun submitPractise(chatModel: ChatModel,requestEngage: RequestEngage) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                var localPath = requestEngage.localPath
+                val localPath = requestEngage.localPath
                 if (requestEngage.localPath.isNullOrEmpty().not()) {
                     val obj = mapOf("media_path" to File(requestEngage.localPath!!).name)
                     val responseObj =
@@ -71,6 +72,10 @@ class PractiseViewModel(application: Application) :
                 resp.localPath = localPath
 
 
+                val list: MutableList<PracticeEngagement> = mutableListOf()
+                list.add(resp)
+                chatModel.question?.practiceEngagement=list
+                AppObjectController.appDatabase.chatDao().updateQuestionObject(chatModel.question!!)
 
                 requestStatusLiveData.postValue(true)
             } catch (ex: HttpException) {

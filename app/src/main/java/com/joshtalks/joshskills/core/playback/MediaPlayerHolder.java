@@ -384,14 +384,17 @@ public final class MediaPlayerHolder implements PlayerInterface, MediaPlayer.OnC
 
     @Override
     public void release() {
-        setStatus(PlaybackInfoListener.State.STOPPED);
-        mPlaybackInfoListener.onPlaybackStop();
-        if (isMediaPlayer()) {
-            EqualizerUtils.closeAudioEffectSession(mContext, mMediaPlayer.getAudioSessionId());
-            mMediaPlayer.release();
-            mMediaPlayer = null;
-            giveUpAudioFocus();
-            unregisterActionsReceiver();
+        try {
+            setStatus(PlaybackInfoListener.State.STOPPED);
+            mPlaybackInfoListener.onPlaybackStop();
+            if (isMediaPlayer()) {
+                EqualizerUtils.closeAudioEffectSession(mContext, mMediaPlayer.getAudioSessionId());
+                mMediaPlayer.release();
+                mMediaPlayer = null;
+                giveUpAudioFocus();
+                unregisterActionsReceiver();
+            }
+        } catch (Exception e) {
         }
     }
 

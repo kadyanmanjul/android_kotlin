@@ -7,16 +7,16 @@ import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
 import android.content.pm.ActivityInfo
+import android.database.Cursor
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.*
-import android.view.Gravity
-import android.view.MotionEvent
-import android.view.View
+import android.provider.MediaStore
+import android.util.Log
+import android.view.*
 import android.view.View.GONE
 import android.view.View.VISIBLE
-import android.view.WindowManager
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.ImageView
@@ -25,6 +25,7 @@ import android.widget.Toast
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.text.HtmlCompat
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.bumptech.glide.Glide
 import com.bumptech.glide.integration.webp.decoder.WebpDrawable
@@ -37,10 +38,8 @@ import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
 import com.crashlytics.android.Crashlytics
-import com.google.android.exoplayer2.util.Log
 import com.greentoad.turtlebody.mediapicker.MediaPicker
 import com.greentoad.turtlebody.mediapicker.core.MediaPickerConfig
-import com.joshtalks.appcamera.VideoTrimmerActivity.Companion.startTrimmerActivity
 import com.joshtalks.appcamera.pix.JoshCameraActivity
 import com.joshtalks.appcamera.pix.Options
 import com.joshtalks.appcamera.utility.ImageQuality
@@ -57,10 +56,12 @@ import com.joshtalks.joshskills.core.playback.MusicService
 import com.joshtalks.joshskills.core.playback.PlaybackInfoListener
 import com.joshtalks.joshskills.core.playback.PlayerInterface
 import com.joshtalks.joshskills.databinding.ActivityPraticeSubmitBinding
+import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.AudioType
 import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
 import com.joshtalks.joshskills.repository.local.entity.EXPECTED_ENGAGE_TYPE
+import com.joshtalks.joshskills.repository.local.eventbus.SeekBarProgressEventBus
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.RequestEngage
 import com.joshtalks.joshskills.ui.extra.ImageShowFragment
@@ -72,12 +73,13 @@ import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.muddzdev.styleabletoast.StyleableToast
-import io.reactivex.Observer
-import io.reactivex.annotations.NonNull
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.disposables.Disposable
+import io.reactivex.schedulers.Schedulers
 import jp.wasabeef.glide.transformations.CropTransformation
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import me.zhanghai.android.materialplaypausedrawable.MaterialPlayPauseDrawable
 import java.io.File
 import java.util.concurrent.TimeUnit
@@ -151,14 +153,28 @@ class PractiseSubmitActivity : CoreJoshActivity(), FullScreenVideoFragment.OnDis
 
         initToolbarView()
         setPracticeInfoView()
-        setViewAccordingExpectedAnswer()
+
+        CoroutineScope(Dispatchers.IO).launch {
+            val question = AppObjectController.appDatabase.chatDao().getQuestion(chatModel.chatId)
+            chatModel.question?.practiceEngagement = question?.practiceEngagement
+            CoroutineScope(Dispatchers.Main).launch {
+                if (chatModel.question?.practiceEngagement != null && chatModel.question?.practiceEngagement?.isNullOrEmpty()!!.not()) {
+                    binding.submitAnswerBtn.visibility = GONE
+                    setViewUserSubmitAnswer()
+                } else {
+                    setViewAccordingExpectedAnswer()
+                }
+            }
+        }
         doBindService()
+        addObserver()
 
     }
 
 
     override fun onResume() {
         super.onResume()
+        subscribeRXBus()
         requestedOrientation = if (Build.VERSION.SDK_INT == 26) {
             ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
         } else {
@@ -197,9 +213,14 @@ class PractiseSubmitActivity : CoreJoshActivity(), FullScreenVideoFragment.OnDis
     }
 
     override fun onDestroy() {
-        super.onDestroy()
-        mPlaybackListener = null
-        doUnbindService()
+        try {
+            super.onDestroy()
+            mPlaybackListener = null
+            doUnbindService()
+            mPlayerInterface?.clearNotification()
+        } catch (ex: Exception) {
+
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, returnIntent: Intent?) {
@@ -217,26 +238,55 @@ class PractiseSubmitActivity : CoreJoshActivity(), FullScreenVideoFragment.OnDis
                         }
                         intent.hasExtra(JoshCameraActivity.VIDEO_RESULTS) -> {
                             val videoPath = intent.getStringExtra(JoshCameraActivity.VIDEO_RESULTS)
-                            filePath = videoPath
+                            videoPath?.run {
+                                initVideoPractise(this)
+                            }
                         }
                         else -> return
                     }
                 }
             } else if (requestCode == TEXT_FILE_ATTACHMENT_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
                 returnIntent?.data?.let {
+                    getPath(it)
+
+
                     val path = Utils.getRealPathFromURI(it)
                     filePath = path
                     isDocumentAttachDone = true
-                    Log.e("path", path)
+                    binding.submitFileViewContainer.visibility = VISIBLE
+                    binding.fileInfoTv.text = Utils.getFileNameFromURL(filePath)
+
+
                 }
 
             } else if (VIDEO_COMPRESS == TEXT_FILE_ATTACHMENT_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-                Utils.printAllIntent(intent)
                 returnIntent?.data?.let {
-                    val path = Utils.getRealPathFromURI(it)
-                    filePath = path
+                    //val path = Utils.getRealPathFromURI(it)
                     isVideoRecordDone = true
-                    Log.e("path", path)
+
+
+                    var uriString = it.toString();
+                    var myFile = File(uriString);
+                    var path = myFile.getAbsolutePath();
+
+                    if (uriString.startsWith("content://")) {
+                        var cursor: Cursor? = null
+                        try {
+                            cursor = getContentResolver().query(
+                                returnIntent.data!!,
+                                null,
+                                null,
+                                null,
+                                null
+                            );
+                            if (cursor != null && cursor.moveToFirst()) {
+                                Log.e("dwd", "dwd")
+                                // displayName = cursor!!.getString(cursor!!.getColumnIndex(OpenableColumns.DISPLAY_NAME));
+                            }
+                        } finally {
+                            cursor?.close();
+                        }
+                    }
                 }
 
             }
@@ -250,11 +300,51 @@ class PractiseSubmitActivity : CoreJoshActivity(), FullScreenVideoFragment.OnDis
 
     }
 
+    fun getPath(uri: Uri) {
+
+        var path = null;
+        val proj = arrayOf(MediaStore.Files.FileColumns.DATA)
+        var cursor = getContentResolver().query(uri, proj, null, null, null);
+
+        val column_index = cursor?.getColumnIndexOrThrow(proj[0]);
+        cursor?.moveToFirst();
+        Log.e("path", cursor?.getString(column_index!!))
+
+    }
+
     override fun onDismiss() {
         try {
             requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         } catch (ex: Exception) {
         }
+    }
+
+    private fun subscribeRXBus() {
+        compositeDisposable.add(
+            RxBus2.listen(SeekBarProgressEventBus::class.java)
+                .subscribeOn(Schedulers.computation())
+                .subscribe({
+                    Handler(Looper.getMainLooper()).post {
+                        if (filePath.isNullOrEmpty().not() && currentAudio == filePath) {
+                            binding.submitPractiseSeekbar.progress = it.progress
+                        } else {
+                            if (chatModel.question?.practiceEngagement != null && chatModel.question?.practiceEngagement?.getOrNull(
+                                    0
+                                ) != null
+                            ) {
+                                binding.submitPractiseSeekbar.progress = it.progress
+                            } else {
+                                binding.practiseSeekbar.progress = it.progress
+
+                            }
+                        }
+                        //  txtCurrentDurationTV.text = PlayerUtil.toTimeSongString(it.progress)
+                    }
+
+                }, {
+                    it.printStackTrace()
+                })
+        )
     }
 
     private fun initToolbarView() {
@@ -330,6 +420,10 @@ class PractiseSubmitActivity : CoreJoshActivity(), FullScreenVideoFragment.OnDis
         chatModel.question?.run {
             binding.practiseInputLayout.visibility = VISIBLE
             this.expectedEngageType?.let {
+                if ((it == EXPECTED_ENGAGE_TYPE.TX).not()) {
+                    binding.uploadPractiseView.visibility = VISIBLE
+                    binding.uploadFileView.visibility = VISIBLE
+                }
                 when {
                     EXPECTED_ENGAGE_TYPE.TX == it -> {
                         binding.etPractise.visibility = VISIBLE
@@ -343,18 +437,82 @@ class PractiseSubmitActivity : CoreJoshActivity(), FullScreenVideoFragment.OnDis
                         setupFileUploadListener(it)
                     }
                     EXPECTED_ENGAGE_TYPE.IM == it -> {
-                        binding.uploadPractiseView.setImageResource(R.drawable.ic_camera)
+                        binding.uploadPractiseView.setImageResource(R.drawable.ic_camera_2)
                         setupFileUploadListener(it)
                     }
                     EXPECTED_ENGAGE_TYPE.DX == it -> {
                         binding.uploadPractiseView.setImageResource(R.drawable.ic_file_upload)
                         setupFileUploadListener(it)
+                        binding.uploadFileView.visibility = GONE
+
                     }
                 }
+            }
+        }
+    }
 
-                if ((it == EXPECTED_ENGAGE_TYPE.TX).not()) {
-                    binding.uploadPractiseView.visibility = VISIBLE
-                    binding.uploadFileView.visibility = VISIBLE
+    private fun addObserver() {
+
+        practiseViewModel.requestStatusLiveData.observe(this, Observer {
+            if (it) {
+                binding.btnSuccess.visibility = VISIBLE
+            } else {
+                binding.progressLayout.visibility = GONE
+
+            }
+        })
+    }
+
+    private fun setViewUserSubmitAnswer() {
+        chatModel.question?.run {
+            this.expectedEngageType?.let {
+                binding.practiseInputLayout.visibility = GONE
+                binding.practiseSubmitLayout.visibility = VISIBLE
+                binding.yourSubAnswerTv.visibility = VISIBLE
+
+                val params: ViewGroup.MarginLayoutParams =
+                    binding.subPractiseSubmitLayout.layoutParams as ViewGroup.MarginLayoutParams;
+                params.topMargin = Utils.dpToPx(20)
+                binding.subPractiseSubmitLayout.layoutParams = params
+
+
+                val practiseEngagement = this.practiceEngagement?.get(0)
+                when {
+                    EXPECTED_ENGAGE_TYPE.TX == it -> {
+                        binding.etPractise.visibility = VISIBLE
+                        binding.etPractise.setText(practiseEngagement?.text)
+                        binding.etPractise.isFocusableInTouchMode = false
+                        binding.etPractise.isEnabled = false
+                    }
+                    EXPECTED_ENGAGE_TYPE.AU == it -> {
+                        binding.submitAudioViewContainer.visibility = VISIBLE
+                        filePath = practiseEngagement?.answerUrl
+                        initializePractiseSeekBar()
+                    }
+                    EXPECTED_ENGAGE_TYPE.VI == it -> {
+                        filePath = practiseEngagement?.answerUrl
+                        filePath?.run {
+                            binding.videoPlayerSubmit.visibility = VISIBLE
+                            binding.videoPlayerSubmit.setUrl(filePath)
+                            binding.videoPlayerSubmit.downloadStreamPlay()
+                            binding.videoPlayerSubmit.fitToScreen()
+                            binding.videoPlayerSubmit.setOnClickListener {
+                                FullScreenVideoFragment.newInstance(filePath!!)
+                                    .show(supportFragmentManager, "Payment Process")
+                            }
+                        }
+                    }
+                    EXPECTED_ENGAGE_TYPE.IM == it -> {
+
+                    }
+                    EXPECTED_ENGAGE_TYPE.DX == it -> {
+                        filePath = practiseEngagement?.answerUrl
+                        binding.submitFileViewContainer.visibility = VISIBLE
+                        binding.fileInfoTv.text = Utils.getFileNameFromURL(filePath)
+                    }
+                    else -> {
+
+                    }
                 }
             }
         }
@@ -562,32 +720,23 @@ class PractiseSubmitActivity : CoreJoshActivity(), FullScreenVideoFragment.OnDis
                 }
             })
             .onResult()
-            .subscribe(object : Observer<ArrayList<Uri>> {
-                override fun onSubscribe(@NonNull d: Disposable) {
-                    compositeDisposable.add(d)
-                }
-
-                override fun onError(@NonNull e: Throwable) {
-                    e.printStackTrace()
-                }
-
-                override fun onComplete() {
-                }
-
-                override fun onNext(it: ArrayList<Uri>) {
-                    it.let {
-                        it[0].path?.let { path ->
-                            filePath = path
-                            startTrimmerActivity(
-                                this@PractiseSubmitActivity,
-                                VIDEO_COMPRESS,
-                                Uri.fromFile(File(path)),
-                                File(path),
-                                File(path).absolutePath
-                            )
-                        }
+            .subscribeOn(Schedulers.io())
+            .subscribe({
+                it.let {
+                    it[0].path?.let { path ->
+                        initVideoPractise(path)
+                        /*VideoTrimmerActivity.startTrimmerActivity(
+                            this@PractiseSubmitActivity,
+                            VIDEO_COMPRESS,
+                            Uri.fromFile(File(path)),
+                            File(path),
+                            File(path).absolutePath
+                        )*/
                     }
                 }
+            }, {
+                it.printStackTrace()
+
             })
     }
 
@@ -605,47 +754,46 @@ class PractiseSubmitActivity : CoreJoshActivity(), FullScreenVideoFragment.OnDis
                 }
             })
             .onResult()
-
-            .subscribe(object : Observer<ArrayList<Uri>> {
-                override fun onSubscribe(@NonNull d: Disposable) {
-                    compositeDisposable.add(d)
+            .subscribe({
+                it?.getOrNull(0)?.path?.let { audioFilePath ->
+                    isAudioRecordDone = true
+                    val tempPath = Utils.getPathFromUri(audioFilePath)
+                    val recordUpdatedPath = AppDirectory.getAudioSentFile(tempPath).absolutePath
+                    AppDirectory.copy(tempPath, recordUpdatedPath)
+                    filePath = recordUpdatedPath
+                    audioAttachmentInit()
                 }
+            }, {
+                it.printStackTrace()
 
-                override fun onError(@NonNull e: Throwable) {
-                    e.printStackTrace()
-                }
-
-                override fun onComplete() {
-                }
-
-                override fun onNext(it: ArrayList<Uri>) {
-                    it.let {
-                        it[0].path?.let { path ->
-
-                            isAudioRecordDone = true
-                            filePath = AppDirectory.getAudioSentFile(null).absolutePath
-                            AppDirectory.copy(path, filePath!!)
-                            binding.practiseSubmitLayout.visibility = VISIBLE
-                            binding.submitAudioViewContainer.visibility = VISIBLE
-                            Log.e("audio path", filePath!!)
-                        }
-                    }
-                }
             })
+
+
+    }
+
+    private fun audioAttachmentInit() {
+        binding.practiseSubmitLayout.visibility = VISIBLE
+        binding.submitAudioViewContainer.visibility = VISIBLE
+        binding.submitPractiseSeekbar.max = Utils.getDurationOfMedia(this, filePath!!)!!.toInt()
+    }
+
+    private fun videoAttachmentInit() {
+
     }
 
 
     private fun uploadTextFileChooser() {
-        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
+        val intent = Intent(Intent.ACTION_GET_CONTENT)
         intent.addCategory(Intent.CATEGORY_OPENABLE)
         intent.type = "*/*"
         intent.putExtra(Intent.EXTRA_MIME_TYPES, DOCX_FILE_MIME_TYPE)
+        intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
         startActivityForResult(intent, TEXT_FILE_ATTACHMENT_REQUEST_CODE)
+
     }
 
 
     private fun setupRecordView() {
-
         if (PermissionUtils.isAudioAndStoragePermissionEnable(this)) {
             audioRecordTouchListener()
         } else {
@@ -684,7 +832,6 @@ class PractiseSubmitActivity : CoreJoshActivity(), FullScreenVideoFragment.OnDis
     @SuppressLint("ClickableViewAccessibility")
     private fun audioRecordTouchListener() {
         binding.uploadPractiseView.setOnTouchListener { _, event ->
-            Log.e("event", "" + event.action)
             when (event.action) {
                 MotionEvent.ACTION_DOWN -> {
                     binding.uploadPractiseView.startAnimation(scaleAnimation)
@@ -717,9 +864,7 @@ class PractiseSubmitActivity : CoreJoshActivity(), FullScreenVideoFragment.OnDis
                             isAudioRecordDone = true
                             filePath = AppDirectory.getAudioSentFile(null).absolutePath
                             AppDirectory.copy(it.absolutePath, filePath!!)
-                            Log.e("comple", filePath!!)
-                            binding.practiseSubmitLayout.visibility = VISIBLE
-                            binding.submitAudioViewContainer.visibility = VISIBLE
+                            audioAttachmentInit()
                         }
                     }
                 }
@@ -807,10 +952,21 @@ class PractiseSubmitActivity : CoreJoshActivity(), FullScreenVideoFragment.OnDis
         if (onPlaybackCompletion) {
             if (mPlayerInterface!!.state != PlaybackInfoListener.State.COMPLETED && mPlayerInterface!!.isPlaying) {
                 mPlayerInterface?.resumeOrPause()
-                mPlayerInterface?.reset()
+                // mPlayerInterface?.reset()
             }
+            setAudioPlayerStateDefault()
         }
     }
+
+    private fun setAudioPlayerStateDefault() {
+        AppObjectController.uiHandler.post {
+            binding.practiseSeekbar.progress = 0
+            binding.submitPractiseSeekbar.progress = 0
+            binding.submitBtnPlayInfo.state = MaterialPlayPauseDrawable.State.Play
+            binding.btnPlayInfo.state = MaterialPlayPauseDrawable.State.Play
+        }
+    }
+
 
     fun playPracticeAudio() {
 
@@ -843,6 +999,21 @@ class PractiseSubmitActivity : CoreJoshActivity(), FullScreenVideoFragment.OnDis
         audioType.duration = Utils.getDurationOfMedia(this, filePath!!)!!.toInt()
         audioType.id = Random.nextInt().toString()
 
+        val state =
+            if (binding.submitBtnPlayInfo.state == MaterialPlayPauseDrawable.State.Pause && mPlayerInterface!!.isPlaying) {
+                MaterialPlayPauseDrawable.State.Play
+            } else {
+                MaterialPlayPauseDrawable.State.Pause
+            }
+        binding.submitBtnPlayInfo.state = state
+
+        if (Utils.getCurrentMediaVolume(applicationContext) <= 0) {
+            StyleableToast.Builder(applicationContext).gravity(Gravity.BOTTOM)
+                .text(getString(R.string.volume_up_message)).cornerRadius(16)
+                .length(Toast.LENGTH_LONG)
+                .solidBackground().show()
+        }
+
         if (currentAudio == null) {
             onPlayAudio(chatModel, audioType)
         } else {
@@ -856,12 +1027,41 @@ class PractiseSubmitActivity : CoreJoshActivity(), FullScreenVideoFragment.OnDis
                 onPlayAudio(chatModel, audioType)
 
             }
-
         }
+    }
 
+    fun removeAudioPractise() {
+        filePath = null
+        currentAudio = null
+        binding.practiseSubmitLayout.visibility = GONE
+        binding.submitAudioViewContainer.visibility = GONE
+        isAudioRecordDone = false
+
+        if (isAudioPlaying()) {
+            mPlayerInterface?.resumeOrPause()
+        }
 
     }
 
+    private fun initVideoPractise(path: String) {
+        val videoSentFile = AppDirectory.videoSentFile()
+        AppDirectory.copy(path, videoSentFile.absolutePath)
+        filePath = videoSentFile.absolutePath
+        isVideoRecordDone = true
+        binding.practiseSubmitLayout.visibility = VISIBLE
+        binding.videoPlayerSubmit.visibility = VISIBLE
+        binding.videoPlayerSubmit.setUrl(filePath)
+        binding.videoPlayerSubmit.downloadStreamPlay()
+        binding.videoPlayerSubmit.fitToScreen()
+        binding.videoPlayerSubmit.setOnClickListener {
+            FullScreenVideoFragment.newInstance(filePath!!)
+                .show(supportFragmentManager, "Payment Process")
+        }
+    }
+
+    fun returnToChat() {
+        this@PractiseSubmitActivity.finish()
+    }
 
     private fun checkIsPlayer(): Boolean {
         return this.mPlayerInterface != null && mPlayerInterface!!.isMediaPlayer
@@ -872,6 +1072,7 @@ class PractiseSubmitActivity : CoreJoshActivity(), FullScreenVideoFragment.OnDis
     }
 
     private fun onPlayAudio(chatModel: ChatModel, audioObject: AudioType) {
+
         currentAudio = audioObject.audio_url
         val audioList = java.util.ArrayList<AudioType>()
         audioList.add(audioObject)
@@ -879,12 +1080,19 @@ class PractiseSubmitActivity : CoreJoshActivity(), FullScreenVideoFragment.OnDis
         mPlayerInterface?.initMediaPlayer(chatModel, audioObject)
 
         if (filePath.isNullOrEmpty().not() && currentAudio == filePath) {
-
+            binding.submitBtnPlayInfo.state = MaterialPlayPauseDrawable.State.Pause
         } else {
             binding.btnPlayInfo.state = MaterialPlayPauseDrawable.State.Pause
         }
 
     }
+
+    fun openAttachmentFile() {
+        filePath?.let {
+            Utils.openFile(this@PractiseSubmitActivity, it)
+        }
+    }
+
 
     fun submitPractise() {
         if (Utils.isInternetAvailable().not()) {
@@ -917,13 +1125,17 @@ class PractiseSubmitActivity : CoreJoshActivity(), FullScreenVideoFragment.OnDis
                 if (it == EXPECTED_ENGAGE_TYPE.AU || it == EXPECTED_ENGAGE_TYPE.VI || it == EXPECTED_ENGAGE_TYPE.DX) {
                     requestEngage.answerUrl = filePath
                 }
-                practiseViewModel.submitPractise(requestEngage)
+                binding.progressLayout.visibility = VISIBLE
+                practiseViewModel.submitPractise(chatModel, requestEngage)
             }
         }
     }
 
     inner class PlaybackListener : PlaybackInfoListener() {
         override fun onPositionChanged(position: Int) {
+            if (!mUserIsSeeking) {
+                RxBus2.publish(SeekBarProgressEventBus(currentAudio!!, position))
+            }
         }
 
         override fun onStateChanged(@State state: Int) {

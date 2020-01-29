@@ -120,9 +120,7 @@ public class CustomImageButton extends AppCompatImageView implements View.OnTouc
     public boolean onTouch(View v, MotionEvent event) {
         try {
             if (isListenForRecord()) {
-
                 switch (event.getAction()) {
-
                     case MotionEvent.ACTION_DOWN:
                         recordView.onActionDown((CustomImageButton) v, event);
                         break;
@@ -136,12 +134,13 @@ public class CustomImageButton extends AppCompatImageView implements View.OnTouc
                         recordView.onActionUp((CustomImageButton) v);
                         break;
                 }
-                if (onRecordTouchListener != null) {
-                    onRecordTouchListener.onTouch(event.getAction());
-                }
+
             }
         } catch (Exception e) {
             e.printStackTrace();
+        }
+        if (onRecordTouchListener != null) {
+            onRecordTouchListener.onTouch(event.getAction());
         }
         return isListenForRecord();
     }

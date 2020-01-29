@@ -271,9 +271,8 @@
             </FrameLayout>
         </RelativeLayout>
 
-<!--
+
         <include layout="@layout/player_controls_panel" />
--->
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>
