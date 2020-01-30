@@ -8,7 +8,6 @@ import android.app.Activity
 import android.app.ActivityManager
 import android.app.PendingIntent
 import android.content.ActivityNotFoundException
-import android.content.ContentUris
 import android.content.Context
 import android.content.Intent
 import android.content.Intent.ACTION_VIEW
@@ -26,7 +25,6 @@ import android.net.NetworkCapabilities
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
-import android.provider.DocumentsContract
 import android.provider.MediaStore
 import android.provider.Settings
 import android.text.format.DateUtils
@@ -563,31 +561,6 @@ object Utils {
         textView.post { textView.text = text }
     }
 
-    @SuppressLint("Recycle")
-    fun getRealPathFromURI(contentUri: Uri): String {
-        var cursor: Cursor? = null;
-        try {
-            val proj = arrayOf(MediaStore.Images.Media.DATA)
-            cursor = AppObjectController.joshApplication.contentResolver.query(
-                contentUri,
-                proj,
-                null,
-                null,
-                null
-            )!!;
-            val column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-            cursor.moveToFirst();
-            return cursor.getString(column_index);
-        } catch (e: Exception) {
-            e.printStackTrace()
-            Log.e("TAG", "getRealPathFromURI Exception : $e");
-            return "";
-        } finally {
-            cursor?.close()
-        }
-    }
-
-
     fun printAllIntent(intent: Intent) {
         val bundle = intent.getExtras()
         if (bundle != null) {
@@ -618,38 +591,13 @@ object Utils {
             } else if (url.toString().contains(".xls") || url.toString().contains(".xlsx")) {
                 // Excel file
                 intent.setDataAndType(uri, "application/vnd.ms-excel");
-            } else if (url.toString().contains(".zip")) {
-                // ZIP file
-                intent.setDataAndType(uri, "application/zip");
-            } else if (url.toString().contains(".rar")) {
-                // RAR file
-                intent.setDataAndType(uri, "application/x-rar-compressed");
             } else if (url.toString().contains(".rtf")) {
                 // RTF file
                 intent.setDataAndType(uri, "application/rtf");
-            } else if (url.toString().contains(".wav") || url.toString().contains(".mp3")) {
-                // WAV audio file
-                intent.setDataAndType(uri, "audio/x-wav");
-            } else if (url.toString().contains(".gif")) {
-                // GIF file
-                intent.setDataAndType(uri, "image/gif");
-            } else if (url.toString().contains(".jpg") || url.toString().contains(".jpeg") || url.toString().contains(
-                    ".png"
-                )
-            ) {
-                // JPG file
-                intent.setDataAndType(uri, "image/jpeg");
             } else if (url.toString().contains(".txt")) {
                 // Text file
                 intent.setDataAndType(uri, "text/plain");
-            } else if (url.toString().contains(".3gp") || url.toString().contains(".mpg") ||
-                url.toString().contains(".mpeg") || url.toString().contains(".mpe") || url.toString().contains(
-                    ".mp4"
-                ) || url.toString().contains(".avi")
-            ) {
-                // Video files
-                intent.setDataAndType(uri, "video/*");
-            } else {
+            }  else {
                 intent.setDataAndType(uri, "*/*");
             }
 
