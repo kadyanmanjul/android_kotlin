@@ -12,7 +12,7 @@
                 type="com.joshtalks.joshskills.ui.practise.PractiseSubmitActivity" />
     </data>
 
-    <androidx.core.widget.NestedScrollView
+    <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             tools:context=".ui.practise.PractiseSubmitActivity">
@@ -48,7 +48,7 @@
                             android:gravity="start|center"
                             android:text="@string/today_task"
                             android:textColor="@color/font_color"
-                            android:textSize="@dimen/font_15" />
+                            android:textSize="@dimen/font_16" />
 
                     <LinearLayout
                             android:layout_width="match_parent"
@@ -66,7 +66,7 @@
                                 android:ellipsize="end"
                                 android:gravity="start|center"
                                 android:textColor="@color/font_color"
-                                android:textSize="@dimen/font_13"
+                                android:textSize="@dimen/font_14"
                                 android:visibility="gone" />
 
 
@@ -167,7 +167,7 @@
                             android:layout_height="wrap_content"
                             android:gravity="start|center"
                             android:textColor="@color/font_color"
-                            android:textSize="@dimen/font_13" />
+                            android:textSize="@dimen/font_16" />
 
                 </com.google.android.material.card.MaterialCardView>
 
@@ -190,7 +190,7 @@
                             android:gravity="start|center"
                             android:text="@string/your_answer"
                             android:textColor="@color/font_color"
-                            android:textSize="@dimen/font_15" />
+                            android:textSize="@dimen/font_16" />
 
                     <LinearLayout
                             android:layout_width="match_parent"
@@ -204,19 +204,21 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="@dimen/_16sdp"
+                                android:autoSizeMaxTextSize="@dimen/font_16"
                                 android:background="@drawable/rect_with_bound"
                                 android:gravity="start|top"
                                 android:hint="@string/type_your_answer_hint"
                                 android:imeOptions="actionDone"
                                 android:inputType="textCapSentences|textMultiLine"
-                                android:lines="6"
-                                android:maxLines="6"
+                                android:lines="8"
+                                android:maxLength="500"
+                                android:maxLines="8"
                                 android:padding="@dimen/_4sdp"
                                 android:singleLine="false"
                                 android:textColor="@color/font_color"
                                 android:textColorHint="@color/emoji_bg_color"
                                 android:textCursorDrawable="@drawable/cursor_drawable"
-                                android:textSize="@dimen/font_13"
+                                android:textSize="@dimen/font_14"
                                 android:visibility="gone" />
 
 
@@ -291,15 +293,15 @@
                         card_view:cardUseCompatPadding="true">
 
                     <androidx.appcompat.widget.AppCompatTextView
-                            android:visibility="gone"
+                            android:id="@+id/your_sub_answer_tv"
                             fontPath="fonts/Roboto-Bold.ttf"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:gravity="start|center"
-                            android:id="@+id/your_sub_answer_tv"
                             android:text="@string/your_submitted_answer"
                             android:textColor="@color/font_color"
-                            android:textSize="@dimen/font_15" />
+                            android:textSize="@dimen/font_16"
+                            android:visibility="gone" />
 
 
                     <LinearLayout
@@ -390,7 +392,7 @@
                         </RelativeLayout>
 
 
-                        <LinearLayout
+                        <RelativeLayout
                                 android:id="@+id/submit_file_view_container"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
@@ -398,8 +400,11 @@
                                 android:visibility="gone">
 
                             <androidx.appcompat.widget.AppCompatImageView
+                                    android:id="@+id/attachment_placeholder"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
+                                    android:layout_alignParentStart="true"
+                                    android:layout_centerVertical="true"
                                     android:layout_gravity="center"
                                     android:adjustViewBounds="true"
                                     android:clickable="true"
@@ -410,17 +415,37 @@
                                     android:src="@drawable/ic_attchement_upload" />
 
                             <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
-                                    android:id="@+id/file_info_tv"
+                                    android:id="@+id/file_info_attachment_tv"
                                     fontPath="fonts/Roboto-Regular.ttf"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
+                                    android:layout_centerVertical="true"
                                     android:layout_gravity="center"
+                                    android:layout_toStartOf="@id/iv_cancel2"
+                                    android:layout_toEndOf="@+id/attachment_placeholder"
+                                    android:ellipsize="end"
                                     android:gravity="start|center"
+                                    android:maxLines="1"
                                     android:textColor="@color/font_color"
                                     android:textSize="@dimen/font_13" />
 
+                            <androidx.appcompat.widget.AppCompatImageView
+                                    android:id="@+id/iv_cancel2"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_alignParentEnd="true"
+                                    android:layout_centerVertical="true"
+                                    android:layout_gravity="end|center"
+                                    android:clickable="true"
+                                    android:focusable="true"
+                                    android:onClick="@{()->handler.removeFileAttachment()}"
+                                    android:padding="@dimen/_4sdp"
+                                    android:src="@drawable/ic_cross"
+                                    android:tint="#878A91"
+                                    android:visibility="visible" />
 
-                        </LinearLayout>
+
+                        </RelativeLayout>
 
 
                     </LinearLayout>
@@ -508,6 +533,6 @@
             </RelativeLayout>
 
         </FrameLayout>
-    </androidx.core.widget.NestedScrollView>
+    </ScrollView>
 
 </layout>

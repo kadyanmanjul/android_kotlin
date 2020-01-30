@@ -32,7 +32,9 @@ import android.provider.Settings
 import android.text.format.DateUtils
 import android.util.Log
 import android.util.TypedValue
+import android.view.Gravity
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.content.ContextCompat
@@ -43,6 +45,7 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.custom_ui.CustomTabHelper
 import com.joshtalks.joshskills.core.datetimeutils.DateTimeStyle
 import com.joshtalks.joshskills.core.datetimeutils.DateTimeUtils
+import com.muddzdev.styleabletoast.StyleableToast
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.File
@@ -653,6 +656,9 @@ object Utils {
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             activity.startActivity(intent);
         } catch (e: ActivityNotFoundException) {
+            StyleableToast.Builder(activity).gravity(Gravity.CENTER)
+                .text(activity.getString(R.string.viewing_support_app_not_exist)).cornerRadius(16).length(Toast.LENGTH_LONG)
+                .solidBackground().show()
             e.printStackTrace()
         }
     }

@@ -59,9 +59,12 @@ android {
             signingConfig signingConfigs.debug
             //applicationIdSuffix ".beta"
             minifyEnabled false
+            resValue("string", "branch_id", "key_test_hmRIENEBxRompOkPRCOXujibxFgew8w4")
+
             //  proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
         release {
+            resValue("string", "branch_id", "key_live_hmRIENEBxRompOkPRCOXujibxFgew8w4")
             debuggable false
             minifyEnabled false
             shrinkResources false

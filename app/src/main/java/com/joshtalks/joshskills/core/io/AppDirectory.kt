@@ -1,7 +1,10 @@
 package com.joshtalks.joshskills.core.io
 
+import android.net.Uri
 import android.os.Environment
+import android.os.ParcelFileDescriptor
 import android.text.format.DateUtils
+import android.util.Log
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.PrefManager
@@ -101,6 +104,28 @@ object AppDirectory {
         file.createNewFile()
         return file
     }
+
+
+    /**
+     * this code is using for sent file
+     **/
+
+    private val FILE_SENT_PATH =
+        Environment.getExternalStorageDirectory().toString() + File.separator + APP_DIRECTORY + File.separator + MEDIA_DIRECTORY + "/JoshAppFiles/Sent"
+
+    fun getSentFile(fileName: String): File {
+        val f = File(FILE_SENT_PATH)
+        if (f.exists().not()) {
+            f.mkdirs()
+        }
+        val file = File(FILE_SENT_PATH + File.separator + fileName)
+        if (file.exists()) {
+            return file
+        }
+        file.createNewFile()
+        return file
+    }
+
 
 
     /**
@@ -417,6 +442,26 @@ object AppDirectory {
             }
         }
         return downloadDirectory
+    }
+
+    fun copy2(sourceUri: Uri,file: File): File? {
+
+        val inputPFD: ParcelFileDescriptor? = AppObjectController.joshApplication.contentResolver.openFileDescriptor(sourceUri, "r")
+        val inStream: FileInputStream? = FileInputStream(inputPFD!!.fileDescriptor)
+        var outStream: FileOutputStream? = null
+        try {
+            outStream = FileOutputStream(file)
+            val inChannel = inStream!!.channel
+            val outChannel = outStream.channel
+            inChannel.transferTo(0, inChannel.size(), outChannel)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return null
+        } finally {
+            closeSilently(inStream)
+            closeSilently(outStream)
+        }
+        return file
     }
 
 

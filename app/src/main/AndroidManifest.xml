@@ -125,7 +125,7 @@
 
         <meta-data
                 android:name="io.branch.sdk.BranchKey"
-                android:value="key_live_hmRIENEBxRompOkPRCOXujibxFgew8w4" />
+                android:value="@string/branch_id" />
         <meta-data
                 android:name="io.branch.sdk.TestMode"
                 android:value="false" />
@@ -138,7 +138,6 @@
                 android:theme="@style/AppNoBarTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
 
@@ -147,6 +146,9 @@
 
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="joshskills" />
+                <data android:scheme="joshskills://" />
 
                 <data
                         android:host="joshskills.test-app.link"
@@ -252,7 +254,7 @@
 
         <activity
                 android:name=".ui.practise.PractiseSubmitActivity"
-                android:configChanges="orientation|screenSize"
+                android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize"
                 android:launchMode="singleTask"
                 android:parentActivityName=".ui.inbox.InboxActivity"
                 android:theme="@style/AppNoBarTheme" />

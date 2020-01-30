@@ -7,13 +7,10 @@ import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
 import android.content.pm.ActivityInfo
-import android.database.Cursor
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
-import android.net.Uri
 import android.os.*
-import android.provider.MediaStore
-import android.util.Log
+import android.provider.OpenableColumns
 import android.view.*
 import android.view.View.GONE
 import android.view.View.VISIBLE
@@ -44,10 +41,8 @@ import com.joshtalks.appcamera.pix.JoshCameraActivity
 import com.joshtalks.appcamera.pix.Options
 import com.joshtalks.appcamera.utility.ImageQuality
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.CoreJoshActivity
-import com.joshtalks.joshskills.core.PermissionUtils
-import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.io.AppDirectory
@@ -81,7 +76,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import me.zhanghai.android.materialplaypausedrawable.MaterialPlayPauseDrawable
-import java.io.File
 import java.util.concurrent.TimeUnit
 import kotlin.random.Random
 
@@ -247,48 +241,25 @@ class PractiseSubmitActivity : CoreJoshActivity(), FullScreenVideoFragment.OnDis
                 }
             } else if (requestCode == TEXT_FILE_ATTACHMENT_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
                 returnIntent?.data?.let {
-                    getPath(it)
-
-
-                    val path = Utils.getRealPathFromURI(it)
-                    filePath = path
-                    isDocumentAttachDone = true
-                    binding.submitFileViewContainer.visibility = VISIBLE
-                    binding.fileInfoTv.text = Utils.getFileNameFromURL(filePath)
-
-
-                }
-
-            } else if (VIDEO_COMPRESS == TEXT_FILE_ATTACHMENT_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-                returnIntent?.data?.let {
-                    //val path = Utils.getRealPathFromURI(it)
-                    isVideoRecordDone = true
-
-
-                    var uriString = it.toString();
-                    var myFile = File(uriString);
-                    var path = myFile.getAbsolutePath();
-
-                    if (uriString.startsWith("content://")) {
-                        var cursor: Cursor? = null
-                        try {
-                            cursor = getContentResolver().query(
-                                returnIntent.data!!,
-                                null,
-                                null,
-                                null,
-                                null
-                            );
-                            if (cursor != null && cursor.moveToFirst()) {
-                                Log.e("dwd", "dwd")
-                                // displayName = cursor!!.getString(cursor!!.getColumnIndex(OpenableColumns.DISPLAY_NAME));
-                            }
-                        } finally {
-                            cursor?.close();
+                    contentResolver.query(it, null, null, null, null)?.use { cursor ->
+                        val nameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+                        val sizeIndex = cursor.getColumnIndex(OpenableColumns.SIZE)
+                        cursor.moveToFirst()
+                        val fileName = cursor.getString(nameIndex)
+                        val file = AppDirectory.copy2(
+                            it,
+                            AppDirectory.getSentFile(fileName)
+                        )
+                        file?.run {
+                            filePath = this.absolutePath
+                            isDocumentAttachDone = true
+                            binding.practiseInputLayout.visibility = GONE
+                            binding.practiseSubmitLayout.visibility = VISIBLE
+                            binding.submitFileViewContainer.visibility = VISIBLE
+                            binding.fileInfoAttachmentTv.text = fileName
                         }
                     }
                 }
-
             }
 
         } catch (ex: Exception) {
@@ -297,19 +268,6 @@ class PractiseSubmitActivity : CoreJoshActivity(), FullScreenVideoFragment.OnDis
         }
 
         super.onActivityResult(requestCode, resultCode, returnIntent)
-
-    }
-
-    fun getPath(uri: Uri) {
-
-        var path = null;
-        val proj = arrayOf(MediaStore.Files.FileColumns.DATA)
-        var cursor = getContentResolver().query(uri, proj, null, null, null);
-
-        val column_index = cursor?.getColumnIndexOrThrow(proj[0]);
-        cursor?.moveToFirst();
-        Log.e("path", cursor?.getString(column_index!!))
-
     }
 
     override fun onDismiss() {
@@ -508,7 +466,7 @@ class PractiseSubmitActivity : CoreJoshActivity(), FullScreenVideoFragment.OnDis
                     EXPECTED_ENGAGE_TYPE.DX == it -> {
                         filePath = practiseEngagement?.answerUrl
                         binding.submitFileViewContainer.visibility = VISIBLE
-                        binding.fileInfoTv.text = Utils.getFileNameFromURL(filePath)
+                        binding.fileInfoAttachmentTv.text = Utils.getFileNameFromURL(filePath)
                     }
                     else -> {
 
@@ -1093,6 +1051,14 @@ class PractiseSubmitActivity : CoreJoshActivity(), FullScreenVideoFragment.OnDis
         }
     }
 
+    fun removeFileAttachment() {
+        filePath =null
+        isDocumentAttachDone = false
+        binding.practiseInputLayout.visibility = VISIBLE
+        binding.practiseSubmitLayout.visibility = GONE
+        binding.submitFileViewContainer.visibility = GONE
+        binding.fileInfoAttachmentTv.text = EMPTY
+    }
 
     fun submitPractise() {
         if (Utils.isInternetAvailable().not()) {

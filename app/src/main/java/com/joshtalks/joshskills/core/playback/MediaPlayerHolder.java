@@ -498,60 +498,64 @@ public final class MediaPlayerHolder implements PlayerInterface, MediaPlayer.OnC
 
         @Override
         public void onReceive(@NonNull final Context context, @NonNull final Intent intent) {
-            // TODO Auto-generated method stub
-            final String action = intent.getAction();
+            try {
+                // TODO Auto-generated method stub
+                final String action = intent.getAction();
 
-            if (action != null) {
+                if (action != null) {
 
-                switch (action) {
-                    case MusicNotificationManager.PREV_ACTION:
-                        instantReset();
-                        break;
-                    case MusicNotificationManager.PLAY_PAUSE_ACTION:
-                        resumeOrPause();
-                        break;
-                    case MusicNotificationManager.NEXT_ACTION:
-                        skip(true);
-                        break;
-                    case MusicNotificationManager.STOP_ACTION:
-                        resumeOrPause();
-                        mNotificationActionsReceiver.clearAbortBroadcast();
-                        mMusicNotificationManager.getNotificationManager().cancelAll();
-                        release();
-                        break;
+                    switch (action) {
+                        case MusicNotificationManager.PREV_ACTION:
+                            instantReset();
+                            break;
+                        case MusicNotificationManager.PLAY_PAUSE_ACTION:
+                            resumeOrPause();
+                            break;
+                        case MusicNotificationManager.NEXT_ACTION:
+                            skip(true);
+                            break;
+                        case MusicNotificationManager.STOP_ACTION:
+                            resumeOrPause();
+                            mNotificationActionsReceiver.clearAbortBroadcast();
+                            mMusicNotificationManager.getNotificationManager().cancelAll();
+                            release();
+                            break;
 
-                    case BluetoothDevice.ACTION_ACL_DISCONNECTED:
-                        if (mSelectedSong != null) {
-                            pauseMediaPlayer();
-                        }
-                        break;
-                    case BluetoothDevice.ACTION_ACL_CONNECTED:
-                        if (mSelectedSong != null && !isPlaying()) {
-                            resumeMediaPlayer();
-                        }
-                        break;
-                    case Intent.ACTION_HEADSET_PLUG:
-                        if (mSelectedSong != null) {
-                            switch (intent.getIntExtra("state", -1)) {
-                                //0 means disconnected
-                                case 0:
-                                    pauseMediaPlayer();
-                                    break;
-                                //1 means connected
-                                case 1:
-                                    if (!isPlaying()) {
-                                        resumeMediaPlayer();
-                                    }
-                                    break;
+                        case BluetoothDevice.ACTION_ACL_DISCONNECTED:
+                            if (mSelectedSong != null) {
+                                pauseMediaPlayer();
                             }
-                        }
-                        break;
-                    case AudioManager.ACTION_AUDIO_BECOMING_NOISY:
-                        if (isPlaying()) {
-                            pauseMediaPlayer();
-                        }
-                        break;
+                            break;
+                        case BluetoothDevice.ACTION_ACL_CONNECTED:
+                            if (mSelectedSong != null && !isPlaying()) {
+                                resumeMediaPlayer();
+                            }
+                            break;
+                        case Intent.ACTION_HEADSET_PLUG:
+                            if (mSelectedSong != null) {
+                                switch (intent.getIntExtra("state", -1)) {
+                                    //0 means disconnected
+                                    case 0:
+                                        pauseMediaPlayer();
+                                        break;
+                                    //1 means connected
+                                    case 1:
+                                        if (!isPlaying()) {
+                                            resumeMediaPlayer();
+                                        }
+                                        break;
+                                }
+                            }
+                            break;
+                        case AudioManager.ACTION_AUDIO_BECOMING_NOISY:
+                            if (isPlaying()) {
+                                pauseMediaPlayer();
+                            }
+                            break;
+                    }
                 }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
     }

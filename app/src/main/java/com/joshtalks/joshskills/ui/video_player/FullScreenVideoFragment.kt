@@ -119,7 +119,6 @@ class FullScreenVideoFragment : DialogFragment() {
 
     override fun onDismiss(dialog: DialogInterface) {
         onDismissListener?.onDismiss()
-        Log.e("dimiss", "dimiss")
         super.onDismiss(dialog)
     }
 

@@ -166,5 +166,8 @@
     <string name="your_answer">Your Answer</string>
     <string name="your_submitted_answer">Your Submitted Answer</string>
 
-    <string name="type_your_answer_hint">Type your answer here</string>
+    <string name="type_your_answer_hint">Type your answer here&#8230;&#8230;&#8230;</string>
+    <string name="viewing_support_app_not_exist">you may have not proper app for viewing this content</string>
+
+
 </resources>
