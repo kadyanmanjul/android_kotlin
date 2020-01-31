@@ -1,13 +1,12 @@
 package com.joshtalks.joshskills.ui.signup
 
-import android.app.Activity
-import android.content.Intent
 import android.os.Bundle
 import android.view.Gravity
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.commit
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import androidx.transition.ChangeBounds
 import com.google.gson.reflect.TypeToken
@@ -19,19 +18,15 @@ import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.databinding.ActivitySignUpBinding
 import com.joshtalks.joshskills.repository.local.model.InstallReferrerModel
-import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
-import com.joshtalks.joshskills.ui.inbox.COURSE_EXPLORER_WITHOUT_CODE
-
 
 const val IS_ACTIVITY_FOR_RESULT = "is_activity_for_result"
-
 
 class SignUpActivity : CoreJoshActivity() {
 
     private lateinit var layout: ActivitySignUpBinding
     private var activityResultFlag = false
     private val viewModel: SignUpViewModel by lazy {
-        ViewModelProviders.of(this).get(SignUpViewModel::class.java)
+        ViewModelProvider(this).get(SignUpViewModel::class.java)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,11 +37,11 @@ class SignUpActivity : CoreJoshActivity() {
         if (intent.hasExtra(IS_ACTIVITY_FOR_RESULT)) {
             activityResultFlag = intent?.getBooleanExtra(IS_ACTIVITY_FOR_RESULT, false) ?: false
         }
-
         addObserver()
         login()
-
     }
+
+
 
     private fun login() {
         supportFragmentManager.commit(true) {
@@ -125,20 +120,9 @@ class SignUpActivity : CoreJoshActivity() {
         })
     }
 
-    private fun setResult() {
-        val resultIntent = Intent()
-        setResult(Activity.RESULT_OK, resultIntent)
-        finish()
-    }
 
-    private fun openCourseExplorerScreen() {
-        CourseExploreActivity.startCourseExploreActivity(
-            this,
-            COURSE_EXPLORER_WITHOUT_CODE,
-            null, true
-        )
-        this.finish()
-    }
+
+
 
     private fun registerAnotherNumberFragment() {
         supportFragmentManager.popBackStack(
@@ -194,4 +178,6 @@ class SignUpActivity : CoreJoshActivity() {
         super.onBackPressed()
 
     }
+
+
 }

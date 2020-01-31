@@ -11,6 +11,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.google.android.gms.location.LocationRequest
 import com.google.android.material.snackbar.Snackbar
+import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.COURSE_STARTED_FB_EVENT
@@ -103,11 +104,16 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
     }
 
     private fun checkAppUpdate() {
+        val forceUpdateMinVersion =
+            AppObjectController.getFirebaseRemoteConfig().getLong("force_upgrade_after_version")
+        val forceUpdateFlag =
+            AppObjectController.getFirebaseRemoteConfig().getBoolean("update_force")
+        val currentAppVersion = BuildConfig.VERSION_CODE
         var updateMode = Constants.UpdateMode.FLEXIBLE
-        if (AppObjectController.getFirebaseRemoteConfig().getBoolean("update_force")) {
+
+        if (currentAppVersion <= forceUpdateMinVersion && forceUpdateFlag) {
             updateMode = Constants.UpdateMode.IMMEDIATE
         }
-
         inAppUpdateManager = InAppUpdateManager.Builder(this, REQ_CODE_VERSION_UPDATE)
             .resumeUpdates(true)
             .mode(updateMode)

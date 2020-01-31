@@ -33,7 +33,7 @@
     <string name="location_rationale">Please allow to access your location. It will help in better recommendations. </string>
     <string name="short_seconds">sec</string>
     <string name="volume_up_message">Please turn the volume up</string>
-    <string name="storage_permission_message">To view or send media, allow Josh Skills access your device\'s  photos, media and files.</string>
+    <string name="storage_permission_message">To view or send media, allow Josh Skills access to your device\'s  photos, media and files.</string>
     <string name="record_permission_message">To record a Voice Message, allow Josh Skills access to your microphone and your device\'s  photos, media and files. Tap Settings > Permissions, and turn Microphone on and Storage on.</string>
     <string name="camera_permission_message">To capture photos and videos allow Josh Skills access to your camera  and your device\'s  photos, media and files.</string>
 
@@ -168,6 +168,10 @@
 
     <string name="type_your_answer_hint">Type your answer here&#8230;&#8230;&#8230;</string>
     <string name="viewing_support_app_not_exist">you may have not proper app for viewing this content</string>
+    <string name="login_with_truecaller_label">Login using TrueCaller</string>
+    <string name="login_with_otp">Login using OTP</string>
+    <string name="wrong_otp">The OTP entered is incorrect. Please enter correct OTP or try regenerating the OTP</string>
+
 
 
 </resources>

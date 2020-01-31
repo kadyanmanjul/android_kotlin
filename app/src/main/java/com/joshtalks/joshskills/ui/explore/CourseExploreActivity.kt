@@ -30,7 +30,7 @@ import com.joshtalks.joshskills.repository.local.model.ScreenEngagementModel
 import com.joshtalks.joshskills.repository.server.CourseExploreModel
 import com.joshtalks.joshskills.ui.inbox.REGISTER_NEW_COURSE_CODE
 import com.joshtalks.joshskills.ui.payment.PaymentActivity
-import com.joshtalks.joshskills.ui.signup.SignUpActivity
+import com.joshtalks.joshskills.ui.sign_up_old.OnBoardActivity
 import com.joshtalks.joshskills.ui.view_holders.CourseExplorerViewHolder
 import com.vanniktech.emoji.Utils
 import io.branch.referral.util.BRANCH_STANDARD_EVENT
@@ -102,7 +102,7 @@ class CourseExploreActivity : CoreJoshActivity() {
                     message(R.string.logout_message)
                     positiveButton(R.string.ok) {
                         val intent =
-                            Intent(AppObjectController.joshApplication, SignUpActivity::class.java)
+                            Intent(AppObjectController.joshApplication, OnBoardActivity::class.java)
                         intent.apply {
                             addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
                             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)

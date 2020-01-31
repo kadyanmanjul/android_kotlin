@@ -14,10 +14,16 @@ interface SignUpNetworkService {
 
 
     @GET("$DIR/user/login/")
-    suspend fun getOtpForNumberAsync(@QueryMap params: Map<String, String>): Any
+    fun getOtpForNumberAsync(@QueryMap params: Map<String, String>): Deferred<Any>
 
     @POST("$DIR/user/otp_verify/")
-    suspend fun verifyOTP(@Body requestVerifyOTP: RequestVerifyOTP): LoginResponse
+    fun verifyOTP(@Body requestVerifyOTP: RequestVerifyOTP): Deferred<LoginResponse>
+
+
+    @POST("$DIR/user/truecaller/login/")
+    fun verifyViaTrueCaller(@Body requestVerifyOTP: TrueCallerLoginRequest): Deferred<LoginResponse>
+
+
 
 
     @GET("$DIR/core/meta/")

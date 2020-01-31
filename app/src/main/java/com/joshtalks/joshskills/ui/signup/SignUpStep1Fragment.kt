@@ -14,7 +14,7 @@ import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import com.github.razir.progressbutton.*
 import com.google.android.gms.auth.api.credentials.Credential
 import com.google.android.gms.auth.api.credentials.Credentials
@@ -44,11 +44,12 @@ class SignUpStep1Fragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        viewModel = activity?.run { ViewModelProviders.of(this)[SignUpViewModel::class.java] }
+        viewModel = activity?.run { ViewModelProvider(activity!!)
+            .get(SignUpViewModel::class.java) }
             ?: throw Exception("Invalid Activity")
-
     }
+
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -212,6 +213,8 @@ class SignUpStep1Fragment : Fragment() {
             signUpStep1FragmentBinding.mobileEt.setSelection(signUpStep1FragmentBinding.mobileEt.text!!.length)
         } catch (ex: Exception) {
         }
-
     }
+
+
+
 }

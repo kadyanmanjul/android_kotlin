@@ -30,8 +30,8 @@ import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.CourseDetailsModel
 import com.joshtalks.joshskills.repository.server.CourseExploreModel
 import com.joshtalks.joshskills.repository.server.PaymentDetailsResponse
+import com.joshtalks.joshskills.ui.sign_up_old.OnBoardActivity
 import com.joshtalks.joshskills.ui.signup.IS_ACTIVITY_FOR_RESULT
-import com.joshtalks.joshskills.ui.signup.SignUpActivity
 import com.joshtalks.joshskills.ui.view_holders.CourseDetailViewHolder
 import com.muddzdev.styleabletoast.StyleableToast
 import com.razorpay.Checkout
@@ -59,10 +59,10 @@ class PaymentActivity : CoreJoshActivity(),
     private var courseModel: CourseExploreModel? = null
     private var compositeDisposable = CompositeDisposable()
     private val uiHandler = Handler(Looper.getMainLooper())
-    private var courseId: String = ""
+    private var courseId: String = EMPTY
     private var currency: String = "INR"
     private var amount: Long = 0L
-    private var courseName = ""
+    private var courseName = EMPTY
 
     companion object {
         fun startPaymentActivity(
@@ -184,7 +184,7 @@ class PaymentActivity : CoreJoshActivity(),
         extras["test_id"] = courseId
         extras["payment_id"] = p0 ?: EMPTY
         extras["currency"] = currency
-        extras["amount"] = amount.toString()
+        extras["amount"] = courseModel?.amount.toString()
         extras["course_name"] = courseName
         BranchIOAnalytics.pushToBranch(BRANCH_STANDARD_EVENT.PURCHASE, extras)
 
@@ -287,13 +287,11 @@ class PaymentActivity : CoreJoshActivity(),
     fun buyCourse() {
 
         if (User.getInstance().token == null) {
-            startActivityForResult(Intent(this, SignUpActivity::class.java).apply {
+            startActivityForResult(Intent(this, OnBoardActivity::class.java).apply {
                 putExtra(IS_ACTIVITY_FOR_RESULT, true)
             }, 101)
             return
         }
-
-
 
         if (courseModel != null) {
             getPaymentDetails(courseModel?.id.toString())

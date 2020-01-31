@@ -32,7 +32,7 @@ import com.joshtalks.joshskills.repository.service.ChatNetworkService
 import com.joshtalks.joshskills.repository.service.CommonNetworkService
 import com.joshtalks.joshskills.repository.service.MediaDUNetworkService
 import com.joshtalks.joshskills.repository.service.SignUpNetworkService
-import com.joshtalks.joshskills.ui.signup.SignUpActivity
+import com.joshtalks.joshskills.ui.sign_up_old.OnBoardActivity
 import com.joshtalks.joshskills.ui.view_holders.IMAGE_SIZE
 import com.joshtalks.joshskills.ui.view_holders.ROUND_CORNER
 import com.tonyodev.fetch2.Fetch
@@ -403,7 +403,7 @@ class StatusCodeInterceptor : Interceptor {
                     AppObjectController.joshApplication.packageName
                 )
             ) {
-                val intent = Intent(AppObjectController.joshApplication, SignUpActivity::class.java)
+                val intent = Intent(AppObjectController.joshApplication, OnBoardActivity::class.java)
                 intent.apply {
                     addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
                     addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)

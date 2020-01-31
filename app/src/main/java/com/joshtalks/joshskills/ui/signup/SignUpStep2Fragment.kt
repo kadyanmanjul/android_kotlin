@@ -3,15 +3,12 @@ package com.joshtalks.joshskills.ui.signup
 import android.graphics.Color
 import android.os.Bundle
 import android.os.CountDownTimer
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.view.WindowManager
+import android.view.*
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import com.github.razir.progressbutton.*
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
@@ -21,6 +18,7 @@ import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.databinding.FragmentSignUpStep2Binding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.OTPReceivedEventBus
+import com.muddzdev.styleabletoast.StyleableToast
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -48,10 +46,11 @@ class SignUpStep2Fragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         activity?.window?.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-
-        viewModel = activity?.run { ViewModelProviders.of(this)[SignUpViewModel::class.java] }
+        viewModel = activity?.run {
+            ViewModelProvider(activity!!)
+                .get(SignUpViewModel::class.java)
+        }
             ?: throw Exception("Invalid Activity")
-
     }
 
     override fun onCreateView(
@@ -88,7 +87,7 @@ class SignUpStep2Fragment : Fragment() {
                 SignUpStepStatus.SignUpResendOTP -> {
                     Toast.makeText(
                         AppObjectController.joshApplication,
-                        getString(R.string.resend_otp_toast,viewModel.phoneNumber),
+                        getString(R.string.resend_otp_toast, viewModel.phoneNumber),
                         Toast.LENGTH_SHORT
                     ).show()
                     startTimer()
@@ -97,6 +96,17 @@ class SignUpStep2Fragment : Fragment() {
                 else -> return@Observer
             }
         })
+        viewModel.otpVerifyStatus.observe(this, Observer {
+            if (it) {
+                StyleableToast.Builder(activity!!).gravity(Gravity.CENTER)
+                    .text(getString(R.string.wrong_otp)).cornerRadius(16).length(Toast.LENGTH_LONG)
+                    .solidBackground().show()
+                hideProgress()
+                signUpStep2Binding.otpView.setText(EMPTY)
+
+            }
+        })
+
         signUpStep2Binding.tvMobile.text = viewModel.countryCode.plus(viewModel.phoneNumber)
 
     }

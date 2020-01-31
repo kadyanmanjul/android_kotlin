@@ -126,9 +126,16 @@
         <meta-data
                 android:name="io.branch.sdk.BranchKey"
                 android:value="@string/branch_id" />
+
+
         <meta-data
                 android:name="io.branch.sdk.TestMode"
-                android:value="false" />
+                android:value="@bool/branch_test" />
+
+
+        <meta-data
+                android:name="com.truecaller.android.sdk.PartnerKey"
+                android:value="@string/truecaller_partnerKey" />
 
 
         <activity
@@ -162,6 +169,10 @@
                 <data
                         android:host="joshskills-alternate.app.link"
                         android:scheme="https" />
+                <data
+                        android:host="joshskills.app.com"
+                        android:scheme="https" />
+
             </intent-filter>
 
         </activity>
@@ -317,6 +328,7 @@
 
 
         <service android:name=".core.playback.MusicService" />
+
         <!--
         <receiver android:name="com.netdoers.com.ui.CleanReceiver" >
             <intent-filter>

@@ -10,12 +10,13 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.CoreJoshActivity
 import com.joshtalks.joshskills.core.service.WorkMangerAdmin
+import com.joshtalks.joshskills.repository.server.CourseExploreModel
 import com.joshtalks.joshskills.ui.payment.COURSE_ID
 import com.joshtalks.joshskills.ui.payment.PaymentActivity
+import com.joshtalks.joshskills.ui.payment.PaymentProcessFragment
 import io.branch.referral.Branch
 import io.branch.referral.BranchError
 import io.branch.referral.Defines
-import io.branch.referral.validators.IntegrationValidator
 import org.json.JSONObject
 
 
@@ -29,6 +30,11 @@ class LauncherActivity : CoreJoshActivity() {
         WorkMangerAdmin.readMessageUpdating()
         setContentView(R.layout.activity_launcher)
         handleIntent()
+        uiHandler.postDelayed({
+            val intent = getIntentForState()
+            startActivity(intent)
+            this@LauncherActivity.finish()
+        }, 1800)
     }
 
 
@@ -89,14 +95,6 @@ class LauncherActivity : CoreJoshActivity() {
         }
     }
 
-    override fun onResume() {
-        uiHandler.postDelayed({
-            val intent = getIntentForState()
-            startActivity(intent)
-            this@LauncherActivity.finish()
-        }, 1500)
-        super.onResume()
-    }
     /*
 
 

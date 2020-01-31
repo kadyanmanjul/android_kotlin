@@ -499,7 +499,6 @@ public final class MediaPlayerHolder implements PlayerInterface, MediaPlayer.OnC
         @Override
         public void onReceive(@NonNull final Context context, @NonNull final Intent intent) {
             try {
-                // TODO Auto-generated method stub
                 final String action = intent.getAction();
 
                 if (action != null) {

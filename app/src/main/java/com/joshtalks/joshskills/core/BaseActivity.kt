@@ -28,6 +28,7 @@ import com.joshtalks.joshskills.ui.profile.CropImageActivity
 import com.joshtalks.joshskills.ui.profile.ProfileActivity
 import com.joshtalks.joshskills.ui.profile.SOURCE_IMAGE
 import com.joshtalks.joshskills.ui.sign_up_old.OnBoardActivity
+import io.branch.referral.Branch
 import io.branch.referral.PrefHelper
 import io.github.inflationx.viewpump.ViewPumpContextWrapper
 import java.net.URLDecoder
@@ -116,6 +117,8 @@ abstract class BaseActivity : AppCompatActivity() {
             Crashlytics.getInstance().core.setUserEmail(User.getInstance().email)
             Crashlytics.getInstance()
                 .core.setUserIdentifier(User.getInstance().phoneNumber + "$" + Mentor.getInstance().getId())
+            Branch.getInstance().setIdentity(Mentor.getInstance().getId())
+
         } catch (ex: Exception) {
         }
     }

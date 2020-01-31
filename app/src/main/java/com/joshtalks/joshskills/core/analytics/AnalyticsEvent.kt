@@ -8,6 +8,8 @@ enum class AnalyticsEvent(val NAME: String) {
     APP_INSTALLED("App Installed"),
     LOGIN_SCREEN_1("Login Screen 1"),
     LOGIN_CLICKED("Login Clicked"),
+    LOGIN_TRUECALLER_CLICKED("Login Truecaller Clicked"),
+
     OTP_ACCOUNT_KIT_ACTIVITY("Otp Account Kit Activity"),
     WHATSAPP_SELECTED("Whatsapp Selected"),
 
