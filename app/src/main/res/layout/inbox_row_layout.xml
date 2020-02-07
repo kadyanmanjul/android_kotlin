@@ -51,7 +51,6 @@
             android:gravity="start" />
 
 
-
     <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tv_last_message"
             fontPath="fonts/OpenSans-Regular.ttf"

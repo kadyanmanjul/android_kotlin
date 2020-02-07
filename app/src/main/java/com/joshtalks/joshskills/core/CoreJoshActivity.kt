@@ -22,6 +22,7 @@ abstract class CoreJoshActivity : BaseActivity() {
         }
     }
 
+
     protected fun setResult() {
         val resultIntent = Intent()
         setResult(Activity.RESULT_OK, resultIntent)

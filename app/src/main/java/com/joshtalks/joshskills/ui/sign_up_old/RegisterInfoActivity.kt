@@ -44,7 +44,8 @@ class RegisterInfoActivity : BaseActivity() {
                 val json: String =
                     applicationContext.assets.open("country_details.json").bufferedReader()
                         .use { it.readText() }
-                val countryList = AppObjectController.gsonMapper.fromJson<List<CountryDetail>>(json,
+                val countryList = AppObjectController.gsonMapper.fromJson<List<CountryDetail>>(
+                    json,
                     object : TypeToken<List<CountryDetail>>() {}.type
                 )
                 val country =

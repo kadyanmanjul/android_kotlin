@@ -44,11 +44,12 @@ class SignUpStep1Fragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel = activity?.run { ViewModelProvider(activity!!)
-            .get(SignUpViewModel::class.java) }
+        viewModel = activity?.run {
+            ViewModelProvider(activity!!)
+                .get(SignUpViewModel::class.java)
+        }
             ?: throw Exception("Invalid Activity")
     }
-
 
 
     override fun onCreateView(
@@ -130,14 +131,6 @@ class SignUpStep1Fragment : Fragment() {
         }
         signUpStep1FragmentBinding.inputLayoutPassword.isErrorEnabled = false
 
-        if (Utils.isInternetAvailable().not()) {
-            Toast.makeText(
-                AppObjectController.joshApplication,
-                getString(R.string.internet_not_available_msz),
-                Toast.LENGTH_SHORT
-            ).show()
-            return
-        }
         showProgress()
         viewModel.networkCallForOtp(
             signUpStep1FragmentBinding.mobileEt.prefix,
@@ -214,7 +207,6 @@ class SignUpStep1Fragment : Fragment() {
         } catch (ex: Exception) {
         }
     }
-
 
 
 }

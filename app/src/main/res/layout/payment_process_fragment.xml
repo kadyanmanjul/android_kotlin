@@ -398,7 +398,6 @@
                 </com.google.android.material.card.MaterialCardView>
 
 
-
             </RelativeLayout>
 
             <androidx.appcompat.widget.AppCompatImageView
@@ -425,11 +424,11 @@
                     android:id="@+id/btn_explore_more_course"
                     style="@style/Widget.MaterialComponents.Button"
                     fontPath="fonts/OpenSans-SemiBold.ttf"
-                    android:layout_marginBottom="@dimen/_20sdp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center|bottom"
                     android:layout_marginTop="@dimen/_16sdp"
+                    android:layout_marginBottom="@dimen/_20sdp"
                     android:background="@drawable/round_rectangle"
                     android:backgroundTint="@color/button_primary_color"
                     android:gravity="center"
@@ -438,6 +437,7 @@
                     android:textAllCaps="false"
                     android:textColor="@color/white"
                     android:textSize="@dimen/font_14"
+                    android:visibility="invisible"
                     app:cornerRadius="@dimen/_8sdp"
                     app:rippleColor="@color/white" />
         </FrameLayout>

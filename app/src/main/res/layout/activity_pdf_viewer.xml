@@ -13,8 +13,7 @@
                 android:layout_height="match_parent"
                 android:background="@color/white" />
 
-        <com.google.android.material.appbar.MaterialToolbar
-                xmlns:app="http://schemas.android.com/apk/res-auto"
+        <com.google.android.material.appbar.MaterialToolbar xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -30,8 +29,8 @@
                     android:layout_marginEnd="@dimen/_5sdp"
                     android:paddingTop="@dimen/_5sdp"
                     android:paddingBottom="@dimen/_5sdp"
-                    android:visibility="visible"
                     android:tint="@color/gray_48"
+                    android:visibility="visible"
                     app:srcCompat="@drawable/ic_arrow_back" />
 
 
@@ -40,11 +39,11 @@
                     fontPath="fonts/OpenSans-SemiBold.ttf"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:ellipsize="end"
                     android:gravity="center_vertical|start"
+                    android:lines="1"
                     android:padding="@dimen/_5sdp"
                     android:text=""
-                    android:lines="1"
-                    android:ellipsize="end"
                     android:textColor="@color/gray_48"
                     android:textSize="@dimen/font_20" />
         </com.google.android.material.appbar.MaterialToolbar>

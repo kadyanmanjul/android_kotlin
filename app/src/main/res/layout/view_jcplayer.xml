@@ -100,11 +100,11 @@
             android:layout_toEndOf="@id/fl_controller">
 
         <View
-                android:visibility="invisible"
                 android:id="@+id/seekBar_ph"
                 android:layout_width="wrap_content"
                 android:layout_height="2dp"
-                android:background="@color/gray_9E" />
+                android:background="@color/gray_9E"
+                android:visibility="invisible" />
 
         <SeekBar
                 android:id="@+id/seekBar"
@@ -143,8 +143,8 @@
             android:layout_alignEnd="@id/fl_seek_bar"
             android:layout_marginTop="@dimen/_20sdp"
             android:layout_marginEnd="@dimen/_5sdp"
-            android:text=""
             android:gravity="center|end"
+            android:text=""
             android:textAlignment="center"
             android:textColor="@color/gray_9E"
             android:textSize="@dimen/font_11"

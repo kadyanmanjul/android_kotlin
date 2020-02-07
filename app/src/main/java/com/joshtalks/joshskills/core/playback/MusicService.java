@@ -44,7 +44,8 @@ public class MusicService extends Service {
             mMediaPlayerHolder.registerNotificationActionsReceiver(false);
             mMusicNotificationManager = null;
             mMediaPlayerHolder.release();
-        }catch (Exception e){}
+        } catch (Exception e) {
+        }
         super.onDestroy();
     }
 

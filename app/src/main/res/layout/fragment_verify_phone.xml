@@ -1,101 +1,98 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
 
         <variable
                 name="handler"
-                type="com.joshtalks.joshskills.ui.signup.VerifyDialogFragment"/>
+                type="com.joshtalks.joshskills.ui.signup.VerifyDialogFragment" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:background="@color/white"
             android:orientation="vertical"
-            android:padding="@dimen/dp20"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:padding="@dimen/dp20">
+
         <TextView
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                fontPath="fonts/OpenSans-Regular.ttf"
-                android:textColor="@color/text_color"
-                android:layout_width="match_parent"
                 android:id="@+id/textView"
-                android:gravity="left|center"
-                android:textSize="@dimen/font_14"
-                android:text="We will be verifying the phone number:"
-                android:layout_height="wrap_content"
-        />
-
-        <TextView
-                android:layout_marginTop="@dimen/dp15"
-                app:layout_constraintTop_toBottomOf="@id/textView"
-                app:layout_constraintLeft_toLeftOf="parent"
-                fontPath="fonts/OpenSans-SemiBold.ttf"
-                android:textColor="@color/text_color"
-                android:layout_width="wrap_content"
-                android:id="@+id/tv_phone_number"
-                android:gravity="left|center"
-                android:textSize="@dimen/font_14"
-                android:text="+91 8432522643"
-                android:layout_height="wrap_content"
-        />
-        <TextView
                 fontPath="fonts/OpenSans-Regular.ttf"
-
-                android:layout_marginTop="@dimen/dp15"
-                app:layout_constraintTop_toBottomOf="@id/tv_phone_number"
-                app:layout_constraintLeft_toLeftOf="parent"
-                android:textColor="@color/text_color"
-                android:layout_width="wrap_content"
-                android:id="@+id/textView2"
-                android:gravity="left|center"
-                android:textSize="@dimen/font_14"
-                android:text="is this OK? or would to like to edit the number?"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-        />
+                android:gravity="left|center"
+                android:text="We will be verifying the phone number:"
+                android:textColor="@color/text_color"
+                android:textSize="@dimen/font_14"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+                android:id="@+id/tv_phone_number"
+                fontPath="fonts/OpenSans-SemiBold.ttf"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dp15"
+                android:gravity="left|center"
+                android:text="+91 8432522643"
+                android:textColor="@color/text_color"
+                android:textSize="@dimen/font_14"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/textView" />
+
+        <TextView
+                android:id="@+id/textView2"
+
+                fontPath="fonts/OpenSans-Regular.ttf"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dp15"
+                android:gravity="left|center"
+                android:text="is this OK? or would to like to edit the number?"
+                android:textColor="@color/text_color"
+                android:textSize="@dimen/font_14"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_phone_number" />
 
 
         <TextView
-                android:textAllCaps="true"
-                android:layout_marginTop="@dimen/dp10"
-                app:layout_constraintTop_toBottomOf="@id/textView2"
-                app:layout_constraintLeft_toLeftOf="parent"
-                fontPath="fonts/OpenSans-SemiBold.ttf"
-                android:textColor="@color/primary_text"
-                android:layout_width="wrap_content"
                 android:id="@+id/tv_edit"
-                android:onClick="@{()->handler.editThisNumber()}"
-                android:gravity="center|center_horizontal"
-                android:textSize="@dimen/font_14"
+                fontPath="fonts/OpenSans-SemiBold.ttf"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/dp10"
-                android:text="@string/edit"
-                android:paddingBottom="@dimen/dp10"
+                android:layout_marginTop="@dimen/dp10"
+                android:gravity="center|center_horizontal"
+                android:onClick="@{()->handler.editThisNumber()}"
                 android:paddingTop="@dimen/dp10"
                 android:paddingRight="@dimen/dp20"
-                android:layout_height="wrap_content"
-        />
+                android:paddingBottom="@dimen/dp10"
+                android:text="@string/edit"
+                android:textAllCaps="true"
+                android:textColor="@color/primary_text"
+                android:textSize="@dimen/font_14"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/textView2" />
 
         <TextView
-                android:gravity="center|center_horizontal"
-                android:layout_marginRight="@dimen/dp10"
-                android:layout_marginTop="@dimen/dp10"
-                android:paddingBottom="@dimen/dp10"
-                android:paddingTop="@dimen/dp10"
-                android:paddingLeft="@dimen/dp20"
-                android:onClick="@{()->handler.okWithThisNumber()}"
-                android:textAllCaps="true"
-                app:layout_constraintTop_toBottomOf="@id/textView2"
-                app:layout_constraintRight_toRightOf="parent"
-                fontPath="fonts/OpenSans-SemiBold.ttf"
-                android:textColor="@color/primary_text"
-                android:layout_width="wrap_content"
                 android:id="@+id/tv_ok"
-                android:textSize="@dimen/font_14"
-                android:text="@string/ok"
+                fontPath="fonts/OpenSans-SemiBold.ttf"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-        />
+                android:layout_marginTop="@dimen/dp10"
+                android:layout_marginRight="@dimen/dp10"
+                android:gravity="center|center_horizontal"
+                android:onClick="@{()->handler.okWithThisNumber()}"
+                android:paddingLeft="@dimen/dp20"
+                android:paddingTop="@dimen/dp10"
+                android:paddingBottom="@dimen/dp10"
+                android:text="@string/ok"
+                android:textAllCaps="true"
+                android:textColor="@color/primary_text"
+                android:textSize="@dimen/font_14"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/textView2" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

@@ -40,9 +40,9 @@
                 android:paddingTop="@dimen/_6sdp"
                 android:paddingBottom="@dimen/_6sdp"
                 android:text="@string/buy_course"
+                android:textAllCaps="false"
                 android:textColor="@color/white"
                 android:textSize="@dimen/font_11"
-                android:textAllCaps="false"
                 android:visibility="visible" />
 
 

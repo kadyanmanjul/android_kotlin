@@ -403,7 +403,8 @@ class StatusCodeInterceptor : Interceptor {
                     AppObjectController.joshApplication.packageName
                 )
             ) {
-                val intent = Intent(AppObjectController.joshApplication, OnBoardActivity::class.java)
+                val intent =
+                    Intent(AppObjectController.joshApplication, OnBoardActivity::class.java)
                 intent.apply {
                     addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
                     addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)

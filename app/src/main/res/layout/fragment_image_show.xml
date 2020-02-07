@@ -33,11 +33,11 @@
                 fontPath="fonts/OpenSans-SemiBold.ttf"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:ellipsize="marquee"
                 android:gravity="center_vertical|start"
                 android:padding="@dimen/_5sdp"
-                android:text=""
                 android:singleLine="true"
-                android:ellipsize="marquee"
+                android:text=""
                 android:textColor="@color/white"
                 android:textSize="@dimen/font_16" />
     </com.google.android.material.appbar.MaterialToolbar>

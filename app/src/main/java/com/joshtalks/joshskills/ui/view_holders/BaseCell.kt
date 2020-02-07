@@ -19,7 +19,6 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.repository.local.model.Mentor
-import jp.wasabeef.glide.transformations.BlurTransformation
 import jp.wasabeef.glide.transformations.CropTransformation
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation
 
@@ -40,12 +39,6 @@ abstract class BaseCell {
     fun setBlurImageInImageView(iv: AppCompatImageView?, url: String, callback: Runnable? = null) {
         if (iv != null) {
             val multi = MultiTransformation<Bitmap>(
-                BlurTransformation(25),
-                CropTransformation(
-                    Utils.dpToPx(IMAGE_SIZE),
-                    Utils.dpToPx(IMAGE_SIZE),
-                    CropTransformation.CropType.CENTER
-                ),
                 RoundedCornersTransformation(
                     Utils.dpToPx(ROUND_CORNER),
                     0,

@@ -45,7 +45,7 @@
     <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY" />
     <uses-permission android:name="BIND_GET_INSTALL_REFERRER_SERVICE" />
     <uses-permission android:name="com.google.android.finsky.permission.BIND_GET_INSTALL_REFERRER_SERVICE" /> <!-- showing notification on do not disturb -->
-    <!--         <uses-permission android:name="android.permission.GET_ACCOUNTS" /> -->
+    <!-- <uses-permission android:name="android.permission.GET_ACCOUNTS" /> -->
     <!--
         <uses-permission android:name="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE"
                 tools:ignore="ProtectedPermissions" />
@@ -67,8 +67,6 @@
             android:theme="@style/AppTheme"
             tools:ignore="AllowBackup,GoogleAppIndexingWarning,UnusedAttribute"
             tools:replace="android:allowBackup">
-
-
         <activity
                 android:name=".ui.help.HelpActivity"
                 android:launchMode="singleTask"
@@ -122,21 +120,15 @@
         <meta-data
                 android:name="com.google.android.gms.ads.APPLICATION_ID"
                 android:value="@string/ads_id" />
-
         <meta-data
                 android:name="io.branch.sdk.BranchKey"
                 android:value="@string/branch_id" />
-
-
         <meta-data
                 android:name="io.branch.sdk.TestMode"
                 android:value="@bool/branch_test" />
-
-
         <meta-data
                 android:name="com.truecaller.android.sdk.PartnerKey"
-                android:value="@string/truecaller_partnerKey" />
-
+                android:value="@string/truecaller_key" />
 
         <activity
                 android:name=".ui.launch.LauncherActivity"
@@ -145,9 +137,9 @@
                 android:theme="@style/AppNoBarTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
@@ -156,7 +148,6 @@
 
                 <data android:scheme="joshskills" />
                 <data android:scheme="joshskills://" />
-
                 <data
                         android:host="joshskills.test-app.link"
                         android:scheme="https" />
@@ -172,12 +163,8 @@
                 <data
                         android:host="joshskills.app.com"
                         android:scheme="https" />
-
             </intent-filter>
-
         </activity>
-
-
         <activity
                 android:name=".ui.inbox.InboxActivity"
                 android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize"
@@ -262,13 +249,18 @@
                     android:name="android.support.PARENT_ACTIVITY"
                     android:value=".ui.explore.CourseExploreActivity" />
         </activity>
-
         <activity
                 android:name=".ui.practise.PractiseSubmitActivity"
                 android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize"
                 android:launchMode="singleTask"
                 android:parentActivityName=".ui.inbox.InboxActivity"
                 android:theme="@style/AppNoBarTheme" />
+
+        <activity
+                android:name=".ui.referral.ReferralActivity"
+                android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize"
+                android:launchMode="singleTask"
+                android:theme="@style/ConversationTheme" />
 
         <receiver
                 android:name=".core.custom_ui.audioplayer.service.notification.JcPlayerNotificationReceiver"
@@ -326,17 +318,37 @@
             </intent-filter>
         </receiver>
 
-
         <service android:name=".core.playback.MusicService" />
+        <service
+                android:name="dm.audiostreamer.AudioStreamingService"
+                android:enabled="true"
+                android:exported="true"
+                tools:ignore="ExportedService" />
 
-        <!--
-        <receiver android:name="com.netdoers.com.ui.CleanReceiver" >
+        <receiver
+                android:name="dm.audiostreamer.AudioStreamingReceiver"
+                tools:ignore="ExportedService">
             <intent-filter>
-                <action android:name="android.intent.action.PACKAGE_REMOVED" >
-                </action>
-                <data android:scheme="package"/>
+                <action android:name="dm.audiostreamer.close" />
+                <action android:name="dm.audiostreamer.pause" />
+                <action android:name="dm.audiostreamer.next" />
+                <action android:name="dm.audiostreamer.play" />
+                <action android:name="dm.audiostreamer.previous" />
+                <action android:name="android.intent.action.MEDIA_BUTTON" />
+                <action android:name="android.media.AUDIO_BECOMING_NOISY" />
             </intent-filter>
-        </receiver>-->
+        </receiver>
+        <provider
+                android:name=".repository.service.GenericFileProvider"
+                android:authorities="com.joshtalks.joshskills.provider"
+                android:exported="false"
+                android:grantUriPermissions="true">
+            <meta-data
+                    android:name="android.support.FILE_PROVIDER_PATHS"
+                    android:resource="@xml/provider_paths" />
+
+        </provider>
+
     </application>
 
 </manifest>

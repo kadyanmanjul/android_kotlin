@@ -11,8 +11,7 @@
             android:id="@+id/root_sub_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="start"
-            >
+            android:layout_gravity="start">
 
         <FrameLayout
 
@@ -21,8 +20,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/_16sdp"
                 android:paddingLeft="@dimen/_5sdp"
-                android:paddingRight="@dimen/_5sdp"
                 android:paddingTop="@dimen/_1sdp"
+                android:paddingRight="@dimen/_5sdp"
                 android:paddingBottom="@dimen/_1sdp">
 
 
@@ -33,22 +32,21 @@
                     android:gravity="start">
 
                 <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
-                        app:layout_constraintLeft_toLeftOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
                         android:id="@+id/text_title"
                         fontPath="fonts/OpenSans-SemiBold.ttf"
-                        android:layout_gravity="start"
-                        android:gravity="center_vertical|start"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_gravity="start"
+                        android:gravity="center_vertical|start"
                         android:paddingBottom="@dimen/_5sdp"
                         android:textColor="@color/gray_48"
                         android:textSize="@dimen/font_16"
-                        android:visibility="gone" />
+                        android:visibility="gone"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
 
                 <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
-                        app:layout_constraintTop_toBottomOf="@+id/text_title"
                         android:id="@+id/text_message_body"
                         fontPath="fonts/Roboto-Regular.ttf"
                         android:layout_width="wrap_content"
@@ -56,13 +54,13 @@
                         android:layout_gravity="start"
                         android:gravity="center_vertical|start"
                         android:paddingEnd="@dimen/_4sdp"
+                        android:paddingBottom="@dimen/_4sdp"
                         android:textColor="@color/gray_48"
                         android:textSize="@dimen/font_16"
                         app:layout_constraintBottom_toTopOf="@+id/text_message_time"
                         app:layout_constraintLeft_toLeftOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        android:paddingBottom="@dimen/_4sdp"
-                        />
+                        app:layout_constraintTop_toBottomOf="@+id/text_title" />
 
 
                 <androidx.appcompat.widget.AppCompatTextView
@@ -71,9 +69,9 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="1dp"
-                        android:paddingStart="@dimen/_20sdp"
                         android:drawablePadding="@dimen/_4sdp"
                         android:gravity="center"
+                        android:paddingStart="@dimen/_20sdp"
                         android:textColor="@color/gray_9E"
                         android:textSize="@dimen/font_12"
                         app:layout_constraintBottom_toBottomOf="parent"

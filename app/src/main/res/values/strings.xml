@@ -4,7 +4,6 @@
     <string name="help_header">Student Support</string>
 
 
-    <string name="login">Login</string>
     <string name="welcome_josh_skill">Welcome to Josh Skills</string>
     <string name="next">Next</string>
     <string name="verify">Verify</string>
@@ -142,25 +141,17 @@
 
 
     <!-- Payment process-->
-    <string name="payment_processing">Payment Processing</string>
     <string name="amount">Amount</string>
     <string name="status">Status</string>
 
-    <string name="duration">Duration</string>
-
     <string name="complaint_message">Thanks for reaching out to us. Your request has been recorded against ticket number %s. Our team will reach out to you between 24–72 hours</string>
-    <string name="question_count">%s/%s</string>
-    <string name="waiting_course_buy_confirmation">We are waiting for confirmation from your bank server.\n #usually it takes 30&#8211;60 seconds. </string>
     <string name="payment_process_success">Your payment has been processed successfully!</string>
     <string name="status_with_colon">Status : </string>
     <string name="submit_answer">Submit Answer</string>
 
     <!-- Help Screen  -->
     <string name="today_task">Today\'s Task</string>
-    <string name="today_task_type_audio">Today\'s Task Type - Text</string>
 
-    <string name="today_task_type">Today\'s Task Type - %s </string>
-    <string name="task_sub_title_audio">You can complete today\'s task by recording an audio</string>
     <string name="hold_to_record_msz">Hold to record audio</string>
     <string name="upload_file_msz">Upload a file</string>
     <string name="your_answer">Your Answer</string>
@@ -171,7 +162,21 @@
     <string name="login_with_truecaller_label">Login using TrueCaller</string>
     <string name="login_with_otp">Login using OTP</string>
     <string name="wrong_otp">The OTP entered is incorrect. Please enter correct OTP or try regenerating the OTP</string>
+    <string name="invite_friends">Invite And Earn</string>
+    <string name="referral_code_title">Referral Code</string>
+    <string name="referral_content">Refer your friends &amp; we\'ll give them a discount of ₹ %s on their first course purchase &amp;  ₹ %s cash to you if they buy a course</string>
+    <string name="refer_and_earn">Refer &amp; Earn</string>
+    <string name="referrals">REFERRALS</string>
+    <string name="referral_amount_title">EARN ₹ %s CASH</string>
+    <string name="copy_code">Referral code copied to clipboard</string>
+    <string name="discount_header">Do you have discount code?</string>
+    <string name="complete_payment">Complete Payment</string>
+    <string name="enter_the_code">Enter the code</string>
+    <string name="oops">Oops!</string>
+    <string name="coupon_not_exist_label">It looks like you have applied  wrong \n coupon code.</string>
 
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 
 </resources>

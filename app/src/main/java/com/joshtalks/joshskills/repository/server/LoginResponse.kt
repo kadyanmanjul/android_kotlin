@@ -2,6 +2,7 @@ package com.joshtalks.joshskills.repository.server
 
 
 import com.google.gson.annotations.SerializedName
+import com.joshtalks.joshskills.core.EMPTY
 
 data class LoginResponse(
     @SerializedName("first_name")
@@ -13,5 +14,7 @@ data class LoginResponse(
     @SerializedName("mobile")
     val mobile: String,
     @SerializedName("token")
-    val token: String
+    val token: String,
+    @SerializedName("referral_code")
+    val referralCode: String = EMPTY
 )

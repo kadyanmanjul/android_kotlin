@@ -63,11 +63,11 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
-                    android:layout_marginEnd="@dimen/_10sdp"
+                    android:layout_marginEnd="@dimen/_6sdp"
                     android:padding="@dimen/_8sdp"
-                    android:visibility="visible"
                     android:src="@drawable/ic_help_outline"
-                    android:tint="@color/white" />
+                    android:tint="@color/white"
+                    android:visibility="visible" />
         </RelativeLayout>
 
 

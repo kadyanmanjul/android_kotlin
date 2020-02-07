@@ -7,7 +7,6 @@ import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.commit
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
 import androidx.transition.ChangeBounds
 import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.R
@@ -40,7 +39,6 @@ class SignUpActivity : CoreJoshActivity() {
         addObserver()
         login()
     }
-
 
 
     private fun login() {
@@ -119,9 +117,6 @@ class SignUpActivity : CoreJoshActivity() {
             }
         })
     }
-
-
-
 
 
     private fun registerAnotherNumberFragment() {

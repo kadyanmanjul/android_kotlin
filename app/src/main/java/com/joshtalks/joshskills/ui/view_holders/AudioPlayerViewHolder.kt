@@ -191,7 +191,7 @@ class AudioPlayerViewHolder(activityRef: WeakReference<FragmentActivity>, messag
     @Resolve
     override fun onViewInflated() {
         super.onViewInflated()
-        animBlink = AnimationUtils.loadAnimation(activityRef.get()!!, R.anim.blink);
+        animBlink = AnimationUtils.loadAnimation(activityRef.get()!!, R.anim.blink)
         profileImage.setImageResource(R.drawable.ic_user_rec_placeholder)
         this.audioPlayerViewHolder = this
         seekBar.progress = 0
@@ -206,6 +206,7 @@ class AudioPlayerViewHolder(activityRef: WeakReference<FragmentActivity>, messag
         btnPlayImageView.visibility = android.view.View.INVISIBLE
         btnPauseImageView.visibility = android.view.View.INVISIBLE
         seekBarPlaceHolder.visibility = android.view.View.INVISIBLE
+        seekBarThumb.visibility = android.view.View.INVISIBLE
 
 
         message.sender?.let {

@@ -23,9 +23,6 @@ interface SignUpNetworkService {
     @POST("$DIR/user/truecaller/login/")
     fun verifyViaTrueCaller(@Body requestVerifyOTP: TrueCallerLoginRequest): Deferred<LoginResponse>
 
-
-
-
     @GET("$DIR/core/meta/")
     fun getCoreMeta(): Deferred<CoreMeta>
 
@@ -77,7 +74,7 @@ interface SignUpNetworkService {
 
 
     @GET("$DIR/payment/create_order")
-    suspend fun getPaymentDetails(@QueryMap params: Map<String, String>): PaymentDetailsResponse
+    fun getPaymentDetails(@QueryMap params: Map<String, String>): Deferred<PaymentDetailsResponse>
 
 
     @GET("$DIR/course/test/")
@@ -85,6 +82,10 @@ interface SignUpNetworkService {
 
     @GET("$DIR/course/test_images/")
     fun explorerCourseDetails(@QueryMap params: Map<String, String>): Deferred<List<CourseDetailsModel>>
+
+
+    @GET("$DIR/payment/coupon/")
+    fun validateOrGetAndReferralOrCouponAsync(@QueryMap params: Map<String, String>): Deferred<List<CouponCodeResponse>>
 
 
 }

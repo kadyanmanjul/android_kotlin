@@ -182,10 +182,10 @@ public class SwipyRefreshLayout extends ViewGroup {
      * toolbar or actionbar present.
      *
      * @param scale Set to true if there is no view at a higher z-order than
-     *            where the progress spinner is set to appear.
+     * where the progress spinner is set to appear.
      * @param end The offset in pixels from the top of this view at which the
-     *            progress spinner should come to rest after a successful swipe
-     *            gesture.
+     * progress spinner should come to rest after a successful swipe
+     * gesture.
      */
     /*
     public void setProgressViewEndTarget(boolean scale, int end) {

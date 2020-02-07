@@ -10,69 +10,67 @@
     </data>
 
 
-        <LinearLayout
-                android:weightSum="1"
-                android:orientation="vertical"
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/white"
+            android:orientation="vertical"
+            android:weightSum="1">
+
+        <FrameLayout
+                android:id="@+id/fl_logo"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@color/white"
-               >
+                android:layout_gravity="center"
+                android:layout_weight=".8"
+                android:orientation="vertical">
 
-            <FrameLayout
+            <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/back_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start|top"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:onClick="@{()->handler.onBackPressed()}"
+                    android:padding="@dimen/_10sdp"
+                    android:tint="@color/gray_9E"
+                    android:visibility="gone"
+                    app:srcCompat="@drawable/ic_arrow_back" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:layout_weight=".8"
-                    android:id="@+id/fl_logo"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical"
-                   >
+                    android:adjustViewBounds="true"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/josh_skill" />
 
-                <androidx.appcompat.widget.AppCompatImageView
-                        android:id="@+id/back_tv"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="start|top"
-                        android:onClick="@{()->handler.onBackPressed()}"
-                        android:clickable="true"
-                        android:focusable="true"
-                        android:padding="@dimen/_10sdp"
-                        android:visibility="gone"
-                        android:tint="@color/gray_9E"
-                        app:srcCompat="@drawable/ic_arrow_back"
-                        />
+            <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/iv_help"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end"
+                    android:layout_marginEnd="@dimen/_4sdp"
+                    android:padding="@dimen/_8sdp"
+                    android:src="@drawable/ic_help_outline"
+                    android:tint="@color/gray_79"
+                    android:visibility="visible" />
 
-                <androidx.appcompat.widget.AppCompatImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:adjustViewBounds="true"
-                        android:scaleType="fitCenter"
-                        android:src="@drawable/josh_skill" />
-                <androidx.appcompat.widget.AppCompatImageView
-                        android:id="@+id/iv_help"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="@dimen/_4sdp"
-                        android:padding="@dimen/_8sdp"
-                        android:visibility="visible"
-                        android:layout_gravity="end"
-                        android:src="@drawable/ic_help_outline"
-                        android:tint="@color/gray_79" />
-
-            </FrameLayout>
+        </FrameLayout>
 
 
-            <FrameLayout
-                    android:layout_weight=".2"
-                    android:id="@+id/container"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:paddingBottom="@dimen/_30sdp"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/fl_logo"
-                    app:layout_constraintWidth_default="percent"
-                    app:layout_constraintWidth_percent="0.9" />
-        </LinearLayout>
+        <FrameLayout
+                android:id="@+id/container"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight=".2"
+                android:paddingBottom="@dimen/_30sdp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/fl_logo"
+                app:layout_constraintWidth_default="percent"
+                app:layout_constraintWidth_percent="0.9" />
+    </LinearLayout>
 
 </layout>

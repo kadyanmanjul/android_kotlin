@@ -3,15 +3,17 @@
         xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
+
         <variable
                 name="handler"
                 type="com.joshtalks.joshskills.ui.video_player.FullScreenVideoFragment" />
     </data>
+
     <FrameLayout
             android:layout_width="match_parent"
-            android:keepScreenOn="true"
             android:layout_height="match_parent"
             android:background="#000"
+            android:keepScreenOn="true"
             android:orientation="vertical">
 
 
@@ -49,11 +51,11 @@
                     fontPath="fonts/OpenSans-SemiBold.ttf"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:ellipsize="end"
                     android:gravity="center_vertical|start"
+                    android:lines="1"
                     android:padding="@dimen/_5sdp"
                     android:text=""
-                    android:ellipsize="end"
-                    android:lines="1"
                     android:textColor="@color/white"
                     android:textSize="@dimen/font_20" />
         </com.google.android.material.appbar.MaterialToolbar>

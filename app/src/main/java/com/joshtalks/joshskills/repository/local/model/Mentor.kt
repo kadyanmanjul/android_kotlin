@@ -1,7 +1,9 @@
 package com.joshtalks.joshskills.repository.local.model
 
+import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.repository.local.model.googlelocation.Locality
 
@@ -19,6 +21,9 @@ class Mentor {
     @SerializedName("locality")
     private var locality: Locality? = null
 
+
+    @Expose
+    var referralCode: String = EMPTY
 
     companion object {
         @JvmStatic
@@ -89,6 +94,11 @@ class Mentor {
 
     fun setId(id: String): Mentor {
         this.id = id
+        return this
+    }
+
+    fun setReferralCode(code: String): Mentor {
+        this.referralCode = code
         return this
     }
 

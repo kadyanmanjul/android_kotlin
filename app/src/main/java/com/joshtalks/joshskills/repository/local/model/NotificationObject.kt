@@ -54,3 +54,5 @@ const val ACTION_OPEN_COURSE_EXPLORER = "course_explorer"
 const val ACTION_OPEN_URL = "open_url"
 const val ACTION_OPEN_CONVERSATION_LIST = "open_conversation_list"
 const val ACTION_OPEN_DIALOG = "show_dialog"
+const val ACTION_OPEN_POPUP = "popup"
+

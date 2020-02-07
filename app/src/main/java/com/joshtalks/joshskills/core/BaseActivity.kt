@@ -19,6 +19,7 @@ import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.notification.HAS_NOTIFICATION
 import com.joshtalks.joshskills.core.notification.NOTIFICATION_ID
+import com.joshtalks.joshskills.core.service.WorkMangerAdmin
 import com.joshtalks.joshskills.repository.local.model.InstallReferrerModel
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
@@ -67,6 +68,9 @@ abstract class BaseActivity : AppCompatActivity() {
         }/* else if (User.getInstance().dateOfBirth == null || User.getInstance().dateOfBirth.isNullOrEmpty()) {
             intent = Intent(this, ProfileActivity::class.java)
         }*/ else {
+            AppObjectController.joshApplication.updateDeviceDetail()
+            AppObjectController.joshApplication.userActive()
+            WorkMangerAdmin.getUserReferralCodeWorker()
             intent = getInboxActivityIntent()
         }
         return intent.apply {
@@ -180,6 +184,8 @@ abstract class BaseActivity : AppCompatActivity() {
 
                             } catch (ex: RemoteException) {
                                 PrefHelper.Debug("onInstallReferrerSetupFinished() Exception: " + ex.message)
+                                Crashlytics.logException(ex)
+                                ex.printStackTrace()
                             }
                         }
                     }

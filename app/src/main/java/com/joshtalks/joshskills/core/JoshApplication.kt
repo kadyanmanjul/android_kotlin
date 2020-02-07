@@ -31,10 +31,11 @@ class JoshApplication : BranchApp() {
 
     override fun onCreate() {
         super.onCreate()
+
         if (BuildConfig.DEBUG) {
+            Stetho.initializeWithDefaults(this)
             FacebookSdk.setIsDebugEnabled(true)
             FacebookSdk.addLoggingBehavior(LoggingBehavior.APP_EVENTS)
-            Stetho.initializeWithDefaults(this)
             Branch.enableDebugMode()
             IntegrationValidator.validate(this)
         }
@@ -66,7 +67,6 @@ class JoshApplication : BranchApp() {
                 if (Mentor.getInstance().hasId()) {
                     AppObjectController.signUpNetworkService.updateDeviceDetails(UpdateDeviceRequest())
                 }
-
             } catch (ex: Exception) {
                 ex.printStackTrace()
             }

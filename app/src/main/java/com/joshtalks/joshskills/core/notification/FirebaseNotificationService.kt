@@ -161,7 +161,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
         actionData: String?
     ): Intent {
         if (action.isNullOrEmpty().not()) {
-            if (ACTION_OPEN_TEST == action) {
+            if (ACTION_OPEN_TEST.equals(action, ignoreCase = true)) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                     importance = NotificationManager.IMPORTANCE_HIGH
                 }
@@ -170,7 +170,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                     addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
                     putExtra(COURSE_ID, actionData)
                 }
-            } else if (ACTION_OPEN_CONVERSATION == action) {
+            } else if (ACTION_OPEN_CONVERSATION.equals(action, ignoreCase = true)) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                     importance = NotificationManager.IMPORTANCE_HIGH
                 }
@@ -190,13 +190,13 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                         flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
                     }
                 }
-            } else if (ACTION_OPEN_COURSE_EXPLORER == action) {
+            } else if (ACTION_OPEN_COURSE_EXPLORER.equals(action, ignoreCase = true)) {
                 notificationChannelId = ACTION_OPEN_COURSE_EXPLORER
                 return Intent(applicationContext, CourseExploreActivity::class.java).apply {
                     flags = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
                 }
 
-            } else if (ACTION_OPEN_URL == action) {
+            } else if (ACTION_OPEN_URL.equals(action, ignoreCase = true)) {
                 notificationChannelId = ACTION_OPEN_URL
                 val intent = Intent(Intent.ACTION_VIEW).apply {
                     addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
@@ -209,7 +209,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                 return intent
 
 
-            } else if (ACTION_OPEN_CONVERSATION_LIST == action) {
+            } else if (ACTION_OPEN_CONVERSATION_LIST.equals(action, ignoreCase = true)) {
                 notificationChannelId = ACTION_OPEN_CONVERSATION_LIST
                 return Intent(applicationContext, InboxActivity::class.java).apply {
                     addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
@@ -217,6 +217,16 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                     putExtra(NOTIFICATION_ID, notificationObject.id)
                 }
             }
+            /*else if (ACTION_OPEN_POPUP.equals(action, ignoreCase = true)) {
+                notificationChannelId = ACTION_OPEN_POPUP
+                return Intent(applicationContext, InboxActivity::class.java).apply {
+                    addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                    putExtra(HAS_NOTIFICATION, true)
+                    putExtra(NOTIFICATION_ID, notificationObject.id)
+                }
+            }*/
+
+
         }
         /*else if (ACTION_OPEN_DIALOG == action) {
     }*/

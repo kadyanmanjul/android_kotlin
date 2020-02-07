@@ -47,7 +47,7 @@ class PractiseViewModel(application: Application) :
 
     }
 
-    fun submitPractise(chatModel: ChatModel,requestEngage: RequestEngage) {
+    fun submitPractise(chatModel: ChatModel, requestEngage: RequestEngage) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val localPath = requestEngage.localPath
@@ -74,7 +74,7 @@ class PractiseViewModel(application: Application) :
 
                 val list: MutableList<PracticeEngagement> = mutableListOf()
                 list.add(resp)
-                chatModel.question?.practiceEngagement=list
+                chatModel.question?.practiceEngagement = list
                 AppObjectController.appDatabase.chatDao().updateQuestionObject(chatModel.question!!)
 
                 requestStatusLiveData.postValue(true)

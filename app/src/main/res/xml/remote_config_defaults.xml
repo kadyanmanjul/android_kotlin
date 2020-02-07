@@ -42,6 +42,10 @@
         <key>utm_source_filter</key>
         <value></value>
     </entry>
+    <entry>
+        <key>REFERRAL_EARN_AMOUNT</key>
+        <value>50</value>
+    </entry>
 
 
 </defaultsMap>

@@ -1,37 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical">
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
 
     <ProgressBar
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_gravity="center"
-        android:layout_marginTop="50dp" />
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="50dp" />
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="30dp"
-        android:text="Identifying Location"
-        android:textColor="#222"
-        android:textSize="20sp"
-        android:textStyle="bold" />
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="30dp"
+            android:text="Identifying Location"
+            android:textColor="#222"
+            android:textSize="20sp"
+            android:textStyle="bold" />
 
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="20dp"
-        android:clickable="true"
-        android:onClick="onCancelFetchingLocationClicked"
-        android:padding="10dp"
-        android:text="Cancel"
-        android:textColor="@color/gray_79"
-        android:textSize="18sp" />
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="20dp"
+            android:clickable="true"
+            android:onClick="onCancelFetchingLocationClicked"
+            android:padding="10dp"
+            android:text="Cancel"
+            android:textColor="@color/gray_79"
+            android:textSize="18sp" />
 
 </LinearLayout>

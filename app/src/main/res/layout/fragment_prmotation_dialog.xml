@@ -1,0 +1,50 @@
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+
+        <variable
+                name="handler"
+                type="com.joshtalks.joshskills.ui.referral.PromotionDialogFragment" />
+    </data>
+
+    <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@android:color/transparent">
+
+        <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:orientation="vertical">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/image_view_cancel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start"
+                    android:adjustViewBounds="true"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:onClick="@{()->handler.cancelPromotion()}"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/referral_placeholder" />
+        </FrameLayout>
+
+        <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/iv_promotion"
+                android:layout_width="@dimen/_20sdp"
+                android:layout_height="@dimen/_20sdp"
+                android:layout_alignParentEnd="true"
+                android:layout_gravity="end|top"
+                android:layout_marginTop="@dimen/_4sdp"
+                android:layout_marginEnd="@dimen/_4sdp"
+                android:background="@drawable/bg_white_round_36"
+                android:clickable="true"
+                android:focusable="true"
+                android:onClick="@{()->handler.openPromotion()}"
+                android:src="@drawable/ic_cross"
+                android:tint="@color/grey_7A" />
+    </RelativeLayout>
+</layout>

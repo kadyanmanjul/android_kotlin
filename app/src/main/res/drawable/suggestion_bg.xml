@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item  android:state_pressed="false" android:state_enabled="true" android:state_selected="false">
+    <item android:state_enabled="true" android:state_pressed="false" android:state_selected="false">
         <shape android:shape="rectangle">
             <solid android:color="@color/gray_e6" />
             <corners android:bottomLeftRadius="@dimen/_12sdp" android:bottomRightRadius="@dimen/_12sdp" android:topLeftRadius="@dimen/_12sdp" android:topRightRadius="@dimen/_12sdp" />
         </shape>
     </item>
-    <item android:state_pressed="true" android:state_enabled="true" android:state_selected="false">
+    <item android:state_enabled="true" android:state_pressed="true" android:state_selected="false">
         <shape android:shape="rectangle">
             <solid android:color="@color/emoji_icon_color" />
             <corners android:bottomLeftRadius="@dimen/_12sdp" android:bottomRightRadius="@dimen/_12sdp" android:topLeftRadius="@dimen/_12sdp" android:topRightRadius="@dimen/_12sdp" />
         </shape>
     </item>
 
-    <item >
+    <item>
         <shape android:shape="rectangle">
             <solid android:color="@color/gray_e6" />
             <corners android:bottomLeftRadius="@dimen/_12sdp" android:bottomRightRadius="@dimen/_12sdp" android:topLeftRadius="@dimen/_12sdp" android:topRightRadius="@dimen/_12sdp" />

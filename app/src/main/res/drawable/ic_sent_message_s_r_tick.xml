@@ -5,8 +5,8 @@
         android:viewportHeight="24">
     <path
             android:fillColor="@color/checkmark_blue"
-            android:pathData="M5.9,16.2L1.7,12l-1.4,1.4L5.9,19l12,-12l-1.4,-1.4L5.9,16.2z"/>
+            android:pathData="M5.9,16.2L1.7,12l-1.4,1.4L5.9,19l12,-12l-1.4,-1.4L5.9,16.2z" />
     <path
             android:fillColor="@color/checkmark_blue"
-            android:pathData="M9.1,16.5l2.5,2.5l12,-12l-1.4,-1.4L11.6,16.2l-1.1,-1.1"/>
+            android:pathData="M9.1,16.5l2.5,2.5l12,-12l-1.4,-1.4L11.6,16.2l-1.1,-1.1" />
 </vector>

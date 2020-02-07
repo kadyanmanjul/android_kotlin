@@ -132,7 +132,6 @@ object PermissionUtils {
     }
 
 
-
     fun cameraRecordStorageReadAndWritePermission(
         activity: Activity?,
         multiplePermissionsListener: MultiplePermissionsListener
@@ -147,7 +146,6 @@ object PermissionUtils {
             )
             .withListener(multiplePermissionsListener).check()
     }
-
 
 
 }

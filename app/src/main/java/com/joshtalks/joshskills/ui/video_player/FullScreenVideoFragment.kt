@@ -2,7 +2,6 @@ package com.joshtalks.joshskills.ui.video_player
 
 import android.content.DialogInterface
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -101,10 +100,6 @@ class FullScreenVideoFragment : DialogFragment() {
         } catch (ex: Exception) {
 
         }
-    }
-
-    override fun onDetach() {
-        super.onDetach()
     }
 
     companion object {

@@ -50,11 +50,9 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
                 registerSMSReceiver()
                 signUpStatus.postValue(SignUpStepStatus.SignUpStepSecond)
 
-            }
-            catch (ex: HttpException) {
+            } catch (ex: HttpException) {
                 progressDialogStatus.postValue(false)
-            }
-            catch (e: Exception) {
+            } catch (e: Exception) {
                 e.printStackTrace()
                 progressDialogStatus.postValue(false)
             }
@@ -69,11 +67,9 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
                     AppObjectController.signUpNetworkService.getOtpForNumberAsync(reqObj).await()
                 progressDialogStatus.postValue(false)
                 signUpStatus.postValue(SignUpStepStatus.SignUpResendOTP)
-            }
-            catch (ex: HttpException) {
+            } catch (ex: HttpException) {
                 progressDialogStatus.postValue(false)
-            }
-            catch (e: Exception) {
+            } catch (e: Exception) {
                 e.printStackTrace()
                 progressDialogStatus.postValue(false)
             }
@@ -99,20 +95,19 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
                 }
                 Mentor.getInstance()
                     .setId(response.mentorId)
+                    .setReferralCode(response.referralCode)
                     .update()
 
                 AppAnalytics.updateUser()
                 fetchMentor()
 
-            }
-            catch (ex: HttpException) {
-                if (ex.code()==400){
+            } catch (ex: HttpException) {
+                if (ex.code() == 400) {
                     otpVerifyStatus.postValue(true)
-                }else {
+                } else {
                     progressDialogStatus.postValue(false)
                 }
-            }
-            catch (e: Exception) {
+            } catch (e: Exception) {
                 e.printStackTrace()
                 progressDialogStatus.postValue(false)
             }
@@ -138,18 +133,21 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
                 user.id = response.userId
                 user.source = "OTP"
                 user.token = response.token
+
                 User.update(user.toString())
                 if (phoneNumber.isEmpty().not()) {
                     Branch.getInstance().setIdentity(user.phoneNumber)
                 }
                 Mentor.getInstance()
                     .setId(response.mentorId)
+                    .setReferralCode(response.referralCode)
                     .update()
-
                 AppAnalytics.updateUser()
                 fetchMentor()
 
             } catch (ex: HttpException) {
+                progressDialogStatus.postValue(false)
+                ex.printStackTrace()
             } catch (e: Exception) {
                 e.printStackTrace()
                 progressDialogStatus.postValue(false)

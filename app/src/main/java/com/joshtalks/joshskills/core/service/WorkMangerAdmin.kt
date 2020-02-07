@@ -78,4 +78,9 @@ object WorkMangerAdmin {
                 workRequest
             )
     }
+
+    fun getUserReferralCodeWorker() {
+        WorkManager.getInstance(AppObjectController.joshApplication)
+            .enqueue(OneTimeWorkRequestBuilder<ReferralCodeRefreshWorker>().build())
+    }
 }

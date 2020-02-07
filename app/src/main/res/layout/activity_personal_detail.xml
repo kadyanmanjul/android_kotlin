@@ -22,8 +22,8 @@
                 android:animateLayoutChanges="true"
                 android:background="@color/gray_3B"
                 android:orientation="vertical"
-                android:paddingTop="@dimen/_20sdp"
                 android:paddingStart="@dimen/_10sdp"
+                android:paddingTop="@dimen/_20sdp"
                 android:paddingEnd="@dimen/_10sdp">
 
             <!--

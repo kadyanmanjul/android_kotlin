@@ -1,8 +1,11 @@
 package com.joshtalks.joshskills.ui.payment
 
 import android.app.Activity
+import android.app.Dialog
 import android.content.Intent
 import android.content.pm.ActivityInfo
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -26,6 +29,7 @@ import com.joshtalks.joshskills.core.analytics.BranchIOAnalytics
 import com.joshtalks.joshskills.databinding.ActivityPaymentBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.BuyCourseEventBus
+import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.CourseDetailsModel
 import com.joshtalks.joshskills.repository.server.CourseExploreModel
@@ -53,7 +57,7 @@ const val COURSE_ID = "course_ID"
 
 
 class PaymentActivity : CoreJoshActivity(),
-    PaymentResultListener {
+    PaymentResultListener, CouponCodeSubmitFragment.OnCouponCodeSubmitListener {
 
     private lateinit var activityPaymentBinding: ActivityPaymentBinding
     private var courseModel: CourseExploreModel? = null
@@ -63,6 +67,7 @@ class PaymentActivity : CoreJoshActivity(),
     private var currency: String = "INR"
     private var amount: Long = 0L
     private var courseName = EMPTY
+    private var userSubmitCode = EMPTY
 
     companion object {
         fun startPaymentActivity(
@@ -145,19 +150,6 @@ class PaymentActivity : CoreJoshActivity(),
                                 )
                             )
                         }
-                        /*if (courseModel != null) {
-                            activityPaymentBinding.recyclerView.addView(
-                                BuyCourseViewHolder(
-                                    courseModel?.id.toString()
-                                )
-                            )
-                        } else {
-                            activityPaymentBinding.recyclerView.addView(
-                                BuyCourseViewHolder(
-                                    courseModel?.id.toString()
-                                )
-                            )
-                        }*/
                     }
                     activityPaymentBinding.progressBar.visibility = View.GONE
                 }
@@ -170,13 +162,14 @@ class PaymentActivity : CoreJoshActivity(),
 
 
     override fun onPaymentError(p0: Int, p1: String?) {
+        userSubmitCode = EMPTY
         StyleableToast.Builder(this).gravity(Gravity.TOP)
             .backgroundColor(ContextCompat.getColor(applicationContext, R.color.error_color))
             .text(getString(R.string.something_went_wrong)).cornerRadius(16)
             .textColor(ContextCompat.getColor(applicationContext, R.color.white))
             .length(Toast.LENGTH_LONG).solidBackground().show()
 
-        Log.e("error", p1 ?: "")
+        Log.i("error", p1 ?: "")
     }
 
     override fun onPaymentSuccess(p0: String?) {
@@ -223,12 +216,16 @@ class PaymentActivity : CoreJoshActivity(),
                     courseId = testId!!
                 }
 
-                val map = mapOf(
-                    "mobile" to User.getInstance().phoneNumber,
-                    "id" to courseId
-                )
+                val map = HashMap<String, String>()
+                map["mobile"] = User.getInstance().phoneNumber
+                map["id"] = courseId
+                if (userSubmitCode.isEmpty()) {
+                    map["code"] = EMPTY
+                } else {
+                    map["code"] = userSubmitCode
+                }
                 val response: PaymentDetailsResponse =
-                    AppObjectController.signUpNetworkService.getPaymentDetails(map)
+                    AppObjectController.signUpNetworkService.getPaymentDetails(map).await()
 
                 if (courseModel == null) {
                     courseModel = CourseExploreModel()
@@ -285,19 +282,7 @@ class PaymentActivity : CoreJoshActivity(),
 
 
     fun buyCourse() {
-
-        if (User.getInstance().token == null) {
-            startActivityForResult(Intent(this, OnBoardActivity::class.java).apply {
-                putExtra(IS_ACTIVITY_FOR_RESULT, true)
-            }, 101)
-            return
-        }
-
-        if (courseModel != null) {
-            getPaymentDetails(courseModel?.id.toString())
-        } else {
-            getPaymentDetails(courseId)
-        }
+        showCouponCodeEnterScreen()
     }
 
 
@@ -348,9 +333,63 @@ class PaymentActivity : CoreJoshActivity(),
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == 101 && resultCode == Activity.RESULT_OK) {
-            buyCourse()
+            requestForPayment()
         }
         super.onActivityResult(requestCode, resultCode, data)
 
     }
+
+    override fun getCouponCode(code: String?) {
+        code?.run {
+            userSubmitCode = this
+        }
+        if (User.getInstance().token == null) {
+            startActivityForResult(Intent(this, OnBoardActivity::class.java).apply {
+                putExtra(IS_ACTIVITY_FOR_RESULT, true)
+            }, 101)
+            return
+        }
+        requestForPayment()
+    }
+
+
+    private fun requestForPayment() {
+        if (userSubmitCode.isEmpty().not() && userSubmitCode.equals(
+                Mentor.getInstance().referralCode,
+                ignoreCase = true
+            )
+        ) {
+            invalidCodeDialog()
+            return
+        }
+        if (courseModel != null) {
+            getPaymentDetails(courseModel?.id.toString())
+        } else {
+            getPaymentDetails(courseId)
+        }
+    }
+
+
+    private fun showCouponCodeEnterScreen() {
+        val fragmentTransaction = supportFragmentManager.beginTransaction()
+        val prev = supportFragmentManager.findFragmentByTag("coupon_code_dialog")
+        if (prev != null) {
+            fragmentTransaction.remove(prev)
+        }
+        fragmentTransaction.addToBackStack(null)
+        CouponCodeSubmitFragment.newInstance()
+            .show(supportFragmentManager, "coupon_code_dialog")
+    }
+
+    private fun invalidCodeDialog() {
+        val dialog = Dialog(this@PaymentActivity)
+        dialog.setContentView(R.layout.invalid_coupon_code_layout)
+        dialog.findViewById<View>(R.id.tv_ok).setOnClickListener {
+            dialog.dismiss()
+        }
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog.window?.setDimAmount(0.7f)
+        dialog.show()
+    }
+
 }

@@ -17,9 +17,9 @@
         <com.mindorks.placeholderview.PlaceHolderView
                 android:id="@+id/recycler_view"
                 android:layout_width="match_parent"
-                android:padding="@dimen/_5sdp"
                 android:layout_height="wrap_content"
-                android:background="@android:color/white" />
+                android:background="@android:color/white"
+                android:padding="@dimen/_5sdp" />
 
         <com.pnikosis.materialishprogress.ProgressWheel
                 android:id="@+id/progress_bar"

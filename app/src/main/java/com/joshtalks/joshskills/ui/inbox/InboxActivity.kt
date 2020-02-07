@@ -8,7 +8,7 @@ import android.view.View
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import com.google.android.gms.location.LocationRequest
 import com.google.android.material.snackbar.Snackbar
 import com.joshtalks.joshskills.BuildConfig
@@ -36,6 +36,7 @@ import com.joshtalks.joshskills.repository.server.UpdateUserLocality
 import com.joshtalks.joshskills.repository.service.SyncChatService
 import com.joshtalks.joshskills.ui.chat.ConversationActivity
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
+import com.joshtalks.joshskills.ui.referral.PromotionDialogFragment
 import com.joshtalks.joshskills.ui.view_holders.EmptyHorizontalView
 import com.joshtalks.joshskills.ui.view_holders.FindMoreViewHolder
 import com.joshtalks.joshskills.ui.view_holders.InboxViewHolder
@@ -65,9 +66,8 @@ const val USER_DETAILS_CODE = 1001
 
 class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.InAppUpdateHandler {
 
-
     private val viewModel: InboxViewModel by lazy {
-        ViewModelProviders.of(this).get(InboxViewModel::class.java)
+        ViewModelProvider(this).get(InboxViewModel::class.java)
     }
     private var compositeDisposable = CompositeDisposable()
 
@@ -77,8 +77,6 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         FCMTokenManager.pushToken()
-        AppObjectController.joshApplication.updateDeviceDetail()
-        AppObjectController.joshApplication.userActive()
         DatabaseUtils.updateUserMessageSeen()
         setContentView(R.layout.activity_inbox)
         setToolbar()
@@ -89,6 +87,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         workInBackground()
         viewModel.getRegisterCourses()
         SyncChatService.syncChatWithServer()
+
     }
 
 
@@ -399,5 +398,16 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         }
     }
 
+
+    private fun showPromotionCode() {
+        val fragmentTransaction = supportFragmentManager.beginTransaction()
+        val prev = supportFragmentManager.findFragmentByTag("promotion_coupon_code_show_dialog")
+        if (prev != null) {
+            fragmentTransaction.remove(prev)
+        }
+        fragmentTransaction.addToBackStack(null)
+        PromotionDialogFragment.newInstance("", "")
+            .show(supportFragmentManager, "promotion_coupon_code_show_dialog")
+    }
 
 }

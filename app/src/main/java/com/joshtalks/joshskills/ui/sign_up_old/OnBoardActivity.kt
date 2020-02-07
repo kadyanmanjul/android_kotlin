@@ -13,6 +13,7 @@ import androidx.annotation.NonNull
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
+import com.crashlytics.android.Crashlytics
 import com.github.razir.progressbutton.DrawableButton
 import com.github.razir.progressbutton.hideProgress
 import com.github.razir.progressbutton.showProgress
@@ -162,26 +163,24 @@ class OnBoardActivity : CoreJoshActivity() {
 
     private val trueCallerSDKCallback: ITrueCallback = object : ITrueCallback {
         override fun onSuccessProfileShared(@NonNull trueProfile: TrueProfile) {
-            if (Utils.isInternetAvailable().not()) {
-                Toast.makeText(
-                    AppObjectController.joshApplication,
-                    getString(R.string.internet_not_available_msz),
-                    Toast.LENGTH_SHORT
-                ).show()
-                return
-            }
             showProgress()
             viewModel.verifyUserViaTrueCaller(trueProfile)
+            Log.e(TAG, "" + trueProfile.firstName)
+
         }
 
         override fun onVerificationRequired() {
+            Crashlytics.log(3, "Truecaller Issue 2", "onVerificationRequired")
+            Log.e(TAG, "onVerificationRequired")
+
         }
 
         override fun onFailureProfileShared(@NonNull trueError: TrueError) {
             if (trueError.errorType == ERROR_TYPE_CONTINUE_WITH_DIFFERENT_NUMBER) {
                 signUp()
             }
-            Log.i(TAG, "" + trueError.errorType)
+            Crashlytics.log(3, "Truecaller Issue", trueError.errorType.toString())
+            Log.e(TAG, trueError.errorType.toString())
 
         }
     }

@@ -4,7 +4,6 @@ import android.net.Uri
 import android.os.Environment
 import android.os.ParcelFileDescriptor
 import android.text.format.DateUtils
-import android.util.Log
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.PrefManager
@@ -125,7 +124,6 @@ object AppDirectory {
         file.createNewFile()
         return file
     }
-
 
 
     /**
@@ -444,9 +442,10 @@ object AppDirectory {
         return downloadDirectory
     }
 
-    fun copy2(sourceUri: Uri,file: File): File? {
+    fun copy2(sourceUri: Uri, file: File): File? {
 
-        val inputPFD: ParcelFileDescriptor? = AppObjectController.joshApplication.contentResolver.openFileDescriptor(sourceUri, "r")
+        val inputPFD: ParcelFileDescriptor? =
+            AppObjectController.joshApplication.contentResolver.openFileDescriptor(sourceUri, "r")
         val inStream: FileInputStream? = FileInputStream(inputPFD!!.fileDescriptor)
         var outStream: FileOutputStream? = null
         try {

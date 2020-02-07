@@ -10,10 +10,8 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.CoreJoshActivity
 import com.joshtalks.joshskills.core.service.WorkMangerAdmin
-import com.joshtalks.joshskills.repository.server.CourseExploreModel
 import com.joshtalks.joshskills.ui.payment.COURSE_ID
 import com.joshtalks.joshskills.ui.payment.PaymentActivity
-import com.joshtalks.joshskills.ui.payment.PaymentProcessFragment
 import io.branch.referral.Branch
 import io.branch.referral.BranchError
 import io.branch.referral.Defines
@@ -39,41 +37,39 @@ class LauncherActivity : CoreJoshActivity() {
 
 
     private fun handleIntent() {
-        Branch.getInstance().initSession(object : Branch.BranchReferralInitListener {
-            override fun onInitFinished(referringParams: JSONObject?, error: BranchError?) {
-                try {
-                    var jsonParms: JSONObject? = referringParams
-                    val sessionParams = Branch.getInstance().latestReferringParams
-                    val installParams = Branch.getInstance().firstReferringParams
-                    if (referringParams == null && installParams != null) {
-                        jsonParms = installParams
-                    } else if (referringParams == null && sessionParams != null) {
-                        jsonParms = sessionParams
-                    }
-
-                    if (error == null) {
-                        if (jsonParms != null && jsonParms.has(Defines.Jsonkey.AndroidDeepLinkPath.key)) {
-                            uiHandler.removeCallbacksAndMessages(null)
-
-                            val testId =
-                                jsonParms.getString(Defines.Jsonkey.AndroidDeepLinkPath.key)
-                            startActivity(
-                                Intent(
-                                    applicationContext,
-                                    PaymentActivity::class.java
-                                ).apply {
-                                    addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
-                                    putExtra(COURSE_ID, testId.split("_")[1])
-                                })
-                            this@LauncherActivity.finish()
-
-                        }
-                    } else {
-                        Log.e("BRANCH SDK", error.message)
-                    }
-                } catch (ex: Exception) {
-                    ex.printStackTrace()
+        Branch.getInstance().initSession({ referringParams, error ->
+            try {
+                var jsonParms: JSONObject? = referringParams
+                val sessionParams = Branch.getInstance().latestReferringParams
+                val installParams = Branch.getInstance().firstReferringParams
+                if (referringParams == null && installParams != null) {
+                    jsonParms = installParams
+                } else if (referringParams == null && sessionParams != null) {
+                    jsonParms = sessionParams
                 }
+
+                if (error == null) {
+                    if (jsonParms != null && jsonParms.has(Defines.Jsonkey.AndroidDeepLinkPath.key)) {
+                        uiHandler.removeCallbacksAndMessages(null)
+
+                        val testId =
+                            jsonParms.getString(Defines.Jsonkey.AndroidDeepLinkPath.key)
+                        startActivity(
+                            Intent(
+                                applicationContext,
+                                PaymentActivity::class.java
+                            ).apply {
+                                addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
+                                putExtra(COURSE_ID, testId.split("_")[1])
+                            })
+                        this@LauncherActivity.finish()
+
+                    }
+                } else {
+                    Log.e("BRANCH SDK", error.message)
+                }
+            } catch (ex: Exception) {
+                ex.printStackTrace()
             }
         }, this.intent.data, this)
     }

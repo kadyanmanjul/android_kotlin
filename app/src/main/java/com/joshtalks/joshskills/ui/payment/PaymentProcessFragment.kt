@@ -97,7 +97,7 @@ class PaymentProcessFragment : DialogFragment() {
         animAlpha?.reset()
 
         paymentProcessFragmentBinding.tvCourse.text = courseModel.courseName
-        paymentProcessFragmentBinding.tvAmount.text = "INR " + (courseModel.amount / 100).toString()
+        paymentProcessFragmentBinding.tvAmount.text = "INR " + (courseModel.amount).toString()
         activity?.let {
             Glide.with(it)
                 .load(courseModel.courseIcon)
@@ -138,6 +138,7 @@ class PaymentProcessFragment : DialogFragment() {
                     FrameLayout.LayoutParams.WRAP_CONTENT,
                     Gravity.TOP
                 )
+                paymentProcessFragmentBinding.btnExploreMoreCourse.visibility = View.VISIBLE
             }
 
             override fun onAnimationStart(animation: Animation?) {
@@ -163,7 +164,6 @@ class PaymentProcessFragment : DialogFragment() {
                 }
 
             }
-
 
 
         paymentProcessFragmentBinding.viewKonfetti.setOnClickListener {

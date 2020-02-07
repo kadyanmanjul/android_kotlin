@@ -56,6 +56,7 @@ public class MediaExtractorUtils {
         public int mAudioTrackIndex;
         public String mAudioTrackMime;
         public MediaFormat mAudioTrackFormat;
+
         private TrackResult() {
         }
     }

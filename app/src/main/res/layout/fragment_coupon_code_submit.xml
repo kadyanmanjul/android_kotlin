@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:card_view="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+                name="handler"
+                type="com.joshtalks.joshskills.ui.payment.CouponCodeSubmitFragment" />
+    </data>
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/round_rect_default"
+            tools:context=".ui.payment.CouponCodeSubmitFragment">
+
+        <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/text_view_1"
+                fontPath="fonts/OpenSans-Bold.ttf"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_8sdp"
+                android:gravity="center"
+                android:lineSpacingExtra="@dimen/_2sdp"
+                android:text="@string/discount_header"
+                android:textColor="@color/font_color"
+                android:textSize="@dimen/font_14"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintWidth_default="percent"
+                app:layout_constraintWidth_percent="0.8" />
+
+
+        <androidx.appcompat.widget.AppCompatTextView
+                fontPath="fonts/OpenSans-Regular.ttf"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:gravity="start|center"
+                android:paddingStart="@dimen/_8sdp"
+                android:text="@string/enter_the_code"
+                android:textColor="@color/font_color"
+                android:textSize="@dimen/font_13"
+                app:layout_constraintBottom_toTopOf="@+id/enter_coupon_code_cv"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/enter_coupon_code_cv"
+                app:layout_constraintWidth_default="percent"
+                app:layout_constraintWidth_percent="0.8" />
+
+
+        <com.google.android.material.card.MaterialCardView
+                android:id="@+id/enter_coupon_code_cv"
+                style="@style/Widget.MaterialComponents.CardView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:contentPadding="@dimen/_8sdp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintWidth_default="percent"
+                app:layout_constraintWidth_percent="0.8"
+                card_view:cardCornerRadius="@dimen/_4sdp"
+                card_view:cardElevation="@dimen/_4sdp"
+                card_view:cardUseCompatPadding="true">
+
+            <androidx.appcompat.widget.AppCompatEditText
+                    android:id="@+id/et_code"
+                    fontPath="fonts/OpenSans-Regular.ttf"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/tv_complaint"
+                    android:background="#00000000"
+                    android:clickable="true"
+                    android:drawablePadding="@dimen/_8sdp"
+                    android:focusable="true"
+                    android:gravity="top|start"
+                    android:imeOptions="actionDone"
+                    android:inputType="text"
+                    android:lines="1"
+                    android:maxLength="16"
+                    android:maxLines="1"
+                    android:minLines="1"
+                    android:paddingTop="@dimen/_4sdp"
+                    android:paddingEnd="@dimen/_8sdp"
+                    android:paddingBottom="@dimen/_4sdp"
+                    android:scrollbars="vertical"
+                    android:textColor="@color/font_color"
+                    android:textColorHint="@color/gray_e6"
+                    android:textSize="@dimen/font_13" />
+
+            <ProgressBar
+                    android:id="@+id/progress_bar"
+                    android:layout_width="@dimen/_18sdp"
+                    android:layout_height="@dimen/_18sdp"
+                    android:layout_gravity="end|center"
+                    android:layout_marginEnd="@dimen/_40sdp"
+                    android:indeterminate="true"
+                    android:indeterminateTint="@color/button_primary_color"
+                    android:visibility="invisible" />
+        </com.google.android.material.card.MaterialCardView>
+
+
+        <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/coupon_valid_tv"
+                fontPath="fonts/OpenSans-Regular.ttf"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:drawablePadding="@dimen/_4sdp"
+                android:gravity="start|center"
+                android:paddingStart="@dimen/_8sdp"
+                android:paddingTop="@dimen/_16sdp"
+                android:paddingBottom="@dimen/_8sdp"
+                android:textSize="@dimen/font_12"
+                app:layout_constraintBottom_toBottomOf="@id/enter_coupon_code_cv"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintStart_toStartOf="@id/enter_coupon_code_cv"
+                app:layout_constraintTop_toBottomOf="@+id/enter_coupon_code_cv"
+                app:layout_constraintWidth_default="percent"
+                app:layout_constraintWidth_percent="0.8" />
+
+        <com.google.android.material.button.MaterialButton
+                android:id="@+id/complete_payment_btn"
+                style="@style/Widget.MaterialComponents.Button"
+                fontPath="fonts/OpenSans-SemiBold.ttf"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="@dimen/_8sdp"
+                android:layout_marginBottom="@dimen/_4sdp"
+                android:backgroundTint="@color/button_primary_color"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center"
+                android:onClick="@{()->handler.completePayment()}"
+                android:paddingTop="@dimen/_4sdp"
+                android:paddingBottom="@dimen/_4sdp"
+                android:text="@string/complete_payment"
+                android:textAllCaps="true"
+                android:textColor="@color/white"
+                android:textSize="@dimen/font_13"
+                app:cornerRadius="@dimen/_4sdp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintWidth_default="percent"
+                app:layout_constraintWidth_percent="0.75"
+                app:rippleColor="@color/white" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

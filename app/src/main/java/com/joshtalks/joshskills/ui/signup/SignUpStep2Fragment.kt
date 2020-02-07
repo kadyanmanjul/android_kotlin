@@ -119,15 +119,6 @@ class SignUpStep2Fragment : Fragment() {
 
 
     fun verifyOTP() {
-        if (Utils.isInternetAvailable().not()) {
-            Toast.makeText(
-                AppObjectController.joshApplication,
-                getString(R.string.internet_not_available_msz),
-                Toast.LENGTH_SHORT
-            ).show()
-            return
-        }
-
         if (signUpStep2Binding.otpView.text.isNullOrEmpty().not() || viewModel.otpField.get().isNullOrEmpty().not()) {
             showProgress()
             viewModel.verifyOTP(signUpStep2Binding.otpView.text?.toString())
@@ -173,12 +164,17 @@ class SignUpStep2Fragment : Fragment() {
         subscribeRXBus()
     }
 
+    override fun onStop() {
+        super.onStop()
+        timer?.cancel()
+        timer = null
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         activity?.window?.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         compositeDisposable.clear()
-        timer?.cancel()
-        timer = null
+
     }
 
     private fun subscribeRXBus() {
@@ -199,12 +195,14 @@ class SignUpStep2Fragment : Fragment() {
             override fun onTick(millisUntilFinished: Long) {
                 if (timer != null) {
                     CoroutineScope(Dispatchers.Main).launch {
-                        signUpStep2Binding.tvResendMessage.text = getString(
-                            R.string.resend_timer_text,
-                            TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished).toString()
-                        )
-                        signUpStep2Binding.tvResendMessage.isEnabled = false
-
+                        try {
+                            signUpStep2Binding.tvResendMessage.text = getString(
+                                R.string.resend_timer_text,
+                                TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished).toString()
+                            )
+                            signUpStep2Binding.tvResendMessage.isEnabled = false
+                        } catch (ex: Exception) {
+                        }
                     }
                 }
             }

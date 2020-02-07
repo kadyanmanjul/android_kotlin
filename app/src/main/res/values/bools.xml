@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <resources>
-    <bool name="allowBackup">true</bool>
     <bool name="useHardwareAcceleration">true</bool>
     <bool name="super_bottom_sheet_isTablet">false</bool>
     <bool name="super_bottom_sheet_isAlwaysExpanded">false</bool>

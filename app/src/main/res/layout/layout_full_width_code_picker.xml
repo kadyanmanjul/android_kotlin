@@ -1,65 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/countryCodeHolder"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content">
+        android:id="@+id/countryCodeHolder"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
 
     <RelativeLayout
-        android:id="@+id/rlClickConsumer"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@drawable/ccp_selectable_bg"
-       >
-
-        <LinearLayout
-            android:id="@+id/linear_flag_holder"
+            android:id="@+id/rlClickConsumer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_gravity="center_vertical"
-           >
+            android:background="@drawable/ccp_selectable_bg">
 
-            <LinearLayout
-                android:id="@+id/linear_flag_border"
+        <LinearLayout
+                android:id="@+id/linear_flag_holder"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@android:color/transparent">
+                android:layout_centerVertical="true"
+                android:layout_gravity="center_vertical">
+
+            <LinearLayout
+                    android:id="@+id/linear_flag_border"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/transparent">
 
                 <ImageView
-                    android:id="@+id/image_flag"
-                    android:layout_width="wrap_content"
-                    android:layout_height="@dimen/_16sdp"
-                    android:adjustViewBounds="true"
-                    android:src="@drawable/flag_india" />
+                        android:id="@+id/image_flag"
+                        android:layout_width="wrap_content"
+                        android:layout_height="@dimen/_16sdp"
+                        android:adjustViewBounds="true"
+                        android:src="@drawable/flag_india" />
             </LinearLayout>
         </LinearLayout>
 
         <!--</LinearLayout>-->
         <TextView
-                android:visibility="gone"
-            android:id="@+id/textView_selectedCountry"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_toStartOf="@+id/imageView_arrow"
-            android:layout_toLeftOf="@+id/imageView_arrow"
-            android:layout_toEndOf="@+id/linear_flag_holder"
-            android:layout_toRightOf="@+id/linear_flag_holder"
-            android:gravity="center"
-            android:text="(IN) +91"
-            android:textColor="@android:color/black"
-            android:textSize="18sp" />
+                android:id="@+id/textView_selectedCountry"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toStartOf="@+id/imageView_arrow"
+                android:layout_toLeftOf="@+id/imageView_arrow"
+                android:layout_toEndOf="@+id/linear_flag_holder"
+                android:layout_toRightOf="@+id/linear_flag_holder"
+                android:gravity="center"
+                android:text="(IN) +91"
+                android:textColor="@android:color/black"
+                android:textSize="18sp"
+                android:visibility="gone" />
 
         <ImageView
-                android:visibility="gone"
-            android:id="@+id/imageView_arrow"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:adjustViewBounds="true"
-            android:alpha="0.6"
-            android:src="@drawable/ccp_down_arrow" />
+                android:id="@+id/imageView_arrow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:adjustViewBounds="true"
+                android:alpha="0.6"
+                android:src="@drawable/ccp_down_arrow"
+                android:visibility="gone" />
     </RelativeLayout>
 </RelativeLayout>

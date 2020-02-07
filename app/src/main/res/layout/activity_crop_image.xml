@@ -16,45 +16,42 @@
             android:orientation="vertical">
 
 
+        <com.isseiaoki.simplecropview.CropImageView
+                android:id="@+id/crop_image_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:padding="@dimen/_24sdp"
+                custom:scv_background_color="@color/windowBackground"
+                custom:scv_crop_mode="fit_image"
+                custom:scv_frame_color="@color/colorAccent"
+                custom:scv_frame_stroke_weight="1dp"
+                custom:scv_guide_color="@color/colorAccent"
+                custom:scv_guide_show_mode="show_always"
+                custom:scv_guide_stroke_weight="1dp"
+                custom:scv_handle_color="@color/colorAccent"
+                custom:scv_handle_show_mode="show_always"
+                custom:scv_handle_size="14dp"
+                custom:scv_min_frame_size="50dp"
+                custom:scv_overlay_color="@color/overlay"
+                custom:scv_touch_padding="8dp"
 
-            <com.isseiaoki.simplecropview.CropImageView
-                    android:id="@+id/crop_image_view"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:padding="@dimen/_24sdp"
-                    custom:scv_background_color="@color/windowBackground"
-                    custom:scv_crop_mode="fit_image"
-                    custom:scv_frame_color="@color/colorAccent"
-                    custom:scv_frame_stroke_weight="1dp"
-                    custom:scv_guide_color="@color/colorAccent"
-                    custom:scv_guide_show_mode="show_always"
-                    custom:scv_guide_stroke_weight="1dp"
-                    custom:scv_handle_color="@color/colorAccent"
-                    custom:scv_handle_show_mode="show_always"
-                    custom:scv_handle_size="14dp"
-                    custom:scv_min_frame_size="50dp"
-                    custom:scv_overlay_color="@color/overlay"
-                    custom:scv_touch_padding="8dp"
-
-                    />
-
-
-            <com.pnikosis.materialishprogress.ProgressWheel
-
-                    android:id="@+id/progress_bar"
-                    android:layout_width="@dimen/_48sdp"
-                    android:layout_height="@dimen/_48sdp"
-                    android:layout_gravity="center"
-                    android:background="@color/transparent"
-                    android:visibility="gone"
-                    wheel:matProg_barColor="@color/button_primary_color"
-                    wheel:matProg_fillRadius="true"
-                    wheel:matProg_progressIndeterminate="true"
-                    wheel:matProg_rimColor="#22000000"
-                    wheel:matProg_rimWidth="@dimen/_3sdp" />
+                />
 
 
+        <com.pnikosis.materialishprogress.ProgressWheel
+
+                android:id="@+id/progress_bar"
+                android:layout_width="@dimen/_48sdp"
+                android:layout_height="@dimen/_48sdp"
+                android:layout_gravity="center"
+                android:background="@color/transparent"
+                android:visibility="gone"
+                wheel:matProg_barColor="@color/button_primary_color"
+                wheel:matProg_fillRadius="true"
+                wheel:matProg_progressIndeterminate="true"
+                wheel:matProg_rimColor="#22000000"
+                wheel:matProg_rimWidth="@dimen/_3sdp" />
 
 
         <!--<HorizontalScrollView
@@ -193,11 +190,11 @@
                 />
     -->
         <RelativeLayout
-                android:layout_gravity="bottom"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignBottom="@id/crop_image_view"
                 android:layout_centerHorizontal="true"
+                android:layout_gravity="bottom"
                 android:background="@color/windowBackground"
                 android:orientation="horizontal">
 

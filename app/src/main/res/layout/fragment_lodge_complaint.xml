@@ -86,19 +86,18 @@
                             android:textSize="@dimen/font_16" />
 
 
-
-                        <androidx.appcompat.widget.AppCompatEditText
-                                android:id="@+id/et_number"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_below="@id/tv_number"
-                                android:hint="@string/type_your_mobile"
-                                android:inputType="phone"
-                                android:maxLines="1"
-                                android:singleLine="true"
-                                android:textColor="@color/font_color"
-                                android:textColorHint="@color/gray_e6"
-                                android:textSize="@dimen/font_14" />
+                    <androidx.appcompat.widget.AppCompatEditText
+                            android:id="@+id/et_number"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/tv_number"
+                            android:hint="@string/type_your_mobile"
+                            android:inputType="phone"
+                            android:maxLines="1"
+                            android:singleLine="true"
+                            android:textColor="@color/font_color"
+                            android:textColorHint="@color/gray_e6"
+                            android:textSize="@dimen/font_14" />
 
                 </RelativeLayout>
 
@@ -195,37 +194,38 @@
                     android:layout_marginTop="@dimen/_8sdp">
 
                 <FrameLayout
-                        android:layout_marginStart="@dimen/_8sdp"
-                        android:background="@drawable/attachment_background"
                         android:id="@+id/image_container"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
+                        android:layout_marginStart="@dimen/_8sdp"
+                        android:background="@drawable/attachment_background"
                         android:clickable="true"
                         android:focusable="true"
                         android:visibility="gone">
+
                     <androidx.appcompat.widget.AppCompatImageView
-                            android:background="@drawable/attachment_background"
                             android:id="@+id/iv_thumbnail"
                             android:layout_width="@dimen/_48sdp"
                             android:layout_height="@dimen/_48sdp"
                             android:layout_gravity="center"
-                            android:clickable="true"
                             android:adjustViewBounds="true"
-                            android:scaleType="fitXY"
+                            android:background="@drawable/attachment_background"
+                            android:clickable="true"
                             android:focusable="true"
+                            android:scaleType="fitXY"
                             android:visibility="visible" />
+
                     <androidx.appcompat.widget.AppCompatImageView
                             android:layout_width="@dimen/_20sdp"
                             android:layout_height="@dimen/_20sdp"
                             android:layout_gravity="end|top"
                             android:clickable="true"
-                            android:onClick="@{()->handler.removeAttachMedia()}"
                             android:focusable="true"
+                            android:onClick="@{()->handler.removeAttachMedia()}"
                             android:padding="@dimen/_2sdp"
                             android:src="@drawable/ic_cross"
-                            android:tint="@color/error_color"
-                             />
+                            android:tint="@color/error_color" />
                 </FrameLayout>
 
 

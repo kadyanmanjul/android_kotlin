@@ -579,7 +579,6 @@ interface ChatDao {
     suspend fun updateQuestionObject(vararg question: Question)
 
 
-
 }
 
 

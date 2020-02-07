@@ -3,7 +3,6 @@ package com.joshtalks.joshskills.core
 import android.Manifest
 import android.accounts.Account
 import android.accounts.AccountManager
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.ActivityManager
 import android.app.PendingIntent
@@ -13,7 +12,6 @@ import android.content.Intent
 import android.content.Intent.ACTION_VIEW
 import android.content.pm.PackageManager
 import android.content.res.Resources
-import android.database.Cursor
 import android.graphics.*
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.VectorDrawable
@@ -25,7 +23,6 @@ import android.net.NetworkCapabilities
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
-import android.provider.MediaStore
 import android.provider.Settings
 import android.text.format.DateUtils
 import android.util.Log
@@ -562,13 +559,13 @@ object Utils {
     }
 
     fun printAllIntent(intent: Intent) {
-        val bundle = intent.getExtras()
+        val bundle = intent.extras
         if (bundle != null) {
             for (key in bundle.keySet()) {
                 Log.e(
                     "all intent",
                     key + " : " + (bundle.get(key) != null ?: bundle.get(key) ?: "NULL")
-                );
+                )
             }
         }
     }
@@ -578,34 +575,35 @@ object Utils {
         try {
 
             val uri = Uri.parse(url)
-            val intent = Intent(Intent.ACTION_VIEW);
+            val intent = Intent(Intent.ACTION_VIEW)
             if (url.toString().contains(".doc") || url.toString().contains(".docx")) {
                 // Word document
-                intent.setDataAndType(uri, "application/msword");
+                intent.setDataAndType(uri, "application/msword")
             } else if (url.toString().contains(".pdf")) {
                 // PDF file
-                intent.setDataAndType(uri, "application/pdf");
+                intent.setDataAndType(uri, "application/pdf")
             } else if (url.toString().contains(".ppt") || url.toString().contains(".pptx")) {
                 // Powerpoint file
-                intent.setDataAndType(uri, "application/vnd.ms-powerpoint");
+                intent.setDataAndType(uri, "application/vnd.ms-powerpoint")
             } else if (url.toString().contains(".xls") || url.toString().contains(".xlsx")) {
                 // Excel file
-                intent.setDataAndType(uri, "application/vnd.ms-excel");
+                intent.setDataAndType(uri, "application/vnd.ms-excel")
             } else if (url.toString().contains(".rtf")) {
                 // RTF file
-                intent.setDataAndType(uri, "application/rtf");
+                intent.setDataAndType(uri, "application/rtf")
             } else if (url.toString().contains(".txt")) {
                 // Text file
-                intent.setDataAndType(uri, "text/plain");
-            }  else {
-                intent.setDataAndType(uri, "*/*");
+                intent.setDataAndType(uri, "text/plain")
+            } else {
+                intent.setDataAndType(uri, "*/*")
             }
 
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            activity.startActivity(intent);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            activity.startActivity(intent)
         } catch (e: ActivityNotFoundException) {
             StyleableToast.Builder(activity).gravity(Gravity.CENTER)
-                .text(activity.getString(R.string.viewing_support_app_not_exist)).cornerRadius(16).length(Toast.LENGTH_LONG)
+                .text(activity.getString(R.string.viewing_support_app_not_exist)).cornerRadius(16)
+                .length(Toast.LENGTH_LONG)
                 .solidBackground().show()
             e.printStackTrace()
         }

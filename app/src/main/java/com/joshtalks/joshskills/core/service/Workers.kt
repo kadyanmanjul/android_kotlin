@@ -186,7 +186,31 @@ class MessageReadPeriodicWorker(context: Context, workerParams: WorkerParameters
             return Result.retry()
 
         }
+    }
 
+}
+
+
+class ReferralCodeRefreshWorker(context: Context, workerParams: WorkerParameters) :
+    CoroutineWorker(context, workerParams) {
+    override suspend fun doWork(): Result {
+        return try {
+            if (Mentor.getInstance().referralCode.isNullOrEmpty()) {
+                val reqObj = mapOf("mentor" to Mentor.getInstance().getId())
+                val response =
+                    AppObjectController.signUpNetworkService.validateOrGetAndReferralOrCouponAsync(
+                        reqObj
+                    ).await()
+                response.getOrNull(0)?.code?.let {
+                    Mentor.getInstance().setReferralCode(it).update()
+                }
+            }
+            Result.success()
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+            Result.retry()
+
+        }
     }
 
 }

@@ -42,7 +42,6 @@ import com.joshtalks.appcamera.pix.Options
 import com.joshtalks.appcamera.utility.ImageQuality
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
-import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.io.AppDirectory
@@ -434,7 +433,7 @@ class PractiseSubmitActivity : CoreJoshActivity(), FullScreenVideoFragment.OnDis
                 binding.yourSubAnswerTv.visibility = VISIBLE
 
                 val params: ViewGroup.MarginLayoutParams =
-                    binding.subPractiseSubmitLayout.layoutParams as ViewGroup.MarginLayoutParams;
+                    binding.subPractiseSubmitLayout.layoutParams as ViewGroup.MarginLayoutParams
                 params.topMargin = Utils.dpToPx(20)
                 binding.subPractiseSubmitLayout.layoutParams = params
 
@@ -737,7 +736,7 @@ class PractiseSubmitActivity : CoreJoshActivity(), FullScreenVideoFragment.OnDis
     private fun audioAttachmentInit() {
         binding.practiseSubmitLayout.visibility = VISIBLE
         binding.submitAudioViewContainer.visibility = VISIBLE
-        binding.submitPractiseSeekbar.max = Utils.getDurationOfMedia(this, filePath!!)!!.toInt()
+        binding.submitPractiseSeekbar.max = Utils.getDurationOfMedia(this, filePath!!).toInt()
     }
 
     private fun videoAttachmentInit() {
@@ -750,7 +749,7 @@ class PractiseSubmitActivity : CoreJoshActivity(), FullScreenVideoFragment.OnDis
         intent.addCategory(Intent.CATEGORY_OPENABLE)
         intent.type = "*/*"
         intent.putExtra(Intent.EXTRA_MIME_TYPES, DOCX_FILE_MIME_TYPE)
-        intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
+        intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true)
         startActivityForResult(intent, TEXT_FILE_ATTACHMENT_REQUEST_CODE)
 
     }
@@ -959,7 +958,7 @@ class PractiseSubmitActivity : CoreJoshActivity(), FullScreenVideoFragment.OnDis
         val audioType = AudioType()
         audioType.audio_url = filePath!!
         audioType.downloadedLocalPath = filePath!!
-        audioType.duration = Utils.getDurationOfMedia(this, filePath!!)!!.toInt()
+        audioType.duration = Utils.getDurationOfMedia(this, filePath!!).toInt()
         audioType.id = Random.nextInt().toString()
 
         val state =
@@ -1057,7 +1056,7 @@ class PractiseSubmitActivity : CoreJoshActivity(), FullScreenVideoFragment.OnDis
     }
 
     fun removeFileAttachment() {
-        filePath =null
+        filePath = null
         isDocumentAttachDone = false
         binding.practiseInputLayout.visibility = VISIBLE
         binding.practiseSubmitLayout.visibility = GONE

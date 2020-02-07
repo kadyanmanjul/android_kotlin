@@ -2,10 +2,10 @@
 <resources>
 
     <declare-styleable name="CodeInputField">
-        <attr name="cell_count" format="integer"/>
-        <attr name="left_margin" format="float"/>
-        <attr name="right_margin" format="float"/>
-        <attr name="font_size" format="dimension"/>
+        <attr name="cell_count" format="integer" />
+        <attr name="left_margin" format="float" />
+        <attr name="right_margin" format="float" />
+        <attr name="font_size" format="dimension" />
 
     </declare-styleable>
     <declare-styleable name="SelectableRoundedImageView">
@@ -21,9 +21,9 @@
 
 
     <declare-styleable name="AttachmentView">
-        <attr name="image_src" format="reference"/>
-        <attr name="text" format="string"/>
-        <attr name="tag" format="string"/>
+        <attr name="image_src" format="reference" />
+        <attr name="text" format="string" />
+        <attr name="tag" format="string" />
 
     </declare-styleable>
 
@@ -50,17 +50,16 @@
     </declare-styleable>
 
 
-
-    <attr name="superBottomSheet_dim" format="float"/>
-    <attr name="superBottomSheet_backgroundColor" format="color"/>
-    <attr name="superBottomSheet_cornerRadius" format="dimension"/>
-    <attr name="superBottomSheet_animateCornerRadius" format="boolean"/>
-    <attr name="superBottomSheet_animateStatusBar" format="boolean"/>
-    <attr name="superBottomSheet_alwaysExpanded" format="boolean"/>
-    <attr name="superBottomSheet_cancelableOnTouchOutside" format="boolean"/>
-    <attr name="superBottomSheet_cancelable" format="boolean"/>
-    <attr name="superBottomSheet_statusBarColor" format="color"/>
-    <attr name="superBottomSheet_peekHeight" format="dimension"/>
+    <attr name="superBottomSheet_dim" format="float" />
+    <attr name="superBottomSheet_backgroundColor" format="color" />
+    <attr name="superBottomSheet_cornerRadius" format="dimension" />
+    <attr name="superBottomSheet_animateCornerRadius" format="boolean" />
+    <attr name="superBottomSheet_animateStatusBar" format="boolean" />
+    <attr name="superBottomSheet_alwaysExpanded" format="boolean" />
+    <attr name="superBottomSheet_cancelableOnTouchOutside" format="boolean" />
+    <attr name="superBottomSheet_cancelable" format="boolean" />
+    <attr name="superBottomSheet_statusBarColor" format="color" />
+    <attr name="superBottomSheet_peekHeight" format="dimension" />
 
 
     <declare-styleable name="JcPlayerView">
