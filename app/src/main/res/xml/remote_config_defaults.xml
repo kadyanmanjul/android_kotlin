@@ -46,6 +46,10 @@
         <key>REFERRAL_EARN_AMOUNT</key>
         <value>50</value>
     </entry>
+    <entry>
+        <key>SHARE_DOMAIN</key>
+        <value>https://joshskill.page.link</value>
+    </entry>
 
 
 </defaultsMap>

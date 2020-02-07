@@ -11,6 +11,7 @@ import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.Gravity
 import android.view.MotionEvent
 import android.view.View
@@ -23,11 +24,15 @@ import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
+import com.google.firebase.dynamiclinks.DynamicLink
+import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
+import com.google.firebase.dynamiclinks.ShortDynamicLink
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.databinding.ActivityReferralBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.muddzdev.styleabletoast.StyleableToast
@@ -39,12 +44,14 @@ import java.io.IOException
 const val REFERRAL_EARN_AMOUNT_KEY = "REFERRAL_EARN_AMOUNT"
 const val REFERRAL_SHARE_TEXT_KEY = "REFERRAL_SHARE_TEXT"
 const val REFERRAL_IMAGE_URL_KEY = "REFERRAL_IMAGE_URL"
+const val SHARE_DOMAIN = "SHARE_DOMAIN"
 
 const val REPLACE_HOLDER = "****"
 const val REFERRAL_AMOUNT_HOLDER = "**"
 
 const val DRAWABLE_RIGHT = 2
 
+const val USER_SHARE_SHORT_URL = "user_share_url"
 
 class ReferralActivity : BaseActivity() {
     companion object {
@@ -58,6 +65,7 @@ class ReferralActivity : BaseActivity() {
 
     private lateinit var activityReferralBinding: ActivityReferralBinding
     private var userReferralCode: String = EMPTY
+    private var userReferralURL: String = EMPTY
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -92,7 +100,39 @@ class ReferralActivity : BaseActivity() {
         activityReferralBinding.referralEarnTv.text =
             getString(R.string.referral_amount_title, refAmount)
 
+        val baseUrl = Uri.parse(getAppShareUrl())
+        val domain = AppObjectController.getFirebaseRemoteConfig().getString(SHARE_DOMAIN)
+
+        if (PrefManager.hasKey(USER_SHARE_SHORT_URL).not()) {
+            userReferralURL = PrefManager.getStringValue(USER_SHARE_SHORT_URL)
+
+        }
+        FirebaseDynamicLinks.getInstance()
+            .createDynamicLink()
+            .setLink(baseUrl)
+            .setDomainUriPrefix(domain)
+            // .setIosParameters(DynamicLink.IosParameters.Builder("com.joshtalks.joshskills").build())
+            .setAndroidParameters(DynamicLink.AndroidParameters.Builder(BuildConfig.APPLICATION_ID).build())
+            .setAndroidParameters(DynamicLink.AndroidParameters.Builder().build())
+            .buildShortDynamicLink(ShortDynamicLink.Suffix.SHORT)
+
+            .addOnSuccessListener { result ->
+                result?.shortLink?.let {
+                    try {
+                        if (it.toString().isNotEmpty()) {
+                            PrefManager.put(USER_SHARE_SHORT_URL, it.toString())
+                            userReferralURL = it.toString()
+
+                        }
+                    } catch (ex: Exception) {
+
+                    }
+                }
+            }.addOnFailureListener {
+                it.printStackTrace()
+            }
     }
+
 
     @SuppressLint("ClickableViewAccessibility")
     private fun initView() {
@@ -129,9 +169,12 @@ class ReferralActivity : BaseActivity() {
         referralText = referralText.replace(REPLACE_HOLDER, userReferralCode)
         referralText = referralText.replace(REFERRAL_AMOUNT_HOLDER, refAmount)
 
-
-
-        referralText = referralText.plus("\n").plus(getAppShareUrl())
+        if (userReferralURL.isEmpty()) {
+            referralText = referralText.plus("\n").plus(getAppShareUrl())
+        } else {
+            referralText =
+                referralText.plus("\n").plus(userReferralURL)
+        }
 
         val referralImageUrl =
             AppObjectController.getFirebaseRemoteConfig().getString(REFERRAL_IMAGE_URL_KEY)
