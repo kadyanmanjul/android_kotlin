@@ -6,7 +6,6 @@ apply plugin: 'androidx.navigation.safeargs'
 apply plugin: 'io.fabric'
 apply plugin: 'com.google.gms.google-services'
 
-
 android {
     compileSdkVersion 29
     defaultConfig {
