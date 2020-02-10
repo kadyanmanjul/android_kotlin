@@ -58,13 +58,24 @@
                     android:textSize="@dimen/font_20" />
 
             <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/iv_earn"
+                    android:layout_width="@dimen/_24sdp"
+                    android:layout_height="@dimen/_24sdp"
+                    android:layout_centerVertical="true"
+                    android:layout_toStartOf="@id/iv_help"
+                    android:padding="@dimen/_4sdp"
+                    android:src="@drawable/ic_earn_share"
+                    android:visibility="gone" />
+
+
+            <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/iv_help"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
                     android:layout_marginEnd="@dimen/_6sdp"
-                    android:padding="@dimen/_8sdp"
+                    android:padding="@dimen/_4sdp"
                     android:src="@drawable/ic_help_outline"
                     android:tint="@color/white"
                     android:visibility="visible" />

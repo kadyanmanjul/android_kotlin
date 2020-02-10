@@ -18,7 +18,7 @@ import androidx.appcompat.widget.AppCompatTextView
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import com.afollestad.materialdialogs.MaterialDialog
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.MultiTransformation
@@ -33,6 +33,7 @@ import com.joshtalks.joshskills.databinding.FragmentLodgeComplaintBinding
 import com.joshtalks.joshskills.repository.server.RequestComplaint
 import com.joshtalks.joshskills.repository.server.TypeOfHelpModel
 import com.joshtalks.joshskills.ui.signup.PHONE_NUMBER_REGEX
+import com.joshtalks.joshskills.ui.signup.SignUpViewModel
 import com.joshtalks.joshskills.ui.view_holders.ROUND_CORNER
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
@@ -63,9 +64,9 @@ class ComplaintFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         typeOfHelpModel = arguments?.getSerializable(COMPLAINT_OBJECT) as TypeOfHelpModel
-        viewModel = activity?.run { ViewModelProviders.of(this)[HelpViewModel::class.java] }
-            ?: throw Exception("Invalid Activity")
-
+        viewModel = activity?.run {
+            ViewModelProvider(this).get(HelpViewModel::class.java)
+        }!!
     }
 
     override fun onCreateView(
@@ -141,8 +142,6 @@ class ComplaintFragment : Fragment() {
                     token?.continuePermissionRequest()
                 }
             })
-
-
     }
 
     fun removeAttachMedia() {
@@ -259,7 +258,17 @@ class ComplaintFragment : Fragment() {
             return
         }
 
-        progressDialog.show(fragmentManager!!, "ProgressDialog")
+        activity?.let {
+            val fragmentTransaction = it.supportFragmentManager.beginTransaction()
+            val prev = it.supportFragmentManager.findFragmentByTag("progress_dialog")
+            if (prev != null) {
+                fragmentTransaction.remove(prev)
+            }
+            fragmentTransaction.addToBackStack(null)
+            progressDialog.show(it.supportFragmentManager, "progress_dialog")
+
+        }
+
         val requestComplaint = RequestComplaint(
             typeOfHelpModel.id,
             lodgeComplaintBinding.etEmail.text.toString(),

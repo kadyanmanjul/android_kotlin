@@ -13,8 +13,8 @@ android {
         applicationId "com.joshtalks.joshskills"
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 43
-        versionName "1.0.43"
+        versionCode 44
+        versionName "1.0.44"
         vectorDrawables.useSupportLibrary true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField "String", "CLIENT_TOKEN", "\"Ctt75ss5IxyHgBJb48diBbHUXIQ1VANCYRykjdcj\""
@@ -277,6 +277,8 @@ dependencies {
     //Payment Razor pay
     implementation 'com.razorpay:checkout:1.5.12'
     /// implementation "com.truecaller.android.sdk:truecaller-sdk:0.8" compile group: 'com.truecaller.android.sdk', name: 'truecaller-sdk', version: '1.0.1'
+    implementation 'com.github.corouteam:GlideToVectorYou:v2.0.0'
+
 
     implementation 'com.github.dibakarece:DMAudioStreamer:v1.0.5'
 

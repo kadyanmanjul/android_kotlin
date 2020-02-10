@@ -9,6 +9,7 @@ import android.graphics.Color
 import android.media.RingtoneManager
 import android.net.Uri
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
@@ -60,6 +61,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
             Gson().toJson(remoteMessage.data),
             NotificationObject::class.java
         )
+       // Log.e("nodata",Gson().toJson(remoteMessage.data))
         sendNotification(nc)
     }
 

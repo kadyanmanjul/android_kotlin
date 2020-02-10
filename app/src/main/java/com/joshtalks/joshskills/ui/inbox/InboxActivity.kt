@@ -3,12 +3,21 @@ package com.joshtalks.joshskills.ui.inbox
 import android.Manifest
 import android.app.Activity
 import android.content.Intent
+import android.graphics.drawable.PictureDrawable
 import android.os.Bundle
 import android.view.View
+import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.RequestOptions
+import com.bumptech.glide.request.target.Target
+import com.github.twocoffeesoneteam.glidetovectoryou.GlideToVectorYou
 import com.google.android.gms.location.LocationRequest
 import com.google.android.material.snackbar.Snackbar
 import com.joshtalks.joshskills.BuildConfig
@@ -37,6 +46,7 @@ import com.joshtalks.joshskills.repository.service.SyncChatService
 import com.joshtalks.joshskills.ui.chat.ConversationActivity
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
 import com.joshtalks.joshskills.ui.referral.PromotionDialogFragment
+import com.joshtalks.joshskills.ui.referral.ReferralActivity
 import com.joshtalks.joshskills.ui.view_holders.EmptyHorizontalView
 import com.joshtalks.joshskills.ui.view_holders.FindMoreViewHolder
 import com.joshtalks.joshskills.ui.view_holders.InboxViewHolder
@@ -72,6 +82,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
     private var compositeDisposable = CompositeDisposable()
 
     private var inAppUpdateManager: InAppUpdateManager? = null
+    private lateinit var earnIV: AppCompatImageView
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -164,7 +175,11 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
     private fun setToolbar() {
         val titleView = findViewById<AppCompatTextView>(R.id.text_message_title)
         titleView.text = getString(R.string.inbox_header)
-
+        earnIV = findViewById(R.id.iv_earn)
+        earnIV.setOnClickListener {
+            ReferralActivity.startReferralActivity(this@InboxActivity)
+        }
+        visibleShareEarn()
     }
 
     private fun addLiveDataObservable() {
@@ -408,6 +423,43 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         fragmentTransaction.addToBackStack(null)
         PromotionDialogFragment.newInstance("", "")
             .show(supportFragmentManager, "promotion_coupon_code_show_dialog")
+    }
+
+    private fun visibleShareEarn() {
+        val url = AppObjectController.getFirebaseRemoteConfig().getString("EARN_SHARE_IMAGE_URL")
+        if (url.isNotEmpty()) {
+            earnIV.visibility = View.VISIBLE
+            val requestBuilder = GlideToVectorYou
+                .init()
+                .with(this)
+                .requestBuilder
+            requestBuilder.load(url)
+                .transition(DrawableTransitionOptions.withCrossFade())
+                .apply(RequestOptions().centerCrop())
+                .listener(object : RequestListener<PictureDrawable> {
+                    override fun onLoadFailed(
+                        e: GlideException?,
+                        model: Any?,
+                        target: Target<PictureDrawable>?,
+                        isFirstResource: Boolean
+                    ): Boolean {
+                        return false
+                    }
+
+                    override fun onResourceReady(
+                        resource: PictureDrawable?,
+                        model: Any?,
+                        target: Target<PictureDrawable>?,
+                        dataSource: DataSource?,
+                        isFirstResource: Boolean
+                    ): Boolean {
+                        earnIV.visibility = View.VISIBLE
+                        return false
+                    }
+
+                })
+                .into(earnIV)
+        }
     }
 
 }

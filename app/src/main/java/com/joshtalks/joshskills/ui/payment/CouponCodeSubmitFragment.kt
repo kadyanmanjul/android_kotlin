@@ -23,6 +23,7 @@ import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.custom_ui.TextDrawable
 import com.joshtalks.joshskills.databinding.FragmentCouponCodeSubmitBinding
+import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.ui.referral.DRAWABLE_RIGHT
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -77,7 +78,7 @@ class CouponCodeSubmitFragment : DialogFragment() {
 
         val clipBoardManager = context?.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
         val copiedString = clipBoardManager.primaryClip?.getItemAt(0)?.text?.toString()
-        Log.e("copytext", copiedString ?: "nope")
+        Log.i("copytext", copiedString ?: "nope")
 
         binding.etCode.setOnTouchListener { _, event ->
             try {
@@ -158,6 +159,17 @@ class CouponCodeSubmitFragment : DialogFragment() {
 
 
     private fun validatingCouponCode(couponCode: String) {
+
+        if (Mentor.getInstance().hasId() && couponCode.equals(
+                Mentor.getInstance().referralCode,
+                ignoreCase = true
+            )
+        ) {
+            inValidCode()
+            return
+        }
+
+
         binding.progressBar.visibility = View.VISIBLE
         CoroutineScope(Dispatchers.IO).launch {
             try {

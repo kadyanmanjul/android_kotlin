@@ -194,10 +194,12 @@ internal class AppObjectController {
 
 
             val builder = OkHttpClient().newBuilder()
-                .connectTimeout(20, TimeUnit.SECONDS)
-                .writeTimeout(20, TimeUnit.SECONDS)
-                .readTimeout(20, TimeUnit.SECONDS)
+                .connectTimeout(30, TimeUnit.SECONDS)
+                .writeTimeout(30, TimeUnit.SECONDS)
+                .readTimeout(30, TimeUnit.SECONDS)
                 .retryOnConnectionFailure(true)
+                .followRedirects(true)
+                .followSslRedirects(true)
                 .addInterceptor(StatusCodeInterceptor())
 
             if (BuildConfig.DEBUG) {

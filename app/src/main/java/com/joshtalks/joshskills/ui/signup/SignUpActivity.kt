@@ -30,6 +30,7 @@ class SignUpActivity : CoreJoshActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         layout = DataBindingUtil.setContentView(this, R.layout.activity_sign_up)
         layout.handler = this
         supportActionBar?.hide()

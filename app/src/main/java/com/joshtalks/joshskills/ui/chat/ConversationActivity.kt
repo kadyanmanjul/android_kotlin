@@ -973,6 +973,8 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
                     currentAudio = streamingManager?.currentAudioId
                     AppObjectController.currentPlayingAudioObject = it.chatModel
                     bottomSheetLayout.visibility = VISIBLE
+                    window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+
 
                 },
                     {
@@ -1294,6 +1296,8 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
         compositeDisposable.clear()
         readMessageTimerTask?.cancel()
         uiHandler.removeCallbacksAndMessages(null)
+        window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+
     }
 
     override fun onDestroy() {
@@ -1446,6 +1450,8 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
                 AppObjectController.currentPlayingAudioObject?.let {
                     refreshViewAtPos(it)
                 }
+                window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+
             }
             PlaybackStateCompat.STATE_BUFFERING -> {
             }

@@ -11,7 +11,6 @@ import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.Gravity
 import android.view.MotionEvent
 import android.view.View
@@ -169,11 +168,10 @@ class ReferralActivity : BaseActivity() {
         referralText = referralText.replace(REPLACE_HOLDER, userReferralCode)
         referralText = referralText.replace(REFERRAL_AMOUNT_HOLDER, refAmount)
 
-        if (userReferralURL.isEmpty()) {
-            referralText = referralText.plus("\n").plus(getAppShareUrl())
+        referralText = if (userReferralURL.isEmpty()) {
+            referralText.plus("\n").plus(getAppShareUrl())
         } else {
-            referralText =
-                referralText.plus("\n").plus(userReferralURL)
+            referralText.plus("\n").plus(userReferralURL)
         }
 
         val referralImageUrl =
@@ -259,7 +257,7 @@ class ReferralActivity : BaseActivity() {
 
 
     private fun getAppShareUrl(): String {
-        return "https://play.google.com/store/apps/details?id=" + BuildConfig.APPLICATION_ID + "&referrer=$userReferralCode"
+        return "https://play.google.com/store/apps/details?id=" + BuildConfig.APPLICATION_ID + "&referrer=utm_source%3D$userReferralCode"
     }
 
     private fun copyCodeIntoClipBoard() {
