@@ -30,6 +30,13 @@ const val MINIMUM_VIDEO_DOWNLOAD_PROGRESS = 20
 const val MAXIMUM_VIDEO_DOWNLOAD_PROGRESS = 50
 
 
+const val ARG_PLACEHOLDER_URL="placeholder_image_url"
+
+
+enum class REFERRAL_EVENT(val type: String) {
+    CLICK_ON_REFERRAL("click_on_referral"), LONG_PRESS_CODE("long_press_code"), CLICK_ON_SHARE("click_on_share")
+}
+
 
 
 

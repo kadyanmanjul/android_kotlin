@@ -28,10 +28,8 @@ import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
 import com.google.firebase.dynamiclinks.ShortDynamicLink
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.BaseActivity
-import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.service.WorkMangerAdmin
 import com.joshtalks.joshskills.databinding.ActivityReferralBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.muddzdev.styleabletoast.StyleableToast
@@ -65,7 +63,6 @@ class ReferralActivity : BaseActivity() {
     private lateinit var activityReferralBinding: ActivityReferralBinding
     private var userReferralCode: String = EMPTY
     private var userReferralURL: String = EMPTY
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         requestedOrientation = if (Build.VERSION.SDK_INT == 26) {
@@ -160,6 +157,7 @@ class ReferralActivity : BaseActivity() {
     }
 
     fun inviteFriends() {
+        WorkMangerAdmin.referralEventTracker(REFERRAL_EVENT.CLICK_ON_SHARE)
         var referralText =
             AppObjectController.getFirebaseRemoteConfig().getString(REFERRAL_SHARE_TEXT_KEY)
         val refAmount =
@@ -260,7 +258,9 @@ class ReferralActivity : BaseActivity() {
         return "https://play.google.com/store/apps/details?id=" + BuildConfig.APPLICATION_ID + "&referrer=utm_source%3D$userReferralCode"
     }
 
+    @Synchronized
     private fun copyCodeIntoClipBoard() {
+        AppObjectController.uiHandler.removeCallbacksAndMessages(null)
         val cManager =
             application.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
         val cData = ClipData.newPlainText("text", userReferralCode)
@@ -268,5 +268,10 @@ class ReferralActivity : BaseActivity() {
         StyleableToast.Builder(this@ReferralActivity).gravity(Gravity.CENTER)
             .text(getString(R.string.copy_code)).cornerRadius(16).length(Toast.LENGTH_LONG)
             .solidBackground().show()
+        AppObjectController.uiHandler.postDelayed({
+            WorkMangerAdmin.referralEventTracker(REFERRAL_EVENT.LONG_PRESS_CODE)
+        }, 1200)
+
+
     }
 }

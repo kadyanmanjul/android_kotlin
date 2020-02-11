@@ -13,10 +13,14 @@ import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.facebook.share.internal.ShareConstants.ACTION_TYPE
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.google.gson.Gson
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.ARG_PLACEHOLDER_URL
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.service.WorkMangerAdmin
@@ -34,11 +38,11 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-
 const val FCM_TOKEN = "fcmToken"
 const val FCM_ID = "fcmId"
 const val HAS_NOTIFICATION = "has_notification"
 const val NOTIFICATION_ID = "notification_id"
+
 
 class FirebaseNotificationService : FirebaseMessagingService() {
 
@@ -61,7 +65,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
             Gson().toJson(remoteMessage.data),
             NotificationObject::class.java
         )
-       // Log.e("nodata",Gson().toJson(remoteMessage.data))
+        Log.i(FirebaseNotificationService::class.java.simpleName, Gson().toJson(remoteMessage.data))
         sendNotification(nc)
     }
 
@@ -218,15 +222,22 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                     putExtra(HAS_NOTIFICATION, true)
                     putExtra(NOTIFICATION_ID, notificationObject.id)
                 }
-            }
-            /*else if (ACTION_OPEN_POPUP.equals(action, ignoreCase = true)) {
-                notificationChannelId = ACTION_OPEN_POPUP
+            } else if (ACTION_UPSELLING_POPUP.equals(action, ignoreCase = true)) {
+                notificationChannelId = ACTION_UPSELLING_POPUP
                 return Intent(applicationContext, InboxActivity::class.java).apply {
                     addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
                     putExtra(HAS_NOTIFICATION, true)
                     putExtra(NOTIFICATION_ID, notificationObject.id)
+                    putExtra(COURSE_ID, actionData)
+                    putExtra(ACTION_TYPE, action)
+                    putExtra(ARG_PLACEHOLDER_URL, notificationObject.bigPicture)
+                    notificationObject.bigPicture?.run {
+                        Glide.with(AppObjectController.joshApplication).load(this)
+                            .diskCacheStrategy(DiskCacheStrategy.ALL)
+                            .submit()
+                    }
                 }
-            }*/
+            }
 
 
         }

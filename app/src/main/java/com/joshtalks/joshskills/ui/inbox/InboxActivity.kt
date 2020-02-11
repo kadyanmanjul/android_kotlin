@@ -3,11 +3,14 @@ package com.joshtalks.joshskills.ui.inbox
 import android.Manifest
 import android.app.Activity
 import android.content.Intent
+import android.graphics.PorterDuff
 import android.graphics.drawable.PictureDrawable
+import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -17,15 +20,13 @@ import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
+import com.facebook.share.internal.ShareConstants.ACTION_TYPE
 import com.github.twocoffeesoneteam.glidetovectoryou.GlideToVectorYou
 import com.google.android.gms.location.LocationRequest
 import com.google.android.material.snackbar.Snackbar
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.COURSE_STARTED_FB_EVENT
-import com.joshtalks.joshskills.core.CoreJoshActivity
-import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.inapp_update.Constants
@@ -38,6 +39,7 @@ import com.joshtalks.joshskills.repository.local.DatabaseUtils
 import com.joshtalks.joshskills.repository.local.eventbus.ExploreCourseEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.OpenCourseEventBus
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
+import com.joshtalks.joshskills.repository.local.model.ACTION_UPSELLING_POPUP
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.ProfileResponse
 import com.joshtalks.joshskills.repository.server.SearchLocality
@@ -45,6 +47,9 @@ import com.joshtalks.joshskills.repository.server.UpdateUserLocality
 import com.joshtalks.joshskills.repository.service.SyncChatService
 import com.joshtalks.joshskills.ui.chat.ConversationActivity
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
+import com.joshtalks.joshskills.ui.payment.COURSE_ID
+import com.joshtalks.joshskills.ui.payment.CouponCodeSubmitFragment
+import com.joshtalks.joshskills.ui.payment.CoursePurchaseDetailFragment
 import com.joshtalks.joshskills.ui.referral.PromotionDialogFragment
 import com.joshtalks.joshskills.ui.referral.ReferralActivity
 import com.joshtalks.joshskills.ui.view_holders.EmptyHorizontalView
@@ -98,7 +103,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         workInBackground()
         viewModel.getRegisterCourses()
         SyncChatService.syncChatWithServer()
-
+        handelIntentAction()
     }
 
 
@@ -139,6 +144,23 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
         processIntent(intent)
+        this.intent = intent
+        handelIntentAction()
+    }
+
+    private fun handelIntentAction() {
+        if (intent != null && intent.hasExtra(ACTION_TYPE)) {
+            intent.getStringExtra(ACTION_TYPE)?.let {
+                if (ACTION_UPSELLING_POPUP.equals(it, ignoreCase = true)) {
+                    showPromotionCode(
+                        intent.getStringExtra(COURSE_ID)!!,
+                        intent.getStringExtra(ARG_PLACEHOLDER_URL)!!
+                    )
+                }
+            }
+
+        }
+
     }
 
 
@@ -177,6 +199,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         titleView.text = getString(R.string.inbox_header)
         earnIV = findViewById(R.id.iv_earn)
         earnIV.setOnClickListener {
+            WorkMangerAdmin.referralEventTracker(REFERRAL_EVENT.CLICK_ON_REFERRAL)
             ReferralActivity.startReferralActivity(this@InboxActivity)
         }
         visibleShareEarn()
@@ -414,52 +437,58 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
     }
 
 
-    private fun showPromotionCode() {
+    private fun showPromotionCode(courseId: String, placeholderImageUrl: String) {
         val fragmentTransaction = supportFragmentManager.beginTransaction()
         val prev = supportFragmentManager.findFragmentByTag("promotion_coupon_code_show_dialog")
         if (prev != null) {
             fragmentTransaction.remove(prev)
         }
         fragmentTransaction.addToBackStack(null)
-        PromotionDialogFragment.newInstance("", "")
+        PromotionDialogFragment.newInstance(courseId, placeholderImageUrl)
             .show(supportFragmentManager, "promotion_coupon_code_show_dialog")
+        this.intent = null
     }
 
     private fun visibleShareEarn() {
         val url = AppObjectController.getFirebaseRemoteConfig().getString("EARN_SHARE_IMAGE_URL")
-        if (url.isNotEmpty()) {
-            earnIV.visibility = View.VISIBLE
-            val requestBuilder = GlideToVectorYou
-                .init()
-                .with(this)
-                .requestBuilder
-            requestBuilder.load(url)
-                .transition(DrawableTransitionOptions.withCrossFade())
-                .apply(RequestOptions().centerCrop())
-                .listener(object : RequestListener<PictureDrawable> {
-                    override fun onLoadFailed(
-                        e: GlideException?,
-                        model: Any?,
-                        target: Target<PictureDrawable>?,
-                        isFirstResource: Boolean
-                    ): Boolean {
-                        return false
-                    }
-
-                    override fun onResourceReady(
-                        resource: PictureDrawable?,
-                        model: Any?,
-                        target: Target<PictureDrawable>?,
-                        dataSource: DataSource?,
-                        isFirstResource: Boolean
-                    ): Boolean {
-                        earnIV.visibility = View.VISIBLE
-                        return false
-                    }
-
-                })
-                .into(earnIV)
+        var iconUri = Uri.parse(url)
+        if (url.isEmpty()) {
+            iconUri = Uri.parse("file:///android_asset/ic_rupee.svg")
         }
+        earnIV.visibility = View.VISIBLE
+        val requestBuilder = GlideToVectorYou
+            .init()
+            .with(this)
+            .requestBuilder
+        requestBuilder.load(iconUri)
+            .transition(DrawableTransitionOptions.withCrossFade())
+            .apply(RequestOptions().centerCrop())
+            .listener(object : RequestListener<PictureDrawable> {
+                override fun onLoadFailed(
+                    e: GlideException?,
+                    model: Any?,
+                    target: Target<PictureDrawable>?,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    return false
+                }
+
+                override fun onResourceReady(
+                    resource: PictureDrawable?,
+                    model: Any?,
+                    target: Target<PictureDrawable>?,
+                    dataSource: DataSource?,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    resource?.setTint(ContextCompat.getColor(applicationContext, R.color.white))
+                    earnIV.setImageDrawable(resource)
+                    earnIV.visibility = View.VISIBLE
+                    return false
+                }
+
+            })
+            .into(earnIV)
+
     }
 
 }

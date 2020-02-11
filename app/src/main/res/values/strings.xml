@@ -175,8 +175,8 @@
     <string name="oops">Oops!</string>
     <string name="coupon_not_exist_label">It looks like you have applied  wrong \n coupon code.</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="course_details_header">Course Details</string>
+    <string name="coupon_code_exist">Do you have a discount code?</string>
 
 
 </resources>

@@ -15,34 +15,32 @@ import com.bumptech.glide.integration.webp.decoder.WebpDrawableTransformation
 import com.bumptech.glide.load.MultiTransformation
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.bumptech.glide.request.RequestOptions
-import com.bumptech.glide.request.target.Target
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.databinding.FragmentPrmotationDialogBinding
 import com.joshtalks.joshskills.ui.payment.COURSE_ID
 import com.joshtalks.joshskills.ui.payment.PaymentActivity
-import com.joshtalks.joshskills.ui.view_holders.IMAGE_SIZE
 import com.joshtalks.joshskills.ui.view_holders.ROUND_CORNER
-import jp.wasabeef.glide.transformations.CropTransformation
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation
 
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
+private const val ARG_COURSE_ID = "course_id"
+private const val ARG_PLACEHOLDER_IMAGE = "placeholder_url"
 
 
 class PromotionDialogFragment : DialogFragment() {
-    private var param1: String? = null
-    private var param2: String? = null
+    private var courseId: String? = null
+    private var placeHolderImageUrl: String? = null
     private lateinit var fragmentPrmotationDialogBinding: FragmentPrmotationDialogBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
+            courseId = it.getString(ARG_COURSE_ID)
+            placeHolderImageUrl = it.getString(ARG_PLACEHOLDER_IMAGE)
         }
         setStyle(STYLE_NO_FRAME, R.style.full_dialog)
+
     }
 
 
@@ -51,8 +49,11 @@ class PromotionDialogFragment : DialogFragment() {
         val dialog = dialog
         if (dialog != null) {
             val width = AppObjectController.screenWidth * .9
-            val height = AppObjectController.screenHeight * .7
+            val height = AppObjectController.screenHeight * .8
             dialog.window?.setLayout(width.toInt(), height.toInt())
+            dialog.setCanceledOnTouchOutside(false)
+            dialog.setCancelable(false)
+
         }
     }
 
@@ -70,30 +71,30 @@ class PromotionDialogFragment : DialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setImageView("http://cdn.pixabay.com/photo/2015/04/19/08/32/rose-729509_960_720.jpg")
+        placeHolderImageUrl?.run {
+            setImageView(this)
+        }
     }
 
     private fun setImageView(url: String) {
 
+        val width = AppObjectController.screenWidth * .8
+        val height = AppObjectController.screenHeight * .7
+
         val multi = MultiTransformation<Bitmap>(
-            CropTransformation(
-                Utils.dpToPx(IMAGE_SIZE),
-                Utils.dpToPx(IMAGE_SIZE),
-                CropTransformation.CropType.CENTER
-            ),
             RoundedCornersTransformation(
                 Utils.dpToPx(ROUND_CORNER),
-                0,
+                8,
                 RoundedCornersTransformation.CornerType.ALL
             )
         )
         Glide.with(AppObjectController.joshApplication)
             .load(url)
-            .override(Target.SIZE_ORIGINAL)
             .optionalTransform(
                 WebpDrawable::class.java,
                 WebpDrawableTransformation(CircleCrop())
             )
+            .override(width.toInt(), height.toInt())
             .apply(RequestOptions.bitmapTransform(multi))
             .into(fragmentPrmotationDialogBinding.ivPromotion)
     }
@@ -104,8 +105,7 @@ class PromotionDialogFragment : DialogFragment() {
 
     fun openPromotion() {
         activity!!.startActivity(Intent(activity!!, PaymentActivity::class.java).apply {
-            addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
-            putExtra(COURSE_ID, "1")
+            putExtra(COURSE_ID, courseId)
         })
         dismissAllowingStateLoss()
     }
@@ -117,8 +117,8 @@ class PromotionDialogFragment : DialogFragment() {
         fun newInstance(param1: String, param2: String) =
             PromotionDialogFragment().apply {
                 arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
+                    putString(ARG_COURSE_ID, param1)
+                    putString(ARG_PLACEHOLDER_IMAGE, param2)
                 }
             }
     }

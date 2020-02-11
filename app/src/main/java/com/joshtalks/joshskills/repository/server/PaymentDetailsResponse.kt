@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName
 
 data class PaymentDetailsResponse(
     @SerializedName("amount")
-    val amount: Int,
+    val amount: Double,
     @SerializedName("course_name")
     val courseName: String,
     @SerializedName("currency")

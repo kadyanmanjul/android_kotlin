@@ -10,32 +10,33 @@
     <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@android:color/transparent">
+            android:background="@android:color/transparent"
+            android:foregroundGravity="center"
+            android:gravity="center">
+
 
         <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:layout_centerHorizontal="true"
-                android:orientation="vertical">
+                android:layout_margin="@dimen/_18sdp">
 
             <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/image_view_cancel"
+                    android:id="@+id/iv_promotion"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="start"
                     android:adjustViewBounds="true"
                     android:clickable="true"
                     android:focusable="true"
-                    android:onClick="@{()->handler.cancelPromotion()}"
+                    android:onClick="@{()->handler.openPromotion()}"
                     android:scaleType="fitCenter"
                     android:src="@drawable/referral_placeholder" />
         </FrameLayout>
 
         <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/iv_promotion"
-                android:layout_width="@dimen/_20sdp"
-                android:layout_height="@dimen/_20sdp"
+                android:id="@+id/image_view_cancel"
+                android:layout_width="@dimen/_16sdp"
+                android:layout_height="@dimen/_16sdp"
                 android:layout_alignParentEnd="true"
                 android:layout_gravity="end|top"
                 android:layout_marginTop="@dimen/_4sdp"
@@ -43,8 +44,9 @@
                 android:background="@drawable/bg_white_round_36"
                 android:clickable="true"
                 android:focusable="true"
-                android:onClick="@{()->handler.openPromotion()}"
+                android:onClick="@{()->handler.cancelPromotion()}"
                 android:src="@drawable/ic_cross"
                 android:tint="@color/grey_7A" />
+
     </RelativeLayout>
 </layout>

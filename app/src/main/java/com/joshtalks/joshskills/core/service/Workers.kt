@@ -10,6 +10,7 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.REFERRAL_EVENT
 import com.joshtalks.joshskills.core.USER_UNIQUE_ID
 import com.joshtalks.joshskills.repository.local.model.InstallReferrerModel
 import com.joshtalks.joshskills.repository.local.model.Mentor
@@ -195,7 +196,7 @@ class ReferralCodeRefreshWorker(context: Context, workerParams: WorkerParameters
     CoroutineWorker(context, workerParams) {
     override suspend fun doWork(): Result {
         return try {
-            if (Mentor.getInstance().referralCode.isNullOrEmpty()) {
+            if (Mentor.getInstance().referralCode.isEmpty()) {
                 val reqObj = mapOf("mentor" to Mentor.getInstance().getId())
                 val response =
                     AppObjectController.signUpNetworkService.validateOrGetAndReferralOrCouponAsync(
@@ -214,6 +215,28 @@ class ReferralCodeRefreshWorker(context: Context, workerParams: WorkerParameters
     }
 
 }
+
+
+const val REFERRAL_EVENT_OBJECT = "referral_event_object"
+
+class ReferralEventWorker(context: Context, private val workerParams: WorkerParameters) :
+    CoroutineWorker(context, workerParams) {
+    override suspend fun doWork(): Result {
+        val obj = AppObjectController.gsonMapperForLocal.fromJson(
+            workerParams.inputData.getString(REFERRAL_EVENT_OBJECT),
+            REFERRAL_EVENT::class.java
+        )
+        val database = FirebaseDatabase.getInstance()
+        val myRef = database.getReference("REFERRAL_EVENT")
+        myRef.child(obj.type).child(System.currentTimeMillis().toString())
+            .setValue(Mentor.getInstance().getId())
+        return Result.success()
+    }
+
+}
+
+
+
 
 
 

@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+                name="handler"
+                type="com.joshtalks.joshskills.ui.payment.CoursePurchaseDetailFragment" />
+    </data>
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/round_rect_default"
+            android:paddingTop="@dimen/_16sdp"
+            android:paddingBottom="@dimen/_16sdp">
+
+        <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/text_view_1"
+                fontPath="fonts/OpenSans-Bold.ttf"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/course_details_header"
+                android:textColor="@color/font_color"
+                android:textSize="@dimen/font_15"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintWidth_default="percent"
+                app:layout_constraintWidth_percent="0.8" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/container"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:paddingTop="@dimen/_16sdp"
+                android:paddingBottom="@dimen/_16sdp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/text_view_1"
+                app:layout_constraintWidth_default="percent"
+                app:layout_constraintWidth_percent="0.9">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tv2"
+                    fontPath="fonts/OpenSans-SemiBold.ttf"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="start|center"
+                    android:lineSpacingExtra="@dimen/_2sdp"
+                    android:text="Course"
+                    android:textColor="@color/font_color"
+                    android:textSize="@dimen/font_14"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintWidth_default="percent"
+                    app:layout_constraintWidth_percent="0.7" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tv3"
+                    fontPath="fonts/OpenSans-SemiBold.ttf"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="end|center"
+                    android:lineSpacingExtra="@dimen/_2sdp"
+                    android:text="Amount"
+                    android:textColor="@color/font_color"
+                    android:textSize="@dimen/font_14"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintWidth_default="percent"
+                    app:layout_constraintWidth_percent="0.3" />
+
+
+            <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tv_course_name"
+                    fontPath="fonts/OpenSans-Regular.ttf"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:gravity="start|center"
+                    android:maxLines="2"
+                    android:textColor="@color/font_color"
+                    android:textSize="@dimen/font_12"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tv2"
+                    app:layout_constraintWidth_default="percent"
+                    app:layout_constraintWidth_percent="0.7" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tv_course_amount"
+                    fontPath="fonts/OpenSans-Regular.ttf"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="end|center"
+                    android:lineSpacingExtra="@dimen/_2sdp"
+                    android:textColor="@color/font_color"
+                    android:textSize="@dimen/font_12"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tv3"
+                    app:layout_constraintWidth_default="percent"
+                    app:layout_constraintWidth_percent="0.25" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        <com.google.android.material.button.MaterialButton
+                android:id="@+id/complete_payment_btn"
+                style="@style/Widget.MaterialComponents.Button"
+                fontPath="fonts/OpenSans-SemiBold.ttf"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:backgroundTint="@color/button_primary_color"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center"
+                android:onClick="@{()->handler.completePayment()}"
+                android:paddingTop="@dimen/_4sdp"
+                android:paddingBottom="@dimen/_4sdp"
+                android:text="@string/complete_payment"
+                android:textAllCaps="true"
+                android:textColor="@color/white"
+                android:textSize="@dimen/font_13"
+                app:cornerRadius="@dimen/_4sdp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/container"
+                app:layout_constraintWidth_default="percent"
+                app:layout_constraintWidth_percent="0.75"
+                app:rippleColor="@color/white" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tc_coupon_code"
+                fontPath="fonts/OpenSans-SemiBold.ttf"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_8sdp"
+                android:gravity="center"
+                android:lineSpacingExtra="@dimen/_2sdp"
+                android:onClick="@{()->handler.haveCouponCode()}"
+                android:padding="@dimen/_4sdp"
+                android:paddingTop="@dimen/_8sdp"
+                android:paddingBottom="@dimen/_8sdp"
+                android:text="@string/coupon_code_exist"
+                android:textColor="@color/button_primary_color"
+                android:textSize="@dimen/font_14"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/complete_payment_btn"
+                app:layout_constraintWidth_default="percent"
+                app:layout_constraintWidth_percent="0.75" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

@@ -57,7 +57,8 @@ const val COURSE_ID = "course_ID"
 
 
 class PaymentActivity : CoreJoshActivity(),
-    PaymentResultListener, CouponCodeSubmitFragment.OnCouponCodeSubmitListener {
+    PaymentResultListener, CouponCodeSubmitFragment.OnCouponCodeSubmitListener,
+    CoursePurchaseDetailFragment.OnCourseDetailInteractionListener {
 
     private lateinit var activityPaymentBinding: ActivityPaymentBinding
     private var courseModel: CourseExploreModel? = null
@@ -65,9 +66,10 @@ class PaymentActivity : CoreJoshActivity(),
     private val uiHandler = Handler(Looper.getMainLooper())
     private var courseId: String = EMPTY
     private var currency: String = "INR"
-    private var amount: Long = 0L
+    private var amount: Double = 0.0
     private var courseName = EMPTY
     private var userSubmitCode = EMPTY
+    private lateinit var titleView: AppCompatTextView
 
     companion object {
         fun startPaymentActivity(
@@ -111,7 +113,7 @@ class PaymentActivity : CoreJoshActivity(),
 
 
     private fun initView() {
-        val titleView = findViewById<AppCompatTextView>(R.id.text_message_title)
+        titleView = findViewById(R.id.text_message_title)
         if (courseModel != null) {
             titleView.text = courseModel?.courseName
             courseName = courseModel?.courseName ?: EMPTY
@@ -153,6 +155,16 @@ class PaymentActivity : CoreJoshActivity(),
                     }
                     activityPaymentBinding.progressBar.visibility = View.GONE
                 }
+
+                amount = courseDetailsModelList[0].testCourseDetail.amount
+                courseName = courseDetailsModelList[0].testCourseDetail.courseName
+                if (courseName.isNotEmpty()) {
+                    CoroutineScope(Dispatchers.Main).launch {
+                        titleView.text = courseName
+                    }
+
+                }
+
             } catch (ex: HttpException) {
             } catch (ex: Exception) {
                 ex.printStackTrace()
@@ -229,7 +241,7 @@ class PaymentActivity : CoreJoshActivity(),
 
                 if (courseModel == null) {
                     courseModel = CourseExploreModel()
-                    courseModel?.amount = response.amount.toDouble()
+                    courseModel?.amount = response.amount
                     courseModel?.courseName = response.courseName
                     courseModel?.id = courseId.toInt()
                 }
@@ -261,7 +273,7 @@ class PaymentActivity : CoreJoshActivity(),
                 options.put("amount", response.amount)
                 options.put("prefill", preFill)
                 currency = response.currency
-                amount = response.amount.toLong()
+                amount = response.amount
                 activityPaymentBinding.progressBar.visibility = View.GONE
 
                 checkout.open(this@PaymentActivity, options)
@@ -282,7 +294,20 @@ class PaymentActivity : CoreJoshActivity(),
 
 
     fun buyCourse() {
-        showCouponCodeEnterScreen()
+
+        val courseModel = CourseExploreModel()
+        courseModel.amount = amount
+        courseModel.courseName = courseName
+        courseModel.id = courseId.toInt()
+
+        val fragmentTransaction = supportFragmentManager.beginTransaction()
+        val prev = supportFragmentManager.findFragmentByTag("purchase_details_dialog")
+        if (prev != null) {
+            fragmentTransaction.remove(prev)
+        }
+        fragmentTransaction.addToBackStack(null)
+        CoursePurchaseDetailFragment.newInstance(courseModel)
+            .show(supportFragmentManager, "purchase_details_dialog")
     }
 
 
@@ -390,6 +415,15 @@ class PaymentActivity : CoreJoshActivity(),
         dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         dialog.window?.setDimAmount(0.7f)
         dialog.show()
+    }
+
+
+    override fun onCompletePayment() {
+        requestForPayment()
+    }
+
+    override fun onCouponCode() {
+        showCouponCodeEnterScreen()
     }
 
 }

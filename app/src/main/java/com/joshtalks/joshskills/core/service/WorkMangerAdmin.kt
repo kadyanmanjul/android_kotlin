@@ -2,6 +2,7 @@ package com.joshtalks.joshskills.core.service
 
 import androidx.work.*
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.REFERRAL_EVENT
 import com.joshtalks.joshskills.repository.local.model.ScreenEngagementModel
 import java.util.concurrent.TimeUnit
 
@@ -83,4 +84,16 @@ object WorkMangerAdmin {
         WorkManager.getInstance(AppObjectController.joshApplication)
             .enqueue(OneTimeWorkRequestBuilder<ReferralCodeRefreshWorker>().build())
     }
+
+
+    fun referralEventTracker(event: REFERRAL_EVENT) {
+        val data = workDataOf(
+            REFERRAL_EVENT_OBJECT to AppObjectController.gsonMapper.toJson(event)
+        )
+        val workRequest = OneTimeWorkRequestBuilder<ReferralEventWorker>()
+            .setInputData(data)
+            .build()
+        WorkManager.getInstance(AppObjectController.joshApplication).enqueue(workRequest)
+    }
+
 }

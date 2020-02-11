@@ -59,12 +59,12 @@
 
             <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/iv_earn"
-                    android:layout_width="@dimen/_24sdp"
-                    android:layout_height="@dimen/_24sdp"
+                    android:layout_width="@dimen/_28sdp"
+                    android:layout_height="@dimen/_28sdp"
                     android:layout_centerVertical="true"
                     android:layout_toStartOf="@id/iv_help"
                     android:padding="@dimen/_4sdp"
-                    android:src="@drawable/ic_earn_share"
+                    android:layout_marginEnd="@dimen/_6sdp"
                     android:visibility="gone" />
 
 

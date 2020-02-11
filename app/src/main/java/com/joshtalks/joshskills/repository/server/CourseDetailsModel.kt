@@ -11,5 +11,15 @@ data class CourseDetailsModel(
     @SerializedName("sequence_no")
     val sequenceNo: Int,
     @SerializedName("test")
-    val test: Int
+    val test: Int,
+    @SerializedName("test_data")
+    val testCourseDetail: TestCourseDetail
+)
+
+
+data class TestCourseDetail(
+    @SerializedName("amount")
+    val amount: Double,
+    @SerializedName("course_name")
+    val courseName: String
 )
