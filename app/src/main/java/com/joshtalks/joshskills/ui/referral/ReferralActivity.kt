@@ -216,7 +216,7 @@ class ReferralActivity : BaseActivity() {
                             ignore.printStackTrace()
                             sendIntent.putExtra(
                                 Intent.EXTRA_STREAM,
-                                getBitmapFromView(resource)!!
+                                Uri.fromFile(getBitmapFromView(resource)!!)
                             )
                         }
                     } else {

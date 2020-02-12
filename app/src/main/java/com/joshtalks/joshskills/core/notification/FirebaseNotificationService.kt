@@ -1,5 +1,6 @@
 package com.joshtalks.joshskills.core.notification
 
+import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -123,6 +124,9 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                         )
                     )
                     .setWhen(System.currentTimeMillis())
+
+            notificationBuilder.setDefaults(Notification.DEFAULT_ALL)
+
 
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
