@@ -146,9 +146,9 @@ dependencies {
     implementation 'androidx.multidex:multidex:2.0.1'
     implementation 'androidx.preference:preference:1.1.0'
     implementation 'androidx.appcompat:appcompat:1.1.0'
-    implementation 'androidx.core:core-ktx:1.1.0'
+    implementation 'androidx.core:core-ktx:1.2.0'
     implementation "androidx.collection:collection-ktx:1.1.0"
-    implementation "androidx.fragment:fragment-ktx:1.2.0"
+    implementation "androidx.fragment:fragment-ktx:1.2.1"
 
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
     implementation 'androidx.cardview:cardview:1.0.0'
@@ -159,14 +159,14 @@ dependencies {
     api 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
 
-    implementation 'androidx.work:work-runtime-ktx:2.3.0'
-    implementation 'androidx.work:work-rxjava2:2.3.0'
-    implementation 'androidx.work:work-runtime:2.3.0'
+    implementation 'androidx.work:work-runtime-ktx:2.3.1'
+    implementation 'androidx.work:work-rxjava2:2.3.1'
+    implementation 'androidx.work:work-runtime:2.3.1'
 
 
-    implementation "androidx.room:room-runtime:2.1.0"
-    kapt "androidx.room:room-compiler:2.1.0"
-    implementation "androidx.room:room-ktx:2.1.0"
+    implementation "androidx.room:room-runtime:2.2.3"
+    kapt "androidx.room:room-compiler:2.2.3"
+    implementation "androidx.room:room-ktx:2.2.3"
 
 
     implementation 'com.google.android.material:material:1.2.0-alpha04'
@@ -275,11 +275,10 @@ dependencies {
 
     //Payment Razor pay
     implementation 'com.razorpay:checkout:1.5.12'
-    /// implementation "com.truecaller.android.sdk:truecaller-sdk:0.8" compile group: 'com.truecaller.android.sdk', name: 'truecaller-sdk', version: '1.0.1'
     implementation 'com.github.corouteam:GlideToVectorYou:v2.0.0'
-
-
     implementation 'com.github.dibakarece:DMAudioStreamer:v1.0.5'
+    implementation 'com.github.nisrulz:easydeviceinfo-base:2.4.1'
+
 
     //implementation 'com.github.nkzawa:socket.io-client:0.6.0'
 
@@ -292,16 +291,6 @@ dependencies {
     /**
      * https://proandroiddev.com/getting-started-using-moshi-for-json-parsing-with-kotlin-5a460bf3935a
      * */
-
-
-/*
-    def nav_version = "2.1.0-rc01"
-
-    // Kotlin
-    implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
-    implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
-    //implementation 'net.yslibrary.keyboardvisibilityevent:keyboardvisibilityevent:2.3.0'
-*/
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.2.0'

@@ -173,7 +173,8 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                 }
                 notificationChannelId = ACTION_OPEN_TEST
                 return Intent(applicationContext, PaymentActivity::class.java).apply {
-                    addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
+                    flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+                    flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
                     putExtra(COURSE_ID, actionData)
                 }
             } else if (ACTION_OPEN_CONVERSATION.equals(action, ignoreCase = true)) {

@@ -2,9 +2,8 @@ package com.joshtalks.joshskills.ui.launch
 
 import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
+import com.crashlytics.android.Crashlytics
 import com.facebook.appevents.AppEventsConstants.EVENT_NAME_ACTIVATED_APP
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
@@ -15,12 +14,9 @@ import com.joshtalks.joshskills.ui.payment.PaymentActivity
 import io.branch.referral.Branch
 import io.branch.referral.BranchError
 import io.branch.referral.Defines
-import org.json.JSONObject
 
 
 class LauncherActivity : CoreJoshActivity() {
-
-    private val uiHandler = Handler(Looper.getMainLooper())
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,18 +24,13 @@ class LauncherActivity : CoreJoshActivity() {
         WorkMangerAdmin.readMessageUpdating()
         setContentView(R.layout.activity_launcher)
         handleIntent()
-        uiHandler.postDelayed({
-            val intent = getIntentForState()
-            startActivity(intent)
-            this@LauncherActivity.finish()
-        }, 1800)
     }
 
 
     private fun handleIntent() {
         Branch.getInstance().initSession({ referringParams, error ->
             try {
-                var jsonParms: JSONObject? = referringParams
+                var jsonParms: org.json.JSONObject? = referringParams
                 val sessionParams = Branch.getInstance().latestReferringParams
                 val installParams = Branch.getInstance().firstReferringParams
                 if (referringParams == null && installParams != null) {
@@ -50,7 +41,7 @@ class LauncherActivity : CoreJoshActivity() {
 
                 if (error == null) {
                     if (jsonParms != null && jsonParms.has(Defines.Jsonkey.AndroidDeepLinkPath.key)) {
-                        uiHandler.removeCallbacksAndMessages(null)
+                        AppObjectController.uiHandler.removeCallbacksAndMessages(null)
 
                         val testId =
                             jsonParms.getString(Defines.Jsonkey.AndroidDeepLinkPath.key)
@@ -63,7 +54,6 @@ class LauncherActivity : CoreJoshActivity() {
                                 putExtra(COURSE_ID, testId.split("_")[1])
                             })
                         this@LauncherActivity.finish()
-
                     }
                 } else {
                     Log.e("BRANCH SDK", error.message)
@@ -87,10 +77,19 @@ class LauncherActivity : CoreJoshActivity() {
     }
 
     private object branchListener : Branch.BranchReferralInitListener {
-        override fun onInitFinished(referringParams: JSONObject?, error: BranchError?) {
+        override fun onInitFinished(referringParams: org.json.JSONObject?, error: BranchError?) {
+            Crashlytics.log(error?.message)
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        AppObjectController.uiHandler.postDelayed({
+            val intent = getIntentForState()
+            startActivity(intent)
+            this@LauncherActivity.finish()
+        }, 2000)
+    }
     /*
 
 

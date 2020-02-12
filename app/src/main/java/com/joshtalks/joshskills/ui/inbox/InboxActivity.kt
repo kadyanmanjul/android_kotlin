@@ -3,7 +3,6 @@ package com.joshtalks.joshskills.ui.inbox
 import android.Manifest
 import android.app.Activity
 import android.content.Intent
-import android.graphics.PorterDuff
 import android.graphics.drawable.PictureDrawable
 import android.net.Uri
 import android.os.Bundle
@@ -48,8 +47,6 @@ import com.joshtalks.joshskills.repository.service.SyncChatService
 import com.joshtalks.joshskills.ui.chat.ConversationActivity
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
 import com.joshtalks.joshskills.ui.payment.COURSE_ID
-import com.joshtalks.joshskills.ui.payment.CouponCodeSubmitFragment
-import com.joshtalks.joshskills.ui.payment.CoursePurchaseDetailFragment
 import com.joshtalks.joshskills.ui.referral.PromotionDialogFragment
 import com.joshtalks.joshskills.ui.referral.ReferralActivity
 import com.joshtalks.joshskills.ui.view_holders.EmptyHorizontalView

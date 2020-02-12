@@ -23,7 +23,6 @@ import com.google.android.gms.auth.api.credentials.HintRequest
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.databinding.SignUpStep1FragmentBinding
 
 

@@ -579,6 +579,10 @@ interface ChatDao {
     suspend fun updateQuestionObject(vararg question: Question)
 
 
+    @Query(value = "SELECT created FROM chat_table where question_id IS NOT NULL AND conversation_id= :conversationId ORDER BY created DESC LIMIT 1; ")
+    suspend fun getLastChatDate(conversationId: String): Date?
+
+
 }
 
 

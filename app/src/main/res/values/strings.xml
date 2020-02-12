@@ -163,10 +163,8 @@
     <string name="login_with_otp">Login using OTP</string>
     <string name="wrong_otp">The OTP entered is incorrect. Please enter correct OTP or try regenerating the OTP</string>
     <string name="invite_friends">Invite And Earn</string>
-    <string name="referral_code_title">Referral Code</string>
     <string name="referral_content">Refer your friends &amp; we\'ll give them a discount of ₹ %s on their first course purchase &amp;  ₹ %s cash to you if they buy a course</string>
     <string name="refer_and_earn">Refer &amp; Earn</string>
-    <string name="referrals">REFERRALS</string>
     <string name="referral_amount_title">EARN ₹ %s CASH</string>
     <string name="copy_code">Referral code copied to clipboard</string>
     <string name="discount_header">Do you have discount code?</string>
@@ -177,6 +175,12 @@
 
     <string name="course_details_header">Course Details</string>
     <string name="coupon_code_exist">Do you have a discount code?</string>
+
+    <string name="ringer_mode">Ringer mode</string>
+    <string name="phone_type">Phone Type</string>
+    <string name="network_type">Network Type</string>
+    <string name="device_charging_via">Device charging via </string>
+
 
 
 </resources>

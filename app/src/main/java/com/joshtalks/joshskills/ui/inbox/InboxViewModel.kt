@@ -18,7 +18,6 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
     var appDatabase = AppObjectController.appDatabase
     val registerCourseMinimalLiveData: MutableLiveData<List<InboxEntity>> = MutableLiveData()
     val registerCourseNetworkLiveData: MutableLiveData<List<InboxEntity>> = MutableLiveData()
-    var canOpenPaymentUrl = false
 
 
     fun getRegisterCourses() {

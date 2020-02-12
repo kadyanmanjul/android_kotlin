@@ -52,7 +52,6 @@
     </LinearLayout>
 
     <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/imageView1"
             android:layout_width="@dimen/_64sdp"
             android:layout_height="@dimen/_64sdp"
             android:layout_alignParentTop="true"

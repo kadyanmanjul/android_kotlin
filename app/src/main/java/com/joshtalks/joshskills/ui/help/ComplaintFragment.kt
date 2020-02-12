@@ -33,7 +33,6 @@ import com.joshtalks.joshskills.databinding.FragmentLodgeComplaintBinding
 import com.joshtalks.joshskills.repository.server.RequestComplaint
 import com.joshtalks.joshskills.repository.server.TypeOfHelpModel
 import com.joshtalks.joshskills.ui.signup.PHONE_NUMBER_REGEX
-import com.joshtalks.joshskills.ui.signup.SignUpViewModel
 import com.joshtalks.joshskills.ui.view_holders.ROUND_CORNER
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken

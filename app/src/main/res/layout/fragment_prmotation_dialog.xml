@@ -30,7 +30,7 @@
                     android:focusable="true"
                     android:onClick="@{()->handler.openPromotion()}"
                     android:scaleType="fitCenter"
-                    android:src="@drawable/referral_placeholder" />
+                    android:src="@drawable/video_placeholder" />
         </FrameLayout>
 
         <androidx.appcompat.widget.AppCompatImageView

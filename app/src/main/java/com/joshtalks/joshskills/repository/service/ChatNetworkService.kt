@@ -6,6 +6,7 @@ import com.joshtalks.joshskills.repository.server.AmazonPolicyResponse
 import com.joshtalks.joshskills.repository.server.ChatMessageReceiver
 import com.joshtalks.joshskills.repository.server.RequestEngage
 import com.joshtalks.joshskills.repository.server.ResponseChatMessage
+import io.reactivex.subjects.ReplaySubject
 import kotlinx.coroutines.Deferred
 import retrofit2.http.*
 
@@ -50,6 +51,9 @@ interface ChatNetworkService {
 
     @POST("$DIR/practice/engagement/")
     fun submitPracticeAsync(@Body requestEngage: RequestEngage): Deferred<PracticeEngagement>
+
+    @POST("$DIR/practice/engagement/")
+    fun dwd(): ReplaySubject<String>
 
 
 }

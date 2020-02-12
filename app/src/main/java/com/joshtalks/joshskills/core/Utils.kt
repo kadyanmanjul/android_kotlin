@@ -41,6 +41,7 @@ import com.joshtalks.joshskills.core.custom_ui.CustomTabHelper
 import com.joshtalks.joshskills.core.datetimeutils.DateTimeStyle
 import com.joshtalks.joshskills.core.datetimeutils.DateTimeUtils
 import com.muddzdev.styleabletoast.StyleableToast
+import github.nisrulz.easydeviceinfo.base.EasyConfigMod
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.File
@@ -607,6 +608,13 @@ object Utils {
                 .solidBackground().show()
             e.printStackTrace()
         }
+    }
+
+
+    fun getDeviceInfo() {
+        var easyConfigMod = EasyConfigMod(AppObjectController.joshApplication)
+
+
     }
 
 

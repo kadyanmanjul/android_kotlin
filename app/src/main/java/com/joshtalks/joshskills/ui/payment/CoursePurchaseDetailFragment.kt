@@ -89,8 +89,6 @@ class CoursePurchaseDetailFragment : DialogFragment() {
     }
 
 
-
-
     companion object {
         @JvmStatic
         fun newInstance(courseModel: CourseExploreModel) =

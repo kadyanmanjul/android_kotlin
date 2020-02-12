@@ -42,18 +42,10 @@ interface CourseDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertRegisterCourses(courseList: List<Course>)
 
-
     @Query(value = "select * from course where conversation_id= :conversation_id ")
     suspend fun chooseRegisterCourseMinimal(conversation_id: String): InboxEntity?
 
-/*
-    @Query(value = "SELECT * FROM course ")
+    @Query(value = "select * FROM (SELECT *,co.conversation_id,co.courseId FROM course co  LEFT JOIN chat_table ct ON  co.conversation_id = ct.conversation_id AND is_delete_message=0  LEFT JOIN question_table qt ON ct.chat_id = qt.chatId  ORDER BY created ASC) inbox where is_deleted=0 GROUP BY inbox.conversation_id ORDER BY created DESC")
     suspend fun getRegisterCourseMinimal(): List<InboxEntity>
-*/
-
-
-    @Query(value = "select inbox.* from (SELECT *,co.conversation_id,co.courseId from course co LEFT JOIN chat_table ct ON  co.conversation_id = ct.conversation_id AND is_delete_message=0  LEFT JOIN question_table qt ON ct.chat_id = qt.chatId  ORDER BY created ASC) inbox GROUP BY inbox.conversation_id ORDER BY created DESC")
-    suspend fun getRegisterCourseMinimal(): List<InboxEntity>
-
 
 }

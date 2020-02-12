@@ -34,6 +34,7 @@ import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.CourseDetailsModel
 import com.joshtalks.joshskills.repository.server.CourseExploreModel
 import com.joshtalks.joshskills.repository.server.PaymentDetailsResponse
+import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
 import com.joshtalks.joshskills.ui.sign_up_old.OnBoardActivity
 import com.joshtalks.joshskills.ui.signup.IS_ACTIVITY_FOR_RESULT
 import com.joshtalks.joshskills.ui.view_holders.CourseDetailViewHolder
@@ -104,11 +105,23 @@ class PaymentActivity : CoreJoshActivity(),
         if (intent.hasExtra(COURSE_ID)) {
             courseId = intent.getStringExtra(COURSE_ID)!!
         }
+        if (courseId.isEmpty()) {
+            invalidCourseId()
+            return
+        }
         initRV()
         initView()
         getCourseDetails()
         Checkout.preload(application)
         openWhatsAppHelp()
+    }
+
+    private fun invalidCourseId() {
+        startActivity(Intent(applicationContext, CourseExploreActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
+        })
+        finishAndRemoveTask()
+
     }
 
 
@@ -166,6 +179,10 @@ class PaymentActivity : CoreJoshActivity(),
                 }
 
             } catch (ex: HttpException) {
+                if (ex.code() == 500) {
+                    invalidCourseId()
+                }
+                ex.printStackTrace()
             } catch (ex: Exception) {
                 ex.printStackTrace()
             }
@@ -222,8 +239,8 @@ class PaymentActivity : CoreJoshActivity(),
     private fun getPaymentDetails(testId: String?) {
         activityPaymentBinding.progressBar.visibility = View.VISIBLE
         BranchIOAnalytics.pushToBranch(BRANCH_STANDARD_EVENT.INITIATE_PURCHASE)
-        try {
-            CoroutineScope(Dispatchers.IO).launch {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
                 if (testId.isNullOrEmpty().not() && testId.equals("null").not()) {
                     courseId = testId!!
                 }
@@ -245,13 +262,15 @@ class PaymentActivity : CoreJoshActivity(),
                     courseModel?.courseName = response.courseName
                     courseModel?.id = courseId.toInt()
                 }
-
                 initializeRazorpayPayment(response)
+            } catch (ex: HttpException) {
+                ex.printStackTrace()
+            } catch (ex: Exception) {
+                activityPaymentBinding.progressBar.visibility = View.GONE
+                ex.printStackTrace()
             }
-        } catch (ex: Exception) {
-            activityPaymentBinding.progressBar.visibility = View.GONE
-            ex.printStackTrace()
         }
+
     }
 
     private fun initializeRazorpayPayment(response: PaymentDetailsResponse) {

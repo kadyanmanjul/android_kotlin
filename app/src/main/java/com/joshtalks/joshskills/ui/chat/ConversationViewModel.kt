@@ -278,18 +278,24 @@ class ConversationViewModel(application: Application, private var inboxEntity: I
             }
             if (Utils.isInternetAvailable()) {
                 val arguments = mutableMapOf<String, String>()
+
                 PrefManager.getLongValue(inboxEntity.conversation_id).let { time ->
                     if (time > 0) {
                         arguments["created"] = (time / 1000).toString()
                     }
                 }
+                val lastQuestionTime =
+                    appDatabase.chatDao().getLastChatDate(inboxEntity.conversation_id)
+                lastQuestionTime?.run {
+                    arguments["created"] = (this.time / 1000).toString()
+                }
+
                 NetworkRequestHelper.getUpdatedChat(
                     inboxEntity.conversation_id,
                     queryMap = arguments
                 )
             } else {
                 RxBus2.publish(MessageCompleteEventBus(false))
-
             }
         }
         refreshChatEverySomeTime()

@@ -14,7 +14,6 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.SignUpStepStatus
-import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.databinding.FragmentSignUpStep2Binding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.OTPReceivedEventBus

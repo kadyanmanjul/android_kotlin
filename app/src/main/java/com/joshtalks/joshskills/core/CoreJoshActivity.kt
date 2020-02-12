@@ -10,6 +10,8 @@ import com.joshtalks.joshskills.ui.inbox.COURSE_EXPLORER_WITHOUT_CODE
 
 
 abstract class CoreJoshActivity : BaseActivity() {
+
+
     override fun onStart() {
         super.onStart()
         try {
@@ -38,3 +40,20 @@ abstract class CoreJoshActivity : BaseActivity() {
         this.finish()
     }
 }
+
+
+/*object RxBus22 {
+    private val publisher = ReplaySubject.create<Any>()
+
+    @JvmStatic
+    fun publish(event: Any) {
+        publisher.onNext(event)
+    }
+    val connectObserable = publisher.share().replay()
+
+}
+
+*/
+
+
+
