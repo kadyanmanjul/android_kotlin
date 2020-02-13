@@ -168,10 +168,6 @@
                                     android:textColor="@color/font_color"
                                     android:textSize="@dimen/font_14"
                                     android:marqueeRepeatLimit="marquee_forever"
-                                    android:scrollHorizontally="true"
-                                    android:focusable="true"
-                                    android:focusableInTouchMode="true"
-                                    android:freezesText="true"
                                     app:layout_constraintStart_toEndOf="@+id/course_image"
                                     app:layout_constraintTop_toTopOf="@id/course_image" />
 
