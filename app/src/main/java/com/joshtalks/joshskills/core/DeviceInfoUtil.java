@@ -91,7 +91,7 @@ public class DeviceInfoUtil {
 
 
             // Sensor Mod
-            EasySensorMod easySensorMod = new EasySensorMod(context);
+            /*EasySensorMod easySensorMod = new EasySensorMod(context);
             List<Sensor> list = easySensorMod.getAllSensors();
             for (Sensor s : list) {
                 if (s != null) {
@@ -114,7 +114,7 @@ public class DeviceInfoUtil {
                     deviceDataMap.put("Sensor", "N/A");
                 }
             }
-
+*/
             // SIM Mod
             EasySimMod easySimMod = new EasySimMod(context);
             deviceDataMap.put("IMSI", easySimMod.getIMSI());

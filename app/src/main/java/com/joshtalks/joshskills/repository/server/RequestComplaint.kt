@@ -15,5 +15,9 @@ data class RequestComplaint(
     @SerializedName("name")
     val name: String,
     @SerializedName("problem")
-    val problem: String
+    val problem: String,
+    @SerializedName("mobile_info")
+    val mobile_info: Any
+
+
 )

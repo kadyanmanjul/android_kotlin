@@ -24,10 +24,8 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.MultiTransformation
 import com.bumptech.glide.request.RequestOptions
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.ApiCallStatus
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.PermissionUtils
-import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.custom_ui.progress.FlipProgressDialog
 import com.joshtalks.joshskills.databinding.FragmentLodgeComplaintBinding
 import com.joshtalks.joshskills.repository.server.RequestComplaint
@@ -274,7 +272,8 @@ class ComplaintFragment : Fragment() {
             attachmentPath,
             lodgeComplaintBinding.etNumber.text.toString(),
             lodgeComplaintBinding.etName.text.toString(),
-            lodgeComplaintBinding.etComplaint.text.toString()
+            lodgeComplaintBinding.etComplaint.text.toString(),
+            DeviceInfoUtil.getDetails(AppObjectController.joshApplication)
         )
         viewModel.requestComplaint(requestComplaint)
     }
