@@ -201,10 +201,10 @@ class PaymentActivity : CoreJoshActivity(),
         Log.i("error", p1 ?: "")
     }
 
-    override fun onPaymentSuccess(p0: String?) {
+    override fun onPaymentSuccess(razorpayPaymentId: String) {
         val extras: HashMap<String, String> = HashMap()
         extras["test_id"] = courseId
-        extras["payment_id"] = p0 ?: EMPTY
+        extras["payment_id"] = razorpayPaymentId
         extras["currency"] = currency
         extras["amount"] = (courseModel?.amount ?: amount).toString()
         extras["course_name"] = courseName

@@ -274,7 +274,7 @@ dependencies {
     implementation 'com.clevertap.android:clevertap-android-sdk:3.5.1'
 
     //Payment Razor pay
-    implementation 'com.razorpay:checkout:1.5.12'
+    implementation 'com.razorpay:checkout:1.5.13'
     implementation 'com.github.corouteam:GlideToVectorYou:v2.0.0'
     implementation 'com.github.dibakarece:DMAudioStreamer:v1.0.5'
     implementation 'com.github.nisrulz:easydeviceinfo-base:2.4.1'
