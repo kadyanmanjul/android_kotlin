@@ -8,6 +8,7 @@ import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
 import android.text.Editable
+import android.text.InputFilter
 import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
@@ -84,7 +85,7 @@ class CouponCodeSubmitFragment : DialogFragment() {
             try {
                 if (event.action == MotionEvent.ACTION_UP) {
                     if (event.rawX >= (binding.etCode.right - binding.etCode.compoundDrawables[DRAWABLE_RIGHT].bounds.width())) {
-                        validatingCouponCode(binding.etCode.text.toString())
+                        validatingCouponCode(binding.etCode.text.toString().trim())
                         return@setOnTouchListener true
                     }
                 }
@@ -97,7 +98,7 @@ class CouponCodeSubmitFragment : DialogFragment() {
 
         binding.etCode.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
-                if (s.isNullOrEmpty()) {
+                if (s?.trim().isNullOrEmpty()) {
                     binding.etCode.setCompoundDrawables(null, null, null, null)
                 } else {
                     addDrawableInEditText()
@@ -110,6 +111,10 @@ class CouponCodeSubmitFragment : DialogFragment() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
             }
 
+        })
+
+        binding.etCode.filters = arrayOf(InputFilter { source, _, _, _, _, _ ->
+            source.toString().filterNot { it.isWhitespace() }
         })
 
     }
@@ -159,6 +164,9 @@ class CouponCodeSubmitFragment : DialogFragment() {
 
 
     private fun validatingCouponCode(couponCode: String) {
+        if (couponCode.isEmpty()) {
+            return
+        }
 
         if (Mentor.getInstance().hasId() && couponCode.equals(
                 Mentor.getInstance().referralCode,

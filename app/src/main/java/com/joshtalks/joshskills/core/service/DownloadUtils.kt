@@ -160,6 +160,7 @@ object DownloadUtils {
                         )
                     )
                 )
+
                 val imageBitmap = Glide.with(AppObjectController.joshApplication)
                     .asBitmap()
                     .load(imageUrl).submit().get()

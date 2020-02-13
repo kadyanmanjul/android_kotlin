@@ -88,7 +88,7 @@ class Mentor {
     }
 
     fun getId(): String {
-        return id.toString()
+        return id ?: EMPTY
     }
 
 

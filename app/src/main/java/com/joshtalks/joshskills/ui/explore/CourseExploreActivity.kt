@@ -26,6 +26,7 @@ import com.joshtalks.joshskills.core.service.WorkMangerAdmin
 import com.joshtalks.joshskills.databinding.ActivityCourseExploreBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
+import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.ScreenEngagementModel
 import com.joshtalks.joshskills.repository.server.CourseExploreModel
 import com.joshtalks.joshskills.ui.inbox.REGISTER_NEW_COURSE_CODE
@@ -142,8 +143,10 @@ class CourseExploreActivity : CoreJoshActivity() {
 
         CoroutineScope(Dispatchers.IO).launch {
             try {
+
+                val data = mapOf("is_default" to "true","mentor" to Mentor.getInstance().getId())
                 val response: List<CourseExploreModel> =
-                    AppObjectController.signUpNetworkService.explorerCourse()
+                    AppObjectController.signUpNetworkService.explorerCourse(data)
                 CoroutineScope(Dispatchers.Main).launch {
                     var list: ArrayList<InboxEntity>? = null
                     if (intent.hasExtra(USER_COURSES) && intent.getSerializableExtra(USER_COURSES) != null) {

@@ -206,7 +206,7 @@ class PaymentActivity : CoreJoshActivity(),
         extras["test_id"] = courseId
         extras["payment_id"] = p0 ?: EMPTY
         extras["currency"] = currency
-        extras["amount"] = courseModel?.amount.toString()
+        extras["amount"] = (courseModel?.amount ?: amount).toString()
         extras["course_name"] = courseName
         BranchIOAnalytics.pushToBranch(BRANCH_STANDARD_EVENT.PURCHASE, extras)
 
@@ -293,6 +293,7 @@ class PaymentActivity : CoreJoshActivity(),
                 options.put("prefill", preFill)
                 currency = response.currency
                 amount = response.amount
+                courseModel?.amount = amount
                 activityPaymentBinding.progressBar.visibility = View.GONE
 
                 checkout.open(this@PaymentActivity, options)
@@ -387,17 +388,17 @@ class PaymentActivity : CoreJoshActivity(),
         code?.run {
             userSubmitCode = this
         }
+        requestForPayment()
+    }
+
+
+    private fun requestForPayment() {
         if (User.getInstance().token == null) {
             startActivityForResult(Intent(this, OnBoardActivity::class.java).apply {
                 putExtra(IS_ACTIVITY_FOR_RESULT, true)
             }, 101)
             return
         }
-        requestForPayment()
-    }
-
-
-    private fun requestForPayment() {
         if (userSubmitCode.isEmpty().not() && userSubmitCode.equals(
                 Mentor.getInstance().referralCode,
                 ignoreCase = true

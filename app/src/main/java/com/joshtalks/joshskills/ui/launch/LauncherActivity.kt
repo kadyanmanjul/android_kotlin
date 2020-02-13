@@ -90,6 +90,9 @@ class LauncherActivity : CoreJoshActivity() {
             this@LauncherActivity.finish()
         }, 2000)
     }
+
+
+
     /*
 
 
