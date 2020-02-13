@@ -26,6 +26,7 @@
                 android:layout_height="wrap_content">
 
             <RelativeLayout
+
                     android:id="@+id/rl_container"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -74,6 +75,7 @@
                         app:contentPaddingBottom="@dimen/_8sdp">
 
                     <LinearLayout
+
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="@dimen/_60sdp"
@@ -83,6 +85,7 @@
                                 fontPath="fonts/Roboto-Bold.ttf"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
+                                android:gravity="center"
                                 android:text="@string/thank_you"
                                 android:textAlignment="center"
                                 android:textColor="@color/font_color"
@@ -92,6 +95,7 @@
                                 fontPath="fonts/Roboto-Medium.ttf"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
+                                android:gravity="center"
                                 android:text="@string/payment_process_success"
                                 android:textAlignment="center"
                                 android:textColor="@color/font_color"
@@ -158,8 +162,9 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_marginStart="@dimen/_10sdp"
+                                    android:ellipsize="marquee"
                                     android:gravity="start|center"
-                                    android:lines="1"
+                                    android:singleLine="true"
                                     android:textColor="@color/font_color"
                                     android:textSize="@dimen/font_14"
                                     app:layout_constraintStart_toEndOf="@+id/course_image"
@@ -428,7 +433,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center|bottom"
                     android:layout_marginTop="@dimen/_16sdp"
-                    android:layout_marginBottom="@dimen/_20sdp"
+                    android:layout_marginBottom="@dimen/_4sdp"
                     android:background="@drawable/round_rectangle"
                     android:backgroundTint="@color/button_primary_color"
                     android:gravity="center"

@@ -292,7 +292,7 @@ class PaymentActivity : CoreJoshActivity(),
                 options.put("amount", response.amount)
                 options.put("prefill", preFill)
                 currency = response.currency
-                amount = response.amount
+                amount = response.amount / 100
                 courseModel?.amount = amount
                 activityPaymentBinding.progressBar.visibility = View.GONE
 

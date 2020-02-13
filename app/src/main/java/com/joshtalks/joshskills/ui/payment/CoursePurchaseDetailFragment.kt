@@ -61,7 +61,7 @@ class CoursePurchaseDetailFragment : DialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.tvCourseName.text = courseModel.courseName
-        binding.tvCourseAmount.text = "₹" + (courseModel.amount).toString()
+        binding.tvCourseAmount.text = "₹" + String.format("%.2f", courseModel.amount)
     }
 
     override fun onAttach(context: Context) {
