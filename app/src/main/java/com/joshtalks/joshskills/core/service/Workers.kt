@@ -232,7 +232,7 @@ class ReferralEventWorker(context: Context, private val workerParams: WorkerPara
 }
 
 
-const val NEW_COURSE_SCREEN_FIREBASE_DATABASE = "new_course_screen"
+const val NEW_COURSE_SCREEN_FIREBASE_DATABASE = "new_course_screen_event"
 
 class NewCourseScreenEventWorker(context: Context, private val workerParams: WorkerParameters) :
     CoroutineWorker(context, workerParams) {
