@@ -62,6 +62,7 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
     private GestureDetector gestureDetector;
     private PlayerControlViewVisibilityListener playerControlViewVisibilityListener;
     private Handler timeHandler = new Handler();
+    private PlayerFullScreenListener playerFullScreenListener;
     private Runnable timeRunnable = new Runnable() {
         @Override
         public void run() {
@@ -325,6 +326,14 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
         }
     }
 
+    public void setPlayListener(PlayerFullScreenListener playerFullScreenListener) {
+        findViewById(R.id.exo_play).setOnClickListener(this);
+        findViewById(R.id.ivFullScreenToggleOp).setOnClickListener(this);
+        findViewById(R.id.ivFullScreenToggleOp).setVisibility(VISIBLE);
+        this.playerFullScreenListener = playerFullScreenListener;
+
+    }
+
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
@@ -353,7 +362,16 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
         if (v.getId() == R.id.ivFullScreenToggle) {
             if (getContext() instanceof FullscreenToggleListener)
                 ((FullscreenToggleListener) getContext()).onFullscreenToggle();
+        } else if (v.getId() == R.id.exo_play) {
+            if (!player.isPlaying()) {
+                downloadStreamPlay();
+            }
+        } else if (v.getId() == R.id.ivFullScreenToggleOp) {
+            if (playerFullScreenListener != null) {
+                playerFullScreenListener.onFullScreen();
+            }
         }
+
 
     }
 
@@ -396,8 +414,13 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
 
     public interface PlayerControlViewVisibilityListener {
         void onVisibilityChange(int visibility);
-
     }
+
+
+    public interface PlayerFullScreenListener {
+        void onFullScreen();
+    }
+
 
     private class PlayerEventListener implements Player.EventListener {
 

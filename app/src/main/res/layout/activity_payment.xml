@@ -18,24 +18,106 @@
             android:layout_height="match_parent"
             android:background="@color/white">
 
-        <include layout="@layout/base_toolbar" />
 
-
-        <com.mindorks.placeholderview.PlaceHolderView
-                android:id="@+id/recycler_view"
+        <FrameLayout
+                android:id="@+id/old_course_container"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="?attr/actionBarSize"
-                android:background="@android:color/white"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                android:layout_height="match_parent"
+                android:visibility="gone">
+
+            <include layout="@layout/base_toolbar" />
+
+
+            <com.mindorks.placeholderview.PlaceHolderView
+                    android:id="@+id/recycler_view"
+
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="?attr/actionBarSize"
+                    android:background="@android:color/white"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end|bottom"
+                    android:layout_marginBottom="@dimen/_8sdp">
+
+                <com.google.android.material.button.MaterialButton
+                        android:id="@+id/find_more"
+                        style="@style/Widget.MaterialComponents.Button"
+                        fontPath="fonts/OpenSans-SemiBold.ttf"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="@dimen/_30sdp"
+                        android:background="@drawable/round_rectangle"
+                        android:backgroundTint="@color/button_primary_color"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:gravity="center"
+                        android:onClick="@{()->handler.buyCourse()}"
+                        android:paddingTop="@dimen/_8sdp"
+                        android:paddingBottom="@dimen/_8sdp"
+                        android:text="@string/start_course"
+                        android:textAllCaps="false"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/font_17"
+                        app:cornerRadius="@dimen/_4sdp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintWidth_default="percent"
+                        app:layout_constraintWidth_percent="0.8"
+                        app:rippleColor="@color/white" />
+
+
+                <FrameLayout
+                        android:id="@+id/whatsapp_help_container"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:visibility="invisible"
+                        app:layout_constraintBottom_toTopOf="@+id/find_more"
+                        app:layout_constraintEnd_toEndOf="parent">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                            android:id="@+id/whatsapp_help"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:padding="@dimen/_8sdp"
+                            android:src="@drawable/ic_whatsapp" />
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                            android:id="@+id/iv_hide_help"
+                            android:layout_width="@dimen/_14sdp"
+                            android:layout_height="@dimen/_14sdp"
+                            android:layout_gravity="end|top"
+                            android:background="@drawable/bg_white_round_36"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:src="@drawable/ic_cross"
+                            android:tint="@color/grey_7A" />
+
+
+                </FrameLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </FrameLayout>
+
+        <FrameLayout
+                android:id="@+id/container"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="gone" />
 
         <FrameLayout
                 android:id="@+id/progress_bar"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="#29000000">
+                android:background="#29000000"
+                android:visibility="gone">
 
             <com.pnikosis.materialishprogress.ProgressWheel
                     android:layout_width="@dimen/_82sdp"
@@ -51,70 +133,6 @@
 
         </FrameLayout>
 
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="end|bottom"
-                android:layout_marginBottom="@dimen/_8sdp">
-
-            <com.google.android.material.button.MaterialButton
-                    android:id="@+id/find_more"
-                    style="@style/Widget.MaterialComponents.Button"
-                    fontPath="fonts/OpenSans-SemiBold.ttf"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginTop="@dimen/_30sdp"
-                    android:background="@drawable/round_rectangle"
-
-                    android:backgroundTint="@color/button_primary_color"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:gravity="center"
-                    android:onClick="@{()->handler.buyCourse()}"
-                    android:paddingTop="@dimen/_8sdp"
-                    android:paddingBottom="@dimen/_8sdp"
-                    android:text="@string/start_course"
-                    android:textAllCaps="false"
-                    android:textColor="@color/white"
-                    android:textSize="@dimen/font_17"
-                    app:cornerRadius="@dimen/_4sdp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintWidth_default="percent"
-                    app:layout_constraintWidth_percent="0.8"
-                    app:rippleColor="@color/white" />
-
-
-            <FrameLayout
-                    android:id="@+id/whatsapp_help_container"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:visibility="invisible"
-                    app:layout_constraintBottom_toTopOf="@+id/find_more"
-                    app:layout_constraintEnd_toEndOf="parent">
-
-                <androidx.appcompat.widget.AppCompatImageView
-                        android:id="@+id/whatsapp_help"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:padding="@dimen/_8sdp"
-                        android:src="@drawable/ic_whatsapp" />
-
-                <androidx.appcompat.widget.AppCompatImageView
-                        android:id="@+id/iv_hide_help"
-                        android:layout_width="@dimen/_14sdp"
-                        android:layout_height="@dimen/_14sdp"
-                        android:layout_gravity="end|top"
-                        android:background="@drawable/bg_white_round_36"
-                        android:clickable="true"
-                        android:focusable="true"
-                        android:src="@drawable/ic_cross"
-                        android:tint="@color/grey_7A" />
-            </FrameLayout>
-        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </FrameLayout>
 </layout>

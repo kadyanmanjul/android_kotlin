@@ -18,14 +18,18 @@ import android.widget.Toast
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.commit
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.crashlytics.android.Crashlytics
 import com.facebook.appevents.AppEventsConstants
+import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.CoreJoshActivity
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.analytics.BranchIOAnalytics
+import com.joshtalks.joshskills.core.service.WorkMangerAdmin
 import com.joshtalks.joshskills.databinding.ActivityPaymentBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.BuyCourseEventBus
@@ -34,6 +38,7 @@ import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.CourseDetailsModel
 import com.joshtalks.joshskills.repository.server.CourseExploreModel
 import com.joshtalks.joshskills.repository.server.PaymentDetailsResponse
+import com.joshtalks.joshskills.repository.server.course_detail.CourseDetailsResponse
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
 import com.joshtalks.joshskills.ui.sign_up_old.OnBoardActivity
 import com.joshtalks.joshskills.ui.signup.IS_ACTIVITY_FOR_RESULT
@@ -98,6 +103,8 @@ class PaymentActivity : CoreJoshActivity(),
         activityPaymentBinding = DataBindingUtil.setContentView(this, R.layout.activity_payment)
         activityPaymentBinding.lifecycleOwner = this
         activityPaymentBinding.handler = this
+        initView()
+
         if (intent.hasExtra(COURSE_OBJECT)) {
             courseModel = intent.getSerializableExtra(COURSE_OBJECT) as CourseExploreModel
             courseId = courseModel?.id.toString()
@@ -109,11 +116,40 @@ class PaymentActivity : CoreJoshActivity(),
             invalidCourseId()
             return
         }
-        initRV()
-        initView()
-        getCourseDetails()
-        Checkout.preload(application)
-        openWhatsAppHelp()
+        val typeToken = object : TypeToken<List<CourseDetailsResponse>>() {}.type
+        val list: List<CourseDetailsResponse>? =
+            AppObjectController.gsonMapperForLocal.fromJson<List<CourseDetailsResponse>>(
+                AppObjectController.getFirebaseRemoteConfig().getString("course_details"),
+                typeToken
+            )
+
+        val obj: CourseDetailsResponse? = list?.find { it.courseId == courseId.toInt() }
+        if (obj != null) {
+            obj.let {
+                courseName = it.courseName
+                amount = it.courseDiscountPrice
+            }
+
+            activityPaymentBinding.container.visibility = View.VISIBLE
+            supportFragmentManager.commit(true) {
+                addToBackStack(CourseDetailType1Fragment::class.java.name)
+                setCustomAnimations(R.anim.slide_in_left, R.anim.slide_in_right)
+                add(
+                    R.id.container,
+                    CourseDetailType1Fragment.newInstance(courseId.toInt()),
+                    CourseDetailType1Fragment::class.java.name
+                )
+            }
+            WorkMangerAdmin.newCourseScreenEventWorker(courseName, courseId)
+        } else {
+            activityPaymentBinding.oldCourseContainer.visibility = View.VISIBLE
+            initRV()
+            getCourseDetails()
+            Checkout.preload(application)
+            openWhatsAppHelp()
+        }
+
+
     }
 
     private fun invalidCourseId() {
@@ -237,7 +273,9 @@ class PaymentActivity : CoreJoshActivity(),
     }
 
     private fun getPaymentDetails(testId: String?) {
-        activityPaymentBinding.progressBar.visibility = View.VISIBLE
+        AppObjectController.uiHandler.post {
+            activityPaymentBinding.progressBar.visibility = View.VISIBLE
+        }
         BranchIOAnalytics.pushToBranch(BRANCH_STANDARD_EVENT.INITIATE_PURCHASE)
         CoroutineScope(Dispatchers.IO).launch {
             try {
@@ -266,8 +304,11 @@ class PaymentActivity : CoreJoshActivity(),
             } catch (ex: HttpException) {
                 ex.printStackTrace()
             } catch (ex: Exception) {
-                activityPaymentBinding.progressBar.visibility = View.GONE
+                AppObjectController.uiHandler.post {
+                    activityPaymentBinding.progressBar.visibility = View.GONE
+                }
                 ex.printStackTrace()
+                Crashlytics.logException(ex)
             }
         }
 
@@ -314,7 +355,6 @@ class PaymentActivity : CoreJoshActivity(),
 
 
     fun buyCourse() {
-
         val courseModel = CourseExploreModel()
         courseModel.amount = amount
         courseModel.courseName = courseName
@@ -337,6 +377,7 @@ class PaymentActivity : CoreJoshActivity(),
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
+                    buyCourse()
                 }, {
                     it.printStackTrace()
                 })
@@ -391,6 +432,14 @@ class PaymentActivity : CoreJoshActivity(),
         requestForPayment()
     }
 
+    override fun onBackPressed() {
+        if (supportFragmentManager.findFragmentById(R.id.container) != null) {
+            this@PaymentActivity.finish()
+            return
+        }
+        super.onBackPressed()
+
+    }
 
     private fun requestForPayment() {
         if (User.getInstance().token == null) {

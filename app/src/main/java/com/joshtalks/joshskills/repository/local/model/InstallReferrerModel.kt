@@ -3,12 +3,13 @@ package com.joshtalks.joshskills.repository.local.model
 import com.google.gson.annotations.SerializedName
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.PrefManager
+import java.util.*
 
 const val INSTALL_REFERRER_OBJECT = "install_referrer_object"
 
 open class InstallReferrerModel {
     @SerializedName("install_on")
-    var installOn: Long = System.currentTimeMillis()
+    var installOn: Long = Date().time
     @SerializedName("mentor")
     var mentor: String? = null
     @SerializedName("other_info")

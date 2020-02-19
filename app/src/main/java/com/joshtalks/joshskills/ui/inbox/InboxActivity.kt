@@ -411,6 +411,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
     }
 
     private fun addCourseExploreView() {
+
         if (AppObjectController.getFirebaseRemoteConfig().getBoolean("course_explore_flag")) {
             recycler_view_inbox.addView(FindMoreViewHolder())
         } else {

@@ -144,7 +144,7 @@ class CourseExploreActivity : CoreJoshActivity() {
         CoroutineScope(Dispatchers.IO).launch {
             try {
 
-                val data = mapOf("is_default" to "true","mentor" to Mentor.getInstance().getId())
+                val data = mapOf("is_default" to "true", "mentor" to Mentor.getInstance().getId())
                 val response: List<CourseExploreModel> =
                     AppObjectController.signUpNetworkService.explorerCourse(data)
                 CoroutineScope(Dispatchers.Main).launch {

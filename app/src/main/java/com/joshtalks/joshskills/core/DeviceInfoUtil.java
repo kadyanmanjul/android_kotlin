@@ -2,7 +2,6 @@ package com.joshtalks.joshskills.core;
 
 import android.Manifest;
 import android.content.Context;
-import android.hardware.Sensor;
 import android.telephony.SubscriptionInfo;
 import android.telephony.SubscriptionManager;
 
@@ -27,7 +26,6 @@ import github.nisrulz.easydeviceinfo.base.EasyLocationMod;
 import github.nisrulz.easydeviceinfo.base.EasyMemoryMod;
 import github.nisrulz.easydeviceinfo.base.EasyNetworkMod;
 import github.nisrulz.easydeviceinfo.base.EasyNfcMod;
-import github.nisrulz.easydeviceinfo.base.EasySensorMod;
 import github.nisrulz.easydeviceinfo.base.EasySimMod;
 import github.nisrulz.easydeviceinfo.base.NetworkType;
 import github.nisrulz.easydeviceinfo.base.PhoneType;

@@ -17,6 +17,7 @@ import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.ScreenEngagementModel
 import com.joshtalks.joshskills.repository.server.MessageStatusRequest
 import com.joshtalks.joshskills.repository.service.NetworkRequestHelper
+import java.util.*
 
 
 const val INSTALL_REFERRER_SYNC = "install_referrer_sync"
@@ -88,7 +89,7 @@ class BuyNowImageEventWorker(context: Context, private val workerParams: WorkerP
         val courseName = workerParams.inputData.getString("course_name")
         val database = FirebaseDatabase.getInstance()
         val myRef = database.getReference(BUY_IMAGE_NOW_FIREBASE_DATABASE)
-        myRef.child(courseName + "_" + System.currentTimeMillis().toString())
+        myRef.child(courseName + "_" + Date().time.toString())
             .setValue(Mentor.getInstance().getId())
         return Result.success()
     }
@@ -228,12 +229,32 @@ class ReferralEventWorker(context: Context, private val workerParams: WorkerPara
         )
         val database = FirebaseDatabase.getInstance()
         val myRef = database.getReference("REFERRAL_EVENT")
-        myRef.child(obj.type).child(System.currentTimeMillis().toString())
+        myRef.child(obj.type).child(Date().time.toString())
             .setValue(Mentor.getInstance().getId())
         return Result.success()
     }
 
 }
+
+
+const val NEW_COURSE_SCREEN_FIREBASE_DATABASE = "new_course_screen"
+
+class NewCourseScreenEventWorker(context: Context, private val workerParams: WorkerParameters) :
+    Worker(context, workerParams) {
+
+    override fun doWork(): Result {
+        val courseName = workerParams.inputData.getString("course_name")
+        val courseID = workerParams.inputData.getString("course_id")
+
+        val database = FirebaseDatabase.getInstance()
+        val myRef = database.getReference(NEW_COURSE_SCREEN_FIREBASE_DATABASE)
+        myRef.child(courseID + "_" + courseName + "_" + Date().time.toString())
+            .setValue(Mentor.getInstance().getId())
+        return Result.success()
+    }
+
+}
+
 
 
 

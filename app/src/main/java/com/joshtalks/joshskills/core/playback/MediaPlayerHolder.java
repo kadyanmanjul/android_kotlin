@@ -197,8 +197,9 @@ public final class MediaPlayerHolder implements PlayerInterface, MediaPlayer.OnC
     @Override
     public void clearNotification() {
         try {
-            mNotificationActionsReceiver.clearAbortBroadcast();
             mMusicNotificationManager.getNotificationManager().cancelAll();
+            mNotificationActionsReceiver.clearAbortBroadcast();
+
         } catch (Exception e) {
             e.printStackTrace();
         }

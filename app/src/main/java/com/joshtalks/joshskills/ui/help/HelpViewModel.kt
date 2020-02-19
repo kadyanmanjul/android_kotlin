@@ -74,6 +74,7 @@ class HelpViewModel(application: Application) : AndroidViewModel(application) {
     private suspend fun uploadAttachmentMedia(mediaPath: String?): Any? {
         return viewModelScope.async(Dispatchers.IO) {
             try {
+
                 val obj = mapOf("media_path" to File(getCompressImage(mediaPath!!)).name)
                 val responseObj =
                     AppObjectController.chatNetworkService.requestUploadMediaAsync(obj).await()
@@ -86,7 +87,7 @@ class HelpViewModel(application: Application) : AndroidViewModel(application) {
                     return@async null
                 }
             } catch (ex: Exception) {
-                Crashlytics.logException(ex)
+              //  Crashlytics.logException(ex)
                 ex.printStackTrace()
                 apiCallStatusLiveData.postValue(ApiCallStatus.FAILED)
                 return@async null

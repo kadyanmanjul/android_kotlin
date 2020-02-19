@@ -1,6 +1,7 @@
 package com.joshtalks.joshskills.ui.video_player
 
 import android.content.DialogInterface
+import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -25,8 +26,12 @@ class FullScreenVideoFragment : DialogFragment() {
         arguments?.let {
             videoUrl = it.getString(ARG_VIDEO_URL)
         }
-        activity?.let {
-            onDismissListener = it as OnDismissListener
+        try {
+            activity?.let {
+                onDismissListener = it as OnDismissListener
+            }
+        } catch (ex: Exception) {
+            ex.printStackTrace()
         }
         setStyle(STYLE_NO_FRAME, R.style.full_dialog)
     }
@@ -113,6 +118,7 @@ class FullScreenVideoFragment : DialogFragment() {
     }
 
     override fun onDismiss(dialog: DialogInterface) {
+        activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         onDismissListener?.onDismiss()
         super.onDismiss(dialog)
     }

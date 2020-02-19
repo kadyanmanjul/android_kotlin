@@ -1,8 +1,7 @@
-<svg height="28.196" id="Group_372" viewBox="0 0 28.196 28.196"
-        width="28.196" xmlns="http://www.w3.org/2000/svg">
-    <path d="M16,2A14.1,14.1,0,1,0,30.1,16.1,14.139,14.139,0,0,0,16,2Zm0,25.376A11.278,11.278,0,1,1,27.276,16.1,11.312,11.312,0,0,1,16,27.376Z" data-name="Path 151"
-            fill="#ffffff"
-            id="Path_151" transform="translate(-1.9 -2)" />
+<svg height="28.196" id="Group_372" viewBox="0 0 28.196 28.196" width="28.196"
+        xmlns="http://www.w3.org/2000/svg">
+    <path d="M16,2A14.1,14.1,0,1,0,30.1,16.1,14.139,14.139,0,0,0,16,2Zm0,25.376A11.278,11.278,0,1,1,27.276,16.1,11.312,11.312,0,0,1,16,27.376Z"
+            data-name="Path 151" fill="#ffffff" id="Path_151" transform="translate(-1.9 -2)" />
     <text fill="#fff" font-family="Roboto-Regular, Roboto" font-size="21" id="_"
             transform="translate(8.96 21.936)">
         <tspan x="0" y="0">₹</tspan>

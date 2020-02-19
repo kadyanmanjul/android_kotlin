@@ -14,6 +14,7 @@ import android.content.pm.PackageManager
 import android.content.res.Resources
 import android.graphics.*
 import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
 import android.graphics.drawable.VectorDrawable
 import android.media.AudioManager
 import android.media.AudioManager.STREAM_MUSIC
@@ -52,6 +53,7 @@ import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
+import kotlin.math.ceil
 import kotlin.math.pow
 
 
@@ -613,9 +615,18 @@ object Utils {
 
     fun getDeviceInfo() {
         var easyConfigMod = EasyConfigMod(AppObjectController.joshApplication)
+    }
 
+    fun getExpectedLines(textSize: Float, value: String): Int {
+        var bounds = Rect()
+        var paint = Paint()
+        paint.textSize = textSize
+        paint.getTextBounds(value, 0, value.length, bounds)
+        val numLines = ceil((bounds.width().toFloat() / textSize).toDouble()).toInt()
+        return numLines
 
     }
+
 
 
 }

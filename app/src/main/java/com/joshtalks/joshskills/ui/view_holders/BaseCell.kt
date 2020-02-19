@@ -240,5 +240,17 @@ abstract class BaseCell {
         }
 
     }
+
+    fun setDefaultImageView(iv: ImageView, url: String) {
+        Glide.with(getAppContext())
+            .load(url)
+            .override(Target.SIZE_ORIGINAL)
+            .optionalTransform(
+                WebpDrawable::class.java,
+                WebpDrawableTransformation(CircleCrop())
+            )
+            .into(iv)
+    }
+
 }
 

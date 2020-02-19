@@ -31,7 +31,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/_36sdp"
-                    android:visibility="gone"
+                    android:visibility="visible"
                     tools:ignore="MissingPrefix">
 
 
@@ -164,10 +164,10 @@
                                     android:layout_marginStart="@dimen/_10sdp"
                                     android:ellipsize="marquee"
                                     android:gravity="start|center"
+                                    android:marqueeRepeatLimit="marquee_forever"
                                     android:singleLine="true"
                                     android:textColor="@color/font_color"
                                     android:textSize="@dimen/font_14"
-                                    android:marqueeRepeatLimit="marquee_forever"
                                     app:layout_constraintStart_toEndOf="@+id/course_image"
                                     app:layout_constraintTop_toTopOf="@id/course_image" />
 

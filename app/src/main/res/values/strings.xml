@@ -69,6 +69,7 @@
 
     <string name="slide_to_cancel">Slide To Cancel</string>
     <string name="buy_course">Buy Course</string>
+
     <string name="explorer_courses">Explore Courses</string>
     <string name="start_course">Start Course</string>
     <string name="explorer_course">Explore Courses</string>
@@ -181,6 +182,8 @@
     <string name="network_type">Network Type</string>
     <string name="device_charging_via">Device charging via </string>
 
-
+    <string name="start_course_now">Start Your Course Now</string>
+    <string name="show_more">SHOW MORE</string>
+    <string name="show_less">SHOW LESS</string>
 
 </resources>

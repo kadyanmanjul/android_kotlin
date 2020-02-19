@@ -146,6 +146,8 @@ internal class AppObjectController {
 
         @JvmStatic
         var currentPlayingAudioObject: ChatModel? = null
+        @JvmStatic
+        var currentCSNumber: Int = 1
 
 
         fun init(context: JoshApplication): AppObjectController {

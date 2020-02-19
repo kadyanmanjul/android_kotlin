@@ -184,6 +184,19 @@
                         android:tint="#fff"
                         android:visibility="gone" />
 
+                <ImageView
+                        android:id="@+id/ivFullScreenToggleOp"
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:background="#0fff"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:padding="10dp"
+                        android:src="@drawable/ic_fullscreen"
+                        android:tint="#fff"
+                        android:visibility="gone" />
+
+
             </LinearLayout>
 
         </LinearLayout>

@@ -96,4 +96,15 @@ object WorkMangerAdmin {
         WorkManager.getInstance(AppObjectController.joshApplication).enqueue(workRequest)
     }
 
+
+    fun newCourseScreenEventWorker(courseName: String,courseId:String) {
+        val data = workDataOf("course_name" to courseName,"course_id" to courseId)
+        val workRequest = OneTimeWorkRequestBuilder<NewCourseScreenEventWorker>()
+            .setInputData(data)
+            .build()
+        WorkManager.getInstance(AppObjectController.joshApplication).enqueue(workRequest)
+    }
+
+
+
 }

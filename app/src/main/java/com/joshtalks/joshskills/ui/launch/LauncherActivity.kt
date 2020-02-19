@@ -92,7 +92,6 @@ class LauncherActivity : CoreJoshActivity() {
     }
 
 
-
     /*
 
 

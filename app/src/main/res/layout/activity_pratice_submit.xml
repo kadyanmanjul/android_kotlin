@@ -77,7 +77,6 @@
                                 android:layout_gravity="center"
                                 android:background="#000"
                                 android:focusable="true"
-
                                 android:minHeight="@dimen/_160sdp"
                                 android:visibility="gone"
                                 app:controller_layout_id="@layout/layout_live_player_controller" />

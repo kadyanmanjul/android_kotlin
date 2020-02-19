@@ -23,7 +23,7 @@ import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.text.HtmlCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.integration.webp.decoder.WebpDrawable
 import com.bumptech.glide.integration.webp.decoder.WebpDrawableTransformation
@@ -45,7 +45,6 @@ import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.io.AppDirectory
-import com.joshtalks.joshskills.core.playback.MusicNotificationManager
 import com.joshtalks.joshskills.core.playback.MusicService
 import com.joshtalks.joshskills.core.playback.PlaybackInfoListener
 import com.joshtalks.joshskills.core.playback.PlayerInterface
@@ -96,7 +95,7 @@ class PractiseSubmitActivity : CoreJoshActivity(), FullScreenVideoFragment.OnDis
     private var mPlaybackListener: PlaybackListener? = null
     private var sBound = false
     private var mUserIsSeeking = false
-    private var mMusicNotificationManager: MusicNotificationManager? = null
+    // private var mMusicNotificationManager: MusicNotificationManager? = null
     private var isAudioRecordDone = false
     private var isVideoRecordDone = false
     private var isImageAttachmentDone = false
@@ -118,10 +117,10 @@ class PractiseSubmitActivity : CoreJoshActivity(), FullScreenVideoFragment.OnDis
         "application/vnd.oasis.opendocument.spreadsheet"
     )
 
-    private val practiseViewModel: PractiseViewModel by lazy {
-        ViewModelProviders.of(this).get(PractiseViewModel::class.java)
-    }
 
+    private val practiseViewModel: PractiseViewModel by lazy {
+        ViewModelProvider(this).get(PractiseViewModel::class.java)
+    }
 
     companion object {
         fun startPractiseSubmissionActivity(
@@ -198,6 +197,8 @@ class PractiseSubmitActivity : CoreJoshActivity(), FullScreenVideoFragment.OnDis
         } catch (ex: Exception) {
 
         }
+        mPlayerInterface?.clearNotification()
+
     }
 
     override fun onStop() {
@@ -346,14 +347,17 @@ class PractiseSubmitActivity : CoreJoshActivity(), FullScreenVideoFragment.OnDis
                     binding.videoPlayer.visibility = VISIBLE
                     this.videoList?.getOrNull(0)?.video_url?.let {
                         binding.videoPlayer.setUrl(it)
-                        binding.videoPlayer.downloadStreamPlay()
+                        // binding.videoPlayer.downloadStreamPlay()
                         binding.videoPlayer.fitToScreen()
-
+                        binding.videoPlayer.setPlayListener {
+                            FullScreenVideoFragment.newInstance(this.videoList?.getOrNull(0)?.video_url!!)
+                                .show(supportFragmentManager, "Payment Process")
+                        }
                     }
-                    binding.videoPlayer.setOnClickListener {
+                    /*binding.videoPlayer.setOnClickListener {
                         FullScreenVideoFragment.newInstance(this.videoList?.getOrNull(0)?.video_url!!)
                             .show(supportFragmentManager, "Payment Process")
-                    }
+                    }*/
                 }
                 BASE_MESSAGE_TYPE.TX -> {
                     this.qText?.let {
@@ -853,8 +857,9 @@ class PractiseSubmitActivity : CoreJoshActivity(), FullScreenVideoFragment.OnDis
             override fun onServiceConnected(componentName: ComponentName, iBinder: IBinder) {
                 mMusicService = (iBinder as MusicService.LocalBinder).instance
                 mPlayerInterface = mMusicService?.mediaPlayerHolder
-                mMusicNotificationManager = mMusicService?.musicNotificationManager
-                mMusicNotificationManager?.setAccentColor(R.color.colorAccent)
+                //mMusicNotificationManager = mMusicService?.musicNotificationManager
+
+                // mMusicNotificationManager?.setAccentColor(R.color.colorAccent)
                 if (mPlaybackListener == null) {
                     mPlaybackListener = PlaybackListener()
                     mPlayerInterface?.setPlaybackInfoListener(mPlaybackListener)
@@ -879,11 +884,15 @@ class PractiseSubmitActivity : CoreJoshActivity(), FullScreenVideoFragment.OnDis
             if (startPlay) {
                 mPlayerInterface?.mediaPlayer?.start()
                 Handler().postDelayed({
+                    val startNotStickyIntent = Intent(this, MusicService::class.java)
+                    startService(startNotStickyIntent)
+                    mPlayerInterface?.clearNotification()
+
+                    /*startService(Intent(this, mMusicService::class.java))
                     mMusicService!!.startForeground(
                         MusicNotificationManager.NOTIFICATION_ID,
                         mMusicNotificationManager!!.createNotification()
-
-                    )
+                    )*/
                 }, 250)
             }
             if (restore) {
@@ -898,12 +907,14 @@ class PractiseSubmitActivity : CoreJoshActivity(), FullScreenVideoFragment.OnDis
                     //stop foreground if coming from pause state
                     if (mMusicService!!.isRestoredFromPause) {
                         mMusicService!!.stopForeground(false)
-                        mMusicService!!.musicNotificationManager.notificationManager.notify(
+                        /*mMusicService!!.musicNotificationManager.notificationManager.notify(
                             MusicNotificationManager.NOTIFICATION_ID,
                             mMusicService!!.musicNotificationManager.notificationBuilder.build()
-                        )
+                        )*/
                         mMusicService!!.isRestoredFromPause = false
                     }
+                    mPlayerInterface?.clearNotification()
+
                 }, 250)
             }
         } catch (ex: Exception) {
@@ -914,6 +925,7 @@ class PractiseSubmitActivity : CoreJoshActivity(), FullScreenVideoFragment.OnDis
         if (onPlaybackCompletion) {
             if (mPlayerInterface!!.state != PlaybackInfoListener.State.COMPLETED && mPlayerInterface!!.isPlaying) {
                 mPlayerInterface?.resumeOrPause()
+                mPlayerInterface?.clearNotification()
                 // mPlayerInterface?.reset()
             }
             setAudioPlayerStateDefault()
@@ -952,6 +964,8 @@ class PractiseSubmitActivity : CoreJoshActivity(), FullScreenVideoFragment.OnDis
                 onPlayAudio(chatModel, chatModel.question?.audioList?.getOrNull(0)!!)
             }
         }
+        mPlayerInterface?.clearNotification()
+
     }
 
     fun playSubmitPracticeAudio() {
@@ -990,6 +1004,8 @@ class PractiseSubmitActivity : CoreJoshActivity(), FullScreenVideoFragment.OnDis
 
             }
         }
+        mPlayerInterface?.clearNotification()
+
     }
 
     fun removeAudioPractise() {
@@ -1047,6 +1063,8 @@ class PractiseSubmitActivity : CoreJoshActivity(), FullScreenVideoFragment.OnDis
             binding.btnPlayInfo.state = MaterialPlayPauseDrawable.State.Pause
         }
 
+        mPlayerInterface?.clearNotification()
+
     }
 
     fun openAttachmentFile() {
@@ -1103,6 +1121,8 @@ class PractiseSubmitActivity : CoreJoshActivity(), FullScreenVideoFragment.OnDis
 
     inner class PlaybackListener : PlaybackInfoListener() {
         override fun onPositionChanged(position: Int) {
+            mPlayerInterface?.clearNotification()
+
             if (!mUserIsSeeking) {
                 RxBus2.publish(SeekBarProgressEventBus(currentAudio!!, position))
             }
@@ -1120,9 +1140,12 @@ class PractiseSubmitActivity : CoreJoshActivity(), FullScreenVideoFragment.OnDis
 
         override fun onPlaybackCompleted() {
             updateResetStatus(true)
+            mPlayerInterface?.clearNotification()
+
         }
 
         override fun onPlaybackStop() {
+            mPlayerInterface?.clearNotification()
 
         }
     }

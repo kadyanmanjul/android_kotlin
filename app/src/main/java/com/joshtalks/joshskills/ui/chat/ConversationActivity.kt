@@ -1106,8 +1106,9 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
     private fun getView(
         chatModel: ChatModel
     ): BaseCell? {
-        return if (chatModel.type == BASE_MESSAGE_TYPE.Q || chatModel.type == BASE_MESSAGE_TYPE.AR || chatModel.type == BASE_MESSAGE_TYPE.A) {
+        return if (chatModel.type == BASE_MESSAGE_TYPE.Q || chatModel.type == BASE_MESSAGE_TYPE.AR || chatModel.type == BASE_MESSAGE_TYPE.A || chatModel.type == BASE_MESSAGE_TYPE.PR) {
             getGenericView(chatModel.question?.material_type, chatModel)
+
         } else {
             getGenericView(chatModel.type, chatModel)
         }
@@ -1420,8 +1421,12 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
     }
 
     override fun currentSeekBarPosition(progress: Int) {
-        mSeekBarAudio.progress = progress
-        RxBus2.publish(SeekBarProgressEventBus(currentAudio!!, progress))
+        try {
+            mSeekBarAudio.progress = progress
+            RxBus2.publish(SeekBarProgressEventBus(currentAudio!!, progress))
+        }catch (ex:Exception){
+
+        }
     }
 
     override fun playSongComplete() {

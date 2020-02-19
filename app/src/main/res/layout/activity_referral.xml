@@ -125,12 +125,7 @@
                 app:layout_constraintWidth_percent="0.6" />
 
 
-
         <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/fl_placeholder"
-                app:layout_constraintWidth_default="percent"
                 android:id="@+id/referral_earn_tv"
                 fontPath="fonts/OpenSans-Bold.ttf"
                 android:layout_width="0dp"
@@ -139,6 +134,10 @@
                 android:gravity="center"
                 android:textColor="@color/gray_48"
                 android:textSize="@dimen/font_14"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/fl_placeholder"
+                app:layout_constraintWidth_default="percent"
                 app:layout_constraintWidth_percent="0.75" />
 
 
