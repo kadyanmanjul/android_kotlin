@@ -4,17 +4,12 @@ import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.Worker
 import androidx.work.WorkerParameters
+import com.crashlytics.android.Crashlytics
 import com.google.android.gms.ads.MobileAds
 import com.google.android.gms.ads.identifier.AdvertisingIdClient
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.core.REFERRAL_EVENT
-import com.joshtalks.joshskills.core.USER_UNIQUE_ID
-import com.joshtalks.joshskills.repository.local.model.InstallReferrerModel
-import com.joshtalks.joshskills.repository.local.model.Mentor
-import com.joshtalks.joshskills.repository.local.model.ScreenEngagementModel
+import com.google.firebase.database.*
+import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.repository.local.model.*
 import com.joshtalks.joshskills.repository.server.MessageStatusRequest
 import com.joshtalks.joshskills.repository.service.NetworkRequestHelper
 import java.util.*
@@ -240,20 +235,77 @@ class ReferralEventWorker(context: Context, private val workerParams: WorkerPara
 const val NEW_COURSE_SCREEN_FIREBASE_DATABASE = "new_course_screen"
 
 class NewCourseScreenEventWorker(context: Context, private val workerParams: WorkerParameters) :
-    Worker(context, workerParams) {
+    CoroutineWorker(context, workerParams) {
 
-    override fun doWork(): Result {
+    override suspend fun doWork(): Result {
+        val database = FirebaseDatabase.getInstance()
+
         val courseName = workerParams.inputData.getString("course_name")
         val courseID = workerParams.inputData.getString("course_id")
+        val isBuy = workerParams.inputData.getBoolean("buy_course", false)
+        val uniqueId = PrefManager.getStringValue(USER_UNIQUE_ID)
+        val buyInitialize = workerParams.inputData.getBoolean("buy_initialize", false)
 
-        val database = FirebaseDatabase.getInstance()
         val myRef = database.getReference(NEW_COURSE_SCREEN_FIREBASE_DATABASE)
-        myRef.child(courseID + "_" + courseName + "_" + Date().time.toString())
-            .setValue(Mentor.getInstance().getId())
+        val key: DatabaseReference = if (myRef.child(uniqueId).key == null) {
+            myRef.child(uniqueId).push()
+        } else {
+            myRef.child(uniqueId)
+        }
+
+        key.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                try {
+                    val courseTrackModel: CourseTrackModel? = if (dataSnapshot.value != null) {
+                        dataSnapshot.getValue(CourseTrackModel::class.java)
+                    } else {
+                        CourseTrackModel(uniqueId = uniqueId)
+                    }
+                    courseTrackModel?.mentorId = Mentor.getInstance().getId()
+                    courseTrackModel?.mobileNumber = User.getInstance().phoneNumber
+
+                    when {
+                        isBuy -> {
+                            courseTrackModel?.courseBuy?.add(
+                                CourseDetailModel(
+                                    courseName = courseName ?: EMPTY, courseId = courseID ?: EMPTY
+                                )
+                            )
+                        }
+                        buyInitialize -> {
+                            courseTrackModel?.courseBuyInitialize?.add(
+                                CourseDetailModel(
+                                    courseName = courseName ?: EMPTY, courseId = courseID ?: EMPTY
+                                )
+                            )
+                        }
+                        else -> {
+                            courseTrackModel?.courseWatch?.add(
+                                CourseDetailModel(
+                                    courseName = courseName ?: EMPTY, courseId = courseID ?: EMPTY
+                                )
+                            )
+                        }
+                    }
+
+                    key.setValue(courseTrackModel)
+                } catch (ex: Exception) {
+                    ex.printStackTrace()
+                }
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                databaseError.toException()
+                Crashlytics.logException(databaseError.toException())
+            }
+        })
+
         return Result.success()
     }
 
 }
+
+
 
 
 

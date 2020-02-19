@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        style="@style/Widget.MaterialComponents.CardView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="@dimen/_2sdp"
+        app:cardElevation="@dimen/_2sdp"
+        app:cardUseCompatPadding="true"
+        app:contentPadding="@dimen/_12sdp">
+
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:orientation="horizontal">
+
+
+        <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/iv_mentor"
+                android:layout_width="@dimen/_90sdp"
+                android:layout_height="@dimen/_90sdp"
+                android:layout_gravity="center"
+                android:padding="@dimen/_4sdp" />
+
+        <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginStart="@dimen/_4sdp"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:paddingTop="@dimen/_8sdp"
+                android:paddingEnd="@dimen/_8sdp"
+                android:paddingBottom="@dimen/_8sdp">
+
+
+            <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+                    android:id="@+id/tv_name"
+                    fontPath="fonts/Roboto-Medium.ttf"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start"
+                    android:gravity="center_vertical|start"
+                    android:textColor="@color/gray_48"
+                    android:textSize="@dimen/font_16" />
+
+            <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+                    android:id="@+id/tv_where"
+                    fontPath="fonts/OpenSans-SemiBold.ttf"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start"
+                    android:layout_marginTop="@dimen/_1sdp"
+                    android:gravity="center_vertical|start"
+                    android:textColor="@color/emoji_icon_color"
+                    android:textSize="@dimen/font_12" />
+
+            <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+                    android:id="@+id/tv_qualification_details"
+                    fontPath="fonts/Roboto-Regular.ttf"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start|center"
+                    android:layout_marginTop="@dimen/_4sdp"
+                    android:ellipsize="end"
+                    android:gravity="center_vertical|start"
+                    android:maxLines="5"
+                    android:textColor="@color/gray_48"
+                    android:textSize="@dimen/font_12" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

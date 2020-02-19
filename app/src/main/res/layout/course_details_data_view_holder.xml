@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        style="@style/Widget.MaterialComponents.CardView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="@dimen/_2sdp"
+        app:cardElevation="@dimen/_2sdp"
+        app:cardUseCompatPadding="true"
+        app:contentPadding="@dimen/_12sdp">
+
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            >
+
+        <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+                android:id="@+id/text_title"
+                fontPath="fonts/OpenSans-SemiBold.ttf"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start"
+                android:gravity="center_vertical|start"
+                android:paddingBottom="@dimen/_6sdp"
+                android:textColor="@color/gray_48"
+                android:textSize="@dimen/font_17" />
+
+        <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+                android:id="@+id/tv_detail"
+                fontPath="fonts/Roboto-Regular.ttf"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start"
+                android:gravity="center_vertical|start"
+                android:maxLines="4"
+                android:textColor="@color/gray_48"
+                android:textSize="@dimen/font_14" />
+
+        <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+                android:id="@+id/text_read_more"
+                fontPath="fonts/OpenSans-Regular.ttf"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start"
+                android:gravity="center_vertical|start"
+                android:maxLines="1"
+                android:paddingTop="@dimen/_4sdp"
+                android:text="@string/show_more"
+                android:textColor="@color/button_primary_color"
+                android:textSize="@dimen/font_13"
+                android:visibility="gone" />
+
+
+    </LinearLayout>
+
+</com.google.android.material.card.MaterialCardView>

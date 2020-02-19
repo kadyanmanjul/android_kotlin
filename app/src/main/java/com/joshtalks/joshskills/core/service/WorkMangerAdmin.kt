@@ -97,14 +97,22 @@ object WorkMangerAdmin {
     }
 
 
-    fun newCourseScreenEventWorker(courseName: String,courseId:String) {
-        val data = workDataOf("course_name" to courseName,"course_id" to courseId)
+    fun newCourseScreenEventWorker(
+        courseName: String?,
+        courseId: String?,
+        buyInitialize: Boolean = false,
+        buyCourse: Boolean = false
+    ) {
+        val data = workDataOf(
+            "course_name" to courseName,
+            "course_id" to courseId,
+            "buy_course" to buyCourse,
+            "buy_initialize" to buyInitialize
+        )
         val workRequest = OneTimeWorkRequestBuilder<NewCourseScreenEventWorker>()
             .setInputData(data)
             .build()
         WorkManager.getInstance(AppObjectController.joshApplication).enqueue(workRequest)
     }
-
-
 
 }

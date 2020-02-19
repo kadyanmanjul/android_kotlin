@@ -238,6 +238,7 @@ class PaymentActivity : CoreJoshActivity(),
     }
 
     override fun onPaymentSuccess(razorpayPaymentId: String) {
+        WorkMangerAdmin.newCourseScreenEventWorker(courseName, courseId, buyCourse = true)
         val extras: HashMap<String, String> = HashMap()
         extras["test_id"] = courseId
         extras["payment_id"] = razorpayPaymentId
@@ -273,6 +274,8 @@ class PaymentActivity : CoreJoshActivity(),
     }
 
     private fun getPaymentDetails(testId: String?) {
+        WorkMangerAdmin.newCourseScreenEventWorker(courseName, courseId, buyInitialize = true)
+
         AppObjectController.uiHandler.post {
             activityPaymentBinding.progressBar.visibility = View.VISIBLE
         }
