@@ -24,6 +24,7 @@ class LauncherActivity : CoreJoshActivity() {
         WorkMangerAdmin.readMessageUpdating()
         setContentView(R.layout.activity_launcher)
         handleIntent()
+        AppObjectController.facebookEventLogger.flush()
     }
 
 

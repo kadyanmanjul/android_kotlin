@@ -9,7 +9,8 @@ object RxBus2 {
 
     @JvmStatic
     fun publish(event: Any) {
-        publisher.onNext(event)
+        publisher.toSerialized().onNext(event)
+       // publisher.onNext(event)
     }
 
     // Listen should return an Observable and not the publisher

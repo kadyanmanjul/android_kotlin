@@ -20,8 +20,7 @@ import android.util.Log
 import android.view.Gravity
 import android.view.MotionEvent
 import android.view.View
-import android.view.View.GONE
-import android.view.View.VISIBLE
+import android.view.View.*
 import android.view.WindowManager
 import android.widget.*
 import androidx.appcompat.widget.AppCompatImageView
@@ -116,6 +115,7 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
         fun startConversionActivity(context: Context, inboxEntity: InboxEntity) {
             val intent = Intent(context, ConversationActivity::class.java)
             intent.putExtra(CHAT_ROOM_OBJECT, inboxEntity)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP
             context.startActivity(intent)
         }
     }
@@ -147,7 +147,7 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
     private var currentAudio: String? = null
     private var streamingManager: AudioStreamingManager? = null
     private var mUserIsSeeking = false
-
+    private var isOnlyChat = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         requestedOrientation = if (Build.VERSION.SDK_INT == 26) {
@@ -215,7 +215,6 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
         AppAnalytics.create(AnalyticsEvent.CHAT_SCREEN.NAME).push()
         initProgressDialog()
         initSnackBar()
-        // initActivityAnimation()
         setToolbar()
         initRV()
         setUpEmojiPopup()
@@ -234,7 +233,7 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
             conversationBinding.progressBar.visibility = GONE
         }, 5000)
         streamingManager = AudioStreamingManager.getInstance(activityRef.get())
-
+        onlyChatView()
     }
 
 
@@ -353,6 +352,26 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
             .build()
     }
 
+
+    private fun onlyChatView() {
+        inboxEntity.chat_type?.let {
+            if (it.isNotEmpty() && it.equals("NC", ignoreCase = true)) {
+                conversationBinding.flAttachment.visibility = GONE
+                conversationBinding.quickToggle.visibility = GONE
+                conversationBinding.recordButton.visibility = INVISIBLE
+                conversationBinding.attachmentContainer.visibility = GONE
+                isOnlyChat = true
+                conversationBinding.messageButton.visibility = VISIBLE
+                conversationBinding.messageButton.setImageResource(R.drawable.ic_send)
+                Glide.with(applicationContext)
+                    .load(R.drawable.ic_send)
+                    .override(Target.SIZE_ORIGINAL)
+                    .into(conversationBinding.messageButton)
+            }
+        }
+    }
+
+
     private fun initRV() {
         linearLayoutManager = LinearLayoutManager(this)
         linearLayoutManager.stackFromEnd = true
@@ -470,12 +489,16 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
                     conversationBinding.recordButton.goToState(FIRST_STATE)
                     conversationBinding.recordButton.isListenForRecord =
                         PermissionUtils.checkPermissionForAudioRecord(this@ConversationActivity)
-                    conversationBinding.quickToggle.show()
+                    if (isOnlyChat.not()) {
+                        conversationBinding.quickToggle.show()
+                    }
+
                 } else {
                     conversationBinding.recordButton.goToState(SECOND_STATE)
                     conversationBinding.recordButton.isListenForRecord = false
                     conversationBinding.quickToggle.hide()
                 }
+
             }
 
             override fun beforeTextChanged(
@@ -503,6 +526,7 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
             }
             false
         }
+
         conversationBinding.recordButton.setOnTouchListener(OnRecordTouchListener {
             if (conversationBinding.chatEdit.text.toString().isEmpty() && it == MotionEvent.ACTION_DOWN) {
                 if (PermissionUtils.isAudioAndStoragePermissionEnable(this).not()) {
@@ -511,7 +535,8 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
                             override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
                                 report?.areAllPermissionsGranted()?.let { flag ->
                                     if (flag) {
-                                        conversationBinding.recordButton.isListenForRecord = true
+                                        conversationBinding.recordButton.isListenForRecord =
+                                            true
                                         return@let
                                     }
                                     if (report.isAnyPermissionPermanentlyDenied) {
@@ -538,36 +563,12 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
         })
 
         conversationBinding.recordButton.setOnRecordClickListener {
-            if (conversationBinding.chatEdit.text.toString().isEmpty()) {
-                return@setOnRecordClickListener
-            }
-
-            if (conversationBinding.chatEdit.text!!.length > MESSAGE_CHAT_SIZE_LIMIT) {
-                Toast.makeText(
-                    applicationContext,
-                    getString(R.string.message_size_limit),
-                    Toast.LENGTH_SHORT
-                ).show()
-                return@setOnRecordClickListener
-            }
-            if (cMessageType == BASE_MESSAGE_TYPE.TX) {
-                val tChatMessage =
-                    TChatMessage(conversationBinding.chatEdit.text.toString())
-                val cell = MessageBuilderFactory.getMessage(
-                    activityRef,
-                    BASE_MESSAGE_TYPE.TX,
-                    tChatMessage
-                )
-                conversationBinding.chatRv.addView(cell)
-                scrollToEnd()
-                conversationViewModel.sendTextMessage(
-                    TChatMessage(conversationBinding.chatEdit.text.toString()),
-                    chatModel = cell.message
-                )
-            }
-            conversationBinding.chatEdit.setText(EMPTY)
+            sendTextTextMessage()
         }
 
+        conversationBinding.messageButton.setOnClickListener {
+            sendTextTextMessage()
+        }
 
         findViewById<View>(R.id.ll_audio).setOnClickListener {
             AppAnalytics.create(AnalyticsEvent.AUDIO_SELECTED.NAME).push()
@@ -598,17 +599,6 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
                         token?.continuePermissionRequest()
                     }
                 })
-
-            inboxEntity.chat_type?.let {
-                if (it.isNotEmpty() && it.equals("NC", ignoreCase = true)) {
-                    conversationBinding.flAttachment.visibility = GONE
-                    conversationBinding.quickToggle.visibility = GONE
-                    conversationBinding.recordButton.isListenForRecord = false
-                    conversationBinding.recordButton.goToState(SECOND_STATE)
-                    conversationBinding.attachmentContainer.visibility = GONE
-                }
-
-            }
 
 
         }
@@ -672,6 +662,36 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
 
         }
 
+    }
+
+    private fun sendTextTextMessage() {
+        if (conversationBinding.chatEdit.text.isNullOrEmpty()) {
+            return
+        }
+        if (conversationBinding.chatEdit.text.toString().length > MESSAGE_CHAT_SIZE_LIMIT) {
+            Toast.makeText(
+                applicationContext,
+                getString(R.string.message_size_limit),
+                Toast.LENGTH_SHORT
+            ).show()
+            return
+        }
+        if (cMessageType == BASE_MESSAGE_TYPE.TX) {
+            val tChatMessage =
+                TChatMessage(conversationBinding.chatEdit.text.toString())
+            val cell = MessageBuilderFactory.getMessage(
+                activityRef,
+                BASE_MESSAGE_TYPE.TX,
+                tChatMessage
+            )
+            conversationBinding.chatRv.addView(cell)
+            scrollToEnd()
+            conversationViewModel.sendTextMessage(
+                TChatMessage(conversationBinding.chatEdit.text.toString()),
+                chatModel = cell.message
+            )
+        }
+        conversationBinding.chatEdit.setText(EMPTY)
     }
 
     @SuppressLint("CheckResult")
@@ -1280,7 +1300,7 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
         subscribeRXBus()
         conversationBinding.chatRv.refresh()
         observeNetwork()
-
+        //AppObjectController.uiHandler.postDelayed(Runnable {  },1000)
     }
 
     override fun onPause() {
@@ -1297,6 +1317,7 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
         readMessageTimerTask?.cancel()
         uiHandler.removeCallbacksAndMessages(null)
         window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        AppObjectController.uiHandler.removeCallbacksAndMessages(null)
 
     }
 

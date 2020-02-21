@@ -82,6 +82,7 @@ class PractiseViewModel(application: Application) :
 
                 requestStatusLiveData.postValue(true)
             } catch (ex: HttpException) {
+                requestStatusLiveData.postValue(false)
                 ex.printStackTrace()
             } catch (ex: Exception) {
                 requestStatusLiveData.postValue(false)

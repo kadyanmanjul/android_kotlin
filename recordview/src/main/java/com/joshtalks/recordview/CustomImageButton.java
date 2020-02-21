@@ -63,8 +63,6 @@ public class CustomImageButton extends AppCompatImageView implements View.OnTouc
 
     private void init(Context context, AttributeSet attrs) {
         if (attrs != null) {
-
-
             TypedArray array = context.obtainStyledAttributes(attrs, R.styleable.CustomImageButton, 0, 0);
 
             int first = array.getResourceId(R.styleable.CustomImageButton_image_first, -1);
@@ -223,7 +221,6 @@ public class CustomImageButton extends AppCompatImageView implements View.OnTouc
         ScaleDrawable scaleDrawable = new ScaleDrawable(drawable, 0, scale, scale);
         scaleDrawable.setLevel(1);
         scaleDrawable.setAlpha(alpha);
-
         return scaleDrawable;
     }
 

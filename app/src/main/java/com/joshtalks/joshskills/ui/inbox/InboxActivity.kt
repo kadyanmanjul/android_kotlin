@@ -207,7 +207,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
             if (it == null || it.isEmpty()) {
                 openCourseExplorer()
             } else {
-                buyCourseFBEvent()
+               // buyCourseFBEvent()
                 recycler_view_inbox.removeAllViews()
                 val total = it.size
                 it.forEachWithIndex { i, inbox ->
@@ -225,7 +225,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
 
         viewModel.registerCourseMinimalLiveData.observe(this, Observer {
             if (it != null && it.isNotEmpty()) {
-                buyCourseFBEvent()
+              //  buyCourseFBEvent()
                 recycler_view_inbox.removeAllViews()
                 val total = it.size
                 it.forEachWithIndex { i, inbox ->
@@ -419,7 +419,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         }
     }
 
-    private fun buyCourseFBEvent() {
+   /* private fun buyCourseFBEvent() {
         CoroutineScope(Dispatchers.Default).launch {
             if (PrefManager.hasKey(COURSE_STARTED_FB_EVENT)) {
                 return@launch
@@ -432,7 +432,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
             )
             PrefManager.put(COURSE_STARTED_FB_EVENT, true)
         }
-    }
+    }*/
 
 
     private fun showPromotionCode(courseId: String, placeholderImageUrl: String) {

@@ -70,7 +70,7 @@ class PaymentActivity : CoreJoshActivity(),
     private var courseModel: CourseExploreModel? = null
     private var compositeDisposable = CompositeDisposable()
     private val uiHandler = Handler(Looper.getMainLooper())
-    private var courseId: String = EMPTY
+    private var testId: String = EMPTY
     private var currency: String = "INR"
     private var amount: Double = 0.0
     private var courseName = EMPTY
@@ -107,12 +107,12 @@ class PaymentActivity : CoreJoshActivity(),
 
         if (intent.hasExtra(COURSE_OBJECT)) {
             courseModel = intent.getSerializableExtra(COURSE_OBJECT) as CourseExploreModel
-            courseId = courseModel?.id.toString()
+            testId = courseModel?.id.toString()
         }
         if (intent.hasExtra(COURSE_ID)) {
-            courseId = intent.getStringExtra(COURSE_ID)!!
+            testId = intent.getStringExtra(COURSE_ID)!!
         }
-        if (courseId.isEmpty()) {
+        if (testId.isEmpty()) {
             invalidCourseId()
             return
         }
@@ -137,11 +137,11 @@ class PaymentActivity : CoreJoshActivity(),
                 setCustomAnimations(R.anim.slide_in_left, R.anim.slide_in_right)
                 add(
                     R.id.container,
-                    CourseDetailType1Fragment.newInstance(courseId.toInt(), courseID),
+                    CourseDetailType1Fragment.newInstance(testId.toInt(), courseID),
                     CourseDetailType1Fragment::class.java.name
                 )
             }
-            WorkMangerAdmin.newCourseScreenEventWorker(courseName, courseId)
+            WorkMangerAdmin.newCourseScreenEventWorker(courseName, testId)
         } else {
             activityPaymentBinding.oldCourseContainer.visibility = View.VISIBLE
             initRV()
@@ -190,7 +190,7 @@ class PaymentActivity : CoreJoshActivity(),
         CoroutineScope(Dispatchers.IO).launch {
             try {
 
-                val data = mapOf("test" to courseId)
+                val data = mapOf("test" to testId)
                 val courseDetailsModelList: List<CourseDetailsModel> =
                     AppObjectController.signUpNetworkService.explorerCourseDetails(data).await()
                 CoroutineScope(Dispatchers.Main).launch {
@@ -239,9 +239,9 @@ class PaymentActivity : CoreJoshActivity(),
     }
 
     override fun onPaymentSuccess(razorpayPaymentId: String) {
-        WorkMangerAdmin.newCourseScreenEventWorker(courseName, courseId, buyCourse = true)
+        WorkMangerAdmin.newCourseScreenEventWorker(courseName, testId, buyCourse = true)
         val extras: HashMap<String, String> = HashMap()
-        extras["test_id"] = courseId
+        extras["test_id"] = testId
         extras["payment_id"] = razorpayPaymentId
         extras["currency"] = currency
         extras["amount"] = (courseModel?.amount ?: amount).toString()
@@ -250,7 +250,7 @@ class PaymentActivity : CoreJoshActivity(),
 
         try {
             val params = Bundle().apply {
-                putString(AppEventsConstants.EVENT_PARAM_CONTENT_ID, courseId)
+                putString(AppEventsConstants.EVENT_PARAM_CONTENT_ID, testId)
             }
             AppObjectController.facebookEventLogger.logPurchase(
                 amount.toBigDecimal(),
@@ -275,7 +275,7 @@ class PaymentActivity : CoreJoshActivity(),
     }
 
     private fun getPaymentDetails(testId: String?) {
-        WorkMangerAdmin.newCourseScreenEventWorker(courseName, courseId, buyInitialize = true)
+        WorkMangerAdmin.newCourseScreenEventWorker(courseName, testId, buyInitialize = true)
 
         AppObjectController.uiHandler.post {
             activityPaymentBinding.progressBar.visibility = View.VISIBLE
@@ -284,12 +284,12 @@ class PaymentActivity : CoreJoshActivity(),
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 if (testId.isNullOrEmpty().not() && testId.equals("null").not()) {
-                    courseId = testId!!
+                    this@PaymentActivity.testId = testId!!
                 }
 
                 val map = HashMap<String, String>()
                 map["mobile"] = User.getInstance().phoneNumber
-                map["id"] = courseId
+                map["id"] = this@PaymentActivity.testId
                 if (userSubmitCode.isEmpty()) {
                     map["code"] = EMPTY
                 } else {
@@ -302,7 +302,7 @@ class PaymentActivity : CoreJoshActivity(),
                     courseModel = CourseExploreModel()
                     courseModel?.amount = response.amount
                     courseModel?.courseName = response.courseName
-                    courseModel?.id = courseId.toInt()
+                    courseModel?.id = this@PaymentActivity.testId.toInt()
                 }
                 initializeRazorpayPayment(response)
             } catch (ex: HttpException) {
@@ -344,7 +344,7 @@ class PaymentActivity : CoreJoshActivity(),
                 checkout.open(this@PaymentActivity, options)
 
                 val params = Bundle().apply {
-                    putString(AppEventsConstants.EVENT_PARAM_CONTENT_ID, courseId)
+                    putString(AppEventsConstants.EVENT_PARAM_CONTENT_ID, testId)
                 }
                 AppObjectController.facebookEventLogger.logEvent(
                     AppEventsConstants.EVENT_NAME_INITIATED_CHECKOUT,
@@ -362,7 +362,7 @@ class PaymentActivity : CoreJoshActivity(),
         val courseModel = CourseExploreModel()
         courseModel.amount = amount
         courseModel.courseName = courseName
-        courseModel.id = courseId.toInt()
+        courseModel.id = testId.toInt()
 
         val fragmentTransaction = supportFragmentManager.beginTransaction()
         val prev = supportFragmentManager.findFragmentByTag("purchase_details_dialog")
@@ -393,11 +393,17 @@ class PaymentActivity : CoreJoshActivity(),
         addObserver()
     }
 
+    override fun onPause() {
+        super.onPause()
+        compositeDisposable.clear()
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         compositeDisposable.clear()
         Checkout.clearUserData(applicationContext)
         uiHandler.removeCallbacksAndMessages(null)
+        AppObjectController.facebookEventLogger.flush()
     }
 
     private fun openWhatsAppHelp() {
@@ -463,7 +469,7 @@ class PaymentActivity : CoreJoshActivity(),
         if (courseModel != null) {
             getPaymentDetails(courseModel?.id.toString())
         } else {
-            getPaymentDetails(courseId)
+            getPaymentDetails(testId)
         }
     }
 
