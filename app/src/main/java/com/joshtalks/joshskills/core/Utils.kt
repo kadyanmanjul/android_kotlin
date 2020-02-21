@@ -14,7 +14,6 @@ import android.content.pm.PackageManager
 import android.content.res.Resources
 import android.graphics.*
 import android.graphics.drawable.BitmapDrawable
-import android.graphics.drawable.Drawable
 import android.graphics.drawable.VectorDrawable
 import android.media.AudioManager
 import android.media.AudioManager.STREAM_MUSIC
@@ -626,7 +625,6 @@ object Utils {
         return numLines
 
     }
-
 
 
 }

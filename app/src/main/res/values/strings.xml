@@ -185,5 +185,13 @@
     <string name="start_course_now">Start Your Course Now</string>
     <string name="show_more">SHOW MORE</string>
     <string name="show_less">SHOW LESS</string>
+    <string name="answer_not_submitted">Answer not submitted</string>
+    <string name="answer_submitted">Answer Submitted</string>
+
+
+    <string name="record_answer_label">Record your answer</string>
+    <string name="type_answer_label">Type your answer</string>
+    <string name="upload_answer_label">Upload your answer</string>
+
 
 </resources>

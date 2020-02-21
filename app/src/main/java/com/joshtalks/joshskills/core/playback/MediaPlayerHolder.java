@@ -201,7 +201,7 @@ public final class MediaPlayerHolder implements PlayerInterface, MediaPlayer.OnC
             mNotificationActionsReceiver.clearAbortBroadcast();
 
         } catch (Exception e) {
-            e.printStackTrace();
+            // e.printStackTrace();
         }
     }
 

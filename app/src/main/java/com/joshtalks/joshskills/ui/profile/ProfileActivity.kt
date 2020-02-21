@@ -344,7 +344,6 @@ class ProfileActivity : BaseActivity(), MediaSelectCallback {
                     params
                 )
                 BranchIOAnalytics.pushToBranch(BRANCH_STANDARD_EVENT.COMPLETE_REGISTRATION)
-
                 User.getInstance().updateFromResponse(updateProfileResponse)
                 if (imageModel != null) {
                     //   WorkMangerPapa.startUploadProfileinWorker(imageModel!!)

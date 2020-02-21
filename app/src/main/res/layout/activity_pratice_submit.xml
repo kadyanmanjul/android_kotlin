@@ -13,9 +13,12 @@
     </data>
 
     <ScrollView
+            android:id="@+id/root_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:background="#f4f4f4"
             tools:context=".ui.practise.PractiseSubmitActivity">
+
 
         <FrameLayout
                 android:layout_width="match_parent"
@@ -42,7 +45,7 @@
                         card_view:cardUseCompatPadding="true">
 
                     <androidx.appcompat.widget.AppCompatTextView
-                            fontPath="fonts/Roboto-Bold.ttf"
+                            fontPath="fonts/OpenSans-SemiBold.ttf"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:gravity="start|center"
@@ -55,15 +58,15 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="@dimen/_16sdp"
                             android:orientation="vertical"
-                            android:padding="@dimen/_8sdp">
+                            android:paddingTop="@dimen/_8sdp"
+                            android:paddingBottom="@dimen/_8sdp">
 
                         <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
                                 android:id="@+id/info_tv"
-                                fontPath="fonts/Roboto-Regular.ttf"
+                                fontPath="fonts/OpenSans-Regular.ttf"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="@dimen/_8sdp"
-                                android:ellipsize="end"
                                 android:gravity="start|center"
                                 android:textColor="@color/font_color"
                                 android:textSize="@dimen/font_14"
@@ -75,6 +78,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center"
+                                android:layout_marginTop="@dimen/_4sdp"
                                 android:background="#000"
                                 android:focusable="true"
                                 android:minHeight="@dimen/_160sdp"
@@ -96,8 +100,7 @@
                                     android:layout_centerInParent="true"
                                     android:layout_gravity="center"
                                     android:background="@drawable/play_pause_button_background"
-                                    android:backgroundTint="@color/primary_text"
-
+                                    android:backgroundTint="@color/button_primary_color"
                                     android:contentDescription="@string/play_button_description"
                                     android:elevation="4dp"
                                     android:onClick="@{()->handler.playPracticeAudio()}"
@@ -166,7 +169,7 @@
                             android:layout_height="wrap_content"
                             android:gravity="start|center"
                             android:textColor="@color/font_color"
-                            android:textSize="@dimen/font_16" />
+                            android:textSize="@dimen/font_15" />
 
                 </com.google.android.material.card.MaterialCardView>
 
@@ -176,26 +179,29 @@
                         style="@style/Widget.MaterialComponents.CardView"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:visibility="visible"
+                        android:visibility="gone"
                         app:contentPadding="@dimen/_8sdp"
                         card_view:cardCornerRadius="@dimen/_4sdp"
                         card_view:cardElevation="@dimen/_4sdp"
                         card_view:cardUseCompatPadding="true">
 
                     <androidx.appcompat.widget.AppCompatTextView
-                            fontPath="fonts/Roboto-Bold.ttf"
+                            android:id="@+id/practise_input_header"
+                            fontPath="fonts/OpenSans-SemiBold.ttf"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:gravity="start|center"
                             android:text="@string/your_answer"
                             android:textColor="@color/font_color"
-                            android:textSize="@dimen/font_16" />
+                            android:textSize="@dimen/font_16"
+                            android:visibility="visible" />
 
                     <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/_4sdp"
-                            android:orientation="vertical">
+                            android:layout_marginTop="@dimen/_16sdp"
+                            android:orientation="vertical"
+                            android:padding="@dimen/_8sdp">
 
                         <androidx.appcompat.widget.AppCompatEditText
                                 android:id="@+id/et_practise"
@@ -223,57 +229,51 @@
 
                         <androidx.appcompat.widget.AppCompatImageView
                                 android:id="@+id/upload_practise_view"
-                                android:layout_width="@dimen/_48sdp"
-                                android:layout_height="@dimen/_48sdp"
+                                android:layout_width="@dimen/_52sdp"
+                                android:layout_height="@dimen/_52sdp"
                                 android:layout_gravity="center"
                                 android:layout_marginTop="@dimen/_16sdp"
                                 android:adjustViewBounds="true"
                                 android:background="@drawable/recv_bg_mic"
+                                android:backgroundTint="@color/button_primary_color"
                                 android:scaleType="centerInside"
-                                android:src="@drawable/recv_ic_mic_white"
+                                android:src="@drawable/ic_rec_mic_big"
                                 android:tint="@color/white"
                                 android:visibility="gone" />
 
-                        <Chronometer
-                                android:id="@+id/counter_tv"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center"
-                                android:layout_marginTop="@dimen/_8sdp"
-                                android:gravity="center"
-                                android:textSize="@dimen/_8sdp"
-                                android:visibility="gone" />
-
-
                         <androidx.appcompat.widget.AppCompatTextView
-                                android:id="@+id/practise_upload_sub_header"
-                                fontPath="fonts/Roboto-Regular.ttf"
+                                android:id="@+id/audio_practise_hint"
+                                fontPath="fonts/OpenSans-Regular.ttf"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center"
-                                android:layout_marginTop="@dimen/_8sdp"
                                 android:gravity="center"
                                 android:padding="@dimen/_4sdp"
                                 android:text="@string/hold_to_record_msz"
                                 android:textColor="@color/gray_9E"
-                                android:textSize="@dimen/font_12"
+                                android:textSize="@dimen/font_10"
                                 android:visibility="gone" />
+
 
                         <androidx.appcompat.widget.AppCompatTextView
                                 android:id="@+id/upload_file_view"
-                                fontPath="fonts/Roboto-Regular.ttf"
+                                fontPath="fonts/OpenSans-SemiBold.ttf"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center"
                                 android:layout_marginTop="@dimen/_8sdp"
                                 android:drawableStart="@drawable/ic_file_upload"
+                                android:drawablePadding="@dimen/_2sdp"
                                 android:gravity="center"
                                 android:onClick="@{()->handler.chooseFile()}"
-                                android:padding="@dimen/_4sdp"
+                                android:paddingStart="@dimen/_4sdp"
+                                android:paddingTop="@dimen/_4sdp"
+                                android:paddingEnd="@dimen/_4sdp"
                                 android:text="@string/upload_file_msz"
                                 android:textColor="@color/gray_9E"
                                 android:textSize="@dimen/font_12"
-                                android:visibility="gone" />
+                                android:visibility="gone"
+                                app:drawableTint="@color/emoji_icon_color" />
 
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
@@ -293,21 +293,20 @@
 
                     <androidx.appcompat.widget.AppCompatTextView
                             android:id="@+id/your_sub_answer_tv"
-                            fontPath="fonts/Roboto-Bold.ttf"
+                            fontPath="fonts/OpenSans-SemiBold.ttf"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:gravity="start|center"
-                            android:text="@string/your_submitted_answer"
+                            android:text="@string/your_answer"
                             android:textColor="@color/font_color"
-                            android:textSize="@dimen/font_16"
-                            android:visibility="gone" />
+                            android:textSize="@dimen/font_16" />
 
 
                     <LinearLayout
                             android:id="@+id/sub_practise_submit_layout"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/_4sdp"
+                            android:layout_marginTop="@dimen/_16sdp"
                             android:orientation="vertical"
                             android:padding="@dimen/_8sdp">
 
@@ -335,11 +334,12 @@
                                     android:layout_height="wrap_content"
                                     android:layout_alignParentStart="true"
                                     android:layout_centerInParent="true"
+                                    android:layout_centerVertical="true"
                                     android:layout_gravity="center"
                                     android:background="@drawable/play_pause_button_background"
-                                    android:backgroundTint="@color/primary_text"
+                                    android:backgroundTint="@color/button_primary_color"
                                     android:contentDescription="@string/play_button_description"
-                                    android:elevation="4dp"
+                                    android:elevation="@dimen/_4sdp"
                                     android:onClick="@{()->handler.playSubmitPracticeAudio()}"
                                     android:padding="@dimen/_4sdp"
                                     android:theme="?actionBarTheme"
@@ -347,7 +347,6 @@
 
 
                             <SeekBar
-
                                     android:id="@+id/submit_practise_seekbar"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
@@ -355,8 +354,8 @@
                                     android:layout_centerInParent="true"
                                     android:layout_toStartOf="@id/iv_cancel"
                                     android:layout_toEndOf="@id/submit_btn_play_info"
-                                    android:paddingStart="@dimen/_10sdp"
-                                    android:paddingEnd="@dimen/_10sdp"
+                                    android:paddingStart="@dimen/_12sdp"
+                                    android:paddingEnd="@dimen/_12sdp"
                                     android:progressDrawable="@drawable/seek_bar_draw"
                                     android:thumb="@drawable/seek_thumb" />
 
@@ -366,19 +365,21 @@
                                     android:layout_height="wrap_content"
                                     android:layout_alignParentEnd="true"
                                     android:layout_centerInParent="true"
+                                    android:layout_centerVertical="true"
                                     android:layout_gravity="center|end"
                                     android:clickable="true"
                                     android:focusable="true"
                                     android:onClick="@{()->handler.removeAudioPractise()}"
-                                    android:padding="@dimen/_5sdp"
-
+                                    android:paddingTop="@dimen/_4sdp"
+                                    android:paddingEnd="@dimen/_4sdp"
+                                    android:paddingBottom="@dimen/_4sdp"
                                     android:src="@drawable/ic_cross"
                                     android:tint="#878A91"
                                     android:visibility="visible" />
 
                             <androidx.appcompat.widget.AppCompatTextView
                                     android:id="@+id/submit_txt_info_duration"
-                                    fontPath="fonts/Roboto-Regular.ttf"
+                                    fontPath="fonts/OpenSans-Regular.ttf"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_below="@+id/submit_practise_seekbar"
@@ -386,7 +387,7 @@
                                     android:layout_marginTop="@dimen/_20sdp"
                                     android:paddingEnd="@dimen/_12sdp"
                                     android:textColor="@color/gray_9E"
-                                    android:textSize="@dimen/font_11"
+                                    android:textSize="@dimen/font_12"
                                     app:layout_goneMarginTop="@dimen/spacing_large" />
                         </RelativeLayout>
 
@@ -446,6 +447,29 @@
 
                         </RelativeLayout>
 
+                        <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+                                android:id="@+id/et_submit_text"
+                                fontPath="fonts/OpenSans-Regular.ttf"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:autoSizeMaxTextSize="@dimen/font_16"
+                                android:background="@drawable/rect_with_bound"
+                                android:backgroundTint="@color/emoji_bg_color"
+                                android:cursorVisible="false"
+                                android:enabled="false"
+                                android:focusable="false"
+                                android:gravity="start|top"
+                                android:imeOptions="actionDone"
+                                android:inputType="none"
+                                android:paddingTop="@dimen/_4sdp"
+                                android:paddingEnd="@dimen/_4sdp"
+                                android:paddingBottom="@dimen/_4sdp"
+                                android:textColor="@color/font_color"
+                                android:textColorHint="@color/emoji_bg_color"
+                                android:textCursorDrawable="@drawable/cursor_drawable"
+                                android:textSize="@dimen/font_14"
+                                android:visibility="gone" />
+
 
                     </LinearLayout>
 
@@ -461,7 +485,7 @@
                         android:layout_gravity="center"
                         android:layout_marginTop="@dimen/_8sdp"
                         android:background="@drawable/round_rectangle"
-                        android:backgroundTint="@color/primary_text"
+                        android:backgroundTint="@color/button_primary_color"
                         android:gravity="center"
                         android:onClick="@{()->handler.submitPractise()}"
                         android:paddingStart="@dimen/_24sdp"
@@ -480,13 +504,15 @@
                     android:id="@+id/progress_layout"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:layout_gravity="center"
                     android:background="@color/overlay"
                     android:visibility="gone">
 
                 <com.pnikosis.materialishprogress.ProgressWheel
+
                         android:id="@+id/progress_bar"
-                        android:layout_width="@dimen/_48sdp"
-                        android:layout_height="@dimen/_48sdp"
+                        android:layout_width="@dimen/_60sdp"
+                        android:layout_height="@dimen/_60sdp"
                         android:layout_centerInParent="true"
                         android:layout_gravity="center"
                         wheel:matProg_barColor="@color/button_primary_color"
@@ -497,39 +523,46 @@
                         wheel:matProg_rimWidth="@dimen/_2sdp" />
 
                 <androidx.appcompat.widget.AppCompatTextView
-                        fontPath="fonts/Roboto-Regular.ttf"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@+id/progress_bar"
-                        android:layout_alignEnd="@id/progress_bar"
-                        android:layout_marginTop="@dimen/_10sdp"
-                        android:text="Please wait"
-                        android:textColor="@color/white"
-                        android:textSize="@dimen/font_12" />
-
-                <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btn_success"
-                        style="@style/Widget.MaterialComponents.Button"
                         fontPath="fonts/OpenSans-SemiBold.ttf"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_alignParentBottom="true"
+                        android:layout_below="@+id/progress_bar"
+                        android:layout_centerInParent="true"
                         android:layout_centerHorizontal="true"
-                        android:layout_gravity="center"
-                        android:background="@drawable/round_rectangle"
-                        android:backgroundTint="@color/button_primary_color"
-                        android:clickable="true"
-                        android:focusable="true"
-                        android:gravity="center"
-                        android:onClick="@{()->handler.returnToChat()}"
-                        android:padding="@dimen/_8sdp"
-                        android:text="Return to chat"
-                        android:textAllCaps="false"
+                        android:layout_centerVertical="true"
+                        android:layout_marginTop="@dimen/_10sdp"
+                        android:text="@string/plz_wait"
                         android:textColor="@color/white"
-                        android:textSize="@dimen/font_14"
-                        app:cornerRadius="@dimen/_4sdp"
-                        app:rippleColor="@color/white" />
+                        android:textSize="@dimen/font_18" />
             </RelativeLayout>
+
+            <FrameLayout
+                    android:id="@+id/counter_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/transparent"
+                    android:visibility="gone">
+
+                <Chronometer
+
+                        android:id="@+id/counter_tv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="top|center"
+                        android:layout_marginTop="?attr/actionBarSize"
+                        android:background="@drawable/bg_timer"
+                        android:drawableStart="@drawable/timer_drawable"
+                        android:drawablePadding="@dimen/_4sdp"
+                        android:drawableTint="@color/error_color"
+                        android:gravity="top|center"
+                        android:paddingStart="@dimen/_16sdp"
+                        android:paddingTop="@dimen/_8sdp"
+                        android:paddingEnd="@dimen/_16sdp"
+                        android:paddingBottom="@dimen/_8sdp"
+                        android:textColor="@android:color/white"
+                        android:textSize="@dimen/font_11_5" />
+            </FrameLayout>
+
 
         </FrameLayout>
     </ScrollView>

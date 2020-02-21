@@ -74,8 +74,11 @@ class PractiseViewModel(application: Application) :
 
                 val list: MutableList<PracticeEngagement> = mutableListOf()
                 list.add(resp)
-                chatModel.question?.practiceEngagement = list
-                AppObjectController.appDatabase.chatDao().updateQuestionObject(chatModel.question!!)
+                chatModel.question?.let {
+                    AppObjectController.appDatabase.chatDao()
+                        .updatePractiseObject(it.questionId, list)
+
+                }
 
                 requestStatusLiveData.postValue(true)
             } catch (ex: HttpException) {

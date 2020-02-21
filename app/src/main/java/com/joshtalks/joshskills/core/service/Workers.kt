@@ -29,7 +29,6 @@ class JoshTalksInstallWorker(context: Context, workerParams: WorkerParameters) :
         val obj = InstallReferrerModel.getPrefObject()
         obj?.apply {
             this.mentor = Mentor.getInstance().getId()
-            this.installOn = (this.installOn / 1000)
         }
 
         if (obj != null) {

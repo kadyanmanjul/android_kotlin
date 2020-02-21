@@ -23,6 +23,7 @@ data class InboxEntity constructor(
     var localUrlPath: String? = "",
     var title: String? = "",
     var question_type: String? = "",
+    var chat_type: String? = null,
     var qText: String? = "",
     var user: User? = null,
     var material_type: BASE_MESSAGE_TYPE?,

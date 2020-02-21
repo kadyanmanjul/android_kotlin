@@ -123,7 +123,8 @@ class PaymentActivity : CoreJoshActivity(),
                 typeToken
             )
 
-        val obj: CourseDetailsResponse? = list?.find { it.courseId == courseId.toInt() }
+        val courseID = courseModel?.course ?: -99
+        val obj: CourseDetailsResponse? = list?.find { it.courseId == courseID }
         if (obj != null) {
             obj.let {
                 courseName = it.courseName
@@ -136,7 +137,7 @@ class PaymentActivity : CoreJoshActivity(),
                 setCustomAnimations(R.anim.slide_in_left, R.anim.slide_in_right)
                 add(
                     R.id.container,
-                    CourseDetailType1Fragment.newInstance(courseId.toInt()),
+                    CourseDetailType1Fragment.newInstance(courseId.toInt(), courseID),
                     CourseDetailType1Fragment::class.java.name
                 )
             }

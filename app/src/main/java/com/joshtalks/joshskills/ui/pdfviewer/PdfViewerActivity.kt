@@ -22,18 +22,21 @@ import com.joshtalks.joshskills.repository.local.entity.PdfType
 import com.joshtalks.joshskills.repository.server.engage.PdfEngage
 import com.joshtalks.joshskills.repository.service.EngagementNetworkHelper
 import es.voghdev.pdfviewpager.library.PDFViewPager
+import es.voghdev.pdfviewpager.library.RemotePDFViewPager
 import es.voghdev.pdfviewpager.library.adapter.PDFPagerAdapter
-
+import es.voghdev.pdfviewpager.library.remote.DownloadFile
 
 const val PDF_URL = "pdf_url"
 const val COURSE_NAME = "course_name"
 
-class PdfViewerActivity : BaseActivity() {
+class PdfViewerActivity : BaseActivity(), DownloadFile.Listener {
     private lateinit var conversationBinding: ActivityPdfViewerBinding
     private lateinit var pdfObject: PdfType
     private var pdfViewPager: PDFViewPager? = null
     private var gestureDetector: GestureDetector? = null
     private var uiHandler = Handler(Looper.getMainLooper())
+    private var adapter: PDFPagerAdapter? = null
+    private var remotePDFViewPager: RemotePDFViewPager? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -97,8 +100,14 @@ class PdfViewerActivity : BaseActivity() {
 
 
     private fun showPdf() {
-        val pdfViewPager = PDFViewPager(applicationContext, pdfObject.downloadedLocalPath)
-        conversationBinding.remotePdfRoot.addView(pdfViewPager)
+        if (pdfObject.downloadedLocalPath.isNullOrEmpty()) {
+            remotePDFViewPager = RemotePDFViewPager(applicationContext, pdfObject.url, this)
+
+        } else {
+            val pdfViewPager = PDFViewPager(applicationContext, pdfObject.downloadedLocalPath)
+            conversationBinding.remotePdfRoot.addView(pdfViewPager)
+
+        }
         AppAnalytics.create(AnalyticsEvent.PDF_OPENED.NAME).addParam("URL", pdfObject.url).push()
 
     }
@@ -116,6 +125,12 @@ class PdfViewerActivity : BaseActivity() {
         } catch (ex: Exception) {
 
         }
+        try {
+            adapter?.close()
+        } catch (ex: Exception) {
+
+        }
+
     }
 
     companion object {
@@ -141,6 +156,21 @@ class PdfViewerActivity : BaseActivity() {
             .addParam("name", javaClass.simpleName)
             .push()
         super.onBackPressed()
+    }
+
+    override fun onSuccess(url: String?, destinationPath: String?) {
+        destinationPath?.let {
+            adapter = PDFPagerAdapter(this, it)
+            remotePDFViewPager?.adapter = adapter
+            conversationBinding.remotePdfRoot.addView(remotePDFViewPager)
+        }
+
+    }
+
+    override fun onFailure(e: java.lang.Exception?) {
+    }
+
+    override fun onProgressUpdate(progress: Int, total: Int) {
     }
 
 }

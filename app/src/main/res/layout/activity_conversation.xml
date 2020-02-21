@@ -238,6 +238,7 @@
                         android:layout_gravity="end|bottom"
                         android:layout_marginEnd="@dimen/_5sdp"
                         android:background="@drawable/recv_bg_mic"
+                        android:backgroundTint="@color/button_primary_color"
                         android:scaleType="centerInside"
                         android:textColor="#fff"
                         android:visibility="visible"

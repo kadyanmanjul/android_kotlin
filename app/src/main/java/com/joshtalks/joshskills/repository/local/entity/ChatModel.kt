@@ -145,8 +145,11 @@ data class Question(
     @ColumnInfo
     @SerializedName("title") var title: String? = "",
 
-    @ColumnInfo(name = "question_type")
-    @SerializedName("type") var questionType: String = "",
+    @ColumnInfo(name = "question_type") var questionType: String = "",
+
+    @ColumnInfo(name = "type")
+    @SerializedName("type") var type: BASE_MESSAGE_TYPE = BASE_MESSAGE_TYPE.Q,
+
 
     @Ignore
     @SerializedName("videos") var videoList: List<VideoType>? = emptyList(),
@@ -479,7 +482,6 @@ interface ChatDao {
                         question.imageList =
                             getImagesOfQuestion(questionId = question.questionId)
                     BASE_MESSAGE_TYPE.VI -> question.videoList =
-
                         getVideosOfQuestion(questionId = question.questionId)
                     BASE_MESSAGE_TYPE.AU -> question.audioList =
                         getAudiosOfQuestion(questionId = question.questionId)
@@ -577,6 +579,12 @@ interface ChatDao {
 
     @Update
     suspend fun updateQuestionObject(vararg question: Question)
+
+    @Query("UPDATE question_table SET practice_engagements = :practiseEngagement  WHERE questionId= :questionId")
+    suspend fun updatePractiseObject(
+        questionId: String,
+        practiseEngagement: List<PracticeEngagement>
+    )
 
 
     @Query(value = "SELECT created FROM chat_table where question_id IS NOT NULL AND conversation_id= :conversationId ORDER BY created DESC LIMIT 1; ")

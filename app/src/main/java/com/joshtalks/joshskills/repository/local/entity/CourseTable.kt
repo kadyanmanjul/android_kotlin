@@ -30,7 +30,10 @@ data class Course(
     @SerializedName("icon") val courseIcon: String?,
 
     @ColumnInfo(name = "course_created_date")
-    @SerializedName("created") val courseCreatedDate: Date?
+    @SerializedName("created") val courseCreatedDate: Date?,
+
+    @ColumnInfo(name = "chat_type")
+    @SerializedName("chat_type") val chat_type: String?
 
 
 ) : Serializable
@@ -42,7 +45,7 @@ interface CourseDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertRegisterCourses(courseList: List<Course>)
 
-    @Query(value = "select * from course where conversation_id= :conversation_id ")
+    @Query(value = "select * from course where conversation_id= :conversation_id AND is_deleted=0 ")
     suspend fun chooseRegisterCourseMinimal(conversation_id: String): InboxEntity?
 
     @Query(value = "select * FROM (SELECT *,co.conversation_id,co.courseId FROM course co  LEFT JOIN chat_table ct ON  co.conversation_id = ct.conversation_id AND is_delete_message=0  LEFT JOIN question_table qt ON ct.chat_id = qt.chatId  ORDER BY created ASC) inbox where is_deleted=0 GROUP BY inbox.conversation_id ORDER BY created DESC")

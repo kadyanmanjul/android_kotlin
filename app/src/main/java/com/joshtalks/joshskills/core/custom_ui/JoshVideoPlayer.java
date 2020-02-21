@@ -6,6 +6,7 @@ import android.content.ContextWrapper;
 import android.content.pm.ActivityInfo;
 import android.net.Uri;
 import android.os.Handler;
+import android.os.Looper;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
@@ -43,10 +44,6 @@ import com.joshtalks.joshskills.core.service.video_download.VideoDownloadControl
 import static android.content.pm.ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE;
 
 public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener, View.OnClickListener {
-    public static final int STATE_IDLE = 1;
-    public static final int STATE_BUFFERING = 2;
-    public static final int STATE_READY = 3;
-    public static final int STATE_ENDED = 4;
     private Uri uri;
     private long lastPosition = 0;
     private long currentPosition = 0;
@@ -326,6 +323,23 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
         }
     }
 
+    public void downloadStreamButNotPlay() {
+        if (player != null) {
+            boolean haveStartPosition = startWindow != C.INDEX_UNSET;
+            if (haveStartPosition) {
+                player.seekTo(startWindow, currentPosition);
+            }
+            player.prepare(VideoDownloadController.getInstance().getMediaSource(uri), !haveStartPosition, false);
+            new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    onPause();
+                }
+            }, 500);
+
+        }
+    }
+
     public void setPlayListener(PlayerFullScreenListener playerFullScreenListener) {
         findViewById(R.id.exo_play).setOnClickListener(this);
         findViewById(R.id.ivFullScreenToggleOp).setOnClickListener(this);
@@ -358,21 +372,23 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
 
     @Override
     public void onClick(View v) {
+        try {
 
-        if (v.getId() == R.id.ivFullScreenToggle) {
-            if (getContext() instanceof FullscreenToggleListener)
-                ((FullscreenToggleListener) getContext()).onFullscreenToggle();
-        } else if (v.getId() == R.id.exo_play) {
-            if (!player.isPlaying()) {
-                downloadStreamPlay();
+            if (v.getId() == R.id.ivFullScreenToggle) {
+                if (getContext() instanceof FullscreenToggleListener)
+                    ((FullscreenToggleListener) getContext()).onFullscreenToggle();
+            } else if (v.getId() == R.id.exo_play) {
+                if (!player.isPlaying()) {
+                    onResume();
+                }
+            } else if (v.getId() == R.id.ivFullScreenToggleOp) {
+                if (playerFullScreenListener != null) {
+                    playerFullScreenListener.onFullScreen();
+                }
             }
-        } else if (v.getId() == R.id.ivFullScreenToggleOp) {
-            if (playerFullScreenListener != null) {
-                playerFullScreenListener.onFullScreen();
-            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-
-
     }
 
     public void fitToScreen() {

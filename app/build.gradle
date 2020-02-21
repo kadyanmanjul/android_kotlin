@@ -12,8 +12,8 @@ android {
         applicationId "com.joshtalks.joshskills"
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 53
-        versionName "1.0.53"
+        versionCode 54
+        versionName "1.0.54beta"
         vectorDrawables.useSupportLibrary true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField "String", "CLIENT_TOKEN", "\"Ctt75ss5IxyHgBJb48diBbHUXIQ1VANCYRykjdcj\""
@@ -106,7 +106,7 @@ android {
         local {
             buildConfigField "boolean", "PLAY_STORE_DISABLED", "false"
             manifestPlaceholders = [enableCrashReporting: "false"]
-            buildConfigField "String", "BASE_URL", "\"http://192.168.0.141:8080\""
+            buildConfigField "String", "BASE_URL", "\"http://192.168.0.102:8080\""
         }
         dev {
             buildConfigField "boolean", "PLAY_STORE_DISABLED", "false"

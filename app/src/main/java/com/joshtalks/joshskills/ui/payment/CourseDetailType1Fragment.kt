@@ -38,15 +38,21 @@ import java.text.DecimalFormatSymbols
 import java.util.*
 
 
+const val TEST_ID = "test_ID"
+
 class CourseDetailType1Fragment : Fragment() {
 
+    private var testId = 0
     private var courseId = 1
+
     private lateinit var binding: FragmentCourseDetailType1FragmentBinding
     private var videoUrl: String? = null
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
+            testId = it.getInt(TEST_ID)
             courseId = it.getInt(COURSE_ID)
         }
     }
@@ -196,10 +202,7 @@ class CourseDetailType1Fragment : Fragment() {
                 binding.upperContainer.layoutParams = lp
 
             }
-
-
             //var set =  ConstraintSet()
-
 
         }, 500)
     }
@@ -218,15 +221,16 @@ class CourseDetailType1Fragment : Fragment() {
     }
 
     fun buyCourse() {
-        RxBus2.publish(BuyCourseEventBus(courseId.toString()))
+        RxBus2.publish(BuyCourseEventBus(testId.toString()))
     }
 
     companion object {
 
         @JvmStatic
-        fun newInstance(courseId: Int) =
+        fun newInstance(testId: Int, courseId: Int) =
             CourseDetailType1Fragment().apply {
                 arguments = Bundle().apply {
+                    putInt(TEST_ID, testId)
                     putInt(COURSE_ID, courseId)
                 }
             }

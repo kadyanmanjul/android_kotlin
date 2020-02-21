@@ -87,7 +87,7 @@ class HelpViewModel(application: Application) : AndroidViewModel(application) {
                     return@async null
                 }
             } catch (ex: Exception) {
-              //  Crashlytics.logException(ex)
+                //  Crashlytics.logException(ex)
                 ex.printStackTrace()
                 apiCallStatusLiveData.postValue(ApiCallStatus.FAILED)
                 return@async null

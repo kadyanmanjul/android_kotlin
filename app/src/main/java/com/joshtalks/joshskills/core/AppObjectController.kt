@@ -220,13 +220,16 @@ internal class AppObjectController {
                             KEY_AUTHORIZATION,
                             "JWT " + (User.getInstance().token ?: "")
                         )
-                            .addHeader(KEY_APP_VERSION_NAME, BuildConfig.VERSION_NAME)
-                            .addHeader(KEY_APP_VERSION_CODE, BuildConfig.VERSION_CODE.toString())
-                            .addHeader(
-                                KEY_APP_USER_AGENT,
-                                "APP_" + BuildConfig.VERSION_NAME + "_" + BuildConfig.VERSION_CODE.toString()
-                            )
+
                     }
+                    newRequest.addHeader(KEY_APP_VERSION_NAME, BuildConfig.VERSION_NAME)
+                        .addHeader(KEY_APP_VERSION_CODE, BuildConfig.VERSION_CODE.toString())
+                        .addHeader(
+                            KEY_APP_USER_AGENT,
+                            "APP_" + BuildConfig.VERSION_NAME + "_" + BuildConfig.VERSION_CODE.toString()
+                        )
+
+
                     return chain.proceed(newRequest.build())
                 }
 

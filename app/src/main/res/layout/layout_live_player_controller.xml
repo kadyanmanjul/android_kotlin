@@ -64,10 +64,9 @@
                         android:layout_height="75dp"
                         android:clickable="true"
                         android:focusable="true"
-
                         android:padding="20dp"
-                        android:tint="#fff"
-                        app:srcCompat="@drawable/ic_play" />
+                        android:tint="#ffffff"
+                        app:srcCompat="@drawable/ic_play_24dp" />
 
                 <ImageView
                         android:id="@id/exo_pause"

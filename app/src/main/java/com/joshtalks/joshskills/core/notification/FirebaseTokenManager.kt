@@ -51,7 +51,7 @@ object FCMTokenManager {
         CoroutineScope(Dispatchers.IO).launch {
             try {
 
-                val data = mutableMapOf<String, String>(
+                val data = mutableMapOf(
                     "registration_id" to token,
                     "name" to Utils.getDeviceName(),
                     "device_id" to Utils.getDeviceId(),

@@ -32,6 +32,9 @@ import com.joshtalks.joshskills.ui.sign_up_old.OnBoardActivity
 import io.branch.referral.Branch
 import io.branch.referral.PrefHelper
 import io.github.inflationx.viewpump.ViewPumpContextWrapper
+import org.threeten.bp.Instant
+import org.threeten.bp.ZoneOffset
+import org.threeten.bp.ZonedDateTime
 import java.net.URLDecoder
 import java.util.*
 
@@ -173,10 +176,32 @@ abstract class BaseActivity : AppCompatActivity() {
 
                                     val installReferrerModel = InstallReferrerModel()
                                     installReferrerModel.otherInfo = referrerMap
-                                    installReferrerModel.utmMedium = referrerMap["utm_medium"]
-                                    installReferrerModel.utmSource = referrerMap["utm_source"]
-                                    installReferrerModel.installOn =
-                                        (response.referrerClickTimestampSeconds * 1000)
+                                    installReferrerModel.otherInfo?.apply {
+                                        this["install_begin_on"] =
+                                            response.installBeginTimestampSeconds.toString()
+                                        this["referral_click_on"] =
+                                            response.referrerClickTimestampSeconds.toString()
+                                    }
+
+                                    if (referrerMap["utm_medium"].isNullOrEmpty().not()) {
+                                        installReferrerModel.utmMedium = referrerMap["utm_medium"]
+                                    }
+                                    if (referrerMap["utm_source"].isNullOrEmpty().not()) {
+                                        installReferrerModel.utmSource = referrerMap["utm_source"]
+                                    }
+                                    if (response.installBeginTimestampSeconds > 0) {
+                                        val instant =
+                                            Instant.ofEpochSecond(response.installBeginTimestampSeconds)
+                                        val time = ZonedDateTime.ofInstant(instant, ZoneOffset.UTC)
+
+                                        installReferrerModel.installOn =
+                                            (time.toEpochSecond())
+                                    }
+                                    if (installReferrerModel.installOn == 0L) {
+                                        installReferrerModel.installOn = (Date().time / 1000)
+                                    }
+
+
                                     InstallReferrerModel.update(installReferrerModel)
                                 } catch (ex: Exception) {
                                     ex.printStackTrace()

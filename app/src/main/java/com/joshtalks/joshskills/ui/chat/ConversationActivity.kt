@@ -76,6 +76,7 @@ import com.joshtalks.joshskills.repository.server.chat_message.TVideoMessage
 import com.joshtalks.joshskills.repository.service.EngagementNetworkHelper
 import com.joshtalks.joshskills.ui.extra.ImageShowFragment
 import com.joshtalks.joshskills.ui.pdfviewer.PdfViewerActivity
+import com.joshtalks.joshskills.ui.practise.PRACTISE_OBJECT
 import com.joshtalks.joshskills.ui.practise.PractiseSubmitActivity
 import com.joshtalks.joshskills.ui.referral.ReferralActivity
 import com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity
@@ -89,7 +90,6 @@ import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.muddzdev.styleabletoast.StyleableToast
-import com.r0adkll.slidr.Slidr
 import com.vanniktech.emoji.EmojiPopup
 import de.hdodenhof.circleimageview.CircleImageView
 import dm.audiostreamer.AudioStreamingManager
@@ -124,22 +124,11 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
     private lateinit var conversationBinding: ActivityConversationBinding
     private lateinit var inboxEntity: InboxEntity
     private lateinit var emojiPopup: EmojiPopup
-    private val cMessageType: BASE_MESSAGE_TYPE = BASE_MESSAGE_TYPE.TX
-    private val compositeDisposable = CompositeDisposable()
-    private var revealAttachmentView: Boolean = false
     private lateinit var activityRef: WeakReference<FragmentActivity>
     private lateinit var linearLayoutManager: LinearLayoutManager
-    private var conversationList = linkedSetOf<ChatModel>()
-    private var removingConversationList = linkedSetOf<ChatModel>()
-    private lateinit var internetAvailableStatus: Snackbar
-    private val readChatList: MutableSet<ChatModel> = mutableSetOf()
-    private var readMessageTimerTask: TimerTask? = null
-    private val uiHandler = Handler(Looper.getMainLooper())
     private lateinit var progressDialog: FlipProgressDialog
-
-    private var currentAudio: String? = null
+    private lateinit var internetAvailableStatus: Snackbar
     private lateinit var mBottomSheetBehaviour: BottomSheetBehavior<MaterialCardView>
-
     private lateinit var mPlayingSong: TextView
     private lateinit var mDuration: TextView
     private lateinit var mSongPosition: TextView
@@ -147,8 +136,16 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
     private lateinit var mControlsContainer: LinearLayout
     private lateinit var bottomSheetLayout: MaterialCardView
     private lateinit var mPlayPauseButton: ImageView
+    private val cMessageType: BASE_MESSAGE_TYPE = BASE_MESSAGE_TYPE.TX
+    private val compositeDisposable = CompositeDisposable()
+    private var revealAttachmentView: Boolean = false
+    private var conversationList = linkedSetOf<ChatModel>()
+    private var removingConversationList = linkedSetOf<ChatModel>()
+    private val readChatList: MutableSet<ChatModel> = mutableSetOf()
+    private var readMessageTimerTask: TimerTask? = null
+    private val uiHandler = Handler(Looper.getMainLooper())
+    private var currentAudio: String? = null
     private var streamingManager: AudioStreamingManager? = null
-    private var currentSong: MediaMetaData? = null
     private var mUserIsSeeking = false
 
 
@@ -210,9 +207,6 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
             conversationBinding.viewmodel = conversationViewModel
             conversationBinding.lifecycleOwner = this
         } catch (ex: Exception) {
-            // ex.printStackTrace()
-            // Crashlytics.logException(ex)
-            //ex.printStackTrace()
         }
     }
 
@@ -303,13 +297,6 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
         }
     }
 
-
-    private fun initActivityAnimation() {
-        val primary = ContextCompat.getColor(applicationContext, R.color.colorPrimaryDark)
-        val secondary = ContextCompat.getColor(applicationContext, R.color.colorPrimary)
-        Slidr.attach(this, primary, secondary)
-    }
-
     fun emojiToggle() {
         emojiPopup.toggle()
     }
@@ -340,8 +327,6 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
                 }
                 return@setOnMenuItemClickListener true
             }
-
-
         } catch (ex: Exception) {
             Crashlytics.logException(ex)
         }
@@ -491,7 +476,6 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
                     conversationBinding.recordButton.isListenForRecord = false
                     conversationBinding.quickToggle.hide()
                 }
-
             }
 
             override fun beforeTextChanged(
@@ -511,7 +495,6 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
             }
 
         })
-
         conversationBinding.chatEdit.setOnTouchListener { _, event ->
             if (MotionEvent.ACTION_UP == event.action) {
                 if (emojiPopup.isShowing) {
@@ -520,8 +503,6 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
             }
             false
         }
-
-
         conversationBinding.recordButton.setOnTouchListener(OnRecordTouchListener {
             if (conversationBinding.chatEdit.text.toString().isEmpty() && it == MotionEvent.ACTION_DOWN) {
                 if (PermissionUtils.isAudioAndStoragePermissionEnable(this).not()) {
@@ -617,6 +598,17 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
                         token?.continuePermissionRequest()
                     }
                 })
+
+            inboxEntity.chat_type?.let {
+                if (it.isNotEmpty() && it.equals("NC", ignoreCase = true)) {
+                    conversationBinding.flAttachment.visibility = GONE
+                    conversationBinding.quickToggle.visibility = GONE
+                    conversationBinding.recordButton.isListenForRecord = false
+                    conversationBinding.recordButton.goToState(SECOND_STATE)
+                    conversationBinding.attachmentContainer.visibility = GONE
+                }
+
+            }
 
 
         }
@@ -928,15 +920,14 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
-
                     if (getCurrentMediaVolume(applicationContext) <= 0) {
                         StyleableToast.Builder(applicationContext).gravity(Gravity.BOTTOM)
                             .text(getString(R.string.volume_up_message)).cornerRadius(16)
                             .length(Toast.LENGTH_LONG)
                             .solidBackground().show()
                     }
-                    AppObjectController.currentPlayingAudioObject?.let {
-                        refreshViewAtPos(it)
+                    AppObjectController.currentPlayingAudioObject?.let { chatModel ->
+                        refreshViewAtPos(chatModel)
                     }
 
                     streamingManager?.isPlayMultiple = false
@@ -1041,20 +1032,6 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
                 ex.printStackTrace()
             }
         }
-        compositeDisposable.add(
-            RxBus2.listen(PractiseSubmitEventBus::class.java)
-                .subscribeOn(Schedulers.io())
-                .subscribe({
-                    PractiseSubmitActivity.startPractiseSubmissionActivity(
-                        activityRef.get()!!,
-                        PRACTISE_SUBMIT_REQUEST_CODE,
-                        it.chatModel
-                    )
-
-                }, {
-                    it.printStackTrace()
-                })
-        )
 
     }
 
@@ -1106,9 +1083,18 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
     private fun getView(
         chatModel: ChatModel
     ): BaseCell? {
-        return if (chatModel.type == BASE_MESSAGE_TYPE.Q || chatModel.type == BASE_MESSAGE_TYPE.AR || chatModel.type == BASE_MESSAGE_TYPE.A || chatModel.type == BASE_MESSAGE_TYPE.PR) {
-            getGenericView(chatModel.question?.material_type, chatModel)
-
+        return if (chatModel.type == BASE_MESSAGE_TYPE.Q) {
+            return when (chatModel.question?.type) {
+                /* BASE_MESSAGE_TYPE.Q, BASE_MESSAGE_TYPE.A, BASE_MESSAGE_TYPE.AR -> {
+                     getGenericView(chatModel.question?.material_type, chatModel)
+                 }*/
+                BASE_MESSAGE_TYPE.PR -> {
+                    getGenericView(chatModel.question?.type, chatModel)
+                }
+                else -> {
+                    getGenericView(chatModel.question?.material_type, chatModel)
+                }
+            }
         } else {
             getGenericView(chatModel.type, chatModel)
         }
@@ -1122,12 +1108,10 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
         return when (mszType) {
             BASE_MESSAGE_TYPE.AU ->
                 AudioPlayerViewHolder(activityRef, chatModel)
-
             BASE_MESSAGE_TYPE.IM ->
                 ImageViewHolder(activityRef, chatModel)
             BASE_MESSAGE_TYPE.PD ->
                 PdfViewHolder(activityRef, chatModel)
-
             BASE_MESSAGE_TYPE.VI ->
                 VideoViewHolder(activityRef, chatModel)
             BASE_MESSAGE_TYPE.PR ->
@@ -1162,7 +1146,22 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
                         else -> return
                     }
                 }
+            } else if (requestCode == PRACTISE_SUBMIT_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+                CoroutineScope(Dispatchers.IO).launch {
+                    try {
+                        val obj = data?.getSerializableExtra(PRACTISE_OBJECT) as ChatModel
+                        val chatObj = AppObjectController.appDatabase.chatDao()
+                            .getUpdatedChatObjectViaId(obj.chatId)
+                        refreshViewAtPos(chatObj)
+                    } catch (ex: Exception) {
+                    }
+                }
+                StyleableToast.Builder(this).gravity(Gravity.BOTTOM)
+                    .text(getString(R.string.answer_submitted)).cornerRadius(16)
+                    .length(Toast.LENGTH_LONG)
+                    .solidBackground().show()
             }
+
         } catch (ex: Exception) {
             Crashlytics.logException(ex)
             ex.printStackTrace()
@@ -1401,17 +1400,6 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
         return streamingManager !== null && streamingManager!!.isPlaying
     }
 
-
-    private fun showMediaInfo(media: MediaMetaData) {
-        currentSong = media
-        //audioPg.setValue(0)
-        //audioPg.setMin(0)
-        // audioPg.setMax(Integer.valueOf(media.getMediaDuration()) * 1000)
-        //setPGTime(0)
-        //setMaxTime()
-        // loadSongDetails(media)
-    }
-
     private fun getNotificationPendingIntent(): PendingIntent {
         val intent = Intent(applicationContext, ConversationActivity::class.java)
         intent.putExtra(CHAT_ROOM_OBJECT, inboxEntity)
@@ -1424,7 +1412,7 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
         try {
             mSeekBarAudio.progress = progress
             RxBus2.publish(SeekBarProgressEventBus(currentAudio!!, progress))
-        }catch (ex:Exception){
+        } catch (ex: Exception) {
 
         }
     }

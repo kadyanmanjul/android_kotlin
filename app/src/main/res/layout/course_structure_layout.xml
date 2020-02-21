@@ -37,10 +37,10 @@
             <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/iv_expand"
                     android:layout_width="wrap_content"
-                    android:padding="@dimen/_4sdp"
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
                     android:gravity="end"
+                    android:padding="@dimen/_4sdp"
                     android:src="@drawable/ic_expand" />
 
 
