@@ -1064,7 +1064,9 @@ class PractiseSubmitActivity : CoreJoshActivity(), FullScreenVideoFragment.OnDis
         binding.practiseSubmitLayout.visibility = GONE
         binding.submitAudioViewContainer.visibility = GONE
         isAudioRecordDone = false
-
+        binding.submitPractiseSeekbar.progress = 0
+        binding.submitPractiseSeekbar.max = 0
+        binding.submitBtnPlayInfo.state = MaterialPlayPauseDrawable.State.Play
         if (isAudioPlaying()) {
             mPlayerInterface?.resumeOrPause()
         }
