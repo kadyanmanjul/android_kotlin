@@ -1,6 +1,7 @@
 package com.joshtalks.joshskills.repository.local
 
 import android.content.Context
+import android.database.SQLException
 import androidx.room.*
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
@@ -108,8 +109,12 @@ abstract class AppDatabase : RoomDatabase() {
         }
         private val MIGRATION_8_9: Migration = object : Migration(8, 9) {
             override fun migrate(database: SupportSQLiteDatabase) {
-                database.execSQL("ALTER TABLE course ADD COLUMN chat_type TEXT ")
-                database.execSQL("ALTER TABLE question_table ADD COLUMN type TEXT ")
+                try {
+                    database.execSQL("ALTER TABLE course ADD COLUMN chat_type TEXT ")
+                    database.execSQL("ALTER TABLE question_table ADD COLUMN type TEXT ")
+                } catch (ex: SQLException) {
+                    ex.printStackTrace()
+                }
             }
         }
 
