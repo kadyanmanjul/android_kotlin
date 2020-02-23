@@ -8,6 +8,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.repository.local.entity.*
 import java.util.*
 
@@ -16,7 +17,7 @@ const val DATABASE_NAME = "JoshEnglishDB.db"
 
 @Database(
     entities = [Course::class, ChatModel::class, Question::class, VideoType::class, AudioType::class, OptionType::class, PdfType::class, ImageType::class],
-    version = 9,
+    version = 10,
     exportSchema = false
 )
 @TypeConverters(
@@ -49,7 +50,8 @@ abstract class AppDatabase : RoomDatabase() {
                                 MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5,
                                 MIGRATION_5_6, MIGRATION_6_7,
                                 MIGRATION_7_8,
-                                MIGRATION_8_9
+                                MIGRATION_8_9,
+                                MIGRATION_9_10
                             )
                             .fallbackToDestructiveMigration()
                             .addCallback(sRoomDatabaseCallback)
@@ -119,6 +121,21 @@ abstract class AppDatabase : RoomDatabase() {
                     if (existsColumnInTable(database, typeQuery)) {
                         database.execSQL("ALTER TABLE question_table ADD COLUMN type TEXT ")
                     }
+                } catch (ex: SQLException) {
+                    ex.printStackTrace()
+                }
+            }
+        }
+        private val MIGRATION_9_10: Migration = object : Migration(9, 10) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                try {
+                    val cursor = database.query("select conversation_id from course")
+                    if (cursor.moveToFirst()) {
+                        val key=cursor.getString(cursor.getColumnIndex("conversation_id"))
+                        PrefManager.removeKey(key)
+                    }
+                    cursor.close();
+
                 } catch (ex: SQLException) {
                     ex.printStackTrace()
                 }

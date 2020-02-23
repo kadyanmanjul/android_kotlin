@@ -84,5 +84,9 @@ object PrefManager {
         AppDatabase.clearDatabase()
     }
 
+    fun removeKey(key: String) {
+        prefManager.edit().remove(key).apply()
+
+    }
 
 }

@@ -324,9 +324,6 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
                 if (it?.itemId == R.id.menu_referral) {
                     ReferralActivity.startReferralActivity(this@ConversationActivity)
                 }
-                else if (it?.itemId == R.id.menu_reload_message) {
-
-                }
                 return@setOnMenuItemClickListener true
             }
         } catch (ex: Exception) {
