@@ -166,6 +166,7 @@
     <string name="invite_friends">Invite And Earn</string>
     <string name="referral_content">Refer your friends &amp; we\'ll give them a discount of ₹ %s on their first course purchase &amp;  ₹ %s cash to you if they buy a course</string>
     <string name="refer_and_earn">Refer &amp; Earn</string>
+    <string name="reload_class">Reload class</string>
     <string name="referral_amount_title">EARN ₹ %s CASH</string>
     <string name="copy_code">Referral code copied to clipboard</string>
     <string name="discount_header">Do you have discount code?</string>

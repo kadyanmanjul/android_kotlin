@@ -48,7 +48,7 @@ abstract class AppDatabase : RoomDatabase() {
                             .addMigrations(
                                 MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5,
                                 MIGRATION_5_6, MIGRATION_6_7,
-                                //MIGRATION_7_8,
+                                MIGRATION_7_8,
                                 MIGRATION_8_9
                             )
                             .fallbackToDestructiveMigration()
@@ -102,17 +102,23 @@ abstract class AppDatabase : RoomDatabase() {
             }
         }
 
-       /* private val MIGRATION_7_8: Migration = object : Migration(7, 8) {
+        private val MIGRATION_7_8: Migration = object : Migration(7, 8) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("ALTER TABLE course ADD COLUMN chat_type TEXT ")
                 database.execSQL("ALTER TABLE question_table ADD COLUMN type TEXT ")
             }
-        }*/
+        }
         private val MIGRATION_8_9: Migration = object : Migration(8, 9) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 try {
-                    database.execSQL("ALTER TABLE course ADD COLUMN chat_type TEXT ")
-                    database.execSQL("ALTER TABLE question_table ADD COLUMN type TEXT ")
+                    val chatTypeQuery = "SELECT chat_type FROM course"
+                    if (existsColumnInTable(database, chatTypeQuery)) {
+                        database.execSQL("ALTER TABLE course ADD COLUMN chat_type TEXT")
+                    }
+                    val typeQuery = "SELECT type FROM question_table"
+                    if (existsColumnInTable(database, typeQuery)) {
+                        database.execSQL("ALTER TABLE question_table ADD COLUMN type TEXT ")
+                    }
                 } catch (ex: SQLException) {
                     ex.printStackTrace()
                 }
@@ -122,6 +128,21 @@ abstract class AppDatabase : RoomDatabase() {
 
         fun clearDatabase() {
             INSTANCE?.clearAllTables()
+        }
+
+        fun existsColumnInTable(
+            database: SupportSQLiteDatabase,
+            query: String
+        ): Boolean {
+            try {
+                database.execSQL(query)
+                return true
+            } catch (ex: SQLException) {
+                ex.printStackTrace()
+            }
+            return false
+
+
         }
 
     }

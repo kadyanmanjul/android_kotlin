@@ -943,10 +943,13 @@ class PractiseSubmitActivity : CoreJoshActivity(), FullScreenVideoFragment.OnDis
         try {
             if (startPlay) {
                 mPlayerInterface?.mediaPlayer?.start()
-                Handler().postDelayed({
-                    val startNotStickyIntent = Intent(this, MusicService::class.java)
-                    startService(startNotStickyIntent)
-                    mPlayerInterface?.clearNotification()
+                AppObjectController.uiHandler.postDelayed({
+                    try {
+                        val startNotStickyIntent = Intent(this, MusicService::class.java)
+                        startService(startNotStickyIntent)
+                        mPlayerInterface?.clearNotification()
+                    } catch (ex: Exception) {
+                    }
                 }, 250)
             }
             if (restore) {
@@ -957,28 +960,35 @@ class PractiseSubmitActivity : CoreJoshActivity(), FullScreenVideoFragment.OnDis
                 }
 
                 updateResetStatus(false)
-                Handler().postDelayed({
-                    //stop foreground if coming from pause state
-                    if (mMusicService!!.isRestoredFromPause) {
-                        mMusicService!!.stopForeground(false)
-                        mMusicService!!.isRestoredFromPause = false
-                    }
-                    mPlayerInterface?.clearNotification()
+                AppObjectController.uiHandler.postDelayed({
+                    try {
 
+                        //stop foreground if coming from pause state
+                        if (mMusicService!!.isRestoredFromPause) {
+                            mMusicService!!.stopForeground(false)
+                            mMusicService!!.isRestoredFromPause = false
+                        }
+                        mPlayerInterface?.clearNotification()
+                    } catch (ex: Exception) {
+                    }
                 }, 250)
+
             }
         } catch (ex: Exception) {
         }
     }
 
     private fun updateResetStatus(onPlaybackCompletion: Boolean) {
-        if (onPlaybackCompletion) {
-            if (mPlayerInterface!!.state != PlaybackInfoListener.State.COMPLETED && mPlayerInterface!!.isPlaying) {
-                mPlayerInterface?.resumeOrPause()
-                mPlayerInterface?.clearNotification()
-                // mPlayerInterface?.reset()
+        try {
+            if (onPlaybackCompletion) {
+                if (mPlayerInterface!!.state != PlaybackInfoListener.State.COMPLETED && mPlayerInterface!!.isPlaying) {
+                    mPlayerInterface?.resumeOrPause()
+                    mPlayerInterface?.clearNotification()
+                    // mPlayerInterface?.reset()
+                }
+                setAudioPlayerStateDefault()
             }
-            setAudioPlayerStateDefault()
+        } catch (ex: Exception) {
         }
     }
 
