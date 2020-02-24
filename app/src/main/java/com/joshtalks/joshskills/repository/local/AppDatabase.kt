@@ -2,6 +2,7 @@ package com.joshtalks.joshskills.repository.local
 
 import android.content.Context
 import android.database.SQLException
+import android.database.sqlite.SQLiteException
 import androidx.room.*
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
@@ -107,21 +108,21 @@ abstract class AppDatabase : RoomDatabase() {
         private val MIGRATION_7_8: Migration = object : Migration(7, 8) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("ALTER TABLE course ADD COLUMN chat_type TEXT ")
-                database.execSQL("ALTER TABLE question_table ADD COLUMN type TEXT ")
+                database.execSQL("ALTER TABLE question_table ADD COLUMN type TEXT NOT NULL DEFAULT 'Q' ")
             }
         }
         private val MIGRATION_8_9: Migration = object : Migration(8, 9) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 try {
                     val chatTypeQuery = "SELECT chat_type FROM course"
-                    if (existsColumnInTable(database, chatTypeQuery)) {
+                    if (existsColumnInTable(database, chatTypeQuery).not()) {
                         database.execSQL("ALTER TABLE course ADD COLUMN chat_type TEXT")
                     }
                     val typeQuery = "SELECT type FROM question_table"
-                    if (existsColumnInTable(database, typeQuery)) {
-                        database.execSQL("ALTER TABLE question_table ADD COLUMN type TEXT ")
+                    if (existsColumnInTable(database, typeQuery).not()) {
+                        database.execSQL("ALTER TABLE question_table ADD COLUMN type TEXT NOT NULL DEFAULT 'Q'")
                     }
-                } catch (ex: SQLException) {
+                } catch (ex: Exception) {
                     ex.printStackTrace()
                 }
             }
@@ -136,7 +137,7 @@ abstract class AppDatabase : RoomDatabase() {
                     }
                     cursor.close();
 
-                } catch (ex: SQLException) {
+                } catch (ex: Exception) {
                     ex.printStackTrace()
                 }
             }
@@ -152,9 +153,9 @@ abstract class AppDatabase : RoomDatabase() {
             query: String
         ): Boolean {
             try {
-                database.execSQL(query)
+                database.query(query)
                 return true
-            } catch (ex: SQLException) {
+            } catch (ex: Exception) {
                 ex.printStackTrace()
             }
             return false
