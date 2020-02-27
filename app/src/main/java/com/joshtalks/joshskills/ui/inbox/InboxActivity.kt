@@ -559,6 +559,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
                 { value ->
                     if (value) {
                         val root = findViewById<View>(R.id.find_more)
+                        root.isShown
                         if (offerIn7DaysHint.isShowing.not()) {
                             offerIn7DaysHint.showAlignBottom(root)
                             findViewById<View>(R.id.bottom_line).visibility = View.GONE

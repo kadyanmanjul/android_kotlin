@@ -2,10 +2,10 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:elevation="4dp"
-        android:translationZ="8dp"
         android:layout_height="60dp"
-        android:background="@android:color/transparent">
+        android:background="@android:color/transparent"
+        android:elevation="4dp"
+        android:translationZ="8dp">
 
     <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/balloon_arrow"
@@ -19,14 +19,14 @@
             android:tint="@android:color/black" />
 
     <RelativeLayout
-            android:paddingStart="16dp"
-            android:paddingTop="6dp"
-            android:paddingEnd="16dp"
-            android:paddingBottom="6dp"
             android:id="@+id/balloon_content"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_centerInParent="true">
+            android:layout_centerInParent="true"
+            android:paddingStart="16dp"
+            android:paddingTop="8dp"
+            android:paddingEnd="16dp"
+            android:paddingBottom="8dp">
 
         <LinearLayout
                 android:id="@+id/balloon_background"
