@@ -53,7 +53,7 @@ interface ChatNetworkService {
     fun submitPracticeAsync(@Body requestEngage: RequestEngage): Deferred<PracticeEngagement>
 
     @POST("$DIR/practice/engagement/")
-    fun dwd(): ReplaySubject<String>
+    fun reply(): ReplaySubject<String>
 
 
 }

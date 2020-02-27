@@ -228,7 +228,7 @@ class PdfViewHolder(activityRef: WeakReference<FragmentActivity>, message: ChatM
 
     @Click(R.id.container_fl)
     fun onClickPdfContainer() {
-        message.question?.pdfList?.get(0)?.let { pdfObj ->
+        message.question?.pdfList?.getOrNull(0)?.let { pdfObj ->
             if (message.downloadStatus == DOWNLOAD_STATUS.DOWNLOADED && AppDirectory.isFileExist(
                     pdfObj.downloadedLocalPath
                 )
