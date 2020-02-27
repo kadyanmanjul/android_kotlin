@@ -13,6 +13,8 @@ import com.facebook.appevents.AppEventsLogger
 import com.facebook.stetho.okhttp3.StethoInterceptor
 import com.google.android.exoplayer2.util.Util
 import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.Logger
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
 import com.google.gson.*
@@ -143,9 +145,9 @@ internal class AppObjectController {
         @JvmStatic
         lateinit var firebaseAnalytics: FirebaseAnalytics
 
-
         @JvmStatic
         var currentPlayingAudioObject: ChatModel? = null
+
         @JvmStatic
         var currentCSNumber: Int = 1
 
@@ -162,6 +164,8 @@ internal class AppObjectController {
             facebookEventLogger = AppEventsLogger.newLogger(joshApplication)
             AndroidThreeTen.init(joshApplication)
             Branch.getAutoInstance(joshApplication)
+            FirebaseDatabase.getInstance().setLogLevel(Logger.Level.DEBUG)
+            FirebaseDatabase.getInstance().setPersistenceEnabled(true)
 
             gsonMapper = GsonBuilder()
                 .enableComplexMapKeySerialization()

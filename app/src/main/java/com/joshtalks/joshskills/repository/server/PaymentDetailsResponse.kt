@@ -2,6 +2,7 @@ package com.joshtalks.joshskills.repository.server
 
 
 import com.google.gson.annotations.SerializedName
+import java.io.Serializable
 
 data class PaymentDetailsResponse(
     @SerializedName("amount")
@@ -15,5 +16,7 @@ data class PaymentDetailsResponse(
     @SerializedName("razorpay_key_id")
     val razorpayKeyId: String,
     @SerializedName("razorpay_order_id")
-    val razorpayOrderId: String
-)
+    val razorpayOrderId: String,
+    @SerializedName("discount_amount")
+    val discountAmount: Double
+):Serializable

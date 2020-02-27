@@ -59,9 +59,9 @@ object PermUtil {
         } else {
             val permissionsNeeded = ArrayList<String>()
             val permissionsList = ArrayList<String>()
-            if (!addPermission(permissionsList, Manifest.permission.CAMERA, fragment.getActivity()!!))
+            if (!addPermission(permissionsList, Manifest.permission.CAMERA, fragment.activity!!))
                 permissionsNeeded.add("CAMERA")
-            if (!addPermission(permissionsList, Manifest.permission.WRITE_EXTERNAL_STORAGE, fragment.getActivity()!!))
+            if (!addPermission(permissionsList, Manifest.permission.WRITE_EXTERNAL_STORAGE, fragment.activity!!))
                 permissionsNeeded.add("WRITE_EXTERNAL_STORAGE")
             if (permissionsList.size > 0) {
                 fragment.requestPermissions(

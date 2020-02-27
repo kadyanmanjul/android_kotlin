@@ -32,7 +32,7 @@ class VideoListFragment : MediaListFragment(), VideoAdapter.OnVideoClickListener
         @JvmStatic
         fun newInstance(key: Int, b: Bundle?): Fragment {
             val bf: Bundle = b ?: Bundle()
-            bf.putInt("fragment.key", key);
+            bf.putInt("fragment.key", key)
             val fragment = VideoListFragment()
             fragment.arguments = bf
             return fragment

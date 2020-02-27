@@ -18,6 +18,7 @@ import io.github.inflationx.viewpump.ViewPump
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 class JoshApplication : BranchApp() {
 
@@ -38,6 +39,8 @@ class JoshApplication : BranchApp() {
             FacebookSdk.addLoggingBehavior(LoggingBehavior.APP_EVENTS)
             Branch.enableDebugMode()
             IntegrationValidator.validate(this)
+             Timber.plant(Timber.DebugTree())
+
         }
         appObjectController = AppObjectController.init(this)
 

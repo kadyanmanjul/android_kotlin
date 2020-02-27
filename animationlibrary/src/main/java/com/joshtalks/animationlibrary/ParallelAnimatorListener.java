@@ -14,5 +14,5 @@ public interface ParallelAnimatorListener {
 	 * @param parallelAnimator
 	 *            The ParallelAnimator object.
 	 */
-	public void onAnimationEnd(ParallelAnimator parallelAnimator);
+    void onAnimationEnd(ParallelAnimator parallelAnimator);
 }

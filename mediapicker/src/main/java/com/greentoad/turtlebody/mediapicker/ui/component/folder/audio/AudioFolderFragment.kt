@@ -30,7 +30,7 @@ class AudioFolderFragment : FragmentBase() {
         @JvmStatic
         fun newInstance(key: Int, b: Bundle?): Fragment {
             val bf: Bundle = b ?: Bundle()
-            bf.putInt("fragment.key", key);
+            bf.putInt("fragment.key", key)
             val fragment = AudioFolderFragment()
             fragment.arguments = bf
             return fragment

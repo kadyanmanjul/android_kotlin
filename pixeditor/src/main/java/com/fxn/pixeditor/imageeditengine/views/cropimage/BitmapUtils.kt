@@ -544,7 +544,7 @@ internal object BitmapUtils {
                     )
                 }
             } catch (e: OutOfMemoryError) {
-                result?.recycle()
+                result.recycle()
                 throw e
             }
 

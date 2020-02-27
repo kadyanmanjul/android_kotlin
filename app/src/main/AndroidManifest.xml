@@ -49,14 +49,6 @@
 
     <permission android:name="android.permission.MEDIA_CONTENT_CONTROL" />
 
-
-    <!-- showing notification on do not disturb -->
-    <!--
-        <uses-permission android:name="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE"
-                tools:ignore="ProtectedPermissions" />
-                            android:requestLegacyExternalStorage="true"
-    -->
-
     <application
             android:name=".core.JoshApplication"
             android:allowBackup="true"
@@ -71,6 +63,7 @@
             android:theme="@style/AppTheme"
             tools:ignore="AllowBackup,GoogleAppIndexingWarning,UnusedAttribute"
             tools:replace="android:allowBackup,android:supportsRtl">
+
         <activity
                 android:name=".ui.help.HelpActivity"
                 android:launchMode="singleTask"
@@ -259,7 +252,6 @@
                 android:launchMode="singleTask"
                 android:parentActivityName=".ui.inbox.InboxActivity"
                 android:theme="@style/AppNoBarTheme" />
-
         <activity
                 android:name=".ui.referral.ReferralActivity"
                 android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize"
@@ -331,7 +323,7 @@
 
         <receiver
                 android:name="dm.audiostreamer.AudioStreamingReceiver"
-                tools:ignore="ExportedService">
+                tools:ignore="ExportedReceiver,ExportedService">
             <intent-filter>
                 <action android:name="dm.audiostreamer.close" />
                 <action android:name="dm.audiostreamer.pause" />
@@ -342,6 +334,7 @@
                 <action android:name="android.media.AUDIO_BECOMING_NOISY" />
             </intent-filter>
         </receiver>
+
         <provider
                 android:name=".repository.service.GenericFileProvider"
                 android:authorities="com.joshtalks.joshskills.provider"
@@ -350,9 +343,7 @@
             <meta-data
                     android:name="android.support.FILE_PROVIDER_PATHS"
                     android:resource="@xml/provider_paths" />
-
         </provider>
-
     </application>
 
 </manifest>

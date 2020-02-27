@@ -39,15 +39,6 @@ abstract class ActivityBase : AppCompatActivity(), AnkoLogger {
         toolbar.setNavigationIcon(resId)
     }
 
-    override fun setContentView(layoutResID: Int) {
-        super.setContentView(layoutResID)
-       /* if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            window.statusBarColor = ContextCompat.getColor(applicationContext, R.color.md_white_1000)
-        }*/
-      // setLightStatusBar(window.decorView, this)
-
-    }
-
     private fun setLightStatusBar(view: View, activity: Activity) {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {

@@ -7,13 +7,6 @@ import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 
 abstract class BaseImageEditActivity : AppCompatActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
-        super.onCreate(savedInstanceState, persistentState)
-    }
 
     companion object {
 

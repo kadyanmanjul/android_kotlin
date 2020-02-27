@@ -260,9 +260,9 @@ class ImageViewTouch(context: Context, attrs: AttributeSet) : ImageViewTouchBase
         }
 
         override fun onLongPress(e: MotionEvent) {
-            if (isLongClickable()) {
+            if (isLongClickable) {
                 if (!mScaleDetector.isInProgress) {
-                    setPressed(true)
+                    isPressed = true
                     performLongClick()
                 }
             }

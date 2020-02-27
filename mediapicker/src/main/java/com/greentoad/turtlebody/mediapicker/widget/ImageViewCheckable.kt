@@ -58,7 +58,7 @@ class ImageViewCheckable : ImageView, Checkable {
     }
 
     override fun toggle() {
-        setChecked(!mIsChecked)
+        isChecked = !mIsChecked
     }
 
 

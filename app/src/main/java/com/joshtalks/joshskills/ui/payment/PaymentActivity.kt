@@ -47,6 +47,7 @@ import com.muddzdev.styleabletoast.StyleableToast
 import com.razorpay.Checkout
 import com.razorpay.PaymentResultListener
 import io.branch.referral.util.BRANCH_STANDARD_EVENT
+import io.reactivex.Maybe
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -60,11 +61,13 @@ import java.util.*
 
 const val COURSE_OBJECT = "course"
 const val COURSE_ID = "course_ID"
+const val PAYMENT_DETAIL_OBJECT = "payment_detail"
 
 
 class PaymentActivity : CoreJoshActivity(),
     PaymentResultListener, CouponCodeSubmitFragment.OnCouponCodeSubmitListener,
-    CoursePurchaseDetailFragment.OnCourseDetailInteractionListener {
+    CoursePurchaseDetailFragment.OnCourseDetailInteractionListener,
+    OfferCoursePaymentDetailFragment.OnCourseBuyOfferInteractionListener {
 
     private lateinit var activityPaymentBinding: ActivityPaymentBinding
     private var courseModel: CourseExploreModel? = null
@@ -76,6 +79,7 @@ class PaymentActivity : CoreJoshActivity(),
     private var courseName = EMPTY
     private var userSubmitCode = EMPTY
     private lateinit var titleView: AppCompatTextView
+    private var specialDiscount = false
 
     companion object {
         fun startPaymentActivity(
@@ -137,7 +141,7 @@ class PaymentActivity : CoreJoshActivity(),
                 setCustomAnimations(R.anim.slide_in_left, R.anim.slide_in_right)
                 add(
                     R.id.container,
-                    CourseDetailType1Fragment.newInstance(testId.toInt(), courseID),
+                    CourseDetailType1Fragment.newInstance(testId.toInt(), courseID, amount),
                     CourseDetailType1Fragment::class.java.name
                 )
             }
@@ -148,6 +152,7 @@ class PaymentActivity : CoreJoshActivity(),
             getCourseDetails()
             Checkout.preload(application)
             openWhatsAppHelp()
+            userHaveSpecialDiscount()
         }
 
 
@@ -158,7 +163,6 @@ class PaymentActivity : CoreJoshActivity(),
             flags = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
         })
         finishAndRemoveTask()
-
     }
 
 
@@ -211,6 +215,10 @@ class PaymentActivity : CoreJoshActivity(),
                 if (courseName.isNotEmpty()) {
                     CoroutineScope(Dispatchers.Main).launch {
                         titleView.text = courseName
+                        AppObjectController.uiHandler.postDelayed({
+
+
+                        }, 500)
                     }
 
                 }
@@ -290,9 +298,7 @@ class PaymentActivity : CoreJoshActivity(),
                 val map = HashMap<String, String>()
                 map["mobile"] = User.getInstance().phoneNumber
                 map["id"] = this@PaymentActivity.testId
-                if (userSubmitCode.isEmpty()) {
-                    map["code"] = EMPTY
-                } else {
+                if (userSubmitCode.isNotEmpty()) {
                     map["code"] = userSubmitCode
                 }
                 val response: PaymentDetailsResponse =
@@ -304,19 +310,46 @@ class PaymentActivity : CoreJoshActivity(),
                     courseModel?.courseName = response.courseName
                     courseModel?.id = this@PaymentActivity.testId.toInt()
                 }
-                initializeRazorpayPayment(response)
+
+                compositeDisposable.add(AppObjectController.appDatabase
+                    .courseDao()
+                    .isUserOldThen7Days()
+                    .concatMap {
+                        val (flag, dayRemain) = Utils.isUser7DaysOld(it.courseCreatedDate)
+                        return@concatMap Maybe.just(flag)
+                    }
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(
+                        { value ->
+                            hideProgress()
+                            if (value) {
+                                courseDetailsWithOffer(courseModel!!, response)
+                            } else {
+                                initializeRazorpayPayment(response)
+                            }
+
+                        },
+                        { error ->
+                            error.printStackTrace()
+
+                        }, {
+                            initializeRazorpayPayment(response)
+                        }
+                    ))
+
             } catch (ex: HttpException) {
+                hideProgress()
                 ex.printStackTrace()
             } catch (ex: Exception) {
-                AppObjectController.uiHandler.post {
-                    activityPaymentBinding.progressBar.visibility = View.GONE
-                }
+                hideProgress()
                 ex.printStackTrace()
                 Crashlytics.logException(ex)
             }
         }
 
     }
+
 
     private fun initializeRazorpayPayment(response: PaymentDetailsResponse) {
         CoroutineScope(Dispatchers.Main).launch {
@@ -358,20 +391,25 @@ class PaymentActivity : CoreJoshActivity(),
     }
 
 
-    fun buyCourse() {
+    fun buyCourse(isUserSpecialOffer: Boolean) {
         val courseModel = CourseExploreModel()
         courseModel.amount = amount
         courseModel.courseName = courseName
         courseModel.id = testId.toInt()
 
-        val fragmentTransaction = supportFragmentManager.beginTransaction()
-        val prev = supportFragmentManager.findFragmentByTag("purchase_details_dialog")
-        if (prev != null) {
-            fragmentTransaction.remove(prev)
+        if (isUserSpecialOffer || specialDiscount) {
+            onCompletePayment()
+        } else {
+
+            val fragmentTransaction = supportFragmentManager.beginTransaction()
+            val prev = supportFragmentManager.findFragmentByTag("purchase_details_dialog")
+            if (prev != null) {
+                fragmentTransaction.remove(prev)
+            }
+            fragmentTransaction.addToBackStack(null)
+            CoursePurchaseDetailFragment.newInstance(courseModel)
+                .show(supportFragmentManager, "purchase_details_dialog")
         }
-        fragmentTransaction.addToBackStack(null)
-        CoursePurchaseDetailFragment.newInstance(courseModel)
-            .show(supportFragmentManager, "purchase_details_dialog")
     }
 
 
@@ -381,7 +419,7 @@ class PaymentActivity : CoreJoshActivity(),
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
-                    buyCourse()
+                    buyCourse(it.specialOffer)
                 }, {
                     it.printStackTrace()
                 })
@@ -429,6 +467,7 @@ class PaymentActivity : CoreJoshActivity(),
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == 101 && resultCode == Activity.RESULT_OK) {
+            userHaveSpecialDiscount()
             requestForPayment()
         }
         super.onActivityResult(requestCode, resultCode, data)
@@ -504,5 +543,56 @@ class PaymentActivity : CoreJoshActivity(),
     override fun onCouponCode() {
         showCouponCodeEnterScreen()
     }
+
+    private fun hideProgress() {
+        AppObjectController.uiHandler.post {
+            activityPaymentBinding.progressBar.visibility = View.GONE
+        }
+    }
+
+    private fun courseDetailsWithOffer(
+        courseModel: CourseExploreModel,
+        paymentDetailsResponse: PaymentDetailsResponse
+    ) {
+        val fragmentTransaction = supportFragmentManager.beginTransaction()
+        val prev = supportFragmentManager.findFragmentByTag("offer_purchase_details_dialog")
+        if (prev != null) {
+            fragmentTransaction.remove(prev)
+        }
+        fragmentTransaction.addToBackStack(null)
+        OfferCoursePaymentDetailFragment.newInstance(courseModel, paymentDetailsResponse)
+            .show(supportFragmentManager, "offer_purchase_details_dialog")
+    }
+
+    override fun onCompleteOfferPayment(
+        courseModel: CourseExploreModel,
+        paymentDetailResponse: PaymentDetailsResponse
+    ) {
+
+        initializeRazorpayPayment(paymentDetailResponse)
+    }
+
+    private fun userHaveSpecialDiscount() {
+        compositeDisposable.add(AppObjectController.appDatabase
+            .courseDao()
+            .isUserOldThen7Days()
+            .concatMap {
+                val (flag, dayRemain) = Utils.isUser7DaysOld(it.courseCreatedDate)
+                return@concatMap Maybe.just(flag)
+            }
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(
+                { value ->
+                    specialDiscount = value
+                },
+                { error ->
+                    error.printStackTrace()
+
+                }, {
+                }
+            ))
+    }
+
 
 }

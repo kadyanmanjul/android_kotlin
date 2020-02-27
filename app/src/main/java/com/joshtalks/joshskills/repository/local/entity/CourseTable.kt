@@ -3,6 +3,7 @@ package com.joshtalks.joshskills.repository.local.entity
 import androidx.room.*
 import com.google.gson.annotations.SerializedName
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
+import io.reactivex.Maybe
 import java.io.Serializable
 import java.util.*
 
@@ -51,4 +52,10 @@ interface CourseDao {
     @Query(value = "select * FROM (SELECT *,co.conversation_id,co.courseId FROM course co  LEFT JOIN chat_table ct ON  co.conversation_id = ct.conversation_id AND is_delete_message=0  LEFT JOIN question_table qt ON ct.chat_id = qt.chatId  ORDER BY created ASC) inbox where is_deleted=0 GROUP BY inbox.conversation_id ORDER BY created DESC")
     suspend fun getRegisterCourseMinimal(): List<InboxEntity>
 
+
+    @Query(value = "SELECT * from course  ORDER BY course_created_date ASC LIMIT 1;")
+    fun isUserOldThen7Days(): Maybe<Course>
 }
+
+//    @Query(value = "SELECT * from course where course_created_date > datetime('now', '7 day') LIMIT 1;")
+

@@ -27,11 +27,18 @@ import com.joshtalks.joshskills.repository.server.course_detail.CourseDetailsRes
 import com.joshtalks.joshskills.ui.payment.viewholder.CourseDetailDataViewHeader
 import com.joshtalks.joshskills.ui.payment.viewholder.CourseMentorViewHolder
 import com.joshtalks.joshskills.ui.payment.viewholder.CourseStructureViewHolder
+import com.joshtalks.joshskills.ui.tooltip.BalloonFactory
 import com.joshtalks.joshskills.ui.video_player.FullScreenVideoFragment
 import com.joshtalks.joshskills.ui.view_holders.DefaultTextViewHolder
 import com.joshtalks.joshskills.ui.view_holders.ROUND_CORNER
 import com.joshtalks.joshskills.ui.view_holders.SingleImageViewHolder
+import com.joshtalks.skydoves.balloon.Balloon
+import com.joshtalks.skydoves.balloon.OnBalloonClickListener
 import com.vanniktech.emoji.Utils
+import io.reactivex.Maybe
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
@@ -39,14 +46,21 @@ import java.util.*
 
 
 const val TEST_ID = "test_ID"
+const val COURSE_AMOUNT = "course_amount"
+
 
 class CourseDetailType1Fragment : Fragment() {
 
     private var testId = 0
     private var courseId = 1
+    private var amount: Double = 0.0
+    private var isUserValidForOffer = false
+    private var dayRemain = "7"
 
     private lateinit var binding: FragmentCourseDetailType1FragmentBinding
     private var videoUrl: String? = null
+    private var compositeDisposable = CompositeDisposable()
+    private var profileBalloon: Balloon? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -54,7 +68,35 @@ class CourseDetailType1Fragment : Fragment() {
         arguments?.let {
             testId = it.getInt(TEST_ID)
             courseId = it.getInt(COURSE_ID)
+            amount = it.getDouble(COURSE_AMOUNT, 0.0)
         }
+
+        compositeDisposable.add(AppObjectController.appDatabase
+            .courseDao()
+            .isUserOldThen7Days()
+            .concatMap {
+                val (flag, dayRemain) = com.joshtalks.joshskills.core.Utils.isUser7DaysOld(it.courseCreatedDate)
+                this.dayRemain = dayRemain.toString()
+                return@concatMap Maybe.just(flag)
+            }
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(
+                { value ->
+                    isUserValidForOffer = value
+                    profileBalloon = BalloonFactory.getCourseOfferBalloon(requireActivity(),
+                        this.dayRemain,
+                        this,
+                        object :
+                            OnBalloonClickListener {
+                            override fun onBalloonClick(view: View) {
+                            }
+                        })
+                },
+                { error ->
+                    error.printStackTrace()
+                }
+            ))
     }
 
     override fun onCreateView(
@@ -71,6 +113,7 @@ class CourseDetailType1Fragment : Fragment() {
         binding.lifecycleOwner = this
         binding.handler = this
 
+
         return binding.root
     }
 
@@ -86,7 +129,7 @@ class CourseDetailType1Fragment : Fragment() {
             binding.courseDetailRv.addItemDecoration(
                 LayoutMarginDecoration(
                     Utils.dpToPx(
-                        context!!,
+                        requireContext(),
                         2f
                     )
                 )
@@ -95,17 +138,20 @@ class CourseDetailType1Fragment : Fragment() {
 
             binding.nestedScrollView.viewTreeObserver.addOnScrollChangedListener {
                 if (binding.nestedScrollView.scrollY == 0) {
+                    profileBalloon?.dismiss()
                     binding.belowBuyCv.visibility = View.GONE
                     return@addOnScrollChangedListener
                 }
                 val rect = Rect()
                 if (binding.btnBuyCourse.getGlobalVisibleRect(rect) && binding.btnBuyCourse.height == rect.height() && binding.btnBuyCourse.width == rect.width()
                 ) {
+                    if (profileBalloon != null && profileBalloon!!.isShowing) {
+                        profileBalloon?.dismiss()
+                    }
                     binding.belowBuyCv.visibility = View.GONE
-
                 } else {
                     binding.belowBuyCv.visibility = View.VISIBLE
-
+                    showHint()
                 }
             }
 
@@ -129,7 +175,7 @@ class CourseDetailType1Fragment : Fragment() {
                 videoUrl = courseDetailsResponse.videoUrl
 
 
-                Glide.with(activity!!)
+                Glide.with(requireActivity())
                     .load(courseDetailsResponse.bgImage)
                     .override(SIZE_ORIGINAL)
                     .into(binding.bgTopIv)
@@ -142,28 +188,36 @@ class CourseDetailType1Fragment : Fragment() {
                         RoundedCornersTransformation.CornerType.ALL
                     )
                 )
-                Glide.with(activity!!)
+                Glide.with(requireActivity())
                     .load(courseDetailsResponse.videoThumbnail)
                     .apply(RequestOptions.bitmapTransform(multi))
                     .override(SIZE_ORIGINAL)
                     .into(binding.imageView)
 
 
-                binding.textViewOfferPrice.text =
-                    "₹" + String.format("%.2f", courseDetailsResponse.courseDiscountPrice)
 
-                binding.tvOfferPrice.text =
-                    "₹" + String.format("%.2f", courseDetailsResponse.courseDiscountPrice)
-
-                binding.textViewPrice.text =
+                binding.tvUpActualPrice.text =
                     "₹" + String.format("%.2f", courseDetailsResponse.coursePrice)
-                binding.tvPrice.text =
+                binding.tvDownActualPrice.text =
                     "₹" + String.format("%.2f", courseDetailsResponse.coursePrice)
 
-                binding.textViewPrice.paintFlags =
-                    binding.textViewPrice.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
-                binding.tvPrice.paintFlags =
-                    binding.tvPrice.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
+
+                if (amount > 0) {
+                    binding.tvUpOfferPrice.text =
+                        "₹" + String.format("%.2f", amount)
+                    binding.tvDownOfferPrice.text =
+                        "₹" + String.format("%.2f", amount)
+                } else {
+                    binding.tvUpOfferPrice.text =
+                        "₹" + String.format("%.2f", courseDetailsResponse.courseDiscountPrice)
+                    binding.tvDownOfferPrice.text =
+                        "₹" + String.format("%.2f", courseDetailsResponse.courseDiscountPrice)
+                }
+
+                binding.tvUpActualPrice.paintFlags =
+                    binding.tvUpActualPrice.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
+                binding.tvDownActualPrice.paintFlags =
+                    binding.tvDownActualPrice.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
 
                 val courseInformationList =
                     courseDetailsResponse.courseInformation.sortedWith(compareBy { it.id })
@@ -187,7 +241,8 @@ class CourseDetailType1Fragment : Fragment() {
 
                 binding.courseDetailRv.addView(SingleImageViewHolder(courseDetailsResponse.feedbackImageUrl))
 
-                val titleView = activity!!.findViewById<AppCompatTextView>(R.id.text_message_title)
+                val titleView =
+                    requireActivity().findViewById<AppCompatTextView>(R.id.text_message_title)
                 titleView.text = courseDetailsResponse.courseName
             }
 
@@ -205,15 +260,28 @@ class CourseDetailType1Fragment : Fragment() {
             //var set =  ConstraintSet()
 
         }, 500)
+
+
+    }
+
+    private fun showHint() {
+        if (isUserValidForOffer && profileBalloon != null && profileBalloon!!.isShowing.not()) {
+            profileBalloon?.showAlignTopWithException(binding.belowBuyCv)
+        }
     }
 
 
     fun playVideo() {
         videoUrl?.let {
             FullScreenVideoFragment.newInstance(it)
-                .show(activity!!.supportFragmentManager, "Video Play")
+                .show(requireActivity().supportFragmentManager, "Video Play")
         }
 
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        compositeDisposable.clear()
     }
 
     fun backPress() {
@@ -221,17 +289,18 @@ class CourseDetailType1Fragment : Fragment() {
     }
 
     fun buyCourse() {
-        RxBus2.publish(BuyCourseEventBus(testId.toString()))
+        RxBus2.publish(BuyCourseEventBus(testId.toString(), isUserValidForOffer))
     }
 
     companion object {
 
         @JvmStatic
-        fun newInstance(testId: Int, courseId: Int) =
+        fun newInstance(testId: Int, courseId: Int, courseAmount: Double) =
             CourseDetailType1Fragment().apply {
                 arguments = Bundle().apply {
                     putInt(TEST_ID, testId)
                     putInt(COURSE_ID, courseId)
+                    putDouble(COURSE_AMOUNT, courseAmount)
                 }
             }
     }

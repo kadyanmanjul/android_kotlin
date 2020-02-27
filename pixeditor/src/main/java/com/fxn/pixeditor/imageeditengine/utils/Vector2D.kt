@@ -4,9 +4,9 @@ import android.graphics.PointF
 
 internal class Vector2D : PointF {
 
-    constructor() : super() {}
+    constructor() : super()
 
-    constructor(x: Float, y: Float) : super(x, y) {}
+    constructor(x: Float, y: Float) : super(x, y)
 
     fun normalize() {
         val length = Math.sqrt((x * x + y * y).toDouble()).toFloat()

@@ -47,7 +47,7 @@ class CourseStructureViewHolder(
         val sp = SpannableStringBuilder()
         courseStructure.cDetail.forEachIndexed { index, value ->
             val spannable = SpannableString(value)
-            spannable.setSpan(BulletSpan(24), 0, value.length, Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+            spannable.setSpan(BulletSpan(24), 0, value.length, Spanned.SPAN_INCLUSIVE_EXCLUSIVE)
             sp.append(spannable)
             if (index != courseStructure.cDetail.size - 1) {
                 sp.append("\n")

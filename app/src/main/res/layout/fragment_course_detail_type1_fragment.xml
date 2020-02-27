@@ -234,7 +234,7 @@
                         android:padding="@dimen/_8sdp">
 
                     <androidx.appcompat.widget.AppCompatTextView
-                            android:id="@+id/text_view_offer_price"
+                            android:id="@+id/tv_up_offer_price"
                             fontPath="fonts/OpenSans-Bold.ttf"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -245,7 +245,7 @@
                             android:textSize="@dimen/font_18" />
 
                     <androidx.appcompat.widget.AppCompatTextView
-                            android:id="@+id/text_view_price"
+                            android:id="@+id/tv_up_actual_price"
                             fontPath="fonts/OpenSans-SemiBold.ttf"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -261,7 +261,7 @@
 
                 <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/btn_buy_course"
-                        fontPath="fonts/Roboto-Medium.ttf"
+                        fontPath="fonts/OpenSans-Bold.ttf"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
@@ -322,19 +322,19 @@
                     android:gravity="center"
                     android:orientation="horizontal"
                     android:paddingStart="@dimen/_8sdp"
-                    android:paddingTop="@dimen/_6sdp"
+                    android:paddingTop="@dimen/_9sdp"
                     android:paddingEnd="@dimen/_8sdp"
-                    android:paddingBottom="@dimen/_6sdp"
+                    android:paddingBottom="@dimen/_9sdp"
                     android:weightSum="2">
 
                 <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1.2"
+                        android:layout_weight="1.25"
                         android:orientation="vertical">
 
                     <androidx.appcompat.widget.AppCompatTextView
-                            android:id="@+id/tv_offer_price"
+                            android:id="@+id/tv_down_offer_price"
                             fontPath="fonts/OpenSans-Bold.ttf"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -345,7 +345,7 @@
                             android:textSize="@dimen/font_18" />
 
                     <androidx.appcompat.widget.AppCompatTextView
-                            android:id="@+id/tv_price"
+                            android:id="@+id/tv_down_actual_price"
                             fontPath="fonts/OpenSans-SemiBold.ttf"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -363,19 +363,19 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
-                        android:layout_weight=".8"
+                        android:layout_weight=".75"
                         android:background="@drawable/round_rect_default"
                         android:backgroundTint="@color/button_primary_color"
                         android:clickable="true"
                         android:focusable="true"
                         android:gravity="center"
                         android:onClick="@{()->handler.buyCourse()}"
-                        android:paddingTop="@dimen/_8sdp"
-                        android:paddingBottom="@dimen/_8sdp"
+                        android:paddingTop="@dimen/_10sdp"
+                        android:paddingBottom="@dimen/_10sdp"
                         android:text="@string/buy_course"
                         android:textAllCaps="false"
                         android:textColor="@color/white"
-                        android:textSize="@dimen/font_15"
+                        android:textSize="@dimen/font_16"
                         app:cornerRadius="@dimen/_4sdp"
                         app:rippleColor="@color/white" />
             </LinearLayout>

@@ -57,7 +57,7 @@ class MediaPicker {
         }
 
         override fun onCancel(message: String) {
-            mEmitter.onError(Throwable(message));
+            mEmitter.onError(Throwable(message))
             mEmitter.onComplete()
         }
 

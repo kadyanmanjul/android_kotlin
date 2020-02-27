@@ -8,6 +8,8 @@ import com.joshtalks.joshskills.repository.local.AppDatabase
 
 const val COURSE_STARTED_FB_EVENT = "course_started_event"
 const val USER_UNIQUE_ID = "user_unique_id"
+const val FIRST_COURSE_BUY="first_course_buy"
+const val FIRST_TIME_OFFER_SHOW="first_time_offer_show"
 
 
 object PrefManager {
@@ -34,6 +36,9 @@ object PrefManager {
         return prefManager.contains(key)
     }
 
+    fun getBoolValue(key: String): Boolean {
+        return prefManager.getBoolean(key, false)
+    }
     fun getStringValue(key: String): String {
         return prefManager.getString(key, EMPTY) ?: EMPTY
     }

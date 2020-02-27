@@ -14,6 +14,6 @@ public interface AnimationListener {
 	 * @param animation
 	 *            The Animation object.
 	 */
-	public void onAnimationEnd(Animation animation);
+    void onAnimationEnd(Animation animation);
 }
 

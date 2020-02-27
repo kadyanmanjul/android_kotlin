@@ -165,9 +165,9 @@ class MultiTouchListener(
 
             if (viewTouchListener != null) {
                 if (isStart) {
-                    viewTouchListener!!.onStartViewChangeListener(view)
+                    viewTouchListener.onStartViewChangeListener(view)
                 } else {
-                    viewTouchListener!!.onStopViewChangeListener(view)
+                    viewTouchListener.onStopViewChangeListener(view)
                 }
             }
         }

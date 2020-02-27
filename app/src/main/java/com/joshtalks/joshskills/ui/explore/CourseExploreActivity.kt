@@ -39,8 +39,6 @@ import io.reactivex.disposables.CompositeDisposable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.util.*
-import kotlin.collections.ArrayList
 import kotlin.collections.set
 
 
@@ -144,7 +142,12 @@ class CourseExploreActivity : CoreJoshActivity() {
         CoroutineScope(Dispatchers.IO).launch {
             try {
 
-                val data = mapOf("is_default" to "true", "mentor" to Mentor.getInstance().getId())
+                val data = HashMap<String, String>()
+                if (Mentor.getInstance().getId().isNotEmpty()) {
+                    data["mentor"] = Mentor.getInstance().getId()
+                } else {
+                    data["is_default"] = "true"
+                }
                 val response: List<CourseExploreModel> =
                     AppObjectController.signUpNetworkService.explorerCourse(data)
                 CoroutineScope(Dispatchers.Main).launch {

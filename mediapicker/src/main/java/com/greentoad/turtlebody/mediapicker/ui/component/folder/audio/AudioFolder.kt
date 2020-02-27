@@ -6,7 +6,4 @@ package com.greentoad.turtlebody.mediapicker.ui.component.folder.audio
 data class AudioFolder(var id: String = "",
                   var name: String = "",
                   var path: String = "",
-                  var contentCount: Int = 0) {
-
-
-}
+                  var contentCount: Int = 0)

@@ -10,7 +10,7 @@ import com.google.android.material.snackbar.Snackbar
 /**
  * Created by WANGSUN on 17-Apr-19.
  */
-class AlertMessage() {
+class AlertMessage {
 
     companion object {
         val MESSAGE = "Some file is missing."

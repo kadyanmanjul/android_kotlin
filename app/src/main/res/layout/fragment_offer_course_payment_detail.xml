@@ -1,0 +1,463 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:card_view="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+                name="handler"
+                type="com.joshtalks.joshskills.ui.payment.OfferCoursePaymentDetailFragment" />
+    </data>
+
+
+    <LinearLayout
+            android:id="@+id/root_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/round_rect_default"
+            android:backgroundTint="#F0F0F0"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="@dimen/_8sdp"
+            card_view:context=".ui.payment.OfferCoursePaymentDetailFragment">
+
+        <androidx.appcompat.widget.AppCompatTextView
+                fontPath="fonts/OpenSans-Bold.ttf"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:ellipsize="marquee"
+                android:gravity="start|center"
+                android:paddingTop="@dimen/_6sdp"
+                android:paddingBottom="@dimen/_10sdp"
+                android:singleLine="true"
+                android:text="@string/payment_details"
+                android:textColor="@color/font_color"
+                android:textSize="@dimen/font_18"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+
+        <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_4sdp"
+                android:layout_marginBottom="@dimen/_4sdp"
+                android:animateLayoutChanges="true"
+                android:background="@color/white"
+                android:clipChildren="false"
+                android:clipToPadding="false"
+                android:divider="@android:color/transparent"
+                android:dividerHeight="0.0px"
+                android:elevation="@dimen/_4sdp"
+                app:cardBackgroundColor="@color/white"
+                app:cardCornerRadius="@dimen/_4sdp"
+                app:contentPadding="@dimen/_4sdp"
+                app:contentPaddingBottom="@dimen/_6sdp"
+                app:contentPaddingLeft="@dimen/_4sdp"
+                app:contentPaddingTop="@dimen/_4sdp"
+                card_view:cardBackgroundColor="@color/white"
+                card_view:cardCornerRadius="@dimen/_4sdp"
+                card_view:cardElevation="@dimen/_4sdp"
+                card_view:cardPreventCornerOverlap="false"
+                card_view:contentPadding="@dimen/_4sdp">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="@dimen/_2sdp"
+                    android:paddingEnd="@dimen/_2sdp">
+
+                <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tv_course_detail"
+                        fontPath="fonts/OpenSans-SemiBold.ttf"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="marquee"
+                        android:gravity="start|center"
+                        android:marqueeRepeatLimit="marquee_forever"
+                        android:paddingBottom="@dimen/_4sdp"
+                        android:singleLine="true"
+                        android:text="@string/course_details_header"
+                        android:textColor="@color/font_color"
+                        android:textSize="@dimen/font_13"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/course_image"
+                        android:layout_width="@dimen/_40sdp"
+                        android:layout_height="@dimen/_40sdp"
+                        android:layout_marginEnd="@dimen/_8sdp"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:src="@color/colorPrimary"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/tv_course_detail" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tv_course"
+                        fontPath="fonts/OpenSans-SemiBold.ttf"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/_8sdp"
+                        android:layout_marginTop="@dimen/_2sdp"
+                        android:ellipsize="marquee"
+                        android:gravity="start|center"
+                        android:marqueeRepeatLimit="marquee_forever"
+                        android:singleLine="true"
+                        android:textColor="@color/font_color"
+                        android:textSize="@dimen/font_12"
+                        app:layout_constraintStart_toEndOf="@+id/course_image"
+                        app:layout_constraintTop_toTopOf="@id/course_image" />
+
+
+                <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tv_course_sub_detail"
+                        fontPath="fonts/Roboto-Regular.ttf"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="start"
+                        android:layout_marginStart="@dimen/_8sdp"
+                        android:layout_marginBottom="@dimen/_8sdp"
+                        android:textColor="@color/font_color"
+                        android:textSize="@dimen/font_12"
+                        app:layout_constraintBottom_toBottomOf="@id/course_image"
+                        app:layout_constraintStart_toEndOf="@+id/course_image" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+
+        <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_6sdp"
+                android:layout_marginBottom="@dimen/_4sdp"
+                android:animateLayoutChanges="true"
+                android:background="@color/white"
+                android:clipChildren="false"
+                android:clipToPadding="false"
+                android:divider="@android:color/transparent"
+                android:dividerHeight="0.0px"
+                android:elevation="@dimen/_4sdp"
+                app:cardBackgroundColor="@color/white"
+                app:cardCornerRadius="@dimen/_4sdp"
+                app:contentPadding="@dimen/_4sdp"
+                app:contentPaddingBottom="@dimen/_6sdp"
+                app:contentPaddingLeft="@dimen/_4sdp"
+                app:contentPaddingTop="@dimen/_4sdp"
+                card_view:cardBackgroundColor="@color/white"
+                card_view:cardCornerRadius="@dimen/_4sdp"
+                card_view:cardElevation="@dimen/_4sdp"
+                card_view:cardPreventCornerOverlap="false"
+                card_view:contentPadding="@dimen/_4sdp">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="@dimen/_2sdp"
+                    android:paddingEnd="@dimen/_2sdp">
+
+
+                <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tv_bill_detail"
+                        fontPath="fonts/OpenSans-SemiBold.ttf"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="marquee"
+                        android:gravity="start|center"
+                        android:marqueeRepeatLimit="marquee_forever"
+                        android:singleLine="true"
+                        android:text="@string/bill_detail_header"
+                        android:textColor="@color/font_color"
+                        android:textSize="@dimen/font_13"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingStart="@dimen/_4sdp"
+                        android:paddingTop="@dimen/_4sdp"
+                        android:paddingEnd="@dimen/_4sdp"
+                        android:paddingBottom="@dimen/_4sdp"
+                        app:layout_constraintTop_toBottomOf="@id/tv_bill_detail">
+
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/tv_course_fees"
+                            fontPath="fonts/OpenSans-SemiBold.ttf"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:gravity="start|center"
+                            android:lineSpacingExtra="@dimen/_2sdp"
+                            android:paddingTop="@dimen/_4sdp"
+                            android:paddingBottom="@dimen/_4sdp"
+                            android:text="@string/course_fees"
+                            android:textColor="@color/font_color"
+                            android:textSize="@dimen/font_12"
+                            app:layout_constraintLeft_toLeftOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintWidth_default="percent"
+                            app:layout_constraintWidth_percent="0.7" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/tv_course_fees_amount"
+                            fontPath="fonts/OpenSans-SemiBold.ttf"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:gravity="end|center"
+                            android:lineSpacingExtra="@dimen/_2sdp"
+                            android:paddingTop="@dimen/_4sdp"
+                            android:paddingBottom="@dimen/_4sdp"
+                            android:textColor="@color/font_color"
+                            android:textSize="@dimen/font_12"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintRight_toRightOf="parent"
+                            app:layout_constraintTop_toTopOf="@+id/tv_course_fees"
+                            app:layout_constraintWidth_default="percent"
+                            app:layout_constraintWidth_percent="0.3" />
+
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/tv_course_discount"
+                            fontPath="fonts/OpenSans-Bold.ttf"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:ellipsize="end"
+                            android:gravity="start|center"
+                            android:paddingTop="@dimen/_4sdp"
+                            android:paddingBottom="@dimen/_4sdp"
+                            android:text="@string/bade_bhaiya_header"
+                            android:textColor="@color/font_color"
+                            android:textSize="@dimen/font_13"
+                            app:layout_constraintLeft_toLeftOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@id/tv_course_fees"
+                            app:layout_constraintWidth_default="percent"
+                            app:layout_constraintWidth_percent="0.7" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/tv_discount_amount"
+                            fontPath="fonts/OpenSans-SemiBold.ttf"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:gravity="end|center"
+                            android:lineSpacingExtra="@dimen/_2sdp"
+                            android:paddingTop="@dimen/_4sdp"
+                            android:paddingBottom="@dimen/_4sdp"
+                            android:textColor="@color/font_color"
+                            android:textSize="@dimen/font_13"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintRight_toRightOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/tv_course_fees_amount"
+                            app:layout_constraintWidth_default="percent"
+                            app:layout_constraintWidth_percent="0.25" />
+
+
+                    <View
+                            android:id="@+id/hl"
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/_1sdp"
+                            android:layout_marginTop="@dimen/_4sdp"
+                            android:background="@color/emoji_bg_color"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@id/tv_course_discount" />
+
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/tv_course_total"
+                            fontPath="fonts/OpenSans-Bold.ttf"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:ellipsize="end"
+                            android:gravity="start|center"
+                            android:maxLines="2"
+                            android:paddingTop="@dimen/_8sdp"
+                            android:paddingBottom="@dimen/_4sdp"
+                            android:text="@string/total_amount"
+                            android:textColor="@color/font_color"
+                            android:textSize="@dimen/font_15"
+                            app:layout_constraintLeft_toLeftOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@id/hl"
+                            app:layout_constraintWidth_default="percent"
+                            app:layout_constraintWidth_percent="0.5" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/tv_course_sell_amount"
+                            fontPath="fonts/OpenSans-Bold.ttf"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="end|center"
+                            android:paddingStart="@dimen/_8sdp"
+                            android:paddingTop="@dimen/_4sdp"
+                            android:paddingBottom="@dimen/_4sdp"
+                            android:textColor="@color/font_color"
+                            android:textSize="@dimen/font_15"
+                            app:layout_constraintBottom_toBottomOf="@+id/tv_course_total"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintRight_toRightOf="parent"
+                            app:layout_constraintTop_toTopOf="@+id/tv_course_total"
+                            app:layout_constraintWidth_default="percent" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/tv_course_actual_amount"
+                            fontPath="fonts/OpenSans-Regular.ttf"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="end|center"
+                            android:paddingBottom="@dimen/_4sdp"
+                            android:textColor="@color/emoji_icon_color"
+                            android:textSize="@dimen/font_11"
+                            app:layout_constraintBottom_toBottomOf="@+id/tv_course_sell_amount"
+                            app:layout_constraintEnd_toStartOf="@+id/tv_course_sell_amount"
+                            app:layout_constraintWidth_default="percent" />
+
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/tv_offer_info"
+                            fontPath="fonts/OpenSans-SemiBold.ttf"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/_4sdp"
+                            android:background="@drawable/dotted_rectangle"
+                            android:backgroundTint="@color/button_primary_color"
+                            android:gravity="start|center"
+                            android:padding="@dimen/_6sdp"
+                            android:textColor="@color/button_primary_color"
+                            android:textSize="@dimen/font_11"
+                            app:layout_constraintLeft_toLeftOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@id/tv_course_total"
+                            app:layout_constraintWidth_default="percent"
+                            app:layout_constraintWidth_percent="1" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+
+        <FrameLayout
+                android:id="@+id/bade_bhaiya_tip_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_6sdp"
+                android:layout_marginBottom="@dimen/_4sdp"
+                android:background="@drawable/dotted_rect_with_white"
+                android:paddingStart="@dimen/_4sdp"
+                android:paddingTop="@dimen/_8sdp"
+                android:paddingEnd="@dimen/_4sdp"
+                android:paddingBottom="@dimen/_8sdp">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_4sdp"
+                    android:layout_marginEnd="@dimen/_4sdp">
+
+                <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/text_view_1"
+                        fontPath="fonts/OpenSans-SemiBold.ttf"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="marquee"
+                        android:gravity="start|center"
+                        android:marqueeRepeatLimit="marquee_forever"
+                        android:singleLine="true"
+                        android:text="@string/bade_bhaiya_tips"
+                        android:textColor="@color/font_color"
+                        android:textSize="@dimen/font_13"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+
+                <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tv_tip"
+                        fontPath="fonts/OpenSans-SemiBold.ttf"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/_8sdp"
+                        android:gravity="start|center"
+                        android:marqueeRepeatLimit="marquee_forever"
+                        android:text="@string/tip_message"
+                        android:textColor="@color/font_color"
+                        android:textSize="@dimen/font_12"
+
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/text_view_1"
+                        app:layout_constraintWidth_default="percent"
+                        app:layout_constraintWidth_percent="0.7" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tv_tip_valid"
+                        fontPath="fonts/OpenSans-Regular.ttf"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/_4sdp"
+                        android:layout_marginStart="@dimen/_12sdp"
+                        android:gravity="start|center"
+                        android:marqueeRepeatLimit="marquee_forever"
+                        android:textColor="@color/error_color"
+                        android:textSize="@dimen/font_13"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/tv_tip"
+                        app:layout_constraintWidth_default="percent"
+                        app:layout_constraintWidth_percent="0.7" />
+
+
+                <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tv_tip_used"
+                        fontPath="fonts/OpenSans-SemiBold.ttf"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:gravity="end"
+                        android:text="@string/tip_used"
+                        android:textColor="@color/button_primary_color"
+                        android:textSize="@dimen/font_12"
+                        app:layout_constraintBottom_toBottomOf="@+id/tv_tip"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/tv_tip"
+                        app:layout_constraintTop_toTopOf="@+id/tv_tip"
+                        app:layout_constraintWidth_default="percent"
+                        app:layout_constraintWidth_percent="0.3" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </FrameLayout>
+
+        <com.google.android.material.button.MaterialButton
+                style="@style/Widget.MaterialComponents.Button"
+                fontPath="fonts/OpenSans-Bold.ttf"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center|bottom"
+                android:layout_marginTop="@dimen/_16sdp"
+                android:background="@drawable/round_rectangle"
+                android:backgroundTint="@color/button_primary_color"
+                android:gravity="center"
+                android:onClick="@{()->handler.buyCourse()}"
+                android:paddingStart="@dimen/_12sdp"
+                android:paddingTop="@dimen/_8sdp"
+                android:paddingEnd="@dimen/_12sdp"
+                android:paddingBottom="@dimen/_8sdp"
+                android:text="@string/complete_payment"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:textSize="@dimen/font_14"
+                app:cornerRadius="@dimen/_4sdp"
+                app:rippleColor="@color/white" />
+    </LinearLayout>
+
+</layout>

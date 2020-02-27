@@ -10,14 +10,10 @@ import java.util.*
 class GetFiltersTask(private val listenerRef: TaskCallback<ArrayList<ImageFilter>>?, private val srcBitmap: Bitmap) :
     AsyncTask<Void, Void, ArrayList<ImageFilter>>() {
 
-    override fun onCancelled() {
-        super.onCancelled()
-    }
-
     override fun onPostExecute(result: ArrayList<ImageFilter>) {
         super.onPostExecute(result)
         if (listenerRef != null) {
-            listenerRef!!.onTaskDone(result)
+            listenerRef.onTaskDone(result)
         }
     }
 
@@ -29,10 +25,6 @@ class GetFiltersTask(private val listenerRef: TaskCallback<ArrayList<ImageFilter
             imageFilter.filterImage = PhotoProcessing.filterPhoto(getScaledBitmap(srcBitmap), imageFilter)
         }
         return filters
-    }
-
-    override fun onPreExecute() {
-        super.onPreExecute()
     }
 
     private fun getScaledBitmap(srcBitmap: Bitmap): Bitmap {

@@ -8,14 +8,10 @@ import com.fxn.pixeditor.imageeditengine.utils.TaskCallback
 class ApplyFilterTask(private val listenerRef: TaskCallback<Bitmap>?, private val srcBitmap: Bitmap) :
     AsyncTask<ImageFilter, Void, Bitmap>() {
 
-    override fun onCancelled() {
-        super.onCancelled()
-    }
-
     override fun onPostExecute(result: Bitmap) {
         super.onPostExecute(result)
         if (listenerRef != null) {
-            listenerRef!!.onTaskDone(result)
+            listenerRef.onTaskDone(result)
         }
     }
 
@@ -27,7 +23,4 @@ class ApplyFilterTask(private val listenerRef: TaskCallback<Bitmap>?, private va
         return null
     }
 
-    override fun onPreExecute() {
-        super.onPreExecute()
-    }
 }// end inner class

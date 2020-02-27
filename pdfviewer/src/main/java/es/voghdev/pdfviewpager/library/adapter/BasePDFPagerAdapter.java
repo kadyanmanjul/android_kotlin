@@ -126,7 +126,7 @@ public class BasePDFPagerAdapter extends PagerAdapter {
     @SuppressWarnings("NewApi")
     public Object instantiateItem(ViewGroup container, int position) {
         View v = inflater.inflate(R.layout.view_pdf_page, container, false);
-        ImageView iv = (ImageView) v.findViewById(R.id.imageView);
+        ImageView iv = v.findViewById(R.id.imageView);
 
         if (renderer == null || getCount() < position) {
             return v;
@@ -139,7 +139,7 @@ public class BasePDFPagerAdapter extends PagerAdapter {
         page.close();
 
         iv.setImageBitmap(bitmap);
-        ((ViewPager) container).addView(v, 0);
+        container.addView(v, 0);
 
         return v;
     }
@@ -177,6 +177,6 @@ public class BasePDFPagerAdapter extends PagerAdapter {
 
     @Override
     public boolean isViewFromObject(View view, Object object) {
-        return view == (View) object;
+        return view == object;
     }
 }

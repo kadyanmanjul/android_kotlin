@@ -76,6 +76,7 @@
     <string name="paid">Paid</string>
     <string name="transaction_status">Your Transaction status:</string>
     <string name="course_payment_label">Course Payment</string>
+    <string name="payment_details">Payment Details</string>
     <string name="done">Done</string>
     <string name="course_started_label">Course Started</string>
     <string name="in_progress_label">In Progress</string>
@@ -166,7 +167,6 @@
     <string name="invite_friends">Invite And Earn</string>
     <string name="referral_content">Refer your friends &amp; we\'ll give them a discount of ₹ %s on their first course purchase &amp;  ₹ %s cash to you if they buy a course</string>
     <string name="refer_and_earn">Refer &amp; Earn</string>
-    <string name="reload_class">Reload class</string>
     <string name="referral_amount_title">EARN ₹ %s CASH</string>
     <string name="copy_code">Referral code copied to clipboard</string>
     <string name="discount_header">Do you have discount code?</string>
@@ -176,8 +176,11 @@
     <string name="coupon_not_exist_label">It looks like you have applied  wrong \n coupon code.</string>
 
     <string name="course_details_header">Course Details</string>
+    <string name="bill_detail_header">Bill Details</string>
     <string name="coupon_code_exist">Do you have a discount code?</string>
-
+    <string name="course_fees">Course Fees</string>
+    <string name="bade_bhaiya_header">Bade Bhaiya Discount </string>
+    <string name="total_amount">Total Amount</string>
     <string name="ringer_mode">Ringer mode</string>
     <string name="phone_type">Phone Type</string>
     <string name="network_type">Network Type</string>
@@ -188,11 +191,20 @@
     <string name="show_less">SHOW LESS</string>
     <string name="answer_not_submitted">Answer not submitted</string>
     <string name="answer_submitted">Answer Submitted</string>
-
+    <string name="offer_bachat">Aapne is course par pure %s ki bachat ki hai</string>
+    <string name="bade_bhaiya_tips">Bade Bhaiya Tips</string>
+    <string name="tip_message">Agar aap apne pehle 7 dino main hain to aap ye course 50\u0025 kam main pa sakte hain.</string>
+    <string name="tip_used">TIP USED</string>
+    <string name="use_tip">USE TIP</string>
 
     <string name="record_answer_label">Record your answer</string>
     <string name="type_answer_label">Type your answer</string>
     <string name="upload_answer_label">Upload your answer</string>
+    <string name="course_duration">Course Duration - %s Days</string>
 
+
+    <string name="find_more_course_hint_ftime">Hello %s, Agar aap es course ke sath kuch aur bhi seekhna chahte hain to pehle 7 dino mai aapke paas har course pe %s off hai </string>
+    <string name="buy_course_offer_tooltip"> Get %s off on the next course you buy, Valid for %s days.</string>
+    <string name="first_time_user_hint">Aapko apne course se related saari videos aur claases isko click karke milengi</string>
 
 </resources>

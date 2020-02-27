@@ -237,7 +237,9 @@ class NewCourseScreenEventWorker(context: Context, private val workerParams: Wor
     CoroutineWorker(context, workerParams) {
 
     override suspend fun doWork(): Result {
+
         val database = FirebaseDatabase.getInstance()
+        val myRef = database.getReference(NEW_COURSE_SCREEN_FIREBASE_DATABASE)
 
         val courseName = workerParams.inputData.getString("course_name")
         val courseID = workerParams.inputData.getString("course_id")
@@ -245,7 +247,6 @@ class NewCourseScreenEventWorker(context: Context, private val workerParams: Wor
         val uniqueId = PrefManager.getStringValue(USER_UNIQUE_ID)
         val buyInitialize = workerParams.inputData.getBoolean("buy_initialize", false)
 
-        val myRef = database.getReference(NEW_COURSE_SCREEN_FIREBASE_DATABASE)
         val key: DatabaseReference = if (myRef.child(uniqueId).key == null) {
             myRef.child(uniqueId).push()
         } else {
@@ -287,16 +288,19 @@ class NewCourseScreenEventWorker(context: Context, private val workerParams: Wor
                         }
                     }
 
-                    key.setValue(courseTrackModel)
+                    key.setValue(courseTrackModel).addOnFailureListener {
+                        it.printStackTrace()
+                    }
                 } catch (ex: Exception) {
                     ex.printStackTrace()
                 }
             }
 
             override fun onCancelled(databaseError: DatabaseError) {
-                databaseError.toException()
                 Crashlytics.logException(databaseError.toException())
+                databaseError.toException().printStackTrace()
             }
+
         })
 
         return Result.success()

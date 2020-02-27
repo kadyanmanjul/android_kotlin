@@ -1,11 +1,13 @@
 package com.joshtalks.joshskills.repository.local.model
 
 
+import com.google.firebase.database.IgnoreExtraProperties
 import com.google.gson.annotations.SerializedName
 import com.joshtalks.joshskills.core.EMPTY
 import java.text.SimpleDateFormat
 import java.util.*
 
+@IgnoreExtraProperties
 data class CourseTrackModel(
     @SerializedName("course_buy")
     val courseBuy: ArrayList<CourseDetailModel> = arrayListOf(),
@@ -21,6 +23,7 @@ data class CourseTrackModel(
     var mobileNumber: String = EMPTY
 )
 
+@IgnoreExtraProperties
 data class CourseDetailModel(
     @SerializedName("course_id")
     val courseId: String = EMPTY,

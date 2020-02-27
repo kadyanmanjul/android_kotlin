@@ -627,4 +627,18 @@ object Utils {
     }
 
 
+    fun isUser7DaysOld(courseCreatedDate: Date?): Pair<Boolean, Int> {
+        if (courseCreatedDate == null) {
+            return Pair(false, 0)
+        }
+        val todayDate = Date()
+        val diff = todayDate.time - courseCreatedDate.time
+        val daysDiff = 7 - TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS)
+        if (daysDiff in 0..7) {
+            return Pair(true, daysDiff.toInt())
+        }
+        return Pair(false, daysDiff.toInt())
+
+    }
+
 }

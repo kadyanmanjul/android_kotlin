@@ -52,7 +52,7 @@ import android.view.ViewGroup;
  */
 public class FoldLayout extends ViewGroup {
 
-    public static enum Orientation {
+    public enum Orientation {
         VERTICAL,
         HORIZONTAL
     }

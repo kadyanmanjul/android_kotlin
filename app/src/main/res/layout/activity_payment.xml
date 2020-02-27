@@ -8,6 +8,10 @@
     <data>
 
         <variable
+                name="flag"
+                type="java.lang.Boolean"/>
+
+        <variable
                 name="handler"
                 type="com.joshtalks.joshskills.ui.payment.PaymentActivity" />
     </data>
@@ -59,7 +63,7 @@
                         android:clickable="true"
                         android:focusable="true"
                         android:gravity="center"
-                        android:onClick="@{()->handler.buyCourse()}"
+                        android:onClick="@{()->handler.buyCourse(false)}"
                         android:paddingTop="@dimen/_8sdp"
                         android:paddingBottom="@dimen/_8sdp"
                         android:text="@string/start_course"

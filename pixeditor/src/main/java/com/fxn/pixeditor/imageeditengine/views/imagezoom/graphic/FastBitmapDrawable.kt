@@ -23,7 +23,7 @@ class FastBitmapDrawable(b: Bitmap) : Drawable(), IBitmapDrawable {
         mPaint.isFilterBitmap = true
     }
 
-    constructor(res: Resources, `is`: InputStream) : this(BitmapFactory.decodeStream(`is`)) {}
+    constructor(res: Resources, `is`: InputStream) : this(BitmapFactory.decodeStream(`is`))
 
     override fun draw(canvas: Canvas) {
         canvas.drawBitmap(bitmap, 0.0f, 0.0f, mPaint)

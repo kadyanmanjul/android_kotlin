@@ -572,7 +572,7 @@ class PixEditor : AppCompatActivity(), View.OnClickListener, FilterImageAdapter.
         val willBeWhite = myFabSrc?.constantState?.newDrawable()
         willBeWhite?.mutate()?.setColorFilter(Color.WHITE, PorterDuff.Mode.MULTIPLY)
         done_btn.setImageDrawable(willBeWhite)
-        done_btn.setColorFilter(Color.WHITE);
+        done_btn.setColorFilter(Color.WHITE)
 
     }
 }

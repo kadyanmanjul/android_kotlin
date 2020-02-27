@@ -1,5 +1,6 @@
 package com.joshtalks.joshskills.ui.view_holders
 
+import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
@@ -19,6 +20,13 @@ import com.vanniktech.emoji.Utils
 @Layout(R.layout.inbox_row_layout)
 class InboxViewHolder(var inboxEntity: InboxEntity, val totalItem: Int, val indexPos: Int) :
     BaseCell() {
+
+
+    @View(R.id.root_view)
+    lateinit var rootView: ViewGroup
+
+
+
 
     @View(R.id.profile_image)
     lateinit var profile_image: ImageView
@@ -178,7 +186,7 @@ class InboxViewHolder(var inboxEntity: InboxEntity, val totalItem: Int, val inde
     }
 
 
-    @Click(R.id.chat_row_container)
+    @Click(R.id.root_view)
     fun onClick() {
         RxBus2.publish(OpenCourseEventBus(inboxEntity))
     }

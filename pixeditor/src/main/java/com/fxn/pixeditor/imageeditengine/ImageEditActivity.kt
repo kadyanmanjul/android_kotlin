@@ -94,10 +94,6 @@ class ImageEditActivity : BaseImageEditActivity(), PhotoEditorFragment.OnFragmen
         (BaseFragment) FragmentUtil.getFragmentByTag(this, CropFragment.class.getSimpleName()));
   }*/
 
-    override fun onBackPressed() {
-        super.onBackPressed()
-    }
-
     override fun onResume() {
         super.onResume()
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)

@@ -135,7 +135,7 @@ abstract class AppDatabase : RoomDatabase() {
                         val key=cursor.getString(cursor.getColumnIndex("conversation_id"))
                         PrefManager.removeKey(key)
                     }
-                    cursor.close();
+                    cursor.close()
 
                 } catch (ex: Exception) {
                     ex.printStackTrace()

@@ -10,18 +10,27 @@
         tools:context="com.joshtalks.joshskills.ui.inbox.InboxActivity">
 
     <FrameLayout
+            android:id="@+id/root_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
         <include layout="@layout/base_toolbar" />
 
-        <com.mindorks.placeholderview.PlaceHolderView
-                android:id="@+id/recycler_view_inbox"
+        <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="?attr/actionBarSize"
-                android:background="@android:color/white"
-                android:paddingTop="@dimen/_5sdp" />
+                android:orientation="vertical">
+
+            <com.mindorks.placeholderview.PlaceHolderView
+                    android:id="@+id/recycler_view_inbox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="?attr/actionBarSize"
+                    android:background="@android:color/white"
+                    android:paddingTop="@dimen/_5sdp" />
+
+            <include layout="@layout/find_more_layout" />
+        </LinearLayout>
 
         <com.pnikosis.materialishprogress.ProgressWheel
                 android:id="@+id/progress_bar"

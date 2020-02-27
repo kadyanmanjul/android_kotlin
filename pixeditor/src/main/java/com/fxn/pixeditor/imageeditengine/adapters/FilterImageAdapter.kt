@@ -21,7 +21,7 @@ class FilterImageAdapter(list: ArrayList<ImageFilter>, private val mListener: Fi
 
 
     private var imageFilters: MutableList<ImageFilter>? = null
-    public var lastCheckedPostion = 0
+    var lastCheckedPostion = 0
 
     override fun getItemCount(): Int {
         return imageFilters!!.size
@@ -97,7 +97,7 @@ class FilterImageAdapter(list: ArrayList<ImageFilter>, private val mListener: Fi
         }
         //layoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, RelativeLayout.TRUE);
         holder.filterIV.layoutParams = layoutParams
-        holder.filterTv.setText(imageFilter.filterName)
+        holder.filterTv.text = imageFilter.filterName
         holder.itemView.setOnClickListener(View.OnClickListener {
             mListener.onFilterSelected(imageFilter, position)
             val lastPosition = lastCheckedPostion
@@ -109,7 +109,7 @@ class FilterImageAdapter(list: ArrayList<ImageFilter>, private val mListener: Fi
             )
             //layoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, RelativeLayout.TRUE);
             holder.filterIV.layoutParams = layoutParams
-            lastCheckedPostion = holder.getAdapterPosition()
+            lastCheckedPostion = holder.adapterPosition
             notifyItemChanged(lastPosition)
         })
     }

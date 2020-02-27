@@ -31,7 +31,7 @@ class ImageListFragment : MediaListFragment(), ImageAdapter.OnImageClickListener
         @JvmStatic
         fun newInstance(key: Int, b: Bundle?): Fragment {
             val bf: Bundle = b ?: Bundle()
-            bf.putInt("fragment.key", key);
+            bf.putInt("fragment.key", key)
             val fragment = ImageListFragment()
             fragment.arguments = bf
             return fragment

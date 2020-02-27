@@ -7,6 +7,7 @@ import android.graphics.drawable.PictureDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
+import android.widget.FrameLayout
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.ContextCompat
@@ -49,15 +50,18 @@ import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
 import com.joshtalks.joshskills.ui.payment.COURSE_ID
 import com.joshtalks.joshskills.ui.referral.PromotionDialogFragment
 import com.joshtalks.joshskills.ui.referral.ReferralActivity
+import com.joshtalks.joshskills.ui.tooltip.BalloonFactory
+import com.joshtalks.joshskills.ui.tooltip.TooltipUtility
 import com.joshtalks.joshskills.ui.view_holders.EmptyHorizontalView
-import com.joshtalks.joshskills.ui.view_holders.FindMoreViewHolder
 import com.joshtalks.joshskills.ui.view_holders.InboxViewHolder
+import com.joshtalks.skydoves.balloon.OnBalloonDismissListener
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.patloew.rxlocation.RxLocation
+import io.reactivex.Maybe
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -66,6 +70,11 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import me.samlss.lighter.Lighter
+import me.samlss.lighter.interfaces.OnLighterListener
+import me.samlss.lighter.parameter.Direction
+import me.samlss.lighter.parameter.LighterParameter
+import me.samlss.lighter.shape.RectShape
 import org.jetbrains.anko.collections.forEachWithIndex
 
 const val REGISTER_INFO_CODE = 2001
@@ -82,9 +91,21 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         ViewModelProvider(this).get(InboxViewModel::class.java)
     }
     private var compositeDisposable = CompositeDisposable()
-
     private var inAppUpdateManager: InAppUpdateManager? = null
     private lateinit var earnIV: AppCompatImageView
+    private lateinit var findMoreLayout: FrameLayout
+    private var findMoreVisible = true
+    private var isUserFirstTime = true
+
+    private val offerIn7DaysHint by lazy { BalloonFactory.offerIn7Days(this, this) }
+    private val hintFirstTime by lazy {
+        BalloonFactory.hintOfferFirstTime(this, this, object :
+            OnBalloonDismissListener {
+            override fun onBalloonDismiss() {
+                attachOfferHintView()
+            }
+        })
+    }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -200,6 +221,10 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
             ReferralActivity.startReferralActivity(this@InboxActivity)
         }
         visibleShareEarn()
+        findMoreLayout = findViewById(R.id.parent_layout)
+        findViewById<View>(R.id.find_more).setOnClickListener {
+            RxBus2.publish(ExploreCourseEventBus())
+        }
     }
 
     private fun addLiveDataObservable() {
@@ -207,7 +232,6 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
             if (it == null || it.isEmpty()) {
                 openCourseExplorer()
             } else {
-               // buyCourseFBEvent()
                 recycler_view_inbox.removeAllViews()
                 val total = it.size
                 it.forEachWithIndex { i, inbox ->
@@ -218,14 +242,13 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
                     )
                 }
                 progress_bar.visibility = View.GONE
-
                 addCourseExploreView()
             }
         })
 
         viewModel.registerCourseMinimalLiveData.observe(this, Observer {
             if (it != null && it.isNotEmpty()) {
-              //  buyCourseFBEvent()
+                //  buyCourseFBEvent()
                 recycler_view_inbox.removeAllViews()
                 val total = it.size
                 it.forEachWithIndex { i, inbox ->
@@ -411,28 +434,43 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
     }
 
     private fun addCourseExploreView() {
-
         if (AppObjectController.getFirebaseRemoteConfig().getBoolean("course_explore_flag")) {
-            recycler_view_inbox.addView(FindMoreViewHolder())
+            findMoreLayout.visibility = View.VISIBLE
+            if (findMoreVisible && PrefManager.getBoolValue(FIRST_COURSE_BUY) && isUserFirstTime) {
+                findMoreVisible = false
+                if (PrefManager.getBoolValue(FIRST_TIME_OFFER_SHOW).not()) {
+                    PrefManager.put(FIRST_TIME_OFFER_SHOW, true)
+                    AppObjectController.uiHandler.postDelayed({
+                        val lighterBuilder = LighterParameter.Builder()
+                            .setHighlightedViewId(findViewById<View>(R.id.find_more).id)
+                            .setTipLayoutId(R.layout.layout_tip_5)
+                            .setLighterShape(RectShape(75.0f, 75.0f, 0.5f))
+                            .setTipViewRelativeDirection(Direction.BOTTOM)
+
+                        val root = findViewById<View>(R.id.find_more)
+                        Lighter.with(this)
+                            .addHighlight(lighterBuilder.build())
+                            .setOnLighterListener(object : OnLighterListener {
+                                override fun onDismiss() {
+                                    hintFirstTime.dismiss()
+                                }
+
+                                override fun onShow(index: Int) {
+                                }
+                            })
+                            .show()
+                        hintFirstTime.showAlignBottom(root)
+                    }, 500)
+                } else {
+                    attachOfferHintView()
+                }
+            }
         } else {
+            findMoreLayout.visibility = View.GONE
             addEmptyView()
         }
+        showAppUseWhenComeFirstTime()
     }
-
-   /* private fun buyCourseFBEvent() {
-        CoroutineScope(Dispatchers.Default).launch {
-            if (PrefManager.hasKey(COURSE_STARTED_FB_EVENT)) {
-                return@launch
-            }
-            val params = Bundle()
-            params.putString("mentor_id", Mentor.getInstance().getId())
-            AppObjectController.facebookEventLogger.logEvent(
-                AnalyticsEvent.COURSE_STARTED.name,
-                params
-            )
-            PrefManager.put(COURSE_STARTED_FB_EVENT, true)
-        }
-    }*/
 
 
     private fun showPromotionCode(courseId: String, placeholderImageUrl: String) {
@@ -486,7 +524,52 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
 
             })
             .into(earnIV)
-
     }
+
+
+    private fun showAppUseWhenComeFirstTime() {
+        try {
+            val entity = viewModel.registerCourseMinimalLiveData.value?.get(0)
+            val entity2 = viewModel.registerCourseNetworkLiveData.value?.get(0)
+            if (entity == null && entity2 == null) {
+                return
+            }
+
+            if (PrefManager.getBoolValue(FIRST_COURSE_BUY).not()) {
+                isUserFirstTime = false
+                PrefManager.put(FIRST_COURSE_BUY, true)
+                TooltipUtility.showFirstTimeUserTooltip(entity ?: entity2, this, this) {
+                }
+            }
+        } catch (ex: Exception) {
+        }
+    }
+
+    fun attachOfferHintView() {
+        compositeDisposable.add(AppObjectController.appDatabase
+            .courseDao()
+            .isUserOldThen7Days()
+            .concatMap {
+                val (flag, dayRemain) = Utils.isUser7DaysOld(it.courseCreatedDate)
+                return@concatMap Maybe.just(flag)
+            }
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(
+                { value ->
+                    if (value) {
+                        val root = findViewById<View>(R.id.find_more)
+                        if (offerIn7DaysHint.isShowing.not()) {
+                            offerIn7DaysHint.showAlignBottom(root)
+                            findViewById<View>(R.id.bottom_line).visibility = View.GONE
+                        }
+                    }
+                },
+                { error ->
+                    error.printStackTrace()
+                }
+            ))
+    }
+
 
 }

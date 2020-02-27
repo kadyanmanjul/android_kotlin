@@ -93,8 +93,8 @@ class VideoTrimmerActivity : AppCompatActivity(), VideoTrimmingListener {
     }
 
     fun getVideoFileDetails(path:String){
-        var retriever =  MediaMetadataRetriever();
-        retriever.setDataSource(path);
+        var retriever =  MediaMetadataRetriever()
+        retriever.setDataSource(path)
         var duration  =retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)
         var width  =retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH)
         var height =retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_HEIGHT)

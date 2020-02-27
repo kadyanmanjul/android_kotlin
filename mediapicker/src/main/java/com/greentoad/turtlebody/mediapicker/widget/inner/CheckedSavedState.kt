@@ -15,8 +15,7 @@ class CheckedSavedState : View.BaseSavedState {
         mIsChecked= source?.readInt() == 1
     }
 
-    constructor(parcelable: Parcelable) : super(parcelable){
-    }
+    constructor(parcelable: Parcelable) : super(parcelable)
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         super.writeToParcel(parcel, flags)

@@ -210,7 +210,7 @@ abstract class ImageViewTouchBase : AppCompatImageView, IDisposable {
     }
 
     protected open fun init() {
-        setScaleType(ImageView.ScaleType.MATRIX)
+        scaleType = ImageView.ScaleType.MATRIX
     }
 
     override fun setScaleType(scaleType: ImageView.ScaleType) {
@@ -228,7 +228,7 @@ abstract class ImageViewTouchBase : AppCompatImageView, IDisposable {
         setImageBitmap(null)
     }
 
-    override protected fun onLayout(
+    override fun onLayout(
         changed: Boolean, left: Int, top: Int, right: Int,
         bottom: Int
     ) {
@@ -267,7 +267,7 @@ abstract class ImageViewTouchBase : AppCompatImageView, IDisposable {
             r.run()
         }
 
-        val drawable = getDrawable()
+        val drawable = drawable
 
         if (drawable != null) {
 
@@ -308,7 +308,7 @@ abstract class ImageViewTouchBase : AppCompatImageView, IDisposable {
                         scale = getDefaultScale(mScaleType)
                     }
 
-                    setImageMatrix(imageViewMatrix)
+                    imageMatrix = imageViewMatrix
 
                     if (scale != scale) {
                         zoomTo(scale)
@@ -323,7 +323,7 @@ abstract class ImageViewTouchBase : AppCompatImageView, IDisposable {
                     if (!mMaxZoomDefined)
                         mMaxZoom = ZOOM_INVALID
 
-                    setImageMatrix(imageViewMatrix)
+                    imageMatrix = imageViewMatrix
                     postTranslate((-deltaX).toFloat(), (-deltaY).toFloat())
 
                     if (!mUserScaled) {
@@ -406,7 +406,7 @@ abstract class ImageViewTouchBase : AppCompatImageView, IDisposable {
     }
 
     override fun setImageResource(resId: Int) {
-        setImageDrawable(getContext().getResources().getDrawable(resId))
+        setImageDrawable(context.resources.getDrawable(resId))
     }
 
     /**
@@ -466,7 +466,7 @@ abstract class ImageViewTouchBase : AppCompatImageView, IDisposable {
         max_zoom: Float
     ) {
 
-        val viewWidth = getWidth()
+        val viewWidth = width
 
         if (viewWidth <= 0) {
             mLayoutRunnable = Runnable {
@@ -591,10 +591,10 @@ abstract class ImageViewTouchBase : AppCompatImageView, IDisposable {
     }
 
     protected fun computeMaxZoom(): Float {
-        val drawable = getDrawable() ?: return 1f
+        val drawable = drawable ?: return 1f
 
-        val fw = drawable!!.getIntrinsicWidth().toFloat() / mThisWidth.toFloat()
-        val fh = drawable!!.getIntrinsicHeight().toFloat() / mThisHeight.toFloat()
+        val fw = drawable.intrinsicWidth.toFloat() / mThisWidth.toFloat()
+        val fh = drawable.intrinsicHeight.toFloat() / mThisHeight.toFloat()
         val scale = Math.max(fw, fh) * 8
 
         if (LOG_ENABLED) {
@@ -604,7 +604,7 @@ abstract class ImageViewTouchBase : AppCompatImageView, IDisposable {
     }
 
     protected fun computeMinZoom(): Float {
-        val drawable = getDrawable() ?: return 1f
+        val drawable = drawable ?: return 1f
 
         var scale = getScale(mBaseMatrix)
         scale = Math.min(1f, 1f / scale)
@@ -624,10 +624,10 @@ abstract class ImageViewTouchBase : AppCompatImageView, IDisposable {
 
     override fun setImageMatrix(matrix: Matrix?) {
 
-        val current = getImageMatrix()
+        val current = imageMatrix
         var needUpdate = false
 
-        if (matrix == null && !current.isIdentity() || matrix != null && current != matrix) {
+        if (matrix == null && !current.isIdentity || matrix != null && current != matrix) {
             needUpdate = true
         }
 
@@ -735,12 +735,12 @@ abstract class ImageViewTouchBase : AppCompatImageView, IDisposable {
     }
 
     protected fun getBitmapRect(supportMatrix: Matrix): RectF? {
-        val drawable = getDrawable() ?: return null
+        val drawable = drawable ?: return null
 
         val m = getImageViewMatrix(supportMatrix)
         mBitmapRect.set(
-            0f, 0f, drawable!!.getIntrinsicWidth().toFloat(),
-            drawable!!.getIntrinsicHeight().toFloat()
+            0f, 0f, drawable.intrinsicWidth.toFloat(),
+            drawable.intrinsicHeight.toFloat()
         )
         m.mapRect(mBitmapRect)
         return mBitmapRect
@@ -751,7 +751,7 @@ abstract class ImageViewTouchBase : AppCompatImageView, IDisposable {
     }
 
     protected fun center(horizontal: Boolean, vertical: Boolean) {
-        val drawable = getDrawable() ?: return
+        val drawable = drawable ?: return
 
         val rect = getCenter(mSuppMatrix, horizontal, vertical)
 
@@ -768,7 +768,7 @@ abstract class ImageViewTouchBase : AppCompatImageView, IDisposable {
         supportMatrix: Matrix, horizontal: Boolean,
         vertical: Boolean
     ): RectF {
-        val drawable = getDrawable() ?: return RectF(0f, 0f, 0f, 0f)
+        val drawable = drawable ?: return RectF(0f, 0f, 0f, 0f)
 
         mCenterRect.set(0f, 0f, 0f, 0f)
         val rect = getBitmapRect(supportMatrix)
@@ -806,7 +806,7 @@ abstract class ImageViewTouchBase : AppCompatImageView, IDisposable {
                 Log.i(LOG_TAG, "postTranslate: " + deltaX + "x" + deltaY)
             }
             mSuppMatrix.postTranslate(deltaX, deltaY)
-            setImageMatrix(imageViewMatrix)
+            imageMatrix = imageViewMatrix
         }
     }
 
@@ -818,7 +818,7 @@ abstract class ImageViewTouchBase : AppCompatImageView, IDisposable {
             )
         }
         mSuppMatrix.postScale(scale, scale, centerX, centerY)
-        setImageMatrix(imageViewMatrix)
+        imageMatrix = imageViewMatrix
     }
 
     protected fun zoomTo(scale: Float) {
@@ -906,8 +906,8 @@ abstract class ImageViewTouchBase : AppCompatImageView, IDisposable {
         val startTime = System.currentTimeMillis()
         mHandler.post(object : Runnable {
 
-            internal var old_x = 0.0
-            internal var old_y = 0.0
+            var old_x = 0.0
+            var old_y = 0.0
 
             override fun run() {
                 val now = System.currentTimeMillis()
@@ -975,7 +975,7 @@ abstract class ImageViewTouchBase : AppCompatImageView, IDisposable {
     companion object {
 
         val LOG_TAG = "ImageViewTouchBase"
-        public val LOG_ENABLED = false
+        val LOG_ENABLED = false
 
         val ZOOM_INVALID = -1f
     }

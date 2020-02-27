@@ -18,6 +18,7 @@
             <option value="$PROJECT_DIR$/pdfviewer" />
             <option value="$PROJECT_DIR$/pixeditor" />
             <option value="$PROJECT_DIR$/recordview" />
+            <option value="$PROJECT_DIR$/xtooltip" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />

@@ -31,7 +31,7 @@ class AudioListFragment : MediaListFragment(), AudioAdapter.OnAudioClickListener
         @JvmStatic
         fun newInstance(key: Int, b: Bundle?): Fragment {
             val bf: Bundle = b ?: Bundle()
-            bf.putInt("fragment.key", key);
+            bf.putInt("fragment.key", key)
             val fragment = AudioListFragment()
             fragment.arguments = bf
             return fragment

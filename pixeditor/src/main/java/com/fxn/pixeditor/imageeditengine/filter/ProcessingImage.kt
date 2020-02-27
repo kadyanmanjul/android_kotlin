@@ -15,14 +15,10 @@ class ProcessingImage(
         return Utility.saveBitmap(srcBitmap, imagePath)
     }
 
-    override fun onPreExecute() {
-        super.onPreExecute()
-    }
-
     override fun onPostExecute(s: String) {
         super.onPostExecute(s)
         if (callback != null) {
-            callback!!.onTaskDone(s)
+            callback.onTaskDone(s)
         }
     }
 }// end inner class

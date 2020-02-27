@@ -42,7 +42,7 @@ object IOUtils {
     fun closeSilently(cursor: Cursor?) {
         if (cursor == null) return
         try {
-            cursor?.close()
+            cursor.close()
         } catch (t: Throwable) {
         }
 

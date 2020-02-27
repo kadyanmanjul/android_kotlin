@@ -7,11 +7,11 @@ import com.fxn.pixeditor.imageeditengine.BaseFragment
 object FragmentUtil {
 
     fun hadFragment(activity: AppCompatActivity): Boolean {
-        return activity.getSupportFragmentManager().getBackStackEntryCount() !== 0
+        return activity.supportFragmentManager.backStackEntryCount !== 0
     }
 
     fun replaceFragment(activity: AppCompatActivity, contentId: Int, fragment: BaseFragment) {
-        val transaction = activity.getSupportFragmentManager().beginTransaction()
+        val transaction = activity.supportFragmentManager.beginTransaction()
 
         transaction.replace(contentId, fragment, fragment::class.java.name)
 
@@ -21,39 +21,39 @@ object FragmentUtil {
 
 
     fun addFragment(activity: AppCompatActivity, contentId: Int, fragment: BaseFragment) {
-        val transaction = activity.getSupportFragmentManager().beginTransaction()
+        val transaction = activity.supportFragmentManager.beginTransaction()
 
         transaction.add(contentId, fragment, fragment::class.java.name)
         transaction.commit()
     }
 
     fun removeFragment(activity: AppCompatActivity, fragment: BaseFragment) {
-        activity.getSupportFragmentManager().beginTransaction()
+        activity.supportFragmentManager.beginTransaction()
             .remove(fragment)
             .commit()
     }
 
 
     fun showFragment(activity: AppCompatActivity, fragment: BaseFragment) {
-        activity.getSupportFragmentManager().beginTransaction()
+        activity.supportFragmentManager.beginTransaction()
             .show(fragment)
             .commit()
     }
 
     fun hideFragment(activity: AppCompatActivity, fragment: BaseFragment) {
-        activity.getSupportFragmentManager().beginTransaction()
+        activity.supportFragmentManager.beginTransaction()
             .hide(fragment)
             .commit()
     }
 
     fun attachFragment(activity: AppCompatActivity, fragment: BaseFragment) {
-        activity.getSupportFragmentManager().beginTransaction()
+        activity.supportFragmentManager.beginTransaction()
             .attach(fragment)
             .commit()
     }
 
     fun detachFragment(activity: AppCompatActivity, fragment: BaseFragment) {
-        activity.getSupportFragmentManager().beginTransaction()
+        activity.supportFragmentManager.beginTransaction()
             .detach(fragment)
             .commit()
     }
