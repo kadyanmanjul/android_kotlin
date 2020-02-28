@@ -12,8 +12,8 @@ android {
         applicationId "com.joshtalks.joshskills"
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 64
-        versionName "1.0.64"
+        versionCode 65
+        versionName "1.0.65"
         vectorDrawables.useSupportLibrary true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField "String", "CLIENT_TOKEN", "\"Ctt75ss5IxyHgBJb48diBbHUXIQ1VANCYRykjdcj\""
@@ -131,8 +131,17 @@ dependencies {
     implementation project(path: ':animationlibrary')
     implementation project(path: ':emoji-google')
     implementation project(path: ':joshlibrary')
-    implementation project(path: ':appcamera')
-    implementation project(path: ':mediapicker')
+
+   // implementation project(path: ':appcamera')
+    //implementation project(path: ':mediapicker')
+    implementation (project(path: ':appcamera'), {
+        exclude group: 'com.bumptech.glide'
+    })
+
+    implementation (project(path: ':mediapicker'), {
+        exclude group: 'com.bumptech.glide'
+    })
+
     implementation project(path: ':pdfviewer')
 
 //    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.0.4'
@@ -156,6 +165,7 @@ dependencies {
     implementation 'androidx.browser:browser:1.2.0'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
 
+    implementation "androidx.lifecycle:lifecycle-common-java8:2.2.0"
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
     api 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
@@ -174,7 +184,9 @@ dependencies {
     implementation 'com.google.android.material:material:1.2.0-alpha05'
     kapt 'com.android.databinding:compiler:3.1.4'
 
-    implementation 'com.github.bumptech.glide:glide:4.11.0'
+    implementation ("com.github.bumptech.glide:glide:4.11.0"){
+        exclude group: "com.android.support"
+    }
     kapt 'com.github.bumptech.glide:compiler:4.11.0'
     implementation 'jp.wasabeef:glide-transformations:4.1.0'
     implementation 'com.zlc.glide:webpdecoder:1.6.4.9.0'
