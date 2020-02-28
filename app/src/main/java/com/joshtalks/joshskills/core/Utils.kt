@@ -70,7 +70,7 @@ object Utils {
 
             val power: Int
             val suffix = " kmbt"
-            var formattedNumber = ""
+            var formattedNumber: String
 
             val formatter = DecimalFormat("#,###.#")
             power = StrictMath.log10(value).toInt()
@@ -341,31 +341,6 @@ object Utils {
         }
     }
 
-    fun isHelplineOnline(): Boolean {
-        val timeFormat = "HH:mm:ss"
-        val simpleDateFormat = SimpleDateFormat(timeFormat, Locale.ENGLISH)
-        val startTime =
-            simpleDateFormat.parse(AppObjectController.getFirebaseRemoteConfig().getString("helpline_start_time"))
-        val startCalender = Calendar.getInstance()
-        startCalender.time = startTime
-        startCalender.add(Calendar.DATE, 1)
-        val endTime =
-            simpleDateFormat.parse(AppObjectController.getFirebaseRemoteConfig().getString("helpline_end_time"))
-        val endCalender = Calendar.getInstance()
-        endCalender.time = endTime
-        endCalender.add(Calendar.DATE, 1)
-
-
-        val cTime = simpleDateFormat.parse(simpleDateFormat.format(Date()))
-        val cCalendar = Calendar.getInstance()
-        cCalendar.time = cTime
-        cCalendar.add(Calendar.DATE, 1)
-
-        if (cCalendar.time.after(startCalender.time) && cCalendar.time.before(endCalender.time)) {
-            return true
-        }
-        return false
-    }
 
     fun getBitmapFromDrawable(context: Context, drawableId: Int): Bitmap {
         val drawable = AppCompatResources.getDrawable(context, drawableId)

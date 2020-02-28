@@ -315,7 +315,6 @@ internal class AppObjectController {
 
             if (BuildConfig.DEBUG) {
                 configSettingsBuilder.setDeveloperModeEnabled(BuildConfig.DEBUG)
-
             }
             getFirebaseRemoteConfig().setConfigSettingsAsync(configSettingsBuilder.build())
             getFirebaseRemoteConfig().setDefaultsAsync(R.xml.remote_config_defaults)

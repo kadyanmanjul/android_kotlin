@@ -6,7 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.SignUpStepStatus
 import com.joshtalks.joshskills.databinding.FragmentEmptyCourseBinding
@@ -16,10 +16,9 @@ class EmptyCourseFragment : Fragment() {
     private lateinit var emptyCourseBinding: FragmentEmptyCourseBinding
     private lateinit var viewModel: SignUpViewModel
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel = activity?.run { ViewModelProviders.of(this)[SignUpViewModel::class.java] }
+        viewModel = activity?.run { ViewModelProvider(this).get(SignUpViewModel::class.java) }
             ?: throw Exception("Invalid Activity")
 
     }

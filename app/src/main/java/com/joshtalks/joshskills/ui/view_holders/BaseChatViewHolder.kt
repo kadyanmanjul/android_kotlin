@@ -145,6 +145,9 @@ abstract class BaseChatViewHolder(
             when (autoLinkMode) {
                 AutoLinkMode.MODE_PHONE -> Utils.call(getAppContext(), matchedText)
                 AutoLinkMode.MODE_URL -> activityRef.get()?.let { Utils.openUrl(matchedText, it) }
+                else -> {
+
+                }
             }
         }
     }

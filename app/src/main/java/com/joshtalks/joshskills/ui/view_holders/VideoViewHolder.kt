@@ -103,7 +103,7 @@ class VideoViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
 
         if (message.url != null) {
             if (message.downloadStatus == DOWNLOAD_STATUS.DOWNLOADED) {
-                if (AppDirectory.isFileExist(message.downloadedLocalPath!!)) {
+                if (AppDirectory.isFileExist(message.downloadedLocalPath)) {
                     Utils.fileUrl(message.downloadedLocalPath, message.url)?.run {
                         setImageInImageView(imageView, message.downloadedLocalPath!!,
                             Runnable {
@@ -159,16 +159,16 @@ class VideoViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
             }
 
             message.question?.let { question ->
-                if (question.title?.isNotEmpty()!!) {
+                if (question.title.isNullOrEmpty().not()) {
                     textTitle.text = HtmlCompat.fromHtml(
-                        question.title.toString(),
+                        question.title!!,
                         HtmlCompat.FROM_HTML_MODE_LEGACY
                     )
                     textTitle.visibility = VISIBLE
                 }
-                if (question.qText?.isNotEmpty()!!) {
+                if (question.qText.isNullOrEmpty().not()) {
                     textMessageBody.text = HtmlCompat.fromHtml(
-                        question.qText.toString(),
+                        question.qText!!,
                         HtmlCompat.FROM_HTML_MODE_LEGACY
                     )
                     textMessageBody.visibility = VISIBLE

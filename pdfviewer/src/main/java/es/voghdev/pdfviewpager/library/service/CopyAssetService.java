@@ -19,10 +19,10 @@ import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
 
+import com.davemorrissey.labs.subscaleview.BuildConfig;
 import java.io.IOException;
-
-import es.voghdev.pdfviewpager.library.BuildConfig;
 import es.voghdev.pdfviewpager.library.util.FileUtil;
+
 
 public class CopyAssetService extends IntentService {
     private static final String ACTION_COPY_ASSET = BuildConfig.APPLICATION_ID + ".copy_asset";

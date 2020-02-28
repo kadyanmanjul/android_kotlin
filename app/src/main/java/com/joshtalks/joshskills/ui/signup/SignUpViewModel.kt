@@ -42,8 +42,7 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val reqObj = mapOf("mobile" to mobileNumber)
-                val response: Any =
-                    AppObjectController.signUpNetworkService.getOtpForNumberAsync(reqObj).await()
+                AppObjectController.signUpNetworkService.getOtpForNumberAsync(reqObj).await()
                 phoneNumber = mobileNumber
                 countryCode = country_code
                 progressDialogStatus.postValue(false)
@@ -63,8 +62,7 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val reqObj = mapOf("mobile" to mobileNumber)
-                val response: Any =
-                    AppObjectController.signUpNetworkService.getOtpForNumberAsync(reqObj).await()
+                AppObjectController.signUpNetworkService.getOtpForNumberAsync(reqObj).await()
                 progressDialogStatus.postValue(false)
                 signUpStatus.postValue(SignUpStepStatus.SignUpResendOTP)
             } catch (ex: HttpException) {

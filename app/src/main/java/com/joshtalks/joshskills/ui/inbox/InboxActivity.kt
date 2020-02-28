@@ -1,6 +1,7 @@
 package com.joshtalks.joshskills.ui.inbox
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.graphics.drawable.PictureDrawable
@@ -354,6 +355,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
 
     }
 
+    @SuppressLint("MissingPermission")
     private fun getLocationAndUpload() {
         val rxLocation = RxLocation(application)
         val locationRequest = LocationRequest.create()
@@ -550,7 +552,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
             .courseDao()
             .isUserOldThen7Days()
             .concatMap {
-                val (flag, dayRemain) = Utils.isUser7DaysOld(it.courseCreatedDate)
+                val (flag, _) = Utils.isUser7DaysOld(it.courseCreatedDate)
                 return@concatMap Maybe.just(flag)
             }
             .subscribeOn(Schedulers.io())

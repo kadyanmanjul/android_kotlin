@@ -11,7 +11,6 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.widget.Toast
@@ -242,8 +241,6 @@ class PaymentActivity : CoreJoshActivity(),
             .text(getString(R.string.something_went_wrong)).cornerRadius(16)
             .textColor(ContextCompat.getColor(applicationContext, R.color.white))
             .length(Toast.LENGTH_LONG).solidBackground().show()
-
-        Log.i("error", p1 ?: "")
     }
 
     override fun onPaymentSuccess(razorpayPaymentId: String) {
@@ -315,7 +312,7 @@ class PaymentActivity : CoreJoshActivity(),
                     .courseDao()
                     .isUserOldThen7Days()
                     .concatMap {
-                        val (flag, dayRemain) = Utils.isUser7DaysOld(it.courseCreatedDate)
+                        val (flag, _) = Utils.isUser7DaysOld(it.courseCreatedDate)
                         return@concatMap Maybe.just(flag)
                     }
                     .subscribeOn(Schedulers.io())
@@ -372,10 +369,8 @@ class PaymentActivity : CoreJoshActivity(),
                 currency = response.currency
                 amount = response.amount / 100
                 courseModel?.amount = amount
-                activityPaymentBinding.progressBar.visibility = View.GONE
-
                 checkout.open(this@PaymentActivity, options)
-
+                activityPaymentBinding.progressBar.visibility = View.GONE
                 val params = Bundle().apply {
                     putString(AppEventsConstants.EVENT_PARAM_CONTENT_ID, testId)
                 }
@@ -577,11 +572,10 @@ class PaymentActivity : CoreJoshActivity(),
             .courseDao()
             .isUserOldThen7Days()
             .concatMap {
-                val (flag, dayRemain) = Utils.isUser7DaysOld(it.courseCreatedDate)
+                val (flag, _) = Utils.isUser7DaysOld(it.courseCreatedDate)
                 return@concatMap Maybe.just(flag)
             }
             .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
             .subscribe(
                 { value ->
                     specialDiscount = value

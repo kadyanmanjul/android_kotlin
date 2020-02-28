@@ -58,9 +58,9 @@
 
     <string name="message_size_limit">Message size limit exceeded</string>
 
-    <string name="unread_message">%s UNREAD MESSAGES</string>
+    <string name="unread_message" formatted="false">%s UNREAD MESSAGES</string>
     <string name="media_not_found_message">Sorry, this media file doesn\'t exist on your internal storage. can you download it?</string>
-    <string name="pdf_desc">%s Page \u2022 PDF</string>
+    <string name="pdf_desc" formatted="false">%s Page \u2022 PDF</string>
     <string name="restart">Restart</string>
     <string name="logout_message">Are you sure you want to logout?</string>
     <string name="logout">Logout</string>
@@ -93,8 +93,8 @@
     <string name="enter_your_mobile_number">Enter your Mobile Number </string>
     <string name="send_otp_msz">We will send you an OTP</string>
     <string name="please_enter_your_mobile_number">Please enter your mobile number </string>
-    <string name="resend_otp_toast">OTP sent to %s</string>
-    <string name="resend_timer_text">Resend in 00:%s</string>
+    <string name="resend_otp_toast" formatted="false">OTP sent to %s</string>
+    <string name="resend_timer_text" formatted="false">Resend in 00:%s</string>
 
     <string name="course_not_exist_number">Sorry! Ye Number hamare paas Registered nahi hai</string>
     <string name="other_number_register">Kya aapne kisi or number se REGISTERED kiya tha</string>
@@ -146,7 +146,7 @@
     <string name="amount">Amount</string>
     <string name="status">Status</string>
 
-    <string name="complaint_message">Thanks for reaching out to us. Your request has been recorded against ticket number %s. Our team will reach out to you between 24–72 hours</string>
+    <string name="complaint_message" formatted="false">Thanks for reaching out to us. Your request has been recorded against ticket number %s. Our team will reach out to you between 24–72 hours</string>
     <string name="payment_process_success">Your payment has been processed successfully!</string>
     <string name="status_with_colon">Status : </string>
     <string name="submit_answer">Submit Answer</string>
@@ -165,9 +165,9 @@
     <string name="login_with_otp">Login using OTP</string>
     <string name="wrong_otp">The OTP entered is incorrect. Please enter correct OTP or try regenerating the OTP</string>
     <string name="invite_friends">Invite And Earn</string>
-    <string name="referral_content">Refer your friends &amp; we\'ll give them a discount of ₹ %s on their first course purchase &amp;  ₹ %s cash to you if they buy a course</string>
+    <string name="referral_content" formatted="false">Refer your friends &amp; we\'ll give them a discount of ₹ %s on their first course purchase &amp;  ₹ %s cash to you if they buy a course</string>
     <string name="refer_and_earn">Refer &amp; Earn</string>
-    <string name="referral_amount_title">EARN ₹ %s CASH</string>
+    <string name="referral_amount_title" formatted="false">EARN ₹ %s CASH</string>
     <string name="copy_code">Referral code copied to clipboard</string>
     <string name="discount_header">Do you have discount code?</string>
     <string name="complete_payment">Complete Payment</string>
@@ -181,17 +181,14 @@
     <string name="course_fees">Course Fees</string>
     <string name="bade_bhaiya_header">Bade Bhaiya Discount </string>
     <string name="total_amount">Total Amount</string>
-    <string name="ringer_mode">Ringer mode</string>
-    <string name="phone_type">Phone Type</string>
     <string name="network_type">Network Type</string>
-    <string name="device_charging_via">Device charging via </string>
 
     <string name="start_course_now">Start Your Course Now</string>
     <string name="show_more">SHOW MORE</string>
     <string name="show_less">SHOW LESS</string>
     <string name="answer_not_submitted">Answer not submitted</string>
     <string name="answer_submitted">Answer Submitted</string>
-    <string name="offer_bachat">Aapne is course par pure %s ki bachat ki hai</string>
+    <string name="offer_bachat" formatted="false">Aapne is course par pure %s ki bachat ki hai</string>
     <string name="bade_bhaiya_tips">Bade Bhaiya Tips</string>
     <string name="tip_message">Agar aap apne pehle 7 dino main hain to aap ye course 50\u0025 kam main pa sakte hain.</string>
     <string name="tip_used">TIP USED</string>
@@ -200,11 +197,11 @@
     <string name="record_answer_label">Record your answer</string>
     <string name="type_answer_label">Type your answer</string>
     <string name="upload_answer_label">Upload your answer</string>
-    <string name="course_duration">Course Duration - %s Days</string>
+    <string name="course_duration" formatted="false">Course Duration - %s Days</string>
 
 
-    <string name="find_more_course_hint_ftime">Hello %s, Agar aap es course ke sath kuch aur bhi seekhna chahte hain to pehle 7 dino mai aapke paas har course pe %s off hai </string>
-    <string name="buy_course_offer_tooltip"> Get %s off on the next course you buy, Valid for %s days.</string>
+    <string name="find_more_course_hint_ftime" formatted="false">Hello %s, Agar aap es course ke sath kuch aur bhi seekhna chahte hain to pehle 7 dino mai aapke paas har course pe %s off hai </string>
+    <string name="buy_course_offer_tooltip" formatted="false"> Get %s off on the next course you buy, Valid for %s days.</string>
     <string name="first_time_user_hint">Aapko apne course se related saari videos aur claases isko click karke milengi</string>
 
 </resources>

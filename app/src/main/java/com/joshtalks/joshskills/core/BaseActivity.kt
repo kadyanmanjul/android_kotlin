@@ -65,18 +65,17 @@ abstract class BaseActivity : AppCompatActivity() {
 
 
     fun getIntentForState(): Intent? {
-        var intent: Intent? = null
-        if (User.getInstance().token == null) {
-            intent = Intent(this, OnBoardActivity::class.java)
+        val intent: Intent? = if (User.getInstance().token == null) {
+            Intent(this, OnBoardActivity::class.java)
         }/* else if (User.getInstance().dateOfBirth == null || User.getInstance().dateOfBirth.isNullOrEmpty()) {
-            intent = Intent(this, ProfileActivity::class.java)
-        }*/ else {
+                intent = Intent(this, ProfileActivity::class.java)
+            }*/ else {
             AppObjectController.joshApplication.updateDeviceDetail()
             AppObjectController.joshApplication.userActive()
             WorkMangerAdmin.getUserReferralCodeWorker()
-            intent = getInboxActivityIntent()
+            getInboxActivityIntent()
         }
-        return intent.apply {
+        return intent?.apply {
             addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         }

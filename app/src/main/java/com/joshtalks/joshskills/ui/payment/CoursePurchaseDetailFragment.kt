@@ -85,7 +85,6 @@ class CoursePurchaseDetailFragment : DialogFragment() {
     fun haveCouponCode() {
         listener?.onCouponCode()
         dismissAllowingStateLoss()
-
     }
 
 

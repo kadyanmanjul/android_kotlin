@@ -84,6 +84,11 @@ interface SignUpNetworkService {
     fun explorerCourseDetails(@QueryMap params: Map<String, String>): Deferred<List<CourseDetailsModel>>
 
 
+    @GET("$DIR/course/test_details/")
+    fun explorerCourseDetailsApiV2Async(@QueryMap params: Map<String, String> = mapOf("is_default" to "true")): Deferred<Any>
+
+
+
     @GET("$DIR/payment/coupon/")
     fun validateOrGetAndReferralOrCouponAsync(@QueryMap params: Map<String, String>): Deferred<List<CouponCodeResponse>>
 

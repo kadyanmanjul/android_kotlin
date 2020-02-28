@@ -79,8 +79,10 @@ class TextViewHolder(activityRef: WeakReference<FragmentActivity>, message: Chat
 
 
         } else {
-            text_message_body.text =
-                HtmlCompat.fromHtml(message.text.toString(), HtmlCompat.FROM_HTML_MODE_LEGACY)
+            if (message.text.isNullOrEmpty().not()) {
+                text_message_body.text =
+                    HtmlCompat.fromHtml(message.text!!, HtmlCompat.FROM_HTML_MODE_LEGACY)
+            }
         }
 
         text_message_time.text = Utils.messageTimeConversion(message.created)

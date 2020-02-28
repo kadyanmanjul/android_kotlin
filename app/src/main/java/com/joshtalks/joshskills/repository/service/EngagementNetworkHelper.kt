@@ -94,9 +94,12 @@ object EngagementNetworkHelper {
     }
 
 
-    fun clickNotification(notificationId: String) {
+    fun clickNotification(notificationId: String?) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
+                if (notificationId.isNullOrEmpty()){
+                    return@launch
+                }
                 AppAnalytics.create(AnalyticsEvent.NOTIFICATION_CLICKED.NAME).push()
                 val data = mapOf("is_clicked" to "true")
                 AppObjectController.chatNetworkService.engageNotificationAsync(

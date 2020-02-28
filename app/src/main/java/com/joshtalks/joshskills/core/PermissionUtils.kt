@@ -146,6 +146,4 @@ object PermissionUtils {
             )
             .withListener(multiplePermissionsListener).check()
     }
-
-
 }

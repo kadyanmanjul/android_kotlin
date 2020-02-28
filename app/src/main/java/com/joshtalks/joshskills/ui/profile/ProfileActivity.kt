@@ -189,36 +189,39 @@ class ProfileActivity : BaseActivity(), MediaSelectCallback {
             startActivityForResult(getCroppingActivity(images.path), CROPPING_IMAGE_CODE)
         } else if (requestCode == CROPPING_IMAGE_CODE && resultCode == Activity.RESULT_OK) {
             val image = data?.getStringExtra(SOURCE_IMAGE)
-            imageModel = image?.let { ImageModel(it) }
-            Glide.with(applicationContext)
-                .load(Uri.fromFile(File(image)))
-                .listener(object : RequestListener<Drawable> {
-                    override fun onLoadFailed(
-                        e: GlideException?,
-                        model: Any?,
-                        target: Target<Drawable>?,
-                        isFirstResource: Boolean
-                    ): Boolean {
-                        return false
+            image?.let {
+                imageModel = ImageModel(image)
+                Glide.with(applicationContext)
+                    .load(Uri.fromFile(File(image)))
+                    .listener(object : RequestListener<Drawable> {
+                        override fun onLoadFailed(
+                            e: GlideException?,
+                            model: Any?,
+                            target: Target<Drawable>?,
+                            isFirstResource: Boolean
+                        ): Boolean {
+                            return false
 
-                    }
-
-                    override fun onResourceReady(
-                        resource: Drawable?,
-                        model: Any?,
-                        target: Target<Drawable>?,
-                        dataSource: DataSource?,
-                        isFirstResource: Boolean
-                    ): Boolean {
-                        layout.ivPlaceholderPic.visibility = GONE
-                        imageModel?.let {
-                            UploadWorker.uploadProfile(it)
                         }
-                        return false
-                    }
 
-                })
-                .into(layout.ivUploadedPic)
+                        override fun onResourceReady(
+                            resource: Drawable?,
+                            model: Any?,
+                            target: Target<Drawable>?,
+                            dataSource: DataSource?,
+                            isFirstResource: Boolean
+                        ): Boolean {
+                            layout.ivPlaceholderPic.visibility = GONE
+                            imageModel?.let {
+                                UploadWorker.uploadProfile(it)
+                            }
+                            return false
+                        }
+
+                    })
+                    .into(layout.ivUploadedPic)
+            }
+
         }
         super.onActivityResult(requestCode, resultCode, data)
     }

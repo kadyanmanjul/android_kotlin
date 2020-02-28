@@ -5,10 +5,9 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/_80sdp"
         android:layout_gravity="center"
-        android:visibility="gone"
         android:orientation="vertical">
 
-    <LinearLayout
+    <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_gravity="top"
@@ -36,7 +35,7 @@
             app:rippleColor="@color/white" />
 
 
-    <LinearLayout
+    <View
             android:id="@+id/bottom_line"
             android:layout_width="match_parent"
             android:layout_height="1dp"
