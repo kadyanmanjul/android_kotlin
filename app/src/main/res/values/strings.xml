@@ -204,5 +204,5 @@
     <string name="find_more_course_hint_ftime" formatted="false">Hello %s, Agar aap es course ke sath kuch aur bhi seekhna chahte hain to pehle 7 dino mai aapke paas har course pe %s off hai </string>
     <string name="buy_course_offer_tooltip" formatted="false"> Get %s off on the next course you buy, Valid for %s days.</string>
     <string name="first_time_user_hint">Aapko apne course se related saari videos aur claases isko click karke milengi</string>
-
+<string name="login_header">To Complete Payment </string>
 </resources>

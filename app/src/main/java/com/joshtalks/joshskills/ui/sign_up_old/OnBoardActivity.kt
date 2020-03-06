@@ -23,6 +23,7 @@ import com.joshtalks.joshskills.core.SignUpStepStatus
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.databinding.ActivityOnboardBinding
+import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
 import com.joshtalks.joshskills.ui.signup.IS_ACTIVITY_FOR_RESULT
 import com.joshtalks.joshskills.ui.signup.SignUpActivity
@@ -217,6 +218,14 @@ class OnBoardActivity : CoreJoshActivity() {
             layout.btnTruecallerLogin.isEnabled = true
             layout.btnTruecallerLogin.hideProgress(getString(R.string.login_with_truecaller_label))
         } catch (e: Exception) {
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (Mentor.getInstance().hasId()) {
+            startActivity(getInboxActivityIntent())
+            finish()
         }
     }
 }

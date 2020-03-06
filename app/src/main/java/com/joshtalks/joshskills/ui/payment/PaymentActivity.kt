@@ -24,10 +24,8 @@ import com.facebook.appevents.AppEventsConstants
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.FirebaseAnalytics.Event.ECOMMERCE_PURCHASE
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.CoreJoshActivity
-import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.BranchIOAnalytics
@@ -41,7 +39,7 @@ import com.joshtalks.joshskills.repository.server.CourseDetailsModel
 import com.joshtalks.joshskills.repository.server.CourseExploreModel
 import com.joshtalks.joshskills.repository.server.PaymentDetailsResponse
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
-import com.joshtalks.joshskills.ui.sign_up_old.OnBoardActivity
+import com.joshtalks.joshskills.ui.sign_up_old.LoginActivity
 import com.joshtalks.joshskills.ui.signup.IS_ACTIVITY_FOR_RESULT
 import com.joshtalks.joshskills.ui.view_holders.CourseDetailViewHolder
 import com.muddzdev.styleabletoast.StyleableToast
@@ -193,7 +191,10 @@ class PaymentActivity : CoreJoshActivity(),
     private fun getCourseDetails() {
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                val data = mapOf("test" to testId)
+                val data = mapOf(
+                    "test" to testId,
+                    "gaid" to PrefManager.getStringValue(USER_UNIQUE_ID)
+                )
                 val courseDetailsModelList: List<CourseDetailsModel> =
                     AppObjectController.signUpNetworkService.explorerCourseDetails(data).await()
                 CoroutineScope(Dispatchers.Main).launch {
@@ -508,7 +509,7 @@ class PaymentActivity : CoreJoshActivity(),
 
     private fun requestForPayment() {
         if (User.getInstance().token == null) {
-            startActivityForResult(Intent(this, OnBoardActivity::class.java).apply {
+            startActivityForResult(Intent(this, LoginActivity::class.java).apply {
                 putExtra(IS_ACTIVITY_FOR_RESULT, true)
             }, 101)
             return
