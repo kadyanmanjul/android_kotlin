@@ -23,6 +23,7 @@ import com.joshtalks.joshskills.core.SignUpStepStatus
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.databinding.ActivityOnboardBinding
+import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
 import com.joshtalks.joshskills.ui.signup.IS_ACTIVITY_FOR_RESULT
 import com.joshtalks.joshskills.ui.signup.SignUpActivity
 import com.joshtalks.joshskills.ui.signup.SignUpViewModel
@@ -55,8 +56,6 @@ class OnBoardActivity : CoreJoshActivity() {
         }
         initTrueCallerSDK()
         AppAnalytics.create(AnalyticsEvent.LOGIN_SCREEN_1.NAME).push()
-
-
         val sBuilder = SpannableStringBuilder()
         sBuilder.append("Welcome to ").append("Josh Skills")
         val typefaceSpan =
@@ -64,16 +63,13 @@ class OnBoardActivity : CoreJoshActivity() {
         sBuilder.setSpan(typefaceSpan, 11, 22, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
         layout.textView.setText(sBuilder, TextView.BufferType.SPANNABLE)
         addObserver()
-
     }
 
 
     private fun addObserver() {
         viewModel.signUpStatus.observe(this, androidx.lifecycle.Observer {
             hideProgress()
-
             when (it) {
-
                 SignUpStepStatus.SignUpCompleted -> {
                     if (activityResultFlag) {
                         setResult()
@@ -122,6 +118,11 @@ class OnBoardActivity : CoreJoshActivity() {
         startActivity(intent)
     }
 
+    fun openCourseExplore() {
+        startActivity(Intent(applicationContext, CourseExploreActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
+        })
+    }
 
     override fun onBackPressed() {
         AppAnalytics.create(AnalyticsEvent.BACK_PRESSED.NAME)
@@ -144,7 +145,7 @@ class OnBoardActivity : CoreJoshActivity() {
             if (TrueSDK.getInstance().isUsable) {
                 val locale = Locale("en")
                 TrueSDK.getInstance().setLocale(locale)
-                layout.btnTruecallerLogin.visibility = View.VISIBLE
+                layout.loginTrueCallerContainer.visibility = View.VISIBLE
             }
         } catch (ex: Exception) {
             ex.printStackTrace()
@@ -203,7 +204,12 @@ class OnBoardActivity : CoreJoshActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        TrueSDK.getInstance().onActivityResultObtained(this, resultCode, data)
+        try {
+            if (TrueSDK.getInstance().isUsable) {
+                TrueSDK.getInstance().onActivityResultObtained(this, resultCode, data)
+            }
+        } catch (ex: Exception) {
+        }
     }
 
     private fun hideProgress() {

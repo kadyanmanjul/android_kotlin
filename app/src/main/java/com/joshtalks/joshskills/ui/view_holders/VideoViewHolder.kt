@@ -215,7 +215,6 @@ class VideoViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
             Uri.parse(url),
             VideoDownloadController.getInstance().buildRenderersFactory(false)
         )
-
     }
 
 

@@ -7,7 +7,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
 import android.content.pm.ActivityInfo
-import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.os.*
 import android.provider.OpenableColumns
@@ -28,11 +27,9 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.integration.webp.decoder.WebpDrawable
 import com.bumptech.glide.integration.webp.decoder.WebpDrawableTransformation
 import com.bumptech.glide.load.DataSource
-import com.bumptech.glide.load.MultiTransformation
 import com.bumptech.glide.load.engine.GlideException
-import com.bumptech.glide.load.resource.bitmap.CircleCrop
+import com.bumptech.glide.load.resource.bitmap.FitCenter
 import com.bumptech.glide.request.RequestListener
-import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
 import com.crashlytics.android.Crashlytics
 import com.greentoad.turtlebody.mediapicker.MediaPicker
@@ -60,8 +57,6 @@ import com.joshtalks.joshskills.repository.server.RequestEngage
 import com.joshtalks.joshskills.ui.extra.ImageShowFragment
 import com.joshtalks.joshskills.ui.pdfviewer.PdfViewerActivity
 import com.joshtalks.joshskills.ui.video_player.FullScreenVideoFragment
-import com.joshtalks.joshskills.ui.view_holders.IMAGE_SIZE
-import com.joshtalks.joshskills.ui.view_holders.ROUND_CORNER
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
@@ -69,8 +64,6 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.muddzdev.styleabletoast.StyleableToast
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import jp.wasabeef.glide.transformations.CropTransformation
-import jp.wasabeef.glide.transformations.RoundedCornersTransformation
 import me.zhanghai.android.materialplaypausedrawable.MaterialPlayPauseDrawable
 import java.util.concurrent.TimeUnit
 import kotlin.random.Random
@@ -142,13 +135,10 @@ class PractiseSubmitActivity : CoreJoshActivity(), FullScreenVideoFragment.OnDis
         binding.handler = this
         chatModel = intent.getSerializableExtra(PRACTISE_OBJECT) as ChatModel
         scaleAnimation = AnimationUtils.loadAnimation(this, R.anim.scale)
-
         initToolbarView()
         setPracticeInfoView()
         doBindService()
         addObserver()
-
-
         chatModel.question?.run {
             if (this.practiceEngagement.isNullOrEmpty()) {
                 binding.submitAnswerBtn.visibility = VISIBLE
@@ -159,16 +149,6 @@ class PractiseSubmitActivity : CoreJoshActivity(), FullScreenVideoFragment.OnDis
                 setViewUserSubmitAnswer()
             }
         }
-
-        /* CoroutineScope(Dispatchers.IO).launch {
-             val chatModel =
-                 AppObjectController.appDatabase.chatDao().getUpdatedChatObject(chatModel)
-             chatModel.question?.practiceEngagement = chatModel.question?.practiceEngagement
-             CoroutineScope(Dispatchers.Main).launch {
-
-             }
-         }
- */
     }
 
 
@@ -551,27 +531,16 @@ class PractiseSubmitActivity : CoreJoshActivity(), FullScreenVideoFragment.OnDis
 
 
     private fun setImageInImageView(url: String, imageView: ImageView) {
-        val multi = MultiTransformation<Bitmap>(
-            CropTransformation(
-                Utils.dpToPx(IMAGE_SIZE),
-                Utils.dpToPx(IMAGE_SIZE),
-                CropTransformation.CropType.CENTER
-            ),
-            RoundedCornersTransformation(
-                Utils.dpToPx(ROUND_CORNER),
-                0,
-                RoundedCornersTransformation.CornerType.ALL
-            )
-        )
+        binding.progressBarImageView.visibility = VISIBLE
+
 
         Glide.with(applicationContext)
             .load(url)
             .override(Target.SIZE_ORIGINAL)
             .optionalTransform(
                 WebpDrawable::class.java,
-                WebpDrawableTransformation(CircleCrop())
+                WebpDrawableTransformation(FitCenter())
             )
-            .apply(RequestOptions.bitmapTransform(multi))
             .listener(object : RequestListener<Drawable> {
                 override fun onLoadFailed(
                     e: GlideException?,
@@ -590,6 +559,8 @@ class PractiseSubmitActivity : CoreJoshActivity(), FullScreenVideoFragment.OnDis
                     dataSource: DataSource?,
                     isFirstResource: Boolean
                 ): Boolean {
+                    binding.progressBarImageView.visibility = GONE
+
                     return false
                 }
 
@@ -798,6 +769,8 @@ class PractiseSubmitActivity : CoreJoshActivity(), FullScreenVideoFragment.OnDis
         binding.practiseSubmitLayout.visibility = VISIBLE
         binding.submitAudioViewContainer.visibility = VISIBLE
         binding.submitPractiseSeekbar.max = Utils.getDurationOfMedia(this, filePath!!).toInt()
+        scrollToEnd()
+
     }
 
 
@@ -850,6 +823,8 @@ class PractiseSubmitActivity : CoreJoshActivity(), FullScreenVideoFragment.OnDis
             }
             when (event.action) {
                 MotionEvent.ACTION_DOWN -> {
+                    binding.videoPlayer.onPause()
+
                     binding.rootView.requestDisallowInterceptTouchEvent(true)
                     binding.counterContainer.visibility = VISIBLE
                     binding.uploadPractiseView.startAnimation(scaleAnimation)
@@ -892,6 +867,7 @@ class PractiseSubmitActivity : CoreJoshActivity(), FullScreenVideoFragment.OnDis
                             AppDirectory.copy(it.absolutePath, filePath!!)
                             audioAttachmentInit()
                         }
+
                     }
                 }
             }
@@ -1097,6 +1073,13 @@ class PractiseSubmitActivity : CoreJoshActivity(), FullScreenVideoFragment.OnDis
         binding.videoPlayerSubmit.setPlayListener {
             FullScreenVideoFragment.newInstance(filePath!!)
                 .show(supportFragmentManager, "VideoPlay")
+        }
+        scrollToEnd()
+    }
+
+    private fun scrollToEnd() {
+        binding.rootView.post {
+            binding.rootView.fullScroll(View.FOCUS_DOWN)
         }
     }
 

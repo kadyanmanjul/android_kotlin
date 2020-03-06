@@ -85,7 +85,7 @@ class OfferCoursePaymentDetailFragment : DialogFragment() {
             .load(courseModel.courseIcon)
             .override(Target.SIZE_ORIGINAL)
             .into(binding.courseImage)
-        binding.tvCourseFeesAmount.text = "₹" + String.format("%.2f", courseModel.amount)
+        binding.tvCourseFeesAmount.text = "₹" + String.format("%.2f",(paymentDetailResponse.amount / 100))
         binding.tvDiscountAmount.text =
             "₹" + String.format("%.2f", (paymentDetailResponse.discountAmount / 100))
         binding.tvOfferInfo.text = getString(R.string.offer_bachat, binding.tvDiscountAmount.text)
@@ -115,7 +115,7 @@ class OfferCoursePaymentDetailFragment : DialogFragment() {
             .courseDao()
             .isUserOldThen7Days()
             .concatMap {
-                val (flag, dayRemain) = com.joshtalks.joshskills.core.Utils.isUser7DaysOld(it.courseCreatedDate)
+                val (_, dayRemain) = com.joshtalks.joshskills.core.Utils.isUser7DaysOld(it.courseCreatedDate)
                 return@concatMap Maybe.just(dayRemain)
             }
             .subscribeOn(Schedulers.io())

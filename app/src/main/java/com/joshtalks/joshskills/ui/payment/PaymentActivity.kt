@@ -21,7 +21,6 @@ import androidx.fragment.app.commit
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.crashlytics.android.Crashlytics
 import com.facebook.appevents.AppEventsConstants
-import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.CoreJoshActivity
@@ -37,7 +36,6 @@ import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.CourseDetailsModel
 import com.joshtalks.joshskills.repository.server.CourseExploreModel
 import com.joshtalks.joshskills.repository.server.PaymentDetailsResponse
-import com.joshtalks.joshskills.repository.server.course_detail.CourseDetailsResponse
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
 import com.joshtalks.joshskills.ui.sign_up_old.OnBoardActivity
 import com.joshtalks.joshskills.ui.signup.IS_ACTIVITY_FOR_RESULT
@@ -102,6 +100,8 @@ class PaymentActivity : CoreJoshActivity(),
         } else {
             ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         }
+        Checkout.preload(application)
+        userHaveSpecialDiscount()
         super.onCreate(savedInstanceState)
         activityPaymentBinding = DataBindingUtil.setContentView(this, R.layout.activity_payment)
         activityPaymentBinding.lifecycleOwner = this
@@ -119,15 +119,8 @@ class PaymentActivity : CoreJoshActivity(),
             invalidCourseId()
             return
         }
-        val typeToken = object : TypeToken<List<CourseDetailsResponse>>() {}.type
-        val list: List<CourseDetailsResponse>? =
-            AppObjectController.gsonMapperForLocal.fromJson<List<CourseDetailsResponse>>(
-                AppObjectController.getFirebaseRemoteConfig().getString("course_details"),
-                typeToken
-            )
 
-        val courseID = courseModel?.course ?: -99
-        val obj: CourseDetailsResponse? = list?.find { it.courseId == courseID }
+        /*val obj: CourseDetailsResponse? = list?.find { it.courseId == courseID }
         if (obj != null) {
             obj.let {
                 courseName = it.courseName
@@ -149,13 +142,27 @@ class PaymentActivity : CoreJoshActivity(),
             activityPaymentBinding.oldCourseContainer.visibility = View.VISIBLE
             initRV()
             getCourseDetails()
-            Checkout.preload(application)
             openWhatsAppHelp()
             userHaveSpecialDiscount()
-        }
-
-
+        }*/
+        getTestCourseDetails()
     }
+
+    private fun getTestCourseDetails() {
+
+        activityPaymentBinding.container.visibility = View.VISIBLE
+        val courseID = courseModel?.course ?: -99
+        supportFragmentManager.commit(true) {
+            addToBackStack(CourseDetailType1Fragment::class.java.name)
+//            setCustomAnimations(R.anim.slide_in_left, R.anim.slide_in_right)
+            add(
+                R.id.container,
+                CourseDetailType1Fragment.newInstance(testId.toInt(), courseID),
+                CourseDetailType1Fragment::class.java.name
+            )
+        }
+    }
+
 
     private fun invalidCourseId() {
         startActivity(Intent(applicationContext, CourseExploreActivity::class.java).apply {
@@ -176,7 +183,7 @@ class PaymentActivity : CoreJoshActivity(),
         }
         findViewById<View>(R.id.iv_back).visibility = View.VISIBLE
         findViewById<View>(R.id.iv_back).setOnClickListener {
-            this@PaymentActivity.finish()
+            onBackPressed()
         }
     }
 
@@ -414,6 +421,15 @@ class PaymentActivity : CoreJoshActivity(),
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
+                    try {
+                        it.courseModel?.let { courseModel ->
+                            this.amount = courseModel.amount
+                            this.courseName = courseModel.courseName
+                            this.testId = courseModel.course.toString()
+                        }
+                    } catch (ex: Exception) {
+                        ex.printStackTrace()
+                    }
                     buyCourse(it.specialOffer)
                 }, {
                     it.printStackTrace()
@@ -477,6 +493,10 @@ class PaymentActivity : CoreJoshActivity(),
     }
 
     override fun onBackPressed() {
+        if (Mentor.getInstance().hasId().not()) {
+            openCourseExplorerScreen()
+            return
+        }
         if (supportFragmentManager.findFragmentById(R.id.container) != null) {
             this@PaymentActivity.finish()
             return

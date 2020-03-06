@@ -11,256 +11,254 @@
 
     </data>
 
-    <androidx.coordinatorlayout.widget.CoordinatorLayout
-            android:id="@+id/clRoot"
+
+    <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:animateLayoutChanges="true"
+            android:background="@color/gray_3B"
+            android:orientation="vertical"
+            android:paddingStart="@dimen/_10sdp"
+            android:paddingTop="@dimen/_20sdp"
+            android:paddingEnd="@dimen/_10sdp">
 
-        <LinearLayout
+        <!--
+                    <include layout="@layout/toolbar_login_register" />
+        -->
+
+        <ScrollView
+
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:animateLayoutChanges="true"
-                android:background="@color/gray_3B"
-                android:orientation="vertical"
-                android:paddingStart="@dimen/_10sdp"
-                android:paddingTop="@dimen/_20sdp"
-                android:paddingEnd="@dimen/_10sdp">
+                android:layout_height="wrap_content"
+                android:scrollbarThumbHorizontal="@null"
+                android:scrollbarThumbVertical="@null">
 
-            <!--
-                        <include layout="@layout/toolbar_login_register" />
-            -->
-
-            <ScrollView
+            <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:scrollbarThumbHorizontal="@null"
-                    android:scrollbarThumbVertical="@null">
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
 
                 <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical">
+                        android:layout_marginBottom="20dp"
+                        android:clickable="true"
+                        android:orientation="horizontal"
+                        android:focusable="true">
 
-                    <LinearLayout
-                            android:layout_width="match_parent"
+                    <TextView
+                            android:id="@+id/tvTitle"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_marginBottom="20dp"
-                            android:clickable="true"
-                            android:orientation="horizontal">
+                            android:layout_weight="1"
+                            android:paddingLeft="10dp"
+                            android:text="Register"
+                            android:textColor="#fff"
+                            android:textSize="30sp"
+                            android:textStyle="bold" />
 
-                        <TextView
-                                android:id="@+id/tvTitle"
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:paddingLeft="10dp"
-                                android:text="Register"
-                                android:textColor="#fff"
-                                android:textSize="30sp"
-                                android:textStyle="bold" />
+                </LinearLayout>
 
-                    </LinearLayout>
-
-                    <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="top"
-                            android:animateLayoutChanges="true"
-                            android:gravity="top"
-                            android:orientation="vertical"
-                            tools:background="@color/gray_3B">
+                <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="top"
+                        android:animateLayoutChanges="true"
+                        android:gravity="top"
+                        android:orientation="vertical"
+                        tools:background="@color/gray_3B">
 
 
-                        <FrameLayout
+                    <FrameLayout
+                            android:layout_width="100dp"
+                            android:layout_height="100dp"
+                            android:layout_gravity="center"
+                            android:visibility="visible">
+
+                        <de.hdodenhof.circleimageview.CircleImageView
+                                android:id="@+id/ivUploadedPic"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:clickable="true"
+                                android:onClick="@{()->handler.onProfilePicClicked()}"
+                                android:visibility="visible" />
+
+                        <ImageView
+                                android:id="@+id/ivPlaceholderPic"
                                 android:layout_width="100dp"
                                 android:layout_height="100dp"
-                                android:layout_gravity="center"
-                                android:visibility="visible">
+                                android:background="@drawable/circle"
+                                android:clickable="true"
+                                android:onClick="@{()->handler.onProfilePicClicked()}"
+                                android:padding="20dp"
+                                android:tint="@color/gray_3B"
+                                app:srcCompat="@drawable/ic_person" />
 
-                            <de.hdodenhof.circleimageview.CircleImageView
-                                    android:id="@+id/ivUploadedPic"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="match_parent"
-                                    android:clickable="true"
-                                    android:onClick="@{()->handler.onProfilePicClicked()}"
-                                    android:visibility="visible" />
+                    </FrameLayout>
 
-                            <ImageView
-                                    android:id="@+id/ivPlaceholderPic"
-                                    android:layout_width="100dp"
-                                    android:layout_height="100dp"
-                                    android:background="@drawable/circle"
-                                    android:clickable="true"
-                                    android:onClick="@{()->handler.onProfilePicClicked()}"
-                                    android:padding="20dp"
-                                    android:tint="@color/gray_3B"
-                                    app:srcCompat="@drawable/ic_person" />
-
-                        </FrameLayout>
-
-                        <FrameLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="20dp">
-
-                            <ImageView
-                                    android:layout_width="30dp"
-                                    android:layout_height="30dp"
-                                    android:layout_gravity="center|left"
-                                    android:layout_marginLeft="10dp"
-                                    android:tint="#777"
-                                    app:srcCompat="@drawable/ic_person" />
-
-                            <EditText
-                                    android:id="@+id/etName"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:hint="@string/name"
-                                    android:importantForAutofill="no"
-                                    android:inputType="textPersonName"
-                                    android:paddingLeft="50dp"
-                                    android:paddingTop="20dp"
-                                    android:paddingBottom="20dp"
-                                    android:textColor="#fff"
-                                    android:textColorHint="@color/gray_53"
-                                    android:textSize="16sp"
-                                    android:theme="@style/EditTextTheme" />
-
-                        </FrameLayout>
-
-
-                        <FrameLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="20dp">
-
-                            <ImageView
-                                    android:layout_width="30dp"
-                                    android:layout_height="30dp"
-                                    android:layout_gravity="center|left"
-                                    android:layout_marginLeft="10dp"
-                                    android:onClick="@{()->handler.selectDateOfBirth()}"
-                                    android:tint="#777"
-                                    app:srcCompat="@drawable/ic_dob" />
-
-
-                            <EditText
-
-                                    android:id="@+id/etDOB"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:clickable="true"
-                                    android:cursorVisible="false"
-                                    android:focusable="false"
-                                    android:hint="@string/dob"
-                                    android:importantForAutofill="no"
-                                    android:inputType="none"
-                                    android:onClick="@{()->handler.selectDateOfBirth()}"
-                                    android:paddingStart="50dp"
-                                    android:paddingTop="20dp"
-                                    android:paddingBottom="20dp"
-                                    android:textColor="#fff"
-                                    android:textColorHint="@color/gray_53"
-                                    android:textSize="16sp"
-                                    android:theme="@style/EditTextTheme" />
-
-                        </FrameLayout>
-
-                        <FrameLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content">
-
-                            <RadioGroup
-                                    android:id="@+id/rgGender"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:layout_gravity="left"
-                                    android:orientation="horizontal"
-                                    android:paddingTop="20dp"
-                                    android:paddingBottom="20dp">
-
-                                <RadioButton
-                                        android:id="@+id/rbMale"
-                                        android:layout_width="0dp"
-                                        android:layout_height="wrap_content"
-                                        android:layout_weight="1"
-                                        android:buttonTint="@color/white"
-                                        android:text="Male"
-                                        android:textColor="@color/white"
-                                        android:textSize="16sp" />
-
-                                <RadioButton
-                                        android:id="@+id/rbfemale"
-                                        android:layout_width="0dp"
-                                        android:layout_height="wrap_content"
-                                        android:layout_weight="1"
-                                        android:buttonTint="@color/white"
-                                        android:text="Female"
-                                        android:textColor="@color/white"
-                                        android:textSize="16sp" />
-
-                                <RadioButton
-                                        android:id="@+id/rbOther"
-                                        android:layout_width="0dp"
-                                        android:layout_height="wrap_content"
-                                        android:layout_weight="1"
-                                        android:buttonTint="@color/white"
-                                        android:text="Other"
-                                        android:textColor="@color/white"
-                                        android:textSize="16sp" />
-
-                            </RadioGroup>
-
-                        </FrameLayout>
-
-
-                        <TextView
-                                android:id="@+id/tvStatus"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="10dp"
-                                android:gravity="center"
-                                android:textColor="@color/button_primary_color"
-                                android:textSize="15sp"
-                                android:visibility="invisible"
-                                tools:text="Status"
-                                tools:visibility="visible" />
-
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                            android:id="@+id/llNextContainer"
+                    <FrameLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_alignParentBottom="true"
-                            android:layout_marginBottom="10dp"
-                            android:orientation="vertical">
+                            android:layout_marginTop="20dp">
 
-                        <com.google.android.material.textview.MaterialTextView
-                                android:id="@+id/tvNext"
-                                fontPath="fonts/OpenSans-SemiBold.ttf"
+                        <ImageView
+                                android:layout_width="30dp"
+                                android:layout_height="30dp"
+                                android:layout_gravity="center|left"
+                                android:layout_marginLeft="10dp"
+                                android:tint="#777"
+                                app:srcCompat="@drawable/ic_person" />
+
+                        <EditText
+                                android:id="@+id/etName"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
+                                android:hint="@string/name"
+                                android:importantForAutofill="no"
+                                android:inputType="textPersonName"
+                                android:paddingLeft="50dp"
+                                android:paddingTop="20dp"
+                                android:paddingBottom="20dp"
+                                android:textColor="#fff"
+                                android:textColorHint="@color/gray_53"
+                                android:textSize="16sp"
+                                android:theme="@style/EditTextTheme" />
 
-                                android:layout_gravity="center"
-                                android:layout_marginTop="@dimen/_20sdp"
-                                android:background="@drawable/round_rectangle"
-                                android:backgroundTint="@color/button_primary_color"
-                                android:gravity="center"
-                                android:onClick="@{()->handler.onNextPressed()}"
-                                android:paddingStart="@dimen/_30sdp"
-                                android:paddingTop="@dimen/_10sdp"
-                                android:paddingEnd="@dimen/_30sdp"
-                                android:paddingBottom="@dimen/_10sdp"
-                                android:text="@string/finish"
-                                android:textAllCaps="false"
-                                android:textColor="@color/white"
-                                android:textSize="@dimen/font_18"
-                                app:rippleColor="@color/white" />
-                    </LinearLayout>
+                    </FrameLayout>
+
+
+                    <FrameLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="20dp">
+
+                        <ImageView
+                                android:layout_width="30dp"
+                                android:layout_height="30dp"
+                                android:layout_gravity="center|left"
+                                android:layout_marginLeft="10dp"
+                                android:onClick="@{()->handler.selectDateOfBirth()}"
+                                android:tint="#777"
+                                app:srcCompat="@drawable/ic_dob" />
+
+
+                        <EditText
+
+                                android:id="@+id/etDOB"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:clickable="true"
+                                android:cursorVisible="false"
+                                android:focusable="false"
+                                android:hint="@string/dob"
+                                android:importantForAutofill="no"
+                                android:inputType="none"
+                                android:onClick="@{()->handler.selectDateOfBirth()}"
+                                android:paddingStart="50dp"
+                                android:paddingTop="20dp"
+                                android:paddingBottom="20dp"
+                                android:textColor="#fff"
+                                android:textColorHint="@color/gray_53"
+                                android:textSize="16sp"
+                                android:theme="@style/EditTextTheme" />
+
+                    </FrameLayout>
+
+                    <FrameLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+
+                        <RadioGroup
+                                android:id="@+id/rgGender"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="left"
+                                android:orientation="horizontal"
+                                android:paddingTop="20dp"
+                                android:paddingBottom="20dp">
+
+                            <RadioButton
+                                    android:id="@+id/rbMale"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:buttonTint="@color/white"
+                                    android:text="Male"
+                                    android:textColor="@color/white"
+                                    android:textSize="16sp" />
+
+                            <RadioButton
+                                    android:id="@+id/rbfemale"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:buttonTint="@color/white"
+                                    android:text="Female"
+                                    android:textColor="@color/white"
+                                    android:textSize="16sp" />
+
+                            <RadioButton
+                                    android:id="@+id/rbOther"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:buttonTint="@color/white"
+                                    android:text="Other"
+                                    android:textColor="@color/white"
+                                    android:textSize="16sp" />
+
+                        </RadioGroup>
+
+                    </FrameLayout>
+
+
+                    <TextView
+                            android:id="@+id/tvStatus"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:gravity="center"
+                            android:textColor="@color/button_primary_color"
+                            android:textSize="15sp"
+                            android:visibility="invisible"
+                            tools:text="Status"
+                            tools:visibility="visible" />
+
+
                 </LinearLayout>
-            </ScrollView>
+
+            </LinearLayout>
+        </ScrollView>
+
+        <LinearLayout
+                android:id="@+id/llNextContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_marginBottom="@dimen/_20sdp"
+                android:orientation="vertical">
+
+            <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/tvNext"
+                    fontPath="fonts/OpenSans-SemiBold.ttf"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="@dimen/_20sdp"
+                    android:background="@drawable/round_rectangle"
+                    android:backgroundTint="@color/button_primary_color"
+                    android:gravity="center"
+                    android:onClick="@{()->handler.onNextPressed()}"
+                    android:paddingStart="@dimen/_30sdp"
+                    android:paddingTop="@dimen/_10sdp"
+                    android:paddingEnd="@dimen/_30sdp"
+                    android:paddingBottom="@dimen/_10sdp"
+                    android:text="@string/finish"
+                    android:textAllCaps="false"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/font_18"
+                    app:rippleColor="@color/white" />
         </LinearLayout>
-    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+    </RelativeLayout>
 </layout>

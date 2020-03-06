@@ -59,6 +59,7 @@ import kotlin.math.pow
 private val CHAT_TIME_FORMATTER = SimpleDateFormat("hh:mm aa")
 private val DD_MM_YYYY = SimpleDateFormat("DD/MM/yyyy")
 private val DD_MMM = SimpleDateFormat("dd-MMM hh:mm aa")
+private val MMM_DD_YYYY = SimpleDateFormat("MMM DD, yyyy")
 
 
 object Utils {
@@ -110,12 +111,9 @@ object Utils {
 
 
     fun messageTimeConversion(old: Date): String {
-        if (DateUtils.isToday(old.time)) {
-            return CHAT_TIME_FORMATTER.format(old.time).toLowerCase(Locale.getDefault())
-                .replace("AM", "am").replace("PM", "pm")
-        } else {
-            return DD_MMM.format(old)
-        }
+        return CHAT_TIME_FORMATTER.format(old.time).toLowerCase(Locale.getDefault())
+            .replace("AM", "am").replace("PM", "pm")
+
     }
 
 
@@ -603,6 +601,7 @@ object Utils {
 
 
     fun isUser7DaysOld(courseCreatedDate: Date?): Pair<Boolean, Int> {
+        return Pair(false, 0)
         if (courseCreatedDate == null) {
             return Pair(false, 0)
         }
@@ -615,5 +614,41 @@ object Utils {
         return Pair(false, daysDiff.toInt())
 
     }
+
+    fun isSameDate(startDate: Date, endDate: Date): Boolean {
+        val cal1 = Calendar.getInstance()
+        val cal2 = Calendar.getInstance()
+        cal1.time = startDate
+        cal2.time = endDate
+        return cal1.get(Calendar.DAY_OF_YEAR) == cal2.get(Calendar.DAY_OF_YEAR) &&
+                cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR)
+    }
+
+    fun dateHeaderDateFormat(date: Date): String {
+        return when {
+            DateUtils.isToday(date.time) -> {
+                "TODAY"
+            }
+            isYesterday(date) -> {
+                "Yesterday"
+            }
+            else -> {
+                DateTimeUtils.formatWithStyle(date, DateTimeStyle.LONG)
+            }
+        }
+    }
+
+    fun getBitmapFromVectorDrawable(context: Context, resource: Int): Bitmap {
+        val drawable = ContextCompat.getDrawable(context, resource)
+        val bitmap = Bitmap.createBitmap(
+            drawable!!.intrinsicWidth,
+            drawable.intrinsicHeight, Bitmap.Config.ARGB_8888
+        )
+        val canvas = Canvas(bitmap)
+        drawable.setBounds(0, 0, canvas.width, canvas.height)
+        drawable.draw(canvas)
+        return bitmap
+    }
+
 
 }

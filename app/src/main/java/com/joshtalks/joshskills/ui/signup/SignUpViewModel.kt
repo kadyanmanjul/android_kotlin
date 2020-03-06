@@ -8,10 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.facebook.appevents.AppEventsConstants.EVENT_NAME_COMPLETED_REGISTRATION
 import com.google.android.gms.auth.api.phone.SmsRetriever
 import com.google.android.gms.tasks.Task
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.JoshApplication
-import com.joshtalks.joshskills.core.SignUpStepStatus
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
@@ -97,7 +94,9 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
                     .update()
 
                 AppAnalytics.updateUser()
+                mergeMentorWithGId(response.mentorId)
                 fetchMentor()
+
 
             } catch (ex: HttpException) {
                 if (ex.code() == 400) {
@@ -141,8 +140,8 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
                     .setReferralCode(response.referralCode)
                     .update()
                 AppAnalytics.updateUser()
+                mergeMentorWithGId(response.mentorId)
                 fetchMentor()
-
             } catch (ex: HttpException) {
                 progressDialogStatus.postValue(false)
                 ex.printStackTrace()
@@ -208,6 +207,23 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
                 }
             } catch (ex: Exception) {
                 signUpStatus.postValue(SignUpStepStatus.SignUpCompleted)
+                ex.printStackTrace()
+            }
+
+        }
+    }
+
+    private fun mergeMentorWithGId(mentorId: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val id = PrefManager.getIntValue(SERVER_GID_ID)
+                if (id == 0) {
+                    return@launch
+                }
+                val data = mapOf("mentor" to mentorId)
+                AppObjectController.chatNetworkService.mergeMentorWithGId(id.toString(), data)
+                PrefManager.removeKey(SERVER_GID_ID)
+            } catch (ex: Exception) {
                 ex.printStackTrace()
             }
 

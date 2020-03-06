@@ -13,7 +13,7 @@ data class ChatMessageReceiver(
     @SerializedName("id")
     val id: String,
     @SerializedName("is_seen")
-    val isSeen: Boolean,
+    var isSeen: Boolean,
     @SerializedName("question")
     val question: Any,
     @SerializedName("sender")

@@ -55,5 +55,9 @@ interface ChatNetworkService {
     @POST("$DIR/practice/engagement/")
     fun reply(): ReplaySubject<String>
 
+    @FormUrlEncoded
+    @PATCH("$DIR/mentor/gaid/{id}/")
+    suspend fun mergeMentorWithGId(@Path("id") id: String, @FieldMap params: Map<String, String>)
+
 
 }

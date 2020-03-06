@@ -19,20 +19,18 @@
 
 
         <TextView
-
                 android:id="@+id/textView"
                 fontPath="fonts/OpenSans-SemiBold.ttf"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/_110sdp"
+                android:layout_marginTop="@dimen/_48sdp"
                 android:gravity="center"
                 android:text="@string/welcome_josh_skill"
                 android:textColor="@color/primary_text"
                 android:textSize="@dimen/font_22"
-                app:layout_constraintBottom_toTopOf="@id/image_view"
                 app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent" />
-
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
                 android:id="@+id/textView_sub"
@@ -49,97 +47,137 @@
                 app:layout_constraintTop_toBottomOf="@+id/textView" />
 
 
-        <ImageView
+        <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/image_view"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:adjustViewBounds="true"
                 android:scaleType="fitCenter"
                 android:src="@drawable/app_bg"
-                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintBottom_toTopOf="@+id/materialButton"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView_sub"
                 app:layout_constraintWidth_default="percent"
-                app:layout_constraintWidth_percent="0.6" />
+                app:layout_constraintWidth_percent="0.5" />
 
 
-        <TextView
+        <!--     <TextView
+                     fontPath="fonts/OpenSans-SemiBold.ttf"
+                     android:layout_width="wrap_content"
+                     android:layout_height="wrap_content"
+                     android:gravity="center"
+                     android:text="@string/register_number_title"
+                     android:textColor="#a8adb1"
+                     android:textSize="@dimen/font_10"
+                     android:visibility="gone"
+                     app:layout_constraintBottom_toTopOf="@+id/abcd"
+                     app:layout_constraintLeft_toLeftOf="parent"
+                     app:layout_constraintRight_toRightOf="parent" />-->
+
+        <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/materialButton"
+                fontPath="fonts/OpenSans-Bold.ttf"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/_40sdp"
+                android:layout_gravity="center"
+                android:layout_marginBottom="@dimen/_16sdp"
+                android:background="@drawable/round_rectangle_for_course_expo"
+                android:backgroundTint="#00E200"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center"
+                android:onClick="@{()->handler.openCourseExplore()}"
+                android:text="@string/explore"
+                android:textAllCaps="true"
+                android:textColor="@color/white"
+                android:textSize="@dimen/font_15"
+                app:cornerRadius="@dimen/_8sdp"
+                app:layout_constraintBottom_toTopOf="@+id/tvText"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintWidth_default="percent"
+                app:layout_constraintWidth_percent="0.45" />
+
+
+        <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+                android:id="@+id/tvText"
                 fontPath="fonts/OpenSans-SemiBold.ttf"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="@string/register_number_title"
-                android:textColor="#a8adb1"
-                android:textSize="@dimen/font_10"
-                android:visibility="gone"
-                app:layout_constraintBottom_toTopOf="@+id/tvNativeLogin"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent" />
-
-
-        <com.google.android.material.button.MaterialButton
-                android:id="@+id/tvNativeLogin"
-                fontPath="fonts/OpenSans-SemiBold.ttf"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginBottom="@dimen/_8sdp"
-                android:background="@drawable/button_native_login"
-                android:backgroundTint="@color/button_primary_color"
-                android:clickable="true"
-                android:focusable="true"
-                android:gravity="center"
-                android:onClick="@{()->handler.signUp()}"
-                android:paddingTop="@dimen/dp8"
-                android:paddingBottom="@dimen/dp8"
-                android:text="@string/login_with_otp"
-                android:textAllCaps="false"
-                android:textColor="@color/white"
-                android:textSize="@dimen/font_12"
-                app:layout_constraintBottom_toTopOf="@+id/btn_truecaller_login"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintWidth_default="percent"
-                app:layout_constraintWidth_percent="0.85" />
-
-        <com.google.android.material.button.MaterialButton
-
-                android:id="@+id/btn_truecaller_login"
-                style="@style/Widget.MaterialComponents.Button"
-                fontPath="fonts/OpenSans-SemiBold.ttf"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:layout_gravity="start"
                 android:layout_marginBottom="@dimen/_16sdp"
-                android:background="@drawable/round_rectangle"
-                android:backgroundTint="@color/button_primary_color"
-                android:clickable="true"
-                android:focusable="true"
-                android:gravity="center"
-                android:onClick="@{()->handler.verifyViaTrueCaller()}"
-                android:paddingTop="@dimen/_8sdp"
-                android:paddingBottom="@dimen/_8sdp"
-                android:text="@string/login_with_truecaller_label"
-                android:textAllCaps="false"
-                android:textColor="@color/white"
-                android:textSize="@dimen/font_12"
-                android:visibility="gone"
-                app:cornerRadius="@dimen/_4sdp"
-                app:icon="@drawable/truecaller_app_icon"
-                app:iconGravity="textStart"
-                app:iconPadding="@dimen/_10sdp"
-                app:iconSize="@dimen/_16sdp"
-                app:iconTint="#FFFFFF"
-                app:iconTintMode="multiply"
+                android:gravity="center_vertical|start"
+                android:text="Already Paid?"
+                android:textColor="#7D7D7D"
+                android:textSize="@dimen/font_13"
+                app:layout_constraintBottom_toTopOf="@+id/bottom_ll"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+
+        <LinearLayout
+                android:id="@+id/bottom_ll"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_40sdp"
+                android:background="@color/button_primary_color"
+                android:orientation="horizontal"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintWidth_default="percent"
-                app:layout_constraintWidth_percent="0.85"
-                app:rippleColor="@color/white" />
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent">
+
+
+            <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/tvNativeLogin"
+                    fontPath="fonts/OpenSans-SemiBold.ttf"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight=".5"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center"
+                    android:onClick="@{()->handler.signUp()}"
+                    android:text="@string/login_with_otp"
+                    android:textAllCaps="true"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/font_13"
+                    android:visibility="visible"
+                    app:rippleColor="@color/white" />
+
+            <FrameLayout
+                    android:id="@+id/login_true_caller_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight=".5"
+                    android:visibility="gone">
+
+                <View
+                        android:layout_width="@dimen/_1sdp"
+                        android:layout_height="match_parent"
+                        android:layout_marginTop="@dimen/_8sdp"
+                        android:layout_marginBottom="@dimen/_8sdp"
+                        android:background="@color/white" />
+
+                <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/btn_truecaller_login"
+                        fontPath="fonts/OpenSans-SemiBold.ttf"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:gravity="center"
+                        android:onClick="@{()->handler.verifyViaTrueCaller()}"
+                        android:text="@string/login_with_truecaller_label"
+                        android:textAllCaps="true"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/font_13"
+                        android:visibility="visible"
+                        app:rippleColor="@color/white" />
+            </FrameLayout>
+
+        </LinearLayout>
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

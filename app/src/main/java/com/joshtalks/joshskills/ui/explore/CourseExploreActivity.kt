@@ -14,10 +14,7 @@ import com.facebook.appevents.AppEventsConstants.EVENT_NAME_VIEWED_CONTENT
 import com.facebook.appevents.AppEventsConstants.EVENT_PARAM_CONTENT_ID
 import com.google.android.material.appbar.MaterialToolbar
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.CoreJoshActivity
-import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.BranchIOAnalytics
@@ -143,7 +140,9 @@ class CourseExploreActivity : CoreJoshActivity() {
             try {
 
                 val data = HashMap<String, String>()
-                if (Mentor.getInstance().getId().isNotEmpty()) {
+                if (PrefManager.getStringValue(USER_UNIQUE_ID).isNotEmpty()) {
+                    data["gaid"] = PrefManager.getStringValue(USER_UNIQUE_ID)
+                } else if (Mentor.getInstance().getId().isNotEmpty()) {
                     data["mentor"] = Mentor.getInstance().getId()
                 } else {
                     data["is_default"] = "true"

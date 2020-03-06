@@ -11,7 +11,7 @@ data class CourseExploreModel(
     @SerializedName("batch_type")
     val batchType: Int,
     @SerializedName("course")
-    val course: Int,
+    var course: Int,
     @SerializedName("created")
     val created: String,
     @SerializedName("id")

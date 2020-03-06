@@ -53,6 +53,7 @@ object NetworkRequestHelper {
                     } else {
                         chatObj.chatId = chatModel.chatId
                         chatObj.url = chatModel.url
+                        chatObj.isSeen = true
                         chatObj.conversationId = chatModel.conversationId
                         chatObj.created = chatModel.created
                         chatObj.messageDeliverStatus = chatModel.messageDeliverStatus
@@ -160,16 +161,16 @@ object NetworkRequestHelper {
                     user = User(chatMessageReceiver.sender)
                 ),
                 url = chatMessageReceiver.url,
-                isSeen = chatMessageReceiver.isSeen,
+                isSeen = true,
                 created = chatMessageReceiver.created,
                 messageDeliverStatus = MESSAGE_DELIVER_STATUS.SENT_RECEIVED,
                 isSync = true,
                 question_id = null
 
             )
-            currentChatModel?.let { old ->
+           /* currentChatModel?.let { old ->
                 chatModel.isSeen = old.isSeen
-            }
+            }*/
 
             if (messageObject is BaseMediaMessage)
                 chatModel.downloadedLocalPath = messageObject.localPathUrl

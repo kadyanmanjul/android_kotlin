@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:card_view="http://schemas.android.com/tools">
+        xmlns:card_view="http://schemas.android.com/tools"
+        xmlns:wheel="http://schemas.android.com/apk/res-auto">
 
     <data>
 
@@ -12,14 +13,29 @@
 
     <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="match_parent">
+
+        <com.pnikosis.materialishprogress.ProgressWheel
+                android:id="@+id/progress_bar"
+                android:layout_width="@dimen/_82sdp"
+                android:layout_height="@dimen/_82sdp"
+                android:layout_centerInParent="true"
+                android:layout_gravity="center"
+                wheel:matProg_barColor="@color/button_primary_color"
+                wheel:matProg_fillRadius="true"
+                wheel:matProg_linearProgress="false"
+                wheel:matProg_progressIndeterminate="true"
+                wheel:matProg_rimColor="#33128C7E"
+                wheel:matProg_rimWidth="@dimen/_2sdp" />
+
 
         <androidx.core.widget.NestedScrollView
                 android:id="@+id/nested_scroll_view"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_above="@+id/below_buy_cv"
-                android:background="#f4f4f4">
+                android:background="#f4f4f4"
+                android:visibility="gone">
 
             <LinearLayout
                     android:layout_width="match_parent"
@@ -189,7 +205,8 @@
                                 android:layout_gravity="center"
                                 android:adjustViewBounds="true"
                                 android:clickable="false"
-                                android:onClick="@{()->handler.playVideo()}" />
+                                android:onClick="@{()->handler.playVideo()}"
+                                android:scaleType="centerCrop" />
 
                         <androidx.appcompat.widget.AppCompatImageView
                                 android:id="@+id/play_icon"
@@ -358,7 +375,7 @@
 
                 </LinearLayout>
 
-                <androidx.appcompat.widget.AppCompatTextView
+                <com.google.android.material.button.MaterialButton
                         fontPath="fonts/OpenSans-Bold.ttf"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -373,7 +390,7 @@
                         android:paddingTop="@dimen/_10sdp"
                         android:paddingBottom="@dimen/_10sdp"
                         android:text="@string/buy_course"
-                        android:textAllCaps="false"
+                        android:textAllCaps="true"
                         android:textColor="@color/white"
                         android:textSize="@dimen/font_16"
                         app:cornerRadius="@dimen/_4sdp"

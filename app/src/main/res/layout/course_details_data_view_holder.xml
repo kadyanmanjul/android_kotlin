@@ -14,19 +14,80 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-        <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
-                android:id="@+id/text_title"
-                fontPath="fonts/OpenSans-SemiBold.ttf"
-                android:layout_width="wrap_content"
+        <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+            <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+                    android:id="@+id/text_title"
+                    fontPath="fonts/OpenSans-SemiBold.ttf"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignStart="@id/iv_expand"
+                    android:layout_alignParentStart="true"
+                    android:layout_gravity="start"
+                    android:layout_toStartOf="@id/iv_expand"
+                    android:gravity="center|start"
+                    android:maxLines="3"
+                    android:textColor="@color/gray_48"
+                    android:textSize="@dimen/font_17"
+                    android:visibility="gone" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                    android:visibility="gone"
+                    android:id="@+id/iv_expand"
+                    android:paddingStart="@dimen/_4sdp"
+                    android:paddingEnd="@dimen/_4sdp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:gravity="end|center"
+                    android:src="@drawable/ic_expand" />
+        </RelativeLayout>
+
+        <FrameLayout
+                android:id="@+id/video_container_fl"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="start"
-                android:gravity="center_vertical|start"
-                android:paddingBottom="@dimen/_6sdp"
-                android:textColor="@color/gray_48"
-                android:textSize="@dimen/font_17" />
+                android:layout_gravity="center"
+                android:clickable="true"
+                android:visibility="gone"
+                android:focusable="true">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/image_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start"
+                    android:adjustViewBounds="true"
+                    android:background="@drawable/video_placeholder"
+                    android:clickable="false"
+                    android:scaleType="centerCrop"
+                     />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="@dimen/_60sdp"
+                    android:layout_height="@dimen/_60sdp"
+                    android:layout_gravity="center"
+                    android:clickable="false"
+                    android:id="@+id/btn_play_view"
+                    android:padding="@dimen/_12sdp"
+                    android:src="@drawable/ic_play_24dp"
+                    app:tint="@color/white" />
+        </FrameLayout>
+
+
+        <LinearLayout
+                android:visibility="gone"
+                android:paddingTop="@dimen/_2sdp"
+                android:id="@+id/multi_line_ll"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" />
 
         <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
                 android:id="@+id/tv_detail"
+                android:visibility="gone"
                 fontPath="fonts/Roboto-Regular.ttf"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

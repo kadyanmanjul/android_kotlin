@@ -21,8 +21,6 @@ import android.graphics.pdf.PdfRenderer;
 import android.view.View;
 import android.view.ViewGroup;
 
-import androidx.viewpager.widget.ViewPager;
-
 import com.davemorrissey.labs.subscaleview.ImageSource;
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView;
 

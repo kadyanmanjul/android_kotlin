@@ -99,7 +99,7 @@ class SignUpStep1Fragment : Fragment() {
         val url = AppObjectController.getFirebaseRemoteConfig().getString("terms_condition_url")
         spannableString.setSpan(
             URLSpan(url),
-            65,
+            74,
             spannableString.length,
             Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
         )

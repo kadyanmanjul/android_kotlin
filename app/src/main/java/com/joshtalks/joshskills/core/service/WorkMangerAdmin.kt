@@ -2,6 +2,8 @@ package com.joshtalks.joshskills.core.service
 
 import androidx.work.*
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.GID_SET_FOR_USER
+import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.REFERRAL_EVENT
 import com.joshtalks.joshskills.repository.local.model.ScreenEngagementModel
 import java.util.concurrent.TimeUnit
@@ -114,5 +116,17 @@ object WorkMangerAdmin {
             .build()
         WorkManager.getInstance(AppObjectController.joshApplication).enqueue(workRequest)
     }
+
+    fun registerUserGIDWithTestId( testId: String) {
+        if (testId.isEmpty() || PrefManager.getBoolValue(GID_SET_FOR_USER)){
+            return
+        }
+        val data = workDataOf("test_id" to testId)
+        val workRequest = OneTimeWorkRequestBuilder<RegisterUserGId>()
+            .setInputData(data)
+            .build()
+        WorkManager.getInstance(AppObjectController.joshApplication).enqueue(workRequest)
+    }
+
 
 }

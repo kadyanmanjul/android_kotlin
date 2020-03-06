@@ -166,6 +166,9 @@ internal class AppObjectController {
             Branch.getAutoInstance(joshApplication)
             FirebaseDatabase.getInstance().setLogLevel(Logger.Level.DEBUG)
             FirebaseDatabase.getInstance().setPersistenceEnabled(true)
+            initFirebaseRemoteConfig()
+            initCrashlytics()
+
 
             gsonMapper = GsonBuilder()
                 .enableComplexMapKeySerialization()
@@ -275,7 +278,8 @@ internal class AppObjectController {
 
 
             EmojiManager.install(GoogleEmojiProvider())
-
+            InstallReferralUtil.installReferrer(joshApplication)
+            WorkMangerAdmin.deviceIdGenerateWorker()
 
             val fetchConfiguration = FetchConfiguration.Builder(context)
                 .enableRetryOnNetworkGain(true)
@@ -302,9 +306,6 @@ internal class AppObjectController {
                     RoundedCornersTransformation.CornerType.ALL
                 )
             )
-            WorkMangerAdmin.deviceIdGenerateWorker()
-            initFirebaseRemoteConfig()
-            initCrashlytics()
 
             return INSTANCE
         }

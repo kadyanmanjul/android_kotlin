@@ -23,7 +23,6 @@ import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import com.esafirm.imagepicker.features.ImagePicker
 import com.esafirm.imagepicker.features.ReturnMode
-import com.github.florent37.singledateandtimepicker.dialog.SingleDateAndTimePickerDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
@@ -31,6 +30,9 @@ import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.BranchIOAnalytics
+import com.joshtalks.joshskills.core.custom_ui.spinnerdatepicker.DatePicker
+import com.joshtalks.joshskills.core.custom_ui.spinnerdatepicker.DatePickerDialog
+import com.joshtalks.joshskills.core.custom_ui.spinnerdatepicker.SpinnerDatePickerDialogBuilder
 import com.joshtalks.joshskills.core.service.UploadWorker
 import com.joshtalks.joshskills.databinding.ActivityPersonalDetailBinding
 import com.joshtalks.joshskills.databinding.FragmentMediaSelectBinding
@@ -54,9 +56,10 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 const val CROPPING_IMAGE_CODE = 1717
+const val MAX_YEAR = 6
 
 
-class ProfileActivity : BaseActivity(), MediaSelectCallback {
+class ProfileActivity : BaseActivity(), MediaSelectCallback, DatePickerDialog.OnDateSetListener {
 
     private lateinit var layout: ActivityPersonalDetailBinding
     private val DATE_FORMATTER = SimpleDateFormat("yyyy-MM-dd")
@@ -64,7 +67,8 @@ class ProfileActivity : BaseActivity(), MediaSelectCallback {
 
     private var userDob = Date()
     private var imageModel: ImageModel? = null
-    private var pickerStatus = false
+    private var datePicker: DatePickerDialog? = null
+
 
     companion object {
         fun startProfileActivity(activity: Activity, requestCode: Int) {
@@ -74,22 +78,6 @@ class ProfileActivity : BaseActivity(), MediaSelectCallback {
             activity.startActivityForResult(intent, requestCode)
         }
     }
-
-
-    private var picker = SingleDateAndTimePickerDialog.Builder(this)
-        .bottomSheet()
-        .curved()
-        .displayMinutes(false)
-        .displayHours(false)
-        .displayDays(false)
-        .displayMonth(true)
-        .displayYears(true)
-        .displayDaysOfMonth(true)
-        .listener {
-            userDob = it
-            layout.etDOB.setText(DATE_FORMATTER_2.format(userDob))
-        }
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -101,6 +89,39 @@ class ProfileActivity : BaseActivity(), MediaSelectCallback {
 
         layout.lifecycleOwner = this
         layout.handler = this
+        initPicker()
+    }
+
+    private fun initPicker() {
+        val now = Calendar.getInstance()
+        val minYear = now.get(Calendar.YEAR) - 99
+
+        val maxYear = now.get(Calendar.YEAR) - MAX_YEAR
+        datePicker = SpinnerDatePickerDialogBuilder()
+            .context(this)
+            .callback(this)
+            .spinnerTheme(R.style.DatePickerStyle)
+            .showTitle(true)
+            .showDaySpinner(true)
+            .defaultDate(
+                maxYear,
+                now.get(Calendar.MONTH),
+                now.get(Calendar.DAY_OF_MONTH)
+            )
+            .minDate(
+                minYear,
+                now.get(Calendar.MONTH),
+                now.get(Calendar.DAY_OF_MONTH)
+            )
+            .maxDate(
+                maxYear,
+                now.get(Calendar.MONTH),
+                now.get(Calendar.DAY_OF_MONTH)
+            )
+            // .minDate(2000, 0, 1)
+            .build()
+
+
     }
 
     override fun onSelect(media: Media) {
@@ -226,7 +247,6 @@ class ProfileActivity : BaseActivity(), MediaSelectCallback {
         super.onActivityResult(requestCode, resultCode, data)
     }
 
-
     fun onProfilePicClicked() {
         val sheet = MediaPickerFragment()
         sheet.show(supportFragmentManager, "MediaPickerFragment")
@@ -269,7 +289,7 @@ class ProfileActivity : BaseActivity(), MediaSelectCallback {
         if (today.get(Calendar.DAY_OF_YEAR) < dob.get(Calendar.DAY_OF_YEAR)) {
             age--
         }
-        if (age > 12) {
+        if (age >= MAX_YEAR) {
             return true
         }
         return false
@@ -289,8 +309,7 @@ class ProfileActivity : BaseActivity(), MediaSelectCallback {
     }
 
     fun selectDateOfBirth() {
-        picker.display()
-        pickerStatus = true
+        datePicker?.show()
     }
 
 
@@ -308,10 +327,7 @@ class ProfileActivity : BaseActivity(), MediaSelectCallback {
 
     private var doubleBackToExitPressedOnce = false
     override fun onBackPressed() {
-        if (pickerStatus) {
-            picker.dismiss()
-            return
-        }
+
         if (doubleBackToExitPressedOnce) {
             val resultIntent = Intent()
             setResult(RESULT_CANCELED, resultIntent)
@@ -365,6 +381,15 @@ class ProfileActivity : BaseActivity(), MediaSelectCallback {
                 ex.printStackTrace()
             }
         }
+
+    }
+
+
+    override fun onDateSet(view: DatePicker?, year: Int, monthOfYear: Int, dayOfMonth: Int) {
+        val calendar = Calendar.getInstance()
+        calendar.set(year, monthOfYear, dayOfMonth)
+        userDob = calendar.time
+        layout.etDOB.setText(DATE_FORMATTER_2.format(userDob))
 
     }
 

@@ -12,6 +12,7 @@ import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.repository.local.model.*
 import com.joshtalks.joshskills.repository.server.MessageStatusRequest
 import com.joshtalks.joshskills.repository.service.NetworkRequestHelper
+import retrofit2.HttpException
 import java.util.*
 
 
@@ -94,17 +95,14 @@ class BuyNowImageEventWorker(context: Context, private val workerParams: WorkerP
 const val SCREEN_ENGAGEMENT_OBJECT = "screen_engagement"
 const val SCREEN_ENGAGEMENT_FIREBASE_DATABASE = "screen_engagement"
 
-
 class ScreenEngagementWorker(context: Context, private val workerParams: WorkerParameters) :
     Worker(context, workerParams) {
 
     override fun doWork(): Result {
-
         val obj = AppObjectController.gsonMapperForLocal.fromJson(
             workerParams.inputData.getString(SCREEN_ENGAGEMENT_OBJECT),
             ScreenEngagementModel::class.java
         )
-
         val database = FirebaseDatabase.getInstance()
         val ref: DatabaseReference = database.getReference(SCREEN_ENGAGEMENT_FIREBASE_DATABASE)
         val postsRef: DatabaseReference = ref.child(Mentor.getInstance().getId())
@@ -306,6 +304,32 @@ class NewCourseScreenEventWorker(context: Context, private val workerParams: Wor
         return Result.success()
     }
 
+}
+
+class RegisterUserGId(context: Context, private val workerParams: WorkerParameters) :
+    CoroutineWorker(context, workerParams) {
+    override suspend fun doWork(): Result {
+        try {
+            val requestRegisterGId = RequestRegisterGId()
+            requestRegisterGId.gaid = PrefManager.getStringValue(USER_UNIQUE_ID)
+            requestRegisterGId.installOn =
+                InstallReferrerModel.getPrefObject()?.installOn ?: Date().time
+            requestRegisterGId.test =
+                workerParams.inputData.getString("test_id")?.split("_")?.get(1)?.toInt() ?: 0
+            requestRegisterGId.utmMedium = InstallReferrerModel.getPrefObject()?.utmMedium ?: EMPTY
+            requestRegisterGId.utmSource = InstallReferrerModel.getPrefObject()?.utmSource ?: EMPTY
+            val resp =
+                AppObjectController.commonNetworkService.registerGAIdAsync(requestRegisterGId)
+                    .await()
+            PrefManager.put(SERVER_GID_ID, resp.id)
+            PrefManager.put(GID_SET_FOR_USER, true)
+        } catch (ex: HttpException) {
+            ex.printStackTrace()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return Result.success()
+    }
 }
 
 

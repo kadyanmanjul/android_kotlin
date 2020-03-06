@@ -65,6 +65,7 @@ public class ZoomageView extends AppCompatImageView implements OnScaleGestureLis
     private int currentPointerCount = 0;
 
     private ScaleGestureDetector scaleDetector;
+    private GestureDetectorInterface gestureDetectorInterface;
 
     private GestureDetector gestureDetector;
     private boolean doubleTapDetected = false;
@@ -93,8 +94,28 @@ public class ZoomageView extends AppCompatImageView implements OnScaleGestureLis
 
         @Override
         public boolean onDown(MotionEvent e) {
+
             return true;
         }
+
+        @Override
+        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+            try {
+                final SwipeDetector detector = new SwipeDetector(e1, e2, velocityX, velocityY);
+                if (detector.isDownSwipe() || detector.isUpSwipe()) {
+                    if (gestureDetectorInterface != null) {
+                        gestureDetectorInterface.dismiss();
+                    }
+                } else {
+                    return false;
+                }
+            } catch (Exception e) {
+            }
+
+            return super.onFling(e1, e2, velocityX, velocityY);
+        }
+
+
     };
 
     public ZoomageView(Context context) {
@@ -850,6 +871,10 @@ public class ZoomageView extends AppCompatImageView implements OnScaleGestureLis
         return true;
     }
 
+    public void setGestureDetectorInterface(GestureDetectorInterface gestureDetectorInterface) {
+        this.gestureDetectorInterface = gestureDetectorInterface;
+    }
+
     @Override
     public void onScaleEnd(ScaleGestureDetector detector) {
         scaleBy = 1f;
@@ -871,5 +896,9 @@ public class ZoomageView extends AppCompatImageView implements OnScaleGestureLis
         @Override
         public void onAnimationRepeat(Animator animation) {
         }
+    }
+
+    public interface GestureDetectorInterface {
+        void dismiss();
     }
 }

@@ -120,7 +120,6 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         addLiveDataObservable()
         checkAppUpdate()
         workInBackground()
-        viewModel.getRegisterCourses()
         SyncChatService.syncChatWithServer()
         handelIntentAction()
     }
@@ -273,14 +272,9 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
-                    if (isUserHavePersonalDetails()) {
-                        AppAnalytics.create(AnalyticsEvent.COURSE_SELECTED.NAME)
-                            .addParam("course_id", it.inboxEntity.conversation_id).push()
-                        ConversationActivity.startConversionActivity(this, it.inboxEntity)
-
-                    } else {
-                        startActivity(getPersonalDetailsActivityIntent())
-                    }
+                    AppAnalytics.create(AnalyticsEvent.COURSE_SELECTED.NAME)
+                        .addParam("course_id", it.inboxEntity.conversation_id).push()
+                    ConversationActivity.startConversionActivity(this, it.inboxEntity)
                 }, {
                     it.printStackTrace()
                 })
@@ -405,6 +399,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         super.onResume()
         Runtime.getRuntime().gc()
         addObserver()
+        viewModel.getRegisterCourses()
 
     }
 
@@ -471,7 +466,8 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
             findMoreLayout.visibility = View.GONE
             addEmptyView()
         }
-        showAppUseWhenComeFirstTime()
+       // showAppUseWhenComeFirstTime()
+        userProfileActivityNotExist()
     }
 
 
@@ -528,6 +524,22 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
             .into(earnIV)
     }
 
+
+    private fun userProfileActivityNotExist() {
+        try {
+            val entity = viewModel.registerCourseMinimalLiveData.value?.get(0)
+            val entity2 = viewModel.registerCourseNetworkLiveData.value?.get(0)
+            if (entity == null && entity2 == null) {
+                return
+            }
+            if (isUserHaveNotPersonalDetails()) {
+                startActivity(getPersonalDetailsActivityIntent())
+            }
+
+        } catch (ex: Exception) {
+        }
+
+    }
 
     private fun showAppUseWhenComeFirstTime() {
         try {

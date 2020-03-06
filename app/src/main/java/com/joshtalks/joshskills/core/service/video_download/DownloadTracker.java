@@ -275,6 +275,7 @@ public class DownloadTracker {
         }
 
         private void startDownload(DownloadRequest downloadRequest) {
+
             DownloadService.sendAddDownload(
                     context, VideoDownloadService.class, downloadRequest, false);
         }

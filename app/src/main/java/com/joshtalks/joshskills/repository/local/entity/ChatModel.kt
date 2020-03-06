@@ -68,9 +68,12 @@ data class ChatModel(
     @ColumnInfo(name = "status")
     @SerializedName("status") var status: MESSAGE_STATUS? = MESSAGE_STATUS.SEEN_BY_SERVER,
 
-
     @ColumnInfo
-    @SerializedName("question_id") var question_id: Int? = null
+    @SerializedName("question_id") var question_id: Int? = null,
+
+    @ColumnInfo(name = "content_download_date")
+    @Expose
+    var contentDownloadDate: Date = Date()
 
 
 ) : DataBaseClass(), Serializable {
@@ -90,7 +93,8 @@ data class ChatModel(
         isSync = true,
         chatLocalId = null,
         status = MESSAGE_STATUS.SEEN_BY_SERVER,
-        question_id = null
+        question_id = null,
+        contentDownloadDate = Date()
     )
 
 
@@ -589,7 +593,6 @@ interface ChatDao {
 
     @Query(value = "SELECT created FROM chat_table where question_id IS NOT NULL AND conversation_id= :conversationId ORDER BY created DESC LIMIT 1; ")
     suspend fun getLastChatDate(conversationId: String): Date?
-
 
 
 }

@@ -1,5 +1,6 @@
 package com.joshtalks.joshskills.core
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.preference.PreferenceManager
@@ -10,7 +11,8 @@ const val COURSE_STARTED_FB_EVENT = "course_started_event"
 const val USER_UNIQUE_ID = "user_unique_id"
 const val FIRST_COURSE_BUY="first_course_buy"
 const val FIRST_TIME_OFFER_SHOW="first_time_offer_show"
-
+const val GID_SET_FOR_USER="gid_set_for_user"
+const val SERVER_GID_ID="server_gid_id"
 
 object PrefManager {
 
@@ -21,6 +23,7 @@ object PrefManager {
     private lateinit var sharedPreferences: SharedPreferences
 
 
+    @SuppressLint("RestrictedApi")
     private fun getPref(context: Context): SharedPreferences {
         sharedPreferences = PreferenceManager(context).sharedPreferences
         PreferenceManager(context).sharedPreferencesName = PREF_NAME

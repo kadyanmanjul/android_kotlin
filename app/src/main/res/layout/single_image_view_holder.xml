@@ -1,17 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/root_view"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        style="@style/Widget.MaterialComponents.CardView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="@dimen/_2sdp"
+        app:cardElevation="@dimen/_2sdp"
+        app:cardUseCompatPadding="true">
 
-
-    <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/image_view"
+    <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:adjustViewBounds="true"
-            android:background="@drawable/video_placeholder"
-            android:clickable="true"
-            android:focusable="true"
-            android:scaleType="centerCrop" />
-</FrameLayout>
+            android:orientation="vertical">
+
+        <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+                android:paddingStart="@dimen/_12sdp"
+                android:paddingTop="@dimen/_12sdp"
+                android:paddingBottom="@dimen/_8sdp"
+                android:id="@+id/text_title"
+                fontPath="fonts/OpenSans-SemiBold.ttf"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start"
+                android:gravity="center_vertical|start"
+                android:maxLines="3"
+                android:textColor="@color/gray_48"
+                android:textSize="@dimen/font_17"
+                android:visibility="gone" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/image_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:adjustViewBounds="true"
+                android:background="@drawable/video_placeholder"
+                android:clickable="true"
+                android:focusable="true"
+                android:scaleType="centerCrop" />
+
+
+    </LinearLayout>
+
+</com.google.android.material.card.MaterialCardView>

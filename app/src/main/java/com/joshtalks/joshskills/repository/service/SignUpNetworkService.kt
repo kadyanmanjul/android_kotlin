@@ -4,6 +4,7 @@ import com.joshtalks.joshskills.repository.local.model.InstallReferrerModel
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.googlelocation.Locality
 import com.joshtalks.joshskills.repository.server.*
+import com.joshtalks.joshskills.repository.server.course_detail.CourseDetailsResponse
 import kotlinx.coroutines.Deferred
 import okhttp3.MultipartBody
 import retrofit2.http.*
@@ -85,7 +86,7 @@ interface SignUpNetworkService {
 
 
     @GET("$DIR/course/test_details/")
-    fun explorerCourseDetailsApiV2Async(@QueryMap params: Map<String, String> = mapOf("is_default" to "true")): Deferred<Any>
+    fun explorerCourseDetailsApiV2Async(@QueryMap params: Map<String, String> = mapOf("is_default" to "true")): Deferred<List<CourseDetailsResponse>>
 
 
 

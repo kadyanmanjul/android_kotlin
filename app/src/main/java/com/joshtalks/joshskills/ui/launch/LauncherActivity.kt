@@ -5,6 +5,8 @@ import android.os.Bundle
 import android.util.Log
 import com.crashlytics.android.Crashlytics
 import com.facebook.appevents.AppEventsConstants.EVENT_NAME_ACTIVATED_APP
+import com.google.firebase.iid.FirebaseInstanceId
+import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.CoreJoshActivity
@@ -23,8 +25,10 @@ class LauncherActivity : CoreJoshActivity() {
         AppObjectController.facebookEventLogger.logEvent(EVENT_NAME_ACTIVATED_APP)
         WorkMangerAdmin.readMessageUpdating()
         setContentView(R.layout.activity_launcher)
+        fbId()
         handleIntent()
         AppObjectController.facebookEventLogger.flush()
+
     }
 
 
@@ -39,13 +43,15 @@ class LauncherActivity : CoreJoshActivity() {
                 } else if (referringParams == null && sessionParams != null) {
                     jsonParms = sessionParams
                 }
-
                 if (error == null) {
                     if (jsonParms != null && jsonParms.has(Defines.Jsonkey.AndroidDeepLinkPath.key)) {
                         AppObjectController.uiHandler.removeCallbacksAndMessages(null)
 
                         val testId =
                             jsonParms.getString(Defines.Jsonkey.AndroidDeepLinkPath.key)
+
+                        WorkMangerAdmin.registerUserGIDWithTestId(testId)
+
                         startActivity(
                             Intent(
                                 applicationContext,
@@ -90,6 +96,17 @@ class LauncherActivity : CoreJoshActivity() {
             startActivity(intent)
             this@LauncherActivity.finish()
         }, 2000)
+    }
+
+
+    private fun fbId(){
+        if (BuildConfig.DEBUG) {
+            FirebaseInstanceId.getInstance().instanceId
+                .addOnSuccessListener { result ->
+                    Log.d("IID_TOKEN", result.token)
+                }
+        }
+
     }
 
 

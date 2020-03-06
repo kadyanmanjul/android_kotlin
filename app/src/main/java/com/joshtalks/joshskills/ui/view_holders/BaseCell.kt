@@ -251,6 +251,28 @@ abstract class BaseCell {
             )
             .into(iv)
     }
+    fun setResourceInImageView(iv: ImageView?, resource: Int) {
+        if (iv != null) {
+            val multi = MultiTransformation<Bitmap>(
+                RoundedCornersTransformation(
+                    Utils.dpToPx(ROUND_CORNER),
+                    0,
+                    RoundedCornersTransformation.CornerType.ALL
+                )
+            )
+
+            Glide.with(getAppContext())
+                .load(resource)
+                .override(Target.SIZE_ORIGINAL)
+                .optionalTransform(
+                    WebpDrawable::class.java,
+                    WebpDrawableTransformation(CircleCrop())
+                )
+                .apply(RequestOptions.bitmapTransform(multi))
+                .into(iv)
+        }
+
+    }
 
 }
 

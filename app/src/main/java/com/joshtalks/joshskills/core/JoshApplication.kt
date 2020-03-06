@@ -21,8 +21,6 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 
 class JoshApplication : BranchApp() {
-
-
     companion object {
         @JvmStatic
         internal var appObjectController: AppObjectController? = null
@@ -43,7 +41,6 @@ class JoshApplication : BranchApp() {
 
         }
         appObjectController = AppObjectController.init(this)
-
 
         ViewPump.init(
             ViewPump.builder()

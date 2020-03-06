@@ -5,14 +5,11 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.os.RemoteException
 import android.provider.Settings
-import android.text.TextUtils
 import android.util.DisplayMetrics
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.android.installreferrer.api.InstallReferrerClient
-import com.android.installreferrer.api.InstallReferrerStateListener
 import com.crashlytics.android.Crashlytics
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
@@ -20,7 +17,6 @@ import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.notification.HAS_NOTIFICATION
 import com.joshtalks.joshskills.core.notification.NOTIFICATION_ID
 import com.joshtalks.joshskills.core.service.WorkMangerAdmin
-import com.joshtalks.joshskills.repository.local.model.InstallReferrerModel
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.service.EngagementNetworkHelper
@@ -30,13 +26,7 @@ import com.joshtalks.joshskills.ui.profile.ProfileActivity
 import com.joshtalks.joshskills.ui.profile.SOURCE_IMAGE
 import com.joshtalks.joshskills.ui.sign_up_old.OnBoardActivity
 import io.branch.referral.Branch
-import io.branch.referral.PrefHelper
 import io.github.inflationx.viewpump.ViewPumpContextWrapper
-import org.threeten.bp.Instant
-import org.threeten.bp.ZoneOffset
-import org.threeten.bp.ZonedDateTime
-import java.net.URLDecoder
-import java.util.*
 
 const val HELP_ACTIVITY_REQUEST_CODE = 9010
 
@@ -60,16 +50,14 @@ abstract class BaseActivity : AppCompatActivity() {
         AppObjectController.screenHeight = displayMetrics.heightPixels
         AppObjectController.screenWidth = displayMetrics.widthPixels
         initUserForCrashlytics()
-        installReferrer()
+        InstallReferralUtil.installReferrer(applicationContext)
     }
 
 
     fun getIntentForState(): Intent? {
         val intent: Intent? = if (User.getInstance().token == null) {
             Intent(this, OnBoardActivity::class.java)
-        }/* else if (User.getInstance().dateOfBirth == null || User.getInstance().dateOfBirth.isNullOrEmpty()) {
-                intent = Intent(this, ProfileActivity::class.java)
-            }*/ else {
+        } else {
             AppObjectController.joshApplication.updateDeviceDetail()
             AppObjectController.joshApplication.userActive()
             WorkMangerAdmin.getUserReferralCodeWorker()
@@ -134,98 +122,9 @@ abstract class BaseActivity : AppCompatActivity() {
         Utils.call(this, AppObjectController.getFirebaseRemoteConfig().getString("helpline_number"))
     }
 
-    private fun installReferrer() {
-        try {
-            val obj = InstallReferrerModel.getPrefObject()
-            if (obj == null) {
-                val referrerClient = InstallReferrerClient.newBuilder(application).build()
-                referrerClient.startConnection(object : InstallReferrerStateListener {
-                    override fun onInstallReferrerSetupFinished(responseCode: Int) {
-                        when (responseCode) {
-                            InstallReferrerClient.InstallReferrerResponse.OK -> try {
 
-                                try {
-                                    val response = referrerClient.installReferrer
-
-                                    val rawReferrerString =
-                                        URLDecoder.decode(response.installReferrer, "UTF-8")
-                                    val referrerMap = HashMap<String, String>()
-                                    val referralParams = rawReferrerString.split("&").toTypedArray()
-                                    for (referrerParam in referralParams) {
-                                        if (!TextUtils.isEmpty(referrerParam)) {
-                                            var splitter = "="
-                                            if (!referrerParam.contains("=") && referrerParam.contains(
-                                                    "-"
-                                                )
-                                            ) {
-                                                splitter = "-"
-                                            }
-                                            val keyValue =
-                                                referrerParam.split(splitter).toTypedArray()
-                                            if (keyValue.size > 1) { // To make sure that there is one key value pair in referrer
-                                                referrerMap[URLDecoder.decode(
-                                                    keyValue[0],
-                                                    "UTF-8"
-                                                )] =
-                                                    URLDecoder.decode(keyValue[1], "UTF-8")
-                                            }
-                                        }
-                                    }
-
-
-                                    val installReferrerModel = InstallReferrerModel()
-                                    installReferrerModel.otherInfo = referrerMap
-                                    installReferrerModel.otherInfo?.apply {
-                                        this["install_begin_on"] =
-                                            response.installBeginTimestampSeconds.toString()
-                                        this["referral_click_on"] =
-                                            response.referrerClickTimestampSeconds.toString()
-                                    }
-
-                                    if (referrerMap["utm_medium"].isNullOrEmpty().not()) {
-                                        installReferrerModel.utmMedium = referrerMap["utm_medium"]
-                                    }
-                                    if (referrerMap["utm_source"].isNullOrEmpty().not()) {
-                                        installReferrerModel.utmSource = referrerMap["utm_source"]
-                                    }
-                                    if (response.installBeginTimestampSeconds > 0) {
-                                        val instant =
-                                            Instant.ofEpochSecond(response.installBeginTimestampSeconds)
-                                        val time = ZonedDateTime.ofInstant(instant, ZoneOffset.UTC)
-
-                                        installReferrerModel.installOn =
-                                            (time.toEpochSecond())
-                                    }
-                                    if (installReferrerModel.installOn == 0L) {
-                                        installReferrerModel.installOn = (Date().time / 1000)
-                                    }
-
-
-                                    InstallReferrerModel.update(installReferrerModel)
-                                } catch (ex: Exception) {
-                                    ex.printStackTrace()
-                                }
-
-                            } catch (ex: RemoteException) {
-                                PrefHelper.Debug("onInstallReferrerSetupFinished() Exception: " + ex.message)
-                                Crashlytics.logException(ex)
-                                ex.printStackTrace()
-                            }
-                        }
-                    }
-
-                    override fun onInstallReferrerServiceDisconnected() {
-                        PrefHelper.Debug("onInstallReferrerServiceDisconnected()")
-                    }
-                })
-            }
-        } catch (ex: Exception) {
-            ex.printStackTrace()
-        }
-    }
-
-    protected fun isUserHavePersonalDetails(): Boolean {
-        return !User.getInstance().dateOfBirth.isNullOrEmpty()
+    protected fun isUserHaveNotPersonalDetails(): Boolean {
+        return User.getInstance().dateOfBirth.isNullOrEmpty()
     }
 
     protected fun getPersonalDetailsActivityIntent(): Intent {

@@ -216,6 +216,12 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
 
         player.seekTo(currentPosition);
         play();
+        /*setPlayerControlViewVisibilityListener(new PlayerControlViewVisibilityListener() {
+            @Override
+            public void onVisibilityChange(int visibility) {
+
+            }
+        });*/
 
     }
 

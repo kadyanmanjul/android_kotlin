@@ -2,6 +2,7 @@ package com.joshtalks.joshskills.ui.video_player
 
 import android.content.Context
 import android.content.Intent
+import android.content.pm.ActivityInfo
 import android.net.Uri
 import android.os.Bundle
 import android.view.Window
@@ -68,7 +69,7 @@ class VideoPlayerActivity : BaseActivity(), PlayerListener {
     private lateinit var binding: ActivityVideoPlayer1Binding
     private lateinit var chatObject: ChatModel
     private lateinit var exoProgress: DefaultTimeBar
-    var videoViewGraphList = mutableListOf<ListenGraph>()
+    var videoViewGraphList = mutableSetOf<ListenGraph>()
     var graph: ListenGraph? = null
     var lastPos: Long = 0
 
@@ -76,6 +77,9 @@ class VideoPlayerActivity : BaseActivity(), PlayerListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requestWindowFeature(Window.FEATURE_NO_TITLE)
+        window.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
+        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_USER
+
         this.window.setFlags(
             WindowManager.LayoutParams.FLAG_FULLSCREEN,
             WindowManager.LayoutParams.FLAG_FULLSCREEN
@@ -166,7 +170,7 @@ class VideoPlayerActivity : BaseActivity(), PlayerListener {
             chatObject.question?.videoList?.get(0)?.id?.let {
                 EngagementNetworkHelper.engageVideoApi(
                     VideoEngage(
-                        videoViewGraphList,
+                        videoViewGraphList.toList(),
                         it,
                         binding.pvPlayer.lastPosition
                     )

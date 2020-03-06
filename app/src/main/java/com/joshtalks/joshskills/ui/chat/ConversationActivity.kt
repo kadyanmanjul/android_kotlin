@@ -16,7 +16,6 @@ import android.provider.Settings
 import android.support.v4.media.session.PlaybackStateCompat
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.Gravity
 import android.view.MotionEvent
 import android.view.View
@@ -102,6 +101,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.lang.ref.WeakReference
 import java.util.*
+import kotlin.collections.ArrayList
 import kotlin.concurrent.scheduleAtFixedRate
 
 const val CHAT_ROOM_OBJECT = "chat_room"
@@ -116,6 +116,7 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
             val intent = Intent(context, ConversationActivity::class.java)
             intent.putExtra(CHAT_ROOM_OBJECT, inboxEntity)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP
+            intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
             context.startActivity(intent)
         }
     }
@@ -139,7 +140,8 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
     private val cMessageType: BASE_MESSAGE_TYPE = BASE_MESSAGE_TYPE.TX
     private val compositeDisposable = CompositeDisposable()
     private var revealAttachmentView: Boolean = false
-    private var conversationList = linkedSetOf<ChatModel>()
+    private val conversationList: MutableList<ChatModel> = ArrayList()
+
     private var removingConversationList = linkedSetOf<ChatModel>()
     private val readChatList: MutableSet<ChatModel> = mutableSetOf()
     private var readMessageTimerTask: TimerTask? = null
@@ -148,6 +150,10 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
     private var streamingManager: AudioStreamingManager? = null
     private var mUserIsSeeking = false
     private var isOnlyChat = false
+    private var isNewChatViewAdd = true
+    private var lastDay: Date = Date()
+    private var chatModelLast: ChatModel? = null
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         requestedOrientation = if (Build.VERSION.SDK_INT == 26) {
@@ -759,17 +765,37 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
 
 
     private fun liveDataObservable() {
-        conversationViewModel.chatObservableLiveData.observe(this, Observer {
-            conversationList.addAll(it)
-            conversationList.iterator().forEach { chatModel ->
-                getView(chatModel)?.let { cell ->
-                    conversationBinding.chatRv.addView(cell)
+        conversationViewModel.chatObservableLiveData.observe(this, Observer { listChat ->
+            try {
+                chatModelLast = listChat.find { it.isSeen.not() }
+                conversationList.addAll(listChat)
+                val temp = listChat.groupBy { it.created }
+                val tempList = temp.toSortedMap(compareBy { it })
+                tempList.forEach { (key, value) ->
+                    if (Utils.isSameDate(lastDay, key).not()) {
+                        conversationBinding.chatRv.addView(TimeViewHolder(key))
+                        lastDay = key
+                    }
+                    value.forEach { chatModel ->
+                        if (chatModelLast != null && chatModelLast == chatModel && isNewChatViewAdd) {
+                            isNewChatViewAdd = false
+                            conversationBinding.chatRv.addView(NewMessageViewHolder("Aapki Nayi Classes"))
+                            conversationBinding.chatRv.layoutManager?.scrollToPosition(
+                                conversationBinding.chatRv.viewResolverCount - 1
+                            )
+                        }
+                        getView(chatModel)?.let { cell ->
+                            conversationBinding.chatRv.addView(cell)
+                        }
+                    }
                 }
+                if (isNewChatViewAdd) {
+                    scrollToEnd()
+                }
+               // conversationBinding.chatRv.refresh()
+                readMessageDatabaseUpdate()
+            } catch (ex: Exception) {
             }
-            conversationBinding.chatRv.refresh()
-            scrollToEnd()
-            readMessageDatabaseUpdate()
-
         })
 
         conversationViewModel.refreshViewLiveData.observe(this, Observer { chatModel ->
@@ -1034,16 +1060,18 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
                 var tempView: BaseChatViewHolder
                 conversationBinding.chatRv.allViewResolvers?.let {
                     it.forEachIndexed { index, view ->
-                        tempView = view as BaseChatViewHolder
-                        if (chatObj.chatId.toLowerCase(Locale.getDefault()) == tempView.message.chatId.toLowerCase(
-                                Locale.getDefault()
-                            )
-                        ) {
-                            tempView.message = chatObj
-                            tempView.message.isSelected = false
-                            AppObjectController.uiHandler.postDelayed({
-                                conversationBinding.chatRv.refreshView(index)
-                            }, 250)
+                        if (view is BaseChatViewHolder) {
+                            tempView = view
+                            if (chatObj.chatId.toLowerCase(Locale.getDefault()) == tempView.message.chatId.toLowerCase(
+                                    Locale.getDefault()
+                                )
+                            ) {
+                                tempView.message = chatObj
+                                tempView.message.isSelected = false
+                                AppObjectController.uiHandler.postDelayed({
+                                    conversationBinding.chatRv.refreshView(index)
+                                }, 250)
+                            }
                         }
                     }
                 }
@@ -1447,7 +1475,6 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
     }
 
     override fun updatePlaybackState(state: Int) {
-        Log.i("player_status", "" + state)
         when (state) {
             PlaybackStateCompat.STATE_PLAYING -> {
                 mPlayPauseButton.setImageResource(R.drawable.ic_pause_player)

@@ -4,6 +4,7 @@
         android:animateLayoutChanges="true">
 
     <FrameLayout
+
             android:id="@+id/fmPlayerController"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
@@ -19,6 +20,7 @@
                     android:background="@drawable/media_controller_background" />
 
             <LinearLayout
+                    android:animateLayoutChanges="true"
                     android:id="@+id/llControlsContainer"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

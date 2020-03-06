@@ -40,7 +40,6 @@
     <string name="profile_photo">Profile photo</string>
 
     <string name="splash_sub_string">ज़िन्दगी में आगे बढ़ो, जोश के साथ</string>
-    <string name="register_number_title">Apna Registered Whatsapp Number Use Karein</string>
 
     <string name="register_now">Register Now</string>
     <string name="aur_koi_problem">Aur koi problem?</string>
@@ -50,7 +49,7 @@
 
     <string name="anonymous_user_login">Okay! Isi Number se dubara register karein!</string>
     <string name="register">Register</string>
-
+    <string name="open">OPEN</string>
     <string name="submit">Submit</string>
     <string name="track_number">Track</string>
     <string name="play_button_description">Play button</string>
@@ -70,6 +69,8 @@
     <string name="slide_to_cancel">Slide To Cancel</string>
     <string name="buy_course">Buy Course</string>
 
+    <string name="explore">Explore</string>
+
     <string name="explorer_courses">Explore Courses</string>
     <string name="start_course">Start Course</string>
     <string name="explorer_course">Explore Courses</string>
@@ -87,9 +88,9 @@
     <string name="please_enter_detail_toast">Please enter your details to continue</string>
     <string name="internet_not_available_msz">Internet not available</string>
 
-    <string name="plz_wait">Please wait&#8230;&#8230;&#8230;</string>
+    <string name="plz_wait">Please wait&#8230;</string>
     <string name="resend_otp">Didn\'t get an otp?</string>
-    <string name="terms_and_condition_msz">By signing up, you confirm that you have read and \n  agree to our Terms &amp; Conditions </string>
+    <string name="terms_and_condition_msz">By signing up, you confirm that you have read and \n  agree to Josh Skills\' Terms &amp; Conditions </string>
     <string name="enter_your_mobile_number">Enter your Mobile Number </string>
     <string name="send_otp_msz">We will send you an OTP</string>
     <string name="please_enter_your_mobile_number">Please enter your mobile number </string>
@@ -152,7 +153,7 @@
     <string name="submit_answer">Submit Answer</string>
 
     <!-- Help Screen  -->
-    <string name="today_task">Today\'s Task</string>
+    <string name="today_practise">Today\'s Practice</string>
 
     <string name="hold_to_record_msz">Hold to record audio</string>
     <string name="upload_file_msz">Upload a file</string>
@@ -161,8 +162,8 @@
 
     <string name="type_your_answer_hint">Type your answer here&#8230;&#8230;&#8230;</string>
     <string name="viewing_support_app_not_exist">you may have not proper app for viewing this content</string>
-    <string name="login_with_truecaller_label">Login using TrueCaller</string>
-    <string name="login_with_otp">Login using OTP</string>
+    <string name="login_with_truecaller_label">TrueCaller Login</string>
+    <string name="login_with_otp">Login with OTP</string>
     <string name="wrong_otp">The OTP entered is incorrect. Please enter correct OTP or try regenerating the OTP</string>
     <string name="invite_friends">Invite And Earn</string>
     <string name="referral_content" formatted="false">Refer your friends &amp; we\'ll give them a discount of ₹ %s on their first course purchase &amp;  ₹ %s cash to you if they buy a course</string>

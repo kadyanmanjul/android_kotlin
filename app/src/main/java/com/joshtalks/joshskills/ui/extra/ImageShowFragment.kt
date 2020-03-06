@@ -24,7 +24,6 @@ class ImageShowFragment : DialogFragment() {
     private lateinit var courseName: String
     private var imageId: String? = null
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -74,25 +73,13 @@ class ImageShowFragment : DialogFragment() {
             dismiss()
         }
         AppAnalytics.create(AnalyticsEvent.IMAGE_CLICKED.NAME).push()
-        imageId?.let {
-            EngagementNetworkHelper.engageImageApi(ImageEngage(it))
+        if (imageId.isNullOrEmpty().not()) {
+            EngagementNetworkHelper.engageImageApi(ImageEngage(imageId!!))
         }
-        /*big_image_view.setOnClickListener(object : View.OnClickListener {
-            var show = true
-            override fun onClick(v: View) {
-                show = if (show) {
-                    toolbar.animate().translationY((-toolbar.bottom).toFloat())
-                        .setInterpolator(AccelerateInterpolator()).start()
-                    hideSystemUI()
-                    false
-                } else {
-                    toolbar.animate().translationY(0f).setInterpolator(DecelerateInterpolator())
-                        .start()
-                    showSystemUI()
-                    true
-                }
-            }
-        })*/
+        big_image_view.setGestureDetectorInterface {
+            dismissAllowingStateLoss()
+        }
+
     }
     /* private fun hideSystemUI() { // Set the IMMERSIVE flag.
  // Set the content to appear under the system bars so that the content

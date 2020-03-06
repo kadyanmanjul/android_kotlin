@@ -199,7 +199,9 @@
                 android:launchMode="singleTask" />
         <activity
                 android:name=".ui.profile.ProfileActivity"
-                android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize"
+                android:windowSoftInputMode="adjustResize"
+                android:screenOrientation="portrait"
+                android:configChanges="touchscreen|keyboard|orientation|screenLayout|screenSize"
                 android:launchMode="singleTask" />
         <activity
                 android:name=".ui.sign_up_old.RegisterInfoActivity"
@@ -207,9 +209,8 @@
                 android:launchMode="singleTask" />
         <activity
                 android:name=".ui.video_player.VideoPlayerActivity"
-                android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
+                android:configChanges="keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
                 android:launchMode="singleTask"
-                android:screenOrientation="fullSensor"
                 android:theme="@style/AppNoBarTheme" />
         <activity
                 android:name=".ui.launcher.SplashActivity"

@@ -1,8 +1,6 @@
 package com.joshtalks.joshskills.repository.local
 
 import android.content.Context
-import android.database.SQLException
-import android.database.sqlite.SQLiteException
 import androidx.room.*
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
@@ -18,7 +16,7 @@ const val DATABASE_NAME = "JoshEnglishDB.db"
 
 @Database(
     entities = [Course::class, ChatModel::class, Question::class, VideoType::class, AudioType::class, OptionType::class, PdfType::class, ImageType::class],
-    version = 10,
+    version = 11,
     exportSchema = false
 )
 @TypeConverters(
@@ -52,7 +50,8 @@ abstract class AppDatabase : RoomDatabase() {
                                 MIGRATION_5_6, MIGRATION_6_7,
                                 MIGRATION_7_8,
                                 MIGRATION_8_9,
-                                MIGRATION_9_10
+                                MIGRATION_9_10,
+                                MIGRATION_10_11
                             )
                             .fallbackToDestructiveMigration()
                             .addCallback(sRoomDatabaseCallback)
@@ -132,7 +131,7 @@ abstract class AppDatabase : RoomDatabase() {
                 try {
                     val cursor = database.query("select conversation_id from course")
                     if (cursor.moveToFirst()) {
-                        val key=cursor.getString(cursor.getColumnIndex("conversation_id"))
+                        val key = cursor.getString(cursor.getColumnIndex("conversation_id"))
                         PrefManager.removeKey(key)
                     }
                     cursor.close()
@@ -142,7 +141,11 @@ abstract class AppDatabase : RoomDatabase() {
                 }
             }
         }
-
+        private val MIGRATION_10_11: Migration = object : Migration(10, 11) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("ALTER TABLE chat_table ADD COLUMN content_download_date INTEGER NOT NULL DEFAULT 0 ")
+            }
+        }
 
         fun clearDatabase() {
             INSTANCE?.clearAllTables()

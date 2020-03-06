@@ -35,21 +35,24 @@
 
 
                 <com.google.android.material.card.MaterialCardView
+                        android:layout_marginTop="@dimen/_6sdp"
+                        android:layout_marginStart="@dimen/_6sdp"
+                        android:layout_marginEnd="@dimen/_6sdp"
+                        card_view:cardElevation="0dp"
                         android:id="@+id/practise_info_layout"
                         style="@style/Widget.MaterialComponents.CardView"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         app:contentPadding="@dimen/_8sdp"
                         card_view:cardCornerRadius="@dimen/_4sdp"
-                        card_view:cardElevation="@dimen/_4sdp"
-                        card_view:cardUseCompatPadding="true">
+                        card_view:cardUseCompatPadding="false">
 
                     <androidx.appcompat.widget.AppCompatTextView
                             fontPath="fonts/OpenSans-SemiBold.ttf"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:gravity="start|center"
-                            android:text="@string/today_task"
+                            android:text="@string/today_practise"
                             android:textColor="@color/font_color"
                             android:textSize="@dimen/font_16" />
 
@@ -135,31 +138,50 @@
                                     app:layout_goneMarginTop="@dimen/spacing_large" />
                         </RelativeLayout>
 
-                        <androidx.appcompat.widget.AppCompatImageView
-                                android:id="@+id/image_view"
+                        <FrameLayout
                                 android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center"
-                                android:adjustViewBounds="true"
-                                android:clickable="true"
-                                android:focusable="true"
-                                android:scaleType="centerCrop"
-                                android:visibility="gone" />
+                                android:layout_height="wrap_content">
+
+                            <androidx.appcompat.widget.AppCompatImageView
+                                    android:id="@+id/image_view"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center"
+                                    android:adjustViewBounds="true"
+                                    android:background="@drawable/video_placeholder"
+                                    android:clickable="true"
+                                    android:focusable="true"
+                                    android:visibility="gone" />
+
+                            <ProgressBar
+                                    android:visibility="gone"
+                                    android:id="@+id/progress_bar_image_view"
+                                    android:layout_width="@dimen/_24sdp"
+                                    android:layout_height="@dimen/_24sdp"
+                                    android:layout_gravity="center"
+                                    android:indeterminate="true"
+                                    android:indeterminateTint="@color/button_primary_color" />
+
+                        </FrameLayout>
+
 
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
 
                 <com.google.android.material.card.MaterialCardView
+                        card_view:cardElevation="0dp"
                         android:id="@+id/practise_text_info_layout"
                         style="@style/Widget.MaterialComponents.CardView"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/_6sdp"
+                        android:layout_marginStart="@dimen/_6sdp"
+                        android:layout_marginEnd="@dimen/_6sdp"
                         android:visibility="gone"
                         app:contentPadding="@dimen/_10sdp"
                         card_view:cardCornerRadius="@dimen/_4sdp"
-                        card_view:cardElevation="@dimen/_4sdp"
-                        card_view:cardUseCompatPadding="true">
+                        card_view:cardUseCompatPadding="false">
 
 
                     <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
@@ -173,8 +195,11 @@
 
                 </com.google.android.material.card.MaterialCardView>
 
-
                 <com.google.android.material.card.MaterialCardView
+                        card_view:cardElevation="0dp"
+                        android:layout_marginTop="@dimen/_6sdp"
+                        android:layout_marginStart="@dimen/_6sdp"
+                        android:layout_marginEnd="@dimen/_6sdp"
                         android:id="@+id/practise_input_layout"
                         style="@style/Widget.MaterialComponents.CardView"
                         android:layout_width="match_parent"
@@ -182,8 +207,7 @@
                         android:visibility="gone"
                         app:contentPadding="@dimen/_8sdp"
                         card_view:cardCornerRadius="@dimen/_4sdp"
-                        card_view:cardElevation="@dimen/_4sdp"
-                        card_view:cardUseCompatPadding="true">
+                        card_view:cardUseCompatPadding="false">
 
                     <androidx.appcompat.widget.AppCompatTextView
                             android:id="@+id/practise_input_header"
@@ -280,6 +304,10 @@
 
 
                 <com.google.android.material.card.MaterialCardView
+                        card_view:cardElevation="0dp"
+                        android:layout_marginTop="@dimen/_6sdp"
+                        android:layout_marginStart="@dimen/_6sdp"
+                        android:layout_marginEnd="@dimen/_6sdp"
                         android:id="@+id/practise_submit_layout"
                         style="@style/Widget.MaterialComponents.CardView"
                         android:layout_width="match_parent"
@@ -288,8 +316,7 @@
                         android:visibility="gone"
                         app:contentPadding="@dimen/_8sdp"
                         card_view:cardCornerRadius="@dimen/_4sdp"
-                        card_view:cardElevation="@dimen/_4sdp"
-                        card_view:cardUseCompatPadding="true">
+                        card_view:cardUseCompatPadding="false">
 
                     <androidx.appcompat.widget.AppCompatTextView
                             android:id="@+id/your_sub_answer_tv"

@@ -1,5 +1,6 @@
 package com.joshtalks.joshskills.ui.payment
 
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Paint
 import android.graphics.Rect
@@ -16,20 +17,23 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.MultiTransformation
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target.SIZE_ORIGINAL
-import com.google.gson.reflect.TypeToken
+import com.crashlytics.android.Crashlytics
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.custom_ui.decorator.LayoutMarginDecoration
+import com.joshtalks.joshskills.core.service.WorkMangerAdmin
 import com.joshtalks.joshskills.databinding.FragmentCourseDetailType1FragmentBinding
 import com.joshtalks.joshskills.messaging.RxBus2
+import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
 import com.joshtalks.joshskills.repository.local.eventbus.BuyCourseEventBus
+import com.joshtalks.joshskills.repository.local.eventbus.ImageShowEvent
+import com.joshtalks.joshskills.repository.local.eventbus.VideoShowEvent
+import com.joshtalks.joshskills.repository.server.CourseExploreModel
 import com.joshtalks.joshskills.repository.server.course_detail.CourseDetailsResponse
+import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
 import com.joshtalks.joshskills.ui.payment.viewholder.CourseDetailDataViewHeader
-import com.joshtalks.joshskills.ui.payment.viewholder.CourseMentorViewHolder
-import com.joshtalks.joshskills.ui.payment.viewholder.CourseStructureViewHolder
 import com.joshtalks.joshskills.ui.tooltip.BalloonFactory
 import com.joshtalks.joshskills.ui.video_player.FullScreenVideoFragment
-import com.joshtalks.joshskills.ui.view_holders.DefaultTextViewHolder
 import com.joshtalks.joshskills.ui.view_holders.ROUND_CORNER
 import com.joshtalks.joshskills.ui.view_holders.SingleImageViewHolder
 import com.joshtalks.skydoves.balloon.Balloon
@@ -40,20 +44,22 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import retrofit2.HttpException
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
 import java.util.*
 
 
 const val TEST_ID = "test_ID"
-const val COURSE_AMOUNT = "course_amount"
 
 
 class CourseDetailType1Fragment : Fragment() {
 
     private var testId = 0
     private var courseId = 1
-    private var amount: Double = 0.0
     private var isUserValidForOffer = false
     private var dayRemain = "7"
 
@@ -61,6 +67,7 @@ class CourseDetailType1Fragment : Fragment() {
     private var videoUrl: String? = null
     private var compositeDisposable = CompositeDisposable()
     private var profileBalloon: Balloon? = null
+    private var courseModel: CourseExploreModel = CourseExploreModel()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -68,7 +75,6 @@ class CourseDetailType1Fragment : Fragment() {
         arguments?.let {
             testId = it.getInt(TEST_ID)
             courseId = it.getInt(COURSE_ID)
-            amount = it.getDouble(COURSE_AMOUNT, 0.0)
         }
 
         compositeDisposable.add(AppObjectController.appDatabase
@@ -112,15 +118,13 @@ class CourseDetailType1Fragment : Fragment() {
             )
         binding.lifecycleOwner = this
         binding.handler = this
-
-
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         try {
-
+            binding.progressBar.visibility = View.VISIBLE
             val linearLayoutManager = LinearLayoutManager(context)
             linearLayoutManager.isSmoothScrollbarEnabled = true
             binding.courseDetailRv.builder
@@ -154,115 +158,129 @@ class CourseDetailType1Fragment : Fragment() {
                     showHint()
                 }
             }
-
-
-            val typeToken = object : TypeToken<List<CourseDetailsResponse>>() {}.type
-            val list = AppObjectController.gsonMapperForLocal.fromJson<List<CourseDetailsResponse>>(
-                AppObjectController.getFirebaseRemoteConfig().getString("course_details"),
-                typeToken
-            )
-            val obj: CourseDetailsResponse? = list.find { it.courseId == courseId }
-            obj?.let { courseDetailsResponse ->
-                binding.courseTitle.text = courseDetailsResponse.courseTitle
-                binding.courseDesc.text = courseDetailsResponse.courseDescription
-
-                val df = DecimalFormat("###,###", DecimalFormatSymbols(Locale.US))
-                val enrollUser = df.format(courseDetailsResponse.courseEnrolledUser)
-                binding.tvEnrollUsers.text = enrollUser + " enrolled"
-
-                binding.tvRating.text = courseDetailsResponse.courseRating.toString()
-                binding.tvDuration.text = courseDetailsResponse.courseDuration.toString() + " Days"
-                videoUrl = courseDetailsResponse.videoUrl
-
-
-                Glide.with(requireActivity())
-                    .load(courseDetailsResponse.bgImage)
-                    .override(SIZE_ORIGINAL)
-                    .into(binding.bgTopIv)
-
-
-                val multi = MultiTransformation<Bitmap>(
-                    RoundedCornersTransformation(
-                        com.joshtalks.joshskills.core.Utils.dpToPx(ROUND_CORNER),
-                        0,
-                        RoundedCornersTransformation.CornerType.ALL
-                    )
-                )
-                Glide.with(requireActivity())
-                    .load(courseDetailsResponse.videoThumbnail)
-                    .apply(RequestOptions.bitmapTransform(multi))
-                    .override(SIZE_ORIGINAL)
-                    .into(binding.imageView)
-
-
-
-                binding.tvUpActualPrice.text =
-                    "₹" + String.format("%.2f", courseDetailsResponse.coursePrice)
-                binding.tvDownActualPrice.text =
-                    "₹" + String.format("%.2f", courseDetailsResponse.coursePrice)
-
-
-                if (amount > 0) {
-                    binding.tvUpOfferPrice.text =
-                        "₹" + String.format("%.2f", amount)
-                    binding.tvDownOfferPrice.text =
-                        "₹" + String.format("%.2f", amount)
-                } else {
-                    binding.tvUpOfferPrice.text =
-                        "₹" + String.format("%.2f", courseDetailsResponse.courseDiscountPrice)
-                    binding.tvDownOfferPrice.text =
-                        "₹" + String.format("%.2f", courseDetailsResponse.courseDiscountPrice)
-                }
-
-                binding.tvUpActualPrice.paintFlags =
-                    binding.tvUpActualPrice.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
-                binding.tvDownActualPrice.paintFlags =
-                    binding.tvDownActualPrice.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
-
-                val courseInformationList =
-                    courseDetailsResponse.courseInformation.sortedWith(compareBy { it.id })
-                courseInformationList.forEach {
-                    binding.courseDetailRv.addView(CourseDetailDataViewHeader(it))
-                }
-
-                binding.courseDetailRv.addView(DefaultTextViewHolder("Mujhe Kaun Padhayega"))
-                val sortedList = courseDetailsResponse.courseMentor.sortedWith(compareBy { it.id })
-                sortedList.forEach {
-                    binding.courseDetailRv.addView(CourseMentorViewHolder(it))
-                }
-
-                binding.courseDetailRv.addView(DefaultTextViewHolder("Course Curriculum"))
-
-                val listCourseStructure =
-                    courseDetailsResponse.courseStructure.sortedWith(compareBy { it.id })
-                listCourseStructure.forEach {
-                    binding.courseDetailRv.addView(CourseStructureViewHolder(it))
-                }
-
-                binding.courseDetailRv.addView(SingleImageViewHolder(courseDetailsResponse.feedbackImageUrl))
-
-                val titleView =
-                    requireActivity().findViewById<AppCompatTextView>(R.id.text_message_title)
-                titleView.text = courseDetailsResponse.courseName
-            }
-
+            getTestCourseDetails()
 
         } catch (ex: Exception) {
             ex.printStackTrace()
         }
-        AppObjectController.uiHandler.postDelayed({
-            if (binding.courseDesc.lineCount > 3) {
-                val lp = binding.upperContainer.layoutParams as ConstraintLayout.LayoutParams
-                lp.matchConstraintPercentHeight = 0.75f
-                binding.upperContainer.layoutParams = lp
-
-            }
-            //var set =  ConstraintSet()
-
-        }, 500)
-
 
     }
+
+    private fun getTestCourseDetails() {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val data = mapOf("test" to testId.toString())
+                val response: List<CourseDetailsResponse> =
+                    AppObjectController.signUpNetworkService.explorerCourseDetailsApiV2Async(data)
+                        .await()
+
+                CoroutineScope(Dispatchers.Main).launch {
+                    try {
+                        val course = response[0].course
+
+                        binding.courseTitle.text = course.name
+                        binding.courseDesc.text = course.description
+                        courseModel.courseName = course.name
+                        courseModel.course = testId
+
+
+                        val df = DecimalFormat("###,###", DecimalFormatSymbols(Locale.US))
+                        val enrollUser = df.format(course.totalEnrolled)
+                        binding.tvEnrollUsers.text = enrollUser + " enrolled"
+                        binding.tvRating.text = course.rating.toString()
+                        binding.tvDuration.text = course.duration.toString() + " Days"
+
+                        val test = response[0].test
+
+                        videoUrl = test.videoLink
+                        val multi = MultiTransformation<Bitmap>(
+                            RoundedCornersTransformation(
+                                com.joshtalks.joshskills.core.Utils.dpToPx(ROUND_CORNER),
+                                0,
+                                RoundedCornersTransformation.CornerType.ALL
+                            )
+                        )
+
+                        Glide.with(requireActivity())
+                            .load(test.thumbnail)
+                            .apply(RequestOptions.bitmapTransform(multi))
+                            .override(SIZE_ORIGINAL)
+                            .into(binding.imageView)
+
+                        binding.tvUpActualPrice.text =
+                            "₹" + String.format("%.2f", test.showAmount)
+                        binding.tvDownActualPrice.text =
+                            "₹" + String.format("%.2f", test.showAmount)
+
+                        binding.tvUpOfferPrice.text =
+                            "₹" + String.format("%.2f", test.amount)
+                        binding.tvDownOfferPrice.text =
+                            "₹" + String.format("%.2f", test.amount)
+                        courseModel.amount = test.amount
+
+
+                        binding.tvUpActualPrice.paintFlags =
+                            binding.tvUpActualPrice.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
+                        binding.tvDownActualPrice.paintFlags =
+                            binding.tvDownActualPrice.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
+
+
+                        val courseInformationList = response.sortedWith(compareBy { it.sequenceNo })
+                        courseInformationList.forEach {
+                            if (it.type == BASE_MESSAGE_TYPE.IM) {
+                                binding.courseDetailRv.addView(
+                                    SingleImageViewHolder(
+                                        it.url,
+                                        it.title
+                                    )
+                                )
+                            } else {
+                                binding.courseDetailRv.addView(CourseDetailDataViewHeader(it))
+                            }
+                        }
+                        binding.nestedScrollView.visibility = View.VISIBLE
+                        binding.progressBar.visibility = View.GONE
+
+                        val titleView =
+                            requireActivity().findViewById<AppCompatTextView>(R.id.text_message_title)
+                        //titleView.text = courseDetailsResponse.courseName
+                        WorkMangerAdmin.newCourseScreenEventWorker(course.name, testId.toString())
+                    } catch (ex: Exception) {
+                        Crashlytics.logException(ex)
+                    }
+                }
+
+                AppObjectController.uiHandler.postDelayed({
+                    if (binding.courseDesc.lineCount > 3) {
+                        val lp =
+                            binding.upperContainer.layoutParams as ConstraintLayout.LayoutParams
+                        lp.matchConstraintPercentHeight = 0.75f
+                        binding.upperContainer.layoutParams = lp
+
+                    }
+                    //var set =  ConstraintSet()
+                }, 500)
+
+            } catch (ex: HttpException) {
+                if (ex.code() == 500) {
+                    invalidCourseId()
+                }
+                ex.printStackTrace()
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+            }
+
+        }
+
+    }
+
+    private fun invalidCourseId() {
+        startActivity(Intent(requireContext(), CourseExploreActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
+        })
+        requireActivity().finishAndRemoveTask()
+    }
+
 
     private fun showHint() {
         if (isUserValidForOffer && profileBalloon != null && profileBalloon!!.isShowing.not()) {
@@ -285,22 +303,55 @@ class CourseDetailType1Fragment : Fragment() {
     }
 
     fun backPress() {
-        activity?.finish()
+        activity?.onBackPressed()
+        // activity?.finish()
     }
 
     fun buyCourse() {
-        RxBus2.publish(BuyCourseEventBus(testId.toString(), isUserValidForOffer))
+        RxBus2.publish(BuyCourseEventBus(testId.toString(), isUserValidForOffer, courseModel))
+    }
+
+    override fun onResume() {
+        super.onResume()
+        addObserver()
+    }
+
+
+    private fun addObserver() {
+        compositeDisposable.add(
+            RxBus2.listen(ImageShowEvent::class.java)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({
+
+                }, {
+                    it.printStackTrace()
+                })
+        )
+
+        compositeDisposable.add(
+            RxBus2.listen(VideoShowEvent::class.java)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({
+
+                }, {
+                    it.printStackTrace()
+                })
+        )
     }
 
     companion object {
 
         @JvmStatic
-        fun newInstance(testId: Int, courseId: Int, courseAmount: Double) =
+        fun newInstance(
+            testId: Int,
+            courseId: Int
+        ) =
             CourseDetailType1Fragment().apply {
                 arguments = Bundle().apply {
                     putInt(TEST_ID, testId)
                     putInt(COURSE_ID, courseId)
-                    putDouble(COURSE_AMOUNT, courseAmount)
                 }
             }
     }

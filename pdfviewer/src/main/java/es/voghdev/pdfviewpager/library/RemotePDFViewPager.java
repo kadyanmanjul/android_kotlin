@@ -20,6 +20,7 @@ import android.content.res.TypedArray;
 import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
+import android.view.View;
 
 import androidx.viewpager.widget.ViewPager;
 
@@ -29,7 +30,7 @@ import es.voghdev.pdfviewpager.library.remote.DownloadFile;
 import es.voghdev.pdfviewpager.library.remote.DownloadFileUrlConnectionImpl;
 import es.voghdev.pdfviewpager.library.util.FileUtil;
 
-public class RemotePDFViewPager extends ViewPager implements DownloadFile.Listener {
+public class RemotePDFViewPager extends VerticalViewPager implements DownloadFile.Listener {
     protected Context context;
     protected DownloadFile downloadFile;
     protected DownloadFile.Listener listener;
@@ -56,7 +57,6 @@ public class RemotePDFViewPager extends ViewPager implements DownloadFile.Listen
     public RemotePDFViewPager(Context context, AttributeSet attrs) {
         super(context, attrs);
         this.context = context;
-
         init(attrs);
     }
 
@@ -100,19 +100,6 @@ public class RemotePDFViewPager extends ViewPager implements DownloadFile.Listen
         listener.onProgressUpdate(progress, total);
     }
 
-    /**
-     * PDFViewPager uses PhotoView, so this bugfix should be added
-     * Issue explained in https://github.com/chrisbanes/PhotoView
-     */
-    @Override
-    public boolean onInterceptTouchEvent(MotionEvent ev) {
-        try {
-            return super.onInterceptTouchEvent(ev);
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
 
     public class NullListener implements DownloadFile.Listener {
         public void onSuccess(String url, String destinationPath) {
@@ -125,6 +112,17 @@ public class RemotePDFViewPager extends ViewPager implements DownloadFile.Listen
 
         public void onProgressUpdate(int progress, int total) {
             /* Empty */
+        }
+    }
+
+
+ @Override
+    public boolean onInterceptTouchEvent(MotionEvent ev) {
+        try {
+            return super.onInterceptTouchEvent(ev);
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+            return false;
         }
     }
 }
