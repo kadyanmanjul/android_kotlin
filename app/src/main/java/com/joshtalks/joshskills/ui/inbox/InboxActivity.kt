@@ -42,6 +42,7 @@ import com.joshtalks.joshskills.repository.local.eventbus.OpenCourseEventBus
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.local.model.ACTION_UPSELLING_POPUP
 import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.ProfileResponse
 import com.joshtalks.joshskills.repository.server.SearchLocality
 import com.joshtalks.joshskills.repository.server.UpdateUserLocality
@@ -466,7 +467,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
             findMoreLayout.visibility = View.GONE
             addEmptyView()
         }
-       // showAppUseWhenComeFirstTime()
+        // showAppUseWhenComeFirstTime()
         userProfileActivityNotExist()
     }
 
@@ -532,11 +533,12 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
             if (entity == null && entity2 == null) {
                 return
             }
-            if (isUserHaveNotPersonalDetails()) {
+            if (User.getInstance().dateOfBirth.isNullOrEmpty()) {
                 startActivity(getPersonalDetailsActivityIntent())
             }
 
         } catch (ex: Exception) {
+            ex.printStackTrace()
         }
 
     }

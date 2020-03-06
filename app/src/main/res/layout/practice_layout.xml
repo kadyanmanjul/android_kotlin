@@ -10,7 +10,6 @@
         android:paddingEnd="@dimen/_14sdp">
 
     <androidx.cardview.widget.CardView
-            android:foreground="?android:attr/selectableItemBackground"
             android:id="@+id/root_view"
             android:layout_width="@dimen/_216sdp"
             android:layout_height="@dimen/_170sdp"
@@ -23,6 +22,7 @@
             android:elevation="@dimen/_4sdp"
             android:enabled="true"
             android:focusable="true"
+            android:foreground="?android:attr/selectableItemBackground"
             app:cardBackgroundColor="@color/white"
             app:cardCornerRadius="@dimen/_4sdp"
             app:cardElevation="0dp"
@@ -44,7 +44,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
 
-                    android:layout_weight=".20"
+                    android:layout_weight=".22"
                     android:background="@drawable/round_rect_default"
                     android:backgroundTint="#EFEFEF"
                     android:clickable="false"
@@ -79,12 +79,13 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
-
                             android:autoSizeMaxTextSize="@dimen/font_18"
                             android:clickable="false"
                             android:enabled="false"
                             android:focusable="false"
                             android:gravity="center"
+                            android:paddingStart="@dimen/_4sdp"
+                            android:paddingEnd="@dimen/_4sdp"
                             android:textColor="@color/colorAccent"
                             android:textSize="@dimen/font_20"
                             app:layout_constraintBottom_toBottomOf="parent"
@@ -125,7 +126,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
-                    android:layout_weight=".80"
+                    android:layout_weight=".78"
                     android:clickable="false"
                     android:enabled="false"
                     android:focusable="false"

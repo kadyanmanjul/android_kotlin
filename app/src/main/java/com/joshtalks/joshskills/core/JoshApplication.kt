@@ -37,8 +37,7 @@ class JoshApplication : BranchApp() {
             FacebookSdk.addLoggingBehavior(LoggingBehavior.APP_EVENTS)
             Branch.enableDebugMode()
             IntegrationValidator.validate(this)
-             Timber.plant(Timber.DebugTree())
-
+            Timber.plant(Timber.DebugTree())
         }
         appObjectController = AppObjectController.init(this)
 

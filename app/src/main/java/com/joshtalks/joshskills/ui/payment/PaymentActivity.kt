@@ -21,11 +21,15 @@ import androidx.fragment.app.commit
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.crashlytics.android.Crashlytics
 import com.facebook.appevents.AppEventsConstants
+import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.analytics.FirebaseAnalytics.Event.ECOMMERCE_PURCHASE
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.CoreJoshActivity
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
+import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.BranchIOAnalytics
 import com.joshtalks.joshskills.core.service.WorkMangerAdmin
 import com.joshtalks.joshskills.databinding.ActivityPaymentBinding
@@ -120,32 +124,23 @@ class PaymentActivity : CoreJoshActivity(),
             return
         }
 
-        /*val obj: CourseDetailsResponse? = list?.find { it.courseId == courseID }
-        if (obj != null) {
-            obj.let {
-                courseName = it.courseName
-                amount = it.courseDiscountPrice
-            }
+        val flagForLandingPage =
+            AppObjectController.getFirebaseRemoteConfig().getBoolean("testing_landing_page")
 
-            activityPaymentBinding.container.visibility = View.VISIBLE
-            supportFragmentManager.commit(true) {
-                addToBackStack(CourseDetailType1Fragment::class.java.name)
-                setCustomAnimations(R.anim.slide_in_left, R.anim.slide_in_right)
-                add(
-                    R.id.container,
-                    CourseDetailType1Fragment.newInstance(testId.toInt(), courseID, amount),
-                    CourseDetailType1Fragment::class.java.name
-                )
-            }
-            WorkMangerAdmin.newCourseScreenEventWorker(courseName, testId)
+        if (flagForLandingPage) {
+            getTestCourseDetails()
         } else {
             activityPaymentBinding.oldCourseContainer.visibility = View.VISIBLE
             initRV()
             getCourseDetails()
             openWhatsAppHelp()
             userHaveSpecialDiscount()
-        }*/
-        getTestCourseDetails()
+        }
+
+        AppObjectController.firebaseAnalytics.resetAnalyticsData()
+        val bundle = Bundle()
+        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, testId)
+        AppObjectController.firebaseAnalytics.logEvent("open_test_id", bundle)
     }
 
     private fun getTestCourseDetails() {
@@ -154,7 +149,6 @@ class PaymentActivity : CoreJoshActivity(),
         val courseID = courseModel?.course ?: -99
         supportFragmentManager.commit(true) {
             addToBackStack(CourseDetailType1Fragment::class.java.name)
-//            setCustomAnimations(R.anim.slide_in_left, R.anim.slide_in_right)
             add(
                 R.id.container,
                 CourseDetailType1Fragment.newInstance(testId.toInt(), courseID),
@@ -199,7 +193,6 @@ class PaymentActivity : CoreJoshActivity(),
     private fun getCourseDetails() {
         CoroutineScope(Dispatchers.IO).launch {
             try {
-
                 val data = mapOf("test" to testId)
                 val courseDetailsModelList: List<CourseDetailsModel> =
                     AppObjectController.signUpNetworkService.explorerCourseDetails(data).await()
@@ -221,10 +214,6 @@ class PaymentActivity : CoreJoshActivity(),
                 if (courseName.isNotEmpty()) {
                     CoroutineScope(Dispatchers.Main).launch {
                         titleView.text = courseName
-                        AppObjectController.uiHandler.postDelayed({
-
-
-                        }, 500)
                     }
 
                 }
@@ -251,6 +240,18 @@ class PaymentActivity : CoreJoshActivity(),
     }
 
     override fun onPaymentSuccess(razorpayPaymentId: String) {
+        AppAnalytics.create(AnalyticsEvent.PURCHASE_COURSE.NAME)
+            .addParam(FirebaseAnalytics.Param.ITEM_ID, testId)
+            .addParam(FirebaseAnalytics.Param.PRICE, (courseModel?.amount ?: amount).toString())
+            .push()
+        AppObjectController.firebaseAnalytics.resetAnalyticsData()
+        val bundle = Bundle()
+        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, testId)
+        bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, courseName)
+        bundle.putDouble(FirebaseAnalytics.Param.PRICE, (courseModel?.amount ?: amount))
+        bundle.putString(FirebaseAnalytics.Param.TRANSACTION_ID, razorpayPaymentId)
+        bundle.putString(FirebaseAnalytics.Param.CURRENCY, "INR")
+        AppObjectController.firebaseAnalytics.logEvent(ECOMMERCE_PURCHASE, bundle)
         WorkMangerAdmin.newCourseScreenEventWorker(courseName, testId, buyCourse = true)
         val extras: HashMap<String, String> = HashMap()
         extras["test_id"] = testId

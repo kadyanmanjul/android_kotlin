@@ -20,6 +20,8 @@ import com.bumptech.glide.request.target.Target.SIZE_ORIGINAL
 import com.crashlytics.android.Crashlytics
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.USER_UNIQUE_ID
 import com.joshtalks.joshskills.core.custom_ui.decorator.LayoutMarginDecoration
 import com.joshtalks.joshskills.core.service.WorkMangerAdmin
 import com.joshtalks.joshskills.databinding.FragmentCourseDetailType1FragmentBinding
@@ -169,7 +171,10 @@ class CourseDetailType1Fragment : Fragment() {
     private fun getTestCourseDetails() {
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                val data = mapOf("test" to testId.toString())
+                val data = mapOf(
+                    "test" to testId.toString(),
+                    "gaid" to PrefManager.getStringValue(USER_UNIQUE_ID)
+                )
                 val response: List<CourseDetailsResponse> =
                     AppObjectController.signUpNetworkService.explorerCourseDetailsApiV2Async(data)
                         .await()

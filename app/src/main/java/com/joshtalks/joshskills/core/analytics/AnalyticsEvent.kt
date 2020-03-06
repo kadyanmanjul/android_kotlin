@@ -92,6 +92,7 @@ enum class AnalyticsEvent(val NAME: String) {
     NOTIFICATION_CLICKED("Notification Clicked"),
     REGISTRATION_COMPLETED("Registration_completed"),
     COURSE_STARTED("Course_Started"),
+    PURCHASE_COURSE("Purchase Course")
 
 
 }

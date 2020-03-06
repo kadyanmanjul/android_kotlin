@@ -160,6 +160,7 @@ internal class AppObjectController {
             DateTimeUtils.setTimeZone("UTC")
 
             firebaseAnalytics = FirebaseAnalytics.getInstance(joshApplication)
+            firebaseAnalytics.setAnalyticsCollectionEnabled(true)
             AppEventsLogger.activateApp(joshApplication)
             facebookEventLogger = AppEventsLogger.newLogger(joshApplication)
             AndroidThreeTen.init(joshApplication)

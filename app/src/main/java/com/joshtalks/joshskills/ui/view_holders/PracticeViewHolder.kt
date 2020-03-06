@@ -75,7 +75,7 @@ class PracticeViewHolder(activityRef: WeakReference<FragmentActivity>, message: 
             titleTv.text = this.title
             if (this.practiceEngagement.isNullOrEmpty()) {
                 sBuilder.append("Pending")
-                layoutP.height = Utils.dpToPx(getAppContext(), 190f)
+                layoutP.height = Utils.dpToPx(getAppContext(), 180f)
                 layoutP.width = Utils.dpToPx(getAppContext(), 260f)
                 layoutP.gravity = android.view.Gravity.START
                 setResourceInImageView(imageView, R.drawable.ic_pattern)

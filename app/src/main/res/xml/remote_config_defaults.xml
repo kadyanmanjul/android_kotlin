@@ -33,7 +33,6 @@
         <value>Buy Course</value>
     </entry>
 
-
     <entry>
         <key>terms_condition_url</key>
         <value>https://www.joshtalks.com/privacy-policy/</value>
@@ -50,6 +49,11 @@
         <key>SHARE_DOMAIN</key>
         <value>https://joshskill.page.link</value>
     </entry>
+    <entry>
+        <key>testing_landing_page</key>
+        <value>true</value>
+    </entry>
+
 
 
 </defaultsMap>

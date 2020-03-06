@@ -29,7 +29,6 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.integration.webp.decoder.WebpDrawable
@@ -53,6 +52,7 @@ import com.joshtalks.joshskills.core.Utils.getCurrentMediaVolume
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.custom_ui.JoshSnackBar
+import com.joshtalks.joshskills.core.custom_ui.SnappingLinearLayoutManager
 import com.joshtalks.joshskills.core.custom_ui.decorator.LayoutMarginDecoration
 import com.joshtalks.joshskills.core.custom_ui.progress.FlipProgressDialog
 import com.joshtalks.joshskills.core.io.AppDirectory
@@ -126,7 +126,7 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
     private lateinit var inboxEntity: InboxEntity
     private lateinit var emojiPopup: EmojiPopup
     private lateinit var activityRef: WeakReference<FragmentActivity>
-    private lateinit var linearLayoutManager: LinearLayoutManager
+    private lateinit var linearLayoutManager: SnappingLinearLayoutManager
     private lateinit var progressDialog: FlipProgressDialog
     private lateinit var internetAvailableStatus: Snackbar
     private lateinit var mBottomSheetBehaviour: BottomSheetBehavior<MaterialCardView>
@@ -379,7 +379,8 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
 
 
     private fun initRV() {
-        linearLayoutManager = LinearLayoutManager(this)
+        linearLayoutManager = SnappingLinearLayoutManager(this)
+        //  linearLayoutManager = LinearLayoutManager(this)
         linearLayoutManager.stackFromEnd = true
         linearLayoutManager.isSmoothScrollbarEnabled = true
         conversationBinding.chatRv.builder
@@ -772,7 +773,11 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
                 val temp = listChat.groupBy { it.created }
                 val tempList = temp.toSortedMap(compareBy { it })
                 tempList.forEach { (key, value) ->
-                    if (Utils.isSameDate(lastDay, key).not()) {
+                    if (Utils.isSameDate(
+                            lastDay,
+                            key
+                        ).not() || conversationBinding.chatRv.viewResolverCount == 0
+                    ) {
                         conversationBinding.chatRv.addView(TimeViewHolder(key))
                         lastDay = key
                     }
@@ -780,7 +785,9 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
                         if (chatModelLast != null && chatModelLast == chatModel && isNewChatViewAdd) {
                             isNewChatViewAdd = false
                             conversationBinding.chatRv.addView(NewMessageViewHolder("Aapki Nayi Classes"))
-                            conversationBinding.chatRv.layoutManager?.scrollToPosition(
+                            linearLayoutManager.smoothScrollToPosition(
+                                conversationBinding.chatRv,
+                                null,
                                 conversationBinding.chatRv.viewResolverCount - 1
                             )
                         }
@@ -792,7 +799,7 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
                 if (isNewChatViewAdd) {
                     scrollToEnd()
                 }
-               // conversationBinding.chatRv.refresh()
+                // conversationBinding.chatRv.refresh()
                 readMessageDatabaseUpdate()
             } catch (ex: Exception) {
             }

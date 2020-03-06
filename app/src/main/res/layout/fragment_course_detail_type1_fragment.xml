@@ -123,7 +123,7 @@
                                     android:layout_height="wrap_content"
                                     android:layout_below="@id/course_desc"
                                     android:orientation="horizontal"
-                                    android:paddingTop="@dimen/_8sdp">
+                                    android:paddingTop="@dimen/_12sdp">
 
                                 <androidx.appcompat.widget.AppCompatTextView
                                         android:id="@+id/tv_rating"

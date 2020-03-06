@@ -1,5 +1,6 @@
 package com.joshtalks.joshskills.core.analytics;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 
 import com.clevertap.android.sdk.CleverTapAPI;
@@ -15,6 +16,7 @@ import java.util.Objects;
 
 public class AppAnalytics {
 
+    @SuppressLint("StaticFieldLeak")
     private static CleverTapAPI cleverTapAnalytics;
     private static FirebaseAnalytics firebaseAnalytics;
     private final String event;
@@ -106,15 +108,15 @@ public class AppAnalytics {
         return formatted.toString();
     }
 
+    public void pushOnCleverTap(){
+        formatParameters();
+        pushToCleverTap();
+    }
+
     public void push() {
-
-        if (BuildConfig.DEBUG)
-            return;
-
         formatParameters();
         pushToFirebase();
         pushToCleverTap();
-
     }
 
     private void formatParameters() {
