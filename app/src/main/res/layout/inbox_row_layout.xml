@@ -1,114 +1,142 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/root_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:clickable="true"
-        android:focusable="true"
         android:background="@color/white"
-        android:paddingStart="@dimen/_15sdp"
-        android:paddingTop="@dimen/_10sdp"
-        android:paddingEnd="@dimen/_15sdp">
+        android:clickable="true"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        android:elevation="0dp"
+        android:enabled="true"
+        android:focusable="true"
+        android:foreground="?android:attr/selectableItemBackground"
+        app:cardBackgroundColor="@color/white"
+        app:cardCornerRadius="0dp"
+        app:cardElevation="0dp"
+        app:contentPaddingLeft="0dp"
+        app:contentPaddingRight="0dp"
+        app:contentPaddingTop="0dp"
+        tools:cardBackgroundColor="@color/white"
+        tools:cardPreventCornerOverlap="false">
 
-    <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/profile_image"
-            android:layout_width="@dimen/_48sdp"
-            android:layout_height="@dimen/_48sdp"
-            android:layout_marginEnd="@dimen/_10sdp"
-            android:layout_marginBottom="@dimen/_10sdp"
-            android:clickable="true"
-            android:focusable="true" />
+    <RelativeLayout
+            android:clickable="false"
+            android:enabled="false"
+            android:focusable="false"
 
-    <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/tv_name"
-            fontPath="fonts/OpenSans-SemiBold.ttf"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_5sdp"
-            android:layout_toStartOf="@id/tv_last_message_time"
-            android:layout_toEndOf="@id/profile_image"
-            android:clickable="true"
-            android:ellipsize="end"
-            android:focusable="true"
-            android:maxLines="1"
-            android:paddingEnd="@dimen/_10sdp"
-            android:text=""
-            android:textColor="@color/font_color"
-            android:textSize="@dimen/font_18"
-            tools:ignore="MissingPrefix" />
-
-
-    <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/tv_last_message_status"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/tv_name"
-            android:layout_marginTop="@dimen/_10sdp"
-            android:layout_marginEnd="@dimen/_4sdp"
-            android:layout_toEndOf="@id/profile_image"
-            android:clickable="true"
-            android:focusable="true"
-            android:gravity="start" />
-
-
-    <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/tv_last_message"
-            fontPath="fonts/OpenSans-Regular.ttf"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/tv_name"
-            android:layout_marginTop="@dimen/_8sdp"
-            android:layout_marginEnd="@dimen/_8sdp"
-            android:layout_toEndOf="@id/tv_last_message_status"
-            android:clickable="true"
-            android:ellipsize="end"
-            android:focusable="true"
-            android:gravity="start"
-            android:maxLines="1"
-            android:text=""
-            android:textColor="@color/gray_79"
-            android:textSize="@dimen/font_14"
-            tools:ignore="MissingPrefix" />
-
-    <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/tv_last_message_time"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignTop="@id/tv_name"
-            android:layout_alignParentEnd="true"
-            android:layout_marginTop="@dimen/_5sdp"
-            android:clickable="true"
-            android:focusable="true"
-            android:maxLines="1"
-            android:text=""
-            android:textSize="@dimen/font_11_5"
-
-            />
-
-    <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/tv_notification"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignTop="@id/tv_last_message"
-            android:layout_alignParentEnd="true"
-            android:layout_marginTop="3dp"
-            android:clickable="true"
-            android:focusable="true"
-            android:maxLines="1"
-            android:text=""
-            android:textSize="@dimen/font_11_5"
-
-            />
-
-    <LinearLayout
-            android:id="@+id/horizontal_line"
             android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_below="@id/profile_image"
-            android:layout_marginStart="62dp"
-            android:background="@color/gray_e6"
-            android:orientation="horizontal" />
+            android:layout_height="wrap_content"
+            android:paddingStart="@dimen/_15sdp"
+            android:paddingTop="@dimen/_10sdp"
+            android:paddingEnd="@dimen/_15sdp">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/profile_image"
+                android:layout_width="@dimen/_48sdp"
+                android:layout_height="@dimen/_48sdp"
+                android:layout_marginEnd="@dimen/_10sdp"
+                android:layout_marginBottom="@dimen/_10sdp"
+                android:clickable="false"
+                android:enabled="false"
+                android:focusable="false" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_name"
+                fontPath="fonts/OpenSans-SemiBold.ttf"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:layout_toStartOf="@id/tv_last_message_time"
+                android:layout_toEndOf="@id/profile_image"
+                android:clickable="false"
+                android:ellipsize="end"
+                android:enabled="false"
+                android:focusable="false"
+                android:maxLines="1"
+                android:paddingEnd="@dimen/_10sdp"
+                android:text=""
+                android:textColor="@color/font_color"
+                android:textSize="@dimen/font_18"
+                tools:ignore="MissingPrefix" />
 
 
-</RelativeLayout>
+        <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/tv_last_message_status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tv_name"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:layout_marginEnd="@dimen/_4sdp"
+                android:layout_toEndOf="@id/profile_image"
+                android:clickable="false"
+                android:enabled="false"
+                android:focusable="false"
+                android:gravity="start" />
+
+
+        <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_last_message"
+                fontPath="fonts/OpenSans-Regular.ttf"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tv_name"
+                android:layout_marginTop="@dimen/_8sdp"
+                android:layout_marginEnd="@dimen/_8sdp"
+                android:layout_toEndOf="@id/tv_last_message_status"
+                android:clickable="false"
+                android:ellipsize="end"
+                android:enabled="false"
+                android:focusable="false"
+                android:gravity="start"
+                android:maxLines="1"
+                android:text=""
+                android:textColor="@color/gray_79"
+                android:textSize="@dimen/font_14"
+                tools:ignore="MissingPrefix" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_last_message_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@id/tv_name"
+                android:layout_alignParentEnd="true"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:clickable="true"
+                android:focusable="true"
+                android:maxLines="1"
+                android:text=""
+                android:textSize="@dimen/font_11_5"
+
+                />
+
+        <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_notification"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@id/tv_last_message"
+                android:layout_alignParentEnd="true"
+                android:layout_marginTop="3dp"
+                android:clickable="false"
+                android:enabled="false"
+                android:focusable="false"
+                android:maxLines="1"
+                android:text=""
+                android:textSize="@dimen/font_11_5"
+
+                />
+
+        <LinearLayout
+                android:id="@+id/horizontal_line"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_below="@id/profile_image"
+                android:layout_marginStart="62dp"
+                android:background="@color/gray_e6"
+                android:orientation="horizontal" />
+
+
+    </RelativeLayout>
+</androidx.cardview.widget.CardView>

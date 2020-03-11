@@ -36,7 +36,6 @@ import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
 import com.joshtalks.joshskills.repository.local.entity.DOWNLOAD_STATUS
 import com.joshtalks.joshskills.repository.local.entity.MESSAGE_DELIVER_STATUS
-import com.joshtalks.joshskills.repository.local.eventbus.AudioPlayerPauseEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.MediaEngageEventBus
 import com.joshtalks.joshskills.repository.local.model.ListenGraph
 import com.joshtalks.joshskills.repository.local.model.Mentor
@@ -804,12 +803,6 @@ class JcPlayerView : LinearLayout, View.OnClickListener, SeekBar.OnSeekBarChange
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
-        compositeDisposable.add(RxBus2.listen(AudioPlayerPauseEventBus::class.java)
-            .subscribeOn(Schedulers.computation())
-            .subscribe {
-                Log.e("aaya", "aya")
-
-            })
 
     }
 

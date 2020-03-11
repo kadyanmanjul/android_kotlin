@@ -10,18 +10,18 @@ import com.mindorks.placeholderview.annotations.Resolve
 import com.mindorks.placeholderview.annotations.View
 
 @Layout(R.layout.suggestion_item_layout)
-class SuggestionViewHolder(var suggestion: String) {
+class SuggestionViewHolder(private var suggestion: String) {
     @View(R.id.text_view)
-    lateinit var text_view: AppCompatTextView
+    lateinit var textView: AppCompatTextView
 
     @Resolve
     fun onInflateView() {
-        text_view.text = suggestion
+        textView.text = suggestion
     }
 
     @Click(R.id.text_view)
     fun onSelect() {
-        text_view.isSelected = true
+        textView.isSelected = true
         RxBus2.publish(TagMessageEventBus(suggestion))
 
     }

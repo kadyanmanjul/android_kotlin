@@ -80,9 +80,7 @@ class HelpViewModel(application: Application) : AndroidViewModel(application) {
                     AppObjectController.chatNetworkService.requestUploadMediaAsync(obj).await()
                 val statusCode: Int = uploadOnS3Server(responseObj, mediaPath)
                 if (statusCode in 200..210) {
-                    val url: String =
-                        responseObj.url.plus(File.separator).plus(responseObj.fields["key"])
-                    return@async url
+                    return@async responseObj.url.plus(File.separator).plus(responseObj.fields["key"])
                 } else {
                     return@async null
                 }

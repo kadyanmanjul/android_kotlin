@@ -340,7 +340,7 @@ object Utils {
     }
 
 
-    fun getBitmapFromDrawable(context: Context, drawableId: Int): Bitmap {
+    private fun getBitmapFromDrawable(context: Context, drawableId: Int): Bitmap {
         val drawable = AppCompatResources.getDrawable(context, drawableId)
 
         if (drawable is BitmapDrawable) {
@@ -533,7 +533,7 @@ object Utils {
         textView.post { textView.text = text }
     }
 
-    fun printAllIntent(intent: Intent) {
+    /*fun printAllIntent(intent: Intent) {
         val bundle = intent.extras
         if (bundle != null) {
             for (key in bundle.keySet()) {
@@ -543,7 +543,7 @@ object Utils {
                 )
             }
         }
-    }
+    }*/
 
     fun openFile(activity: Activity, url: String) {
 
@@ -590,8 +590,8 @@ object Utils {
     }
 
     fun getExpectedLines(textSize: Float, value: String): Int {
-        var bounds = Rect()
-        var paint = Paint()
+        val bounds = Rect()
+        val paint = Paint()
         paint.textSize = textSize
         paint.getTextBounds(value, 0, value.length, bounds)
         val numLines = ceil((bounds.width().toFloat() / textSize).toDouble()).toInt()
@@ -630,7 +630,7 @@ object Utils {
                 "TODAY"
             }
             isYesterday(date) -> {
-                "Yesterday"
+                "YESTERDAY"
             }
             else -> {
                 DateTimeUtils.formatWithStyle(date, DateTimeStyle.LONG)

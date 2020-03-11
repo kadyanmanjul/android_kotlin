@@ -1,8 +1,6 @@
 package com.joshtalks.joshskills.ui.referral
 
-
 import android.content.Intent
-import android.graphics.Bitmap
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -26,7 +24,6 @@ import jp.wasabeef.glide.transformations.RoundedCornersTransformation
 
 private const val ARG_COURSE_ID = "course_id"
 private const val ARG_PLACEHOLDER_IMAGE = "placeholder_url"
-
 
 class PromotionDialogFragment : DialogFragment() {
     private var courseId: String? = null
@@ -81,7 +78,7 @@ class PromotionDialogFragment : DialogFragment() {
         val width = AppObjectController.screenWidth * .8
         val height = AppObjectController.screenHeight * .7
 
-        val multi = MultiTransformation<Bitmap>(
+        val multi = MultiTransformation(
             RoundedCornersTransformation(
                 Utils.dpToPx(ROUND_CORNER),
                 8,

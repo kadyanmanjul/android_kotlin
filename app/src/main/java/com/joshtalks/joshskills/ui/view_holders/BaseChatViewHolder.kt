@@ -4,7 +4,6 @@ import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
-import android.widget.LinearLayout
 import android.widget.RelativeLayout
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.fragment.app.FragmentActivity
@@ -30,14 +29,14 @@ abstract class BaseChatViewHolder(
     )
 
 
-    fun getLeftPaddingForReceiver() = com.vanniktech.emoji.Utils.dpToPx(getAppContext(), 7f)
-    fun getRightPaddingForReceiver() = com.vanniktech.emoji.Utils.dpToPx(getAppContext(), 80f)
-    fun getMarginForReceiver() = com.vanniktech.emoji.Utils.dpToPx(getAppContext(), 0f)
+    private fun getLeftPaddingForReceiver() = com.vanniktech.emoji.Utils.dpToPx(getAppContext(), 7f)
+    private fun getRightPaddingForReceiver() =
+        com.vanniktech.emoji.Utils.dpToPx(getAppContext(), 80f)
 
-
-    fun getLeftPaddingForSender() = com.vanniktech.emoji.Utils.dpToPx(getAppContext(), 80f)
-    fun getRightPaddingForSender() = com.vanniktech.emoji.Utils.dpToPx(getAppContext(), 7f)
-    fun getMarginForSender() = com.vanniktech.emoji.Utils.dpToPx(getAppContext(), 0f)
+    private fun getMarginForReceiver() = com.vanniktech.emoji.Utils.dpToPx(getAppContext(), 0f)
+    private fun getLeftPaddingForSender() = com.vanniktech.emoji.Utils.dpToPx(getAppContext(), 80f)
+    private fun getRightPaddingForSender() = com.vanniktech.emoji.Utils.dpToPx(getAppContext(), 7f)
+    private fun getMarginForSender() = com.vanniktech.emoji.Utils.dpToPx(getAppContext(), 0f)
 
 
     fun updateView(
@@ -102,9 +101,8 @@ abstract class BaseChatViewHolder(
             }
 
 
-
-            when {
-                message.messageDeliverStatus == MESSAGE_DELIVER_STATUS.SENT -> {
+            when (message.messageDeliverStatus) {
+                MESSAGE_DELIVER_STATUS.SENT -> {
 
                     text_message_time.setCompoundDrawablesWithIntrinsicBounds(
                         0,
@@ -113,7 +111,7 @@ abstract class BaseChatViewHolder(
                         0
                     )
                 }
-                message.messageDeliverStatus == MESSAGE_DELIVER_STATUS.SENT_RECEIVED -> text_message_time.setCompoundDrawablesWithIntrinsicBounds(
+                MESSAGE_DELIVER_STATUS.SENT_RECEIVED -> text_message_time.setCompoundDrawablesWithIntrinsicBounds(
                     0,
                     0,
                     R.drawable.ic_sent_message_d_tick,
@@ -185,66 +183,7 @@ abstract class BaseChatViewHolder(
         }
     }
 
-    companion object {
-        private val senderParams = LinearLayout.LayoutParams(
-            ViewGroup.LayoutParams.WRAP_CONTENT,
-            ViewGroup.LayoutParams.WRAP_CONTENT
-        ).apply {
-            weight = 1.0f
-            gravity = Gravity.END
-
-        }
-
-        private val receiverParam = LinearLayout.LayoutParams(
-            ViewGroup.LayoutParams.WRAP_CONTENT,
-            ViewGroup.LayoutParams.WRAP_CONTENT
-        ).apply {
-            weight = 1.0f
-            gravity = Gravity.START
-        }
-        private var START_MARGIN = 80F
-        private var END_MARGIN = 10F
-
-
-        fun getSenderParams(): LinearLayout.LayoutParams {
-            //senderParams.resolveLayoutDirection()
-            /*senderParams.setMargins(
-                com.vanniktech.emoji.Utils.dpToPx(
-                    AppObjectController.joshApplication,
-                    80f
-                ),
-                0,
-                com.vanniktech.emoji.Utils.dpToPx(AppObjectController.joshApplication, 0f),
-                0
-            )*/
-            return senderParams
-
-        }
-
-        fun getReceiverParams(): LinearLayout.LayoutParams {
-            receiverParam.gravity = Gravity.END
-
-            /*receiverParam.setMargins(
-                com.vanniktech.emoji.Utils.dpToPx(
-                    AppObjectController.joshApplication,
-                    0f
-                ),
-                0,
-                com.vanniktech.emoji.Utils.dpToPx(
-                    AppObjectController.joshApplication,
-                    80f
-                ),
-                0
-            )*/
-            return receiverParam
-        }
-
-
-    }
-
     open fun onViewInflated() {
         RxBus2.publish(message)
     }
-
-
 }

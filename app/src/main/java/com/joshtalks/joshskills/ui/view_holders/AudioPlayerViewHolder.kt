@@ -1,7 +1,6 @@
 package com.joshtalks.joshskills.ui.view_holders
 
-import android.os.Handler
-import android.os.Looper
+
 import android.view.Gravity
 import android.view.ViewGroup
 import android.view.animation.Animation
@@ -42,7 +41,6 @@ import com.tonyodev.fetch2.Error
 import com.tonyodev.fetch2.FetchListener
 import com.tonyodev.fetch2core.DownloadBlock
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -103,12 +101,9 @@ class AudioPlayerViewHolder(activityRef: WeakReference<FragmentActivity>, messag
     @View(R.id.seekBar_thumb_virtual)
     lateinit var seekBarThumb: AppCompatImageView
 
-
-    var animBlink: Animation? = null
-
-
+    private var animBlink: Animation? = null
     lateinit var audioPlayerViewHolder: AudioPlayerViewHolder
-    var duration: Int = 0
+    private var duration: Int = 0
     private val compositeDisposable = CompositeDisposable()
 
 
@@ -497,32 +492,8 @@ class AudioPlayerViewHolder(activityRef: WeakReference<FragmentActivity>, messag
         }
     }
 
-
     @Recycle
     fun onRecycled() {
         compositeDisposable.clear()
-    }
-
-    private fun subscribeAudioPlayer() {
-        compositeDisposable.add(
-            RxBus2.listen(SeekBarProgressEventBus::class.java)
-                .subscribeOn(Schedulers.computation())
-                .subscribe({
-                    if (it.cId == message.chatId) {
-                        Handler(Looper.getMainLooper()).post {
-                            seekBar.progress = it.progress
-                            txtCurrentDurationTV.text = PlayerUtil.toTimeSongString(it.progress)
-                        }
-                    }
-                }, {
-                    it.printStackTrace()
-                })
-        )
-        compositeDisposable.add(RxBus2.listen(AudioPlayerPauseEventBus::class.java)
-            .subscribeOn(Schedulers.computation())
-            .subscribe {
-
-
-            })
     }
 }

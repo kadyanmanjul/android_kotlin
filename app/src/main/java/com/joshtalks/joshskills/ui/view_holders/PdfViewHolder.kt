@@ -2,13 +2,11 @@ package com.joshtalks.joshskills.ui.view_holders
 
 import android.net.Uri
 import android.widget.FrameLayout
-import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.fragment.app.FragmentActivity
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.PermissionUtils
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.io.AppDirectory
@@ -41,53 +39,37 @@ import java.lang.ref.WeakReference
 class PdfViewHolder(activityRef: WeakReference<FragmentActivity>, message: ChatModel) :
     BaseChatViewHolder(activityRef, message) {
 
-    var context = AppObjectController.joshApplication
-
-
     @View(R.id.root_view)
-    lateinit var root_view: FrameLayout
+    lateinit var rootView: FrameLayout
 
     @View(R.id.root_sub_view)
-    lateinit var root_sub_view: FrameLayout
+    lateinit var rootSubView: FrameLayout
 
     @View(R.id.message_view)
-    lateinit var message_view: android.view.View
+    lateinit var messageView: android.view.View
 
     @View(R.id.tv_pdf_info)
-    lateinit var tv_pdf_info: TextView
-
+    lateinit var tvPdfInfo: TextView
 
     @View(R.id.text_message_time)
-    lateinit var text_message_time: AppCompatTextView
-
+    lateinit var receivedMessageTime: AppCompatTextView
 
     @View(R.id.tv_message_detail)
     lateinit var messageDetail: AppCompatTextView
 
-
     @View(R.id.image_view)
-    lateinit var image_view: AppCompatImageView
-
-
-    @View(R.id.download_container)
-    lateinit var download_container: FrameLayout
+    lateinit var imageView: AppCompatImageView
 
     @View(R.id.iv_cancel_download)
-    lateinit var iv_cancel_download: AppCompatImageView
+    lateinit var ivCancelDownload: AppCompatImageView
 
     @View(R.id.iv_start_download)
-    lateinit var iv_start_download: AppCompatImageView
-
+    lateinit var ivStartDownload: AppCompatImageView
 
     @View(R.id.progress_dialog)
-    lateinit var progress_dialog: ProgressWheel
-
-    @View(R.id.ll_container)
-    lateinit var ll_container: RelativeLayout
-
+    lateinit var progressDialog: ProgressWheel
 
     lateinit var pdfViewHolder: PdfViewHolder
-
 
     private var downloadListener = object : FetchListener {
         override fun onAdded(download: Download) {
@@ -167,24 +149,24 @@ class PdfViewHolder(activityRef: WeakReference<FragmentActivity>, message: ChatM
     override fun onViewInflated() {
         super.onViewInflated()
         pdfViewHolder = this
-        text_message_time.text = Utils.messageTimeConversion(message.created)
-        updateTime(text_message_time)
+        receivedMessageTime.text = Utils.messageTimeConversion(message.created)
+        updateTime(receivedMessageTime)
 
         message.sender?.let {
-            updateView(it, root_view, root_sub_view, message_view)
+            updateView(it, rootView, rootSubView, messageView)
         }
 
         message.question?.run {
             this.pdfList?.getOrNull(0)?.let { pdfObj ->
                 try {
                     pdfObj.pages?.let {
-                        messageDetail.text = context.getString(R.string.pdf_desc, it)
+                        messageDetail.text = getAppContext().getString(R.string.pdf_desc, it)
                     }
                     Uri.parse(pdfObj.url).let {
-                        tv_pdf_info.text = it.pathSegments[it.pathSegments.size - 1].split(".")[0]
+                        tvPdfInfo.text = it.pathSegments[it.pathSegments.size - 1].split(".")[0]
                     }
                     Utils.fileUrl(pdfObj.thumbnail, pdfObj.thumbnail)?.run {
-                        setImageInImageView(image_view, this)
+                        setImageInImageView(imageView, this)
                     }
 
                     if (message.downloadStatus == DOWNLOAD_STATUS.DOWNLOADING) {
@@ -206,23 +188,21 @@ class PdfViewHolder(activityRef: WeakReference<FragmentActivity>, message: ChatM
     }
 
     private fun fileDownloadSuccess() {
-        iv_start_download.visibility = android.view.View.GONE
-        progress_dialog.visibility = android.view.View.GONE
-        iv_cancel_download.visibility = android.view.View.GONE
+        ivStartDownload.visibility = android.view.View.GONE
+        progressDialog.visibility = android.view.View.GONE
+        ivCancelDownload.visibility = android.view.View.GONE
     }
 
     private fun fileNotDownloadView() {
-        iv_start_download.visibility = android.view.View.VISIBLE
-        progress_dialog.visibility = android.view.View.GONE
-        iv_cancel_download.visibility = android.view.View.GONE
-
+        ivStartDownload.visibility = android.view.View.VISIBLE
+        progressDialog.visibility = android.view.View.GONE
+        ivCancelDownload.visibility = android.view.View.GONE
     }
 
     private fun fileDownloadingInProgressView() {
-        iv_start_download.visibility = android.view.View.GONE
-        progress_dialog.visibility = android.view.View.VISIBLE
-        iv_cancel_download.visibility = android.view.View.VISIBLE
-
+        ivStartDownload.visibility = android.view.View.GONE
+        progressDialog.visibility = android.view.View.VISIBLE
+        ivCancelDownload.visibility = android.view.View.VISIBLE
     }
 
 

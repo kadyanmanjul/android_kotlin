@@ -13,8 +13,6 @@ import com.joshtalks.joshskills.R;
 
 public class AttachmentView extends FrameLayout {
 
-    private static final String TAG = AudioView.class.getSimpleName();
-
     private final AppCompatImageView imageView;
     private final AppCompatTextView textView;
     private String tag;

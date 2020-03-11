@@ -7,7 +7,6 @@ import androidx.preference.PreferenceManager
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.repository.local.AppDatabase
 
-const val COURSE_STARTED_FB_EVENT = "course_started_event"
 const val USER_UNIQUE_ID = "user_unique_id"
 const val FIRST_COURSE_BUY="first_course_buy"
 const val FIRST_TIME_OFFER_SHOW="first_time_offer_show"

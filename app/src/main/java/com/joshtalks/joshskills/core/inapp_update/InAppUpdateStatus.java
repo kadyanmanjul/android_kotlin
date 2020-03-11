@@ -5,10 +5,6 @@ import com.google.android.play.core.install.InstallState;
 import com.google.android.play.core.install.model.InstallStatus;
 import com.google.android.play.core.install.model.UpdateAvailability;
 
-/**
- * This class is just a wrapper for AppUpdateInfo and InstallState
- * Used by InAppUpdateManager
- */
 public class InAppUpdateStatus {
 
     private static final int NO_UPDATE = 0;

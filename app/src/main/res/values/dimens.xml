@@ -27,18 +27,9 @@
     <dimen name="font_20">20sp</dimen>
     <dimen name="font_22">22sp</dimen>
 
-    <dimen name="emoji_size_default">20sp</dimen>
-    <dimen name="emoji_size_only_emojis">40sp</dimen>
-    <dimen name="emoji_size_single_emoji">60sp</dimen>
-
 
     <dimen name="spacing">16dp</dimen>
 
-
-    <dimen name="super_bottom_sheet_width">0dp</dimen>
-    <dimen name="super_bottom_sheet_radius">16dp</dimen>
-    <dimen name="super_bottom_sheet_peek_height">64dp</dimen>
-    <item name="super_bottom_sheet_dim" format="float" type="dimen">0.6</item>
 
     <dimen name="touch_default">32dp</dimen>
     <dimen name="icon_with">65dp</dimen>

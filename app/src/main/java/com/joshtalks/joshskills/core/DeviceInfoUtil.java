@@ -20,7 +20,6 @@ import github.nisrulz.easydeviceinfo.base.EasyConfigMod;
 import github.nisrulz.easydeviceinfo.base.EasyCpuMod;
 import github.nisrulz.easydeviceinfo.base.EasyDeviceMod;
 import github.nisrulz.easydeviceinfo.base.EasyDisplayMod;
-import github.nisrulz.easydeviceinfo.base.EasyIdMod;
 import github.nisrulz.easydeviceinfo.base.EasyLocationMod;
 import github.nisrulz.easydeviceinfo.base.EasyMemoryMod;
 import github.nisrulz.easydeviceinfo.base.EasyNetworkMod;
@@ -41,20 +40,6 @@ public class DeviceInfoUtil {
             // Enable Debugging when in Debug build
             if (BuildConfig.DEBUG) {
                 EasyDeviceInfo.debug();
-            }
-
-
-            // ID Mod
-            EasyIdMod easyIdMod = new EasyIdMod(context);
-
-            String[] emailIds = easyIdMod.getAccounts();
-            StringBuilder emailString = new StringBuilder();
-            if (emailIds != null && emailIds.length > 0) {
-                for (String e : emailIds) {
-                    emailString.append(e).append("\n");
-                }
-            } else {
-                emailString.append("-");
             }
 
 

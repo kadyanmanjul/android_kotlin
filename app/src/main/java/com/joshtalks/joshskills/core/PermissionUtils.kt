@@ -103,20 +103,6 @@ object PermissionUtils {
     }
 
 
-    fun cameraStorageReadAndWritePermission(
-        activity: Activity?,
-        multiplePermissionsListener: MultiplePermissionsListener
-    ) {
-        Dexter.withActivity(activity)
-            .withPermissions(
-                Manifest.permission.CAMERA,
-                Manifest.permission.READ_EXTERNAL_STORAGE,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE
-            )
-            .withListener(multiplePermissionsListener).check()
-    }
-
-
     fun cameraStoragePermissionPermanentlyDeniedDialog(
         activity: Activity,
         message: Int = R.string.camera_permission_message

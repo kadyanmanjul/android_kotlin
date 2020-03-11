@@ -10,8 +10,6 @@ import com.joshtalks.joshskills.ui.inbox.COURSE_EXPLORER_WITHOUT_CODE
 
 
 abstract class CoreJoshActivity : BaseActivity() {
-
-
     override fun onStart() {
         super.onStart()
         try {
@@ -52,7 +50,6 @@ abstract class CoreJoshActivity : BaseActivity() {
     val connectObserable = publisher.share().replay()
 
 }
-
 */
 
 

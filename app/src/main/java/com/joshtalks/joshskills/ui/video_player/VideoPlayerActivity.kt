@@ -28,8 +28,6 @@ import com.joshtalks.joshskills.ui.pdfviewer.COURSE_NAME
 const val VIDEO_OBJECT = "video_"
 
 class VideoPlayerActivity : BaseActivity(), PlayerListener {
-
-
     override fun onPlayerReady() {
         if (graph != null) {
             graph?.endTime = binding.pvPlayer.player!!.currentPosition
@@ -69,9 +67,9 @@ class VideoPlayerActivity : BaseActivity(), PlayerListener {
     private lateinit var binding: ActivityVideoPlayer1Binding
     private lateinit var chatObject: ChatModel
     private lateinit var exoProgress: DefaultTimeBar
-    var videoViewGraphList = mutableSetOf<ListenGraph>()
-    var graph: ListenGraph? = null
-    var lastPos: Long = 0
+    private var videoViewGraphList = mutableSetOf<ListenGraph>()
+    private var graph: ListenGraph? = null
+    private var lastPos: Long = 0
 
 
     override fun onCreate(savedInstanceState: Bundle?) {

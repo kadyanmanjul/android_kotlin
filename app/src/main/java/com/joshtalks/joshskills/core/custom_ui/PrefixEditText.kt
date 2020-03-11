@@ -12,11 +12,6 @@ import androidx.appcompat.widget.AppCompatEditText
 import com.joshtalks.joshskills.R
 import kotlin.properties.Delegates
 
-/**
- * [AppCompatEditText] with easy prefix and suffix support.
- *
- * Inspired by https://gist.github.com/morristech/5480419
- */
 class PrefixEditText @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet,

@@ -7,14 +7,14 @@ import com.mindorks.placeholderview.annotations.Resolve
 import com.mindorks.placeholderview.annotations.View
 
 @Layout(R.layout.unread_message_view)
-class UnreadMessageViewHolder(var unread: Int) : BaseCell() {
+class UnreadMessageViewHolder(private var unread: Int) : BaseCell() {
 
     @View(R.id.tv_unread)
-    lateinit var tv_unread: AppCompatTextView
+    lateinit var tvUnread: AppCompatTextView
 
 
     @Resolve
     fun onResolved() {
-        tv_unread.text = getAppContext().getString(R.string.unread_message, unread.toString())
+        tvUnread.text = getAppContext().getString(R.string.unread_message, unread.toString())
     }
 }

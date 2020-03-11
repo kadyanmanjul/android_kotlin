@@ -40,8 +40,8 @@ class PaymentProcessFragment : DialogFragment() {
     private lateinit var paymentProcessFragmentBinding: PaymentProcessFragmentBinding
     private var timer = Timer()
 
-    var animAlpha: Animation? = null
-    var animMoveToTop: Animation? = null
+    private var animAlpha: Animation? = null
+    private var animMoveToTop: Animation? = null
 
     companion object {
         @JvmStatic

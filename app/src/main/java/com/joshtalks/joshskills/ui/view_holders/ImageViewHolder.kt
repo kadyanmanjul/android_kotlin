@@ -38,27 +38,27 @@ class ImageViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
 
 
     @View(R.id.text_message_time)
-    lateinit var text_message_time: AppCompatTextView
+    lateinit var textMessageTime: AppCompatTextView
 
 
     @View(R.id.root_view)
-    lateinit var root_view: FrameLayout
+    lateinit var rootView: FrameLayout
 
     @View(R.id.root_sub_view)
-    lateinit var root_sub_view: FrameLayout
+    lateinit var rootSubView: FrameLayout
 
     @View(R.id.message_view)
-    lateinit var message_view: FrameLayout
+    lateinit var messageView: FrameLayout
 
 
     @View(R.id.download_container)
-    lateinit var download_container: FrameLayout
+    lateinit var downloadContainer: FrameLayout
 
     @View(R.id.iv_cancel_download)
-    lateinit var iv_cancel_download: AppCompatImageView
+    lateinit var ivCancelDownload: AppCompatImageView
 
     @View(R.id.iv_start_download)
-    lateinit var iv_start_download: AppCompatImageView
+    lateinit var ivStartDownload: AppCompatImageView
 
     @View(R.id.progress_dialog)
     lateinit var progressDialog: ProgressWheel
@@ -68,10 +68,10 @@ class ImageViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
     @Resolve
     override fun onViewInflated() {
         super.onViewInflated()
-        download_container.visibility = GONE
+        ivCancelDownload.visibility = GONE
         imageViewHolder = this
         message.sender?.let {
-            updateView(it, root_view, root_sub_view, message_view)
+            updateView(it, rootView, rootSubView, messageView)
         }
         textMessageBody.visibility = GONE
 
@@ -121,8 +121,8 @@ class ImageViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
             }
         }
 
-        text_message_time.text = Utils.messageTimeConversion(message.created)
-        updateTime(text_message_time)
+        textMessageTime.text = Utils.messageTimeConversion(message.created)
+        updateTime(textMessageTime)
     }
 
     private fun download(url: String) {
@@ -137,17 +137,17 @@ class ImageViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
 
 
     private fun fileNotDownloadView() {
-        download_container.visibility = VISIBLE
+        downloadContainer.visibility = VISIBLE
         progressDialog.visibility = GONE
-        iv_cancel_download.visibility = GONE
-        iv_start_download.visibility = VISIBLE
+        ivCancelDownload.visibility = GONE
+        ivStartDownload.visibility = VISIBLE
     }
 
     private fun fileDownloadRunView() {
-        download_container.visibility = VISIBLE
+        downloadContainer.visibility = VISIBLE
         progressDialog.visibility = VISIBLE
-        iv_cancel_download.visibility = VISIBLE
-        iv_start_download.visibility = GONE
+        ivCancelDownload.visibility = VISIBLE
+        ivStartDownload.visibility = GONE
     }
 
 

@@ -1,5 +1,6 @@
 package com.joshtalks.joshskills.ui.view_holders
 
+import android.annotation.SuppressLint
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.appcompat.widget.AppCompatImageView
@@ -18,35 +19,28 @@ import com.mindorks.placeholderview.annotations.View
 import com.vanniktech.emoji.Utils
 
 @Layout(R.layout.inbox_row_layout)
-class InboxViewHolder(var inboxEntity: InboxEntity, val totalItem: Int, val indexPos: Int) :
+class InboxViewHolder(private var inboxEntity: InboxEntity, private val totalItem: Int, private val indexPos: Int) :
     BaseCell() {
-
 
     @View(R.id.root_view)
     lateinit var rootView: ViewGroup
 
-
-
-
     @View(R.id.profile_image)
-    lateinit var profile_image: ImageView
+    lateinit var profileImage: ImageView
 
     @View(R.id.tv_name)
     lateinit var tvName: AppCompatTextView
 
     @View(R.id.tv_last_message)
-    lateinit var tv_last_message: AppCompatTextView
+    lateinit var tvLastReceivedMessage: AppCompatTextView
 
 
     @View(R.id.tv_last_message_time)
-    lateinit var tv_last_message_time: AppCompatTextView
+    lateinit var tvLastReceivedMessageTime: AppCompatTextView
 
 
     @View(R.id.tv_last_message_status)
-    lateinit var tv_last_message_status: AppCompatImageView
-
-    @View(R.id.tv_notification)
-    lateinit var tv_notification: AppCompatTextView
+    lateinit var tvLastMessageStatus: AppCompatImageView
 
     @View(R.id.horizontal_line)
     lateinit var hLine: android.view.View
@@ -60,11 +54,11 @@ class InboxViewHolder(var inboxEntity: InboxEntity, val totalItem: Int, val inde
 
     @Resolve
     fun onResolved() {
-        profile_image.setImageResource(R.drawable.ic_josh_course)
+        profileImage.setImageResource(R.drawable.ic_josh_course)
         tvName.text = inboxEntity.course_name
 
         inboxEntity.course_icon?.let {
-            setImageInImageView(profile_image, it)
+            setImageInImageView(profileImage, it)
         }
 
 
@@ -79,16 +73,15 @@ class InboxViewHolder(var inboxEntity: InboxEntity, val totalItem: Int, val inde
         }
 
         if (inboxEntity.created != null) {
-            tv_last_message_time.text =
+            tvLastReceivedMessageTime.text =
                 com.joshtalks.joshskills.core.Utils.getMessageTime(inboxEntity.created!!)
         } else {
-            tv_last_message.text = getAppContext().getString(R.string.click_to_start_course)
-
+            tvLastReceivedMessage.text = getAppContext().getString(R.string.click_to_start_course)
         }
         inboxEntity.created?.let {
         }
         if (inboxEntity.chat_id.isNullOrEmpty()) {
-            tv_last_message_time.setCompoundDrawablesWithIntrinsicBounds(
+            tvLastReceivedMessageTime.setCompoundDrawablesWithIntrinsicBounds(
                 R.drawable.ic_unread,
                 0,
                 0,
@@ -106,68 +99,70 @@ class InboxViewHolder(var inboxEntity: InboxEntity, val totalItem: Int, val inde
     }
 
 
+    @SuppressLint("SetTextI18n")
     private fun showRecentAsPerView(baseMessageType: BASE_MESSAGE_TYPE) {
+        tvLastReceivedMessage.compoundDrawablePadding = getDrawablePadding()
+        when {
+            BASE_MESSAGE_TYPE.TX == baseMessageType -> {
+                inboxEntity.qText?.let { text ->
+                    tvLastReceivedMessage.text = text
+                }
+                inboxEntity.text?.let { text ->
+                    tvLastReceivedMessage.text = text
+                }
 
-        tv_last_message.compoundDrawablePadding = getDrawablePadding()
-
-
-        if (BASE_MESSAGE_TYPE.TX == baseMessageType) {
-            inboxEntity.qText?.let { text ->
-                tv_last_message.text = text
             }
-            inboxEntity.text?.let { text ->
-                tv_last_message.text = text
+            BASE_MESSAGE_TYPE.IM == baseMessageType -> {
+                tvLastReceivedMessage.setCompoundDrawablesWithIntrinsicBounds(
+                    R.drawable.ic_inbox_camera,
+                    0,
+                    0,
+                    0
+                )
+                tvLastReceivedMessage.compoundDrawablePadding = Utils.dpToPx(context, drawablePadding)
+                tvLastReceivedMessage.text = "Photo"
+
+
             }
-
-        } else if (BASE_MESSAGE_TYPE.IM == baseMessageType) {
-            tv_last_message.setCompoundDrawablesWithIntrinsicBounds(
-                R.drawable.ic_inbox_camera,
-                0,
-                0,
-                0
-            )
-            tv_last_message.compoundDrawablePadding = Utils.dpToPx(context, drawablePadding)
-            tv_last_message.text = "Photo"
-
-
-        } else if (BASE_MESSAGE_TYPE.AU == baseMessageType) {
-            tv_last_message.setCompoundDrawablesWithIntrinsicBounds(
-                R.drawable.ic_inbox_audio,
-                0,
-                0,
-                0
-            )
-            tv_last_message.compoundDrawablePadding = Utils.dpToPx(context, drawablePadding)
-            tv_last_message.text = "Audio"
+            BASE_MESSAGE_TYPE.AU == baseMessageType -> {
+                tvLastReceivedMessage.setCompoundDrawablesWithIntrinsicBounds(
+                    R.drawable.ic_inbox_audio,
+                    0,
+                    0,
+                    0
+                )
+                tvLastReceivedMessage.compoundDrawablePadding = Utils.dpToPx(context, drawablePadding)
+                tvLastReceivedMessage.text = "Audio"
 
 
-        } else if (BASE_MESSAGE_TYPE.VI == baseMessageType) {
-            tv_last_message.setCompoundDrawablesWithIntrinsicBounds(
-                R.drawable.ic_inbox_video,
-                0,
-                0,
-                0
-            )
-            tv_last_message.compoundDrawablePadding = Utils.dpToPx(context, drawablePadding)
-            tv_last_message.text = "Video"
+            }
+            BASE_MESSAGE_TYPE.VI == baseMessageType -> {
+                tvLastReceivedMessage.setCompoundDrawablesWithIntrinsicBounds(
+                    R.drawable.ic_inbox_video,
+                    0,
+                    0,
+                    0
+                )
+                tvLastReceivedMessage.compoundDrawablePadding = Utils.dpToPx(context, drawablePadding)
+                tvLastReceivedMessage.text = "Video"
 
-        } else if (BASE_MESSAGE_TYPE.PD == baseMessageType) {
-            tv_last_message.setCompoundDrawablesWithIntrinsicBounds(
-                R.drawable.ic_inbox_pdf,
-                0,
-                0,
-                0
-            )
-            tv_last_message.compoundDrawablePadding = Utils.dpToPx(context, drawablePadding)
-            tv_last_message.text = "Pdf"
+            }
+            BASE_MESSAGE_TYPE.PD == baseMessageType -> {
+                tvLastReceivedMessage.setCompoundDrawablesWithIntrinsicBounds(
+                    R.drawable.ic_inbox_pdf,
+                    0,
+                    0,
+                    0
+                )
+                tvLastReceivedMessage.compoundDrawablePadding = Utils.dpToPx(context, drawablePadding)
+                tvLastReceivedMessage.text = "Pdf"
 
+            }
         }
 
         if (this.inboxEntity.message_deliver_status != null) {
             inboxEntity.message_deliver_status?.let { messageDeliverStatus ->
-
                 inboxEntity.user?.id.let {
-
                     var resource = 0
                     if (it.equals(getUserId(), ignoreCase = true)) {
                         resource = when (messageDeliverStatus) {
@@ -178,7 +173,7 @@ class InboxViewHolder(var inboxEntity: InboxEntity, val totalItem: Int, val inde
                             else -> R.drawable.ic_sent_message_s_r_tick
                         }
                     }
-                    tv_last_message_status.setImageResource(resource)
+                    tvLastMessageStatus.setImageResource(resource)
                 }
             }
         }

@@ -34,8 +34,8 @@ class ImageShowFragment : DialogFragment() {
             it.getString(COURSE_NAME)?.let { course ->
                 courseName = course
             }
-            it.getString(IMAGE_ID)?.let {
-                imageId = it
+            it.getString(IMAGE_ID)?.let {id->
+                imageId = id
             }
 
         }

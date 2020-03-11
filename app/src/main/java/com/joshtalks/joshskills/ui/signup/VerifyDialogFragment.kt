@@ -13,11 +13,9 @@ import com.joshtalks.joshskills.databinding.FragmentVerifyPhoneBinding
 
 class VerifyDialogFragment : DialogFragment() {
 
-
     private lateinit var verifyPhoneBinding: FragmentVerifyPhoneBinding
     private lateinit var phoneNumber: String
     private lateinit var callback: VerifyDialogFragmentListener
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

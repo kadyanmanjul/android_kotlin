@@ -20,16 +20,6 @@ import com.google.android.play.core.install.model.UpdateAvailability;
 import com.google.android.play.core.tasks.Task;
 
 
-/**
- * A simple implementation of the Android In-App Update API.
- * <p>
- * <div class="special reference">
- * <h3>In-App Updates</h3>
- * <p>For more information about In-App Updates you can check the official
- * <a href="https://developer.android.com/guide/app-bundle/in-app-updates">documentation</a>
- * </p>
- * </div>
- */
 public class InAppUpdateManager implements LifecycleObserver {
 
     // region Declarations
@@ -386,6 +376,4 @@ public class InAppUpdateManager implements LifecycleObserver {
          */
         void onInAppUpdateStatus(InAppUpdateStatus status);
     }
-
-    //endregion
 }

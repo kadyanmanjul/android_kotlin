@@ -9,7 +9,7 @@ import androidx.appcompat.widget.AppCompatTextView
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
@@ -20,11 +20,8 @@ import com.vanniktech.emoji.Utils
 
 
 class HelpListFragment : Fragment() {
-
-
     private lateinit var viewModel: HelpViewModel
     private lateinit var helpListBinding: FragmentHelpListBinding
-
 
     companion object {
         @JvmStatic
@@ -33,8 +30,9 @@ class HelpListFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel = activity?.run { ViewModelProviders.of(this)[HelpViewModel::class.java] }
-            ?: throw Exception("Invalid Activity")
+        viewModel = activity?.run {
+            ViewModelProvider(this).get(HelpViewModel::class.java)
+        }!!
 
     }
 
@@ -58,7 +56,7 @@ class HelpListFragment : Fragment() {
         if (viewModel.typeOfHelpModelLiveData.value.isNullOrEmpty()) {
             viewModel.getAllHelpCategory()
         }
-        viewModel.typeOfHelpModelLiveData.observe(this, Observer {
+        viewModel.typeOfHelpModelLiveData.observe(viewLifecycleOwner, Observer {
             it.forEach { obj ->
                 helpListBinding.recyclerView.addView(HelpViewHolder(obj))
             }

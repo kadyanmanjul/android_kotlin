@@ -10,10 +10,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import static android.view.View.SCROLLBARS_OUTSIDE_OVERLAY;
 
-/**
- * Created by thekhaeng on 4/30/2017 AD.
- */
-
 abstract class BaseLayoutMargin extends RecyclerView.ItemDecoration {
 
     private final MarginDelegate marginDelegate;

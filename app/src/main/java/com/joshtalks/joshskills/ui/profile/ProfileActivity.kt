@@ -1,6 +1,7 @@
 package com.joshtalks.joshskills.ui.profile
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
@@ -62,7 +63,9 @@ const val MAX_YEAR = 6
 class ProfileActivity : BaseActivity(), MediaSelectCallback, DatePickerDialog.OnDateSetListener {
 
     private lateinit var layout: ActivityPersonalDetailBinding
+    @SuppressLint("SimpleDateFormat")
     private val DATE_FORMATTER = SimpleDateFormat("yyyy-MM-dd")
+    @SuppressLint("SimpleDateFormat")
     private val DATE_FORMATTER_2 = SimpleDateFormat("dd - MMM - yyyy")
 
     private var userDob = Date()
@@ -95,7 +98,6 @@ class ProfileActivity : BaseActivity(), MediaSelectCallback, DatePickerDialog.On
     private fun initPicker() {
         val now = Calendar.getInstance()
         val minYear = now.get(Calendar.YEAR) - 99
-
         val maxYear = now.get(Calendar.YEAR) - MAX_YEAR
         datePicker = SpinnerDatePickerDialogBuilder()
             .context(this)
@@ -337,7 +339,7 @@ class ProfileActivity : BaseActivity(), MediaSelectCallback, DatePickerDialog.On
 
         this.doubleBackToExitPressedOnce = true
         Toast.makeText(this, R.string.please_enter_detail_toast, Toast.LENGTH_SHORT).show()
-        Handler().postDelayed(Runnable { doubleBackToExitPressedOnce = false }, 1500)
+        Handler().postDelayed({ doubleBackToExitPressedOnce = false }, 1500)
     }
 
 
@@ -364,17 +366,11 @@ class ProfileActivity : BaseActivity(), MediaSelectCallback, DatePickerDialog.On
                 )
                 BranchIOAnalytics.pushToBranch(BRANCH_STANDARD_EVENT.COMPLETE_REGISTRATION)
                 User.getInstance().updateFromResponse(updateProfileResponse)
-                if (imageModel != null) {
-                    //   WorkMangerPapa.startUploadProfileinWorker(imageModel!!)
-                }
                 AppAnalytics.updateUser()
                 withContext(Dispatchers.Main) {
                     val resultIntent = Intent()
                     setResult(RESULT_OK, resultIntent)
                     finish()
-
-                    // startActivity(getInboxActivityIntent())
-                    //finish()
                 }
 
             } catch (ex: Exception) {
@@ -429,7 +425,6 @@ class MediaPickerFragment : BottomSheetDialogFragment() {
         dismiss()
 
     }
-
 }
 
 

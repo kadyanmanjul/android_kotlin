@@ -27,7 +27,6 @@ const val SOURCE_IMAGE = "source"
 class CropImageActivity : BaseActivity() {
     private lateinit var cropImageBinding: ActivityCropImageBinding
     private lateinit var filePath: String
-    private val mCompressFormat = Bitmap.CompressFormat.JPEG
     private var mSourceUri: Uri? = null
     private var mSaveUri: Uri? = null
 
@@ -38,10 +37,8 @@ class CropImageActivity : BaseActivity() {
         cropImageBinding = DataBindingUtil.setContentView(this, R.layout.activity_crop_image)
         cropImageBinding.handler = this
         crop_image_view.setCropMode(CropImageView.CropMode.SQUARE)
-
-
         if (intent != null && intent.hasExtra(SOURCE_IMAGE)) {
-            filePath = intent.getStringExtra(SOURCE_IMAGE)
+            filePath = intent.getStringExtra(SOURCE_IMAGE)!!
             mSourceUri = Uri.fromFile(File(filePath))
             crop_image_view.load(mSourceUri)
                 .useThumbnail(true)

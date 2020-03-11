@@ -68,9 +68,7 @@ import me.zhanghai.android.materialplaypausedrawable.MaterialPlayPauseDrawable
 import java.util.concurrent.TimeUnit
 import kotlin.random.Random
 
-
 const val PRACTISE_OBJECT = "practise_object"
-
 const val IMAGE_OR_VIDEO_SELECT_REQUEST_CODE = 1081
 const val TEXT_FILE_ATTACHMENT_REQUEST_CODE = 1082
 

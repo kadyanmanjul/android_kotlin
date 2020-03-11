@@ -185,14 +185,7 @@
                 android:name=".ui.signup.SignUpActivity"
                 android:screenOrientation="portrait"
                 android:windowSoftInputMode="adjustResize" />
-        <activity
-                android:name=".ui.location.SelectLocationActivity"
-                android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize"
-                android:launchMode="singleTask" />
-        <activity
-                android:name=".ui.location.SearchLocationActivity"
-                android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize"
-                android:launchMode="singleTask" />
+
         <activity
                 android:name=".ui.sign_up_old.OnBoardActivity"
                 android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize"
@@ -212,9 +205,7 @@
                 android:configChanges="keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
                 android:launchMode="singleTask"
                 android:theme="@style/AppNoBarTheme" />
-        <activity
-                android:name=".ui.launcher.SplashActivity"
-                android:launchMode="singleTask" />
+
         <activity
                 android:name=".ui.sign_up_old.LoginActivity"
                 android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize"
@@ -281,6 +272,7 @@
                 android:name=".core.notification.FirebaseNotificationService"
                 android:enabled="true"
                 android:exported="true"
+                android:permission="android.permission.BIND_JOB_SERVICE"
                 tools:ignore="ExportedService">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />

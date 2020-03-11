@@ -38,7 +38,7 @@ abstract class BaseCell {
 
     fun setBlurImageInImageView(iv: AppCompatImageView?, url: String, callback: Runnable? = null) {
         if (iv != null) {
-            val multi = MultiTransformation<Bitmap>(
+            val multi = MultiTransformation(
                 RoundedCornersTransformation(
                     Utils.dpToPx(ROUND_CORNER),
                     0,
@@ -84,7 +84,7 @@ abstract class BaseCell {
 
     fun setImageInImageView(iv: AppCompatImageView?, url: String, callback: Runnable? = null) {
         if (iv != null) {
-            val multi = MultiTransformation<Bitmap>(
+            val multi = MultiTransformation(
                 CropTransformation(
                     Utils.dpToPx(IMAGE_SIZE),
                     Utils.dpToPx(IMAGE_SIZE),
@@ -137,7 +137,7 @@ abstract class BaseCell {
 
     fun setVideoImageView(iv: AppCompatImageView, url: Int, callback: Runnable? = null) {
 
-        val multi = MultiTransformation<Bitmap>(
+        val multi = MultiTransformation(
             CropTransformation(
                 Utils.dpToPx(IMAGE_SIZE),
                 Utils.dpToPx(IMAGE_SIZE),
@@ -215,7 +215,7 @@ abstract class BaseCell {
 
     fun setImageInImageView(iv: ImageView?, url: String) {
         if (iv != null) {
-            val multi = MultiTransformation<Bitmap>(
+            val multi = MultiTransformation(
                 CropTransformation(
                     Utils.dpToPx(IMAGE_SIZE),
                     Utils.dpToPx(IMAGE_SIZE),
@@ -253,7 +253,7 @@ abstract class BaseCell {
     }
     fun setResourceInImageView(iv: ImageView?, resource: Int) {
         if (iv != null) {
-            val multi = MultiTransformation<Bitmap>(
+            val multi = MultiTransformation(
                 RoundedCornersTransformation(
                     Utils.dpToPx(ROUND_CORNER),
                     0,

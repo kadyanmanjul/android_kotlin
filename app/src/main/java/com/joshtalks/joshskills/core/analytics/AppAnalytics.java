@@ -6,11 +6,9 @@ import android.os.Bundle;
 import com.clevertap.android.sdk.CleverTapAPI;
 import com.crashlytics.android.Crashlytics;
 import com.google.firebase.analytics.FirebaseAnalytics;
-import com.joshtalks.joshskills.BuildConfig;
 import com.joshtalks.joshskills.core.AppObjectController;
 import com.joshtalks.joshskills.repository.local.model.Mentor;
 import com.joshtalks.joshskills.repository.local.model.User;
-
 import java.util.HashMap;
 import java.util.Objects;
 
@@ -62,16 +60,13 @@ public class AppAnalytics {
         profileUpdate.put("Username", user.getUsername());
         profileUpdate.put("User Type", user.getUserType());
         cleverTapAnalytics.pushProfile(profileUpdate);
-
     }
 
     private static void updateFabricUser() {
         User user = User.getInstance();
-        Mentor mentor = Mentor.getInstance();
         Crashlytics.setUserIdentifier(user.getId());
         Crashlytics.setUserName(user.getFirstName());
         Crashlytics.setString("cleverId", cleverTapAnalytics.getCleverTapID());
-
     }
 
     public AppAnalytics addParam(String key, String value) {
@@ -104,13 +99,7 @@ public class AppAnalytics {
             }
             formatted.append(c);
         }
-
         return formatted.toString();
-    }
-
-    public void pushOnCleverTap(){
-        formatParameters();
-        pushToCleverTap();
     }
 
     public void push() {
@@ -137,12 +126,12 @@ public class AppAnalytics {
     }
 
 
-    private Bundle convertMapToBundle(HashMap hProperites) {
+    private Bundle convertMapToBundle(HashMap properites) {
         Bundle bundle = new Bundle();
-        for (Object o : hProperites.keySet()) {
+        for (Object o : properites.keySet()) {
 
             String key = format((String) o);
-            String value = "" + hProperites.get(key);
+            String value = "" + properites.get(key);
 
             bundle.putString(key, value);
         }

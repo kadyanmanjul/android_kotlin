@@ -2,7 +2,6 @@ package com.joshtalks.joshskills.ui.view_holders
 
 import android.graphics.Color
 import android.net.Uri
-import android.util.Log
 import android.view.View.*
 import android.widget.FrameLayout
 import android.widget.TextView
@@ -209,7 +208,6 @@ class VideoViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
 
 
     private fun download(url: String) {
-        AppObjectController.addVideoCallback(message.chatId)
         AppObjectController.videoDownloadTracker.download(
             message,
             Uri.parse(url),
@@ -276,9 +274,9 @@ class VideoViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
         if (message.url != null) {
             if (message.downloadStatus == DOWNLOAD_STATUS.DOWNLOADED) {
                 RxBus2.publish(PlayVideoEvent(message))
-            } else if (AppDirectory.isFileExist(message.downloadedLocalPath).not()) {
+            } /*else if (AppDirectory.isFileExist(message.downloadedLocalPath).not()) {
                 Log.e("file not exist", "file not exist")
-            }
+            }*/
         } else {
             message.question?.videoList?.getOrNull(0)?.let { _ ->
                 if (message.downloadStatus == DOWNLOAD_STATUS.DOWNLOADED) {

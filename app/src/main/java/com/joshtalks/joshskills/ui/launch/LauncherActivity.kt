@@ -2,11 +2,8 @@ package com.joshtalks.joshskills.ui.launch
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import com.crashlytics.android.Crashlytics
 import com.facebook.appevents.AppEventsConstants.EVENT_NAME_ACTIVATED_APP
-import com.google.firebase.iid.FirebaseInstanceId
-import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.CoreJoshActivity
@@ -27,10 +24,8 @@ class LauncherActivity : CoreJoshActivity() {
         WorkMangerAdmin.deviceIdGenerateWorker()
         WorkMangerAdmin.readMessageUpdating()
         setContentView(R.layout.activity_launcher)
-        fbId()
         handleIntent()
         AppObjectController.facebookEventLogger.flush()
-
     }
 
 
@@ -64,8 +59,6 @@ class LauncherActivity : CoreJoshActivity() {
                             })
                         this@LauncherActivity.finish()
                     }
-                } else {
-                    Log.e("BRANCH SDK", error.message)
                 }
             } catch (ex: Exception) {
                 ex.printStackTrace()
@@ -75,17 +68,17 @@ class LauncherActivity : CoreJoshActivity() {
 
     override fun onStart() {
         super.onStart()
-        Branch.getInstance().initSession(branchListener, this.intent.data, this)
+        Branch.getInstance().initSession(BranchListener, this.intent.data, this)
     }
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         this.intent = intent
-        Branch.getInstance().reInitSession(this, branchListener)
+        Branch.getInstance().reInitSession(this, BranchListener)
         handleIntent()
     }
 
-    private object branchListener : Branch.BranchReferralInitListener {
+    private object BranchListener : Branch.BranchReferralInitListener {
         override fun onInitFinished(referringParams: org.json.JSONObject?, error: BranchError?) {
             Crashlytics.log(error?.message)
         }
@@ -101,7 +94,11 @@ class LauncherActivity : CoreJoshActivity() {
     }
 
 
-    private fun fbId(){
+
+
+    /*
+
+  private fun fbId(){
         if (BuildConfig.DEBUG) {
             FirebaseInstanceId.getInstance().instanceId
                 .addOnSuccessListener { result ->
@@ -110,9 +107,6 @@ class LauncherActivity : CoreJoshActivity() {
         }
 
     }
-
-
-    /*
 
 
         try {

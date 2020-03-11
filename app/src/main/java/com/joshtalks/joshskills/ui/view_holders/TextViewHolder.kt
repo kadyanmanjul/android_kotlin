@@ -21,58 +21,47 @@ import java.lang.ref.WeakReference
 class TextViewHolder(activityRef: WeakReference<FragmentActivity>, message: ChatModel) :
     BaseChatViewHolder(activityRef, message) {
 
-    @View(R.id.parent_layout)
-    lateinit var parent_layout: android.view.View
-
     @View(R.id.root_sub_view)
-    lateinit var root_sub_view: FrameLayout
-
+    lateinit var rootSubView: FrameLayout
 
     @View(R.id.text_message_body)
-    lateinit var text_message_body: JoshTextView
+    lateinit var messageBody: JoshTextView
 
     @View(R.id.text_title)
-    lateinit var text_title: JoshTextView
+    lateinit var titleView: JoshTextView
 
     @View(R.id.text_message_time)
     lateinit var text_message_time: AppCompatTextView
 
-
     @View(R.id.root_view)
-    lateinit var root_view: FrameLayout
-
+    lateinit var rootView: FrameLayout
 
     @View(R.id.message_view)
-    lateinit var message_view: FrameLayout
+    lateinit var messageView: FrameLayout
 
     lateinit var textViewHolder: TextViewHolder
-
 
     @Resolve
     override fun onViewInflated() {
         super.onViewInflated()
 
-        text_title.text = EMPTY
-
-        text_title.text = EMPTY
-        text_title.visibility = GONE
-
+        titleView.text = EMPTY
+        titleView.visibility = GONE
         textViewHolder = this
         message.sender?.let {
-            updateView(it, root_view, root_sub_view, message_view)
+            updateView(it, rootView, rootSubView, messageView)
         }
 
         if (message.text.isNullOrEmpty()) {
             message.question?.run {
                 this.qText?.let {
-                    text_message_body.text =
+                    messageBody.text =
                         HtmlCompat.fromHtml(it, HtmlCompat.FROM_HTML_MODE_LEGACY)
                 }
                 this.title?.let { text ->
                     if (text.isNotEmpty()) {
-                        text_title.visibility = VISIBLE
-                        text_title.text =
-                            HtmlCompat.fromHtml(text, HtmlCompat.FROM_HTML_MODE_LEGACY)
+                        titleView.visibility = VISIBLE
+                        titleView.text = HtmlCompat.fromHtml(text, HtmlCompat.FROM_HTML_MODE_LEGACY)
                     }
                 }
             }
@@ -80,14 +69,14 @@ class TextViewHolder(activityRef: WeakReference<FragmentActivity>, message: Chat
 
         } else {
             if (message.text.isNullOrEmpty().not()) {
-                text_message_body.text =
+                messageBody.text =
                     HtmlCompat.fromHtml(message.text!!, HtmlCompat.FROM_HTML_MODE_LEGACY)
             }
         }
 
         text_message_time.text = Utils.messageTimeConversion(message.created)
         updateTime(text_message_time)
-        addMessageAutoLink(text_message_body)
+        addMessageAutoLink(messageBody)
 
         // updateForegroundView()
     }

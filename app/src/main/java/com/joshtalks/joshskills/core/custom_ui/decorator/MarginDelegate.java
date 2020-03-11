@@ -6,10 +6,6 @@ import androidx.annotation.IntRange;
 import androidx.annotation.Px;
 import androidx.recyclerview.widget.OrientationHelper;
 
-/**
- * Created by thekhaeng on 4/13/2017 AD.
- */
-
 class MarginDelegate {
     private final int spanCount;
     private final int spaceItem;

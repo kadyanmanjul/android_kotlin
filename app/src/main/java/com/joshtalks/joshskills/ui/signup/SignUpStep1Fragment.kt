@@ -43,10 +43,7 @@ class SignUpStep1Fragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel = activity?.run {
-            ViewModelProvider(activity!!)
-                .get(SignUpViewModel::class.java)
-        }
+        viewModel = activity?.run { ViewModelProvider(this).get(SignUpViewModel::class.java) }
             ?: throw Exception("Invalid Activity")
     }
 
@@ -86,7 +83,7 @@ class SignUpStep1Fragment : Fragment() {
         initProgressView()
         requestHint()
         signUpStep1FragmentBinding.mobileEt.setText(viewModel.phoneNumber)
-        viewModel.progressDialogStatus.observe(this, Observer {
+        viewModel.progressDialogStatus.observe(viewLifecycleOwner, Observer {
             if (it.not()) {
                 hideProgress()
             }

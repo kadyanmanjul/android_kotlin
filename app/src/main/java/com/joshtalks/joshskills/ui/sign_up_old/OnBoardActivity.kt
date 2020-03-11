@@ -5,7 +5,6 @@ import android.graphics.Color
 import android.os.Bundle
 import android.text.SpannableStringBuilder
 import android.text.Spanned
-import android.util.Log
 import android.view.View
 import android.widget.TextView
 import androidx.annotation.NonNull
@@ -165,14 +164,11 @@ class OnBoardActivity : CoreJoshActivity() {
         override fun onSuccessProfileShared(@NonNull trueProfile: TrueProfile) {
             showProgress()
             viewModel.verifyUserViaTrueCaller(trueProfile)
-            Log.e(TAG, "" + trueProfile.firstName)
 
         }
 
         override fun onVerificationRequired() {
             Crashlytics.log(3, "Truecaller Issue 2", "onVerificationRequired")
-            Log.e(TAG, "onVerificationRequired")
-
         }
 
         override fun onFailureProfileShared(@NonNull trueError: TrueError) {
@@ -180,8 +176,6 @@ class OnBoardActivity : CoreJoshActivity() {
                 signUp()
             }
             Crashlytics.log(3, "Truecaller Issue", trueError.errorType.toString())
-            Log.e(TAG, trueError.errorType.toString())
-
         }
     }
 

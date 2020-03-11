@@ -46,7 +46,7 @@ class SignUpStep2Fragment : Fragment() {
         super.onCreate(savedInstanceState)
         activity?.window?.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         viewModel = activity?.run {
-            ViewModelProvider(activity!!)
+            ViewModelProvider(requireActivity())
                 .get(SignUpViewModel::class.java)
         }
             ?: throw Exception("Invalid Activity")
@@ -76,12 +76,12 @@ class SignUpStep2Fragment : Fragment() {
 
             verifyOTP()
         }
-        viewModel.progressDialogStatus.observe(this, Observer {
+        viewModel.progressDialogStatus.observe(viewLifecycleOwner, Observer {
             if (it.not()) {
                 hideProgress()
             }
         })
-        viewModel.signUpStatus.observe(this, Observer {
+        viewModel.signUpStatus.observe(viewLifecycleOwner, Observer {
             when (it) {
                 SignUpStepStatus.SignUpResendOTP -> {
                     Toast.makeText(
@@ -95,9 +95,9 @@ class SignUpStep2Fragment : Fragment() {
                 else -> return@Observer
             }
         })
-        viewModel.otpVerifyStatus.observe(this, Observer {
+        viewModel.otpVerifyStatus.observe(viewLifecycleOwner, Observer {
             if (it) {
-                StyleableToast.Builder(activity!!).gravity(Gravity.CENTER)
+                StyleableToast.Builder(requireActivity()).gravity(Gravity.CENTER)
                     .text(getString(R.string.wrong_otp)).cornerRadius(16).length(Toast.LENGTH_LONG)
                     .solidBackground().show()
                 hideProgress()
@@ -208,8 +208,10 @@ class SignUpStep2Fragment : Fragment() {
 
             override fun onFinish() {
                 CoroutineScope(Dispatchers.Main).launch {
-                    signUpStep2Binding.tvResendMessage.text = getString(R.string.resend_otp)
-                    signUpStep2Binding.tvResendMessage.isEnabled = true
+                    try {
+                        signUpStep2Binding.tvResendMessage.text = getString(R.string.resend_otp)
+                        signUpStep2Binding.tvResendMessage.isEnabled = true
+                    }catch (ex:Exception){}
                 }
             }
         }

@@ -26,10 +26,7 @@
     <string name="audio">Audio</string>
 
     <string name="camera">Camera</string>
-    <string name="call_help_line">Call helpline </string>
 
-    <string name="incomplete_register">Sorry, aap English Course\n mein registered nahi ho</string>
-    <string name="location_rationale">Please allow to access your location. It will help in better recommendations. </string>
     <string name="short_seconds">sec</string>
     <string name="volume_up_message">Please turn the volume up</string>
     <string name="storage_permission_message">To view or send media, allow Josh Skills access to your device\'s  photos, media and files.</string>
@@ -41,14 +38,6 @@
 
     <string name="splash_sub_string">ज़िन्दगी में आगे बढ़ो, जोश के साथ</string>
 
-    <string name="register_now">Register Now</string>
-    <string name="aur_koi_problem">Aur koi problem?</string>
-    <string name="kya_aapne_text">Kya aapne kisi aur Whatsapp number se register kiya hai</string>
-    <string name="continue_label">Continue</string>
-    <string name="invalid_phone_number">Invalid phone number</string>
-
-    <string name="anonymous_user_login">Okay! Isi Number se dubara register karein!</string>
-    <string name="register">Register</string>
     <string name="open">OPEN</string>
     <string name="submit">Submit</string>
     <string name="track_number">Track</string>
@@ -204,5 +193,4 @@
     <string name="find_more_course_hint_ftime" formatted="false">Hello %s, Agar aap es course ke sath kuch aur bhi seekhna chahte hain to pehle 7 dino mai aapke paas har course pe %s off hai </string>
     <string name="buy_course_offer_tooltip" formatted="false"> Get %s off on the next course you buy, Valid for %s days.</string>
     <string name="first_time_user_hint">Aapko apne course se related saari videos aur claases isko click karke milengi</string>
-<string name="login_header">To Complete Payment </string>
 </resources>

@@ -8,12 +8,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 object BranchIOAnalytics {
-
     fun pushToBranch(event: BRANCH_STANDARD_EVENT, extras: HashMap<String, String>? = null) {
-
         CoroutineScope(Dispatchers.IO).launch {
             try {
-
                 val branchEvent = BranchEvent(event)
                 extras?.let {
                     for ((k, v) in it) {
@@ -22,17 +19,6 @@ object BranchIOAnalytics {
                     }
                 }
                 branchEvent.logEvent(AppObjectController.joshApplication)
-
-                /*if (extras == null) {
-                    BranchEvent(event).addContentItems()
-                        .logEvent(AppObjectController.joshApplication)
-                } else {
-
-
-                    BranchUniversalObject().userCompletedAction(event, extras)
-                }
-*/
-
             } catch (ex: Exception) {
                 ex.printStackTrace()
             }

@@ -9,9 +9,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import java.util.*
 
-
 object DatabaseUtils {
-
 
     fun updateUserMessageSeen() {
         CoroutineScope(Dispatchers.IO).launch {
@@ -58,7 +56,6 @@ object DatabaseUtils {
         CoroutineScope(Dispatchers.IO).launch {
             AppObjectController.appDatabase.chatDao().updateDownloadVideoStatusFailed()
         }
-
     }
 
     @JvmStatic

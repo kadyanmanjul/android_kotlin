@@ -49,10 +49,6 @@
         <item name="android:src">@drawable/ic_more_vert</item>
     </style>
 
-    <style name="superBottomSheetDialog" parent="Theme.Design.Light.BottomSheetDialog">
-        <item name="android:windowIsFloating">false</item>
-    </style>
-
     <style name="NoDimDialogFragmentStyle" parent="@android:style/Theme.Holo.Light.Dialog">
         <item name="android:backgroundDimAmount">0.0</item>
         <item name="android:backgroundDimEnabled">false</item>

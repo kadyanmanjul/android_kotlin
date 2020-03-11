@@ -2,7 +2,6 @@ package com.joshtalks.joshskills.core.analytics
 
 enum class AnalyticsEvent(val NAME: String) {
 
-
     BACK_PRESSED("Back Pressed"),
     ACTIVITY_OPENED("Activity Opened"),
     APP_INSTALLED("App Installed"),
@@ -14,7 +13,6 @@ enum class AnalyticsEvent(val NAME: String) {
     WHATSAPP_SELECTED("Whatsapp Selected"),
 
     UNREGISTER_USER("Unregister User"),
-
 
     SMS_SELECTED("Sms Selected"),
     OTP_VERIFICATION_SCREEN("OTP Verification Screen"),

@@ -52,13 +52,13 @@ import com.joshtalks.joshskills.core.Utils.getCurrentMediaVolume
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.custom_ui.JoshSnackBar
+import com.joshtalks.joshskills.core.custom_ui.PageTransformer
 import com.joshtalks.joshskills.core.custom_ui.SnappingLinearLayoutManager
 import com.joshtalks.joshskills.core.custom_ui.decorator.LayoutMarginDecoration
 import com.joshtalks.joshskills.core.custom_ui.progress.FlipProgressDialog
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.core.playback.PlaybackInfoListener.State.PLAYING
 import com.joshtalks.joshskills.databinding.ActivityConversationBinding
-import com.joshtalks.joshskills.emoji.PageTransformer
 import com.joshtalks.joshskills.messaging.MessageBuilderFactory
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
@@ -244,9 +244,9 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
 
 
     private fun initAudioPlayerView() {
-        mControlsContainer = findViewById(R.id.controls_container)
+        this.mControlsContainer = findViewById(R.id.controls_container)
         bottomSheetLayout = findViewById(R.id.design_bottom_sheet)
-        mBottomSheetBehaviour = BottomSheetBehavior.from<MaterialCardView>(bottomSheetLayout)
+        mBottomSheetBehaviour = BottomSheetBehavior.from(bottomSheetLayout)
         mDuration = findViewById(R.id.duration)
         mSeekBarAudio = findViewById(R.id.seekTo)
         mSongPosition = findViewById(R.id.song_position)

@@ -81,10 +81,10 @@ class ComplaintFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val titleView = activity?.findViewById<AppCompatTextView>(R.id.text_message_title)
         titleView?.text = typeOfHelpModel.categoryName
-        viewModel.apiCallStatusLiveData.observe(this, Observer {
+        viewModel.apiCallStatusLiveData.observe(viewLifecycleOwner, Observer {
             if (it == ApiCallStatus.SUCCESS) {
                 progressDialog.dismissAllowingStateLoss()
-                MaterialDialog(activity!!).show {
+                MaterialDialog(requireActivity()).show {
                     message(
                         text = getString(
                             R.string.complaint_message,
@@ -94,7 +94,7 @@ class ComplaintFragment : Fragment() {
                         lineSpacing(1.2f)
                     }
                     positiveButton(R.string.ok) {
-                        activity!!.finish()
+                        requireActivity().finish()
                     }
                 }
             } else {
@@ -212,7 +212,7 @@ class ComplaintFragment : Fragment() {
                 RoundedCornersTransformation.CornerType.ALL
             )
         )
-        Glide.with(activity!!)
+        Glide.with(requireContext())
             .load(path)
             .apply(RequestOptions.bitmapTransform(multi))
             .into(lodgeComplaintBinding.ivThumbnail)
@@ -278,7 +278,7 @@ class ComplaintFragment : Fragment() {
     }
 
     private fun showToast(message: String) {
-        StyleableToast.Builder(activity!!).gravity(Gravity.BOTTOM)
+        StyleableToast.Builder(requireActivity()).gravity(Gravity.BOTTOM)
             .text(message).cornerRadius(16).length(Toast.LENGTH_LONG)
             .solidBackground().show()
     }
