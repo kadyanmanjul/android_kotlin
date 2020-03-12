@@ -12,8 +12,8 @@ android {
         applicationId "com.joshtalks.joshskills"
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 69
-        versionName "1.0.69"
+        versionCode 70
+        versionName "1.0.70"
         vectorDrawables.useSupportLibrary true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField "String", "CLIENT_TOKEN", "\"Ctt75ss5IxyHgBJb48diBbHUXIQ1VANCYRykjdcj\""
