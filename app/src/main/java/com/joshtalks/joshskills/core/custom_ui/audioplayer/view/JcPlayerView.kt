@@ -95,6 +95,7 @@ class JcPlayerView : LinearLayout, View.OnClickListener, SeekBar.OnSeekBarChange
     companion object {
         private const val PULSE_ANIMATION_DURATION = 200L
         private const val TITLE_ANIMATION_DURATION = 600
+
         @JvmStatic
         @Volatile
         private var audioId: String? = ""
@@ -663,7 +664,8 @@ class JcPlayerView : LinearLayout, View.OnClickListener, SeekBar.OnSeekBarChange
                 val audioTypeObj = message.question!!.audioList!![0]
                 this.duration = audioTypeObj.duration
                 if (message.downloadStatus === DOWNLOAD_STATUS.DOWNLOADED) {
-                    if (audioTypeObj.downloadedLocalPath.isNullOrEmpty().not() && AppDirectory.isFileExist(
+                    if (audioTypeObj.downloadedLocalPath.isNullOrEmpty()
+                            .not() && AppDirectory.isFileExist(
                             audioTypeObj.downloadedLocalPath!!
                         )
                     ) {

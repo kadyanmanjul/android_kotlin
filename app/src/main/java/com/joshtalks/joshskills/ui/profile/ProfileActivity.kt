@@ -63,8 +63,10 @@ const val MAX_YEAR = 6
 class ProfileActivity : BaseActivity(), MediaSelectCallback, DatePickerDialog.OnDateSetListener {
 
     private lateinit var layout: ActivityPersonalDetailBinding
+
     @SuppressLint("SimpleDateFormat")
     private val DATE_FORMATTER = SimpleDateFormat("yyyy-MM-dd")
+
     @SuppressLint("SimpleDateFormat")
     private val DATE_FORMATTER_2 = SimpleDateFormat("dd - MMM - yyyy")
 
@@ -353,9 +355,9 @@ class ProfileActivity : BaseActivity(), MediaSelectCallback, DatePickerDialog.On
 
                 val updateProfileResponse: UpdateProfileResponse =
                     AppObjectController.signUpNetworkService.updateUserAsync(
-                        User.getInstance().id,
-                        obj
-                    )
+                            User.getInstance().id,
+                            obj
+                        )
                         .await()
 
                 val params = Bundle()

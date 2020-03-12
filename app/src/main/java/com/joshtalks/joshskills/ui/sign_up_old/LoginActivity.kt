@@ -62,6 +62,8 @@ class LoginActivity : CoreJoshActivity() {
         sBuilder.setSpan(typefaceSpan, 11, 22, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
         layout.textView.setText(sBuilder, TextView.BufferType.SPANNABLE)
         addObserver()
+        AppAnalytics.create(AnalyticsEvent.LOGIN_SCREEN.NAME).push()
+
     }
 
 

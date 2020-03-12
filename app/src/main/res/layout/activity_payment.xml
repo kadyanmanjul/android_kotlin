@@ -9,7 +9,7 @@
 
         <variable
                 name="flag"
-                type="java.lang.Boolean"/>
+                type="java.lang.Boolean" />
 
         <variable
                 name="handler"

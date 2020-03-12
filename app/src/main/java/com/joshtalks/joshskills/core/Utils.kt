@@ -601,7 +601,6 @@ object Utils {
 
 
     fun isUser7DaysOld(courseCreatedDate: Date?): Pair<Boolean, Int> {
-        return Pair(false, 0)
         if (courseCreatedDate == null) {
             return Pair(false, 0)
         }

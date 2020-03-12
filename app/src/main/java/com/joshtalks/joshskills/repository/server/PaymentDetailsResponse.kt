@@ -18,5 +18,9 @@ data class PaymentDetailsResponse(
     @SerializedName("razorpay_order_id")
     val razorpayOrderId: String,
     @SerializedName("discount_amount")
-    val discountAmount: Double
-):Serializable
+    val discountAmount: Double,
+    @SerializedName("original_amount")
+    val originalAmount: Double
+
+
+) : Serializable

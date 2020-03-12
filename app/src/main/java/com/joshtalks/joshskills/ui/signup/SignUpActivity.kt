@@ -99,7 +99,8 @@ class SignUpActivity : CoreJoshActivity() {
                     try {
                         val typeToken = object : TypeToken<List<String>>() {}.type
                         val list = AppObjectController.gsonMapperForLocal.fromJson<List<String>>(
-                            AppObjectController.getFirebaseRemoteConfig().getString("utm_source_filter"),
+                            AppObjectController.getFirebaseRemoteConfig()
+                                .getString("utm_source_filter"),
                             typeToken
                         )
                         if (list.contains(InstallReferrerModel.getPrefObject()?.utmSource)) {

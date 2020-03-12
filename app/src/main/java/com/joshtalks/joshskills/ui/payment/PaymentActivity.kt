@@ -25,7 +25,6 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.FirebaseAnalytics.Event.ECOMMERCE_PURCHASE
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
-import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.BranchIOAnalytics
@@ -116,6 +115,8 @@ class PaymentActivity : CoreJoshActivity(),
         }
         if (intent.hasExtra(COURSE_ID)) {
             testId = intent.getStringExtra(COURSE_ID)!!
+            AppAnalytics.create(AnalyticsEvent.TEST_ID_OPENED.NAME).addParam("test_id", testId)
+                .push()
         }
         if (testId.isEmpty()) {
             invalidCourseId()
@@ -191,10 +192,14 @@ class PaymentActivity : CoreJoshActivity(),
     private fun getCourseDetails() {
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                val data = mapOf(
-                    "test" to testId,
-                    "gaid" to PrefManager.getStringValue(USER_UNIQUE_ID)
-                )
+                val data = HashMap<String, String>()
+                data["test"] = testId
+                data["gaid"] = PrefManager.getStringValue(USER_UNIQUE_ID)
+
+                if (Mentor.getInstance().getId().isNotEmpty()) {
+                    data["mentor"] = Mentor.getInstance().getId()
+                }
+
                 val courseDetailsModelList: List<CourseDetailsModel> =
                     AppObjectController.signUpNetworkService.explorerCourseDetails(data).await()
                 CoroutineScope(Dispatchers.Main).launch {
@@ -241,6 +246,7 @@ class PaymentActivity : CoreJoshActivity(),
     }
 
     override fun onPaymentSuccess(razorpayPaymentId: String) {
+
         AppAnalytics.create(AnalyticsEvent.PURCHASE_COURSE.NAME)
             .addParam(FirebaseAnalytics.Param.ITEM_ID, testId)
             .addParam(FirebaseAnalytics.Param.PRICE, (courseModel?.amount ?: amount).toString())
@@ -285,6 +291,8 @@ class PaymentActivity : CoreJoshActivity(),
             startActivity(getInboxActivityIntent())
             this@PaymentActivity.finish()
         }, 1000 * 59)
+        AppAnalytics.create(AnalyticsEvent.PAYMENT_COMPLETED.NAME).push()
+
 
     }
 
@@ -309,7 +317,7 @@ class PaymentActivity : CoreJoshActivity(),
                 }
                 val response: PaymentDetailsResponse =
                     AppObjectController.signUpNetworkService.getPaymentDetails(map).await()
-
+                AppAnalytics.create(AnalyticsEvent.PAYMENT_INITIATED.NAME).push()
                 if (courseModel == null) {
                     courseModel = CourseExploreModel()
                     courseModel?.amount = response.amount
@@ -387,6 +395,8 @@ class PaymentActivity : CoreJoshActivity(),
                     AppEventsConstants.EVENT_NAME_INITIATED_CHECKOUT,
                     params
                 )
+                AppAnalytics.create(AnalyticsEvent.RAZORPAY_SDK.NAME).push()
+
 
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -404,7 +414,6 @@ class PaymentActivity : CoreJoshActivity(),
         if (isUserSpecialOffer || specialDiscount) {
             onCompletePayment()
         } else {
-
             val fragmentTransaction = supportFragmentManager.beginTransaction()
             val prev = supportFragmentManager.findFragmentByTag("purchase_details_dialog")
             if (prev != null) {
@@ -413,6 +422,9 @@ class PaymentActivity : CoreJoshActivity(),
             fragmentTransaction.addToBackStack(null)
             CoursePurchaseDetailFragment.newInstance(courseModel)
                 .show(supportFragmentManager, "purchase_details_dialog")
+            AppAnalytics.create(AnalyticsEvent.PAYMENT_DIALOG.NAME)
+                .push()
+
         }
     }
 
@@ -424,6 +436,8 @@ class PaymentActivity : CoreJoshActivity(),
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
                     try {
+                        AppAnalytics.create(AnalyticsEvent.BUY_NOW_SELECTED.NAME)
+                            .addParam("test_id", testId).push()
                         it.courseModel?.let { courseModel ->
                             this.amount = courseModel.amount
                             this.courseName = courseModel.courseName
@@ -480,6 +494,7 @@ class PaymentActivity : CoreJoshActivity(),
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == 101 && resultCode == Activity.RESULT_OK) {
+            AppAnalytics.create(AnalyticsEvent.LOGIN_SUCCESSFULLY.NAME).push()
             userHaveSpecialDiscount()
             requestForPayment()
         }
@@ -490,15 +505,21 @@ class PaymentActivity : CoreJoshActivity(),
     override fun getCouponCode(code: String?) {
         code?.run {
             userSubmitCode = this
+            AppAnalytics.create(AnalyticsEvent.COUPON_INSERTED.NAME)
+                .addParam("coupon_code", userSubmitCode).push()
         }
         requestForPayment()
     }
 
     override fun onBackPressed() {
+
         if (Mentor.getInstance().hasId().not()) {
             openCourseExplorerScreen()
             return
         }
+        AppAnalytics.create(AnalyticsEvent.BACK_PRESSED.NAME)
+            .addParam("name", javaClass.simpleName)
+            .push()
         if (supportFragmentManager.findFragmentById(R.id.container) != null) {
             this@PaymentActivity.finish()
             return
@@ -539,6 +560,8 @@ class PaymentActivity : CoreJoshActivity(),
         fragmentTransaction.addToBackStack(null)
         CouponCodeSubmitFragment.newInstance()
             .show(supportFragmentManager, "coupon_code_dialog")
+        AppAnalytics.create(AnalyticsEvent.COUPON_SELECTED.NAME)
+            .push()
     }
 
     private fun invalidCodeDialog() {

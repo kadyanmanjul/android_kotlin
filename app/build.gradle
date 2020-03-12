@@ -12,8 +12,8 @@ android {
         applicationId "com.joshtalks.joshskills"
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 70
-        versionName "1.0.70"
+        versionCode 69
+        versionName "1.0.69"
         vectorDrawables.useSupportLibrary true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField "String", "CLIENT_TOKEN", "\"Ctt75ss5IxyHgBJb48diBbHUXIQ1VANCYRykjdcj\""
@@ -130,10 +130,10 @@ dependencies {
     implementation project(path: ':emoji-google')
     implementation project(path: ':joshlibrary')
     implementation project(path: ':pdfviewer')
-    implementation (project(path: ':appcamera'), {
+    implementation(project(path: ':appcamera'), {
         exclude group: 'com.bumptech.glide'
     })
-    implementation (project(path: ':mediapicker'), {
+    implementation(project(path: ':mediapicker'), {
         exclude group: 'com.bumptech.glide'
     })
 
@@ -174,7 +174,7 @@ dependencies {
     implementation 'com.google.android.material:material:1.2.0-alpha05'
     kapt 'com.android.databinding:compiler:3.1.4'
 
-    implementation ("com.github.bumptech.glide:glide:4.11.0"){
+    implementation("com.github.bumptech.glide:glide:4.11.0") {
         exclude group: "com.android.support"
     }
     kapt 'com.github.bumptech.glide:compiler:4.11.0'
@@ -264,7 +264,7 @@ dependencies {
     implementation 'me.zhanghai.android.materialplaypausedrawable:library:1.0.0'
 
     implementation 'io.branch.sdk.android:library:4.3.2'
-    implementation (name: "truesdk-0.7-releasePartner", ext: "aar")
+    implementation(name: "truesdk-0.7-releasePartner", ext: "aar")
     implementation 'com.clevertap.android:clevertap-android-sdk:3.5.1'
 
     //Payment Razor pay
@@ -274,6 +274,8 @@ dependencies {
     implementation 'com.github.nisrulz:easydeviceinfo-base:2.4.1'
     implementation 'me.samlss:lighter:1.0.3'
     implementation 'com.jakewharton.timber:timber:4.7.1'
+//    implementation 'the.bot.box:appusagemonitor:1.0.1'
+
 
     //https://github.com/stepstone-tech/android-material-app-rating
 

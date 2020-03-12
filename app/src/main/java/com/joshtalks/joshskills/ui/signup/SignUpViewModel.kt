@@ -9,6 +9,7 @@ import com.facebook.appevents.AppEventsConstants.EVENT_NAME_COMPLETED_REGISTRATI
 import com.google.android.gms.auth.api.phone.SmsRetriever
 import com.google.android.gms.tasks.Task
 import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
@@ -79,7 +80,7 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
                 val reqObj = RequestVerifyOTP(phoneNumber, otp ?: otpField.get()!!)
                 val response: LoginResponse =
                     AppObjectController.signUpNetworkService.verifyOTP(reqObj).await()
-
+                AppAnalytics.create(AnalyticsEvent.LOGIN_WITH_OTP.NAME).push()
                 val user = User.getInstance()
                 user.id = response.userId
                 user.source = "OTP"
@@ -126,6 +127,8 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
                         trueCallerLoginRequest
                     ).await()
 
+                AppAnalytics.create(AnalyticsEvent.LOGIN_WITH_TRUECALLER.NAME).push()
+
                 val user = User.getInstance()
                 user.id = response.userId
                 user.source = "OTP"
@@ -157,7 +160,9 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val mentor: Mentor =
-                    AppObjectController.signUpNetworkService.getPersonalProfileAsync(Mentor.getInstance().getId())
+                    AppObjectController.signUpNetworkService.getPersonalProfileAsync(
+                            Mentor.getInstance().getId()
+                        )
                         .await()
                 Mentor.getInstance().updateFromResponse(mentor)
                 mentor.getUser()?.let {

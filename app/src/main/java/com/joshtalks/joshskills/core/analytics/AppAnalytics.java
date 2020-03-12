@@ -6,9 +6,11 @@ import android.os.Bundle;
 import com.clevertap.android.sdk.CleverTapAPI;
 import com.crashlytics.android.Crashlytics;
 import com.google.firebase.analytics.FirebaseAnalytics;
+import com.joshtalks.joshskills.BuildConfig;
 import com.joshtalks.joshskills.core.AppObjectController;
 import com.joshtalks.joshskills.repository.local.model.Mentor;
 import com.joshtalks.joshskills.repository.local.model.User;
+
 import java.util.HashMap;
 import java.util.Objects;
 
@@ -29,6 +31,10 @@ public class AppAnalytics {
 
         if (cleverTapAnalytics == null) {
             cleverTapAnalytics = CleverTapAPI.getDefaultInstance(AppObjectController.getJoshApplication());
+            if (BuildConfig.DEBUG) {
+                CleverTapAPI.setDebugLevel(CleverTapAPI.LogLevel.DEBUG);
+            }
+
         }
 
         if (firebaseAnalytics == null) {
@@ -67,6 +73,14 @@ public class AppAnalytics {
         Crashlytics.setUserIdentifier(user.getId());
         Crashlytics.setUserName(user.getFirstName());
         Crashlytics.setString("cleverId", cleverTapAnalytics.getCleverTapID());
+    }
+
+    public static void flush() {
+        if (cleverTapAnalytics == null) {
+            cleverTapAnalytics = CleverTapAPI.getDefaultInstance(AppObjectController.getJoshApplication());
+        }
+        cleverTapAnalytics.flush();
+
     }
 
     public AppAnalytics addParam(String key, String value) {
@@ -124,7 +138,6 @@ public class AppAnalytics {
     private void pushToCleverTap() {
         cleverTapAnalytics.pushEvent(event, parameters);
     }
-
 
     private Bundle convertMapToBundle(HashMap properites) {
         Bundle bundle = new Bundle();

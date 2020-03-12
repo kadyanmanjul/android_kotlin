@@ -219,6 +219,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         earnIV = findViewById(R.id.iv_earn)
         earnIV.setOnClickListener {
             WorkMangerAdmin.referralEventTracker(REFERRAL_EVENT.CLICK_ON_REFERRAL)
+            AppAnalytics.create(AnalyticsEvent.REFERRAL_SELECTED.NAME).push()
             ReferralActivity.startReferralActivity(this@InboxActivity)
         }
         visibleShareEarn()
@@ -260,7 +261,6 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
                     )
                 }
                 progress_bar.visibility = View.GONE
-
                 addCourseExploreView()
             }
         })
@@ -434,7 +434,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
     private fun addCourseExploreView() {
         if (AppObjectController.getFirebaseRemoteConfig().getBoolean("course_explore_flag")) {
             findMoreLayout.visibility = View.VISIBLE
-            if (findMoreVisible && PrefManager.getBoolValue(FIRST_COURSE_BUY) && isUserFirstTime) {
+            if (findMoreVisible) {
                 findMoreVisible = false
                 if (PrefManager.getBoolValue(FIRST_TIME_OFFER_SHOW).not()) {
                     PrefManager.put(FIRST_TIME_OFFER_SHOW, true)
@@ -543,23 +543,23 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
 
     }
 
-    private fun showAppUseWhenComeFirstTime() {
-        try {
-            val entity = viewModel.registerCourseMinimalLiveData.value?.get(0)
-            val entity2 = viewModel.registerCourseNetworkLiveData.value?.get(0)
-            if (entity == null && entity2 == null) {
-                return
-            }
+    /* private fun showAppUseWhenComeFirstTime() {
+         try {
+             val entity = viewModel.registerCourseMinimalLiveData.value?.get(0)
+             val entity2 = viewModel.registerCourseNetworkLiveData.value?.get(0)
+             if (entity == null && entity2 == null) {
+                 return
+             }
 
-            if (PrefManager.getBoolValue(FIRST_COURSE_BUY).not()) {
-                isUserFirstTime = false
-                PrefManager.put(FIRST_COURSE_BUY, true)
-                TooltipUtility.showFirstTimeUserTooltip(entity ?: entity2, this, this) {
-                }
-            }
-        } catch (ex: Exception) {
-        }
-    }
+             if (PrefManager.getBoolValue(FIRST_COURSE_BUY).not()) {
+                 isUserFirstTime = false
+                 PrefManager.put(FIRST_COURSE_BUY, true)
+                 TooltipUtility.showFirstTimeUserTooltip(entity ?: entity2, this, this) {
+                 }
+             }
+         } catch (ex: Exception) {
+         }
+     }*/
 
     fun attachOfferHintView() {
         compositeDisposable.add(AppObjectController.appDatabase

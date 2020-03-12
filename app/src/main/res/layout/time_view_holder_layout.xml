@@ -22,6 +22,7 @@
             app:contentPaddingLeft="@dimen/_8sdp"
             app:contentPaddingRight="@dimen/_8sdp"
             app:contentPaddingTop="@dimen/_4sdp">
+
         <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
                 android:id="@+id/text_title"
                 fontPath="fonts/Roboto-Regular.ttf"

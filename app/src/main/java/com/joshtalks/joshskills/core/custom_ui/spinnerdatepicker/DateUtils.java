@@ -25,6 +25,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Locale;
 import java.util.TimeZone;
+
 /**
  * Utility methods for processing dates.
  */
@@ -46,6 +47,7 @@ public class DateUtils {
             new SimpleDateFormat("yyyyMMdd'T'HHmmss'Z'", Locale.US),
             new SimpleDateFormat("yyyyMMdd'T'HHmm'Z'", Locale.US),
     };
+
     static {
         for (SimpleDateFormat format : DATE_FORMATS) {
             format.setLenient(true);
@@ -53,12 +55,13 @@ public class DateUtils {
         }
         CommonDateUtils.NO_YEAR_DATE_FORMAT.setTimeZone(UTC_TIMEZONE);
     }
+
     /**
      * Parses the supplied string to see if it looks like a date.
      *
-     * @param string The string representation of the provided date
+     * @param string          The string representation of the provided date
      * @param mustContainYear If true, the string is parsed as a date containing a year. If false,
-     * the string is parsed into a valid date even if the year field is missing.
+     *                        the string is parsed into a valid date even if the year field is missing.
      * @return A Calendar object corresponding to the date if the string is successfully parsed.
      * If not, null is returned.
      */
@@ -92,6 +95,7 @@ public class DateUtils {
         }
         return null;
     }
+
     private static final Calendar getUtcDate(Date date, boolean noYear) {
         final Calendar calendar = Calendar.getInstance(UTC_TIMEZONE, Locale.US);
         calendar.setTime(date);
@@ -100,6 +104,7 @@ public class DateUtils {
         }
         return calendar;
     }
+
     private static final Calendar getUtcDate(int year, int month, int dayOfMonth) {
         final Calendar calendar = Calendar.getInstance(UTC_TIMEZONE, Locale.US);
         calendar.clear();
@@ -108,31 +113,34 @@ public class DateUtils {
         calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
         return calendar;
     }
+
     public static boolean isYearSet(Calendar cal) {
         // use the Calendar.YEAR field to track whether or not the year is set instead of
         // Calendar.isSet() because doing Calendar.get() causes Calendar.isSet() to become
         // true irregardless of what the previous value was
         return cal.get(Calendar.YEAR) > 1;
     }
+
     /**
      * Same as {@link #formatDate(Context context, String string, boolean longForm)}, with
      * longForm set to {@code true} by default.
      *
      * @param context Valid context
-     * @param string String representation of a date to parse
+     * @param string  String representation of a date to parse
      * @return Returns the same date in a cleaned up format. If the supplied string does not look
      * like a date, return it unchanged.
      */
     public static String formatDate(Context context, String string) {
         return formatDate(context, string, true);
     }
+
     /**
      * Parses the supplied string to see if it looks like a date.
      *
-     * @param context Valid context
-     * @param string String representation of a date to parse
+     * @param context  Valid context
+     * @param string   String representation of a date to parse
      * @param longForm If true, return the date formatted into its long string representation.
-     * If false, return the date formatted using its short form representation (i.e. 12/11/2012)
+     *                 If false, return the date formatted using its short form representation (i.e. 12/11/2012)
      * @return Returns the same date in a cleaned up format. If the supplied string does not look
      * like a date, return it unchanged.
      */
@@ -163,6 +171,7 @@ public class DateUtils {
             return outFormat.format(cal.getTime());
         }
     }
+
     public static boolean isMonthBeforeDay(Context context) {
         char[] dateFormatOrder = DateFormat.getDateFormatOrder(context);
         for (int i = 0; i < dateFormatOrder.length; i++) {
@@ -175,6 +184,7 @@ public class DateUtils {
         }
         return false;
     }
+
     /**
      * Returns a SimpleDateFormat object without the year fields by using a regular expression
      * to eliminate the year in the string pattern. In the rare occurence that the resulting
@@ -197,6 +207,7 @@ public class DateUtils {
                     DateUtils.isMonthBeforeDay(context) ? "MMMM dd" : "dd MMMM");
         }
     }
+
     /**
      * Given a calendar (possibly containing only a day of the year), returns the earliest possible
      * anniversary of the date that is equal to or after the current point in time if the date
@@ -239,18 +250,19 @@ public class DateUtils {
                 // Otherwise, keep going until we find the next leap year (this is not guaranteed
                 // to be in 4 years time).
                 do {
-                    anniversaryYear +=1;
+                    anniversaryYear += 1;
                 } while (isFeb29 && !anniversary.isLeapYear(anniversaryYear));
                 anniversary.set(anniversaryYear, targetMonth, targetDay);
             }
         }
         return anniversary.getTime();
     }
+
     /**
      * Determine the difference, in days between two dates.  Uses similar logic as the
      * {android.text.format.DateUtils.getRelativeTimeSpanString} method.
      *
-     * @param time Instance of time object to use for calculations.
+     * @param time  Instance of time object to use for calculations.
      * @param date1 First date to check.
      * @param date2 Second date to check.
      * @return The absolute difference in days between the two dates.

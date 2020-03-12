@@ -101,9 +101,13 @@ class PromotionDialogFragment : DialogFragment() {
     }
 
     fun openPromotion() {
-        requireActivity().startActivity(Intent(requireActivity(), PaymentActivity::class.java).apply {
-            putExtra(COURSE_ID, courseId)
-        })
+        requireActivity().startActivity(
+            Intent(
+                requireActivity(),
+                PaymentActivity::class.java
+            ).apply {
+                putExtra(COURSE_ID, courseId)
+            })
         dismissAllowingStateLoss()
     }
 

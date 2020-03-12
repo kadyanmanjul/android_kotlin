@@ -25,6 +25,8 @@ import com.bumptech.glide.load.MultiTransformation
 import com.bumptech.glide.request.RequestOptions
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
+import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.custom_ui.progress.FlipProgressDialog
 import com.joshtalks.joshskills.databinding.FragmentLodgeComplaintBinding
 import com.joshtalks.joshskills.repository.server.RequestComplaint
@@ -81,6 +83,7 @@ class ComplaintFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val titleView = activity?.findViewById<AppCompatTextView>(R.id.text_message_title)
         titleView?.text = typeOfHelpModel.categoryName
+        AppAnalytics.create(typeOfHelpModel.categoryName).push()
         viewModel.apiCallStatusLiveData.observe(viewLifecycleOwner, Observer {
             if (it == ApiCallStatus.SUCCESS) {
                 progressDialog.dismissAllowingStateLoss()
@@ -233,7 +236,8 @@ class ComplaintFragment : Fragment() {
             return
         }
 
-        if (lodgeComplaintBinding.etEmail.text.toString().isEmpty() || Patterns.EMAIL_ADDRESS.matcher(
+        if (lodgeComplaintBinding.etEmail.text.toString()
+                .isEmpty() || Patterns.EMAIL_ADDRESS.matcher(
                 lodgeComplaintBinding.etEmail.text.toString()
             ).matches().not()
         ) {

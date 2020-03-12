@@ -23,6 +23,4 @@ interface CommonNetworkService {
     fun registerGAIdAsync(@Body requestRegisterGId: RequestRegisterGId): Deferred<RequestRegisterGId>
 
 
-
-
 }

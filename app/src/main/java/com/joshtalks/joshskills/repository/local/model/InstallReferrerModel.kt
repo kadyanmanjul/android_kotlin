@@ -9,15 +9,20 @@ const val INSTALL_REFERRER_OBJECT = "install_referrer_object"
 
 open class InstallReferrerModel {
     @SerializedName("install_on")
-    var installOn: Long = (Date().time/1000)
+    var installOn: Long = (Date().time / 1000)
+
     @SerializedName("mentor")
     var mentor: String? = null
+
     @SerializedName("other_info")
     var otherInfo: HashMap<String, String>? = null
+
     @SerializedName("utm_medium")
     var utmMedium: String? = null
+
     @SerializedName("utm_source")
     var utmSource: String? = null
+
     @SerializedName("utm_term")
     var utmTerm: String? = null
 

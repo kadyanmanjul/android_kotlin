@@ -118,7 +118,9 @@ class SignUpStep2Fragment : Fragment() {
 
 
     fun verifyOTP() {
-        if (signUpStep2Binding.otpView.text.isNullOrEmpty().not() || viewModel.otpField.get().isNullOrEmpty().not()) {
+        if (signUpStep2Binding.otpView.text.isNullOrEmpty().not() || viewModel.otpField.get()
+                .isNullOrEmpty().not()
+        ) {
             showProgress()
             viewModel.verifyOTP(signUpStep2Binding.otpView.text?.toString())
         } else {
@@ -211,7 +213,8 @@ class SignUpStep2Fragment : Fragment() {
                     try {
                         signUpStep2Binding.tvResendMessage.text = getString(R.string.resend_otp)
                         signUpStep2Binding.tvResendMessage.isEnabled = true
-                    }catch (ex:Exception){}
+                    } catch (ex: Exception) {
+                    }
                 }
             }
         }

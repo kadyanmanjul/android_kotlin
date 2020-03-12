@@ -110,7 +110,9 @@ abstract class BaseActivity : AppCompatActivity() {
             Crashlytics.getInstance().core.setUserName(User.getInstance().firstName)
             Crashlytics.getInstance().core.setUserEmail(User.getInstance().email)
             Crashlytics.getInstance()
-                .core.setUserIdentifier(User.getInstance().phoneNumber + "$" + Mentor.getInstance().getId())
+                .core.setUserIdentifier(
+                User.getInstance().phoneNumber + "$" + Mentor.getInstance().getId()
+            )
             Branch.getInstance().setIdentity(Mentor.getInstance().getId())
 
         } catch (ex: Exception) {

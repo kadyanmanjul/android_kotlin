@@ -45,13 +45,13 @@ public class DeviceInfoUtil {
 
             // Config Mod
             EasyConfigMod easyConfigMod = new EasyConfigMod(context);
-           // deviceDataMap.put("Time (ms)", String.valueOf(easyConfigMod.getTime()));
-           // deviceDataMap.put("Formatted Time (24Hrs)", easyConfigMod.getFormattedTime());
-          //  deviceDataMap.put("UpTime (ms)", String.valueOf(easyConfigMod.getUpTime()));
-          //  deviceDataMap.put("Formatted Up Time (24Hrs)", easyConfigMod.getFormattedUpTime());
+            // deviceDataMap.put("Time (ms)", String.valueOf(easyConfigMod.getTime()));
+            // deviceDataMap.put("Formatted Time (24Hrs)", easyConfigMod.getFormattedTime());
+            //  deviceDataMap.put("UpTime (ms)", String.valueOf(easyConfigMod.getUpTime()));
+            //  deviceDataMap.put("Formatted Up Time (24Hrs)", easyConfigMod.getFormattedUpTime());
             deviceDataMap.put("Date", String.valueOf(easyConfigMod.getCurrentDate()));
             //  deviceDataMap.put("Formatted Date", easyConfigMod.getFormattedDate());
-          //  deviceDataMap.put("SD Card available", String.valueOf(easyConfigMod.hasSdCard()));
+            //  deviceDataMap.put("SD Card available", String.valueOf(easyConfigMod.hasSdCard()));
             // deviceDataMap.put("Running on emulator", String.valueOf(easyConfigMod.isRunningOnEmulator()));
 /*
 
@@ -100,12 +100,12 @@ public class DeviceInfoUtil {
             EasySimMod easySimMod = new EasySimMod(context);
             if (ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
                 //deviceDataMap.put("IMSI", easySimMod.getIMSI());
-               // deviceDataMap.put("SIM Serial Number", easySimMod.getSIMSerial());
+                // deviceDataMap.put("SIM Serial Number", easySimMod.getSIMSerial());
                 deviceDataMap.put("Country", easySimMod.getCountry());
-             //   deviceDataMap.put("Carrier", easySimMod.getCarrier());
-             //   deviceDataMap.put("SIM Network Locked", String.valueOf(easySimMod.isSimNetworkLocked()));
-               // deviceDataMap.put("Is Multi SIM", String.valueOf(easySimMod.isMultiSim()));
-               // deviceDataMap.put("Number of active SIM", String.valueOf(easySimMod.getNumberOfActiveSim()));
+                //   deviceDataMap.put("Carrier", easySimMod.getCarrier());
+                //   deviceDataMap.put("SIM Network Locked", String.valueOf(easySimMod.isSimNetworkLocked()));
+                // deviceDataMap.put("Is Multi SIM", String.valueOf(easySimMod.isMultiSim()));
+                // deviceDataMap.put("Number of active SIM", String.valueOf(easySimMod.getNumberOfActiveSim()));
 
             }
 
@@ -146,37 +146,37 @@ public class DeviceInfoUtil {
             // Device Mod
             EasyDeviceMod easyDeviceMod = new EasyDeviceMod(context);
             deviceDataMap.put("Language", easyDeviceMod.getLanguage());
-          //  deviceDataMap.put("Android ID", easyIdMod.getAndroidID());
-           // deviceDataMap.put("IMEI", easyDeviceMod.getIMEI());
-           // deviceDataMap.put("User-Agent", easyIdMod.getUA());
+            //  deviceDataMap.put("Android ID", easyIdMod.getAndroidID());
+            // deviceDataMap.put("IMEI", easyDeviceMod.getIMEI());
+            // deviceDataMap.put("User-Agent", easyIdMod.getUA());
             //    deviceDataMap.put("GSF ID", easyIdMod.getGSFID());
-          //  deviceDataMap.put("Pseudo ID", easyIdMod.getPseudoUniqueID());
-        //    deviceDataMap.put("Device Serial", easyDeviceMod.getSerial());
+            //  deviceDataMap.put("Pseudo ID", easyIdMod.getPseudoUniqueID());
+            //    deviceDataMap.put("Device Serial", easyDeviceMod.getSerial());
             deviceDataMap.put("Manufacturer", easyDeviceMod.getManufacturer());
             deviceDataMap.put("Model", easyDeviceMod.getModel());
-         //   deviceDataMap.put("OS Codename", easyDeviceMod.getOSCodename());
+            //   deviceDataMap.put("OS Codename", easyDeviceMod.getOSCodename());
             deviceDataMap.put("OS Version", easyDeviceMod.getOSVersion());
-          //  deviceDataMap.put("Display Version", easyDeviceMod.getDisplayVersion());
-           // deviceDataMap.put("Phone Number", easyDeviceMod.getPhoneNo());
-           // deviceDataMap.put("Radio Version", easyDeviceMod.getRadioVer());
-           // deviceDataMap.put("Product ", easyDeviceMod.getProduct());
-           // deviceDataMap.put("Device", easyDeviceMod.getDevice());
-           // deviceDataMap.put("Board", easyDeviceMod.getBoard());
-           // deviceDataMap.put("Hardware", easyDeviceMod.getHardware());
-           // deviceDataMap.put("BootLoader", easyDeviceMod.getBootloader());
+            //  deviceDataMap.put("Display Version", easyDeviceMod.getDisplayVersion());
+            // deviceDataMap.put("Phone Number", easyDeviceMod.getPhoneNo());
+            // deviceDataMap.put("Radio Version", easyDeviceMod.getRadioVer());
+            // deviceDataMap.put("Product ", easyDeviceMod.getProduct());
+            // deviceDataMap.put("Device", easyDeviceMod.getDevice());
+            // deviceDataMap.put("Board", easyDeviceMod.getBoard());
+            // deviceDataMap.put("Hardware", easyDeviceMod.getHardware());
+            // deviceDataMap.put("BootLoader", easyDeviceMod.getBootloader());
             deviceDataMap.put("Device Rooted", String.valueOf(easyDeviceMod.isDeviceRooted()));
-         //   deviceDataMap.put("Fingerprint", easyDeviceMod.getFingerprint());
-           // deviceDataMap.put("Build Brand", easyDeviceMod.getBuildBrand());
-           // deviceDataMap.put("Build Host", easyDeviceMod.getBuildHost());
-           // deviceDataMap.put("Build Tag", easyDeviceMod.getBuildTags());
-        //    deviceDataMap.put("Build Time", String.valueOf(easyDeviceMod.getBuildTime()));
-        //    deviceDataMap.put("Build User", easyDeviceMod.getBuildUser());
-          //  deviceDataMap.put("Build Version Release", easyDeviceMod.getBuildVersionRelease());
+            //   deviceDataMap.put("Fingerprint", easyDeviceMod.getFingerprint());
+            // deviceDataMap.put("Build Brand", easyDeviceMod.getBuildBrand());
+            // deviceDataMap.put("Build Host", easyDeviceMod.getBuildHost());
+            // deviceDataMap.put("Build Tag", easyDeviceMod.getBuildTags());
+            //    deviceDataMap.put("Build Time", String.valueOf(easyDeviceMod.getBuildTime()));
+            //    deviceDataMap.put("Build User", easyDeviceMod.getBuildUser());
+            //  deviceDataMap.put("Build Version Release", easyDeviceMod.getBuildVersionRelease());
             //deviceDataMap.put("Screen Display ID", easyDeviceMod.getScreenDisplayID());
-           // deviceDataMap.put("Build Version Codename", easyDeviceMod.getBuildVersionCodename());
-           // deviceDataMap.put("Build Version Increment", easyDeviceMod.getBuildVersionIncremental());
+            // deviceDataMap.put("Build Version Codename", easyDeviceMod.getBuildVersionCodename());
+            // deviceDataMap.put("Build Version Increment", easyDeviceMod.getBuildVersionIncremental());
             deviceDataMap.put("Build Version SDK", String.valueOf(easyDeviceMod.getBuildVersionSDK()));
-           // deviceDataMap.put("Build ID", easyDeviceMod.getBuildID());
+            // deviceDataMap.put("Build ID", easyDeviceMod.getBuildID());
 
 /*
             @PhoneType int phoneType = easyDeviceMod.getPhoneType();
@@ -202,21 +202,21 @@ public class DeviceInfoUtil {
             //deviceDataMap.put("Installer Store", easyAppMod.getStore());
             deviceDataMap.put("App Name", easyAppMod.getAppName());
             deviceDataMap.put("Package Name", easyAppMod.getPackageName());
-           // deviceDataMap.put("Activity Name", easyAppMod.getActivityName());
+            // deviceDataMap.put("Activity Name", easyAppMod.getActivityName());
             deviceDataMap.put("App version", easyAppMod.getAppVersion());
             deviceDataMap.put("App versioncode", easyAppMod.getAppVersionCode());
             //deviceDataMap.put("Does app have Camera permission?",String.valueOf(easyAppMod.isPermissionGranted(Manifest.permission.CAMERA)));
 
             //Network Mod
             EasyNetworkMod easyNetworkMod = new EasyNetworkMod(context);
-           // deviceDataMap.put("WIFI MAC Address", easyNetworkMod.getWifiMAC());
+            // deviceDataMap.put("WIFI MAC Address", easyNetworkMod.getWifiMAC());
             //deviceDataMap.put("WIFI LinkSpeed", easyNetworkMod.getWifiLinkSpeed());
             //deviceDataMap.put("WIFI SSID", easyNetworkMod.getWifiSSID());
             //deviceDataMap.put("WIFI BSSID", easyNetworkMod.getWifiBSSID());
-           // deviceDataMap.put("IPv4 Address", easyNetworkMod.getIPv4Address());
+            // deviceDataMap.put("IPv4 Address", easyNetworkMod.getIPv4Address());
             //deviceDataMap.put("IPv6 Address", easyNetworkMod.getIPv6Address());
-           // deviceDataMap.put("Network Available", String.valueOf(easyNetworkMod.isNetworkAvailable()));
-        //    deviceDataMap.put("Wi-Fi enabled", String.valueOf(easyNetworkMod.isWifiEnabled()));
+            // deviceDataMap.put("Network Available", String.valueOf(easyNetworkMod.isNetworkAvailable()));
+            //    deviceDataMap.put("Wi-Fi enabled", String.valueOf(easyNetworkMod.isWifiEnabled()));
 
             @NetworkType int networkType = easyNetworkMod.getNetworkType();
 

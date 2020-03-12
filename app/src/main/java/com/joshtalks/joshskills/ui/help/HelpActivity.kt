@@ -9,6 +9,8 @@ import androidx.fragment.app.commit
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.CoreJoshActivity
 import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
+import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.HelpRequestEventBus
 import com.joshtalks.joshskills.repository.server.TypeOfHelpModel
@@ -52,6 +54,9 @@ class HelpActivity : CoreJoshActivity() {
     }
 
     override fun onBackPressed() {
+        AppAnalytics.create(AnalyticsEvent.BACK_PRESSED.NAME)
+            .addParam("name", javaClass.simpleName)
+            .push()
         if (supportFragmentManager.backStackEntryCount == 1) {
             this@HelpActivity.finish()
             return
@@ -81,6 +86,8 @@ class HelpActivity : CoreJoshActivity() {
                     compliantScreen(it.typeOfHelpModel)
                 } else {
                     Utils.call(this@HelpActivity, it.typeOfHelpModel.mobile)
+                    AppAnalytics.create(AnalyticsEvent.CALL_HELPLINE.NAME).push()
+
                 }
             })
     }

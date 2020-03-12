@@ -1,6 +1,11 @@
 package com.joshtalks.joshskills.core
 
 import android.content.Context
+import android.util.Log
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.OnLifecycleEvent
+import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.multidex.MultiDex
 import com.facebook.FacebookSdk
 import com.facebook.LoggingBehavior
@@ -20,7 +25,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
-class JoshApplication : BranchApp() {
+class JoshApplication : BranchApp(), LifecycleObserver {
     companion object {
         @JvmStatic
         internal var appObjectController: AppObjectController? = null
@@ -30,6 +35,7 @@ class JoshApplication : BranchApp() {
 
     override fun onCreate() {
         super.onCreate()
+        ProcessLifecycleOwner.get().lifecycle.addObserver(this);
 
         if (BuildConfig.DEBUG) {
             Stetho.initializeWithDefaults(this)
@@ -86,5 +92,26 @@ class JoshApplication : BranchApp() {
                 ex.printStackTrace()
             }
         }
+    }
+
+    var TAG = "APPPP"
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
+    fun onAppBackgrounded() {
+
+        Log.e(TAG, "************* backgrounded")
+        Log.e(TAG, "************* ${isActivityVisible()}")
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_START)
+    fun onAppForegrounded() {
+
+        Log.e(TAG, "************* foregrounded")
+        Log.e(TAG, "************* ${isActivityVisible()}")
+        // App in foreground
+    }
+
+    fun isActivityVisible(): String {
+        return ProcessLifecycleOwner.get().lifecycle.currentState.name
     }
 }

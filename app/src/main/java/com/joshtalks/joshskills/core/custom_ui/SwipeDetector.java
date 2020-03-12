@@ -54,10 +54,10 @@ public class SwipeDetector {
 
     private class Gesticulate {
 
-        private int swipe_distance;
-        private int swipe_velocity;
         private static final int DEFAULT_SWIPE_MIN_DISTANCE = 220;
         private static final int DEFAULT_SWIPE_THRESHOLD_VELOCITY = 400;
+        private int swipe_distance;
+        private int swipe_velocity;
 
         public Gesticulate() {
             super();

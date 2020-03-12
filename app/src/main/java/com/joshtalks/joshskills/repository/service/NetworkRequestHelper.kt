@@ -168,9 +168,9 @@ object NetworkRequestHelper {
                 question_id = null
 
             )
-           /* currentChatModel?.let { old ->
-                chatModel.isSeen = old.isSeen
-            }*/
+            /* currentChatModel?.let { old ->
+                 chatModel.isSeen = old.isSeen
+             }*/
 
             if (messageObject is BaseMediaMessage)
                 chatModel.downloadedLocalPath = messageObject.localPathUrl
@@ -185,22 +185,26 @@ object NetworkRequestHelper {
             refreshViewLiveData?.postValue(chatModel)
 
             when (chatMessageReceiver.type) {
-                BASE_MESSAGE_TYPE.TX -> AppAnalytics.create(AnalyticsEvent.MESSAGE_SENT_TEXT.NAME).addParam(
-                    "ChatId",
-                    chatMessageReceiver.id
-                ).push()
-                BASE_MESSAGE_TYPE.IM -> AppAnalytics.create(AnalyticsEvent.MESSAGE_SENT_IMAGE.NAME).addParam(
-                    "ChatId",
-                    chatMessageReceiver.id
-                ).push()
-                BASE_MESSAGE_TYPE.VI -> AppAnalytics.create(AnalyticsEvent.MESSAGE_SENT_VIDEO.NAME).addParam(
-                    "ChatId",
-                    chatMessageReceiver.id
-                ).push()
-                BASE_MESSAGE_TYPE.AU -> AppAnalytics.create(AnalyticsEvent.MESSAGE_SENT_AUDIO.NAME).addParam(
-                    "ChatId",
-                    chatMessageReceiver.id
-                ).push()
+                BASE_MESSAGE_TYPE.TX -> AppAnalytics.create(AnalyticsEvent.MESSAGE_SENT_TEXT.NAME)
+                    .addParam(
+                        "ChatId",
+                        chatMessageReceiver.id
+                    ).push()
+                BASE_MESSAGE_TYPE.IM -> AppAnalytics.create(AnalyticsEvent.MESSAGE_SENT_IMAGE.NAME)
+                    .addParam(
+                        "ChatId",
+                        chatMessageReceiver.id
+                    ).push()
+                BASE_MESSAGE_TYPE.VI -> AppAnalytics.create(AnalyticsEvent.MESSAGE_SENT_VIDEO.NAME)
+                    .addParam(
+                        "ChatId",
+                        chatMessageReceiver.id
+                    ).push()
+                BASE_MESSAGE_TYPE.AU -> AppAnalytics.create(AnalyticsEvent.MESSAGE_SENT_AUDIO.NAME)
+                    .addParam(
+                        "ChatId",
+                        chatMessageReceiver.id
+                    ).push()
             }
 
         }

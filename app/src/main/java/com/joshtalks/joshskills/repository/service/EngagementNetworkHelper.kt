@@ -97,7 +97,7 @@ object EngagementNetworkHelper {
     fun clickNotification(notificationId: String?) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                if (notificationId.isNullOrEmpty()){
+                if (notificationId.isNullOrEmpty()) {
                     return@launch
                 }
                 AppAnalytics.create(AnalyticsEvent.NOTIFICATION_CLICKED.NAME).push()

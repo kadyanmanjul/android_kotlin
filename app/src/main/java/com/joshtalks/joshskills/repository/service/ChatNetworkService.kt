@@ -20,10 +20,16 @@ interface ChatNetworkService {
     fun sendMessage(@Body messageObject: Any): Deferred<ChatMessageReceiver>
 
     @PATCH("$DIR/chat/message/{id}")
-    suspend fun deleteMessage(@Path("id") id: String, @FieldMap params: Map<String, String>): ChatMessageReceiver
+    suspend fun deleteMessage(
+        @Path("id") id: String,
+        @FieldMap params: Map<String, String>
+    ): ChatMessageReceiver
 
     @GET("$DIR/chat/{id}/")
-    suspend fun getUnReceivedMessageAsync(@Path("id") id: String, @QueryMap params: Map<String, String>): ResponseChatMessage
+    suspend fun getUnReceivedMessageAsync(
+        @Path("id") id: String,
+        @QueryMap params: Map<String, String>
+    ): ResponseChatMessage
 
     @FormUrlEncoded
     @POST("$DIR/core/signed_url/")
@@ -43,7 +49,10 @@ interface ChatNetworkService {
 
     @FormUrlEncoded
     @PATCH("$DIR/notification/{id}/")
-    suspend fun engageNotificationAsync(@Path("id") id: String, @FieldMap params: Map<String, String>)
+    suspend fun engageNotificationAsync(
+        @Path("id") id: String,
+        @FieldMap params: Map<String, String>
+    )
 
     @PATCH("$DIR/chat/message/list/")
     suspend fun updateMessagesStatus(@Body messageObject: Any)

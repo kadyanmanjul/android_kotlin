@@ -25,6 +25,7 @@ object AppDirectory {
 
     const val TODAY_DATE = "today_date"
     const val APP_SHORT_NAME = "JS"
+
     @Volatile
     private var downloadDirectory: File? = null
 
@@ -41,7 +42,8 @@ object AppDirectory {
      **/
 
     private val AUDIO_RECEIVED_PATH =
-        Environment.getExternalStorageDirectory().toString() + File.separator + APP_DIRECTORY + File.separator + MEDIA_DIRECTORY + "/JoshAppAudio/"
+        Environment.getExternalStorageDirectory()
+            .toString() + File.separator + APP_DIRECTORY + File.separator + MEDIA_DIRECTORY + "/JoshAppAudio/"
 
     fun getAudioReceivedFile(path: String): File {
         val f = File(AUDIO_RECEIVED_PATH)
@@ -62,7 +64,8 @@ object AppDirectory {
      *
      * */
     private val AUDIO_SENT_PATH =
-        Environment.getExternalStorageDirectory().toString() + File.separator + APP_DIRECTORY + File.separator + MEDIA_DIRECTORY + "/JoshAppAudio/Sent"
+        Environment.getExternalStorageDirectory()
+            .toString() + File.separator + APP_DIRECTORY + File.separator + MEDIA_DIRECTORY + "/JoshAppAudio/Sent"
 
     fun getAudioSentFile(path: String?): File {
         val f = File(AUDIO_SENT_PATH)
@@ -89,7 +92,8 @@ object AppDirectory {
      **/
 
     private val IMAGE_RECEIVED_PATH =
-        Environment.getExternalStorageDirectory().toString() + File.separator + APP_DIRECTORY + File.separator + MEDIA_DIRECTORY + "/JoshAppImages/"
+        Environment.getExternalStorageDirectory()
+            .toString() + File.separator + APP_DIRECTORY + File.separator + MEDIA_DIRECTORY + "/JoshAppImages/"
 
     fun getImageReceivedFile(path: String?): File {
         val f = File(IMAGE_RECEIVED_PATH)
@@ -110,7 +114,8 @@ object AppDirectory {
      **/
 
     private val FILE_SENT_PATH =
-        Environment.getExternalStorageDirectory().toString() + File.separator + APP_DIRECTORY + File.separator + MEDIA_DIRECTORY + "/JoshAppFiles/Sent"
+        Environment.getExternalStorageDirectory()
+            .toString() + File.separator + APP_DIRECTORY + File.separator + MEDIA_DIRECTORY + "/JoshAppFiles/Sent"
 
     fun getSentFile(fileName: String): File {
         val f = File(FILE_SENT_PATH)
@@ -131,7 +136,8 @@ object AppDirectory {
      *
      * */
     private val IMAGE_SENT_PATH =
-        Environment.getExternalStorageDirectory().toString() + File.separator + APP_DIRECTORY + File.separator + MEDIA_DIRECTORY + "/JoshAppImages/Sent"
+        Environment.getExternalStorageDirectory()
+            .toString() + File.separator + APP_DIRECTORY + File.separator + MEDIA_DIRECTORY + "/JoshAppImages/Sent"
 
     fun getImageSentFile(path: String?): File {
         val f = File(IMAGE_SENT_PATH)
@@ -154,7 +160,8 @@ object AppDirectory {
 
 
     private val DOCS_RECEIVED_PATH =
-        Environment.getExternalStorageDirectory().toString() + File.separator + APP_DIRECTORY + File.separator + MEDIA_DIRECTORY + "/JoshAppDocuments/"
+        Environment.getExternalStorageDirectory()
+            .toString() + File.separator + APP_DIRECTORY + File.separator + MEDIA_DIRECTORY + "/JoshAppDocuments/"
 
 
     fun docsReceivedFile(url: String): File {
@@ -169,7 +176,8 @@ object AppDirectory {
 
 
     private val VIDEO_RECEIVED_PATH =
-        Environment.getExternalStorageDirectory().toString() + File.separator + APP_DIRECTORY + File.separator + MEDIA_DIRECTORY + "/JoshAppVideos/"
+        Environment.getExternalStorageDirectory()
+            .toString() + File.separator + APP_DIRECTORY + File.separator + MEDIA_DIRECTORY + "/JoshAppVideos/"
 
 
     @JvmStatic
@@ -183,15 +191,18 @@ object AppDirectory {
 
 
     val VIDEO_SENT_PATH =
-        Environment.getExternalStorageDirectory().toString() + File.separator + APP_DIRECTORY + File.separator + MEDIA_DIRECTORY + "/JoshAppVideos/Sent"
+        Environment.getExternalStorageDirectory()
+            .toString() + File.separator + APP_DIRECTORY + File.separator + MEDIA_DIRECTORY + "/JoshAppVideos/Sent"
 
 
     val VIDEO_CACHED_RECEIVED_PATH =
-        Environment.getExternalStorageDirectory().toString() + File.separator + APP_DIRECTORY + File.separator + MEDIA_DIRECTORY + "/JoshApp/cached"
+        Environment.getExternalStorageDirectory()
+            .toString() + File.separator + APP_DIRECTORY + File.separator + MEDIA_DIRECTORY + "/JoshApp/cached"
 
 
     val TEMP_PATH =
-        Environment.getExternalStorageDirectory().toString() + File.separator + APP_DIRECTORY + File.separator + MEDIA_DIRECTORY + "/JoshAppTemp"
+        Environment.getExternalStorageDirectory()
+            .toString() + File.separator + APP_DIRECTORY + File.separator + MEDIA_DIRECTORY + "/JoshAppTemp"
 
 
     private fun getImageFileName(): String {
@@ -422,7 +433,8 @@ object AppDirectory {
 
     fun getFilePathForVideoRecordCache(): File {
         var path =
-            Environment.getExternalStorageDirectory().toString() + File.separator + APP_DIRECTORY + File.separator + MEDIA_DIRECTORY + "/cached"
+            Environment.getExternalStorageDirectory()
+                .toString() + File.separator + APP_DIRECTORY + File.separator + MEDIA_DIRECTORY + "/cached"
         val f = File(path)
         if (f.exists().not()) {
             f.mkdirs()

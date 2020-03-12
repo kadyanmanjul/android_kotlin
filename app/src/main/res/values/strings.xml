@@ -154,10 +154,8 @@
     <string name="login_with_truecaller_label">TrueCaller Login</string>
     <string name="login_with_otp">Login with OTP</string>
     <string name="wrong_otp">The OTP entered is incorrect. Please enter correct OTP or try regenerating the OTP</string>
-    <string name="invite_friends">Invite And Earn</string>
-    <string name="referral_content" formatted="false">Refer your friends &amp; we\'ll give them a discount of ₹ %s on their first course purchase &amp;  ₹ %s cash to you if they buy a course</string>
     <string name="refer_and_earn">Refer &amp; Earn</string>
-    <string name="referral_amount_title" formatted="false">EARN ₹ %s CASH</string>
+    <string name="paise_kamao">Paise Kamao</string>
     <string name="copy_code">Referral code copied to clipboard</string>
     <string name="discount_header">Do you have discount code?</string>
     <string name="complete_payment">Complete Payment</string>
@@ -193,4 +191,5 @@
     <string name="find_more_course_hint_ftime" formatted="false">Hello %s, Agar aap es course ke sath kuch aur bhi seekhna chahte hain to pehle 7 dino mai aapke paas har course pe %s off hai </string>
     <string name="buy_course_offer_tooltip" formatted="false"> Get %s off on the next course you buy, Valid for %s days.</string>
     <string name="first_time_user_hint">Aapko apne course se related saari videos aur claases isko click karke milengi</string>
+    <string name="share_msz">Share with your friends &amp; family and start earning now!</string>
 </resources>

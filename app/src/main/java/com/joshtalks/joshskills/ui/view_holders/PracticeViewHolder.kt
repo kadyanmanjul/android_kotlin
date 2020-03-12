@@ -109,7 +109,6 @@ class PracticeViewHolder(activityRef: WeakReference<FragmentActivity>, message: 
     }
 
 
-
     @Click(R.id.root_view)
     fun onClickRootView() {
         RxBus2.publish(PractiseSubmitEventBus(viewHolder, message))

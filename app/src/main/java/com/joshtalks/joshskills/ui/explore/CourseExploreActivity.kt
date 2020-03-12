@@ -142,7 +142,8 @@ class CourseExploreActivity : CoreJoshActivity() {
                 val data = HashMap<String, String>()
                 if (PrefManager.getStringValue(USER_UNIQUE_ID).isNotEmpty()) {
                     data["gaid"] = PrefManager.getStringValue(USER_UNIQUE_ID)
-                } else if (Mentor.getInstance().getId().isNotEmpty()) {
+                }
+                if (Mentor.getInstance().getId().isNotEmpty()) {
                     data["mentor"] = Mentor.getInstance().getId()
                 } else {
                     data["is_default"] = "true"

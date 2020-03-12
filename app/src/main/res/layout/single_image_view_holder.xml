@@ -14,9 +14,6 @@
             android:orientation="vertical">
 
         <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
-                android:paddingStart="@dimen/_12sdp"
-                android:paddingTop="@dimen/_12sdp"
-                android:paddingBottom="@dimen/_8sdp"
                 android:id="@+id/text_title"
                 fontPath="fonts/OpenSans-SemiBold.ttf"
                 android:layout_width="match_parent"
@@ -24,6 +21,9 @@
                 android:layout_gravity="start"
                 android:gravity="center_vertical|start"
                 android:maxLines="3"
+                android:paddingStart="@dimen/_12sdp"
+                android:paddingTop="@dimen/_12sdp"
+                android:paddingBottom="@dimen/_8sdp"
                 android:textColor="@color/gray_48"
                 android:textSize="@dimen/font_17"
                 android:visibility="gone" />

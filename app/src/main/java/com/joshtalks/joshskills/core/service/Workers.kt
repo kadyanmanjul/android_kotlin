@@ -128,6 +128,7 @@ class UniqueIdGenerationWorker(var context: Context, workerParams: WorkerParamet
                 adInfo.id?.let {
                     PrefManager.put(USER_UNIQUE_ID, it)
                 }
+
             }
         } catch (ex: Exception) {
             ex.printStackTrace()

@@ -8,10 +8,10 @@ import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.repository.local.AppDatabase
 
 const val USER_UNIQUE_ID = "user_unique_id"
-const val FIRST_COURSE_BUY="first_course_buy"
-const val FIRST_TIME_OFFER_SHOW="first_time_offer_show"
-const val GID_SET_FOR_USER="gid_set_for_user"
-const val SERVER_GID_ID="server_gid_id"
+const val FIRST_COURSE_BUY = "first_course_buy"
+const val FIRST_TIME_OFFER_SHOW = "first_time_offer_show"
+const val GID_SET_FOR_USER = "gid_set_for_user"
+const val SERVER_GID_ID = "server_gid_id"
 
 object PrefManager {
 
@@ -41,6 +41,7 @@ object PrefManager {
     fun getBoolValue(key: String): Boolean {
         return prefManager.getBoolean(key, false)
     }
+
     fun getStringValue(key: String): String {
         return prefManager.getString(key, EMPTY) ?: EMPTY
     }

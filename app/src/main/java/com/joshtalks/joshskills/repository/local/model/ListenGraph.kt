@@ -8,6 +8,7 @@ class ListenGraph : Serializable {
 
     @SerializedName("start_time")
     var startTime: Long = 0
+
     @SerializedName("end_time")
     var endTime: Long = 0
 

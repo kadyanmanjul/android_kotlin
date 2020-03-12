@@ -23,12 +23,12 @@
         tools:cardPreventCornerOverlap="false">
 
     <RelativeLayout
-            android:clickable="false"
-            android:enabled="false"
-            android:focusable="false"
-
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:clickable="false"
+
+            android:enabled="false"
+            android:focusable="false"
             android:paddingStart="@dimen/_15sdp"
             android:paddingTop="@dimen/_10sdp"
             android:paddingEnd="@dimen/_15sdp">

@@ -8,7 +8,7 @@ import java.util.Locale;
 /**
  * Copy of {android.widget.NumberPicker.TwoDigitFormatter}, modified
  * so that it doesn't use libcore.
- *
+ * <p>
  * Use a custom NumberPicker formatting callback to use two-digit minutes
  * strings like "01". Keeping a static formatter etc. is the most efficient
  * way to do this; it avoids creating temporary objects on every call to
@@ -16,15 +16,19 @@ import java.util.Locale;
  */
 public class TwoDigitFormatter implements NumberPicker.Formatter {
     final StringBuilder mBuilder = new StringBuilder();
-
+    final Object[] mArgs = new Object[1];
     char mZeroDigit;
     java.util.Formatter mFmt;
-
-    final Object[] mArgs = new Object[1];
 
     public TwoDigitFormatter() {
         final Locale locale = Locale.getDefault();
         init(locale);
+    }
+
+    private static char getZeroDigit(Locale locale) {
+        // The original TwoDigitFormatter directly referenced LocaleData's value. Instead,
+        // we need to use the public DecimalFormatSymbols API.
+        return DecimalFormatSymbols.getInstance(locale).getZeroDigit();
     }
 
     private void init(Locale locale) {
@@ -41,12 +45,6 @@ public class TwoDigitFormatter implements NumberPicker.Formatter {
         mBuilder.delete(0, mBuilder.length());
         mFmt.format("%02d", mArgs);
         return mFmt.toString();
-    }
-
-    private static char getZeroDigit(Locale locale) {
-        // The original TwoDigitFormatter directly referenced LocaleData's value. Instead,
-        // we need to use the public DecimalFormatSymbols API.
-        return DecimalFormatSymbols.getInstance(locale).getZeroDigit();
     }
 
     private java.util.Formatter createFormatter(Locale locale) {

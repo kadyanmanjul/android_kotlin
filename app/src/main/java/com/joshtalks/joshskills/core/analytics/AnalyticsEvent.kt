@@ -56,7 +56,7 @@ enum class AnalyticsEvent(val NAME: String) {
     LOGIN_ERROR("Login Error"),
     LOGIN_CANCELLED("Login Cancelled"),
     LOGIN_SUCCESS("Login Success"),
-    CHAT_SCREEN("Chat Screen"),
+    COURSE_OPENED("Course Opened"),
 
 
     LOGIN("Login"),
@@ -90,7 +90,36 @@ enum class AnalyticsEvent(val NAME: String) {
     NOTIFICATION_CLICKED("Notification Clicked"),
     REGISTRATION_COMPLETED("Registration_completed"),
     COURSE_STARTED("Course_Started"),
-    PURCHASE_COURSE("Purchase Course")
+    PURCHASE_COURSE("Purchase Course"),
+    APP_INSTALL("App Install"),
+    APP_INSTALL_WITH_DEEP_LINK("App Install With Deep Link"),
+    TEST_ID_OPENED("Test ID Opened"),
+    BUY_NOW_SELECTED("Buy Now Selected"),
+    EXPLORE_OPENED("Explore Opened"),
+    PAYMENT_DIALOG("Payment Dialog"),
+    COUPON_SELECTED("Coupon Selected"),
+    COUPON_INSERTED("Coupon Inserted"),
+    COUPON_VALID("Coupon Valid"),
+    COUPON_INVALID("Coupon Invalid"),
+    LOGIN_SCREEN("Login Screen"),
+    LOGIN_WITH_TRUECALLER("Login With Truecaller"),
+    LOGIN_WITH_OTP("Login With Otp"),
+    RAZORPAY_SDK("Razorpay SDK"),
+    PAYMENT_COMPLETED("Payment Completed"),
+    PAYMENT_INITIATED("Payment Initiated"),
+
+    PRACTISE_OPENED("Practise Opened"),
+    AUDIO_SUBMITTED("Audio Submitted"),
+    VIDEO_SUBMITTED("Video Submitted"),
+    TEXT_SUBMITTED("Text Submitted"),
+    DOCUMENT_SUBMITTED("Document Submitted"),
+    REFERRAL_SELECTED("Referral Selected"),
+    CODE_COPIED("Code Copied"),
+    SHARE_ON_WHATSAPP("Share On Whatsapp"),
+    HELP_SELECTED("Help Selected"),
+    CALL_HELPLINE("Call Helpline"),
+    HELP_SUBMITTED("Help Submitted"),
+    LOGIN_SUCCESSFULLY("Login Successfully")
 
 
 }

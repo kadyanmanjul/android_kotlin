@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
 **
 ** Copyright 2007, The Android Open Source Project
 **
@@ -23,19 +22,19 @@
      contained in it. This helps to prevent rounding errors when toggling the "Show year" option -->
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
-              android:layout_gravity="center_horizontal"
-              android:layout_width="270dip"
-              android:layout_height="wrap_content">
+        android:layout_width="270dip"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:orientation="vertical">
 
     <!-- Warning: everything within the parent is removed and re-ordered depending
          on the date format selected by the user. -->
     <LinearLayout
-        android:id="@+id/parent"
-        android:orientation="horizontal"
-        android:layout_gravity="center_horizontal"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+            android:id="@+id/parent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:orientation="horizontal">
 
     </LinearLayout>
 </LinearLayout>

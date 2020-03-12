@@ -22,6 +22,8 @@ import com.google.gson.JsonSyntaxException
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
+import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.custom_ui.TextDrawable
 import com.joshtalks.joshskills.databinding.FragmentCouponCodeSubmitBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor
@@ -149,10 +151,10 @@ class CouponCodeSubmitFragment : DialogFragment() {
     }
 
     private fun addDrawableInEditText() {
-        val font = Typeface.createFromAsset(context!!.assets, "fonts/OpenSans-SemiBold.ttf")
+        val font = Typeface.createFromAsset(requireContext().assets, "fonts/OpenSans-SemiBold.ttf")
         val drawable: TextDrawable = TextDrawable.builder()
             .beginConfig()
-            .textColor(ContextCompat.getColor(activity!!, R.color.button_primary_color))
+            .textColor(ContextCompat.getColor(requireActivity(), R.color.button_primary_color))
             .useFont(font)
             .fontSize(Utils.dpToPx(12))
             .toUpperCase()
@@ -213,7 +215,7 @@ class CouponCodeSubmitFragment : DialogFragment() {
         CoroutineScope(Dispatchers.Main).launch {
             binding.couponValidTv.text = "Coupon Successfully Applied"
             binding.couponValidTv.textColor =
-                ContextCompat.getColor(context!!, R.color.color_success)
+                ContextCompat.getColor(requireContext(), R.color.color_success)
             binding.couponValidTv.setCompoundDrawablesWithIntrinsicBounds(
                 R.drawable.ic_check_circle,
                 0,
@@ -223,13 +225,15 @@ class CouponCodeSubmitFragment : DialogFragment() {
 
             binding.progressBar.visibility = View.INVISIBLE
         }
+        AppAnalytics.create(AnalyticsEvent.COUPON_VALID.NAME).push()
+
     }
 
     private fun inValidCode() {
         CoroutineScope(Dispatchers.Main).launch {
             binding.couponValidTv.text = "Coupon Code Invalid"
             binding.couponValidTv.textColor =
-                ContextCompat.getColor(context!!, R.color.error_color)
+                ContextCompat.getColor(requireContext(), R.color.error_color)
             binding.couponValidTv.setCompoundDrawablesWithIntrinsicBounds(
                 R.drawable.ic_error_outline,
                 0,
@@ -239,5 +243,7 @@ class CouponCodeSubmitFragment : DialogFragment() {
 
             binding.progressBar.visibility = View.INVISIBLE
         }
+        AppAnalytics.create(AnalyticsEvent.COUPON_INVALID.NAME).push()
+
     }
 }

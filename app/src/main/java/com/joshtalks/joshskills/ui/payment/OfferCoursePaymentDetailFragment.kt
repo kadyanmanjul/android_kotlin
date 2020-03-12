@@ -85,13 +85,11 @@ class OfferCoursePaymentDetailFragment : DialogFragment() {
             .load(courseModel.courseIcon)
             .override(Target.SIZE_ORIGINAL)
             .into(binding.courseImage)
-        binding.tvCourseFeesAmount.text = "₹" + String.format("%.2f",(paymentDetailResponse.amount / 100))
+        binding.tvCourseFeesAmount.text =
+            "₹" + String.format("%.2f", (paymentDetailResponse.originalAmount))
         binding.tvDiscountAmount.text =
             "₹" + String.format("%.2f", (paymentDetailResponse.discountAmount / 100))
         binding.tvOfferInfo.text = getString(R.string.offer_bachat, binding.tvDiscountAmount.text)
-
-
-
 
         binding.tvCourseSellAmount.text =
             "₹" + String.format("%.2f", (paymentDetailResponse.amount / 100))

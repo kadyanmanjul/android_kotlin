@@ -20,11 +20,11 @@
                     android:background="@drawable/media_controller_background" />
 
             <LinearLayout
-                    android:animateLayoutChanges="true"
                     android:id="@+id/llControlsContainer"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
+                    android:animateLayoutChanges="true"
                     android:gravity="center"
                     android:orientation="horizontal">
 

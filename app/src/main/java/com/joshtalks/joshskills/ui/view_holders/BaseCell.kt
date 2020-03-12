@@ -251,6 +251,7 @@ abstract class BaseCell {
             )
             .into(iv)
     }
+
     fun setResourceInImageView(iv: ImageView?, resource: Int) {
         if (iv != null) {
             val multi = MultiTransformation(

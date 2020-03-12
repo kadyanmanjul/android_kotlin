@@ -880,6 +880,10 @@ public class ZoomageView extends AppCompatImageView implements OnScaleGestureLis
         scaleBy = 1f;
     }
 
+    public interface GestureDetectorInterface {
+        void dismiss();
+    }
+
     private class SimpleAnimatorListener implements Animator.AnimatorListener {
         @Override
         public void onAnimationStart(Animator animation) {
@@ -896,9 +900,5 @@ public class ZoomageView extends AppCompatImageView implements OnScaleGestureLis
         @Override
         public void onAnimationRepeat(Animator animation) {
         }
-    }
-
-    public interface GestureDetectorInterface {
-        void dismiss();
     }
 }

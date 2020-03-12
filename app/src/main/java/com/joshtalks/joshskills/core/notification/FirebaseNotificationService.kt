@@ -50,6 +50,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
     private var notificationChannelId = "101111"
     private var notificationId = 1
     private var notificationChannelName = "JoshTalksDefault"
+
     @RequiresApi(Build.VERSION_CODES.N)
     private var importance = NotificationManager.IMPORTANCE_DEFAULT
 
@@ -105,9 +106,9 @@ class FirebaseNotificationService : FirebaseMessagingService() {
 
             val notificationBuilder =
                 NotificationCompat.Builder(
-                    this@FirebaseNotificationService,
-                    notificationChannelId
-                )
+                        this@FirebaseNotificationService,
+                        notificationChannelId
+                    )
                     .setTicker(notificationObject.ticker)
                     .setSmallIcon(R.drawable.ic_status_bar_notification)
                     .setContentTitle(notificationObject.contentTitle)

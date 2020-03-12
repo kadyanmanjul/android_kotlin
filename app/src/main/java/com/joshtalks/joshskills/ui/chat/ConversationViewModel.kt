@@ -85,9 +85,10 @@ class ConversationViewModel(application: Application, private var inboxEntity: I
 
 
     private fun addObserver() {
-        compositeDisposable.add(RxBus2.listen(DBInsertion::class.java).subscribeOn(Schedulers.computation()).subscribe {
-            getUserRecentChats()
-        })
+        compositeDisposable.add(
+            RxBus2.listen(DBInsertion::class.java).subscribeOn(Schedulers.computation()).subscribe {
+                getUserRecentChats()
+            })
         val filter = IntentFilter("android.net.conn.CONNECTIVITY_CHANGE")
         context.registerReceiver(broadCastForNetwork, filter)
     }

@@ -4,6 +4,8 @@ import android.app.Activity
 import android.content.Intent
 import android.view.View
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
+import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
 import com.joshtalks.joshskills.ui.help.HelpActivity
 import com.joshtalks.joshskills.ui.inbox.COURSE_EXPLORER_WITHOUT_CODE
@@ -16,6 +18,7 @@ abstract class CoreJoshActivity : BaseActivity() {
             findViewById<View>(R.id.iv_help).setOnClickListener {
                 val i = Intent(this, HelpActivity::class.java)
                 startActivityForResult(i, HELP_ACTIVITY_REQUEST_CODE)
+                AppAnalytics.create(AnalyticsEvent.HELP_SELECTED.NAME).push()
             }
         } catch (ex: Exception) {
         }
@@ -29,6 +32,8 @@ abstract class CoreJoshActivity : BaseActivity() {
     }
 
     protected fun openCourseExplorerScreen() {
+        AppAnalytics.create(AnalyticsEvent.EXPLORE_OPENED.NAME)
+            .push()
         CourseExploreActivity.startCourseExploreActivity(
             this,
             COURSE_EXPLORER_WITHOUT_CODE,

@@ -39,32 +39,6 @@ public class DatePickerDialog extends AlertDialog implements OnClickListener,
     private boolean mIsTitleShown = true;
     private String mCustomTitle = "";
 
-    /**
-     * The callback used to indicate the user is done filling in the date.
-     */
-    public interface OnDateSetListener {
-        /**
-         * @param view        The view associated with this listener.
-         * @param year        The year that was set
-         * @param monthOfYear The month that was set (0-11) for compatibility
-         *                    with {@link Calendar}.
-         * @param dayOfMonth  The day of the month that was set.
-         */
-        void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth);
-    }
-
-    /**
-     * Callback for when things are cancelled
-     */
-    public interface OnDateCancelListener {
-        /**
-         * Called when cancel happens.
-         *
-         * @param view The view associated with this listener.
-         */
-        void onCancelled(DatePicker view);
-    }
-
     DatePickerDialog(Context context,
                      int theme,
                      int spinnerTheme,
@@ -142,16 +116,15 @@ public class DatePickerDialog extends AlertDialog implements OnClickListener,
             setTitle(" ");
         }
     }
-    void setCTitle(String value){
+
+    void setCTitle(String value) {
         TextView myMsg = new TextView(getContext());
         myMsg.setText(value);
-        myMsg.setGravity(Gravity.START| Gravity.CENTER);
+        myMsg.setGravity(Gravity.START | Gravity.CENTER);
         myMsg.setTextSize(17);
         myMsg.setTextColor(Color.WHITE);
         setCustomTitle(myMsg);
     }
-
-
 
     @Override
     public Bundle onSaveInstanceState() {
@@ -178,5 +151,32 @@ public class DatePickerDialog extends AlertDialog implements OnClickListener,
         c.set(Calendar.DAY_OF_MONTH, day);
         updateTitle(c);
         mDatePicker.init(year, month, day, mIsDayShown, this);
+    }
+
+
+    /**
+     * The callback used to indicate the user is done filling in the date.
+     */
+    public interface OnDateSetListener {
+        /**
+         * @param view        The view associated with this listener.
+         * @param year        The year that was set
+         * @param monthOfYear The month that was set (0-11) for compatibility
+         *                    with {@link Calendar}.
+         * @param dayOfMonth  The day of the month that was set.
+         */
+        void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth);
+    }
+
+    /**
+     * Callback for when things are cancelled
+     */
+    public interface OnDateCancelListener {
+        /**
+         * Called when cancel happens.
+         *
+         * @param view The view associated with this listener.
+         */
+        void onCancelled(DatePicker view);
     }
 }

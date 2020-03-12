@@ -30,6 +30,7 @@ import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
 import com.joshtalks.joshskills.repository.local.eventbus.BuyCourseEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.ImageShowEvent
 import com.joshtalks.joshskills.repository.local.eventbus.VideoShowEvent
+import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.CourseExploreModel
 import com.joshtalks.joshskills.repository.server.course_detail.CourseDetailsResponse
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
@@ -171,10 +172,14 @@ class CourseDetailType1Fragment : Fragment() {
     private fun getTestCourseDetails() {
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                val data = mapOf(
-                    "test" to testId.toString(),
-                    "gaid" to PrefManager.getStringValue(USER_UNIQUE_ID)
-                )
+                val data = HashMap<String, String>()
+                data["test"] = testId.toString()
+                data["gaid"] = PrefManager.getStringValue(USER_UNIQUE_ID)
+
+                if (Mentor.getInstance().getId().isNotEmpty()) {
+                    data["mentor"] = Mentor.getInstance().getId()
+                }
+
                 val response: List<CourseDetailsResponse> =
                     AppObjectController.signUpNetworkService.explorerCourseDetailsApiV2Async(data)
                         .await()

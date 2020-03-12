@@ -122,6 +122,8 @@ class PractiseSubmitActivity : CoreJoshActivity(), FullScreenVideoFragment.OnDis
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        AppAnalytics.create(AnalyticsEvent.PRACTISE_OPENED.NAME).push()
+
         requestedOrientation = if (Build.VERSION.SDK_INT == 26) {
             ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
         } else {
@@ -1134,6 +1136,7 @@ class PractiseSubmitActivity : CoreJoshActivity(), FullScreenVideoFragment.OnDis
         }
 
         if (chatModel.question != null && chatModel.question!!.expectedEngageType != null) {
+            var engageType = chatModel.question?.expectedEngageType
             chatModel.question?.expectedEngageType?.let {
                 if (EXPECTED_ENGAGE_TYPE.TX == it && binding.etPractise.text.isNullOrEmpty()) {
                     return
@@ -1155,7 +1158,7 @@ class PractiseSubmitActivity : CoreJoshActivity(), FullScreenVideoFragment.OnDis
                     requestEngage.answerUrl = filePath
                 }
                 binding.progressLayout.visibility = VISIBLE
-                practiseViewModel.submitPractise(chatModel, requestEngage)
+                practiseViewModel.submitPractise(chatModel, requestEngage, engageType)
             }
         }
     }

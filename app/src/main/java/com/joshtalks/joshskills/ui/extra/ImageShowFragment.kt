@@ -34,12 +34,14 @@ class ImageShowFragment : DialogFragment() {
             it.getString(COURSE_NAME)?.let { course ->
                 courseName = course
             }
-            it.getString(IMAGE_ID)?.let {id->
+            it.getString(IMAGE_ID)?.let { id ->
                 imageId = id
             }
 
         }
         setStyle(STYLE_NO_FRAME, R.style.full_dialog)
+        AppAnalytics.create(AnalyticsEvent.IMAGE_OPENED.NAME).push()
+
     }
 
     override fun onStart() {
@@ -72,7 +74,6 @@ class ImageShowFragment : DialogFragment() {
                 .push()
             dismiss()
         }
-        AppAnalytics.create(AnalyticsEvent.IMAGE_CLICKED.NAME).push()
         if (imageId.isNullOrEmpty().not()) {
             EngagementNetworkHelper.engageImageApi(ImageEngage(imageId!!))
         }

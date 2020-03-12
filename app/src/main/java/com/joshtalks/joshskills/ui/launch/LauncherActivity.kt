@@ -7,6 +7,8 @@ import com.facebook.appevents.AppEventsConstants.EVENT_NAME_ACTIVATED_APP
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.CoreJoshActivity
+import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
+import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.service.WorkMangerAdmin
 import com.joshtalks.joshskills.ui.payment.COURSE_ID
 import com.joshtalks.joshskills.ui.payment.PaymentActivity
@@ -19,6 +21,7 @@ class LauncherActivity : CoreJoshActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        AppAnalytics.flush()
         AppObjectController.firebaseAnalytics.resetAnalyticsData()
         AppObjectController.facebookEventLogger.logEvent(EVENT_NAME_ACTIVATED_APP)
         WorkMangerAdmin.deviceIdGenerateWorker()
@@ -43,12 +46,11 @@ class LauncherActivity : CoreJoshActivity() {
                 if (error == null) {
                     if (jsonParms != null && jsonParms.has(Defines.Jsonkey.AndroidDeepLinkPath.key)) {
                         AppObjectController.uiHandler.removeCallbacksAndMessages(null)
-
                         val testId =
                             jsonParms.getString(Defines.Jsonkey.AndroidDeepLinkPath.key)
-
                         WorkMangerAdmin.registerUserGIDWithTestId(testId)
-
+                        AppAnalytics.create(AnalyticsEvent.APP_INSTALL_WITH_DEEP_LINK.NAME)
+                            .addParam("test_id", testId).push()
                         startActivity(
                             Intent(
                                 applicationContext,
@@ -94,7 +96,10 @@ class LauncherActivity : CoreJoshActivity() {
     }
 
 
-
+    override fun onBackPressed() {
+        super.onBackPressed()
+        this.finishAndRemoveTask()
+    }
 
     /*
 

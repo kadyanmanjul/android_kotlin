@@ -7,8 +7,11 @@ import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.JoshApplication
 import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
+import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
+import com.joshtalks.joshskills.repository.local.entity.EXPECTED_ENGAGE_TYPE
 import com.joshtalks.joshskills.repository.local.entity.PracticeEngagement
 import com.joshtalks.joshskills.repository.server.AmazonPolicyResponse
 import com.joshtalks.joshskills.repository.server.RequestEngage
@@ -47,7 +50,11 @@ class PractiseViewModel(application: Application) :
 
     }
 
-    fun submitPractise(chatModel: ChatModel, requestEngage: RequestEngage) {
+    fun submitPractise(
+        chatModel: ChatModel,
+        requestEngage: RequestEngage,
+        engageType: EXPECTED_ENGAGE_TYPE?
+    ) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val localPath = requestEngage.localPath
@@ -65,6 +72,23 @@ class PractiseViewModel(application: Application) :
                         return@launch
                     }
                 }
+                if (requestEngage.answerUrl.isNullOrEmpty().not() && engageType != null) {
+                    when {
+                        EXPECTED_ENGAGE_TYPE.TX == engageType -> {
+                            AppAnalytics.create(AnalyticsEvent.TEXT_SUBMITTED.NAME).push()
+                        }
+                        EXPECTED_ENGAGE_TYPE.AU == engageType -> {
+                            AppAnalytics.create(AnalyticsEvent.AUDIO_SUBMITTED.NAME).push()
+                        }
+                        EXPECTED_ENGAGE_TYPE.VI == engageType -> {
+                            AppAnalytics.create(AnalyticsEvent.VIDEO_SUBMITTED.NAME).push()
+                        }
+                        EXPECTED_ENGAGE_TYPE.DX == engageType -> {
+                            AppAnalytics.create(AnalyticsEvent.DOCUMENT_SUBMITTED.NAME).push()
+                        }
+                    }
+                }
+
 
                 val resp: PracticeEngagement =
                     AppObjectController.chatNetworkService.submitPracticeAsync(requestEngage)

@@ -218,7 +218,7 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
 
 
     private fun initChat() {
-        AppAnalytics.create(AnalyticsEvent.CHAT_SCREEN.NAME).push()
+        AppAnalytics.create(AnalyticsEvent.COURSE_OPENED.NAME).push()
         initProgressDialog()
         initSnackBar()
         setToolbar()
@@ -535,7 +535,9 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
         }
 
         conversationBinding.recordButton.setOnTouchListener(OnRecordTouchListener {
-            if (conversationBinding.chatEdit.text.toString().isEmpty() && it == MotionEvent.ACTION_DOWN) {
+            if (conversationBinding.chatEdit.text.toString()
+                    .isEmpty() && it == MotionEvent.ACTION_DOWN
+            ) {
                 if (PermissionUtils.isAudioAndStoragePermissionEnable(this).not()) {
                     PermissionUtils.audioRecordStorageReadAndWritePermission(activityRef.get()!!,
                         object : MultiplePermissionsListener {
@@ -1028,9 +1030,9 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
 
         compositeDisposable.add(
             RxBus2.listen(
-                InternalSeekBarProgressEventBus::
-                class.java
-            )
+                    InternalSeekBarProgressEventBus::
+                    class.java
+                )
                 .subscribeOn(Schedulers.computation())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(

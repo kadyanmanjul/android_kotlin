@@ -19,7 +19,11 @@ import com.mindorks.placeholderview.annotations.View
 import com.vanniktech.emoji.Utils
 
 @Layout(R.layout.inbox_row_layout)
-class InboxViewHolder(private var inboxEntity: InboxEntity, private val totalItem: Int, private val indexPos: Int) :
+class InboxViewHolder(
+    private var inboxEntity: InboxEntity,
+    private val totalItem: Int,
+    private val indexPos: Int
+) :
     BaseCell() {
 
     @View(R.id.root_view)
@@ -119,7 +123,8 @@ class InboxViewHolder(private var inboxEntity: InboxEntity, private val totalIte
                     0,
                     0
                 )
-                tvLastReceivedMessage.compoundDrawablePadding = Utils.dpToPx(context, drawablePadding)
+                tvLastReceivedMessage.compoundDrawablePadding =
+                    Utils.dpToPx(context, drawablePadding)
                 tvLastReceivedMessage.text = "Photo"
 
 
@@ -131,7 +136,8 @@ class InboxViewHolder(private var inboxEntity: InboxEntity, private val totalIte
                     0,
                     0
                 )
-                tvLastReceivedMessage.compoundDrawablePadding = Utils.dpToPx(context, drawablePadding)
+                tvLastReceivedMessage.compoundDrawablePadding =
+                    Utils.dpToPx(context, drawablePadding)
                 tvLastReceivedMessage.text = "Audio"
 
 
@@ -143,7 +149,8 @@ class InboxViewHolder(private var inboxEntity: InboxEntity, private val totalIte
                     0,
                     0
                 )
-                tvLastReceivedMessage.compoundDrawablePadding = Utils.dpToPx(context, drawablePadding)
+                tvLastReceivedMessage.compoundDrawablePadding =
+                    Utils.dpToPx(context, drawablePadding)
                 tvLastReceivedMessage.text = "Video"
 
             }
@@ -154,7 +161,8 @@ class InboxViewHolder(private var inboxEntity: InboxEntity, private val totalIte
                     0,
                     0
                 )
-                tvLastReceivedMessage.compoundDrawablePadding = Utils.dpToPx(context, drawablePadding)
+                tvLastReceivedMessage.compoundDrawablePadding =
+                    Utils.dpToPx(context, drawablePadding)
                 tvLastReceivedMessage.text = "Pdf"
 
             }

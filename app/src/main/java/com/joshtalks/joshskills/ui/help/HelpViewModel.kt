@@ -9,6 +9,8 @@ import com.joshtalks.joshskills.core.ApiCallStatus
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.JoshApplication
 import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
+import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.repository.server.AmazonPolicyResponse
 import com.joshtalks.joshskills.repository.server.ComplaintResponse
@@ -59,6 +61,7 @@ class HelpViewModel(application: Application) : AndroidViewModel(application) {
             try {
                 complaintResponse =
                     AppObjectController.commonNetworkService.submitComplaint(requestComplaint)
+                AppAnalytics.create(AnalyticsEvent.HELP_SUBMITTED.NAME).push()
                 apiCallStatusLiveData.postValue(ApiCallStatus.SUCCESS)
             } catch (e: Exception) {
                 Crashlytics.logException(e)
@@ -80,7 +83,8 @@ class HelpViewModel(application: Application) : AndroidViewModel(application) {
                     AppObjectController.chatNetworkService.requestUploadMediaAsync(obj).await()
                 val statusCode: Int = uploadOnS3Server(responseObj, mediaPath)
                 if (statusCode in 200..210) {
-                    return@async responseObj.url.plus(File.separator).plus(responseObj.fields["key"])
+                    return@async responseObj.url.plus(File.separator)
+                        .plus(responseObj.fields["key"])
                 } else {
                     return@async null
                 }

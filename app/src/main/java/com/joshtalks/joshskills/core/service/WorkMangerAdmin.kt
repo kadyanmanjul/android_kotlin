@@ -63,12 +63,12 @@ object WorkMangerAdmin {
     fun readMessageUpdating() {
 
         val workRequest = PeriodicWorkRequest.Builder(
-            MessageReadPeriodicWorker::class.java,
-            30,
-            TimeUnit.MINUTES,
-            PeriodicWorkRequest.MIN_PERIODIC_FLEX_MILLIS,
-            TimeUnit.MILLISECONDS
-        )
+                MessageReadPeriodicWorker::class.java,
+                30,
+                TimeUnit.MINUTES,
+                PeriodicWorkRequest.MIN_PERIODIC_FLEX_MILLIS,
+                TimeUnit.MILLISECONDS
+            )
             .setInitialDelay(1, TimeUnit.MINUTES)
             .addTag(MessageReadPeriodicWorker::class.java.simpleName)
             .build()
@@ -117,8 +117,8 @@ object WorkMangerAdmin {
         WorkManager.getInstance(AppObjectController.joshApplication).enqueue(workRequest)
     }
 
-    fun registerUserGIDWithTestId( testId: String) {
-        if (testId.isEmpty() || PrefManager.getBoolValue(GID_SET_FOR_USER)){
+    fun registerUserGIDWithTestId(testId: String) {
+        if (testId.isEmpty() || PrefManager.getBoolValue(GID_SET_FOR_USER)) {
             return
         }
         val data = workDataOf("test_id" to testId)

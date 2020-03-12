@@ -39,7 +39,8 @@ class SMSReadBroadcastReceiver : BroadcastReceiver() {
                                         var otp =
                                             message.replace(MESSAGE_START_FORMAT, EMPTY).replace(
                                                 MESSAGE_END_FORMAT, EMPTY
-                                            ).split("\n".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()[0]
+                                            ).split("\n".toRegex()).dropLastWhile { it.isEmpty() }
+                                                .toTypedArray()[0]
                                         otp = otp.replace(signature, EMPTY).trimStart().trimEnd()
                                             .trim()
                                         RxBus2.publish(OTPReceivedEventBus(otp))

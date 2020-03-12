@@ -6,6 +6,8 @@ import android.text.TextUtils
 import com.android.installreferrer.api.InstallReferrerClient
 import com.android.installreferrer.api.InstallReferrerStateListener
 import com.crashlytics.android.Crashlytics
+import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
+import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.repository.local.model.InstallReferrerModel
 import io.branch.referral.PrefHelper
 import org.threeten.bp.Instant
@@ -25,6 +27,7 @@ object InstallReferralUtil {
                     override fun onInstallReferrerSetupFinished(responseCode: Int) {
                         when (responseCode) {
                             InstallReferrerClient.InstallReferrerResponse.OK -> try {
+                                AppAnalytics.create(AnalyticsEvent.APP_INSTALL.NAME).push()
 
                                 try {
                                     val response = referrerClient.installReferrer

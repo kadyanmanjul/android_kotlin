@@ -72,7 +72,7 @@ public class VideoDownloadService extends DownloadService {
     @Override
     protected void onDownloadChanged(Download download) {
 
-        Log.i("download_video", "onDownloadChanged " + download.state + "  " + download.getPercentDownloaded() + "  " + download.getBytesDownloaded()+" "+download.contentLength);
+        Log.i("download_video", "onDownloadChanged " + download.state + "  " + download.getPercentDownloaded() + "  " + download.getBytesDownloaded() + " " + download.contentLength);
         DOWNLOAD_STATUS downloadStatus = DOWNLOAD_STATUS.NOT_START;
 
         if (download.state == Download.STATE_DOWNLOADING || download.state == Download.STATE_QUEUED) {

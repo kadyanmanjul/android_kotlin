@@ -42,7 +42,9 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
                     registerCourseNetworkLiveData.postValue(null)
                 } else {
                     appDatabase.courseDao().insertRegisterCourses(courseList).let {
-                        registerCourseNetworkLiveData.postValue(appDatabase.courseDao().getRegisterCourseMinimal())
+                        registerCourseNetworkLiveData.postValue(
+                            appDatabase.courseDao().getRegisterCourseMinimal()
+                        )
                     }
                 }
             } catch (ex: Exception) {
@@ -53,7 +55,9 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
 
     private fun getAllRegisterCourseMinimalFromDB() = viewModelScope.launch {
         try {
-            registerCourseMinimalLiveData.postValue(appDatabase.courseDao().getRegisterCourseMinimal())
+            registerCourseMinimalLiveData.postValue(
+                appDatabase.courseDao().getRegisterCourseMinimal()
+            )
         } catch (ex: Exception) {
             ex.printStackTrace()
         }

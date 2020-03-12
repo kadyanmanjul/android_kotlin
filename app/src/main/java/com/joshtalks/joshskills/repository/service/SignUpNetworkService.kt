@@ -36,7 +36,10 @@ interface SignUpNetworkService {
 
 
     @PATCH("$DIR/mentor/{id}/")
-    fun updateUserAddressAsync(@Path("id") id: String, @Body params: UpdateUserLocality): Deferred<ProfileResponse>
+    fun updateUserAddressAsync(
+        @Path("id") id: String,
+        @Body params: UpdateUserLocality
+    ): Deferred<ProfileResponse>
 
 
     @FormUrlEncoded
@@ -44,7 +47,10 @@ interface SignUpNetworkService {
     fun confirmUserLocationAsync(@FieldMap params: Map<String, String>): Deferred<Locality>
 
     @PATCH("$DIR/user/{id}/")
-    fun updateUserAsync(@Path("id") id: String, @Body obj: UpdateUserPersonal): Deferred<UpdateProfileResponse>
+    fun updateUserAsync(
+        @Path("id") id: String,
+        @Body obj: UpdateUserPersonal
+    ): Deferred<UpdateProfileResponse>
 
 
     @PATCH("$DIR/mentor/{id}/last_login/")
@@ -87,7 +93,6 @@ interface SignUpNetworkService {
 
     @GET("$DIR/course/test_details/")
     fun explorerCourseDetailsApiV2Async(@QueryMap params: Map<String, String> = mapOf("is_default" to "true")): Deferred<List<CourseDetailsResponse>>
-
 
 
     @GET("$DIR/payment/coupon/")

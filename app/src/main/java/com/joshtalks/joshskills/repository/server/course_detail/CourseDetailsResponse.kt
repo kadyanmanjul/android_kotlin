@@ -26,7 +26,7 @@ data class CourseDetailsResponse(
     val type: BASE_MESSAGE_TYPE,
     @SerializedName("url")
     val url: String
-):Serializable
+) : Serializable
 
 
 data class Course(
@@ -56,6 +56,6 @@ data class Test(
 
 
 enum class CARD_STATE(val state: String) {
-    NM("NM"),SM("SM"),CO("CO"),UCO("UCO"),ML("ML")
+    NM("NM"), SM("SM"), CO("CO"), UCO("UCO"), ML("ML")
 //Co - collaspse , // sm- show more // uco- uncollplse // nm -normal //Multiline
 }

@@ -52,29 +52,17 @@ public class DatePicker extends FrameLayout {
     private static final String DATE_FORMAT = "MM/dd/yyyy";
 
     private static final boolean DEFAULT_ENABLED_STATE = true;
-
-    private LinearLayout mPickerContainer;
-
-    private NumberPicker mDaySpinner;
-
-    private NumberPicker mMonthSpinner;
-
-    private NumberPicker mYearSpinner;
-
-    private EditText mDaySpinnerInput;
-
-    private EditText mMonthSpinnerInput;
-
-    private EditText mYearSpinnerInput;
-
-    private Context mContext;
-
-    private OnDateChangedListener mOnDateChangedListener;
-
-    private String[] mShortMonths;
-
     private final java.text.DateFormat mDateFormat = new SimpleDateFormat(DATE_FORMAT);
-
+    private LinearLayout mPickerContainer;
+    private NumberPicker mDaySpinner;
+    private NumberPicker mMonthSpinner;
+    private NumberPicker mYearSpinner;
+    private EditText mDaySpinnerInput;
+    private EditText mMonthSpinnerInput;
+    private EditText mYearSpinnerInput;
+    private Context mContext;
+    private OnDateChangedListener mOnDateChangedListener;
+    private String[] mShortMonths;
     private int mNumberOfMonths;
 
     private Calendar mTempDate;
@@ -97,7 +85,7 @@ public class DatePicker extends FrameLayout {
         setCurrentLocale(Locale.getDefault());
 
         LayoutInflater inflater = (LayoutInflater) new ContextThemeWrapper(mContext,
-                                                                           numberPickerStyle).getSystemService(
+                numberPickerStyle).getSystemService(
                 Context.LAYOUT_INFLATER_SERVICE);
         inflater.inflate(R.layout.date_picker_container, this, true);
 
@@ -140,7 +128,7 @@ public class DatePicker extends FrameLayout {
 
         // day
         mDaySpinner = (NumberPicker) inflater.inflate(R.layout.number_picker_day_month,
-                                                      mPickerContainer, false);
+                mPickerContainer, false);
         mDaySpinner.setId(R.id.day);
         mDaySpinner.setFormatter(new TwoDigitFormatter());
         mDaySpinner.setOnLongPressUpdateInterval(100);
@@ -150,7 +138,7 @@ public class DatePicker extends FrameLayout {
 
         // month
         mMonthSpinner = (NumberPicker) inflater.inflate(R.layout.number_picker_day_month,
-                                                        mPickerContainer, false);
+                mPickerContainer, false);
         mMonthSpinner.setId(R.id.month);
         mMonthSpinner.setMinValue(0);
         mMonthSpinner.setMaxValue(mNumberOfMonths - 1);
@@ -161,7 +149,7 @@ public class DatePicker extends FrameLayout {
 
         // year
         mYearSpinner = (NumberPicker) inflater.inflate(R.layout.number_picker_year,
-                                                       mPickerContainer, false);
+                mPickerContainer, false);
         mYearSpinner.setId(R.id.year);
         mYearSpinner.setOnLongPressUpdateInterval(100);
         mYearSpinner.setOnValueChangedListener(onChangeListener);
@@ -240,16 +228,16 @@ public class DatePicker extends FrameLayout {
     }
 
     @Override
+    public boolean isEnabled() {
+        return mIsEnabled;
+    }
+
+    @Override
     public void setEnabled(boolean enabled) {
         mDaySpinner.setEnabled(enabled);
         mMonthSpinner.setEnabled(enabled);
         mYearSpinner.setEnabled(enabled);
         mIsEnabled = enabled;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return mIsEnabled;
     }
 
     @Override
@@ -416,8 +404,8 @@ public class DatePicker extends FrameLayout {
         // make sure the month names are a zero based array
         // with the months in the month spinner
         String[] displayedValues = Arrays.copyOfRange(mShortMonths,
-                                                      mMonthSpinner.getMinValue(),
-                                                      mMonthSpinner.getMaxValue() + 1);
+                mMonthSpinner.getMinValue(),
+                mMonthSpinner.getMaxValue() + 1);
         mMonthSpinner.setDisplayedValues(displayedValues);
 
         // year spinner range does not change based on the current date
@@ -443,7 +431,7 @@ public class DatePicker extends FrameLayout {
         sendAccessibilityEvent(AccessibilityEvent.TYPE_VIEW_SELECTED);
         if (mOnDateChangedListener != null) {
             mOnDateChangedListener.onDateChanged(this, getYear(), getMonth(),
-                                                 getDayOfMonth());
+                    getDayOfMonth());
         }
     }
 
@@ -509,7 +497,8 @@ public class DatePicker extends FrameLayout {
 
     private static class SavedState extends BaseSavedState {
 
-        @SuppressWarnings("unused") public static final Creator<SavedState> CREATOR = new Creator<SavedState>() {
+        @SuppressWarnings("unused")
+        public static final Creator<SavedState> CREATOR = new Creator<SavedState>() {
 
             @Override
             public SavedState createFromParcel(Parcel in) {
