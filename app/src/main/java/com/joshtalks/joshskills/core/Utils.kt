@@ -25,7 +25,6 @@ import android.os.Build
 import android.os.Environment
 import android.provider.Settings
 import android.text.format.DateUtils
-import android.util.Log
 import android.util.TypedValue
 import android.view.Gravity
 import android.widget.TextView

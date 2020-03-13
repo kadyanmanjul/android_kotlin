@@ -92,6 +92,4 @@ enum class AnalyticsEvent(val NAME: String) {
     HAVE_COUPON_CODE("Have Coupon Code")
 
 
-
-
 }

@@ -117,7 +117,7 @@ public class AppAnalytics {
     }
 
     public void push() {
-        if (BuildConfig.DEBUG){
+        if (BuildConfig.DEBUG) {
             return;
         }
         formatParameters();

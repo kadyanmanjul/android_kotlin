@@ -8,7 +8,6 @@ import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import android.util.AttributeSet
-import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.widget.*
@@ -45,7 +44,6 @@ import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.muddzdev.styleabletoast.StyleableToast
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.view_jcplayer.view.*
 import java.util.*
 

@@ -53,7 +53,6 @@ import com.joshtalks.joshskills.ui.payment.COURSE_ID
 import com.joshtalks.joshskills.ui.referral.PromotionDialogFragment
 import com.joshtalks.joshskills.ui.referral.ReferralActivity
 import com.joshtalks.joshskills.ui.tooltip.BalloonFactory
-import com.joshtalks.joshskills.ui.tooltip.TooltipUtility
 import com.joshtalks.joshskills.ui.view_holders.EmptyHorizontalView
 import com.joshtalks.joshskills.ui.view_holders.InboxViewHolder
 import com.joshtalks.skydoves.balloon.OnBalloonDismissListener

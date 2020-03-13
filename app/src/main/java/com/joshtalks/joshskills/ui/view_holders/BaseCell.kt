@@ -1,7 +1,6 @@
 package com.joshtalks.joshskills.ui.view_holders
 
 import android.content.res.Resources
-import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.widget.ImageView
 import androidx.appcompat.widget.AppCompatImageView

@@ -25,7 +25,6 @@ import com.bumptech.glide.load.MultiTransformation
 import com.bumptech.glide.request.RequestOptions
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
-import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.custom_ui.progress.FlipProgressDialog
 import com.joshtalks.joshskills.databinding.FragmentLodgeComplaintBinding

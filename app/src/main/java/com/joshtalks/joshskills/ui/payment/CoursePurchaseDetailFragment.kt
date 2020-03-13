@@ -100,6 +100,7 @@ class CoursePurchaseDetailFragment : DialogFragment() {
                 }
             }
     }
+
     override fun onDestroyView() {
         super.onDestroyView()
         AppAnalytics.create(AnalyticsEvent.BACK_PRESSED.NAME)
