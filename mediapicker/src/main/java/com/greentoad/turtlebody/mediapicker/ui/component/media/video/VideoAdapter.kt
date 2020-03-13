@@ -5,7 +5,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.bumptech.glide.util.Util
 import com.greentoad.turtlebody.mediapicker.R
 import com.greentoad.turtlebody.mediapicker.util.UtilTime
 import kotlinx.android.synthetic.main.tb_media_picker_item_video.view.*

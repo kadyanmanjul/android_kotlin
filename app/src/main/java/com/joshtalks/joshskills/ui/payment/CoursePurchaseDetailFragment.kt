@@ -11,6 +11,8 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
+import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.databinding.FragmentCoursePurchaseDetailBinding
 import com.joshtalks.joshskills.repository.server.CourseExploreModel
 
@@ -83,6 +85,7 @@ class CoursePurchaseDetailFragment : DialogFragment() {
     }
 
     fun haveCouponCode() {
+
         listener?.onCouponCode()
         dismissAllowingStateLoss()
     }
@@ -96,6 +99,12 @@ class CoursePurchaseDetailFragment : DialogFragment() {
                     putSerializable(COURSE_OBJECT, courseModel)
                 }
             }
+    }
+    override fun onDestroyView() {
+        super.onDestroyView()
+        AppAnalytics.create(AnalyticsEvent.BACK_PRESSED.NAME)
+            .addParam("name", javaClass.simpleName)
+            .push()
     }
 
     interface OnCourseDetailInteractionListener {

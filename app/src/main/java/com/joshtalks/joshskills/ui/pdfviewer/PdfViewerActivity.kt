@@ -44,23 +44,16 @@ class PdfViewerActivity : BaseActivity(), DownloadFile.Listener {
         pdfObject = intent.getSerializableExtra(PDF_URL) as PdfType
         setToolbar()
         showPdf()
-
-
     }
 
     private fun setToolbar() {
-
         window.clearFlags(FLAG_TRANSLUCENT_STATUS)
         window.addFlags(FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
         window.statusBarColor = ContextCompat.getColor(applicationContext, R.color.overlay)
-
         intent.getStringExtra(COURSE_NAME)?.let {
             conversationBinding.textMessageTitle.text = it
         }
         conversationBinding.ivBack.setOnClickListener {
-            AppAnalytics.create(AnalyticsEvent.BACK_PRESSED.NAME)
-                .addParam("name", javaClass.simpleName)
-                .push()
             finish()
         }
         gestureDetector = GestureDetector(this,
@@ -69,7 +62,6 @@ class PdfViewerActivity : BaseActivity(), DownloadFile.Listener {
                     if (conversationBinding.toolbar.visibility == View.VISIBLE) {
                         conversationBinding.toolbar.visibility = View.GONE
                         enterIntoFullScreen()
-
                     } else {
                         exitFromFullScreen()
                         conversationBinding.toolbar.visibility = View.VISIBLE
@@ -149,13 +141,6 @@ class PdfViewerActivity : BaseActivity(), DownloadFile.Listener {
 
         }
 
-    }
-
-    override fun onBackPressed() {
-        AppAnalytics.create(AnalyticsEvent.BACK_PRESSED.NAME)
-            .addParam("name", javaClass.simpleName)
-            .push()
-        super.onBackPressed()
     }
 
     override fun onSuccess(url: String?, destinationPath: String?) {

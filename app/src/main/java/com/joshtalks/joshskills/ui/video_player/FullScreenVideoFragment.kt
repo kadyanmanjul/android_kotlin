@@ -9,6 +9,8 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
+import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.databinding.FragmentFullScreenVideoBinding
 
 private const val ARG_VIDEO_URL = "video_url"
@@ -34,6 +36,8 @@ class FullScreenVideoFragment : DialogFragment() {
             ex.printStackTrace()
         }
         setStyle(STYLE_NO_FRAME, R.style.full_dialog)
+        AppAnalytics.create(AnalyticsEvent.VIDEO_WATCH_ACTIVITY.NAME).push()
+
     }
 
     override fun onStart() {
@@ -105,6 +109,12 @@ class FullScreenVideoFragment : DialogFragment() {
         } catch (ex: Exception) {
 
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        AppAnalytics.create(AnalyticsEvent.BACK_PRESSED.NAME).addParam("name", javaClass.simpleName)
+            .push()
     }
 
     companion object {

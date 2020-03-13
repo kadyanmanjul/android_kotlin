@@ -390,9 +390,6 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
 
 
     override fun onBackPressed() {
-        AppAnalytics.create(AnalyticsEvent.BACK_PRESSED.NAME)
-            .addParam("name", javaClass.simpleName)
-            .push()
         super.onBackPressed()
     }
 

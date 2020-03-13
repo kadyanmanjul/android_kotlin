@@ -15,6 +15,8 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.Target
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
+import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.custom_ui.ImprovedBulletSpan
 import com.joshtalks.joshskills.databinding.FragmentOfferCoursePaymentDetailBinding
 import com.joshtalks.joshskills.repository.server.CourseExploreModel
@@ -153,6 +155,13 @@ class OfferCoursePaymentDetailFragment : DialogFragment() {
 
     private fun showTooltip() {
         HintTooltipDialog.newInstance().show(requireActivity().supportFragmentManager, "Hint")
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        AppAnalytics.create(AnalyticsEvent.BACK_PRESSED.NAME)
+            .addParam("name", javaClass.simpleName)
+            .push()
     }
 
     companion object {

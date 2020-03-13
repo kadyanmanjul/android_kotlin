@@ -22,6 +22,8 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.USER_UNIQUE_ID
+import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
+import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.custom_ui.decorator.LayoutMarginDecoration
 import com.joshtalks.joshskills.core.service.WorkMangerAdmin
 import com.joshtalks.joshskills.databinding.FragmentCourseDetailType1FragmentBinding
@@ -349,6 +351,12 @@ class CourseDetailType1Fragment : Fragment() {
                     it.printStackTrace()
                 })
         )
+    }
+    override fun onDestroyView() {
+        super.onDestroyView()
+        AppAnalytics.create(AnalyticsEvent.BACK_PRESSED.NAME)
+            .addParam("name", javaClass.simpleName)
+            .push()
     }
 
     companion object {

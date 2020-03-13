@@ -97,8 +97,6 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
                 AppAnalytics.updateUser()
                 mergeMentorWithGId(response.mentorId)
                 fetchMentor()
-
-
             } catch (ex: HttpException) {
                 if (ex.code() == 400) {
                     otpVerifyStatus.postValue(true)
@@ -173,10 +171,11 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
                     Branch.getInstance().setIdentity(User.getInstance().phoneNumber)
                 }
                 AppAnalytics.updateUser()
-                getCourseFromServer()
+                signUpStatus.postValue(SignUpStepStatus.SignUpCompleted)
 
             } catch (e: Exception) {
                 e.printStackTrace()
+                progressDialogStatus.postValue(false)
                 //showError("Something went wrong! Please try again!")
             }
 

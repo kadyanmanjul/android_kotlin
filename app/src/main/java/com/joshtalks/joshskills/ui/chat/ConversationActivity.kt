@@ -380,7 +380,6 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
 
     private fun initRV() {
         linearLayoutManager = SnappingLinearLayoutManager(this)
-        //  linearLayoutManager = LinearLayoutManager(this)
         linearLayoutManager.stackFromEnd = true
         linearLayoutManager.isSmoothScrollbarEnabled = true
         conversationBinding.chatRv.builder
@@ -457,6 +456,7 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
                 AppAnalytics.create(AnalyticsEvent.AUDIO_BUTTON_CLICKED.NAME).push()
                 conversationBinding.recordView.visibility = VISIBLE
                 conversationViewModel.startRecord()
+                AppAnalytics.create(AnalyticsEvent.AUDIO_RECORD.NAME).push()
             }
 
             override fun onCancel() {
@@ -732,7 +732,6 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
                     }
                 }
             }, {
-                AppAnalytics.create(AnalyticsEvent.BACK_PRESSED.NAME).push()
             })
     }
 
@@ -762,7 +761,6 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
 
                 }
             }, {
-                AppAnalytics.create(AnalyticsEvent.BACK_PRESSED.NAME).push()
             })
     }
 
@@ -881,7 +879,6 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
                                     conversationBinding.chatRv.refreshView(view)
                                 }, 250)
                                 return
-
                             }
                             if (report.isAnyPermissionPermanentlyDenied) {
                                 PermissionUtils.permissionPermanentlyDeniedDialog(
@@ -1370,9 +1367,6 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
         if (streamingManager!!.isPlaying) {
             streamingManager?.handlePauseRequest()
         }
-        AppAnalytics.create(AnalyticsEvent.BACK_PRESSED.NAME)
-            .addParam("name", javaClass.simpleName)
-            .push()
         this@ConversationActivity.finishAndRemoveTask()
     }
 

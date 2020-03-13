@@ -117,6 +117,9 @@ public class AppAnalytics {
     }
 
     public void push() {
+        if (BuildConfig.DEBUG){
+            return;
+        }
         formatParameters();
         pushToFirebase();
         pushToCleverTap();

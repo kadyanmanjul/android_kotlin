@@ -56,7 +56,6 @@ class HelpViewModel(application: Application) : AndroidViewModel(application) {
                 } else {
                     requestComplaint.imageUrl = resp as String
                 }
-
             }
             try {
                 complaintResponse =

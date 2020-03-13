@@ -22,13 +22,13 @@ class LauncherActivity : CoreJoshActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         AppAnalytics.flush()
+        AppObjectController.facebookEventLogger.flush()
         AppObjectController.firebaseAnalytics.resetAnalyticsData()
         AppObjectController.facebookEventLogger.logEvent(EVENT_NAME_ACTIVATED_APP)
         WorkMangerAdmin.deviceIdGenerateWorker()
         WorkMangerAdmin.readMessageUpdating()
         setContentView(R.layout.activity_launcher)
         handleIntent()
-        AppObjectController.facebookEventLogger.flush()
     }
 
 

@@ -17,7 +17,9 @@ public class ActivityLifecycleCallback {
 
                     @Override
                     public void onActivityCreated(Activity activity, Bundle bundle) {
-
+                        AppAnalytics.create(AnalyticsEvent.ACTIVITY_OPENED.getNAME())
+                                .addParam("name", activity.getClass().getSimpleName())
+                                .push();
                     }
 
                     @Override
@@ -26,7 +28,7 @@ public class ActivityLifecycleCallback {
 
                     @Override
                     public void onActivityResumed(Activity activity) {
-                        AppAnalytics.create(AnalyticsEvent.ACTIVITY_OPENED.getNAME())
+                        AppAnalytics.create(AnalyticsEvent.ACTIVITY_REOPEN.getNAME())
                                 .addParam("name", activity.getClass().getSimpleName())
                                 .push();
                     }
@@ -37,6 +39,9 @@ public class ActivityLifecycleCallback {
 
                     @Override
                     public void onActivityStopped(Activity activity) {
+                        AppAnalytics.create(AnalyticsEvent.BACK_PRESSED.getNAME())
+                                .addParam("name", activity.getClass().getSimpleName())
+                                .push();
                     }
 
                     @Override

@@ -106,6 +106,7 @@ class HintTooltipDialog : DialogFragment() {
 
     }
 
+
     companion object {
         @JvmStatic
         fun newInstance() = HintTooltipDialog()

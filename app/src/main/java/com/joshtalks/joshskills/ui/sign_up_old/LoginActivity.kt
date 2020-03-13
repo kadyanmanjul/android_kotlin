@@ -121,9 +121,6 @@ class LoginActivity : CoreJoshActivity() {
 
 
     override fun onBackPressed() {
-        AppAnalytics.create(AnalyticsEvent.BACK_PRESSED.NAME)
-            .addParam("name", javaClass.simpleName)
-            .push()
         super.onBackPressed()
         this@LoginActivity.finish()
 

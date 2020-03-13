@@ -54,9 +54,6 @@ class HelpActivity : CoreJoshActivity() {
     }
 
     override fun onBackPressed() {
-        AppAnalytics.create(AnalyticsEvent.BACK_PRESSED.NAME)
-            .addParam("name", javaClass.simpleName)
-            .push()
         if (supportFragmentManager.backStackEntryCount == 1) {
             this@HelpActivity.finish()
             return

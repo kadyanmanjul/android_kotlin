@@ -246,4 +246,11 @@ class CouponCodeSubmitFragment : DialogFragment() {
         AppAnalytics.create(AnalyticsEvent.COUPON_INVALID.NAME).push()
 
     }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        AppAnalytics.create(AnalyticsEvent.BACK_PRESSED.NAME)
+            .addParam("name", javaClass.simpleName)
+            .push()
+    }
 }

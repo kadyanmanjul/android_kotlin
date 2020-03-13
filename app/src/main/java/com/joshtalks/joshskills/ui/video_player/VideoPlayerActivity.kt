@@ -112,7 +112,7 @@ class VideoPlayerActivity : BaseActivity(), PlayerListener {
 
         binding.pvPlayer.setActivity(this)
         exoProgress = findViewById(R.id.exo_progress)
-        AppAnalytics.create(AnalyticsEvent.WATCH_ACTIVITY.NAME).push()
+        AppAnalytics.create(AnalyticsEvent.VIDEO_WATCH_ACTIVITY.NAME).push()
         try {
             binding.pvPlayer.setPlayerControlViewVisibilityListener { visibility ->
                 binding.toolbar.visibility = visibility
@@ -132,9 +132,6 @@ class VideoPlayerActivity : BaseActivity(), PlayerListener {
             binding.textMessageTitle.text = it
         }
         binding.ivBack.setOnClickListener {
-            AppAnalytics.create(AnalyticsEvent.BACK_PRESSED.NAME)
-                .addParam("name", javaClass.simpleName)
-                .push()
             finish()
         }
     }
@@ -200,9 +197,6 @@ class VideoPlayerActivity : BaseActivity(), PlayerListener {
     }
 
     override fun onBackPressed() {
-        AppAnalytics.create(AnalyticsEvent.BACK_PRESSED.NAME)
-            .addParam("name", javaClass.simpleName)
-            .push()
         this@VideoPlayerActivity.finish()
     }
 

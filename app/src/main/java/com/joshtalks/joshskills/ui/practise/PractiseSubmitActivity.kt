@@ -829,8 +829,7 @@ class PractiseSubmitActivity : CoreJoshActivity(), FullScreenVideoFragment.OnDis
                     binding.counterContainer.visibility = VISIBLE
                     binding.uploadPractiseView.startAnimation(scaleAnimation)
                     window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-                    AppAnalytics.create(AnalyticsEvent.AUDIO_BUTTON_CLICKED.NAME)
-                        .push()
+                    AppAnalytics.create(AnalyticsEvent.AUDIO_RECORD.NAME).push()
                     binding.counterTv.base = SystemClock.elapsedRealtime()
                     startTime = System.currentTimeMillis()
                     binding.counterTv.start()
@@ -1136,7 +1135,7 @@ class PractiseSubmitActivity : CoreJoshActivity(), FullScreenVideoFragment.OnDis
         }
 
         if (chatModel.question != null && chatModel.question!!.expectedEngageType != null) {
-            var engageType = chatModel.question?.expectedEngageType
+            val engageType = chatModel.question?.expectedEngageType
             chatModel.question?.expectedEngageType?.let {
                 if (EXPECTED_ENGAGE_TYPE.TX == it && binding.etPractise.text.isNullOrEmpty()) {
                     return

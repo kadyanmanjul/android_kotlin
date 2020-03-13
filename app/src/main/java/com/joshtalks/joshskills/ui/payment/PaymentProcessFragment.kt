@@ -19,6 +19,8 @@ import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
+import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.databinding.PaymentProcessFragmentBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.OTPReceivedEventBus
@@ -224,7 +226,11 @@ class PaymentProcessFragment : DialogFragment() {
                     it.printStackTrace()
                 })
         )
-
-
+    }
+    override fun onDestroyView() {
+        super.onDestroyView()
+        AppAnalytics.create(AnalyticsEvent.BACK_PRESSED.NAME)
+            .addParam("name", javaClass.simpleName)
+            .push()
     }
 }

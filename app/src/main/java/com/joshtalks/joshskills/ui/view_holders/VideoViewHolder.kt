@@ -13,6 +13,8 @@ import androidx.fragment.app.FragmentActivity
 import com.google.android.exoplayer2.offline.Download
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
+import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.core.service.video_download.VideoDownloadController
@@ -98,7 +100,8 @@ class VideoViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
         message.sender?.let {
             updateView(it, rootView, rootSubView, messageView)
         }
-
+        updateTime(textMessageTime)
+        addMessageAutoLink(textMessageBody)
 
         if (message.url != null) {
             if (message.downloadStatus == DOWNLOAD_STATUS.DOWNLOADED) {
@@ -176,10 +179,6 @@ class VideoViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
             }
         }
 
-
-        updateTime(textMessageTime)
-        addMessageAutoLink(textMessageBody)
-
     }
 
     private fun fileDownloadSuccess() {
@@ -195,8 +194,6 @@ class VideoViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
         ivStartDownload.visibility = VISIBLE
         progressDialog.visibility = GONE
         ivCancelDownload.visibility = GONE
-
-
     }
 
     private fun fileDownloadingInProgressView() {
@@ -213,6 +210,7 @@ class VideoViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
             Uri.parse(url),
             VideoDownloadController.getInstance().buildRenderersFactory(false)
         )
+        AppAnalytics.create(AnalyticsEvent.VIDEO_DOWNLOAD.NAME).push()
     }
 
 

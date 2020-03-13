@@ -201,6 +201,8 @@ class CourseExploreActivity : CoreJoshActivity() {
             val extras: HashMap<String, String> = HashMap()
             extras["test_id"] = it.id?.toString() ?: EMPTY
             extras["course_name"] = it.courseName
+            AppAnalytics.create(AnalyticsEvent.COURSE_EXPLORER.NAME)
+                .addParam("test_id", it.id?.toString()).push()
             BranchIOAnalytics.pushToBranch(BRANCH_STANDARD_EVENT.VIEW_ITEM, extras)
             AppObjectController.facebookEventLogger.logEvent(EVENT_NAME_VIEWED_CONTENT, params)
             PaymentActivity.startPaymentActivity(this, REGISTER_NEW_COURSE_CODE, it)
@@ -221,9 +223,6 @@ class CourseExploreActivity : CoreJoshActivity() {
     }
 
     override fun onBackPressed() {
-        AppAnalytics.create(AnalyticsEvent.BACK_PRESSED.NAME)
-            .addParam("name", javaClass.simpleName)
-            .push()
         onCancelResult()
         super.onBackPressed()
 

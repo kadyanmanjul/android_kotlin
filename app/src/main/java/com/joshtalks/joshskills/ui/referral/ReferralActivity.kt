@@ -46,12 +46,9 @@ const val REFERRAL_EARN_AMOUNT_KEY = "REFERRAL_EARN_AMOUNT"
 const val REFERRAL_SHARE_TEXT_KEY = "REFERRAL_SHARE_TEXT"
 const val REFERRAL_IMAGE_URL_KEY = "REFERRAL_IMAGE_URL"
 const val SHARE_DOMAIN = "SHARE_DOMAIN"
-
 const val REPLACE_HOLDER = "****"
 const val REFERRAL_AMOUNT_HOLDER = "**"
-
 const val DRAWABLE_RIGHT = 2
-
 const val USER_SHARE_SHORT_URL = "user_share_url"
 
 class ReferralActivity : BaseActivity() {
@@ -328,7 +325,5 @@ class ReferralActivity : BaseActivity() {
             WorkMangerAdmin.referralEventTracker(REFERRAL_EVENT.LONG_PRESS_CODE)
         }, 1200)
         AppAnalytics.create(AnalyticsEvent.CODE_COPIED.NAME).push()
-
-
     }
 }

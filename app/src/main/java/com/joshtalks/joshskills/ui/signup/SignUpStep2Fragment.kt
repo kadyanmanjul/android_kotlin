@@ -73,7 +73,6 @@ class SignUpStep2Fragment : Fragment() {
         activity?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
         initProgressView()
         signUpStep2Binding.otpView.setOtpCompletionListener {
-
             verifyOTP()
         }
         viewModel.progressDialogStatus.observe(viewLifecycleOwner, Observer {
@@ -102,10 +101,8 @@ class SignUpStep2Fragment : Fragment() {
                     .solidBackground().show()
                 hideProgress()
                 signUpStep2Binding.otpView.setText(EMPTY)
-
             }
         })
-
         signUpStep2Binding.tvMobile.text = viewModel.countryCode.plus(viewModel.phoneNumber)
 
     }
@@ -113,7 +110,6 @@ class SignUpStep2Fragment : Fragment() {
     private fun initProgressView() {
         bindProgressButton(signUpStep2Binding.btnVerify)
         signUpStep2Binding.btnVerify.attachTextChangeAnimator()
-
     }
 
 

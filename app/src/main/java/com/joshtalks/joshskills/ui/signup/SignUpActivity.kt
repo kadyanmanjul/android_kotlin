@@ -89,13 +89,10 @@ class SignUpActivity : CoreJoshActivity() {
                     return@Observer
                 }
                 SignUpStepStatus.CoursesNotExist -> {
-
                     if (activityResultFlag) {
                         setResult()
                         return@Observer
                     }
-
-
                     try {
                         val typeToken = object : TypeToken<List<String>>() {}.type
                         val list = AppObjectController.gsonMapperForLocal.fromJson<List<String>>(
@@ -113,8 +110,6 @@ class SignUpActivity : CoreJoshActivity() {
                     }
                     return@Observer
                 }
-
-
                 else -> return@Observer
             }
         })

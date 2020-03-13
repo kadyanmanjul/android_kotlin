@@ -119,18 +119,15 @@ class OnBoardActivity : CoreJoshActivity() {
     }
 
     fun openCourseExplore() {
+        AppAnalytics.create(AnalyticsEvent.COURSE_EXPLORER.NAME).push()
         startActivity(Intent(applicationContext, CourseExploreActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
         })
     }
 
     override fun onBackPressed() {
-        AppAnalytics.create(AnalyticsEvent.BACK_PRESSED.NAME)
-            .addParam("name", javaClass.simpleName)
-            .push()
         super.onBackPressed()
         this@OnBoardActivity.finish()
-
     }
 
     private fun initTrueCallerSDK() {

@@ -112,6 +112,7 @@ class PaymentActivity : CoreJoshActivity(),
         if (intent.hasExtra(COURSE_OBJECT)) {
             courseModel = intent.getSerializableExtra(COURSE_OBJECT) as CourseExploreModel
             testId = courseModel?.id.toString()
+
         }
         if (intent.hasExtra(COURSE_ID)) {
             testId = intent.getStringExtra(COURSE_ID)!!
@@ -298,7 +299,6 @@ class PaymentActivity : CoreJoshActivity(),
 
     private fun getPaymentDetails(testId: String?) {
         WorkMangerAdmin.newCourseScreenEventWorker(courseName, testId, buyInitialize = true)
-
         AppObjectController.uiHandler.post {
             activityPaymentBinding.progressBar.visibility = View.VISIBLE
         }
@@ -361,7 +361,6 @@ class PaymentActivity : CoreJoshActivity(),
                 Crashlytics.logException(ex)
             }
         }
-
     }
 
 
@@ -517,9 +516,6 @@ class PaymentActivity : CoreJoshActivity(),
             openCourseExplorerScreen()
             return
         }
-        AppAnalytics.create(AnalyticsEvent.BACK_PRESSED.NAME)
-            .addParam("name", javaClass.simpleName)
-            .push()
         if (supportFragmentManager.findFragmentById(R.id.container) != null) {
             this@PaymentActivity.finish()
             return
@@ -581,6 +577,7 @@ class PaymentActivity : CoreJoshActivity(),
     }
 
     override fun onCouponCode() {
+        AppAnalytics.create(AnalyticsEvent.HAVE_COUPON_CODE.NAME).push()
         showCouponCodeEnterScreen()
     }
 
