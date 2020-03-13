@@ -1,5 +1,6 @@
 package com.joshtalks.joshskills.ui.video_player
 
+import android.content.Context
 import android.content.DialogInterface
 import android.content.pm.ActivityInfo
 import android.os.Bundle
@@ -8,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
+import com.google.android.exoplayer2.Player.STATE_ENDED
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
@@ -73,6 +75,11 @@ class FullScreenVideoFragment : DialogFragment() {
         fullScreenVideoBinding.pvPlayer.setActivity(activity)
         fullScreenVideoBinding.pvPlayer.fitToScreen()
         fullScreenVideoBinding.pvPlayer.supportFullScreen()
+        fullScreenVideoBinding.pvPlayer.setPlayerEventCallback {
+            if (it == STATE_ENDED) {
+                dismissAllowingStateLoss()
+            }
+        }
         setToolbar()
     }
 
@@ -119,12 +126,12 @@ class FullScreenVideoFragment : DialogFragment() {
 
     companion object {
         @JvmStatic
-        fun newInstance(paramVideoUrl: String) =
-            FullScreenVideoFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_VIDEO_URL, paramVideoUrl)
-                }
+        fun newInstance(context: Context, paramVideoUrl: String) = FullScreenVideoFragment().apply {
+            arguments = Bundle().apply {
+                putString(ARG_VIDEO_URL, paramVideoUrl)
             }
+        }
+
     }
 
     override fun onDismiss(dialog: DialogInterface) {

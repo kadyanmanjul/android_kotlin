@@ -303,7 +303,7 @@ class CourseDetailType1Fragment : Fragment() {
 
     fun playVideo() {
         videoUrl?.let {
-            FullScreenVideoFragment.newInstance(it)
+            FullScreenVideoFragment.newInstance(requireContext(), it)
                 .show(requireActivity().supportFragmentManager, "Video Play")
         }
 

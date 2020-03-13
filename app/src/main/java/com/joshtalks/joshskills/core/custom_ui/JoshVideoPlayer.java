@@ -60,6 +60,7 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
     private PlayerControlViewVisibilityListener playerControlViewVisibilityListener;
     private Handler timeHandler = new Handler();
     private PlayerFullScreenListener playerFullScreenListener;
+    private PlayerEventCallback playerEventCallback;
     private Runnable timeRunnable = new Runnable() {
         @Override
         public void run() {
@@ -421,6 +422,10 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
         this.playerControlViewVisibilityListener = playerControlViewVisibilityListener;
     }
 
+    public void setPlayerEventCallback(PlayerEventCallback playerEventCallback) {
+        this.playerEventCallback = playerEventCallback;
+    }
+
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
         if (gestureDetector != null) {
@@ -443,12 +448,19 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
         void onFullScreen();
     }
 
+    public interface PlayerEventCallback {
+        void onReceiveEvent(int event);
+    }
+
 
     private class PlayerEventListener implements Player.EventListener {
 
         @Override
         public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
             if (playbackState == Player.STATE_ENDED) {
+            }
+            if (playerEventCallback != null) {
+                playerEventCallback.onReceiveEvent(playbackState);
             }
         }
 

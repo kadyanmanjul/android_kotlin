@@ -353,7 +353,7 @@ class PractiseSubmitActivity : CoreJoshActivity(), FullScreenVideoFragment.OnDis
                         binding.videoPlayer.setUrl(it)
                         binding.videoPlayer.fitToScreen()
                         binding.videoPlayer.setPlayListener {
-                            FullScreenVideoFragment.newInstance(this.videoList?.getOrNull(0)?.video_url!!)
+                            FullScreenVideoFragment.newInstance(applicationContext,this.videoList?.getOrNull(0)?.video_url!!)
                                 .show(supportFragmentManager, "VideoPlay")
                         }
                         binding.videoPlayer.downloadStreamButNotPlay()
@@ -506,7 +506,7 @@ class PractiseSubmitActivity : CoreJoshActivity(), FullScreenVideoFragment.OnDis
                             binding.videoPlayerSubmit.setUrl(filePath)
                             binding.videoPlayerSubmit.fitToScreen()
                             binding.videoPlayerSubmit.setPlayListener {
-                                FullScreenVideoFragment.newInstance(filePath!!)
+                                FullScreenVideoFragment.newInstance(applicationContext,filePath!!)
                                     .show(supportFragmentManager, "VideoPlay")
                             }
                             binding.videoPlayerSubmit.downloadStreamButNotPlay()
@@ -1070,7 +1070,7 @@ class PractiseSubmitActivity : CoreJoshActivity(), FullScreenVideoFragment.OnDis
         binding.videoPlayerSubmit.fitToScreen()
         binding.videoPlayerSubmit.downloadStreamButNotPlay()
         binding.videoPlayerSubmit.setPlayListener {
-            FullScreenVideoFragment.newInstance(filePath!!)
+            FullScreenVideoFragment.newInstance(applicationContext,filePath!!)
                 .show(supportFragmentManager, "VideoPlay")
         }
         scrollToEnd()
