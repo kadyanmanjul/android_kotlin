@@ -27,6 +27,7 @@ class LauncherActivity : CoreJoshActivity() {
         AppObjectController.facebookEventLogger.logEvent(EVENT_NAME_ACTIVATED_APP)
         WorkMangerAdmin.deviceIdGenerateWorker()
         WorkMangerAdmin.readMessageUpdating()
+        WorkMangerAdmin.mappingGIDWithMentor()
         setContentView(R.layout.activity_launcher)
         handleIntent()
     }

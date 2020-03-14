@@ -129,4 +129,9 @@ object WorkMangerAdmin {
     }
 
 
+    fun mappingGIDWithMentor(){
+        WorkManager.getInstance(AppObjectController.joshApplication)
+            .enqueue(OneTimeWorkRequestBuilder<MappingGaIDWithMentor>().build())
+    }
+
 }

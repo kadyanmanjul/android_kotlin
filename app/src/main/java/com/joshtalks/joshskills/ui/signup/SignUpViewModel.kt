@@ -11,6 +11,7 @@ import com.google.android.gms.tasks.Task
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
+import com.joshtalks.joshskills.core.service.WorkMangerAdmin
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.LoginResponse
@@ -97,6 +98,8 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
                 AppAnalytics.updateUser()
                 mergeMentorWithGId(response.mentorId)
                 fetchMentor()
+                WorkMangerAdmin.mappingGIDWithMentor()
+
             } catch (ex: HttpException) {
                 if (ex.code() == 400) {
                     otpVerifyStatus.postValue(true)
@@ -143,6 +146,7 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
                 AppAnalytics.updateUser()
                 mergeMentorWithGId(response.mentorId)
                 fetchMentor()
+                WorkMangerAdmin.mappingGIDWithMentor()
             } catch (ex: HttpException) {
                 progressDialogStatus.postValue(false)
                 ex.printStackTrace()

@@ -64,6 +64,7 @@
             android:roundIcon="@mipmap/ic_launcher_round"
             android:supportsRtl="false"
             android:theme="@style/AppTheme"
+
             tools:ignore="AllowBackup,GoogleAppIndexingWarning,UnusedAttribute"
             tools:replace="android:allowBackup,android:supportsRtl">
 

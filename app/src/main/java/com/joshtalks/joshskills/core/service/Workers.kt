@@ -120,23 +120,16 @@ class UniqueIdGenerationWorker(var context: Context, workerParams: WorkerParamet
     override fun doWork(): Result {
         try {
             if (PrefManager.hasKey(USER_UNIQUE_ID).not()) {
-                MobileAds.initialize(
-                    context,
-                    context.getString(com.joshtalks.joshskills.R.string.ads_id)
-                )
-                val adInfo = AdvertisingIdClient.getAdvertisingIdInfo(context)
-                adInfo.id?.let {
-                    PrefManager.put(USER_UNIQUE_ID, it)
-                }
-
+                val id = getGoogleAdId(context)
+                PrefManager.put(USER_UNIQUE_ID, id)
             }
         } catch (ex: Exception) {
             ex.printStackTrace()
         }
         return Result.success()
     }
-
 }
+
 
 class GetUserConversationWorker(var context: Context, private var workerParams: WorkerParameters) :
     Worker(context, workerParams) {
@@ -299,7 +292,6 @@ class NewCourseScreenEventWorker(context: Context, private val workerParams: Wor
                 Crashlytics.logException(databaseError.toException())
                 databaseError.toException().printStackTrace()
             }
-
         })
 
         return Result.success()
@@ -333,7 +325,62 @@ class RegisterUserGId(context: Context, private val workerParams: WorkerParamete
     }
 }
 
+class MappingGaIDWithMentor(var context: Context, private val workerParams: WorkerParameters) :
+    CoroutineWorker(context, workerParams) {
+    override suspend fun doWork(): Result {
+        if (GaIDMentorModel.getMapObject() == null) {
+            val extras: HashMap<String, String> = HashMap()
+            val obj = GaIDMentorModel()
+            obj.gaID = getGoogleAdId(context)
+            try {
+                extras["id"] = obj.gaID
+                val resp = AppObjectController.commonNetworkService.registerGAIdDetailsAsync(extras)
+                    .await()
+                GaIDMentorModel.update(resp)
+            } catch (ex: HttpException) {
+                if (ex.code() == 400) {
+                    GaIDMentorModel.update(obj)
+                }
+                ex.printStackTrace()
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        } else {
+            val obj = GaIDMentorModel.getMapObject()
+            if (obj != null && obj.mapMentorList.isNullOrEmpty() && Mentor.getInstance().hasId()) {
+                try {
+                    val extras: HashMap<String, List<String>> = HashMap()
+                    extras["mentors"] = listOf(Mentor.getInstance().getId())
+                    AppObjectController.commonNetworkService.patchMentorWithGAIdAsync(
+                        obj.gaID,
+                        extras
+                    ).await()
+                    obj.mapMentorList = extras["mentors"]
+                    GaIDMentorModel.update(obj)
+                } catch (ex: HttpException) {
+                    GaIDMentorModel.update(obj)
+                    ex.printStackTrace()
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }
 
+        }
+
+
+        return Result.success()
+    }
+}
+
+
+fun getGoogleAdId(context: Context): String {
+    MobileAds.initialize(
+        context,
+        context.getString(com.joshtalks.joshskills.R.string.ads_id)
+    )
+    val adInfo = AdvertisingIdClient.getAdvertisingIdInfo(context)
+    return adInfo.id
+}
 
 
 

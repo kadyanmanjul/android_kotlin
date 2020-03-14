@@ -11,8 +11,8 @@ import retrofit2.http.*
 
 const val DIR = "api/skill/v1"
 
+@JvmSuppressWildcards
 interface SignUpNetworkService {
-
 
     @GET("$DIR/user/login/")
     fun getOtpForNumberAsync(@QueryMap params: Map<String, String>): Deferred<Any>
