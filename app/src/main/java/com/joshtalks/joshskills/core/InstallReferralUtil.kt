@@ -3,6 +3,7 @@ package com.joshtalks.joshskills.core
 import android.content.Context
 import android.os.RemoteException
 import android.text.TextUtils
+import android.util.Log
 import com.android.installreferrer.api.InstallReferrerClient
 import com.android.installreferrer.api.InstallReferrerStateListener
 import com.crashlytics.android.Crashlytics
@@ -103,6 +104,8 @@ object InstallReferralUtil {
                     }
                 })
             }
+            Log.e("JoshReferral", InstallReferrerModel.getPrefObject().toString())
+
         } catch (ex: Exception) {
             ex.printStackTrace()
         }

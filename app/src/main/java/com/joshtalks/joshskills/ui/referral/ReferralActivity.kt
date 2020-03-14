@@ -11,6 +11,7 @@ import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.GestureDetector
 import android.view.Gravity
 import android.view.MotionEvent
@@ -28,6 +29,11 @@ import com.bumptech.glide.request.target.Target
 import com.google.firebase.dynamiclinks.DynamicLink
 import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
 import com.google.firebase.dynamiclinks.ShortDynamicLink
+import com.google.firebase.dynamiclinks.ktx.androidParameters
+import com.google.firebase.dynamiclinks.ktx.dynamicLinks
+import com.google.firebase.dynamiclinks.ktx.googleAnalyticsParameters
+import com.google.firebase.dynamiclinks.ktx.shortLinkAsync
+import com.google.firebase.ktx.Firebase
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
@@ -95,7 +101,38 @@ class ReferralActivity : BaseActivity() {
             userReferralURL = PrefManager.getStringValue(USER_SHARE_SHORT_URL)
 
         }
-        FirebaseDynamicLinks.getInstance()
+         Firebase.dynamicLinks.shortLinkAsync(ShortDynamicLink.Suffix.SHORT) {
+                link = Uri.parse("https://joshskill.app.link")
+                domainUriPrefix = domain
+                androidParameters(BuildConfig.APPLICATION_ID) {
+                    minimumVersion = 69
+                }
+                googleAnalyticsParameters {
+                    source = userReferralCode
+                    medium = "Mobile"
+                    campaign = "user_referer"
+                }
+
+            }.addOnSuccessListener { result ->
+                result?.shortLink?.let {
+                    try {
+                        if (it.toString().isNotEmpty()) {
+                            PrefManager.put(USER_SHARE_SHORT_URL, it.toString())
+                            userReferralURL = it.toString()
+
+                        }
+                    } catch (ex: Exception) {
+                        ex.printStackTrace()
+                    }
+                }
+            }
+            .addOnFailureListener {
+                it.printStackTrace()
+
+            }
+
+
+       /* FirebaseDynamicLinks.getInstance()
             .createDynamicLink()
             .setLink(baseUrl)
             .setDomainUriPrefix(domain)
@@ -115,13 +152,13 @@ class ReferralActivity : BaseActivity() {
 
                         }
                     } catch (ex: Exception) {
-
+                        ex.printStackTrace()
                     }
                 }
             }.addOnFailureListener {
                 it.printStackTrace()
             }
-
+*/
     }
 
 
@@ -280,7 +317,8 @@ class ReferralActivity : BaseActivity() {
 
                     sendIntent.type = "image/*"
                     sendIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                    val shareIntent = Intent.createChooser(sendIntent, getString(R.string.app_name))
+                    val shareIntent =
+                        Intent.createChooser(sendIntent, getString(R.string.app_name))
                     startActivity(shareIntent)
                     AppAnalytics.create(AnalyticsEvent.SHARE_ON_WHATSAPP.NAME).push()
                     return false

@@ -129,11 +129,11 @@ public class CCPCountry implements Comparable<CCPCountry> {
             }
             loadedLibraryMasterListLanguage = language;
         } catch (XmlPullParserException e) {
-            e.printStackTrace();
+       //     e.printStackTrace();
         } catch (IOException e) {
-            e.printStackTrace();
+         //   e.printStackTrace();
         } catch (Exception e) {
-            e.printStackTrace();
+           // e.printStackTrace();
         } finally {
 
         }

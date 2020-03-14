@@ -502,8 +502,8 @@ class PaymentActivity : CoreJoshActivity(),
     }
 
     override fun getCouponCode(code: String?) {
-        code?.run {
-            userSubmitCode = this
+        if (code.isNullOrEmpty().not()) {
+            userSubmitCode = code!!
             AppAnalytics.create(AnalyticsEvent.COUPON_INSERTED.NAME)
                 .addParam("coupon_code", userSubmitCode).push()
         }

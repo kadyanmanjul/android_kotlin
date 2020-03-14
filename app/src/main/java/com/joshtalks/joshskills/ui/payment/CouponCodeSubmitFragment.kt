@@ -10,7 +10,6 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.InputFilter
 import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
@@ -21,6 +20,7 @@ import androidx.fragment.app.DialogFragment
 import com.google.gson.JsonSyntaxException
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
@@ -38,6 +38,7 @@ import retrofit2.HttpException
 class CouponCodeSubmitFragment : DialogFragment() {
     private var listener: OnCouponCodeSubmitListener? = null
     private lateinit var binding: FragmentCouponCodeSubmitBinding
+    private var validCode = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -80,9 +81,7 @@ class CouponCodeSubmitFragment : DialogFragment() {
         binding.etCode.requestFocus()
 
         val clipBoardManager = context?.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
-        val copiedString = clipBoardManager.primaryClip?.getItemAt(0)?.text?.toString()
-        Log.i("copytext", copiedString ?: "nope")
-
+        //val copiedString = clipBoardManager.primaryClip?.getItemAt(0)?.text?.toString()
         binding.etCode.setOnTouchListener { _, event ->
             try {
                 if (event.action == MotionEvent.ACTION_UP) {
@@ -141,7 +140,11 @@ class CouponCodeSubmitFragment : DialogFragment() {
     }
 
     fun completePayment() {
-        listener?.getCouponCode(binding.etCode.text?.toString())
+        if (validCode) {
+            listener?.getCouponCode(binding.etCode.text?.toString())
+        } else {
+            listener?.getCouponCode(EMPTY)
+        }
         dismissAllowingStateLoss()
     }
 
@@ -226,7 +229,7 @@ class CouponCodeSubmitFragment : DialogFragment() {
             binding.progressBar.visibility = View.INVISIBLE
         }
         AppAnalytics.create(AnalyticsEvent.COUPON_VALID.NAME).push()
-
+        validCode = true
     }
 
     private fun inValidCode() {
