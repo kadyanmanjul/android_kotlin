@@ -36,8 +36,8 @@ import com.joshtalks.joshskills.repository.local.entity.ChatModel
 import com.joshtalks.joshskills.repository.local.entity.DOWNLOAD_STATUS
 import com.joshtalks.joshskills.repository.local.entity.MESSAGE_DELIVER_STATUS
 import com.joshtalks.joshskills.repository.local.eventbus.MediaEngageEventBus
-import com.joshtalks.joshskills.repository.local.model.ListenGraph
 import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.repository.server.engage.Graph
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
@@ -85,7 +85,7 @@ class JcPlayerView : LinearLayout, View.OnClickListener, SeekBar.OnSeekBarChange
     var startTime: Long = 0
     var endTime: Long = 0
     var drag = false
-    var audioListenList = mutableListOf<ListenGraph>()
+    var audioListenList = mutableListOf<Graph>()
     private var compositeDisposable = CompositeDisposable()
     private var cAudioObj: JcAudio? = null
 
@@ -500,7 +500,6 @@ class JcPlayerView : LinearLayout, View.OnClickListener, SeekBar.OnSeekBarChange
 
     override fun onStartTrackingTouch(seekBar: SeekBar) {
         if (endTime > startTime) {
-            audioListenList.add(ListenGraph(startTime, endTime))
             startTime = 0
             endTime = 0
         }
@@ -560,7 +559,6 @@ class JcPlayerView : LinearLayout, View.OnClickListener, SeekBar.OnSeekBarChange
     override fun onStopped(status: JcStatus) {
         try {
             txtCurrentDuration?.post { txtCurrentDuration?.text = toTimeSongString(duration) }
-            audioListenList.add(ListenGraph(startTime, endTime))
             startTime = 0
             endTime = 0
             if (audioListenList.isNullOrEmpty()) {

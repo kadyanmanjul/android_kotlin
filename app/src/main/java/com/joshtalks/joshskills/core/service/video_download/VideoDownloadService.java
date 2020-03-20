@@ -1,6 +1,8 @@
 package com.joshtalks.joshskills.core.service.video_download;
 
 import android.app.Notification;
+import android.app.NotificationManager;
+import android.content.Context;
 import android.util.Log;
 
 import com.google.android.exoplayer2.C;
@@ -18,7 +20,10 @@ import com.joshtalks.joshskills.repository.local.DatabaseUtils;
 import com.joshtalks.joshskills.repository.local.entity.DOWNLOAD_STATUS;
 import com.joshtalks.joshskills.repository.local.eventbus.MediaProgressEventBus;
 
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -32,6 +37,8 @@ public class VideoDownloadService extends DownloadService {
     private static final int FOREGROUND_NOTIFICATION_ID = 1;
 
     private static int nextNotificationId = FOREGROUND_NOTIFICATION_ID + 1;
+    private static HashMap<String, Integer> notificationListMap = new HashMap<>();
+
 
     private DownloadNotificationHelper notificationHelper;
 
@@ -42,12 +49,14 @@ public class VideoDownloadService extends DownloadService {
                 CHANNEL_ID,
                 R.string.exo_download_notification_channel_name, 0);
         nextNotificationId = FOREGROUND_NOTIFICATION_ID + 1;
+        notificationListMap.clear();
     }
 
     @Override
     public void onCreate() {
         super.onCreate();
         notificationHelper = new DownloadNotificationHelper(this, CHANNEL_ID);
+
     }
 
     @Override
@@ -87,19 +96,19 @@ public class VideoDownloadService extends DownloadService {
         } else if (download.state == Download.STATE_STOPPED) {
             downloadStatus = DOWNLOAD_STATUS.FAILED;
         }
+        notificationListMap.put(Util.fromUtf8Bytes(download.request.data), nextNotificationId);
         DatabaseUtils.updateVideoDownload(Util.fromUtf8Bytes(download.request.data), downloadStatus);
         Notification notification;
         if (download.state == Download.STATE_COMPLETED) {
-            notification = notificationHelper.buildDownloadCompletedNotification(R.mipmap.ic_launcher, null, "Download completed");
+            clearNotification(Util.fromUtf8Bytes(download.request.data));
+            //notification = notificationHelper.buildDownloadCompletedNotification(R.mipmap.ic_launcher, null, "Download completed");
         } else if (download.state == Download.STATE_FAILED) {
             notification = notificationHelper.buildDownloadFailedNotification(R.mipmap.ic_launcher, null, "Download failed");
             RxBus2.publish(new MediaProgressEventBus(Download.STATE_FAILED, Util.fromUtf8Bytes(download.request.data), 0));
-
+            NotificationUtil.setNotification(this, nextNotificationId++, notification);
         } else {
             return;
         }
-        NotificationUtil.setNotification(this, nextNotificationId++, notification);
-
     }
 
     void videoNotUploadFlagUpdate() {
@@ -152,6 +161,22 @@ public class VideoDownloadService extends DownloadService {
             }
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    private void clearNotification(String s) {
+        try {
+            NotificationManager notificationManager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
+            Iterator it = notificationListMap.entrySet().iterator();
+            while (it.hasNext()) {
+                Map.Entry pair = (Map.Entry) it.next();
+                if (s.equalsIgnoreCase(pair.getKey().toString())) {
+                    notificationManager.cancel((int) pair.getValue());
+                    it.remove();
+                }
+            }
+        } catch (Exception e) {
+
         }
     }
 }

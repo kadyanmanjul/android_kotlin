@@ -13,6 +13,7 @@ import androidx.appcompat.widget.AppCompatTextView
 import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
+import com.google.android.material.card.MaterialCardView
 import com.google.android.material.textview.MaterialTextView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.Utils
@@ -32,7 +33,6 @@ import java.lang.ref.WeakReference
 class PracticeViewHolder(activityRef: WeakReference<FragmentActivity>, message: ChatModel) :
     BaseChatViewHolder(activityRef, message) {
 
-
     @View(R.id.tv_title)
     lateinit var titleTv: AppCompatTextView
 
@@ -43,8 +43,12 @@ class PracticeViewHolder(activityRef: WeakReference<FragmentActivity>, message: 
     @View(R.id.image_view)
     lateinit var imageView: AppCompatImageView
 
-    @View(R.id.root_view)
-    lateinit var rootView: CardView
+    @View(R.id.root_view_fl)
+    lateinit var rootView: FrameLayout
+
+    @View(R.id.root_sub_view)
+    lateinit var subRootView: CardView
+
 
     @View(R.id.tv_submit_answer)
     lateinit var tvSubmitAnswer: MaterialTextView
@@ -65,9 +69,11 @@ class PracticeViewHolder(activityRef: WeakReference<FragmentActivity>, message: 
     override fun onViewInflated() {
         super.onViewInflated()
         viewHolder = this
-        val layoutP = rootView.layoutParams as FrameLayout.LayoutParams
-        rootView.setCardBackgroundColor(ContextCompat.getColor(getAppContext(), R.color.white))
-
+        if (message.chatId.isNotEmpty() && sId == message.chatId) {
+            highlightedViewForSomeTime(rootView)
+        }
+        val layoutP = subRootView.layoutParams as FrameLayout.LayoutParams
+        subRootView.setCardBackgroundColor(ContextCompat.getColor(getAppContext(), R.color.white))
         val sBuilder = SpannableStringBuilder().append("Status: ")
         practiceStatusTv.text = activityRef.get()?.getString(R.string.answer_not_submitted)
         tvSubmitAnswer.visibility = android.view.View.VISIBLE
@@ -79,12 +85,12 @@ class PracticeViewHolder(activityRef: WeakReference<FragmentActivity>, message: 
                 layoutP.width = Utils.dpToPx(getAppContext(), 260f)
                 layoutP.gravity = android.view.Gravity.START
                 setResourceInImageView(imageView, R.drawable.ic_pattern)
-                rootView.layoutParams = layoutP
+                subRootView.layoutParams = layoutP
 
             } else {
                 sBuilder.append("Submitted")
                 tvSubmitAnswer.visibility = android.view.View.GONE
-                rootView.setContentPadding(
+                subRootView.setContentPadding(
                     Utils.dpToPx(getAppContext(), 5f),
                     Utils.dpToPx(getAppContext(), 5f),
                     Utils.dpToPx(getAppContext(), 5f),
@@ -94,8 +100,8 @@ class PracticeViewHolder(activityRef: WeakReference<FragmentActivity>, message: 
                 layoutP.gravity = android.view.Gravity.END
                 layoutP.height = Utils.dpToPx(getAppContext(), 160f)
                 layoutP.width = Utils.dpToPx(getAppContext(), 260f)
-                rootView.layoutParams = layoutP
-                rootView.setCardBackgroundColor(Color.parseColor("#EFFAFF"))
+                subRootView.layoutParams = layoutP
+                subRootView.setCardBackgroundColor(Color.parseColor("#EFFAFF"))
                 sBuilder.setSpan(
                     ForegroundColorSpan(Color.parseColor("#25d366")),
                     8,
@@ -109,7 +115,7 @@ class PracticeViewHolder(activityRef: WeakReference<FragmentActivity>, message: 
     }
 
 
-    @Click(R.id.root_view)
+    @Click(R.id.root_sub_view)
     fun onClickRootView() {
         RxBus2.publish(PractiseSubmitEventBus(viewHolder, message))
     }
@@ -117,6 +123,9 @@ class PracticeViewHolder(activityRef: WeakReference<FragmentActivity>, message: 
     @Click(R.id.status_tv)
     fun onClickStatusView() {
         RxBus2.publish(PractiseSubmitEventBus(viewHolder, message))
+    }
+    override fun getRoot(): FrameLayout {
+        return rootView
     }
 
 }

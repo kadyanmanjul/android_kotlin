@@ -38,8 +38,7 @@ import com.joshtalks.joshskills.repository.server.CourseDetailsModel
 import com.joshtalks.joshskills.repository.server.CourseExploreModel
 import com.joshtalks.joshskills.repository.server.PaymentDetailsResponse
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
-import com.joshtalks.joshskills.ui.sign_up_old.LoginActivity
-import com.joshtalks.joshskills.ui.signup.IS_ACTIVITY_FOR_RESULT
+import com.joshtalks.joshskills.ui.signup.LoginDialogFragment
 import com.joshtalks.joshskills.ui.view_holders.CourseDetailViewHolder
 import com.muddzdev.styleabletoast.StyleableToast
 import com.razorpay.Checkout
@@ -65,7 +64,8 @@ const val PAYMENT_DETAIL_OBJECT = "payment_detail"
 class PaymentActivity : CoreJoshActivity(),
     PaymentResultListener, CouponCodeSubmitFragment.OnCouponCodeSubmitListener,
     CoursePurchaseDetailFragment.OnCourseDetailInteractionListener,
-    OfferCoursePaymentDetailFragment.OnCourseBuyOfferInteractionListener {
+    OfferCoursePaymentDetailFragment.OnCourseBuyOfferInteractionListener,
+    LoginDialogFragment.OnLoginCallback {
 
     private lateinit var activityPaymentBinding: ActivityPaymentBinding
     private var courseModel: CourseExploreModel? = null
@@ -238,6 +238,7 @@ class PaymentActivity : CoreJoshActivity(),
 
 
     override fun onPaymentError(p0: Int, p1: String?) {
+
         userSubmitCode = EMPTY
         StyleableToast.Builder(this).gravity(Gravity.TOP)
             .backgroundColor(ContextCompat.getColor(applicationContext, R.color.error_color))
@@ -471,23 +472,25 @@ class PaymentActivity : CoreJoshActivity(),
     }
 
     private fun openWhatsAppHelp() {
-        AppObjectController.uiHandler.postDelayed({
-            if (courseModel != null && courseModel!!.whatsappUrl != null) {
-                activityPaymentBinding.whatsappHelpContainer.visibility = View.VISIBLE
-                activityPaymentBinding.whatsappHelp.setOnClickListener {
-                    val intent = Intent(Intent.ACTION_VIEW)
-                    intent.data = Uri.parse(courseModel?.whatsappUrl)
-                    intent.apply {
-                        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        if (Utils.isPackageInstalled("com.whatsapp", applicationContext)) {
+            AppObjectController.uiHandler.postDelayed({
+                if (courseModel != null && courseModel!!.whatsappUrl != null) {
+                    activityPaymentBinding.whatsappHelpContainer.visibility = View.VISIBLE
+                    activityPaymentBinding.whatsappHelp.setOnClickListener {
+                        val intent = Intent(Intent.ACTION_VIEW)
+                        intent.data = Uri.parse(courseModel?.whatsappUrl)
+                        intent.apply {
+                            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                        }
+                        startActivity(intent)
                     }
-                    startActivity(intent)
-                }
-                activityPaymentBinding.ivHideHelp.setOnClickListener {
-                    activityPaymentBinding.whatsappHelpContainer.visibility = View.GONE
+                    activityPaymentBinding.ivHideHelp.setOnClickListener {
+                        activityPaymentBinding.whatsappHelpContainer.visibility = View.GONE
 
+                    }
                 }
-            }
-        }, 2500)
+            }, 2500)
+        }
 
     }
 
@@ -508,6 +511,7 @@ class PaymentActivity : CoreJoshActivity(),
                 .addParam("coupon_code", userSubmitCode).push()
         }
         requestForPayment()
+
     }
 
     override fun onBackPressed() {
@@ -526,9 +530,10 @@ class PaymentActivity : CoreJoshActivity(),
 
     private fun requestForPayment() {
         if (User.getInstance().token == null) {
-            startActivityForResult(Intent(this, LoginActivity::class.java).apply {
-                putExtra(IS_ACTIVITY_FOR_RESULT, true)
-            }, 101)
+            showLoginDialog()
+            /*  startActivityForResult(Intent(this, LoginActivity::class.java).apply {
+                  putExtra(IS_ACTIVITY_FOR_RESULT, true)
+              }, 101)*/
             return
         }
         if (userSubmitCode.isEmpty().not() && userSubmitCode.equals(
@@ -559,6 +564,17 @@ class PaymentActivity : CoreJoshActivity(),
         AppAnalytics.create(AnalyticsEvent.COUPON_SELECTED.NAME)
             .push()
     }
+
+    private fun showLoginDialog() {
+        val fragmentTransaction = supportFragmentManager.beginTransaction()
+        val prev = supportFragmentManager.findFragmentByTag("login_dialog")
+        if (prev != null) {
+            fragmentTransaction.remove(prev)
+        }
+        fragmentTransaction.addToBackStack(null)
+        LoginDialogFragment.newInstance().show(supportFragmentManager, "login_dialog")
+    }
+
 
     private fun invalidCodeDialog() {
         val dialog = Dialog(this@PaymentActivity)
@@ -628,6 +644,12 @@ class PaymentActivity : CoreJoshActivity(),
                 }, {
                 }
             ))
+    }
+
+    override fun onLoginSuccessfully() {
+        AppAnalytics.create(AnalyticsEvent.LOGIN_SUCCESSFULLY.NAME).push()
+        userHaveSpecialDiscount()
+        requestForPayment()
     }
 
 

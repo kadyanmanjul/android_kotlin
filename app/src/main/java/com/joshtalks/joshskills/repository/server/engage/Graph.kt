@@ -2,10 +2,9 @@ package com.joshtalks.joshskills.repository.server.engage
 
 
 import com.google.gson.annotations.SerializedName
+import java.io.Serializable
 
-data class Graph(
+class Graph(@SerializedName("start") var startTime: Long) :Serializable {
     @SerializedName("end")
-    val end: Int,
-    @SerializedName("start")
-    val start: Int
-)
+    var endTime: Long = 0
+}

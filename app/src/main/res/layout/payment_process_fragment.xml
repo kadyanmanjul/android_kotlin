@@ -89,7 +89,7 @@
                                 android:text="@string/thank_you"
                                 android:textAlignment="center"
                                 android:textColor="@color/font_color"
-                                android:textSize="@dimen/font_18" />
+                                android:textSize="@dimen/font_19" />
 
                         <androidx.appcompat.widget.AppCompatTextView
                                 fontPath="fonts/Roboto-Medium.ttf"
@@ -99,7 +99,7 @@
                                 android:text="@string/payment_process_success"
                                 android:textAlignment="center"
                                 android:textColor="@color/font_color"
-                                android:textSize="@dimen/font_11" />
+                                android:textSize="@dimen/font_12" />
 
                         <FrameLayout
                                 android:layout_width="match_parent"
@@ -167,7 +167,7 @@
                                     android:marqueeRepeatLimit="marquee_forever"
                                     android:singleLine="true"
                                     android:textColor="@color/font_color"
-                                    android:textSize="@dimen/font_14"
+                                    android:textSize="@dimen/font_15"
                                     app:layout_constraintStart_toEndOf="@+id/course_image"
                                     app:layout_constraintTop_toTopOf="@id/course_image" />
 
@@ -180,7 +180,7 @@
                                     android:layout_marginBottom="@dimen/_4sdp"
                                     android:text="@string/amount"
                                     android:textColor="@color/font_color"
-                                    android:textSize="@dimen/font_9"
+                                    android:textSize="@dimen/font_10"
                                     app:layout_constraintBottom_toTopOf="@+id/tv_amount"
                                     app:layout_constraintStart_toStartOf="@id/tv_amount" />
 
@@ -194,7 +194,7 @@
                                     android:layout_marginStart="@dimen/_10sdp"
                                     android:layout_marginBottom="@dimen/_4sdp"
                                     android:textColor="@color/font_color"
-                                    android:textSize="@dimen/font_9"
+                                    android:textSize="@dimen/font_10"
                                     app:layout_constraintBottom_toBottomOf="@id/course_image"
                                     app:layout_constraintStart_toEndOf="@+id/course_image" />
 
@@ -206,7 +206,7 @@
                                     android:layout_gravity="start"
                                     android:text="@string/status"
                                     android:textColor="@color/font_color"
-                                    android:textSize="@dimen/font_9"
+                                    android:textSize="@dimen/font_10"
                                     app:layout_constraintBottom_toBottomOf="parent"
                                     app:layout_constraintBottom_toTopOf="@+id/tv_status"
                                     app:layout_constraintEnd_toEndOf="parent" />
@@ -221,7 +221,7 @@
                                     android:layout_marginBottom="@dimen/_4sdp"
                                     android:text="@string/paid"
                                     android:textColor="@color/font_color"
-                                    android:textSize="@dimen/font_9"
+                                    android:textSize="@dimen/font_10"
                                     app:layout_constraintBottom_toBottomOf="parent"
                                     app:layout_constraintEnd_toEndOf="parent" />
 
@@ -277,7 +277,7 @@
                                     android:lines="1"
                                     android:text="@string/transaction_status"
                                     android:textColor="@color/font_color"
-                                    android:textSize="@dimen/font_14"
+                                    android:textSize="@dimen/font_15"
                                     app:layout_constraintStart_toStartOf="parent"
                                     app:layout_constraintTop_toTopOf="parent" />
 
@@ -310,7 +310,7 @@
                                     android:lines="1"
                                     android:text="@string/course_payment_label"
                                     android:textColor="@color/font_color"
-                                    android:textSize="@dimen/font_12"
+                                    android:textSize="@dimen/font_13"
                                     app:layout_constraintBottom_toBottomOf="@+id/image_view_1"
                                     app:layout_constraintStart_toEndOf="@+id/image_view_1"
                                     app:layout_constraintTop_toTopOf="@+id/image_view_1" />
@@ -325,7 +325,7 @@
                                     android:lines="1"
                                     android:text="@string/done"
                                     android:textColor="@color/color_success"
-                                    android:textSize="@dimen/font_12"
+                                    android:textSize="@dimen/font_13"
                                     app:layout_constraintEnd_toEndOf="parent"
                                     app:layout_constraintTop_toTopOf="@+id/text_view_2" />
 
@@ -361,7 +361,7 @@
                                     android:lines="1"
                                     android:text="@string/course_started_label"
                                     android:textColor="@color/font_color"
-                                    android:textSize="@dimen/font_12"
+                                    android:textSize="@dimen/font_13"
                                     app:layout_constraintBottom_toBottomOf="@+id/image_view_2"
                                     app:layout_constraintStart_toEndOf="@+id/image_view_2"
                                     app:layout_constraintTop_toTopOf="@+id/image_view_2" />
@@ -375,7 +375,7 @@
                                     android:lines="1"
                                     android:text="@string/in_progress_label"
                                     android:textColor="@color/color_success"
-                                    android:textSize="@dimen/font_12"
+                                    android:textSize="@dimen/font_13"
                                     app:layout_constraintEnd_toEndOf="parent"
                                     app:layout_constraintTop_toTopOf="@+id/image_view_2" />
 
@@ -391,7 +391,7 @@
                                     android:padding="@dimen/_6sdp"
                                     android:text="@string/payment_process_info"
                                     android:textColor="@color/gray_79"
-                                    android:textSize="@dimen/font_10"
+                                    android:textSize="@dimen/font_11_5"
                                     app:layout_constraintEnd_toEndOf="@id/text_view_5"
                                     app:layout_constraintStart_toStartOf="@+id/text_view_4"
                                     app:layout_constraintTop_toBottomOf="@+id/text_view_4" />

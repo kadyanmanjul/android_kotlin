@@ -1,6 +1,7 @@
 package com.joshtalks.joshskills.ui.view_holders
 
 import android.net.Uri
+import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.TextView
 import androidx.appcompat.widget.AppCompatImageView
@@ -46,7 +47,7 @@ class PdfViewHolder(activityRef: WeakReference<FragmentActivity>, message: ChatM
     lateinit var rootSubView: FrameLayout
 
     @View(R.id.message_view)
-    lateinit var messageView: android.view.View
+    lateinit var messageView: ViewGroup
 
     @View(R.id.tv_pdf_info)
     lateinit var tvPdfInfo: TextView
@@ -151,6 +152,13 @@ class PdfViewHolder(activityRef: WeakReference<FragmentActivity>, message: ChatM
         pdfViewHolder = this
         receivedMessageTime.text = Utils.messageTimeConversion(message.created)
         updateTime(receivedMessageTime)
+
+        message.parentQuestionObject?.run {
+            addLinkToTagMessage(messageView, this)
+        }
+        if (message.chatId.isNotEmpty() && sId == message.chatId) {
+            highlightedViewForSomeTime(rootView)
+        }
 
         message.sender?.let {
             updateView(it, rootView, rootSubView, messageView)
@@ -269,5 +277,7 @@ class PdfViewHolder(activityRef: WeakReference<FragmentActivity>, message: ChatM
         )
 
     }
-
+    override fun getRoot(): FrameLayout {
+        return rootView
+    }
 }

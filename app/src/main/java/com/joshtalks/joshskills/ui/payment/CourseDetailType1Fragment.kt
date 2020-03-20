@@ -67,6 +67,7 @@ class CourseDetailType1Fragment : Fragment() {
     private var courseId = 1
     private var isUserValidForOffer = false
     private var dayRemain = "7"
+    private var videoId: String? = null
 
     private lateinit var binding: FragmentCourseDetailType1FragmentBinding
     private var videoUrl: String? = null
@@ -252,6 +253,7 @@ class CourseDetailType1Fragment : Fragment() {
                         }
                         binding.nestedScrollView.visibility = View.VISIBLE
                         binding.progressBar.visibility = View.GONE
+                        videoId = response[0].videoObj?.id
 
                         val titleView =
                             requireActivity().findViewById<AppCompatTextView>(R.id.text_message_title)
@@ -303,7 +305,7 @@ class CourseDetailType1Fragment : Fragment() {
 
     fun playVideo() {
         videoUrl?.let {
-            FullScreenVideoFragment.newInstance(requireContext(), it)
+            FullScreenVideoFragment.newInstance(it, videoId)
                 .show(requireActivity().supportFragmentManager, "Video Play")
         }
 

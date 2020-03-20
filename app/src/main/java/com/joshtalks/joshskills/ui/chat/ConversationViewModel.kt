@@ -117,8 +117,8 @@ class ConversationViewModel(application: Application, private var inboxEntity: I
         }
         listOfChat.forEachWithIndex { _, chat ->
             val question: Question? = appDatabase.chatDao().getQuestion(chat.chatId)
-            if (question != null) {
-                when (question.material_type) {
+            question?.run {
+                when (this.material_type) {
                     BASE_MESSAGE_TYPE.IM -> question.imageList =
                         appDatabase.chatDao()
                             .getImagesOfQuestion(questionId = question.questionId)
@@ -133,10 +133,16 @@ class ConversationViewModel(application: Application, private var inboxEntity: I
                             .getPdfOfQuestion(questionId = question.questionId)
                 }
                 chat.question = question
+                if (this.parent_id.isNullOrEmpty().not()) {
+                    chat.parentQuestionObject =
+                        appDatabase.chatDao().getQuestionOnId(this.parent_id!!)
+                }
             }
+
             if (chat.type == BASE_MESSAGE_TYPE.Q && question == null) {
                 return@forEachWithIndex
             }
+
             chatReturn.add(chat)
         }
         if (chatReturn.isNullOrEmpty()) {

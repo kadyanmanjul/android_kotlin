@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+                name="handler"
+                type="com.joshtalks.joshskills.repository.local.minimalentity.CourseContentEntity" />
+    </data>
+
+    <LinearLayout
+            android:layout_marginEnd="@dimen/_6sdp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+        <com.github.vipulasri.timelineview.TimelineView
+                android:id="@+id/timeline"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                app:endLineColor="@color/colorPrimary"
+                app:linePadding="@dimen/_4sdp"
+                app:lineStyle="normal"
+                app:lineWidth="@dimen/_1sdp"
+                app:marker="@drawable/ic_marker_v"
+                app:markerInCenter="true"
+                app:markerSize="@dimen/_12sdp"
+                app:startLineColor="@color/colorPrimary" />
+
+        <com.google.android.material.card.MaterialCardView
+                android:id="@+id/root_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_10sdp"
+                android:layout_marginTop="@dimen/_2sdp"
+                android:layout_marginBottom="@dimen/_2sdp"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?android:attr/selectableItemBackground"
+                app:contentPadding="@dimen/_12sdp">
+
+            <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+                    android:id="@+id/text_title"
+                    fontPath="fonts/Roboto-Medium.ttf"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start"
+                    android:ellipsize="end"
+                    android:gravity="center_vertical|start"
+                    android:maxLines="1"
+                    android:textColor="@color/gray_48"
+                    android:textSize="@dimen/font_16" />
+        </com.google.android.material.card.MaterialCardView>
+    </LinearLayout>
+</layout>

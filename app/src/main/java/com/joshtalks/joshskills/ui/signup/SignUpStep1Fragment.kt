@@ -23,6 +23,8 @@ import com.google.android.gms.auth.api.credentials.HintRequest
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.SignUpStep1FragmentBinding
 
 
@@ -77,8 +79,6 @@ class SignUpStep1Fragment : Fragment() {
                 signUpStep1FragmentBinding.countryCodePicker.selectedCountryCodeWithPlus
         }
 
-
-
         initTermsConditionView()
         initProgressView()
         requestHint()
@@ -120,13 +120,17 @@ class SignUpStep1Fragment : Fragment() {
             ).show()
             return
         }
+        if (Utils.isInternetAvailable().not()) {
+            showToast( getString(R.string.internet_not_available_msz))
+            return
+        }
+
         if (validationForIndiaOnly() && validPhoneNumber(signUpStep1FragmentBinding.mobileEt.text.toString()).not()) {
             signUpStep1FragmentBinding.inputLayoutPassword.error = "Please enter valid phone number"
             signUpStep1FragmentBinding.inputLayoutPassword.isErrorEnabled = true
             return
         }
         signUpStep1FragmentBinding.inputLayoutPassword.isErrorEnabled = false
-
         showProgress()
         viewModel.networkCallForOtp(
             signUpStep1FragmentBinding.mobileEt.prefix,

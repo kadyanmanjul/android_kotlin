@@ -14,7 +14,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="start">
 
-        <FrameLayout
+        <LinearLayout
                 android:id="@+id/message_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -22,8 +22,10 @@
                 android:orientation="vertical"
                 android:padding="@dimen/_3sdp">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
+            <include layout="@layout/tag_practise_layout" />
 
+
+            <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/parent_layout"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -73,7 +75,7 @@
                             android:paddingEnd="@dimen/_10sdp"
                             android:paddingBottom="@dimen/_5sdp"
                             android:textColor="@color/white"
-                            android:textSize="@dimen/font_12" />
+                            android:textSize="@dimen/font_13" />
 
                 </FrameLayout>
 
@@ -88,32 +90,13 @@
                         android:paddingTop="@dimen/_5sdp"
                         android:paddingEnd="@dimen/_10sdp"
                         android:textColor="@color/gray_48"
-                        android:textSize="@dimen/font_16"
+                        android:textSize="@dimen/font_17"
                         android:visibility="gone"
                         app:layout_constraintBottom_toBottomOf="@+id/image_view"
                         app:layout_constraintLeft_toLeftOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="parent" />
 
-
-                <!--  <TextView
-                          android:id="@+id/text_message_time"
-                          fontPath="fonts/Roboto-Light.ttf"
-                          android:layout_width="wrap_content"
-                          android:layout_height="wrap_content"
-                          android:layout_gravity="end"
-                          android:drawablePadding="@dimen/_4sdp"
-                          android:gravity="center"
-                          android:paddingLeft="@dimen/_20sdp"
-                          android:paddingTop="@dimen/_5sdp"
-                          android:text=""
-                          android:textColor="@color/gray_9E"
-                          android:textSize="@dimen/font_12"
-                          app:layout_constraintBottom_toBottomOf="parent"
-                          app:layout_constraintEnd_toEndOf="parent"
-
-                          />
-  -->
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <FrameLayout
@@ -124,7 +107,7 @@
                     android:background="@drawable/download_rounded_bg"
                     android:clickable="true"
                     android:focusable="true"
-                    android:visibility="visible">
+                    android:visibility="gone">
 
 
                 <androidx.appcompat.widget.AppCompatImageView
@@ -166,8 +149,6 @@
 
 
             </FrameLayout>
-
-
-        </FrameLayout>
+        </LinearLayout>
     </FrameLayout>
 </FrameLayout>

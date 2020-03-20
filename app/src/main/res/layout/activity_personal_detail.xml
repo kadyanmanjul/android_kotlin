@@ -1,16 +1,12 @@
-<?xml version="1.0" encoding="utf-8"?><!--<RelativeLayout --><!--xmlns:tools="http://schemas.android.com/tools"--><!--android:layout_width="match_parent"--><!--android:layout_height="match_parent">-->
+<?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools">
-
     <data>
-
         <variable
                 name="handler"
                 type="com.joshtalks.joshskills.ui.profile.ProfileActivity" />
-
     </data>
-
 
     <RelativeLayout
             android:layout_width="match_parent"
@@ -21,10 +17,6 @@
             android:paddingStart="@dimen/_10sdp"
             android:paddingTop="@dimen/_20sdp"
             android:paddingEnd="@dimen/_10sdp">
-
-        <!--
-                    <include layout="@layout/toolbar_login_register" />
-        -->
 
         <ScrollView
 

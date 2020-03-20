@@ -2,6 +2,7 @@ package com.joshtalks.joshskills.ui.view_holders
 
 import android.view.View.GONE
 import android.view.View.VISIBLE
+import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.text.HtmlCompat
@@ -37,19 +38,25 @@ class TextViewHolder(activityRef: WeakReference<FragmentActivity>, message: Chat
     lateinit var rootView: FrameLayout
 
     @View(R.id.message_view)
-    lateinit var messageView: FrameLayout
+    lateinit var messageView: ViewGroup
+
 
     lateinit var textViewHolder: TextViewHolder
 
     @Resolve
     override fun onViewInflated() {
         super.onViewInflated()
-
         titleView.text = EMPTY
         titleView.visibility = GONE
         textViewHolder = this
         message.sender?.let {
             updateView(it, rootView, rootSubView, messageView)
+        }
+        message.parentQuestionObject?.run {
+            addLinkToTagMessage(messageView, this)
+        }
+        if (message.chatId.isNotEmpty() && sId == message.chatId) {
+            highlightedViewForSomeTime(rootView)
         }
 
         if (message.text.isNullOrEmpty()) {
@@ -65,8 +72,6 @@ class TextViewHolder(activityRef: WeakReference<FragmentActivity>, message: Chat
                     }
                 }
             }
-
-
         } else {
             if (message.text.isNullOrEmpty().not()) {
                 messageBody.text =
@@ -77,8 +82,10 @@ class TextViewHolder(activityRef: WeakReference<FragmentActivity>, message: Chat
         text_message_time.text = Utils.messageTimeConversion(message.created)
         updateTime(text_message_time)
         addMessageAutoLink(messageBody)
+    }
 
-        // updateForegroundView()
+    override fun getRoot(): FrameLayout {
+        return rootView
     }
 
 

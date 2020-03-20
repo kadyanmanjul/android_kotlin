@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.OrientationEventListener;
@@ -135,6 +136,8 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
                 e.printStackTrace();
             }
 
+
+
             player.addListener(new PlayerEventListener());
             player.setPlayWhenReady(true);
             setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FIXED_WIDTH);
@@ -142,6 +145,7 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
             player.addAnalyticsListener(new AnalyticsListener() {
                 @Override
                 public void onPlayerStateChanged(EventTime eventTime, boolean playWhenReady, int playbackState) {
+
 
                     if (getContext() instanceof PlayerListener) {
 
@@ -179,7 +183,6 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
                         listener.onPositionDiscontinuity(1, player.getCurrentPosition());
                     } catch (Exception e) {
                         e.printStackTrace();
-
                     }
                 }
 
@@ -449,7 +452,7 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
     }
 
     public interface PlayerEventCallback {
-        void onReceiveEvent(int event);
+        void onReceiveEvent(int event,boolean playbackState);
     }
 
 
@@ -457,10 +460,8 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
 
         @Override
         public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
-            if (playbackState == Player.STATE_ENDED) {
-            }
             if (playerEventCallback != null) {
-                playerEventCallback.onReceiveEvent(playbackState);
+                playerEventCallback.onReceiveEvent(playbackState,playWhenReady);
             }
         }
 
@@ -473,7 +474,6 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
         @SuppressWarnings("ReferenceEquality")
         public void onTracksChanged(TrackGroupArray trackGroups, TrackSelectionArray trackSelections) {
             try {
-
                 if (trackGroups != lastSeenTrackGroupArray) {
                     MappingTrackSelector.MappedTrackInfo mappedTrackInfo = trackSelector.getCurrentMappedTrackInfo();
                     if (mappedTrackInfo != null) {

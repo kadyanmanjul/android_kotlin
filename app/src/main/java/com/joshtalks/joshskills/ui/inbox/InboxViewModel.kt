@@ -38,6 +38,7 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val courseList = AppObjectController.chatNetworkService.getRegisterCourses()
+
                 if (courseList.isNullOrEmpty()) {
                     registerCourseNetworkLiveData.postValue(null)
                 } else {

@@ -171,7 +171,7 @@
         </activity>
         <activity
                 android:name=".ui.inbox.InboxActivity"
-                android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize"
+                android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize"
                 android:launchMode="singleTask"
                 android:theme="@style/AppNoBarTheme" />
         <activity
@@ -179,7 +179,7 @@
                 android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize"
                 android:launchMode="singleTask"
                 android:parentActivityName=".ui.inbox.InboxActivity"
-                android:theme="@style/ConversationTheme">
+                android:theme="@style/AppNoBarTheme">
             <meta-data
                     android:name="android.support.PARENT_ACTIVITY"
                     android:value=".ui.inbox.InboxActivity" />

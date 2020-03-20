@@ -1,20 +1,28 @@
 package com.joshtalks.joshskills.ui.view_holders
 
+import android.animation.AnimatorSet
+import android.animation.ObjectAnimator
+import android.annotation.SuppressLint
+import android.graphics.drawable.ColorDrawable
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.RelativeLayout
+import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.custom_ui.audioplayer.general.PlayerUtil
 import com.joshtalks.joshskills.core.custom_ui.custom_textview.AutoLinkMode
 import com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
 import com.joshtalks.joshskills.messaging.RxBus2
-import com.joshtalks.joshskills.repository.local.entity.ChatModel
-import com.joshtalks.joshskills.repository.local.entity.MESSAGE_DELIVER_STATUS
-import com.joshtalks.joshskills.repository.local.entity.Sender
+import com.joshtalks.joshskills.repository.local.entity.*
+import com.joshtalks.joshskills.repository.local.eventbus.GotoChatEventBus
 import java.lang.ref.WeakReference
 
 
@@ -22,6 +30,10 @@ abstract class BaseChatViewHolder(
     val activityRef: WeakReference<FragmentActivity>,
     var message: ChatModel
 ) : BaseCell() {
+
+    companion object {
+        var sId = EMPTY
+    }
 
     private val params = FrameLayout.LayoutParams(
         ViewGroup.LayoutParams.WRAP_CONTENT,
@@ -43,7 +55,7 @@ abstract class BaseChatViewHolder(
         sender: Sender,
         root_view: FrameLayout,
         root_sub_view: FrameLayout,
-        message_view: View
+        message_view: ViewGroup
     ) {
         if (sender.id.equals(getUserId(), ignoreCase = true)) {
 
@@ -183,7 +195,96 @@ abstract class BaseChatViewHolder(
         }
     }
 
+    @SuppressLint("ClickableViewAccessibility")
+    fun addLinkToTagMessage(rootView: ViewGroup, linkObj: Question) {
+        try {
+            rootView.findViewById<ViewGroup>(R.id.tag_view).visibility = View.VISIBLE
+            rootView.findViewById<ViewGroup>(R.id.tag_view).setOnClickListener {
+                RxBus2.publish(GotoChatEventBus(linkObj.chatId))
+            }
+            rootView.findViewById<ViewGroup>(R.id.sub_rl).setOnClickListener {
+                RxBus2.publish(GotoChatEventBus(linkObj.chatId))
+            }
+            val tvLastMESSAGE = rootView.findViewById<JoshTextView>(R.id.tv_detail_last)
+            var imageUrl: String? = null
+            var text: String? = linkObj.title
+
+            if (linkObj.material_type != BASE_MESSAGE_TYPE.TX) {
+                when (linkObj.material_type) {
+                    BASE_MESSAGE_TYPE.IM -> {
+                        tvLastMESSAGE.setCompoundDrawablesWithIntrinsicBounds(
+                            R.drawable.ic_baseline_image,
+                            0,
+                            0,
+                            0
+                        )
+                        imageUrl = linkObj.imageList?.getOrNull(0)?.imageUrl
+                    }
+                    BASE_MESSAGE_TYPE.AU -> {
+                        tvLastMESSAGE.setCompoundDrawablesWithIntrinsicBounds(
+                            R.drawable.ic_inbox_audio,
+                            0,
+                            0,
+                            0
+                        )
+                        val duration =
+                            PlayerUtil.toTimeSongString(linkObj.audioList?.getOrNull(0)?.duration)
+                        text = "Voice Message "
+                        if (duration.isNullOrEmpty().not()) {
+                            text += "($duration)"
+                        }
+                    }
+                    BASE_MESSAGE_TYPE.VI -> {
+                        tvLastMESSAGE.setCompoundDrawablesWithIntrinsicBounds(
+                            R.drawable.ic_inbox_video,
+                            0,
+                            0,
+                            0
+                        )
+                        imageUrl = linkObj.videoList?.getOrNull(0)?.video_image_url
+                        val duration =
+                            PlayerUtil.toTimeSongString(linkObj.videoList?.getOrNull(0)?.duration)
+                        if (duration.isNullOrEmpty().not()) {
+                            text += "($duration)"
+                        }
+
+                    }
+                    else -> text = linkObj.title
+                }
+                if (imageUrl.isNullOrEmpty().not()) {
+                    val imageLastView =
+                        rootView.findViewById<AppCompatImageView>(R.id.iv_detail_last)
+                    setDefaultImageView(imageLastView, imageUrl!!)
+                    imageLastView.visibility = View.VISIBLE
+                }
+            }
+            if (text.isNullOrEmpty().not()) {
+                tvLastMESSAGE.text = text
+            }
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+        }
+    }
+
+    protected fun highlightedViewForSomeTime(view: FrameLayout) {
+        try {
+            view.background =
+                ColorDrawable(ContextCompat.getColor(getAppContext(), R.color.forground_bg))
+
+
+            AppObjectController.uiHandler.postDelayed({
+                sId = EMPTY
+                view.background =
+                    ColorDrawable(ContextCompat.getColor(getAppContext(), R.color.transparent))
+            }, 1200)
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+        }
+    }
+
     open fun onViewInflated() {
         RxBus2.publish(message)
     }
+
+    abstract fun getRoot(): FrameLayout
 }

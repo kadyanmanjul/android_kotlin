@@ -49,6 +49,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.lang.ref.WeakReference
 import java.util.*
+import kotlin.math.roundToInt
 
 @Layout(R.layout.audio_player_view)
 class AudioPlayerViewHolder(activityRef: WeakReference<FragmentActivity>, message: ChatModel) :
@@ -58,7 +59,11 @@ class AudioPlayerViewHolder(activityRef: WeakReference<FragmentActivity>, messag
     lateinit var audioView: RelativeLayout
 
     @View(R.id.root_view)
-    lateinit var rootView: RelativeLayout
+    lateinit var rootView: FrameLayout
+
+
+    @View(R.id.root_sub_view)
+    lateinit var rootSubView: RelativeLayout
 
     @View(R.id.audio_view_sent)
     lateinit var audioViewSent: android.view.View
@@ -206,10 +211,24 @@ class AudioPlayerViewHolder(activityRef: WeakReference<FragmentActivity>, messag
         seekBarPlaceHolder.visibility = android.view.View.INVISIBLE
         seekBarThumb.visibility = android.view.View.INVISIBLE
 
+        message.parentQuestionObject?.run {
+            val relativeParams = rootSubView.layoutParams as ViewGroup.MarginLayoutParams
+            relativeParams.setMargins(
+                0,
+                getAppContext().resources.getDimension(R.dimen.tag_height).roundToInt(),
+                0,
+                0
+            )
+            rootSubView.layoutParams = relativeParams
+            addLinkToTagMessage(rootView, this)
+        }
+        if (message.chatId.isNotEmpty() && sId == message.chatId) {
+            highlightedViewForSomeTime(rootView)
+        }
+
 
         message.sender?.let {
             if (it.id.equals(getUserId(), ignoreCase = true)) {
-
                 val params = FrameLayout.LayoutParams(
                     ViewGroup.LayoutParams.WRAP_CONTENT,
                     ViewGroup.LayoutParams.WRAP_CONTENT
@@ -244,11 +263,6 @@ class AudioPlayerViewHolder(activityRef: WeakReference<FragmentActivity>, messag
         }
 
 
-        updateTime(messageTimeTV)
-        messageTimeTV.text =
-            Utils.getMessageTimeInHours(message.created).toUpperCase(Locale.getDefault())
-
-
         seekBar.setOnSeekBarChangeListener(
             object : SeekBar.OnSeekBarChangeListener {
                 var userSelectedPosition = 0
@@ -267,9 +281,8 @@ class AudioPlayerViewHolder(activityRef: WeakReference<FragmentActivity>, messag
             })
         updateUI()
         audioPlayingStatus()
-
-        // subscribeAudioPlayer()
-
+        updateTime(messageTimeTV)
+        messageTimeTV.text = Utils.getMessageTimeInHours(message.created).toUpperCase(Locale.getDefault())
     }
 
     private fun audioPlayingStatus() {
@@ -453,50 +466,56 @@ class AudioPlayerViewHolder(activityRef: WeakReference<FragmentActivity>, messag
 
 
     fun playAudioInPlayer() {
-        val ref = activityRef.get() as ConversationActivity
+        try {
+            val ref = activityRef.get() as ConversationActivity
+            if (AppObjectController.currentPlayingAudioObject != null && AppObjectController.currentPlayingAudioObject?.chatId == message.chatId && ref.isAudioPlaying()) {
+                btnPauseImageView.visibility = android.view.View.INVISIBLE
+                btnPlayImageView.visibility = android.view.View.VISIBLE
 
-        if (AppObjectController.currentPlayingAudioObject != null && AppObjectController.currentPlayingAudioObject?.chatId == message.chatId && ref.isAudioPlaying()) {
-            btnPauseImageView.visibility = android.view.View.INVISIBLE
-            btnPlayImageView.visibility = android.view.View.VISIBLE
+            } else {
+                btnPauseImageView.visibility = android.view.View.VISIBLE
+                btnPlayImageView.visibility = android.view.View.INVISIBLE
+                seekBarThumb.startAnimation(animBlink)
+            }
 
-        } else {
-            btnPauseImageView.visibility = android.view.View.VISIBLE
-            btnPlayImageView.visibility = android.view.View.INVISIBLE
-            seekBarThumb.startAnimation(animBlink)
-        }
-
-        if (message.url.isNullOrEmpty().not()) {
-            val audioObject = AudioType(
-                message.url!!,
-                EMPTY,
-                Utils.getDurationOfMedia(
-                    activityRef.get()!!,
-                    message.downloadedLocalPath!!
-                ).toInt(),
-                0,
-                true
-            )
-            audioObject.downloadedLocalPath = message.url
-            RxBus2.publish(
-                AudioPlayEventBus(
-                    PlaybackInfoListener.State.PLAYING,
-                    message,
-                    audioObject
+            if (message.url.isNullOrEmpty().not()) {
+                val audioObject = AudioType(
+                    message.url!!,
+                    EMPTY,
+                    Utils.getDurationOfMedia(
+                        activityRef.get()!!,
+                        message.downloadedLocalPath!!
+                    ).toInt(),
+                    0,
+                    true
                 )
-            )
-        } else {
-            RxBus2.publish(
-                AudioPlayEventBus(
-                    PlaybackInfoListener.State.PLAYING,
-                    message,
-                    message.question!!.audioList?.get(0)!!
+                audioObject.downloadedLocalPath = message.url
+                RxBus2.publish(
+                    AudioPlayEventBus(
+                        PlaybackInfoListener.State.PLAYING,
+                        message,
+                        audioObject
+                    )
                 )
-            )
-        }
+            } else {
+                RxBus2.publish(
+                    AudioPlayEventBus(
+                        PlaybackInfoListener.State.PLAYING,
+                        message,
+                        message.question!!.audioList?.get(0)!!
+                    )
+                )
+            }
+        }catch (ex:Exception){}
+    }
+
+    override fun getRoot(): FrameLayout {
+        return rootView
     }
 
     @Recycle
     fun onRecycled() {
         compositeDisposable.clear()
     }
+
 }

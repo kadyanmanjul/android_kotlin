@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
+import androidx.core.text.HtmlCompat
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.messaging.RxBus2
@@ -98,10 +99,7 @@ class InboxViewHolder(
         ) {
             hLine.visibility = android.view.View.GONE
         }
-
-
     }
-
 
     @SuppressLint("SetTextI18n")
     private fun showRecentAsPerView(baseMessageType: BASE_MESSAGE_TYPE) {
@@ -109,10 +107,10 @@ class InboxViewHolder(
         when {
             BASE_MESSAGE_TYPE.TX == baseMessageType -> {
                 inboxEntity.qText?.let { text ->
-                    tvLastReceivedMessage.text = text
+                    tvLastReceivedMessage.text =  HtmlCompat.fromHtml(text, HtmlCompat.FROM_HTML_MODE_LEGACY)
                 }
                 inboxEntity.text?.let { text ->
-                    tvLastReceivedMessage.text = text
+                    tvLastReceivedMessage.text =  HtmlCompat.fromHtml(text, HtmlCompat.FROM_HTML_MODE_LEGACY)
                 }
 
             }

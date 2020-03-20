@@ -1,14 +1,13 @@
 package com.joshtalks.joshskills.repository.server.engage
 
 import com.google.gson.annotations.SerializedName
-import com.joshtalks.joshskills.repository.local.model.ListenGraph
 
 
 data class VideoEngage(
     @SerializedName("graph")
-    var graph: List<ListenGraph>,
+    var graph: List<Graph>,
     @SerializedName("video_id")
-    val videoId: String,
+    val videoId: Int,
     @SerializedName("watch_time")
     var watchTime: Long
 )

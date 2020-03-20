@@ -2,6 +2,7 @@ package com.joshtalks.joshskills.ui.view_holders
 
 import android.view.View.GONE
 import android.view.View.VISIBLE
+import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
@@ -47,8 +48,9 @@ class ImageViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
     @View(R.id.root_sub_view)
     lateinit var rootSubView: FrameLayout
 
+
     @View(R.id.message_view)
-    lateinit var messageView: FrameLayout
+    lateinit var messageView: ViewGroup
 
 
     @View(R.id.download_container)
@@ -73,6 +75,13 @@ class ImageViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
         message.sender?.let {
             updateView(it, rootView, rootSubView, messageView)
         }
+        message.parentQuestionObject?.run {
+            addLinkToTagMessage(messageView, this)
+        }
+        if (message.chatId.isNotEmpty() && sId == message.chatId) {
+            highlightedViewForSomeTime(rootView)
+        }
+
         textMessageBody.visibility = GONE
 
         if (message.url != null) {
@@ -123,6 +132,10 @@ class ImageViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
 
         textMessageTime.text = Utils.messageTimeConversion(message.created)
         updateTime(textMessageTime)
+    }
+
+    override fun getRoot(): FrameLayout {
+        return rootView
     }
 
     private fun download(url: String) {
@@ -197,10 +210,7 @@ class ImageViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
     @Click(R.id.iv_start_download)
     fun downloadStart1() {
         RxBus2.publish(DownloadMediaEventBus(this, message))
-
     }
-
-
 }
 
 

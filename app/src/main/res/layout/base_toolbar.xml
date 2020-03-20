@@ -53,6 +53,7 @@
                     android:visibility="gone" />
 
             <androidx.appcompat.widget.AppCompatTextView
+                    android:foreground="?android:attr/selectableItemBackground"
                     android:id="@+id/text_message_title"
                     fontPath="fonts/OpenSans-SemiBold.ttf"
                     android:layout_width="match_parent"

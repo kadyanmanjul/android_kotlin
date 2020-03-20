@@ -21,6 +21,6 @@
             android:paddingEnd="@dimen/_8sdp"
             android:paddingBottom="@dimen/_6sdp"
             android:textColor="@color/gray_48"
-            android:textSize="@dimen/font_14" />
+            android:textSize="@dimen/font_15" />
 
 </FrameLayout>

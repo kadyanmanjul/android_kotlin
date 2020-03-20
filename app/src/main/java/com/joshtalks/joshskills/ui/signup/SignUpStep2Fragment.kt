@@ -11,9 +11,8 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.github.razir.progressbutton.*
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.SignUpStepStatus
 import com.joshtalks.joshskills.databinding.FragmentSignUpStep2Binding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.OTPReceivedEventBus
@@ -117,14 +116,14 @@ class SignUpStep2Fragment : Fragment() {
         if (signUpStep2Binding.otpView.text.isNullOrEmpty().not() || viewModel.otpField.get()
                 .isNullOrEmpty().not()
         ) {
+            if (Utils.isInternetAvailable().not()) {
+                showToast(getString(R.string.internet_not_available_msz))
+                return
+            }
             showProgress()
             viewModel.verifyOTP(signUpStep2Binding.otpView.text?.toString())
         } else {
-            Toast.makeText(
-                AppObjectController.joshApplication,
-                "Please enter OTP",
-                Toast.LENGTH_SHORT
-            ).show()
+            showToast(getString(R.string.please_enter_otp))
             return
         }
     }

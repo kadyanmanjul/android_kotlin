@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <dimen name="dp0_5">0.5dp</dimen>
     <dimen name="dp2">2dp</dimen>
     <dimen name="dp4">4dp</dimen>
     <dimen name="dp5">5dp</dimen>
@@ -24,6 +25,7 @@
     <dimen name="font_16">16sp</dimen>
     <dimen name="font_17">17sp</dimen>
     <dimen name="font_18">18sp</dimen>
+    <dimen name="font_19">19sp</dimen>
     <dimen name="font_20">20sp</dimen>
     <dimen name="font_22">22sp</dimen>
 
@@ -46,5 +48,6 @@
 
     <dimen name="bottom_sheet_corner_radius">16dp</dimen>
     <dimen name="notification_large_dim">256dp</dimen>
+    <dimen name="tag_height">@dimen/_42sdp</dimen>
 
 </resources>

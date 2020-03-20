@@ -3,6 +3,7 @@ package com.joshtalks.joshskills.ui.view_holders
 import android.graphics.Color
 import android.net.Uri
 import android.view.View.*
+import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.TextView
 import androidx.appcompat.widget.AppCompatImageView
@@ -50,7 +51,7 @@ class VideoViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
     lateinit var rootSubView: FrameLayout
 
     @View(R.id.message_view)
-    lateinit var messageView: android.view.View
+    lateinit var messageView: ViewGroup
 
     @View(R.id.text_title)
     lateinit var textTitle: TextView
@@ -100,6 +101,13 @@ class VideoViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
         message.sender?.let {
             updateView(it, rootView, rootSubView, messageView)
         }
+        message.parentQuestionObject?.run {
+            addLinkToTagMessage(messageView, this)
+        }
+        if (message.chatId.isNotEmpty() && sId == message.chatId) {
+            highlightedViewForSomeTime(rootView)
+        }
+
         updateTime(textMessageTime)
         addMessageAutoLink(textMessageBody)
 
@@ -346,6 +354,10 @@ class VideoViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
                     it.printStackTrace()
                 })
         )
+    }
+
+    override fun getRoot(): FrameLayout {
+        return rootView
     }
 
     @Recycle

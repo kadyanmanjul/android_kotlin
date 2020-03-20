@@ -31,7 +31,7 @@
                 android:layout_gravity="center"
                 android:gravity="center"
                 android:textColor="@color/time_color"
-                android:textSize="@dimen/font_13" />
+                android:textSize="@dimen/font_15" />
 
     </androidx.cardview.widget.CardView>
 </FrameLayout>

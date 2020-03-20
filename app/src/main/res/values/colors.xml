@@ -6,6 +6,7 @@
     <color name="status_bar_color">#035D88</color>
     <color name="font_color">#373737</color>
     <color name="button_primary_color">#00ACFF</color>
+
     <color name="chat_bg">#F1F1F1</color>
 
     <color name="white">#FFFFFF</color>
@@ -53,6 +54,8 @@
     <color name="controls_panel_stroke">#e6e6e6</color>
     <color name="success_trans">#444CAF50</color>
     <color name="time_color">#42565d</color>
+
+    <color name="forground_bg">#8834B7F1</color>
 
 
 </resources>

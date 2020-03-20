@@ -4,9 +4,14 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
+import android.content.pm.ActivityInfo
 import android.graphics.drawable.PictureDrawable
+import android.media.AudioManager
+import android.media.MediaPlayer
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.FrameLayout
 import androidx.appcompat.widget.AppCompatImageView
@@ -110,6 +115,11 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        requestedOrientation = if (Build.VERSION.SDK_INT == 26) {
+            ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+        } else {
+            ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+        }
         super.onCreate(savedInstanceState)
         FCMTokenManager.pushToken()
         DatabaseUtils.updateUserMessageSeen()
@@ -123,7 +133,6 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         SyncChatService.syncChatWithServer()
         handelIntentAction()
     }
-
 
     private fun workInBackground() {
         CoroutineScope(Dispatchers.Default).launch {
@@ -453,7 +462,9 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
                                 }
                             })
                             .show()
-                        hintFirstTime.showAlignBottom(root)
+                        if ( isFinishing.not()) {
+                            hintFirstTime.showAlignBottom(root)
+                        }
                     }, 500)
                 } else {
                     attachOfferHintView()
@@ -529,12 +540,11 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
             if (entity == null && entity2 == null) {
                 return
             }
-            if (User.getInstance().dateOfBirth.isNullOrEmpty()) {
+            if (Mentor.getInstance().hasId() && User.getInstance().dateOfBirth.isNullOrEmpty()) {
                 startActivity(getPersonalDetailsActivityIntent())
             }
 
         } catch (ex: Exception) {
-            ex.printStackTrace()
         }
 
     }
@@ -572,7 +582,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
                     if (value) {
                         val root = findViewById<View>(R.id.find_more)
                         root.isShown
-                        if (offerIn7DaysHint.isShowing.not()) {
+                        if (offerIn7DaysHint.isShowing.not() && isFinishing.not()) {
                             offerIn7DaysHint.showAlignBottom(root)
                             findViewById<View>(R.id.bottom_line).visibility = View.GONE
                         }
@@ -583,6 +593,4 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
                 }
             ))
     }
-
-
 }

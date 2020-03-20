@@ -41,11 +41,18 @@ import com.joshtalks.joshskills.core.datetimeutils.DateTimeStyle
 import com.joshtalks.joshskills.core.datetimeutils.DateTimeUtils
 import com.muddzdev.styleabletoast.StyleableToast
 import github.nisrulz.easydeviceinfo.base.EasyConfigMod
+import io.reactivex.Single
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.File
 import java.io.FileOutputStream
+import java.io.IOException
 import java.io.OutputStream
+import java.net.InetSocketAddress
+import java.net.Socket
+import java.net.SocketAddress
 import java.net.URL
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
@@ -320,22 +327,42 @@ object Utils {
     }
 
     fun isInternetAvailable(): Boolean {
-        val connectivityManager =
-            AppObjectController.joshApplication.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            val nw = connectivityManager.activeNetwork ?: return false
-            val actNw = connectivityManager.getNetworkCapabilities(nw) ?: return false
-            return when {
-                actNw.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> true
-                actNw.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> true
-                //for other device how are able to connect with Ethernet
-                actNw.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> true
-                else -> false
+            val connectivityManager =
+                AppObjectController.joshApplication.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                val nw = connectivityManager.activeNetwork ?: return false
+                val actNw = connectivityManager.getNetworkCapabilities(nw) ?: return false
+                return when {
+                    actNw.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> true
+                    actNw.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> true
+                    //for other device how are able to connect with Ethernet
+                    actNw.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> true
+                    else -> false
+                }
+            } else {
+                val nwInfo = connectivityManager.activeNetworkInfo ?: return false
+                return nwInfo.isConnected
             }
-        } else {
-            val nwInfo = connectivityManager.activeNetworkInfo ?: return false
-            return nwInfo.isConnected
-        }
+
+    }
+
+    private fun hasInternetConnection(): Single<Boolean> {
+        return Single.fromCallable {
+                try {
+                    // Connect to Google DNS to check for connection
+                    val timeoutMs = 500
+                    val socket = Socket()
+                    val socketAddress = InetSocketAddress("8.8.8.8", 53)
+                    socket.connect(socketAddress, timeoutMs)
+                    socket.close()
+
+                    true
+                } catch (e: IOException) {
+                    false
+                }
+            }
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
     }
 
 
@@ -648,5 +675,31 @@ object Utils {
         return bitmap
     }
 
+    fun isPackageInstalled(packageName: String, context: Context): Boolean {
+        return try {
+            context.packageManager.getPackageInfo(packageName, 0)
+            true
+        } catch (e: PackageManager.NameNotFoundException) {
+            false
+        }
+    }
+}
 
+fun milliSecondsToSeconds(time: Long): Long {
+    return TimeUnit.MILLISECONDS.toSeconds(time)
+}
+
+fun convertCamelCase(string: String): String {
+    val words = string.split(" ").toMutableList()
+    val output = StringBuilder()
+    for (word in words) {
+        output.append(word.capitalize()).append(" ")
+    }
+    return output.toString().trim()
+}
+
+fun showToast(message: String) {
+    StyleableToast.Builder(AppObjectController.joshApplication).gravity(Gravity.BOTTOM)
+        .text(message).cornerRadius(16).length(Toast.LENGTH_SHORT)
+        .solidBackground().show()
 }

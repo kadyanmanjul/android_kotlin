@@ -21,6 +21,9 @@
                 android:orientation="vertical"
                 android:padding="@dimen/_3sdp">
 
+            <include layout="@layout/tag_practise_layout"/>
+
+
             <TextView
                     android:id="@+id/text_title"
                     fontPath="fonts/OpenSans-SemiBold.ttf"
@@ -31,7 +34,7 @@
                     android:padding="@dimen/_5sdp"
                     android:text=""
                     android:textColor="@color/gray_48"
-                    android:textSize="@dimen/font_16"
+                    android:textSize="@dimen/font_17"
                     android:visibility="gone" />
 
 
@@ -148,7 +151,7 @@
                             android:paddingEnd="@dimen/_10sdp"
                             android:paddingBottom="@dimen/_5sdp"
                             android:textColor="@color/white"
-                            android:textSize="@dimen/font_12" />
+                            android:textSize="@dimen/font_13" />
 
                 </FrameLayout>
 
@@ -166,7 +169,7 @@
                     android:paddingTop="@dimen/_5sdp"
                     android:paddingEnd="@dimen/_10sdp"
                     android:textColor="@color/gray_48"
-                    android:textSize="@dimen/font_16"
+                    android:textSize="@dimen/font_17"
                     android:visibility="gone"
                     app:layout_constraintBottom_toBottomOf="@+id/image_view"
                     app:layout_constraintBottom_toTopOf="@+id/text_message_time"

@@ -7,6 +7,7 @@ import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.ConvectorForEngagement
 import com.joshtalks.joshskills.repository.local.eventbus.VideoDownloadedBus
+import com.joshtalks.joshskills.repository.local.minimalentity.CourseContentEntity
 import com.joshtalks.joshskills.util.RandomString
 import java.io.Serializable
 import java.util.*
@@ -30,6 +31,10 @@ data class ChatModel(
     @Ignore
     @SerializedName("question")
     var question: Question? = null,
+
+    @Ignore
+    @Expose
+    var parentQuestionObject: Question? = null,
 
 
     @Embedded
@@ -594,6 +599,16 @@ interface ChatDao {
     @Query(value = "SELECT created FROM chat_table where question_id IS NOT NULL AND conversation_id= :conversationId ORDER BY created DESC LIMIT 1; ")
     suspend fun getLastChatDate(conversationId: String): Date?
 
+
+    @Query(value = "SELECT * FROM (SELECT *,qt.type AS 'question_type' FROM chat_table ct LEFT JOIN question_table qt ON ct.chat_id = qt.chatId where qt.type= :typeO AND  title IS NOT NULL ) inbox  where type= :typeO AND conversation_id= :conversationId  ORDER BY created ASC;")
+    suspend fun getRegisterCourseMinimal22(
+        conversationId: String,
+        typeO: BASE_MESSAGE_TYPE = BASE_MESSAGE_TYPE.Q
+    ): List<CourseContentEntity>
+
+
+    @Query("SELECT * FROM  question_table  WHERE questionId= :questionId")
+    suspend fun getQuestionOnId(questionId: String): Question?
 
 }
 

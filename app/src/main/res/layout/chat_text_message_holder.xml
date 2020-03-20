@@ -13,16 +13,18 @@
             android:layout_height="wrap_content"
             android:layout_gravity="start">
 
-        <FrameLayout
-
+        <LinearLayout
                 android:id="@+id/message_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/_16sdp"
+                android:orientation="vertical"
                 android:paddingLeft="@dimen/_5sdp"
                 android:paddingTop="@dimen/_1sdp"
                 android:paddingRight="@dimen/_5sdp"
                 android:paddingBottom="@dimen/_1sdp">
+
+            <include layout="@layout/tag_practise_layout"/>
 
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -40,7 +42,7 @@
                         android:gravity="center_vertical|start"
                         android:paddingBottom="@dimen/_5sdp"
                         android:textColor="@color/gray_48"
-                        android:textSize="@dimen/font_16"
+                        android:textSize="@dimen/font_17"
                         android:visibility="gone"
                         app:layout_constraintLeft_toLeftOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -56,7 +58,7 @@
                         android:paddingEnd="@dimen/_4sdp"
                         android:paddingBottom="@dimen/_4sdp"
                         android:textColor="@color/gray_48"
-                        android:textSize="@dimen/font_16"
+                        android:textSize="@dimen/font_17"
                         app:layout_constraintBottom_toTopOf="@+id/text_message_time"
                         app:layout_constraintLeft_toLeftOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -73,12 +75,12 @@
                         android:gravity="center"
                         android:paddingStart="@dimen/_20sdp"
                         android:textColor="@color/gray_9E"
-                        android:textSize="@dimen/font_12"
+                        android:textSize="@dimen/font_13"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-        </FrameLayout>
+        </LinearLayout>
     </FrameLayout>
 </FrameLayout>

@@ -49,7 +49,11 @@
                             android:clipToPadding="true"
                             android:paddingTop="@dimen/_6sdp"
                             android:paddingBottom="@dimen/_4sdp"
-                            android:scrollbars="vertical" />
+                            android:scrollbars="vertical"
+                            app:fastScrollHorizontalThumbDrawable="@drawable/thumb_drawable_rv"
+                            app:fastScrollHorizontalTrackDrawable="@drawable/thumb_drawable_rv"
+                            app:fastScrollVerticalThumbDrawable="@drawable/thumb_drawable_rv"
+                            app:fastScrollVerticalTrackDrawable="@drawable/thumb_drawable_rv" />
 
 
                     <com.facebook.shimmer.ShimmerFrameLayout
@@ -159,6 +163,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center"
                                 android:layout_weight="1"
+                                android:autoSizeMaxTextSize="@dimen/_17sdp"
                                 android:backgroundTint="@android:color/transparent"
                                 android:clickable="true"
                                 android:focusable="true"
@@ -234,8 +239,8 @@
 
                 <com.joshtalks.recordview.CustomImageButton
                         android:id="@+id/record_button"
-                        android:layout_width="@dimen/_40sdp"
-                        android:layout_height="@dimen/_40sdp"
+                        android:layout_width="@dimen/_36sdp"
+                        android:layout_height="@dimen/_36sdp"
                         android:layout_gravity="end|bottom"
                         android:layout_marginEnd="@dimen/_4sdp"
                         android:background="@drawable/recv_bg_mic"
@@ -253,8 +258,8 @@
 
                 <androidx.appcompat.widget.AppCompatImageView
                         android:id="@+id/message_button"
-                        android:layout_width="@dimen/_40sdp"
-                        android:layout_height="@dimen/_40sdp"
+                        android:layout_width="@dimen/_36sdp"
+                        android:layout_height="@dimen/_36sdp"
                         android:layout_gravity="end|bottom"
                         android:layout_marginEnd="@dimen/_4sdp"
                         android:background="@drawable/recv_bg_mic"

@@ -35,7 +35,7 @@ class JoshApplication : BranchApp(), LifecycleObserver {
 
     override fun onCreate() {
         super.onCreate()
-        ProcessLifecycleOwner.get().lifecycle.addObserver(this);
+        ProcessLifecycleOwner.get().lifecycle.addObserver(this)
 
         if (BuildConfig.DEBUG) {
             Stetho.initializeWithDefaults(this)
@@ -111,7 +111,7 @@ class JoshApplication : BranchApp(), LifecycleObserver {
         // App in foreground
     }
 
-    fun isActivityVisible(): String {
+    private fun isActivityVisible(): String {
         return ProcessLifecycleOwner.get().lifecycle.currentState.name
     }
 }

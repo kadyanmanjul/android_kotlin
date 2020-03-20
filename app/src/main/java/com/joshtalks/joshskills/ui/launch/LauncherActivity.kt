@@ -2,6 +2,7 @@ package com.joshtalks.joshskills.ui.launch
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import com.crashlytics.android.Crashlytics
 import com.facebook.appevents.AppEventsConstants.EVENT_NAME_ACTIVATED_APP
 import com.joshtalks.joshskills.R
@@ -12,6 +13,7 @@ import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.service.WorkMangerAdmin
 import com.joshtalks.joshskills.ui.payment.COURSE_ID
 import com.joshtalks.joshskills.ui.payment.PaymentActivity
+import com.joshtalks.joshskills.ui.signup.LoginDialogFragment
 import io.branch.referral.Branch
 import io.branch.referral.BranchError
 import io.branch.referral.Defines
@@ -31,7 +33,6 @@ class LauncherActivity : CoreJoshActivity() {
         setContentView(R.layout.activity_launcher)
         handleIntent()
     }
-
 
     private fun handleIntent() {
         Branch.getInstance().initSession({ referringParams, error ->

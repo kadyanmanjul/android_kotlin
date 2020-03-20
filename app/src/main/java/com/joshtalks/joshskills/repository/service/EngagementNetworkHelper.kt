@@ -3,31 +3,21 @@ package com.joshtalks.joshskills.repository.service
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
-import com.joshtalks.joshskills.repository.local.eventbus.MediaEngageEventBus
 import com.joshtalks.joshskills.repository.local.model.NotificationObject
-import com.joshtalks.joshskills.repository.server.engage.AudioEngage
-import com.joshtalks.joshskills.repository.server.engage.ImageEngage
-import com.joshtalks.joshskills.repository.server.engage.PdfEngage
-import com.joshtalks.joshskills.repository.server.engage.VideoEngage
+import com.joshtalks.joshskills.repository.server.engage.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
+const val VIDEO_TIME_LEAP = 6
+
 object EngagementNetworkHelper {
-
-
     fun engageVideoApi(videoEngage: VideoEngage) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                var timeListen: Long = 0
-                for (graph in videoEngage.graph) {
-                    timeListen += (graph.endTime - graph.startTime)
-                }
-                if (timeListen <= 0) {
+                if (videoEngage.watchTime == 0L) {
                     return@launch
                 }
-                videoEngage.graph = mutableListOf()
-                videoEngage.watchTime = timeListen
                 AppObjectController.chatNetworkService.engageVideo(videoEngage)
             } catch (ex: Exception) {
                 ex.printStackTrace()
@@ -38,17 +28,17 @@ object EngagementNetworkHelper {
 
     @JvmStatic
     @Synchronized
-    fun engageAudioApi(mediaEngageEventBus: MediaEngageEventBus) {
+    fun engageAudioApi(audioId: String, mediaEngageList: List<Graph>) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 var timeListen: Long = 0
-                for (graph in mediaEngageEventBus.list) {
+                for (graph in mediaEngageList) {
                     timeListen += (graph.endTime - graph.startTime)
                 }
                 if (timeListen < 0) {
                     return@launch
                 }
-                val audioEngage = AudioEngage(emptyList(), mediaEngageEventBus.id, timeListen)
+                val audioEngage = AudioEngage(mediaEngageList, audioId, timeListen)
                 AppObjectController.chatNetworkService.engageAudio(audioEngage)
             } catch (ex: Exception) {
                 ex.printStackTrace()
@@ -114,3 +104,17 @@ object EngagementNetworkHelper {
 
     }
 }
+
+/* val graphList = IntArray(videoDuration / VIDEO_TIME_LEAP)
+                //val graphList: ArrayList<Int> =arrayListOf((videoDuration / VIDEO_TIME_LEAP))
+                for (graph in videoEngage.graph) {
+                    var startUpdateListIndex = 0
+                    if (graph.startTime != 0L) {
+                        val diff = (graph.startTime.rem(VIDEO_TIME_LEAP)).toInt()
+                        startUpdateListIndex = (graph.startTime / VIDEO_TIME_LEAP).toInt() + if (diff == 0) 0 else 1
+                    }
+                    val endUpdateListIndex = (graph.endTime / VIDEO_TIME_LEAP).toInt() - 1
+                    for (i in startUpdateListIndex..endUpdateListIndex) {
+                        graphList[i] = graphList[i] + 1
+                    }
+                }*/

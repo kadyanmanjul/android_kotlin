@@ -7,10 +7,12 @@
         android:layout_marginTop="@dimen/_2sdp"
         android:layout_marginBottom="@dimen/_2sdp"
         android:paddingStart="@dimen/_14sdp"
+        android:id="@+id/root_view_fl"
         android:paddingEnd="@dimen/_14sdp">
 
     <androidx.cardview.widget.CardView
-            android:id="@+id/root_view"
+
+            android:id="@+id/root_sub_view"
             android:layout_width="@dimen/_216sdp"
             android:layout_height="@dimen/_170sdp"
             android:background="@color/white"
@@ -136,7 +138,7 @@
                     android:text="@string/open"
                     android:textAllCaps="false"
                     android:textColor="#25d366"
-                    android:textSize="@dimen/font_16"
+                    android:textSize="@dimen/font_17"
                     app:drawableTint="@color/white"
                     app:icon="@drawable/ef_ic_arrow_forward"
                     app:layout_constraintBottom_toBottomOf="parent"

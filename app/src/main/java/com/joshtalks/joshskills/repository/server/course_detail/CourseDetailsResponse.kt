@@ -3,6 +3,7 @@ package com.joshtalks.joshskills.repository.server.course_detail
 
 import com.google.gson.annotations.SerializedName
 import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
+import com.joshtalks.joshskills.repository.local.entity.VideoType
 import java.io.Serializable
 
 data class CourseDetailsResponse(
@@ -25,8 +26,11 @@ data class CourseDetailsResponse(
     @SerializedName("type")
     val type: BASE_MESSAGE_TYPE,
     @SerializedName("url")
-    val url: String
-) : Serializable
+    val url: String,
+    @SerializedName("video")
+    var videoObj: VideoType? = null
+
+    ) : Serializable
 
 
 data class Course(
@@ -52,6 +56,7 @@ data class Test(
     val thumbnail: String,
     @SerializedName("video_link")
     val videoLink: String
+
 )
 
 

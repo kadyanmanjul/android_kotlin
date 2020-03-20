@@ -70,7 +70,7 @@
     <string name="done">Done</string>
     <string name="course_started_label">Course Started</string>
     <string name="in_progress_label">In Progress</string>
-    <string name="payment_process_info">It usually takes 2&#8211;3 minutes to complete our admission process and start your classes.</string>
+    <string name="payment_process_info">It usually takes 2&#8211;3 minutes to complete your admission process and start our classes.</string>
 
 
     <string name="find_more_courses">Find More Courses</string>
@@ -85,6 +85,7 @@
     <string name="please_enter_your_mobile_number">Please enter your mobile number </string>
     <string name="resend_otp_toast" formatted="false">OTP sent to %s</string>
     <string name="resend_timer_text" formatted="false">Resend in 00:%s</string>
+    <string name="please_enter_otp">Please enter OTP</string>
 
     <string name="course_not_exist_number">Sorry! Ye Number hamare paas Registered nahi hai</string>
     <string name="other_number_register">Kya aapne kisi or number se REGISTERED kiya tha</string>
@@ -192,4 +193,9 @@
     <string name="buy_course_offer_tooltip" formatted="false"> Get %s off on the next course you buy, Valid for %s days.</string>
     <string name="first_time_user_hint">Aapko apne course se related saari videos aur claases isko click karke milengi</string>
     <string name="share_msz">Share with your friends &amp; family and start earning now!</string>
+
+    <string name="login_dialog_header">Payment complete karne ke liye</string>
+    <string name="course_overview">Course Overview</string>
+    <string name="submit_practise_msz">Please complete your task before Submitting</string>
+    <string name="generic_message_for_error">An error occurred, please try again later</string>
 </resources>

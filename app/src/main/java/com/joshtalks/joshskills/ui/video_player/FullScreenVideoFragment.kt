@@ -1,6 +1,5 @@
 package com.joshtalks.joshskills.ui.video_player
 
-import android.content.Context
 import android.content.DialogInterface
 import android.content.pm.ActivityInfo
 import android.os.Bundle
@@ -11,14 +10,30 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
 import com.google.android.exoplayer2.Player.STATE_ENDED
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.CountUpTimer
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
+import com.joshtalks.joshskills.core.custom_ui.JoshVideoPlayer
+import com.joshtalks.joshskills.core.custom_ui.PlayerListener
 import com.joshtalks.joshskills.databinding.FragmentFullScreenVideoBinding
+import com.joshtalks.joshskills.repository.server.engage.Graph
+import com.joshtalks.joshskills.repository.server.engage.VideoEngage
+import com.joshtalks.joshskills.repository.service.EngagementNetworkHelper
 
 private const val ARG_VIDEO_URL = "video_url"
+private const val ARG_VIDEO_ID = "video_id"
 
-class FullScreenVideoFragment : DialogFragment() {
+class FullScreenVideoFragment : DialogFragment(), PlayerListener,
+    JoshVideoPlayer.PlayerEventCallback {
     private var videoUrl: String? = null
+    private var countUpTimer = CountUpTimer(true)
+    private var videoViewGraphList = mutableSetOf<Graph>()
+    private var graph: Graph? = null
+    private var videoId: String? = null
+
+    init {
+        countUpTimer.lap()
+    }
 
     private var onDismissListener: OnDismissListener? = null
 
@@ -29,6 +44,7 @@ class FullScreenVideoFragment : DialogFragment() {
         super.onCreate(savedInstanceState)
         arguments?.let {
             videoUrl = it.getString(ARG_VIDEO_URL)
+            videoId = it.getString(ARG_VIDEO_ID)
         }
         try {
             activity?.let {
@@ -75,11 +91,12 @@ class FullScreenVideoFragment : DialogFragment() {
         fullScreenVideoBinding.pvPlayer.setActivity(activity)
         fullScreenVideoBinding.pvPlayer.fitToScreen()
         fullScreenVideoBinding.pvPlayer.supportFullScreen()
-        fullScreenVideoBinding.pvPlayer.setPlayerEventCallback {
-            if (it == STATE_ENDED) {
+        fullScreenVideoBinding.pvPlayer.setPlayerEventCallback { event, _ ->
+            if (event == STATE_ENDED) {
                 dismissAllowingStateLoss()
             }
         }
+
         setToolbar()
     }
 
@@ -92,12 +109,29 @@ class FullScreenVideoFragment : DialogFragment() {
     override fun onStop() {
         super.onStop()
         try {
-
             fullScreenVideoBinding.pvPlayer.onStop()
+        } catch (ex: Exception) {
+        }
+        engageVideo()
+    }
 
+    private fun engageVideo() {
+        try {
+            onPlayerReleased()
+            if (videoId.isNullOrEmpty().not()) {
+                EngagementNetworkHelper.engageVideoApi(
+                    VideoEngage(
+                        videoViewGraphList.toList(),
+                        videoId!!.toInt(),
+                        countUpTimer.time.toLong()
+                    )
+                )
+
+            }
         } catch (ex: Exception) {
         }
     }
+
 
     override fun onPause() {
         super.onPause()
@@ -126,11 +160,13 @@ class FullScreenVideoFragment : DialogFragment() {
 
     companion object {
         @JvmStatic
-        fun newInstance(context: Context, paramVideoUrl: String) = FullScreenVideoFragment().apply {
-            arguments = Bundle().apply {
-                putString(ARG_VIDEO_URL, paramVideoUrl)
+        fun newInstance(paramVideoUrl: String, videoId: String? = null) =
+            FullScreenVideoFragment().apply {
+                arguments = Bundle().apply {
+                    putString(ARG_VIDEO_URL, paramVideoUrl)
+                    putString(ARG_VIDEO_ID, videoId)
+                }
             }
-        }
 
     }
 
@@ -140,7 +176,47 @@ class FullScreenVideoFragment : DialogFragment() {
         super.onDismiss(dialog)
     }
 
+    override fun onReceiveEvent(event: Int, playBackState: Boolean) {
+        if (playBackState) {
+            countUpTimer.resume()
+        } else {
+            countUpTimer.pause()
+        }
+    }
+
+    override fun onPlayerReady() {
+        if (graph != null) {
+            return
+        }
+        graph = Graph(fullScreenVideoBinding.pvPlayer.player!!.currentPosition)
+    }
+
+    override fun onBufferingUpdated(isBuffering: Boolean) {
+    }
+
+    override fun onCurrentTimeUpdated(time: Long) {
+        graph?.endTime = time
+    }
+
+    override fun onPlayerReleased() {
+        graph?.endTime = fullScreenVideoBinding.pvPlayer.player!!.currentPosition
+        graph?.let {
+            videoViewGraphList.add(it)
+        }
+        graph = null
+    }
+
+    override fun onPositionDiscontinuity(reason: Int, lastPos: Long) {
+        graph?.endTime = lastPos
+        graph?.let {
+            videoViewGraphList.add(it)
+        }
+        graph = null
+    }
+
     interface OnDismissListener {
         fun onDismiss()
     }
+
+
 }

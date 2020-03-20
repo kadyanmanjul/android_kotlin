@@ -11,65 +11,34 @@ import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import com.google.android.exoplayer2.ui.DefaultTimeBar
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.BaseActivity
-import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
+import com.joshtalks.joshskills.core.custom_ui.JoshVideoPlayer
 import com.joshtalks.joshskills.core.custom_ui.PlayerListener
 import com.joshtalks.joshskills.core.service.video_download.VideoDownloadController
 import com.joshtalks.joshskills.databinding.ActivityVideoPlayer1Binding
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
-import com.joshtalks.joshskills.repository.local.model.ListenGraph
+import com.joshtalks.joshskills.repository.server.engage.Graph
 import com.joshtalks.joshskills.repository.server.engage.VideoEngage
 import com.joshtalks.joshskills.repository.service.EngagementNetworkHelper
 import com.joshtalks.joshskills.ui.pdfviewer.COURSE_NAME
 
 const val VIDEO_OBJECT = "video_"
 
-class VideoPlayerActivity : BaseActivity(), PlayerListener {
-    override fun onPlayerReady() {
-        if (graph != null) {
-            graph?.endTime = binding.pvPlayer.player!!.currentPosition
-            videoViewGraphList.add(graph!!)
-        }
-        graph = null
+class VideoPlayerActivity : BaseActivity(), PlayerListener, JoshVideoPlayer.PlayerEventCallback {
 
-        graph = ListenGraph(binding.pvPlayer.player!!.currentPosition)
+    private var countUpTimer = CountUpTimer(true)
 
-    }
-
-    override fun onBufferingUpdated(isBuffering: Boolean) {
-
-
-    }
-
-    override fun onCurrentTimeUpdated(time: Long) {
-        lastPos = time
-    }
-
-    override fun onPlayerReleased() {
-        graph?.endTime = binding.pvPlayer.player!!.currentPosition
-        graph?.let {
-            videoViewGraphList.add(it)
-        }
-        graph = null
-    }
-
-    override fun onPositionDiscontinuity(reason: Int, lastPos: Long) {
-        graph?.endTime = lastPos
-        graph?.let {
-            videoViewGraphList.add(it)
-        }
-        graph = null
+    init {
+        countUpTimer.lap()
     }
 
     private lateinit var binding: ActivityVideoPlayer1Binding
     private lateinit var chatObject: ChatModel
     private lateinit var exoProgress: DefaultTimeBar
-    private var videoViewGraphList = mutableSetOf<ListenGraph>()
-    private var graph: ListenGraph? = null
-    private var lastPos: Long = 0
+    private var videoViewGraphList = mutableSetOf<Graph>()
+    private var graph: Graph? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -111,6 +80,7 @@ class VideoPlayerActivity : BaseActivity(), PlayerListener {
         }
 
         binding.pvPlayer.setActivity(this)
+        binding.pvPlayer.setPlayerEventCallback(this)
         exoProgress = findViewById(R.id.exo_progress)
         AppAnalytics.create(AnalyticsEvent.VIDEO_WATCH_ACTIVITY.NAME).push()
         try {
@@ -162,14 +132,16 @@ class VideoPlayerActivity : BaseActivity(), PlayerListener {
     override fun onStop() {
         super.onStop()
         try {
+            onPlayerReleased()
             chatObject.question?.videoList?.get(0)?.id?.let {
                 EngagementNetworkHelper.engageVideoApi(
                     VideoEngage(
                         videoViewGraphList.toList(),
-                        it,
-                        binding.pvPlayer.lastPosition
+                        it.toInt(),
+                        countUpTimer.time.toLong()
                     )
                 )
+
             }
             binding.pvPlayer.onStop()
 
@@ -198,6 +170,44 @@ class VideoPlayerActivity : BaseActivity(), PlayerListener {
 
     override fun onBackPressed() {
         this@VideoPlayerActivity.finish()
+    }
+
+    override fun onReceiveEvent(event: Int, playBackState: Boolean) {
+        if (playBackState) {
+            countUpTimer.resume()
+        } else {
+            countUpTimer.pause()
+        }
+    }
+
+    override fun onPlayerReady() {
+        if (graph != null) {
+            return
+        }
+        graph = Graph(binding.pvPlayer.player!!.currentPosition)
+    }
+
+    override fun onBufferingUpdated(isBuffering: Boolean) {
+    }
+
+    override fun onCurrentTimeUpdated(time: Long) {
+        graph?.endTime = time
+    }
+
+    override fun onPlayerReleased() {
+        graph?.endTime = binding.pvPlayer.player!!.currentPosition
+        graph?.let {
+            videoViewGraphList.add(it)
+        }
+        graph = null
+    }
+
+    override fun onPositionDiscontinuity(reason: Int, lastPos: Long) {
+        graph?.endTime = lastPos
+        graph?.let {
+            videoViewGraphList.add(it)
+        }
+        graph = null
     }
 
 
