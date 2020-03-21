@@ -136,6 +136,7 @@
     <!-- Payment process-->
     <string name="amount">Amount</string>
     <string name="status">Status</string>
+    <string name="practice">Practice</string>
 
     <string name="complaint_message" formatted="false">Thanks for reaching out to us. Your request has been recorded against ticket number %s. Our team will reach out to you between 24–72 hours</string>
     <string name="payment_process_success">Your payment has been processed successfully!</string>

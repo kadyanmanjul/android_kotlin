@@ -16,7 +16,7 @@ const val DATABASE_NAME = "JoshEnglishDB.db"
 
 @Database(
     entities = [Course::class, ChatModel::class, Question::class, VideoType::class, AudioType::class, OptionType::class, PdfType::class, ImageType::class],
-    version = 11,
+    version = 12,
     exportSchema = false
 )
 @TypeConverters(
@@ -46,12 +46,17 @@ abstract class AppDatabase : RoomDatabase() {
                                 AppDatabase::class.java, DATABASE_NAME
                             )
                             .addMigrations(
-                                MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5,
-                                MIGRATION_5_6, MIGRATION_6_7,
+                                MIGRATION_1_2,
+                                MIGRATION_2_3,
+                                MIGRATION_3_4,
+                                MIGRATION_4_5,
+                                MIGRATION_5_6,
+                                MIGRATION_6_7,
                                 MIGRATION_7_8,
                                 MIGRATION_8_9,
                                 MIGRATION_9_10,
-                                MIGRATION_10_11
+                                MIGRATION_10_11,
+                                MIGRATION_11_12
                             )
                             .fallbackToDestructiveMigration()
                             .addCallback(sRoomDatabaseCallback)
@@ -144,6 +149,11 @@ abstract class AppDatabase : RoomDatabase() {
         private val MIGRATION_10_11: Migration = object : Migration(10, 11) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("ALTER TABLE chat_table ADD COLUMN content_download_date INTEGER NOT NULL DEFAULT 0 ")
+            }
+        }
+        private val MIGRATION_11_12: Migration = object : Migration(11, 12) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("ALTER TABLE question_table ADD COLUMN practice_no INTEGER")
             }
         }
 

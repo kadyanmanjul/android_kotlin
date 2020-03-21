@@ -154,7 +154,7 @@ class PdfViewHolder(activityRef: WeakReference<FragmentActivity>, message: ChatM
         updateTime(receivedMessageTime)
 
         message.parentQuestionObject?.run {
-            addLinkToTagMessage(messageView, this)
+            addLinkToTagMessage(messageView, this, message.sender)
         }
         if (message.chatId.isNotEmpty() && sId == message.chatId) {
             highlightedViewForSomeTime(rootView)

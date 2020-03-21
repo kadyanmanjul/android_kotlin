@@ -30,25 +30,47 @@
             android:layout_marginStart="@dimen/_6sdp">
 
         <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
-                android:id="@+id/tv_detail_last"
+                android:id="@+id/tv_sender_name"
                 fontPath="fonts/Roboto-Medium.ttf"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
-                android:layout_centerInParent="true"
-                android:layout_centerHorizontal="true"
                 android:layout_gravity="center|start"
+                android:layout_marginTop="@dimen/_4sdp"
                 android:layout_marginEnd="@dimen/_8sdp"
                 android:layout_toStartOf="@id/iv_detail_last"
+                android:paddingBottom="@dimen/_4sdp"
+                android:clickable="false"
+                android:focusable="false"
+                android:gravity="center|start"
+                android:inputType=""
+                android:visibility="visible"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textAlignment="center"
+                android:textColor="@color/colorPrimaryDark"
+                android:textSize="@dimen/font_15" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_detail_last"
+                fontPath="fonts/Roboto-Regular.ttf"
+                android:layout_below="@+id/tv_sender_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_gravity="center|start"
+                android:layout_marginEnd="@dimen/_8sdp"
                 android:clickable="false"
                 android:drawablePadding="@dimen/_4sdp"
                 android:focusable="false"
                 android:gravity="center|start"
                 android:inputType=""
                 android:maxLines="2"
+                android:drawableTint="@color/emoji_icon_color"
                 android:textAlignment="center"
-                android:textColor="@color/gray_79"
-                android:textSize="@dimen/font_16" />
+                android:textColor="@color/emoji_icon_color"
+                android:textSize="@dimen/font_14" />
+
 
 
         <androidx.appcompat.widget.AppCompatImageView

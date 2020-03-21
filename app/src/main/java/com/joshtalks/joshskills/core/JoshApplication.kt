@@ -1,6 +1,7 @@
 package com.joshtalks.joshskills.core
 
 import android.content.Context
+import android.os.Environment
 import android.util.Log
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
@@ -10,6 +11,9 @@ import androidx.multidex.MultiDex
 import com.facebook.FacebookSdk
 import com.facebook.LoggingBehavior
 import com.facebook.stetho.Stetho
+import com.joshtalks.filelogger.FL
+import com.joshtalks.filelogger.FLConfig
+import com.joshtalks.filelogger.FLConst
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.repository.local.model.Mentor
@@ -24,6 +28,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import java.io.File
 
 class JoshApplication : BranchApp(), LifecycleObserver {
     companion object {
@@ -44,6 +49,20 @@ class JoshApplication : BranchApp(), LifecycleObserver {
             Branch.enableDebugMode()
             IntegrationValidator.validate(this)
             Timber.plant(Timber.DebugTree())
+
+            FL.init(
+                FLConfig.Builder(this)
+                    .defaultTag("Default Tag")   // customise default tag
+                    .logToFile(true)   // enable logging to file
+                    .minLevel(FLConst.Level.V)
+                    .dir(File( Environment.getExternalStorageDirectory(), "file_logger_demo"))
+                    .retentionPolicy(FLConst.RetentionPolicy.FILE_COUNT)
+                    .maxFileCount(FLConst.DEFAULT_MAX_FILE_COUNT)    // customise how many log files to keep if retention by file count
+                    .maxTotalSize(FLConst.DEFAULT_MAX_TOTAL_SIZE)    // customise how much space log files can occupy if retention by total size
+                    .build()
+            
+            )
+            FL.setEnabled(true)
         }
         appObjectController = AppObjectController.init(this)
 

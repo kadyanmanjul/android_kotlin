@@ -1,8 +1,10 @@
 package com.joshtalks.joshskills.ui.view_holders
 
-import android.animation.AnimatorSet
+import android.animation.Animator
+import android.animation.ArgbEvaluator
 import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
+import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.view.Gravity
 import android.view.View
@@ -14,7 +16,6 @@ import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.custom_ui.audioplayer.general.PlayerUtil
@@ -23,6 +24,8 @@ import com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.*
 import com.joshtalks.joshskills.repository.local.eventbus.GotoChatEventBus
+import io.github.inflationx.calligraphy3.CalligraphyTypefaceSpan
+import io.github.inflationx.calligraphy3.TypefaceUtils
 import java.lang.ref.WeakReference
 
 
@@ -30,6 +33,13 @@ abstract class BaseChatViewHolder(
     val activityRef: WeakReference<FragmentActivity>,
     var message: ChatModel
 ) : BaseCell() {
+
+    val robotoMediumTypefaceSpan = CalligraphyTypefaceSpan(
+        TypefaceUtils.load(
+            getAppContext().assets,
+            "fonts/Roboto-Medium.ttf"
+        )
+    )
 
     companion object {
         var sId = EMPTY
@@ -196,7 +206,11 @@ abstract class BaseChatViewHolder(
     }
 
     @SuppressLint("ClickableViewAccessibility")
-    fun addLinkToTagMessage(rootView: ViewGroup, linkObj: Question) {
+    fun addLinkToTagMessage(
+        rootView: ViewGroup,
+        linkObj: Question,
+        sender: Sender?
+    ) {
         try {
             rootView.findViewById<ViewGroup>(R.id.tag_view).visibility = View.VISIBLE
             rootView.findViewById<ViewGroup>(R.id.tag_view).setOnClickListener {
@@ -205,9 +219,25 @@ abstract class BaseChatViewHolder(
             rootView.findViewById<ViewGroup>(R.id.sub_rl).setOnClickListener {
                 RxBus2.publish(GotoChatEventBus(linkObj.chatId))
             }
-            val tvLastMESSAGE = rootView.findViewById<JoshTextView>(R.id.tv_detail_last)
+            val tvSenderName = rootView.findViewById<JoshTextView>(R.id.tv_sender_name)
+            sender?.user?.run {
+                tvSenderName.text = this.first_name.plus(" ".plus(this.last_name))
+            }
+
+            val tvLastMESSAGE = rootView.findViewById<AppCompatTextView>(R.id.tv_detail_last)
             var imageUrl: String? = null
-            var text: String? = linkObj.title
+            val text: StringBuilder? = StringBuilder(getAppContext().getString(R.string.practice))
+            linkObj.practiceNo?.run {
+                text?.append(" #$this")
+            }
+
+            tvLastMESSAGE.setCompoundDrawablesWithIntrinsicBounds(
+                R.drawable.ic_assignment,
+                0,
+                0,
+                0
+            )
+
 
             if (linkObj.material_type != BASE_MESSAGE_TYPE.TX) {
                 when (linkObj.material_type) {
@@ -218,6 +248,7 @@ abstract class BaseChatViewHolder(
                             0,
                             0
                         )
+                        text?.append("Photo ")
                         imageUrl = linkObj.imageList?.getOrNull(0)?.imageUrl
                     }
                     BASE_MESSAGE_TYPE.AU -> {
@@ -229,9 +260,9 @@ abstract class BaseChatViewHolder(
                         )
                         val duration =
                             PlayerUtil.toTimeSongString(linkObj.audioList?.getOrNull(0)?.duration)
-                        text = "Voice Message "
+                        text?.append("Voice Message ")
                         if (duration.isNullOrEmpty().not()) {
-                            text += "($duration)"
+                            text?.append("($duration)")
                         }
                     }
                     BASE_MESSAGE_TYPE.VI -> {
@@ -244,12 +275,12 @@ abstract class BaseChatViewHolder(
                         imageUrl = linkObj.videoList?.getOrNull(0)?.video_image_url
                         val duration =
                             PlayerUtil.toTimeSongString(linkObj.videoList?.getOrNull(0)?.duration)
+                        text?.append("Video ")
                         if (duration.isNullOrEmpty().not()) {
-                            text += "($duration)"
+                            text?.append("($duration)")
                         }
 
                     }
-                    else -> text = linkObj.title
                 }
                 if (imageUrl.isNullOrEmpty().not()) {
                     val imageLastView =
@@ -259,7 +290,7 @@ abstract class BaseChatViewHolder(
                 }
             }
             if (text.isNullOrEmpty().not()) {
-                tvLastMESSAGE.text = text
+                tvLastMESSAGE.text = text.toString()
             }
         } catch (ex: Exception) {
             ex.printStackTrace()
@@ -270,13 +301,35 @@ abstract class BaseChatViewHolder(
         try {
             view.background =
                 ColorDrawable(ContextCompat.getColor(getAppContext(), R.color.forground_bg))
+            val colorFrom: Int = Color.parseColor("#AA34B7F1")
+            val colorTo: Int = Color.TRANSPARENT
+            val duration = 1000L
 
+            val animate = ObjectAnimator.ofObject(
+                view,
+                "backgroundColor",
+                ArgbEvaluator(),
+                colorFrom,
+                colorTo
+            )
+            animate.addListener(object : Animator.AnimatorListener {
+                override fun onAnimationRepeat(animation: Animator?) {
+                }
 
-            AppObjectController.uiHandler.postDelayed({
-                sId = EMPTY
-                view.background =
-                    ColorDrawable(ContextCompat.getColor(getAppContext(), R.color.transparent))
-            }, 1200)
+                override fun onAnimationEnd(animation: Animator?) {
+                    sId = EMPTY
+                }
+
+                override fun onAnimationCancel(animation: Animator?) {
+                }
+
+                override fun onAnimationStart(animation: Animator?) {
+                }
+
+            })
+            animate.startDelay = 500
+            animate.duration = duration
+            animate.start()
         } catch (ex: Exception) {
             ex.printStackTrace()
         }

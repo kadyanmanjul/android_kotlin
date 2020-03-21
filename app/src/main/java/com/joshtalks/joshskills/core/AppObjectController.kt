@@ -19,6 +19,7 @@ import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
 import com.google.gson.*
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import com.jakewharton.threetenabp.AndroidThreeTen
+import com.joshtalks.filelogger.FL
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.datetimeutils.DateTimeUtils
@@ -202,11 +203,20 @@ internal class AppObjectController {
                 .followSslRedirects(true)
                 .addInterceptor(StatusCodeInterceptor())
 
+            val logging =
+                HttpLoggingInterceptor(object : HttpLoggingInterceptor.Logger {
+                    override fun log(message: String) {
+                        Timber.tag("OkHttp").d(message)
+                        FL.v(message+"\n")
+                    }
+
+                }).apply {
+                    level = HttpLoggingInterceptor.Level.BODY
+
+                }
+
             if (BuildConfig.DEBUG) {
                 builder.addNetworkInterceptor(StethoInterceptor())
-                val logging = HttpLoggingInterceptor().apply {
-                    level = HttpLoggingInterceptor.Level.BODY
-                }
                 builder.addInterceptor(logging)
             }
             builder.addInterceptor(object : Interceptor {
@@ -256,9 +266,6 @@ internal class AppObjectController {
 
             if (BuildConfig.DEBUG) {
                 mediaOkhttpBuilder.addNetworkInterceptor(StethoInterceptor())
-                val logging = HttpLoggingInterceptor().apply {
-                    level = HttpLoggingInterceptor.Level.BODY
-                }
                 mediaOkhttpBuilder.addInterceptor(logging)
             }
 

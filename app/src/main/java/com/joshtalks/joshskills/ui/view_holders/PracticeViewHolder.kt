@@ -13,7 +13,6 @@ import androidx.appcompat.widget.AppCompatTextView
 import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
-import com.google.android.material.card.MaterialCardView
 import com.google.android.material.textview.MaterialTextView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.Utils
@@ -39,6 +38,8 @@ class PracticeViewHolder(activityRef: WeakReference<FragmentActivity>, message: 
     @View(R.id.status_tv)
     lateinit var practiceStatusTv: AppCompatTextView
 
+    @View(R.id.sub_title_tv)
+    lateinit var subTitleTV: AppCompatTextView
 
     @View(R.id.image_view)
     lateinit var imageView: AppCompatImageView
@@ -78,7 +79,12 @@ class PracticeViewHolder(activityRef: WeakReference<FragmentActivity>, message: 
         practiceStatusTv.text = activityRef.get()?.getString(R.string.answer_not_submitted)
         tvSubmitAnswer.visibility = android.view.View.VISIBLE
         message.question?.run {
-            titleTv.text = this.title
+            this.practiceNo?.let {
+                titleTv.text = getAppContext().getString(R.string.practice).plus(" #$it")
+            }
+
+            subTitleTV.text = this.title
+
             if (this.practiceEngagement.isNullOrEmpty()) {
                 sBuilder.append("Pending")
                 layoutP.height = Utils.dpToPx(getAppContext(), 180f)
@@ -124,6 +130,7 @@ class PracticeViewHolder(activityRef: WeakReference<FragmentActivity>, message: 
     fun onClickStatusView() {
         RxBus2.publish(PractiseSubmitEventBus(viewHolder, message))
     }
+
     override fun getRoot(): FrameLayout {
         return rootView
     }

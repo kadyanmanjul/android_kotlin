@@ -220,7 +220,7 @@ class AudioPlayerViewHolder(activityRef: WeakReference<FragmentActivity>, messag
                 0
             )
             rootSubView.layoutParams = relativeParams
-            addLinkToTagMessage(rootView, this)
+            addLinkToTagMessage(rootView, this,message.sender)
         }
         if (message.chatId.isNotEmpty() && sId == message.chatId) {
             highlightedViewForSomeTime(rootView)

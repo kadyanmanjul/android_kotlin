@@ -6,12 +6,9 @@ import android.app.Activity
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.graphics.drawable.PictureDrawable
-import android.media.AudioManager
-import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.FrameLayout
 import androidx.appcompat.widget.AppCompatImageView
@@ -82,6 +79,7 @@ import me.samlss.lighter.parameter.Direction
 import me.samlss.lighter.parameter.LighterParameter
 import me.samlss.lighter.shape.RectShape
 import org.jetbrains.anko.collections.forEachWithIndex
+import java.util.*
 
 const val REGISTER_INFO_CODE = 2001
 const val COURSE_EXPLORER_CODE = 2002
@@ -396,10 +394,6 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
 
     }
 
-
-    override fun onBackPressed() {
-        super.onBackPressed()
-    }
 
     override fun onResume() {
         super.onResume()

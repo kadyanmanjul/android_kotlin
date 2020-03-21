@@ -45,7 +45,6 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-
                     android:layout_weight=".22"
                     android:background="@drawable/round_rect_default"
                     android:backgroundTint="#EFEFEF"
@@ -86,6 +85,7 @@
                             android:enabled="false"
                             android:focusable="false"
                             android:gravity="center"
+                            android:text="@string/practice"
                             android:paddingStart="@dimen/_4sdp"
                             android:paddingEnd="@dimen/_4sdp"
                             android:textColor="@color/colorAccent"
@@ -110,13 +110,33 @@
                         android:focusable="true"
                         android:gravity="center_vertical|start"
                         android:paddingStart="@dimen/_8sdp"
-                        android:paddingTop="@dimen/_12sdp"
-                        android:paddingBottom="@dimen/_12sdp"
+                        android:paddingTop="@dimen/_4sdp"
+                        android:paddingBottom="@dimen/_2sdp"
                         android:text="@string/status_with_colon"
+                        android:textColor="@color/gray_82"
+                        android:textSize="@dimen/font_14"
+                        app:layout_constraintBottom_toTopOf="@+id/sub_title_tv"
+                        app:layout_constraintStart_toStartOf="parent" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                        android:background="@drawable/round_both_bottom_bg"
+                        android:id="@+id/sub_title_tv"
+                        fontPath="fonts/Roboto-Medium.ttf"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="start"
+                        android:backgroundTint="#EFEFEF"
+                        android:clickable="true"
+                        android:enabled="true"
+                        android:focusable="true"
+                        android:gravity="center_vertical|start"
+                        android:paddingStart="@dimen/_8sdp"
+                        android:paddingBottom="@dimen/_4sdp"
                         android:textColor="@color/gray_82"
                         android:textSize="@dimen/font_14"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent" />
+
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 

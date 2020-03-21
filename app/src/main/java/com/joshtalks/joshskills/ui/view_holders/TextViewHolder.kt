@@ -53,7 +53,7 @@ class TextViewHolder(activityRef: WeakReference<FragmentActivity>, message: Chat
             updateView(it, rootView, rootSubView, messageView)
         }
         message.parentQuestionObject?.run {
-            addLinkToTagMessage(messageView, this)
+            addLinkToTagMessage(messageView, this, message.sender)
         }
         if (message.chatId.isNotEmpty() && sId == message.chatId) {
             highlightedViewForSomeTime(rootView)

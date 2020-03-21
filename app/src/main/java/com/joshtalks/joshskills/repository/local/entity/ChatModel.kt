@@ -178,7 +178,10 @@ data class Question(
     )
     @ColumnInfo(name = "practice_engagements")
     @SerializedName("practice_engagements")
-    var practiceEngagement: List<PracticeEngagement>? = emptyList()
+    var practiceEngagement: List<PracticeEngagement>? = emptyList(),
+
+    @ColumnInfo(name = "practice_no")
+    @SerializedName("practice_no") var practiceNo: Int? = null
 
 ) : Serializable
 

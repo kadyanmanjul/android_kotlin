@@ -76,7 +76,7 @@ class ImageViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
             updateView(it, rootView, rootSubView, messageView)
         }
         message.parentQuestionObject?.run {
-            addLinkToTagMessage(messageView, this)
+            addLinkToTagMessage(messageView, this, message.sender)
         }
         if (message.chatId.isNotEmpty() && sId == message.chatId) {
             highlightedViewForSomeTime(rootView)
@@ -150,14 +150,14 @@ class ImageViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
 
 
     private fun fileNotDownloadView() {
-        downloadContainer.visibility = VISIBLE
+       // downloadContainer.visibility = VISIBLE
         progressDialog.visibility = GONE
         ivCancelDownload.visibility = GONE
         ivStartDownload.visibility = VISIBLE
     }
 
     private fun fileDownloadRunView() {
-        downloadContainer.visibility = VISIBLE
+       // downloadContainer.visibility = VISIBLE
         progressDialog.visibility = VISIBLE
         ivCancelDownload.visibility = VISIBLE
         ivStartDownload.visibility = GONE
@@ -171,9 +171,6 @@ class ImageViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
 
     @Click(R.id.image_view)
     fun onClick() {
-        if (message.disable) {
-            return
-        }
         if (message.downloadedLocalPath != null && message.downloadedLocalPath?.isNotEmpty()!!) {
             RxBus2.publish(ImageShowEvent(message.downloadedLocalPath, message.url))
         } else if (message.url != null) {
@@ -196,8 +193,6 @@ class ImageViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
     fun downloadStart() {
         RxBus2.publish(DownloadMediaEventBus(this, message))
         AppAnalytics.create(AnalyticsEvent.IMAGE_DOWNLOAD.NAME).addParam("ChatId", message.chatId)
-
-
     }
 
     @Click(R.id.iv_cancel_download)
