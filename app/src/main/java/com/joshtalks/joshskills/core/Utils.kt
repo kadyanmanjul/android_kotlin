@@ -52,7 +52,6 @@ import java.io.IOException
 import java.io.OutputStream
 import java.net.InetSocketAddress
 import java.net.Socket
-import java.net.SocketAddress
 import java.net.URL
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
@@ -327,22 +326,22 @@ object Utils {
     }
 
     fun isInternetAvailable(): Boolean {
-            val connectivityManager =
-                AppObjectController.joshApplication.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                val nw = connectivityManager.activeNetwork ?: return false
-                val actNw = connectivityManager.getNetworkCapabilities(nw) ?: return false
-                return when {
-                    actNw.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> true
-                    actNw.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> true
-                    //for other device how are able to connect with Ethernet
-                    actNw.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> true
-                    else -> false
-                }
-            } else {
-                val nwInfo = connectivityManager.activeNetworkInfo ?: return false
-                return nwInfo.isConnected
+        val connectivityManager =
+            AppObjectController.joshApplication.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            val nw = connectivityManager.activeNetwork ?: return false
+            val actNw = connectivityManager.getNetworkCapabilities(nw) ?: return false
+            return when {
+                actNw.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> true
+                actNw.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> true
+                //for other device how are able to connect with Ethernet
+                actNw.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> true
+                else -> false
             }
+        } else {
+            val nwInfo = connectivityManager.activeNetworkInfo ?: return false
+            return nwInfo.isConnected
+        }
 
     }
 
@@ -699,7 +698,9 @@ fun convertCamelCase(string: String): String {
 }
 
 fun showToast(message: String) {
-    StyleableToast.Builder(AppObjectController.joshApplication).gravity(Gravity.BOTTOM)
-        .text(message).cornerRadius(16).length(Toast.LENGTH_SHORT)
-        .solidBackground().show()
+    AppObjectController.uiHandler.post {
+        StyleableToast.Builder(AppObjectController.joshApplication).gravity(Gravity.BOTTOM)
+            .text(message).cornerRadius(16).length(Toast.LENGTH_SHORT)
+            .solidBackground().show()
+    }
 }

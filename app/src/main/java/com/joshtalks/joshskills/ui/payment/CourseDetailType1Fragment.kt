@@ -26,6 +26,7 @@ import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.custom_ui.decorator.LayoutMarginDecoration
 import com.joshtalks.joshskills.core.service.WorkMangerAdmin
+import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.FragmentCourseDetailType1FragmentBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
@@ -53,6 +54,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
+import java.net.UnknownHostException
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
 import java.util.*
@@ -145,7 +147,6 @@ class CourseDetailType1Fragment : Fragment() {
                 )
             )
             binding.courseDetailRv.itemAnimator = null
-
             binding.nestedScrollView.viewTreeObserver.addOnScrollChangedListener {
                 if (binding.nestedScrollView.scrollY == 0) {
                     profileBalloon?.dismiss()
@@ -164,11 +165,10 @@ class CourseDetailType1Fragment : Fragment() {
                     showHint()
                 }
             }
-            getTestCourseDetails()
-
         } catch (ex: Exception) {
             ex.printStackTrace()
         }
+        getTestCourseDetails()
 
     }
 
@@ -280,6 +280,10 @@ class CourseDetailType1Fragment : Fragment() {
                     invalidCourseId()
                 }
                 ex.printStackTrace()
+            } catch (ex: UnknownHostException) {
+                showToast(getString(R.string.internet_not_available_msz))
+                binding.progressBar.visibility = View.GONE
+
             } catch (ex: Exception) {
                 ex.printStackTrace()
             }

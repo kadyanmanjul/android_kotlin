@@ -11,7 +11,6 @@ import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.GestureDetector
 import android.view.Gravity
 import android.view.MotionEvent
@@ -26,8 +25,6 @@ import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
-import com.google.firebase.dynamiclinks.DynamicLink
-import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
 import com.google.firebase.dynamiclinks.ShortDynamicLink
 import com.google.firebase.dynamiclinks.ktx.androidParameters
 import com.google.firebase.dynamiclinks.ktx.dynamicLinks
@@ -94,14 +91,14 @@ class ReferralActivity : BaseActivity() {
         userReferralCode = Mentor.getInstance().referralCode
         activityReferralBinding.tvReferralCode.text = userReferralCode
         initView()
-        val baseUrl = Uri.parse(getAppShareUrl())
+        //val baseUrl = Uri.parse(getAppShareUrl())
         val domain = AppObjectController.getFirebaseRemoteConfig().getString(SHARE_DOMAIN)
 
         if (PrefManager.hasKey(USER_SHARE_SHORT_URL).not()) {
             userReferralURL = PrefManager.getStringValue(USER_SHARE_SHORT_URL)
 
         }
-         Firebase.dynamicLinks.shortLinkAsync(ShortDynamicLink.Suffix.SHORT) {
+        Firebase.dynamicLinks.shortLinkAsync(ShortDynamicLink.Suffix.SHORT) {
                 link = Uri.parse("https://joshskill.app.link")
                 domainUriPrefix = domain
                 androidParameters(BuildConfig.APPLICATION_ID) {
@@ -132,33 +129,33 @@ class ReferralActivity : BaseActivity() {
             }
 
 
-       /* FirebaseDynamicLinks.getInstance()
-            .createDynamicLink()
-            .setLink(baseUrl)
-            .setDomainUriPrefix(domain)
-            // .setIosParameters(DynamicLink.IosParameters.Builder("com.joshtalks.joshskills").build())
-            .setAndroidParameters(
-                DynamicLink.AndroidParameters.Builder(BuildConfig.APPLICATION_ID).build()
-            )
-            .setAndroidParameters(DynamicLink.AndroidParameters.Builder().build())
-            .buildShortDynamicLink(ShortDynamicLink.Suffix.SHORT)
+        /* FirebaseDynamicLinks.getInstance()
+             .createDynamicLink()
+             .setLink(baseUrl)
+             .setDomainUriPrefix(domain)
+             // .setIosParameters(DynamicLink.IosParameters.Builder("com.joshtalks.joshskills").build())
+             .setAndroidParameters(
+                 DynamicLink.AndroidParameters.Builder(BuildConfig.APPLICATION_ID).build()
+             )
+             .setAndroidParameters(DynamicLink.AndroidParameters.Builder().build())
+             .buildShortDynamicLink(ShortDynamicLink.Suffix.SHORT)
 
-            .addOnSuccessListener { result ->
-                result?.shortLink?.let {
-                    try {
-                        if (it.toString().isNotEmpty()) {
-                            PrefManager.put(USER_SHARE_SHORT_URL, it.toString())
-                            userReferralURL = it.toString()
+             .addOnSuccessListener { result ->
+                 result?.shortLink?.let {
+                     try {
+                         if (it.toString().isNotEmpty()) {
+                             PrefManager.put(USER_SHARE_SHORT_URL, it.toString())
+                             userReferralURL = it.toString()
 
-                        }
-                    } catch (ex: Exception) {
-                        ex.printStackTrace()
-                    }
-                }
-            }.addOnFailureListener {
-                it.printStackTrace()
-            }
-*/
+                         }
+                     } catch (ex: Exception) {
+                         ex.printStackTrace()
+                     }
+                 }
+             }.addOnFailureListener {
+                 it.printStackTrace()
+             }
+ */
     }
 
 
@@ -290,25 +287,19 @@ class ReferralActivity : BaseActivity() {
                         action = Intent.ACTION_SEND
                         putExtra(Intent.EXTRA_TEXT, referralText)
                     }
-                    if (Build.VERSION.SDK_INT >= 24) {
-                        try {
-                            sendIntent.putExtra(
-                                Intent.EXTRA_STREAM,
-                                FileProvider.getUriForFile(
-                                    this@ReferralActivity,
-                                    BuildConfig.APPLICATION_ID + ".provider",
-                                    getBitmapFromView(resource)!!
-                                )
+                    sendIntent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
+                    sendIntent.flags = Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+                    try {
+                        sendIntent.putExtra(
+                            Intent.EXTRA_STREAM,
+                            FileProvider.getUriForFile(
+                                this@ReferralActivity,
+                                BuildConfig.APPLICATION_ID + ".provider",
+                                getBitmapFromView(resource)!!
                             )
-                            sendIntent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
-                        } catch (ignore: Exception) {
-                            ignore.printStackTrace()
-                            sendIntent.putExtra(
-                                Intent.EXTRA_STREAM,
-                                Uri.fromFile(getBitmapFromView(resource)!!)
-                            )
-                        }
-                    } else {
+                        )
+                    } catch (ignore: Exception) {
+                        ignore.printStackTrace()
                         sendIntent.putExtra(
                             Intent.EXTRA_STREAM,
                             Uri.fromFile(getBitmapFromView(resource)!!)

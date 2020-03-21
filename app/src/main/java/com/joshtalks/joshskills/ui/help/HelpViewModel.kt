@@ -1,14 +1,14 @@
 package com.joshtalks.joshskills.ui.help
 
 import android.app.Application
+import android.view.View
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.crashlytics.android.Crashlytics
-import com.joshtalks.joshskills.core.ApiCallStatus
+import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.JoshApplication
-import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.io.AppDirectory
@@ -17,6 +17,7 @@ import com.joshtalks.joshskills.repository.server.ComplaintResponse
 import com.joshtalks.joshskills.repository.server.RequestComplaint
 import com.joshtalks.joshskills.repository.server.TypeOfHelpModel
 import id.zelory.compressor.Compressor
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
@@ -24,7 +25,10 @@ import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
+import retrofit2.HttpException
 import java.io.File
+import java.net.SocketTimeoutException
+import java.net.UnknownHostException
 
 
 class HelpViewModel(application: Application) : AndroidViewModel(application) {
@@ -40,8 +44,17 @@ class HelpViewModel(application: Application) : AndroidViewModel(application) {
                 val response: List<TypeOfHelpModel> =
                     AppObjectController.commonNetworkService.getHelpCategory()
                 typeOfHelpModelLiveData.postValue(response)
-            } catch (e: Exception) {
-                e.printStackTrace()
+            } catch (ex: Exception) {
+                when (ex) {
+                    is HttpException -> {
+                    }
+                    is SocketTimeoutException, is UnknownHostException -> {
+                        showToast(context.getString(R.string.internet_not_available_msz))
+                    }
+                    else -> {
+                        Crashlytics.logException(ex)
+                    }
+                }
             }
         }
     }
@@ -62,12 +75,20 @@ class HelpViewModel(application: Application) : AndroidViewModel(application) {
                     AppObjectController.commonNetworkService.submitComplaint(requestComplaint)
                 AppAnalytics.create(AnalyticsEvent.HELP_SUBMITTED.NAME).push()
                 apiCallStatusLiveData.postValue(ApiCallStatus.SUCCESS)
-            } catch (e: Exception) {
-                Crashlytics.logException(e)
-                apiCallStatusLiveData.postValue(ApiCallStatus.FAILED)
-                e.printStackTrace()
             }
-
+            catch (ex: Exception) {
+                apiCallStatusLiveData.postValue(ApiCallStatus.FAILED)
+                when (ex) {
+                    is HttpException -> {
+                    }
+                    is SocketTimeoutException, is UnknownHostException -> {
+                        showToast(context.getString(R.string.internet_not_available_msz))
+                    }
+                    else -> {
+                        Crashlytics.logException(ex)
+                    }
+                }
+            }
         }
 
     }

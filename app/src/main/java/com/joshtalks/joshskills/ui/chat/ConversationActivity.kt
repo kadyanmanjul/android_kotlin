@@ -143,7 +143,6 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback, OnGoCon
     private val compositeDisposable = CompositeDisposable()
     private var revealAttachmentView: Boolean = false
     private val conversationList: MutableList<ChatModel> = ArrayList()
-
     private var removingConversationList = linkedSetOf<ChatModel>()
     private val readChatList: MutableSet<ChatModel> = mutableSetOf()
     private var readMessageTimerTask: TimerTask? = null
@@ -154,6 +153,7 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback, OnGoCon
     private var isNewChatViewAdd = true
     private var lastDay: Date = Date()
     private var chatModelLast: ChatModel? = null
+    private var internetAvailableFlag: Boolean = true
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -886,6 +886,10 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback, OnGoCon
                     override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
                         report?.areAllPermissionsGranted()?.let { flag ->
                             if (flag) {
+                                if (internetAvailableFlag.not()) {
+                                    showToast(getString(R.string.internet_not_available_msz))
+                                    return@let
+                                }
                                 val pos =
                                     conversationBinding.chatRv.getViewResolverPosition(it.viewHolder)
                                 val view: BaseChatViewHolder =
@@ -1448,7 +1452,8 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback, OnGoCon
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe { connectivity ->
-                    if (connectivity.available()) {
+                    internetAvailableFlag = connectivity.available()
+                    if (internetAvailableFlag) {
                         internetAvailable()
                     } else {
                         internetNotAvailable()

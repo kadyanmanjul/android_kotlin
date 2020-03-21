@@ -10,6 +10,7 @@ import androidx.appcompat.widget.AppCompatTextView
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.afollestad.materialdialogs.MaterialDialog
+import com.crashlytics.android.Crashlytics
 import com.facebook.appevents.AppEventsConstants.EVENT_NAME_VIEWED_CONTENT
 import com.facebook.appevents.AppEventsConstants.EVENT_PARAM_CONTENT_ID
 import com.google.android.material.appbar.MaterialToolbar
@@ -36,6 +37,9 @@ import io.reactivex.disposables.CompositeDisposable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import retrofit2.HttpException
+import java.net.SocketTimeoutException
+import java.net.UnknownHostException
 import kotlin.collections.set
 
 
@@ -176,7 +180,16 @@ class CourseExploreActivity : CoreJoshActivity() {
                 CoroutineScope(Dispatchers.Main).launch {
                     courseExploreBinding.progressBar.visibility = View.GONE
                 }
-                ex.printStackTrace()
+                when (ex) {
+                    is HttpException -> {
+                    }
+                    is SocketTimeoutException, is UnknownHostException -> {
+                        showToast(getString(R.string.internet_not_available_msz))
+                    }
+                    else -> {
+                        Crashlytics.logException(ex)
+                    }
+                }
             }
         }
     }

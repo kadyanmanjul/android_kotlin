@@ -53,6 +53,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 import retrofit2.HttpException
+import java.net.SocketTimeoutException
+import java.net.UnknownHostException
 import java.util.*
 
 
@@ -137,6 +139,8 @@ class PaymentActivity : CoreJoshActivity(),
             userHaveSpecialDiscount()
         }
 
+
+
         AppObjectController.firebaseAnalytics.resetAnalyticsData()
         val bundle = Bundle()
         bundle.putString(FirebaseAnalytics.Param.ITEM_ID, testId)
@@ -144,7 +148,6 @@ class PaymentActivity : CoreJoshActivity(),
     }
 
     private fun getTestCourseDetails() {
-
         activityPaymentBinding.container.visibility = View.VISIBLE
         val courseID = courseModel?.course ?: -99
         supportFragmentManager.commit(true) {
@@ -234,11 +237,15 @@ class PaymentActivity : CoreJoshActivity(),
                 ex.printStackTrace()
             }
         }
+        if (Utils.isInternetAvailable().not()) {
+            showToast(getString(R.string.internet_not_available_msz))
+            activityPaymentBinding.progressBar.visibility = View.GONE
+            return
+        }
     }
 
 
     override fun onPaymentError(p0: Int, p1: String?) {
-
         userSubmitCode = EMPTY
         StyleableToast.Builder(this).gravity(Gravity.TOP)
             .backgroundColor(ContextCompat.getColor(applicationContext, R.color.error_color))
@@ -353,13 +360,19 @@ class PaymentActivity : CoreJoshActivity(),
                         }
                     ))
 
-            } catch (ex: HttpException) {
+            }
+            catch (ex: Exception) {
                 hideProgress()
-                ex.printStackTrace()
-            } catch (ex: Exception) {
-                hideProgress()
-                ex.printStackTrace()
-                Crashlytics.logException(ex)
+                when (ex) {
+                    is HttpException -> {
+                    }
+                    is SocketTimeoutException, is UnknownHostException -> {
+                        showToast(getString(R.string.internet_not_available_msz))
+                    }
+                    else -> {
+                        Crashlytics.logException(ex)
+                    }
+                }
             }
         }
     }

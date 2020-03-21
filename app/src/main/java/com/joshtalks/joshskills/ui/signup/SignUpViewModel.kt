@@ -5,9 +5,11 @@ import androidx.databinding.ObservableField
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.crashlytics.android.Crashlytics
 import com.facebook.appevents.AppEventsConstants.EVENT_NAME_COMPLETED_REGISTRATION
 import com.google.android.gms.auth.api.phone.SmsRetriever
 import com.google.android.gms.tasks.Task
+import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
@@ -23,6 +25,8 @@ import io.branch.referral.Branch
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
+import java.net.SocketTimeoutException
+import java.net.UnknownHostException
 
 
 class SignUpViewModel(application: Application) : AndroidViewModel(application) {
@@ -48,11 +52,18 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
                 registerSMSReceiver()
                 signUpStatus.postValue(SignUpStepStatus.SignUpStepSecond)
 
-            } catch (ex: HttpException) {
+            } catch (ex: Exception) {
                 progressDialogStatus.postValue(false)
-            } catch (e: Exception) {
-                e.printStackTrace()
-                progressDialogStatus.postValue(false)
+                when (ex) {
+                    is HttpException -> {
+                    }
+                    is SocketTimeoutException, is UnknownHostException -> {
+                        showToast(context.getString(R.string.internet_not_available_msz))
+                    }
+                    else -> {
+                        Crashlytics.logException(ex)
+                    }
+                }
             }
         }
     }
@@ -64,11 +75,18 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
                 AppObjectController.signUpNetworkService.getOtpForNumberAsync(reqObj).await()
                 progressDialogStatus.postValue(false)
                 signUpStatus.postValue(SignUpStepStatus.SignUpResendOTP)
-            } catch (ex: HttpException) {
+            } catch (ex: Exception) {
                 progressDialogStatus.postValue(false)
-            } catch (e: Exception) {
-                e.printStackTrace()
-                progressDialogStatus.postValue(false)
+                when (ex) {
+                    is HttpException -> {
+                    }
+                    is SocketTimeoutException, is UnknownHostException -> {
+                        showToast(context.getString(R.string.internet_not_available_msz))
+                    }
+                    else -> {
+                        Crashlytics.logException(ex)
+                    }
+                }
             }
         }
     }
@@ -100,15 +118,21 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
                 fetchMentor()
                 WorkMangerAdmin.mappingGIDWithMentor()
 
-            } catch (ex: HttpException) {
-                if (ex.code() == 400) {
-                    otpVerifyStatus.postValue(true)
-                } else {
-                    progressDialogStatus.postValue(false)
-                }
-            } catch (e: Exception) {
-                e.printStackTrace()
+            } catch (ex: Exception) {
                 progressDialogStatus.postValue(false)
+                when (ex) {
+                    is HttpException -> {
+                        if (ex.code() == 400) {
+                            otpVerifyStatus.postValue(true)
+                        }
+                    }
+                    is SocketTimeoutException, is UnknownHostException -> {
+                        showToast(context.getString(R.string.internet_not_available_msz))
+                    }
+                    else -> {
+                        Crashlytics.logException(ex)
+                    }
+                }
             }
         }
 
@@ -147,12 +171,18 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
                 mergeMentorWithGId(response.mentorId)
                 fetchMentor()
                 WorkMangerAdmin.mappingGIDWithMentor()
-            } catch (ex: HttpException) {
+            } catch (ex: Exception) {
                 progressDialogStatus.postValue(false)
-                ex.printStackTrace()
-            } catch (e: Exception) {
-                e.printStackTrace()
-                progressDialogStatus.postValue(false)
+                when (ex) {
+                    is HttpException -> {
+                    }
+                    is SocketTimeoutException, is UnknownHostException -> {
+                        showToast(context.getString(R.string.internet_not_available_msz))
+                    }
+                    else -> {
+                        Crashlytics.logException(ex)
+                    }
+                }
             }
         }
     }
@@ -177,12 +207,19 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
                 AppAnalytics.updateUser()
                 signUpStatus.postValue(SignUpStepStatus.SignUpCompleted)
 
-            } catch (e: Exception) {
-                e.printStackTrace()
+            } catch (ex: Exception) {
                 progressDialogStatus.postValue(false)
-                //showError("Something went wrong! Please try again!")
+                when (ex) {
+                    is HttpException -> {
+                    }
+                    is SocketTimeoutException, is UnknownHostException -> {
+                        showToast(context.getString(R.string.internet_not_available_msz))
+                    }
+                    else -> {
+                        Crashlytics.logException(ex)
+                    }
+                }
             }
-
         }
     }
 
