@@ -32,7 +32,7 @@ public class AttachmentUtil {
                 @Override
                 public void onAnimationStart(Animator animation) {
                     super.onAnimationStart(animation);
-                    childAnimate((ViewGroup) conversationBinding.attachmentContainer);
+                    childAnimate(conversationBinding.attachmentContainer);
                 }
 
             });

@@ -799,11 +799,6 @@ class JcPlayerView : LinearLayout, View.OnClickListener, SeekBar.OnSeekBarChange
 
     }
 
-    override fun onAttachedToWindow() {
-        super.onAttachedToWindow()
-
-    }
-
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
         if (audioId == message.chatId && message.downloadStatus === DOWNLOAD_STATUS.DOWNLOADED) {
