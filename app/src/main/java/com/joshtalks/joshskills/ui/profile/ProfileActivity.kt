@@ -22,6 +22,7 @@ import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
+import com.crashlytics.android.Crashlytics
 import com.esafirm.imagepicker.features.ImagePicker
 import com.esafirm.imagepicker.features.ReturnMode
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -35,6 +36,7 @@ import com.joshtalks.joshskills.core.custom_ui.spinnerdatepicker.DatePicker
 import com.joshtalks.joshskills.core.custom_ui.spinnerdatepicker.DatePickerDialog
 import com.joshtalks.joshskills.core.custom_ui.spinnerdatepicker.SpinnerDatePickerDialogBuilder
 import com.joshtalks.joshskills.core.service.UploadWorker
+import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.ActivityPersonalDetailBinding
 import com.joshtalks.joshskills.databinding.FragmentMediaSelectBinding
 import com.joshtalks.joshskills.repository.local.model.ImageModel
@@ -52,7 +54,10 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import retrofit2.HttpException
 import java.io.File
+import java.net.SocketTimeoutException
+import java.net.UnknownHostException
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -376,7 +381,17 @@ class ProfileActivity : BaseActivity(), MediaSelectCallback, DatePickerDialog.On
                 }
 
             } catch (ex: Exception) {
-                ex.printStackTrace()
+                when (ex) {
+                    is HttpException -> {
+                        showToast(getString(R.string.generic_message_for_error))
+                    }
+                    is SocketTimeoutException, is UnknownHostException -> {
+                        showToast(getString(R.string.internet_not_available_msz))
+                    }
+                    else -> {
+                        Crashlytics.logException(ex)
+                    }
+                }
             }
         }
 

@@ -278,6 +278,8 @@ class CourseDetailType1Fragment : Fragment() {
             } catch (ex: HttpException) {
                 if (ex.code() == 500) {
                     invalidCourseId()
+                } else if (ex.code() == 400) {
+                    showToast(getString(R.string.generic_message_for_error))
                 }
                 ex.printStackTrace()
             } catch (ex: UnknownHostException) {

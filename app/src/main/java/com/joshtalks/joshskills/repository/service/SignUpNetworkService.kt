@@ -7,6 +7,7 @@ import com.joshtalks.joshskills.repository.server.*
 import com.joshtalks.joshskills.repository.server.course_detail.CourseDetailsResponse
 import kotlinx.coroutines.Deferred
 import okhttp3.MultipartBody
+import retrofit2.Response
 import retrofit2.http.*
 
 const val DIR = "api/skill/v1"
@@ -15,7 +16,7 @@ const val DIR = "api/skill/v1"
 interface SignUpNetworkService {
 
     @GET("$DIR/user/login/")
-    fun getOtpForNumberAsync(@QueryMap params: Map<String, String>): Deferred<Any>
+    suspend fun getOtpForNumberAsync(@QueryMap params: Map<String, String>): Response<Any>
 
     @POST("$DIR/user/otp_verify/")
     fun verifyOTP(@Body requestVerifyOTP: RequestVerifyOTP): Deferred<LoginResponse>

@@ -510,7 +510,7 @@
                         android:layout_gravity="center"
                         android:layout_marginTop="@dimen/_8sdp"
                         android:background="@drawable/round_rectangle"
-                        android:backgroundTint="@color/button_primary_color"
+                        android:backgroundTint="@color/seek_bar_background"
                         android:gravity="center"
                         android:onClick="@{()->handler.submitPractise()}"
                         android:paddingStart="@dimen/_24sdp"

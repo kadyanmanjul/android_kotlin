@@ -182,6 +182,7 @@ class CourseExploreActivity : CoreJoshActivity() {
                 }
                 when (ex) {
                     is HttpException -> {
+                        showToast(getString(R.string.generic_message_for_error))
                     }
                     is SocketTimeoutException, is UnknownHostException -> {
                         showToast(getString(R.string.internet_not_available_msz))

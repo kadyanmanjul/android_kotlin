@@ -37,7 +37,6 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
     val signUpStatus = MutableLiveData<SignUpStepStatus>()
     val progressDialogStatus = MutableLiveData<Boolean>()
     val otpVerifyStatus = MutableLiveData<Boolean>()
-
     val otpField = ObservableField<String>()
 
 
@@ -45,13 +44,16 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val reqObj = mapOf("mobile" to mobileNumber)
-                AppObjectController.signUpNetworkService.getOtpForNumberAsync(reqObj).await()
-                phoneNumber = mobileNumber
-                countryCode = country_code
+                val resp = AppObjectController.signUpNetworkService.getOtpForNumberAsync(reqObj)
                 progressDialogStatus.postValue(false)
-                registerSMSReceiver()
-                signUpStatus.postValue(SignUpStepStatus.SignUpStepSecond)
-
+                if (resp.isSuccessful) {
+                    phoneNumber = mobileNumber
+                    countryCode = country_code
+                    registerSMSReceiver()
+                    signUpStatus.postValue(SignUpStepStatus.SignUpStepSecond)
+                } else {
+                    showToast(context.getString(R.string.generic_message_for_error))
+                }
             } catch (ex: Exception) {
                 progressDialogStatus.postValue(false)
                 when (ex) {
@@ -72,9 +74,13 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val reqObj = mapOf("mobile" to mobileNumber)
-                AppObjectController.signUpNetworkService.getOtpForNumberAsync(reqObj).await()
+                val resp = AppObjectController.signUpNetworkService.getOtpForNumberAsync(reqObj)
                 progressDialogStatus.postValue(false)
-                signUpStatus.postValue(SignUpStepStatus.SignUpResendOTP)
+                if (resp.isSuccessful) {
+                    signUpStatus.postValue(SignUpStepStatus.SignUpResendOTP)
+                } else {
+                    showToast(context.getString(R.string.generic_message_for_error))
+                }
             } catch (ex: Exception) {
                 progressDialogStatus.postValue(false)
                 when (ex) {
@@ -238,25 +244,25 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
 
     }
 
-    private fun getCourseFromServer() {
-        viewModelScope.launch(Dispatchers.IO) {
-            try {
-                val courseList = AppObjectController.chatNetworkService.getRegisterCourses()
-                if (courseList.isNullOrEmpty()) {
-                    signUpStatus.postValue(SignUpStepStatus.CoursesNotExist)
+    /* private fun getCourseFromServer() {
+         viewModelScope.launch(Dispatchers.IO) {
+             try {
+                 val courseList = AppObjectController.chatNetworkService.getRegisterCourses()
+                 if (courseList.isNullOrEmpty()) {
+                     signUpStatus.postValue(SignUpStepStatus.CoursesNotExist)
 
-                } else {
-                    AppObjectController.appDatabase.courseDao().insertRegisterCourses(courseList)
-                    signUpStatus.postValue(SignUpStepStatus.SignUpCompleted)
+                 } else {
+                     AppObjectController.appDatabase.courseDao().insertRegisterCourses(courseList)
+                     signUpStatus.postValue(SignUpStepStatus.SignUpCompleted)
 
-                }
-            } catch (ex: Exception) {
-                signUpStatus.postValue(SignUpStepStatus.SignUpCompleted)
-                ex.printStackTrace()
-            }
+                 }
+             } catch (ex: Exception) {
+                 signUpStatus.postValue(SignUpStepStatus.SignUpCompleted)
+                 ex.printStackTrace()
+             }
 
-        }
-    }
+         }
+     }*/
 
     private fun mergeMentorWithGId(mentorId: String) {
         viewModelScope.launch(Dispatchers.IO) {

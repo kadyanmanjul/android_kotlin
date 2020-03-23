@@ -173,7 +173,7 @@ class ConversationViewModel(application: Application, private var inboxEntity: I
                 }
                 messageObject.conversation = inboxEntity.conversation_id
                 val responseChat =
-                    AppObjectController.chatNetworkService.sendMessage(messageObject).await()
+                    AppObjectController.chatNetworkService.sendMessageAsync(messageObject).await()
                 NetworkRequestHelper.updateChat(
                     responseChat,
                     refreshViewLiveData,

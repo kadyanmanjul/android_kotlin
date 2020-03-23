@@ -25,6 +25,7 @@ import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.custom_ui.TextDrawable
+import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.FragmentCouponCodeSubmitBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.ui.referral.DRAWABLE_RIGHT
@@ -181,8 +182,6 @@ class CouponCodeSubmitFragment : DialogFragment() {
             inValidCode()
             return
         }
-
-
         binding.progressBar.visibility = View.VISIBLE
         CoroutineScope(Dispatchers.IO).launch {
             try {
@@ -199,6 +198,7 @@ class CouponCodeSubmitFragment : DialogFragment() {
             } catch (ex: JsonSyntaxException) {
                 inValidCode()
             } catch (ex: HttpException) {
+                showToast(getString(R.string.generic_message_for_error))
                 ex.printStackTrace()
             } catch (e: Exception) {
                 e.printStackTrace()

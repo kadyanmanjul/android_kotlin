@@ -7,10 +7,12 @@ import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
 import android.content.pm.ActivityInfo
+import android.content.res.ColorStateList
 import android.graphics.drawable.Drawable
 import android.os.*
 import android.provider.OpenableColumns
-import android.util.Log
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.*
 import android.view.View.GONE
 import android.view.View.VISIBLE
@@ -20,6 +22,7 @@ import android.widget.ImageView
 import android.widget.SeekBar
 import android.widget.Toast
 import androidx.appcompat.widget.AppCompatTextView
+import androidx.core.content.ContextCompat
 import androidx.core.text.HtmlCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
@@ -92,7 +95,7 @@ class PractiseSubmitActivity : CoreJoshActivity(), FullScreenVideoFragment.OnDis
     private var filePath: String? = null
 
 
-    val DOCX_FILE_MIME_TYPE = arrayOf(
+    private val DOCX_FILE_MIME_TYPE = arrayOf(
         "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
         "application/msword", "application/vnd.ms-excel",
         "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
@@ -274,6 +277,7 @@ class PractiseSubmitActivity : CoreJoshActivity(), FullScreenVideoFragment.OnDis
                             binding.practiseSubmitLayout.visibility = VISIBLE
                             binding.submitFileViewContainer.visibility = VISIBLE
                             binding.fileInfoAttachmentTv.text = fileName
+                            enableSubmitButton()
                         }
                     }
                 }
@@ -422,6 +426,33 @@ class PractiseSubmitActivity : CoreJoshActivity(), FullScreenVideoFragment.OnDis
                     EXPECTED_ENGAGE_TYPE.TX == it -> {
                         binding.practiseInputHeader.text = getString(R.string.type_answer_label)
                         binding.etPractise.visibility = VISIBLE
+                        binding.etPractise.addTextChangedListener(object : TextWatcher {
+                            override fun afterTextChanged(s: Editable) {
+                                if (s.isEmpty()) {
+                                    disableSubmitButton()
+                                } else {
+                                    enableSubmitButton()
+                                }
+                            }
+
+                            override fun beforeTextChanged(
+                                s: CharSequence?,
+                                start: Int,
+                                count: Int,
+                                after: Int
+                            ) {
+                            }
+
+                            override fun onTextChanged(
+                                s: CharSequence?,
+                                start: Int,
+                                before: Int,
+                                count: Int
+                            ) {
+                            }
+
+                        })
+
                     }
                     EXPECTED_ENGAGE_TYPE.AU == it -> {
                         binding.practiseInputHeader.text = getString(R.string.record_answer_label)
@@ -461,7 +492,6 @@ class PractiseSubmitActivity : CoreJoshActivity(), FullScreenVideoFragment.OnDis
                 finishAndRemoveTask()
             } else {
                 binding.progressLayout.visibility = GONE
-
             }
         })
     }
@@ -782,7 +812,9 @@ class PractiseSubmitActivity : CoreJoshActivity(), FullScreenVideoFragment.OnDis
         binding.practiseSubmitLayout.visibility = VISIBLE
         binding.submitAudioViewContainer.visibility = VISIBLE
         binding.submitPractiseSeekbar.max = Utils.getDurationOfMedia(this, filePath!!).toInt()
+        enableSubmitButton()
         scrollToEnd()
+
 
     }
 
@@ -905,9 +937,6 @@ class PractiseSubmitActivity : CoreJoshActivity(), FullScreenVideoFragment.OnDis
             override fun onServiceConnected(componentName: ComponentName, iBinder: IBinder) {
                 mMusicService = (iBinder as MusicService.LocalBinder).instance
                 mPlayerInterface = mMusicService?.mediaPlayerHolder
-                //mMusicNotificationManager = mMusicService?.musicNotificationManager
-
-                // mMusicNotificationManager?.setAccentColor(R.color.colorAccent)
                 if (mPlaybackListener == null) {
                     mPlaybackListener = PlaybackListener()
                     mPlayerInterface?.setPlaybackInfoListener(mPlaybackListener)
@@ -946,11 +975,9 @@ class PractiseSubmitActivity : CoreJoshActivity(), FullScreenVideoFragment.OnDis
                 } else {
                     binding.practiseSeekbar.progress = mPlayerInterface!!.playerPosition
                 }
-
                 updateResetStatus(false)
                 AppObjectController.uiHandler.postDelayed({
                     try {
-
                         //stop foreground if coming from pause state
                         if (mMusicService!!.isRestoredFromPause) {
                             mMusicService!!.stopForeground(false)
@@ -1015,7 +1042,7 @@ class PractiseSubmitActivity : CoreJoshActivity(), FullScreenVideoFragment.OnDis
                 onPlayAudio(chatModel, chatModel.question?.audioList?.getOrNull(0)!!)
             }
         }
-        cAudioId == chatModel.question?.audioList?.getOrNull(0)?.id
+        cAudioId = chatModel.question?.audioList?.getOrNull(0)?.id
         mPlayerInterface?.clearNotification()
 
     }
@@ -1072,6 +1099,7 @@ class PractiseSubmitActivity : CoreJoshActivity(), FullScreenVideoFragment.OnDis
         if (isAudioPlaying()) {
             mPlayerInterface?.resumeOrPause()
         }
+        disableSubmitButton()
 
     }
 
@@ -1090,6 +1118,7 @@ class PractiseSubmitActivity : CoreJoshActivity(), FullScreenVideoFragment.OnDis
             FullScreenVideoFragment.newInstance(filePath!!)
                 .show(supportFragmentManager, "VideoPlay")
         }
+        enableSubmitButton()
         scrollToEnd()
     }
 
@@ -1138,14 +1167,36 @@ class PractiseSubmitActivity : CoreJoshActivity(), FullScreenVideoFragment.OnDis
         binding.practiseSubmitLayout.visibility = GONE
         binding.submitFileViewContainer.visibility = GONE
         binding.fileInfoAttachmentTv.text = EMPTY
+        disableSubmitButton()
+    }
+
+    private fun disableSubmitButton() {
+        binding.submitAnswerBtn.apply {
+            isEnabled = false
+            isClickable = false
+            backgroundTintList = ColorStateList.valueOf(
+                ContextCompat.getColor(
+                    applicationContext,
+                    R.color.seek_bar_background
+                )
+            )
+        }
+    }
+
+    private fun enableSubmitButton() {
+        binding.submitAnswerBtn.apply {
+            isEnabled = true
+            isClickable = true
+            backgroundTintList = ColorStateList.valueOf(
+                ContextCompat.getColor(
+                    applicationContext,
+                    R.color.button_primary_color
+                )
+            )
+        }
     }
 
     fun submitPractise() {
-        if (Utils.isInternetAvailable().not()) {
-            showToast(getString(R.string.internet_not_available_msz))
-            return
-        }
-
         if (chatModel.question != null && chatModel.question!!.expectedEngageType != null) {
             val engageType = chatModel.question?.expectedEngageType
             chatModel.question?.expectedEngageType?.let {
@@ -1180,9 +1231,7 @@ class PractiseSubmitActivity : CoreJoshActivity(), FullScreenVideoFragment.OnDis
 
     inner class PlaybackListener : PlaybackInfoListener() {
         override fun onPositionChanged(position: Int) {
-            Log.e("position", "" + position)
             mPlayerInterface?.clearNotification()
-
             if (!mUserIsSeeking) {
                 RxBus2.publish(SeekBarProgressEventBus(currentAudio!!, position))
             }

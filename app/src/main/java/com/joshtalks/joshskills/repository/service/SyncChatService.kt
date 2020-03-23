@@ -123,7 +123,7 @@ object SyncChatService {
             try {
                 messageObject.conversation = conversation_id
                 val responseChat =
-                    AppObjectController.chatNetworkService.sendMessage(messageObject).await()
+                    AppObjectController.chatNetworkService.sendMessageAsync(messageObject).await()
                 NetworkRequestHelper.updateChat(
                     responseChat,
                     refreshViewLiveData,

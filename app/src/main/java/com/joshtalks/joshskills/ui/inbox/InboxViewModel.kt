@@ -4,12 +4,16 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.crashlytics.android.Crashlytics
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.JoshApplication
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import retrofit2.HttpException
+import java.net.SocketTimeoutException
+import java.net.UnknownHostException
 
 
 class InboxViewModel(application: Application) : AndroidViewModel(application) {
@@ -37,18 +41,31 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
     private fun getCourseFromServer() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val courseList = AppObjectController.chatNetworkService.getRegisterCourses()
-
-                if (courseList.isNullOrEmpty()) {
-                    registerCourseNetworkLiveData.postValue(null)
-                } else {
-                    appDatabase.courseDao().insertRegisterCourses(courseList).let {
-                        registerCourseNetworkLiveData.postValue(
-                            appDatabase.courseDao().getRegisterCourseMinimal()
-                        )
+                val courseListResponse = AppObjectController.chatNetworkService.getRegisterCourses()
+                if (courseListResponse.isSuccessful) {
+                    if (courseListResponse.body().isNullOrEmpty()) {
+                        registerCourseNetworkLiveData.postValue(null)
+                    } else {
+                        appDatabase.courseDao().insertRegisterCourses(courseListResponse.body()!!)
+                            .let {
+                                registerCourseNetworkLiveData.postValue(
+                                    appDatabase.courseDao().getRegisterCourseMinimal()
+                                )
+                            }
                     }
                 }
             } catch (ex: Exception) {
+                ex.printStackTrace()
+
+                when (ex) {
+                    is HttpException -> {
+                    }
+                    is SocketTimeoutException, is UnknownHostException -> {
+                    }
+                    else -> {
+                        Crashlytics.logException(ex)
+                    }
+                }
             }
         }
     }

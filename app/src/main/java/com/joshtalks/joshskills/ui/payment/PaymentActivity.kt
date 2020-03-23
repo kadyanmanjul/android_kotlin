@@ -323,8 +323,7 @@ class PaymentActivity : CoreJoshActivity(),
                 if (userSubmitCode.isNotEmpty()) {
                     map["code"] = userSubmitCode
                 }
-                val response: PaymentDetailsResponse =
-                    AppObjectController.signUpNetworkService.getPaymentDetails(map).await()
+                val response: PaymentDetailsResponse = AppObjectController.signUpNetworkService.getPaymentDetails(map).await()
                 AppAnalytics.create(AnalyticsEvent.PAYMENT_INITIATED.NAME).push()
                 if (courseModel == null) {
                     courseModel = CourseExploreModel()
@@ -365,6 +364,7 @@ class PaymentActivity : CoreJoshActivity(),
                 hideProgress()
                 when (ex) {
                     is HttpException -> {
+                        showToast(getString(R.string.generic_message_for_error))
                     }
                     is SocketTimeoutException, is UnknownHostException -> {
                         showToast(getString(R.string.internet_not_available_msz))

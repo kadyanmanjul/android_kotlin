@@ -4,12 +4,15 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.crashlytics.android.Crashlytics
+import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.JoshApplication
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.io.AppDirectory
+import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
 import com.joshtalks.joshskills.repository.local.entity.EXPECTED_ENGAGE_TYPE
 import com.joshtalks.joshskills.repository.local.entity.PracticeEngagement
@@ -26,6 +29,8 @@ import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import retrofit2.HttpException
 import java.io.File
+import java.net.SocketTimeoutException
+import java.net.UnknownHostException
 
 
 class PractiseViewModel(application: Application) :
@@ -89,28 +94,35 @@ class PractiseViewModel(application: Application) :
                     }
                 }
 
-
-                val resp: PracticeEngagement =
-                    AppObjectController.chatNetworkService.submitPracticeAsync(requestEngage)
-                        .await()
-                resp.localPath = localPath
-
-
-                val list: MutableList<PracticeEngagement> = mutableListOf()
-                list.add(resp)
-                chatModel.question?.let {
-                    AppObjectController.appDatabase.chatDao()
-                        .updatePractiseObject(it.questionId, list)
-
+                val resp = AppObjectController.chatNetworkService.submitPracticeAsync(requestEngage)
+                if (resp.isSuccessful && resp.body() != null) {
+                    resp.body()?.localPath = localPath
+                    val list: MutableList<PracticeEngagement> = mutableListOf()
+                    list.add(resp.body()!!)
+                    chatModel.question?.let {
+                        AppObjectController.appDatabase.chatDao()
+                            .updatePractiseObject(it.questionId, list)
+                    }
+                    requestStatusLiveData.postValue(true)
+                } else {
+                    requestStatusLiveData.postValue(false)
+                    if (resp.code() == 400) {
+                        showToast(context.getString(R.string.generic_message_for_error))
+                    }
                 }
-
-                requestStatusLiveData.postValue(true)
-            } catch (ex: HttpException) {
-                requestStatusLiveData.postValue(false)
-                ex.printStackTrace()
             } catch (ex: Exception) {
                 requestStatusLiveData.postValue(false)
                 ex.printStackTrace()
+                when (ex) {
+                    is HttpException -> {
+                    }
+                    is SocketTimeoutException, is UnknownHostException -> {
+                        showToast(context.getString(R.string.internet_not_available_msz))
+                    }
+                    else -> {
+                        Crashlytics.logException(ex)
+                    }
+                }
             }
         }
     }

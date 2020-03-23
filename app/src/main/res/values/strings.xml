@@ -198,5 +198,5 @@
     <string name="login_dialog_header">Payment complete karne ke liye</string>
     <string name="course_overview">Course Overview</string>
     <string name="submit_practise_msz">Please complete your task before Submitting</string>
-    <string name="generic_message_for_error">An error occurred, please try again later</string>
+    <string name="generic_message_for_error">An error occurred, please try again!</string>
 </resources>

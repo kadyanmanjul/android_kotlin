@@ -16,12 +16,10 @@ import retrofit2.http.*
 interface ChatNetworkService {
 
     @GET("$DIR/course/")
-    suspend fun getRegisterCourses(): List<Course>
-
-
+    suspend fun getRegisterCourses(): Response<List<Course>>
 
     @POST("$DIR/chat/message/")
-    fun sendMessage(@Body messageObject: Any): Deferred<ChatMessageReceiver>
+    fun sendMessageAsync(@Body messageObject: Any): Deferred<ChatMessageReceiver>
 
     @PATCH("$DIR/chat/message/{id}")
     suspend fun deleteMessage(
@@ -61,12 +59,8 @@ interface ChatNetworkService {
     @PATCH("$DIR/chat/message/list/")
     suspend fun updateMessagesStatus(@Body messageObject: Any)
 
-
     @POST("$DIR/practice/engagement/")
-    fun submitPracticeAsync(@Body requestEngage: RequestEngage): Deferred<PracticeEngagement>
-
-    @POST("$DIR/practice/engagement/")
-    fun reply(): ReplaySubject<String>
+    suspend fun submitPracticeAsync(@Body requestEngage: RequestEngage): Response<PracticeEngagement>
 
     @FormUrlEncoded
     @PATCH("$DIR/mentor/gaid/{id}/")
