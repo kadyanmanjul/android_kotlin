@@ -92,7 +92,6 @@
     <string name="relogin">Dobara Login Kare</string>
     <string name="or">OR</string>
     <string name="explore_more_course">EXPLORE MORE COURSES</string>
-    <string name="explore_more_course_small">Explore More Courses</string>
 
     <string name="no_new_message_arrive">No new classes</string>
     <string name="new_message_arrive">New classes downloaded</string>
@@ -193,10 +192,12 @@
     <string name="find_more_course_hint_ftime" formatted="false">Hello %s, Agar aap es course ke sath kuch aur bhi seekhna chahte hain to pehle 7 dino mai aapke paas har course pe %s off hai </string>
     <string name="buy_course_offer_tooltip" formatted="false"> Get %s off on the next course you buy, Valid for %s days.</string>
     <string name="first_time_user_hint">Aapko apne course se related saari videos aur claases isko click karke milengi</string>
-    <string name="share_msz">Share with your friends &amp; family and start earning now!</string>
 
     <string name="login_dialog_header">Payment complete karne ke liye</string>
     <string name="course_overview">Course Overview</string>
     <string name="submit_practise_msz">Please complete your task before Submitting</string>
     <string name="generic_message_for_error">An error occurred, please try again!</string>
+    <string name="referral_header" formatted="false">Give %s, Get %s</string>
+    <string name="share_more_text">Share More, Earn More</string>
+    <string name="go_to_course">Go To Course</string>
 </resources>

@@ -2,10 +2,13 @@ package com.joshtalks.joshskills.repository.service
 
 import com.joshtalks.joshskills.repository.local.model.GaIDMentorModel
 import com.joshtalks.joshskills.repository.local.model.RequestRegisterGId
-import com.joshtalks.joshskills.repository.server.*
+import com.joshtalks.joshskills.repository.server.ComplaintResponse
+import com.joshtalks.joshskills.repository.server.RequestComplaint
+import com.joshtalks.joshskills.repository.server.SuccessResponse
+import com.joshtalks.joshskills.repository.server.TypeOfHelpModel
 import kotlinx.coroutines.Deferred
 import retrofit2.http.*
-import java.util.HashMap
+import java.util.*
 
 @JvmSuppressWildcards
 interface CommonNetworkService {
@@ -22,10 +25,15 @@ interface CommonNetworkService {
     fun registerGAIdAsync(@Body requestRegisterGId: RequestRegisterGId): Deferred<RequestRegisterGId>
 
     @POST("$DIR/mentor/gaid_detail/")
-    fun registerGAIdDetailsAsync(@Body  params: Map<String, String>): Deferred<GaIDMentorModel>
+    fun registerGAIdDetailsAsync(@Body params: Map<String, String>): Deferred<GaIDMentorModel>
 
     @PATCH("$DIR/mentor/gaid_detail/{id}/")
-    fun patchMentorWithGAIdAsync( @Path("id") id: String, @Body params: HashMap<String, @JvmSuppressWildcards List<String>>): Deferred<SuccessResponse>
-//Object
+    fun patchMentorWithGAIdAsync(
+        @Path("id") id: String,
+        @Body params: HashMap<String, @JvmSuppressWildcards List<String>>
+    ): Deferred<SuccessResponse>
 
+
+    @POST("$DIR/payment/verify/")
+    suspend fun verifyPayment(@Body params: Map<String, String>): Any
 }

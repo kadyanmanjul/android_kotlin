@@ -1,7 +1,6 @@
 package com.joshtalks.joshskills.ui.payment
 
 import android.annotation.SuppressLint
-import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
@@ -18,6 +17,7 @@ import com.bumptech.glide.integration.webp.decoder.WebpDrawableTransformation
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
@@ -25,7 +25,6 @@ import com.joshtalks.joshskills.databinding.PaymentProcessFragmentBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.OTPReceivedEventBus
 import com.joshtalks.joshskills.repository.server.CourseExploreModel
-import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -61,14 +60,11 @@ class PaymentProcessFragment : DialogFragment() {
         activity?.run {
             animMoveToTop = AnimationUtils.loadAnimation(applicationContext, R.anim.translate)
             animAlpha = AnimationUtils.loadAnimation(applicationContext, R.anim.fade_out)
-
         }
-
         arguments?.let {
             courseModel = it.getSerializable(COURSE_ID) as CourseExploreModel
         }
         setStyle(STYLE_NO_FRAME, R.style.full_dialog)
-
     }
 
     override fun onStart() {
@@ -141,7 +137,7 @@ class PaymentProcessFragment : DialogFragment() {
                     FrameLayout.LayoutParams.WRAP_CONTENT,
                     Gravity.TOP
                 )
-                paymentProcessFragmentBinding.btnExploreMoreCourse.visibility = View.VISIBLE
+                paymentProcessFragmentBinding.btnInbox.visibility = View.VISIBLE
             }
 
             override fun onAnimationStart(animation: Animation?) {
@@ -191,12 +187,13 @@ class PaymentProcessFragment : DialogFragment() {
             paymentProcessFragmentBinding.successIv.startAnimation(animAlpha)
         }, 750)
 
-        paymentProcessFragmentBinding.btnExploreMoreCourse.setOnClickListener {
-            startActivity(Intent(activity, CourseExploreActivity::class.java).apply {
-                flags = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
-            })
+        paymentProcessFragmentBinding.btnInbox.setOnClickListener {
+            startActivity((activity as BaseActivity).getInboxActivityIntent())
             activity?.finish()
 
+           /* startActivity(Intent(activity, CourseExploreActivity::class.java).apply {
+                addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+            })*/
         }
     }
 

@@ -32,15 +32,27 @@
                 app:layout_constraintWidth_default="percent"
                 app:layout_constraintWidth_percent="0.8" />
 
+        <de.hdodenhof.circleimageview.CircleImageView
+                android:layout_marginTop="@dimen/_8sdp"
+                android:id="@+id/iv_course"
+                android:layout_width="@dimen/_60sdp"
+                android:layout_height="@dimen/_60sdp"
+                android:clickable="true"
+                android:focusable="true"
+                android:src="@drawable/ic_josh_course"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/text_view_1" />
+
         <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_marginTop="@dimen/_8sdp"
                 android:id="@+id/container"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:paddingTop="@dimen/_16sdp"
                 android:paddingBottom="@dimen/_16sdp"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/text_view_1"
+                app:layout_constraintTop_toBottomOf="@id/iv_course"
                 app:layout_constraintWidth_default="percent"
                 app:layout_constraintWidth_percent="0.9">
 
@@ -50,10 +62,9 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:gravity="start|center"
-                    android:lineSpacingExtra="@dimen/_2sdp"
                     android:text="Course"
                     android:textColor="@color/font_color"
-                    android:textSize="@dimen/font_14"
+                    android:textSize="@dimen/font_15"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
@@ -68,7 +79,7 @@
                     android:gravity="end|center"
                     android:text="Amount"
                     android:textColor="@color/font_color"
-                    android:textSize="@dimen/font_14"
+                    android:textSize="@dimen/font_15"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintRight_toRightOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
@@ -78,14 +89,15 @@
 
             <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/tv_course_name"
-                    fontPath="fonts/OpenSans-Regular.ttf"
+                    fontPath="fonts/Roboto-Regular.ttf"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:ellipsize="end"
+                    android:paddingTop="@dimen/_2sdp"
                     android:gravity="start|center"
                     android:maxLines="2"
                     android:textColor="@color/font_color"
-                    android:textSize="@dimen/font_12"
+                    android:textSize="@dimen/font_14"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/tv2"
@@ -93,20 +105,19 @@
                     app:layout_constraintWidth_percent="0.7" />
 
             <androidx.appcompat.widget.AppCompatTextView
+                    android:paddingTop="@dimen/_2sdp"
                     android:id="@+id/tv_course_amount"
-                    fontPath="fonts/OpenSans-Regular.ttf"
+                    fontPath="fonts/Roboto-Regular.ttf"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:gravity="end|center"
                     android:textColor="@color/font_color"
-                    android:textSize="@dimen/font_12"
+                    android:textSize="@dimen/font_14"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintRight_toRightOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/tv3"
                     app:layout_constraintWidth_default="percent"
                     app:layout_constraintWidth_percent="0.25" />
-
-
         </androidx.constraintlayout.widget.ConstraintLayout>
 
 
@@ -123,7 +134,6 @@
                 android:gravity="center"
                 android:onClick="@{()->handler.completePayment()}"
                 android:paddingTop="@dimen/_4sdp"
-                android:paddingBottom="@dimen/_4sdp"
                 android:text="@string/complete_payment"
                 android:textAllCaps="true"
                 android:textColor="@color/white"

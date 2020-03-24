@@ -2,21 +2,14 @@ package com.joshtalks.joshskills.ui.referral
 
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.content.ClipData
-import android.content.ClipboardManager
-import android.content.Context
-import android.content.Intent
+import android.content.*
 import android.content.pm.ActivityInfo
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.view.GestureDetector
-import android.view.Gravity
-import android.view.MotionEvent
-import android.view.View
+import android.view.*
 import android.widget.Toast
-import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.core.text.HtmlCompat
 import androidx.databinding.DataBindingUtil
@@ -68,23 +61,19 @@ class ReferralActivity : BaseActivity() {
     private var userReferralCode: String = EMPTY
     private var userReferralURL: String = EMPTY
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
+        requestWindowFeature(Window.FEATURE_NO_TITLE)
+        window.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
+        this.window.setFlags(
+            WindowManager.LayoutParams.FLAG_FULLSCREEN,
+            WindowManager.LayoutParams.FLAG_FULLSCREEN
+        )
         requestedOrientation = if (Build.VERSION.SDK_INT == 26) {
             ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
         } else {
             ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         }
         super.onCreate(savedInstanceState)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
-        }
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            window.statusBarColor =
-                ContextCompat.getColor(applicationContext, R.color.white)
-        }
-
         activityReferralBinding = DataBindingUtil.setContentView(this, R.layout.activity_referral)
         activityReferralBinding.lifecycleOwner = this
         activityReferralBinding.handler = this
@@ -127,67 +116,42 @@ class ReferralActivity : BaseActivity() {
                 it.printStackTrace()
 
             }
-
-
-        /* FirebaseDynamicLinks.getInstance()
-             .createDynamicLink()
-             .setLink(baseUrl)
-             .setDomainUriPrefix(domain)
-             // .setIosParameters(DynamicLink.IosParameters.Builder("com.joshtalks.joshskills").build())
-             .setAndroidParameters(
-                 DynamicLink.AndroidParameters.Builder(BuildConfig.APPLICATION_ID).build()
-             )
-             .setAndroidParameters(DynamicLink.AndroidParameters.Builder().build())
-             .buildShortDynamicLink(ShortDynamicLink.Suffix.SHORT)
-
-             .addOnSuccessListener { result ->
-                 result?.shortLink?.let {
-                     try {
-                         if (it.toString().isNotEmpty()) {
-                             PrefManager.put(USER_SHARE_SHORT_URL, it.toString())
-                             userReferralURL = it.toString()
-
-                         }
-                     } catch (ex: Exception) {
-                         ex.printStackTrace()
-                     }
-                 }
-             }.addOnFailureListener {
-                 it.printStackTrace()
-             }
- */
     }
 
 
     @ExperimentalUnsignedTypes
-    @SuppressLint("ClickableViewAccessibility")
+    @SuppressLint("ClickableViewAccessibility", "SetTextI18n")
     private fun initView() {
         val refAmount =
             AppObjectController.getFirebaseRemoteConfig().getLong(REFERRAL_EARN_AMOUNT_KEY)
                 .toString()
-        val headerText =
-            "Jab aapke dost App par Course khareedenge tab aapko <font color=#25d366><strong>₹$refAmount milenge</strong></font> (per person)!"
-        activityReferralBinding.tvHeader.text =
-            HtmlCompat.fromHtml(headerText, HtmlCompat.FROM_HTML_MODE_LEGACY)
 
-        val text1 =
-            "Apne <font color=#90a9eb><strong>unique code </strong></font> ko WhatsApp pe apne dosto ke sath share karo"
-        val text2 =
-            "Apne dosto se app download karvake <font color=#90a9eb><strong>payment ke samay ye code use karwaiye</strong></font>"
-        val text3 =
-            "Unko milega unke Pehle Course par <font color=#90a9eb><strong>₹$refAmount ka discount</strong></font>"
-        val text4 =
-            "Apko milenge <font color=#25d366><strong>₹$refAmount bank account mein \uD83D\uDCB0</strong></font>"
 
-        activityReferralBinding.tv1.text =
-            HtmlCompat.fromHtml(text1, HtmlCompat.FROM_HTML_MODE_LEGACY)
-        activityReferralBinding.tv2.text =
-            HtmlCompat.fromHtml(text2, HtmlCompat.FROM_HTML_MODE_LEGACY)
-        activityReferralBinding.tv3.text =
-            HtmlCompat.fromHtml(text3, HtmlCompat.FROM_HTML_MODE_LEGACY)
-        activityReferralBinding.tv4.text =
-            HtmlCompat.fromHtml(text4, HtmlCompat.FROM_HTML_MODE_LEGACY)
+        val referralScreenVersion =
+            AppObjectController.getFirebaseRemoteConfig().getString("referral_screen_page")
 
+        if (referralScreenVersion == "version_1") {
+            activityReferralBinding.tvHeader.text =
+                getString(R.string.referral_header, refAmount, refAmount)
+            activityReferralBinding.textView1.text = HtmlCompat.fromHtml(
+                "Earn <strong><u>₹$refAmount</u></strong> in your account <br/>for every friend who <br/> joins a course!",
+                HtmlCompat.FROM_HTML_MODE_LEGACY
+            )
+            activityReferralBinding.textView2.text = HtmlCompat.fromHtml(
+                "Your friend also gets <br/> <strong>₹$refAmount OFF</strong> on their first course",
+                HtmlCompat.FROM_HTML_MODE_LEGACY
+            )
+        } else if (referralScreenVersion == "version_2") {
+            activityReferralBinding.tvHeader.text = "Earn upto ₹10,000 "
+            activityReferralBinding.textView1.text = HtmlCompat.fromHtml(
+                "Earn <strong><u>₹$refAmount</u></strong> in your account <br/>for every friend who <br/> joins a course!",
+                HtmlCompat.FROM_HTML_MODE_LEGACY
+            )
+            activityReferralBinding.textView2.text = HtmlCompat.fromHtml(
+                "No Conditions Apply",
+                HtmlCompat.FROM_HTML_MODE_LEGACY
+            )
+        }
 
         activityReferralBinding.ivBack.setOnClickListener {
             this@ReferralActivity.finish()
@@ -242,7 +206,11 @@ class ReferralActivity : BaseActivity() {
         activityReferralBinding.tvReferralCode.setOnTouchListener(touchListener)
     }
 
-    fun inviteFriends() {
+    fun inviteOnlyWhatsapp() {
+        inviteFriends("com.whatsapp")
+    }
+
+    fun inviteFriends(packageString: String? = null) {
         WorkMangerAdmin.referralEventTracker(REFERRAL_EVENT.CLICK_ON_SHARE)
         var referralText =
             AppObjectController.getFirebaseRemoteConfig().getString(REFERRAL_SHARE_TEXT_KEY)
@@ -308,17 +276,27 @@ class ReferralActivity : BaseActivity() {
 
                     sendIntent.type = "image/*"
                     sendIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                    val shareIntent =
-                        Intent.createChooser(sendIntent, getString(R.string.app_name))
-                    startActivity(shareIntent)
+
+                    if (packageString.isNullOrEmpty()) {
+                        val shareIntent =
+                            Intent.createChooser(sendIntent, getString(R.string.app_name))
+                        startActivity(shareIntent)
+                    } else {
+                        try {
+                            sendIntent.setPackage(packageString)
+                            startActivity(sendIntent)
+                        } catch (ex: ActivityNotFoundException) {
+                            val shareIntent =
+                                Intent.createChooser(sendIntent, getString(R.string.app_name))
+                            startActivity(shareIntent)
+                        }
+                    }
+
                     AppAnalytics.create(AnalyticsEvent.SHARE_ON_WHATSAPP.NAME).push()
                     return false
                 }
-
             }
             ).submit()
-
-
     }
 
     fun getBitmapFromView(bmp: Bitmap?): File? {

@@ -340,13 +340,15 @@ data class PracticeEngagement(
     @SerializedName("answer_url") val answerUrl: String?,
     @SerializedName("id") val id: Int?,
     @SerializedName("text") val text: String?,
+    @SerializedName("duration") val duration: Int?,
     @Expose var localPath: String? = null
 
 ) : Serializable {
     constructor() : this(
         answerUrl = null,
         id = null,
-        text = null
+        text = null,
+        duration = null
     )
 }
 

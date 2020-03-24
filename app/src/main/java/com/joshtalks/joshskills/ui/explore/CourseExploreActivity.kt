@@ -81,10 +81,16 @@ class CourseExploreActivity : CoreJoshActivity() {
         courseExploreBinding =
             DataBindingUtil.setContentView(this, R.layout.activity_course_explore)
         courseExploreBinding.lifecycleOwner = this
-        //  initActivityAnimation()
         initRV()
         initView()
         loadCourses()
+    }
+
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+            loadCourses()
+
     }
 
 
@@ -117,7 +123,6 @@ class CourseExploreActivity : CoreJoshActivity() {
             }
             return@setOnMenuItemClickListener true
         }
-
     }
 
     private fun initRV() {
@@ -139,10 +144,8 @@ class CourseExploreActivity : CoreJoshActivity() {
 
 
     private fun loadCourses() {
-
         CoroutineScope(Dispatchers.IO).launch {
             try {
-
                 val data = HashMap<String, String>()
                 if (PrefManager.getStringValue(USER_UNIQUE_ID).isNotEmpty()) {
                     data["gaid"] = PrefManager.getStringValue(USER_UNIQUE_ID)
@@ -159,6 +162,7 @@ class CourseExploreActivity : CoreJoshActivity() {
                     if (intent.hasExtra(USER_COURSES) && intent.getSerializableExtra(USER_COURSES) != null) {
                         list = intent.getSerializableExtra(USER_COURSES) as ArrayList<InboxEntity>?
                     }
+                    courseExploreBinding.recyclerView.removeAllViews()
                     response.forEach { courseExploreModel ->
                         list?.let { it ->
                             val entity: InboxEntity? =

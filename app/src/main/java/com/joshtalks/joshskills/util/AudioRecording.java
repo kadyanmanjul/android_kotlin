@@ -10,12 +10,12 @@ public class AudioRecording {
 
     public void startPlayer(File recordFile) {
         recorder = new MediaRecorder();
-        recorder.setAudioChannels(1);
+        recorder.setAudioChannels(2);
         recorder.setAudioSamplingRate(16000);
-        recorder.setAudioEncodingBitRate(32000);
+        recorder.setAudioEncodingBitRate(64000);
         recorder.setAudioSource(MediaRecorder.AudioSource.MIC);
         recorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
-        recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
+        recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_WB);
         recorder.setOutputFile(recordFile.getAbsolutePath());
         try {
             recorder.prepare();

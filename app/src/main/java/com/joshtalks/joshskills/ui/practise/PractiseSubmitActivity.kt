@@ -518,7 +518,6 @@ class PractiseSubmitActivity : CoreJoshActivity(), FullScreenVideoFragment.OnDis
                     EXPECTED_ENGAGE_TYPE.AU == it -> {
                         binding.submitAudioViewContainer.visibility = VISIBLE
                         filePath = practiseEngagement?.answerUrl
-
                         if (PermissionUtils.isStoragePermissionEnable(this@PractiseSubmitActivity) && AppDirectory.isFileExist(
                                 practiseEngagement?.localPath
                             )
@@ -528,8 +527,13 @@ class PractiseSubmitActivity : CoreJoshActivity(), FullScreenVideoFragment.OnDis
                                 Utils.getDurationOfMedia(this@PractiseSubmitActivity, filePath!!)
                                     .toInt()
                         } else {
-                            binding.submitPractiseSeekbar.max = 1_00_000
+                            if (practiseEngagement?.duration != null) {
+                                binding.submitPractiseSeekbar.max = practiseEngagement.duration
+                            } else {
+                                binding.submitPractiseSeekbar.max = 1_00_000
+                            }
                         }
+
 
                         initializePractiseSeekBar()
                         binding.ivCancel.visibility = GONE
@@ -1217,6 +1221,8 @@ class PractiseSubmitActivity : CoreJoshActivity(), FullScreenVideoFragment.OnDis
                 val requestEngage = RequestEngage()
                 requestEngage.text = binding.etPractise.text.toString()
                 requestEngage.localPath = filePath
+                requestEngage.duration =
+                    Utils.getDurationOfMedia(this@PractiseSubmitActivity, filePath)?.toInt()
                 requestEngage.feedbackRequire = chatModel.question?.feedback_require
                 requestEngage.question = chatModel.question?.questionId!!
                 requestEngage.mentor = Mentor.getInstance().getId()

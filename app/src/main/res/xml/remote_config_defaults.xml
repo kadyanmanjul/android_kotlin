@@ -53,6 +53,10 @@
         <key>testing_landing_page</key>
         <value>true</value>
     </entry>
+    <entry>
+        <key>referral_screen_page</key>
+        <value>version_1</value>
+    </entry>
 
 
 </defaultsMap>

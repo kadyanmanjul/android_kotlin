@@ -9,6 +9,10 @@ import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
+import com.bumptech.glide.Glide
+import com.bumptech.glide.integration.webp.decoder.WebpDrawable
+import com.bumptech.glide.integration.webp.decoder.WebpDrawableTransformation
+import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
@@ -37,7 +41,7 @@ class CoursePurchaseDetailFragment : DialogFragment() {
         super.onStart()
         val dialog = dialog
         if (dialog != null) {
-            val width = AppObjectController.screenWidth * .9
+            val width = AppObjectController.screenWidth * .85
             dialog.window?.setLayout(width.toInt(), FrameLayout.LayoutParams.WRAP_CONTENT)
         }
     }
@@ -64,6 +68,13 @@ class CoursePurchaseDetailFragment : DialogFragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.tvCourseName.text = courseModel.courseName
         binding.tvCourseAmount.text = "₹" + String.format("%.2f", courseModel.amount)
+        Glide.with(view.context)
+            .load(courseModel.courseIcon)
+            .optionalTransform(
+                WebpDrawable::class.java,
+                WebpDrawableTransformation(CircleCrop())
+            )
+            .into(binding.ivCourse)
     }
 
     override fun onAttach(context: Context) {

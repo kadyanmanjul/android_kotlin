@@ -78,6 +78,7 @@ class PaymentActivity : CoreJoshActivity(),
     private var amount: Double = 0.0
     private var courseName = EMPTY
     private var userSubmitCode = EMPTY
+    private var razorpayOrderId = EMPTY
     private lateinit var titleView: AppCompatTextView
     private var specialDiscount = false
 
@@ -247,6 +248,7 @@ class PaymentActivity : CoreJoshActivity(),
 
     override fun onPaymentError(p0: Int, p1: String?) {
         userSubmitCode = EMPTY
+        razorpayOrderId= EMPTY
         StyleableToast.Builder(this).gravity(Gravity.TOP)
             .backgroundColor(ContextCompat.getColor(applicationContext, R.color.error_color))
             .text(getString(R.string.something_went_wrong)).cornerRadius(16)
@@ -255,7 +257,7 @@ class PaymentActivity : CoreJoshActivity(),
     }
 
     override fun onPaymentSuccess(razorpayPaymentId: String) {
-
+        razorpayOrderId.verifyPayment()
         AppAnalytics.create(AnalyticsEvent.PURCHASE_COURSE.NAME)
             .addParam(FirebaseAnalytics.Param.ITEM_ID, testId)
             .addParam(FirebaseAnalytics.Param.PRICE, (courseModel?.amount ?: amount).toString())
@@ -301,9 +303,21 @@ class PaymentActivity : CoreJoshActivity(),
             this@PaymentActivity.finish()
         }, 1000 * 59)
         AppAnalytics.create(AnalyticsEvent.PAYMENT_COMPLETED.NAME).push()
-
-
     }
+
+    private fun String.verifyPayment() {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val data = mapOf("razorpay_order_id" to this@verifyPayment)
+                AppObjectController.commonNetworkService.verifyPayment(data)
+            } catch (ex: HttpException) {
+                ex.printStackTrace()
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
 
     private fun getPaymentDetails(testId: String?) {
         WorkMangerAdmin.newCourseScreenEventWorker(courseName, testId, buyInitialize = true)
@@ -323,7 +337,8 @@ class PaymentActivity : CoreJoshActivity(),
                 if (userSubmitCode.isNotEmpty()) {
                     map["code"] = userSubmitCode
                 }
-                val response: PaymentDetailsResponse = AppObjectController.signUpNetworkService.getPaymentDetails(map).await()
+                val response: PaymentDetailsResponse =
+                    AppObjectController.signUpNetworkService.getPaymentDetails(map).await()
                 AppAnalytics.create(AnalyticsEvent.PAYMENT_INITIATED.NAME).push()
                 if (courseModel == null) {
                     courseModel = CourseExploreModel()
@@ -359,8 +374,7 @@ class PaymentActivity : CoreJoshActivity(),
                         }
                     ))
 
-            }
-            catch (ex: Exception) {
+            } catch (ex: Exception) {
                 hideProgress()
                 when (ex) {
                     is HttpException -> {
@@ -409,7 +423,7 @@ class PaymentActivity : CoreJoshActivity(),
                     params
                 )
                 AppAnalytics.create(AnalyticsEvent.RAZORPAY_SDK.NAME).push()
-
+                razorpayOrderId=response.razorpayOrderId
 
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -423,6 +437,7 @@ class PaymentActivity : CoreJoshActivity(),
         courseModel.amount = amount
         courseModel.courseName = courseName
         courseModel.id = testId.toInt()
+        courseModel.courseIcon = this.courseModel?.courseIcon ?: EMPTY
 
         if (isUserSpecialOffer || specialDiscount) {
             onCompletePayment()

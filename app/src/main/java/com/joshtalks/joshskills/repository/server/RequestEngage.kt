@@ -21,6 +21,9 @@ class RequestEngage {
     @SerializedName("text")
     var text: String? = null
 
+    @SerializedName("duration")
+    var duration: Int? = null
+
     @Expose
     var localPath: String? = null
 }

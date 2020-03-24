@@ -9,9 +9,13 @@ import android.view.Window
 import android.view.WindowManager
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
+import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.ui.DefaultTimeBar
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.BaseActivity
+import com.joshtalks.joshskills.core.CountUpTimer
+import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.custom_ui.JoshVideoPlayer
@@ -81,6 +85,7 @@ class VideoPlayerActivity : BaseActivity(), PlayerListener, JoshVideoPlayer.Play
 
         binding.pvPlayer.setActivity(this)
         binding.pvPlayer.setPlayerEventCallback(this)
+
         exoProgress = findViewById(R.id.exo_progress)
         AppAnalytics.create(AnalyticsEvent.VIDEO_WATCH_ACTIVITY.NAME).push()
         try {
@@ -177,6 +182,9 @@ class VideoPlayerActivity : BaseActivity(), PlayerListener, JoshVideoPlayer.Play
             countUpTimer.resume()
         } else {
             countUpTimer.pause()
+        }
+        if (event == Player.STATE_ENDED) {
+            onBackPressed()
         }
     }
 

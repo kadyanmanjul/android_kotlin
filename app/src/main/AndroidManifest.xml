@@ -252,7 +252,7 @@
                 android:name=".ui.referral.ReferralActivity"
                 android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize"
                 android:launchMode="singleTask"
-                android:theme="@style/ConversationTheme" />
+                android:theme="@style/AppNoBarTheme" />
 
         <receiver
                 android:name=".core.custom_ui.audioplayer.service.notification.JcPlayerNotificationReceiver"

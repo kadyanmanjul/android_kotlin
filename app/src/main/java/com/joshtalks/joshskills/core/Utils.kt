@@ -170,6 +170,21 @@ object Utils {
         return 0
 
     }
+    @JvmStatic
+    fun getDurationOfMedia(context: Context, mediaPath: String?): Long? {
+        try {
+            val uri = Uri.parse(mediaPath)
+            val mmr = MediaMetadataRetriever()
+            mmr.setDataSource(context, uri)
+            val durationStr = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)
+            return durationStr.toLong()
+        } catch (ex: Exception) {
+            // ex.printStackTrace()
+
+        }
+        return null
+
+    }
 
     fun convertSecondsToHMmSs(seconds: Long): String {
         val s = seconds % 60

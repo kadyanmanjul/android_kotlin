@@ -427,7 +427,7 @@
                     android:visibility="visible" />
 
             <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btn_explore_more_course"
+                    android:id="@+id/btn_inbox"
                     style="@style/Widget.MaterialComponents.Button"
                     fontPath="fonts/OpenSans-SemiBold.ttf"
                     android:layout_width="wrap_content"
@@ -438,14 +438,41 @@
                     android:background="@drawable/round_rectangle"
                     android:backgroundTint="@color/button_primary_color"
                     android:gravity="center"
-                    android:padding="@dimen/_8sdp"
-                    android:text="@string/explore_more_course_small"
+                    android:paddingStart="@dimen/_12sdp"
+                    android:paddingEnd="@dimen/_12sdp"
+                    android:paddingTop="@dimen/_8sdp"
+                    android:paddingBottom="@dimen/_8sdp"
+                    android:text="@string/go_to_course"
                     android:textAllCaps="false"
                     android:textColor="@color/white"
                     android:textSize="@dimen/font_14"
                     android:visibility="invisible"
                     app:cornerRadius="@dimen/_8sdp"
                     app:rippleColor="@color/white" />
+
+
+            <!--
+                        <com.google.android.material.button.MaterialButton
+                                android:id="@+id/btn_explore_more_course"
+                                style="@style/Widget.MaterialComponents.Button"
+                                fontPath="fonts/OpenSans-SemiBold.ttf"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center|bottom"
+                                android:layout_marginTop="@dimen/_16sdp"
+                                android:layout_marginBottom="@dimen/_4sdp"
+                                android:background="@drawable/round_rectangle"
+                                android:backgroundTint="@color/button_primary_color"
+                                android:gravity="center"
+                                android:padding="@dimen/_8sdp"
+                                android:text="@string/explore_more_course_small"
+                                android:textAllCaps="false"
+                                android:textColor="@color/white"
+                                android:textSize="@dimen/font_14"
+                                android:visibility="invisible"
+                                app:cornerRadius="@dimen/_8sdp"
+                                app:rippleColor="@color/white" />
+            -->
         </FrameLayout>
     </ScrollView>
 </layout>
