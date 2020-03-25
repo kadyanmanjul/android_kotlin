@@ -12,8 +12,8 @@ android {
         applicationId "com.joshtalks.joshskills"
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 75
-        versionName "1.0.75"
+        versionCode 76
+        versionName "1.0.76Beta"
         vectorDrawables.useSupportLibrary true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField "String", "CLIENT_TOKEN", "\"Ctt75ss5IxyHgBJb48diBbHUXIQ1VANCYRykjdcj\""
@@ -264,7 +264,7 @@ dependencies {
     implementation 'me.zhanghai.android.materialplaypausedrawable:library:1.0.0'
 
     implementation 'io.branch.sdk.android:library:4.3.2'
-    implementation(name: "truesdk-0.7-releasePartner", ext: "aar")
+    implementation (name: "truesdk-0.7-releasePartner", ext: "aar")
     implementation 'com.clevertap.android:clevertap-android-sdk:3.5.1'
 
     //Payment Razor pay

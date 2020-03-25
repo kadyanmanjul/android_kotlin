@@ -6,6 +6,7 @@ import android.content.SharedPreferences
 import androidx.preference.PreferenceManager
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.repository.local.AppDatabase
+import io.branch.referral.Branch
 
 const val USER_UNIQUE_ID = "user_unique_id"
 const val FIRST_COURSE_BUY = "first_course_buy"

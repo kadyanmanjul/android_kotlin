@@ -5,19 +5,39 @@ import androidx.work.CoroutineWorker
 import androidx.work.Worker
 import androidx.work.WorkerParameters
 import com.crashlytics.android.Crashlytics
+import com.facebook.appevents.AppEventsConstants
 import com.google.android.gms.ads.MobileAds
 import com.google.android.gms.ads.identifier.AdvertisingIdClient
 import com.google.firebase.database.*
 import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.repository.local.model.*
 import com.joshtalks.joshskills.repository.server.MessageStatusRequest
 import com.joshtalks.joshskills.repository.service.NetworkRequestHelper
+import io.branch.referral.Branch
 import retrofit2.HttpException
 import java.util.*
 
 
 const val INSTALL_REFERRER_SYNC = "install_referrer_sync"
 const val CONVERSATION_ID = "conversation_id"
+
+
+class AppRunRequiredTaskWorker(context: Context, workerParams: WorkerParameters) :
+    CoroutineWorker(context, workerParams) {
+    override suspend fun doWork(): Result {
+        AppAnalytics.flush()
+       // Branch.getInstance(AppObjectController.joshApplication).resetUserSession()
+        AppObjectController.facebookEventLogger.flush()
+        AppObjectController.firebaseAnalytics.resetAnalyticsData()
+        AppObjectController.facebookEventLogger.logEvent(AppEventsConstants.EVENT_NAME_ACTIVATED_APP)
+        WorkMangerAdmin.deviceIdGenerateWorker()
+        WorkMangerAdmin.readMessageUpdating()
+        WorkMangerAdmin.mappingGIDWithMentor()
+        return Result.success()
+    }
+}
+
 
 
 class JoshTalksInstallWorker(context: Context, workerParams: WorkerParameters) :

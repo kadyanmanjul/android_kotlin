@@ -285,14 +285,15 @@ class ReferralActivity : BaseActivity() {
                         try {
                             sendIntent.setPackage(packageString)
                             startActivity(sendIntent)
+                            AppAnalytics.create(AnalyticsEvent.SHARE_ON_WHATSAPP.NAME).push()
+                            return true
                         } catch (ex: ActivityNotFoundException) {
                             val shareIntent =
                                 Intent.createChooser(sendIntent, getString(R.string.app_name))
                             startActivity(shareIntent)
                         }
                     }
-
-                    AppAnalytics.create(AnalyticsEvent.SHARE_ON_WHATSAPP.NAME).push()
+                    AppAnalytics.create(AnalyticsEvent.SHARE_ON_ALL.NAME).push()
                     return false
                 }
             }

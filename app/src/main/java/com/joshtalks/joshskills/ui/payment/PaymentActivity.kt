@@ -248,7 +248,7 @@ class PaymentActivity : CoreJoshActivity(),
 
     override fun onPaymentError(p0: Int, p1: String?) {
         userSubmitCode = EMPTY
-        razorpayOrderId= EMPTY
+        razorpayOrderId = EMPTY
         StyleableToast.Builder(this).gravity(Gravity.TOP)
             .backgroundColor(ContextCompat.getColor(applicationContext, R.color.error_color))
             .text(getString(R.string.something_went_wrong)).cornerRadius(16)
@@ -271,6 +271,7 @@ class PaymentActivity : CoreJoshActivity(),
         bundle.putString(FirebaseAnalytics.Param.CURRENCY, "INR")
         AppObjectController.firebaseAnalytics.logEvent(ECOMMERCE_PURCHASE, bundle)
         WorkMangerAdmin.newCourseScreenEventWorker(courseName, testId, buyCourse = true)
+
         val extras: HashMap<String, String> = HashMap()
         extras["test_id"] = testId
         extras["payment_id"] = razorpayPaymentId
@@ -280,16 +281,19 @@ class PaymentActivity : CoreJoshActivity(),
         BranchIOAnalytics.pushToBranch(BRANCH_STANDARD_EVENT.PURCHASE, extras)
 
         try {
-            val params = Bundle().apply {
-                putString(AppEventsConstants.EVENT_PARAM_CONTENT_ID, testId)
+            if (testId.isNotEmpty() && currency.equals("inr", ignoreCase = true)) {
+                val params = Bundle().apply {
+                    putString(AppEventsConstants.EVENT_PARAM_CONTENT_ID, testId)
+                }
+                AppObjectController.facebookEventLogger.logPurchase(
+                    amount.toBigDecimal(),
+                    Currency.getInstance(currency.trim()),
+                    params
+                )
             }
-            AppObjectController.facebookEventLogger.logPurchase(
-                amount.toBigDecimal(),
-                Currency.getInstance(currency.trim()),
-                params
-            )
         } catch (ex: Exception) {
             ex.printStackTrace()
+            Crashlytics.logException(ex)
         }
 
         uiHandler.post {
@@ -423,7 +427,7 @@ class PaymentActivity : CoreJoshActivity(),
                     params
                 )
                 AppAnalytics.create(AnalyticsEvent.RAZORPAY_SDK.NAME).push()
-                razorpayOrderId=response.razorpayOrderId
+                razorpayOrderId = response.razorpayOrderId
 
             } catch (e: Exception) {
                 e.printStackTrace()

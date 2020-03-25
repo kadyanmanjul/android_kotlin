@@ -83,6 +83,7 @@ enum class AnalyticsEvent(val NAME: String) {
     REFERRAL_SELECTED("Referral Selected"),
     CODE_COPIED("Code Copied"),
     SHARE_ON_WHATSAPP("Share On Whatsapp"),
+    SHARE_ON_ALL("Share On All"),
     HELP_SELECTED("Help Selected"),
     CALL_HELPLINE("Call Helpline"),
     HELP_SUBMITTED("Help Submitted"),

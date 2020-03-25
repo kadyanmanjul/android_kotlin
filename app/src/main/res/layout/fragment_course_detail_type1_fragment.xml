@@ -54,7 +54,7 @@
                             android:background="@drawable/course_page_bg"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintHeight_default="percent"
-                            app:layout_constraintHeight_percent="0.72"
+                            app:layout_constraintHeight_percent="0.73"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent">
 

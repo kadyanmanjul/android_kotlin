@@ -149,7 +149,6 @@ internal class AppObjectController {
             com.joshtalks.joshskills.core.ActivityLifecycleCallback.register(joshApplication)
             ActivityLifecycleCallback.register(joshApplication)
             DateTimeUtils.setTimeZone("UTC")
-
             firebaseAnalytics = FirebaseAnalytics.getInstance(joshApplication)
             firebaseAnalytics.setAnalyticsCollectionEnabled(true)
             AppEventsLogger.activateApp(joshApplication)

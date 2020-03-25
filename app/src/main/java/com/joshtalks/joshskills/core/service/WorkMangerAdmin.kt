@@ -11,6 +11,11 @@ import java.util.concurrent.TimeUnit
 
 object WorkMangerAdmin {
 
+    fun appStartWorker(){
+        WorkManager.getInstance(AppObjectController.joshApplication)
+            .enqueue(OneTimeWorkRequestBuilder<AppRunRequiredTaskWorker>().build())
+    }
+
     fun installReferrerWorker() {
         WorkManager.getInstance(AppObjectController.joshApplication)
             .enqueue(OneTimeWorkRequestBuilder<JoshTalksInstallWorker>().build())

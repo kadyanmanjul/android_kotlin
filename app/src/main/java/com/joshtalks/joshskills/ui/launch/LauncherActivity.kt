@@ -22,14 +22,8 @@ import io.branch.referral.Defines
 class LauncherActivity : CoreJoshActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        WorkMangerAdmin.appStartWorker()
         super.onCreate(savedInstanceState)
-        AppAnalytics.flush()
-        AppObjectController.facebookEventLogger.flush()
-        AppObjectController.firebaseAnalytics.resetAnalyticsData()
-        AppObjectController.facebookEventLogger.logEvent(EVENT_NAME_ACTIVATED_APP)
-        WorkMangerAdmin.deviceIdGenerateWorker()
-        WorkMangerAdmin.readMessageUpdating()
-        WorkMangerAdmin.mappingGIDWithMentor()
         setContentView(R.layout.activity_launcher)
         handleIntent()
     }
