@@ -256,6 +256,7 @@ class PaymentActivity : CoreJoshActivity(),
             .length(Toast.LENGTH_LONG).solidBackground().show()
     }
 
+    @Synchronized
     override fun onPaymentSuccess(razorpayPaymentId: String) {
         razorpayOrderId.verifyPayment()
         AppAnalytics.create(AnalyticsEvent.PURCHASE_COURSE.NAME)

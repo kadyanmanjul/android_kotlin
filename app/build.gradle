@@ -13,7 +13,7 @@ android {
         minSdkVersion 21
         targetSdkVersion 28
         versionCode 76
-        versionName "1.0.76Beta"
+        versionName "1.0.76"
         vectorDrawables.useSupportLibrary true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField "String", "CLIENT_TOKEN", "\"Ctt75ss5IxyHgBJb48diBbHUXIQ1VANCYRykjdcj\""
