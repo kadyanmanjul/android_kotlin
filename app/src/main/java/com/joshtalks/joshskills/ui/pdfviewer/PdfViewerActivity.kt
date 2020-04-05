@@ -94,9 +94,13 @@ class PdfViewerActivity : BaseActivity(), DownloadFile.Listener {
     private fun showPdf() {
         if (pdfObject.downloadedLocalPath.isNullOrEmpty()) {
             remotePDFViewPager = RemotePDFViewPager(applicationContext, pdfObject.url, this)
+            // Disable clip to padding
+            // sets a margin b/w individual pages to ensure that there is a gap b/w them
+            remotePDFViewPager?.pageMargin = 20;
 
         } else {
             val pdfViewPager = PDFViewPager(applicationContext, pdfObject.downloadedLocalPath)
+            pdfViewPager?.pageMargin = 20;
             conversationBinding.remotePdfRoot.addView(pdfViewPager)
 
         }

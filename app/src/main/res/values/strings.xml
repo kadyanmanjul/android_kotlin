@@ -200,4 +200,14 @@
     <string name="referral_header" formatted="false">Give %s, Get %s</string>
     <string name="share_more_text">Share More, Earn More</string>
     <string name="go_to_course">Go To Course</string>
+    <string name="video_url_not_exist">Something went wrong! Video does not exist</string>
+
+
+
+
+    <string name="bvp_right">RIGHT</string>
+    <string name="bvp_left">LEFT</string>
+    <string name="volume">Volume: %1$d</string>
+    <string name="brightness">Brightness: %1$d</string>
+    <string name="seconds">%1$d seconds</string>
 </resources>

@@ -125,11 +125,11 @@ class PracticeViewHolder(activityRef: WeakReference<FragmentActivity>, message: 
     fun onClickRootView() {
         RxBus2.publish(PractiseSubmitEventBus(viewHolder, message))
     }
-
+/*
     @Click(R.id.status_tv)
     fun onClickStatusView() {
         RxBus2.publish(PractiseSubmitEventBus(viewHolder, message))
-    }
+    }*/
 
     override fun getRoot(): FrameLayout {
         return rootView

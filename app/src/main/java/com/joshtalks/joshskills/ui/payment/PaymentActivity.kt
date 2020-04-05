@@ -44,6 +44,7 @@ import com.muddzdev.styleabletoast.StyleableToast
 import com.razorpay.Checkout
 import com.razorpay.PaymentResultListener
 import io.branch.referral.util.BRANCH_STANDARD_EVENT
+import io.branch.referral.util.CurrencyType
 import io.reactivex.Maybe
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -81,6 +82,7 @@ class PaymentActivity : CoreJoshActivity(),
     private var razorpayOrderId = EMPTY
     private lateinit var titleView: AppCompatTextView
     private var specialDiscount = false
+    private var isEcommereceEventFire = true
 
     companion object {
         fun startPaymentActivity(
@@ -259,42 +261,10 @@ class PaymentActivity : CoreJoshActivity(),
     @Synchronized
     override fun onPaymentSuccess(razorpayPaymentId: String) {
         razorpayOrderId.verifyPayment()
-        AppAnalytics.create(AnalyticsEvent.PURCHASE_COURSE.NAME)
-            .addParam(FirebaseAnalytics.Param.ITEM_ID, testId)
-            .addParam(FirebaseAnalytics.Param.PRICE, (courseModel?.amount ?: amount).toString())
-            .push()
-        AppObjectController.firebaseAnalytics.resetAnalyticsData()
-        val bundle = Bundle()
-        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, testId)
-        bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, courseName)
-        bundle.putDouble(FirebaseAnalytics.Param.PRICE, (courseModel?.amount ?: amount))
-        bundle.putString(FirebaseAnalytics.Param.TRANSACTION_ID, razorpayPaymentId)
-        bundle.putString(FirebaseAnalytics.Param.CURRENCY, "INR")
-        AppObjectController.firebaseAnalytics.logEvent(ECOMMERCE_PURCHASE, bundle)
-        WorkMangerAdmin.newCourseScreenEventWorker(courseName, testId, buyCourse = true)
 
-        val extras: HashMap<String, String> = HashMap()
-        extras["test_id"] = testId
-        extras["payment_id"] = razorpayPaymentId
-        extras["currency"] = currency
-        extras["amount"] = (courseModel?.amount ?: amount).toString()
-        extras["course_name"] = courseName
-        BranchIOAnalytics.pushToBranch(BRANCH_STANDARD_EVENT.PURCHASE, extras)
-
-        try {
-            if (testId.isNotEmpty() && currency.equals("inr", ignoreCase = true)) {
-                val params = Bundle().apply {
-                    putString(AppEventsConstants.EVENT_PARAM_CONTENT_ID, testId)
-                }
-                AppObjectController.facebookEventLogger.logPurchase(
-                    amount.toBigDecimal(),
-                    Currency.getInstance(currency.trim()),
-                    params
-                )
-            }
-        } catch (ex: Exception) {
-            ex.printStackTrace()
-            Crashlytics.logException(ex)
+        if (isEcommereceEventFire && amount > 0 && razorpayPaymentId.isNotEmpty() && testId.isNotEmpty()) {
+            isEcommereceEventFire = false
+            addECommerceEvent(razorpayPaymentId)
         }
 
         uiHandler.post {
@@ -329,13 +299,11 @@ class PaymentActivity : CoreJoshActivity(),
         AppObjectController.uiHandler.post {
             activityPaymentBinding.progressBar.visibility = View.VISIBLE
         }
-        BranchIOAnalytics.pushToBranch(BRANCH_STANDARD_EVENT.INITIATE_PURCHASE)
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 if (testId.isNullOrEmpty().not() && testId.equals("null").not()) {
                     this@PaymentActivity.testId = testId!!
                 }
-
                 val map = HashMap<String, String>()
                 map["mobile"] = User.getInstance().phoneNumber
                 map["id"] = this@PaymentActivity.testId
@@ -345,6 +313,8 @@ class PaymentActivity : CoreJoshActivity(),
                 val response: PaymentDetailsResponse =
                     AppObjectController.signUpNetworkService.getPaymentDetails(map).await()
                 AppAnalytics.create(AnalyticsEvent.PAYMENT_INITIATED.NAME).push()
+                BranchIOAnalytics.pushToBranch(BRANCH_STANDARD_EVENT.INITIATE_PURCHASE)
+
                 if (courseModel == null) {
                     courseModel = CourseExploreModel()
                     courseModel?.amount = response.amount
@@ -685,5 +655,47 @@ class PaymentActivity : CoreJoshActivity(),
         requestForPayment()
     }
 
+
+    private fun addECommerceEvent(razorpayPaymentId: String) {
+        WorkMangerAdmin.newCourseScreenEventWorker(courseName, testId, buyCourse = true)
+        AppAnalytics.create(AnalyticsEvent.PURCHASE_COURSE.NAME)
+            .addParam(FirebaseAnalytics.Param.ITEM_ID, testId)
+            .addParam(FirebaseAnalytics.Param.PRICE, (amount).toString())
+            .push()
+
+        AppObjectController.firebaseAnalytics.resetAnalyticsData()
+        val bundle = Bundle()
+        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, testId)
+        bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, courseName)
+        bundle.putDouble(FirebaseAnalytics.Param.PRICE, amount)
+        bundle.putString(FirebaseAnalytics.Param.TRANSACTION_ID, razorpayPaymentId)
+        bundle.putString(FirebaseAnalytics.Param.CURRENCY, "INR")
+        AppObjectController.firebaseAnalytics.logEvent(ECOMMERCE_PURCHASE, bundle)
+
+        val extras: HashMap<String, String> = HashMap()
+        extras["test_id"] = testId
+        extras["payment_id"] = razorpayPaymentId
+        extras["currency"] = CurrencyType.INR.name
+        extras["amount"] = amount.toString()
+        extras["course_name"] = courseName
+        BranchIOAnalytics.pushToBranch(BRANCH_STANDARD_EVENT.PURCHASE, extras)
+
+
+        try {
+            val params = Bundle().apply {
+                putString(AppEventsConstants.EVENT_PARAM_CONTENT_ID, testId)
+            }
+            AppObjectController.facebookEventLogger.logPurchase(
+                amount.toBigDecimal(),
+                Currency.getInstance(currency.trim()),
+                params
+            )
+
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+            Crashlytics.logException(ex)
+        }
+
+    }
 
 }

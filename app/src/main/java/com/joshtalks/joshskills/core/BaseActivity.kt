@@ -20,6 +20,7 @@ import com.joshtalks.joshskills.core.service.WorkMangerAdmin
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.service.EngagementNetworkHelper
+import com.joshtalks.joshskills.ui.help.HelpActivity
 import com.joshtalks.joshskills.ui.inbox.InboxActivity
 import com.joshtalks.joshskills.ui.profile.CropImageActivity
 import com.joshtalks.joshskills.ui.profile.ProfileActivity
@@ -51,6 +52,13 @@ abstract class BaseActivity : AppCompatActivity() {
         AppObjectController.screenWidth = displayMetrics.widthPixels
         initUserForCrashlytics()
         InstallReferralUtil.installReferrer(applicationContext)
+        Branch.getInstance().setIdentity(PrefManager.getStringValue(USER_UNIQUE_ID))
+    }
+
+    fun openHelpActivity() {
+        val i = Intent(this, HelpActivity::class.java)
+        startActivityForResult(i, HELP_ACTIVITY_REQUEST_CODE)
+        AppAnalytics.create(AnalyticsEvent.HELP_SELECTED.NAME).push()
     }
 
 
@@ -111,9 +119,8 @@ abstract class BaseActivity : AppCompatActivity() {
             Crashlytics.getInstance().core.setUserEmail(User.getInstance().email)
             Crashlytics.getInstance()
                 .core.setUserIdentifier(
-                User.getInstance().phoneNumber + "$" + Mentor.getInstance().getId()
-            )
-            Branch.getInstance().setIdentity(Mentor.getInstance().getId())
+                    User.getInstance().phoneNumber + "$" + Mentor.getInstance().getId()
+                )
 
         } catch (ex: Exception) {
         }

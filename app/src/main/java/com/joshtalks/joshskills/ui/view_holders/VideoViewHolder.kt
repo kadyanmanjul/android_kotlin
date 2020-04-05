@@ -280,16 +280,16 @@ class VideoViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
         if (message.url != null) {
             if (message.downloadStatus == DOWNLOAD_STATUS.DOWNLOADED) {
                 RxBus2.publish(PlayVideoEvent(message))
-            } /*else if (AppDirectory.isFileExist(message.downloadedLocalPath).not()) {
-                Log.e("file not exist", "file not exist")
-            }*/
+            } else if (AppDirectory.isFileExist(message.downloadedLocalPath).not()) {
+               showToast(getAppContext().getString(R.string.video_url_not_exist))
+            }
         } else {
             message.question?.videoList?.getOrNull(0)?.let { _ ->
                 if (message.downloadStatus == DOWNLOAD_STATUS.DOWNLOADED) {
                     RxBus2.publish(PlayVideoEvent(message))
                     return
                 }
-                if (message.downloadStatus == DOWNLOAD_STATUS.DOWNLOADING && message.progress > MINIMUM_VIDEO_DOWNLOAD_PROGRESS) {
+                if (message.downloadStatus == DOWNLOAD_STATUS.DOWNLOADING ) {
                     RxBus2.publish(PlayVideoEvent(message))
                     return
                 }
@@ -297,6 +297,7 @@ class VideoViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
                     return
                 }
                 RxBus2.publish(DownloadMediaEventBus(this, message))
+                RxBus2.publish(PlayVideoEvent(message))
             }
         }
     }

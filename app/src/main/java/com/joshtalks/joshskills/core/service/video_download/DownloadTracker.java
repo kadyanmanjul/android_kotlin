@@ -16,8 +16,11 @@ import com.google.android.exoplayer2.offline.DownloadManager;
 import com.google.android.exoplayer2.offline.DownloadRequest;
 import com.google.android.exoplayer2.offline.DownloadService;
 import com.google.android.exoplayer2.source.TrackGroupArray;
+import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.MappingTrackSelector.MappedTrackInfo;
+import com.google.android.exoplayer2.trackselection.TrackSelection;
+import com.google.android.exoplayer2.trackselection.TrackSelectionParameters;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.util.Log;
 import com.google.android.exoplayer2.util.Util;
@@ -187,7 +190,17 @@ public class DownloadTracker {
                 for (int periodIndex = 0; periodIndex < downloadHelper.getPeriodCount(); periodIndex++) {
                     downloadHelper.clearTrackSelections(periodIndex);
                     for (int i = 0; i < mappedTrackInfo.getRendererCount(); i++) {
-                        downloadHelper.addTrackSelectionForSingleRenderer(periodIndex, i, DownloadHelper.DEFAULT_TRACK_SELECTOR_PARAMETERS, getOverrides(i));
+                        TrackSelection.Factory trackSelectionFactory = new AdaptiveTrackSelection.Factory();
+                        DefaultTrackSelector trackSelector = new DefaultTrackSelector(context, trackSelectionFactory);
+                        DefaultTrackSelector.Parameters currentParameters = trackSelector.getParameters();
+                        DefaultTrackSelector.Parameters newParameters = currentParameters
+                                .buildUpon()
+                                .setForceLowestBitrate(true)
+                                .setForceHighestSupportedBitrate(false)
+                               // .setMaxVideoSizeSd()
+                                .build();
+                        trackSelector.setParameters(newParameters);
+                        downloadHelper.addTrackSelectionForSingleRenderer(periodIndex, i, newParameters, getOverrides(i));
                     }
                 }
 

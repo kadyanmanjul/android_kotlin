@@ -79,6 +79,7 @@ public class PDFViewPager extends VerticalViewPager {
     protected void initAdapter(Context context, String pdfPath) {
         setAdapter(new PDFPagerAdapter.Builder(context)
                 .setPdfPath(pdfPath)
+                .setScale((float) 0.7)
                 .setOffScreenSize(getOffscreenPageLimit())
                 .create());
     }

@@ -1,1 +1,3 @@
-include ':app', ':joshlibrary', ':recordview', ':emojiBase', ':animationlibrary', ':emoji-google', ':appcamera', ':mediapicker', ':pixeditor', ':pdfviewer'
+include ':app', ':joshlibrary', ':recordview', ':emojiBase',  ':emoji-google', ':appcamera', ':mediapicker', ':pixeditor', ':pdfviewer'
+
+//':animationlibrary',

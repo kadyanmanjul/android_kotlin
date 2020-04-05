@@ -47,7 +47,8 @@ class JoshApplication : BranchApp(), LifecycleObserver {
             FacebookSdk.setIsDebugEnabled(true)
             FacebookSdk.addLoggingBehavior(LoggingBehavior.APP_EVENTS)
             Branch.enableDebugMode()
-            IntegrationValidator.validate(this)
+            Branch.enableSimulateInstalls()
+           // IntegrationValidator.validate(this)
             Timber.plant(Timber.DebugTree())
 
             FL.init(

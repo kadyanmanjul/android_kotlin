@@ -57,5 +57,9 @@
 
     <color name="forground_bg">#AA34B7F1</color>
 
+    <color name="media_tv_bg">#44000000</color>
+    <color name="bg_tint">#88ffffff</color>
+
+
 
 </resources>

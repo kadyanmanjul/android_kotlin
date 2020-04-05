@@ -25,6 +25,4 @@
     <item name="android:windowExitAnimation">@anim/dispose_center</item>
   </style>
 
-
-
 </resources>

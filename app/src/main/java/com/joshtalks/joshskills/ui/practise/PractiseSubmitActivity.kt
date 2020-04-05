@@ -60,7 +60,7 @@ import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.RequestEngage
 import com.joshtalks.joshskills.ui.extra.ImageShowFragment
 import com.joshtalks.joshskills.ui.pdfviewer.PdfViewerActivity
-import com.joshtalks.joshskills.ui.video_player.FullScreenVideoFragment
+import com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
@@ -77,7 +77,7 @@ const val IMAGE_OR_VIDEO_SELECT_REQUEST_CODE = 1081
 const val TEXT_FILE_ATTACHMENT_REQUEST_CODE = 1082
 
 
-class PractiseSubmitActivity : CoreJoshActivity(), FullScreenVideoFragment.OnDismissListener {
+class PractiseSubmitActivity : CoreJoshActivity() {
     private var compositeDisposable = CompositeDisposable()
 
     private lateinit var binding: ActivityPraticeSubmitBinding
@@ -291,13 +291,6 @@ class PractiseSubmitActivity : CoreJoshActivity(), FullScreenVideoFragment.OnDis
         super.onActivityResult(requestCode, resultCode, returnIntent)
     }
 
-    override fun onDismiss() {
-        try {
-            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-        } catch (ex: Exception) {
-        }
-    }
-
     private fun subscribeRXBus() {
         compositeDisposable.add(
             RxBus2.listen(SeekBarProgressEventBus::class.java)
@@ -317,9 +310,7 @@ class PractiseSubmitActivity : CoreJoshActivity(), FullScreenVideoFragment.OnDis
 
                             }
                         }
-                        //  txtCurrentDurationTV.text = PlayerUtil.toTimeSongString(it.progress)
                     }
-
                 }, {
                     it.printStackTrace()
                 })
@@ -368,8 +359,14 @@ class PractiseSubmitActivity : CoreJoshActivity(), FullScreenVideoFragment.OnDis
                         binding.videoPlayer.setUrl(it)
                         binding.videoPlayer.fitToScreen()
                         binding.videoPlayer.setPlayListener {
-                            FullScreenVideoFragment.newInstance(this.videoList?.getOrNull(0)?.video_url!!)
-                                .show(supportFragmentManager, "VideoPlay")
+                            val videoId = this.videoList?.getOrNull(0)?.id
+                            val videoUrl = this.videoList?.getOrNull(0)?.video_url
+                            VideoPlayerActivity.startConversionActivityV2(
+                                this@PractiseSubmitActivity,
+                                "",
+                                videoId,
+                                videoUrl
+                            )
                         }
                         binding.videoPlayer.downloadStreamButNotPlay()
                     }
@@ -553,8 +550,14 @@ class PractiseSubmitActivity : CoreJoshActivity(), FullScreenVideoFragment.OnDis
                             binding.videoPlayerSubmit.setUrl(filePath)
                             binding.videoPlayerSubmit.fitToScreen()
                             binding.videoPlayerSubmit.setPlayListener {
-                                FullScreenVideoFragment.newInstance(filePath!!)
-                                    .show(supportFragmentManager, "VideoPlay")
+                                VideoPlayerActivity.startConversionActivityV2(
+                                    this@PractiseSubmitActivity,
+                                    null,
+                                    null,
+                                    filePath
+                                )
+                                /* FullScreenVideoFragment.newInstance(filePath!!)
+                                     .show(supportFragmentManager, "VideoPlay")*/
                             }
                             binding.videoPlayerSubmit.downloadStreamButNotPlay()
 
@@ -684,11 +687,8 @@ class PractiseSubmitActivity : CoreJoshActivity(), FullScreenVideoFragment.OnDis
                                     selectVideoFromStorage()
                                 } else if (EXPECTED_ENGAGE_TYPE.AU == expectedEngageType) {
                                     selectAudioFromStorage()
-                                }/*else if (EXPECTED_ENGAGE_TYPE.IM == expectedEngageType) {
-                                    selectImageFromStorage()
-                                }*/
+                                }
                                 return
-
                             }
                             if (report.isAnyPermissionPermanentlyDenied) {
                                 PermissionUtils.cameraStoragePermissionPermanentlyDeniedDialog(this@PractiseSubmitActivity)
@@ -704,10 +704,7 @@ class PractiseSubmitActivity : CoreJoshActivity(), FullScreenVideoFragment.OnDis
                         token?.continuePermissionRequest()
                     }
                 })
-
-
         }
-
     }
 
 
@@ -766,18 +763,10 @@ class PractiseSubmitActivity : CoreJoshActivity(), FullScreenVideoFragment.OnDis
                 it.let {
                     it[0].path?.let { path ->
                         initVideoPractise(path)
-                        /*VideoTrimmerActivity.startTrimmerActivity(
-                            this@PractiseSubmitActivity,
-                            VIDEO_COMPRESS,
-                            Uri.fromFile(File(path)),
-                            File(path),
-                            File(path).absolutePath
-                        )*/
                     }
                 }
             }, {
                 it.printStackTrace()
-
             })
     }
 
@@ -808,8 +797,6 @@ class PractiseSubmitActivity : CoreJoshActivity(), FullScreenVideoFragment.OnDis
                 it.printStackTrace()
 
             })
-
-
     }
 
     private fun audioAttachmentInit() {
@@ -818,10 +805,7 @@ class PractiseSubmitActivity : CoreJoshActivity(), FullScreenVideoFragment.OnDis
         binding.submitPractiseSeekbar.max = Utils.getDurationOfMedia(this, filePath!!).toInt()
         enableSubmitButton()
         scrollToEnd()
-
-
     }
-
 
     private fun uploadTextFileChooser() {
         val intent = Intent(Intent.ACTION_GET_CONTENT)
@@ -830,9 +814,7 @@ class PractiseSubmitActivity : CoreJoshActivity(), FullScreenVideoFragment.OnDis
         intent.putExtra(Intent.EXTRA_MIME_TYPES, DOCX_FILE_MIME_TYPE)
         intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true)
         startActivityForResult(intent, TEXT_FILE_ATTACHMENT_REQUEST_CODE)
-
     }
-
 
     private fun recordPermission() {
         PermissionUtils.audioRecordStorageReadAndWritePermission(this,
@@ -885,14 +867,10 @@ class PractiseSubmitActivity : CoreJoshActivity(), FullScreenVideoFragment.OnDis
                     val params =
                         binding.counterContainer.layoutParams as ViewGroup.MarginLayoutParams
                     params.topMargin = binding.rootView.scrollY
-                    //  binding.counterContainer.layoutParams=params
                     practiseViewModel.startRecord()
                     binding.audioPractiseHint.visibility = GONE
-
                 }
-
                 MotionEvent.ACTION_MOVE -> {
-
                 }
                 MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
                     binding.rootView.requestDisallowInterceptTouchEvent(false)
@@ -900,7 +878,6 @@ class PractiseSubmitActivity : CoreJoshActivity(), FullScreenVideoFragment.OnDis
                     practiseViewModel.stopRecording()
                     binding.uploadPractiseView.clearAnimation()
                     binding.counterContainer.visibility = GONE
-
                     binding.audioPractiseHint.visibility = VISIBLE
                     window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
@@ -1003,7 +980,6 @@ class PractiseSubmitActivity : CoreJoshActivity(), FullScreenVideoFragment.OnDis
                 if (mPlayerInterface!!.state != PlaybackInfoListener.State.COMPLETED && mPlayerInterface!!.isPlaying) {
                     mPlayerInterface?.resumeOrPause()
                     mPlayerInterface?.clearNotification()
-                    // mPlayerInterface?.reset()
                 }
                 setAudioPlayerStateDefault()
             }
@@ -1022,7 +998,6 @@ class PractiseSubmitActivity : CoreJoshActivity(), FullScreenVideoFragment.OnDis
 
 
     fun playPracticeAudio() {
-
         if (Utils.getCurrentMediaVolume(applicationContext) <= 0) {
             StyleableToast.Builder(applicationContext).gravity(Gravity.BOTTOM)
                 .text(getString(R.string.volume_up_message)).cornerRadius(16)
@@ -1119,8 +1094,15 @@ class PractiseSubmitActivity : CoreJoshActivity(), FullScreenVideoFragment.OnDis
         binding.videoPlayerSubmit.fitToScreen()
         binding.videoPlayerSubmit.downloadStreamButNotPlay()
         binding.videoPlayerSubmit.setPlayListener {
+            VideoPlayerActivity.startConversionActivityV2(
+                this@PractiseSubmitActivity,
+                null,
+                null,
+                filePath
+            )
+/*
             FullScreenVideoFragment.newInstance(filePath!!)
-                .show(supportFragmentManager, "VideoPlay")
+                .show(supportFragmentManager, "VideoPlay")*/
         }
         enableSubmitButton()
         scrollToEnd()
@@ -1256,12 +1238,10 @@ class PractiseSubmitActivity : CoreJoshActivity(), FullScreenVideoFragment.OnDis
         override fun onPlaybackCompleted() {
             updateResetStatus(true)
             mPlayerInterface?.clearNotification()
-
         }
 
         override fun onPlaybackStop() {
             mPlayerInterface?.clearNotification()
-
         }
     }
 

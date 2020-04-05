@@ -7,8 +7,6 @@
         android:layout_height="wrap_content"
         android:background="@color/white"
         android:clickable="true"
-        android:clipChildren="false"
-        android:clipToPadding="false"
         android:elevation="0dp"
         android:enabled="true"
         android:focusable="true"
@@ -25,9 +23,6 @@
     <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:clickable="false"
-            android:enabled="false"
-            android:focusable="false"
             android:paddingStart="@dimen/_15sdp"
             android:paddingTop="@dimen/_10sdp"
             android:paddingEnd="@dimen/_15sdp">

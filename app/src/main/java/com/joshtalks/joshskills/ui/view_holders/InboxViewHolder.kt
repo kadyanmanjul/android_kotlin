@@ -186,41 +186,8 @@ class InboxViewHolder(
 
     }
 
-
     @Click(R.id.root_view)
     fun onClick() {
         RxBus2.publish(OpenCourseEventBus(inboxEntity))
     }
-
-    @Click(R.id.profile_image)
-    fun onClickProfileImage() {
-        RxBus2.publish(OpenCourseEventBus(inboxEntity))
-    }
-
-    @Click(R.id.tv_name)
-    fun onClickCourseName() {
-        RxBus2.publish(OpenCourseEventBus(inboxEntity))
-    }
-
-    @Click(R.id.tv_last_message_status)
-    fun onClickLastMessageStatus() {
-        RxBus2.publish(OpenCourseEventBus(inboxEntity))
-    }
-
-    @Click(R.id.tv_last_message)
-    fun onClickLastMessage() {
-        RxBus2.publish(OpenCourseEventBus(inboxEntity))
-    }
-
-    @Click(R.id.tv_last_message_time)
-    fun onClickLastMessageTime() {
-        RxBus2.publish(OpenCourseEventBus(inboxEntity))
-    }
-
-    @Click(R.id.tv_notification)
-    fun onClickNotification() {
-        RxBus2.publish(OpenCourseEventBus(inboxEntity))
-    }
-
-
 }

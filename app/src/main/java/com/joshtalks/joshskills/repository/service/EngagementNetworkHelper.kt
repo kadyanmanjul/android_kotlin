@@ -1,8 +1,11 @@
 package com.joshtalks.joshskills.repository.service
 
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.USER_UNIQUE_ID
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
+import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.NotificationObject
 import com.joshtalks.joshskills.repository.server.engage.*
 import kotlinx.coroutines.CoroutineScope
@@ -18,7 +21,9 @@ object EngagementNetworkHelper {
                 if (videoEngage.watchTime == 0L) {
                     return@launch
                 }
-                AppObjectController.chatNetworkService.engageVideo(videoEngage)
+                videoEngage.gID = PrefManager.getStringValue(USER_UNIQUE_ID)
+                videoEngage.mentorId = Mentor.getInstance().getId()
+                AppObjectController.chatNetworkService.engageVideoApiV2(videoEngage)
             } catch (ex: Exception) {
                 ex.printStackTrace()
             }

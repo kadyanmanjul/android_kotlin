@@ -27,7 +27,7 @@ class AppRunRequiredTaskWorker(context: Context, workerParams: WorkerParameters)
     CoroutineWorker(context, workerParams) {
     override suspend fun doWork(): Result {
         AppAnalytics.flush()
-       // Branch.getInstance(AppObjectController.joshApplication).resetUserSession()
+        // Branch.getInstance(AppObjectController.joshApplication).resetUserSession()
         AppObjectController.facebookEventLogger.flush()
         AppObjectController.firebaseAnalytics.resetAnalyticsData()
         AppObjectController.facebookEventLogger.logEvent(AppEventsConstants.EVENT_NAME_ACTIVATED_APP)
@@ -37,7 +37,6 @@ class AppRunRequiredTaskWorker(context: Context, workerParams: WorkerParameters)
         return Result.success()
     }
 }
-
 
 
 class JoshTalksInstallWorker(context: Context, workerParams: WorkerParameters) :
@@ -70,9 +69,13 @@ class FindMoreEventWorker(context: Context, workerParams: WorkerParameters) :
     Worker(context, workerParams) {
 
     override fun doWork(): Result {
-        val database = FirebaseDatabase.getInstance()
-        val myRef = database.getReference(FIND_MORE_FIREBASE_DATABASE)
-        myRef.child(System.currentTimeMillis().toString()).setValue(Mentor.getInstance().getId())
+        try {
+            val database = FirebaseDatabase.getInstance()
+            val myRef = database.getReference(FIND_MORE_FIREBASE_DATABASE)
+            myRef.child(System.currentTimeMillis().toString())
+                .setValue(Mentor.getInstance().getId())
+        } catch (ex: Exception) {
+        }
         return Result.success()
     }
 
@@ -85,11 +88,14 @@ class BuyNowEventWorker(context: Context, private val workerParams: WorkerParame
     Worker(context, workerParams) {
 
     override fun doWork(): Result {
-        val courseName = workerParams.inputData.getString("course_name")
-        val database = FirebaseDatabase.getInstance()
-        val myRef = database.getReference(BUY_NOW_FIREBASE_DATABASE)
-        myRef.child(courseName + "_" + System.currentTimeMillis().toString())
-            .setValue(Mentor.getInstance().getId())
+        try {
+            val courseName = workerParams.inputData.getString("course_name")
+            val database = FirebaseDatabase.getInstance()
+            val myRef = database.getReference(BUY_NOW_FIREBASE_DATABASE)
+            myRef.child(courseName + "_" + System.currentTimeMillis().toString())
+                .setValue(Mentor.getInstance().getId())
+        } catch (ex: Exception) {
+        }
         return Result.success()
     }
 
@@ -142,6 +148,7 @@ class UniqueIdGenerationWorker(var context: Context, workerParams: WorkerParamet
             if (PrefManager.hasKey(USER_UNIQUE_ID).not()) {
                 val id = getGoogleAdId(context)
                 PrefManager.put(USER_UNIQUE_ID, id)
+                Branch.getInstance().setIdentity(id)
             }
         } catch (ex: Exception) {
             ex.printStackTrace()

@@ -40,6 +40,12 @@ interface ChatNetworkService {
     @POST("$DIR/engage/video/")
     suspend fun engageVideo(@Body messageObject: Any)
 
+    @POST("$DIR/engage/video_course/")
+    suspend fun engageVideoApiV2(@Body messageObject: Any)
+
+
+
+
     @POST("$DIR/engage/audio/")
     suspend fun engageAudio(@Body messageObject: Any)
 

@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:ignore="MissingDefaultResource">
+
+    <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/position_text_view"
+            fontPath="fonts/Roboto-Medium.ttf"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginStart="@dimen/_24sdp"
+            android:layout_marginEnd="@dimen/_24sdp"
+            android:background="@drawable/round_rect_default"
+            android:backgroundTint="@color/media_tv_bg"
+            android:gravity="center"
+            android:padding="@dimen/_12sdp"
+            android:textSize="@dimen/font_32"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark"
+            android:visibility="gone" />
+
+    <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/view_forward"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end|center_vertical"
+                android:layout_margin="@dimen/_10sdp"
+                android:alpha="0"
+                android:drawableTop="@drawable/ic_fast_forward"
+                android:gravity="center"
+                android:textColor="@android:color/white"
+                android:visibility="gone" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/view_backward"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start|center_vertical"
+                android:layout_margin="@dimen/_10sdp"
+                android:alpha="0"
+                android:drawableTop="@drawable/ic_fast_rewind"
+                android:gravity="center"
+                android:textColor="@android:color/white"
+                android:visibility="gone" />
+
+    </FrameLayout>
+
+    <com.mikhaellopez.circularprogressbar.CircularProgressBar
+            android:id="@+id/progress_bar"
+            android:layout_width="@dimen/_72sdp"
+            android:layout_height="@dimen/_72sdp"
+            android:layout_gravity="center"
+            android:visibility="invisible"
+            app:cpb_background_progressbar_color="@android:color/transparent"
+            app:cpb_background_progressbar_width="0dp"
+            app:cpb_indeterminate_mode="true"
+            app:cpb_progress_direction="to_right"
+            app:cpb_progressbar_color="#bbffffff"
+            app:cpb_progressbar_width="@dimen/_6sdp"
+            app:cpb_round_border="true" />
+
+    <ProgressBar
+            android:id="@+id/progress_bar_bottom"
+            style="@style/BottomProgressBar"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_4sdp"
+            android:layout_gravity="bottom"
+            android:visibility="gone" />
+</FrameLayout>

@@ -2,14 +2,15 @@ package com.joshtalks.joshskills.core.analytics
 
 import com.crashlytics.android.Crashlytics
 import com.joshtalks.joshskills.core.AppObjectController
-import io.branch.referral.Branch
 import io.branch.referral.util.BRANCH_STANDARD_EVENT
 import io.branch.referral.util.BranchEvent
+import io.branch.referral.util.CurrencyType
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 object BranchIOAnalytics {
+    @Synchronized
     fun pushToBranch(event: BRANCH_STANDARD_EVENT, extras: HashMap<String, String>? = null) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
@@ -19,6 +20,11 @@ object BranchIOAnalytics {
                         branchEvent.addCustomDataProperty(k, v)
                         println("$k = $v")
                     }
+                    branchEvent.setTransactionID(extras["payment_id"])
+                    branchEvent.setCurrency(CurrencyType.INR)
+                    extras["amount"]?.toDouble()?.run {
+                        branchEvent.setRevenue(this)
+                    }
                 }
                 branchEvent.logEvent(AppObjectController.joshApplication)
 
@@ -27,6 +33,7 @@ object BranchIOAnalytics {
                 ex.printStackTrace()
             }
         }
+
     }
 
 }

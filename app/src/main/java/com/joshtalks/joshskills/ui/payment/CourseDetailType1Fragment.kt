@@ -39,7 +39,7 @@ import com.joshtalks.joshskills.repository.server.course_detail.CourseDetailsRes
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
 import com.joshtalks.joshskills.ui.payment.viewholder.CourseDetailDataViewHeader
 import com.joshtalks.joshskills.ui.tooltip.BalloonFactory
-import com.joshtalks.joshskills.ui.video_player.FullScreenVideoFragment
+import com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity
 import com.joshtalks.joshskills.ui.view_holders.ROUND_CORNER
 import com.joshtalks.joshskills.ui.view_holders.SingleImageViewHolder
 import com.joshtalks.skydoves.balloon.Balloon
@@ -205,7 +205,6 @@ class CourseDetailType1Fragment : Fragment() {
 
                         val test = response[0].test
 
-                        videoUrl = test.videoLink
                         val multi = MultiTransformation<Bitmap>(
                             RoundedCornersTransformation(
                                 com.joshtalks.joshskills.core.Utils.dpToPx(ROUND_CORNER),
@@ -253,6 +252,7 @@ class CourseDetailType1Fragment : Fragment() {
                         }
                         binding.nestedScrollView.visibility = View.VISIBLE
                         binding.progressBar.visibility = View.GONE
+                        videoUrl = response[0].videoObj?.video_url?:test.videoLink
                         videoId = response[0].videoObj?.id
 
                         val titleView =
@@ -310,9 +310,12 @@ class CourseDetailType1Fragment : Fragment() {
 
 
     fun playVideo() {
+        if (videoUrl.isNullOrEmpty()){
+            showToast(getString(R.string.video_url_not_exist))
+            return
+        }
         videoUrl?.let {
-            FullScreenVideoFragment.newInstance(it, videoId)
-                .show(requireActivity().supportFragmentManager, "Video Play")
+            VideoPlayerActivity.startConversionActivityV2(requireActivity(), binding.courseTitle.text.toString(),videoId,videoUrl)
         }
 
     }

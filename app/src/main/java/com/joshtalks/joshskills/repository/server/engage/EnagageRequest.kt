@@ -9,8 +9,14 @@ data class VideoEngage(
     @SerializedName("video_id")
     val videoId: Int,
     @SerializedName("watch_time")
-    var watchTime: Long
-)
+    var watchTime: Long,
+    @SerializedName("mentor_id")
+    var mentorId: String?=null,
+    @SerializedName("gaid_id")
+    var gID: String?=null
+){
+
+}
 
 
 data class AudioEngage(

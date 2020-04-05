@@ -25,9 +25,7 @@ abstract class CoreJoshActivity : BaseActivity() {
         super.onStart()
         try {
             findViewById<View>(R.id.iv_help).setOnClickListener {
-                val i = Intent(this, HelpActivity::class.java)
-                startActivityForResult(i, HELP_ACTIVITY_REQUEST_CODE)
-                AppAnalytics.create(AnalyticsEvent.HELP_SELECTED.NAME).push()
+                openHelpActivity()
             }
         } catch (ex: Exception) {
         }

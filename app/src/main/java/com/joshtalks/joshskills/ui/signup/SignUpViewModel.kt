@@ -21,7 +21,6 @@ import com.joshtalks.joshskills.repository.server.RequestVerifyOTP
 import com.joshtalks.joshskills.repository.server.TrueCallerLoginRequest
 import com.joshtalks.joshskills.util.BindableString
 import com.truecaller.android.sdk.TrueProfile
-import io.branch.referral.Branch
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
@@ -111,9 +110,6 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
                 user.source = "OTP"
                 user.token = response.token
                 User.update(user.toString())
-                if (phoneNumber.isEmpty().not()) {
-                    Branch.getInstance().setIdentity(user.phoneNumber)
-                }
                 Mentor.getInstance()
                     .setId(response.mentorId)
                     .setReferralCode(response.referralCode)
@@ -166,9 +162,6 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
                 user.token = response.token
 
                 User.update(user.toString())
-                if (phoneNumber.isEmpty().not()) {
-                    Branch.getInstance().setIdentity(user.phoneNumber)
-                }
                 Mentor.getInstance()
                     .setId(response.mentorId)
                     .setReferralCode(response.referralCode)
@@ -207,9 +200,6 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
                     User.getInstance().updateFromResponse(it)
                 }
                 AppObjectController.facebookEventLogger.logEvent(EVENT_NAME_COMPLETED_REGISTRATION)
-                if (User.getInstance().phoneNumber.isEmpty().not()) {
-                    Branch.getInstance().setIdentity(User.getInstance().phoneNumber)
-                }
                 AppAnalytics.updateUser()
                 signUpStatus.postValue(SignUpStepStatus.SignUpCompleted)
 

@@ -17,8 +17,6 @@
             android:layout_height="@dimen/_170sdp"
             android:background="@color/white"
             android:clickable="true"
-            android:clipChildren="false"
-            android:clipToPadding="false"
             android:divider="@android:color/transparent"
             android:dividerHeight="0.0px"
             android:elevation="@dimen/_4sdp"
@@ -37,9 +35,6 @@
         <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:clickable="false"
-                android:enabled="false"
-                android:focusable="false"
                 android:orientation="vertical">
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -47,28 +42,19 @@
                     android:layout_height="match_parent"
                     android:layout_weight=".22"
                     android:background="@drawable/round_rect_default"
-                    android:backgroundTint="#EFEFEF"
-                    android:clickable="false"
-                    android:enabled="false"
-                    android:focusable="false">
+                    android:backgroundTint="#EFEFEF">
 
                 <androidx.appcompat.widget.AppCompatImageView
                         android:id="@+id/image_view"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:adjustViewBounds="true"
-                        android:clickable="false"
-                        android:enabled="false"
-                        android:focusable="false"
                         android:scaleType="fitXY"
                         android:src="@drawable/ic_pattern" />
 
                 <FrameLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:clickable="false"
-                        android:enabled="false"
-                        android:focusable="false"
                         app:layout_constraintBottom_toTopOf="@+id/status_tv"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -81,9 +67,6 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:autoSizeMaxTextSize="@dimen/font_18"
-                            android:clickable="false"
-                            android:enabled="false"
-                            android:focusable="false"
                             android:gravity="center"
                             android:text="@string/practice"
                             android:paddingStart="@dimen/_4sdp"
@@ -105,9 +88,6 @@
                         android:layout_gravity="start"
                         android:background="@drawable/round_both_bottom_bg"
                         android:backgroundTint="#EFEFEF"
-                        android:clickable="true"
-                        android:enabled="true"
-                        android:focusable="true"
                         android:gravity="center_vertical|start"
                         android:paddingStart="@dimen/_8sdp"
                         android:paddingTop="@dimen/_4sdp"
@@ -126,9 +106,6 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="start"
                         android:backgroundTint="#EFEFEF"
-                        android:clickable="true"
-                        android:enabled="true"
-                        android:focusable="true"
                         android:gravity="center_vertical|start"
                         android:paddingStart="@dimen/_8sdp"
                         android:paddingBottom="@dimen/_4sdp"
@@ -149,9 +126,6 @@
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
                     android:layout_weight=".78"
-                    android:clickable="false"
-                    android:enabled="false"
-                    android:focusable="false"
                     android:gravity="center"
                     android:paddingTop="@dimen/_6sdp"
                     android:paddingBottom="@dimen/_6sdp"
@@ -165,7 +139,6 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:rippleColor="@color/white" />
-
 
         </LinearLayout>
     </androidx.cardview.widget.CardView>

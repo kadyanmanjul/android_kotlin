@@ -208,7 +208,7 @@
                 android:name=".ui.video_player.VideoPlayerActivity"
                 android:configChanges="keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
                 android:launchMode="singleTask"
-                android:theme="@style/AppNoBarTheme" />
+                android:theme="@style/VideoPlayerTheme"/>
 
         <activity
                 android:name=".ui.sign_up_old.LoginActivity"

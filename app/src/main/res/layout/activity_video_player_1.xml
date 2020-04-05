@@ -9,58 +9,101 @@
                 type="com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity" />
     </data>
 
-    <FrameLayout
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="#000"
-            android:keepScreenOn="true"
-            android:orientation="vertical">
+            android:layout_height="match_parent">
 
+    <FrameLayout
+            android:background="#000000"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-        <com.joshtalks.joshskills.core.custom_ui.JoshVideoPlayer
-                android:id="@+id/pvPlayer"
+        <com.joshtalks.joshskills.core.videoplayer.BitVideoPlayer
+                android:id="@+id/video_player"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_gravity="center"
-                android:background="#000"
                 android:focusable="true"
-                app:controller_layout_id="@layout/layout_live_player_controller" />
+                app:controller_layout_id="@layout/player_controller_layout"
+                app:hide_on_touch="true"
+                app:keep_content_on_player_reset="true"
+                app:surface_type="texture_view" />
 
-        <com.google.android.material.appbar.MaterialToolbar xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:app="http://schemas.android.com/apk/res-auto"
+        <com.google.android.material.appbar.MaterialToolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="#20000000"
-                android:gravity="start|center|top"
+                android:background="@drawable/vp_topbar_background"
                 android:minHeight="?attr/actionBarSize"
-                app:theme="@style/Theme.GuidelinesCompat.Light.DarkToolbar">
+                app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+                app:theme="@style/ThemeOverlay.AppCompat.Dark"
+                android:contentInsetStart="0dp"
+                android:contentInsetLeft="0dp"
+                android:contentInsetEnd="0dp"
+                android:contentInsetRight="0dp"
+                android:elevation="@dimen/_4sdp"
+                app:contentInsetEnd="0dp"
+                app:contentInsetLeft="0dp"
+                app:contentInsetRight="0dp"
+                app:contentInsetStart="0dp">
 
-            <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/iv_back"
-                    android:layout_width="wrap_content"
+            <RelativeLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="@dimen/_5sdp"
-                    android:paddingTop="@dimen/_5sdp"
-                    android:paddingBottom="@dimen/_5sdp"
-                    android:visibility="visible"
-                    app:srcCompat="@drawable/ic_arrow_back" />
+                    android:paddingStart="@dimen/_7sdp">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/iv_back"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentStart="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginStart="@dimen/_4sdp"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:gravity="center_vertical|start"
+                        android:paddingTop="@dimen/_6sdp"
+                        android:paddingBottom="@dimen/_6sdp"
+                        app:srcCompat="@drawable/ic_arrow_back" />
 
 
-            <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/text_message_title"
-                    fontPath="fonts/OpenSans-SemiBold.ttf"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:ellipsize="end"
-                    android:gravity="center_vertical|start"
-                    android:lines="1"
-                    android:padding="@dimen/_5sdp"
-                    android:text=""
-                    android:textColor="@color/white"
-                    android:textSize="@dimen/font_20" />
+                <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/text_message_title"
+                        fontPath="fonts/Roboto-Medium.ttf"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginStart="@dimen/_4sdp"
+                        android:layout_marginEnd="@dimen/_8sdp"
+                        android:layout_toStartOf="@id/iv_more"
+                        android:layout_toEndOf="@id/iv_back"
+                        android:autoSizeMaxTextSize="@dimen/font_16"
+                        android:ellipsize="marquee"
+                        android:gravity="start"
+                        android:padding="@dimen/_4sdp"
+                        android:singleLine="true"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/font_16" />
+
+
+                <androidx.appcompat.widget.AppCompatImageView
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:clickable="true"
+                        android:id="@+id/iv_more"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:padding="@dimen/_4sdp"
+                        android:src="@drawable/ic_more_option"
+                        android:tint="@color/white"
+                        android:visibility="visible"
+                        android:focusable="true" />
+            </RelativeLayout>
         </com.google.android.material.appbar.MaterialToolbar>
-
-
     </FrameLayout>
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+
 </layout>
