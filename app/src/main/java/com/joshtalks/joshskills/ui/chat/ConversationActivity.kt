@@ -704,10 +704,14 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
                 }
             }
             if (streamingManager != null && streamingManager!!.isPlaying) {
-                streamingManager?.handlePauseRequest()
+                try {
+                    streamingManager?.handlePauseRequest()
+                }catch (ex:Exception){}
                 mPlayPauseButton.setImageResource(R.drawable.ic_play_player)
             } else {
-                streamingManager?.handlePlayRequest()
+                try {
+                    streamingManager?.handlePlayRequest()
+                }catch (ex:Exception){}
                 mPlayPauseButton.setImageResource(R.drawable.ic_pause_player)
             }
 

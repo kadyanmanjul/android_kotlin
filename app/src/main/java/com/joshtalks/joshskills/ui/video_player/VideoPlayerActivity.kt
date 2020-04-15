@@ -40,6 +40,7 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener {
             videoTitle: String
         ) {
             val intent = Intent(activity, VideoPlayerActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK  or Intent.FLAG_ACTIVITY_CLEAR_TOP
             intent.putExtra(VIDEO_OBJECT, chatModel)
             intent.putExtra(COURSE_NAME, videoTitle)
             activity.startActivityForResult(intent, VIDEO_OPEN_REQUEST_CODE)
@@ -90,7 +91,7 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener {
 
         if (intent.hasExtra(VIDEO_OBJECT)) {
             chatObject = intent.getSerializableExtra(VIDEO_OBJECT) as ChatModel
-            videoId = chatObject.question?.videoList?.get(0)?.id
+            videoId = chatObject.question?.videoList?.getOrNull(0)?.id
 
             if (chatObject.url != null) {
                 if (chatObject.downloadedLocalPath.isNullOrEmpty()) {
@@ -106,7 +107,7 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener {
                     }
                 }
             } else {
-                videoUrl = chatObject.question?.videoList?.get(0)?.video_url
+                videoUrl = chatObject.question?.videoList?.getOrNull(0)?.video_url
             }
         }
         if (intent.hasExtra(VIDEO_URL)) {

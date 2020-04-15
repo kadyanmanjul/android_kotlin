@@ -291,7 +291,8 @@ class ConversationViewModel(application: Application, private var inboxEntity: I
                     appDatabase.chatDao().getLastChatDate(inboxEntity.conversation_id)
 
                 if (lastQuestionTime.isNullOrEmpty().not()) {
-                    arguments[key] = lastQuestionTime!!
+                    arguments.remove(key)
+                    arguments["createdmilisecond"] = lastQuestionTime!!
                 }
 
                 NetworkRequestHelper.getUpdatedChat(
