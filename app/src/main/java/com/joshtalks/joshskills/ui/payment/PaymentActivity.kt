@@ -23,6 +23,7 @@ import com.crashlytics.android.Crashlytics
 import com.facebook.appevents.AppEventsConstants
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.FirebaseAnalytics.Event.ECOMMERCE_PURCHASE
+import com.google.firebase.analytics.FirebaseAnalytics.Event.PURCHASE
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
@@ -675,7 +676,7 @@ class PaymentActivity : CoreJoshActivity(),
         bundle.putDouble(FirebaseAnalytics.Param.PRICE, amount)
         bundle.putString(FirebaseAnalytics.Param.TRANSACTION_ID, razorpayPaymentId)
         bundle.putString(FirebaseAnalytics.Param.CURRENCY, "INR")
-        AppObjectController.firebaseAnalytics.logEvent(ECOMMERCE_PURCHASE, bundle)
+        AppObjectController.firebaseAnalytics.logEvent(PURCHASE, bundle)
 
         val extras: HashMap<String, String> = HashMap()
         extras["test_id"] = testId

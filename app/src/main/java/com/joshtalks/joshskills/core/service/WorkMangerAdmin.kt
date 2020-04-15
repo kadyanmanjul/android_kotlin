@@ -138,6 +138,12 @@ object WorkMangerAdmin {
         WorkManager.getInstance(AppObjectController.joshApplication)
             .enqueue(OneTimeWorkRequestBuilder<MappingGaIDWithMentor>().build())
     }
+    fun refreshFCMToken() {
+        WorkManager.getInstance(AppObjectController.joshApplication)
+            .enqueue(OneTimeWorkRequestBuilder<RefreshFCMTokenWorker>().build())
+    }
+
+
 
 
 }

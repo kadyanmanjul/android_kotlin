@@ -108,7 +108,6 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                 PendingIntent.FLAG_UPDATE_CURRENT
             )
 
-
             val notificationBuilder =
                 NotificationCompat.Builder(
                     this@FirebaseNotificationService,
@@ -133,8 +132,6 @@ class FirebaseNotificationService : FirebaseMessagingService() {
 
             notificationBuilder.setDefaults(Notification.DEFAULT_ALL)
 
-
-
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                 notificationBuilder.priority = NotificationManager.IMPORTANCE_HIGH
             }
@@ -150,9 +147,6 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                 }
             } catch (ex: Exception) {
             }
-
-
-
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 val notificationChannel = NotificationChannel(
                     notificationChannelId,
@@ -160,10 +154,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                     importance
                 )
                 notificationChannel.enableLights(true)
-                //notificationChannel.lightColor = Color.RED
                 notificationChannel.enableVibration(true)
-                /* notificationChannel.vibrationPattern =
-                     longArrayOf(100, 200, 300, 400, 500, 400, 300, 200, 400)*/
                 notificationBuilder.setChannelId(notificationChannelId)
                 notificationManager.createNotificationChannel(notificationChannel)
             }

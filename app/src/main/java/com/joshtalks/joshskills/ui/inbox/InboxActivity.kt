@@ -111,7 +111,6 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
             ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         }
         super.onCreate(savedInstanceState)
-        FCMTokenManager.pushToken()
         DatabaseUtils.updateUserMessageSeen()
         setContentView(R.layout.activity_inbox)
         setToolbar()

@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import androidx.preference.PreferenceManager
 import com.joshtalks.joshskills.BuildConfig
+import com.joshtalks.joshskills.core.service.WorkMangerAdmin
 import com.joshtalks.joshskills.repository.local.AppDatabase
 
 const val USER_UNIQUE_ID = "user_unique_id"
@@ -100,6 +101,7 @@ object PrefManager {
     fun clearUser() {
         prefManager.edit().clear().apply()
         AppDatabase.clearDatabase()
+        WorkMangerAdmin.refreshFCMToken()
     }
 
     fun removeKey(key: String) {

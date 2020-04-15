@@ -8,9 +8,13 @@ import com.crashlytics.android.Crashlytics
 import com.facebook.appevents.AppEventsConstants
 import com.google.android.gms.ads.MobileAds
 import com.google.android.gms.ads.identifier.AdvertisingIdClient
+import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.database.*
+import com.google.firebase.iid.FirebaseInstanceId
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
+import com.joshtalks.joshskills.core.notification.FCMTokenManager
+import com.joshtalks.joshskills.core.notification.FCM_TOKEN
 import com.joshtalks.joshskills.repository.local.model.*
 import com.joshtalks.joshskills.repository.server.MessageStatusRequest
 import com.joshtalks.joshskills.repository.service.NetworkRequestHelper
@@ -34,6 +38,8 @@ class AppRunRequiredTaskWorker(context: Context, workerParams: WorkerParameters)
         WorkMangerAdmin.deviceIdGenerateWorker()
         WorkMangerAdmin.readMessageUpdating()
         WorkMangerAdmin.mappingGIDWithMentor()
+        FCMTokenManager.pushToken()
+
         return Result.success()
     }
 }
@@ -166,11 +172,8 @@ class GetUserConversationWorker(var context: Context, private var workerParams: 
             val conversationId = workerParams.inputData.getString(CONVERSATION_ID)
             conversationId?.run {
                 val arguments = mutableMapOf<String, String>()
-                PrefManager.getLongValue(this).let { time ->
-                    if (time > 0) {
-                        arguments["created"] = (time / 1000).toString()
-                    }
-                }
+                val (key, value) = PrefManager.getLastSyncTime(this)
+                arguments[key] = value
                 NetworkRequestHelper.getUpdatedChat(this, queryMap = arguments)
             }
         } catch (ex: Exception) {
@@ -352,6 +355,27 @@ class RegisterUserGId(context: Context, private val workerParams: WorkerParamete
     }
 }
 
+
+class RefreshFCMTokenWorker(context: Context, private val workerParams: WorkerParameters) :
+    CoroutineWorker(context, workerParams) {
+    override suspend fun doWork(): Result {
+
+        FirebaseInstanceId.getInstance().instanceId
+            .addOnCompleteListener(OnCompleteListener { task ->
+                if (!task.isSuccessful) {
+                    task.exception?.printStackTrace()
+                    return@OnCompleteListener
+                }
+                task.result?.token?.run {
+                    PrefManager.put(FCM_TOKEN, this)
+                    FCMTokenManager.pushToken()
+                }
+            })
+        return Result.success()
+    }
+}
+
+
 class MappingGaIDWithMentor(var context: Context, workerParams: WorkerParameters) :
     CoroutineWorker(context, workerParams) {
     override suspend fun doWork(): Result {
@@ -408,12 +432,6 @@ fun getGoogleAdId(context: Context): String {
     val adInfo = AdvertisingIdClient.getAdvertisingIdInfo(context)
     return adInfo.id
 }
-
-
-
-
-
-
 
 
 
