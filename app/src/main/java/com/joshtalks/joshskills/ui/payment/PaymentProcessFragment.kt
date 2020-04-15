@@ -128,15 +128,14 @@ class PaymentProcessFragment : DialogFragment() {
             }
 
             override fun onAnimationEnd(animation: Animation?) {
-                paymentProcessFragmentBinding.rlContainer.visibility = View.VISIBLE
-                paymentProcessFragmentBinding.successIv.visibility = View.GONE
                 paymentProcessFragmentBinding.viewKonfetti.setOnClickListener(null)
-
                 paymentProcessFragmentBinding.viewKonfetti.layoutParams = FrameLayout.LayoutParams(
                     FrameLayout.LayoutParams.WRAP_CONTENT,
                     FrameLayout.LayoutParams.WRAP_CONTENT,
                     Gravity.TOP
                 )
+                paymentProcessFragmentBinding.rlContainer.visibility = View.VISIBLE
+                paymentProcessFragmentBinding.successIv.visibility = View.GONE
                 paymentProcessFragmentBinding.btnInbox.visibility = View.VISIBLE
             }
 
@@ -190,11 +189,13 @@ class PaymentProcessFragment : DialogFragment() {
         paymentProcessFragmentBinding.btnInbox.setOnClickListener {
             startActivity((activity as BaseActivity).getInboxActivityIntent())
             activity?.finish()
-
-            /* startActivity(Intent(activity, CourseExploreActivity::class.java).apply {
-                 addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-             })*/
         }
+    }
+
+    fun gotToCourse() {
+        startActivity((activity as BaseActivity).getInboxActivityIntent())
+        activity?.finish()
+
     }
 
     override fun onResume() {

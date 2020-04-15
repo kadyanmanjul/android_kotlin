@@ -25,13 +25,19 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
+            <nl.dionsegijn.konfetti.KonfettiView
+                    android:id="@+id/view_konfetti"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:visibility="visible" />
+
             <RelativeLayout
 
                     android:id="@+id/rl_container"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/_36sdp"
-                    android:visibility="gone"
+                    android:visibility="invisible"
                     tools:ignore="MissingPrefix">
 
 
@@ -410,12 +416,16 @@
                         android:layout_height="wrap_content"
                         android:layout_below="@+id/card_payment"
                         android:layout_centerInParent="true"
+
                         android:layout_gravity="center|bottom"
                         android:layout_marginTop="@dimen/_24sdp"
                         android:layout_marginBottom="@dimen/_8sdp"
                         android:background="@drawable/round_rectangle"
                         android:backgroundTint="@color/button_primary_color"
+                        android:clickable="true"
+                        android:focusable="true"
                         android:gravity="center"
+                        android:onClick="@{()->handler.gotToCourse()}"
                         android:paddingTop="@dimen/_8sdp"
                         android:paddingBottom="@dimen/_8sdp"
                         android:text="@string/go_to_course"
@@ -442,35 +452,7 @@
                     android:tint="@color/white"
                     android:visibility="invisible" />
 
-            <nl.dionsegijn.konfetti.KonfettiView
-                    android:id="@+id/view_konfetti"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:visibility="visible" />
 
-
-            <!--
-                        <com.google.android.material.button.MaterialButton
-                                android:id="@+id/btn_explore_more_course"
-                                style="@style/Widget.MaterialComponents.Button"
-                                fontPath="fonts/OpenSans-SemiBold.ttf"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center|bottom"
-                                android:layout_marginTop="@dimen/_16sdp"
-                                android:layout_marginBottom="@dimen/_4sdp"
-                                android:background="@drawable/round_rectangle"
-                                android:backgroundTint="@color/button_primary_color"
-                                android:gravity="center"
-                                android:padding="@dimen/_8sdp"
-                                android:text="@string/explore_more_course_small"
-                                android:textAllCaps="false"
-                                android:textColor="@color/white"
-                                android:textSize="@dimen/font_14"
-                                android:visibility="invisible"
-                                app:cornerRadius="@dimen/_8sdp"
-                                app:rippleColor="@color/white" />
-            -->
         </FrameLayout>
     </ScrollView>
 </layout>

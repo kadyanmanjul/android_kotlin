@@ -65,6 +65,7 @@ const val PAYMENT_DETAIL_OBJECT = "payment_detail"
 const val HAS_CERTIFICATE = "has_certificate"
 
 
+
 class PaymentActivity : CoreJoshActivity(),
     PaymentResultListener, CouponCodeSubmitFragment.OnCouponCodeSubmitListener,
     CoursePurchaseDetailFragment.OnCourseDetailInteractionListener,
@@ -427,7 +428,7 @@ class PaymentActivity : CoreJoshActivity(),
                 fragmentTransaction.remove(prev)
             }
             fragmentTransaction.addToBackStack(null)
-            CoursePurchaseDetailFragment.newInstance(courseModel, hasCertificate)
+            CoursePurchaseDetailFragment.newInstance(courseModel,hasCertificate)
                 .show(supportFragmentManager, "purchase_details_dialog")
             AppAnalytics.create(AnalyticsEvent.PAYMENT_DIALOG.NAME)
                 .push()
