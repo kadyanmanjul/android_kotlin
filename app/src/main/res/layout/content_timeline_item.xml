@@ -10,9 +10,9 @@
     </data>
 
     <LinearLayout
-            android:layout_marginEnd="@dimen/_6sdp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/_6sdp"
             android:orientation="horizontal">
 
         <com.github.vipulasri.timelineview.TimelineView

@@ -77,6 +77,7 @@ object DownloadUtils {
                     }
                 })
         }
+
     }
 
     fun removeCallbackListener(tag: String?) {

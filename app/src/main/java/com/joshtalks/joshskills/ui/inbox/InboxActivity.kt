@@ -52,7 +52,6 @@ import com.joshtalks.joshskills.repository.service.SyncChatService
 import com.joshtalks.joshskills.ui.chat.ConversationActivity
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
 import com.joshtalks.joshskills.ui.payment.COURSE_ID
-import com.joshtalks.joshskills.ui.referral.PromotionDialogFragment
 import com.joshtalks.joshskills.ui.referral.ReferralActivity
 import com.joshtalks.joshskills.ui.tooltip.BalloonFactory
 import com.joshtalks.joshskills.ui.view_holders.EmptyHorizontalView
@@ -73,13 +72,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import me.samlss.lighter.Lighter
-import me.samlss.lighter.interfaces.OnLighterListener
-import me.samlss.lighter.parameter.Direction
-import me.samlss.lighter.parameter.LighterParameter
-import me.samlss.lighter.shape.RectShape
 import org.jetbrains.anko.collections.forEachWithIndex
-import java.util.*
 
 const val REGISTER_INFO_CODE = 2001
 const val COURSE_EXPLORER_CODE = 2002
@@ -99,7 +92,6 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
     private lateinit var earnIV: AppCompatImageView
     private lateinit var findMoreLayout: FrameLayout
     private var findMoreVisible = true
-    private var isUserFirstTime = true
 
     private val offerIn7DaysHint by lazy { BalloonFactory.offerIn7Days(this, this) }
     private val hintFirstTime by lazy {
@@ -177,7 +169,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         if (intent != null && intent.hasExtra(ACTION_TYPE)) {
             intent.getStringExtra(ACTION_TYPE)?.let {
                 if (ACTION_UPSELLING_POPUP.equals(it, ignoreCase = true)) {
-                    showPromotionCode(
+                    showPromotionScreen(
                         intent.getStringExtra(COURSE_ID)!!,
                         intent.getStringExtra(ARG_PLACEHOLDER_URL)!!
                     )
@@ -185,7 +177,6 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
             }
 
         }
-
     }
 
 
@@ -437,29 +428,28 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
                 findMoreVisible = false
                 if (PrefManager.getBoolValue(FIRST_TIME_OFFER_SHOW).not()) {
                     PrefManager.put(FIRST_TIME_OFFER_SHOW, true)
-                    AppObjectController.uiHandler.postDelayed({
-                        val lighterBuilder = LighterParameter.Builder()
-                            .setHighlightedViewId(findViewById<View>(R.id.find_more).id)
-                            .setTipLayoutId(R.layout.layout_tip_5)
-                            .setLighterShape(RectShape(75.0f, 75.0f, 0.5f))
-                            .setTipViewRelativeDirection(Direction.BOTTOM)
-
-                        val root = findViewById<View>(R.id.find_more)
-                        Lighter.with(this)
-                            .addHighlight(lighterBuilder.build())
-                            .setOnLighterListener(object : OnLighterListener {
-                                override fun onDismiss() {
-                                    hintFirstTime.dismiss()
-                                }
-
-                                override fun onShow(index: Int) {
-                                }
-                            })
-                            .show()
-                        if ( isFinishing.not()) {
-                            hintFirstTime.showAlignBottom(root)
+                    compositeDisposable.add(AppObjectController.appDatabase
+                        .courseDao()
+                        .isUserOldThen7Days()
+                        .concatMap {
+                            val (flag, _) = Utils.isUser7DaysOld(it.courseCreatedDate)
+                            return@concatMap Maybe.just(flag)
                         }
-                    }, 500)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(
+                            { value ->
+                                if (value) {
+                                    if (offerIn7DaysHint.isShowing.not() && isFinishing.not()) {
+                                        val root = findViewById<View>(R.id.find_more)
+                                        hintFirstTime.showAlignBottom(root)
+                                    }
+                                }
+                            },
+                            { error ->
+                                error.printStackTrace()
+                            }
+                        ))
                 } else {
                     attachOfferHintView()
                 }
@@ -472,18 +462,6 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         userProfileActivityNotExist()
     }
 
-
-    private fun showPromotionCode(courseId: String, placeholderImageUrl: String) {
-        val fragmentTransaction = supportFragmentManager.beginTransaction()
-        val prev = supportFragmentManager.findFragmentByTag("promotion_coupon_code_show_dialog")
-        if (prev != null) {
-            fragmentTransaction.remove(prev)
-        }
-        fragmentTransaction.addToBackStack(null)
-        PromotionDialogFragment.newInstance(courseId, placeholderImageUrl)
-            .show(supportFragmentManager, "promotion_coupon_code_show_dialog")
-        this.intent = null
-    }
 
     private fun visibleShareEarn() {
         val url = AppObjectController.getFirebaseRemoteConfig().getString("EARN_SHARE_IMAGE_URL")
@@ -575,10 +553,10 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
                 { value ->
                     if (value) {
                         val root = findViewById<View>(R.id.find_more)
-                        root.isShown
                         if (offerIn7DaysHint.isShowing.not() && isFinishing.not()) {
                             offerIn7DaysHint.showAlignBottom(root)
                             findViewById<View>(R.id.bottom_line).visibility = View.GONE
+
                         }
                     }
                 },

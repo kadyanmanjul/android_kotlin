@@ -758,7 +758,7 @@ class JcPlayerView : LinearLayout, View.OnClickListener, SeekBar.OnSeekBarChange
         cAudioObj = getAudioObject()
         kill()
         if (cAudioObj != null) {
-            val jcAudios = java.util.ArrayList<JcAudio>()
+            val jcAudios = ArrayList<JcAudio>()
             jcAudios.add(cAudioObj!!)
             initPlaylist(jcAudios, this@JcPlayerView)
         }

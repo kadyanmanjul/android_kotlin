@@ -32,6 +32,7 @@ import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.service.WorkMangerAdmin
 import com.joshtalks.joshskills.databinding.ActivityReferralBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.ui.inbox.InboxActivity
 import com.muddzdev.styleabletoast.StyleableToast
 import java.io.File
 import java.io.FileOutputStream
@@ -80,7 +81,6 @@ class ReferralActivity : BaseActivity() {
         userReferralCode = Mentor.getInstance().referralCode
         activityReferralBinding.tvReferralCode.text = userReferralCode
         initView()
-        //val baseUrl = Uri.parse(getAppShareUrl())
         val domain = AppObjectController.getFirebaseRemoteConfig().getString(SHARE_DOMAIN)
 
         if (PrefManager.hasKey(USER_SHARE_SHORT_URL).not()) {
@@ -88,30 +88,30 @@ class ReferralActivity : BaseActivity() {
 
         }
         Firebase.dynamicLinks.shortLinkAsync(ShortDynamicLink.Suffix.SHORT) {
-                link = Uri.parse("https://joshskill.app.link")
-                domainUriPrefix = domain
-                androidParameters(BuildConfig.APPLICATION_ID) {
-                    minimumVersion = 69
-                }
-                googleAnalyticsParameters {
-                    source = userReferralCode
-                    medium = "Mobile"
-                    campaign = "user_referer"
-                }
+            link = Uri.parse("https://joshskill.app.link")
+            domainUriPrefix = domain
+            androidParameters(BuildConfig.APPLICATION_ID) {
+                minimumVersion = 69
+            }
+            googleAnalyticsParameters {
+                source = userReferralCode
+                medium = "Mobile"
+                campaign = "user_referer"
+            }
 
-            }.addOnSuccessListener { result ->
-                result?.shortLink?.let {
-                    try {
-                        if (it.toString().isNotEmpty()) {
-                            PrefManager.put(USER_SHARE_SHORT_URL, it.toString())
-                            userReferralURL = it.toString()
+        }.addOnSuccessListener { result ->
+            result?.shortLink?.let {
+                try {
+                    if (it.toString().isNotEmpty()) {
+                        PrefManager.put(USER_SHARE_SHORT_URL, it.toString())
+                        userReferralURL = it.toString()
 
-                        }
-                    } catch (ex: Exception) {
-                        ex.printStackTrace()
                     }
+                } catch (ex: Exception) {
+                    ex.printStackTrace()
                 }
             }
+        }
             .addOnFailureListener {
                 it.printStackTrace()
 
@@ -154,7 +154,7 @@ class ReferralActivity : BaseActivity() {
         }
 
         activityReferralBinding.ivBack.setOnClickListener {
-            this@ReferralActivity.finish()
+            onBackPressed()
         }
 
         val mDetector = GestureDetector(this, object :
@@ -333,5 +333,12 @@ class ReferralActivity : BaseActivity() {
             WorkMangerAdmin.referralEventTracker(REFERRAL_EVENT.LONG_PRESS_CODE)
         }, 1200)
         AppAnalytics.create(AnalyticsEvent.CODE_COPIED.NAME).push()
+    }
+
+    override fun onBackPressed() {
+        startActivity(Intent(this, InboxActivity::class.java))
+        this.finish()
+        super.onBackPressed()
+
     }
 }

@@ -360,9 +360,9 @@ class ProfileActivity : BaseActivity(), MediaSelectCallback, DatePickerDialog.On
 
                 val updateProfileResponse: UpdateProfileResponse =
                     AppObjectController.signUpNetworkService.updateUserAsync(
-                            User.getInstance().id,
-                            obj
-                        )
+                        User.getInstance().id,
+                        obj
+                    )
                         .await()
 
                 val params = Bundle()

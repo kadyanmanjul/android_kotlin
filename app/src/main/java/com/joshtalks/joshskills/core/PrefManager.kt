@@ -6,7 +6,6 @@ import android.content.SharedPreferences
 import androidx.preference.PreferenceManager
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.repository.local.AppDatabase
-import io.branch.referral.Branch
 
 const val USER_UNIQUE_ID = "user_unique_id"
 const val FIRST_COURSE_BUY = "first_course_buy"
@@ -57,6 +56,11 @@ object PrefManager {
 
     }
 
+    private fun getFloatValue(key: String): Float {
+        return prefManager.getFloat(key, 0F)
+
+    }
+
     fun put(key: String, value: String) {
         prefManager.edit().putString(key, value).apply()
 
@@ -69,6 +73,11 @@ object PrefManager {
 
     fun put(key: String, value: Long) {
         prefManager.edit().putLong(key, value).apply()
+
+    }
+
+    fun put(key: String, value: Float) {
+        prefManager.edit().putFloat(key, value).apply()
 
     }
 
@@ -98,4 +107,16 @@ object PrefManager {
 
     }
 
+    fun getLastSyncTime(key: String): Pair<String, String> {
+        return try {
+            val time = getStringValue(key)
+            if (time.isNotEmpty()) {
+                Pair("createdmilisecond", time)
+            } else {
+                Pair("created", getLongValue(key).toString())
+            }
+        } catch (ex: Exception) {
+            Pair("created", "0")
+        }
+    }
 }

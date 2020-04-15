@@ -6,11 +6,9 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.graphics.Color
 import android.media.RingtoneManager
 import android.net.Uri
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
@@ -35,20 +33,24 @@ import com.joshtalks.joshskills.ui.inbox.InboxActivity
 import com.joshtalks.joshskills.ui.launch.LauncherActivity
 import com.joshtalks.joshskills.ui.payment.COURSE_ID
 import com.joshtalks.joshskills.ui.payment.PaymentActivity
+import com.joshtalks.joshskills.ui.referral.ReferralActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import timber.log.Timber
+import kotlin.random.Random
 
 const val FCM_TOKEN = "fcmToken"
 const val FCM_ID = "fcmId"
 const val HAS_NOTIFICATION = "has_notification"
 const val NOTIFICATION_ID = "notification_id"
+const val HAS_COURSE_REPORT = "has_course_report"
 
 
 class FirebaseNotificationService : FirebaseMessagingService() {
 
     private var notificationChannelId = "101111"
-    private var notificationId = 1
+    private var notificationId = Random(1000).nextInt()
     private var notificationChannelName = "JoshTalksDefault"
 
     @RequiresApi(Build.VERSION_CODES.N)
@@ -67,7 +69,10 @@ class FirebaseNotificationService : FirebaseMessagingService() {
             Gson().toJson(remoteMessage.data),
             NotificationObject::class.java
         )
-        Log.i(FirebaseNotificationService::class.java.simpleName, Gson().toJson(remoteMessage.data))
+        Timber.i(
+            FirebaseNotificationService::class.java.simpleName,
+            Gson().toJson(remoteMessage.data)
+        )
         sendNotification(nc)
     }
 
@@ -106,9 +111,9 @@ class FirebaseNotificationService : FirebaseMessagingService() {
 
             val notificationBuilder =
                 NotificationCompat.Builder(
-                        this@FirebaseNotificationService,
-                        notificationChannelId
-                    )
+                    this@FirebaseNotificationService,
+                    notificationChannelId
+                )
                     .setTicker(notificationObject.ticker)
                     .setSmallIcon(R.drawable.ic_status_bar_notification)
                     .setContentTitle(notificationObject.contentTitle)
@@ -155,10 +160,10 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                     importance
                 )
                 notificationChannel.enableLights(true)
-                notificationChannel.lightColor = Color.RED
+                //notificationChannel.lightColor = Color.RED
                 notificationChannel.enableVibration(true)
-                notificationChannel.vibrationPattern =
-                    longArrayOf(100, 200, 300, 400, 500, 400, 300, 200, 400)
+                /* notificationChannel.vibrationPattern =
+                     longArrayOf(100, 200, 300, 400, 500, 400, 300, 200, 400)*/
                 notificationBuilder.setChannelId(notificationChannelId)
                 notificationManager.createNotificationChannel(notificationChannel)
             }
@@ -182,25 +187,34 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                     flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
                     putExtra(COURSE_ID, actionData)
                 }
-            } else if (ACTION_OPEN_CONVERSATION.equals(action, ignoreCase = true)) {
+            } else if (ACTION_OPEN_CONVERSATION.equals(
+                    action,
+                    ignoreCase = true
+                ) || ACTION_OPEN_COURSE_REPORT.equals(action, ignoreCase = true)
+            ) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                     importance = NotificationManager.IMPORTANCE_HIGH
                 }
-                notificationChannelId = ACTION_OPEN_CONVERSATION
+                notificationChannelId = action ?: ""
                 val obj: InboxEntity? = AppObjectController.appDatabase.courseDao()
                     .chooseRegisterCourseMinimal(actionData!!)
                 obj?.run { WorkMangerAdmin.updatedCourseForConversation(this.conversation_id) }
 
                 if (obj != null) {
                     notificationChannelId = obj.conversation_id
-                    notificationId = obj.conversation_id.hashCode()
                     notificationChannelName = obj.course_name
-                    return Intent(applicationContext, ConversationActivity::class.java).apply {
-                        putExtra(CHAT_ROOM_OBJECT, obj)
-                        putExtra(HAS_NOTIFICATION, true)
-                        flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
-                        flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
+                    val rIntnet =
+                        Intent(applicationContext, ConversationActivity::class.java).apply {
+                            putExtra(CHAT_ROOM_OBJECT, obj)
+                            putExtra(HAS_NOTIFICATION, true)
+                            flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+                            flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
+                        }
+                    if (ACTION_OPEN_COURSE_REPORT.equals(action, ignoreCase = true)) {
+                        rIntnet.putExtra(HAS_COURSE_REPORT, true)
                     }
+                    return rIntnet
+
                 }
             } else if (ACTION_OPEN_COURSE_EXPLORER.equals(action, ignoreCase = true)) {
                 notificationChannelId = ACTION_OPEN_COURSE_EXPLORER
@@ -243,12 +257,13 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                             .submit()
                     }
                 }
+            } else if (ACTION_OPEN_REFERRAL.equals(action, ignoreCase = true)) {
+                notificationChannelId = ACTION_OPEN_REFERRAL
+                return Intent(applicationContext, ReferralActivity::class.java).apply {
+                    flags = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
+                }
             }
-
-
         }
-        /*else if (ACTION_OPEN_DIALOG == action) {
-    }*/
         return Intent(applicationContext, LauncherActivity::class.java).apply {
             addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
         }

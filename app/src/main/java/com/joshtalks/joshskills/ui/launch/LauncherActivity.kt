@@ -14,6 +14,7 @@ import com.joshtalks.joshskills.ui.payment.PaymentActivity
 import io.branch.referral.Branch
 import io.branch.referral.BranchError
 import io.branch.referral.Defines
+import org.json.JSONObject
 
 
 class LauncherActivity : CoreJoshActivity() {
@@ -24,14 +25,14 @@ class LauncherActivity : CoreJoshActivity() {
         WorkMangerAdmin.appStartWorker()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_launcher)
-
         handleIntent()
     }
 
     private fun handleIntent() {
-        Branch.getInstance().initSession({ referringParams, error ->
+
+        Branch.sessionBuilder(this).withCallback { referringParams, error ->
             try {
-                var jsonParms: org.json.JSONObject? = referringParams
+                var jsonParms: JSONObject? = referringParams
                 val sessionParams = Branch.getInstance().latestReferringParams
                 val installParams = Branch.getInstance().firstReferringParams
                 if (referringParams == null && installParams != null) {
@@ -61,7 +62,11 @@ class LauncherActivity : CoreJoshActivity() {
             } catch (ex: Exception) {
                 ex.printStackTrace()
             }
-        }, this.intent.data, this)
+        }.withData(this.intent.data)
+
+        /*Branch.getInstance().initSession({ referringParams, error ->
+
+        }, this.intent.data, this)*/
     }
 
     override fun onStart() {
@@ -77,7 +82,7 @@ class LauncherActivity : CoreJoshActivity() {
     }
 
     private object BranchListener : Branch.BranchReferralInitListener {
-        override fun onInitFinished(referringParams: org.json.JSONObject?, error: BranchError?) {
+        override fun onInitFinished(referringParams: JSONObject?, error: BranchError?) {
             Crashlytics.log(error?.message)
         }
     }

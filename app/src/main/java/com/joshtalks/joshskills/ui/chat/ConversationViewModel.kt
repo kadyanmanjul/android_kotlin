@@ -278,23 +278,20 @@ class ConversationViewModel(application: Application, private var inboxEntity: I
                 if (rows > 0) {
                     delay(2500)
                 } else {
-                    delay(500)
+                    delay(250)
                 }
             } catch (ex: Exception) {
                 ex.printStackTrace()
             }
             if (Utils.isInternetAvailable()) {
                 val arguments = mutableMapOf<String, String>()
-
-                PrefManager.getLongValue(inboxEntity.conversation_id).let { time ->
-                    if (time > 0) {
-                        arguments["created"] = (time / 1000).toString()
-                    }
-                }
+                val (key, value) = PrefManager.getLastSyncTime(inboxEntity.conversation_id)
+                arguments[key] = value
                 val lastQuestionTime =
                     appDatabase.chatDao().getLastChatDate(inboxEntity.conversation_id)
-                lastQuestionTime?.run {
-                    arguments["created"] = (this.time / 1000).toString()
+
+                if (lastQuestionTime.isNullOrEmpty().not()) {
+                    arguments[key] = lastQuestionTime!!
                 }
 
                 NetworkRequestHelper.getUpdatedChat(
@@ -318,11 +315,8 @@ class ConversationViewModel(application: Application, private var inboxEntity: I
                 .subscribe({
                     if (Utils.isInternetAvailable()) {
                         val arguments = mutableMapOf<String, String>()
-                        PrefManager.getLongValue(inboxEntity.conversation_id).let { time ->
-                            if (time > 0) {
-                                arguments["created"] = (time / 1000).toString()
-                            }
-                        }
+                        val (key, value) = PrefManager.getLastSyncTime(inboxEntity.conversation_id)
+                        arguments[key] = value
                         NetworkRequestHelper.getUpdatedChat(
                             inboxEntity.conversation_id,
                             queryMap = arguments
@@ -351,11 +345,8 @@ class ConversationViewModel(application: Application, private var inboxEntity: I
 
     fun refreshChatOnManual() {
         val arguments = mutableMapOf<String, String>()
-        PrefManager.getLongValue(inboxEntity.conversation_id).let { time ->
-            if (time > 0) {
-                arguments["created"] = (time / 1000).toString()
-            }
-        }
+        val (key, value) = PrefManager.getLastSyncTime(inboxEntity.conversation_id)
+        arguments[key] = value
         NetworkRequestHelper.getUpdatedChat(
             inboxEntity.conversation_id,
             queryMap = arguments

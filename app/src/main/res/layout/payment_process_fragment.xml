@@ -404,12 +404,12 @@
                 </com.google.android.material.card.MaterialCardView>
 
                 <com.google.android.material.button.MaterialButton
-                        android:layout_below="@+id/card_payment"
                         android:id="@+id/btn_inbox"
                         fontPath="fonts/OpenSans-SemiBold.ttf"
-                        android:layout_centerInParent="true"
                         android:layout_width="@dimen/_140sdp"
                         android:layout_height="wrap_content"
+                        android:layout_below="@+id/card_payment"
+                        android:layout_centerInParent="true"
                         android:layout_gravity="center|bottom"
                         android:layout_marginTop="@dimen/_24sdp"
                         android:layout_marginBottom="@dimen/_8sdp"

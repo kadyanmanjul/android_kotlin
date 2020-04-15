@@ -220,7 +220,7 @@ class AudioPlayerViewHolder(activityRef: WeakReference<FragmentActivity>, messag
                 0
             )
             rootSubView.layoutParams = relativeParams
-            addLinkToTagMessage(rootView, this,message.sender)
+            addLinkToTagMessage(rootView, this, message.sender)
         }
         if (message.chatId.isNotEmpty() && sId == message.chatId) {
             highlightedViewForSomeTime(rootView)
@@ -282,7 +282,8 @@ class AudioPlayerViewHolder(activityRef: WeakReference<FragmentActivity>, messag
         updateUI()
         audioPlayingStatus()
         updateTime(messageTimeTV)
-        messageTimeTV.text = Utils.getMessageTimeInHours(message.created).toUpperCase(Locale.getDefault())
+        messageTimeTV.text =
+            Utils.getMessageTimeInHours(message.created).toUpperCase(Locale.getDefault())
     }
 
     private fun audioPlayingStatus() {
@@ -506,7 +507,8 @@ class AudioPlayerViewHolder(activityRef: WeakReference<FragmentActivity>, messag
                     )
                 )
             }
-        }catch (ex:Exception){}
+        } catch (ex: Exception) {
+        }
     }
 
     override fun getRoot(): FrameLayout {

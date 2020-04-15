@@ -20,6 +20,8 @@ import com.joshtalks.joshskills.repository.local.DatabaseUtils;
 import com.joshtalks.joshskills.repository.local.entity.DOWNLOAD_STATUS;
 import com.joshtalks.joshskills.repository.local.eventbus.MediaProgressEventBus;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -56,9 +58,14 @@ public class VideoDownloadService extends DownloadService {
     public void onCreate() {
         super.onCreate();
         notificationHelper = new DownloadNotificationHelper(this, CHANNEL_ID);
-
     }
 
+   /*@Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        return  START_STICKY;
+    }*/
+
+    @NotNull
     @Override
     protected DownloadManager getDownloadManager() {
         return VideoDownloadController.getInstance().getDownloadManager();
@@ -67,14 +74,13 @@ public class VideoDownloadService extends DownloadService {
     @Override
     protected Scheduler getScheduler() {
         return new WorkManagerScheduler("Download Video");
-        //  return Util.SDK_INT >= 21 ? new PlatformScheduler(this, JOB_ID) : null;
     }
 
+    @NotNull
     @Override
-    protected Notification getForegroundNotification(List<Download> downloads) {
+    protected Notification getForegroundNotification(@NotNull List<Download> downloads) {
         showDownloadProgress(downloads);
-        return notificationHelper.buildProgressNotification(
-                R.drawable.ic_download, null, "", downloads);
+        return notificationHelper.buildProgressNotification(R.drawable.ic_download, null, "", downloads);
     }
 
 
@@ -110,6 +116,7 @@ public class VideoDownloadService extends DownloadService {
             return;
         }
     }
+
 
     void videoNotUploadFlagUpdate() {
         new Timer().schedule(new TimerTask() {

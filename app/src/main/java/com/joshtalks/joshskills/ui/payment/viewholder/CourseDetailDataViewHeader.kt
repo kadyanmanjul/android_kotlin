@@ -1,7 +1,6 @@
 package com.joshtalks.joshskills.ui.payment.viewholder
 
 import android.content.Context
-import android.graphics.Bitmap
 import android.text.SpannableString
 import android.text.Spanned
 import android.text.style.IconMarginSpan
@@ -149,7 +148,7 @@ class CourseDetailDataViewHeader(
     }
 
     private fun setImageView(url: String) {
-        val multi = MultiTransformation<Bitmap>(
+        val multi = MultiTransformation(
             RoundedCornersTransformation(
                 Utils.dpToPx(ROUND_CORNER),
                 0,

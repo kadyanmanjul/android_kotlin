@@ -1,10 +1,12 @@
 package com.joshtalks.joshskills.ui.video_player
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.net.Uri
 import android.os.Bundle
+import android.view.WindowManager
 import androidx.databinding.DataBindingUtil
 import com.google.android.exoplayer2.Player
 import com.joshtalks.joshskills.R
@@ -21,6 +23,7 @@ import com.joshtalks.joshskills.repository.local.entity.ChatModel
 import com.joshtalks.joshskills.repository.server.engage.Graph
 import com.joshtalks.joshskills.repository.server.engage.VideoEngage
 import com.joshtalks.joshskills.repository.service.EngagementNetworkHelper
+import com.joshtalks.joshskills.ui.chat.VIDEO_OPEN_REQUEST_CODE
 import com.joshtalks.joshskills.ui.pdfviewer.COURSE_NAME
 
 const val VIDEO_OBJECT = "video_"
@@ -29,6 +32,37 @@ const val VIDEO_ID = "video_id"
 
 
 class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener {
+
+    companion object {
+        fun startConversionActivity(
+            activity: Activity,
+            chatModel: ChatModel,
+            videoTitle: String
+        ) {
+            val intent = Intent(activity, VideoPlayerActivity::class.java)
+            intent.putExtra(VIDEO_OBJECT, chatModel)
+            intent.putExtra(COURSE_NAME, videoTitle)
+            activity.startActivityForResult(intent, VIDEO_OPEN_REQUEST_CODE)
+        }
+
+        fun startConversionActivityV2(
+            context: Context,
+            videoTitle: String?,
+            videoId: String?,
+            videoUrl: String?
+
+        ) {
+            val intent = Intent(context, VideoPlayerActivity::class.java)
+            intent.putExtra(VIDEO_URL, videoUrl)
+            intent.putExtra(VIDEO_ID, videoId)
+            intent.putExtra(COURSE_NAME, videoTitle)
+            context.startActivity(intent)
+        }
+
+        const val VIDEO_URL = "video_url"
+        const val VIDEO_ID = "video_id"
+
+    }
 
     private var countUpTimer = CountUpTimer(true)
 
@@ -45,6 +79,7 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener {
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         AppAnalytics.create(AnalyticsEvent.VIDEO_WATCH_ACTIVITY.NAME).push()
         super.onCreate(savedInstanceState)
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_USER
@@ -66,7 +101,7 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener {
                         AppObjectController.videoDownloadTracker.download(
                             chatObject,
                             Uri.parse(chatObject.url),
-                            VideoDownloadController.getInstance().buildRenderersFactory(false)
+                            VideoDownloadController.getInstance().buildRenderersFactory(true)
                         )
                     }
                 }
@@ -87,55 +122,21 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener {
 
 
     private fun setToolbar() {
-
         setSupportActionBar(binding.toolbar)
         binding.videoPlayer.setToolbar(binding.toolbar)
         intent.getStringExtra(COURSE_NAME)?.let {
             binding.textMessageTitle.text = it
         }
         binding.ivBack.setOnClickListener {
-            this.finish()
+            this.onBackPressed()
         }
         binding.ivMore.setOnClickListener {
             binding.videoPlayer.openVideoPlayerOptions()
         }
         binding.videoPlayer.getToolbar()?.setNavigationOnClickListener {
-            this.finish()
+            this.onBackPressed()
         }
-
     }
-
-
-    companion object {
-        fun startConversionActivity(
-            context: Context,
-            chatModel: ChatModel,
-            videoTitle: String
-        ) {
-            val intent = Intent(context, VideoPlayerActivity::class.java)
-            intent.putExtra(VIDEO_OBJECT, chatModel)
-            intent.putExtra(COURSE_NAME, videoTitle)
-            context.startActivity(intent)
-        }
-        fun startConversionActivityV2(
-            context: Context,
-            videoTitle: String?,
-            videoId:String?,
-            videoUrl:String?
-
-        ) {
-            val intent = Intent(context, VideoPlayerActivity::class.java)
-            intent.putExtra(VIDEO_URL, videoUrl)
-            intent.putExtra(VIDEO_ID, videoId)
-            intent.putExtra(COURSE_NAME, videoTitle)
-            context.startActivity(intent)
-        }
-
-        const val VIDEO_URL = "video_url"
-        const val VIDEO_ID = "video_id"
-
-    }
-
 
     override fun onStop() {
         super.onStop()
@@ -156,6 +157,8 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener {
 
 
     override fun onBackPressed() {
+        window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        setResult()
         this@VideoPlayerActivity.finish()
     }
 
@@ -207,5 +210,11 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener {
         graph = null
     }
 
+    fun setResult() {
+        if (videoViewGraphList.isNotEmpty() || graph != null) {
+            val resultIntent = Intent()
+            setResult(Activity.RESULT_OK, resultIntent)
+        }
+    }
 
 }

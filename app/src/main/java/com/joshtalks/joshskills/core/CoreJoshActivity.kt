@@ -9,13 +9,13 @@ import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.repository.server.engage.Graph
 import com.joshtalks.joshskills.repository.service.EngagementNetworkHelper
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
-import com.joshtalks.joshskills.ui.help.HelpActivity
 import com.joshtalks.joshskills.ui.inbox.COURSE_EXPLORER_WITHOUT_CODE
+import com.joshtalks.joshskills.ui.referral.PromotionDialogFragment
 
 
 abstract class CoreJoshActivity : BaseActivity() {
     protected var countUpTimer = CountUpTimer(true)
-    protected var videoViewGraphList: MutableSet<Graph> = mutableSetOf<Graph>()
+    protected var videoViewGraphList: MutableSet<Graph> = mutableSetOf()
     protected var graph: Graph? = null
     protected var currentAudio: String? = null
     protected var cAudioId: String? = null
@@ -50,7 +50,7 @@ abstract class CoreJoshActivity : BaseActivity() {
 
     }
 
-    protected fun endAudioEngagePart(endTime:Long) {
+    protected fun endAudioEngagePart(endTime: Long) {
         graph?.endTime = endTime
         graph?.let {
             videoViewGraphList.add(it)
@@ -63,6 +63,18 @@ abstract class CoreJoshActivity : BaseActivity() {
             EngagementNetworkHelper.engageAudioApi(cAudioId!!, videoViewGraphList.toList())
         }
         videoViewGraphList.clear()
+    }
+
+    fun showPromotionScreen(courseId: String?, placeholderImageUrl: String?) {
+        val fragmentTransaction = supportFragmentManager.beginTransaction()
+        val prev = supportFragmentManager.findFragmentByTag("promotion_show_dialog")
+        if (prev != null) {
+            fragmentTransaction.remove(prev)
+        }
+        fragmentTransaction.addToBackStack(null)
+        PromotionDialogFragment.newInstance(courseId, placeholderImageUrl)
+            .show(supportFragmentManager, "promotion_show_dialog")
+        this.intent = null
     }
 
 }

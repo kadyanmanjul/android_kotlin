@@ -2,12 +2,12 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/root_view_fl"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/_2sdp"
         android:layout_marginBottom="@dimen/_2sdp"
         android:paddingStart="@dimen/_14sdp"
-        android:id="@+id/root_view_fl"
         android:paddingEnd="@dimen/_14sdp">
 
     <androidx.cardview.widget.CardView
@@ -68,9 +68,9 @@
                             android:layout_gravity="center"
                             android:autoSizeMaxTextSize="@dimen/font_18"
                             android:gravity="center"
-                            android:text="@string/practice"
                             android:paddingStart="@dimen/_4sdp"
                             android:paddingEnd="@dimen/_4sdp"
+                            android:text="@string/practice"
                             android:textColor="@color/colorAccent"
                             android:textSize="@dimen/font_20"
                             app:layout_constraintBottom_toBottomOf="parent"
@@ -99,12 +99,12 @@
                         app:layout_constraintStart_toStartOf="parent" />
 
                 <androidx.appcompat.widget.AppCompatTextView
-                        android:background="@drawable/round_both_bottom_bg"
                         android:id="@+id/sub_title_tv"
                         fontPath="fonts/Roboto-Medium.ttf"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="start"
+                        android:background="@drawable/round_both_bottom_bg"
                         android:backgroundTint="#EFEFEF"
                         android:gravity="center_vertical|start"
                         android:paddingStart="@dimen/_8sdp"

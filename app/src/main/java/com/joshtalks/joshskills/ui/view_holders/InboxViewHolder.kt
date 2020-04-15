@@ -107,10 +107,12 @@ class InboxViewHolder(
         when {
             BASE_MESSAGE_TYPE.TX == baseMessageType -> {
                 inboxEntity.qText?.let { text ->
-                    tvLastReceivedMessage.text =  HtmlCompat.fromHtml(text, HtmlCompat.FROM_HTML_MODE_LEGACY)
+                    tvLastReceivedMessage.text =
+                        HtmlCompat.fromHtml(text, HtmlCompat.FROM_HTML_MODE_LEGACY)
                 }
                 inboxEntity.text?.let { text ->
-                    tvLastReceivedMessage.text =  HtmlCompat.fromHtml(text, HtmlCompat.FROM_HTML_MODE_LEGACY)
+                    tvLastReceivedMessage.text =
+                        HtmlCompat.fromHtml(text, HtmlCompat.FROM_HTML_MODE_LEGACY)
                 }
 
             }

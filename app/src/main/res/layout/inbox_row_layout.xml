@@ -32,11 +32,9 @@
                 android:layout_width="@dimen/_48sdp"
                 android:layout_height="@dimen/_48sdp"
                 android:layout_marginEnd="@dimen/_10sdp"
-                android:layout_marginBottom="@dimen/_10sdp"
-               />
+                android:layout_marginBottom="@dimen/_10sdp" />
 
         <androidx.appcompat.widget.AppCompatTextView
-                android:inputType="none"
                 android:id="@+id/tv_name"
                 fontPath="fonts/OpenSans-SemiBold.ttf"
                 android:layout_width="wrap_content"
@@ -45,6 +43,7 @@
                 android:layout_toStartOf="@id/tv_last_message_time"
                 android:layout_toEndOf="@id/profile_image"
                 android:ellipsize="end"
+                android:inputType="none"
                 android:maxLines="1"
                 android:paddingEnd="@dimen/_10sdp"
                 android:text=""
@@ -90,8 +89,7 @@
                 android:layout_marginTop="@dimen/_5sdp"
                 android:maxLines="1"
                 android:text=""
-                android:textSize="@dimen/font_12"
-                />
+                android:textSize="@dimen/font_12" />
 
         <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tv_notification"
@@ -101,8 +99,7 @@
                 android:layout_alignParentEnd="true"
                 android:layout_marginTop="3dp"
                 android:maxLines="1"
-                android:textSize="@dimen/font_11_5"
-                />
+                android:textSize="@dimen/font_11_5" />
 
         <LinearLayout
                 android:id="@+id/horizontal_line"

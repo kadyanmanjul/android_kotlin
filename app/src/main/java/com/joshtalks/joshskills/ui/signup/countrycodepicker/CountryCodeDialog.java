@@ -47,13 +47,9 @@ class CountryCodeDialog {
             cursorDrawableResourceField = TextView.class.getDeclaredField("mCursorDrawableRes");
             cursorDrawableResourceField.setAccessible(true);
             final Class<?> drawableFieldClass;
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
-                drawableFieldClass = TextView.class;
-            } else {
-                editorField = TextView.class.getDeclaredField("mEditor");
-                editorField.setAccessible(true);
-                drawableFieldClass = editorField.getType();
-            }
+            editorField = TextView.class.getDeclaredField("mEditor");
+            editorField.setAccessible(true);
+            drawableFieldClass = editorField.getType();
             cursorDrawableField = drawableFieldClass.getDeclaredField("mCursorDrawable");
             cursorDrawableField.setAccessible(true);
         } catch (Exception e) {

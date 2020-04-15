@@ -18,6 +18,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
+const val HEADER_KEY = "createdmilisecond"
+
 object NetworkRequestHelper {
 
     fun getUpdatedChat(
@@ -30,16 +32,14 @@ object NetworkRequestHelper {
                     conversation_id,
                     queryMap
                 )
-
                 if (resp.chatModelList.isNullOrEmpty()) {
                     RxBus2.publish(MessageCompleteEventBus(false))
                 } else {
                     PrefManager.put(
                         conversation_id.trim(),
-                        resp.chatModelList.last().created.time
+                        resp.chatModelList.last().messageTimeInMilliSeconds
                     )
                     RxBus2.publish(MessageCompleteEventBus(true))
-
                 }
 
 
@@ -112,34 +112,22 @@ object NetworkRequestHelper {
                 RxBus2.publish(DBInsertion("Chat"))
 
                 resp.next?.let {
-
                     val uri = Uri.parse(it)
                     val args = uri.queryParameterNames
                     val arguments = mutableMapOf<String, String>()
-
-                    val created = uri.getQueryParameter("created")
-
-                    PrefManager.getLongValue(conversation_id).let { time ->
-                        if (created.isNullOrEmpty().not()) {
-                            if (created?.toLong() == (time / 1000)) {
-                                for (name in args) {
-                                    arguments[name] = uri.getQueryParameter(name) ?: ""
-                                }
+                    PrefManager.getLastSyncTime(conversation_id).let { keys ->
+                        /*for (name in args) {
+                            uri.getQueryParameter(name)?.run {
+                                arguments[name] = this
                             }
-                        }
-
-                        if (time > 0) {
-                            arguments["created"] = (time / 1000).toString()
-                        }
+                        }*/
+                        arguments[keys.first] = keys.second
                     }
                     getUpdatedChat(conversation_id, queryMap = arguments)
-
                 }
-
             } catch (ex: Exception) {
                 ex.printStackTrace()
             }
-
         }
     }
 

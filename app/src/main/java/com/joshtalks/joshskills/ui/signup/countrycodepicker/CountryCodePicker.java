@@ -1523,7 +1523,6 @@ public class CountryCodePicker extends RelativeLayout {
      *                           if you want to set IN +91(India) as default country, defaultCountryCode =  91
      *                           if you want to set JP +81(Japan) as default country, defaultCountryCode =  81
      */
-    @Deprecated
     public void setDefaultCountryUsingPhoneCode(int defaultCountryCode) {
         CCPCountry defaultCCPCountry = CCPCountry.getCountryForCode(getContext(), getLanguageToApply(), preferredCountries, defaultCountryCode); //xml stores data in string format, but want to allow only numeric value to country code to user.
         if (defaultCCPCountry == null) { //if no correct country is found

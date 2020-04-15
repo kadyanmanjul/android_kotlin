@@ -216,7 +216,7 @@ class VideoViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
         AppObjectController.videoDownloadTracker.download(
             message,
             Uri.parse(url),
-            VideoDownloadController.getInstance().buildRenderersFactory(false)
+            VideoDownloadController.getInstance().buildRenderersFactory(true)
         )
         AppAnalytics.create(AnalyticsEvent.VIDEO_DOWNLOAD.NAME).push()
     }
@@ -243,6 +243,12 @@ class VideoViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
     fun downloadStart() {
         executeDownload()
     }
+
+    @Click(R.id.download_container)
+    fun downloadStartContainer() {
+        executeDownload()
+    }
+
 
     private fun executeDownload() {
         if (PermissionUtils.isStoragePermissionEnable(activityRef.get()!!).not()) {
@@ -281,7 +287,7 @@ class VideoViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
             if (message.downloadStatus == DOWNLOAD_STATUS.DOWNLOADED) {
                 RxBus2.publish(PlayVideoEvent(message))
             } else if (AppDirectory.isFileExist(message.downloadedLocalPath).not()) {
-               showToast(getAppContext().getString(R.string.video_url_not_exist))
+                showToast(getAppContext().getString(R.string.video_url_not_exist))
             }
         } else {
             message.question?.videoList?.getOrNull(0)?.let { _ ->
@@ -289,7 +295,7 @@ class VideoViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
                     RxBus2.publish(PlayVideoEvent(message))
                     return
                 }
-                if (message.downloadStatus == DOWNLOAD_STATUS.DOWNLOADING ) {
+                if (message.downloadStatus == DOWNLOAD_STATUS.DOWNLOADING) {
                     RxBus2.publish(PlayVideoEvent(message))
                     return
                 }

@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import androidx.lifecycle.LifecycleOwner
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.COURSE_OFFER
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.skydoves.balloon.*
@@ -67,7 +68,7 @@ object BalloonFactory {
         val typefaceSpan = TypefaceUtils.load(baseContext.assets, "fonts/Roboto-Medium.ttf")
         val textForm: TextForm = TextForm.Builder(baseContext)
             .setText(text)
-            .setTextColorResource(R.color.gray_53)
+            .setTextColorResource(R.color.white)
             .setTextSize(12f)
             .setTextTypeface(typefaceSpan)
             .build()
@@ -86,7 +87,7 @@ object BalloonFactory {
             .setSpace(8)
             .setDismissWhenShowAgain(false)
             .setOnBalloonDismissListener(onBalloonDismissListener)
-            .setBackgroundColorResource(R.color.white)
+            .setBackgroundColorResource(R.color.gray_53)
             .setBalloonAnimation(BalloonAnimation.OVERSHOOT)
             .setLifecycleOwner(lifecycleOwner)
             .setDismissWhenClicked(false)
@@ -174,6 +175,39 @@ object BalloonFactory {
             .setBalloonAnimation(BalloonAnimation.OVERSHOOT)
             .setLifecycleOwner(lifecycleOwner)
             .setDismissWhenClicked(true)
+            .build()
+    }
+
+    fun getTooltipForCertificate(
+        baseContext: Context, lifecycleOwner: LifecycleOwner, value: OnBalloonDismissListener
+    ): Balloon {
+
+        val per =
+            AppObjectController.getFirebaseRemoteConfig().getString("COURSE_COMPLETED_PERCENTAGE")
+        val text = baseContext.getString(R.string.certificate_tooltip_hint, per)
+        val typefaceSpan = TypefaceUtils.load(baseContext.assets, "fonts/Roboto-Regular.ttf")
+        val textForm: TextForm = TextForm.Builder(baseContext)
+            .setText(text)
+            .setTextColorResource(R.color.gray_53)
+            .setTextSize(11f)
+            .setTextTypeface(typefaceSpan)
+            .build()
+
+        return Balloon.Builder(baseContext)
+            .setTextForm(textForm)
+            .setArrowSize(10)
+            .setArrowVisible(true)
+            .setWidthRatio(0.85f)
+            .setArrowOrientation(ArrowOrientation.BOTTOM)
+            .setArrowVisible(true)
+            .setHeight(64)
+            .setDismissWhenTouchOutside(true)
+            .setCornerRadius(4f)
+            .setBackgroundColorResource(R.color.controls_panel_stroke)
+            .setBalloonAnimation(BalloonAnimation.OVERSHOOT)
+            .setLifecycleOwner(lifecycleOwner)
+            .setDismissWhenClicked(true)
+            .setOnBalloonDismissListener(value)
             .build()
     }
 

@@ -886,7 +886,7 @@ class PractiseSubmitActivity : CoreJoshActivity() {
                             startTime
                         )
                     if (timeDifference > 1) {
-                        practiseViewModel.recordFile.let {
+                        practiseViewModel.recordFile?.let {
                             isAudioRecordDone = true
                             filePath = AppDirectory.getAudioSentFile(null).absolutePath
                             AppDirectory.copy(it.absolutePath, filePath!!)
@@ -1079,7 +1079,6 @@ class PractiseSubmitActivity : CoreJoshActivity() {
             mPlayerInterface?.resumeOrPause()
         }
         disableSubmitButton()
-
     }
 
     private fun initVideoPractise(path: String) {
@@ -1100,9 +1099,6 @@ class PractiseSubmitActivity : CoreJoshActivity() {
                 null,
                 filePath
             )
-/*
-            FullScreenVideoFragment.newInstance(filePath!!)
-                .show(supportFragmentManager, "VideoPlay")*/
         }
         enableSubmitButton()
         scrollToEnd()

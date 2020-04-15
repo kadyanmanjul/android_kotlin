@@ -10,7 +10,6 @@ import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
-import android.widget.RelativeLayout
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.ContextCompat
@@ -24,8 +23,6 @@ import com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.*
 import com.joshtalks.joshskills.repository.local.eventbus.GotoChatEventBus
-import io.github.inflationx.calligraphy3.CalligraphyTypefaceSpan
-import io.github.inflationx.calligraphy3.TypefaceUtils
 import java.lang.ref.WeakReference
 
 
@@ -33,13 +30,6 @@ abstract class BaseChatViewHolder(
     val activityRef: WeakReference<FragmentActivity>,
     var message: ChatModel
 ) : BaseCell() {
-
-    val robotoMediumTypefaceSpan = CalligraphyTypefaceSpan(
-        TypefaceUtils.load(
-            getAppContext().assets,
-            "fonts/Roboto-Medium.ttf"
-        )
-    )
 
     companion object {
         var sId = EMPTY
@@ -173,38 +163,6 @@ abstract class BaseChatViewHolder(
     }
 
 
-    fun updateView(rootView: RelativeLayout, sender: Sender) {
-        if (sender.id.equals(getUserId(), ignoreCase = true)) {
-            val params = FrameLayout.LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT
-            )
-            params.setMargins(
-                com.vanniktech.emoji.Utils.dpToPx(getAppContext(), 80f),
-                0,
-                com.vanniktech.emoji.Utils.dpToPx(getAppContext(), 7f),
-                0
-            )
-            params.gravity = Gravity.END
-            rootView.layoutParams = params
-            rootView.setBackgroundResource(R.drawable.balloon_outgoing_normal)
-        } else {
-            val params = FrameLayout.LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT
-            )
-            params.gravity = Gravity.START
-            params.setMargins(
-                com.vanniktech.emoji.Utils.dpToPx(getAppContext(), 7f),
-                0,
-                com.vanniktech.emoji.Utils.dpToPx(getAppContext(), 80f),
-                0
-            )
-            rootView.layoutParams = params
-            rootView.setBackgroundResource(R.drawable.balloon_incoming_normal)
-        }
-    }
-
     @SuppressLint("ClickableViewAccessibility")
     fun addLinkToTagMessage(
         rootView: ViewGroup,
@@ -281,6 +239,10 @@ abstract class BaseChatViewHolder(
                         }
 
                     }
+
+                    else -> {
+
+                    }
                 }
                 if (imageUrl.isNullOrEmpty().not()) {
                     val imageLastView =
@@ -341,3 +303,38 @@ abstract class BaseChatViewHolder(
 
     abstract fun getRoot(): FrameLayout
 }
+
+
+/*
+fun updateView(rootView: RelativeLayout, sender: Sender) {
+    if (sender.id.equals(getUserId(), ignoreCase = true)) {
+        val params = FrameLayout.LayoutParams(
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
+        params.setMargins(
+            com.vanniktech.emoji.Utils.dpToPx(getAppContext(), 80f),
+            0,
+            com.vanniktech.emoji.Utils.dpToPx(getAppContext(), 7f),
+            0
+        )
+        params.gravity = Gravity.END
+        rootView.layoutParams = params
+        rootView.setBackgroundResource(R.drawable.balloon_outgoing_normal)
+    } else {
+        val params = FrameLayout.LayoutParams(
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
+        params.gravity = Gravity.START
+        params.setMargins(
+            com.vanniktech.emoji.Utils.dpToPx(getAppContext(), 7f),
+            0,
+            com.vanniktech.emoji.Utils.dpToPx(getAppContext(), 80f),
+            0
+        )
+        rootView.layoutParams = params
+        rootView.setBackgroundResource(R.drawable.balloon_incoming_normal)
+    }
+}
+*/

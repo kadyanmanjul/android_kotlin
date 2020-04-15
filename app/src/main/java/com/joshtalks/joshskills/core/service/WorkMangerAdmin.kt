@@ -11,7 +11,7 @@ import java.util.concurrent.TimeUnit
 
 object WorkMangerAdmin {
 
-    fun appStartWorker(){
+    fun appStartWorker() {
         WorkManager.getInstance(AppObjectController.joshApplication)
             .enqueue(OneTimeWorkRequestBuilder<AppRunRequiredTaskWorker>().build())
     }
@@ -68,12 +68,12 @@ object WorkMangerAdmin {
     fun readMessageUpdating() {
 
         val workRequest = PeriodicWorkRequest.Builder(
-                MessageReadPeriodicWorker::class.java,
-                30,
-                TimeUnit.MINUTES,
-                PeriodicWorkRequest.MIN_PERIODIC_FLEX_MILLIS,
-                TimeUnit.MILLISECONDS
-            )
+            MessageReadPeriodicWorker::class.java,
+            30,
+            TimeUnit.MINUTES,
+            PeriodicWorkRequest.MIN_PERIODIC_FLEX_MILLIS,
+            TimeUnit.MILLISECONDS
+        )
             .setInitialDelay(1, TimeUnit.MINUTES)
             .addTag(MessageReadPeriodicWorker::class.java.simpleName)
             .build()
@@ -134,7 +134,7 @@ object WorkMangerAdmin {
     }
 
 
-    fun mappingGIDWithMentor(){
+    fun mappingGIDWithMentor() {
         WorkManager.getInstance(AppObjectController.joshApplication)
             .enqueue(OneTimeWorkRequestBuilder<MappingGaIDWithMentor>().build())
     }

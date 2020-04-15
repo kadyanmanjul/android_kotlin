@@ -16,7 +16,7 @@ const val DATABASE_NAME = "JoshEnglishDB.db"
 
 @Database(
     entities = [Course::class, ChatModel::class, Question::class, VideoType::class, AudioType::class, OptionType::class, PdfType::class, ImageType::class],
-    version = 12,
+    version = 13,
     exportSchema = false
 )
 @TypeConverters(
@@ -42,9 +42,9 @@ abstract class AppDatabase : RoomDatabase() {
                 synchronized(AppDatabase::class.java) {
                     if (INSTANCE == null) {
                         INSTANCE = Room.databaseBuilder(
-                                context.applicationContext,
-                                AppDatabase::class.java, DATABASE_NAME
-                            )
+                            context.applicationContext,
+                            AppDatabase::class.java, DATABASE_NAME
+                        )
                             .addMigrations(
                                 MIGRATION_1_2,
                                 MIGRATION_2_3,
@@ -56,7 +56,8 @@ abstract class AppDatabase : RoomDatabase() {
                                 MIGRATION_8_9,
                                 MIGRATION_9_10,
                                 MIGRATION_10_11,
-                                MIGRATION_11_12
+                                MIGRATION_11_12,
+                                MIGRATION_12_13
                             )
                             .fallbackToDestructiveMigration()
                             .addCallback(sRoomDatabaseCallback)
@@ -157,6 +158,13 @@ abstract class AppDatabase : RoomDatabase() {
             }
         }
 
+        private val MIGRATION_12_13: Migration = object : Migration(12, 13) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("ALTER TABLE chat_table ADD COLUMN message_time_in_milliSeconds TEXT  NOT NULL DEFAULT '' ")
+            }
+        }
+
+
         fun clearDatabase() {
             INSTANCE?.clearAllTables()
         }
@@ -209,7 +217,7 @@ class ConvertersForDownloadStatus {
     @TypeConverter
     fun fromString(value: String): DOWNLOAD_STATUS {
         val matType = object : TypeToken<DOWNLOAD_STATUS>() {}.type
-        return AppObjectController.gsonMapper.fromJson<DOWNLOAD_STATUS>(value, matType)
+        return AppObjectController.gsonMapper.fromJson(value, matType)
     }
 
     @TypeConverter
@@ -254,7 +262,7 @@ class MessageDeliveryTypeConverter {
     @TypeConverter
     fun fromString(value: String?): MESSAGE_DELIVER_STATUS {
         val matType = object : TypeToken<MESSAGE_DELIVER_STATUS>() {}.type
-        return AppObjectController.gsonMapper.fromJson<MESSAGE_DELIVER_STATUS>(
+        return AppObjectController.gsonMapper.fromJson(
             value ?: MESSAGE_DELIVER_STATUS.READ.name, matType
         )
     }

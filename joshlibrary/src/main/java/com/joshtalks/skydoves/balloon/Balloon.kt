@@ -61,7 +61,7 @@ class Balloon(
     private val bodyView: View
     private val bodyWindow: PopupWindow
     var isShowing = false
-        private set
+
     var onBalloonClickListener: OnBalloonClickListener? = null
     var onBalloonDismissListener: OnBalloonDismissListener? = null
     var onBalloonOutsideTouchListener: OnBalloonOutsideTouchListener? = null

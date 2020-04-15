@@ -57,6 +57,7 @@ import com.joshtalks.joshskills.core.custom_ui.SnappingLinearLayoutManager
 import com.joshtalks.joshskills.core.custom_ui.decorator.LayoutMarginDecoration
 import com.joshtalks.joshskills.core.custom_ui.progress.FlipProgressDialog
 import com.joshtalks.joshskills.core.io.AppDirectory
+import com.joshtalks.joshskills.core.notification.HAS_COURSE_REPORT
 import com.joshtalks.joshskills.core.playback.PlaybackInfoListener.State.PLAYING
 import com.joshtalks.joshskills.databinding.ActivityConversationBinding
 import com.joshtalks.joshskills.messaging.MessageBuilderFactory
@@ -72,8 +73,7 @@ import com.joshtalks.joshskills.repository.server.chat_message.TChatMessage
 import com.joshtalks.joshskills.repository.server.chat_message.TImageMessage
 import com.joshtalks.joshskills.repository.server.chat_message.TVideoMessage
 import com.joshtalks.joshskills.repository.server.engage.Graph
-import com.joshtalks.joshskills.ui.chat.course_content.ContentTimelineFragment
-import com.joshtalks.joshskills.ui.chat.course_content.OnGoContentListener
+import com.joshtalks.joshskills.ui.courseprogress.CourseProgressActivity
 import com.joshtalks.joshskills.ui.extra.ImageShowFragment
 import com.joshtalks.joshskills.ui.pdfviewer.PdfViewerActivity
 import com.joshtalks.joshskills.ui.practise.PRACTISE_OBJECT
@@ -110,8 +110,14 @@ const val CHAT_ROOM_OBJECT = "chat_room"
 const val IMAGE_SELECT_REQUEST_CODE = 1077
 const val VISIBILE_ITEM_PERCENT = 75
 const val PRACTISE_SUBMIT_REQUEST_CODE = 1100
+const val COURSE_PROGRESS_REQUEST_CODE = 1101
+const val VIDEO_OPEN_REQUEST_CODE = 1102
 
-class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback, OnGoContentListener {
+const val PRACTISE_UPDATE_MESSAGE_KEY = "practise_update_message_id"
+const val FOCUS_ON_CHAT_ID = "focus_on_chat_id"
+
+
+class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
 
     companion object {
         fun startConversionActivity(context: Context, inboxEntity: InboxEntity) {
@@ -168,6 +174,10 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback, OnGoCon
         } else {
             this@ConversationActivity.finish()
         }
+        if (intent.hasExtra(HAS_COURSE_REPORT)) {
+            openCourseProgressListingScreen()
+        }
+
         conversationBinding = DataBindingUtil.setContentView(this, R.layout.activity_conversation)
         initViewModel()
         conversationBinding.viewmodel = conversationViewModel
@@ -202,6 +212,17 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback, OnGoCon
                 }
             }
         }
+
+        mIntent?.hasExtra(HAS_COURSE_REPORT)?.run {
+            if (this) {
+                openCourseProgressListingScreen()
+            }
+        }
+        intent?.hasExtra(HAS_COURSE_REPORT)?.run {
+            if (this) {
+                openCourseProgressListingScreen()
+            }
+        }
         super.onNewIntent(mIntent)
     }
 
@@ -215,6 +236,7 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback, OnGoCon
             conversationBinding.lifecycleOwner = this
         } catch (ex: Exception) {
         }
+        //var pq: SavedStateHandle
     }
 
 
@@ -332,10 +354,10 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback, OnGoCon
             }
             findViewById<View>(R.id.image_view_logo).visibility = VISIBLE
             findViewById<View>(R.id.image_view_logo).setOnClickListener {
-                showContentTimeLine()
+                openCourseProgressListingScreen()
             }
             findViewById<AppCompatTextView>(R.id.text_message_title).setOnClickListener {
-                showContentTimeLine()
+                openCourseProgressListingScreen()
             }
 
             findViewById<AppCompatImageView>(R.id.iv_back).setOnClickListener {
@@ -375,22 +397,31 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback, OnGoCon
             .build()
     }
 
-
     private fun onlyChatView() {
-        inboxEntity.chat_type?.let {
-            if (it.isNotEmpty() && it.equals("NC", ignoreCase = true)) {
-                conversationBinding.flAttachment.visibility = GONE
-                conversationBinding.quickToggle.visibility = GONE
-                conversationBinding.recordButton.visibility = INVISIBLE
-                conversationBinding.attachmentContainer.visibility = GONE
-                isOnlyChat = true
-                conversationBinding.messageButton.visibility = VISIBLE
-                conversationBinding.messageButton.setImageResource(R.drawable.ic_send)
-                Glide.with(applicationContext)
-                    .load(R.drawable.ic_send)
-                    .override(Target.SIZE_ORIGINAL)
-                    .into(conversationBinding.messageButton)
+        inboxEntity.chat_type?.run {
+            when {
+                this.equals("NC", ignoreCase = true) -> {
+                    conversationBinding.flAttachment.visibility = GONE
+                    conversationBinding.quickToggle.visibility = GONE
+                    conversationBinding.recordButton.visibility = INVISIBLE
+                    conversationBinding.attachmentContainer.visibility = GONE
+                    isOnlyChat = true
+                    conversationBinding.messageButton.visibility = VISIBLE
+                    conversationBinding.messageButton.setImageResource(R.drawable.ic_send)
+                    Glide.with(applicationContext)
+                        .load(R.drawable.ic_send)
+                        .override(Target.SIZE_ORIGINAL)
+                        .into(conversationBinding.messageButton)
+                }
+                this.equals("RC", ignoreCase = true) -> {
+                    conversationBinding.bottomBar.visibility = GONE
+                }
+                else -> {
+
+                }
             }
+
+
         }
     }
 
@@ -666,24 +697,27 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback, OnGoCon
             scrollToEnd()
         }
 
+
         findViewById<View>(R.id.play_pause).setOnClickListener {
+            AppObjectController.currentPlayingAudioObject?.let {
+                refreshViewAtPos(it) {
+                }
+            }
             if (streamingManager != null && streamingManager!!.isPlaying) {
                 streamingManager?.handlePauseRequest()
                 mPlayPauseButton.setImageResource(R.drawable.ic_play_player)
             } else {
                 streamingManager?.handlePlayRequest()
                 mPlayPauseButton.setImageResource(R.drawable.ic_pause_player)
+            }
 
-            }
-            AppObjectController.currentPlayingAudioObject?.let {
-                refreshViewAtPos(it)
-            }
         }
         findViewById<View>(R.id.stop_player).setOnClickListener {
             streamingManager?.handlePauseRequest()
-            bottomSheetLayout.visibility = GONE
             AppObjectController.currentPlayingAudioObject?.let {
-                refreshViewAtPos(it)
+                refreshViewAtPos(it) {
+                    bottomSheetLayout.visibility = GONE
+                }
             }
             endAudioEngagePart(mSeekBarAudio.progress.toLong())
             engageAudio()
@@ -803,11 +837,7 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback, OnGoCon
                         if (chatModelLast != null && chatModelLast == chatModel && isNewChatViewAdd) {
                             isNewChatViewAdd = false
                             conversationBinding.chatRv.addView(NewMessageViewHolder("Aapki Nayi Classes"))
-                            linearLayoutManager.smoothScrollToPosition(
-                                conversationBinding.chatRv,
-                                null,
-                                conversationBinding.chatRv.viewResolverCount - 1
-                            )
+                            linearLayoutManager.scrollToPosition(conversationBinding.chatRv.viewResolverCount - 1)
                         }
                         getView(chatModel)?.let { cell ->
                             conversationBinding.chatRv.addView(cell)
@@ -1053,9 +1083,9 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback, OnGoCon
 
         compositeDisposable.add(
             RxBus2.listen(
-                    InternalSeekBarProgressEventBus::
-                    class.java
-                )
+                InternalSeekBarProgressEventBus::
+                class.java
+            )
                 .subscribeOn(Schedulers.computation())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
@@ -1095,7 +1125,7 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback, OnGoCon
 
     }
 
-    private fun refreshViewAtPos(chatObj: ChatModel) {
+    private fun refreshViewAtPos(chatObj: ChatModel, callback: () -> Unit = {}) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 var tempView: BaseChatViewHolder
@@ -1111,6 +1141,7 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback, OnGoCon
                                 tempView.message.isSelected = false
                                 AppObjectController.uiHandler.postDelayed({
                                     conversationBinding.chatRv.refreshView(index)
+                                    callback.invoke()
                                 }, 250)
                             }
                         }
@@ -1246,7 +1277,25 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback, OnGoCon
                     }
                 }
                 showToast(getString(R.string.answer_submitted))
+            } else if (requestCode == COURSE_PROGRESS_REQUEST_CODE && data != null) {
+                if (data.hasExtra(PRACTISE_UPDATE_MESSAGE_KEY)) {
+                    CoroutineScope(Dispatchers.IO).launch {
+                        try {
+                            val obj: Array<String>? =
+                                data.getStringArrayExtra(PRACTISE_UPDATE_MESSAGE_KEY)
+                            obj?.forEach {
+                                val chatObj = AppObjectController.appDatabase.chatDao()
+                                    .getUpdatedChatObjectViaId(it)
+                                refreshViewAtPos(chatObj)
+                            }
+                        } catch (ex: Exception) {
+                        }
+                    }
+                } else if (data.hasExtra(FOCUS_ON_CHAT_ID)) {
+                    scrollToPosition(data.getStringExtra(FOCUS_ON_CHAT_ID)!!)
+                }
             }
+
 
         } catch (ex: Exception) {
             Crashlytics.logException(ex)
@@ -1434,17 +1483,14 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback, OnGoCon
         this@ConversationActivity.finishAndRemoveTask()
     }
 
-    private fun showContentTimeLine() {
-        val fragmentTransaction = supportFragmentManager.beginTransaction()
-        val prev = supportFragmentManager.findFragmentByTag("content_time_line")
-        if (prev != null) {
-            fragmentTransaction.remove(prev)
-        }
-        fragmentTransaction.addToBackStack(null)
-        ContentTimelineFragment.newInstance(inboxEntity.conversation_id, inboxEntity.course_name)
-            .show(supportFragmentManager, "purchase_details_dialog")
+    private fun openCourseProgressListingScreen() {
+        AppAnalytics.create(AnalyticsEvent.COURSE_OVERVIEW.NAME).push()
+        CourseProgressActivity.startCourseProgressActivity(
+            this,
+            COURSE_PROGRESS_REQUEST_CODE,
+            inboxEntity
+        )
     }
-
 
     private fun observeNetwork() {
         compositeDisposable.add(
@@ -1593,10 +1639,6 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback, OnGoCon
     }
 
     override fun playPrevious(indexP: Int, currentAudio: MediaMetaData?) {
-    }
-
-    override fun onFocused(chatId: String) {
-        scrollToPosition(chatId)
     }
 
 }

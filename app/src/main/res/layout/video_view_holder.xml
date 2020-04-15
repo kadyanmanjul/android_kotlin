@@ -21,7 +21,7 @@
                 android:orientation="vertical"
                 android:padding="@dimen/_3sdp">
 
-            <include layout="@layout/tag_practise_layout"/>
+            <include layout="@layout/tag_practise_layout" />
 
 
             <TextView

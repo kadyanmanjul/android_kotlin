@@ -150,14 +150,14 @@ class ImageViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
 
 
     private fun fileNotDownloadView() {
-       // downloadContainer.visibility = VISIBLE
+        // downloadContainer.visibility = VISIBLE
         progressDialog.visibility = GONE
         ivCancelDownload.visibility = GONE
         ivStartDownload.visibility = VISIBLE
     }
 
     private fun fileDownloadRunView() {
-       // downloadContainer.visibility = VISIBLE
+        // downloadContainer.visibility = VISIBLE
         progressDialog.visibility = VISIBLE
         ivCancelDownload.visibility = VISIBLE
         ivStartDownload.visibility = GONE

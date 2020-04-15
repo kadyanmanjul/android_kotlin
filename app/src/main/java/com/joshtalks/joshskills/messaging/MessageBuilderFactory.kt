@@ -18,20 +18,24 @@ object MessageBuilderFactory {
         cMessageType: BASE_MESSAGE_TYPE,
         message: BaseChatMessage
     ): BaseChatViewHolder {
+        when (cMessageType) {
+            BASE_MESSAGE_TYPE.TX -> {
+                return TextViewHolder(activityRef, getTextChatModel(message))
 
-        if (cMessageType == BASE_MESSAGE_TYPE.TX) {
-            return TextViewHolder(activityRef, getTextChatModel(message))
+            }
+            BASE_MESSAGE_TYPE.VI -> {
+                return VideoViewHolder(activityRef, getVideoChatModel(message))
 
-        } else if (cMessageType == BASE_MESSAGE_TYPE.VI) {
-            return VideoViewHolder(activityRef, getVideoChatModel(message))
+            }
+            BASE_MESSAGE_TYPE.IM -> {
+                return ImageViewHolder(activityRef, getImageChatModel(message))
 
-        } else if (cMessageType == BASE_MESSAGE_TYPE.IM) {
-            return ImageViewHolder(activityRef, getImageChatModel(message))
-
-        } else if (cMessageType == BASE_MESSAGE_TYPE.AU) {
-            return AudioPlayerViewHolder(activityRef, getAudioChatModel(message))
+            }
+            BASE_MESSAGE_TYPE.AU -> {
+                return AudioPlayerViewHolder(activityRef, getAudioChatModel(message))
+            }
+            else -> return TextViewHolder(activityRef, ChatModel())
         }
-        return TextViewHolder(activityRef, ChatModel())
 
     }
 

@@ -39,38 +39,37 @@
                 android:layout_marginTop="@dimen/_4sdp"
                 android:layout_marginEnd="@dimen/_8sdp"
                 android:layout_toStartOf="@id/iv_detail_last"
-                android:paddingBottom="@dimen/_3sdp"
                 android:clickable="false"
+                android:ellipsize="end"
                 android:focusable="false"
                 android:gravity="center|start"
                 android:inputType=""
-                android:visibility="visible"
-                android:ellipsize="end"
                 android:maxLines="1"
+                android:paddingBottom="@dimen/_3sdp"
                 android:textAlignment="center"
                 android:textColor="@color/colorPrimaryDark"
-                android:textSize="@dimen/font_15" />
+                android:textSize="@dimen/font_15"
+                android:visibility="visible" />
 
         <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tv_detail_last"
                 fontPath="fonts/Roboto-Regular.ttf"
-                android:layout_below="@+id/tv_sender_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_below="@+id/tv_sender_name"
                 android:layout_alignParentStart="true"
                 android:layout_gravity="center|start"
                 android:layout_marginEnd="@dimen/_8sdp"
                 android:clickable="false"
                 android:drawablePadding="@dimen/_4sdp"
+                android:drawableTint="@color/emoji_icon_color"
                 android:focusable="false"
                 android:gravity="center|start"
                 android:inputType=""
                 android:maxLines="2"
-                android:drawableTint="@color/emoji_icon_color"
                 android:textAlignment="center"
                 android:textColor="@color/emoji_icon_color"
                 android:textSize="@dimen/font_14" />
-
 
 
         <androidx.appcompat.widget.AppCompatImageView

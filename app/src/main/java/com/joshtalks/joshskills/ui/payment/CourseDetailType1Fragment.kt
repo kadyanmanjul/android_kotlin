@@ -1,7 +1,6 @@
 package com.joshtalks.joshskills.ui.payment
 
 import android.content.Intent
-import android.graphics.Bitmap
 import android.graphics.Paint
 import android.graphics.Rect
 import android.os.Bundle
@@ -199,13 +198,13 @@ class CourseDetailType1Fragment : Fragment() {
 
                         val df = DecimalFormat("###,###", DecimalFormatSymbols(Locale.US))
                         val enrollUser = df.format(course.totalEnrolled)
-                        binding.tvEnrollUsers.text = enrollUser + " enrolled"
+                        binding.tvEnrollUsers.text = enrollUser.plus(" enrolled")
                         binding.tvRating.text = course.rating.toString()
-                        binding.tvDuration.text = course.duration.toString() + " Days"
+                        binding.tvDuration.text = course.duration.toString().plus(" Days")
 
                         val test = response[0].test
 
-                        val multi = MultiTransformation<Bitmap>(
+                        val multi = MultiTransformation(
                             RoundedCornersTransformation(
                                 com.joshtalks.joshskills.core.Utils.dpToPx(ROUND_CORNER),
                                 0,
@@ -252,7 +251,7 @@ class CourseDetailType1Fragment : Fragment() {
                         }
                         binding.nestedScrollView.visibility = View.VISIBLE
                         binding.progressBar.visibility = View.GONE
-                        videoUrl = response[0].videoObj?.video_url?:test.videoLink
+                        videoUrl = response[0].videoObj?.video_url ?: test.videoLink
                         videoId = response[0].videoObj?.id
 
                         val titleView =
@@ -284,8 +283,9 @@ class CourseDetailType1Fragment : Fragment() {
                 ex.printStackTrace()
             } catch (ex: UnknownHostException) {
                 showToast(getString(R.string.internet_not_available_msz))
-                binding.progressBar.visibility = View.GONE
-
+                AppObjectController.uiHandler.post {
+                    binding.progressBar.visibility = View.GONE
+                }
             } catch (ex: Exception) {
                 ex.printStackTrace()
             }
@@ -310,12 +310,17 @@ class CourseDetailType1Fragment : Fragment() {
 
 
     fun playVideo() {
-        if (videoUrl.isNullOrEmpty()){
+        if (videoUrl.isNullOrEmpty()) {
             showToast(getString(R.string.video_url_not_exist))
             return
         }
         videoUrl?.let {
-            VideoPlayerActivity.startConversionActivityV2(requireActivity(), binding.courseTitle.text.toString(),videoId,videoUrl)
+            VideoPlayerActivity.startConversionActivityV2(
+                requireActivity(),
+                binding.courseTitle.text.toString(),
+                videoId,
+                videoUrl
+            )
         }
 
     }

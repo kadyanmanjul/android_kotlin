@@ -28,18 +28,13 @@
     </style>
 
 
-    <style name="Theme.GuidelinesCompat.Light.DarkToolbar" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="Theme.GuidelinesCompat.Light.DarkToolbar" parent="Theme.MaterialComponents.Light.DarkActionBar">
         <item name="android:textColorSecondary">@color/white</item>
         <item name="actionOverflowButtonStyle">@style/OverFlow</item>
     </style>
 
     <style name="OverFlow" parent="@style/Widget.AppCompat.Light.ActionButton.Overflow">
         <item name="android:src">@drawable/ic_more_vert</item>
-    </style>
-
-    <style name="NoDimDialogFragmentStyle" parent="@android:style/Theme.Holo.Light.Dialog">
-        <item name="android:backgroundDimAmount">0.0</item>
-        <item name="android:backgroundDimEnabled">false</item>
     </style>
 
     <style name="full_dialog" parent="@android:style/Theme.Holo.Light.Dialog">
@@ -50,7 +45,7 @@
         <item name="android:background">@android:color/transparent</item>
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:backgroundDimEnabled">true</item>
-        <item name="android:backgroundDimAmount">0.7</item>
+        <item name="android:backgroundDimAmount">0.8</item>
     </style>
 
 
@@ -79,10 +74,8 @@
 
     <style name="BottomProgressBar" parent="@style/Widget.AppCompat.ProgressBar.Horizontal">
         <item name="android:progressBackgroundTint">@color/pdf_bg_color</item>
-        <item name="android:progressTint">@color/button_primary_color</item>
+        <item name="android:progressTint">@color/error_color</item>
     </style>
-
-
 
 
 </resources>

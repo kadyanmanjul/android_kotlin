@@ -118,6 +118,7 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
                 AppAnalytics.updateUser()
                 mergeMentorWithGId(response.mentorId)
                 fetchMentor()
+                WorkMangerAdmin.appStartWorker()
                 WorkMangerAdmin.mappingGIDWithMentor()
 
             } catch (ex: Exception) {
@@ -169,7 +170,9 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
                 AppAnalytics.updateUser()
                 mergeMentorWithGId(response.mentorId)
                 fetchMentor()
+                WorkMangerAdmin.appStartWorker()
                 WorkMangerAdmin.mappingGIDWithMentor()
+
             } catch (ex: Exception) {
                 progressDialogStatus.postValue(false)
                 when (ex) {
@@ -192,8 +195,8 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
             try {
                 val mentor: Mentor =
                     AppObjectController.signUpNetworkService.getPersonalProfileAsync(
-                            Mentor.getInstance().getId()
-                        )
+                        Mentor.getInstance().getId()
+                    )
                         .await()
                 Mentor.getInstance().updateFromResponse(mentor)
                 mentor.getUser()?.let {

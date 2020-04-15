@@ -216,39 +216,52 @@ class PdfViewHolder(activityRef: WeakReference<FragmentActivity>, message: ChatM
 
     @Click(R.id.container_fl)
     fun onClickPdfContainer() {
+        if (PermissionUtils.isStoragePermissionEnable(activityRef.get()!!).not()) {
+            PermissionUtils.storageReadAndWritePermission(activityRef.get()!!,
+                object : MultiplePermissionsListener {
+                    override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
+                        report?.areAllPermissionsGranted()?.let { flag ->
+                            if (flag) {
+                                openPdf()
+                                return
+
+                            }
+                            if (report.isAnyPermissionPermanentlyDenied) {
+                                PermissionUtils.permissionPermanentlyDeniedDialog(
+                                    activityRef.get()!!
+                                )
+                                return
+                            }
+                        }
+                    }
+
+                    override fun onPermissionRationaleShouldBeShown(
+                        permissions: MutableList<PermissionRequest>?,
+                        token: PermissionToken?
+                    ) {
+                        token?.continuePermissionRequest()
+                    }
+                })
+            return
+        }
+        openPdf()
+    }
+
+    private fun openPdf() {
         message.question?.pdfList?.getOrNull(0)?.let { pdfObj ->
+            if (pdfObj.url.isBlank()) {
+                return
+            }
             if (message.downloadStatus == DOWNLOAD_STATUS.DOWNLOADED && AppDirectory.isFileExist(
                     pdfObj.downloadedLocalPath
                 )
             ) {
-                PermissionUtils.storageReadAndWritePermission(activityRef.get(),
-                    object : MultiplePermissionsListener {
-                        override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
-                            report?.areAllPermissionsGranted()?.let { flag ->
-                                if (flag) {
-                                    RxBus2.publish(PdfOpenEventBus(pdfObj))
-                                    return
-                                }
-                                if (report.isAnyPermissionPermanentlyDenied) {
-                                    PermissionUtils.permissionPermanentlyDeniedDialog(
-                                        activityRef.get()!!
-                                    )
-                                    return
-                                }
-                            }
-                        }
-
-                        override fun onPermissionRationaleShouldBeShown(
-                            permissions: MutableList<PermissionRequest>?,
-                            token: PermissionToken?
-                        ) {
-                            token?.continuePermissionRequest()
-                        }
-                    })
+                RxBus2.publish(PdfOpenEventBus(pdfObj))
             } else {
                 RxBus2.publish(DownloadMediaEventBus(pdfViewHolder, message))
             }
         }
+
     }
 
 
@@ -277,6 +290,7 @@ class PdfViewHolder(activityRef: WeakReference<FragmentActivity>, message: ChatM
         )
 
     }
+
     override fun getRoot(): FrameLayout {
         return rootView
     }

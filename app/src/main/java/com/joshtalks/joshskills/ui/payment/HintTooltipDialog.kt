@@ -90,7 +90,7 @@ class HintTooltipDialog : DialogFragment() {
             .courseDao()
             .isUserOldThen7Days()
             .concatMap {
-                val (flag, dayRemain) = com.joshtalks.joshskills.core.Utils.isUser7DaysOld(it.courseCreatedDate)
+                val (_, dayRemain) = com.joshtalks.joshskills.core.Utils.isUser7DaysOld(it.courseCreatedDate)
                 return@concatMap Maybe.just(dayRemain)
             }
             .subscribeOn(Schedulers.io())

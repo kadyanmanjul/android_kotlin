@@ -121,7 +121,7 @@ class SignUpStep1Fragment : Fragment() {
             return
         }
         if (Utils.isInternetAvailable().not()) {
-            showToast( getString(R.string.internet_not_available_msz))
+            showToast(getString(R.string.internet_not_available_msz))
             return
         }
 

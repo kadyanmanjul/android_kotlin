@@ -14,10 +14,9 @@ import android.os.Build;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
-import androidx.media.app.NotificationCompat.MediaStyle;
 
 import com.joshtalks.joshskills.R;
-import com.joshtalks.joshskills.ui.chat.ConversationActivity;
+import com.joshtalks.joshskills.ui.practise.PractiseSubmitActivity;
 
 import static com.joshtalks.joshskills.ui.chat.ConversationActivityKt.CHAT_ROOM_OBJECT;
 
@@ -70,9 +69,10 @@ public class MusicNotificationManager {
             createNotificationChannel();
         }
 
-        final Intent openPlayerIntent = new Intent(mMusicService, ConversationActivity.class);
+        final Intent openPlayerIntent = new Intent(mMusicService, PractiseSubmitActivity.class);
         openPlayerIntent.putExtra(CHAT_ROOM_OBJECT, mMusicService.getMediaPlayerHolder().getConversation());
         openPlayerIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+
         final PendingIntent contentIntent = PendingIntent.getActivity(mMusicService, REQUEST_CODE, openPlayerIntent, 0);
 
         final String spanned = "Audio";
@@ -86,11 +86,16 @@ public class MusicNotificationManager {
                 .setContentTitle(spanned)
                 .setContentText(contentText)
                 .setContentIntent(contentIntent)
-                .addAction(notificationAction(PLAY_PAUSE_ACTION))
-                .addAction(notificationAction(STOP_ACTION))
+                // .addAction(notificationAction(PLAY_PAUSE_ACTION))
+                //.addAction(notificationAction(STOP_ACTION))
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
-        mNotificationBuilder.setStyle(new MediaStyle().setShowActionsInCompactView(0, 1));
-        return mNotificationBuilder.build();
+        // mNotificationBuilder.setStyle(new MediaStyle().setShowActionsInCompactView(0, 1));
+
+        Notification notification = mNotificationBuilder.build();
+        notification.flags |= Notification.FLAG_AUTO_CANCEL;
+
+
+        return notification;
     }
 
     @NonNull

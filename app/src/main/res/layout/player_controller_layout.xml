@@ -36,9 +36,9 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:layout_weight="0.7"
-                    app:buffered_color="@color/pdf_bg_color"
-                    app:played_color="#8BC34A"
-                    app:scrubber_color="@color/button_primary_color"
+                    app:buffered_color="@color/white"
+                    app:played_color="@color/error_color"
+                    app:scrubber_color="@color/error_color"
                     app:unplayed_color="@color/bg_tint" />
 
 
@@ -51,8 +51,7 @@
                     android:gravity="center"
                     android:text="00:00"
                     android:textColor="@color/white"
-                    android:textSize="@dimen/font_12"
-                     />
+                    android:textSize="@dimen/font_12" />
         </LinearLayout>
 
 
@@ -86,24 +85,24 @@
                     android:layout_marginEnd="@dimen/_36sdp">
 
                 <androidx.appcompat.widget.AppCompatImageView
-                        android:foreground="?android:attr/selectableItemBackground"
                         android:id="@+id/exo_play"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:adjustViewBounds="true"
+                        android:foreground="?android:attr/selectableItemBackground"
                         android:scaleType="fitXY"
                         android:src="@drawable/ic_play_actual"
                         android:visibility="invisible" />
 
                 <androidx.appcompat.widget.AppCompatImageView
-                        android:foreground="?android:attr/selectableItemBackground"
                         android:id="@+id/exo_pause"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:adjustViewBounds="true"
                         android:background="@android:color/transparent"
+                        android:foreground="?android:attr/selectableItemBackground"
                         android:scaleType="fitXY"
                         android:src="@drawable/ic_pause_actual"
                         android:visibility="invisible" />
@@ -112,7 +111,6 @@
 
 
             <androidx.appcompat.widget.AppCompatImageView
-                    android:foreground="?android:attr/selectableItemBackground"
                     android:id="@+id/img_fwd"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -121,11 +119,11 @@
                     android:layout_toEndOf="@id/play_pause_fl"
                     android:adjustViewBounds="true"
                     android:background="@android:color/transparent"
+                    android:foreground="?android:attr/selectableItemBackground"
                     android:scaleType="fitXY"
                     android:src="@drawable/ic_forward_10" />
 
             <androidx.appcompat.widget.AppCompatImageView
-                    android:foreground="?android:attr/selectableItemBackground"
                     android:id="@+id/img_full_screen_enter_exit"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -133,6 +131,7 @@
                     android:layout_centerVertical="true"
                     android:layout_marginEnd="@dimen/_8sdp"
                     android:background="@android:color/transparent"
+                    android:foreground="?android:attr/selectableItemBackground"
                     android:scaleType="fitXY"
                     android:src="@drawable/ic_full_screen_enter" />
         </RelativeLayout>

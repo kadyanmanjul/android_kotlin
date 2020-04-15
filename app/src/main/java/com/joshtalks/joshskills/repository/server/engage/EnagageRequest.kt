@@ -11,12 +11,10 @@ data class VideoEngage(
     @SerializedName("watch_time")
     var watchTime: Long,
     @SerializedName("mentor_id")
-    var mentorId: String?=null,
+    var mentorId: String? = null,
     @SerializedName("gaid_id")
-    var gID: String?=null
-){
-
-}
+    var gID: String? = null
+)
 
 
 data class AudioEngage(

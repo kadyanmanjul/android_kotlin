@@ -7,6 +7,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
 import android.content.pm.ActivityInfo
+import android.graphics.Color
 import android.graphics.SurfaceTexture
 import android.media.AudioManager
 import android.net.Uri
@@ -87,7 +88,8 @@ class BitVideoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibili
     private var videoQualityP: String = ""
     private var playbackSpeed: Float = 1F
     private var playbackSpeedTitle: String = "Normal"
-
+    private var audioLanguage: String = ""
+    private var lisOfAudioLanguageTrack = mutableListOf<AudioLanguageTrack>()
     private var playerListener: VideoPlayerEventListener? = null
 
     private var mToolbar: Toolbar? = null
@@ -305,6 +307,9 @@ class BitVideoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibili
                 trackSelector?.parameters?.buildUpon()?.apply {
                     setForceLowestBitrate(true)
                     setForceHighestSupportedBitrate(false)
+                    setAllowAudioMixedChannelCountAdaptiveness(true)
+                    setAllowAudioMixedMimeTypeAdaptiveness(true)
+                    setAllowAudioMixedSampleRateAdaptiveness(true)
                 }?.build()?.run {
                     trackSelector?.parameters = this
                 }
@@ -324,6 +329,7 @@ class BitVideoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibili
 
                 player = SimpleExoPlayer.Builder(context, renderersFactory)
                     .setLoadControl(defaultLoadControl)
+                    .setUseLazyPreparation(true)
                     .setTrackSelector(trackSelector!!).build()
             } catch (e: Exception) {
                 throw e
@@ -354,6 +360,7 @@ class BitVideoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibili
             LayoutInflater.from(context).inflate(R.layout.other_media_view, this, false)
         addView(mTextureFrame)
         defaultTimeBar = findViewById(R.id.exo_progress)
+        defaultTimeBar.callOnClick()
         progressBarBottom = findViewById(R.id.progress_bar_bottom)
         imgFullScreenEnterExit = findViewById(R.id.img_full_screen_enter_exit)
         mPositionTextView = findViewById(R.id.position_text_view)
@@ -384,9 +391,13 @@ class BitVideoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibili
             if (orientation == Surface.ROTATION_90 || orientation == Surface.ROTATION_270) {
                 imgFullScreenEnterExit.setImageResource(R.drawable.ic_full_screen_enter)
                 context.activity()?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+                resizeMode = AspectRatioFrameLayout.RESIZE_MODE_FIXED_WIDTH
+
             } else {
                 imgFullScreenEnterExit.setImageResource(R.drawable.ic_full_screen_exit)
                 context.activity()?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+                resizeMode = AspectRatioFrameLayout.RESIZE_MODE_FIT
+
             }
             playerListener?.onClickFullScreenView(
                 context.activity()?.requestedOrientation
@@ -658,9 +669,10 @@ class BitVideoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibili
         player?.seekTo(pos)
         controllerAutoHideOnDelay()
     }
-    private fun controllerAutoHideOnDelay(){
+
+    private fun controllerAutoHideOnDelay() {
         controllerHandler.removeCallbacksAndMessages(null)
-        controllerHandler.postDelayed(Runnable {
+        controllerHandler.postDelayed({
             if (isControllerVisible) {
                 toggleControls()
             }
@@ -671,6 +683,7 @@ class BitVideoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibili
     fun openVideoPlayerOptions() {
         val optionOfVideoPlayer = arrayListOf<VideoPlayerOption>()
         optionOfVideoPlayer.add(VideoPlayerOption.Quality(extraInfo = videoQualityP))
+        optionOfVideoPlayer.add(VideoPlayerOption.AudioLanguage(extraInfo = audioLanguage))
         optionOfVideoPlayer.add(VideoPlayerOption.PlaybackSpeed(extraInfo = playbackSpeedTitle))
         optionOfVideoPlayer.add(VideoPlayerOption.Help(extraInfo = ""))
 
@@ -699,6 +712,9 @@ class BitVideoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibili
                             is VideoPlayerOption.Quality -> {
                                 openVideoTrackBottomBar()
                             }
+                            is VideoPlayerOption.AudioLanguage -> {
+                                openAudioLanguageTrackOption()
+                            }
                             is VideoPlayerOption.PlaybackSpeed -> {
                                 openPlaybackSpeedOption()
                             }
@@ -708,10 +724,8 @@ class BitVideoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibili
 
                         }
                     }
-
                 })
         }
-
     }
 
 
@@ -741,9 +755,38 @@ class BitVideoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibili
                         onSelectTrack(videoQualityTrack)
                     }
                 })
+        }
+    }
+
+    fun openAudioLanguageTrackOption() {
+        activity?.run {
+            val bottomSheet = BottomSheet(LayoutMode.WRAP_CONTENT)
+            val view =
+                LayoutInflater.from(context)
+                    .inflate(R.layout.base_recycler_view_layout, null, false)
+            val dialog = MaterialDialog(this, bottomSheet).show {
+                customView(view = view)
+                setFinishOnTouchOutside(true)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
+                    setShowWhenLocked(true)
+                }
+            }
+            val recyclerView: RecyclerView = view.findViewById(R.id.recycler_view)
+            val layoutManager = LinearLayoutManager(context)
+            recyclerView.layoutManager = layoutManager
+            recyclerView.setHasFixedSize(false)
+            recyclerView.adapter = AudioLanguageAdapter(lisOfAudioLanguageTrack,
+                object : AudioLanguageAdapter.OnSelectQualityListener {
+                    override fun onSelect(audioLanguageTrack: AudioLanguageTrack) {
+                        bottomSheet.onDismiss()
+                        dialog.dismiss()
+                        onSelectAudioTrack(audioLanguageTrack)
+                    }
+                })
 
         }
     }
+
 
     @SuppressLint("InflateParams")
     fun openPlaybackSpeedOption() {
@@ -825,6 +868,18 @@ class BitVideoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibili
         videoQualityP = videoQualityTrack.title
     }
 
+    private fun onSelectAudioTrack(audioLanguageTrack: AudioLanguageTrack) {
+        try {
+            val parametersBuilder = trackSelector?.buildUponParameters()
+            parametersBuilder?.setPreferredTextLanguage(audioLanguageTrack.id)
+            parametersBuilder?.setPreferredAudioLanguage(audioLanguageTrack.id)
+            trackSelector!!.parameters = parametersBuilder!!.build()
+            audioLanguage = audioLanguageTrack.id
+        } catch (ex: java.lang.Exception) {
+            ex.printStackTrace()
+        }
+    }
+
     fun onChangePlaybackSpeed(playbackSpeed: PlaybackSpeed) {
         this.playbackSpeed = playbackSpeed.speed
         this.playbackSpeedTitle = playbackSpeed.title
@@ -845,21 +900,15 @@ class BitVideoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibili
         var playWhenReady = false
         var playbackState: Int = STATE_IDLE
 
-        override fun onPlaybackParametersChanged(playbackParameters: PlaybackParameters) {
-            super.onPlaybackParametersChanged(playbackParameters)
-        }
-
-        override fun onSeekProcessed() {
-            super.onSeekProcessed()
-        }
-
         override fun onTracksChanged(
             trackGroups: TrackGroupArray,
             trackSelections: TrackSelectionArray
         ) {
             super.onTracksChanged(trackGroups, trackSelections)
             try {
+                audioLanguage = trackSelections[1]?.selectedFormat?.language ?: ""
                 val oldTrack = currentMappedTrackInfoPosition
+                //trackSelections[0]?.selectedFormat.width
                 currentMappedTrackInfoPosition =
                     trackSelections.get(0)?.getIndexInTrackGroup(0) ?: 0
                 if (lisOfVideoQualityTrack.isNullOrEmpty() || oldTrack != currentMappedTrackInfoPosition) {
@@ -874,14 +923,34 @@ class BitVideoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibili
                             val currentQuality = "" + trackGroups.getFormat(x).height + "p"
                             lisOfVideoQualityTrack.add(
                                 VideoQualityTrack(
+                                    trackGroups.getFormat(x).height,
                                     x, currentQuality, currentMappedTrackInfoPosition == x
                                 )
                             )
                         }
                     }
+                    lisOfVideoQualityTrack.sortBy { it.quality }
                 }
                 if (videoQualityP.isEmpty()) {
                     videoQualityP = lisOfVideoQualityTrack[0].title
+                }
+                if (lisOfAudioLanguageTrack.isNullOrEmpty()) {
+
+                    val mappedTrackInfo: MappingTrackSelector.MappedTrackInfo? =
+                        trackSelector?.currentMappedTrackInfo
+                    if (mappedTrackInfo != null) {
+                        val infoArray = trackSelector!!.currentMappedTrackInfo!!.getTrackGroups(1)
+                        for (x in 0 until infoArray.length) {
+                            val language = infoArray.get(x).getFormat(0).language
+                            lisOfAudioLanguageTrack.add(
+                                AudioLanguageTrack(
+                                    language ?: "",
+                                    language ?: "",
+                                    currentMappedTrackInfoPosition == x
+                                )
+                            )
+                        }
+                    }
                 }
 
             } catch (ex: Exception) {
@@ -898,7 +967,7 @@ class BitVideoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibili
         override fun onLoadingChanged(isLoading: Boolean) {
             super.onLoadingChanged(isLoading)
             if (isLoading.not()) {
-              //  mProgressBar.visibility = View.GONE
+                //  mProgressBar.visibility = View.GONE
             }
         }
 
@@ -919,8 +988,8 @@ class BitVideoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibili
                 ExoPlayer.STATE_IDLE -> "idle"
                 else -> "unknownState$playbackState"
             }
-            if (playbackState==STATE_BUFFERING){
-                 mProgressBar.visibility = View.VISIBLE
+            if (playbackState == STATE_BUFFERING) {
+                mProgressBar.visibility = View.VISIBLE
             }
         }
 
@@ -956,15 +1025,22 @@ sealed class VideoPlayerOption(
         extraInfo: String? = null
     ) : VideoPlayerOption(order, rId, name, extraInfo)
 
-    class PlaybackSpeed(
+    class AudioLanguage(
         order: Int = 2,
+        rId: Int = R.drawable.ic_baseline_language,
+        name: String = "Language &nbsp; &#8226; &nbsp; ",
+        extraInfo: String? = null
+    ) : VideoPlayerOption(order, rId, name, extraInfo)
+
+    class PlaybackSpeed(
+        order: Int = 3,
         rId: Int = R.drawable.ic_baseline_playback,
         name: String = "Playback speed &nbsp; &#8226; &nbsp; ",
         extraInfo: String? = null
     ) : VideoPlayerOption(order, rId, name, extraInfo)
 
     class Help(
-        order: Int = 3,
+        order: Int = 4,
         rId: Int = R.drawable.ic_baseline_help,
         name: String = "Help & feedback",
         extraInfo: String? = null
@@ -1068,7 +1144,13 @@ class PlaybackSpeedAdapter(
 
 /** Video VideoQualityTrack adapter*/
 
-data class VideoQualityTrack(val id: Int, val title: String, val isSelected: Boolean)
+data class VideoQualityTrack(
+    val id: Int,
+    val quality: Int,
+    val title: String,
+    val isSelected: Boolean
+)
+
 class VideoTrackAdapter(
     private var items: List<VideoQualityTrack> = emptyList(),
     private var onSelectQualityListener: OnSelectQualityListener
@@ -1109,7 +1191,51 @@ class VideoTrackAdapter(
         fun onSelect(videoQualityTrack: VideoQualityTrack)
     }
 }
+/*end **/
 
+
+/* start audio **/
+
+
+
+data class AudioLanguageTrack(val id: String, val title: String, val isSelected: Boolean)
+class AudioLanguageAdapter(
+    private var items: List<AudioLanguageTrack> = emptyList(),
+    private var onSelectQualityListener: OnSelectQualityListener
+) :
+    RecyclerView.Adapter<AudioLanguageAdapter.ViewHolder>() {
+
+    private var selectedPos: Int = items.indexOfLast { it.isSelected }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        val view = LayoutInflater.from(parent.context)
+            .inflate(R.layout.base_video_item_layout, parent, false)
+        return ViewHolder(view)
+    }
+
+    override fun getItemCount(): Int = items.size
+
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        holder.labelTextView.text = items[position].title
+        holder.itemView.setOnClickListener {
+            onSelectQualityListener.onSelect(items[position])
+        }
+        holder.labelTextView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_check, 0, 0, 0)
+        if (selectedPos == position) {
+            holder.labelTextView.compoundDrawables[0]?.setTint(Color.BLUE)
+        }
+    }
+
+    inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+        var labelTextView: MaterialTextView = view.findViewById(R.id.text_view)
+    }
+
+    interface OnSelectQualityListener {
+        fun onSelect(audioLanguageTrack: AudioLanguageTrack)
+    }
+}
+
+/******end **/
 
 interface VideoPlayerEventListener {
     fun onClickFullScreenView(cOrientation: Int)

@@ -24,7 +24,8 @@ class GaIDMentorModel {
         @JvmStatic
         fun getMapObject(): GaIDMentorModel? {
             return try {
-                AppObjectController.gsonMapper.fromJson(PrefManager.getStringValue(GAID_MENTOR_MAP_OBJECT),
+                AppObjectController.gsonMapper.fromJson(
+                    PrefManager.getStringValue(GAID_MENTOR_MAP_OBJECT),
                     GaIDMentorModel::class.java
                 )
             } catch (ex: Exception) {

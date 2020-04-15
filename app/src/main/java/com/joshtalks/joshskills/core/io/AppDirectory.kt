@@ -34,8 +34,6 @@ object AppDirectory {
         IMAGE_SENT, IMAGE_RECEIVED, RECORDING_SENT, RECORDING_RECEIVED, VIDEO_SENT, VIDEO_RECEIVED, DOCS_RECEIVED
     }
 
-    // var path: String =AppObjectController.joshApplication.getExternalFilesDir(null)!!.absolutePath
-
 
     /**
      * this code is using for received audio file
@@ -207,31 +205,31 @@ object AppDirectory {
 
     private fun getImageFileName(): String {
         return "IMG".plus("-").plus(getDate()).plus("-".plus(APP_SHORT_NAME)) + getFileEndName(
-            AppDirectory.FileType.IMAGE_SENT
+            FileType.IMAGE_SENT
         ) + ".jpg"
     }
 
     private fun getAudioFileName(): String {
         return "RECORD".plus("-").plus(getDate()).plus("-".plus(APP_SHORT_NAME)) + getFileEndName(
-            AppDirectory.FileType.RECORDING_SENT
+            FileType.RECORDING_SENT
         ) + ".amr"
     }
 
     private fun getAudioFileName(extension: String): String {
         return "RECORD".plus("-").plus(getDate()).plus("-".plus(APP_SHORT_NAME)) + getFileEndName(
-            AppDirectory.FileType.RECORDING_SENT
+            FileType.RECORDING_SENT
         ) + extension
     }
 
     private fun getVideoFileName(): String {
         return "VID".plus("-").plus(getDate()).plus("-".plus(APP_SHORT_NAME)) + getFileEndName(
-            AppDirectory.FileType.IMAGE_SENT
+            FileType.IMAGE_SENT
         ) + ".mp4"
     }
 
     private fun getDocsFileName(): String {
         return "DOCS".plus("-").plus(getDate()).plus("-".plus(APP_SHORT_NAME)) + getFileEndName(
-            AppDirectory.FileType.DOCS_RECEIVED
+            FileType.DOCS_RECEIVED
         ) + ".pdf"
     }
 
@@ -240,13 +238,13 @@ object AppDirectory {
 
     private fun getFileEndName(fileType: FileType): String {
         return when (fileType) {
-            AppDirectory.FileType.IMAGE_SENT -> getFileTodayCount(TODAY_IMAGE_COUNT)
-            AppDirectory.FileType.IMAGE_RECEIVED -> getFileTodayCount(TODAY_IMAGE_COUNT)
-            AppDirectory.FileType.RECORDING_SENT -> getFileTodayCount(TODAY_RECORDING_COUNT)
-            AppDirectory.FileType.RECORDING_RECEIVED -> getFileTodayCount(TODAY_RECORDING_COUNT)
-            AppDirectory.FileType.VIDEO_SENT -> getFileTodayCount(TODAY_VIDEO_COUNT)
-            AppDirectory.FileType.VIDEO_RECEIVED -> getFileTodayCount(TODAY_VIDEO_COUNT)
-            AppDirectory.FileType.DOCS_RECEIVED -> getFileTodayCount(TODAY_DOCS_COUNT)
+            FileType.IMAGE_SENT -> getFileTodayCount(TODAY_IMAGE_COUNT)
+            FileType.IMAGE_RECEIVED -> getFileTodayCount(TODAY_IMAGE_COUNT)
+            FileType.RECORDING_SENT -> getFileTodayCount(TODAY_RECORDING_COUNT)
+            FileType.RECORDING_RECEIVED -> getFileTodayCount(TODAY_RECORDING_COUNT)
+            FileType.VIDEO_SENT -> getFileTodayCount(TODAY_VIDEO_COUNT)
+            FileType.VIDEO_RECEIVED -> getFileTodayCount(TODAY_VIDEO_COUNT)
+            FileType.DOCS_RECEIVED -> getFileTodayCount(TODAY_DOCS_COUNT)
 
         }
 
@@ -378,7 +376,12 @@ object AppDirectory {
         if (path.isNullOrEmpty()) {
             return false
         }
-        return File(path).exists()
+        return try {
+            File(path).exists()
+        } catch (e: java.lang.Exception) {
+            false
+        }
+
     }
 
     fun rename(fromPath: String, toPath: String): Boolean {

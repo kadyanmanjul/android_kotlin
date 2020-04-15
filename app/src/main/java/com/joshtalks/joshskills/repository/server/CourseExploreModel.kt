@@ -31,7 +31,9 @@ data class CourseExploreModel(
     @SerializedName("course_icon")
     var courseIcon: String,
     @SerializedName("whatsapp_url")
-    var whatsappUrl: String?
+    var whatsappUrl: String?,
+    @SerializedName("certificate")
+    val certificate: Boolean = false
 
 
 ) : Serializable {
@@ -49,7 +51,8 @@ data class CourseExploreModel(
         courseName = EMPTY,
         courseDuration = EMPTY,
         courseIcon = EMPTY,
-        whatsappUrl = EMPTY
+        whatsappUrl = EMPTY,
+        certificate = false
     )
 
 }

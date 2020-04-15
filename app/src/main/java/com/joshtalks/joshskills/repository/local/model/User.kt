@@ -35,7 +35,7 @@ open class User {
 
 
     @SerializedName("photo_url")
-    var photo: String = ""
+    var photo: String? = null
 
     @SerializedName("social_id")
     var socialId: String = ""

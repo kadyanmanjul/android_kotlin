@@ -18,13 +18,11 @@ import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.service.CONVERSATION_ID
 import com.joshtalks.joshskills.databinding.FragmentContentTimelineBinding
-import com.joshtalks.joshskills.repository.local.minimalentity.CourseContentEntity
 import com.joshtalks.joshskills.ui.help.HelpActivity
 import com.joshtalks.joshskills.ui.pdfviewer.COURSE_NAME
 
 
-class ContentTimelineFragment : DialogFragment(),
-    ContentTimelineAdapter.OnContentInteractionListener {
+class ContentTimelineFragment : DialogFragment() {
     private var listener: OnGoContentListener? = null
 
     companion object {
@@ -40,7 +38,7 @@ class ContentTimelineFragment : DialogFragment(),
 
     private lateinit var binding: FragmentContentTimelineBinding
     private lateinit var viewModel: ContentViewModel
-    private var contentTimelineAdapter = ContentTimelineAdapter(this)
+    private var contentTimelineAdapter = ContentTimelineAdapter(emptyList())
     private var courseName: String? = null
     private var conversationId: String? = null
 
@@ -114,10 +112,10 @@ class ContentTimelineFragment : DialogFragment(),
             .push()
     }
 
-    override fun onClick(courseContentEntity: CourseContentEntity) {
-        listener?.onFocused(courseContentEntity.chat_id)
-        dismissAllowingStateLoss()
-    }
+    /* override fun onClick(courseContentEntity: CourseContentEntity) {
+         listener?.onFocused(courseContentEntity.chat_id)
+         dismissAllowingStateLoss()
+     }*/
 
 }
 

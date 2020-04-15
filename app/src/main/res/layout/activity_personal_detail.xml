@@ -2,7 +2,9 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools">
+
     <data>
+
         <variable
                 name="handler"
                 type="com.joshtalks.joshskills.ui.profile.ProfileActivity" />
@@ -83,8 +85,8 @@
                                 android:clickable="true"
                                 android:onClick="@{()->handler.onProfilePicClicked()}"
                                 android:padding="20dp"
-                                android:tint="@color/gray_3B"
-                                app:srcCompat="@drawable/ic_person" />
+                                app:srcCompat="@drawable/ic_person"
+                                app:tint="@color/gray_3B" />
 
                     </FrameLayout>
 

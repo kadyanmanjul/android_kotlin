@@ -37,7 +37,7 @@ class PractiseViewModel(application: Application) :
     AndroidViewModel(application) {
     private var compositeDisposable = CompositeDisposable()
     var context: JoshApplication = getApplication()
-    lateinit var recordFile: File
+    var recordFile: File? = null
     val requestStatusLiveData: MutableLiveData<Boolean> = MutableLiveData()
 
 

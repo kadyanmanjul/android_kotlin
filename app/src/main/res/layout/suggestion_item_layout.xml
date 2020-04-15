@@ -7,10 +7,11 @@
         android:background="@drawable/suggestion_bg"
         android:clickable="true"
         android:enabled="true"
+        android:focusable="true"
         android:gravity="center_vertical|start"
         android:paddingStart="@dimen/_10sdp"
         android:paddingTop="@dimen/_6sdp"
         android:paddingEnd="@dimen/_10sdp"
         android:paddingBottom="@dimen/_6sdp"
         android:textColor="@color/gray_79"
-        android:textSize="@dimen/font_14"></androidx.appcompat.widget.AppCompatTextView>
+        android:textSize="@dimen/font_14" />

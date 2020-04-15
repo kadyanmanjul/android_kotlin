@@ -58,5 +58,15 @@
         <value>version_1</value>
     </entry>
 
+    <entry>
+        <key>CERTIFICATE_URL</key>
+        <value>https://s3.ap-south-1.amazonaws.com/www.static.skills.com/Icons/Certificate.jpg
+        </value>
+    </entry>
+    <entry>
+        <key>COURSE_COMPLETED_PERCENTAGE</key>
+        <value>70%</value>
+    </entry>
+
 
 </defaultsMap>

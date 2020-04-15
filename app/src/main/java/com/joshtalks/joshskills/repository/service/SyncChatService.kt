@@ -74,38 +74,42 @@ object SyncChatService {
                             )
                         }
                     } else {
-                        if (chatObject.type == BASE_MESSAGE_TYPE.VI) {
-                            chatObject.downloadedLocalPath?.let { path ->
-                                tChatMessage = TVideoMessage(path, path)
-                                (tChatMessage as BaseMediaMessage).url = url
-                                sendTextMessage(
-                                    tChatMessage,
-                                    chatObject,
-                                    chatObject.conversationId,
-                                    refreshViewLiveData
-                                )
+                        when (chatObject.type) {
+                            BASE_MESSAGE_TYPE.VI -> {
+                                chatObject.downloadedLocalPath?.let { path ->
+                                    tChatMessage = TVideoMessage(path, path)
+                                    (tChatMessage as BaseMediaMessage).url = url
+                                    sendTextMessage(
+                                        tChatMessage,
+                                        chatObject,
+                                        chatObject.conversationId,
+                                        refreshViewLiveData
+                                    )
+                                }
                             }
-                        } else if (chatObject.type == BASE_MESSAGE_TYPE.IM) {
-                            chatObject.downloadedLocalPath?.let { path ->
-                                tChatMessage = TImageMessage(path, path)
-                                (tChatMessage as BaseMediaMessage).url = url
-                                sendTextMessage(
-                                    tChatMessage,
-                                    chatObject,
-                                    chatObject.conversationId,
-                                    refreshViewLiveData
-                                )
+                            BASE_MESSAGE_TYPE.IM -> {
+                                chatObject.downloadedLocalPath?.let { path ->
+                                    tChatMessage = TImageMessage(path, path)
+                                    (tChatMessage as BaseMediaMessage).url = url
+                                    sendTextMessage(
+                                        tChatMessage,
+                                        chatObject,
+                                        chatObject.conversationId,
+                                        refreshViewLiveData
+                                    )
+                                }
                             }
-                        } else if (chatObject.type == BASE_MESSAGE_TYPE.AU) {
-                            chatObject.downloadedLocalPath?.let { path ->
-                                tChatMessage = TAudioMessage(path, path)
-                                (tChatMessage as BaseMediaMessage).url = url
-                                sendTextMessage(
-                                    tChatMessage,
-                                    chatObject,
-                                    chatObject.conversationId,
-                                    refreshViewLiveData
-                                )
+                            BASE_MESSAGE_TYPE.AU -> {
+                                chatObject.downloadedLocalPath?.let { path ->
+                                    tChatMessage = TAudioMessage(path, path)
+                                    (tChatMessage as BaseMediaMessage).url = url
+                                    sendTextMessage(
+                                        tChatMessage,
+                                        chatObject,
+                                        chatObject.conversationId,
+                                        refreshViewLiveData
+                                    )
+                                }
                             }
                         }
                     }

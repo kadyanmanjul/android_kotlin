@@ -21,9 +21,10 @@ object PlayerUtil {
 
         return "$sMinutes:$sSeconds"
     }
+
     @JvmStatic
     fun toTimeSongString(currentPosition: Int?): String? {
-        if (currentPosition==null){
+        if (currentPosition == null) {
             return null
         }
         val aux = currentPosition / 1000

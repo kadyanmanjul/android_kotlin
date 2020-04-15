@@ -30,7 +30,7 @@ data class CourseDetailsResponse(
     @SerializedName("video")
     var videoObj: VideoType? = null
 
-    ) : Serializable
+) : Serializable
 
 
 data class Course(

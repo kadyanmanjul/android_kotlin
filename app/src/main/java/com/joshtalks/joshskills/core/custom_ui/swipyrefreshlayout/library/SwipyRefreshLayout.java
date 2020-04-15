@@ -671,10 +671,8 @@ public class SwipyRefreshLayout extends ViewGroup {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                return true;
-            } else {
-                return true;
             }
+            return true;
         } else {
             return ViewCompat.canScrollVertically(mTarget, 1);
         }

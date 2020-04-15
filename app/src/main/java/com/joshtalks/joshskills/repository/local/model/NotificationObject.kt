@@ -75,6 +75,10 @@ const val ACTION_OPEN_CONVERSATION_LIST = "open_conversation_list"
 const val ACTION_OPEN_DIALOG = "show_dialog"
 const val ACTION_OPEN_POPUP = "popup"
 const val ACTION_UPSELLING_POPUP = "upselling_popup"
+const val ACTION_OPEN_REFERRAL = "open_referral"
+const val ACTION_OPEN_COURSE_REPORT = "course_report"
+
+
 
 
 

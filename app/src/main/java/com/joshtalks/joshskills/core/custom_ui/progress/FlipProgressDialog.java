@@ -5,22 +5,17 @@ import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.animation.PropertyValuesHolder;
 import android.app.Dialog;
-import android.content.Context;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.AccelerateDecelerateInterpolator;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 import androidx.annotation.Nullable;
-import androidx.appcompat.view.ContextThemeWrapper;
 import androidx.fragment.app.DialogFragment;
 
 import com.joshtalks.joshskills.R;
@@ -28,14 +23,6 @@ import com.joshtalks.joshskills.R;
 import java.util.ArrayList;
 import java.util.List;
 
-
-/**
- * A ProgressDialog with Image Flip Animation.
- * For more information, check https://github.com/Taishi-Y/FlipProgressDialog
- *
- * @author Taishi Yamasaki (http://taishi.tech/)
- * @version 0.1.0 01/10/2017
- */
 
 public class FlipProgressDialog extends DialogFragment {
 
@@ -59,12 +46,11 @@ public class FlipProgressDialog extends DialogFragment {
     private int borderStroke = 0;
     private int borderColor = -1;
     private int cornerRadius = 16;
-    private float dimAmount = 0.0f;
+    private float dimAmount = 0.7f;
 
     // Set Image settings
     private int imageMargin = 10;
     private int imageSize = 200;
-    //	private int imageSize = FrameLayout.LayoutParams.MATCH_PARENT;
     private List<Integer> imageList = new ArrayList<Integer>();
 
     // Set cancelOnTouch
@@ -146,7 +132,21 @@ public class FlipProgressDialog extends DialogFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setStyle(STYLE_NO_FRAME, R.style.full_dialog);
+
     }
+
+ /*   override fun onStart() {
+        super.onStart()
+        val dialog = dialog
+        if (dialog != null) {
+            dialog.window?.setLayout(
+                    FrameLayout.LayoutParams.MATCH_PARENT,
+                    FrameLayout.LayoutParams.MATCH_PARENT
+            )
+        }
+    }*/
+
 
     @Override
     public void onStart() {
@@ -156,96 +156,21 @@ public class FlipProgressDialog extends DialogFragment {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        try {
-            repeatChangeImages();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void repeatChangeImages() {
-
-        if (imageList == null || imageList.size() == 0) {
-            return;
-        }
-        final int numberImageList = imageList.size() - 1;
-
-        r = new Runnable() {
-            @Override
-            public void run() {
-                handler.postDelayed(this, duration);
-                //Check if is the showing image last image in the ArrayList
-
-                try {
-                    if (numberImageList == counter) {
-                        counter = 0;
-                        image.setImageResource(imageList.get(counter));
-                    } else {
-                        counter++;
-                        image.setImageResource(imageList.get(counter));
-                    }
-                } catch (Exception e) {
-                    // e.printStackTrace();
-                    Log.e("image null error", "Try to set imageList!");
-                }
-            }
-        };
-
-        handler.postDelayed(r, duration);
-    }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        final Context contextThemeWrapper = new ContextThemeWrapper(getActivity(), R.style.NoDimDialogFragmentStyle);
-        LayoutInflater localInflater = inflater.cloneInContext(contextThemeWrapper);
-        View view = localInflater.inflate(R.layout.fragment_dialog, null, false);
+
+        View view = inflater.inflate(R.layout.fragment_dialog, container, false);
 
         try {
-            //Can not dismiss when pressing outside the dialog
             getDialog().setCanceledOnTouchOutside(canceledOnTouchOutside);
-
-
-            // Set Background color and shape
-            BackgroundView backgroundView = new BackgroundView();
-            backgroundColorWIthAlpha = backgroundView.createTransparentColor(backgroundColor, backgroundAlpha);
-            Drawable backgroundDrawable = BackgroundView.setBackground(view, backgroundColorWIthAlpha, borderColor, cornerRadius, borderStroke);
-            getDialog().getWindow().setBackgroundDrawable(backgroundDrawable);
-
-            // Let's create the missing ImageView
-            image = new ImageView(getActivity());
-
-
-            // Now the layout parameters, these are a little tricky at first
-
         } catch (Exception e) {
             e.printStackTrace();
         }
-        try {
-            FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(imageSize, imageSize);
-            // Set margins for image
-            params.setMargins(imageMargin, imageMargin, imageMargin, imageMargin);
-
-            image.setScaleType(ImageView.ScaleType.FIT_XY);
-            image.setImageResource(imageList.get(0));
-            image.setLayoutParams(params);
-            // Let's get the root layout and add our ImageView
-            FrameLayout layout = view.findViewById(R.id.root);
-            layout.addView(image, 0, params);
-
-        } catch (Exception e) {
-            // e.printStackTrace();
-            Log.e("image null error", "Try to set imageList!");
-        }
-
-
-        animateAnimatorSetSample(image);
-
         return view;
     }
 

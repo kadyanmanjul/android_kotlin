@@ -89,7 +89,7 @@ class CourseExploreActivity : CoreJoshActivity() {
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
-            loadCourses()
+        loadCourses()
 
     }
 

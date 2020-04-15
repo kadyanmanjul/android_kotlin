@@ -88,7 +88,8 @@ internal abstract class OnSwipeTouchListener(
                 if (initialGesture == 0) { // Finger did not move enough to trigger a swipe
                     return if (doubleTapEnabled &&
                         System.currentTimeMillis() - lastClick <= DOUBLE_TAP_THRESHOLD &&
-                        lastClick != 0L) {
+                        lastClick != 0L
+                    ) {
                         mHandler.removeCallbacks(futureClickRunnable)
                         onDoubleTap(event)
                         true
@@ -126,7 +127,7 @@ internal abstract class OnSwipeTouchListener(
     abstract fun onAfterMove()
 
     abstract fun onBeforeMove(dir: Direction)
-    abstract fun lastTouchScreen(time:Long)
+    abstract fun lastTouchScreen(time: Long)
 
     companion object {
 

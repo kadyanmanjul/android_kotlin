@@ -19,18 +19,24 @@ import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.databinding.FragmentCoursePurchaseDetailBinding
 import com.joshtalks.joshskills.repository.server.CourseExploreModel
+import com.joshtalks.joshskills.ui.tooltip.BalloonFactory
+import com.joshtalks.skydoves.balloon.Balloon
+import com.joshtalks.skydoves.balloon.OnBalloonDismissListener
 
 
 class CoursePurchaseDetailFragment : DialogFragment() {
     private var listener: OnCourseDetailInteractionListener? = null
     private lateinit var binding: FragmentCoursePurchaseDetailBinding
     private lateinit var courseModel: CourseExploreModel
+    private var hasCertificate: Boolean = false
 
+    private var balloonTooltip: Balloon? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
             courseModel = it.getSerializable(COURSE_OBJECT) as CourseExploreModel
+            hasCertificate = it.getBoolean(HAS_CERTIFICATE)
         }
 
         setStyle(STYLE_NO_FRAME, R.style.full_dialog)
@@ -63,7 +69,7 @@ class CoursePurchaseDetailFragment : DialogFragment() {
         return binding.root
     }
 
-    @SuppressLint("SetTextI18n")
+    @SuppressLint("SetTextI18n", "ClickableViewAccessibility")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.tvCourseName.text = courseModel.courseName
@@ -75,6 +81,36 @@ class CoursePurchaseDetailFragment : DialogFragment() {
                 WebpDrawableTransformation(CircleCrop())
             )
             .into(binding.ivCourse)
+
+
+
+        if (hasCertificate.not()) {
+            binding.tvDigitalCertificate.visibility = View.GONE
+            binding.tvCertificateIncl.visibility = View.GONE
+            binding.tvDigitalInfo.visibility = View.GONE
+            return
+        }
+        binding.tvDigitalInfo.setOnClickListener {
+            showTooltip()
+        }
+
+        balloonTooltip = BalloonFactory.getTooltipForCertificate(
+            requireActivity(),
+            this,
+            object : OnBalloonDismissListener {
+                override fun onBalloonDismiss() {
+                    balloonTooltip?.isShowing = false
+                }
+
+            })
+    }
+
+    private fun showTooltip() {
+        balloonTooltip?.isShowing?.run {
+            if (this.not()) {
+                balloonTooltip?.showAlignTopWithException(binding.tvDigitalInfo)
+            }
+        }
     }
 
     override fun onAttach(context: Context) {
@@ -104,10 +140,11 @@ class CoursePurchaseDetailFragment : DialogFragment() {
 
     companion object {
         @JvmStatic
-        fun newInstance(courseModel: CourseExploreModel) =
+        fun newInstance(courseModel: CourseExploreModel, hasCertificate: Boolean) =
             CoursePurchaseDetailFragment().apply {
                 arguments = Bundle().apply {
                     putSerializable(COURSE_OBJECT, courseModel)
+                    putBoolean(HAS_CERTIFICATE, hasCertificate)
                 }
             }
     }

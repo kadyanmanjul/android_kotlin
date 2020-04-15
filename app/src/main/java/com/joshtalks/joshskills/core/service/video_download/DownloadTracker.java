@@ -20,7 +20,6 @@ import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.MappingTrackSelector.MappedTrackInfo;
 import com.google.android.exoplayer2.trackselection.TrackSelection;
-import com.google.android.exoplayer2.trackselection.TrackSelectionParameters;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.util.Log;
 import com.google.android.exoplayer2.util.Util;
@@ -28,6 +27,8 @@ import com.joshtalks.joshskills.core.AppObjectController;
 import com.joshtalks.joshskills.messaging.RxBus2;
 import com.joshtalks.joshskills.repository.local.entity.ChatModel;
 import com.joshtalks.joshskills.repository.local.eventbus.MediaProgressEventBus;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -86,7 +87,7 @@ public class DownloadTracker {
         if (startDownloadDialogHelper != null) {
             startDownloadDialogHelper.release();
         }
-        startDownloadDialogHelper = new StartDownloadDialogHelper(getDownloadHelper(uri, renderersFactory), chatObj);
+        startDownloadDialogHelper = new StartDownloadDialogHelper(getDownloadHelper(context, uri, renderersFactory), chatObj);
 
     }
 
@@ -94,7 +95,7 @@ public class DownloadTracker {
             Uri uri) {
         Download download = downloads.get(uri);
         if (download != null) {
-            DownloadService.sendRemoveDownload(context, VideoDownloadService.class, download.request.id, /* foreground= */ false);
+            DownloadService.sendRemoveDownload(context, VideoDownloadService.class, download.request.id, /* foreground= */ true);
         }
     }
 
@@ -109,18 +110,18 @@ public class DownloadTracker {
         }
     }
 
-    private DownloadHelper getDownloadHelper(
-            Uri uri, RenderersFactory renderersFactory) {
+    private DownloadHelper getDownloadHelper(Context context,
+                                             Uri uri, RenderersFactory renderersFactory) {
         int type = Util.inferContentType(uri, null);
         switch (type) {
             case C.TYPE_DASH:
-                return DownloadHelper.forDash(uri, dataSourceFactory, renderersFactory);
+                return DownloadHelper.forDash(context, uri, dataSourceFactory, renderersFactory);
             case C.TYPE_SS:
-                return DownloadHelper.forSmoothStreaming(uri, dataSourceFactory, renderersFactory);
+                return DownloadHelper.forSmoothStreaming(context, uri, dataSourceFactory, renderersFactory);
             case C.TYPE_HLS:
-                return DownloadHelper.forHls(uri, dataSourceFactory, renderersFactory);
+                return DownloadHelper.forHls(context, uri, dataSourceFactory, renderersFactory);
             case C.TYPE_OTHER:
-                return DownloadHelper.forProgressive(uri);
+                return DownloadHelper.forProgressive(context, uri);
             default:
                 throw new IllegalStateException("Unsupported type: " + type);
         }
@@ -138,7 +139,7 @@ public class DownloadTracker {
 
         @Override
         public void onDownloadChanged(DownloadManager downloadManager, Download download) {
-            Log.i("download_state", "" + download.state);
+            Log.e("download_state", "" + download.state);
             downloads.put(download.request.uri, download);
             for (Listener listener : listeners) {
                 listener.onDownloadsChanged(download);
@@ -171,7 +172,7 @@ public class DownloadTracker {
         }
 
         @Override
-        public void onPrepared(DownloadHelper helper) {
+        public void onPrepared(@NotNull DownloadHelper helper) {
             try {
                 if (helper.getPeriodCount() == 0) {
                     Log.d(TAG, "No periods found. Downloading entire stream.");
@@ -197,7 +198,7 @@ public class DownloadTracker {
                                 .buildUpon()
                                 .setForceLowestBitrate(true)
                                 .setForceHighestSupportedBitrate(false)
-                               // .setMaxVideoSizeSd()
+                                // .setMaxVideoSizeSd()
                                 .build();
                         trackSelector.setParameters(newParameters);
                         downloadHelper.addTrackSelectionForSingleRenderer(periodIndex, i, newParameters, getOverrides(i));
@@ -217,11 +218,8 @@ public class DownloadTracker {
         }
 
         @Override
-        public void onPrepareError(DownloadHelper helper, IOException e) {
-          /*  Toast.makeText(
-                    context.getApplicationContext(), R.string.download_start_error, Toast.LENGTH_LONG)
-                    .show();*/
-
+        public void onPrepareError(@NotNull DownloadHelper helper, @NotNull IOException e) {
+            Log.e("error", "err");
             for (Listener listener : listeners) {
                 listener.onError(AppObjectController.getGsonMapper().toJson(chatObj), e);
             }
@@ -288,9 +286,8 @@ public class DownloadTracker {
         }
 
         private void startDownload(DownloadRequest downloadRequest) {
-
             DownloadService.sendAddDownload(
-                    context, VideoDownloadService.class, downloadRequest, false);
+                    context, VideoDownloadService.class, downloadRequest, true);
         }
 
         private DownloadRequest buildDownloadRequest() {

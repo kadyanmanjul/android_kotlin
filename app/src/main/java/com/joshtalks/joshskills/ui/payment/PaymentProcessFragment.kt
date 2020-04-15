@@ -191,9 +191,9 @@ class PaymentProcessFragment : DialogFragment() {
             startActivity((activity as BaseActivity).getInboxActivityIntent())
             activity?.finish()
 
-           /* startActivity(Intent(activity, CourseExploreActivity::class.java).apply {
-                addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-            })*/
+            /* startActivity(Intent(activity, CourseExploreActivity::class.java).apply {
+                 addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+             })*/
         }
     }
 

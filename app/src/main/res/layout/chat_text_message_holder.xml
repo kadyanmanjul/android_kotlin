@@ -24,7 +24,7 @@
                 android:paddingRight="@dimen/_5sdp"
                 android:paddingBottom="@dimen/_1sdp">
 
-            <include layout="@layout/tag_practise_layout"/>
+            <include layout="@layout/tag_practise_layout" />
 
 
             <androidx.constraintlayout.widget.ConstraintLayout

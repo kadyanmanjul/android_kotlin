@@ -352,7 +352,7 @@ class RegisterUserGId(context: Context, private val workerParams: WorkerParamete
     }
 }
 
-class MappingGaIDWithMentor(var context: Context, private val workerParams: WorkerParameters) :
+class MappingGaIDWithMentor(var context: Context, workerParams: WorkerParameters) :
     CoroutineWorker(context, workerParams) {
     override suspend fun doWork(): Result {
         if (GaIDMentorModel.getMapObject() == null) {

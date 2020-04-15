@@ -90,7 +90,14 @@ enum class AnalyticsEvent(val NAME: String) {
     LOGIN_SUCCESSFULLY("Login Successfully"),
     AUDIO_RECORD("Audio Record"),
     COURSE_EXPLORER("Course Explorer"),
-    HAVE_COUPON_CODE("Have Coupon Code")
+    HAVE_COUPON_CODE("Have Coupon Code"),
+    COURSE_OVERVIEW("Course Overview"),
+    CERTIFICATE_PROGRESS_CLICKED("Certificate Progress Clicked"),
+    PERFORMANCE_CLICKED("Performance Clicked"),
+    VIEW_SAMPLE_CERTIFICATE_OPEN("View Sample Certificate Open"),
+    VIEW_SAMPLE_CERTIFICATE_CLOSE("View Sample Certificate Close"),
+    VIDEO_CLICKED_COURSE_OVERVIEW("Video Click Course Overview"),
+    PRACTISE_CLICKED_COURSE_OVERVIEW("Practise Clicked Course Overview")
 
 
 }

@@ -176,7 +176,7 @@
     <string name="show_more">SHOW MORE</string>
     <string name="show_less">SHOW LESS</string>
     <string name="answer_not_submitted">Answer not submitted</string>
-    <string name="answer_submitted">Answer Submitted</string>
+    <string name="answer_submitted">Practice Successfully Submitted</string>
     <string name="offer_bachat" formatted="false">Aapne is course par pure %s ki bachat ki hai</string>
     <string name="bade_bhaiya_tips">Bade Bhaiya Tips</string>
     <string name="tip_message">Agar aap apne pehle 7 dino main hain to aap ye course 50\u0025 kam main pa sakte hain.</string>
@@ -192,7 +192,7 @@
     <string name="find_more_course_hint_ftime" formatted="false">Hello %s, Agar aap es course ke sath kuch aur bhi seekhna chahte hain to pehle 7 dino mai aapke paas har course pe %s off hai </string>
     <string name="buy_course_offer_tooltip" formatted="false"> Get %s off on the next course you buy, Valid for %s days.</string>
     <string name="first_time_user_hint">Aapko apne course se related saari videos aur claases isko click karke milengi</string>
-
+    <string name="certificate_tooltip_hint">Iss course ke lessons aur practices %s complete karne par aapko ek digital certificate milega.</string>
     <string name="login_dialog_header">Payment complete karne ke liye</string>
     <string name="course_overview">Course Overview</string>
     <string name="submit_practise_msz">Please complete your task before Submitting</string>
@@ -203,11 +203,19 @@
     <string name="video_url_not_exist">Something went wrong! Video does not exist</string>
 
 
-
-
-    <string name="bvp_right">RIGHT</string>
-    <string name="bvp_left">LEFT</string>
     <string name="volume">Volume: %1$d</string>
     <string name="brightness">Brightness: %1$d</string>
     <string name="seconds">%1$d seconds</string>
+
+
+    <!-- course progress layout-->
+    <string name="course_progress_detail">You have completed %s of the course</string>
+    <string name="course_duration_day" formatted="false">Day %s/%s</string>
+    <string name="unlock_progress_header">To unlock &amp; download certificate, you need to complete at least %s of the course</string>
+    <string name="sample_certificate">View Sample Certificate</string>
+    <string name="certificate_progress_h">Certificate Progress</string>
+    <string name="claim_certificate_h">Claim Certificate</string>
+    <string name="performance_h">Performance</string>
+    <string name="course_overview_header">Course Overview</string>
+    <string name="your_performance_so_far">Your Performance So Far</string>
 </resources>

@@ -2,16 +2,16 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
-//apply plugin: 'androidx.navigation.safeargs'
 apply plugin: 'io.fabric'
 apply plugin: 'com.google.gms.google-services'
+
 
 android {
     compileSdkVersion 29
     defaultConfig {
         applicationId "com.joshtalks.joshskills"
         minSdkVersion 21
-        targetSdkVersion 28
+        targetSdkVersion 29
         versionCode 76
         versionName "1.0.76"
         vectorDrawables.useSupportLibrary true
@@ -70,6 +70,9 @@ android {
     }
     kotlinOptions {
         jvmTarget = "1.8"
+    }
+    aaptOptions {
+        cruncherEnabled = false
     }
 
     dexOptions {
@@ -150,7 +153,7 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'androidx.core:core-ktx:1.2.0'
     implementation "androidx.collection:collection-ktx:1.1.0"
-    implementation "androidx.fragment:fragment-ktx:1.2.3"
+    implementation "androidx.fragment:fragment-ktx:1.2.4"
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation 'androidx.browser:browser:1.2.0'
@@ -185,26 +188,25 @@ dependencies {
     }*/
     implementation 'com.github.corouteam:GlideToVectorYou:v2.0.0'
 
-
-    implementation 'com.google.android.exoplayer:exoplayer:2.11.3'
-    implementation 'com.google.android.exoplayer:extension-workmanager:2.11.3'
+    implementation 'com.google.android.exoplayer:exoplayer:2.11.4'
+    implementation 'com.google.android.exoplayer:extension-workmanager:2.11.4'
 
     implementation 'com.crashlytics.sdk.android:crashlytics:2.10.1'
     implementation 'com.google.firebase:firebase-appindexing:19.1.0'
-    implementation 'com.google.firebase:firebase-analytics:17.2.3'
-    implementation 'com.google.firebase:firebase-core:17.2.3'
-    implementation 'com.google.firebase:firebase-messaging:20.1.3'
-    implementation 'com.google.firebase:firebase-perf:19.0.5'
+    implementation 'com.google.firebase:firebase-analytics:17.3.0'
+    implementation 'com.google.firebase:firebase-core:17.3.0'
+    implementation 'com.google.firebase:firebase-messaging:20.1.5'
+    implementation 'com.google.firebase:firebase-perf:19.0.6'
     implementation 'com.google.firebase:firebase-config:19.1.3'
     implementation 'com.google.firebase:firebase-database-ktx:19.2.1'
     implementation 'com.google.firebase:firebase-dynamic-links-ktx:19.1.0'
 
 
     implementation 'com.google.android.gms:play-services-ads:19.0.1'
-    implementation 'com.google.android.gms:play-services-auth:17.0.0'
+    implementation 'com.google.android.gms:play-services-auth:18.0.0'
     implementation 'com.google.android.gms:play-services-base:17.2.1'
     implementation 'com.google.android.libraries.places:places:2.2.0'
-    implementation 'com.google.android.play:core:1.7.1'
+    implementation 'com.google.android.play:core:1.7.2'
     implementation 'com.android.installreferrer:installreferrer:1.1.2'
 
     implementation 'com.facebook.shimmer:shimmer:0.4.0'
@@ -266,7 +268,7 @@ dependencies {
     implementation 'me.zhanghai.android.materialplaypausedrawable:library:1.0.0'
 
     implementation 'io.branch.sdk.android:library:5.0.0'
-    implementation (name: "truesdk-0.7-releasePartner", ext: "aar")
+    implementation(name: "truesdk-0.7-releasePartner", ext: "aar")
     implementation 'com.clevertap.android:clevertap-android-sdk:3.5.1'
 
     //Payment Razor pay
@@ -278,8 +280,8 @@ dependencies {
     implementation 'com.github.vipulasri:timelineview:1.1.4'
     implementation 'com.afollestad.material-dialogs:bottomsheets:3.2.1'
     implementation 'com.mikhaellopez:circularprogressbar:3.0.3'
- //   implementation 'com.google.android.exoplayer:extension-cast:2.11.3'
-   // implementation 'com.google.android.gms:play-services-cast-framework:18.1.0'
+    //   implementation 'com.google.android.exoplayer:extension-cast:2.11.3'
+    // implementation 'com.google.android.gms:play-services-cast-framework:18.1.0'
 
 //    implementation 'the.bot.box:appusagemonitor:1.0.1'
 

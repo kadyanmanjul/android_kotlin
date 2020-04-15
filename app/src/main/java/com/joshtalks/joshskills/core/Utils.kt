@@ -39,6 +39,7 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.custom_ui.CustomTabHelper
 import com.joshtalks.joshskills.core.datetimeutils.DateTimeStyle
 import com.joshtalks.joshskills.core.datetimeutils.DateTimeUtils
+import com.joshtalks.joshskills.repository.local.model.User
 import com.muddzdev.styleabletoast.StyleableToast
 import github.nisrulz.easydeviceinfo.base.EasyConfigMod
 import io.reactivex.Single
@@ -128,15 +129,17 @@ object Utils {
 
 
     fun getMessageTime(epoch: Long): String {
-        val time = epoch
-        val date = Date(time)
-
-        if (DateUtils.isToday(time)) {
-            return CHAT_TIME_FORMATTER.format(date.time).toLowerCase(Locale.getDefault())
-        } else if (isYesterday(date)) {
-            return "Yesterday"
-        } else {
-            return DateTimeUtils.formatWithStyle(date, DateTimeStyle.SHORT)
+        val date = Date(epoch)
+        return when {
+            DateUtils.isToday(epoch) -> {
+                CHAT_TIME_FORMATTER.format(date.time).toLowerCase(Locale.getDefault())
+            }
+            isYesterday(date) -> {
+                "Yesterday"
+            }
+            else -> {
+                DateTimeUtils.formatWithStyle(date, DateTimeStyle.SHORT)
+            }
         }
 
 
@@ -170,6 +173,7 @@ object Utils {
         return 0
 
     }
+
     @JvmStatic
     fun getDurationOfMedia(context: Context, mediaPath: String?): Long? {
         try {
@@ -362,19 +366,19 @@ object Utils {
 
     private fun hasInternetConnection(): Single<Boolean> {
         return Single.fromCallable {
-                try {
-                    // Connect to Google DNS to check for connection
-                    val timeoutMs = 500
-                    val socket = Socket()
-                    val socketAddress = InetSocketAddress("8.8.8.8", 53)
-                    socket.connect(socketAddress, timeoutMs)
-                    socket.close()
+            try {
+                // Connect to Google DNS to check for connection
+                val timeoutMs = 500
+                val socket = Socket()
+                val socketAddress = InetSocketAddress("8.8.8.8", 53)
+                socket.connect(socketAddress, timeoutMs)
+                socket.close()
 
-                    true
-                } catch (e: IOException) {
-                    false
-                }
+                true
+            } catch (e: IOException) {
+                false
             }
+        }
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
     }
@@ -590,23 +594,23 @@ object Utils {
         try {
 
             val uri = Uri.parse(url)
-            val intent = Intent(Intent.ACTION_VIEW)
-            if (url.toString().contains(".doc") || url.toString().contains(".docx")) {
+            val intent = Intent(ACTION_VIEW)
+            if (url.contains(".doc") || url.contains(".docx")) {
                 // Word document
                 intent.setDataAndType(uri, "application/msword")
-            } else if (url.toString().contains(".pdf")) {
+            } else if (url.contains(".pdf")) {
                 // PDF file
                 intent.setDataAndType(uri, "application/pdf")
-            } else if (url.toString().contains(".ppt") || url.toString().contains(".pptx")) {
+            } else if (url.contains(".ppt") || url.contains(".pptx")) {
                 // Powerpoint file
                 intent.setDataAndType(uri, "application/vnd.ms-powerpoint")
-            } else if (url.toString().contains(".xls") || url.toString().contains(".xlsx")) {
+            } else if (url.contains(".xls") || url.contains(".xlsx")) {
                 // Excel file
                 intent.setDataAndType(uri, "application/vnd.ms-excel")
-            } else if (url.toString().contains(".rtf")) {
+            } else if (url.contains(".rtf")) {
                 // RTF file
                 intent.setDataAndType(uri, "application/rtf")
-            } else if (url.toString().contains(".txt")) {
+            } else if (url.contains(".txt")) {
                 // Text file
                 intent.setDataAndType(uri, "text/plain")
             } else {
@@ -634,8 +638,7 @@ object Utils {
         val paint = Paint()
         paint.textSize = textSize
         paint.getTextBounds(value, 0, value.length, bounds)
-        val numLines = ceil((bounds.width().toFloat() / textSize).toDouble()).toInt()
-        return numLines
+        return ceil((bounds.width().toFloat() / textSize).toDouble()).toInt()
 
     }
 
@@ -717,5 +720,19 @@ fun showToast(message: String) {
         StyleableToast.Builder(AppObjectController.joshApplication).gravity(Gravity.BOTTOM)
             .text(message).cornerRadius(16).length(Toast.LENGTH_SHORT)
             .solidBackground().show()
+    }
+
+}
+
+fun getUserNameInShort(): String {
+    val name = User.getInstance().firstName.trim().toUpperCase()
+    if (name.contains(" ")) {
+        val nameSplit = name.split(" ")
+        return nameSplit[0].plus(nameSplit[1])
+    }
+    return try {
+        name.substring(0, 2)
+    } catch (e: IndexOutOfBoundsException) {
+        name.substring(0, name.length)
     }
 }

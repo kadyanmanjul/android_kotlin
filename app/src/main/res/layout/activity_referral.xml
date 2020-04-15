@@ -9,217 +9,218 @@
         <variable
                 name="handler"
                 type="com.joshtalks.joshskills.ui.referral.ReferralActivity" />
+
         <variable
                 name="packageVal"
-                type="String"/>
+                type="String" />
     </data>
 
 
-        <LinearLayout
-                android:background="@color/white"
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/white"
+            android:orientation="vertical"
+            android:weightSum="1">
+
+        <com.joshtalks.arclayout.ArcLayout
+                android:id="@+id/diagonalLayout"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:weightSum="1">
+                android:layout_height="0dp"
+                android:layout_weight=".75"
+                android:elevation="@dimen/_8sdp"
+                app:arc_cropDirection="cropInside"
+                app:arc_height="@dimen/_32sdp"
+                app:arc_position="bottom">
 
-            <com.joshtalks.arclayout.ArcLayout
-                    android:id="@+id/diagonalLayout"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight=".75"
-                    android:elevation="@dimen/_8sdp"
-                    app:arc_cropDirection="cropInside"
-                    app:arc_height="@dimen/_32sdp"
-                    app:arc_position="bottom">
-
-
-                <androidx.constraintlayout.widget.ConstraintLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:background="#25d366">
-
-                    <androidx.appcompat.widget.AppCompatImageView
-                            android:id="@+id/iv_back"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:gravity="center"
-                            android:paddingStart="@dimen/_8sdp"
-                            android:paddingBottom="@dimen/_8sdp"
-                            android:paddingEnd="@dimen/_8sdp"
-                            android:paddingTop="@dimen/_16sdp"
-                            android:tint="@color/white"
-                            app:layout_constraintLeft_toLeftOf="parent"
-                            app:layout_constraintTop_toTopOf="parent"
-                            app:srcCompat="@drawable/ic_baseline_arrow_back_ios" />
-
-
-                    <androidx.appcompat.widget.AppCompatTextView
-                            android:id="@+id/tv_header"
-                            fontPath="fonts/Roboto-Medium.ttf"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:ellipsize="marquee"
-                            android:gravity="center"
-                            android:paddingStart="@dimen/_8sdp"
-                            android:paddingTop="@dimen/_16sdp"
-                            android:singleLine="true"
-                            android:text="@string/paise_kamao"
-                            android:textColor="@color/white"
-                            android:textSize="@dimen/font_22"
-                            app:layout_constraintLeft_toLeftOf="parent"
-                            app:layout_constraintRight_toRightOf="parent"
-                            app:layout_constraintTop_toTopOf="parent" />
-
-                    <androidx.appcompat.widget.AppCompatImageView
-                            android:id="@+id/image_view"
-                            android:layout_width="match_parent"
-                            android:layout_height="0dp"
-                            android:layout_marginTop="@dimen/_24sdp"
-                            android:adjustViewBounds="true"
-                            android:scaleType="fitCenter"
-                            android:src="@drawable/ic_refer_a_friend"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintHeight_default="percent"
-                            app:layout_constraintHeight_percent="0.4"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toBottomOf="@+id/tv_header" />
-
-
-                    <androidx.appcompat.widget.AppCompatTextView
-                            android:id="@+id/text_view_1"
-                            fontPath="fonts/OpenSans-SemiBold.ttf"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:gravity="center"
-                            android:layout_marginTop="@dimen/_16sdp"
-                            android:textColor="@color/white"
-                            android:textSize="@dimen/font_15"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toBottomOf="@+id/image_view" />
-
-
-                    <androidx.appcompat.widget.AppCompatTextView
-                            android:id="@+id/text_view_2"
-                            fontPath="fonts/Roboto-Regular.ttf"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:gravity="center"
-                            android:layout_marginTop="@dimen/_8sdp"
-                            android:textColor="@color/font_color"
-                            android:textSize="@dimen/font_15"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toBottomOf="@+id/text_view_1" />
-
-
-                </androidx.constraintlayout.widget.ConstraintLayout>
-            </com.joshtalks.arclayout.ArcLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight=".25"
-                    android:orientation="vertical">
+                    android:layout_height="match_parent"
+                    android:background="#25d366">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/iv_back"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:paddingStart="@dimen/_8sdp"
+                        android:paddingTop="@dimen/_16sdp"
+                        android:paddingEnd="@dimen/_8sdp"
+                        android:paddingBottom="@dimen/_8sdp"
+                        android:tint="@color/white"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:srcCompat="@drawable/ic_baseline_arrow_back_ios" />
 
 
                 <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/text_view_3"
-                        fontPath="fonts/Roboto-Bold.ttf"
+                        android:id="@+id/tv_header"
+                        fontPath="fonts/Roboto-Medium.ttf"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:ellipsize="marquee"
                         android:gravity="center"
+                        android:paddingStart="@dimen/_8sdp"
+                        android:paddingTop="@dimen/_16sdp"
                         android:singleLine="true"
-                        android:text="@string/share_more_text"
-                        android:textColor="@color/font_color"
-                        android:textSize="@dimen/font_13"
+                        android:text="@string/paise_kamao"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/font_22"
                         app:layout_constraintLeft_toLeftOf="parent"
                         app:layout_constraintRight_toRightOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
+                <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/image_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_marginTop="@dimen/_24sdp"
+                        android:adjustViewBounds="true"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/ic_refer_a_friend"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHeight_default="percent"
+                        app:layout_constraintHeight_percent="0.4"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/tv_header" />
 
-                <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
-                        android:id="@+id/tv_referral_code"
-                        fontPath="fonts/Roboto-Bold.ttf"
-                        android:layout_width="0dp"
-                        android:layout_height="@dimen/_42sdp"
-                        android:layout_gravity="center"
-                        android:layout_marginTop="@dimen/_8sdp"
-                        android:background="@drawable/rect_with_bound"
-                        android:clickable="true"
-                        android:drawableEnd="@drawable/ic_content_copy"
-                        android:drawablePadding="@dimen/_18sdp"
-                        android:drawableTint="@color/font_color"
-                        android:focusable="true"
+
+                <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/text_view_1"
+                        fontPath="fonts/OpenSans-SemiBold.ttf"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/_16sdp"
                         android:gravity="center"
-                        android:paddingStart="@dimen/_18sdp"
-                        android:paddingTop="@dimen/_8sdp"
-                        android:paddingEnd="@dimen/_8sdp"
-                        android:paddingBottom="@dimen/_8sdp"
-                        android:textColor="@color/font_color"
-                        android:textIsSelectable="true"
-                        android:textSize="@dimen/font_16"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/font_15"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/text_view_3"
-                        app:layout_constraintWidth_default="percent"
-                        app:layout_constraintWidth_percent="0.65" />
+                        app:layout_constraintTop_toBottomOf="@+id/image_view" />
 
 
-                <com.google.android.material.button.MaterialButton
-                        fontPath="fonts/Roboto-Bold.ttf"
-                        android:layout_width="0dp"
-                        android:layout_height="@dimen/_46sdp"
-                        android:layout_gravity="center"
+                <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/text_view_2"
+                        fontPath="fonts/Roboto-Regular.ttf"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/_8sdp"
-                        android:background="@drawable/rect_with_bound"
-                        android:backgroundTint="#7ED957"
-                        android:clickable="true"
-                        android:focusable="true"
                         android:gravity="center"
-                        android:onClick="@{()->handler.inviteOnlyWhatsapp()}"
-                        android:text="Whatsapp"
-                        android:textAllCaps="true"
-                        android:textColor="@android:color/white"
-                        android:textSize="@dimen/font_13"
-                        app:cornerRadius="@dimen/_4sdp"
-                        app:icon="@drawable/ic_whatsapp_share"
-                        app:iconGravity="textStart"
-                        app:iconPadding="@dimen/_3sdp"
-                        app:iconSize="@dimen/_20sdp"
-                        app:iconTint="#FFFFFF"
-                        app:iconTintMode="multiply"
-                        app:layout_constraintStart_toStartOf="@+id/tv_referral_code"
-                        app:layout_constraintTop_toBottomOf="@id/tv_referral_code"
-                        app:layout_constraintWidth_default="percent"
-                        app:layout_constraintWidth_percent="0.45"
-                        app:rippleColor="@color/white" />
-
-                <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btn_other_share"
-                        fontPath="fonts/Roboto-Bold.ttf"
-                        android:layout_width="0dp"
-                        android:layout_height="@dimen/_44sdp"
-                        android:layout_marginTop="@dimen/_8sdp"
-                        android:background="@drawable/rect_with_bound"
-                        android:backgroundTint="@color/pdf_bg_color"
-                        android:clickable="true"
-                        android:focusable="true"
-                        android:gravity="center"
-                        android:onClick="@{()->handler.inviteFriends(packageVal)}"
-                        android:text="\u00b7\u00b7\u00b7"
-                        android:textAllCaps="true"
                         android:textColor="@color/font_color"
-                        android:textSize="@dimen/font_18"
-                        app:cornerRadius="@dimen/_4sdp"
-                        app:layout_constraintEnd_toEndOf="@+id/tv_referral_code"
-                        app:layout_constraintTop_toBottomOf="@id/tv_referral_code"
-                        app:layout_constraintWidth_default="percent"
-                        app:layout_constraintWidth_percent="0.16"
-                        app:rippleColor="@color/white" />
+                        android:textSize="@dimen/font_15"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/text_view_1" />
 
 
             </androidx.constraintlayout.widget.ConstraintLayout>
-        </LinearLayout>
+        </com.joshtalks.arclayout.ArcLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight=".25"
+                android:orientation="vertical">
+
+
+            <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/text_view_3"
+                    fontPath="fonts/Roboto-Bold.ttf"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="marquee"
+                    android:gravity="center"
+                    android:singleLine="true"
+                    android:text="@string/share_more_text"
+                    android:textColor="@color/font_color"
+                    android:textSize="@dimen/font_13"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+
+            <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+                    android:id="@+id/tv_referral_code"
+                    fontPath="fonts/Roboto-Bold.ttf"
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/_42sdp"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="@dimen/_8sdp"
+                    android:background="@drawable/rect_with_bound"
+                    android:clickable="true"
+                    android:drawableEnd="@drawable/ic_content_copy"
+                    android:drawablePadding="@dimen/_18sdp"
+                    android:drawableTint="@color/font_color"
+                    android:focusable="true"
+                    android:gravity="center"
+                    android:paddingStart="@dimen/_18sdp"
+                    android:paddingTop="@dimen/_8sdp"
+                    android:paddingEnd="@dimen/_8sdp"
+                    android:paddingBottom="@dimen/_8sdp"
+                    android:textColor="@color/font_color"
+                    android:textIsSelectable="true"
+                    android:textSize="@dimen/font_16"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/text_view_3"
+                    app:layout_constraintWidth_default="percent"
+                    app:layout_constraintWidth_percent="0.65" />
+
+
+            <com.google.android.material.button.MaterialButton
+                    fontPath="fonts/Roboto-Bold.ttf"
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/_46sdp"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="@dimen/_8sdp"
+                    android:background="@drawable/rect_with_bound"
+                    android:backgroundTint="#7ED957"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center"
+                    android:onClick="@{()->handler.inviteOnlyWhatsapp()}"
+                    android:text="Whatsapp"
+                    android:textAllCaps="true"
+                    android:textColor="@android:color/white"
+                    android:textSize="@dimen/font_13"
+                    app:cornerRadius="@dimen/_4sdp"
+                    app:icon="@drawable/ic_whatsapp_share"
+                    app:iconGravity="textStart"
+                    app:iconPadding="@dimen/_3sdp"
+                    app:iconSize="@dimen/_20sdp"
+                    app:iconTint="#FFFFFF"
+                    app:iconTintMode="multiply"
+                    app:layout_constraintStart_toStartOf="@+id/tv_referral_code"
+                    app:layout_constraintTop_toBottomOf="@id/tv_referral_code"
+                    app:layout_constraintWidth_default="percent"
+                    app:layout_constraintWidth_percent="0.45"
+                    app:rippleColor="@color/white" />
+
+            <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_other_share"
+                    fontPath="fonts/Roboto-Bold.ttf"
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/_44sdp"
+                    android:layout_marginTop="@dimen/_8sdp"
+                    android:background="@drawable/rect_with_bound"
+                    android:backgroundTint="@color/pdf_bg_color"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center"
+                    android:onClick="@{()->handler.inviteFriends(packageVal)}"
+                    android:text="\u00b7\u00b7\u00b7"
+                    android:textAllCaps="true"
+                    android:textColor="@color/font_color"
+                    android:textSize="@dimen/font_18"
+                    app:cornerRadius="@dimen/_4sdp"
+                    app:layout_constraintEnd_toEndOf="@+id/tv_referral_code"
+                    app:layout_constraintTop_toBottomOf="@id/tv_referral_code"
+                    app:layout_constraintWidth_default="percent"
+                    app:layout_constraintWidth_percent="0.16"
+                    app:rippleColor="@color/white" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
 </layout>

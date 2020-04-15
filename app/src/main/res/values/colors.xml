@@ -60,6 +60,11 @@
     <color name="media_tv_bg">#44000000</color>
     <color name="bg_tint">#88ffffff</color>
 
+    <color name="practise_complete_tint">#F5C116</color>
+    <color name="wa_color">#25d366</color>
+    <color name="disable_color">#C7D0D8</color>
+    <color name="wh_f4">#f4f4f4</color>
+    <color name="wh_fc">#FCFDF3</color>
 
 
 </resources>

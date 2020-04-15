@@ -8,7 +8,6 @@ import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.OrientationEventListener;
@@ -135,7 +134,6 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
                 player = ExoPlayerFactory.newSimpleInstance(getContext());
                 e.printStackTrace();
             }
-
 
 
             player.addListener(new PlayerEventListener());
@@ -324,12 +322,16 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
     }
 
     public void downloadStreamPlay() {
-        if (player != null) {
-            boolean haveStartPosition = startWindow != C.INDEX_UNSET;
-            if (haveStartPosition) {
-                player.seekTo(startWindow, currentPosition);
+        try {
+            if (player != null) {
+                boolean haveStartPosition = startWindow != C.INDEX_UNSET;
+                if (haveStartPosition) {
+                    player.seekTo(startWindow, currentPosition);
+                }
+                player.prepare(VideoDownloadController.getInstance().getMediaSource(uri), !haveStartPosition, false);
             }
-            player.prepare(VideoDownloadController.getInstance().getMediaSource(uri), !haveStartPosition, false);
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
     }
 
@@ -340,12 +342,7 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
                 player.seekTo(startWindow, currentPosition);
             }
             player.prepare(VideoDownloadController.getInstance().getMediaSource(uri), !haveStartPosition, false);
-            new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    onPause();
-                }
-            }, 500);
+            new Handler(Looper.getMainLooper()).postDelayed(this::onPause, 500);
 
         }
     }
@@ -452,7 +449,7 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
     }
 
     public interface PlayerEventCallback {
-        void onReceiveEvent(int event,boolean playbackState);
+        void onReceiveEvent(int event, boolean playbackState);
     }
 
 
@@ -461,7 +458,7 @@ public class JoshVideoPlayer extends PlayerView implements View.OnTouchListener,
         @Override
         public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
             if (playerEventCallback != null) {
-                playerEventCallback.onReceiveEvent(playbackState,playWhenReady);
+                playerEventCallback.onReceiveEvent(playbackState, playWhenReady);
             }
         }
 

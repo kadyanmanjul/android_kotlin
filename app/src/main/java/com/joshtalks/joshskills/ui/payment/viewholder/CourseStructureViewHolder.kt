@@ -20,7 +20,7 @@ import com.mindorks.placeholderview.annotations.Resolve
 @Layout(R.layout.course_structure_layout)
 class CourseStructureViewHolder(
     private var courseStructure: CourseStructure,
-    private val context: Context = AppObjectController.joshApplication
+    context: Context = AppObjectController.joshApplication
 ) {
 
     @com.mindorks.placeholderview.annotations.View(R.id.tv_name)

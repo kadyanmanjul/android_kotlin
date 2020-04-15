@@ -62,6 +62,7 @@ import java.util.*
 const val COURSE_OBJECT = "course"
 const val COURSE_ID = "course_ID"
 const val PAYMENT_DETAIL_OBJECT = "payment_detail"
+const val HAS_CERTIFICATE = "has_certificate"
 
 
 class PaymentActivity : CoreJoshActivity(),
@@ -83,6 +84,7 @@ class PaymentActivity : CoreJoshActivity(),
     private lateinit var titleView: AppCompatTextView
     private var specialDiscount = false
     private var isEcommereceEventFire = true
+    private var hasCertificate = false
 
     companion object {
         fun startPaymentActivity(
@@ -117,7 +119,9 @@ class PaymentActivity : CoreJoshActivity(),
         if (intent.hasExtra(COURSE_OBJECT)) {
             courseModel = intent.getSerializableExtra(COURSE_OBJECT) as CourseExploreModel
             testId = courseModel?.id.toString()
-
+            courseModel?.certificate?.run {
+                hasCertificate = this
+            }
         }
         if (intent.hasExtra(COURSE_ID)) {
             testId = intent.getStringExtra(COURSE_ID)!!
@@ -423,7 +427,7 @@ class PaymentActivity : CoreJoshActivity(),
                 fragmentTransaction.remove(prev)
             }
             fragmentTransaction.addToBackStack(null)
-            CoursePurchaseDetailFragment.newInstance(courseModel)
+            CoursePurchaseDetailFragment.newInstance(courseModel, hasCertificate)
                 .show(supportFragmentManager, "purchase_details_dialog")
             AppAnalytics.create(AnalyticsEvent.PAYMENT_DIALOG.NAME)
                 .push()
@@ -682,6 +686,10 @@ class PaymentActivity : CoreJoshActivity(),
 
 
         try {
+            if (this.amount <= 0) {
+                return
+            }
+            AppObjectController.facebookEventLogger.flush()
             val params = Bundle().apply {
                 putString(AppEventsConstants.EVENT_PARAM_CONTENT_ID, testId)
             }

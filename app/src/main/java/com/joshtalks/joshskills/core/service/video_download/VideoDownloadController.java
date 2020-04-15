@@ -198,6 +198,8 @@ public class VideoDownloadController {
             downloadManager =
                     new DownloadManager(
                             AppObjectController.getJoshApplication(), downloadIndex, new DefaultDownloaderFactory(downloaderConstructorHelper));
+            downloadManager.setMinRetryCount(5);
+            downloadManager.setMaxParallelDownloads(10);
             downloadTracker =
                     new DownloadTracker(AppObjectController.getJoshApplication(), buildDataSourceFactory(), downloadManager);
         }

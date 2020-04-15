@@ -4,6 +4,7 @@ import androidx.room.*
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.ConvectorForEngagement
 import com.joshtalks.joshskills.repository.local.eventbus.VideoDownloadedBus
@@ -78,7 +79,11 @@ data class ChatModel(
 
     @ColumnInfo(name = "content_download_date")
     @Expose
-    var contentDownloadDate: Date = Date()
+    var contentDownloadDate: Date = Date(),
+
+    @ColumnInfo(name = "message_time_in_milliSeconds")
+    @SerializedName("createdmilisecond")
+    var messageTimeInMilliSeconds: String = EMPTY
 
 
 ) : DataBaseClass(), Serializable {
@@ -601,8 +606,8 @@ interface ChatDao {
     )
 
 
-    @Query(value = "SELECT created FROM chat_table where question_id IS NOT NULL AND conversation_id= :conversationId ORDER BY created DESC LIMIT 1; ")
-    suspend fun getLastChatDate(conversationId: String): Date?
+    @Query(value = "SELECT message_time_in_milliSeconds FROM chat_table where question_id IS NOT NULL AND conversation_id= :conversationId ORDER BY created DESC LIMIT 1; ")
+    suspend fun getLastChatDate(conversationId: String): String?
 
 
     @Query(value = "SELECT * FROM (SELECT *,qt.type AS 'question_type' FROM chat_table ct LEFT JOIN question_table qt ON ct.chat_id = qt.chatId where qt.type= :typeO AND  title IS NOT NULL ) inbox  where type= :typeO AND conversation_id= :conversationId  ORDER BY created ASC;")
@@ -614,6 +619,16 @@ interface ChatDao {
 
     @Query("SELECT * FROM  question_table  WHERE questionId= :questionId")
     suspend fun getQuestionOnId(questionId: String): Question?
+
+
+    @Transaction
+    suspend fun getPractiseFromQuestionId(id: String): ChatModel? {
+        val question: Question? = getQuestionOnId(id)
+        return if (question == null) null
+        else {
+            getUpdatedChatObjectViaId(question.chatId)
+        }
+    }
 
 }
 

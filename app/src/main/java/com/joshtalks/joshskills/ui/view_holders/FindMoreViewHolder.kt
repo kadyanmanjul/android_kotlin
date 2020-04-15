@@ -10,6 +10,7 @@ import com.mindorks.placeholderview.annotations.Resolve
 @Layout(R.layout.find_more_layout)
 class FindMoreViewHolder {
 
+
     @Resolve
     fun onResolved() {
     }

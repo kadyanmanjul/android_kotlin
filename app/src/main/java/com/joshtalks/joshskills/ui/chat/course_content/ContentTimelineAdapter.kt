@@ -5,21 +5,17 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.github.vipulasri.timelineview.TimelineView
 import com.joshtalks.joshskills.core.convertCamelCase
-import com.joshtalks.joshskills.core.datetimeutils.DateTimeStyle
-import com.joshtalks.joshskills.core.datetimeutils.DateTimeUtils
 import com.joshtalks.joshskills.databinding.ContentTimelineItemBinding
+import com.joshtalks.joshskills.messaging.RxBus2
+import com.joshtalks.joshskills.repository.local.eventbus.ContentClickEventBus
 import com.joshtalks.joshskills.repository.local.minimalentity.CourseContentEntity
 
-class ContentTimelineAdapter(
-    private var context: ContentTimelineFragment,
-    private var items: List<CourseContentEntity> = emptyList()
-) :
+class ContentTimelineAdapter(private var items: List<CourseContentEntity>) :
     RecyclerView.Adapter<ContentTimelineAdapter.ViewHolder>() {
-    private var onContentInteractionListener: OnContentInteractionListener = context
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
-        val binding = ContentTimelineItemBinding.inflate(inflater,parent,false)
+        val binding = ContentTimelineItemBinding.inflate(inflater, parent, false)
         return ViewHolder(binding, viewType)
     }
 
@@ -43,17 +39,13 @@ class ContentTimelineAdapter(
                 timeline.initLine(viewType)
                 this.textTitle.text = convertCamelCase(courseContentEntity.title!!)
                 this.textTitle.setOnClickListener {
-                    onContentInteractionListener.onClick(courseContentEntity)
+                    RxBus2.publish(ContentClickEventBus(courseContentEntity))
                 }
                 this.rootView.setOnClickListener {
-                    onContentInteractionListener.onClick(courseContentEntity)
+                    RxBus2.publish(ContentClickEventBus(courseContentEntity))
                 }
             }
         }
-    }
-
-    interface OnContentInteractionListener {
-        fun onClick(courseContentEntity: CourseContentEntity)
     }
 
 }

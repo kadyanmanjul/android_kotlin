@@ -8,6 +8,8 @@ import com.bumptech.glide.load.MultiTransformation
 import com.clevertap.android.sdk.ActivityLifecycleCallback
 import com.crashlytics.android.Crashlytics
 import com.crashlytics.android.core.CrashlyticsCore
+import com.facebook.FacebookSdk
+import com.facebook.LoggingBehavior
 import com.facebook.appevents.AppEventsLogger
 import com.facebook.stetho.okhttp3.StethoInterceptor
 import com.google.android.exoplayer2.util.Util
@@ -153,6 +155,7 @@ internal class AppObjectController {
             firebaseAnalytics.setAnalyticsCollectionEnabled(true)
             AppEventsLogger.activateApp(joshApplication)
             facebookEventLogger = AppEventsLogger.newLogger(joshApplication)
+            FacebookSdk.addLoggingBehavior(LoggingBehavior.APP_EVENTS)
             AndroidThreeTen.init(joshApplication)
             Branch.getAutoInstance(joshApplication)
             FirebaseDatabase.getInstance().setLogLevel(Logger.Level.DEBUG)
@@ -160,10 +163,8 @@ internal class AppObjectController {
             initFirebaseRemoteConfig()
             initCrashlytics()
 
-
             gsonMapper = GsonBuilder()
                 .enableComplexMapKeySerialization()
-                .serializeNulls()
                 .setDateFormat("yyyy-MM-dd'T'HH:mm:ss")
                 .registerTypeAdapter(Date::class.java, object : JsonDeserializer<Date> {
                     @Throws(JsonParseException::class)
@@ -206,7 +207,7 @@ internal class AppObjectController {
                 HttpLoggingInterceptor(object : HttpLoggingInterceptor.Logger {
                     override fun log(message: String) {
                         Timber.tag("OkHttp").d(message)
-                        FL.v(message+"\n")
+                        FL.v(message + "\n")
                     }
 
                 }).apply {
@@ -280,7 +281,7 @@ internal class AppObjectController {
 
             val fetchConfiguration = FetchConfiguration.Builder(context)
                 .enableRetryOnNetworkGain(true)
-                .setDownloadConcurrentLimit(10)
+                .setDownloadConcurrentLimit(50)
                 .enableLogging(true)
                 .setAutoRetryMaxAttempts(5)
                 .setHttpDownloader(HttpUrlConnectionDownloader(Downloader.FileDownloaderType.PARALLEL))
@@ -288,7 +289,8 @@ internal class AppObjectController {
                 .build()
             Fetch.setDefaultInstanceConfiguration(fetchConfiguration)
 
-            fetch = Fetch.getInstance(fetchConfiguration)
+            fetch = Fetch.Impl.getInstance(fetchConfiguration)
+            // fetch = Fetch.getInstance(fetchConfiguration)
             videoDownloadTracker = VideoDownloadController.getInstance().downloadTracker
             initExoPlayer()
             multiTransformation = MultiTransformation(
@@ -346,7 +348,13 @@ internal class AppObjectController {
         }
 
         private fun getOkHttpDownloader(): OkHttpDownloader {
-            val okHttpClient = OkHttpClient.Builder().build()
+            val mediaOkhttpBuilder = OkHttpClient().newBuilder()
+            mediaOkhttpBuilder.connectTimeout(1, TimeUnit.MINUTES)
+                .writeTimeout(1, TimeUnit.MINUTES)
+                .readTimeout(1, TimeUnit.MINUTES)
+                .retryOnConnectionFailure(true)
+                .addInterceptor(StatusCodeInterceptor())
+            val okHttpClient = mediaOkhttpBuilder.build()
             return OkHttpDownloader(
                 okHttpClient,
                 Downloader.FileDownloaderType.PARALLEL
@@ -375,6 +383,7 @@ class StatusCodeInterceptor : Interceptor {
                 AppObjectController.joshApplication.startActivity(intent)
             }
         }
+
         Timber.i("Status code: " + response.code)
         return response
     }

@@ -2,13 +2,8 @@ package com.joshtalks.joshskills.repository.service
 
 import com.joshtalks.joshskills.repository.local.entity.Course
 import com.joshtalks.joshskills.repository.local.entity.PracticeEngagement
-import com.joshtalks.joshskills.repository.server.AmazonPolicyResponse
-import com.joshtalks.joshskills.repository.server.ChatMessageReceiver
-import com.joshtalks.joshskills.repository.server.RequestEngage
-import com.joshtalks.joshskills.repository.server.ResponseChatMessage
-import io.reactivex.subjects.ReplaySubject
+import com.joshtalks.joshskills.repository.server.*
 import kotlinx.coroutines.Deferred
-import retrofit2.Call
 import retrofit2.Response
 import retrofit2.http.*
 
@@ -44,8 +39,6 @@ interface ChatNetworkService {
     suspend fun engageVideoApiV2(@Body messageObject: Any)
 
 
-
-
     @POST("$DIR/engage/audio/")
     suspend fun engageAudio(@Body messageObject: Any)
 
@@ -71,6 +64,9 @@ interface ChatNetworkService {
     @FormUrlEncoded
     @PATCH("$DIR/mentor/gaid/{id}/")
     suspend fun mergeMentorWithGId(@Path("id") id: String, @FieldMap params: Map<String, String>)
+
+    @GET("$DIR/chat/conversation/{id}/")
+    suspend fun getCourseProgressDetailsAsync(@Path("id") cId: String): CoursePerformanceResponse
 
 
 }

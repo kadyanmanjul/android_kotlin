@@ -29,6 +29,7 @@ class PromotionDialogFragment : DialogFragment() {
     private var courseId: String? = null
     private var placeHolderImageUrl: String? = null
     private lateinit var fragmentPrmotationDialogBinding: FragmentPrmotationDialogBinding
+    private var listener: OnDismissDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,7 +38,7 @@ class PromotionDialogFragment : DialogFragment() {
             placeHolderImageUrl = it.getString(ARG_PLACEHOLDER_IMAGE)
         }
         setStyle(STYLE_NO_FRAME, R.style.full_dialog)
-
+        listener = requireActivity() as OnDismissDialog
     }
 
 
@@ -97,30 +98,37 @@ class PromotionDialogFragment : DialogFragment() {
     }
 
     fun cancelPromotion() {
+        listener?.onDismiss()
         dismissAllowingStateLoss()
     }
 
     fun openPromotion() {
-        requireActivity().startActivity(
-            Intent(
-                requireActivity(),
-                PaymentActivity::class.java
-            ).apply {
-                putExtra(COURSE_ID, courseId)
-            })
-        dismissAllowingStateLoss()
+        courseId?.run {
+            requireActivity().startActivity(
+                Intent(
+                    requireActivity(),
+                    PaymentActivity::class.java
+                ).apply {
+                    putExtra(COURSE_ID, courseId)
+                })
+            dismissAllowingStateLoss()
+        }
     }
 
 
     companion object {
 
         @JvmStatic
-        fun newInstance(param1: String, param2: String) =
+        fun newInstance(id: String?, url: String?) =
             PromotionDialogFragment().apply {
                 arguments = Bundle().apply {
-                    putString(ARG_COURSE_ID, param1)
-                    putString(ARG_PLACEHOLDER_IMAGE, param2)
+                    putString(ARG_COURSE_ID, courseId)
+                    putString(ARG_PLACEHOLDER_IMAGE, url)
                 }
             }
+    }
+
+    interface OnDismissDialog {
+        fun onDismiss()
     }
 }

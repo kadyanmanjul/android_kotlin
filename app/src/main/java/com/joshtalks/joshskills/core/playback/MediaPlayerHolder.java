@@ -197,10 +197,10 @@ public final class MediaPlayerHolder implements PlayerInterface, MediaPlayer.OnC
     @Override
     public void clearNotification() {
         try {
-            mMusicNotificationManager.getNotificationManager().cancelAll();
+            mMusicNotificationManager.getNotificationManager().cancel(101);
             mNotificationActionsReceiver.clearAbortBroadcast();
-
         } catch (Exception e) {
+            e.printStackTrace();
             // e.printStackTrace();
         }
     }
@@ -252,6 +252,7 @@ public final class MediaPlayerHolder implements PlayerInterface, MediaPlayer.OnC
                 mMediaPlayer.start();
                 setStatus(PlaybackInfoListener.State.RESUMED);
                 mMusicService.startForeground(MusicNotificationManager.NOTIFICATION_ID, mMusicNotificationManager.createNotification());
+                mMusicNotificationManager.getNotificationManager().cancel(MusicNotificationManager.NOTIFICATION_ID);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -262,7 +263,7 @@ public final class MediaPlayerHolder implements PlayerInterface, MediaPlayer.OnC
         try {
             setStatus(PlaybackInfoListener.State.PAUSED);
             mMediaPlayer.pause();
-            mMusicService.stopForeground(false);
+            mMusicService.stopForeground(true);
             mMusicNotificationManager.getNotificationManager().notify(MusicNotificationManager.NOTIFICATION_ID, mMusicNotificationManager.createNotification());
         } catch (Exception e) {
             e.printStackTrace();
@@ -297,6 +298,16 @@ public final class MediaPlayerHolder implements PlayerInterface, MediaPlayer.OnC
 
     // Reports media playback position to mPlaybackProgressCallback.
     private void stopUpdatingCallbackWithPosition() {
+
+        try {
+            setStatus(PlaybackInfoListener.State.PAUSED);
+            mMediaPlayer.pause();
+            mMusicService.stopForeground(true);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         if (mExecutor != null) {
             mExecutor.shutdownNow();
             mExecutor = null;
