@@ -82,7 +82,7 @@ interface SignUpNetworkService {
 
 
     @GET("$DIR/payment/create_order")
-    fun getPaymentDetails(@QueryMap params: Map<String, String>): Deferred<PaymentDetailsResponse>
+    fun getPaymentDetails(@QueryMap params: Map<String, String>): Deferred<Response<PaymentDetailsResponse>>
 
 
     @GET("$DIR/course/test/")

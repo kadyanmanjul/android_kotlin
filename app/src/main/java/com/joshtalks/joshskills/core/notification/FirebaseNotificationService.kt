@@ -130,6 +130,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                     )
                     .setWhen(System.currentTimeMillis())
 
+
             notificationBuilder.setDefaults(Notification.DEFAULT_ALL)
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -158,7 +159,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                 notificationBuilder.setChannelId(notificationChannelId)
                 notificationManager.createNotificationChannel(notificationChannel)
             }
-            notificationManager.notify(notificationId, notificationBuilder.build())
+            notificationManager.notify(uniqueInt, notificationBuilder.build())
         }
     }
 

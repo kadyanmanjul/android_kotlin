@@ -47,11 +47,13 @@ const val REPLACE_HOLDER = "****"
 const val REFERRAL_AMOUNT_HOLDER = "**"
 const val DRAWABLE_RIGHT = 2
 const val USER_SHARE_SHORT_URL = "user_share_url"
+const val FROM_CLASS = "parent_class"
 
 class ReferralActivity : BaseActivity() {
     companion object {
-        fun startReferralActivity(context: Activity) {
+        fun startReferralActivity(context: Activity, className: String = "") {
             Intent(context, ReferralActivity::class.java).apply {
+                putExtra(FROM_CLASS, className)
             }.run {
                 context.startActivity(this)
             }
@@ -336,7 +338,13 @@ class ReferralActivity : BaseActivity() {
     }
 
     override fun onBackPressed() {
-        startActivity(Intent(this, InboxActivity::class.java))
+        if (intent.hasExtra(FROM_CLASS) ){
+            intent.getStringExtra(FROM_CLASS)?.run {
+                if (this.equals(InboxActivity::class.java.name,ignoreCase = true)){
+                    startActivity(Intent(this@ReferralActivity, InboxActivity::class.java))
+                }
+            }
+        }
         this.finish()
         super.onBackPressed()
 

@@ -98,6 +98,7 @@
                                 android:textSize="@dimen/font_19" />
 
                         <androidx.appcompat.widget.AppCompatTextView
+                                android:id="@+id/text_view"
                                 fontPath="fonts/Roboto-Medium.ttf"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"

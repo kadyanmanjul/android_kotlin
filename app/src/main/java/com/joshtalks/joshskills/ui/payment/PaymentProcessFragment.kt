@@ -93,6 +93,9 @@ class PaymentProcessFragment : DialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         animAlpha?.reset()
+        if (courseModel.amount==0.0){
+            paymentProcessFragmentBinding.textView.visibility=View.GONE
+        }
 
         paymentProcessFragmentBinding.tvCourse.text = courseModel.courseName
         paymentProcessFragmentBinding.tvAmount.text =

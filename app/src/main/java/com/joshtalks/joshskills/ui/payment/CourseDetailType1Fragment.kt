@@ -195,7 +195,6 @@ class CourseDetailType1Fragment : Fragment() {
                         courseModel.courseName = course.name
                         courseModel.course = testId
 
-
                         val df = DecimalFormat("###,###", DecimalFormatSymbols(Locale.US))
                         val enrollUser = df.format(course.totalEnrolled)
                         binding.tvEnrollUsers.text = enrollUser.plus(" enrolled")

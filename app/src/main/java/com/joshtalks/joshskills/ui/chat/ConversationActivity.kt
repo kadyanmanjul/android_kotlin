@@ -367,7 +367,7 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
             findViewById<MaterialToolbar>(R.id.toolbar).inflateMenu(R.menu.conversation_menu)
             findViewById<MaterialToolbar>(R.id.toolbar).setOnMenuItemClickListener {
                 if (it?.itemId == R.id.menu_referral) {
-                    ReferralActivity.startReferralActivity(this@ConversationActivity)
+                    ReferralActivity.startReferralActivity(this@ConversationActivity,ConversationActivity::class.java.name)
                 }
                 return@setOnMenuItemClickListener true
             }

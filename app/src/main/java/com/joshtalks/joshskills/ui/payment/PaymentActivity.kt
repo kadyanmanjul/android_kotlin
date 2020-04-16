@@ -22,7 +22,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.crashlytics.android.Crashlytics
 import com.facebook.appevents.AppEventsConstants
 import com.google.firebase.analytics.FirebaseAnalytics
-import com.google.firebase.analytics.FirebaseAnalytics.Event.ECOMMERCE_PURCHASE
 import com.google.firebase.analytics.FirebaseAnalytics.Event.PURCHASE
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
@@ -55,6 +54,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 import retrofit2.HttpException
+import retrofit2.Response
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 import java.util.*
@@ -64,7 +64,6 @@ const val COURSE_OBJECT = "course"
 const val COURSE_ID = "course_ID"
 const val PAYMENT_DETAIL_OBJECT = "payment_detail"
 const val HAS_CERTIFICATE = "has_certificate"
-
 
 
 class PaymentActivity : CoreJoshActivity(),
@@ -316,44 +315,54 @@ class PaymentActivity : CoreJoshActivity(),
                 if (userSubmitCode.isNotEmpty()) {
                     map["code"] = userSubmitCode
                 }
-                val response: PaymentDetailsResponse =
+                val paymentDetailsResponse: Response<PaymentDetailsResponse> =
                     AppObjectController.signUpNetworkService.getPaymentDetails(map).await()
                 AppAnalytics.create(AnalyticsEvent.PAYMENT_INITIATED.NAME).push()
                 BranchIOAnalytics.pushToBranch(BRANCH_STANDARD_EVENT.INITIATE_PURCHASE)
-
-                if (courseModel == null) {
-                    courseModel = CourseExploreModel()
-                    courseModel?.amount = response.amount
-                    courseModel?.courseName = response.courseName
-                    courseModel?.id = this@PaymentActivity.testId.toInt()
-                }
-
-                compositeDisposable.add(AppObjectController.appDatabase
-                    .courseDao()
-                    .isUserOldThen7Days()
-                    .concatMap {
-                        val (flag, _) = Utils.isUser7DaysOld(it.courseCreatedDate)
-                        return@concatMap Maybe.just(flag)
+                if (paymentDetailsResponse.code() == 201) {
+                    val response: PaymentDetailsResponse = paymentDetailsResponse.body()!!
+                    if (courseModel == null) {
+                        courseModel = CourseExploreModel()
+                        courseModel?.amount = response.amount
+                        courseModel?.courseName = response.courseName
+                        courseModel?.id = this@PaymentActivity.testId.toInt()
                     }
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(
-                        { value ->
-                            hideProgress()
-                            if (value) {
-                                courseDetailsWithOffer(courseModel!!, response)
-                            } else {
+
+                    compositeDisposable.add(AppObjectController.appDatabase
+                        .courseDao()
+                        .isUserOldThen7Days()
+                        .concatMap {
+                            val (flag, _) = Utils.isUser7DaysOld(it.courseCreatedDate)
+                            return@concatMap Maybe.just(flag)
+                        }
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(
+                            { value ->
+                                hideProgress()
+                                if (value) {
+                                    courseDetailsWithOffer(courseModel!!, response)
+                                } else {
+                                    initializeRazorpayPayment(response)
+                                }
+
+                            },
+                            { error ->
+                                error.printStackTrace()
+
+                            }, {
                                 initializeRazorpayPayment(response)
                             }
+                        ))
+                }
+                else if (paymentDetailsResponse.code() == 200) {
+                    courseModel?.amount= 0.0
+                    courseModel?.run {
+                        PaymentProcessFragment.newInstance(this)
+                            .show(supportFragmentManager, "Payment Process")
+                    }
+                }
 
-                        },
-                        { error ->
-                            error.printStackTrace()
-
-                        }, {
-                            initializeRazorpayPayment(response)
-                        }
-                    ))
 
             } catch (ex: Exception) {
                 hideProgress()
@@ -429,7 +438,7 @@ class PaymentActivity : CoreJoshActivity(),
                 fragmentTransaction.remove(prev)
             }
             fragmentTransaction.addToBackStack(null)
-            CoursePurchaseDetailFragment.newInstance(courseModel,hasCertificate)
+            CoursePurchaseDetailFragment.newInstance(courseModel, hasCertificate)
                 .show(supportFragmentManager, "purchase_details_dialog")
             AppAnalytics.create(AnalyticsEvent.PAYMENT_DIALOG.NAME)
                 .push()

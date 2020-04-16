@@ -216,7 +216,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         earnIV.setOnClickListener {
             WorkMangerAdmin.referralEventTracker(REFERRAL_EVENT.CLICK_ON_REFERRAL)
             AppAnalytics.create(AnalyticsEvent.REFERRAL_SELECTED.NAME).push()
-            ReferralActivity.startReferralActivity(this@InboxActivity)
+            ReferralActivity.startReferralActivity(this@InboxActivity,InboxActivity::class.java.name)
         }
         visibleShareEarn()
         findMoreLayout = findViewById(R.id.parent_layout)
