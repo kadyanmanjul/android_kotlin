@@ -312,7 +312,6 @@ class ConversationViewModel(application: Application, private var inboxEntity: I
             Observable.interval(1, 1, TimeUnit.MINUTES)
                 .subscribeOn(Schedulers.computation())
                 .timeInterval()
-                .subscribeOn(Schedulers.computation())
                 .subscribe({
                     if (Utils.isInternetAvailable()) {
                         val arguments = mutableMapOf<String, String>()
@@ -327,7 +326,6 @@ class ConversationViewModel(application: Application, private var inboxEntity: I
                     it.printStackTrace()
                 })
         )
-
     }
 
     fun updateInDatabaseReadMessage(readChatList: MutableSet<ChatModel>) {

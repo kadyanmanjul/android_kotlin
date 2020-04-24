@@ -187,21 +187,25 @@ public class VideoDownloadController {
     }
 
     private synchronized void initDownloadManager() {
-        if (downloadManager == null) {
-            DefaultDownloadIndex downloadIndex = new DefaultDownloadIndex(getDatabaseProvider());
-            upgradeActionFile(
-                    DOWNLOAD_ACTION_FILE, downloadIndex, false);
-            upgradeActionFile(
-                    DOWNLOAD_TRACKER_ACTION_FILE, downloadIndex, true);
-            DownloaderConstructorHelper downloaderConstructorHelper =
-                    new DownloaderConstructorHelper(getDownloadCache(), buildHttpDataSourceFactory());
-            downloadManager =
-                    new DownloadManager(
-                            AppObjectController.getJoshApplication(), downloadIndex, new DefaultDownloaderFactory(downloaderConstructorHelper));
-            downloadManager.setMinRetryCount(5);
-            downloadManager.setMaxParallelDownloads(10);
-            downloadTracker =
-                    new DownloadTracker(AppObjectController.getJoshApplication(), buildDataSourceFactory(), downloadManager);
+        try {
+            if (downloadManager == null) {
+                DefaultDownloadIndex downloadIndex = new DefaultDownloadIndex(getDatabaseProvider());
+                upgradeActionFile(
+                        DOWNLOAD_ACTION_FILE, downloadIndex, false);
+                upgradeActionFile(
+                        DOWNLOAD_TRACKER_ACTION_FILE, downloadIndex, true);
+                DownloaderConstructorHelper downloaderConstructorHelper =
+                        new DownloaderConstructorHelper(getDownloadCache(), buildHttpDataSourceFactory());
+                downloadManager =
+                        new DownloadManager(
+                                AppObjectController.getJoshApplication(), downloadIndex, new DefaultDownloaderFactory(downloaderConstructorHelper));
+                downloadManager.setMinRetryCount(5);
+                downloadManager.setMaxParallelDownloads(10);
+                downloadTracker =
+                        new DownloadTracker(AppObjectController.getJoshApplication(), buildDataSourceFactory(), downloadManager);
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
     }
 

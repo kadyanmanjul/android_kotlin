@@ -1,5 +1,6 @@
 package com.joshtalks.joshskills.repository.local.entity
 
+import android.os.Parcelable
 import androidx.room.*
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
@@ -10,10 +11,12 @@ import com.joshtalks.joshskills.repository.local.ConvectorForEngagement
 import com.joshtalks.joshskills.repository.local.eventbus.VideoDownloadedBus
 import com.joshtalks.joshskills.repository.local.minimalentity.CourseContentEntity
 import com.joshtalks.joshskills.util.RandomString
+import kotlinx.android.parcel.Parcelize
 import java.io.Serializable
 import java.util.*
 
 
+@Parcelize
 @Entity(tableName = "chat_table", indices = [Index(value = ["chat_id", "conversation_id"])])
 data class ChatModel(
     @PrimaryKey
@@ -86,7 +89,7 @@ data class ChatModel(
     var messageTimeInMilliSeconds: String = EMPTY
 
 
-) : DataBaseClass(), Serializable {
+) : DataBaseClass(), Parcelable {
 
     constructor() : this(
         chatId = "",
@@ -108,17 +111,13 @@ data class ChatModel(
     )
 
 
-    override fun toString(): String {
-        return AppObjectController.gsonMapper.toJson(this)
-    }
-
-
 }
 
 
 @Entity(
     tableName = "question_table"
 )
+@Parcelize
 data class Question(
 
     @PrimaryKey
@@ -188,7 +187,7 @@ data class Question(
     @ColumnInfo(name = "practice_no")
     @SerializedName("practice_no") var practiceNo: Int? = null
 
-) : Serializable
+) : Parcelable
 
 
 data class User(
@@ -205,6 +204,7 @@ data class User(
 
 
 @Entity(tableName = "VideoTable")
+@Parcelize
 data class VideoType(
     @ColumnInfo
     @SerializedName("video_url") var video_url: String? = "",
@@ -237,10 +237,11 @@ data class VideoType(
     @ColumnInfo
     @SerializedName("is_deleted") var is_deleted: Boolean = false
 
-) : DataBaseClass(), Serializable
+) : DataBaseClass(), Parcelable
 
 
 @Entity(tableName = "AudioTable")
+@Parcelize
 data class AudioType(
     @ColumnInfo
     @SerializedName("audio_url") var audio_url: String = "",
@@ -259,10 +260,11 @@ data class AudioType(
     @ColumnInfo
     @SerializedName("is_deleted") var is_deleted: Boolean = false
 
-) : DataBaseClass(), Serializable
+) : DataBaseClass(), Parcelable
 
 
 @Entity(tableName = "OptionTable")
+@Parcelize
 data class OptionType(
 
     @PrimaryKey
@@ -280,10 +282,11 @@ data class OptionType(
     @ColumnInfo
     @SerializedName("order") var order: Int = 0
 
-) : DataBaseClass(), Serializable
+) : DataBaseClass(), Parcelable
 
 
 @Entity(tableName = "PdfTable")
+@Parcelize
 data class PdfType(
 
     @PrimaryKey
@@ -309,10 +312,11 @@ data class PdfType(
     @ColumnInfo(name = "pages")
     var pages: String? = ""
 
-) : DataBaseClass(), Serializable
+) : DataBaseClass(), Parcelable
 
 
 @Entity(tableName = "ImageTable")
+@Parcelize
 data class ImageType(
 
     @PrimaryKey
@@ -331,7 +335,7 @@ data class ImageType(
     @ColumnInfo
     @SerializedName("width") var width: Int = 0
 
-) : DataBaseClass(), Serializable
+) : DataBaseClass(), Parcelable
 
 
 data class Sender(
@@ -339,6 +343,7 @@ data class Sender(
     @SerializedName("user") var user: User? = User(),
     @SerializedName("user_type") var user_type: String = ""
 ) : Serializable
+
 
 
 data class PracticeEngagement(
@@ -356,8 +361,7 @@ data class PracticeEngagement(
         duration = null
     )
 }
-
-open class DataBaseClass : Serializable {
+open class DataBaseClass  {
 
     @ColumnInfo
     @Expose
@@ -386,8 +390,6 @@ open class DataBaseClass : Serializable {
     @Ignore
     @Expose
     var disable: Boolean = false
-
-
 }
 
 
@@ -427,7 +429,7 @@ interface ChatDao {
 
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insertAMessage(chat: ChatModel): Long
+    suspend fun  insertAMessage(chat: ChatModel): Long
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun updateChatMessage(chat: ChatModel)

@@ -2,13 +2,11 @@ package com.joshtalks.joshskills.core.service
 
 import android.Manifest
 import android.content.pm.PackageManager
-import android.util.Log
 import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
 import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.AppObjectController.Companion.appDatabase
-import com.joshtalks.joshskills.core.AppObjectController.Companion.fetch
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.messaging.RxBus2
@@ -28,16 +26,14 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import java.lang.reflect.Type
 import java.util.*
 
-
 const val DOWNLOAD_OBJECT = "DownloadObject"
-
 object DownloadUtils {
 
-    private val CHAT_MODEL_TYPE_TOKEN: Type = object : TypeToken<ChatModel>() {}.type
-
+    val CHAT_MODEL_TYPE_TOKEN: Type = object : TypeToken<ChatModel>() {}.type
     val objectFetchListener = HashMap<String, FetchListener>()
 
 
@@ -61,10 +57,10 @@ object DownloadUtils {
                         )
                     )
                 )
-            fetch.addListener(fetchListener)
+            AppObjectController.getFetchObject().addListener(fetchListener)
             objectFetchListener[tag] = fetchListener
             //request.toDownloadInfo()
-            fetch.enqueue(request, Func {
+            AppObjectController.getFetchObject().enqueue(request, Func {
                 CoroutineScope(Dispatchers.IO).launch {
                     updateDownloadStatus(it.file, it.extras)
                 }
@@ -73,7 +69,7 @@ object DownloadUtils {
                 Func {
                     it.throwable?.printStackTrace()
                     request.tag?.let { tag ->
-                        objectFetchListener[tag]?.let { it1 -> fetch.removeListener(it1) }
+                        objectFetchListener[tag]?.let { it1 -> AppObjectController.getFetchObject().removeListener(it1) }
                     }
                 })
         }
@@ -83,7 +79,7 @@ object DownloadUtils {
     fun removeCallbackListener(tag: String?) {
         tag?.let { tagg ->
             objectFetchListener[tagg]?.let { it1 ->
-                fetch.removeListener(it1)
+                AppObjectController.getFetchObject().removeListener(it1)
             }
 
         }
@@ -185,7 +181,6 @@ object DownloadUtils {
                 return@launch
             }
             for (audioType in listAudioData) {
-
                 audioType.downloadStatus = DOWNLOAD_STATUS.DOWNLOADING
                 appDatabase.chatDao().updateAudioObject(audioType)
                 val file = AppDirectory.getAudioReceivedFile(audioType.audio_url).absolutePath
@@ -193,25 +188,18 @@ object DownloadUtils {
                     return@launch
                 }
 
-                Log.e("file url", file + "   " + audioType.audio_url)
-
                 val request = Request(audioType.audio_url, file)
                 request.priority = Priority.HIGH
                 request.networkType = NetworkType.ALL
                 request.tag = audioType.id
-
-
-
-                fetch.enqueue(request, Func {
+                AppObjectController.getFetchObject().enqueue(request, Func {
                     audioType.downloadedLocalPath = it.file
                     audioType.downloadStatus = DOWNLOAD_STATUS.DOWNLOADED
                     CoroutineScope(Dispatchers.IO).launch {
                         appDatabase.chatDao().updateAudioObject(audioType)
                     }
                     objectFetchListener.remove(it.tag)
-                    Log.e("file url", it.url + "   " + it.file)
-
-
+                    Timber.e(it.url + "   " + it.file)
                 },
                     Func {
                         it.throwable?.printStackTrace()

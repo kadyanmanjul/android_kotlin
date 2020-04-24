@@ -1,10 +1,13 @@
 package com.joshtalks.joshskills.repository.local.minimalentity
 
+import android.os.Parcelable
 import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
 import com.joshtalks.joshskills.repository.local.entity.MESSAGE_DELIVER_STATUS
 import com.joshtalks.joshskills.repository.local.entity.User
+import kotlinx.android.parcel.Parcelize
 import java.io.Serializable
 
+@Parcelize
 data class InboxEntity constructor(
     val course_name: String = "",
     val conversation_id: String = "",
@@ -27,6 +30,7 @@ data class InboxEntity constructor(
     var qText: String? = "",
     var user: User? = null,
     var material_type: BASE_MESSAGE_TYPE?,
-    var message_deliver_status: MESSAGE_DELIVER_STATUS? = MESSAGE_DELIVER_STATUS.READ
+    var message_deliver_status: MESSAGE_DELIVER_STATUS? = MESSAGE_DELIVER_STATUS.READ,
+    var report_status:Boolean
 
-) : Serializable
+) : Parcelable

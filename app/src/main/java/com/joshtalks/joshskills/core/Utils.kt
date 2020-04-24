@@ -27,6 +27,11 @@ import android.provider.Settings
 import android.text.format.DateUtils
 import android.util.TypedValue
 import android.view.Gravity
+import android.view.View
+import android.view.animation.AccelerateDecelerateInterpolator
+import android.view.animation.AlphaAnimation
+import android.view.animation.Animation
+import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.content.res.AppCompatResources
@@ -168,7 +173,6 @@ object Utils {
             return durationStr.toLong()
         } catch (ex: Exception) {
             // ex.printStackTrace()
-
         }
         return 0
 
@@ -590,35 +594,8 @@ object Utils {
     }*/
 
     fun openFile(activity: Activity, url: String) {
-
         try {
-
-            val uri = Uri.parse(url)
-            val intent = Intent(ACTION_VIEW)
-            if (url.contains(".doc") || url.contains(".docx")) {
-                // Word document
-                intent.setDataAndType(uri, "application/msword")
-            } else if (url.contains(".pdf")) {
-                // PDF file
-                intent.setDataAndType(uri, "application/pdf")
-            } else if (url.contains(".ppt") || url.contains(".pptx")) {
-                // Powerpoint file
-                intent.setDataAndType(uri, "application/vnd.ms-powerpoint")
-            } else if (url.contains(".xls") || url.contains(".xlsx")) {
-                // Excel file
-                intent.setDataAndType(uri, "application/vnd.ms-excel")
-            } else if (url.contains(".rtf")) {
-                // RTF file
-                intent.setDataAndType(uri, "application/rtf")
-            } else if (url.contains(".txt")) {
-                // Text file
-                intent.setDataAndType(uri, "text/plain")
-            } else {
-                intent.setDataAndType(uri, "*/*")
-            }
-
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            activity.startActivity(intent)
+            activity.startActivity(getRequireFileOpeningIntent(url))
         } catch (e: ActivityNotFoundException) {
             StyleableToast.Builder(activity).gravity(Gravity.CENTER)
                 .text(activity.getString(R.string.viewing_support_app_not_exist)).cornerRadius(16)
@@ -626,6 +603,37 @@ object Utils {
                 .solidBackground().show()
             e.printStackTrace()
         }
+    }
+
+
+    fun getRequireFileOpeningIntent(url: String): Intent {
+        val uri = Uri.parse(url)
+        val intent = Intent(ACTION_VIEW)
+        if (url.contains(".doc") || url.contains(".docx")) {
+            // Word document
+            intent.setDataAndType(uri, "application/msword")
+        } else if (url.contains(".pdf")) {
+            // PDF file
+            intent.setDataAndType(uri, "application/pdf")
+        } else if (url.contains(".ppt") || url.contains(".pptx")) {
+            // Powerpoint file
+            intent.setDataAndType(uri, "application/vnd.ms-powerpoint")
+        } else if (url.contains(".xls") || url.contains(".xlsx")) {
+            // Excel file
+            intent.setDataAndType(uri, "application/vnd.ms-excel")
+        } else if (url.contains(".rtf")) {
+            // RTF file
+            intent.setDataAndType(uri, "application/rtf")
+        } else if (url.contains(".txt")) {
+            // Text file
+            intent.setDataAndType(uri, "text/plain")
+        } else {
+            intent.setDataAndType(uri, "*/*")
+        }
+
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        return intent
+
     }
 
 
@@ -735,4 +743,19 @@ fun getUserNameInShort(): String {
     } catch (e: IndexOutOfBoundsException) {
         name.substring(0, name.length)
     }
+}
+
+fun hideKeyboard(activity: Activity, view: View) {
+    val inputManager: InputMethodManager =
+        activity.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+    inputManager.hideSoftInputFromWindow(view.windowToken, 0)
+}
+
+fun alphaAnimation(view: View) {
+    val animation = AlphaAnimation(0f, 1f)
+    animation.duration = 850
+    animation.interpolator = AccelerateDecelerateInterpolator()
+    animation.repeatCount = 12
+    animation.repeatMode = Animation.REVERSE
+    view.startAnimation(animation)
 }

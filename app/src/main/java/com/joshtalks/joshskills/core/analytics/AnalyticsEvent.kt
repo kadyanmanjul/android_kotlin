@@ -3,6 +3,14 @@ package com.joshtalks.joshskills.core.analytics
 enum class AnalyticsEvent(val NAME: String) {
 
 
+    ACTIVITY_CREATED("Activity Created"),
+    ACTIVITY_START("Activity Start"),
+    ACTIVITY_RESUME("Activity Resume"),
+    ACTIVITY_PAUSE("Activity Pause"),
+    ACTIVITY_STOP("Activity Stop"),
+    ACTIVITY_DESTROY("Activity Destroy"),
+
+
     ACTIVITY_OPENED("Activity Opened"),
     ACTIVITY_REOPEN("Activity Reopened"),
     BACK_PRESSED("Back Pressed"),

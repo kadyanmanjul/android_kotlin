@@ -65,7 +65,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         super.onMessageReceived(remoteMessage)
-        val nc: NotificationObject = Gson().fromJson<NotificationObject>(
+        val nc: NotificationObject = Gson().fromJson(
             Gson().toJson(remoteMessage.data),
             NotificationObject::class.java
         )
@@ -89,17 +89,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                 notificationObject.action,
                 notificationObject.actionData
             )
-
-            /*val stackBuilder: TaskStackBuilder = TaskStackBuilder.create(this@FirebaseNotificationService)
-            stackBuilder.addParentStack(LauncherActivity::class.java)
-            stackBuilder.addNextIntent(intent)
-
-            val pendingIntent = stackBuilder.getPendingIntent(
-                uniqueInt,
-                PendingIntent.FLAG_UPDATE_CURRENT
-            )*/
             val uniqueInt = (System.currentTimeMillis() and 0xfffffff).toInt()
-
             val defaultSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
             val pendingIntent = PendingIntent.getActivity(
                 applicationContext,

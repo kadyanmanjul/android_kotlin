@@ -21,7 +21,7 @@ public class ActivityLifecycleCallback {
 
                     @Override
                     public void onActivityCreated(Activity activity, Bundle bundle) {
-                        AppAnalytics.create(AnalyticsEvent.ACTIVITY_OPENED.getNAME())
+                        AppAnalytics.create(AnalyticsEvent.ACTIVITY_CREATED.getNAME())
                                 .addParam("name", activity.getClass().getSimpleName())
                                 .push();
                         Timber.tag("Josh_Activity_Created").d(activity.getClass().getSimpleName());
@@ -30,12 +30,15 @@ public class ActivityLifecycleCallback {
 
                     @Override
                     public void onActivityStarted(Activity activity) {
+                        AppAnalytics.create(AnalyticsEvent.ACTIVITY_START.getNAME())
+                                .addParam("name", activity.getClass().getSimpleName())
+                                .push();
                         Timber.tag("Josh_Activity_Started").d(activity.getClass().getSimpleName());
                     }
 
                     @Override
                     public void onActivityResumed(Activity activity) {
-                        AppAnalytics.create(AnalyticsEvent.ACTIVITY_REOPEN.getNAME())
+                        AppAnalytics.create(AnalyticsEvent.ACTIVITY_RESUME.getNAME())
                                 .addParam("name", activity.getClass().getSimpleName())
                                 .push();
                         Timber.tag("Josh_Activity_Resumed").d(activity.getClass().getSimpleName());
@@ -44,13 +47,17 @@ public class ActivityLifecycleCallback {
 
                     @Override
                     public void onActivityPaused(Activity activity) {
+                        AppAnalytics.create(AnalyticsEvent.ACTIVITY_PAUSE.getNAME())
+                                .addParam("name", activity.getClass().getSimpleName())
+                                .push();
+
                         Timber.tag("Josh_Activity_Paused").d(activity.getClass().getSimpleName());
 
                     }
 
                     @Override
                     public void onActivityStopped(Activity activity) {
-                        AppAnalytics.create(AnalyticsEvent.BACK_PRESSED.getNAME())
+                        AppAnalytics.create(AnalyticsEvent.ACTIVITY_STOP.getNAME())
                                 .addParam("name", activity.getClass().getSimpleName())
                                 .push();
                         Timber.tag("Josh_Activity_Stopped").d(activity.getClass().getSimpleName());
@@ -64,6 +71,10 @@ public class ActivityLifecycleCallback {
 
                     @Override
                     public void onActivityDestroyed(Activity activity) {
+                        AppAnalytics.create(AnalyticsEvent.ACTIVITY_DESTROY.getNAME())
+                                .addParam("name", activity.getClass().getSimpleName())
+                                .push();
+
                         Timber.tag("Josh_Activity_Destroyed").d(activity.getClass().getSimpleName());
 
                     }
@@ -72,6 +83,7 @@ public class ActivityLifecycleCallback {
                     public void onActivityPostStopped(@NonNull Activity activity) {
 
                     }
+
                 }
 
         );

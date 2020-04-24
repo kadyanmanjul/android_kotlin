@@ -61,7 +61,7 @@ class CourseExploreActivity : CoreJoshActivity() {
             val intent = Intent(context, CourseExploreActivity::class.java)
             intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
             list?.run {
-                intent.putExtra(USER_COURSES, ArrayList(this))
+                intent.putParcelableArrayListExtra(USER_COURSES, ArrayList(this))
             }
             if (clearBackStack) {
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
@@ -159,8 +159,8 @@ class CourseExploreActivity : CoreJoshActivity() {
                     AppObjectController.signUpNetworkService.explorerCourse(data)
                 CoroutineScope(Dispatchers.Main).launch {
                     var list: ArrayList<InboxEntity>? = null
-                    if (intent.hasExtra(USER_COURSES) && intent.getSerializableExtra(USER_COURSES) != null) {
-                        list = intent.getSerializableExtra(USER_COURSES) as ArrayList<InboxEntity>?
+                    if (intent.hasExtra(USER_COURSES)) {
+                        list = intent.getParcelableArrayListExtra(USER_COURSES)
                     }
                     courseExploreBinding.recyclerView.removeAllViews()
                     response.forEach { courseExploreModel ->

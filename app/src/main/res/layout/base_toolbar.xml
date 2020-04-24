@@ -70,6 +70,20 @@
                 android:textSize="@dimen/font_18" />
 
         <androidx.appcompat.widget.AppCompatImageView
+                android:visibility="invisible"
+                android:id="@+id/ic_notification_dot"
+                android:layout_marginTop="@dimen/_4sdp"
+                android:layout_alignEnd="@id/text_message_title"
+                android:layout_width="@dimen/_8sdp"
+                android:layout_height="@dimen/_8sdp"
+                android:tint="@color/wh_fc"
+                android:background="@drawable/timer_drawable"
+                android:gravity="start"
+                android:backgroundTint="@color/wa_color"
+                />
+
+
+        <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/iv_earn"
                 android:layout_width="@dimen/_26sdp"
                 android:layout_height="@dimen/_26sdp"

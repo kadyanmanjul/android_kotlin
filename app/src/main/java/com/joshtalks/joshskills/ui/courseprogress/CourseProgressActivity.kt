@@ -23,7 +23,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.transition.Fade
-
 import androidx.transition.Transition
 import androidx.transition.TransitionManager
 import com.bumptech.glide.Glide
@@ -42,6 +41,8 @@ import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.custom_ui.AnimationView
 import com.joshtalks.joshskills.core.custom_ui.TextDrawable
+import com.joshtalks.joshskills.core.interfaces.OnDismissClaimCertificateDialog
+import com.joshtalks.joshskills.core.interfaces.OnDismissDialog
 import com.joshtalks.joshskills.databinding.ActivityCourseProgressBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
@@ -49,13 +50,14 @@ import com.joshtalks.joshskills.repository.local.eventbus.ContentClickEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.OpenClickProgressEventBus
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.local.model.User
+import com.joshtalks.joshskills.repository.server.CertificateDetail
 import com.joshtalks.joshskills.ui.chat.CHAT_ROOM_OBJECT
 import com.joshtalks.joshskills.ui.chat.FOCUS_ON_CHAT_ID
 import com.joshtalks.joshskills.ui.chat.PRACTISE_SUBMIT_REQUEST_CODE
 import com.joshtalks.joshskills.ui.chat.PRACTISE_UPDATE_MESSAGE_KEY
 import com.joshtalks.joshskills.ui.chat.course_content.ContentTimelineAdapter
+import com.joshtalks.joshskills.ui.courseprogress.course_certificate.ClaimCertificateFragment
 import com.joshtalks.joshskills.ui.practise.PractiseSubmitActivity
-import com.joshtalks.joshskills.ui.referral.PromotionDialogFragment
 import com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity
 import com.joshtalks.joshskills.ui.view_holders.PerformHeaderViewHolder
 import com.joshtalks.joshskills.ui.view_holders.PerformItemViewHolder
@@ -69,9 +71,11 @@ import retrofit2.HttpException
 import java.net.ProtocolException
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
+import java.util.concurrent.TimeUnit
 import kotlin.math.abs
 
-class CourseProgressActivity : CoreJoshActivity(), PromotionDialogFragment.OnDismissDialog {
+class CourseProgressActivity : CoreJoshActivity(), OnDismissDialog,
+    OnDismissClaimCertificateDialog {
 
     private lateinit var inboxEntity: InboxEntity
     private val compositeDisposable = CompositeDisposable()
@@ -79,6 +83,10 @@ class CourseProgressActivity : CoreJoshActivity(), PromotionDialogFragment.OnDis
     private var updatePractiseId = EMPTY
     private var updateIndex = -1
     private var id = -1
+    private var completePercent: Double = 0.0
+    private var unlockPercent: Double = 0.0
+    private var certificateDetail: CertificateDetail? = null
+
     private val viewModel: CourseProgressViewModel by lazy {
         ViewModelProvider(this).get(CourseProgressViewModel::class.java)
     }
@@ -102,7 +110,10 @@ class CourseProgressActivity : CoreJoshActivity(), PromotionDialogFragment.OnDis
         binding = DataBindingUtil.setContentView(this, R.layout.activity_course_progress)
         binding.handler = this
         if (intent.hasExtra(CHAT_ROOM_OBJECT)) {
-            inboxEntity = intent.getSerializableExtra(CHAT_ROOM_OBJECT) as InboxEntity
+            inboxEntity = intent.getParcelableExtra(CHAT_ROOM_OBJECT)!!
+            if (inboxEntity.report_status) {
+                PrefManager.put(inboxEntity.conversation_id.trim().plus(CERTIFICATE_GENERATE), true)
+            }
         }
         initView()
         getProgressOfCourse()
@@ -186,7 +197,9 @@ class CourseProgressActivity : CoreJoshActivity(), PromotionDialogFragment.OnDis
                     AppObjectController.chatNetworkService.getCourseProgressDetailsAsync(inboxEntity.conversation_id)
                 hideProgressBar()
                 CoroutineScope(Dispatchers.Main).launch {
-
+                    completePercent = cpr.completePercent
+                    unlockPercent = cpr.unlockPercent
+                    certificateDetail = cpr.certificateDetail
                     setImageInProgressView(cpr.link)
                     binding.tvCourseDuration.text =
                         getString(
@@ -243,7 +256,6 @@ class CourseProgressActivity : CoreJoshActivity(), PromotionDialogFragment.OnDis
                     binding.tvCourseCompleteStatus.text = sb2
 
                     binding.courseProgressBar.progress = abs(cpr.completePercent).toInt()
-
                     if (cpr.completePercent >= cpr.unlockPercent) {
                         binding.claimCertificateBtn.icon = null
                         binding.claimCertificateBtn.backgroundTintList = ColorStateList.valueOf(
@@ -279,7 +291,6 @@ class CourseProgressActivity : CoreJoshActivity(), PromotionDialogFragment.OnDis
                         )
                     )
                     binding.bottomImageView.visibility = View.VISIBLE
-
                     binding.bottomImageView.setImageResource(R.drawable.bk_progress)
                     val transition: Transition = Fade()
                     transition.duration = 250
@@ -392,6 +403,21 @@ class CourseProgressActivity : CoreJoshActivity(), PromotionDialogFragment.OnDis
         showPromotionScreen(null, url)
     }
 
+    fun requestForCertificate() {
+        if (completePercent > 0 && unlockPercent > 0 && completePercent >= unlockPercent && certificateDetail != null) {
+            val fragmentTransaction = supportFragmentManager.beginTransaction()
+            val prev = supportFragmentManager.findFragmentByTag("claim_certificate_dialog")
+            if (prev != null) {
+                fragmentTransaction.remove(prev)
+            }
+            fragmentTransaction.addToBackStack(null)
+            ClaimCertificateFragment.newInstance(inboxEntity.conversation_id, certificateDetail!!)
+                .show(supportFragmentManager, "claim_certificate_dialog")
+        }
+
+
+    }
+
     private fun setImageInProgressView(url: String) {
         Glide.with(applicationContext)
             .load(url)
@@ -403,10 +429,12 @@ class CourseProgressActivity : CoreJoshActivity(), PromotionDialogFragment.OnDis
             .into(binding.imageView)
     }
 
+
     private fun subscribeBus() {
         compositeDisposable.add(
             RxBus2.listen(OpenClickProgressEventBus::class.java)
                 .subscribeOn(Schedulers.io())
+                .debounce(2L, TimeUnit.SECONDS)
                 .subscribe({
                     CoroutineScope(Dispatchers.IO).launch {
                         val obj: ChatModel? = AppObjectController.appDatabase.chatDao()
@@ -513,6 +541,12 @@ class CourseProgressActivity : CoreJoshActivity(), PromotionDialogFragment.OnDis
 
     override fun onDismiss() {
         AppAnalytics.create(AnalyticsEvent.VIEW_SAMPLE_CERTIFICATE_CLOSE.NAME).push()
+    }
+
+    override fun onDismiss(certificateDetail: CertificateDetail?) {
+        if (this.certificateDetail == null || this.certificateDetail?.name.isNullOrEmpty()) {
+            this.certificateDetail = certificateDetail
+        }
     }
 
 

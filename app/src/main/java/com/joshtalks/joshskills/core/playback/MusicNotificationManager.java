@@ -70,7 +70,7 @@ public class MusicNotificationManager {
         }
 
         final Intent openPlayerIntent = new Intent(mMusicService, PractiseSubmitActivity.class);
-        openPlayerIntent.putExtra(CHAT_ROOM_OBJECT, mMusicService.getMediaPlayerHolder().getConversation());
+      //  openPlayerIntent.putExtra(CHAT_ROOM_OBJECT, mMusicService.getMediaPlayerHolder().getConversation());
         openPlayerIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
 
         final PendingIntent contentIntent = PendingIntent.getActivity(mMusicService, REQUEST_CODE, openPlayerIntent, 0);
@@ -85,7 +85,7 @@ public class MusicNotificationManager {
                 .setColor(mAccent)
                 .setContentTitle(spanned)
                 .setContentText(contentText)
-                .setContentIntent(contentIntent)
+                //.setContentIntent(contentIntent)
                 // .addAction(notificationAction(PLAY_PAUSE_ACTION))
                 //.addAction(notificationAction(STOP_ACTION))
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC);

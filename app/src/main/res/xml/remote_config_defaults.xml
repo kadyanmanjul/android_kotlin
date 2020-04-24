@@ -60,8 +60,7 @@
 
     <entry>
         <key>CERTIFICATE_URL</key>
-        <value>https://s3.ap-south-1.amazonaws.com/www.static.skills.com/Icons/Certificate.jpg
-        </value>
+        <value>https://s3.ap-south-1.amazonaws.com/www.static.skills.com/Icons/Certificate.jpg</value>
     </entry>
     <entry>
         <key>COURSE_COMPLETED_PERCENTAGE</key>

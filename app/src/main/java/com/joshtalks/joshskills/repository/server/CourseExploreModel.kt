@@ -1,10 +1,13 @@
 package com.joshtalks.joshskills.repository.server
 
 
+import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
 import com.joshtalks.joshskills.core.EMPTY
+import kotlinx.android.parcel.Parcelize
 import java.io.Serializable
 
+@Parcelize
 data class CourseExploreModel(
     @SerializedName("amount")
     var amount: Double,
@@ -36,7 +39,7 @@ data class CourseExploreModel(
     val certificate: Boolean = false
 
 
-) : Serializable {
+) : Parcelable {
 
     constructor() : this(
         amount = 0.0,

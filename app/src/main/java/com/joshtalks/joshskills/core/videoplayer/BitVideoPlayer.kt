@@ -61,7 +61,6 @@ class BitVideoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibili
         context,
         attrs,
         defStyleAttr
-
     )
 
     private var uri: Uri? = null
@@ -736,7 +735,6 @@ class BitVideoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibili
                 LayoutInflater.from(context)
                     .inflate(R.layout.base_recycler_view_layout, null, false)
             val dialog = MaterialDialog(this, bottomSheet).show {
-                //setPeekHeight(res = R.dimen.seek_bar_image)
                 customView(view = view)
                 setFinishOnTouchOutside(true)
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
@@ -859,7 +857,7 @@ class BitVideoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibili
 
     fun onSelectTrack(videoQualityTrack: VideoQualityTrack) {
         val parametersBuilder = trackSelector?.buildUponParameters()
-        parametersBuilder?.setRendererDisabled(0, false)
+       // parametersBuilder?.setRendererDisabled(0, false)
         val trackGroups = trackSelector!!.currentMappedTrackInfo!!.getTrackGroups(0)
         val selectionOverride: DefaultTrackSelector.SelectionOverride =
             DefaultTrackSelector.SelectionOverride(0, videoQualityTrack.id)
@@ -923,8 +921,9 @@ class BitVideoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibili
                             val currentQuality = "" + trackGroups.getFormat(x).height + "p"
                             lisOfVideoQualityTrack.add(
                                 VideoQualityTrack(
+                                    x,
                                     trackGroups.getFormat(x).height,
-                                    x, currentQuality, currentMappedTrackInfoPosition == x
+                                     currentQuality, currentMappedTrackInfoPosition == x
                                 )
                             )
                         }
@@ -1041,7 +1040,7 @@ sealed class VideoPlayerOption(
 
     class Help(
         order: Int = 4,
-        rId: Int = R.drawable.ic_baseline_help,
+        rId: Int = R.drawable.ic_help_player,
         name: String = "Help & feedback",
         extraInfo: String? = null
     ) : VideoPlayerOption(order, rId, name, extraInfo)

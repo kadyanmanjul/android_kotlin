@@ -1,9 +1,12 @@
 package com.joshtalks.joshskills.repository.server
 
 
+import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
+import kotlinx.android.parcel.Parcelize
 import java.io.Serializable
 
+@Parcelize
 data class PaymentDetailsResponse(
     @SerializedName("amount")
     val amount: Double,
@@ -23,4 +26,4 @@ data class PaymentDetailsResponse(
     val originalAmount: Double
 
 
-) : Serializable
+) :  Parcelable

@@ -31,17 +31,16 @@ class OfferCoursePaymentDetailFragment : DialogFragment() {
     private var compositeDisposable = CompositeDisposable()
 
     private lateinit var binding: FragmentOfferCoursePaymentDetailBinding
-    private lateinit var courseModel: CourseExploreModel
-    private lateinit var paymentDetailResponse: PaymentDetailsResponse
+    private var courseModel: CourseExploreModel? = null
+    private var paymentDetailResponse: PaymentDetailsResponse? = null
     private var listener: OnCourseBuyOfferInteractionListener? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            courseModel = it.getSerializable(COURSE_OBJECT) as CourseExploreModel
-            paymentDetailResponse =
-                it.getSerializable(PAYMENT_DETAIL_OBJECT) as PaymentDetailsResponse
+            courseModel = it.getParcelable(COURSE_OBJECT)
+            paymentDetailResponse = it.getParcelable(PAYMENT_DETAIL_OBJECT)
 
         }
 
@@ -79,22 +78,22 @@ class OfferCoursePaymentDetailFragment : DialogFragment() {
         super.onViewCreated(view, savedInstanceState)
         showTooltip()
 
-        binding.tvCourse.text = courseModel.courseName
+        binding.tvCourse.text = courseModel?.courseName
         binding.tvCourseSubDetail.text =
-            getString(R.string.course_duration, courseModel.courseDuration)
+            getString(R.string.course_duration, courseModel?.courseDuration)
 
         Glide.with(requireActivity())
-            .load(courseModel.courseIcon)
+            .load(courseModel?.courseIcon)
             .override(Target.SIZE_ORIGINAL)
             .into(binding.courseImage)
         binding.tvCourseFeesAmount.text =
-            "₹" + String.format("%.2f", (paymentDetailResponse.originalAmount))
+            "₹" + String.format("%.2f", (paymentDetailResponse?.originalAmount))
         binding.tvDiscountAmount.text =
-            "₹" + String.format("%.2f", (paymentDetailResponse.discountAmount / 100))
+            "₹" + String.format("%.2f", (paymentDetailResponse!!.discountAmount / 100))
         binding.tvOfferInfo.text = getString(R.string.offer_bachat, binding.tvDiscountAmount.text)
 
         binding.tvCourseSellAmount.text =
-            "₹" + String.format("%.2f", (paymentDetailResponse.amount / 100))
+            "₹" + String.format("%.2f", (paymentDetailResponse!!.amount / 100))
         binding.tvCourseActualAmount.text = binding.tvCourseFeesAmount.text
 
         binding.tvCourseActualAmount.paintFlags =
@@ -131,7 +130,9 @@ class OfferCoursePaymentDetailFragment : DialogFragment() {
     }
 
     fun buyCourse() {
-        listener?.onCompleteOfferPayment(courseModel, paymentDetailResponse)
+        if (courseModel != null && paymentDetailResponse != null) {
+            listener?.onCompleteOfferPayment(courseModel!!, paymentDetailResponse!!)
+        }
         dismissAllowingStateLoss()
 
     }
@@ -169,8 +170,8 @@ class OfferCoursePaymentDetailFragment : DialogFragment() {
         fun newInstance(courseModel: CourseExploreModel, paymentDetail: PaymentDetailsResponse) =
             OfferCoursePaymentDetailFragment().apply {
                 arguments = Bundle().apply {
-                    putSerializable(COURSE_OBJECT, courseModel)
-                    putSerializable(PAYMENT_DETAIL_OBJECT, paymentDetail)
+                    putParcelable(COURSE_OBJECT, courseModel)
+                    putParcelable(PAYMENT_DETAIL_OBJECT, paymentDetail)
 
                 }
             }

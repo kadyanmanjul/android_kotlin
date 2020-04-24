@@ -34,12 +34,13 @@ class AppRunRequiredTaskWorker(context: Context, workerParams: WorkerParameters)
         // Branch.getInstance(AppObjectController.joshApplication).resetUserSession()
         AppObjectController.facebookEventLogger.flush()
         AppObjectController.firebaseAnalytics.resetAnalyticsData()
+
+        AppObjectController.getFetchObject().awaitFinish()
         AppObjectController.facebookEventLogger.logEvent(AppEventsConstants.EVENT_NAME_ACTIVATED_APP)
         WorkMangerAdmin.deviceIdGenerateWorker()
         WorkMangerAdmin.readMessageUpdating()
         WorkMangerAdmin.mappingGIDWithMentor()
         FCMTokenManager.pushToken()
-
         return Result.success()
     }
 }
@@ -417,8 +418,6 @@ class MappingGaIDWithMentor(var context: Context, workerParams: WorkerParameters
             }
 
         }
-
-
         return Result.success()
     }
 }

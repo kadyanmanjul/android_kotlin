@@ -35,7 +35,6 @@ import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.inapp_update.Constants
 import com.joshtalks.joshskills.core.inapp_update.InAppUpdateManager
 import com.joshtalks.joshskills.core.inapp_update.InAppUpdateStatus
-import com.joshtalks.joshskills.core.notification.FCMTokenManager
 import com.joshtalks.joshskills.core.service.WorkMangerAdmin
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.DatabaseUtils
@@ -121,6 +120,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         workInBackground()
         SyncChatService.syncChatWithServer()
         handelIntentAction()
+        addObserver()
     }
 
     private fun workInBackground() {
@@ -205,9 +205,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
 
                 }).check()
         }
-
     }
-
 
     private fun setToolbar() {
         val titleView = findViewById<AppCompatTextView>(R.id.text_message_title)
@@ -216,7 +214,10 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         earnIV.setOnClickListener {
             WorkMangerAdmin.referralEventTracker(REFERRAL_EVENT.CLICK_ON_REFERRAL)
             AppAnalytics.create(AnalyticsEvent.REFERRAL_SELECTED.NAME).push()
-            ReferralActivity.startReferralActivity(this@InboxActivity,InboxActivity::class.java.name)
+            ReferralActivity.startReferralActivity(
+                this@InboxActivity,
+                InboxActivity::class.java.name
+            )
         }
         visibleShareEarn()
         findMoreLayout = findViewById(R.id.parent_layout)
@@ -230,43 +231,35 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
             if (it == null || it.isEmpty()) {
                 openCourseExplorer()
             } else {
-                recycler_view_inbox.removeAllViews()
-                val total = it.size
-                it.forEachWithIndex { i, inbox ->
-                    recycler_view_inbox.addView(
-                        InboxViewHolder(
-                            inbox, total, i
-                        )
-                    )
-                }
-                progress_bar.visibility = View.GONE
-                addCourseExploreView()
+                addCourseInRecyclerView(it)
             }
         })
-
         viewModel.registerCourseMinimalLiveData.observe(this, Observer {
-            if (it != null && it.isNotEmpty()) {
-                //  buyCourseFBEvent()
-                recycler_view_inbox.removeAllViews()
-                val total = it.size
-                it.forEachWithIndex { i, inbox ->
-                    recycler_view_inbox.addView(
-                        InboxViewHolder(
-                            inbox, total, i
-                        )
-                    )
-                }
-                progress_bar.visibility = View.GONE
-                addCourseExploreView()
-            }
+            addCourseInRecyclerView(it)
         })
-
     }
+
+    private fun addCourseInRecyclerView(items: List<InboxEntity>?) {
+        if (items.isNullOrEmpty() || items.size == recycler_view_inbox.viewResolverCount) {
+            return
+        }
+        recycler_view_inbox.removeAllViews()
+        val total = items.size
+        items.forEachWithIndex { i, inbox ->
+            recycler_view_inbox.addView(
+                InboxViewHolder(
+                    inbox, total, i
+                )
+            )
+        }
+        progress_bar.visibility = View.GONE
+        addCourseExploreView()
+    }
+
 
     private fun addObserver() {
         compositeDisposable.add(
             RxBus2.listen(OpenCourseEventBus::class.java)
-                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
                     AppAnalytics.create(AnalyticsEvent.COURSE_SELECTED.NAME)
@@ -277,9 +270,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
                 })
         )
         compositeDisposable.add(RxBus2.listen(ExploreCourseEventBus::class.java).subscribe {
-            compositeDisposable.clear()
             openCourseExplorer()
-
         })
     }
 
@@ -291,7 +282,6 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         viewModel.registerCourseNetworkLiveData.value?.let {
             registerCourses.addAll(it)
         }
-
         WorkMangerAdmin.fineMoreEventWorker()
         CourseExploreActivity.startCourseExploreActivity(
             this,
@@ -388,13 +378,12 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
     override fun onResume() {
         super.onResume()
         Runtime.getRuntime().gc()
-        addObserver()
         viewModel.getRegisterCourses()
-
+        addObserver()
     }
 
-    override fun onPause() {
-        super.onPause()
+    override fun onDestroy() {
+        super.onDestroy()
         compositeDisposable.clear()
     }
 
@@ -421,14 +410,15 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
     }
 
     private fun addCourseExploreView() {
+        hintFirstTime.dismiss()
+        offerIn7DaysHint.dismiss()
         if (AppObjectController.getFirebaseRemoteConfig().getBoolean("course_explore_flag")) {
             findMoreLayout.visibility = View.VISIBLE
             if (findMoreVisible) {
                 findMoreVisible = false
                 if (PrefManager.getBoolValue(FIRST_TIME_OFFER_SHOW).not()) {
                     PrefManager.put(FIRST_TIME_OFFER_SHOW, true)
-                    compositeDisposable.add(AppObjectController.appDatabase
-                        .courseDao()
+                    compositeDisposable.add(AppObjectController.appDatabase.courseDao()
                         .isUserOldThen7Days()
                         .concatMap {
                             val (flag, _) = Utils.isUser7DaysOld(it.courseCreatedDate)
@@ -457,7 +447,6 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
             findMoreLayout.visibility = View.GONE
             addEmptyView()
         }
-        // showAppUseWhenComeFirstTime()
         userProfileActivityNotExist()
     }
 

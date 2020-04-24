@@ -21,7 +21,6 @@ object MessageBuilderFactory {
         when (cMessageType) {
             BASE_MESSAGE_TYPE.TX -> {
                 return TextViewHolder(activityRef, getTextChatModel(message))
-
             }
             BASE_MESSAGE_TYPE.VI -> {
                 return VideoViewHolder(activityRef, getVideoChatModel(message))
@@ -62,7 +61,6 @@ object MessageBuilderFactory {
         model.sender = Sender(Mentor.getInstance().getId(), User(), "")
         model.downloadedLocalPath = model.url
         model.isSync = false
-
         model.chatLocalId = RandomString().nextString()
         model.url?.let {
             model.mediaDuration = Utils.getDurationOfMedia(AppObjectController.joshApplication, it)

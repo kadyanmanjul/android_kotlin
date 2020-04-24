@@ -16,7 +16,7 @@ const val DATABASE_NAME = "JoshEnglishDB.db"
 
 @Database(
     entities = [Course::class, ChatModel::class, Question::class, VideoType::class, AudioType::class, OptionType::class, PdfType::class, ImageType::class],
-    version = 13,
+    version = 14,
     exportSchema = false
 )
 @TypeConverters(
@@ -57,7 +57,8 @@ abstract class AppDatabase : RoomDatabase() {
                                 MIGRATION_9_10,
                                 MIGRATION_10_11,
                                 MIGRATION_11_12,
-                                MIGRATION_12_13
+                                MIGRATION_12_13,
+                                MIGRATION_13_14
                             )
                             .fallbackToDestructiveMigration()
                             .addCallback(sRoomDatabaseCallback)
@@ -161,6 +162,12 @@ abstract class AppDatabase : RoomDatabase() {
         private val MIGRATION_12_13: Migration = object : Migration(12, 13) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("ALTER TABLE chat_table ADD COLUMN message_time_in_milliSeconds TEXT  NOT NULL DEFAULT '' ")
+            }
+        }
+
+        private val MIGRATION_13_14: Migration = object : Migration(13, 14) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("ALTER TABLE course ADD COLUMN report_status INTEGER NOT NULL DEFAULT 0 ")
             }
         }
 

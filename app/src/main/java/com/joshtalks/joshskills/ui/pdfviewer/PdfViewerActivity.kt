@@ -41,7 +41,7 @@ class PdfViewerActivity : BaseActivity(), DownloadFile.Listener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         conversationBinding = DataBindingUtil.setContentView(this, R.layout.activity_pdf_viewer)
-        pdfObject = intent.getSerializableExtra(PDF_URL) as PdfType
+        pdfObject = intent.getParcelableExtra(PDF_URL) as PdfType
         setToolbar()
         showPdf()
     }

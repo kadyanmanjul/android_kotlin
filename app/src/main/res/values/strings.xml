@@ -13,14 +13,18 @@
     <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
     <string name="download">Download</string>
+    <string name="downloading_certificate">Downloading your certificate</string>
+    <string name="downloading_complete">Downloading complete</string>
     <string name="not_now">Not Now</string>
     <string name="settings">Settings</string>
-
+    <string name="header_congratulation">Congratulations</string>
 
     <string name="edit">edit</string>
     <string name="label_6_digit_code">Enter 4-digit code</string>
 
     <string name="name">Name</string>
+    <string name="email">Email Id</string>
+
     <string name="dob">Date of Birth</string>
     <string name="gallery">Gallery</string>
     <string name="audio">Audio</string>
@@ -86,6 +90,9 @@
     <string name="resend_otp_toast" formatted="false">OTP sent to %s</string>
     <string name="resend_timer_text" formatted="false">Resend in 00:%s</string>
     <string name="please_enter_otp">Please enter OTP</string>
+    <string name="please_enter_name">Please enter name</string>
+    <string name="please_enter_email">Please enter valid Email Id</string>
+
 
     <string name="course_not_exist_number">Sorry! Ye Number hamare paas Registered nahi hai</string>
     <string name="other_number_register">Kya aapne kisi or number se REGISTERED kiya tha</string>
@@ -123,6 +130,7 @@
     <!-- Help Screen  -->
     <string name="mobile_number">Mobile Number</string>
     <string name="email_address">Email Address</string>
+
     <string name="what_problem">Please share your complaint:</string>
 
     <string name="attach_image">Attach an image</string>
@@ -218,4 +226,8 @@
     <string name="performance_h">Performance</string>
     <string name="course_overview_header">Course Overview</string>
     <string name="your_performance_so_far">Your Performance So Far</string>
+    <string name="download_certificate">Download Digital Copy</string>
+    <string name="certificate_unmodify_msz">Please fill carefully, no changes will be possible</string>
+    <string name="certificate_generate_message">Your certificate will be sent to you on mail.\n Thank you!</string>
+    <string name="details_not_change_message">Details cannot be changed again</string>
 </resources>

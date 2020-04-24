@@ -13,6 +13,7 @@ const val FIRST_COURSE_BUY = "first_course_buy"
 const val FIRST_TIME_OFFER_SHOW = "first_time_offer_show"
 const val GID_SET_FOR_USER = "gid_set_for_user"
 const val SERVER_GID_ID = "server_gid_id"
+const val CERTIFICATE_GENERATE = "_certificate_generate"
 
 object PrefManager {
 

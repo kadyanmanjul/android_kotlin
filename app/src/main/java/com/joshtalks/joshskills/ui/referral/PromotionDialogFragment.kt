@@ -16,6 +16,7 @@ import com.bumptech.glide.request.RequestOptions
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.interfaces.OnDismissDialog
 import com.joshtalks.joshskills.databinding.FragmentPrmotationDialogBinding
 import com.joshtalks.joshskills.ui.payment.COURSE_ID
 import com.joshtalks.joshskills.ui.payment.PaymentActivity
@@ -126,9 +127,5 @@ class PromotionDialogFragment : DialogFragment() {
                     putString(ARG_PLACEHOLDER_IMAGE, url)
                 }
             }
-    }
-
-    interface OnDismissDialog {
-        fun onDismiss()
     }
 }

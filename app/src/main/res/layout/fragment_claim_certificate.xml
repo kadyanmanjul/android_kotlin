@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:wheel="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+                name="handler"
+                type="com.joshtalks.joshskills.ui.courseprogress.course_certificate.ClaimCertificateFragment" />
+    </data>
+
+    <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fillViewport="true">
+
+        <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/round_rect_default"
+                    android:gravity="center"
+                    android:paddingStart="@dimen/_8sdp"
+                    android:paddingEnd="@dimen/_8sdp">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/iv_back"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:gravity="center_vertical|start"
+                        android:onClick="@{()->handler.dismissAllowingStateLoss()}"
+                        android:paddingTop="@dimen/_8sdp"
+                        android:paddingEnd="@dimen/_4sdp"
+                        android:paddingBottom="@dimen/_8sdp"
+                        android:visibility="visible"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:srcCompat="@drawable/ic_arrow_back"
+                        app:tint="@color/font_color" />
+
+
+                <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/image_view"
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:adjustViewBounds="true"
+                        android:background="@drawable/video_placeholder"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:scaleType="fitCenter"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHeight_default="percent"
+                        app:layout_constraintHeight_percent="0.35"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/iv_back" />
+
+
+                <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/text_view"
+                        fontPath="fonts/Roboto-BoldItalic.ttf"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/_4sdp"
+                        android:gravity="center"
+                        android:lines="2"
+                        android:text="@string/certificate_unmodify_msz"
+                        android:textColor="@color/font_color"
+                        android:textSize="@dimen/_12sdp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/image_view"
+                        app:layout_constraintWidth_default="percent"
+                        app:layout_constraintWidth_percent="0.8" />
+
+
+                <androidx.appcompat.widget.AppCompatEditText
+                        android:id="@+id/et_name"
+                        fontPath="fonts/Roboto-Regular.ttf"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/_16sdp"
+                        android:background="@drawable/round_rect_default"
+                        android:backgroundTint="@color/pdf_bg_color"
+                        android:cursorVisible="true"
+                        android:focusable="true"
+                        android:imeOptions="actionDone"
+                        android:inputType="textCapSentences"
+                        android:lines="1"
+                        android:maxLength="40"
+                        android:padding="@dimen/_8sdp"
+                        android:textColor="@color/gray_79"
+                        android:textCursorDrawable="@drawable/cursor_drawable"
+                        android:textSize="@dimen/_12sdp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/text_view"
+                        app:layout_constraintWidth_default="percent"
+                        app:layout_constraintWidth_percent="0.7" />
+
+
+                <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/text_view_name"
+                        fontPath="fonts/Roboto-Regular.ttf"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:gravity="center|start"
+                        android:paddingStart="@dimen/_12sdp"
+                        android:text="@string/name"
+                        android:textColor="@color/font_color"
+                        android:textSize="@dimen/_15sdp"
+                        app:layout_constraintBottom_toBottomOf="@+id/et_name"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="@+id/et_name"
+                        app:layout_constraintWidth_default="percent"
+                        app:layout_constraintWidth_percent="0.25" />
+
+
+                <androidx.appcompat.widget.AppCompatTextView
+                        android:gravity="center|start"
+                        android:paddingStart="@dimen/_12sdp"
+                        android:id="@+id/text_view_email"
+                        fontPath="fonts/Roboto-Regular.ttf"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:text="@string/email"
+                        android:textColor="@color/font_color"
+                        android:textSize="@dimen/_15sdp"
+                        app:layout_constraintBottom_toBottomOf="@+id/et_email"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="@+id/et_email"
+                        app:layout_constraintWidth_default="percent"
+                        app:layout_constraintWidth_percent="0.25" />
+
+                <androidx.appcompat.widget.AppCompatEditText
+                        android:id="@+id/et_email"
+                        fontPath="fonts/Roboto-Regular.ttf"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/_16sdp"
+                        android:background="@drawable/round_rect_default"
+                        android:backgroundTint="@color/pdf_bg_color"
+                        android:cursorVisible="true"
+                        android:focusable="true"
+                        android:imeOptions="actionDone"
+                        android:inputType="textEmailAddress"
+                        android:lines="1"
+                        android:maxLength="40"
+                        android:padding="@dimen/_8sdp"
+                        android:textColor="@color/gray_79"
+                        android:textCursorDrawable="@drawable/cursor_drawable"
+                        android:textSize="@dimen/_12sdp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/et_name"
+                        app:layout_constraintWidth_default="percent"
+                        app:layout_constraintWidth_percent="0.7" />
+
+
+                <com.google.android.material.button.MaterialButton
+                        android:id="@+id/claim_download_cert_btn"
+                        fontPath="fonts/Roboto-Regular.ttf"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="@dimen/_24sdp"
+                        android:backgroundTint="@color/wa_color"
+                        android:gravity="center"
+                        android:onClick="@{()->handler.onCertificateAction()}"
+                        android:paddingTop="@dimen/_10sdp"
+                        android:paddingBottom="@dimen/_10sdp"
+                        android:text="@string/claim_certificate_h"
+                        android:textAllCaps="false"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/font_14"
+                        app:cornerRadius="@dimen/_4sdp"
+                        app:elevation="0dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/text_view_email"
+                        app:layout_constraintWidth_default="percent"
+                        app:layout_constraintWidth_percent="0.75"
+                        app:rippleColor="@color/white" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <FrameLayout
+                    android:id="@+id/progress_fl"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/overlay"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                <com.pnikosis.materialishprogress.ProgressWheel
+                        android:id="@+id/progress_bar"
+                        android:layout_width="@dimen/_72sdp"
+                        android:layout_height="@dimen/_72sdp"
+                        android:layout_gravity="center"
+                        android:layout_marginBottom="@dimen/_24sdp"
+                        android:visibility="visible"
+                        wheel:matProg_barColor="@color/button_primary_color"
+                        wheel:matProg_fillRadius="true"
+                        wheel:matProg_linearProgress="false"
+                        wheel:matProg_progressIndeterminate="true"
+                        wheel:matProg_rimWidth="@dimen/_2sdp" />
+
+
+                <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tv_congrats"
+                        fontPath="fonts/Roboto-Bold.ttf"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:layout_marginBottom="@dimen/_84sdp"
+                        android:text="@string/header_congratulation"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/_15sdp"
+                        android:visibility="invisible" />
+
+
+                <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/success_iv"
+                        android:layout_width="@dimen/_72sdp"
+                        android:layout_height="@dimen/_72sdp"
+                        android:layout_gravity="center"
+                        android:layout_marginBottom="@dimen/_24sdp"
+                        android:background="@drawable/timer_drawable"
+                        android:backgroundTint="@color/color_success"
+                        android:elevation="@dimen/_4sdp"
+                        android:scaleType="center"
+                        android:src="@drawable/ic_tick_default"
+                        android:tint="@color/white"
+                        android:visibility="invisible" />
+
+
+                <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tv_success_message"
+                        fontPath="fonts/Roboto-Medium.ttf"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginStart="@dimen/_24sdp"
+                        android:layout_marginTop="@dimen/_44sdp"
+                        android:layout_marginEnd="@dimen/_24sdp"
+                        android:gravity="center"
+                        android:text="@string/certificate_generate_message"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/_13sdp"
+                        android:visibility="invisible" />
+
+                <ProgressBar
+                        android:id="@+id/download_progress"
+                        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/_36sdp"
+                        android:layout_gravity="center"
+                        android:layout_marginStart="@dimen/_16sdp"
+                        android:layout_marginEnd="@dimen/_16sdp"
+                        android:indeterminate="true"
+                        android:visibility="gone" />
+
+
+            </FrameLayout>
+        </FrameLayout>
+    </ScrollView>
+
+</layout>

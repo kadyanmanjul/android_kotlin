@@ -27,7 +27,7 @@ import com.joshtalks.skydoves.balloon.OnBalloonDismissListener
 class CoursePurchaseDetailFragment : DialogFragment() {
     private var listener: OnCourseDetailInteractionListener? = null
     private lateinit var binding: FragmentCoursePurchaseDetailBinding
-    private lateinit var courseModel: CourseExploreModel
+    private var courseModel: CourseExploreModel?=null
     private var hasCertificate: Boolean = false
 
     private var balloonTooltip: Balloon? = null
@@ -35,7 +35,7 @@ class CoursePurchaseDetailFragment : DialogFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            courseModel = it.getSerializable(COURSE_OBJECT) as CourseExploreModel
+            courseModel = it.getParcelable(COURSE_OBJECT)
             hasCertificate = it.getBoolean(HAS_CERTIFICATE)
         }
 
@@ -72,10 +72,10 @@ class CoursePurchaseDetailFragment : DialogFragment() {
     @SuppressLint("SetTextI18n", "ClickableViewAccessibility")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.tvCourseName.text = courseModel.courseName
-        binding.tvCourseAmount.text = "₹" + String.format("%.2f", courseModel.amount)
+        binding.tvCourseName.text = courseModel?.courseName
+        binding.tvCourseAmount.text = "₹" + String.format("%.2f", courseModel?.amount)
         Glide.with(view.context)
-            .load(courseModel.courseIcon)
+            .load(courseModel?.courseIcon)
             .optionalTransform(
                 WebpDrawable::class.java,
                 WebpDrawableTransformation(CircleCrop())
@@ -143,7 +143,7 @@ class CoursePurchaseDetailFragment : DialogFragment() {
         fun newInstance(courseModel: CourseExploreModel, hasCertificate: Boolean) =
             CoursePurchaseDetailFragment().apply {
                 arguments = Bundle().apply {
-                    putSerializable(COURSE_OBJECT, courseModel)
+                    putParcelable(COURSE_OBJECT, courseModel)
                     putBoolean(HAS_CERTIFICATE, hasCertificate)
                 }
             }

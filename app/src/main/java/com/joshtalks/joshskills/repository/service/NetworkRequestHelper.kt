@@ -60,13 +60,9 @@ object NetworkRequestHelper {
                         chatObj.type = chatModel.type
                         AppObjectController.appDatabase.chatDao().updateChatMessage(chatObj)
                     }
-
-
                     chatModel.question?.let { question ->
                         question.chatId = chatModel.chatId
-
                         AppObjectController.appDatabase.chatDao().insertChatQuestion(question)
-
                         question.audioList?.let {
                             it.listIterator().forEach { audioType ->
                                 audioType.questionId = question.questionId
@@ -107,7 +103,6 @@ object NetworkRequestHelper {
                             AppObjectController.appDatabase.chatDao().insertVideoMessageList(it)
                         }
                     }
-
                 }
                 RxBus2.publish(DBInsertion("Chat"))
 
@@ -154,7 +149,6 @@ object NetworkRequestHelper {
                 messageDeliverStatus = MESSAGE_DELIVER_STATUS.SENT_RECEIVED,
                 isSync = true,
                 question_id = null
-
             )
             /* currentChatModel?.let { old ->
                  chatModel.isSeen = old.isSeen

@@ -12,7 +12,6 @@ import com.facebook.FacebookSdk
 import com.facebook.LoggingBehavior
 import com.facebook.appevents.AppEventsLogger
 import com.facebook.stetho.okhttp3.StethoInterceptor
-import com.google.android.exoplayer2.util.Util
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.Logger
@@ -42,6 +41,7 @@ import com.joshtalks.joshskills.ui.view_holders.ROUND_CORNER
 import com.tonyodev.fetch2.Fetch
 import com.tonyodev.fetch2.FetchConfiguration
 import com.tonyodev.fetch2.HttpUrlConnectionDownloader
+import com.tonyodev.fetch2.NetworkType
 import com.tonyodev.fetch2core.Downloader
 import com.tonyodev.fetch2okhttp.OkHttpDownloader
 import com.vanniktech.emoji.EmojiManager
@@ -63,7 +63,6 @@ import java.lang.reflect.Type
 import java.text.DateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
-
 
 const val KEY_AUTHORIZATION = "Authorization"
 const val KEY_APP_VERSION_CODE = "app-version-code"
@@ -112,7 +111,7 @@ internal class AppObjectController {
         lateinit var mediaDUNetworkService: MediaDUNetworkService
 
         @JvmStatic
-        lateinit var fetch: Fetch
+        private var fetch: Fetch? = null
 
         @JvmStatic
         var uiHandler: Handler = Handler(Looper.getMainLooper())
@@ -126,9 +125,6 @@ internal class AppObjectController {
 
         @JvmStatic
         lateinit var okHttpClient: OkHttpClient
-
-        @JvmStatic
-        lateinit var userAgent: String
 
         @JvmStatic
         lateinit var videoDownloadTracker: DownloadTracker
@@ -184,13 +180,14 @@ internal class AppObjectController {
                 .create()
 
             gsonMapperForLocal = GsonBuilder()
-                .enableComplexMapKeySerialization()
+             //   .enableComplexMapKeySerialization()
                 .serializeNulls()
-                .excludeFieldsWithModifiers(
+               /* .excludeFieldsWithModifiers(
                     Modifier.TRANSIENT
-                )
+                )*/
                 .setDateFormat(DateFormat.LONG)
                 .setPrettyPrinting()
+                .setLenient()
                 .create()
 
 
@@ -228,7 +225,6 @@ internal class AppObjectController {
                             KEY_AUTHORIZATION,
                             "JWT " + (User.getInstance().token ?: "")
                         )
-
                     }
                     newRequest.addHeader(KEY_APP_VERSION_NAME, BuildConfig.VERSION_NAME)
                         .addHeader(KEY_APP_VERSION_CODE, BuildConfig.VERSION_CODE.toString())
@@ -236,11 +232,8 @@ internal class AppObjectController {
                             KEY_APP_USER_AGENT,
                             "APP_" + BuildConfig.VERSION_NAME + "_" + BuildConfig.VERSION_CODE.toString()
                         )
-
-
                     return chain.proceed(newRequest.build())
                 }
-
             })
             okHttpClient = builder.build()
 
@@ -279,20 +272,7 @@ internal class AppObjectController {
             InstallReferralUtil.installReferrer(joshApplication)
             WorkMangerAdmin.deviceIdGenerateWorker()
 
-            val fetchConfiguration = FetchConfiguration.Builder(context)
-                .enableRetryOnNetworkGain(true)
-                .setDownloadConcurrentLimit(50)
-                .enableLogging(true)
-                .setAutoRetryMaxAttempts(5)
-                .setHttpDownloader(HttpUrlConnectionDownloader(Downloader.FileDownloaderType.PARALLEL))
-                .setHttpDownloader(getOkHttpDownloader())
-                .build()
-            Fetch.setDefaultInstanceConfiguration(fetchConfiguration)
-
-            fetch = Fetch.Impl.getInstance(fetchConfiguration)
-            // fetch = Fetch.getInstance(fetchConfiguration)
             videoDownloadTracker = VideoDownloadController.getInstance().downloadTracker
-            initExoPlayer()
             multiTransformation = MultiTransformation(
                 CropTransformation(
                     Utils.dpToPx(IMAGE_SIZE),
@@ -325,22 +305,14 @@ internal class AppObjectController {
             )
         }
 
-        private fun initExoPlayer() {
-            userAgent =
-                Util.getUserAgent(joshApplication, joshApplication.getString(R.string.app_name))
-        }
-
         fun clearDownloadMangerCallback() {
             try {
                 DownloadUtils.objectFetchListener.forEach { (key, value) ->
-
-                    fetch.removeListener(value)
+                    fetch?.removeListener(value)
                     DownloadUtils.objectFetchListener.remove(key)
                 }
             } catch (ex: Exception) {
-
             }
-
         }
 
         fun getFirebaseRemoteConfig(): FirebaseRemoteConfig {
@@ -353,12 +325,33 @@ internal class AppObjectController {
                 .writeTimeout(1, TimeUnit.MINUTES)
                 .readTimeout(1, TimeUnit.MINUTES)
                 .retryOnConnectionFailure(true)
-                .addInterceptor(StatusCodeInterceptor())
+                .retryOnConnectionFailure(true)
+                .followRedirects(true)
+                .followSslRedirects(true)
+
             val okHttpClient = mediaOkhttpBuilder.build()
             return OkHttpDownloader(
                 okHttpClient,
                 Downloader.FileDownloaderType.PARALLEL
             )
+        }
+
+        fun getFetchObject(): Fetch {
+            if (fetch == null || fetch!!.isClosed) {
+                val fetchConfiguration = FetchConfiguration.Builder(joshApplication)
+                    .enableRetryOnNetworkGain(true)
+                    .setDownloadConcurrentLimit(50)
+                    .enableLogging(true)
+                    .setAutoRetryMaxAttempts(5)
+                    .enableFileExistChecks(true)
+                    .setGlobalNetworkType(NetworkType.ALL)
+                    .setHttpDownloader(HttpUrlConnectionDownloader(Downloader.FileDownloaderType.PARALLEL))
+                    .setHttpDownloader(getOkHttpDownloader())
+                    .build()
+                Fetch.setDefaultInstanceConfiguration(fetchConfiguration)
+                fetch = Fetch.Impl.getInstance(fetchConfiguration)
+            }
+            return fetch as Fetch
         }
     }
 }

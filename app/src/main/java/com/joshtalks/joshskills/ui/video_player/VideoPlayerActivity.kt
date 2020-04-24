@@ -90,7 +90,7 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener {
         binding.videoPlayer.setVideoPlayerEventListener(this)
 
         if (intent.hasExtra(VIDEO_OBJECT)) {
-            chatObject = intent.getSerializableExtra(VIDEO_OBJECT) as ChatModel
+            chatObject = intent.getParcelableExtra(VIDEO_OBJECT) as ChatModel
             videoId = chatObject.question?.videoList?.getOrNull(0)?.id
 
             if (chatObject.url != null) {

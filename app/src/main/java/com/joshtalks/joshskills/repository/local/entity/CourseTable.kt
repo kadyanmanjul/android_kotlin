@@ -34,7 +34,10 @@ data class Course(
     @SerializedName("created") val courseCreatedDate: Date?,
 
     @ColumnInfo(name = "chat_type")
-    @SerializedName("chat_type") val chat_type: String?
+    @SerializedName("chat_type") val chat_type: String?,
+
+    @ColumnInfo(name = "report_status")
+    @SerializedName("report_status") val reportStatus: Boolean = false
 
 
 ) : Serializable
@@ -55,7 +58,7 @@ interface CourseDao {
     suspend fun getRegisterCourseMinimal(): List<InboxEntity>
 
 
-    @Query(value = "SELECT * from course  ORDER BY course_created_date ASC LIMIT 1;")
+    @Query(value = "SELECT * from course ORDER BY course_created_date ASC LIMIT 1")
     fun isUserOldThen7Days(): Maybe<Course>
 }
 

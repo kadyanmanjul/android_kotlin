@@ -46,9 +46,7 @@ object SyncChatService {
                                         uploadOnS3Server(responseObj, filePath).await()
 
                                     if (statusCode in 200..210) {
-                                        url =
-                                            responseObj.url.plus(File.separator)
-                                                .plus(responseObj.fields["key"])
+                                        url =responseObj.url.plus(File.separator).plus(responseObj.fields["key"])
                                     }
                                 }
                             }

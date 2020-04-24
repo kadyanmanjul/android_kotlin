@@ -2,7 +2,9 @@ package com.joshtalks.joshskills.core.service.video_download;
 
 import android.app.Notification;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 
 import com.google.android.exoplayer2.C;
@@ -14,11 +16,15 @@ import com.google.android.exoplayer2.scheduler.Scheduler;
 import com.google.android.exoplayer2.ui.DownloadNotificationHelper;
 import com.google.android.exoplayer2.util.NotificationUtil;
 import com.google.android.exoplayer2.util.Util;
+import com.google.gson.reflect.TypeToken;
 import com.joshtalks.joshskills.R;
+import com.joshtalks.joshskills.core.AppObjectController;
 import com.joshtalks.joshskills.messaging.RxBus2;
 import com.joshtalks.joshskills.repository.local.DatabaseUtils;
+import com.joshtalks.joshskills.repository.local.entity.ChatModel;
 import com.joshtalks.joshskills.repository.local.entity.DOWNLOAD_STATUS;
 import com.joshtalks.joshskills.repository.local.eventbus.MediaProgressEventBus;
+import com.joshtalks.joshskills.ui.chat.ConversationActivity;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -30,6 +36,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import static com.joshtalks.joshskills.core.StaticConstantKt.MINIMUM_VIDEO_DOWNLOAD_PROGRESS;
+import static com.joshtalks.joshskills.ui.chat.ConversationActivityKt.FOCUS_ON_CHAT_ID;
 
 
 public class VideoDownloadService extends DownloadService {
@@ -80,7 +87,21 @@ public class VideoDownloadService extends DownloadService {
     @Override
     protected Notification getForegroundNotification(@NotNull List<Download> downloads) {
         showDownloadProgress(downloads);
-        return notificationHelper.buildProgressNotification(R.drawable.ic_download, null, "", downloads);
+        Intent intent = new Intent(this, ConversationActivity.class);
+        try {
+            ChatModel chatModel = AppObjectController.getGsonMapperForLocal().fromJson(Util.fromUtf8Bytes(downloads.get(0).request.data), new TypeToken<ChatModel>() {
+            }.getType());
+            intent.putExtra(FOCUS_ON_CHAT_ID, chatModel);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+        PendingIntent pendingIntent = PendingIntent.getActivity(
+                this,
+                101,
+                intent,
+                PendingIntent.FLAG_UPDATE_CURRENT);
+        return notificationHelper.buildProgressNotification(R.drawable.ic_download, pendingIntent, "", downloads);
     }
 
 

@@ -126,17 +126,19 @@ class PractiseSubmitActivity : CoreJoshActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         AppAnalytics.create(AnalyticsEvent.PRACTISE_OPENED.NAME).push()
-
         requestedOrientation = if (Build.VERSION.SDK_INT == 26) {
             ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
         } else {
             ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         }
         super.onCreate(savedInstanceState)
+        if (intent.hasExtra(PRACTISE_OBJECT).not()){
+            this.finish()
+        }
         binding = DataBindingUtil.setContentView(this, R.layout.activity_pratice_submit)
         binding.lifecycleOwner = this
         binding.handler = this
-        chatModel = intent.getSerializableExtra(PRACTISE_OBJECT) as ChatModel
+        chatModel = intent.getParcelableExtra(PRACTISE_OBJECT) as ChatModel
         scaleAnimation = AnimationUtils.loadAnimation(this, R.anim.scale)
         initToolbarView()
         setPracticeInfoView()
@@ -406,7 +408,6 @@ class PractiseSubmitActivity : CoreJoshActivity() {
                     binding.infoTv2.visibility = VISIBLE
                 }
             }
-
         }
     }
 

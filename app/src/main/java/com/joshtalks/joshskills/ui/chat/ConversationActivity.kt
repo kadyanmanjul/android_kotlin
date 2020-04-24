@@ -121,11 +121,13 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
 
     companion object {
         fun startConversionActivity(context: Context, inboxEntity: InboxEntity) {
-            val intent = Intent(context, ConversationActivity::class.java)
-            intent.putExtra(CHAT_ROOM_OBJECT, inboxEntity)
-            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP
-            intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
-            context.startActivity(intent)
+            Intent(context, ConversationActivity::class.java).apply {
+                putExtra(CHAT_ROOM_OBJECT, inboxEntity)
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP
+                addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
+            }.run {
+                context.startActivity(this)
+            }
         }
     }
 
@@ -170,27 +172,32 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
         }
         super.onCreate(savedInstanceState)
         if (intent.hasExtra(CHAT_ROOM_OBJECT)) {
-            inboxEntity = intent.getSerializableExtra(CHAT_ROOM_OBJECT) as InboxEntity
-        } else {
-            this@ConversationActivity.finish()
+            val temp = intent.getParcelableExtra(CHAT_ROOM_OBJECT) as InboxEntity?
+            if (temp == null) {
+                this@ConversationActivity.finish()
+                return
+            }
+            inboxEntity = temp
         }
         if (intent.hasExtra(HAS_COURSE_REPORT)) {
             openCourseProgressListingScreen()
         }
 
-        conversationBinding = DataBindingUtil.setContentView(this, R.layout.activity_conversation)
+        conversationBinding =
+            DataBindingUtil.setContentView(this, R.layout.activity_conversation)
         initViewModel()
         conversationBinding.viewmodel = conversationViewModel
         conversationBinding.handler = this
         activityRef = WeakReference(this)
         initChat()
+
     }
 
     override fun onNewIntent(mIntent: Intent?) {
         super.processIntent(mIntent)
         mIntent?.hasExtra(CHAT_ROOM_OBJECT)?.let {
             if (it) {
-                val temp = mIntent.getSerializableExtra(CHAT_ROOM_OBJECT) as InboxEntity?
+                val temp = mIntent.getParcelableExtra(CHAT_ROOM_OBJECT) as InboxEntity?
                 temp?.let { inboxObj ->
                     if (inboxEntity.conversation_id != inboxObj.conversation_id) {
                         inboxEntity = inboxObj
@@ -202,7 +209,7 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
         }
         intent?.hasExtra(CHAT_ROOM_OBJECT)?.run {
             if (this) {
-                val temp = intent.getSerializableExtra(CHAT_ROOM_OBJECT) as InboxEntity?
+                val temp = intent.getParcelableExtra(CHAT_ROOM_OBJECT) as InboxEntity?
                 temp?.let { inboxObj ->
                     if (inboxEntity.conversation_id != inboxObj.conversation_id) {
                         inboxEntity = inboxObj
@@ -223,6 +230,14 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
                 openCourseProgressListingScreen()
             }
         }
+        mIntent?.hasExtra(FOCUS_ON_CHAT_ID)?.run {
+            if (this) {
+                mIntent.getParcelableExtra<ChatModel>(FOCUS_ON_CHAT_ID)?.chatId?.run {
+                    scrollToPosition(this)
+                }
+            }
+        }
+
         super.onNewIntent(mIntent)
     }
 
@@ -249,9 +264,10 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
         setUpEmojiPopup()
         liveDataObservable()
         initView()
+        refreshChat()
         initAudioPlayerView()
         conversationViewModel.getAllUserMessage()
-        refreshChat()
+        onlyChatView()
         uiHandler.postDelayed({
             try {
                 progressDialog.dismissAllowingStateLoss()
@@ -262,7 +278,13 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
             conversationBinding.progressBar.visibility = GONE
         }, 5000)
         streamingManager = AudioStreamingManager.getInstance(activityRef.get())
-        onlyChatView()
+        if (inboxEntity.report_status && PrefManager.hasKey(
+                inboxEntity.conversation_id.trim().plus(CERTIFICATE_GENERATE)
+            ).not()
+        ) {
+            alphaAnimation(findViewById(R.id.ic_notification_dot))
+        }
+
     }
 
 
@@ -298,7 +320,11 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
                     }
                 }
 
-                override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
+                override fun onProgressChanged(
+                    seekBar: SeekBar,
+                    progress: Int,
+                    fromUser: Boolean
+                ) {
                     if (fromUser) {
                         userSelectedPosition = progress
                     }
@@ -363,11 +389,15 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
             findViewById<AppCompatImageView>(R.id.iv_back).setOnClickListener {
                 finish()
             }
-            findViewById<AppCompatTextView>(R.id.text_message_title).text = inboxEntity.course_name
+            findViewById<AppCompatTextView>(R.id.text_message_title).text =
+                inboxEntity.course_name
             findViewById<MaterialToolbar>(R.id.toolbar).inflateMenu(R.menu.conversation_menu)
             findViewById<MaterialToolbar>(R.id.toolbar).setOnMenuItemClickListener {
                 if (it?.itemId == R.id.menu_referral) {
-                    ReferralActivity.startReferralActivity(this@ConversationActivity,ConversationActivity::class.java.name)
+                    ReferralActivity.startReferralActivity(
+                        this@ConversationActivity,
+                        ConversationActivity::class.java.name
+                    )
                 }
                 return@setOnMenuItemClickListener true
             }
@@ -442,7 +472,8 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
                 )
             )
         )
-        conversationBinding.chatRv.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+        conversationBinding.chatRv.addOnScrollListener(object :
+            RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)
                 if (!recyclerView.canScrollVertically(1) && newState == RecyclerView.SCROLL_STATE_IDLE) {
@@ -706,18 +737,23 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
             if (streamingManager != null && streamingManager!!.isPlaying) {
                 try {
                     streamingManager?.handlePauseRequest()
-                }catch (ex:Exception){}
+                } catch (ex: Exception) {
+                }
                 mPlayPauseButton.setImageResource(R.drawable.ic_play_player)
             } else {
                 try {
                     streamingManager?.handlePlayRequest()
-                }catch (ex:Exception){}
+                } catch (ex: Exception) {
+                }
                 mPlayPauseButton.setImageResource(R.drawable.ic_pause_player)
             }
 
         }
         findViewById<View>(R.id.stop_player).setOnClickListener {
-            streamingManager?.handlePauseRequest()
+            try {
+                streamingManager?.handlePauseRequest()
+            } catch (ex: Exception) {
+            }
             AppObjectController.currentPlayingAudioObject?.let {
                 refreshViewAtPos(it) {
                     bottomSheetLayout.visibility = GONE
@@ -726,6 +762,7 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
             endAudioEngagePart(mSeekBarAudio.progress.toLong())
             engageAudio()
         }
+
 
     }
 
@@ -1071,7 +1108,9 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
                             mSeekBarAudio.max = it.audioType!!.duration
                             streamingManager?.onPlay(obj)
                             streamingManager?.setShowPlayerNotification(false)
-                            streamingManager?.setPendingIntentAct(getNotificationPendingIntent())
+                            streamingManager?.setPendingIntentAct(
+                                getNotificationPendingIntent()
+                            )
                             countUpTimer.reset()
                         }
                     }
@@ -1273,7 +1312,7 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
             } else if (requestCode == PRACTISE_SUBMIT_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
                 CoroutineScope(Dispatchers.IO).launch {
                     try {
-                        val obj = data?.getSerializableExtra(PRACTISE_OBJECT) as ChatModel
+                        val obj = data?.getParcelableExtra(PRACTISE_OBJECT) as ChatModel
                         val chatObj = AppObjectController.appDatabase.chatDao()
                             .getUpdatedChatObjectViaId(obj.chatId)
                         refreshViewAtPos(chatObj)
@@ -1448,7 +1487,6 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
         subscribeRXBus()
         conversationBinding.chatRv.refresh()
         observeNetwork()
-        //AppObjectController.uiHandler.postDelayed(Runnable {  },1000)
     }
 
     override fun onPause() {

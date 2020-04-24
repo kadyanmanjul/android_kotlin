@@ -2,11 +2,9 @@ package com.joshtalks.joshskills.repository.service
 
 import com.joshtalks.joshskills.repository.local.model.GaIDMentorModel
 import com.joshtalks.joshskills.repository.local.model.RequestRegisterGId
-import com.joshtalks.joshskills.repository.server.ComplaintResponse
-import com.joshtalks.joshskills.repository.server.RequestComplaint
-import com.joshtalks.joshskills.repository.server.SuccessResponse
-import com.joshtalks.joshskills.repository.server.TypeOfHelpModel
+import com.joshtalks.joshskills.repository.server.*
 import kotlinx.coroutines.Deferred
+import retrofit2.Response
 import retrofit2.http.*
 import java.util.*
 
@@ -36,4 +34,10 @@ interface CommonNetworkService {
 
     @POST("$DIR/payment/verify/")
     suspend fun verifyPayment(@Body params: Map<String, String>): Any
+
+
+    @POST("$DIR/course/certificate/generate/")
+    suspend fun certificateGenerate(@Body requestCertificateGenerate: RequestCertificateGenerate): Response<CertificateDetail>
+
+
 }

@@ -118,7 +118,7 @@ class PaymentActivity : CoreJoshActivity(),
         initView()
 
         if (intent.hasExtra(COURSE_OBJECT)) {
-            courseModel = intent.getSerializableExtra(COURSE_OBJECT) as CourseExploreModel
+            courseModel = intent.getParcelableExtra(COURSE_OBJECT) as CourseExploreModel
             testId = courseModel?.id.toString()
             courseModel?.certificate?.run {
                 hasCertificate = this
@@ -146,9 +146,6 @@ class PaymentActivity : CoreJoshActivity(),
             openWhatsAppHelp()
             userHaveSpecialDiscount()
         }
-
-
-
         AppObjectController.firebaseAnalytics.resetAnalyticsData()
         val bundle = Bundle()
         bundle.putString(FirebaseAnalytics.Param.ITEM_ID, testId)
@@ -647,11 +644,11 @@ class PaymentActivity : CoreJoshActivity(),
         compositeDisposable.add(AppObjectController.appDatabase
             .courseDao()
             .isUserOldThen7Days()
+            .subscribeOn(Schedulers.io())
             .concatMap {
                 val (flag, _) = Utils.isUser7DaysOld(it.courseCreatedDate)
                 return@concatMap Maybe.just(flag)
             }
-            .subscribeOn(Schedulers.io())
             .subscribe(
                 { value ->
                     specialDiscount = value

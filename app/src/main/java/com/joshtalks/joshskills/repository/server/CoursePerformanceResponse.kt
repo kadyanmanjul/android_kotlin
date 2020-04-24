@@ -1,14 +1,15 @@
 package com.joshtalks.joshskills.repository.server
 
 
+import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
+import kotlinx.android.parcel.Parcelize
 
 data class CoursePerformanceResponse(
     @SerializedName("complete_percent")
     val completePercent: Double,
     @SerializedName("duration")
     val duration: Int,
-
     @SerializedName("header")
     val header: String,
     @SerializedName("link")
@@ -26,7 +27,9 @@ data class CoursePerformanceResponse(
     @SerializedName("total_video_practice")
     val totalVideoPractice: Int,
     @SerializedName("unlock_percent")
-    val unlockPercent: Int
+    val unlockPercent: Double,
+    @SerializedName("certificate_detail")
+    val certificateDetail: CertificateDetail
 )
 
 
@@ -44,3 +47,13 @@ data class ModuleData(
     @SerializedName("statement")
     val statement: String
 )
+
+@Parcelize
+data class CertificateDetail(
+    @SerializedName("name")
+    val name: String?,
+    @SerializedName("email")
+    val email: String?,
+    @SerializedName("url")
+    val url: String?
+) : Parcelable

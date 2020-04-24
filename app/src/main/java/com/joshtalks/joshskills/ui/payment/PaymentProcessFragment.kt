@@ -37,7 +37,7 @@ import java.util.*
 
 class PaymentProcessFragment : DialogFragment() {
     private var compositeDisposable = CompositeDisposable()
-    private lateinit var courseModel: CourseExploreModel
+    private  var courseModel: CourseExploreModel?=null
     private lateinit var paymentProcessFragmentBinding: PaymentProcessFragmentBinding
     private var timer = Timer()
 
@@ -49,7 +49,7 @@ class PaymentProcessFragment : DialogFragment() {
         fun newInstance(courseModel: CourseExploreModel) =
             PaymentProcessFragment().apply {
                 arguments = Bundle().apply {
-                    putSerializable(COURSE_ID, courseModel)
+                    putParcelable(COURSE_ID, courseModel)
                 }
             }
     }
@@ -62,7 +62,7 @@ class PaymentProcessFragment : DialogFragment() {
             animAlpha = AnimationUtils.loadAnimation(applicationContext, R.anim.fade_out)
         }
         arguments?.let {
-            courseModel = it.getSerializable(COURSE_ID) as CourseExploreModel
+            courseModel = it.getParcelable(COURSE_ID) as CourseExploreModel?
         }
         setStyle(STYLE_NO_FRAME, R.style.full_dialog)
     }
@@ -93,16 +93,16 @@ class PaymentProcessFragment : DialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         animAlpha?.reset()
-        if (courseModel.amount==0.0){
+        if (courseModel?.amount==0.0){
             paymentProcessFragmentBinding.textView.visibility=View.GONE
         }
 
-        paymentProcessFragmentBinding.tvCourse.text = courseModel.courseName
+        paymentProcessFragmentBinding.tvCourse.text = courseModel?.courseName
         paymentProcessFragmentBinding.tvAmount.text =
-            "INR " + String.format("%.2f", courseModel.amount)
+            "INR " + String.format("%.2f", courseModel?.amount)
         activity?.let {
             Glide.with(it)
-                .load(courseModel.courseIcon)
+                .load(courseModel?.courseIcon)
                 .optionalTransform(
                     WebpDrawable::class.java,
                     WebpDrawableTransformation(CircleCrop())

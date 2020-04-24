@@ -47,7 +47,6 @@ abstract class CoreJoshActivity : BaseActivity() {
             null, true
         )
         this.finish()
-
     }
 
     protected fun endAudioEngagePart(endTime: Long) {
