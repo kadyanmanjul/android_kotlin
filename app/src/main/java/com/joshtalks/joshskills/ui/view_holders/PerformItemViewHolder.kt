@@ -101,13 +101,15 @@ class PerformItemViewHolder(
                 )
             )
         } else {
-            RxBus2.publish(
-                OpenClickProgressEventBus(
-                    moduleData.questionIncomplete[0],
-                    postion,
-                    false
+            if (moduleData.questionIncomplete.isNotEmpty()) {
+                RxBus2.publish(
+                    OpenClickProgressEventBus(
+                        moduleData.questionIncomplete[0],
+                        postion,
+                        false
+                    )
                 )
-            )
+            }
         }
     }
 

@@ -92,7 +92,7 @@ open class TimeLineView @JvmOverloads constructor(context: Context, attrs: Attri
                     mediaMetadataRetriever.release()
                     returnBitmaps(thumbnailList)
                 } catch (e: Throwable) {
-                    Thread.getDefaultUncaughtExceptionHandler().uncaughtException(Thread.currentThread(), e)
+                    //Thread.getDefaultUncaughtExceptionHandler().uncaughtException(Thread.currentThread(), e)
                 }
 
             }

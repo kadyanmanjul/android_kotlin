@@ -351,9 +351,8 @@ class PaymentActivity : CoreJoshActivity(),
                                 initializeRazorpayPayment(response)
                             }
                         ))
-                }
-                else if (paymentDetailsResponse.code() == 200) {
-                    courseModel?.amount= 0.0
+                } else if (paymentDetailsResponse.code() == 200) {
+                    courseModel?.amount = 0.0
                     courseModel?.run {
                         PaymentProcessFragment.newInstance(this)
                             .show(supportFragmentManager, "Payment Process")
@@ -622,14 +621,16 @@ class PaymentActivity : CoreJoshActivity(),
         courseModel: CourseExploreModel,
         paymentDetailsResponse: PaymentDetailsResponse
     ) {
-        val fragmentTransaction = supportFragmentManager.beginTransaction()
-        val prev = supportFragmentManager.findFragmentByTag("offer_purchase_details_dialog")
-        if (prev != null) {
-            fragmentTransaction.remove(prev)
+        if (isFinishing.not()) {
+            val fragmentTransaction = supportFragmentManager.beginTransaction()
+            val prev = supportFragmentManager.findFragmentByTag("offer_purchase_details_dialog")
+            if (prev != null) {
+                fragmentTransaction.remove(prev)
+            }
+            fragmentTransaction.addToBackStack(null)
+            OfferCoursePaymentDetailFragment.newInstance(courseModel, paymentDetailsResponse)
+                .show(supportFragmentManager, "offer_purchase_details_dialog")
         }
-        fragmentTransaction.addToBackStack(null)
-        OfferCoursePaymentDetailFragment.newInstance(courseModel, paymentDetailsResponse)
-            .show(supportFragmentManager, "offer_purchase_details_dialog")
     }
 
     override fun onCompleteOfferPayment(

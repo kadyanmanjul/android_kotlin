@@ -51,10 +51,14 @@ public class MusicService extends Service {
 
     @Override
     public IBinder onBind(@NonNull final Intent intent) {
-        if (mMediaPlayerHolder == null) {
-            mMediaPlayerHolder = new MediaPlayerHolder(this);
-            mMusicNotificationManager = new MusicNotificationManager(this);
-            mMediaPlayerHolder.registerNotificationActionsReceiver(true);
+        try {
+            if (mMediaPlayerHolder == null) {
+                mMediaPlayerHolder = new MediaPlayerHolder(this);
+                mMusicNotificationManager = new MusicNotificationManager(this);
+                mMediaPlayerHolder.registerNotificationActionsReceiver(true);
+            }
+        }catch (Exception ex){
+
         }
         return mIBinder;
     }

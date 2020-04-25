@@ -132,7 +132,7 @@ class PractiseSubmitActivity : CoreJoshActivity() {
             ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         }
         super.onCreate(savedInstanceState)
-        if (intent.hasExtra(PRACTISE_OBJECT).not()){
+        if (intent.hasExtra(PRACTISE_OBJECT).not()) {
             this.finish()
         }
         binding = DataBindingUtil.setContentView(this, R.layout.activity_pratice_submit)
@@ -1028,42 +1028,45 @@ class PractiseSubmitActivity : CoreJoshActivity() {
     }
 
     fun playSubmitPracticeAudio() {
-        val audioType = AudioType()
-        audioType.audio_url = filePath!!
-        audioType.downloadedLocalPath = filePath!!
-        audioType.duration = Utils.getDurationOfMedia(this, filePath!!).toInt()
-        audioType.id = Random.nextInt().toString()
+        try {
+            val audioType = AudioType()
+            audioType.audio_url = filePath!!
+            audioType.downloadedLocalPath = filePath!!
+            audioType.duration = Utils.getDurationOfMedia(this, filePath!!).toInt()
+            audioType.id = Random.nextInt().toString()
 
-        val state =
-            if (binding.submitBtnPlayInfo.state == MaterialPlayPauseDrawable.State.Pause && mPlayerInterface!!.isPlaying) {
-                MaterialPlayPauseDrawable.State.Play
-            } else {
-                MaterialPlayPauseDrawable.State.Pause
+            val state =
+                if (binding.submitBtnPlayInfo.state == MaterialPlayPauseDrawable.State.Pause && mPlayerInterface!!.isPlaying) {
+                    MaterialPlayPauseDrawable.State.Play
+                } else {
+                    MaterialPlayPauseDrawable.State.Pause
+                }
+            binding.submitBtnPlayInfo.state = state
+
+            if (Utils.getCurrentMediaVolume(applicationContext) <= 0) {
+                StyleableToast.Builder(applicationContext).gravity(Gravity.BOTTOM)
+                    .text(getString(R.string.volume_up_message)).cornerRadius(16)
+                    .length(Toast.LENGTH_LONG)
+                    .solidBackground().show()
             }
-        binding.submitBtnPlayInfo.state = state
 
-        if (Utils.getCurrentMediaVolume(applicationContext) <= 0) {
-            StyleableToast.Builder(applicationContext).gravity(Gravity.BOTTOM)
-                .text(getString(R.string.volume_up_message)).cornerRadius(16)
-                .length(Toast.LENGTH_LONG)
-                .solidBackground().show()
-        }
-
-        if (currentAudio == null) {
-            onPlayAudio(chatModel, audioType)
-        } else {
-            if (currentAudio == audioType.audio_url) {
-                if (checkIsPlayer()) {
-                    mPlayerInterface?.resumeOrPause()
+            if (currentAudio == null) {
+                onPlayAudio(chatModel, audioType)
+            } else {
+                if (currentAudio == audioType.audio_url) {
+                    if (checkIsPlayer()) {
+                        mPlayerInterface?.resumeOrPause()
+                    } else {
+                        onPlayAudio(chatModel, audioType)
+                    }
                 } else {
                     onPlayAudio(chatModel, audioType)
-                }
-            } else {
-                onPlayAudio(chatModel, audioType)
 
+                }
             }
+            mPlayerInterface?.clearNotification()
+        } catch (ex: Exception) {
         }
-        mPlayerInterface?.clearNotification()
 
     }
 
