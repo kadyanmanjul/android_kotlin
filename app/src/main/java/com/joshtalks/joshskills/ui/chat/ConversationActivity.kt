@@ -762,8 +762,6 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
             endAudioEngagePart(mSeekBarAudio.progress.toLong())
             engageAudio()
         }
-
-
     }
 
     private fun sendTextTextMessage() {

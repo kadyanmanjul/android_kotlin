@@ -39,7 +39,6 @@ object FCMTokenManager {
                 val data = mapOf("registration_id" to token, "active" to "true")
                 val fcmId = PrefManager.getLongValue(FCM_ID).toString()
                 AppObjectController.signUpNetworkService.updateFCMToken(fcmId, data).await()
-
             } catch (ex: Exception) {
                 ex.printStackTrace()
             }

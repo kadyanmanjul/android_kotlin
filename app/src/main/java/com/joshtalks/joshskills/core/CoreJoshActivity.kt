@@ -12,7 +12,6 @@ import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
 import com.joshtalks.joshskills.ui.inbox.COURSE_EXPLORER_WITHOUT_CODE
 import com.joshtalks.joshskills.ui.referral.PromotionDialogFragment
 
-
 abstract class CoreJoshActivity : BaseActivity() {
     protected var countUpTimer = CountUpTimer(true)
     protected var videoViewGraphList: MutableSet<Graph> = mutableSetOf()

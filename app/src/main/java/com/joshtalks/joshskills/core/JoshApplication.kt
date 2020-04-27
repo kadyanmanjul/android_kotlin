@@ -52,8 +52,11 @@ class JoshApplication : BranchApp(), LifecycleObserver, Configuration.Provider {
             Stetho.initializeWithDefaults(this)
             FacebookSdk.setIsDebugEnabled(true)
             FacebookSdk.addLoggingBehavior(LoggingBehavior.APP_EVENTS)
+            Branch.enableLogging();
             Branch.enableDebugMode()
             Branch.enableSimulateInstalls()
+            Branch.enableTestMode()
+
             // IntegrationValidator.validate(this)
             Timber.plant(Timber.DebugTree())
 

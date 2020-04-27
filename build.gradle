@@ -18,6 +18,8 @@ buildscript {
         maven {
             url 'http://dl.bintray.com/amulyakhare/maven'
         }
+        maven { url 'http://developer.huawei.com/repo/' }
+
 
     }
     dependencies {
@@ -45,6 +47,8 @@ allprojects {
         flatDir {
             dirs 'libs'
         }
+        maven { url 'http://developer.huawei.com/repo/' }
+
     }
 }
 
