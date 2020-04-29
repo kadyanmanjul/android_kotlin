@@ -67,6 +67,7 @@
     <color name="wh_fc">#FCFDF3</color>
 
     <color name="bubble_background">#CCababab</color>
+    <color name="feedback_comment_background">#B5FFFFFF</color>
     <color name="feedback_background">#0B81CD</color>
     <color name="feedback_submit_background">#8c52ff</color>
 
