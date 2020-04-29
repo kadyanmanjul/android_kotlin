@@ -218,4 +218,10 @@
     <string name="performance_h">Performance</string>
     <string name="course_overview_header">Course Overview</string>
     <string name="your_performance_so_far">Your Performance So Far</string>
+
+
+    <!-- Dialog FeedBack Fragment layout-->
+    <string name="feedback_title">Practice Submitted !</string>
+    <string name="dialog_title">Rate this practice</string>
+    <string name="submit_button">Submit</string>
 </resources>
