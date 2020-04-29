@@ -11,6 +11,24 @@
             android:paddingTop="@dimen/_8sdp"
             android:paddingBottom="@dimen/_8sdp">
 
+        <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/top_feedback_title"
+                fontPath="fonts/OpenSans-Bold.ttf"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="108dp"
+                android:gravity="center"
+                android:text="@string/feedback_title"
+                android:textColor="@color/font_color"
+                android:textSize="@dimen/font_16"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintWidth_default="percent"
+                app:layout_constraintWidth_percent="0.8" />
+
+
+
         <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="362dp"
                 android:layout_height="417dp"
@@ -125,7 +143,7 @@
                     android:paddingEnd="@dimen/_24sdp"
                     android:paddingBottom="@dimen/_12sdp"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.197"
+                    app:layout_constraintHorizontal_bias="0.289"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/feedback_comment1" />
 
@@ -209,25 +227,18 @@
                 android:src="@drawable/ic_cross"
                 android:tint="@color/grey_7A"
                 tools:ignore="MissingConstraints"
-                tools:layout_editor_absoluteX="361dp"
-                tools:layout_editor_absoluteY="120dp" />
+                tools:layout_editor_absoluteX="374dp"
+                tools:layout_editor_absoluteY="132dp" />
 
-        <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/top_feedback_title"
-                fontPath="fonts/OpenSans-Bold.ttf"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="108dp"
-                android:gravity="center"
-                android:text="@string/feedback_title"
-                android:textColor="@color/font_color"
-                android:textSize="@dimen/font_16"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
+        <ImageView
+                android:id="@+id/check_mark"
+                android:layout_width="99dp"
+                android:layout_height="82dp"
+                android:layout_marginTop="16dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintWidth_default="percent"
-                app:layout_constraintWidth_percent="0.8" />
-
+                app:srcCompat="@drawable/animated_vector_check" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
