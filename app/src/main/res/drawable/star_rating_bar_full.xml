@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:id="@+id/background"
-            android:drawable="@drawable/start_ratingbar_full_empty" />
+            android:drawable="@drawable/ic_star_border" />
     <item android:id="@+id/secondaryProgress"
-            android:drawable="@drawable/start_ratingbar_full_empty" />
+            android:drawable="@drawable/ic_star_border" />
     <item android:id="@+id/progress"
-            android:drawable="@drawable/star_ratingbar_full_filled" />
+            android:drawable="@drawable/ic_star" />
 </layer-list>
