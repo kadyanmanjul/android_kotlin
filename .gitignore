@@ -45,6 +45,7 @@ captures/
 /.idea/modules.xml
 /.idea/navEditor.xml
 /.idea/sonarlint
+/.idea/detekt.xml
 
 
 # Keystore files
