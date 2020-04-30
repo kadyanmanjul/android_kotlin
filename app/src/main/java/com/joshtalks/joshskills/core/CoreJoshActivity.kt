@@ -23,7 +23,7 @@ abstract class CoreJoshActivity : BaseActivity() {
     override fun onStart() {
         super.onStart()
         try {
-            findViewById<View>(R.id.iv_help).setOnClickListener {
+            findViewById<View>(R.id.iv_help).setOnClickListener {   //TODO(FixMe) - FindViewById not required
                 openHelpActivity()
             }
         } catch (ex: Exception) {

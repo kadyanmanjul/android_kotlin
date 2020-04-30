@@ -82,6 +82,9 @@ class ImageShowFragment : DialogFragment() {
         }
 
     }
+
+    //TODO(FixMe) - Remove Commented Code
+
     /* private fun hideSystemUI() { // Set the IMMERSIVE flag.
  // Set the content to appear under the system bars so that the content
  // doesn't resize when the system bars hide and show.

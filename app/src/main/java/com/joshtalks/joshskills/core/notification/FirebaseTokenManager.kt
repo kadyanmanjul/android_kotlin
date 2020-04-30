@@ -18,7 +18,7 @@ object FCMTokenManager {
             if (token.isEmpty())
                 return
 
-            if (PrefManager.hasKey(FCM_ID)) {
+            if (PrefManager.hasKey(FCM_ID)) {  //TODO(FixMe) - FCMID hs no use
                 patchToken(
                     token
                 )

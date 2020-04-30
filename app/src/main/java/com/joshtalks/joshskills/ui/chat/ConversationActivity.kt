@@ -776,7 +776,7 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
             ).show()
             return
         }
-        if (cMessageType == BASE_MESSAGE_TYPE.TX) {
+        if (cMessageType == BASE_MESSAGE_TYPE.TX) {        //TODO(FixMe) - Conditions Check at wrong place
             val tChatMessage =
                 TChatMessage(conversationBinding.chatEdit.text.toString())
             val cell = MessageBuilderFactory.getMessage(

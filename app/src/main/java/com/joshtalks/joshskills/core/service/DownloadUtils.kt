@@ -184,7 +184,7 @@ object DownloadUtils {
                 audioType.downloadStatus = DOWNLOAD_STATUS.DOWNLOADING
                 appDatabase.chatDao().updateAudioObject(audioType)
                 val file = AppDirectory.getAudioReceivedFile(audioType.audio_url).absolutePath
-                if (audioType.downloadStatus == DOWNLOAD_STATUS.DOWNLOADED) {
+                if (audioType.downloadStatus == DOWNLOAD_STATUS.DOWNLOADED) {   //TODO(FixMe) - Condition check at wrong place
                     return@launch
                 }
 

@@ -32,7 +32,8 @@
                 android:alpha="0.7"
                 android:background="@drawable/ccp_selectable_bg"
                 android:clickable="true"
-                android:padding="4dp" />
+                android:padding="4dp"
+                android:src="@drawable/quantum_ic_clear_grey600_24" />
     </RelativeLayout>
 
     <RelativeLayout
