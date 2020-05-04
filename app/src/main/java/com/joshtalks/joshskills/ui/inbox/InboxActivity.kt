@@ -4,10 +4,8 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
-import android.content.pm.ActivityInfo
 import android.graphics.drawable.PictureDrawable
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.widget.FrameLayout
@@ -37,7 +35,6 @@ import com.joshtalks.joshskills.core.inapp_update.InAppUpdateManager
 import com.joshtalks.joshskills.core.inapp_update.InAppUpdateStatus
 import com.joshtalks.joshskills.core.service.WorkMangerAdmin
 import com.joshtalks.joshskills.messaging.RxBus2
-import com.joshtalks.joshskills.repository.local.DatabaseUtils
 import com.joshtalks.joshskills.repository.local.eventbus.ExploreCourseEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.OpenCourseEventBus
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
@@ -47,7 +44,6 @@ import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.ProfileResponse
 import com.joshtalks.joshskills.repository.server.SearchLocality
 import com.joshtalks.joshskills.repository.server.UpdateUserLocality
-import com.joshtalks.joshskills.repository.service.SyncChatService
 import com.joshtalks.joshskills.ui.chat.ConversationActivity
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
 import com.joshtalks.joshskills.ui.payment.COURSE_ID
@@ -67,6 +63,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_inbox.*
+import kotlinx.android.synthetic.main.find_more_layout.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -76,7 +73,7 @@ import org.jetbrains.anko.collections.forEachWithIndex
 const val REGISTER_INFO_CODE = 2001
 const val COURSE_EXPLORER_CODE = 2002
 const val COURSE_EXPLORER_WITHOUT_CODE = 2003
-const val REGISTER_NEW_COURSE_CODE = 2003
+const val PAYMENT_FOR_COURSE_CODE = 2004
 const val REQ_CODE_VERSION_UPDATE = 530
 const val USER_DETAILS_CODE = 1001
 
@@ -91,7 +88,6 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
     private lateinit var earnIV: AppCompatImageView
     private lateinit var findMoreLayout: FrameLayout
     private var findMoreVisible = true
-
     private val offerIn7DaysHint by lazy { BalloonFactory.offerIn7Days(this, this) }
     private val hintFirstTime by lazy {
         BalloonFactory.hintOfferFirstTime(this, this, object :
@@ -104,34 +100,44 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        requestedOrientation = if (Build.VERSION.SDK_INT == 26) {
-            ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
-        } else {
-            ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-        }
+        WorkMangerAdmin.requiredTaskAfterLoginComplete()
+        AppAnalytics.create(AnalyticsEvent.INBOX_SCREEN.NAME).push()
         super.onCreate(savedInstanceState)
-        DatabaseUtils.updateUserMessageSeen()
+        lifecycle.addObserver(this)
         setContentView(R.layout.activity_inbox)
         setToolbar()
-        lifecycle.addObserver(this)
-        AppAnalytics.create(AnalyticsEvent.INBOX_SCREEN.NAME).push()
         addLiveDataObservable()
         checkAppUpdate()
         workInBackground()
-        SyncChatService.syncChatWithServer()
         handelIntentAction()
         addObserver()
     }
 
+    private fun setToolbar() {
+        val titleView = findViewById<AppCompatTextView>(R.id.text_message_title)
+        titleView.text = getString(R.string.inbox_header)
+        earnIV = findViewById(R.id.iv_earn)
+        earnIV.setOnClickListener {
+            WorkMangerAdmin.referralEventTracker(REFERRAL_EVENT.CLICK_ON_REFERRAL)
+            AppAnalytics.create(AnalyticsEvent.REFERRAL_SELECTED.NAME).push()
+            ReferralActivity.startReferralActivity(
+                this@InboxActivity,
+                InboxActivity::class.java.name
+            )
+        }
+        findMoreLayout = findViewById(R.id.parent_layout)
+        find_more.setOnClickListener {
+            RxBus2.publish(ExploreCourseEventBus())
+        }
+        visibleShareEarn()
+    }
+
     private fun workInBackground() {
         CoroutineScope(Dispatchers.Default).launch {
-            AppObjectController.clearDownloadMangerCallback()
-            AppAnalytics.updateUser()
             processIntent(intent)
-            delay(1000)
+            delay(2000)
             locationFetch()
         }
-        WorkMangerAdmin.installReferrerWorker()
     }
 
     private fun checkAppUpdate() {
@@ -152,7 +158,6 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
             .snackBarMessage(getString(R.string.update_message))
             .snackBarAction(getString(R.string.restart))
             .handler(this)
-
         inAppUpdateManager?.checkForAppUpdate()
     }
 
@@ -174,7 +179,6 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
                     )
                 }
             }
-
         }
     }
 
@@ -207,24 +211,6 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         }
     }
 
-    private fun setToolbar() {
-        val titleView = findViewById<AppCompatTextView>(R.id.text_message_title)
-        titleView.text = getString(R.string.inbox_header)
-        earnIV = findViewById(R.id.iv_earn)
-        earnIV.setOnClickListener {
-            WorkMangerAdmin.referralEventTracker(REFERRAL_EVENT.CLICK_ON_REFERRAL)
-            AppAnalytics.create(AnalyticsEvent.REFERRAL_SELECTED.NAME).push()
-            ReferralActivity.startReferralActivity(
-                this@InboxActivity,
-                InboxActivity::class.java.name
-            )
-        }
-        visibleShareEarn()
-        findMoreLayout = findViewById(R.id.parent_layout)
-        findViewById<View>(R.id.find_more).setOnClickListener {
-            RxBus2.publish(ExploreCourseEventBus())
-        }
-    }
 
     private fun addLiveDataObservable() {
         viewModel.registerCourseNetworkLiveData.observe(this, Observer {
@@ -240,7 +226,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
     }
 
     private fun addCourseInRecyclerView(items: List<InboxEntity>?) {
-        if (items.isNullOrEmpty() || items.size == recycler_view_inbox.viewResolverCount) {
+        if (items.isNullOrEmpty()) {
             return
         }
         recycler_view_inbox.removeAllViews()
@@ -431,6 +417,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
                                 if (value) {
                                     if (offerIn7DaysHint.isShowing.not() && isFinishing.not()) {
                                         val root = findViewById<View>(R.id.find_more)
+                                        //sub_root_viw.addView(hintFirstTime.getContentView())
                                         hintFirstTime.showAlignBottom(root)
                                     }
                                 }
@@ -508,24 +495,6 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         }
 
     }
-
-    /* private fun showAppUseWhenComeFirstTime() {
-         try {
-             val entity = viewModel.registerCourseMinimalLiveData.value?.get(0)
-             val entity2 = viewModel.registerCourseNetworkLiveData.value?.get(0)
-             if (entity == null && entity2 == null) {
-                 return
-             }
-
-             if (PrefManager.getBoolValue(FIRST_COURSE_BUY).not()) {
-                 isUserFirstTime = false
-                 PrefManager.put(FIRST_COURSE_BUY, true)
-                 TooltipUtility.showFirstTimeUserTooltip(entity ?: entity2, this, this) {
-                 }
-             }
-         } catch (ex: Exception) {
-         }
-     }*/
 
     fun attachOfferHintView() {
         compositeDisposable.add(AppObjectController.appDatabase
