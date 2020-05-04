@@ -9,14 +9,15 @@ import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.repository.local.entity.*
+import com.joshtalks.joshskills.repository.server.engage.Graph
 import java.util.*
 
 
 const val DATABASE_NAME = "JoshEnglishDB.db"
 
 @Database(
-    entities = [Course::class, ChatModel::class, Question::class, VideoType::class, AudioType::class, OptionType::class, PdfType::class, ImageType::class],
-    version = 14,
+    entities = [Course::class, ChatModel::class, Question::class, VideoType::class, AudioType::class, OptionType::class, PdfType::class, ImageType::class,VideoEngage::class],
+    version = 15,
     exportSchema = false
 )
 @TypeConverters(
@@ -27,7 +28,8 @@ const val DATABASE_NAME = "JoshEnglishDB.db"
     MessageDeliveryTypeConverter::class,
     MessageStatusTypeConverters::class,
     ExpectedEngageTypeConverter::class,
-    ConvectorForEngagement::class
+    ConvectorForEngagement::class,
+    ConvectorForGraph::class
 
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -195,6 +197,7 @@ abstract class AppDatabase : RoomDatabase() {
 
     abstract fun courseDao(): CourseDao
     abstract fun chatDao(): ChatDao
+    abstract fun videoEngageDao() : VideoEngageDao
 
 }
 
@@ -332,6 +335,24 @@ class ConvectorForEngagement {
             return Collections.emptyList()
         }
         val type = object : TypeToken<List<PracticeEngagement>>() {}.type
+        return AppObjectController.gsonMapper.fromJson(value, type)
+    }
+}
+
+
+class ConvectorForGraph {
+    @TypeConverter
+    fun fromGraph(value: List<Graph>?): String {
+        val type = object : TypeToken<List<Graph>>() {}.type
+        return AppObjectController.gsonMapper.toJson(value, type)
+    }
+
+    @TypeConverter
+    fun toGraph(value: String?): List<Graph> {
+        if (value == null) {
+            return Collections.emptyList()
+        }
+        val type = object : TypeToken<List<Graph>>() {}.type
         return AppObjectController.gsonMapper.fromJson(value, type)
     }
 }
