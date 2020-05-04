@@ -12,8 +12,8 @@ android {
         applicationId "com.joshtalks.joshskills"
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 81
-        versionName "1.0.81"
+        versionCode 82
+        versionName "1.0.82"
         vectorDrawables.useSupportLibrary true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField "String", "CLIENT_TOKEN", "\"Ctt75ss5IxyHgBJb48diBbHUXIQ1VANCYRykjdcj\""
@@ -198,11 +198,11 @@ dependencies {
     implementation 'com.google.firebase:firebase-messaging:20.1.6'
     implementation 'com.google.firebase:firebase-perf:19.0.7'
     implementation 'com.google.firebase:firebase-config:19.1.4'
-    implementation 'com.google.firebase:firebase-config-ktx:19.1.4'
     implementation 'com.google.firebase:firebase-database-ktx:19.3.0'
     implementation 'com.google.firebase:firebase-dynamic-links-ktx:19.1.0'
 
 
+    implementation 'com.huawei.hms:ads-identifier:3.4.28.305' // ads identifier for Huawei devices
     implementation 'com.google.android.gms:play-services-ads:19.1.0'
     implementation 'com.google.android.gms:play-services-auth:18.0.0'
     implementation 'com.google.android.gms:play-services-base:17.2.1'
@@ -281,17 +281,11 @@ dependencies {
     implementation 'com.github.vipulasri:timelineview:1.1.4'
     implementation 'com.afollestad.material-dialogs:bottomsheets:3.2.1'
     implementation 'com.mikhaellopez:circularprogressbar:3.0.3'
-    //   implementation 'com.google.android.exoplayer:extension-cast:2.11.3'
-    // implementation 'com.google.android.gms:play-services-cast-framework:18.1.0'
 
-//    implementation 'the.bot.box:appusagemonitor:1.0.1'
+    implementation 'com.google.android:flexbox:2.0.1'
 
-
-    //https://github.com/stepstone-tech/android-material-app-rating
-
-    //huawei support branch
-    implementation 'com.huawei.hms:ads-identifier:3.4.28.305'
-
+    implementation 'io.sentry:sentry-android:2.0.3'
+    //implementation 'com.github.GetStream:stream-chat-android:4.0.13'
 
 
 
