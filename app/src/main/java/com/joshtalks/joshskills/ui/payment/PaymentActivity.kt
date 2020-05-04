@@ -529,7 +529,6 @@ class PaymentActivity : CoreJoshActivity(),
     }
 
     override fun onBackPressed() {
-
         if (Mentor.getInstance().hasId().not()) {
             openCourseExplorerScreen()
             return
@@ -545,9 +544,6 @@ class PaymentActivity : CoreJoshActivity(),
     private fun requestForPayment() {
         if (User.getInstance().token == null) {
             showLoginDialog()
-            /*  startActivityForResult(Intent(this, LoginActivity::class.java).apply {
-                  putExtra(IS_ACTIVITY_FOR_RESULT, true)
-              }, 101)*/
             return
         }
         if (userSubmitCode.isEmpty().not() && userSubmitCode.equals(
