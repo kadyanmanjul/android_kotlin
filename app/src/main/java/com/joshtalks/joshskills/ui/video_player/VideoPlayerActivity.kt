@@ -20,16 +20,13 @@ import com.joshtalks.joshskills.core.service.video_download.VideoDownloadControl
 import com.joshtalks.joshskills.core.videoplayer.VideoPlayerEventListener
 import com.joshtalks.joshskills.databinding.ActivityVideoPlayer1Binding
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
+import com.joshtalks.joshskills.repository.local.entity.VideoEngage
 import com.joshtalks.joshskills.repository.server.engage.Graph
-import com.joshtalks.joshskills.repository.server.engage.VideoEngage
 import com.joshtalks.joshskills.repository.service.EngagementNetworkHelper
 import com.joshtalks.joshskills.ui.chat.VIDEO_OPEN_REQUEST_CODE
 import com.joshtalks.joshskills.ui.pdfviewer.COURSE_NAME
 
 const val VIDEO_OBJECT = "video_"
-const val VIDEO_URL = "video_url"
-const val VIDEO_ID = "video_id"
-
 
 class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener {
 
