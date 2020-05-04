@@ -49,5 +49,7 @@
     <dimen name="bottom_sheet_corner_radius">16dp</dimen>
     <dimen name="notification_large_dim">256dp</dimen>
     <dimen name="tag_height">@dimen/_44sdp</dimen>
+    <dimen name="rating_size">@dimen/_40sdp</dimen>
+
 
 </resources>
