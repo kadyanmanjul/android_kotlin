@@ -5,6 +5,7 @@ import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.USER_UNIQUE_ID
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
+import com.joshtalks.joshskills.repository.local.entity.VideoEngage
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.NotificationObject
 import com.joshtalks.joshskills.repository.server.engage.*
@@ -25,14 +26,13 @@ object EngagementNetworkHelper {
                 videoEngage.mentorId = Mentor.getInstance().getId()
                 AppObjectController.chatNetworkService.engageVideoApiV2(videoEngage)
             } catch (ex: Exception) {
+                AppObjectController.appDatabase.videoEngageDao().insertVideoEngage(videoEngage)
                 ex.printStackTrace()
             }
         }
 
     }
 
-    @JvmStatic
-    @Synchronized
     fun engageAudioApi(audioId: String, mediaEngageList: List<Graph>) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
