@@ -8,7 +8,6 @@ import com.joshtalks.joshskills.core.REFERRAL_EVENT
 import com.joshtalks.joshskills.repository.local.model.ScreenEngagementModel
 import java.util.concurrent.TimeUnit
 
-
 object WorkMangerAdmin {
 
     fun appStartWorker() {
@@ -133,7 +132,6 @@ object WorkMangerAdmin {
         WorkManager.getInstance(AppObjectController.joshApplication).enqueue(workRequest)
     }
 
-
     fun mappingGIDWithMentor() {
         WorkManager.getInstance(AppObjectController.joshApplication)
             .enqueue(OneTimeWorkRequestBuilder<MappingGaIDWithMentor>().build())
@@ -143,7 +141,19 @@ object WorkMangerAdmin {
             .enqueue(OneTimeWorkRequestBuilder<RefreshFCMTokenWorker>().build())
     }
 
+    fun pushTokenToServer() {
+        WorkManager.getInstance(AppObjectController.joshApplication)
+            .enqueue(OneTimeWorkRequestBuilder<UploadFCMTokenOnServer>().build())
+    }
 
+    fun requiredTaskAfterLoginComplete() {
+        WorkManager.getInstance(AppObjectController.joshApplication)
+            .enqueue(OneTimeWorkRequestBuilder<WorkerAfterLoginInApp>().build())
+    }
 
+    fun syncVideoEngage(){
+        WorkManager.getInstance(AppObjectController.joshApplication)
+            .enqueue(OneTimeWorkRequestBuilder<SyncEngageVideo>().build())
+    }
 
 }
