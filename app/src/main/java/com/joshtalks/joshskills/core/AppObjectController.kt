@@ -20,7 +20,6 @@ import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
 import com.google.gson.*
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import com.jakewharton.threetenabp.AndroidThreeTen
-import com.joshtalks.filelogger.FL
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.datetimeutils.DateTimeUtils
@@ -48,6 +47,9 @@ import com.vanniktech.emoji.EmojiManager
 import com.vanniktech.emoji.google.GoogleEmojiProvider
 import io.branch.referral.Branch
 import io.fabric.sdk.android.Fabric
+import io.github.inflationx.calligraphy3.CalligraphyConfig
+import io.github.inflationx.calligraphy3.CalligraphyInterceptor
+import io.github.inflationx.viewpump.ViewPump
 import jp.wasabeef.glide.transformations.CropTransformation
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation
 import okhttp3.Interceptor
@@ -158,6 +160,8 @@ internal class AppObjectController {
             FirebaseDatabase.getInstance().setPersistenceEnabled(true)
             initFirebaseRemoteConfig()
             initCrashlytics()
+            EmojiManager.install(GoogleEmojiProvider())
+            videoDownloadTracker = VideoDownloadController.getInstance().downloadTracker
 
             gsonMapper = GsonBuilder()
                 .enableComplexMapKeySerialization()
@@ -180,23 +184,17 @@ internal class AppObjectController {
                 .create()
 
             gsonMapperForLocal = GsonBuilder()
-             //   .enableComplexMapKeySerialization()
                 .serializeNulls()
-               /* .excludeFieldsWithModifiers(
-                    Modifier.TRANSIENT
-                )*/
                 .setDateFormat(DateFormat.LONG)
                 .setPrettyPrinting()
                 .setLenient()
                 .create()
-
 
             val builder = OkHttpClient().newBuilder()
                 .connectTimeout(30, TimeUnit.SECONDS)
                 .writeTimeout(30, TimeUnit.SECONDS)
                 .readTimeout(30, TimeUnit.SECONDS)
                 .retryOnConnectionFailure(true)
-                .followRedirects(true)
                 .followSslRedirects(true)
                 .addInterceptor(StatusCodeInterceptor())
 
@@ -204,7 +202,6 @@ internal class AppObjectController {
                 HttpLoggingInterceptor(object : HttpLoggingInterceptor.Logger {
                     override fun log(message: String) {
                         Timber.tag("OkHttp").d(message)
-                        FL.v(message + "\n")
                     }
 
                 }).apply {
@@ -232,6 +229,7 @@ internal class AppObjectController {
                             KEY_APP_USER_AGENT,
                             "APP_" + BuildConfig.VERSION_NAME + "_" + BuildConfig.VERSION_CODE.toString()
                         )
+
                     return chain.proceed(newRequest.build())
                 }
             })
@@ -251,10 +249,10 @@ internal class AppObjectController {
 
 
             val mediaOkhttpBuilder = OkHttpClient().newBuilder()
-            mediaOkhttpBuilder.connectTimeout(1, TimeUnit.MINUTES)
-                .writeTimeout(1, TimeUnit.MINUTES)
-                .readTimeout(1, TimeUnit.MINUTES)
-                .retryOnConnectionFailure(true)
+            mediaOkhttpBuilder.connectTimeout(45, TimeUnit.SECONDS)
+                .writeTimeout(45, TimeUnit.SECONDS)
+                .readTimeout(45, TimeUnit.SECONDS)
+                .followRedirects(true)
                 .addInterceptor(StatusCodeInterceptor())
 
             if (BuildConfig.DEBUG) {
@@ -262,17 +260,23 @@ internal class AppObjectController {
                 mediaOkhttpBuilder.addInterceptor(logging)
             }
 
+            mediaOkhttpBuilder.addInterceptor(object : Interceptor {
+                override fun intercept(chain: Interceptor.Chain): Response {
+                    val original = chain.request()
+                    val newRequest: Request.Builder = original.newBuilder()
+                    newRequest.addHeader("Connection","close")
+
+                    return chain.proceed(newRequest.build())
+                }
+            })
+
             mediaDUNetworkService = Retrofit.Builder()
                 .baseUrl(BuildConfig.BASE_URL)
                 .client(mediaOkhttpBuilder.build())
                 .build().create(MediaDUNetworkService::class.java)
 
 
-            EmojiManager.install(GoogleEmojiProvider())
-            InstallReferralUtil.installReferrer(joshApplication)
-            WorkMangerAdmin.deviceIdGenerateWorker()
 
-            videoDownloadTracker = VideoDownloadController.getInstance().downloadTracker
             multiTransformation = MultiTransformation(
                 CropTransformation(
                     Utils.dpToPx(IMAGE_SIZE),
@@ -285,6 +289,20 @@ internal class AppObjectController {
                     RoundedCornersTransformation.CornerType.ALL
                 )
             )
+
+            ViewPump.init(
+                ViewPump.builder().addInterceptor(
+                    CalligraphyInterceptor(
+                        CalligraphyConfig.Builder()
+                            .setDefaultFontPath("fonts/OpenSans-Regular.ttf")
+                            .setFontAttrId(R.attr.fontPath)
+                            .build()
+                    )
+                ).build()
+            )
+            InstallReferralUtil.installReferrer(joshApplication)
+            WorkMangerAdmin.deviceIdGenerateWorker()
+
 
             return INSTANCE
         }
@@ -324,11 +342,7 @@ internal class AppObjectController {
             mediaOkhttpBuilder.connectTimeout(1, TimeUnit.MINUTES)
                 .writeTimeout(1, TimeUnit.MINUTES)
                 .readTimeout(1, TimeUnit.MINUTES)
-                .retryOnConnectionFailure(true)
-                .retryOnConnectionFailure(true)
                 .followRedirects(true)
-                .followSslRedirects(true)
-
             val okHttpClient = mediaOkhttpBuilder.build()
             return OkHttpDownloader(
                 okHttpClient,
@@ -342,11 +356,11 @@ internal class AppObjectController {
                     .enableRetryOnNetworkGain(true)
                     .setDownloadConcurrentLimit(50)
                     .enableLogging(true)
-                    .setAutoRetryMaxAttempts(5)
-                    .enableFileExistChecks(true)
+                    .setAutoRetryMaxAttempts(1)
                     .setGlobalNetworkType(NetworkType.ALL)
                     .setHttpDownloader(HttpUrlConnectionDownloader(Downloader.FileDownloaderType.PARALLEL))
                     .setHttpDownloader(getOkHttpDownloader())
+                    .setNamespace("JoshTalks")
                     .build()
                 Fetch.setDefaultInstanceConfiguration(fetchConfiguration)
                 fetch = Fetch.Impl.getInstance(fetchConfiguration)
@@ -377,7 +391,7 @@ class StatusCodeInterceptor : Interceptor {
             }
         }
 
-        Timber.i("Status code: " + response.code)
+        Timber.i("Status code: %s", response.code)
         return response
     }
 }
