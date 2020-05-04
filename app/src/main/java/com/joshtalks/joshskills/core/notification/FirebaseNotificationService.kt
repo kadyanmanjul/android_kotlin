@@ -26,8 +26,8 @@ import com.joshtalks.joshskills.core.service.WorkMangerAdmin
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.local.model.*
 import com.joshtalks.joshskills.repository.service.EngagementNetworkHelper
-import com.joshtalks.joshskills.ui.chat.CHAT_ROOM_OBJECT
 import com.joshtalks.joshskills.ui.chat.ConversationActivity
+import com.joshtalks.joshskills.ui.chat.UPDATED_CHAT_ROOM_OBJECT
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
 import com.joshtalks.joshskills.ui.inbox.InboxActivity
 import com.joshtalks.joshskills.ui.launch.LauncherActivity
@@ -56,11 +56,10 @@ class FirebaseNotificationService : FirebaseMessagingService() {
     @RequiresApi(Build.VERSION_CODES.N)
     private var importance = NotificationManager.IMPORTANCE_DEFAULT
 
-    //restart_last_conversation_time
     override fun onNewToken(token: String) {
         super.onNewToken(token)
         PrefManager.put(FCM_TOKEN, token)
-        FCMTokenManager.pushToken()
+        WorkMangerAdmin.pushTokenToServer()
     }
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
@@ -130,14 +129,6 @@ class FirebaseNotificationService : FirebaseMessagingService() {
             val notificationManager =
                 getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
-            try {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
-                    && !notificationManager.isNotificationPolicyAccessGranted
-                ) {
-                    notificationManager.setInterruptionFilter(NotificationManager.INTERRUPTION_FILTER_NONE)
-                }
-            } catch (ex: Exception) {
-            }
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 val notificationChannel = NotificationChannel(
                     notificationChannelId,
@@ -187,7 +178,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                     notificationChannelName = obj.course_name
                     val rIntnet =
                         Intent(applicationContext, ConversationActivity::class.java).apply {
-                            putExtra(CHAT_ROOM_OBJECT, obj)
+                            putExtra(UPDATED_CHAT_ROOM_OBJECT, obj)
                             putExtra(HAS_NOTIFICATION, true)
                             flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
                             flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
