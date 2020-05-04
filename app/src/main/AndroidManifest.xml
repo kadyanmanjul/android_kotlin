@@ -141,6 +141,14 @@
                 android:name="CLEVERTAP_BACKGROUND_SYNC"
                 android:value="1" />
 
+        <meta-data android:name="io.sentry.auto-init" android:value="true" />
+        <meta-data android:name="io.sentry.session-tracking.enable" android:value="true" />
+        <meta-data android:name="io.sentry.session-tracking.timeout-interval-millis" android:value="30000" />
+
+        <meta-data
+                android:name="io.sentry.dsn"
+                android:value="https://8c4bbb45603f4ba6b810cb0be03e8be1@o386229.ingest.sentry.io/5220245" />
+
         <activity
                 android:name=".ui.launch.LauncherActivity"
                 android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize"
@@ -153,8 +161,10 @@
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
+
                 <data android:scheme="joshskills" />
                 <data android:scheme="joshskills://" />
                 <data
@@ -233,9 +243,6 @@
                 android:launchMode="singleTask"
                 android:parentActivityName=".ui.inbox.InboxActivity"
                 android:theme="@style/AppNoBarTheme">
-            <meta-data
-                    android:name="android.support.PARENT_ACTIVITY"
-                    android:value=".ui.inbox.InboxActivity" />
         </activity>
         <activity
                 android:name=".ui.payment.PaymentActivity"
@@ -274,8 +281,8 @@
                 android:name=".ui.courseprogress.CourseProgressActivity"
                 android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize"
                 android:launchMode="singleTask"
-                android:windowSoftInputMode="stateAlwaysHidden"
-                android:theme="@style/AppNoBarTheme" />
+                android:theme="@style/AppNoBarTheme"
+                android:windowSoftInputMode="stateAlwaysHidden" />
 
         <receiver
                 android:name=".core.custom_ui.audioplayer.service.notification.JcPlayerNotificationReceiver"
