@@ -16,7 +16,6 @@ import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.notification.HAS_NOTIFICATION
 import com.joshtalks.joshskills.core.notification.NOTIFICATION_ID
-import com.joshtalks.joshskills.core.service.WorkMangerAdmin
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.service.EngagementNetworkHelper
@@ -51,7 +50,6 @@ abstract class BaseActivity : AppCompatActivity() {
         AppObjectController.screenHeight = displayMetrics.heightPixels
         AppObjectController.screenWidth = displayMetrics.widthPixels
         initUserForCrashlytics()
-        InstallReferralUtil.installReferrer(applicationContext)
         Branch.getInstance().setIdentity(PrefManager.getStringValue(USER_UNIQUE_ID))
     }
 
@@ -66,9 +64,6 @@ abstract class BaseActivity : AppCompatActivity() {
         val intent: Intent? = if (User.getInstance().token == null) {
             Intent(this, OnBoardActivity::class.java)
         } else {
-            AppObjectController.joshApplication.updateDeviceDetail()
-            AppObjectController.joshApplication.userActive()
-            WorkMangerAdmin.getUserReferralCodeWorker()
             getInboxActivityIntent()
         }
         return intent?.apply {
