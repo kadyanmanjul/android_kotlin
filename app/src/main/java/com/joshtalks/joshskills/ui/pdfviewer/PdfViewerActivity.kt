@@ -14,6 +14,7 @@ import android.view.WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
@@ -25,13 +26,17 @@ import es.voghdev.pdfviewpager.library.PDFViewPager
 import es.voghdev.pdfviewpager.library.RemotePDFViewPager
 import es.voghdev.pdfviewpager.library.adapter.PDFPagerAdapter
 import es.voghdev.pdfviewpager.library.remote.DownloadFile
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
-const val PDF_URL = "pdf_url"
+const val PDF_ID = "pdf_id"
 const val COURSE_NAME = "course_name"
 
 class PdfViewerActivity : BaseActivity(), DownloadFile.Listener {
     private lateinit var conversationBinding: ActivityPdfViewerBinding
-    private lateinit var pdfObject: PdfType
+    private var pdfObject: PdfType? = null
+
     private var pdfViewPager: PDFViewPager? = null
     private var gestureDetector: GestureDetector? = null
     private var uiHandler = Handler(Looper.getMainLooper())
@@ -41,7 +46,6 @@ class PdfViewerActivity : BaseActivity(), DownloadFile.Listener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         conversationBinding = DataBindingUtil.setContentView(this, R.layout.activity_pdf_viewer)
-        pdfObject = intent.getParcelableExtra(PDF_URL) as PdfType
         setToolbar()
         showPdf()
     }
@@ -92,25 +96,43 @@ class PdfViewerActivity : BaseActivity(), DownloadFile.Listener {
 
 
     private fun showPdf() {
-        if (pdfObject.downloadedLocalPath.isNullOrEmpty()) {
-            remotePDFViewPager = RemotePDFViewPager(applicationContext, pdfObject.url, this)
-            // Disable clip to padding
-            // sets a margin b/w individual pages to ensure that there is a gap b/w them
-            remotePDFViewPager?.pageMargin = 20
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                pdfObject =
+                    AppObjectController.appDatabase.chatDao()
+                        .getPdfById(intent.getStringExtra(PDF_ID))
+                CoroutineScope(Dispatchers.Main).launch {
+                    if (pdfObject?.downloadedLocalPath.isNullOrEmpty()) {
+                        remotePDFViewPager = RemotePDFViewPager(
+                            applicationContext,
+                            pdfObject?.url,
+                            this@PdfViewerActivity
+                        )
+                        remotePDFViewPager?.pageMargin = 20
 
-        } else {
-            val pdfViewPager = PDFViewPager(applicationContext, pdfObject.downloadedLocalPath)
-            pdfViewPager.pageMargin = 20
-            conversationBinding.remotePdfRoot.addView(pdfViewPager)
+                    } else {
+                        val pdfViewPager =
+                            PDFViewPager(applicationContext, pdfObject?.downloadedLocalPath)
+                        pdfViewPager.pageMargin = 20
+                        conversationBinding.remotePdfRoot.addView(pdfViewPager)
 
+                    }
+                    AppAnalytics.create(AnalyticsEvent.PDF_OPENED.NAME)
+                        .addParam("URL", pdfObject?.url)
+                        .push()
+                }
+            } catch (ex: Exception) {
+            }
         }
-        AppAnalytics.create(AnalyticsEvent.PDF_OPENED.NAME).addParam("URL", pdfObject.url).push()
+
 
     }
 
     override fun onPause() {
         super.onPause()
-        EngagementNetworkHelper.engagePdfApi(PdfEngage(pdfObject.id, pdfObject.totalView))
+        pdfObject?.run {
+            EngagementNetworkHelper.engagePdfApi(PdfEngage(this.id, this.totalView))
+        }
         uiHandler.removeCallbacksAndMessages(null)
     }
 
@@ -132,15 +154,15 @@ class PdfViewerActivity : BaseActivity(), DownloadFile.Listener {
     companion object {
         fun startPdfActivity(
             context: Context,
-            pdfUrl: PdfType,
+            pdfId: String,
             courseName: String
         ) {
-            val intent = Intent(context, PdfViewerActivity::class.java).apply {
-
+            Intent(context, PdfViewerActivity::class.java).apply {
+                putExtra(PDF_ID, pdfId)
+                putExtra(COURSE_NAME, courseName)
+            }.run {
+                context.startActivity(this)
             }
-            intent.putExtra(PDF_URL, pdfUrl)
-            intent.putExtra(COURSE_NAME, courseName)
-            context.startActivity(intent)
 
 
         }
