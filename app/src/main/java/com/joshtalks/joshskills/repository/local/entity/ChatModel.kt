@@ -4,7 +4,6 @@ import android.os.Parcelable
 import androidx.room.*
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
-import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.ConvectorForEngagement
@@ -14,7 +13,6 @@ import com.joshtalks.joshskills.util.RandomString
 import kotlinx.android.parcel.Parcelize
 import java.io.Serializable
 import java.util.*
-
 
 @Parcelize
 @Entity(tableName = "chat_table", indices = [Index(value = ["chat_id", "conversation_id"])])
@@ -87,7 +85,6 @@ data class ChatModel(
     @ColumnInfo(name = "message_time_in_milliSeconds")
     @SerializedName("createdmilisecond")
     var messageTimeInMilliSeconds: String = EMPTY
-
 
 ) : DataBaseClass(), Parcelable {
 
@@ -362,37 +359,35 @@ data class PracticeEngagement(
     )
 }
 
-@Parcelize
-open class DataBaseClass() :Parcelable {
+open class DataBaseClass(
+    @ColumnInfo
+    @Expose
+    var questionId: String = "",
 
     @ColumnInfo
     @Expose
-    var questionId: String = ""
+    var downloadStatus: DOWNLOAD_STATUS = DOWNLOAD_STATUS.DOWNLOADED,
 
     @ColumnInfo
     @Expose
-    var downloadStatus: DOWNLOAD_STATUS = DOWNLOAD_STATUS.DOWNLOADED
+    var downloadedLocalPath: String? = "",
 
     @ColumnInfo
     @Expose
-    var downloadedLocalPath: String? = ""
+    var lastDownloadStartTime: Long = 0,
 
     @ColumnInfo
     @Expose
-    var lastDownloadStartTime: Long = 0
-
-    @ColumnInfo
-    @Expose
-    var thumbnailUrl: String? = ""
+    var thumbnailUrl: String? = "",
 
     @Ignore
     @Expose
-    var isSelected: Boolean = false
+    var isSelected: Boolean = false,
 
     @Ignore
     @Expose
     var disable: Boolean = false
-}
+)
 
 
 @Dao
