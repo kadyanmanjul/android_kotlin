@@ -3,7 +3,6 @@ package com.joshtalks.joshskills.core
 import android.content.Context
 import android.os.RemoteException
 import android.text.TextUtils
-import android.util.Log
 import com.android.installreferrer.api.InstallReferrerClient
 import com.android.installreferrer.api.InstallReferrerStateListener
 import com.crashlytics.android.Crashlytics
@@ -14,6 +13,7 @@ import io.branch.referral.PrefHelper
 import org.threeten.bp.Instant
 import org.threeten.bp.ZoneOffset
 import org.threeten.bp.ZonedDateTime
+import timber.log.Timber
 import java.net.URLDecoder
 import java.util.*
 
@@ -104,7 +104,7 @@ object InstallReferralUtil {
                     }
                 })
             }
-            Log.e("JoshReferral", InstallReferrerModel.getPrefObject().toString())
+            Timber.tag("JoshReferral").e(InstallReferrerModel.getPrefObject().toString())
 
         } catch (ex: Exception) {
             ex.printStackTrace()
