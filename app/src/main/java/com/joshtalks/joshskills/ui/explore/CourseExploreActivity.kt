@@ -2,8 +2,6 @@ package com.joshtalks.joshskills.ui.explore
 
 import android.app.Activity
 import android.content.Intent
-import android.content.pm.ActivityInfo
-import android.os.Build
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.widget.AppCompatTextView
@@ -27,7 +25,7 @@ import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.ScreenEngagementModel
 import com.joshtalks.joshskills.repository.server.CourseExploreModel
-import com.joshtalks.joshskills.ui.inbox.REGISTER_NEW_COURSE_CODE
+import com.joshtalks.joshskills.ui.inbox.PAYMENT_FOR_COURSE_CODE
 import com.joshtalks.joshskills.ui.payment.PaymentActivity
 import com.joshtalks.joshskills.ui.sign_up_old.OnBoardActivity
 import com.joshtalks.joshskills.ui.view_holders.CourseExplorerViewHolder
@@ -41,7 +39,6 @@ import retrofit2.HttpException
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 import kotlin.collections.set
-
 
 const val COURSE_EXPLORER_SCREEN_NAME = "Course Explorer"
 const val USER_COURSES = "user_courses"
@@ -72,11 +69,6 @@ class CourseExploreActivity : CoreJoshActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        requestedOrientation = if (Build.VERSION.SDK_INT == 26) {
-            ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
-        } else {
-            ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-        }
         super.onCreate(savedInstanceState)
         courseExploreBinding =
             DataBindingUtil.setContentView(this, R.layout.activity_course_explore)
@@ -89,8 +81,7 @@ class CourseExploreActivity : CoreJoshActivity() {
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
-        loadCourses()
-
+        setIntent(intent)
     }
 
 
@@ -223,7 +214,7 @@ class CourseExploreActivity : CoreJoshActivity() {
                 .addParam("test_id", it.id?.toString()).push()
             BranchIOAnalytics.pushToBranch(BRANCH_STANDARD_EVENT.VIEW_ITEM, extras)
             AppObjectController.facebookEventLogger.logEvent(EVENT_NAME_VIEWED_CONTENT, params)
-            PaymentActivity.startPaymentActivity(this, REGISTER_NEW_COURSE_CODE, it)
+            PaymentActivity.startPaymentActivity(this, PAYMENT_FOR_COURSE_CODE, it)
         })
 
 
@@ -231,7 +222,7 @@ class CourseExploreActivity : CoreJoshActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == REGISTER_NEW_COURSE_CODE) {
+        if (requestCode == PAYMENT_FOR_COURSE_CODE) {
             if (resultCode == Activity.RESULT_OK) {
                 val resultIntent = Intent()
                 setResult(Activity.RESULT_OK, resultIntent)
@@ -261,7 +252,7 @@ class CourseExploreActivity : CoreJoshActivity() {
     private fun onCancelResult() {
         val resultIntent = Intent()
         setResult(Activity.RESULT_CANCELED, resultIntent)
-        finish()
+        this.finish()
     }
 
 }
