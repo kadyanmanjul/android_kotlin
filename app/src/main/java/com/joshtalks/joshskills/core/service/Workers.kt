@@ -13,11 +13,12 @@ import com.google.firebase.database.*
 import com.google.firebase.iid.FirebaseInstanceId
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
-import com.joshtalks.joshskills.core.notification.FCMTokenManager
 import com.joshtalks.joshskills.core.notification.FCM_TOKEN
+import com.joshtalks.joshskills.repository.local.DatabaseUtils
 import com.joshtalks.joshskills.repository.local.model.*
 import com.joshtalks.joshskills.repository.server.MessageStatusRequest
 import com.joshtalks.joshskills.repository.service.NetworkRequestHelper
+import com.joshtalks.joshskills.repository.service.SyncChatService
 import io.branch.referral.Branch
 import retrofit2.HttpException
 import java.util.*
@@ -31,16 +32,14 @@ class AppRunRequiredTaskWorker(context: Context, workerParams: WorkerParameters)
     CoroutineWorker(context, workerParams) {
     override suspend fun doWork(): Result {
         AppAnalytics.flush()
-        // Branch.getInstance(AppObjectController.joshApplication).resetUserSession()
         AppObjectController.facebookEventLogger.flush()
         AppObjectController.firebaseAnalytics.resetAnalyticsData()
-
         AppObjectController.getFetchObject().awaitFinish()
         AppObjectController.facebookEventLogger.logEvent(AppEventsConstants.EVENT_NAME_ACTIVATED_APP)
         WorkMangerAdmin.deviceIdGenerateWorker()
         WorkMangerAdmin.readMessageUpdating()
         WorkMangerAdmin.mappingGIDWithMentor()
-        FCMTokenManager.pushToken()
+        WorkMangerAdmin.pushTokenToServer()
         return Result.success()
     }
 }
@@ -360,7 +359,6 @@ class RegisterUserGId(context: Context, private val workerParams: WorkerParamete
 class RefreshFCMTokenWorker(context: Context, private val workerParams: WorkerParameters) :
     CoroutineWorker(context, workerParams) {
     override suspend fun doWork(): Result {
-
         FirebaseInstanceId.getInstance().instanceId
             .addOnCompleteListener(OnCompleteListener { task ->
                 if (!task.isSuccessful) {
@@ -369,7 +367,7 @@ class RefreshFCMTokenWorker(context: Context, private val workerParams: WorkerPa
                 }
                 task.result?.token?.run {
                     PrefManager.put(FCM_TOKEN, this)
-                    FCMTokenManager.pushToken()
+                    WorkMangerAdmin.pushTokenToServer()
                 }
             })
         return Result.success()
@@ -423,11 +421,76 @@ class MappingGaIDWithMentor(var context: Context, workerParams: WorkerParameters
 }
 
 
+class UploadFCMTokenOnServer(context: Context, workerParams: WorkerParameters) :
+    CoroutineWorker(context, workerParams) {
+    override suspend fun doWork(): Result {
+        try {
+            val token = PrefManager.getStringValue(FCM_TOKEN)
+            if (token.isEmpty())
+                return Result.success()
+            val data = mutableMapOf(
+                "registration_id" to token,
+                "name" to Utils.getDeviceName(),
+                "device_id" to Utils.getDeviceId(),
+                "active" to "true",
+                "type" to "android"
+            )
+            if (Mentor.getInstance().hasId()) {
+                data["user_id"] = Mentor.getInstance().getId()
+
+            }
+            AppObjectController.signUpNetworkService.uploadFCMToken(data).await()
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+        }
+        return Result.success()
+    }
+}
+
+
+class WorkerAfterLoginInApp(context: Context, workerParams: WorkerParameters) :
+    CoroutineWorker(context, workerParams) {
+    override suspend fun doWork(): Result {
+        InstallReferralUtil.installReferrer(applicationContext)
+        DatabaseUtils.updateUserMessageSeen()
+        AppObjectController.clearDownloadMangerCallback()
+        AppAnalytics.updateUser()
+        AppObjectController.joshApplication.updateDeviceDetail()
+        AppObjectController.joshApplication.userActive()
+        WorkMangerAdmin.installReferrerWorker()
+        WorkMangerAdmin.getUserReferralCodeWorker()
+        SyncChatService.syncChatWithServer()
+        WorkMangerAdmin.syncVideoEngage()
+
+        return Result.success()
+    }
+}
+
+
+class SyncEngageVideo(context: Context, workerParams: WorkerParameters) :
+    CoroutineWorker(context, workerParams) {
+    override suspend fun doWork(): Result {
+
+        val syncEngageVideoList = mutableListOf<Long>()
+        val chatIdList = AppObjectController.appDatabase.videoEngageDao().getAllUnSyncVideo()
+        if (chatIdList.isNullOrEmpty().not()) {
+            chatIdList.forEach {
+                try {
+                    AppObjectController.chatNetworkService.engageVideoApiV2(it)
+                    syncEngageVideoList.add(it.id)
+                } catch (ex: Exception) {
+                }
+            }
+            AppObjectController.appDatabase.videoEngageDao().deleteVideos(syncEngageVideoList)
+        }
+
+        return Result.success()
+    }
+}
+
+
 fun getGoogleAdId(context: Context): String {
-    MobileAds.initialize(
-        context,
-        context.getString(com.joshtalks.joshskills.R.string.ads_id)
-    )
+    MobileAds.initialize(context)
     val adInfo = AdvertisingIdClient.getAdvertisingIdInfo(context)
     return adInfo.id
 }
