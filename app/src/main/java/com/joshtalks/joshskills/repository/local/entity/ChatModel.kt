@@ -361,7 +361,9 @@ data class PracticeEngagement(
         duration = null
     )
 }
-open class DataBaseClass  {
+
+@Parcelize
+open class DataBaseClass() :Parcelable {
 
     @ColumnInfo
     @Expose
@@ -631,6 +633,10 @@ interface ChatDao {
             getUpdatedChatObjectViaId(question.chatId)
         }
     }
+
+    @Query("SELECT * FROM  PdfTable  WHERE id= :pdfId")
+    suspend fun getPdfById(pdfId: String): PdfType
+
 
 }
 
