@@ -27,6 +27,8 @@ import com.joshtalks.joshskills.ui.profile.SOURCE_IMAGE
 import com.joshtalks.joshskills.ui.sign_up_old.OnBoardActivity
 import io.branch.referral.Branch
 import io.github.inflationx.viewpump.ViewPumpContextWrapper
+import io.sentry.core.Sentry
+
 
 const val HELP_ACTIVITY_REQUEST_CODE = 9010
 
@@ -51,6 +53,7 @@ abstract class BaseActivity : AppCompatActivity() {
         AppObjectController.screenWidth = displayMetrics.widthPixels
         initUserForCrashlytics()
         Branch.getInstance().setIdentity(PrefManager.getStringValue(USER_UNIQUE_ID))
+        setupSentryUser()
     }
 
     fun openHelpActivity() {
@@ -118,6 +121,17 @@ abstract class BaseActivity : AppCompatActivity() {
                 )
 
         } catch (ex: Exception) {
+        }
+    }
+
+    fun setupSentryUser() {
+        try {
+            val user = io.sentry.core.protocol.User()
+            user.id = User.getInstance().phoneNumber
+            user.username = User.getInstance().username
+            Sentry.setUser(user)
+        } catch (ex: Exception) {
+            Sentry.captureException(ex)
         }
     }
 
