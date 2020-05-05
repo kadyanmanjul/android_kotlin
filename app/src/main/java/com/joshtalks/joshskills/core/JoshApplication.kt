@@ -17,6 +17,8 @@ import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.UpdateDeviceRequest
 import io.branch.referral.Branch
 import io.branch.referral.BranchApp
+import io.sentry.core.Sentry
+import io.sentry.core.SentryLevel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -44,6 +46,8 @@ class JoshApplication : BranchApp(), LifecycleObserver, Configuration.Provider {
             Branch.enableSimulateInstalls()
             Branch.enableTestMode()
             Timber.plant(Timber.DebugTree())
+            Sentry.setLevel(SentryLevel.ERROR)
+
         }
         AppObjectController.init(this)
     }
