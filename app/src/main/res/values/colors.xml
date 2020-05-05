@@ -66,5 +66,7 @@
     <color name="wh_f4">#f4f4f4</color>
     <color name="wh_fc">#FCFDF3</color>
 
+    <color name="feedback_submit_background">#8c52ff</color>
+
 
 </resources>
