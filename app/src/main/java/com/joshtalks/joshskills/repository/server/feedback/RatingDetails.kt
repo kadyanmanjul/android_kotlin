@@ -10,4 +10,16 @@ data class RatingDetails(
     val keywords: String,
     @SerializedName("rating")
     val rating: Int
+) {
+    val keywordsList: List<String>
+        get() {
+            return keywords.split(",")
+        }
+}
+
+data class RatingModel(
+    var label: String,
+    var rating: Int,
+    var click: Boolean,
+    var enable: Boolean
 )
