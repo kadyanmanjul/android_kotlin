@@ -461,7 +461,7 @@ class WorkerAfterLoginInApp(context: Context, workerParams: WorkerParameters) :
         WorkMangerAdmin.getUserReferralCodeWorker()
         SyncChatService.syncChatWithServer()
         WorkMangerAdmin.syncVideoEngage()
-
+        WorkMangerAdmin.fetchFeedbackRating()
         return Result.success()
     }
 }
