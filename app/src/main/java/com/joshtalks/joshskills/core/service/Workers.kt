@@ -489,6 +489,20 @@ class SyncEngageVideo(context: Context, workerParams: WorkerParameters) :
 }
 
 
+class FeedbackRatingWorker(context: Context, workerParams: WorkerParameters) :
+    CoroutineWorker(context, workerParams) {
+    override suspend fun doWork(): Result {
+        try {
+            val response = AppObjectController.commonNetworkService.getFeedbackRatingDetailsAsync()
+            PrefManager.put(RATING_DETAILS_KEY, AppObjectController.gsonMapper.toJson(response))
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+        }
+        return Result.success()
+    }
+}
+
+
 fun getGoogleAdId(context: Context): String {
     MobileAds.initialize(context)
     val adInfo = AdvertisingIdClient.getAdvertisingIdInfo(context)
