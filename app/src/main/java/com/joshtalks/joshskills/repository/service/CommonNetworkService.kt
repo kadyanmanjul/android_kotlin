@@ -41,7 +41,7 @@ interface CommonNetworkService {
     suspend fun certificateGenerate(@Body requestCertificateGenerate: RequestCertificateGenerate): Response<CertificateDetail>
 
     @GET("$DIR/feedback/rating/details/")
-    suspend fun getFeedbackRatingDetailsAsync(): Deferred<Response<List<RatingDetails>>>
+    suspend fun getFeedbackRatingDetailsAsync(): List<RatingDetails>
 
 
 }
