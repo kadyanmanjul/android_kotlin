@@ -113,6 +113,7 @@ abstract class BaseActivity : AppCompatActivity() {
 
     private fun initUserForCrashlytics() {
         try {
+            Sentry.captureMessage("Init Crashlytics")
             Crashlytics.getInstance().core.setUserName(User.getInstance().firstName)
             Crashlytics.getInstance().core.setUserEmail(User.getInstance().email)
             Crashlytics.getInstance()
@@ -121,11 +122,13 @@ abstract class BaseActivity : AppCompatActivity() {
                 )
 
         } catch (ex: Exception) {
+            Sentry.captureException(ex)
         }
     }
 
-    fun setupSentryUser() {
+    private fun setupSentryUser() {
         try {
+            Sentry.captureMessage("Init Sentry")
             val user = io.sentry.core.protocol.User()
             user.id = User.getInstance().phoneNumber
             user.username = User.getInstance().username
