@@ -151,9 +151,14 @@ object WorkMangerAdmin {
             .enqueue(OneTimeWorkRequestBuilder<WorkerAfterLoginInApp>().build())
     }
 
-    fun syncVideoEngage(){
+    fun syncVideoEngage() {
         WorkManager.getInstance(AppObjectController.joshApplication)
             .enqueue(OneTimeWorkRequestBuilder<SyncEngageVideo>().build())
+    }
+
+    fun fetchFeedbackRating() {
+        WorkManager.getInstance(AppObjectController.joshApplication)
+            .enqueue(OneTimeWorkRequestBuilder<FeedbackRatingWorker>().build())
     }
 
 }
