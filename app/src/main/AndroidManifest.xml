@@ -141,9 +141,24 @@
                 android:name="CLEVERTAP_BACKGROUND_SYNC"
                 android:value="1" />
 
-        <meta-data android:name="io.sentry.auto-init" android:value="true" />
-        <meta-data android:name="io.sentry.session-tracking.enable" android:value="true" />
-        <meta-data android:name="io.sentry.session-tracking.timeout-interval-millis" android:value="30000" />
+        <meta-data
+                android:name="io.sentry.auto-init"
+                android:value="true" />
+        <meta-data
+                android:name="io.sentry.session-tracking.enable"
+                android:value="true" />
+        <meta-data
+                android:name="io.sentry.session-tracking.timeout-interval-millis"
+                android:value="30000" />
+        <meta-data
+                android:name="io.sentry.ndk.enable"
+                android:value="false" />
+        <meta-data
+                android:name="io.sentry.anr.enable"
+                android:value="true" />
+        <meta-data
+                android:name="io.sentry.anr.timeout-interval-mills"
+                android:value="3000" />
 
         <meta-data
                 android:name="io.sentry.dsn"
