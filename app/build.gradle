@@ -4,6 +4,7 @@ apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'io.fabric'
 apply plugin: 'com.google.gms.google-services'
+apply plugin: 'io.sentry.android.gradle'
 
 
 android {
@@ -120,6 +121,13 @@ android {
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    sentry {
+        autoProguardConfig true
+        autoUpload true
+        uploadNativeSymbols false
+        includeNativeSources false
     }
 
 }
@@ -283,9 +291,11 @@ dependencies {
     implementation 'com.mikhaellopez:circularprogressbar:3.0.3'
 
     implementation 'com.google.android:flexbox:2.0.1'
+    implementation 'io.sentry:sentry-android-core:2.0.3'
 
-    implementation 'io.sentry:sentry-android:2.0.3'
-    //implementation 'com.github.GetStream:stream-chat-android:4.0.13'
+//  implementation 'io.sentry:sentry-android:2.0.3'
+//  implementation "com.truecaller.android.sdk:truecaller-sdk:2.0.0"
+//  implementation 'com.github.GetStream:stream-chat-android:4.0.13'
 
 
 
