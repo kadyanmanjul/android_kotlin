@@ -10,8 +10,8 @@ import android.view.animation.ScaleAnimation
 import android.widget.FrameLayout
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
+import androidx.lifecycle.ViewModelProvider
 import com.google.android.flexbox.FlexDirection
-import com.google.android.flexbox.FlexboxItemDecoration
 import com.google.android.flexbox.FlexboxLayoutManager
 import com.google.android.flexbox.JustifyContent
 import com.google.gson.reflect.TypeToken
@@ -32,9 +32,14 @@ class FeedbackFragment : DialogFragment(), FeedbackOptionAdapter.OnFeedbackItemL
     private var compositeDisposable = CompositeDisposable()
     private val ratingDetailsTypeToken: Type = object : TypeToken<List<RatingDetails>>() {}.type
     private var ratingDetailsList: List<RatingDetails> = emptyList()
+    private lateinit var viewModel: FeedbackViewModel
+    private var issueLabel: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        viewModel = activity?.run { ViewModelProvider(this).get(FeedbackViewModel::class.java) }
+            ?: throw Exception("Invalid Activity")
+
         setStyle(STYLE_NO_FRAME, R.style.full_dialog)
     }
 
@@ -49,7 +54,7 @@ class FeedbackFragment : DialogFragment(), FeedbackOptionAdapter.OnFeedbackItemL
             )
             dialog.setCanceledOnTouchOutside(true)
             dialog.setCancelable(true)
-            dialog.window?.setBackgroundDrawableResource(android.R.color.white);
+            dialog.window?.setBackgroundDrawableResource(android.R.color.white)
         }
     }
 
@@ -130,7 +135,7 @@ class FeedbackFragment : DialogFragment(), FeedbackOptionAdapter.OnFeedbackItemL
             0.5f
         )
         scaleAnimation.interpolator = AccelerateDecelerateInterpolator()
-        scaleAnimation.startOffset=500
+        scaleAnimation.startOffset = 500
         scaleAnimation.duration = 750
         scaleAnimation.fillAfter = true
         scaleAnimation.setAnimationListener(object : Animation.AnimationListener {
@@ -148,22 +153,25 @@ class FeedbackFragment : DialogFragment(), FeedbackOptionAdapter.OnFeedbackItemL
         binding.successIv.startAnimation(scaleAnimation)
     }
 
+    fun submitFeedback() {
+        if (issueLabel.isNullOrEmpty()) {
+            return
+        }
 
-    companion object {
-
-        @JvmStatic
-        fun newInstance() =
-            FeedbackFragment().apply {
-            }
     }
 
     override fun onSelectOption(label: String) {
+        issueLabel = label
 
     }
 
     override fun onWriteComment() {
-        binding.etFeedback.visibility=View.VISIBLE
-        binding.ratingOptionRv.visibility=View.GONE
+        binding.etFeedback.visibility = View.VISIBLE
+        binding.ratingOptionRv.visibility = View.GONE
+    }
+
+    companion object {
+        fun newInstance() = FeedbackFragment()
     }
 }
 
