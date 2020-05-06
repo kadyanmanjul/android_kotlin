@@ -779,7 +779,7 @@ class JcPlayerView : LinearLayout, View.OnClickListener, SeekBar.OnSeekBarChange
                 cAudioObj = JcAudio.createFromFilePath(message.downloadedLocalPath!!)
                 isMedia = true
                 this.duration =
-                    Utils.getDurationOfMedia(context, message.downloadedLocalPath!!).toInt()
+                    Utils.getDurationOfMedia(context, message.downloadedLocalPath!!)?.toInt()?:0
             }
 
         } catch (e: Exception) {

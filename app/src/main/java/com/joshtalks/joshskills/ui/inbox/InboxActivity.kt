@@ -240,7 +240,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
     }
 
     private fun addCourseInRecyclerView(items: List<InboxEntity>?) {
-        if (items.isNullOrEmpty() || items.size == recycler_view_inbox.viewResolverCount) {
+        if (items.isNullOrEmpty()) {
             return
         }
         recycler_view_inbox.removeAllViews()
@@ -415,39 +415,33 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
 
     private fun addCourseExploreView() {
         hintFirstTime.dismiss()
-      //  offerIn7DaysHint.dismiss()
-        if (AppObjectController.getFirebaseRemoteConfig().getBoolean("course_explore_flag")) {
-            findMoreLayout.visibility = View.VISIBLE
-            if (PrefManager.getBoolValue(FIRST_TIME_OFFER_SHOW).not()) {
-                PrefManager.put(FIRST_TIME_OFFER_SHOW, true)
-                compositeDisposable.add(AppObjectController.appDatabase.courseDao()
-                    .isUserOldThen7Days()
-                    .concatMap {
-                        val (flag, _) = Utils.isUser7DaysOld(it.courseCreatedDate)
-                        return@concatMap Maybe.just(flag)
-                    }
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(
-                        { value ->
-                            if (value) {
-                                if (offerIn7DaysHint.isShowing.not() && isFinishing.not()) {
-                                    val root = findViewById<View>(R.id.find_more)
-                                    hintFirstTime.showAlignBottom(root)
-                                }
+        //  offerIn7DaysHint.dismiss()
+        findMoreLayout.visibility = View.VISIBLE
+        if (PrefManager.getBoolValue(FIRST_TIME_OFFER_SHOW).not()) {
+            PrefManager.put(FIRST_TIME_OFFER_SHOW, true)
+            compositeDisposable.add(AppObjectController.appDatabase.courseDao()
+                .isUserOldThen7Days()
+                .concatMap {
+                    val (flag, _) = Utils.isUser7DaysOld(it.courseCreatedDate)
+                    return@concatMap Maybe.just(flag)
+                }
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                    { value ->
+                        if (value) {
+                            if (offerIn7DaysHint.isShowing.not() && isFinishing.not()) {
+                                val root = findViewById<View>(R.id.find_more)
+                                hintFirstTime.showAlignBottom(root)
                             }
-                        },
-                        { error ->
-                            error.printStackTrace()
                         }
-                    ))
-            } else {
-                attachOfferHintView()
-            }
-
+                    },
+                    { error ->
+                        error.printStackTrace()
+                    }
+                ))
         } else {
-            findMoreLayout.visibility = View.GONE
-            addEmptyView()
+            attachOfferHintView()
         }
         userProfileActivityNotExist()
     }

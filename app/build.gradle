@@ -12,8 +12,8 @@ android {
         applicationId "com.joshtalks.joshskills"
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 82
-        versionName "1.0.82"
+        versionCode 83
+        versionName "1.0.83"
         vectorDrawables.useSupportLibrary true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField "String", "CLIENT_TOKEN", "\"Ctt75ss5IxyHgBJb48diBbHUXIQ1VANCYRykjdcj\""
@@ -287,12 +287,6 @@ dependencies {
 
 
     //https://github.com/stepstone-tech/android-material-app-rating
-
-    //huawei support branch
-    implementation 'com.huawei.hms:ads-identifier:3.4.28.305'
-
-
-
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.2.0'

@@ -342,6 +342,12 @@ class CourseProgressActivity : CoreJoshActivity(), OnDismissDialog,
                         R.color.wh_f4
                     )
                 )
+                binding.mainView.setBackgroundColor(
+                    ContextCompat.getColor(
+                        applicationContext,
+                        R.color.wh_f4
+                    )
+                )
                 binding.subRootView2.visibility = View.VISIBLE
             })
             viewModel.getReceivedCourseContent(inboxEntity.conversation_id)

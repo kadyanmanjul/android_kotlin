@@ -336,7 +336,7 @@ class AudioPlayerViewHolder(activityRef: WeakReference<FragmentActivity>, messag
                     duration = Utils.getDurationOfMedia(
                         activityRef.get()!!,
                         message.downloadedLocalPath!!
-                    ).toInt()
+                    )?.toInt()?:0
                 } else if (message.downloadStatus === DOWNLOAD_STATUS.DOWNLOADING) {
                     mediaDownloading()
                     downloadStart(message.url!!)
@@ -486,7 +486,7 @@ class AudioPlayerViewHolder(activityRef: WeakReference<FragmentActivity>, messag
                     Utils.getDurationOfMedia(
                         activityRef.get()!!,
                         message.downloadedLocalPath!!
-                    ).toInt(),
+                    )?.toInt()?:0,
                     0,
                     true
                 )

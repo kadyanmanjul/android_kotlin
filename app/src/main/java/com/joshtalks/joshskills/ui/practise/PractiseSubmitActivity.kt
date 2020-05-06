@@ -523,7 +523,7 @@ class PractiseSubmitActivity : CoreJoshActivity() {
                             filePath = practiseEngagement?.localPath
                             binding.submitPractiseSeekbar.max =
                                 Utils.getDurationOfMedia(this@PractiseSubmitActivity, filePath!!)
-                                    .toInt()
+                                    ?.toInt()?:0
                         } else {
                             if (practiseEngagement?.duration != null) {
                                 binding.submitPractiseSeekbar.max = practiseEngagement.duration
@@ -803,7 +803,7 @@ class PractiseSubmitActivity : CoreJoshActivity() {
     private fun audioAttachmentInit() {
         binding.practiseSubmitLayout.visibility = VISIBLE
         binding.submitAudioViewContainer.visibility = VISIBLE
-        binding.submitPractiseSeekbar.max = Utils.getDurationOfMedia(this, filePath!!).toInt()
+        binding.submitPractiseSeekbar.max = Utils.getDurationOfMedia(this, filePath!!)?.toInt()?:0
         enableSubmitButton()
         scrollToEnd()
     }
@@ -1032,7 +1032,7 @@ class PractiseSubmitActivity : CoreJoshActivity() {
             val audioType = AudioType()
             audioType.audio_url = filePath!!
             audioType.downloadedLocalPath = filePath!!
-            audioType.duration = Utils.getDurationOfMedia(this, filePath!!).toInt()
+            audioType.duration = Utils.getDurationOfMedia(this, filePath!!)?.toInt()?:0
             audioType.id = Random.nextInt().toString()
 
             val state =
