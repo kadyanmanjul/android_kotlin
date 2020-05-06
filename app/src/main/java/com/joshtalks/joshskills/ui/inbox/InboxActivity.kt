@@ -87,7 +87,6 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
     private var inAppUpdateManager: InAppUpdateManager? = null
     private lateinit var earnIV: AppCompatImageView
     private lateinit var findMoreLayout: FrameLayout
-    private var findMoreVisible = true
     private val offerIn7DaysHint by lazy { BalloonFactory.offerIn7Days(this, this) }
     private val hintFirstTime by lazy {
         BalloonFactory.hintOfferFirstTime(this, this, object :
@@ -110,7 +109,6 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         checkAppUpdate()
         workInBackground()
         handelIntentAction()
-        addObserver()
     }
 
     private fun setToolbar() {
@@ -246,6 +244,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
     private fun addObserver() {
         compositeDisposable.add(
             RxBus2.listen(OpenCourseEventBus::class.java)
+                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
                     AppAnalytics.create(AnalyticsEvent.COURSE_SELECTED.NAME)
@@ -255,9 +254,12 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
                     it.printStackTrace()
                 })
         )
-        compositeDisposable.add(RxBus2.listen(ExploreCourseEventBus::class.java).subscribe {
-            openCourseExplorer()
-        })
+        compositeDisposable.add(RxBus2.listen(ExploreCourseEventBus::class.java)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                openCourseExplorer()
+            })
     }
 
     private fun openCourseExplorer() {
@@ -360,12 +362,11 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
 
     }
 
-
     override fun onResume() {
         super.onResume()
         Runtime.getRuntime().gc()
-        viewModel.getRegisterCourses()
         addObserver()
+        viewModel.getRegisterCourses()
     }
 
     override fun onDestroy() {
@@ -397,38 +398,34 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
 
     private fun addCourseExploreView() {
         hintFirstTime.dismiss()
-        offerIn7DaysHint.dismiss()
         if (AppObjectController.getFirebaseRemoteConfig().getBoolean("course_explore_flag")) {
             findMoreLayout.visibility = View.VISIBLE
-            if (findMoreVisible) {
-                findMoreVisible = false
-                if (PrefManager.getBoolValue(FIRST_TIME_OFFER_SHOW).not()) {
-                    PrefManager.put(FIRST_TIME_OFFER_SHOW, true)
-                    compositeDisposable.add(AppObjectController.appDatabase.courseDao()
-                        .isUserOldThen7Days()
-                        .concatMap {
-                            val (flag, _) = Utils.isUser7DaysOld(it.courseCreatedDate)
-                            return@concatMap Maybe.just(flag)
-                        }
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(
-                            { value ->
-                                if (value) {
-                                    if (offerIn7DaysHint.isShowing.not() && isFinishing.not()) {
-                                        val root = findViewById<View>(R.id.find_more)
-                                        //sub_root_viw.addView(hintFirstTime.getContentView())
-                                        hintFirstTime.showAlignBottom(root)
-                                    }
+            if (PrefManager.getBoolValue(FIRST_TIME_OFFER_SHOW).not()) {
+                PrefManager.put(FIRST_TIME_OFFER_SHOW, true)
+                compositeDisposable.add(AppObjectController.appDatabase.courseDao()
+                    .isUserOldThen7Days()
+                    .concatMap {
+                        val (flag, _) = Utils.isUser7DaysOld(it.courseCreatedDate)
+                        return@concatMap Maybe.just(flag)
+                    }
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(
+                        { value ->
+                            if (value) {
+                                if (hintFirstTime.isShowing.not() && isFinishing.not()) {
+                                    val root = findViewById<View>(R.id.find_more)
+                                    //sub_root_viw.addView(hintFirstTime.getContentView())
+                                    hintFirstTime.showAlignBottom(root)
                                 }
-                            },
-                            { error ->
-                                error.printStackTrace()
                             }
-                        ))
-                } else {
-                    attachOfferHintView()
-                }
+                        },
+                        { error ->
+                            error.printStackTrace()
+                        }
+                    ))
+            } else {
+                attachOfferHintView()
             }
         } else {
             findMoreLayout.visibility = View.GONE
