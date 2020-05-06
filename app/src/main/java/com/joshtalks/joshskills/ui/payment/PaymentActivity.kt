@@ -258,6 +258,8 @@ class PaymentActivity : CoreJoshActivity(),
             .text(getString(R.string.something_went_wrong)).cornerRadius(16)
             .textColor(ContextCompat.getColor(applicationContext, R.color.white))
             .length(Toast.LENGTH_LONG).solidBackground().show()
+        AppAnalytics.create(AnalyticsEvent.PAYMENT_FAILED.NAME).push()
+
     }
 
     @Synchronized

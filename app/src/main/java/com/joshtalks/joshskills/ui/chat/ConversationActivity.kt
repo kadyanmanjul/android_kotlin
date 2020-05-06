@@ -651,11 +651,11 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
         })
 
         conversationBinding.recordButton.setOnRecordClickListener {
-            sendTextTextMessage()
+            sendTextMessage()
         }
 
         conversationBinding.messageButton.setOnClickListener {
-            sendTextTextMessage()
+            sendTextMessage()
         }
 
         findViewById<View>(R.id.ll_audio).setOnClickListener {
@@ -764,7 +764,7 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
         }
     }
 
-    private fun sendTextTextMessage() {
+    private fun sendTextMessage() {
         if (conversationBinding.chatEdit.text.isNullOrEmpty()) {
             return
         }
@@ -776,7 +776,7 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
             ).show()
             return
         }
-        if (cMessageType == BASE_MESSAGE_TYPE.TX) {
+        if (cMessageType == BASE_MESSAGE_TYPE.TX) {        //TODO(FixMe) - Conditions Check at wrong place
             val tChatMessage =
                 TChatMessage(conversationBinding.chatEdit.text.toString())
             val cell = MessageBuilderFactory.getMessage(

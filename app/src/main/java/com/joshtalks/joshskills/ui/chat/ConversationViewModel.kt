@@ -90,7 +90,7 @@ class ConversationViewModel(application: Application, private var inboxEntity: I
                 getUserRecentChats()
             })
         val filter = IntentFilter("android.net.conn.CONNECTIVITY_CHANGE")
-        context.registerReceiver(broadCastForNetwork, filter)
+        context.registerReceiver(broadCastForNetwork, filter)       //TODO(FixMe) - ViewModel should not hold any reference of Context
     }
 
     inner class CheckConnectivity : BroadcastReceiver() {

@@ -74,9 +74,9 @@ import kotlinx.coroutines.launch
 import org.jetbrains.anko.collections.forEachWithIndex
 
 const val REGISTER_INFO_CODE = 2001
-const val COURSE_EXPLORER_CODE = 2002
+const val COURSE_EXPLORER_CODE = 2002               //TODO(FixMe) - Use of this RequestCode?
 const val COURSE_EXPLORER_WITHOUT_CODE = 2003
-const val REGISTER_NEW_COURSE_CODE = 2003
+const val REGISTER_NEW_COURSE_CODE = 2003           //TODO(FixMe) - Same request code
 const val REQ_CODE_VERSION_UPDATE = 530
 const val USER_DETAILS_CODE = 1001
 

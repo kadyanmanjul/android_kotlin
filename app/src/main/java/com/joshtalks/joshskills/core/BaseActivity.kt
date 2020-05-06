@@ -9,7 +9,6 @@ import android.provider.Settings
 import android.util.DisplayMetrics
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import com.android.installreferrer.api.InstallReferrerClient
 import com.crashlytics.android.Crashlytics
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
@@ -34,7 +33,6 @@ const val HELP_ACTIVITY_REQUEST_CODE = 9010
 abstract class BaseActivity : AppCompatActivity() {
 
     protected val TAG: String = javaClass.simpleName
-    private lateinit var referrerClient: InstallReferrerClient
 
     override fun attachBaseContext(newBase: Context?) {
         super.attachBaseContext(newBase?.let { ViewPumpContextWrapper.wrap(it) })

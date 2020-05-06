@@ -82,6 +82,7 @@ enum class AnalyticsEvent(val NAME: String) {
     RAZORPAY_SDK("Razorpay SDK"),
     PAYMENT_COMPLETED("Payment Completed"),
     PAYMENT_INITIATED("Payment Initiated"),
+    PAYMENT_FAILED("Payment Fail"),
 
     PRACTISE_OPENED("Practise Opened"),
     AUDIO_SUBMITTED("Audio Submitted"),
