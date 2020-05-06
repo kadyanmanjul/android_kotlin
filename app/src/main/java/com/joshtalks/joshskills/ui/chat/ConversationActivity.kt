@@ -927,7 +927,7 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
                 })
         )
         compositeDisposable.add(RxBus2.listen(PdfOpenEventBus::class.java).subscribe({
-            PdfViewerActivity.startPdfActivity(this, it.pdfObject, inboxEntity.course_name)
+            PdfViewerActivity.startPdfActivity(this, it.pdfObject.id, inboxEntity.course_name)
         }, {
             it.printStackTrace()
         }))

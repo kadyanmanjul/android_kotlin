@@ -380,7 +380,7 @@ class PractiseSubmitActivity : CoreJoshActivity() {
                         binding.imageView.setOnClickListener {
                             PdfViewerActivity.startPdfActivity(
                                 this@PractiseSubmitActivity,
-                                pdfType,
+                                pdfType.id,
                                 EMPTY
                             )
 

@@ -632,6 +632,10 @@ interface ChatDao {
         }
     }
 
+    @Query("SELECT * FROM  PdfTable  WHERE id= :pdfId")
+    suspend fun getPdfById(pdfId: String): PdfType
+
+
 }
 
 
