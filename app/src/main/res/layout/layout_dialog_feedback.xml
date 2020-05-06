@@ -194,6 +194,8 @@
                         android:textSize="@dimen/font_14"
                         app:cornerRadius="@dimen/_4sdp"
                         app:elevation="0dp"
+                        android:onClick="@{()->handler.submitFeedback()}"
+
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
