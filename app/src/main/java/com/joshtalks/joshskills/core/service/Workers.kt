@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.Worker
 import androidx.work.WorkerParameters
+import androidx.work.workDataOf
 import com.crashlytics.android.Crashlytics
 import com.facebook.appevents.AppEventsConstants
 import com.google.android.gms.ads.MobileAds
@@ -499,6 +500,31 @@ class FeedbackRatingWorker(context: Context, workerParams: WorkerParameters) :
             ex.printStackTrace()
         }
         return Result.success()
+    }
+}
+
+class FeedbackStatusForQuestionWorker(
+    context: Context,
+    private var workerParams: WorkerParameters
+) :
+    CoroutineWorker(context, workerParams) {
+    override suspend fun doWork(): Result {
+        try {
+            val questionId = workerParams.inputData.getString("question_id")
+            if (questionId.isNullOrEmpty().not()) {
+                val response =
+                    AppObjectController.commonNetworkService.getQuestionFeedbackStatus(questionId!!)
+                if (response.isSuccessful) {
+                    AppObjectController.appDatabase.chatDao()
+                        .updateFeedbackStatus(questionId, response.body()?.feedbackRequire)
+                }
+            }
+            val outputData = workDataOf("question_id" to questionId, "status" to 1)
+            return Result.success(outputData)
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+        }
+        return Result.failure()
     }
 }
 
