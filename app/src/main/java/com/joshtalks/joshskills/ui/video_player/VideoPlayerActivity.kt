@@ -37,7 +37,7 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener {
             videoTitle: String
         ) {
             val intent = Intent(activity, VideoPlayerActivity::class.java)
-            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK  or Intent.FLAG_ACTIVITY_CLEAR_TOP
+            intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
             intent.putExtra(VIDEO_OBJECT, chatModel)
             intent.putExtra(COURSE_NAME, videoTitle)
             activity.startActivityForResult(intent, VIDEO_OPEN_REQUEST_CODE)
@@ -89,6 +89,7 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener {
         if (intent.hasExtra(VIDEO_OBJECT)) {
             chatObject = intent.getParcelableExtra(VIDEO_OBJECT) as ChatModel
             videoId = chatObject.question?.videoList?.getOrNull(0)?.id
+            feedbackEngagementStatus(chatObject.question)
 
             if (chatObject.url != null) {
                 if (chatObject.downloadedLocalPath.isNullOrEmpty()) {
@@ -209,10 +210,12 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener {
     }
 
     fun setResult() {
-        if (videoViewGraphList.isNotEmpty() || graph != null) {
-            val resultIntent = Intent()
-            setResult(Activity.RESULT_OK, resultIntent)
-        }
+        // if (videoViewGraphList.isNotEmpty() || graph != null) {
+        val resultIntent = Intent()
+        resultIntent.putExtra(VIDEO_OBJECT, chatObject)
+        setResult(Activity.RESULT_OK, resultIntent)
+
+        //}
     }
 
 }
