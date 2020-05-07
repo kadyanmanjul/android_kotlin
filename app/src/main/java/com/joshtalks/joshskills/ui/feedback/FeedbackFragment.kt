@@ -25,6 +25,7 @@ import com.joshtalks.joshskills.repository.server.feedback.RatingModel
 import io.reactivex.disposables.CompositeDisposable
 import java.lang.reflect.Type
 
+const val QUESTION_ID = "question_id"
 
 class FeedbackFragment : DialogFragment(), FeedbackOptionAdapter.OnFeedbackItemListener {
 
@@ -34,12 +35,16 @@ class FeedbackFragment : DialogFragment(), FeedbackOptionAdapter.OnFeedbackItemL
     private var ratingDetailsList: List<RatingDetails> = emptyList()
     private lateinit var viewModel: FeedbackViewModel
     private var issueLabel: String? = null
+    private var questionId: String? = null
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel = activity?.run { ViewModelProvider(this).get(FeedbackViewModel::class.java) }
             ?: throw Exception("Invalid Activity")
-
+        arguments?.let {
+            questionId = it.getString(QUESTION_ID)
+        }
         setStyle(STYLE_NO_FRAME, R.style.full_dialog)
     }
 
@@ -82,14 +87,14 @@ class FeedbackFragment : DialogFragment(), FeedbackOptionAdapter.OnFeedbackItemL
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         successIvShow()
-        binding.feedbackRatingBar.setOnRatingBarChangeListener { ratingBar, rating, fromUser ->
+        binding.feedbackRatingBar.setOnRatingBarChangeListener { ratingBar, rating, _ ->
             if (rating < 1.0f) {
                 ratingBar.rating = 1.0f
+                return@setOnRatingBarChangeListener
             }
             setupRatingOptions(rating.toInt())
         }
         setUpRatingBar()
-
     }
 
     private fun setUpRatingBar() {
@@ -157,7 +162,12 @@ class FeedbackFragment : DialogFragment(), FeedbackOptionAdapter.OnFeedbackItemL
         if (issueLabel.isNullOrEmpty()) {
             return
         }
-
+        viewModel.submitFeedback(
+            questionId!!,
+            binding.feedbackRatingBar.rating,
+            issueLabel!!,
+            binding.etFeedback.text.toString()
+        )
     }
 
     override fun onSelectOption(label: String) {
@@ -171,7 +181,11 @@ class FeedbackFragment : DialogFragment(), FeedbackOptionAdapter.OnFeedbackItemL
     }
 
     companion object {
-        fun newInstance() = FeedbackFragment()
+        fun newInstance(questionId: String) = FeedbackFragment().apply {
+            arguments = Bundle().apply {
+                putString(QUESTION_ID, questionId)
+            }
+        }
     }
 }
 
