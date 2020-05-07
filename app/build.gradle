@@ -5,7 +5,7 @@ apply plugin: 'kotlin-kapt'
 apply plugin: 'io.fabric'
 apply plugin: 'com.google.gms.google-services'
 apply plugin: 'io.sentry.android.gradle'
-
+//apply plugin: 'newrelic'
 
 android {
     compileSdkVersion 29
@@ -13,8 +13,8 @@ android {
         applicationId "com.joshtalks.joshskills"
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 82
-        versionName "1.0.82"
+        versionCode 84
+        versionName "1.0.84Beta"
         vectorDrawables.useSupportLibrary true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField "String", "CLIENT_TOKEN", "\"Ctt75ss5IxyHgBJb48diBbHUXIQ1VANCYRykjdcj\""
@@ -28,6 +28,9 @@ android {
         }
         resConfigs "en"
         multiDexEnabled true
+        dataBinding {
+            enabled = true
+        }
     }
     signingConfigs {
         debug {
@@ -66,9 +69,9 @@ android {
             signingConfig signingConfigs.release
         }
     }
-    buildFeatures {
+   /* buildFeatures {
         dataBinding = true
-    }
+    }*/
     kotlinOptions {
         jvmTarget = "1.8"
     }
