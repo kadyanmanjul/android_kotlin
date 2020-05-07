@@ -60,11 +60,16 @@
 
     <entry>
         <key>CERTIFICATE_URL</key>
-        <value>https://s3.ap-south-1.amazonaws.com/www.static.skills.com/Icons/Certificate.jpg</value>
+        <value>https://s3.ap-south-1.amazonaws.com/www.static.skills.com/Icons/Certificate.jpg
+        </value>
     </entry>
     <entry>
         <key>COURSE_COMPLETED_PERCENTAGE</key>
         <value>70%</value>
+    </entry>
+    <entry>
+        <key>MINIMUM_FEEDBACK_IN_A_DAY_COUNT</key>
+        <value>2</value>
     </entry>
 
 
