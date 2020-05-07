@@ -157,6 +157,7 @@ class PractiseSubmitActivity : CoreJoshActivity() {
                 setViewUserSubmitAnswer()
             }
         }
+        feedbackEngagementStatus(chatModel.question)
     }
 
 
