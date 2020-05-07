@@ -18,6 +18,7 @@ android {
         vectorDrawables.useSupportLibrary true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField "String", "CLIENT_TOKEN", "\"Ctt75ss5IxyHgBJb48diBbHUXIQ1VANCYRykjdcj\""
+        buildConfigField "String", "NEW_RELIC_TOKEN", "\"AAd8bc1e3740f51d8d131e42fff378fa2168243e00-NRMA\""
         javaCompileOptions {
             annotationProcessorOptions {
                 arguments = [
