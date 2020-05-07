@@ -6,6 +6,7 @@ import com.joshtalks.joshskills.core.GID_SET_FOR_USER
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.REFERRAL_EVENT
 import com.joshtalks.joshskills.repository.local.model.ScreenEngagementModel
+import java.util.*
 import java.util.concurrent.TimeUnit
 
 object WorkMangerAdmin {
@@ -160,5 +161,15 @@ object WorkMangerAdmin {
         WorkManager.getInstance(AppObjectController.joshApplication)
             .enqueue(OneTimeWorkRequestBuilder<FeedbackRatingWorker>().build())
     }
+
+    fun getQuestionFeedback(questionId: String): UUID {
+        val data = workDataOf("question_id" to questionId)
+        val workRequest = OneTimeWorkRequestBuilder<FeedbackStatusForQuestionWorker>()
+            .setInputData(data)
+            .build()
+        WorkManager.getInstance(AppObjectController.joshApplication).enqueue(workRequest)
+        return workRequest.id
+    }
+
 
 }
