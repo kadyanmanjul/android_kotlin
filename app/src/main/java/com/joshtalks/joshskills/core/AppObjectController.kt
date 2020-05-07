@@ -37,6 +37,8 @@ import com.joshtalks.joshskills.repository.service.SignUpNetworkService
 import com.joshtalks.joshskills.ui.sign_up_old.OnBoardActivity
 import com.joshtalks.joshskills.ui.view_holders.IMAGE_SIZE
 import com.joshtalks.joshskills.ui.view_holders.ROUND_CORNER
+import com.newrelic.agent.android.FeatureFlag
+import com.newrelic.agent.android.NewRelic
 import com.tonyodev.fetch2.Fetch
 import com.tonyodev.fetch2.FetchConfiguration
 import com.tonyodev.fetch2.HttpUrlConnectionDownloader
@@ -162,7 +164,7 @@ internal class AppObjectController {
             initCrashlytics()
             EmojiManager.install(GoogleEmojiProvider())
             videoDownloadTracker = VideoDownloadController.getInstance().downloadTracker
-
+            initNewRelic()
             gsonMapper = GsonBuilder()
                 .enableComplexMapKeySerialization()
                 .setDateFormat("yyyy-MM-dd'T'HH:mm:ss")
@@ -305,6 +307,25 @@ internal class AppObjectController {
 
 
             return INSTANCE
+        }
+
+        private fun initNewRelic() {
+            NewRelic.enableFeature(FeatureFlag.CrashReporting)
+            NewRelic.enableFeature(FeatureFlag.DefaultInteractions)
+            NewRelic.enableFeature(FeatureFlag.DistributedTracing)
+            NewRelic.enableFeature(FeatureFlag.GestureInstrumentation)
+            NewRelic.enableFeature(FeatureFlag.HttpResponseBodyCapture)
+            NewRelic.enableFeature(FeatureFlag.HandledExceptions)
+            NewRelic.enableFeature(FeatureFlag.NetworkErrorRequests)
+            NewRelic.enableFeature(FeatureFlag.NetworkRequests)
+            NewRelic.enableFeature(FeatureFlag.AnalyticsEvents)
+            NewRelic.withApplicationToken(BuildConfig.NEW_RELIC_TOKEN)
+                .withLocationServiceEnabled(true)
+                .start(
+                    joshApplication
+                )
+
+
         }
 
         private fun initFirebaseRemoteConfig() {
