@@ -5,7 +5,7 @@ apply plugin: 'kotlin-kapt'
 apply plugin: 'io.fabric'
 apply plugin: 'com.google.gms.google-services'
 apply plugin: 'io.sentry.android.gradle'
-//apply plugin: 'newrelic'
+apply plugin: 'newrelic'
 
 android {
     compileSdkVersion 29
@@ -295,6 +295,7 @@ dependencies {
 
     implementation 'com.google.android:flexbox:2.0.1'
     implementation 'io.sentry:sentry-android-core:2.0.3'
+    implementation 'com.newrelic.agent.android:android-agent:5.25.0'
 
 //  implementation 'io.sentry:sentry-android:2.0.3'
 //  implementation "com.truecaller.android.sdk:truecaller-sdk:2.0.0"
