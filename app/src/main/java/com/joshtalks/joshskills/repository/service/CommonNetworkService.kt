@@ -3,6 +3,7 @@ package com.joshtalks.joshskills.repository.service
 import com.joshtalks.joshskills.repository.local.model.GaIDMentorModel
 import com.joshtalks.joshskills.repository.local.model.RequestRegisterGId
 import com.joshtalks.joshskills.repository.server.*
+import com.joshtalks.joshskills.repository.server.feedback.FeedbackStatusResponse
 import com.joshtalks.joshskills.repository.server.feedback.RatingDetails
 import com.joshtalks.joshskills.repository.server.feedback.UserFeedbackRequest
 import kotlinx.coroutines.Deferred
@@ -46,6 +47,10 @@ interface CommonNetworkService {
 
     @POST("$DIR/feedback/response/")
     suspend fun postUserFeedback(@Body userFeedbackRequest: UserFeedbackRequest): Response<Any>
+
+
+    @GET("$DIR/feedback/")
+    suspend fun getQuestionFeedbackStatus(@Query("question_id") id: String): Response<FeedbackStatusResponse>
 
 
 }
