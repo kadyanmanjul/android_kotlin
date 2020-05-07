@@ -60,7 +60,8 @@ abstract class AppDatabase : RoomDatabase() {
                                 MIGRATION_10_11,
                                 MIGRATION_11_12,
                                 MIGRATION_12_13,
-                                MIGRATION_13_14
+                                MIGRATION_13_14,
+                                MIGRATION_14_15
                             )
                             .fallbackToDestructiveMigration()
                             .addCallback(sRoomDatabaseCallback)
@@ -170,6 +171,12 @@ abstract class AppDatabase : RoomDatabase() {
         private val MIGRATION_13_14: Migration = object : Migration(13, 14) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("ALTER TABLE course ADD COLUMN report_status INTEGER NOT NULL DEFAULT 0 ")
+            }
+        }
+        private val MIGRATION_14_15: Migration = object : Migration(14, 15) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("ALTER TABLE question_table ADD COLUMN need_feedback INTEGER ")
+                database.execSQL("ALTER TABLE question_table ADD COLUMN upload_feedback_status INTEGER NOT NULL DEFAULT 0 ")
             }
         }
 
