@@ -5,7 +5,6 @@ buildscript {
         google()
         jcenter()
         maven { url 'https://maven.google.com' }
-        mavenCentral()
         maven {
             url "https://s3.amazonaws.com/repo.commonsware.com"
         }
@@ -19,16 +18,19 @@ buildscript {
             url 'http://dl.bintray.com/amulyakhare/maven'
         }
         maven { url 'http://developer.huawei.com/repo/' }
+        mavenCentral()
 
 
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:4.0.0-beta05'
+        classpath 'com.android.tools.build:gradle:3.6.3'
+        //classpath 'com.android.tools.build:gradle:4.0.0-beta05'
      //   classpath 'android.arch.navigation:navigation-safe-args-gradle-plugin:1.0.0'
         classpath 'com.google.gms:google-services:4.3.3'
         classpath 'io.fabric.tools:gradle:1.31.0'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath 'io.sentry:sentry-android-gradle-plugin:1.7.31'
+        classpath "com.newrelic.agent.android:agent-gradle-plugin:5.25.0"
 
     }
 }
@@ -49,6 +51,7 @@ allprojects {
             dirs 'libs'
         }
         maven { url 'http://developer.huawei.com/repo/' }
+        mavenCentral()
 
     }
 }
