@@ -182,7 +182,14 @@ data class Question(
     var practiceEngagement: List<PracticeEngagement>? = emptyList(),
 
     @ColumnInfo(name = "practice_no")
-    @SerializedName("practice_no") var practiceNo: Int? = null
+    @SerializedName("practice_no") var practiceNo: Int? = null,
+
+    @ColumnInfo(name = "need_feedback")
+    @Expose var needFeedback: Boolean? = null,
+
+    @ColumnInfo(name = "upload_feedback_status")
+    @Expose var uploadFeedbackStatus: Boolean = false
+
 
 ) : Parcelable
 
@@ -342,7 +349,6 @@ data class Sender(
 ) : Serializable
 
 
-
 data class PracticeEngagement(
     @SerializedName("answer_url") val answerUrl: String?,
     @SerializedName("id") val id: Int?,
@@ -426,7 +432,7 @@ interface ChatDao {
 
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun  insertAMessage(chat: ChatModel): Long
+    suspend fun insertAMessage(chat: ChatModel): Long
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun updateChatMessage(chat: ChatModel)
@@ -631,6 +637,15 @@ interface ChatDao {
 
     @Query("SELECT * FROM  PdfTable  WHERE id= :pdfId")
     suspend fun getPdfById(pdfId: String): PdfType
+
+    @Query("UPDATE question_table SET need_feedback = :status WHERE questionId= :questionId")
+    suspend fun updateFeedbackStatus(questionId: String, status: Boolean?)
+
+    @Query("SELECT need_feedback from question_table  WHERE questionId= :questionId AND upload_feedback_status=0;")
+    suspend fun getFeedbackStatusOfQuestion(questionId: String): Boolean?
+
+    @Query("UPDATE question_table SET upload_feedback_status = 1 WHERE questionId= :questionId")
+    suspend fun userSubmitFeedbackStatusUpdate(questionId: String)
 
 
 }
