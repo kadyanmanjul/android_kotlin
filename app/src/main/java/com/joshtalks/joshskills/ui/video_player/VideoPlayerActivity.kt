@@ -69,7 +69,7 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener {
     }
 
     private lateinit var binding: ActivityVideoPlayer1Binding
-    private lateinit var chatObject: ChatModel
+    private var chatObject: ChatModel? = null
     private var videoViewGraphList = mutableSetOf<Graph>()
     private var graph: Graph? = null
     private var videoId: String? = null
@@ -88,24 +88,24 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener {
 
         if (intent.hasExtra(VIDEO_OBJECT)) {
             chatObject = intent.getParcelableExtra(VIDEO_OBJECT) as ChatModel
-            videoId = chatObject.question?.videoList?.getOrNull(0)?.id
-            feedbackEngagementStatus(chatObject.question)
+            videoId = chatObject?.question?.videoList?.getOrNull(0)?.id
+            feedbackEngagementStatus(chatObject?.question)
 
-            if (chatObject.url != null) {
-                if (chatObject.downloadedLocalPath.isNullOrEmpty()) {
-                    videoUrl = chatObject.url
+            if (chatObject?.url != null) {
+                if (chatObject?.downloadedLocalPath.isNullOrEmpty()) {
+                    videoUrl = chatObject?.url
                 } else {
-                    Utils.fileUrl(chatObject.downloadedLocalPath, chatObject.url)?.run {
+                    Utils.fileUrl(chatObject?.downloadedLocalPath, chatObject?.url)?.run {
                         videoUrl = this
                         AppObjectController.videoDownloadTracker.download(
                             chatObject,
-                            Uri.parse(chatObject.url),
+                            Uri.parse(chatObject?.url),
                             VideoDownloadController.getInstance().buildRenderersFactory(true)
                         )
                     }
                 }
             } else {
-                videoUrl = chatObject.question?.videoList?.getOrNull(0)?.video_url
+                videoUrl = chatObject?.question?.videoList?.getOrNull(0)?.video_url
             }
         }
         if (intent.hasExtra(VIDEO_URL)) {
@@ -210,12 +210,11 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener {
     }
 
     fun setResult() {
-        // if (videoViewGraphList.isNotEmpty() || graph != null) {
         val resultIntent = Intent()
-        resultIntent.putExtra(VIDEO_OBJECT, chatObject)
+        chatObject?.run {
+            resultIntent.putExtra(VIDEO_OBJECT, this)
+        }
         setResult(Activity.RESULT_OK, resultIntent)
-
-        //}
     }
 
 }
