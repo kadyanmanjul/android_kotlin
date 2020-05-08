@@ -2,13 +2,11 @@ package com.joshtalks.joshskills.core
 
 import android.content.Context
 import android.os.StrictMode
-import android.util.Log
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
 import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.multidex.MultiDex
-import androidx.work.Configuration
 import com.facebook.FacebookSdk
 import com.facebook.LoggingBehavior
 import com.facebook.stetho.Stetho
@@ -26,7 +24,7 @@ import timber.log.Timber
 
 var TAG = "JoshSkill"
 
-class JoshApplication : BranchApp(), LifecycleObserver, Configuration.Provider {
+class JoshApplication : BranchApp(), LifecycleObserver/*, Configuration.Provider*/ {
 
     override fun onCreate() {
         super.onCreate()
@@ -102,10 +100,10 @@ class JoshApplication : BranchApp(), LifecycleObserver, Configuration.Provider {
     private fun isActivityVisible(): String {
         return ProcessLifecycleOwner.get().lifecycle.currentState.name
     }
-
+/*
     override fun getWorkManagerConfiguration(): Configuration {
         return Configuration.Builder()
             .setMinimumLoggingLevel(Log.VERBOSE)
             .build()
-    }
+    }*/
 }
