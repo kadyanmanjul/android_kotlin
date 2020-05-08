@@ -50,8 +50,7 @@ class FeedbackFragment : DialogFragment(), FeedbackOptionAdapter.OnFeedbackItemL
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel = activity?.run { ViewModelProvider(this).get(FeedbackViewModel::class.java) }
-            ?: throw Exception("Invalid Activity")
+        viewModel = ViewModelProvider(this).get(FeedbackViewModel::class.java)
         arguments?.let {
             questionId = it.getString(QUESTION_ID)
             feedbackType = it.getParcelable(FEEDBACK_TYPE)
