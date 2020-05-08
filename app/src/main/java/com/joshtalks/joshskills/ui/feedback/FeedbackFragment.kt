@@ -1,5 +1,6 @@
 package com.joshtalks.joshskills.ui.feedback
 
+import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -7,25 +8,33 @@ import android.view.ViewGroup
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.Animation
 import android.view.animation.ScaleAnimation
-import android.widget.FrameLayout
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.flexbox.FlexDirection
+import com.google.android.flexbox.FlexWrap
 import com.google.android.flexbox.FlexboxLayoutManager
 import com.google.android.flexbox.JustifyContent
 import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.core.RATING_DETAILS_KEY
+import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
+import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.databinding.LayoutDialogFeedbackBinding
+import com.joshtalks.joshskills.repository.server.feedback.FeedbackTypes
 import com.joshtalks.joshskills.repository.server.feedback.RatingDetails
 import com.joshtalks.joshskills.repository.server.feedback.RatingModel
 import io.reactivex.disposables.CompositeDisposable
+import kotlinx.android.synthetic.main.progress_layout.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.lang.reflect.Type
 
 const val QUESTION_ID = "question_id"
+const val FEEDBACK_TYPE = "feedback_type"
 
 class FeedbackFragment : DialogFragment(), FeedbackOptionAdapter.OnFeedbackItemListener {
 
@@ -34,7 +43,8 @@ class FeedbackFragment : DialogFragment(), FeedbackOptionAdapter.OnFeedbackItemL
     private val ratingDetailsTypeToken: Type = object : TypeToken<List<RatingDetails>>() {}.type
     private var ratingDetailsList: List<RatingDetails> = emptyList()
     private lateinit var viewModel: FeedbackViewModel
-    private var issueLabel: String? = null
+    private var issueLabel: String = EMPTY
+    private var feedbackType: FeedbackTypes? = null
     private var questionId: String? = null
 
 
@@ -44,15 +54,24 @@ class FeedbackFragment : DialogFragment(), FeedbackOptionAdapter.OnFeedbackItemL
             ?: throw Exception("Invalid Activity")
         arguments?.let {
             questionId = it.getString(QUESTION_ID)
+            feedbackType = it.getParcelable(FEEDBACK_TYPE)
         }
-        setStyle(STYLE_NO_FRAME, R.style.full_dialog)
+        android.R.style.Theme_Black_NoTitleBar_Fullscreen
+        setStyle(STYLE_NO_FRAME, R.style.FullDialogWithAnimation)
+        AppAnalytics.create(AnalyticsEvent.FEEDBACK_INITIATED.NAME)
+            .addParam("QUESTION_ID", questionId)
+            .addParam("type", feedbackType?.name)
+            .push()
+
     }
 
+/*
 
     override fun onStart() {
         super.onStart()
         val dialog = dialog
         if (dialog != null) {
+
             dialog.window?.setLayout(
                 FrameLayout.LayoutParams.MATCH_PARENT,
                 FrameLayout.LayoutParams.MATCH_PARENT
@@ -62,6 +81,7 @@ class FeedbackFragment : DialogFragment(), FeedbackOptionAdapter.OnFeedbackItemL
             dialog.window?.setBackgroundDrawableResource(android.R.color.white)
         }
     }
+*/
 
 
     override fun onDestroy() {
@@ -95,6 +115,28 @@ class FeedbackFragment : DialogFragment(), FeedbackOptionAdapter.OnFeedbackItemL
             setupRatingOptions(rating.toInt())
         }
         setUpRatingBar()
+        viewModel.apiCallStatusLiveData.observe(this, Observer {
+            if (it == ApiCallStatus.SUCCESS) {
+                AppAnalytics.create(AnalyticsEvent.FEEDBACK_SUBMITTED.NAME)
+                    .addParam("QUESTION_ID", questionId)
+                    .addParam("type", feedbackType?.name)
+                    .push()
+                CoroutineScope(Dispatchers.Main).launch {
+                    delay(1500)
+                    dismissAllowingStateLoss()
+                }
+            } else {
+                progress_layout.visibility = View.GONE
+            }
+        })
+        feedbackType?.run {
+            if (this == FeedbackTypes.PRACTISE) {
+                binding.topFeedbackTitle.text = getString(R.string.practice_submitted)
+                binding.feedbackTitle.text = getString(R.string.feedback_sub_practise)
+            } else if (this == FeedbackTypes.VIDEO) {
+                binding.feedbackTitle.text = getString(R.string.feedback_sub_video)
+            }
+        }
     }
 
     private fun setUpRatingBar() {
@@ -102,11 +144,14 @@ class FeedbackFragment : DialogFragment(), FeedbackOptionAdapter.OnFeedbackItemL
             val layoutManager = FlexboxLayoutManager(requireContext())
             layoutManager.flexDirection = FlexDirection.ROW
             layoutManager.justifyContent = JustifyContent.CENTER
+            layoutManager.flexWrap = FlexWrap.WRAP
+
             binding.ratingOptionRv.layoutManager = layoutManager
             ratingDetailsList = AppObjectController.gsonMapper.fromJson(
                 PrefManager.getStringValue(RATING_DETAILS_KEY),
                 ratingDetailsTypeToken
             )
+            ratingDetailsList = ratingDetailsList.sortedWith(compareBy { it.rating })
             binding.feedbackRatingBar.numStars = ratingDetailsList.size
             binding.feedbackRatingBar.rating = ratingDetailsList.size.toFloat()
         } catch (ex: Exception) {
@@ -135,9 +180,9 @@ class FeedbackFragment : DialogFragment(), FeedbackOptionAdapter.OnFeedbackItemL
             0f,
             1f,
             Animation.RELATIVE_TO_SELF,
-            0.5f,
+            0.50f,
             Animation.RELATIVE_TO_SELF,
-            0.5f
+            0.50f
         )
         scaleAnimation.interpolator = AccelerateDecelerateInterpolator()
         scaleAnimation.startOffset = 500
@@ -148,7 +193,11 @@ class FeedbackFragment : DialogFragment(), FeedbackOptionAdapter.OnFeedbackItemL
             }
 
             override fun onAnimationEnd(animation: Animation?) {
-
+                binding.group.visibility = View.VISIBLE
+                binding.group.updatePreLayout(binding.subRootView)
+                if (binding.topFeedbackTitle.text.isNullOrEmpty().not()) {
+                    binding.topFeedbackTitle.visibility = View.VISIBLE
+                }
             }
 
             override fun onAnimationStart(animation: Animation?) {
@@ -156,16 +205,16 @@ class FeedbackFragment : DialogFragment(), FeedbackOptionAdapter.OnFeedbackItemL
 
         })
         binding.successIv.startAnimation(scaleAnimation)
+
     }
 
     fun submitFeedback() {
-        if (issueLabel.isNullOrEmpty()) {
-            return
-        }
+        hideKeyboard(requireActivity(), binding.etFeedback)
+        progress_layout.visibility = View.VISIBLE
         viewModel.submitFeedback(
             questionId!!,
             binding.feedbackRatingBar.rating,
-            issueLabel!!,
+            issueLabel,
             binding.etFeedback.text.toString()
         )
     }
@@ -180,12 +229,25 @@ class FeedbackFragment : DialogFragment(), FeedbackOptionAdapter.OnFeedbackItemL
         binding.ratingOptionRv.visibility = View.GONE
     }
 
-    companion object {
-        fun newInstance(questionId: String) = FeedbackFragment().apply {
-            arguments = Bundle().apply {
-                putString(QUESTION_ID, questionId)
-            }
+    override fun onDismiss(dialog: DialogInterface) {
+        if (viewModel.apiCallStatusLiveData.value == null) {
+            AppAnalytics.create(AnalyticsEvent.FEEDBACK_IGNORE.NAME)
+                .addParam("QUESTION_ID", questionId)
+                .addParam("type", feedbackType?.name)
+                .push()
         }
+        viewModel.updateQuestionFeedbackStatus(questionId!!)
+        super.onDismiss(dialog)
+    }
+
+    companion object {
+        fun newInstance(feedbackType: FeedbackTypes, questionId: String) =
+            FeedbackFragment().apply {
+                arguments = Bundle().apply {
+                    putParcelable(FEEDBACK_TYPE, feedbackType)
+                    putString(QUESTION_ID, questionId)
+                }
+            }
     }
 }
 
