@@ -109,10 +109,10 @@ abstract class CoreJoshActivity : BaseActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                if (requestCode == PRACTISE_SUBMIT_REQUEST_CODE || requestCode == VIDEO_OPEN_REQUEST_CODE && resultCode == Activity.RESULT_OK && data != null) {
+                if ((requestCode == PRACTISE_SUBMIT_REQUEST_CODE || requestCode == VIDEO_OPEN_REQUEST_CODE) && resultCode == Activity.RESULT_OK && data != null) {
                     var obj: ChatModel? = null
                     var feedbackType: FeedbackTypes = FeedbackTypes.VIDEO
-                    if (data!!.hasExtra(VIDEO_OBJECT)) {
+                    if (data.hasExtra(VIDEO_OBJECT)) {
                         obj = data.getParcelableExtra(VIDEO_OBJECT) as ChatModel
                         feedbackType = FeedbackTypes.VIDEO
                     } else if (data.hasExtra(PRACTISE_OBJECT)) {
