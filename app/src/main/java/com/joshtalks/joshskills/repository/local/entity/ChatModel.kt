@@ -646,10 +646,7 @@ interface ChatDao {
 
     @Query("UPDATE question_table SET upload_feedback_status = 1 WHERE questionId= :questionId")
     suspend fun userSubmitFeedbackStatusUpdate(questionId: String)
-
-
 }
-
 
 enum class OPTION_TYPE(val type: String) {
     OPTION("O"), POLL("P")
