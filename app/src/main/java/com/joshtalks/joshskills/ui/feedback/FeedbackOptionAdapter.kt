@@ -38,7 +38,7 @@ class FeedbackOptionAdapter(context: FeedbackFragment, private var items: List<R
                 binding.title.backgroundTintList = ColorStateList.valueOf(
                     ContextCompat.getColor(
                         binding.root.context,
-                        R.color.button_primary_color
+                        R.color.rating_bar_border_bg
                     )
                 )
             }
@@ -46,6 +46,7 @@ class FeedbackOptionAdapter(context: FeedbackFragment, private var items: List<R
                 if (ratingModel.enable) {
                     if (ratingModel.click.not()) {
                         lastSelected = ratingModel
+                        onFeedbackItemListener.onSelectOption(ratingModel.label)
                         notifyDataSetChanged()
                     }
                 } else {
