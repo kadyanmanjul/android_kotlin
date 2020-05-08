@@ -16,7 +16,7 @@ import java.util.*
 const val DATABASE_NAME = "JoshEnglishDB.db"
 
 @Database(
-    entities = [Course::class, ChatModel::class, Question::class, VideoType::class, AudioType::class, OptionType::class, PdfType::class, ImageType::class,VideoEngage::class],
+    entities = [Course::class, ChatModel::class, Question::class, VideoType::class, AudioType::class, OptionType::class, PdfType::class, ImageType::class, VideoEngage::class, FeedbackEngageModel::class],
     version = 15,
     exportSchema = false
 )
@@ -204,7 +204,8 @@ abstract class AppDatabase : RoomDatabase() {
 
     abstract fun courseDao(): CourseDao
     abstract fun chatDao(): ChatDao
-    abstract fun videoEngageDao() : VideoEngageDao
+    abstract fun videoEngageDao(): VideoEngageDao
+    abstract fun feedbackEngageModelDao(): FeedbackEngageModelDao
 
 }
 
