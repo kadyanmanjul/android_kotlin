@@ -34,7 +34,6 @@ public class AppAnalytics {
             if (BuildConfig.DEBUG) {
                 CleverTapAPI.setDebugLevel(CleverTapAPI.LogLevel.DEBUG);
             }
-
         }
 
         if (firebaseAnalytics == null) {
