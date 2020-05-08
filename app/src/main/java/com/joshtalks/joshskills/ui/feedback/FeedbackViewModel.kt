@@ -64,5 +64,8 @@ class FeedbackViewModel(application: Application) : AndroidViewModel(application
         }
     }
 
-
+    override fun onCleared() {
+        super.onCleared()
+        apiCallStatusLiveData.value = null
+    }
 }
