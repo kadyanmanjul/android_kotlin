@@ -357,7 +357,7 @@ class RegisterUserGId(context: Context, private val workerParams: WorkerParamete
 }
 
 
-class RefreshFCMTokenWorker(context: Context, private val workerParams: WorkerParameters) :
+class RefreshFCMTokenWorker(context: Context, workerParams: WorkerParameters) :
     CoroutineWorker(context, workerParams) {
     override suspend fun doWork(): Result {
         FirebaseInstanceId.getInstance().instanceId
@@ -515,8 +515,13 @@ class FeedbackStatusForQuestionWorker(
                 val response =
                     AppObjectController.commonNetworkService.getQuestionFeedbackStatus(questionId!!)
                 if (response.isSuccessful) {
+                    val id = response.body()?.submittedData?.id ?: 0
+                    var feedbackRequire = response.body()?.feedbackRequire
+                    if (id > 0) {
+                        feedbackRequire = false
+                    }
                     AppObjectController.appDatabase.chatDao()
-                        .updateFeedbackStatus(questionId, response.body()?.feedbackRequire)
+                        .updateFeedbackStatus(questionId, feedbackRequire)
                 }
             }
             val outputData = workDataOf("question_id" to questionId, "status" to 1)
