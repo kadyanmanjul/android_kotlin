@@ -15,14 +15,12 @@ import retrofit2.HttpException
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 
-
 class InboxViewModel(application: Application) : AndroidViewModel(application) {
 
     var context: JoshApplication = getApplication()
     var appDatabase = AppObjectController.appDatabase
     val registerCourseMinimalLiveData: MutableLiveData<List<InboxEntity>> = MutableLiveData()
     val registerCourseNetworkLiveData: MutableLiveData<List<InboxEntity>> = MutableLiveData()
-
 
     fun getRegisterCourses() {
         viewModelScope.launch(Dispatchers.IO) {
@@ -31,13 +29,10 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
                 delay(800)
                 getCourseFromServer()
             } catch (ex: Exception) {
-                //registerCourseLiveData.postValue(null)
                 ex.printStackTrace()
             }
-
         }
     }
-
     private fun getCourseFromServer() {
         viewModelScope.launch(Dispatchers.IO) {
             try {

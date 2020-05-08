@@ -288,6 +288,8 @@ class VideoViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
                 RxBus2.publish(PlayVideoEvent(message))
             } else if (AppDirectory.isFileExist(message.downloadedLocalPath).not()) {
                 showToast(getAppContext().getString(R.string.video_url_not_exist))
+            } else {
+                RxBus2.publish(PlayVideoEvent(message))
             }
         } else {
             message.question?.videoList?.getOrNull(0)?.let { _ ->
@@ -297,9 +299,6 @@ class VideoViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
                 }
                 if (message.downloadStatus == DOWNLOAD_STATUS.DOWNLOADING) {
                     RxBus2.publish(PlayVideoEvent(message))
-                    return
-                }
-                if (message.downloadStatus == DOWNLOAD_STATUS.DOWNLOADING) {
                     return
                 }
                 RxBus2.publish(DownloadMediaEventBus(this, message))

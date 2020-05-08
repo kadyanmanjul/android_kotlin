@@ -9,14 +9,15 @@ import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.repository.local.entity.*
+import com.joshtalks.joshskills.repository.server.engage.Graph
 import java.util.*
 
 
 const val DATABASE_NAME = "JoshEnglishDB.db"
 
 @Database(
-    entities = [Course::class, ChatModel::class, Question::class, VideoType::class, AudioType::class, OptionType::class, PdfType::class, ImageType::class],
-    version = 14,
+    entities = [Course::class, ChatModel::class, Question::class, VideoType::class, AudioType::class, OptionType::class, PdfType::class, ImageType::class, VideoEngage::class, FeedbackEngageModel::class],
+    version = 15,
     exportSchema = false
 )
 @TypeConverters(
@@ -27,7 +28,8 @@ const val DATABASE_NAME = "JoshEnglishDB.db"
     MessageDeliveryTypeConverter::class,
     MessageStatusTypeConverters::class,
     ExpectedEngageTypeConverter::class,
-    ConvectorForEngagement::class
+    ConvectorForEngagement::class,
+    ConvectorForGraph::class
 
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -58,7 +60,8 @@ abstract class AppDatabase : RoomDatabase() {
                                 MIGRATION_10_11,
                                 MIGRATION_11_12,
                                 MIGRATION_12_13,
-                                MIGRATION_13_14
+                                MIGRATION_13_14,
+                                MIGRATION_14_15
                             )
                             .fallbackToDestructiveMigration()
                             .addCallback(sRoomDatabaseCallback)
@@ -170,6 +173,12 @@ abstract class AppDatabase : RoomDatabase() {
                 database.execSQL("ALTER TABLE course ADD COLUMN report_status INTEGER NOT NULL DEFAULT 0 ")
             }
         }
+        private val MIGRATION_14_15: Migration = object : Migration(14, 15) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("ALTER TABLE question_table ADD COLUMN need_feedback INTEGER ")
+                database.execSQL("ALTER TABLE question_table ADD COLUMN upload_feedback_status INTEGER NOT NULL DEFAULT 0 ")
+            }
+        }
 
 
         fun clearDatabase() {
@@ -195,6 +204,8 @@ abstract class AppDatabase : RoomDatabase() {
 
     abstract fun courseDao(): CourseDao
     abstract fun chatDao(): ChatDao
+    abstract fun videoEngageDao(): VideoEngageDao
+    abstract fun feedbackEngageModelDao(): FeedbackEngageModelDao
 
 }
 
@@ -332,6 +343,24 @@ class ConvectorForEngagement {
             return Collections.emptyList()
         }
         val type = object : TypeToken<List<PracticeEngagement>>() {}.type
+        return AppObjectController.gsonMapper.fromJson(value, type)
+    }
+}
+
+
+class ConvectorForGraph {
+    @TypeConverter
+    fun fromGraph(value: List<Graph>?): String {
+        val type = object : TypeToken<List<Graph>>() {}.type
+        return AppObjectController.gsonMapper.toJson(value, type)
+    }
+
+    @TypeConverter
+    fun toGraph(value: String?): List<Graph> {
+        if (value == null) {
+            return Collections.emptyList()
+        }
+        val type = object : TypeToken<List<Graph>>() {}.type
         return AppObjectController.gsonMapper.fromJson(value, type)
     }
 }

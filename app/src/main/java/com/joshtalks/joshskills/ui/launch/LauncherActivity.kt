@@ -12,6 +12,7 @@ import com.joshtalks.joshskills.ui.payment.COURSE_ID
 import com.joshtalks.joshskills.ui.payment.PaymentActivity
 import io.branch.referral.Branch
 import io.branch.referral.Defines
+import io.sentry.core.Sentry
 import org.json.JSONObject
 
 
@@ -55,6 +56,7 @@ class LauncherActivity : CoreJoshActivity() {
                     }
                 }
             } catch (ex: Exception) {
+                Sentry.captureException(ex)
                 ex.printStackTrace()
             }
         }.withData(this.intent.data).init()
@@ -64,22 +66,17 @@ class LauncherActivity : CoreJoshActivity() {
     override fun onStart() {
         super.onStart()
         handleIntent()
+        AppObjectController.uiHandler.postDelayed({
+            val intent = getIntentForState()
+            startActivity(intent)
+            this@LauncherActivity.finish()
+        }, 2500)
     }
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         this.intent = intent
         handleIntent()
-    }
-
-
-    override fun onResume() {
-        super.onResume()
-        AppObjectController.uiHandler.postDelayed({
-            val intent = getIntentForState()
-            startActivity(intent)
-            this@LauncherActivity.finish()
-        }, 2500)
     }
 
 

@@ -2,21 +2,6 @@ package com.joshtalks.joshskills.repository.server.engage
 
 import com.google.gson.annotations.SerializedName
 
-
-data class VideoEngage(
-    @SerializedName("graph")
-    var graph: List<Graph>,
-    @SerializedName("video_id")
-    val videoId: Int,
-    @SerializedName("watch_time")
-    var watchTime: Long,
-    @SerializedName("mentor_id")
-    var mentorId: String? = null,
-    @SerializedName("gaid_id")
-    var gID: String? = null
-)
-
-
 data class AudioEngage(
     @SerializedName("graph")
     val graph: List<Graph>,

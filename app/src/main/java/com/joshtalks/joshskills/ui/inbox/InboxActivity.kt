@@ -4,10 +4,8 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
-import android.content.pm.ActivityInfo
 import android.graphics.drawable.PictureDrawable
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.widget.FrameLayout
@@ -37,7 +35,6 @@ import com.joshtalks.joshskills.core.inapp_update.InAppUpdateManager
 import com.joshtalks.joshskills.core.inapp_update.InAppUpdateStatus
 import com.joshtalks.joshskills.core.service.WorkMangerAdmin
 import com.joshtalks.joshskills.messaging.RxBus2
-import com.joshtalks.joshskills.repository.local.DatabaseUtils
 import com.joshtalks.joshskills.repository.local.eventbus.ExploreCourseEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.OpenCourseEventBus
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
@@ -47,13 +44,11 @@ import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.ProfileResponse
 import com.joshtalks.joshskills.repository.server.SearchLocality
 import com.joshtalks.joshskills.repository.server.UpdateUserLocality
-import com.joshtalks.joshskills.repository.service.SyncChatService
 import com.joshtalks.joshskills.ui.chat.ConversationActivity
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
 import com.joshtalks.joshskills.ui.payment.COURSE_ID
 import com.joshtalks.joshskills.ui.referral.ReferralActivity
 import com.joshtalks.joshskills.ui.tooltip.BalloonFactory
-import com.joshtalks.joshskills.ui.view_holders.EmptyHorizontalView
 import com.joshtalks.joshskills.ui.view_holders.InboxViewHolder
 import com.joshtalks.skydoves.balloon.OnBalloonDismissListener
 import com.karumi.dexter.Dexter
@@ -67,6 +62,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_inbox.*
+import kotlinx.android.synthetic.main.find_more_layout.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -74,9 +70,9 @@ import kotlinx.coroutines.launch
 import org.jetbrains.anko.collections.forEachWithIndex
 
 const val REGISTER_INFO_CODE = 2001
-const val COURSE_EXPLORER_CODE = 2002               //TODO(FixMe) - Use of this RequestCode?
+const val COURSE_EXPLORER_CODE = 2002
 const val COURSE_EXPLORER_WITHOUT_CODE = 2003
-const val REGISTER_NEW_COURSE_CODE = 2003           //TODO(FixMe) - Same request code
+const val PAYMENT_FOR_COURSE_CODE = 2004
 const val REQ_CODE_VERSION_UPDATE = 530
 const val USER_DETAILS_CODE = 1001
 
@@ -90,8 +86,6 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
     private var inAppUpdateManager: InAppUpdateManager? = null
     private lateinit var earnIV: AppCompatImageView
     private lateinit var findMoreLayout: FrameLayout
-    private var findMoreVisible = true
-
     private val offerIn7DaysHint by lazy { BalloonFactory.offerIn7Days(this, this) }
     private val hintFirstTime by lazy {
         BalloonFactory.hintOfferFirstTime(this, this, object :
@@ -104,34 +98,43 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        requestedOrientation = if (Build.VERSION.SDK_INT == 26) {
-            ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
-        } else {
-            ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-        }
+        WorkMangerAdmin.requiredTaskAfterLoginComplete()
+        AppAnalytics.create(AnalyticsEvent.INBOX_SCREEN.NAME).push()
         super.onCreate(savedInstanceState)
-        DatabaseUtils.updateUserMessageSeen()
+        lifecycle.addObserver(this)
         setContentView(R.layout.activity_inbox)
         setToolbar()
-        lifecycle.addObserver(this)
-        AppAnalytics.create(AnalyticsEvent.INBOX_SCREEN.NAME).push()
         addLiveDataObservable()
         checkAppUpdate()
         workInBackground()
-        SyncChatService.syncChatWithServer()
         handelIntentAction()
-        addObserver()
+    }
+
+    private fun setToolbar() {
+        val titleView = findViewById<AppCompatTextView>(R.id.text_message_title)
+        titleView.text = getString(R.string.inbox_header)
+        earnIV = findViewById(R.id.iv_earn)
+        earnIV.setOnClickListener {
+            WorkMangerAdmin.referralEventTracker(REFERRAL_EVENT.CLICK_ON_REFERRAL)
+            AppAnalytics.create(AnalyticsEvent.REFERRAL_SELECTED.NAME).push()
+            ReferralActivity.startReferralActivity(
+                this@InboxActivity,
+                InboxActivity::class.java.name
+            )
+        }
+        findMoreLayout = findViewById(R.id.parent_layout)
+        find_more.setOnClickListener {
+            RxBus2.publish(ExploreCourseEventBus())
+        }
+        visibleShareEarn()
     }
 
     private fun workInBackground() {
         CoroutineScope(Dispatchers.Default).launch {
-            AppObjectController.clearDownloadMangerCallback()
-            AppAnalytics.updateUser()
             processIntent(intent)
             delay(1000)
             locationFetch()
         }
-        WorkMangerAdmin.installReferrerWorker()
     }
 
     private fun checkAppUpdate() {
@@ -207,24 +210,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         }
     }
 
-    private fun setToolbar() {
-        val titleView = findViewById<AppCompatTextView>(R.id.text_message_title)
-        titleView.text = getString(R.string.inbox_header)
-        earnIV = findViewById(R.id.iv_earn)
-        earnIV.setOnClickListener {
-            WorkMangerAdmin.referralEventTracker(REFERRAL_EVENT.CLICK_ON_REFERRAL)
-            AppAnalytics.create(AnalyticsEvent.REFERRAL_SELECTED.NAME).push()
-            ReferralActivity.startReferralActivity(
-                this@InboxActivity,
-                InboxActivity::class.java.name
-            )
-        }
-        visibleShareEarn()
-        findMoreLayout = findViewById(R.id.parent_layout)
-        findViewById<View>(R.id.find_more).setOnClickListener {
-            RxBus2.publish(ExploreCourseEventBus())
-        }
-    }
+
 
     private fun addLiveDataObservable() {
         viewModel.registerCourseNetworkLiveData.observe(this, Observer {
@@ -240,7 +226,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
     }
 
     private fun addCourseInRecyclerView(items: List<InboxEntity>?) {
-        if (items.isNullOrEmpty()) {
+        if (items.isNullOrEmpty() || items.size == recycler_view_inbox.viewResolverCount) {
             return
         }
         recycler_view_inbox.removeAllViews()
@@ -260,7 +246,6 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
     private fun addObserver() {
         compositeDisposable.add(
             RxBus2.listen(OpenCourseEventBus::class.java)
-                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
                     AppAnalytics.create(AnalyticsEvent.COURSE_SELECTED.NAME)
@@ -292,13 +277,6 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
             COURSE_EXPLORER_CODE,
             registerCourses
         )
-    }
-
-
-    private fun addEmptyView() {
-        for (i in 1..8) {
-            recycler_view_inbox.addView(EmptyHorizontalView())
-        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -382,8 +360,8 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
     override fun onResume() {
         super.onResume()
         Runtime.getRuntime().gc()
-        viewModel.getRegisterCourses()
         addObserver()
+        viewModel.getRegisterCourses()
     }
 
     override fun onDestroy() {

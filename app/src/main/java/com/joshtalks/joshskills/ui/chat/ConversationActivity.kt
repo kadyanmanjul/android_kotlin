@@ -3,12 +3,10 @@ package com.joshtalks.joshskills.ui.chat
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.PendingIntent
-import android.content.Context
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.graphics.Color
 import android.graphics.Rect
-import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -107,6 +105,7 @@ import kotlin.collections.ArrayList
 import kotlin.concurrent.scheduleAtFixedRate
 
 const val CHAT_ROOM_OBJECT = "chat_room"
+const val UPDATED_CHAT_ROOM_OBJECT = "updated_chat_room"
 const val IMAGE_SELECT_REQUEST_CODE = 1077
 const val VISIBILE_ITEM_PERCENT = 75
 const val PRACTISE_SUBMIT_REQUEST_CODE = 1100
@@ -120,13 +119,14 @@ const val FOCUS_ON_CHAT_ID = "focus_on_chat_id"
 class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
 
     companion object {
-        fun startConversionActivity(context: Context, inboxEntity: InboxEntity) {
-            Intent(context, ConversationActivity::class.java).apply {
+        fun startConversionActivity(activity: Activity, inboxEntity: InboxEntity) {
+            Intent(activity, ConversationActivity::class.java).apply {
                 putExtra(CHAT_ROOM_OBJECT, inboxEntity)
-                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
             }.run {
-                context.startActivity(this)
+                activity.startActivity(this)
             }
         }
     }
@@ -165,11 +165,6 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        requestedOrientation = if (Build.VERSION.SDK_INT == 26) {
-            ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
-        } else {
-            ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-        }
         super.onCreate(savedInstanceState)
         if (intent.hasExtra(CHAT_ROOM_OBJECT)) {
             val temp = intent.getParcelableExtra(CHAT_ROOM_OBJECT) as InboxEntity?
@@ -189,55 +184,30 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
         conversationBinding.viewmodel = conversationViewModel
         conversationBinding.handler = this
         activityRef = WeakReference(this)
-        initChat()
-
+        init()
     }
 
-    override fun onNewIntent(mIntent: Intent?) {
+    override fun onNewIntent(mIntent: Intent) {
+        intent = mIntent
         super.processIntent(mIntent)
-        mIntent?.hasExtra(CHAT_ROOM_OBJECT)?.let {
-            if (it) {
-                val temp = mIntent.getParcelableExtra(CHAT_ROOM_OBJECT) as InboxEntity?
-                temp?.let { inboxObj ->
-                    if (inboxEntity.conversation_id != inboxObj.conversation_id) {
-                        inboxEntity = inboxObj
-                        initViewModel()
-                        initChat()
-                    }
+        if (intent.hasExtra(UPDATED_CHAT_ROOM_OBJECT)) {
+            val temp = intent.getParcelableExtra(CHAT_ROOM_OBJECT) as InboxEntity?
+            temp?.let { inboxObj ->
+                if (inboxEntity.conversation_id != inboxObj.conversation_id) {
+                    inboxEntity = inboxObj
+                    initViewModel()
+                    fetchMessage()
                 }
             }
         }
-        intent?.hasExtra(CHAT_ROOM_OBJECT)?.run {
-            if (this) {
-                val temp = intent.getParcelableExtra(CHAT_ROOM_OBJECT) as InboxEntity?
-                temp?.let { inboxObj ->
-                    if (inboxEntity.conversation_id != inboxObj.conversation_id) {
-                        inboxEntity = inboxObj
-                        initViewModel()
-                        initChat()
-                    }
-                }
+        if (intent.hasExtra(HAS_COURSE_REPORT)) {
+            openCourseProgressListingScreen()
+        }
+        if (intent.hasExtra(FOCUS_ON_CHAT_ID)) {
+            mIntent.getParcelableExtra<ChatModel>(FOCUS_ON_CHAT_ID)?.chatId?.run {
+                scrollToPosition(this)
             }
         }
-
-        mIntent?.hasExtra(HAS_COURSE_REPORT)?.run {
-            if (this) {
-                openCourseProgressListingScreen()
-            }
-        }
-        intent?.hasExtra(HAS_COURSE_REPORT)?.run {
-            if (this) {
-                openCourseProgressListingScreen()
-            }
-        }
-        mIntent?.hasExtra(FOCUS_ON_CHAT_ID)?.run {
-            if (this) {
-                mIntent.getParcelableExtra<ChatModel>(FOCUS_ON_CHAT_ID)?.chatId?.run {
-                    scrollToPosition(this)
-                }
-            }
-        }
-
         super.onNewIntent(mIntent)
     }
 
@@ -255,9 +225,8 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
     }
 
 
-    private fun initChat() {
+    private fun init() {
         AppAnalytics.create(AnalyticsEvent.COURSE_OPENED.NAME).push()
-        initProgressDialog()
         initSnackBar()
         setToolbar()
         initRV()
@@ -266,8 +235,8 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
         initView()
         refreshChat()
         initAudioPlayerView()
-        conversationViewModel.getAllUserMessage()
-        onlyChatView()
+        streamingManager = AudioStreamingManager.getInstance(activityRef.get())
+        fetchMessage()
         uiHandler.postDelayed({
             try {
                 progressDialog.dismissAllowingStateLoss()
@@ -275,16 +244,20 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
                 Crashlytics.logException(ex)
                 ex.printStackTrace()
             }
-            conversationBinding.progressBar.visibility = GONE
         }, 5000)
-        streamingManager = AudioStreamingManager.getInstance(activityRef.get())
+
+    }
+
+    private fun fetchMessage() {
+        initProgressDialog()
+        conversationViewModel.getAllUserMessage()
+        onlyChatView()
         if (inboxEntity.report_status && PrefManager.hasKey(
                 inboxEntity.conversation_id.trim().plus(CERTIFICATE_GENERATE)
             ).not()
         ) {
             alphaAnimation(findViewById(R.id.ic_notification_dot))
         }
-
     }
 
 
@@ -447,11 +420,8 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
                     conversationBinding.bottomBar.visibility = GONE
                 }
                 else -> {
-
                 }
             }
-
-
         }
     }
 
@@ -886,7 +856,6 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
                 if (isNewChatViewAdd) {
                     scrollToEnd()
                 }
-                // conversationBinding.chatRv.refresh()
                 readMessageDatabaseUpdate()
             } catch (ex: Exception) {
             }
@@ -905,6 +874,8 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
     private fun subscribeRXBus() {
         compositeDisposable.add(
             RxBus2.listen(PlayVideoEvent::class.java)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
                     VideoPlayerActivity.startConversionActivity(
                         this,
@@ -915,25 +886,39 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
                 })
         )
         compositeDisposable.add(
-            RxBus2.listen(ImageShowEvent::class.java).subscribeOn(Schedulers.io()).subscribe(
-                {
-                    Utils.fileUrl(it.localPath, it.serverPath)?.run {
-                        ImageShowFragment.newInstance(this, inboxEntity.course_name, it.imageId)
-                            .show(supportFragmentManager, "ImageShow")
-                    }
-                },
-                {
+            RxBus2.listen(ImageShowEvent::class.java)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                    {
+                        Utils.fileUrl(it.localPath, it.serverPath)?.run {
+                            ImageShowFragment.newInstance(this, inboxEntity.course_name, it.imageId)
+                                .show(supportFragmentManager, "ImageShow")
+                        }
+                    },
+                    {
+                        it.printStackTrace()
+                    })
+        )
+        compositeDisposable.add(
+            RxBus2.listen(PdfOpenEventBus::class.java)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({
+                    PdfViewerActivity.startPdfActivity(
+                        activityRef.get()!!,
+                        it.pdfObject.id,
+                        inboxEntity.course_name
+
+                    )
+                }, {
                     it.printStackTrace()
                 })
         )
-        compositeDisposable.add(RxBus2.listen(PdfOpenEventBus::class.java).subscribe({
-            PdfViewerActivity.startPdfActivity(this, it.pdfObject.id, inboxEntity.course_name)
-        }, {
-            it.printStackTrace()
-        }))
         compositeDisposable.add(
             RxBus2.listen(MediaProgressEventBus::class.java)
                 .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
                     if (it.state == com.google.android.exoplayer2.offline.Download.STATE_COMPLETED) {
                         refreshViewAtPos(
@@ -949,45 +934,46 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
                 })
         )
 
-        compositeDisposable.add(RxBus2.listen(DownloadMediaEventBus::class.java).subscribe {
-            PermissionUtils.storageReadAndWritePermission(this,
-                object : MultiplePermissionsListener {
-                    override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
-                        report?.areAllPermissionsGranted()?.let { flag ->
-                            if (flag) {
-                                if (internetAvailableFlag.not()) {
-                                    showToast(getString(R.string.internet_not_available_msz))
-                                    return@let
-                                }
-                                val pos =
-                                    conversationBinding.chatRv.getViewResolverPosition(it.viewHolder)
-                                val view: BaseChatViewHolder =
-                                    conversationBinding.chatRv.getViewResolverAtPosition(pos) as BaseChatViewHolder
-                                val chatModel = it.chatModel
-                                chatModel.downloadStatus = DOWNLOAD_STATUS.DOWNLOADING
-                                view.message = it.chatModel
-                                AppObjectController.uiHandler.postDelayed({
+        compositeDisposable.add(RxBus2.listen(DownloadMediaEventBus::class.java)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                PermissionUtils.storageReadAndWritePermission(this,
+                    object : MultiplePermissionsListener {
+                        override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
+                            report?.areAllPermissionsGranted()?.let { flag ->
+                                if (flag) {
+                                    if (internetAvailableFlag.not()) {
+                                        showToast(getString(R.string.internet_not_available_msz))
+                                        return@let
+                                    }
+                                    val pos =
+                                        conversationBinding.chatRv.getViewResolverPosition(it.viewHolder)
+                                    val view: BaseChatViewHolder =
+                                        conversationBinding.chatRv.getViewResolverAtPosition(pos) as BaseChatViewHolder
+                                    val chatModel = it.chatModel
+                                    chatModel.downloadStatus = DOWNLOAD_STATUS.DOWNLOADING
+                                    view.message = it.chatModel
                                     conversationBinding.chatRv.refreshView(view)
-                                }, 250)
-                                return
-                            }
-                            if (report.isAnyPermissionPermanentlyDenied) {
-                                PermissionUtils.permissionPermanentlyDeniedDialog(
-                                    activityRef.get()!!
-                                )
-                                return
+                                    return
+                                }
+                                if (report.isAnyPermissionPermanentlyDenied) {
+                                    PermissionUtils.permissionPermanentlyDeniedDialog(
+                                        activityRef.get()!!
+                                    )
+                                    return
+                                }
                             }
                         }
-                    }
 
-                    override fun onPermissionRationaleShouldBeShown(
-                        permissions: MutableList<PermissionRequest>?,
-                        token: PermissionToken?
-                    ) {
-                        token?.continuePermissionRequest()
-                    }
-                })
-        })
+                        override fun onPermissionRationaleShouldBeShown(
+                            permissions: MutableList<PermissionRequest>?,
+                            token: PermissionToken?
+                        ) {
+                            token?.continuePermissionRequest()
+                        }
+                    })
+            })
 
         compositeDisposable.add(RxBus2.listen(DownloadCompletedEventBus::class.java)
             .subscribeOn(Schedulers.computation())
@@ -999,13 +985,6 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
                 }
 
             })
-        /* compositeDisposable.add(RxBus2.listen(MediaEngageEventBus::class.java).subscribe {
-             CoroutineScope(Dispatchers.IO).launch {
-                 if (it.type.equals("AUDIO", ignoreCase = true)) {
-                     EngagementNetworkHelper.engageAudioApi(it)
-                 }
-             }
-         })*/
         compositeDisposable.add(RxBus2.listen(VideoDownloadedBus::class.java)
             .subscribeOn(Schedulers.computation())
             .subscribe {
@@ -1053,7 +1032,6 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
                     }
                     if (it.flag.not()) {
                         progressDialog.dismissAllowingStateLoss()
-                        conversationBinding.progressBar.visibility = GONE
                     }
                     conversationBinding.refreshLayout.isRefreshing = false
                 })
@@ -1121,34 +1099,16 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
                         it.printStackTrace()
                     })
         )
-
-        compositeDisposable.add(
-            RxBus2.listen(
-                InternalSeekBarProgressEventBus::
-                class.java
-            )
-                .subscribeOn(Schedulers.computation())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                    {
-                        //mPlayerInterface?.seekTo(it.progress)
-                    },
-                    {
-                        it.printStackTrace()
-                    })
-        )
-
         compositeDisposable.add(
             RxBus2.listen(PractiseSubmitEventBus::class.java)
                 .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
-                    CoroutineScope(Dispatchers.IO).launch {
-                        PractiseSubmitActivity.startPractiseSubmissionActivity(
-                            activityRef.get()!!,
-                            PRACTISE_SUBMIT_REQUEST_CODE,
-                            it.chatModel
-                        )
-                    }
+                    PractiseSubmitActivity.startPractiseSubmissionActivity(
+                        activityRef.get()!!,
+                        PRACTISE_SUBMIT_REQUEST_CODE,
+                        it.chatModel
+                    )
                 }, {
                     it.printStackTrace()
                 })
@@ -1162,8 +1122,6 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
                     it.printStackTrace()
                 })
         )
-
-
     }
 
     private fun refreshViewAtPos(chatObj: ChatModel, callback: () -> Unit = {}) {
@@ -1481,9 +1439,8 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
 
     override fun onResume() {
         super.onResume()
-        activityRef = WeakReference(this)
-        subscribeRXBus()
         conversationBinding.chatRv.refresh()
+        subscribeRXBus()
         observeNetwork()
     }
 

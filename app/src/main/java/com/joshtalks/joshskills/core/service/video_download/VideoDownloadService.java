@@ -5,7 +5,6 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ext.workmanager.WorkManagerScheduler;
@@ -24,6 +23,7 @@ import com.joshtalks.joshskills.repository.local.DatabaseUtils;
 import com.joshtalks.joshskills.repository.local.entity.ChatModel;
 import com.joshtalks.joshskills.repository.local.entity.DOWNLOAD_STATUS;
 import com.joshtalks.joshskills.repository.local.eventbus.MediaProgressEventBus;
+import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity;
 import com.joshtalks.joshskills.ui.chat.ConversationActivity;
 
 import org.jetbrains.annotations.NotNull;
@@ -35,7 +35,11 @@ import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import io.reactivex.schedulers.Schedulers;
+import timber.log.Timber;
+
 import static com.joshtalks.joshskills.core.StaticConstantKt.MINIMUM_VIDEO_DOWNLOAD_PROGRESS;
+import static com.joshtalks.joshskills.ui.chat.ConversationActivityKt.CHAT_ROOM_OBJECT;
 import static com.joshtalks.joshskills.ui.chat.ConversationActivityKt.FOCUS_ON_CHAT_ID;
 
 
@@ -67,11 +71,6 @@ public class VideoDownloadService extends DownloadService {
         notificationHelper = new DownloadNotificationHelper(this, CHANNEL_ID);
     }
 
-   /*@Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        return  START_STICKY;
-    }*/
-
     @NotNull
     @Override
     protected DownloadManager getDownloadManager() {
@@ -87,11 +86,14 @@ public class VideoDownloadService extends DownloadService {
     @Override
     protected Notification getForegroundNotification(@NotNull List<Download> downloads) {
         showDownloadProgress(downloads);
-        Intent intent = new Intent(this, ConversationActivity.class);
+        Intent intent=null;
         try {
+            intent = new Intent(this, ConversationActivity.class);
             ChatModel chatModel = AppObjectController.getGsonMapperForLocal().fromJson(Util.fromUtf8Bytes(downloads.get(0).request.data), new TypeToken<ChatModel>() {
             }.getType());
             intent.putExtra(FOCUS_ON_CHAT_ID, chatModel);
+            InboxEntity entity=  AppObjectController.getAppDatabase().courseDao().chooseRegisterCourseMinimalRX(chatModel.getConversationId()).subscribeOn(Schedulers.io()).blockingGet();
+            intent.putExtra(CHAT_ROOM_OBJECT, entity);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -108,7 +110,7 @@ public class VideoDownloadService extends DownloadService {
     @Override
     protected void onDownloadChanged(Download download) {
 
-        Log.i("download_video", "onDownloadChanged " + download.state + "  " + download.getPercentDownloaded() + "  " + download.getBytesDownloaded() + " " + download.contentLength);
+        Timber.tag("download_video").i("onDownloadChanged " + download.state + "  " + download.getPercentDownloaded() + "  " + download.getBytesDownloaded() + " " + download.contentLength);
         DOWNLOAD_STATUS downloadStatus = DOWNLOAD_STATUS.NOT_START;
 
         if (download.state == Download.STATE_DOWNLOADING || download.state == Download.STATE_QUEUED) {

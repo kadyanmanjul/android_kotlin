@@ -124,7 +124,7 @@ class PdfViewerActivity : BaseActivity(), DownloadFile.Listener {
             } catch (ex: Exception) {
             }
         }
-        AppAnalytics.create(AnalyticsEvent.PDF_OPENED.NAME).addParam("URL", pdfObject?.url).push()
+
 
     }
 

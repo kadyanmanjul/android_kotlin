@@ -66,5 +66,8 @@
     <color name="wh_f4">#f4f4f4</color>
     <color name="wh_fc">#FCFDF3</color>
 
+    <color name="feedback_submit_background">#8c52ff</color>
+    <color name="rating_bar_border_bg">#c7d0d8</color>
+
 
 </resources>

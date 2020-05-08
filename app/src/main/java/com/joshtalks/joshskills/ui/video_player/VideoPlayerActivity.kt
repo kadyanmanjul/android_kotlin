@@ -20,16 +20,13 @@ import com.joshtalks.joshskills.core.service.video_download.VideoDownloadControl
 import com.joshtalks.joshskills.core.videoplayer.VideoPlayerEventListener
 import com.joshtalks.joshskills.databinding.ActivityVideoPlayer1Binding
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
+import com.joshtalks.joshskills.repository.local.entity.VideoEngage
 import com.joshtalks.joshskills.repository.server.engage.Graph
-import com.joshtalks.joshskills.repository.server.engage.VideoEngage
 import com.joshtalks.joshskills.repository.service.EngagementNetworkHelper
 import com.joshtalks.joshskills.ui.chat.VIDEO_OPEN_REQUEST_CODE
 import com.joshtalks.joshskills.ui.pdfviewer.COURSE_NAME
 
 const val VIDEO_OBJECT = "video_"
-const val VIDEO_URL = "video_url"
-const val VIDEO_ID = "video_id"
-
 
 class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener {
 
@@ -40,7 +37,7 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener {
             videoTitle: String
         ) {
             val intent = Intent(activity, VideoPlayerActivity::class.java)
-            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK  or Intent.FLAG_ACTIVITY_CLEAR_TOP
+            intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
             intent.putExtra(VIDEO_OBJECT, chatModel)
             intent.putExtra(COURSE_NAME, videoTitle)
             activity.startActivityForResult(intent, VIDEO_OPEN_REQUEST_CODE)
@@ -72,7 +69,7 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener {
     }
 
     private lateinit var binding: ActivityVideoPlayer1Binding
-    private lateinit var chatObject: ChatModel
+    private var chatObject: ChatModel? = null
     private var videoViewGraphList = mutableSetOf<Graph>()
     private var graph: Graph? = null
     private var videoId: String? = null
@@ -91,23 +88,24 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener {
 
         if (intent.hasExtra(VIDEO_OBJECT)) {
             chatObject = intent.getParcelableExtra(VIDEO_OBJECT) as ChatModel
-            videoId = chatObject.question?.videoList?.getOrNull(0)?.id
+            videoId = chatObject?.question?.videoList?.getOrNull(0)?.id
+            feedbackEngagementStatus(chatObject?.question)
 
-            if (chatObject.url != null) {
-                if (chatObject.downloadedLocalPath.isNullOrEmpty()) {
-                    videoUrl = chatObject.url
+            if (chatObject?.url != null) {
+                if (chatObject?.downloadedLocalPath.isNullOrEmpty()) {
+                    videoUrl = chatObject?.url
                 } else {
-                    Utils.fileUrl(chatObject.downloadedLocalPath, chatObject.url)?.run {
+                    Utils.fileUrl(chatObject?.downloadedLocalPath, chatObject?.url)?.run {
                         videoUrl = this
                         AppObjectController.videoDownloadTracker.download(
                             chatObject,
-                            Uri.parse(chatObject.url),
+                            Uri.parse(chatObject?.url),
                             VideoDownloadController.getInstance().buildRenderersFactory(true)
                         )
                     }
                 }
             } else {
-                videoUrl = chatObject.question?.videoList?.getOrNull(0)?.video_url
+                videoUrl = chatObject?.question?.videoList?.getOrNull(0)?.video_url
             }
         }
         if (intent.hasExtra(VIDEO_URL)) {
@@ -212,10 +210,11 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener {
     }
 
     fun setResult() {
-        if (videoViewGraphList.isNotEmpty() || graph != null) {
-            val resultIntent = Intent()
-            setResult(Activity.RESULT_OK, resultIntent)
+        val resultIntent = Intent()
+        chatObject?.run {
+            resultIntent.putExtra(VIDEO_OBJECT, this)
         }
+        setResult(Activity.RESULT_OK, resultIntent)
     }
 
 }
