@@ -9,7 +9,7 @@
             android:paddingTop="@dimen/_4sdp"
             android:paddingEnd="@dimen/_4sdp">
 
-        <com.google.android.material.textview.MaterialTextView
+        <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/title"
                 fontPath="fonts/Roboto-Regular.ttf"
                 android:layout_width="wrap_content"
@@ -23,10 +23,9 @@
                 android:paddingTop="@dimen/_6sdp"
                 android:paddingEnd="@dimen/_14sdp"
                 android:paddingBottom="@dimen/_6sdp"
-                android:textColor="@color/gray_82"
+                android:textColor="@color/wh_f4"
                 android:textSize="@dimen/font_16"
-                app:elevation="0dp"
-                app:rippleColor="@color/red" />
+                app:elevation="0dp" />
 
         <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/iv_tick"
