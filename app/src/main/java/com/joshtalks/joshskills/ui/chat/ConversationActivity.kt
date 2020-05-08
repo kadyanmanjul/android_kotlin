@@ -1434,6 +1434,7 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
 
     override fun onResume() {
         super.onResume()
+        conversationBinding.chatRv.refresh()
         subscribeRXBus()
         observeNetwork()
     }
