@@ -105,7 +105,10 @@ enum class AnalyticsEvent(val NAME: String) {
     VIEW_SAMPLE_CERTIFICATE_OPEN("View Sample Certificate Open"),
     VIEW_SAMPLE_CERTIFICATE_CLOSE("View Sample Certificate Close"),
     VIDEO_CLICKED_COURSE_OVERVIEW("Video Click Course Overview"),
-    PRACTISE_CLICKED_COURSE_OVERVIEW("Practise Clicked Course Overview")
+    PRACTISE_CLICKED_COURSE_OVERVIEW("Practise Clicked Course Overview"),
+    FEEDBACK_INITIATED("Feedback Initiated"),
+    FEEDBACK_SUBMITTED("Feedback Submitted"),
+    FEEDBACK_IGNORE("Feedback Ignore"),
 
 
 }
