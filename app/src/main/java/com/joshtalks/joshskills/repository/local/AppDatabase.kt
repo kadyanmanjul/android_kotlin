@@ -61,8 +61,7 @@ abstract class AppDatabase : RoomDatabase() {
                                 MIGRATION_11_12,
                                 MIGRATION_12_13,
                                 MIGRATION_13_14,
-                                MIGRATION_15_16
-
+                                MIGRATION_14_16
                             )
                             .fallbackToDestructiveMigration()
                             .addCallback(sRoomDatabaseCallback)
@@ -174,13 +173,16 @@ abstract class AppDatabase : RoomDatabase() {
                 database.execSQL("ALTER TABLE course ADD COLUMN report_status INTEGER NOT NULL DEFAULT 0 ")
             }
         }
-        private val MIGRATION_15_16: Migration = object : Migration(15, 16) {
+        private val MIGRATION_14_16: Migration = object : Migration(14, 16) {
             override fun migrate(database: SupportSQLiteDatabase) {
-                database.execSQL("CREATE TABLE IF NOT EXISTS `video_watch_table` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `mentorId` TEXT, `gID` TEXT, `graph` TEXT NOT NULL, `videoId` INTEGER NOT NULL, `watchTime` INTEGER NOT NULL)")
-                database.execSQL("CREATE TABLE IF NOT EXISTS `feedback_engage` (`id` TEXT NOT NULL, `created_at` INTEGER NOT NULL, PRIMARY KEY(`id`))")
-
-                database.execSQL("ALTER TABLE question_table ADD COLUMN need_feedback INTEGER ")
-                database.execSQL("ALTER TABLE question_table ADD COLUMN upload_feedback_status INTEGER NOT NULL DEFAULT 0 ")
+                try {
+                    database.execSQL("ALTER TABLE question_table ADD COLUMN need_feedback INTEGER ")
+                    database.execSQL("ALTER TABLE question_table ADD COLUMN upload_feedback_status INTEGER NOT NULL DEFAULT 0 ")
+                    database.execSQL("CREATE TABLE IF NOT EXISTS `video_watch_table` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `mentorId` TEXT, `gID` TEXT, `graph` TEXT NOT NULL, `videoId` INTEGER NOT NULL, `watchTime` INTEGER NOT NULL)")
+                    database.execSQL("CREATE TABLE IF NOT EXISTS `feedback_engage` (`id` TEXT NOT NULL, `created_at` INTEGER NOT NULL, PRIMARY KEY(`id`))")
+                } catch (ex: Exception) {
+                    ex.printStackTrace()
+                }
             }
         }
 
