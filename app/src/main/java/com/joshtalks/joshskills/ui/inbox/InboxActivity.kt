@@ -211,7 +211,6 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
     }
 
 
-
     private fun addLiveDataObservable() {
         viewModel.registerCourseNetworkLiveData.observe(this, Observer {
             if (it == null || it.isEmpty()) {
@@ -226,7 +225,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
     }
 
     private fun addCourseInRecyclerView(items: List<InboxEntity>?) {
-        if (items.isNullOrEmpty() || items.size == recycler_view_inbox.viewResolverCount) {
+        if (items.isNullOrEmpty()) {
             return
         }
         recycler_view_inbox.removeAllViews()
@@ -328,29 +327,26 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
             rxLocation.location().updates(locationRequest)
                 .subscribeOn(Schedulers.computation())
                 .subscribe({ location ->
-                    if (Mentor.getInstance().getLocality() == null) {
-                        CoroutineScope(Dispatchers.IO).launch {
-                            try {
-                                val request = UpdateUserLocality()
-                                request.locality =
-                                    SearchLocality(location.latitude, location.longitude)
+                    CoroutineScope(Dispatchers.IO).launch {
+                        try {
+                            val request = UpdateUserLocality()
+                            request.locality =
+                                SearchLocality(location.latitude, location.longitude)
 
-                                val response: ProfileResponse =
-                                    AppObjectController.signUpNetworkService.updateUserAddressAsync(
-                                        Mentor.getInstance().getId(),
-                                        request
-                                    ).await()
-                                Mentor.getInstance().setLocality(response.locality).update()
-                            } catch (e: Exception) {
-                                e.printStackTrace()
-                                // onFailedToFetchLocation()
-                            }
-                            compositeDisposable.clear()
+                            val response: ProfileResponse =
+                                AppObjectController.signUpNetworkService.updateUserAddressAsync(
+                                    Mentor.getInstance().getId(),
+                                    request
+                                ).await()
+                            Mentor.getInstance().setLocality(response.locality).update()
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                            // onFailedToFetchLocation()
                         }
+                        compositeDisposable.clear()
                     }
                 }, { ex ->
                     ex.printStackTrace()
-
                 })
         )
 
