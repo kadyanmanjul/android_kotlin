@@ -4,6 +4,7 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import com.bumptech.glide.load.MultiTransformation
 import com.clevertap.android.sdk.ActivityLifecycleCallback
 import com.crashlytics.android.Crashlytics
@@ -12,6 +13,8 @@ import com.facebook.FacebookSdk
 import com.facebook.LoggingBehavior
 import com.facebook.appevents.AppEventsLogger
 import com.facebook.stetho.okhttp3.StethoInterceptor
+import com.flurry.android.FlurryAgent
+import com.flurry.android.FlurryPerformance
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.Logger
@@ -162,6 +165,7 @@ internal class AppObjectController {
             FirebaseDatabase.getInstance().setPersistenceEnabled(true)
             initFirebaseRemoteConfig()
             initCrashlytics()
+            initFlurryAnalytics()
             EmojiManager.install(GoogleEmojiProvider())
             videoDownloadTracker = VideoDownloadController.getInstance().downloadTracker
             initNewRelic()
@@ -343,6 +347,17 @@ internal class AppObjectController {
                     .build()
             )
         }
+
+        private fun initFlurryAnalytics(){
+            FlurryAgent.Builder()
+                .withDataSaleOptOut(false) //CCPA - the default value is false
+                .withCaptureUncaughtExceptions(true)
+                .withIncludeBackgroundSessionsInMetrics(true)
+                .withLogLevel(Log.VERBOSE)
+                .withPerformanceMetrics(FlurryPerformance.ALL)
+                .build(joshApplication, BuildConfig.FLURRY_API_KEY);
+        }
+
 
         fun clearDownloadMangerCallback() {
             try {
