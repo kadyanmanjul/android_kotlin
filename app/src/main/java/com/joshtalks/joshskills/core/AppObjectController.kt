@@ -159,6 +159,8 @@ internal class AppObjectController {
             FirebaseDatabase.getInstance().setPersistenceEnabled(true)
             initFirebaseRemoteConfig()
             initCrashlytics()
+            WorkMangerAdmin.deviceIdGenerateWorker()
+
             EmojiManager.install(GoogleEmojiProvider())
             videoDownloadTracker = VideoDownloadController.getInstance().downloadTracker
             initNewRelic()
@@ -300,9 +302,6 @@ internal class AppObjectController {
                 ).build()
             )
             InstallReferralUtil.installReferrer(joshApplication)
-            WorkMangerAdmin.deviceIdGenerateWorker()
-
-
             return INSTANCE
         }
 
