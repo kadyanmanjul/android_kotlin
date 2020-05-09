@@ -8,8 +8,6 @@ import com.bumptech.glide.load.MultiTransformation
 import com.clevertap.android.sdk.ActivityLifecycleCallback
 import com.crashlytics.android.Crashlytics
 import com.crashlytics.android.core.CrashlyticsCore
-import com.facebook.FacebookSdk
-import com.facebook.LoggingBehavior
 import com.facebook.appevents.AppEventsLogger
 import com.facebook.stetho.okhttp3.StethoInterceptor
 import com.google.firebase.analytics.FirebaseAnalytics
@@ -155,7 +153,6 @@ internal class AppObjectController {
             firebaseAnalytics.setAnalyticsCollectionEnabled(true)
             AppEventsLogger.activateApp(joshApplication)
             facebookEventLogger = AppEventsLogger.newLogger(joshApplication)
-            FacebookSdk.addLoggingBehavior(LoggingBehavior.APP_EVENTS)
             AndroidThreeTen.init(joshApplication)
             Branch.getAutoInstance(joshApplication)
             FirebaseDatabase.getInstance().setLogLevel(Logger.Level.DEBUG)
