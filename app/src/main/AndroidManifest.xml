@@ -168,6 +168,7 @@
                 android:name=".ui.launch.LauncherActivity"
                 android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize"
                 android:launchMode="singleTask"
+                android:screenOrientation="portrait"
                 android:theme="@style/AppNoBarTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
