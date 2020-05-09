@@ -6,7 +6,6 @@ import androidx.work.Worker
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import com.crashlytics.android.Crashlytics
-import com.facebook.appevents.AppEventsConstants
 import com.google.android.gms.ads.MobileAds
 import com.google.android.gms.ads.identifier.AdvertisingIdClient
 import com.google.android.gms.tasks.OnCompleteListener
@@ -36,7 +35,6 @@ class AppRunRequiredTaskWorker(context: Context, workerParams: WorkerParameters)
         AppObjectController.facebookEventLogger.flush()
         AppObjectController.firebaseAnalytics.resetAnalyticsData()
         AppObjectController.getFetchObject().awaitFinish()
-        AppObjectController.facebookEventLogger.logEvent(AppEventsConstants.EVENT_NAME_ACTIVATED_APP)
         WorkMangerAdmin.deviceIdGenerateWorker()
         WorkMangerAdmin.readMessageUpdating()
         WorkMangerAdmin.mappingGIDWithMentor()
