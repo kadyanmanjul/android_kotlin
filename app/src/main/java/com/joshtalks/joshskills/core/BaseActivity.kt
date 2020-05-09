@@ -21,7 +21,6 @@ import com.joshtalks.joshskills.core.notification.HAS_NOTIFICATION
 import com.joshtalks.joshskills.core.notification.NOTIFICATION_ID
 import com.joshtalks.joshskills.core.service.WorkMangerAdmin
 import com.joshtalks.joshskills.repository.local.entity.Question
-import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.service.EngagementNetworkHelper
 import com.joshtalks.joshskills.ui.help.HelpActivity
@@ -117,14 +116,13 @@ abstract class BaseActivity : AppCompatActivity() {
 
     private fun initUserForCrashlytics() {
         try {
-            Sentry.captureMessage("Init Crashlytics")
             Crashlytics.getInstance().core.setUserName(User.getInstance().firstName)
             Crashlytics.getInstance().core.setUserEmail(User.getInstance().email)
-            Crashlytics.getInstance()
-                .core.setUserIdentifier(
-                    User.getInstance().phoneNumber + "$" + Mentor.getInstance().getId()
+            Crashlytics.getInstance().core.setUserIdentifier(
+                PrefManager.getStringValue(
+                    USER_UNIQUE_ID
                 )
-
+            )
         } catch (ex: Exception) {
             Sentry.captureException(ex)
         }
@@ -134,7 +132,7 @@ abstract class BaseActivity : AppCompatActivity() {
         try {
             Sentry.captureMessage("Init Sentry")
             val user = io.sentry.core.protocol.User()
-            user.id = User.getInstance().phoneNumber
+            user.id = PrefManager.getStringValue(USER_UNIQUE_ID)
             user.username = User.getInstance().username
             Sentry.setUser(user)
         } catch (ex: Exception) {
