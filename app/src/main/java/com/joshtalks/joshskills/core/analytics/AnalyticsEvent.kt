@@ -5,13 +5,24 @@ enum class AnalyticsEvent(val NAME: String) {
     APP_INSTALL("App Install V2"),
     APP_INSTALL_WITH_DEEP_LINK("App Install With Deep Link V2"),
     APP_UNINSTALLED("App Uninstalled V2"),
-    LATITUDE("Latitude V2"),
-    LONGITUDE("Longitude V2"),
-    APP_VERSION("App version V2"),
+    /*
+    LATITUDE("Latitude V2"),  //Not yet
+    LONGITUDE("Longitude V2"), //Not yet
+    */
+    APP_VERSION_CODE("App version V2"),
+    //APP_VERSION_NAME("App version name V2"),
+
+    //parameters
+    TEST_ID_PARAM("test_id"), //DONE
     SOURCE("Source V2"),
-    DEVICE("Device V2"),
+    DEVICE_MANUFACTURER("Device V2"),
+    DEVICE_MODEL("Device V2"),
     ANDROID_OR_IOS("Android/IOS V2"),
-    GAID("gaid V2"),
+    USER_GAID("User Gaid V2"),
+    USER_NAME("User name V2"),
+    USER_EMAIL("User email id V2"),
+
+
     APP_LAUNCHED("App Launched V2"),
     NETWORK_CARRIER("Network Carrier V2"),
     ACTIVITY_CREATED("Activity Created V2"),
@@ -26,16 +37,17 @@ enum class AnalyticsEvent(val NAME: String) {
 
     // Login Screen
     LOGIN_SCREEN_1("Login Screen 1 V2"),
-    COURSE_EXPLORER("Course Explorer V2"),  //EXPLORE_BTN_CLICKED("Explore Button Clicked V2"),
-    LOGIN_CLICKED("Login Clicked V2"),//TODO
-    LOGIN_TRUECALLER_CLICKED("Login Truecaller Clicked V2"),//TODO
+    COURSE_EXPLORER("Course Explorer V2"),
+    EXPLORE_BTN_CLICKED("Explore Button Clicked V2"),
+    LOGIN_CLICKED("Login Clicked V2"),//TODO  called in both onBoardActivity and from payment LoginDialogFragment
+    LOGIN_TRUECALLER_CLICKED("Login Truecaller Clicked V2"),//TODO called in both onBoardActivity and from payment LoginDialogFragment
 
     LOGIN_WITH_TRUECALLER("Login With Truecaller V2"),//TODO
     LOGIN_WITH_OTP("Login With Otp V2"), //TODO
 
     //LOGIN with otp
     PHONENO_ENTERED_NEXT_BTN_CLICKED("Phone Number Entered Next Button Clicked V2"),
-    COUNTRY_FLAG("CountryFlag Icon V2"),
+    COUNTRY_FLAG_CHANGED("CountryFlag Icon Changed V2"),
     FLAG_DIALOG_SEARCH_TEXT("Flag Searched V2"),
     FLAG_DIALOG_CLOSED("Flag Dialog Closed V2"),
     FLAG_DIALOG_ITEM_CLICKED("Flag Dialog Flag Selected V2"),
@@ -50,7 +62,10 @@ enum class AnalyticsEvent(val NAME: String) {
 
     RESEND_OTP("Resend OTP V2"),
     INCORRECT_OTP("Incorrect OTP V2"),
-    NEXT_OTP_CLICKED("OTP Screen Next Clicked V2"),
+    NEXT_OTP_CLICKED("OTP Verified V2"),
+    OTP_VERIFIED("OTP Verified V2"),
+    VERIFIED_VIA_TRUECALLER("Verified via TruecallerV2"),
+    NEXT_TO_OTP_SCREEN_CLICKED("Next To Otp Screen Clicked V2"),
     LOGIN_SUCCESS("Login Success V2"),
     LOGIN_SUCCESSFULLY("Login Successfully V2"),
 
@@ -58,6 +73,8 @@ enum class AnalyticsEvent(val NAME: String) {
     CLICK_HELPLINE_SELECTED("Call Helpline Selected V2"),
     CALL_HELPLINE("Call Helpline V2"),
     HELP_SUBMITTED("Help Submitted V2"),
+    HELP_BACK_CLICKED("Help back button clicked V2"),
+    HELP_COMPLAINT_FOAM("Help Complain Foam V2"),
 
 
     // ExploreCourses Screen
@@ -65,10 +82,11 @@ enum class AnalyticsEvent(val NAME: String) {
     EXPLORE_OPENED("Explore Opened V2"),
     COURSE_LIST_SCROLLED("Course List Scrolled V2"),
     COURSE_CLICKED("Course Clicked V2"),
-    BUY_COURSE_NOW_CARDVIEW_BUTTON_CLICKED("Buy Course now Clicked V2"),
+    BUY_COURSE_NOW_BUTTON_CLICKED("Buy Course now Clicked V2"), //  COURSE_CLICKED same
     BACK_BTN_EXPLORESCREEN("Back Pressed on Explore Screen V2"),
     MORE_ICON_CLICKED("More Icons Clicked V2"),
     LOGOUT_CLICKED("Logout Menu item clicked V2"),
+    USER_LOGGED_OUT("User logged out V2"),
 
 
     //CourseDetails Screen

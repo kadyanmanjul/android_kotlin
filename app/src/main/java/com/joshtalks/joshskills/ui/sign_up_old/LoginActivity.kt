@@ -156,6 +156,8 @@ class LoginActivity : CoreJoshActivity() {
     private val trueCallerSDKCallback: ITrueCallback = object : ITrueCallback {
         override fun onSuccessProfileShared(@NonNull trueProfile: TrueProfile) {
             showProgress()
+
+            AppAnalytics.create(AnalyticsEvent.TRRUECALLER_CONTINUE_CLICKED.NAME).push()
             viewModel.verifyUserViaTrueCaller(trueProfile)
         }
 
@@ -166,6 +168,8 @@ class LoginActivity : CoreJoshActivity() {
         override fun onFailureProfileShared(@NonNull trueError: TrueError) {
             if (trueError.errorType == ERROR_TYPE_CONTINUE_WITH_DIFFERENT_NUMBER) {
                 signUp()
+
+                AppAnalytics.create(AnalyticsEvent.USE_OTHER_MOBILE_CLICKED.NAME).push()
             }
             Crashlytics.log(3, "Truecaller Issue", trueError.errorType.toString())
         }
