@@ -7,12 +7,12 @@ import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.CoreJoshActivity
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
+import com.joshtalks.joshskills.core.analytics.LogException
 import com.joshtalks.joshskills.core.service.WorkMangerAdmin
 import com.joshtalks.joshskills.ui.payment.COURSE_ID
 import com.joshtalks.joshskills.ui.payment.PaymentActivity
 import io.branch.referral.Branch
 import io.branch.referral.Defines
-import io.sentry.core.Sentry
 import org.json.JSONObject
 
 
@@ -55,9 +55,8 @@ class LauncherActivity : CoreJoshActivity() {
                         this@LauncherActivity.finish()
                     }
                 }
-            } catch (ex: Exception) {
-                Sentry.captureException(ex)
-                ex.printStackTrace()
+            } catch (ex: Throwable) {
+                LogException.catchException(ex)
             }
         }.withData(this.intent.data).init()
 
