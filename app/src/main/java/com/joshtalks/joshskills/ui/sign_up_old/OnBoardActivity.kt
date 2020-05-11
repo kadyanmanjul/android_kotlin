@@ -20,6 +20,7 @@ import com.joshtalks.joshskills.core.CoreJoshActivity
 import com.joshtalks.joshskills.core.SignUpStepStatus
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
+import com.joshtalks.joshskills.core.analytics.ErrorTag
 import com.joshtalks.joshskills.core.analytics.LogException
 import com.joshtalks.joshskills.databinding.ActivityOnboardBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor
@@ -160,7 +161,7 @@ class OnBoardActivity : CoreJoshActivity() {
             if (trueError.errorType == ERROR_TYPE_CONTINUE_WITH_DIFFERENT_NUMBER) {
                 signUp()
             }
-            LogException.catchException(trueError.errorType.toString())
+            LogException.catchError(ErrorTag.TRUE_CALLER, trueError.errorType.toString())
         }
     }
 
