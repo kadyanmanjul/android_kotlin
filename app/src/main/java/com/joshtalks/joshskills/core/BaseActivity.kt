@@ -17,6 +17,7 @@ import com.crashlytics.android.Crashlytics
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
+import com.joshtalks.joshskills.core.analytics.LogException
 import com.joshtalks.joshskills.core.notification.HAS_NOTIFICATION
 import com.joshtalks.joshskills.core.notification.NOTIFICATION_ID
 import com.joshtalks.joshskills.core.service.WorkMangerAdmin
@@ -29,6 +30,7 @@ import com.joshtalks.joshskills.ui.profile.CropImageActivity
 import com.joshtalks.joshskills.ui.profile.ProfileActivity
 import com.joshtalks.joshskills.ui.profile.SOURCE_IMAGE
 import com.joshtalks.joshskills.ui.sign_up_old.OnBoardActivity
+import com.newrelic.agent.android.NewRelic
 import io.branch.referral.Branch
 import io.github.inflationx.viewpump.ViewPumpContextWrapper
 import io.sentry.core.Sentry
@@ -55,8 +57,16 @@ abstract class BaseActivity : AppCompatActivity() {
         AppObjectController.screenHeight = displayMetrics.heightPixels
         AppObjectController.screenWidth = displayMetrics.widthPixels
         initUserForCrashlytics()
+        initIdentifierForTools()
         InstallReferralUtil.installReferrer(applicationContext)
-        Branch.getInstance().setIdentity(PrefManager.getStringValue(USER_UNIQUE_ID))
+    }
+
+    private fun initIdentifierForTools() {
+        if (PrefManager.getStringValue(USER_UNIQUE_ID).isNotEmpty()) {
+            Branch.getInstance().setIdentity(PrefManager.getStringValue(USER_UNIQUE_ID))
+            setupSentryUser()
+            initNewRelic()
+        }
     }
 
     fun openHelpActivity() {
@@ -110,7 +120,8 @@ abstract class BaseActivity : AppCompatActivity() {
                     )
                 )
             }
-        } catch (ex: Exception) {
+        } catch (ex: Throwable) {
+            LogException.catchException(ex)
         }
     }
 
@@ -123,21 +134,21 @@ abstract class BaseActivity : AppCompatActivity() {
                     USER_UNIQUE_ID
                 )
             )
-        } catch (ex: Exception) {
-            Sentry.captureException(ex)
+        } catch (ex: Throwable) {
+            LogException.catchException(ex)
         }
     }
 
     private fun setupSentryUser() {
-        try {
-            Sentry.captureMessage("Init Sentry")
-            val user = io.sentry.core.protocol.User()
-            user.id = PrefManager.getStringValue(USER_UNIQUE_ID)
-            user.username = User.getInstance().username
-            Sentry.setUser(user)
-        } catch (ex: Exception) {
-            Sentry.captureException(ex)
-        }
+        val user = io.sentry.core.protocol.User()
+        user.id = PrefManager.getStringValue(USER_UNIQUE_ID)
+        user.username = User.getInstance().username
+        Sentry.setUser(user)
+
+    }
+
+    private fun initNewRelic() {
+        NewRelic.setUserId(PrefManager.getStringValue(USER_UNIQUE_ID))
     }
 
     fun callHelpLine() {
