@@ -46,7 +46,7 @@ abstract class CoreJoshActivity : BaseActivity() {
         try {
             iv_help.setOnClickListener { openHelpActivity() }
         } catch (ex: Throwable) {
-            LogException.catchException(ex)
+            //LogException.catchException(ex)
         }
     }
 
