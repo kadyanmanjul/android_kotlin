@@ -11,7 +11,6 @@ import androidx.annotation.NonNull
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
-import com.crashlytics.android.Crashlytics
 import com.github.razir.progressbutton.DrawableButton
 import com.github.razir.progressbutton.hideProgress
 import com.github.razir.progressbutton.showProgress
@@ -21,6 +20,7 @@ import com.joshtalks.joshskills.core.CoreJoshActivity
 import com.joshtalks.joshskills.core.SignUpStepStatus
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
+import com.joshtalks.joshskills.core.analytics.LogException
 import com.joshtalks.joshskills.databinding.ActivityOnboardBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
@@ -89,17 +89,6 @@ class OnBoardActivity : CoreJoshActivity() {
                     openCourseExplorerScreen()
                     return@Observer
                 }
-                SignUpStepStatus.CoursesNotExist -> {
-
-                    if (activityResultFlag) {
-                        setResult()
-                        return@Observer
-                    }
-                    openCourseExplorerScreen()
-                    return@Observer
-                }
-
-
                 else -> return@Observer
             }
         })
@@ -144,8 +133,8 @@ class OnBoardActivity : CoreJoshActivity() {
                 TrueSDK.getInstance().setLocale(locale)
                 layout.loginTrueCallerContainer.visibility = View.VISIBLE
             }
-        } catch (ex: Exception) {
-            ex.printStackTrace()
+        } catch (ex: Throwable) {
+            LogException.catchException(ex)
         }
     }
 
@@ -165,14 +154,13 @@ class OnBoardActivity : CoreJoshActivity() {
         }
 
         override fun onVerificationRequired() {
-            Crashlytics.log(3, "Truecaller Issue 2", "onVerificationRequired")
         }
 
         override fun onFailureProfileShared(@NonNull trueError: TrueError) {
             if (trueError.errorType == ERROR_TYPE_CONTINUE_WITH_DIFFERENT_NUMBER) {
                 signUp()
             }
-            Crashlytics.log(3, "Truecaller Issue", trueError.errorType.toString())
+            LogException.catchException(trueError.errorType.toString())
         }
     }
 
@@ -200,7 +188,8 @@ class OnBoardActivity : CoreJoshActivity() {
             if (TrueSDK.getInstance().isUsable) {
                 TrueSDK.getInstance().onActivityResultObtained(this, resultCode, data)
             }
-        } catch (ex: Exception) {
+        } catch (ex: Throwable) {
+            LogException.catchException(ex)
         }
     }
 
@@ -208,7 +197,8 @@ class OnBoardActivity : CoreJoshActivity() {
         try {
             layout.btnTruecallerLogin.isEnabled = true
             layout.btnTruecallerLogin.hideProgress(getString(R.string.login_with_truecaller_label))
-        } catch (e: Exception) {
+        } catch (ex: Throwable) {
+            LogException.catchException(ex)
         }
     }
 
