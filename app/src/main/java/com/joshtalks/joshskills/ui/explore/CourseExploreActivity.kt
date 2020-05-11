@@ -9,14 +9,13 @@ import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.afollestad.materialdialogs.MaterialDialog
 import com.crashlytics.android.Crashlytics
-import com.facebook.appevents.AppEventsConstants.EVENT_NAME_VIEWED_CONTENT
-import com.facebook.appevents.AppEventsConstants.EVENT_PARAM_CONTENT_ID
 import com.google.android.material.appbar.MaterialToolbar
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
-import com.joshtalks.joshskills.core.analytics.BranchIOAnalytics
+import com.joshtalks.joshskills.core.analytics.LogException
+import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
 import com.joshtalks.joshskills.core.custom_ui.decorator.LayoutMarginDecoration
 import com.joshtalks.joshskills.core.service.WorkMangerAdmin
 import com.joshtalks.joshskills.databinding.ActivityCourseExploreBinding
@@ -30,7 +29,6 @@ import com.joshtalks.joshskills.ui.payment.PaymentActivity
 import com.joshtalks.joshskills.ui.sign_up_old.OnBoardActivity
 import com.joshtalks.joshskills.ui.view_holders.CourseExplorerViewHolder
 import com.vanniktech.emoji.Utils
-import io.branch.referral.util.BRANCH_STANDARD_EVENT
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -171,7 +169,8 @@ class CourseExploreActivity : CoreJoshActivity() {
                     courseExploreBinding.progressBar.visibility = View.GONE
                 }
 
-            } catch (ex: Exception) {
+            } catch (ex: Throwable) {
+                LogException.catchException(ex)
                 CoroutineScope(Dispatchers.Main).launch {
                     courseExploreBinding.progressBar.visibility = View.GONE
                 }
@@ -204,16 +203,9 @@ class CourseExploreActivity : CoreJoshActivity() {
 
     private fun addObserver() {
         compositeDisposable.add(RxBus2.listen(CourseExploreModel::class.java).subscribe {
-            val params = Bundle().apply {
-                putString(EVENT_PARAM_CONTENT_ID, it.id.toString())
-            }
-            val extras: HashMap<String, String> = HashMap()
-            extras["test_id"] = it.id?.toString() ?: EMPTY
-            extras["course_name"] = it.courseName
             AppAnalytics.create(AnalyticsEvent.COURSE_EXPLORER.NAME)
                 .addParam("test_id", it.id?.toString()).push()
-            BranchIOAnalytics.pushToBranch(BRANCH_STANDARD_EVENT.VIEW_ITEM, extras)
-            AppObjectController.facebookEventLogger.logEvent(EVENT_NAME_VIEWED_CONTENT, params)
+            MarketingAnalytics.courseViewAnalytics(it)
             PaymentActivity.startPaymentActivity(this, PAYMENT_FOR_COURSE_CODE, it)
         })
 
