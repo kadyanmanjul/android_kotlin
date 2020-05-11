@@ -7,6 +7,7 @@ import android.os.Build
 import android.os.Bundle
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
+import com.joshtalks.joshskills.core.analytics.LogException
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
 import com.joshtalks.joshskills.repository.server.engage.Graph
 import com.joshtalks.joshskills.repository.server.feedback.FeedbackTypes
@@ -44,7 +45,8 @@ abstract class CoreJoshActivity : BaseActivity() {
         super.onStart()
         try {
             iv_help.setOnClickListener { openHelpActivity() }
-        } catch (ex: Exception) {
+        } catch (ex: Throwable) {
+            LogException.catchException(ex)
         }
     }
 
@@ -123,8 +125,8 @@ abstract class CoreJoshActivity : BaseActivity() {
                         canTakeRequestFeedbackFromUser(feedbackType, this)
                     }
                 }
-            } catch (ex: Exception) {
-                ex.printStackTrace()
+            } catch (ex: Throwable) {
+                LogException.catchException(ex)
             }
         }
     }
