@@ -10,7 +10,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 object BranchIOAnalytics {
-    @Synchronized
     fun pushToBranch(event: BRANCH_STANDARD_EVENT, extras: HashMap<String, String>? = null) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
