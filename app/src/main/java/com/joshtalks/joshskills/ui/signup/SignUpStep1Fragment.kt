@@ -24,6 +24,7 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.analytics.LogException
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.SignUpStep1FragmentBinding
 
@@ -196,7 +197,8 @@ class SignUpStep1Fragment : Fragment() {
                     EMPTY
                 )
             )
-        } catch (ex: Exception) {
+        } catch (ex: Throwable) {
+            LogException.catchException(ex)
         }
     }
 
