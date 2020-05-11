@@ -119,6 +119,8 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
                     .update()
 
                 AppAnalytics.updateUser()
+
+                AppAnalytics.create(AnalyticsEvent.OTP_VERIFIED.NAME).push()
                 mergeMentorWithGId(response.mentorId)
                 fetchMentor()
                 WorkMangerAdmin.appStartWorker()
@@ -162,6 +164,9 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
                     response.isUserExist,
                     RegistrationMethods.MOBILE_NUMBER
                 )
+
+                AppAnalytics.create(AnalyticsEvent.LOGIN_WITH_TRUECALLER.NAME)
+                    .addParam(AnalyticsEvent.VERIFIED_VIA_TRUECALLER.NAME,true).push()
 
                 val user = User.getInstance()
                 user.id = response.userId

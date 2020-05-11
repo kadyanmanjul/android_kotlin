@@ -20,7 +20,9 @@ import com.joshtalks.joshskills.repository.server.MessageStatusRequest
 import com.joshtalks.joshskills.repository.service.NetworkRequestHelper
 import com.joshtalks.joshskills.repository.service.SyncChatService
 import io.branch.referral.Branch
+import io.sentry.core.Sentry
 import retrofit2.HttpException
+import timber.log.Timber
 import java.util.*
 
 
@@ -441,6 +443,7 @@ class UploadFCMTokenOnServer(context: Context, workerParams: WorkerParameters) :
             AppObjectController.signUpNetworkService.uploadFCMToken(data).await()
         } catch (ex: Exception) {
             ex.printStackTrace()
+            Sentry.captureException(ex,"Upload FCM Token Exception")
         }
         return Result.success()
     }

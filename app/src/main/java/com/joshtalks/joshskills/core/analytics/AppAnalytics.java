@@ -2,16 +2,21 @@ package com.joshtalks.joshskills.core.analytics;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.clevertap.android.sdk.CleverTapAPI;
 import com.crashlytics.android.Crashlytics;
+import com.flurry.android.FlurryAgent;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.joshtalks.joshskills.BuildConfig;
 import com.joshtalks.joshskills.core.AppObjectController;
 import com.joshtalks.joshskills.repository.local.model.Mentor;
 import com.joshtalks.joshskills.repository.local.model.User;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 public class AppAnalytics {
@@ -19,6 +24,7 @@ public class AppAnalytics {
     @SuppressLint("StaticFieldLeak")
     private static CleverTapAPI cleverTapAnalytics;
     private static FirebaseAnalytics firebaseAnalytics;
+    private static FlurryAgent flurryAgent;
     private final String event;
     private HashMap<String, Object> parameters = new HashMap<>();
 
@@ -50,6 +56,7 @@ public class AppAnalytics {
         init();
         updateCleverTapUser();
         updateFabricUser();
+        updateFlurryUser();
     }
 
     private static void updateCleverTapUser() {
@@ -72,6 +79,39 @@ public class AppAnalytics {
         Crashlytics.setUserIdentifier(user.getId());
         Crashlytics.setUserName(user.getFirstName());
         Crashlytics.setString("cleverId", cleverTapAnalytics.getCleverTapID());
+    }
+
+    private static void updateFlurryUser() {
+        //FlurryAgent.deleteData();
+        Log.d("Furry", "updateFlurryUser() called");
+        User user = User.getInstance();
+        Mentor mentor = Mentor.getInstance();
+        FlurryAgent.setUserId(mentor.getId());
+        FlurryAgent.setVersionName(BuildConfig.VERSION_NAME);
+       // FlurryAgent.setAge(getAge(user.getDateOfBirth()));
+        List<String> list =new ArrayList<>();
+        list.add(user.getUsername());
+        list.add(mentor.getId());
+        list.add(user.getPhoneNumber());
+        list.add(user.getDateOfBirth());
+        list.add(user.getUserType());
+        list.add(user.getGender());
+        FlurryAgent.UserProperties.set("User",list);
+        FlurryAgent.setGender((byte) (user.getGender().equals("M")?1:0));
+        FlurryAgent.UserProperties.set("Name", user.getFirstName());
+        FlurryAgent.UserProperties.set("Identity", mentor.getId());
+        FlurryAgent.UserProperties.set("Phone", user.getPhoneNumber());
+        FlurryAgent.UserProperties.set("MentorIdentity", mentor.getId());
+        FlurryAgent.UserProperties.set("Photo", user.getPhoto());
+        FlurryAgent.UserProperties.set("date_of_birth", user.getDateOfBirth());
+        FlurryAgent.UserProperties.set("Username", user.getUsername());
+        FlurryAgent.UserProperties.set("User Type", user.getUserType());
+
+    }
+
+    private static int getAge(String dateOfBirth) {
+
+        return 0;
     }
 
     public static void flush() {
@@ -115,16 +155,30 @@ public class AppAnalytics {
         return formatted.toString();
     }
 
-    public void push() {
+    public void push( ) {
         if (BuildConfig.DEBUG) {
             return;
         }
         formatParameters();
         pushToFirebase();
         pushToCleverTap();
+        pushToFlurry(false);
     }
 
-    private void formatParameters() {
+    public void push(boolean trackSession ) {
+        if (BuildConfig.DEBUG) {
+            return;
+        }
+        formatParameters();
+        pushToFirebase();
+        pushToCleverTap();
+        pushToFlurry(trackSession);
+    }
+
+    public void endSession() {
+        FlurryAgent.endTimedEvent(event);
+    }
+   private void formatParameters() {
 
         for (String key : parameters.keySet()) {
             if (parameters.get(key) == null || Objects.requireNonNull(parameters.get(key)).toString().isEmpty()) {
@@ -135,6 +189,13 @@ public class AppAnalytics {
 
     private void pushToFirebase() {
         firebaseAnalytics.logEvent(event, convertMapToBundle(parameters));
+    }
+    private void pushToFlurry(boolean tracksession) {
+        //Log.d("flurry", "pushToFlurry() called event "+ event+"  "+ "${parametere) "+convertMapToMaoString(parameters).toString());
+        if(tracksession)
+        FlurryAgent.logEvent(event, convertMapToMaoString(parameters),true);
+        else
+            FlurryAgent.logEvent(event, convertMapToMaoString(parameters));
     }
 
     private void pushToCleverTap() {
@@ -152,6 +213,23 @@ public class AppAnalytics {
         }
 
         return bundle;
+    }
+
+    private Map<String,String> convertMapToMaoString(HashMap properites) {
+        Map<String,Object> map = properites; //Object is containing String
+        Map<String,String> newMap =new HashMap<String,String>();
+        Log.d("flurry", "convertMapToMaoString() called with: properites = [" + properites + "]");
+
+        for (Map.Entry<String, Object> entry : map.entrySet()) {
+            if(entry.getValue() instanceof String){
+                newMap.put(entry.getKey(), (String) entry.getValue());
+            }else{
+                newMap.put(entry.getKey(), ""+ entry.getValue());
+            }
+        }
+        Log.d("flurry", "convertMapToMaoString() ended with: properites = [" + newMap + "]");
+
+        return newMap;
     }
 
 }

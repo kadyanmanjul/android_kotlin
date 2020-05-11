@@ -24,6 +24,8 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
+import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.LogException
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.SignUpStep1FragmentBinding
@@ -78,6 +80,9 @@ class SignUpStep1Fragment : Fragment() {
         signUpStep1FragmentBinding.countryCodePicker.setOnCountryChangeListener {
             signUpStep1FragmentBinding.mobileEt.prefix =
                 signUpStep1FragmentBinding.countryCodePicker.selectedCountryCodeWithPlus
+            AppAnalytics.create(AnalyticsEvent.COUNTRY_FLAG_CHANGED.NAME)
+                .addParam("MobilePrefix",signUpStep1FragmentBinding.mobileEt.prefix)
+                .push()
         }
 
         initTermsConditionView()
@@ -104,6 +109,7 @@ class SignUpStep1Fragment : Fragment() {
         signUpStep1FragmentBinding.termsconditiontv.text = spannableString
         signUpStep1FragmentBinding.termsconditiontv.movementMethod =
             LinkMovementMethod.getInstance()
+        // TODO Add Terms and Condition Analytics  EVENt -TERMS_CONDITION_CLICKED
     }
 
     private fun initProgressView() {
@@ -137,6 +143,11 @@ class SignUpStep1Fragment : Fragment() {
             signUpStep1FragmentBinding.mobileEt.prefix,
             signUpStep1FragmentBinding.mobileEt.text.toString()
         )
+        AppAnalytics.create(AnalyticsEvent.NEXT_TO_OTP_SCREEN_CLICKED.NAME)
+            .addParam("MobilePrefix",signUpStep1FragmentBinding.mobileEt.prefix)
+            .addParam("MobileNmberEntered",signUpStep1FragmentBinding.mobileEt.text.toString())
+            .push()
+
     }
 
     private fun validPhoneNumber(number: String): Boolean {
