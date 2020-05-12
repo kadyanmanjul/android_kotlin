@@ -10,10 +10,10 @@ import android.util.DisplayMetrics
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
-import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import com.android.installreferrer.api.InstallReferrerClient
 import com.crashlytics.android.Crashlytics
+import com.flurry.android.FlurryAgent
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
@@ -39,7 +39,6 @@ const val HELP_ACTIVITY_REQUEST_CODE = 9010
 
 abstract class BaseActivity : AppCompatActivity() {
 
-    protected val TAG: String = javaClass.simpleName
     private lateinit var referrerClient: InstallReferrerClient
 
     override fun attachBaseContext(newBase: Context?) {
@@ -66,6 +65,7 @@ abstract class BaseActivity : AppCompatActivity() {
             Branch.getInstance().setIdentity(PrefManager.getStringValue(USER_UNIQUE_ID))
             setupSentryUser()
             initNewRelic()
+            initFlurry()
         }
     }
 
@@ -151,6 +151,10 @@ abstract class BaseActivity : AppCompatActivity() {
         NewRelic.setUserId(PrefManager.getStringValue(USER_UNIQUE_ID))
     }
 
+    private fun initFlurry() {
+        FlurryAgent.setUserId(PrefManager.getStringValue(USER_UNIQUE_ID))
+    }
+
     fun callHelpLine() {
         AppAnalytics.create(AnalyticsEvent.CLICK_HELPLINE_SELECTED.NAME).push()
         Utils.call(this, AppObjectController.getFirebaseRemoteConfig().getString("helpline_number"))
@@ -169,10 +173,10 @@ abstract class BaseActivity : AppCompatActivity() {
         if (question != null && question.needFeedback == null) {
             WorkManager.getInstance(applicationContext)
                 .getWorkInfoByIdLiveData(WorkMangerAdmin.getQuestionFeedback(question.questionId))
-                .observe(this, Observer { workInfo ->
-                    if (workInfo != null && workInfo.state == WorkInfo.State.SUCCEEDED) {
+                .observe(this, Observer {
+                    /* if (workInfo != null && workInfo.state == WorkInfo.State.SUCCEEDED) {
 
-                    }
+                     }*/
                 })
         }
     }
