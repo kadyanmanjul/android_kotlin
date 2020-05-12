@@ -1,5 +1,6 @@
 package com.joshtalks.joshskills.repository.service
 
+import com.joshtalks.joshskills.repository.local.model.FCMResponse
 import com.joshtalks.joshskills.repository.local.model.InstallReferrerModel
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.googlelocation.Locality
@@ -64,13 +65,12 @@ interface SignUpNetworkService {
     @POST("$DIR/mentor/devices/")
     suspend fun updateDeviceDetails(@Body obj: UpdateDeviceRequest)
 
-    @FormUrlEncoded
     @PATCH("$DIR/mentor/fcm/{id}/")
-    fun updateFCMToken(@Path("id") id: String, @FieldMap params: Map<String, String>): Deferred<Any>
+    fun updateFCMToken(@Path("id") id: Int, @Body fcmResponse: FCMResponse): Deferred<Any>
 
     @FormUrlEncoded
     @POST("$DIR/mentor/fcm/")
-    fun uploadFCMToken(@FieldMap params: Map<String, String>): Deferred<Any>
+    fun uploadFCMToken(@FieldMap params: Map<String, String>): Deferred<FCMResponse>
 
     @FormUrlEncoded
     @POST("$DIR/mentor/register/anonymous/")
