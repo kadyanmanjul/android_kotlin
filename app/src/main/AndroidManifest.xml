@@ -242,11 +242,6 @@
                 android:theme="@style/VideoPlayerTheme" />
 
         <activity
-                android:name=".ui.sign_up_old.LoginActivity"
-                android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize"
-                android:launchMode="singleTask"
-                android:windowSoftInputMode="stateHidden" />
-        <activity
                 android:name=".ui.pdfviewer.PdfViewerActivity"
                 android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize"
                 android:launchMode="singleTask"

@@ -39,11 +39,11 @@ enum class AnalyticsEvent(val NAME: String) {
     LOGIN_SCREEN_1("Login Screen 1 V2"),
     COURSE_EXPLORER("Course Explorer V2"),
     EXPLORE_BTN_CLICKED("Explore Button Clicked V2"),
-    LOGIN_CLICKED("Login Clicked V2"),//TODO  called in both onBoardActivity and from payment LoginDialogFragment
-    LOGIN_TRUECALLER_CLICKED("Login Truecaller Clicked V2"),//TODO called in both onBoardActivity and from payment LoginDialogFragment
+    LOGIN_CLICKED("Login Clicked V2"),//  called in both onBoardActivity and from payment LoginDialogFragment
+    LOGIN_TRUECALLER_CLICKED("Login Truecaller Clicked V2"),// called in both onBoardActivity and from payment LoginDialogFragment
 
-    LOGIN_WITH_TRUECALLER("Login With Truecaller V2"),//TODO
-    LOGIN_WITH_OTP("Login With Otp V2"), //TODO
+    LOGIN_WITH_TRUECALLER("Login With Truecaller V2"),
+    LOGIN_WITH_OTP("Login With Otp V2"),
 
     //LOGIN with otp
     PHONENO_ENTERED_NEXT_BTN_CLICKED("Phone Number Entered Next Button Clicked V2"),
@@ -82,7 +82,6 @@ enum class AnalyticsEvent(val NAME: String) {
     EXPLORE_OPENED("Explore Opened V2"),
     COURSE_LIST_SCROLLED("Course List Scrolled V2"),
     COURSE_CLICKED("Course Clicked V2"),
-    BUY_COURSE_NOW_BUTTON_CLICKED("Buy Course now Clicked V2"), //  COURSE_CLICKED same
     BACK_BTN_EXPLORESCREEN("Back Pressed on Explore Screen V2"),
     MORE_ICON_CLICKED("More Icons Clicked V2"),
     LOGOUT_CLICKED("Logout Menu item clicked V2"),
@@ -99,8 +98,9 @@ enum class AnalyticsEvent(val NAME: String) {
     COUPON_INVALID("Coupon Invalid V2"),
 
     COURSE_DETAILS("Clicked Course Details V2"),
-    COMPLETE_PAYMENT("Complete Payment V2"), // TODO
+    COMPLETE_PAYMENT("Complete Payment V2"), //
     COMPLETE_PAYMENT_CLICKED("Complete Payment Btn Clicked V2"),
+    START_COURSE_NOW("Start your course now v2"), //  COURSE_CLICKED same
 
 
 
@@ -151,12 +151,10 @@ enum class AnalyticsEvent(val NAME: String) {
     NOTIFICATION_CLICKED("Notification Clicked V2"),
     REGISTRATION_COMPLETED("Registration_completed V2"),
     COURSE_STARTED("Course_Started V2"),
-    PURCHASE_COURSE("Purchase Course V2"), // TODO
+    PURCHASE_COURSE("Purchase Course V2"),
 
 
     TEST_ID_OPENED("Test ID Opened V2"),
-
-    LOGIN_SCREEN("Login Screen V2"), // TODO remove it as used in old LoginActivity
 
     RAZORPAY_SDK("Razorpay SDK V2"),
     PAYMENT_COMPLETED("Payment Completed V2"),

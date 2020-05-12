@@ -11,7 +11,11 @@ import com.joshtalks.joshskills.core.AppObjectController;
 import com.joshtalks.joshskills.repository.local.model.Mentor;
 import com.joshtalks.joshskills.repository.local.model.User;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -53,6 +57,7 @@ public class AppAnalytics {
     public static void updateUser() {
         init();
         updateCleverTapUser();
+        updateFabricUser();
         updateFlurryUser();
     }
 
@@ -73,28 +78,57 @@ public class AppAnalytics {
 
     private static void updateFlurryUser() {
         //FlurryAgent.deleteData();
-        Timber.d("updateFlurryUser() called");
+        Log.d("Furry", "updateFlurryUser() called");
         User user = User.getInstance();
         Mentor mentor = Mentor.getInstance();
+        FlurryAgent.setUserId(mentor.getId());
         FlurryAgent.setVersionName(BuildConfig.VERSION_NAME);
-        List<String> list = new ArrayList<>();
+        FlurryAgent.setAge(getAge(user.getDateOfBirth()));
+        FlurryAgent.setGender((user.getGender().equals("M")? Constants.MALE :Constants.FEMALE));
+
+        //User Properties
+        List<String> list =new ArrayList<>();
         list.add(user.getUsername());
         list.add(mentor.getId());
         list.add(user.getPhoneNumber());
         list.add(user.getDateOfBirth());
         list.add(user.getUserType());
         list.add(user.getGender());
-        FlurryAgent.UserProperties.set("User", list);
-        FlurryAgent.setGender((byte) (user.getGender().equals("M") ? 1 : 0));
-        FlurryAgent.UserProperties.set("Name", user.getFirstName());
-        FlurryAgent.UserProperties.set("Identity", mentor.getId());
-        FlurryAgent.UserProperties.set("Phone", user.getPhoneNumber());
-        FlurryAgent.UserProperties.set("MentorIdentity", mentor.getId());
-        FlurryAgent.UserProperties.set("Photo", user.getPhoto());
-        FlurryAgent.UserProperties.set("date_of_birth", user.getDateOfBirth());
-        FlurryAgent.UserProperties.set("Username", user.getUsername());
-        FlurryAgent.UserProperties.set("User Type", user.getUserType());
+        FlurryAgent.UserProperties.set("JoshSkills.User",list);
 
+
+    }
+
+    public static int getAge(String dobString){
+
+        Date date = null;
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        try {
+            date = sdf.parse(dobString);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        if(date == null) return 0;
+
+        Calendar dob = Calendar.getInstance();
+        Calendar today = Calendar.getInstance();
+        dob.setTime(date);
+
+        int year = dob.get(Calendar.YEAR);
+        int month = dob.get(Calendar.MONTH);
+        int day = dob.get(Calendar.DAY_OF_MONTH);
+
+        dob.set(year, month+1, day);
+
+        int age = today.get(Calendar.YEAR) - dob.get(Calendar.YEAR);
+
+        if (today.get(Calendar.DAY_OF_YEAR) < dob.get(Calendar.DAY_OF_YEAR)){
+            age--;
+        }
+
+
+        return age;
     }
 
     public static void flush() {
@@ -102,6 +136,7 @@ public class AppAnalytics {
             cleverTapAnalytics = CleverTapAPI.getDefaultInstance(AppObjectController.getJoshApplication());
         }
         cleverTapAnalytics.flush();
+
     }
 
     public AppAnalytics addParam(String key, String value) {

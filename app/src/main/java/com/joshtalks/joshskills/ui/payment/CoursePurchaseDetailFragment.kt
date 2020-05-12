@@ -126,6 +126,7 @@ class CoursePurchaseDetailFragment : DialogFragment() {
     }
 
     fun completePayment() {
+        AppAnalytics.create(AnalyticsEvent.COMPLETE_PAYMENT_CLICKED.NAME).push()
         listener?.onCompletePayment()
         dismissAllowingStateLoss()
 

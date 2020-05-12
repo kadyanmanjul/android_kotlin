@@ -93,6 +93,7 @@ class CourseExploreActivity : CoreJoshActivity() {
         }
         findViewById<MaterialToolbar>(R.id.toolbar).inflateMenu(R.menu.logout_menu)
         findViewById<MaterialToolbar>(R.id.toolbar).setOnMenuItemClickListener {
+            AppAnalytics.create(AnalyticsEvent.MORE_ICON_CLICKED.NAME).push()
             if (it?.itemId == R.id.menu_logout) {
                 AppAnalytics.create(AnalyticsEvent.LOGOUT_CLICKED.NAME).push()
                 MaterialDialog(this@CourseExploreActivity).show {
