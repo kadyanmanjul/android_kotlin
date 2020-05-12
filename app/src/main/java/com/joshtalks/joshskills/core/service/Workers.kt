@@ -436,15 +436,15 @@ class UploadFCMTokenOnServer(context: Context, workerParams: WorkerParameters) :
             if (PrefManager.getStringValue(USER_UNIQUE_ID).isNotEmpty()) {
                 data["gaid"] = PrefManager.getStringValue(USER_UNIQUE_ID)
             }
-            if (Mentor.getInstance().hasId()) {
-                data["user_id"] = Mentor.getInstance().getId()
-                AppObjectController.signUpNetworkService.updateFCMToken(
-                    Mentor.getInstance().getId(), data
-                ).await()
-            } else {
-                AppObjectController.signUpNetworkService.uploadFCMToken(data).await()
+            // if (Mentor.getInstance().hasId()) {
+            data["user_id"] = Mentor.getInstance().getId()
+            /*AppObjectController.signUpNetworkService.updateFCMToken(
+                Mentor.getInstance().getId(), data
+            ).await()*/
+            // } else {
+            AppObjectController.signUpNetworkService.uploadFCMToken(data).await()
 
-            }
+            //  }
         } catch (ex: Exception) {
             ex.printStackTrace()
         }
