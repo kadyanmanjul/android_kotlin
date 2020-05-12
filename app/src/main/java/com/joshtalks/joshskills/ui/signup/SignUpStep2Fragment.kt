@@ -30,13 +30,10 @@ class SignUpStep2Fragment : Fragment() {
 
     companion object {
         @JvmStatic
-        fun newInstance() =
-            SignUpStep2Fragment().apply {
-            }
+        fun newInstance() = SignUpStep2Fragment()
     }
 
     private lateinit var signUpStep2Binding: FragmentSignUpStep2Binding
-
     private lateinit var viewModel: SignUpViewModel
     private val compositeDisposable = CompositeDisposable()
     private var timer: CountDownTimer? = null
@@ -48,8 +45,7 @@ class SignUpStep2Fragment : Fragment() {
         viewModel = activity?.run {
             ViewModelProvider(requireActivity())
                 .get(SignUpViewModel::class.java)
-        }
-            ?: throw Exception("Invalid Activity")
+        } ?: throw Exception("Invalid Activity")
     }
 
     override fun onCreateView(
