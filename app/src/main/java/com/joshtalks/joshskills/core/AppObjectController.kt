@@ -164,13 +164,12 @@ internal class AppObjectController {
             FirebaseDatabase.getInstance().setLogLevel(Logger.Level.DEBUG)
             FirebaseDatabase.getInstance().setPersistenceEnabled(true)
             initFirebaseRemoteConfig()
-            initCrashlytics()
             WorkMangerAdmin.deviceIdGenerateWorker()
-
+            configureCrashlytics()
             initFlurryAnalytics()
+            initNewRelic()
             EmojiManager.install(GoogleEmojiProvider())
             videoDownloadTracker = VideoDownloadController.getInstance().downloadTracker
-            initNewRelic()
             gsonMapper = GsonBuilder()
                 .enableComplexMapKeySerialization()
                 .setDateFormat("yyyy-MM-dd'T'HH:mm:ss")
@@ -329,8 +328,6 @@ internal class AppObjectController {
                 .start(
                     joshApplication
                 )
-
-
         }
 
         private fun initFirebaseRemoteConfig() {
@@ -341,7 +338,7 @@ internal class AppObjectController {
             getFirebaseRemoteConfig().fetchAndActivate()
         }
 
-        private fun initCrashlytics() {
+        private fun configureCrashlytics() {
             Fabric.with(
                 joshApplication, Crashlytics.Builder()
                     .core(CrashlyticsCore.Builder().disabled(BuildConfig.DEBUG).build())
@@ -356,7 +353,7 @@ internal class AppObjectController {
                 .withIncludeBackgroundSessionsInMetrics(true)
                 .withLogLevel(Log.VERBOSE)
                 .withPerformanceMetrics(FlurryPerformance.ALL)
-                .build(joshApplication, BuildConfig.FLURRY_API_KEY);
+                .build(joshApplication, BuildConfig.FLURRY_API_KEY)
         }
 
 
