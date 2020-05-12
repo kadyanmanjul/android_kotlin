@@ -132,14 +132,18 @@ class LoginDialogFragment : DialogFragment() {
     }
 
     fun verifyViaTrueCaller() {
-        AppAnalytics.create(AnalyticsEvent.LOGIN_TRUECALLER_CLICKED.NAME).push()
+        AppAnalytics.create(AnalyticsEvent.LOGIN_TRUECALLER_CLICKED.NAME)
+            .addParam("name", this.javaClass.simpleName)
+            .push()
         TrueSDK.getInstance().getUserProfile(this)
         showProgress()
         AppObjectController.uiHandler.postDelayed({ hideProgress() }, 1500)
     }
 
     fun signUp() {
-        AppAnalytics.create(AnalyticsEvent.LOGIN_CLICKED.NAME).push()
+        AppAnalytics.create(AnalyticsEvent.LOGIN_CLICKED.NAME)
+            .addParam("name",this.javaClass.simpleName)
+            .push()
         startActivityForResult(Intent(requireActivity(), SignUpActivity::class.java).apply {
             putExtra(IS_ACTIVITY_FOR_RESULT, true)
         }, 101)

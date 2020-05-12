@@ -29,9 +29,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.BaseActivity
-import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
-import com.joshtalks.joshskills.core.analytics.BranchIOAnalytics
 import com.joshtalks.joshskills.core.custom_ui.spinnerdatepicker.DatePicker
 import com.joshtalks.joshskills.core.custom_ui.spinnerdatepicker.DatePickerDialog
 import com.joshtalks.joshskills.core.custom_ui.spinnerdatepicker.SpinnerDatePickerDialogBuilder
@@ -40,7 +38,6 @@ import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.ActivityPersonalDetailBinding
 import com.joshtalks.joshskills.databinding.FragmentMediaSelectBinding
 import com.joshtalks.joshskills.repository.local.model.ImageModel
-import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.UpdateProfileResponse
 import com.joshtalks.joshskills.repository.server.UpdateUserPersonal
@@ -49,7 +46,6 @@ import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
-import io.branch.referral.util.BRANCH_STANDARD_EVENT
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -362,16 +358,8 @@ class ProfileActivity : BaseActivity(), MediaSelectCallback, DatePickerDialog.On
                     AppObjectController.signUpNetworkService.updateUserAsync(
                         User.getInstance().id,
                         obj
-                    )
-                        .await()
+                    ).await()
 
-                val params = Bundle()
-                params.putString("Mentor", Mentor.getInstance().getId())
-                AppObjectController.facebookEventLogger.logEvent(
-                    AnalyticsEvent.REGISTRATION_COMPLETED.name,
-                    params
-                )
-                BranchIOAnalytics.pushToBranch(BRANCH_STANDARD_EVENT.COMPLETE_REGISTRATION)
                 User.getInstance().updateFromResponse(updateProfileResponse)
                 AppAnalytics.updateUser()
                 withContext(Dispatchers.Main) {

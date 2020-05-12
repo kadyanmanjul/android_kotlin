@@ -10,18 +10,18 @@ import android.util.DisplayMetrics
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
-import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import com.android.installreferrer.api.InstallReferrerClient
 import com.crashlytics.android.Crashlytics
+import com.flurry.android.FlurryAgent
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
+import com.joshtalks.joshskills.core.analytics.LogException
 import com.joshtalks.joshskills.core.notification.HAS_NOTIFICATION
 import com.joshtalks.joshskills.core.notification.NOTIFICATION_ID
 import com.joshtalks.joshskills.core.service.WorkMangerAdmin
 import com.joshtalks.joshskills.repository.local.entity.Question
-import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.service.EngagementNetworkHelper
 import com.joshtalks.joshskills.ui.help.HelpActivity
@@ -30,6 +30,7 @@ import com.joshtalks.joshskills.ui.profile.CropImageActivity
 import com.joshtalks.joshskills.ui.profile.ProfileActivity
 import com.joshtalks.joshskills.ui.profile.SOURCE_IMAGE
 import com.joshtalks.joshskills.ui.sign_up_old.OnBoardActivity
+import com.newrelic.agent.android.NewRelic
 import io.branch.referral.Branch
 import io.github.inflationx.viewpump.ViewPumpContextWrapper
 import io.sentry.core.Sentry
@@ -38,7 +39,6 @@ const val HELP_ACTIVITY_REQUEST_CODE = 9010
 
 abstract class BaseActivity : AppCompatActivity() {
 
-    protected val TAG: String = javaClass.simpleName
     private lateinit var referrerClient: InstallReferrerClient
 
     override fun attachBaseContext(newBase: Context?) {
@@ -56,8 +56,17 @@ abstract class BaseActivity : AppCompatActivity() {
         AppObjectController.screenHeight = displayMetrics.heightPixels
         AppObjectController.screenWidth = displayMetrics.widthPixels
         initUserForCrashlytics()
+        initIdentifierForTools()
         InstallReferralUtil.installReferrer(applicationContext)
-        Branch.getInstance().setIdentity(PrefManager.getStringValue(USER_UNIQUE_ID))
+    }
+
+    private fun initIdentifierForTools() {
+        if (PrefManager.getStringValue(USER_UNIQUE_ID).isNotEmpty()) {
+            Branch.getInstance().setIdentity(PrefManager.getStringValue(USER_UNIQUE_ID))
+            setupSentryUser()
+            initNewRelic()
+            initFlurry()
+        }
     }
 
     fun openHelpActivity() {
@@ -111,35 +120,39 @@ abstract class BaseActivity : AppCompatActivity() {
                     )
                 )
             }
-        } catch (ex: Exception) {
+        } catch (ex: Throwable) {
+            LogException.catchException(ex)
         }
     }
 
     private fun initUserForCrashlytics() {
         try {
-            Sentry.captureMessage("Init Crashlytics")
             Crashlytics.getInstance().core.setUserName(User.getInstance().firstName)
             Crashlytics.getInstance().core.setUserEmail(User.getInstance().email)
-            Crashlytics.getInstance()
-                .core.setUserIdentifier(
-                    User.getInstance().phoneNumber + "$" + Mentor.getInstance().getId()
+            Crashlytics.getInstance().core.setUserIdentifier(
+                PrefManager.getStringValue(
+                    USER_UNIQUE_ID
                 )
-
-        } catch (ex: Exception) {
-            Sentry.captureException(ex)
+            )
+        } catch (ex: Throwable) {
+            LogException.catchException(ex)
         }
     }
 
     private fun setupSentryUser() {
-        try {
-            Sentry.captureMessage("Init Sentry")
-            val user = io.sentry.core.protocol.User()
-            user.id = User.getInstance().phoneNumber
-            user.username = User.getInstance().username
-            Sentry.setUser(user)
-        } catch (ex: Exception) {
-            Sentry.captureException(ex)
-        }
+        val user = io.sentry.core.protocol.User()
+        user.id = PrefManager.getStringValue(USER_UNIQUE_ID)
+        user.username = User.getInstance().username
+        Sentry.setUser(user)
+
+    }
+
+    private fun initNewRelic() {
+        NewRelic.setUserId(PrefManager.getStringValue(USER_UNIQUE_ID))
+    }
+
+    private fun initFlurry() {
+        FlurryAgent.setUserId(PrefManager.getStringValue(USER_UNIQUE_ID))
     }
 
     fun callHelpLine() {
@@ -160,10 +173,10 @@ abstract class BaseActivity : AppCompatActivity() {
         if (question != null && question.needFeedback == null) {
             WorkManager.getInstance(applicationContext)
                 .getWorkInfoByIdLiveData(WorkMangerAdmin.getQuestionFeedback(question.questionId))
-                .observe(this, Observer { workInfo ->
-                    if (workInfo != null && workInfo.state == WorkInfo.State.SUCCEEDED) {
+                .observe(this, Observer {
+                    /* if (workInfo != null && workInfo.state == WorkInfo.State.SUCCEEDED) {
 
-                    }
+                     }*/
                 })
         }
     }

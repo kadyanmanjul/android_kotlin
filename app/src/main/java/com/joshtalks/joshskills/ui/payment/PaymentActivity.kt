@@ -21,6 +21,7 @@ import androidx.fragment.app.commit
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.crashlytics.android.Crashlytics
 import com.facebook.appevents.AppEventsConstants
+import com.flurry.android.FlurryAgent
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.FirebaseAnalytics.Event.PURCHASE
 import com.joshtalks.joshskills.R
@@ -282,6 +283,7 @@ class PaymentActivity : CoreJoshActivity(),
             this@PaymentActivity.finish()
         }, 1000 * 59)
         AppAnalytics.create(AnalyticsEvent.PAYMENT_COMPLETED.NAME).push()
+        FlurryAgent.UserProperties.set(FlurryAgent.UserProperties.PROPERTY_PURCHASER,"true")
     }
 
     private fun String.verifyPayment() {

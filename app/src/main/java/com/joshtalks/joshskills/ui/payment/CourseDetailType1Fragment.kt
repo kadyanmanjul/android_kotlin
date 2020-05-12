@@ -335,6 +335,7 @@ class CourseDetailType1Fragment : Fragment() {
     }
 
     fun buyCourse() {
+        AppAnalytics.create(AnalyticsEvent.START_COURSE_NOW.NAME).push()
         RxBus2.publish(BuyCourseEventBus(testId.toString(), isUserValidForOffer, courseModel))
     }
 

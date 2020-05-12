@@ -2,6 +2,7 @@ package com.joshtalks.joshskills.ui.sign_up_old
 
 import android.content.Intent
 import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
 import android.text.SpannableStringBuilder
 import android.text.Spanned
@@ -11,18 +12,20 @@ import androidx.annotation.NonNull
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
-import com.crashlytics.android.Crashlytics
 import com.github.razir.progressbutton.DrawableButton
 import com.github.razir.progressbutton.hideProgress
 import com.github.razir.progressbutton.showProgress
+import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.CoreJoshActivity
-import com.joshtalks.joshskills.core.SignUpStepStatus
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
+import com.joshtalks.joshskills.core.analytics.ErrorTag
+import com.joshtalks.joshskills.core.analytics.LogException
 import com.joshtalks.joshskills.databinding.ActivityOnboardBinding
+import com.joshtalks.joshskills.repository.local.model.InstallReferrerModel
 import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
 import com.joshtalks.joshskills.ui.signup.IS_ACTIVITY_FOR_RESULT
 import com.joshtalks.joshskills.ui.signup.SignUpActivity
@@ -55,7 +58,16 @@ class OnBoardActivity : CoreJoshActivity() {
             activityResultFlag = intent?.getBooleanExtra(IS_ACTIVITY_FOR_RESULT, false) ?: false
         }
         initTrueCallerSDK()
-        AppAnalytics.create(AnalyticsEvent.LOGIN_SCREEN_1.NAME).push()
+        AppAnalytics.create(AnalyticsEvent.LOGIN_SCREEN_1.NAME)
+            .addParam(AnalyticsEvent.APP_VERSION_CODE.NAME, BuildConfig.VERSION_NAME)
+            .addParam(AnalyticsEvent.DEVICE_MANUFACTURER.NAME, Build.MANUFACTURER)
+            .addParam(AnalyticsEvent.DEVICE_MODEL.NAME, Build.MODEL)
+            .addParam(AnalyticsEvent.USER_GAID.NAME, PrefManager.getStringValue(USER_UNIQUE_ID))
+            .addParam(AnalyticsEvent.USER_NAME.NAME, User.getInstance().firstName)
+            .addParam(AnalyticsEvent.USER_EMAIL.NAME, User.getInstance().email)
+            .addParam(AnalyticsEvent.SOURCE.NAME, InstallReferrerModel.getPrefObject()?.utmSource ?: EMPTY)
+            .push(true)
+
         val sBuilder = SpannableStringBuilder()
         sBuilder.append("Welcome to ").append("Josh Skills")
         val typefaceSpan =
@@ -89,17 +101,6 @@ class OnBoardActivity : CoreJoshActivity() {
                     openCourseExplorerScreen()
                     return@Observer
                 }
-                SignUpStepStatus.CoursesNotExist -> {
-
-                    if (activityResultFlag) {
-                        setResult()
-                        return@Observer
-                    }
-                    openCourseExplorerScreen()
-                    return@Observer
-                }
-
-
                 else -> return@Observer
             }
         })
@@ -111,7 +112,9 @@ class OnBoardActivity : CoreJoshActivity() {
     }
 
     fun signUp() {
-        AppAnalytics.create(AnalyticsEvent.LOGIN_CLICKED.NAME).push()
+        AppAnalytics.create(AnalyticsEvent.LOGIN_CLICKED.NAME)
+            .addParam("name",this.javaClass.simpleName)
+            .push()
         val intent = Intent(this, SignUpActivity::class.java).apply {
             putExtra(IS_ACTIVITY_FOR_RESULT, activityResultFlag)
         }
@@ -119,7 +122,9 @@ class OnBoardActivity : CoreJoshActivity() {
     }
 
     fun openCourseExplore() {
-        AppAnalytics.create(AnalyticsEvent.COURSE_EXPLORER.NAME).push()
+        AppAnalytics.create(AnalyticsEvent.EXPLORE_BTN_CLICKED.NAME)
+            .addParam("name", this.javaClass.simpleName)
+            .push()
         startActivity(Intent(applicationContext, CourseExploreActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
         })
@@ -144,13 +149,15 @@ class OnBoardActivity : CoreJoshActivity() {
                 TrueSDK.getInstance().setLocale(locale)
                 layout.loginTrueCallerContainer.visibility = View.VISIBLE
             }
-        } catch (ex: Exception) {
-            ex.printStackTrace()
+        } catch (ex: Throwable) {
+            LogException.catchException(ex)
         }
     }
 
     fun verifyViaTrueCaller() {
-        AppAnalytics.create(AnalyticsEvent.LOGIN_TRUECALLER_CLICKED.NAME).push()
+        AppAnalytics.create(AnalyticsEvent.LOGIN_TRUECALLER_CLICKED.NAME)
+            .addParam("name", this.javaClass.simpleName)
+            .push()
         TrueSDK.getInstance().getUserProfile(this)
         showProgress()
         AppObjectController.uiHandler.postDelayed({ hideProgress() }, 1500)
@@ -165,14 +172,13 @@ class OnBoardActivity : CoreJoshActivity() {
         }
 
         override fun onVerificationRequired() {
-            Crashlytics.log(3, "Truecaller Issue 2", "onVerificationRequired")
         }
 
         override fun onFailureProfileShared(@NonNull trueError: TrueError) {
             if (trueError.errorType == ERROR_TYPE_CONTINUE_WITH_DIFFERENT_NUMBER) {
                 signUp()
             }
-            Crashlytics.log(3, "Truecaller Issue", trueError.errorType.toString())
+            LogException.catchError(ErrorTag.TRUE_CALLER, trueError.errorType.toString())
         }
     }
 
@@ -200,7 +206,8 @@ class OnBoardActivity : CoreJoshActivity() {
             if (TrueSDK.getInstance().isUsable) {
                 TrueSDK.getInstance().onActivityResultObtained(this, resultCode, data)
             }
-        } catch (ex: Exception) {
+        } catch (ex: Throwable) {
+            LogException.catchException(ex)
         }
     }
 
@@ -208,8 +215,15 @@ class OnBoardActivity : CoreJoshActivity() {
         try {
             layout.btnTruecallerLogin.isEnabled = true
             layout.btnTruecallerLogin.hideProgress(getString(R.string.login_with_truecaller_label))
-        } catch (e: Exception) {
+        } catch (ex: Throwable) {
+            LogException.catchException(ex)
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        AppAnalytics.create(AnalyticsEvent.LOGIN_SCREEN_1.NAME).endSession()
+
     }
 
     override fun onResume() {

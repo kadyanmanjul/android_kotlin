@@ -24,6 +24,7 @@ import com.bumptech.glide.load.MultiTransformation
 import com.bumptech.glide.request.RequestOptions
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.custom_ui.progress.FlipProgressDialog
 import com.joshtalks.joshskills.databinding.FragmentLodgeComplaintBinding
@@ -63,6 +64,7 @@ class ComplaintFragment : Fragment() {
         viewModel = activity?.run {
             ViewModelProvider(this).get(HelpViewModel::class.java)
         }!!
+
     }
 
     override fun onCreateView(
@@ -81,7 +83,9 @@ class ComplaintFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val titleView = activity?.findViewById<AppCompatTextView>(R.id.text_message_title)
         titleView?.text = typeOfHelpModel.categoryName
-        AppAnalytics.create(typeOfHelpModel.categoryName).push()
+        AppAnalytics.create(AnalyticsEvent.HELP_COMPLAINT_FOAM.NAME)
+            .addParam("categoryName",typeOfHelpModel.categoryName)
+            .push()
         viewModel.apiCallStatusLiveData.observe(viewLifecycleOwner, Observer {
             if (it == ApiCallStatus.SUCCESS) {
                 progressDialog.dismissAllowingStateLoss()

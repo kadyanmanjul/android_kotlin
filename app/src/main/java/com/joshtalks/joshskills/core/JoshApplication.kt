@@ -9,6 +9,7 @@ import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.multidex.MultiDex
 import com.facebook.FacebookSdk
 import com.facebook.LoggingBehavior
+import com.facebook.appevents.AppEventsConstants
 import com.facebook.stetho.Stetho
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.repository.local.model.Mentor
@@ -88,13 +89,15 @@ class JoshApplication : BranchApp(), LifecycleObserver/*, Configuration.Provider
     fun onAppBackgrounded() {
         Timber.tag(TAG).e("************* backgrounded")
         Timber.tag(TAG).e("************* ${isActivityVisible()}")
+        AppObjectController.facebookEventLogger.logEvent(AppEventsConstants.EVENT_NAME_DEACTIVATED_APP)
+
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
     fun onAppForegrounded() {
         Timber.tag(TAG).e("************* foregrounded")
         Timber.tag(TAG).e("************* ${isActivityVisible()}")
-
+        AppObjectController.facebookEventLogger.logEvent(AppEventsConstants.EVENT_NAME_ACTIVATED_APP)
     }
 
     private fun isActivityVisible(): String {

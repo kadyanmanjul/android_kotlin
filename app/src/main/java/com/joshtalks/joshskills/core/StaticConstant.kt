@@ -27,6 +27,9 @@ enum class REFERRAL_EVENT(val type: String) {
 }
 
 
+enum class RegistrationMethods(val type: String) {
+    MOBILE_NUMBER("Mobile Number"), TRUE_CALLER("True Caller")
+}
 
 
 

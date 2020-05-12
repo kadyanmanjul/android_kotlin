@@ -16,5 +16,9 @@ data class LoginResponse(
     @SerializedName("token")
     val token: String,
     @SerializedName("referral_code")
-    val referralCode: String = EMPTY
+    val referralCode: String = EMPTY,
+    @SerializedName("is_user_exist")
+    val isUserExist: Boolean
+
+
 )

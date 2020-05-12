@@ -12,6 +12,8 @@ import androidx.lifecycle.ViewModelProvider
 import com.github.razir.progressbutton.*
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
+import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.databinding.FragmentSignUpStep2Binding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.OTPReceivedEventBus
@@ -28,13 +30,10 @@ class SignUpStep2Fragment : Fragment() {
 
     companion object {
         @JvmStatic
-        fun newInstance() =
-            SignUpStep2Fragment().apply {
-            }
+        fun newInstance() = SignUpStep2Fragment()
     }
 
     private lateinit var signUpStep2Binding: FragmentSignUpStep2Binding
-
     private lateinit var viewModel: SignUpViewModel
     private val compositeDisposable = CompositeDisposable()
     private var timer: CountDownTimer? = null
@@ -46,8 +45,7 @@ class SignUpStep2Fragment : Fragment() {
         viewModel = activity?.run {
             ViewModelProvider(requireActivity())
                 .get(SignUpViewModel::class.java)
-        }
-            ?: throw Exception("Invalid Activity")
+        } ?: throw Exception("Invalid Activity")
     }
 
     override fun onCreateView(
@@ -99,6 +97,8 @@ class SignUpStep2Fragment : Fragment() {
                     .solidBackground().show()
                 hideProgress()
                 signUpStep2Binding.otpView.setText(EMPTY)
+                AppAnalytics.create(AnalyticsEvent.INCORRECT_OTP.NAME).push()
+
             }
         })
         signUpStep2Binding.tvMobile.text = viewModel.countryCode.plus(viewModel.phoneNumber)
@@ -121,6 +121,8 @@ class SignUpStep2Fragment : Fragment() {
             }
             showProgress()
             viewModel.verifyOTP(signUpStep2Binding.otpView.text?.toString())
+            AppAnalytics.create(AnalyticsEvent.NEXT_OTP_CLICKED.NAME).push()
+
         } else {
             showToast(getString(R.string.please_enter_otp))
             return
@@ -130,6 +132,7 @@ class SignUpStep2Fragment : Fragment() {
     fun resendOTP() {
         showProgress()
         viewModel.resendOTP(viewModel.phoneNumber)
+        AppAnalytics.create(AnalyticsEvent.RESEND_OTP.NAME).push()
     }
 
 
