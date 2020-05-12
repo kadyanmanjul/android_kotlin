@@ -91,7 +91,9 @@ class CourseExploreActivity : CoreJoshActivity() {
         findViewById<View>(R.id.iv_back).setOnClickListener {
             onCancelResult()
         }
-        findViewById<MaterialToolbar>(R.id.toolbar).inflateMenu(R.menu.logout_menu)
+        if (Mentor.getInstance().hasId()) {
+            findViewById<MaterialToolbar>(R.id.toolbar).inflateMenu(R.menu.logout_menu)
+        }
         findViewById<MaterialToolbar>(R.id.toolbar).setOnMenuItemClickListener {
             AppAnalytics.create(AnalyticsEvent.MORE_ICON_CLICKED.NAME).push()
             if (it?.itemId == R.id.menu_logout) {
