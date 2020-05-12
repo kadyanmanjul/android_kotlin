@@ -20,14 +20,11 @@ import com.joshtalks.joshskills.repository.server.MessageStatusRequest
 import com.joshtalks.joshskills.repository.service.NetworkRequestHelper
 import com.joshtalks.joshskills.repository.service.SyncChatService
 import io.branch.referral.Branch
-import io.sentry.core.Sentry
 import retrofit2.HttpException
 import java.util.*
 
-
 const val INSTALL_REFERRER_SYNC = "install_referrer_sync"
 const val CONVERSATION_ID = "conversation_id"
-
 
 class AppRunRequiredTaskWorker(context: Context, workerParams: WorkerParameters) :
     CoroutineWorker(context, workerParams) {
@@ -436,14 +433,20 @@ class UploadFCMTokenOnServer(context: Context, workerParams: WorkerParameters) :
                 "active" to "true",
                 "type" to "android"
             )
+            if (PrefManager.getStringValue(USER_UNIQUE_ID).isNotEmpty()) {
+                data["gaid"] = PrefManager.getStringValue(USER_UNIQUE_ID)
+            }
             if (Mentor.getInstance().hasId()) {
                 data["user_id"] = Mentor.getInstance().getId()
+                AppObjectController.signUpNetworkService.updateFCMToken(
+                    Mentor.getInstance().getId(), data
+                ).await()
+            } else {
+                AppObjectController.signUpNetworkService.uploadFCMToken(data).await()
 
             }
-            AppObjectController.signUpNetworkService.uploadFCMToken(data).await()
         } catch (ex: Exception) {
             ex.printStackTrace()
-            Sentry.captureException(ex, "Upload FCM Token Exception")
         }
         return Result.success()
     }
