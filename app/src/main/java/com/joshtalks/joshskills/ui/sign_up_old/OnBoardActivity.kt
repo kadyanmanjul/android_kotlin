@@ -24,7 +24,6 @@ import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.databinding.ActivityOnboardBinding
 import com.joshtalks.joshskills.repository.local.model.InstallReferrerModel
 import com.joshtalks.joshskills.repository.local.model.Mentor
-import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
 import com.joshtalks.joshskills.ui.signup.IS_ACTIVITY_FOR_RESULT
 import com.joshtalks.joshskills.ui.signup.SignUpActivity
@@ -62,8 +61,6 @@ class OnBoardActivity : CoreJoshActivity() {
             .addParam(AnalyticsEvent.DEVICE_MANUFACTURER.NAME,Build.MANUFACTURER)
             .addParam(AnalyticsEvent.DEVICE_MODEL.NAME,Build.MODEL)
             .addParam(AnalyticsEvent.USER_GAID.NAME, PrefManager.getStringValue(USER_UNIQUE_ID))
-            .addParam(AnalyticsEvent.USER_NAME.NAME, User.getInstance()?.firstName ?:EMPTY)
-            .addParam(AnalyticsEvent.USER_EMAIL.NAME, User.getInstance()?.email ?: EMPTY)
             .addParam(AnalyticsEvent.SOURCE.NAME, InstallReferrerModel.getPrefObject()?.utmSource ?: EMPTY)
             .push(true)
 

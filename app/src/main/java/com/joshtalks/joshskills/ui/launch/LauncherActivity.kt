@@ -36,7 +36,7 @@ class LauncherActivity : CoreJoshActivity() {
             .addParam(AnalyticsEvent.SOURCE.NAME, InstallReferrerModel.getPrefObject()?.utmSource ?: EMPTY)
             .addParam(AnalyticsEvent.USER_GAID.NAME,PrefManager.getStringValue(USER_UNIQUE_ID))
             .addParam(AnalyticsEvent.SOURCE.NAME, InstallReferrerModel.getPrefObject()?.utmSource ?: EMPTY)
-            .push()
+            .push(true)
 
     }
 
@@ -107,6 +107,11 @@ class LauncherActivity : CoreJoshActivity() {
     override fun onStop() {
         super.onStop()
         AppObjectController.uiHandler.removeCallbacksAndMessages(null)
+    }
+
+    override fun onDestroy() {
+        AppAnalytics.create(AnalyticsEvent.APP_LAUNCHED.NAME).endSession()
+        super.onDestroy()
     }
 
     override fun onBackPressed() {
