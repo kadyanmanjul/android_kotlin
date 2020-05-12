@@ -23,8 +23,10 @@ import android.net.NetworkCapabilities
 import android.net.Uri
 import android.os.Build
 import android.os.Environment
+import android.provider.Browser
 import android.provider.Settings
 import android.text.format.DateUtils
+import android.util.Log
 import android.util.TypedValue
 import android.view.Gravity
 import android.view.View
@@ -174,7 +176,7 @@ object Utils {
         } catch (ex: Exception) {
             // ex.printStackTrace()
         }
-        if(mediaPath != null){
+        if (mediaPath != null) {
             return 0
         }
         return null
@@ -299,7 +301,17 @@ object Utils {
             AppObjectController.joshApplication.startActivity(intent)
         } catch (ex: Exception) {
             ex.printStackTrace()
+        }
+    }
 
+    fun openUri(context: Context, uri: Uri) {
+        val intent =
+            Intent(ACTION_VIEW, uri)
+        intent.putExtra(Browser.EXTRA_APPLICATION_ID, context.packageName)
+        try {
+            context.startActivity(intent)
+        } catch (e: ActivityNotFoundException) {
+            Log.w("URLSpan", "Actvity was not found for intent, $intent")
         }
     }
 
