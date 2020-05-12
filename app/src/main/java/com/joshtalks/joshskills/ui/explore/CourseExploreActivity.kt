@@ -207,27 +207,19 @@ class CourseExploreActivity : CoreJoshActivity() {
 
     private fun addObserver() {
         compositeDisposable.add(RxBus2.listen(CourseExploreModel::class.java).subscribe {
-            AppAnalytics.create(AnalyticsEvent.COURSE_EXPLORER.NAME)
-                .addParam("test_id", it.id?.toString()).push()
             MarketingAnalytics.courseViewAnalytics(it)
-            val params = Bundle().apply {
-                putString(EVENT_PARAM_CONTENT_ID, it.id.toString())
-            }
             val extras: HashMap<String, String> = HashMap()
             extras["test_id"] = it.id?.toString() ?: EMPTY
             extras["course_name"] = it.courseName
             AppAnalytics.create(AnalyticsEvent.COURSE_CLICKED.NAME)
                 .addParam("user_unique_id", PrefManager.getStringValue(USER_UNIQUE_ID))
                 .addParam(AnalyticsEvent.USER_GAID.NAME, PrefManager.getStringValue(USER_UNIQUE_ID))
-                .addParam(AnalyticsEvent.USER_NAME.NAME, User.getInstance()?.firstName ?: EMPTY)
-                .addParam(AnalyticsEvent.USER_EMAIL.NAME, User.getInstance()?.email ?: EMPTY)
-                .addParam("course_name",it.courseName).push()
-            BranchIOAnalytics.pushToBranch(BRANCH_STANDARD_EVENT.VIEW_ITEM, extras)
-            AppObjectController.facebookEventLogger.logEvent(EVENT_NAME_VIEWED_CONTENT, params)
+                .addParam(AnalyticsEvent.USER_NAME.NAME, User.getInstance().firstName)
+                .addParam(AnalyticsEvent.USER_EMAIL.NAME, User.getInstance().email)
+                .addParam("course_name", it.courseName).push()
+
             PaymentActivity.startPaymentActivity(this, PAYMENT_FOR_COURSE_CODE, it)
         })
-
-
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
