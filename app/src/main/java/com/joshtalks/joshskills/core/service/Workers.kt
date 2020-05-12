@@ -211,7 +211,7 @@ class ReferralCodeRefreshWorker(context: Context, workerParams: WorkerParameters
     CoroutineWorker(context, workerParams) {
     override suspend fun doWork(): Result {
         return try {
-            if (Mentor.getInstance().referralCode.isEmpty()) {
+            if (Mentor.getInstance().hasId() && Mentor.getInstance().referralCode.isEmpty()) {
                 val reqObj = mapOf("mentor" to Mentor.getInstance().getId())
                 val response =
                     AppObjectController.signUpNetworkService.validateOrGetAndReferralOrCouponAsync(
@@ -225,7 +225,6 @@ class ReferralCodeRefreshWorker(context: Context, workerParams: WorkerParameters
         } catch (ex: Throwable) {
             LogException.catchException(ex)
             Result.retry()
-
         }
     }
 
@@ -436,17 +435,21 @@ class UploadFCMTokenOnServer(context: Context, workerParams: WorkerParameters) :
             if (PrefManager.getStringValue(USER_UNIQUE_ID).isNotEmpty()) {
                 data["gaid"] = PrefManager.getStringValue(USER_UNIQUE_ID)
             }
-            // if (Mentor.getInstance().hasId()) {
-            data["user_id"] = Mentor.getInstance().getId()
-            /*AppObjectController.signUpNetworkService.updateFCMToken(
-                Mentor.getInstance().getId(), data
-            ).await()*/
-            // } else {
-            AppObjectController.signUpNetworkService.uploadFCMToken(data).await()
-
-            //  }
-        } catch (ex: Exception) {
-            ex.printStackTrace()
+            val fcmResponse = FCMResponse.getInstance()
+            if (Mentor.getInstance().hasId() && fcmResponse != null) {
+                fcmResponse.userId = Mentor.getInstance().getId()
+                AppObjectController.signUpNetworkService.updateFCMToken(
+                    fcmResponse.id, fcmResponse
+                ).await()
+            } else {
+                if (fcmResponse == null) {
+                    val response =
+                        AppObjectController.signUpNetworkService.uploadFCMToken(data).await()
+                    response.update()
+                }
+            }
+        } catch (ex: Throwable) {
+            LogException.catchException(ex)
         }
         return Result.success()
     }
