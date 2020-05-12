@@ -103,7 +103,6 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
                 val reqObj = RequestVerifyOTP(phoneNumber, otp ?: otpField.get()!!)
                 val response: LoginResponse =
                     AppObjectController.signUpNetworkService.verifyOTP(reqObj).await()
-                AppAnalytics.create(AnalyticsEvent.LOGIN_WITH_OTP.NAME).push()
                 MarketingAnalytics.completeRegistrationAnalytics(
                     response.isUserExist,
                     RegistrationMethods.MOBILE_NUMBER
@@ -119,7 +118,6 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
                     .update()
 
                 AppAnalytics.updateUser()
-
                 AppAnalytics.create(AnalyticsEvent.OTP_VERIFIED.NAME).push()
                 mergeMentorWithGId(response.mentorId)
                 fetchMentor()
@@ -159,14 +157,10 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
                     AppObjectController.signUpNetworkService.verifyViaTrueCaller(
                         trueCallerLoginRequest
                     ).await()
-                AppAnalytics.create(AnalyticsEvent.LOGIN_WITH_TRUECALLER.NAME).push()
                 MarketingAnalytics.completeRegistrationAnalytics(
                     response.isUserExist,
                     RegistrationMethods.MOBILE_NUMBER
                 )
-
-                AppAnalytics.create(AnalyticsEvent.LOGIN_WITH_TRUECALLER.NAME)
-                    .addParam(AnalyticsEvent.VERIFIED_VIA_TRUECALLER.NAME,true).push()
 
                 val user = User.getInstance()
                 user.id = response.userId
@@ -179,6 +173,9 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
                     .setReferralCode(response.referralCode)
                     .update()
                 AppAnalytics.updateUser()
+                AppAnalytics.create(AnalyticsEvent.LOGIN_WITH_TRUECALLER.NAME)
+                    .addParam(AnalyticsEvent.VERIFIED_VIA_TRUECALLER.NAME, true).push()
+
                 mergeMentorWithGId(response.mentorId)
                 fetchMentor()
                 WorkMangerAdmin.appStartWorker()
