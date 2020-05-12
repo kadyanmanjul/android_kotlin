@@ -5,7 +5,6 @@ import androidx.work.CoroutineWorker
 import androidx.work.Worker
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
-import com.crashlytics.android.Crashlytics
 import com.google.android.gms.ads.MobileAds
 import com.google.android.gms.ads.identifier.AdvertisingIdClient
 import com.google.android.gms.tasks.OnCompleteListener
@@ -13,6 +12,7 @@ import com.google.firebase.database.*
 import com.google.firebase.iid.FirebaseInstanceId
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
+import com.joshtalks.joshskills.core.analytics.LogException
 import com.joshtalks.joshskills.core.notification.FCM_TOKEN
 import com.joshtalks.joshskills.repository.local.DatabaseUtils
 import com.joshtalks.joshskills.repository.local.model.*
@@ -22,7 +22,6 @@ import com.joshtalks.joshskills.repository.service.SyncChatService
 import io.branch.referral.Branch
 import io.sentry.core.Sentry
 import retrofit2.HttpException
-import timber.log.Timber
 import java.util.*
 
 
@@ -62,8 +61,8 @@ class JoshTalksInstallWorker(context: Context, workerParams: WorkerParameters) :
             try {
                 AppObjectController.signUpNetworkService.getInstallReferrerAsync(obj)
                 PrefManager.put(INSTALL_REFERRER_SYNC, true)
-            } catch (ex: Exception) {
-                ex.printStackTrace()
+            } catch (ex: Throwable) {
+                LogException.catchException(ex)
             }
         }
         return Result.success()
@@ -81,7 +80,8 @@ class FindMoreEventWorker(context: Context, workerParams: WorkerParameters) :
             val myRef = database.getReference(FIND_MORE_FIREBASE_DATABASE)
             myRef.child(System.currentTimeMillis().toString())
                 .setValue(Mentor.getInstance().getId())
-        } catch (ex: Exception) {
+        } catch (ex: Throwable) {
+            LogException.catchException(ex)
         }
         return Result.success()
     }
@@ -101,7 +101,8 @@ class BuyNowEventWorker(context: Context, private val workerParams: WorkerParame
             val myRef = database.getReference(BUY_NOW_FIREBASE_DATABASE)
             myRef.child(courseName + "_" + System.currentTimeMillis().toString())
                 .setValue(Mentor.getInstance().getId())
-        } catch (ex: Exception) {
+        } catch (ex: Throwable) {
+            LogException.catchException(ex)
         }
         return Result.success()
     }
@@ -157,8 +158,8 @@ class UniqueIdGenerationWorker(var context: Context, workerParams: WorkerParamet
                 PrefManager.put(USER_UNIQUE_ID, id)
                 Branch.getInstance().setIdentity(id)
             }
-        } catch (ex: Exception) {
-            ex.printStackTrace()
+        } catch (ex: Throwable) {
+            LogException.catchException(ex)
         }
         return Result.success()
     }
@@ -177,8 +178,8 @@ class GetUserConversationWorker(var context: Context, private var workerParams: 
                 arguments[key] = value
                 NetworkRequestHelper.getUpdatedChat(this, queryMap = arguments)
             }
-        } catch (ex: Exception) {
-            ex.printStackTrace()
+        } catch (ex: Throwable) {
+            LogException.catchException(ex)
         }
         return Result.success()
     }
@@ -200,10 +201,9 @@ class MessageReadPeriodicWorker(context: Context, workerParams: WorkerParameters
             return Result.success()
 
 
-        } catch (ex: Exception) {
-            ex.printStackTrace()
+        } catch (ex: Throwable) {
+            LogException.catchException(ex)
             return Result.retry()
-
         }
     }
 
@@ -225,8 +225,8 @@ class ReferralCodeRefreshWorker(context: Context, workerParams: WorkerParameters
                 }
             }
             Result.success()
-        } catch (ex: Exception) {
-            ex.printStackTrace()
+        } catch (ex: Throwable) {
+            LogException.catchException(ex)
             Result.retry()
 
         }
@@ -314,13 +314,12 @@ class NewCourseScreenEventWorker(context: Context, private val workerParams: Wor
                     key.setValue(courseTrackModel).addOnFailureListener {
                         it.printStackTrace()
                     }
-                } catch (ex: Exception) {
-                    ex.printStackTrace()
+                } catch (ex: Throwable) {
+                    LogException.catchException(ex)
                 }
             }
 
             override fun onCancelled(databaseError: DatabaseError) {
-                Crashlytics.logException(databaseError.toException())
                 databaseError.toException().printStackTrace()
             }
         })
@@ -347,10 +346,8 @@ class RegisterUserGId(context: Context, private val workerParams: WorkerParamete
                     .await()
             PrefManager.put(SERVER_GID_ID, resp.id)
             PrefManager.put(GID_SET_FOR_USER, true)
-        } catch (ex: HttpException) {
-            ex.printStackTrace()
-        } catch (e: Exception) {
-            e.printStackTrace()
+        } catch (ex: Throwable) {
+            LogException.catchException(ex)
         }
         return Result.success()
     }
@@ -363,6 +360,9 @@ class RefreshFCMTokenWorker(context: Context, workerParams: WorkerParameters) :
         FirebaseInstanceId.getInstance().instanceId
             .addOnCompleteListener(OnCompleteListener { task ->
                 if (!task.isSuccessful) {
+                    task.exception?.run {
+                        LogException.catchException(this)
+                    }
                     task.exception?.printStackTrace()
                     return@OnCompleteListener
                 }
@@ -443,7 +443,7 @@ class UploadFCMTokenOnServer(context: Context, workerParams: WorkerParameters) :
             AppObjectController.signUpNetworkService.uploadFCMToken(data).await()
         } catch (ex: Exception) {
             ex.printStackTrace()
-            Sentry.captureException(ex,"Upload FCM Token Exception")
+            Sentry.captureException(ex, "Upload FCM Token Exception")
         }
         return Result.success()
     }
