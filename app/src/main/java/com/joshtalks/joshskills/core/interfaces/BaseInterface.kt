@@ -1,5 +1,6 @@
 package com.joshtalks.joshskills.core.interfaces
 
+import android.net.Uri
 import com.joshtalks.joshskills.repository.server.CertificateDetail
 
 interface OnDismissDialog {
@@ -8,4 +9,8 @@ interface OnDismissDialog {
 
 interface OnDismissClaimCertificateDialog {
     fun onDismiss(certificateDetail: CertificateDetail?)
+}
+
+interface OnUrlClickSpanListener {
+    fun onClick(uri: Uri)
 }
