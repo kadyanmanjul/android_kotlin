@@ -41,7 +41,6 @@ import com.joshtalks.joshskills.ui.view_holders.IMAGE_SIZE
 import com.joshtalks.joshskills.ui.view_holders.ROUND_CORNER
 import com.newrelic.agent.android.FeatureFlag
 import com.newrelic.agent.android.NewRelic
-import com.newrelic.agent.android.logging.AgentLog
 import com.tonyodev.fetch2.Fetch
 import com.tonyodev.fetch2.FetchConfiguration
 import com.tonyodev.fetch2.HttpUrlConnectionDownloader
@@ -324,7 +323,7 @@ internal class AppObjectController {
             NewRelic.enableFeature(FeatureFlag.AnalyticsEvents)
             NewRelic.withApplicationToken(BuildConfig.NEW_RELIC_TOKEN)
                 .withLocationServiceEnabled(true)
-                .withLogLevel(AgentLog.AUDIT)
+               // .withLogLevel(AgentLog.AUDIT)
                 .start(
                     joshApplication
                 )
