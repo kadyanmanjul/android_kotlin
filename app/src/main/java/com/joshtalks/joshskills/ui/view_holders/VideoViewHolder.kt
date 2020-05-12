@@ -137,6 +137,7 @@ class VideoViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
             }
         } else {
             message.question?.videoList?.getOrNull(0)?.let { videoObj ->
+                subscribeDownloader()
                 if (videoObj.video_image_url.isEmpty()) {
                     imageView.background =
                         ContextCompat.getDrawable(activityRef.get()!!, R.drawable.video_placeholder)
@@ -152,7 +153,6 @@ class VideoViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
                             fileDownloadingInProgressView()
                             download(this)
                         }
-                        subscribeDownloader()
                         if (message.progress == 0) {
                             progressDialog.barColor = Color.WHITE
                         } else {
@@ -186,7 +186,6 @@ class VideoViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
 
             }
         }
-
     }
 
     private fun fileDownloadSuccess() {
@@ -284,12 +283,16 @@ class VideoViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
 
     private fun videoDownload() {
         if (message.url != null) {
-            if (message.downloadStatus == DOWNLOAD_STATUS.DOWNLOADED) {
-                RxBus2.publish(PlayVideoEvent(message))
-            } else if (AppDirectory.isFileExist(message.downloadedLocalPath).not()) {
-                showToast(getAppContext().getString(R.string.video_url_not_exist))
-            } else {
-                RxBus2.publish(PlayVideoEvent(message))
+            when {
+                message.downloadStatus == DOWNLOAD_STATUS.DOWNLOADED -> {
+                    RxBus2.publish(PlayVideoEvent(message))
+                }
+                AppDirectory.isFileExist(message.downloadedLocalPath).not() -> {
+                    showToast(getAppContext().getString(R.string.video_url_not_exist))
+                }
+                else -> {
+                    RxBus2.publish(PlayVideoEvent(message))
+                }
             }
         } else {
             message.question?.videoList?.getOrNull(0)?.let { _ ->

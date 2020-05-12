@@ -4,14 +4,15 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import com.bumptech.glide.load.MultiTransformation
 import com.clevertap.android.sdk.ActivityLifecycleCallback
 import com.crashlytics.android.Crashlytics
 import com.crashlytics.android.core.CrashlyticsCore
-import com.facebook.FacebookSdk
-import com.facebook.LoggingBehavior
 import com.facebook.appevents.AppEventsLogger
 import com.facebook.stetho.okhttp3.StethoInterceptor
+import com.flurry.android.FlurryAgent
+import com.flurry.android.FlurryPerformance
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.Logger
@@ -22,6 +23,7 @@ import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterF
 import com.jakewharton.threetenabp.AndroidThreeTen
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.analytics.LogException
 import com.joshtalks.joshskills.core.datetimeutils.DateTimeUtils
 import com.joshtalks.joshskills.core.service.DownloadUtils
 import com.joshtalks.joshskills.core.service.WorkMangerAdmin
@@ -39,6 +41,7 @@ import com.joshtalks.joshskills.ui.view_holders.IMAGE_SIZE
 import com.joshtalks.joshskills.ui.view_holders.ROUND_CORNER
 import com.newrelic.agent.android.FeatureFlag
 import com.newrelic.agent.android.NewRelic
+import com.newrelic.agent.android.logging.AgentLog
 import com.tonyodev.fetch2.Fetch
 import com.tonyodev.fetch2.FetchConfiguration
 import com.tonyodev.fetch2.HttpUrlConnectionDownloader
@@ -59,6 +62,7 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
 import okhttp3.logging.HttpLoggingInterceptor
+import retrofit2.HttpException
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import timber.log.Timber
@@ -155,16 +159,17 @@ internal class AppObjectController {
             firebaseAnalytics.setAnalyticsCollectionEnabled(true)
             AppEventsLogger.activateApp(joshApplication)
             facebookEventLogger = AppEventsLogger.newLogger(joshApplication)
-            FacebookSdk.addLoggingBehavior(LoggingBehavior.APP_EVENTS)
             AndroidThreeTen.init(joshApplication)
             Branch.getAutoInstance(joshApplication)
             FirebaseDatabase.getInstance().setLogLevel(Logger.Level.DEBUG)
             FirebaseDatabase.getInstance().setPersistenceEnabled(true)
             initFirebaseRemoteConfig()
-            initCrashlytics()
+            WorkMangerAdmin.deviceIdGenerateWorker()
+            configureCrashlytics()
+            initFlurryAnalytics()
+            initNewRelic()
             EmojiManager.install(GoogleEmojiProvider())
             videoDownloadTracker = VideoDownloadController.getInstance().downloadTracker
-            initNewRelic()
             gsonMapper = GsonBuilder()
                 .enableComplexMapKeySerialization()
                 .setDateFormat("yyyy-MM-dd'T'HH:mm:ss")
@@ -199,6 +204,7 @@ internal class AppObjectController {
                 .retryOnConnectionFailure(true)
                 .followSslRedirects(true)
                 .addInterceptor(StatusCodeInterceptor())
+                .addInterceptor(NewRelicHttpMetricsLogger())
 
             val logging =
                 HttpLoggingInterceptor(object : HttpLoggingInterceptor.Logger {
@@ -266,7 +272,7 @@ internal class AppObjectController {
                 override fun intercept(chain: Interceptor.Chain): Response {
                     val original = chain.request()
                     val newRequest: Request.Builder = original.newBuilder()
-                    newRequest.addHeader("Connection","close")
+                    newRequest.addHeader("Connection", "close")
 
                     return chain.proceed(newRequest.build())
                 }
@@ -303,9 +309,6 @@ internal class AppObjectController {
                 ).build()
             )
             InstallReferralUtil.installReferrer(joshApplication)
-            WorkMangerAdmin.deviceIdGenerateWorker()
-
-
             return INSTANCE
         }
 
@@ -321,11 +324,10 @@ internal class AppObjectController {
             NewRelic.enableFeature(FeatureFlag.AnalyticsEvents)
             NewRelic.withApplicationToken(BuildConfig.NEW_RELIC_TOKEN)
                 .withLocationServiceEnabled(true)
+                .withLogLevel(AgentLog.AUDIT)
                 .start(
                     joshApplication
                 )
-
-
         }
 
         private fun initFirebaseRemoteConfig() {
@@ -336,13 +338,24 @@ internal class AppObjectController {
             getFirebaseRemoteConfig().fetchAndActivate()
         }
 
-        private fun initCrashlytics() {
+        private fun configureCrashlytics() {
             Fabric.with(
                 joshApplication, Crashlytics.Builder()
                     .core(CrashlyticsCore.Builder().disabled(BuildConfig.DEBUG).build())
                     .build()
             )
         }
+
+        private fun initFlurryAnalytics(){
+            FlurryAgent.Builder()
+                .withDataSaleOptOut(false) //CCPA - the default value is false
+                .withCaptureUncaughtExceptions(true)
+                .withIncludeBackgroundSessionsInMetrics(true)
+                .withLogLevel(Log.VERBOSE)
+                .withPerformanceMetrics(FlurryPerformance.ALL)
+                .build(joshApplication, BuildConfig.FLURRY_API_KEY)
+        }
+
 
         fun clearDownloadMangerCallback() {
             try {
@@ -414,5 +427,37 @@ class StatusCodeInterceptor : Interceptor {
 
         Timber.i("Status code: %s", response.code)
         return response
+    }
+}
+
+class NewRelicHttpMetricsLogger : Interceptor {
+    override fun intercept(chain: Interceptor.Chain): Response {
+        val request: Request = chain.request()
+        val start = System.nanoTime()
+
+        try {
+            val requestSize =
+                if (null == request.body) 0 else request.body!!.contentLength()
+            val response: Response = chain.proceed(request)
+            val end = System.nanoTime()
+
+            val responseSize =
+                if (null == response.body) 0 else response.body!!.contentLength()
+            NewRelic.noticeHttpTransaction(
+                request.url.toString(),
+                request.method,
+                response.code,
+                start,
+                end,
+                requestSize,
+                responseSize
+            )
+            return response
+        } catch (ex: HttpException) {
+            LogException.catchException(ex)
+            val end = System.nanoTime()
+            NewRelic.noticeNetworkFailure(request.url.toString(), request.method, start, end, ex)
+            return chain.proceed(request)
+        }
     }
 }

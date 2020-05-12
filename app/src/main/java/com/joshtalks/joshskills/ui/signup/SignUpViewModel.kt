@@ -5,14 +5,11 @@ import androidx.databinding.ObservableField
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.crashlytics.android.Crashlytics
-import com.facebook.appevents.AppEventsConstants.EVENT_NAME_COMPLETED_REGISTRATION
 import com.google.android.gms.auth.api.phone.SmsRetriever
 import com.google.android.gms.tasks.Task
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
-import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
-import com.joshtalks.joshskills.core.analytics.AppAnalytics
+import com.joshtalks.joshskills.core.analytics.*
 import com.joshtalks.joshskills.core.service.WorkMangerAdmin
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
@@ -51,9 +48,11 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
                     registerSMSReceiver()
                     signUpStatus.postValue(SignUpStepStatus.SignUpStepSecond)
                 } else {
+                    LogException.catchError(ErrorTag.OTP_REQUEST, resp.message())
                     showToast(context.getString(R.string.generic_message_for_error))
                 }
-            } catch (ex: Exception) {
+            } catch (ex: Throwable) {
+                LogException.catchException(ex)
                 progressDialogStatus.postValue(false)
                 when (ex) {
                     is HttpException -> {
@@ -62,7 +61,6 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
                         showToast(context.getString(R.string.internet_not_available_msz))
                     }
                     else -> {
-                        Crashlytics.logException(ex)
                     }
                 }
             }
@@ -78,9 +76,11 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
                 if (resp.isSuccessful) {
                     signUpStatus.postValue(SignUpStepStatus.SignUpResendOTP)
                 } else {
+                    LogException.catchError(ErrorTag.OTP_REQUEST, resp.message())
                     showToast(context.getString(R.string.generic_message_for_error))
                 }
-            } catch (ex: Exception) {
+            } catch (ex: Throwable) {
+                LogException.catchException(ex)
                 progressDialogStatus.postValue(false)
                 when (ex) {
                     is HttpException -> {
@@ -89,7 +89,6 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
                         showToast(context.getString(R.string.internet_not_available_msz))
                     }
                     else -> {
-                        Crashlytics.logException(ex)
                     }
                 }
             }
@@ -104,7 +103,10 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
                 val reqObj = RequestVerifyOTP(phoneNumber, otp ?: otpField.get()!!)
                 val response: LoginResponse =
                     AppObjectController.signUpNetworkService.verifyOTP(reqObj).await()
-                AppAnalytics.create(AnalyticsEvent.LOGIN_WITH_OTP.NAME).push()
+                MarketingAnalytics.completeRegistrationAnalytics(
+                    response.isUserExist,
+                    RegistrationMethods.MOBILE_NUMBER
+                )
                 val user = User.getInstance()
                 user.id = response.userId
                 user.source = "OTP"
@@ -116,12 +118,14 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
                     .update()
 
                 AppAnalytics.updateUser()
+                AppAnalytics.create(AnalyticsEvent.OTP_VERIFIED.NAME).push()
                 mergeMentorWithGId(response.mentorId)
                 fetchMentor()
                 WorkMangerAdmin.appStartWorker()
                 WorkMangerAdmin.mappingGIDWithMentor()
 
-            } catch (ex: Exception) {
+            } catch (ex: Throwable) {
+                LogException.catchException(ex)
                 progressDialogStatus.postValue(false)
                 when (ex) {
                     is HttpException -> {
@@ -133,7 +137,6 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
                         showToast(context.getString(R.string.internet_not_available_msz))
                     }
                     else -> {
-                        Crashlytics.logException(ex)
                     }
                 }
             }
@@ -154,8 +157,10 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
                     AppObjectController.signUpNetworkService.verifyViaTrueCaller(
                         trueCallerLoginRequest
                     ).await()
-
-                AppAnalytics.create(AnalyticsEvent.LOGIN_WITH_TRUECALLER.NAME).push()
+                MarketingAnalytics.completeRegistrationAnalytics(
+                    response.isUserExist,
+                    RegistrationMethods.MOBILE_NUMBER
+                )
 
                 val user = User.getInstance()
                 user.id = response.userId
@@ -168,12 +173,16 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
                     .setReferralCode(response.referralCode)
                     .update()
                 AppAnalytics.updateUser()
+                AppAnalytics.create(AnalyticsEvent.LOGIN_WITH_TRUECALLER.NAME)
+                    .addParam(AnalyticsEvent.VERIFIED_VIA_TRUECALLER.NAME, true).push()
+
                 mergeMentorWithGId(response.mentorId)
                 fetchMentor()
                 WorkMangerAdmin.appStartWorker()
                 WorkMangerAdmin.mappingGIDWithMentor()
 
-            } catch (ex: Exception) {
+            } catch (ex: Throwable) {
+                LogException.catchException(ex)
                 progressDialogStatus.postValue(false)
                 when (ex) {
                     is HttpException -> {
@@ -182,7 +191,6 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
                         showToast(context.getString(R.string.internet_not_available_msz))
                     }
                     else -> {
-                        Crashlytics.logException(ex)
                     }
                 }
             }
@@ -202,11 +210,11 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
                 mentor.getUser()?.let {
                     User.getInstance().updateFromResponse(it)
                 }
-                AppObjectController.facebookEventLogger.logEvent(EVENT_NAME_COMPLETED_REGISTRATION)
                 AppAnalytics.updateUser()
                 signUpStatus.postValue(SignUpStepStatus.SignUpCompleted)
 
-            } catch (ex: Exception) {
+            } catch (ex: Throwable) {
+                LogException.catchException(ex)
                 progressDialogStatus.postValue(false)
                 when (ex) {
                     is HttpException -> {
@@ -215,7 +223,6 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
                         showToast(context.getString(R.string.internet_not_available_msz))
                     }
                     else -> {
-                        Crashlytics.logException(ex)
                     }
                 }
             }
@@ -237,26 +244,6 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
 
     }
 
-    /* private fun getCourseFromServer() {
-         viewModelScope.launch(Dispatchers.IO) {
-             try {
-                 val courseList = AppObjectController.chatNetworkService.getRegisterCourses()
-                 if (courseList.isNullOrEmpty()) {
-                     signUpStatus.postValue(SignUpStepStatus.CoursesNotExist)
-
-                 } else {
-                     AppObjectController.appDatabase.courseDao().insertRegisterCourses(courseList)
-                     signUpStatus.postValue(SignUpStepStatus.SignUpCompleted)
-
-                 }
-             } catch (ex: Exception) {
-                 signUpStatus.postValue(SignUpStepStatus.SignUpCompleted)
-                 ex.printStackTrace()
-             }
-
-         }
-     }*/
-
     private fun mergeMentorWithGId(mentorId: String) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
@@ -267,8 +254,8 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
                 val data = mapOf("mentor" to mentorId)
                 AppObjectController.chatNetworkService.mergeMentorWithGId(id.toString(), data)
                 PrefManager.removeKey(SERVER_GID_ID)
-            } catch (ex: Exception) {
-                ex.printStackTrace()
+            } catch (ex: Throwable) {
+                LogException.catchException(ex)
             }
 
         }

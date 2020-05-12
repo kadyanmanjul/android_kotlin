@@ -8,15 +8,12 @@ import androidx.fragment.app.commit
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.transition.ChangeBounds
-import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.CoreJoshActivity
 import com.joshtalks.joshskills.core.SignUpStepStatus
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.databinding.ActivitySignUpBinding
-import com.joshtalks.joshskills.repository.local.model.InstallReferrerModel
 
 const val IS_ACTIVITY_FOR_RESULT = "is_activity_for_result"
 
@@ -88,55 +85,9 @@ class SignUpActivity : CoreJoshActivity() {
                     openCourseExplorerScreen()
                     return@Observer
                 }
-                SignUpStepStatus.CoursesNotExist -> {
-                    if (activityResultFlag) {
-                        setResult()
-                        return@Observer
-                    }
-                    try {
-                        val typeToken = object : TypeToken<List<String>>() {}.type
-                        val list = AppObjectController.gsonMapperForLocal.fromJson<List<String>>(
-                            AppObjectController.getFirebaseRemoteConfig()
-                                .getString("utm_source_filter"),
-                            typeToken
-                        )
-                        if (list.contains(InstallReferrerModel.getPrefObject()?.utmSource)) {
-                            registerAnotherNumberFragment()
-                        } else {
-                            openCourseExplorerScreen()
-                        }
-                    } catch (ex: Exception) {
-                        openCourseExplorerScreen()
-                    }
-                    return@Observer
-                }
                 else -> return@Observer
             }
         })
-    }
-
-
-    private fun registerAnotherNumberFragment() {
-        supportFragmentManager.popBackStack(
-            null,
-            FragmentManager.POP_BACK_STACK_INCLUSIVE
-        )
-
-        val emptyCourseFragment: EmptyCourseFragment =
-            EmptyCourseFragment.newInstance()
-        val slideTransition = androidx.transition.Slide(Gravity.END)
-        slideTransition.duration = 200
-        val changeBoundsTransition = ChangeBounds()
-        changeBoundsTransition.duration = 200
-        emptyCourseFragment.enterTransition = slideTransition
-        emptyCourseFragment.sharedElementEnterTransition = changeBoundsTransition
-        emptyCourseFragment.allowEnterTransitionOverlap = false
-        emptyCourseFragment.allowReturnTransitionOverlap = false
-
-        supportFragmentManager.beginTransaction()
-            .replace(R.id.container, emptyCourseFragment)
-            .addToBackStack(null)
-            .commitAllowingStateLoss()
     }
 
     private fun addNextFragment() {
