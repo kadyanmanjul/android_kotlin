@@ -2,11 +2,11 @@ package com.joshtalks.joshskills.ui.signup
 
 import android.content.Intent
 import android.graphics.Color
+import android.net.Uri
 import android.os.Bundle
 import android.text.SpannableString
 import android.text.Spanned
 import android.text.method.LinkMovementMethod
-import android.text.style.URLSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -27,6 +27,8 @@ import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.LogException
+import com.joshtalks.joshskills.core.custom_ui.UrlClickSpan
+import com.joshtalks.joshskills.core.interfaces.OnUrlClickSpanListener
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.SignUpStep1FragmentBinding
 
@@ -81,7 +83,7 @@ class SignUpStep1Fragment : Fragment() {
             signUpStep1FragmentBinding.mobileEt.prefix =
                 signUpStep1FragmentBinding.countryCodePicker.selectedCountryCodeWithPlus
             AppAnalytics.create(AnalyticsEvent.COUNTRY_FLAG_CHANGED.NAME)
-                .addParam("MobilePrefix",signUpStep1FragmentBinding.mobileEt.prefix)
+                .addParam("MobilePrefix", signUpStep1FragmentBinding.mobileEt.prefix)
                 .push()
         }
 
@@ -96,12 +98,17 @@ class SignUpStep1Fragment : Fragment() {
         })
     }
 
-
     private fun initTermsConditionView() {
         val spannableString = SpannableString(getString(R.string.terms_and_condition_msz))
         val url = AppObjectController.getFirebaseRemoteConfig().getString("terms_condition_url")
         spannableString.setSpan(
-            URLSpan(url),
+            UrlClickSpan(url, object : OnUrlClickSpanListener {
+                override fun onClick(uri: Uri) {
+                    AppAnalytics.create(AnalyticsEvent.TERMS_CONDITION_CLICKED.NAME).push()
+                    Utils.openUri(requireContext(), uri)
+                }
+
+            }),
             74,
             spannableString.length,
             Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
@@ -109,7 +116,6 @@ class SignUpStep1Fragment : Fragment() {
         signUpStep1FragmentBinding.termsconditiontv.text = spannableString
         signUpStep1FragmentBinding.termsconditiontv.movementMethod =
             LinkMovementMethod.getInstance()
-        // TODO Add Terms and Condition Analytics  EVENt -TERMS_CONDITION_CLICKED
     }
 
     private fun initProgressView() {
@@ -144,8 +150,8 @@ class SignUpStep1Fragment : Fragment() {
             signUpStep1FragmentBinding.mobileEt.text.toString()
         )
         AppAnalytics.create(AnalyticsEvent.NEXT_TO_OTP_SCREEN_CLICKED.NAME)
-            .addParam("MobilePrefix",signUpStep1FragmentBinding.mobileEt.prefix)
-            .addParam("MobileNmberEntered",signUpStep1FragmentBinding.mobileEt.text.toString())
+            .addParam("MobilePrefix", signUpStep1FragmentBinding.mobileEt.prefix)
+            .addParam("MobileNumberEntered", signUpStep1FragmentBinding.mobileEt.text.toString())
             .push()
 
     }
