@@ -28,16 +28,21 @@ class LauncherActivity : CoreJoshActivity() {
         WorkMangerAdmin.appStartWorker()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_launcher)
-        val tManager: TelephonyManager = baseContext.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
-        // launcher Activity analytics
+        val tManager: TelephonyManager? =
+            getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager?
         AppAnalytics.create(AnalyticsEvent.APP_LAUNCHED.NAME)
             .addParam(AnalyticsEvent.APP_VERSION_CODE.NAME, BuildConfig.VERSION_NAME)
-            .addParam(AnalyticsEvent.NETWORK_CARRIER.NAME, tManager.networkOperatorName)
-            .addParam(AnalyticsEvent.SOURCE.NAME, InstallReferrerModel.getPrefObject()?.utmSource ?: EMPTY)
-            .addParam(AnalyticsEvent.USER_GAID.NAME,PrefManager.getStringValue(USER_UNIQUE_ID))
-            .addParam(AnalyticsEvent.SOURCE.NAME, InstallReferrerModel.getPrefObject()?.utmSource ?: EMPTY)
+            .addParam(AnalyticsEvent.NETWORK_CARRIER.NAME, tManager?.networkOperatorName)
+            .addParam(
+                AnalyticsEvent.SOURCE.NAME,
+                InstallReferrerModel.getPrefObject()?.utmSource ?: EMPTY
+            )
+            .addParam(AnalyticsEvent.USER_GAID.NAME, PrefManager.getStringValue(USER_UNIQUE_ID))
+            .addParam(
+                AnalyticsEvent.SOURCE.NAME,
+                InstallReferrerModel.getPrefObject()?.utmSource ?: EMPTY
+            )
             .push()
-
     }
 
     private fun handleIntent() {
@@ -58,15 +63,23 @@ class LauncherActivity : CoreJoshActivity() {
                             jsonParms.getString(Defines.Jsonkey.AndroidDeepLinkPath.key)
                         WorkMangerAdmin.registerUserGIDWithTestId(testId)
                         AppAnalytics.create(AnalyticsEvent.APP_INSTALL_WITH_DEEP_LINK.NAME)
-                            .addParam(AnalyticsEvent.APP_VERSION_CODE.NAME, BuildConfig.VERSION_NAME)
-                            .addParam(AnalyticsEvent.DEVICE_MANUFACTURER.NAME,Build.MANUFACTURER)
-                            .addParam(AnalyticsEvent.DEVICE_MODEL.NAME,Build.MODEL)
-                            .addParam(AnalyticsEvent.TEST_ID_PARAM.NAME, testId?:EMPTY)
-                            .addParam(AnalyticsEvent.USER_GAID.NAME, PrefManager.getStringValue(USER_UNIQUE_ID))
-                            .addParam(AnalyticsEvent.USER_NAME.NAME, User.getInstance()?.firstName ?:EMPTY)
-                            .addParam(AnalyticsEvent.USER_EMAIL.NAME, User.getInstance()?.email ?: EMPTY)
-                            .addParam(AnalyticsEvent.SOURCE.NAME, InstallReferrerModel.getPrefObject()?.utmSource ?: EMPTY)
-
+                            .addParam(
+                                AnalyticsEvent.APP_VERSION_CODE.NAME,
+                                BuildConfig.VERSION_NAME
+                            )
+                            .addParam(AnalyticsEvent.DEVICE_MANUFACTURER.NAME, Build.MANUFACTURER)
+                            .addParam(AnalyticsEvent.DEVICE_MODEL.NAME, Build.MODEL)
+                            .addParam(AnalyticsEvent.TEST_ID_PARAM.NAME, testId ?: EMPTY)
+                            .addParam(
+                                AnalyticsEvent.USER_GAID.NAME,
+                                PrefManager.getStringValue(USER_UNIQUE_ID)
+                            )
+                            .addParam(AnalyticsEvent.USER_NAME.NAME, User.getInstance().firstName)
+                            .addParam(AnalyticsEvent.USER_EMAIL.NAME, User.getInstance().email)
+                            .addParam(
+                                AnalyticsEvent.SOURCE.NAME,
+                                InstallReferrerModel.getPrefObject()?.utmSource ?: EMPTY
+                            )
                             .push()
                         startActivity(
                             Intent(
