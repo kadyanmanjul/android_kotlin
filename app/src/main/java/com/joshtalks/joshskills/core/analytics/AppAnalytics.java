@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.os.Bundle;
 
 import com.clevertap.android.sdk.CleverTapAPI;
+import com.flurry.android.Constants;
 import com.flurry.android.FlurryAgent;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.joshtalks.joshskills.BuildConfig;
@@ -18,6 +19,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 
@@ -57,7 +59,6 @@ public class AppAnalytics {
     public static void updateUser() {
         init();
         updateCleverTapUser();
-        updateFabricUser();
         updateFlurryUser();
     }
 
@@ -78,39 +79,40 @@ public class AppAnalytics {
 
     private static void updateFlurryUser() {
         //FlurryAgent.deleteData();
-        Log.d("Furry", "updateFlurryUser() called");
+        Timber.tag("Furry").d("updateFlurryUser() called");
         User user = User.getInstance();
         Mentor mentor = Mentor.getInstance();
         FlurryAgent.setUserId(mentor.getId());
         FlurryAgent.setVersionName(BuildConfig.VERSION_NAME);
         FlurryAgent.setAge(getAge(user.getDateOfBirth()));
-        FlurryAgent.setGender((user.getGender().equals("M")? Constants.MALE :Constants.FEMALE));
+        FlurryAgent.setGender((user.getGender().equals("M") ? Constants.MALE : Constants.FEMALE));
 
         //User Properties
-        List<String> list =new ArrayList<>();
+        List<String> list = new ArrayList<>();
         list.add(user.getUsername());
         list.add(mentor.getId());
         list.add(user.getPhoneNumber());
         list.add(user.getDateOfBirth());
         list.add(user.getUserType());
         list.add(user.getGender());
-        FlurryAgent.UserProperties.set("JoshSkills.User",list);
+        FlurryAgent.UserProperties.set("JoshSkills.User", list);
 
 
     }
 
-    public static int getAge(String dobString){
-
+    public static int getAge(String dobString) {
+        if (dobString == null || dobString.isEmpty()) {
+            return -1;
+        }
         Date date = null;
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
         try {
             date = sdf.parse(dobString);
         } catch (ParseException e) {
             e.printStackTrace();
         }
 
-        if(date == null) return 0;
-
+        if (date == null) return 0;
         Calendar dob = Calendar.getInstance();
         Calendar today = Calendar.getInstance();
         dob.setTime(date);
@@ -119,11 +121,11 @@ public class AppAnalytics {
         int month = dob.get(Calendar.MONTH);
         int day = dob.get(Calendar.DAY_OF_MONTH);
 
-        dob.set(year, month+1, day);
+        dob.set(year, month + 1, day);
 
         int age = today.get(Calendar.YEAR) - dob.get(Calendar.YEAR);
 
-        if (today.get(Calendar.DAY_OF_YEAR) < dob.get(Calendar.DAY_OF_YEAR)){
+        if (today.get(Calendar.DAY_OF_YEAR) < dob.get(Calendar.DAY_OF_YEAR)) {
             age--;
         }
 
