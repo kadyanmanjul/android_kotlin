@@ -25,6 +25,7 @@ import com.joshtalks.joshskills.core.analytics.LogException
 import com.joshtalks.joshskills.databinding.ActivityOnboardBinding
 import com.joshtalks.joshskills.repository.local.model.InstallReferrerModel
 import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
 import com.joshtalks.joshskills.ui.signup.IS_ACTIVITY_FOR_RESULT
 import com.joshtalks.joshskills.ui.signup.SignUpActivity
