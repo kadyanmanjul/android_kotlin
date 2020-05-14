@@ -1,3 +1,4 @@
+include ':joshcamerax'
 include ':app', ':joshlibrary', ':recordview', ':emojiBase',  ':emoji-google', ':appcamera', ':mediapicker', ':pixeditor', ':pdfviewer'
 
 //':animationlibrary',
