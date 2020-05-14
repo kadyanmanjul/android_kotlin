@@ -1,5 +1,6 @@
 package com.joshtalks.joshskills.ui.extra
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,7 +9,6 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.joshtalks.joshskills.R
 
 class CustomPermissionDialogFragment : BottomSheetDialogFragment() {
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -18,8 +18,23 @@ class CustomPermissionDialogFragment : BottomSheetDialogFragment() {
     }
 
     companion object {
-        fun newInstance(): CustomPermissionDialogFragment {
+        lateinit var mIntent: Intent
+        fun newInstance(intent: Intent): CustomPermissionDialogFragment {
+            mIntent = intent
             return CustomPermissionDialogFragment()
         }
+    }
+
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+    }
+
+    /**
+     * Dismiss to Fragment
+     * */
+    fun navigateToSettings() {
+        activity?.startActivity(mIntent)
+
     }
 }

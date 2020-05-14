@@ -138,7 +138,7 @@ class LauncherActivity : CoreJoshActivity() {
             fragmentTransaction.remove(prev)
         }
         fragmentTransaction.addToBackStack(null)
-        CustomPermissionDialogFragment.newInstance()
+        CustomPermissionDialogFragment.newInstance(intent)
             .show(supportFragmentManager, "custom_permission_fragment_dialog")
     }
 
