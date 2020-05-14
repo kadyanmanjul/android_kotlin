@@ -38,9 +38,9 @@ import com.bumptech.glide.request.target.Target
 import com.crashlytics.android.Crashlytics
 import com.greentoad.turtlebody.mediapicker.MediaPicker
 import com.greentoad.turtlebody.mediapicker.core.MediaPickerConfig
-import com.joshtalks.appcamera.pix.JoshCameraActivity
-import com.joshtalks.appcamera.pix.Options
-import com.joshtalks.appcamera.utility.ImageQuality
+import com.joshtalks.joshcamerax.JoshCameraActivity
+import com.joshtalks.joshcamerax.utils.ImageQuality
+import com.joshtalks.joshcamerax.utils.Options
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
@@ -743,7 +743,7 @@ class PractiseSubmitActivity : CoreJoshActivity() {
                                 .setImageQuality(ImageQuality.HIGH)
                                 .setScreenOrientation(Options.SCREEN_ORIENTATION_PORTRAIT)
 
-                            JoshCameraActivity.start(this@PractiseSubmitActivity, options)
+                            JoshCameraActivity.startJoshCameraxActivity(this@PractiseSubmitActivity, options)
                             return
 
                         }
