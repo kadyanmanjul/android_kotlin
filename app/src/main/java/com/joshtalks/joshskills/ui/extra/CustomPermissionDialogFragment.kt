@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.databinding.DataBindingUtil
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.CUSTOM_PERMISSION_ACTION_KEY
@@ -12,6 +13,7 @@ import com.joshtalks.joshskills.core.PermissionAction
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
+import com.joshtalks.joshskills.databinding.FragmentCustomPermissionDialogBinding
 
 class CustomPermissionDialogFragment : BottomSheetDialogFragment() {
 
@@ -28,7 +30,15 @@ class CustomPermissionDialogFragment : BottomSheetDialogFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_custom_permission_dialog, container, false)
+        binding = DataBindingUtil.inflate(
+            inflater,
+            R.layout.fragment_custom_permission_dialog,
+            container,
+            false
+        )
+        binding.lifecycleOwner = this
+        binding.fragment = this
+        return binding.root
     }
 
     fun allow() {
@@ -62,4 +72,5 @@ class CustomPermissionDialogFragment : BottomSheetDialogFragment() {
             .addParam("Action", actionPerformed.name)
             .push()
     }
+
 }
