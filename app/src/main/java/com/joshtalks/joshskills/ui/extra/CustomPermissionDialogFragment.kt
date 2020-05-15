@@ -17,6 +17,9 @@ import com.joshtalks.joshskills.databinding.FragmentCustomPermissionDialogBindin
 
 class CustomPermissionDialogFragment : BottomSheetDialogFragment() {
 
+    private lateinit var binding: FragmentCustomPermissionDialogBinding
+    private val interactionListener by lazy { activity as CustomPermissionDialogInteractionListener }
+
     companion object {
         lateinit var mIntent: Intent
         fun newInstance(intent: Intent): CustomPermissionDialogFragment {
@@ -51,12 +54,14 @@ class CustomPermissionDialogFragment : BottomSheetDialogFragment() {
         PrefManager.put(CUSTOM_PERMISSION_ACTION_KEY, PermissionAction.CANCEL.name)
         logAction(PermissionAction.CANCEL)
         dismiss()
+        interactionListener.navigateToNextScreen()
     }
 
     fun doNotAskAgain() {
         PrefManager.put(CUSTOM_PERMISSION_ACTION_KEY, PermissionAction.DO_NOT_ASK_AGAIN.name)
         logAction(PermissionAction.DO_NOT_ASK_AGAIN)
         dismiss()
+        interactionListener.navigateToNextScreen()
     }
 
     /**

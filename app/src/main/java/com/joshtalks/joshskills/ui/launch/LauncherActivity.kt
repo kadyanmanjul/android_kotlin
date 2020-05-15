@@ -17,6 +17,7 @@ import com.joshtalks.joshskills.core.service.WorkMangerAdmin
 import com.joshtalks.joshskills.repository.local.model.InstallReferrerModel
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.ui.extra.CustomPermissionDialogFragment
+import com.joshtalks.joshskills.ui.extra.CustomPermissionDialogInteractionListener
 import com.joshtalks.joshskills.ui.payment.COURSE_ID
 import com.joshtalks.joshskills.ui.payment.PaymentActivity
 import com.joshtalks.joshskills.ui.payment.STARTED_FROM
@@ -25,7 +26,7 @@ import io.branch.referral.Defines
 import org.json.JSONObject
 
 
-class LauncherActivity : CoreJoshActivity() {
+class LauncherActivity : CoreJoshActivity(), CustomPermissionDialogInteractionListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Branch.getInstance(applicationContext).resetUserSession()
@@ -102,11 +103,7 @@ class LauncherActivity : CoreJoshActivity() {
         ) {
             showCustomPermissionDialog(oemIntent)
         } else {
-            AppObjectController.uiHandler.postDelayed({
-                val intent = getIntentForState()
-                startActivity(intent)
-                this@LauncherActivity.finish()
-            }, 2500)
+            navigateToNextScreen()
         }
     }
 
@@ -144,6 +141,14 @@ class LauncherActivity : CoreJoshActivity() {
         fragmentTransaction.addToBackStack(null)
         CustomPermissionDialogFragment.newInstance(intent)
             .show(supportFragmentManager, "custom_permission_fragment_dialog")
+    }
+
+    override fun navigateToNextScreen() {
+        AppObjectController.uiHandler.postDelayed({
+            val intent = getIntentForState()
+            startActivity(intent)
+            this@LauncherActivity.finish()
+        }, 2500)
     }
 
 }
