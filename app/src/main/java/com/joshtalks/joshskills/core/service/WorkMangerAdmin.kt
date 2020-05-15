@@ -171,5 +171,14 @@ object WorkMangerAdmin {
         return workRequest.id
     }
 
+    fun getQuestionNPA(eventName: String): UUID {
+        val data = workDataOf("event" to eventName)
+        val workRequest = OneTimeWorkRequestBuilder<NPAQuestionViaEventWorker>()
+            .setInputData(data)
+            .build()
+        WorkManager.getInstance(AppObjectController.joshApplication).enqueue(workRequest)
+        return workRequest.id
+    }
+
 
 }
