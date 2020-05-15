@@ -311,7 +311,7 @@ public class AudioView extends FrameLayout {
         if (message.getUrl() != null) {
             if (message.getDownloadStatus() == DOWNLOAD_STATUS.DOWNLOADED) {
                 if (message.getDownloadedLocalPath() != null && AppDirectory.isFileExist(message.getDownloadedLocalPath())) {
-                    Dexter.withActivity(activity)
+                    Dexter.withContext(activity)
                             .withPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
                             .withListener(new PermissionListener() {
                                 @Override
@@ -351,7 +351,7 @@ public class AudioView extends FrameLayout {
                 if (message.getDownloadStatus() == DOWNLOAD_STATUS.DOWNLOADED) {
 
                     if (audioTypeObj.getDownloadedLocalPath() != null && AppDirectory.isFileExist(audioTypeObj.getDownloadedLocalPath())) {
-                        Dexter.withActivity(activity)
+                        Dexter.withContext(activity)
                                 .withPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
                                 .withListener(new PermissionListener() {
                                     @Override

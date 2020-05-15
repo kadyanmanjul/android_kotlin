@@ -109,7 +109,7 @@ class MediaPicker {
         private fun getPermission() {
             mActivity.get()?.let {
                 it.runOnUiThread {
-                    Dexter.withActivity(it)
+                    Dexter.withContext(it)
                             .withPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
                             .withListener(object : PermissionListener {
                                 override fun onPermissionGranted(response: PermissionGrantedResponse) {
