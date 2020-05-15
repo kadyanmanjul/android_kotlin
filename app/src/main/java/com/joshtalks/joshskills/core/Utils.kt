@@ -663,6 +663,17 @@ object Utils {
 
     }
 
+    fun compareDateToday(compareDay: Date, cDay: Int): Pair<Boolean, Int> {
+        val todayDate = Date()
+        val diff = todayDate.time - compareDay.time
+        val daysDiff = TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS).toInt()
+        if (daysDiff == cDay) {
+            return Pair(true, cDay)
+        }
+        return Pair(false, daysDiff)
+    }
+
+
     fun isSameDate(startDate: Date, endDate: Date): Boolean {
         val cal1 = Calendar.getInstance()
         val cal2 = Calendar.getInstance()
