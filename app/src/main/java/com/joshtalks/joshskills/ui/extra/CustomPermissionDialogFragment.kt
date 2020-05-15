@@ -33,6 +33,7 @@ class CustomPermissionDialogFragment : BottomSheetDialogFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        isCancelable = false
         binding = DataBindingUtil.inflate(
             inflater,
             R.layout.fragment_custom_permission_dialog,
@@ -69,7 +70,6 @@ class CustomPermissionDialogFragment : BottomSheetDialogFragment() {
      * */
     fun navigateToSettings() {
         activity?.startActivity(mIntent)
-
     }
 
     fun logAction(actionPerformed: PermissionAction) {
@@ -77,5 +77,4 @@ class CustomPermissionDialogFragment : BottomSheetDialogFragment() {
             .addParam("Action", actionPerformed.name)
             .push()
     }
-
 }
