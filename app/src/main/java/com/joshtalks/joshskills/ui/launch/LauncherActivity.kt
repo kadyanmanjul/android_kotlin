@@ -95,15 +95,19 @@ class LauncherActivity : CoreJoshActivity() {
         handleIntent()
 
         val oemIntent = PowerManagers.getIntentForOEM(this)
-        if (oemIntent != null) {
+        val performedAction = PrefManager.getStringValue(CUSTOM_PERMISSION_ACTION_KEY)
+        if (
+            oemIntent != null &&
+            (performedAction == EMPTY || performedAction == PermissionAction.CANCEL.name)
+        ) {
             showCustomPermissionDialog(oemIntent)
+        } else {
+            AppObjectController.uiHandler.postDelayed({
+                val intent = getIntentForState()
+                startActivity(intent)
+                this@LauncherActivity.finish()
+            }, 2500)
         }
-
-        AppObjectController.uiHandler.postDelayed({
-            val intent = getIntentForState()
-            startActivity(intent)
-            this@LauncherActivity.finish()
-        }, 2500)
     }
 
     override fun onNewIntent(intent: Intent) {
