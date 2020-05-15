@@ -7,7 +7,7 @@ enum class SignUpStepStatus {
 }
 
 enum class ApiCallStatus {
-    SUCCESS, FAILED
+    SUCCESS, FAILED, RETRY
 }
 
 const val MESSAGE_CHAT_SIZE_LIMIT = 2048
