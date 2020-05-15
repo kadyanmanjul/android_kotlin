@@ -12,6 +12,7 @@ import android.util.DisplayMetrics
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
+import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import com.android.installreferrer.api.InstallReferrerClient
 import com.crashlytics.android.Crashlytics
@@ -25,12 +26,17 @@ import com.joshtalks.joshskills.core.notification.NOTIFICATION_ID
 import com.joshtalks.joshskills.core.service.WorkMangerAdmin
 import com.joshtalks.joshskills.repository.local.entity.Question
 import com.joshtalks.joshskills.repository.local.model.User
+import com.joshtalks.joshskills.repository.local.model.nps.NPAFilter
+import com.joshtalks.joshskills.repository.local.model.nps.NPSEvent
+import com.joshtalks.joshskills.repository.local.model.nps.NPSEventModel
+import com.joshtalks.joshskills.repository.local.model.nps.NPSQuestionModel
 import com.joshtalks.joshskills.repository.service.EngagementNetworkHelper
 import com.joshtalks.joshskills.ui.chat.ConversationActivity
 import com.joshtalks.joshskills.ui.courseprogress.CourseProgressActivity
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
 import com.joshtalks.joshskills.ui.help.HelpActivity
 import com.joshtalks.joshskills.ui.inbox.InboxActivity
+import com.joshtalks.joshskills.ui.nps.NetPromoterScoreFragment
 import com.joshtalks.joshskills.ui.payment.PaymentActivity
 import com.joshtalks.joshskills.ui.profile.CropImageActivity
 import com.joshtalks.joshskills.ui.profile.ProfileActivity
@@ -41,6 +47,9 @@ import com.newrelic.agent.android.NewRelic
 import io.branch.referral.Branch
 import io.github.inflationx.viewpump.ViewPumpContextWrapper
 import io.sentry.core.Sentry
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 const val HELP_ACTIVITY_REQUEST_CODE = 9010
 
@@ -177,6 +186,7 @@ abstract class BaseActivity : AppCompatActivity() {
         user.id = PrefManager.getStringValue(USER_UNIQUE_ID)
         user.username = User.getInstance().username
         Sentry.setUser(user)
+
     }
 
     private fun initNewRelic() {
@@ -191,6 +201,7 @@ abstract class BaseActivity : AppCompatActivity() {
         AppAnalytics.create(AnalyticsEvent.CLICK_HELPLINE_SELECTED.NAME).push()
         Utils.call(this, AppObjectController.getFirebaseRemoteConfig().getString("helpline_number"))
     }
+
 
     protected fun isUserHaveNotPersonalDetails(): Boolean {
         return User.getInstance().dateOfBirth.isNullOrEmpty()
@@ -212,5 +223,65 @@ abstract class BaseActivity : AppCompatActivity() {
         }
     }
 
+
+    protected fun showNPSDialog(nps: NPSEvent? = null, courseId: String = EMPTY): Boolean {
+        CoroutineScope(Dispatchers.IO).launch {
+            var currentState = nps
+            if (currentState == null) {
+                currentState = NPSEventModel.getCurrentNPA()
+            }
+
+            if (currentState == null) {
+                return@launch
+            }
+
+            val list =
+                NPSEventModel.getAllNpaList()?.filter { it.enable }
+            val npsEventModel = list?.find { it.event == currentState }
+            npsEventModel?.let { npsEventModelInternal ->
+                if (npsEventModelInternal.filterBy == NPAFilter.DAY) {
+                    val date =
+                        AppObjectController.appDatabase.courseDao().getCourseCreatedDate(courseId)
+                    val (flag, _) = Utils.compareDateToday(date, npsEventModelInternal.day)
+                    if (flag.not()) {
+                        return@launch
+                    }
+                }
+
+                CoroutineScope(Dispatchers.Main).launch {
+                    WorkManager.getInstance(applicationContext)
+                        .getWorkInfoByIdLiveData(
+                            WorkMangerAdmin.getQuestionNPA(
+                                npsEventModelInternal.eventName
+                            )
+                        )
+                        .observe(this@BaseActivity, Observer {
+                            try {
+                                if (it != null && it.state == WorkInfo.State.SUCCEEDED) {
+                                    val output = it.outputData.getString("nps_question_list")
+                                    if (output.isNullOrEmpty().not()) {
+                                        NPSEventModel.setCurrentNPA(null)
+                                        val questionList =
+                                            NPSQuestionModel.getNPSQuestionModelList(output!!)
+                                        if (questionList.isNullOrEmpty().not()) {
+                                            showNPSFragment(questionList!!)
+                                        }
+                                    }
+                                }
+                            } catch (ex: Exception) {
+                                ex.printStackTrace()
+                            }
+                        })
+                }
+            }
+        }
+        return true
+    }
+
+    private fun showNPSFragment(questionList: List<NPSQuestionModel>) {
+        val bottomSheetFragment = NetPromoterScoreFragment.newInstance(questionList)
+        bottomSheetFragment.show(supportFragmentManager, bottomSheetFragment.tag)
+
+    }
 
 }
