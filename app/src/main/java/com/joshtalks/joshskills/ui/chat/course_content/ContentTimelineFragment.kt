@@ -93,7 +93,9 @@ class ContentTimelineFragment : DialogFragment() {
         binding.ivHelp.setOnClickListener {
             val i = Intent(requireActivity(), HelpActivity::class.java)
             startActivityForResult(i, HELP_ACTIVITY_REQUEST_CODE)
-            AppAnalytics.create(AnalyticsEvent.HELP_SELECTED.NAME).push()
+            AppAnalytics.create(AnalyticsEvent.HELP_INITIATED.NAME)
+                .addBasicParam()
+                .push()
         }
         val layoutManager = LinearLayoutManager(context)
         binding.recyclerView.layoutManager = layoutManager

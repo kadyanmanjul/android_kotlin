@@ -72,7 +72,7 @@ abstract class BaseActivity : AppCompatActivity() {
     fun openHelpActivity() {
         val i = Intent(this, HelpActivity::class.java)
         startActivityForResult(i, HELP_ACTIVITY_REQUEST_CODE)
-        AppAnalytics.create(AnalyticsEvent.HELP_SELECTED.NAME).push()
+
     }
 
 

@@ -10,17 +10,21 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.transition.ChangeBounds
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.CoreJoshActivity
+import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.SignUpStepStatus
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.databinding.ActivitySignUpBinding
 
 const val IS_ACTIVITY_FOR_RESULT = "is_activity_for_result"
+const val FROM_ACTIVITY = "from_activity"
 
 class SignUpActivity : CoreJoshActivity() {
 
     private lateinit var layout: ActivitySignUpBinding
     private var activityResultFlag = false
+    private var fromActivity = EMPTY
+    private lateinit var appAnalytics :AppAnalytics
     private val viewModel: SignUpViewModel by lazy {
         ViewModelProvider(this).get(SignUpViewModel::class.java)
     }
@@ -33,9 +37,17 @@ class SignUpActivity : CoreJoshActivity() {
         supportActionBar?.hide()
         if (intent.hasExtra(IS_ACTIVITY_FOR_RESULT)) {
             activityResultFlag = intent?.getBooleanExtra(IS_ACTIVITY_FOR_RESULT, false) ?: false
+            fromActivity = intent?.getStringExtra(FROM_ACTIVITY) ?: EMPTY
         }
         addObserver()
         login()
+        appAnalytics= AppAnalytics.create(AnalyticsEvent.SIGNUP_SATUS.NAME)
+            .addBasicParam()
+            .addParam(AnalyticsEvent.TYPE_PARAM.NAME,AnalyticsEvent.MOBILE_OTP_PARAM.NAME)
+
+
+        if(fromActivity.isEmpty().not())
+            appAnalytics.addParam(AnalyticsEvent.FLOW_FROM_PARAM.NAME,fromActivity)
     }
 
 
@@ -67,13 +79,17 @@ class SignUpActivity : CoreJoshActivity() {
                     return@Observer
                 }
                 SignUpStepStatus.SignUpCompleted -> {
+                    appAnalytics.addParam(AnalyticsEvent.STATUS.NAME,AnalyticsEvent.SUCCESS_PARAM.NAME)
+                    if(viewModel.phoneNumber.isEmpty().not())
+                    appAnalytics.addParam(AnalyticsEvent.USER_DETAILS.NAME,viewModel.countryCode+viewModel.phoneNumber)
+                    appAnalytics.push()
                     if (activityResultFlag) {
                         setResult()
                         return@Observer
                     }
                     val intent = getIntentForState()
                     if (intent == null) {
-                        AppAnalytics.create(AnalyticsEvent.LOGIN_SUCCESS.NAME).push()
+                        //AppAnalytics.create(AnalyticsEvent.LOGIN_SUCCESS.NAME).push()
                         startActivity(getInboxActivityIntent())
                     } else {
                         startActivity(intent)
@@ -82,6 +98,10 @@ class SignUpActivity : CoreJoshActivity() {
                     return@Observer
                 }
                 SignUpStepStatus.SignUpWithoutRegister -> {
+                    appAnalytics.addParam(AnalyticsEvent.STATUS.NAME,AnalyticsEvent.SUCCESS_PARAM.NAME)
+                    if(viewModel.phoneNumber.isEmpty().not())
+                        appAnalytics.addParam(AnalyticsEvent.USER_DETAILS.NAME,viewModel.countryCode+viewModel.phoneNumber)
+                    appAnalytics.push()
                     openCourseExplorerScreen()
                     return@Observer
                 }
@@ -115,6 +135,8 @@ class SignUpActivity : CoreJoshActivity() {
 
     override fun onBackPressed() {
         if (supportFragmentManager.backStackEntryCount == 1) {
+            appAnalytics.addParam(AnalyticsEvent.STATUS.NAME,AnalyticsEvent.CANCELLED_PARAM.NAME)
+            appAnalytics.push()
             this@SignUpActivity.finish()
             return
         }

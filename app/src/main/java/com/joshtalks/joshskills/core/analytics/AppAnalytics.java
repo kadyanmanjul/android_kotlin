@@ -1,6 +1,7 @@
 package com.joshtalks.joshskills.core.analytics;
 
 import android.annotation.SuppressLint;
+import android.os.Build;
 import android.os.Bundle;
 
 import com.clevertap.android.sdk.CleverTapAPI;
@@ -9,6 +10,7 @@ import com.flurry.android.FlurryAgent;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.joshtalks.joshskills.BuildConfig;
 import com.joshtalks.joshskills.core.AppObjectController;
+import com.joshtalks.joshskills.repository.local.model.InstallReferrerModel;
 import com.joshtalks.joshskills.repository.local.model.Mentor;
 import com.joshtalks.joshskills.repository.local.model.User;
 
@@ -141,12 +143,39 @@ public class AppAnalytics {
 
     }
 
+    public AppAnalytics addBasicParam() {
+        parameters.put(AnalyticsEvent.APP_VERSION_CODE.getNAME(), BuildConfig.VERSION_NAME);
+        parameters.put(AnalyticsEvent.DEVICE_MANUFACTURER.getNAME(), Build.MANUFACTURER);
+        parameters.put(AnalyticsEvent.DEVICE_MODEL.getNAME(), Build.MODEL);
+        parameters.put(AnalyticsEvent.ANDROID_OR_IOS.getNAME(), Build.VERSION.SDK_INT);
+        if(InstallReferrerModel.getPrefObject()!=null&&!Objects.requireNonNull(InstallReferrerModel.getPrefObject().getUtmSource()).isEmpty())
+        parameters.put(AnalyticsEvent.SOURCE.getNAME(),InstallReferrerModel.getPrefObject().getUtmSource());
+        if(InstallReferrerModel.getPrefObject()!=null&&!InstallReferrerModel.getPrefObject().getUtmMedium().isEmpty())
+        parameters.put(AnalyticsEvent.UTM_MEDIUM.getNAME(),InstallReferrerModel.getPrefObject().getUtmMedium());
+        return this;
+    }
+
+    public AppAnalytics addUserDetails() {
+        if(User.getInstance()!=null) {
+            if (!Objects.requireNonNull(User.getInstance().getUsername()).isEmpty())
+                parameters.put(AnalyticsEvent.USER_NAME.getNAME(), User.getInstance().getUsername());
+            if (Objects.requireNonNull(User.getInstance().getEmail()).isEmpty())
+                parameters.put(AnalyticsEvent.USER_EMAIL.getNAME(), User.getInstance().getEmail());
+        }
+        return this;
+    }
+
     public AppAnalytics addParam(String key, String value) {
         parameters.put(key, value);
         return this;
     }
 
     public AppAnalytics addParam(String key, int value) {
+        parameters.put(key, value);
+        return this;
+    }
+
+    public AppAnalytics addParam(String key, long value) {
         parameters.put(key, value);
         return this;
     }
@@ -176,7 +205,7 @@ public class AppAnalytics {
 
     public void push() {
         if (BuildConfig.DEBUG) {
-            return;
+            //return;
         }
         formatParameters();
         pushToFirebase();
@@ -186,7 +215,7 @@ public class AppAnalytics {
 
     public void push(boolean trackSession) {
         if (BuildConfig.DEBUG) {
-            return;
+            //return;
         }
         formatParameters();
         pushToFirebase();

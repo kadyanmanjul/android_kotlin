@@ -76,14 +76,7 @@ class LauncherActivity : CoreJoshActivity() {
                                 AnalyticsEvent.USER_GAID.NAME,
                                 PrefManager.getStringValue(USER_UNIQUE_ID)
                             )
-                            .addParam(
-                                AnalyticsEvent.USER_NAME.NAME,
-                                User.getInstance().firstName
-                            )
-                            .addParam(
-                                AnalyticsEvent.USER_EMAIL.NAME,
-                                User.getInstance().email
-                            )
+                            .addUserDetails()
                             .addParam(
                                 AnalyticsEvent.SOURCE.NAME,
                                 InstallReferrerModel.getPrefObject()?.utmSource ?: EMPTY

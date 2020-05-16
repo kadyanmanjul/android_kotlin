@@ -3,6 +3,7 @@ package com.joshtalks.joshskills.ui.signup
 import android.graphics.Color
 import android.os.Bundle
 import android.os.CountDownTimer
+import android.util.Log
 import android.view.*
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
@@ -24,6 +25,7 @@ import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import java.util.concurrent.TimeUnit
 
 class SignUpStep2Fragment : Fragment() {
@@ -37,6 +39,8 @@ class SignUpStep2Fragment : Fragment() {
     private lateinit var viewModel: SignUpViewModel
     private val compositeDisposable = CompositeDisposable()
     private var timer: CountDownTimer? = null
+    private lateinit var appAnalytics: AppAnalytics
+    private val currentTime=System.currentTimeMillis()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -79,6 +83,7 @@ class SignUpStep2Fragment : Fragment() {
         viewModel.signUpStatus.observe(viewLifecycleOwner, Observer {
             when (it) {
                 SignUpStepStatus.SignUpResendOTP -> {
+                    viewModel.incrementResendAttempts()
                     Toast.makeText(
                         AppObjectController.joshApplication,
                         getString(R.string.resend_otp_toast, viewModel.phoneNumber),
@@ -92,16 +97,19 @@ class SignUpStep2Fragment : Fragment() {
         })
         viewModel.otpVerifyStatus.observe(viewLifecycleOwner, Observer {
             if (it) {
+                viewModel.incrementIncorrectAttempts()
+
                 StyleableToast.Builder(requireActivity()).gravity(Gravity.CENTER)
                     .text(getString(R.string.wrong_otp)).cornerRadius(16).length(Toast.LENGTH_LONG)
                     .solidBackground().show()
                 hideProgress()
                 signUpStep2Binding.otpView.setText(EMPTY)
-                AppAnalytics.create(AnalyticsEvent.INCORRECT_OTP.NAME).push()
-
             }
         })
         signUpStep2Binding.tvMobile.text = viewModel.countryCode.plus(viewModel.phoneNumber)
+        appAnalytics=AppAnalytics.create(AnalyticsEvent.ENTER_OTP_SCREEN.NAME)
+            .addBasicParam()
+            .addParam(AnalyticsEvent.USER_DETAILS.NAME,viewModel.countryCode.plus(viewModel.phoneNumber))
 
     }
 
@@ -117,22 +125,24 @@ class SignUpStep2Fragment : Fragment() {
         ) {
             if (Utils.isInternetAvailable().not()) {
                 showToast(getString(R.string.internet_not_available_msz))
+                appAnalytics.addParam(AnalyticsEvent.NEXT_OTP_CLICKED.NAME,"Internet Not Available")
                 return
             }
             showProgress()
             viewModel.verifyOTP(signUpStep2Binding.otpView.text?.toString())
-            AppAnalytics.create(AnalyticsEvent.NEXT_OTP_CLICKED.NAME).push()
+            appAnalytics.addParam(AnalyticsEvent.NEXT_OTP_CLICKED.NAME,"Otp Submitted")
 
         } else {
             showToast(getString(R.string.please_enter_otp))
+            appAnalytics.addParam(AnalyticsEvent.NEXT_OTP_CLICKED.NAME,"Blank Otp Submitted")
             return
         }
     }
 
     fun resendOTP() {
+        Timber.tag(TAG).e("************* resend")
         showProgress()
         viewModel.resendOTP(viewModel.phoneNumber)
-        AppAnalytics.create(AnalyticsEvent.RESEND_OTP.NAME).push()
     }
 
 
@@ -166,6 +176,12 @@ class SignUpStep2Fragment : Fragment() {
         super.onStop()
         timer?.cancel()
         timer = null
+        Timber.tag(TAG).e("************* backgrounded")
+        Log.d(TAG, "onStop() called  ${viewModel.incorrectAttempt} ${viewModel.resendAttempt}")
+        appAnalytics.addParam(AnalyticsEvent.INCORRECT_OTP_ATTEMPTS.NAME,viewModel.incorrectAttempt)
+        appAnalytics.addParam(AnalyticsEvent.NO_OF_TIMES_OTP_SEND.NAME,viewModel.resendAttempt)
+        appAnalytics.addParam(AnalyticsEvent.TIME_TAKEN.NAME.plus("(in ms"),System.currentTimeMillis()-currentTime)
+        appAnalytics.push()
     }
 
     override fun onDestroy() {
@@ -189,7 +205,7 @@ class SignUpStep2Fragment : Fragment() {
     }
 
     private fun startTimer() {
-        timer = object : CountDownTimer(60_000, 1000) {
+        timer = object : CountDownTimer(10_000, 1000) {
             override fun onTick(millisUntilFinished: Long) {
                 if (timer != null) {
                     CoroutineScope(Dispatchers.Main).launch {

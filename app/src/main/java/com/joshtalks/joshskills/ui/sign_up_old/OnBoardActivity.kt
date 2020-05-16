@@ -2,7 +2,6 @@ package com.joshtalks.joshskills.ui.sign_up_old
 
 import android.content.Intent
 import android.graphics.Color
-import android.os.Build
 import android.os.Bundle
 import android.text.SpannableStringBuilder
 import android.text.Spanned
@@ -15,7 +14,6 @@ import androidx.lifecycle.ViewModelProvider
 import com.github.razir.progressbutton.DrawableButton
 import com.github.razir.progressbutton.hideProgress
 import com.github.razir.progressbutton.showProgress
-import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
@@ -27,6 +25,7 @@ import com.joshtalks.joshskills.repository.local.model.InstallReferrerModel
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
+import com.joshtalks.joshskills.ui.signup.FROM_ACTIVITY
 import com.joshtalks.joshskills.ui.signup.IS_ACTIVITY_FOR_RESULT
 import com.joshtalks.joshskills.ui.signup.SignUpActivity
 import com.joshtalks.joshskills.ui.signup.SignUpViewModel
@@ -59,12 +58,10 @@ class OnBoardActivity : CoreJoshActivity() {
         }
         initTrueCallerSDK()
         AppAnalytics.create(AnalyticsEvent.LOGIN_SCREEN_1.NAME)
-            .addParam(AnalyticsEvent.APP_VERSION_CODE.NAME, BuildConfig.VERSION_NAME)
-            .addParam(AnalyticsEvent.DEVICE_MANUFACTURER.NAME, Build.MANUFACTURER)
-            .addParam(AnalyticsEvent.DEVICE_MODEL.NAME, Build.MODEL)
+            .addBasicParam()
             .addParam(AnalyticsEvent.USER_GAID.NAME, PrefManager.getStringValue(USER_UNIQUE_ID))
-            .addParam(AnalyticsEvent.USER_NAME.NAME, User.getInstance().firstName)
-            .addParam(AnalyticsEvent.USER_EMAIL.NAME, User.getInstance().email)
+            //.addParam(AnalyticsEvent.USER_NAME.NAME, User.getInstance().firstName)
+            //.addParam(AnalyticsEvent.USER_EMAIL.NAME, User.getInstance().email)
             .addParam(AnalyticsEvent.SOURCE.NAME, InstallReferrerModel.getPrefObject()?.utmSource ?: EMPTY)
             .push(true)
 
@@ -112,11 +109,14 @@ class OnBoardActivity : CoreJoshActivity() {
     }
 
     fun signUp() {
-        AppAnalytics.create(AnalyticsEvent.LOGIN_CLICKED.NAME)
+        AppAnalytics.create(AnalyticsEvent.LOGIN_INITIATED.NAME)
+            .addBasicParam()
             .addParam("name",this.javaClass.simpleName)
+            .addParam(AnalyticsEvent.TYPE_PARAM.NAME,AnalyticsEvent.MOBILE_OTP_PARAM.NAME)
             .push()
         val intent = Intent(this, SignUpActivity::class.java).apply {
             putExtra(IS_ACTIVITY_FOR_RESULT, activityResultFlag)
+            putExtra(FROM_ACTIVITY, this@OnBoardActivity.javaClass.simpleName)
         }
         startActivity(intent)
     }
@@ -124,7 +124,11 @@ class OnBoardActivity : CoreJoshActivity() {
     fun openCourseExplore() {
         AppAnalytics.create(AnalyticsEvent.EXPLORE_BTN_CLICKED.NAME)
             .addParam("name", this.javaClass.simpleName)
+            .addBasicParam()
+            .addParam(AnalyticsEvent.USER_GAID.NAME, PrefManager.getStringValue(USER_UNIQUE_ID))
             .push()
+
+
         startActivity(Intent(applicationContext, CourseExploreActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
         })
@@ -155,8 +159,10 @@ class OnBoardActivity : CoreJoshActivity() {
     }
 
     fun verifyViaTrueCaller() {
-        AppAnalytics.create(AnalyticsEvent.LOGIN_TRUECALLER_CLICKED.NAME)
+        AppAnalytics.create(AnalyticsEvent.LOGIN_INITIATED.NAME)
+            .addBasicParam()
             .addParam("name", this.javaClass.simpleName)
+            .addParam(AnalyticsEvent.TYPE_PARAM.NAME, AnalyticsEvent.TRUECALLER_PARAM.NAME)
             .push()
         TrueSDK.getInstance().getUserProfile(this)
         showProgress()

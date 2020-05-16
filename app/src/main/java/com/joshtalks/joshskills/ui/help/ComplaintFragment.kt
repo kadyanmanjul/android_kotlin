@@ -48,6 +48,7 @@ class ComplaintFragment : Fragment() {
     private lateinit var typeOfHelpModel: TypeOfHelpModel
     private var attachmentPath: String? = null
     private lateinit var viewModel: HelpViewModel
+    private lateinit var appAnalytics: AppAnalytics
 
 
     private lateinit var progressDialog: FlipProgressDialog
@@ -76,6 +77,7 @@ class ComplaintFragment : Fragment() {
         lodgeComplaintBinding.lifecycleOwner = this
         lodgeComplaintBinding.handler = this
         initProgressDialog()
+
         return lodgeComplaintBinding.root
     }
 
@@ -83,11 +85,37 @@ class ComplaintFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val titleView = activity?.findViewById<AppCompatTextView>(R.id.text_message_title)
         titleView?.text = typeOfHelpModel.categoryName
-        AppAnalytics.create(AnalyticsEvent.HELP_COMPLAINT_FOAM.NAME)
-            .addParam("categoryName",typeOfHelpModel.categoryName)
-            .push()
+        appAnalytics = AppAnalytics.create(AnalyticsEvent.HELP_SUBMITTED.NAME)
+            .addBasicParam()
+            .addUserDetails()
+            .addParam(
+                AnalyticsEvent.HELP_CATEGORY_CLICKED.NAME,
+                AnalyticsEvent.HELP_COMPLAINT_FOAM.NAME
+            )
+            .addParam("categoryName", typeOfHelpModel.categoryName)
         viewModel.apiCallStatusLiveData.observe(viewLifecycleOwner, Observer {
             if (it == ApiCallStatus.SUCCESS) {
+
+                appAnalytics.addParam(
+                    AnalyticsEvent.COMPLAINT_EMAIL.NAME,
+                    lodgeComplaintBinding.etEmail.text.toString()
+                )
+                appAnalytics.addParam(
+                    AnalyticsEvent.COMPLAINT_NAME.NAME,
+                    lodgeComplaintBinding.etName.text.toString()
+                )
+                appAnalytics.addParam(
+                    AnalyticsEvent.COMPLAINT_NUMBER.NAME,
+                    lodgeComplaintBinding.etNumber.text.toString()
+                )
+                appAnalytics.addParam(
+                    AnalyticsEvent.COMPLAINT_TEXT.NAME,
+                    lodgeComplaintBinding.etComplaint.text.toString()
+                )
+                appAnalytics.addParam(
+                    AnalyticsEvent.COMPLAINT_IMAGE.NAME,
+                    if (lodgeComplaintBinding.imageContainer.visibility == View.GONE) "Not attached" else "Attached"
+                )
                 progressDialog.dismissAllowingStateLoss()
                 MaterialDialog(requireActivity()).show {
                     message(

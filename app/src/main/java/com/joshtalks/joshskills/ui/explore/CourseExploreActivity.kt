@@ -23,7 +23,6 @@ import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.ScreenEngagementModel
-import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.CourseExploreModel
 import com.joshtalks.joshskills.ui.inbox.PAYMENT_FOR_COURSE_CODE
 import com.joshtalks.joshskills.ui.payment.PaymentActivity
@@ -45,6 +44,7 @@ const val USER_COURSES = "user_courses"
 class CourseExploreActivity : CoreJoshActivity() {
     private var compositeDisposable = CompositeDisposable()
     private lateinit var courseExploreBinding: ActivityCourseExploreBinding
+    private lateinit var appAnalytics: AppAnalytics
     private var screenEngagementModel: ScreenEngagementModel =
         ScreenEngagementModel(COURSE_EXPLORER_SCREEN_NAME)
 
@@ -75,6 +75,10 @@ class CourseExploreActivity : CoreJoshActivity() {
         initRV()
         initView()
         loadCourses()
+        appAnalytics = AppAnalytics.create(AnalyticsEvent.EXPLORE_OPENED.NAME)
+            .addUserDetails()
+            .addBasicParam()
+        // TODO
     }
 
 
@@ -95,7 +99,7 @@ class CourseExploreActivity : CoreJoshActivity() {
             findViewById<MaterialToolbar>(R.id.toolbar).inflateMenu(R.menu.logout_menu)
         }
         findViewById<MaterialToolbar>(R.id.toolbar).setOnMenuItemClickListener {
-            AppAnalytics.create(AnalyticsEvent.MORE_ICON_CLICKED.NAME).push()
+            appAnalytics = AppAnalytics.create(AnalyticsEvent.MORE_ICON_CLICKED.NAME)
             if (it?.itemId == R.id.menu_logout) {
                 AppAnalytics.create(AnalyticsEvent.LOGOUT_CLICKED.NAME).push()
                 MaterialDialog(this@CourseExploreActivity).show {
@@ -217,8 +221,7 @@ class CourseExploreActivity : CoreJoshActivity() {
             AppAnalytics.create(AnalyticsEvent.COURSE_CLICKED.NAME)
                 .addParam("user_unique_id", PrefManager.getStringValue(USER_UNIQUE_ID))
                 .addParam(AnalyticsEvent.USER_GAID.NAME, PrefManager.getStringValue(USER_UNIQUE_ID))
-                .addParam(AnalyticsEvent.USER_NAME.NAME, User.getInstance().firstName)
-                .addParam(AnalyticsEvent.USER_EMAIL.NAME, User.getInstance().email)
+                .addUserDetails()
                 .addParam("course_name", it.courseName).push()
 
             PaymentActivity.startPaymentActivity(this, PAYMENT_FOR_COURSE_CODE, it)
