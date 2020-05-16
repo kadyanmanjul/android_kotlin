@@ -14,6 +14,8 @@ import com.joshtalks.joshskills.repository.local.model.InstallReferrerModel;
 import com.joshtalks.joshskills.repository.local.model.Mentor;
 import com.joshtalks.joshskills.repository.local.model.User;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -80,7 +82,6 @@ public class AppAnalytics {
     }
 
     private static void updateFlurryUser() {
-        //FlurryAgent.deleteData();
         Timber.tag("Furry").d("updateFlurryUser() called");
         User user = User.getInstance();
         Mentor mentor = Mentor.getInstance();
@@ -148,20 +149,23 @@ public class AppAnalytics {
         parameters.put(AnalyticsEvent.DEVICE_MANUFACTURER.getNAME(), Build.MANUFACTURER);
         parameters.put(AnalyticsEvent.DEVICE_MODEL.getNAME(), Build.MODEL);
         parameters.put(AnalyticsEvent.ANDROID_OR_IOS.getNAME(), Build.VERSION.SDK_INT);
-        if(InstallReferrerModel.getPrefObject()!=null&&!Objects.requireNonNull(InstallReferrerModel.getPrefObject().getUtmSource()).isEmpty())
-        parameters.put(AnalyticsEvent.SOURCE.getNAME(),InstallReferrerModel.getPrefObject().getUtmSource());
-        if(InstallReferrerModel.getPrefObject()!=null&&!InstallReferrerModel.getPrefObject().getUtmMedium().isEmpty())
-        parameters.put(AnalyticsEvent.UTM_MEDIUM.getNAME(),InstallReferrerModel.getPrefObject().getUtmMedium());
+        if (InstallReferrerModel.getPrefObject() != null && !Objects.requireNonNull(InstallReferrerModel.getPrefObject().getUtmSource()).isEmpty())
+            parameters.put(AnalyticsEvent.SOURCE.getNAME(), InstallReferrerModel.getPrefObject().getUtmSource());
+
+        if (
+                InstallReferrerModel.getPrefObject() != null &&
+                        InstallReferrerModel.getPrefObject().getUtmMedium() != null &&
+                        !InstallReferrerModel.getPrefObject().getUtmMedium().isEmpty()
+        )
+            parameters.put(AnalyticsEvent.UTM_MEDIUM.getNAME(), InstallReferrerModel.getPrefObject().getUtmMedium());
         return this;
     }
 
     public AppAnalytics addUserDetails() {
-        if(User.getInstance()!=null) {
-            if (!Objects.requireNonNull(User.getInstance().getUsername()).isEmpty())
-                parameters.put(AnalyticsEvent.USER_NAME.getNAME(), User.getInstance().getUsername());
-            if (Objects.requireNonNull(User.getInstance().getEmail()).isEmpty())
-                parameters.put(AnalyticsEvent.USER_EMAIL.getNAME(), User.getInstance().getEmail());
-        }
+        if (!Objects.requireNonNull(User.getInstance().getUsername()).isEmpty())
+            parameters.put(AnalyticsEvent.USER_NAME.getNAME(), User.getInstance().getUsername());
+        if (Objects.requireNonNull(User.getInstance().getEmail()).isEmpty())
+            parameters.put(AnalyticsEvent.USER_EMAIL.getNAME(), User.getInstance().getEmail());
         return this;
     }
 
@@ -204,6 +208,7 @@ public class AppAnalytics {
     }
 
     public void push() {
+        Timber.v(this.toString());
         if (BuildConfig.DEBUG) {
             //return;
         }
@@ -214,6 +219,7 @@ public class AppAnalytics {
     }
 
     public void push(boolean trackSession) {
+        Timber.v(this.toString());
         if (BuildConfig.DEBUG) {
             //return;
         }
@@ -229,9 +235,9 @@ public class AppAnalytics {
 
     private void formatParameters() {
 
-        for (String key : parameters.keySet()) {
-            if (parameters.get(key) == null || Objects.requireNonNull(parameters.get(key)).toString().isEmpty()) {
-                parameters.put(key, "null");
+        for (Map.Entry<String, Object> entry : parameters.entrySet()) {
+            if (entry.getValue() == null || Objects.requireNonNull(entry.getValue()).toString().isEmpty()) {
+                parameters.put(entry.getKey(), "null");
             }
         }
     }
@@ -242,38 +248,44 @@ public class AppAnalytics {
 
     private void pushToFlurry(boolean trackSession) {
         if (trackSession)
-            FlurryAgent.logEvent(event, convertMapToMaoString(parameters), true);
+            FlurryAgent.logEvent(event, typeCastMap(parameters), true);
         else
-            FlurryAgent.logEvent(event, convertMapToMaoString(parameters));
+            FlurryAgent.logEvent(event, typeCastMap(parameters));
     }
 
     private void pushToCleverTap() {
         cleverTapAnalytics.pushEvent(event, parameters);
     }
 
-    private Bundle convertMapToBundle(HashMap properties) {
+    private Bundle convertMapToBundle(HashMap<String, Object> properties) {
         Bundle bundle = new Bundle();
-        for (Object o : properties.keySet()) {
-            String key = format((String) o);
+        for (String o : properties.keySet()) {
+            String key = format(o);
             String value = "" + properties.get(key);
             bundle.putString(key, value);
         }
         return bundle;
     }
 
-    private Map<String, String> convertMapToMaoString(HashMap properties) {
-        Map<String, String> newMap = new HashMap<String, String>();
-        Timber.d("convertMapToMaoString() called with: properites = [" + properties + "]");
+    private Map<String, String> typeCastMap(Map<String, Object> properties) {
+        Map<String, String> newMap = new HashMap<>();
 
-        for (Map.Entry<String, Object> entry : ((Map<String, Object>) properties).entrySet()) {
+        for (Map.Entry<String, Object> entry : (properties).entrySet()) {
             if (entry.getValue() instanceof String) {
                 newMap.put(entry.getKey(), (String) entry.getValue());
             } else {
                 newMap.put(entry.getKey(), "" + entry.getValue());
             }
         }
-        Timber.d("convertMapToMaoString() ended with: properites = [" + newMap + "]");
         return newMap;
     }
 
+    @NotNull
+    @Override
+    public String toString() {
+        return "JoshSkillsAnalytics{" +
+                "Event Name='" + event + '\'' +
+                ", Parameters=" + parameters +
+                '}';
+    }
 }
