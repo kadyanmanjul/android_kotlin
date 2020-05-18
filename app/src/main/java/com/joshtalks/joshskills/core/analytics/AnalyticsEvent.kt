@@ -23,6 +23,7 @@ enum class AnalyticsEvent(val NAME: String) {
     USER_GAID("User Gaid V3"),
     USER_NAME("User name V3"),
     USER_EMAIL("User email id V3"),
+    USER_PHONE_NUMBER("User Phone Number V3"),
 
 
     APP_LAUNCHED("App Launched V3"),

@@ -167,6 +167,8 @@ public class AppAnalytics {
 
         if (!User.getInstance().getEmail().isEmpty())
             parameters.put(AnalyticsEvent.USER_EMAIL.getNAME(), User.getInstance().getEmail());
+        if (!User.getInstance().getPhoneNumber().isEmpty())
+            parameters.put(AnalyticsEvent.USER_PHONE_NUMBER.getNAME(), User.getInstance().getPhoneNumber());
         return this;
     }
 
