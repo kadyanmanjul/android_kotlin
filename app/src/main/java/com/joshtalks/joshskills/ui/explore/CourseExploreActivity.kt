@@ -78,7 +78,7 @@ class CourseExploreActivity : CoreJoshActivity() {
         appAnalytics = AppAnalytics.create(AnalyticsEvent.EXPLORE_OPENED.NAME)
             .addUserDetails()
             .addBasicParam()
-        // TODO
+
     }
 
 
@@ -99,13 +99,16 @@ class CourseExploreActivity : CoreJoshActivity() {
             findViewById<MaterialToolbar>(R.id.toolbar).inflateMenu(R.menu.logout_menu)
         }
         findViewById<MaterialToolbar>(R.id.toolbar).setOnMenuItemClickListener {
-            appAnalytics = AppAnalytics.create(AnalyticsEvent.MORE_ICON_CLICKED.NAME)
+            appAnalytics.addParam(AnalyticsEvent.MENU_ICON_CLICKED.NAME, "Menu 3 dot clicked")
             if (it?.itemId == R.id.menu_logout) {
-                AppAnalytics.create(AnalyticsEvent.LOGOUT_CLICKED.NAME).push()
+                appAnalytics.addParam(AnalyticsEvent.LOGOUT_CLICKED.NAME, "logout btn clicked")
                 MaterialDialog(this@CourseExploreActivity).show {
                     message(R.string.logout_message)
                     positiveButton(R.string.ok) {
-                        AppAnalytics.create(AnalyticsEvent.USER_LOGGED_OUT.NAME).push()
+                        appAnalytics.addParam(
+                            AnalyticsEvent.USER_LOGGED_OUT.NAME,
+                            "User clicked Ok on logout"
+                        )
                         val intent =
                             Intent(AppObjectController.joshApplication, OnBoardActivity::class.java)
                         intent.apply {
@@ -218,11 +221,14 @@ class CourseExploreActivity : CoreJoshActivity() {
             val extras: HashMap<String, String> = HashMap()
             extras["test_id"] = it.id?.toString() ?: EMPTY
             extras["course_name"] = it.courseName
-            AppAnalytics.create(AnalyticsEvent.COURSE_CLICKED.NAME)
-                .addParam("user_unique_id", PrefManager.getStringValue(USER_UNIQUE_ID))
+            appAnalytics.push()
+            AppAnalytics.create(AnalyticsEvent.COURSE_THUMBNAIL_CLICKED.NAME)
+                .addBasicParam()
                 .addParam(AnalyticsEvent.USER_GAID.NAME, PrefManager.getStringValue(USER_UNIQUE_ID))
                 .addUserDetails()
-                .addParam("course_name", it.courseName).push()
+                .addParam(AnalyticsEvent.COURSE_NAME.NAME, it.courseName)
+                .addParam(AnalyticsEvent.COURSE_PRICE.NAME, it.amount)
+                .push()
 
             PaymentActivity.startPaymentActivity(this, PAYMENT_FOR_COURSE_CODE, it)
         })
@@ -258,7 +264,7 @@ class CourseExploreActivity : CoreJoshActivity() {
     }
 
     private fun onCancelResult() {
-        AppAnalytics.create(AnalyticsEvent.BACK_BTN_EXPLORESCREEN.NAME).push()
+        appAnalytics.addParam(AnalyticsEvent.BACK_BTN_EXPLORESCREEN.NAME, true).push()
         val resultIntent = Intent()
         setResult(Activity.RESULT_CANCELED, resultIntent)
         this.finish()

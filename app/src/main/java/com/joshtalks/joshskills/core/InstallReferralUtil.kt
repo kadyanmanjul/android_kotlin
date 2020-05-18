@@ -1,13 +1,11 @@
 package com.joshtalks.joshskills.core
 
 import android.content.Context
-import android.os.Build
 import android.os.RemoteException
 import android.text.TextUtils
 import com.android.installreferrer.api.InstallReferrerClient
 import com.android.installreferrer.api.InstallReferrerStateListener
 import com.crashlytics.android.Crashlytics
-import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.repository.local.model.InstallReferrerModel
@@ -24,15 +22,19 @@ object InstallReferralUtil {
     fun installReferrer(context: Context) {
         try {
             val obj = InstallReferrerModel.getPrefObject()
+            val appAnalytics = AppAnalytics.create(AnalyticsEvent.APP_INSTALL.NAME)
             if (obj == null) {
                 val referrerClient = InstallReferrerClient.newBuilder(context).build()
                 referrerClient.startConnection(object : InstallReferrerStateListener {
                     override fun onInstallReferrerSetupFinished(responseCode: Int) {
                         when (responseCode) {
                             InstallReferrerClient.InstallReferrerResponse.OK -> try {
-                                AppAnalytics.create(AnalyticsEvent.APP_INSTALL.NAME)
-                                    .addBasicParam()
-                                    .addParam(AnalyticsEvent.USER_GAID.NAME,PrefManager.getStringValue(USER_UNIQUE_ID))
+
+                                appAnalytics.addBasicParam()
+                                    .addParam(
+                                        AnalyticsEvent.USER_GAID.NAME,
+                                        PrefManager.getStringValue(USER_UNIQUE_ID)
+                                    )
 
                                 try {
                                     val response = referrerClient.installReferrer
@@ -74,12 +76,18 @@ object InstallReferralUtil {
 
                                     if (referrerMap["utm_medium"].isNullOrEmpty().not()) {
                                         installReferrerModel.utmMedium = referrerMap["utm_medium"]
-                                        AppAnalytics.create(AnalyticsEvent.APP_INSTALL.NAME).addParam(AnalyticsEvent.UTM_MEDIUM.NAME,installReferrerModel.utmMedium)
+                                        appAnalytics.addParam(
+                                            AnalyticsEvent.UTM_MEDIUM.NAME,
+                                            installReferrerModel.utmMedium
+                                        )
 
                                     }
                                     if (referrerMap["utm_source"].isNullOrEmpty().not()) {
                                         installReferrerModel.utmSource = referrerMap["utm_source"]
-                                        AppAnalytics.create(AnalyticsEvent.APP_INSTALL.NAME).addParam(AnalyticsEvent.SOURCE.NAME,installReferrerModel.utmSource)
+                                        appAnalytics.addParam(
+                                            AnalyticsEvent.SOURCE.NAME,
+                                            installReferrerModel.utmSource
+                                        )
                                     }
                                     if (response.installBeginTimestampSeconds > 0) {
                                         val instant =
@@ -93,11 +101,11 @@ object InstallReferralUtil {
                                         installReferrerModel.installOn = (Date().time / 1000)
                                     }
                                     InstallReferrerModel.update(installReferrerModel)
-                                    AppAnalytics.create(AnalyticsEvent.APP_INSTALL.NAME).push()
+                                    appAnalytics.push()
 
                                 } catch (ex: Exception) {
                                     ex.printStackTrace()
-                                    AppAnalytics.create(AnalyticsEvent.APP_INSTALL.NAME).push()
+                                    appAnalytics.push()
                                 }
 
                             } catch (ex: RemoteException) {
