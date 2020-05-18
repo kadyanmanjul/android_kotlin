@@ -60,10 +60,7 @@ import com.joshtalks.joshskills.core.playback.PlaybackInfoListener.State.PLAYING
 import com.joshtalks.joshskills.databinding.ActivityConversationBinding
 import com.joshtalks.joshskills.messaging.MessageBuilderFactory
 import com.joshtalks.joshskills.messaging.RxBus2
-import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
-import com.joshtalks.joshskills.repository.local.entity.ChatModel
-import com.joshtalks.joshskills.repository.local.entity.DOWNLOAD_STATUS
-import com.joshtalks.joshskills.repository.local.entity.MESSAGE_STATUS
+import com.joshtalks.joshskills.repository.local.entity.*
 import com.joshtalks.joshskills.repository.local.eventbus.*
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.server.chat_message.TAudioMessage
@@ -1050,6 +1047,7 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
                     AppObjectController.currentPlayingAudioObject?.let { chatModel ->
                         refreshViewAtPos(chatModel)
                     }
+                    analyticsAudioPlayed(it.audioType, it.state)
 
                     streamingManager?.isPlayMultiple = false
                     endAudioEngagePart(mSeekBarAudio.progress.toLong())
@@ -1069,7 +1067,9 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
 
                     } else {
                         if (streamingManager?.currentAudioId == it?.chatModel?.chatId) {
+
                             if (it.state == PLAYING) {
+
                                 streamingManager?.handlePlayRequest()
                             } else {
                                 streamingManager?.handlePauseRequest()
@@ -1122,6 +1122,23 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
                     it.printStackTrace()
                 })
         )
+    }
+
+    private fun analyticsAudioPlayed(
+        audioType: AudioType?,
+        state: Int
+    ) {
+
+        AppAnalytics.create(AnalyticsEvent.AUDIO_PLAYER_PLAYED.NAME)
+            .addBasicParam()
+            .addUserDetails()
+            .addParam(AnalyticsEvent.COURSE_NAME.NAME, inboxEntity.course_name)
+            .addParam(AnalyticsEvent.AUDIO_ID.NAME, audioType!!.id)
+            .addParam(AnalyticsEvent.AUDIO_DURATION.NAME, audioType.duration)
+            .addParam(AnalyticsEvent.AUDIO_VIEW_STATUS.NAME, state)
+            .addParam(AnalyticsEvent.AUDIO_DOWNLOAD_STATUS.NAME, "Downloaded")
+            .addParam("flow", this@ConversationActivity.javaClass.simpleName)
+
     }
 
     private fun refreshViewAtPos(chatObj: ChatModel, callback: () -> Unit = {}) {
@@ -1481,7 +1498,7 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
     }
 
     private fun openCourseProgressListingScreen() {
-        AppAnalytics.create(AnalyticsEvent.COURSE_OVERVIEW.NAME).push()
+        AppAnalytics.create(AnalyticsEvent.COURSE_PROGRESS_OVERVIEW.NAME).push()
         CourseProgressActivity.startCourseProgressActivity(
             this,
             COURSE_PROGRESS_REQUEST_CODE,

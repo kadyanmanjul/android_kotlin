@@ -111,8 +111,10 @@ class AudioPlayerViewHolder(activityRef: WeakReference<FragmentActivity>, messag
 
     private var animBlink: Animation? = null
     lateinit var audioPlayerViewHolder: AudioPlayerViewHolder
+    private lateinit var appAnalytics: AppAnalytics
     private var duration: Int = 0
     private val compositeDisposable = CompositeDisposable()
+    private var eta = 0L
 
 
     private var downloadListener = object : FetchListener {
@@ -121,13 +123,14 @@ class AudioPlayerViewHolder(activityRef: WeakReference<FragmentActivity>, messag
         }
 
         override fun onCancelled(download: Download) {
-
+            appAnalytics.addParam(AnalyticsEvent.AUDIO_DOWNLOAD_STATUS.NAME, "Cancelled")
         }
 
         override fun onCompleted(download: Download) {
-            AppAnalytics.create(AnalyticsEvent.AUDIO_DOWNLOAD.NAME)
-                .addParam("ChatId", message.chatId).push()
-
+            eta = System.currentTimeMillis() - eta
+            appAnalytics.addParam("Time taken to download", eta)
+            appAnalytics.addParam(AnalyticsEvent.AUDIO_DOWNLOAD_STATUS.NAME, "Completed")
+            appAnalytics.addParam("ChatId", message.chatId)
             DownloadUtils.removeCallbackListener(download.tag)
             CoroutineScope(Dispatchers.IO).launch {
                 DownloadUtils.updateDownloadStatus(download.file, download.extras).let {
@@ -151,6 +154,7 @@ class AudioPlayerViewHolder(activityRef: WeakReference<FragmentActivity>, messag
         }
 
         override fun onError(download: Download, error: Error, throwable: Throwable?) {
+            appAnalytics.addParam(AnalyticsEvent.AUDIO_DOWNLOAD_STATUS.NAME, "Failed")
 
         }
 
@@ -182,7 +186,7 @@ class AudioPlayerViewHolder(activityRef: WeakReference<FragmentActivity>, messag
             downloadBlocks: List<DownloadBlock>,
             totalBlocks: Int
         ) {
-
+            eta = System.currentTimeMillis()
         }
 
         override fun onWaitingNetwork(download: Download) {
@@ -210,6 +214,10 @@ class AudioPlayerViewHolder(activityRef: WeakReference<FragmentActivity>, messag
         btnPauseImageView.visibility = android.view.View.INVISIBLE
         seekBarPlaceHolder.visibility = android.view.View.INVISIBLE
         seekBarThumb.visibility = android.view.View.INVISIBLE
+
+        appAnalytics = AppAnalytics.create(AnalyticsEvent.AUDIO_DOWNLOADED.NAME)
+            .addBasicParam()
+            .addUserDetails()
 
         message.parentQuestionObject?.run {
             val relativeParams = rootSubView.layoutParams as ViewGroup.MarginLayoutParams
@@ -284,6 +292,7 @@ class AudioPlayerViewHolder(activityRef: WeakReference<FragmentActivity>, messag
         updateTime(messageTimeTV)
         messageTimeTV.text =
             Utils.getMessageTimeInHours(message.created).toUpperCase(Locale.getDefault())
+
     }
 
     private fun audioPlayingStatus() {
@@ -317,6 +326,9 @@ class AudioPlayerViewHolder(activityRef: WeakReference<FragmentActivity>, messag
             if (message.type == BASE_MESSAGE_TYPE.Q || message.type == BASE_MESSAGE_TYPE.AR) {
                 val audioTypeObj: AudioType = message.question!!.audioList!![0]
                 this.duration = audioTypeObj.duration
+                appAnalytics.addParam(AnalyticsEvent.AUDIO_DURATION.NAME, duration)
+                    .addParam(AnalyticsEvent.AUDIO_ID.NAME, audioTypeObj.id)
+                    .addParam(AnalyticsEvent.AUDIO_DOWNLOAD_STATUS.NAME, "Not downloaded")
                 when {
                     message.downloadStatus === DOWNLOAD_STATUS.DOWNLOADED -> {
                         mediaDownloaded()
