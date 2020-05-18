@@ -10,6 +10,8 @@ import androidx.fragment.app.FragmentActivity
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.PermissionUtils
 import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
+import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.core.service.DownloadUtils
 import com.joshtalks.joshskills.messaging.RxBus2
@@ -71,6 +73,10 @@ class PdfViewHolder(activityRef: WeakReference<FragmentActivity>, message: ChatM
     lateinit var progressDialog: ProgressWheel
 
     lateinit var pdfViewHolder: PdfViewHolder
+    private var eta = 0L
+
+    private lateinit var appAnalytics: AppAnalytics
+
 
     private var downloadListener = object : FetchListener {
         override fun onAdded(download: Download) {
@@ -78,11 +84,15 @@ class PdfViewHolder(activityRef: WeakReference<FragmentActivity>, message: ChatM
         }
 
         override fun onCancelled(download: Download) {
+            appAnalytics.addParam(AnalyticsEvent.PDF_DOWNLOAD_STATUS.NAME, "Cancelled").push()
 
         }
 
         override fun onCompleted(download: Download) {
             DownloadUtils.removeCallbackListener(download.tag)
+            appAnalytics.addParam(AnalyticsEvent.TIME_TAKEN_DOWNLOAD.NAME, eta)
+            appAnalytics.addParam(AnalyticsEvent.PDF_DOWNLOAD_STATUS.NAME, "Completed").push()
+            appAnalytics.addParam("ChatId", message.chatId).push()
             CoroutineScope(Dispatchers.IO).launch {
                 DownloadUtils.updateDownloadStatus(download.file, download.extras).let {
                     RxBus2.publish(DownloadCompletedEventBus(pdfViewHolder, message))
@@ -105,6 +115,7 @@ class PdfViewHolder(activityRef: WeakReference<FragmentActivity>, message: ChatM
         }
 
         override fun onError(download: Download, error: Error, throwable: Throwable?) {
+            appAnalytics.addParam(AnalyticsEvent.PDF_DOWNLOAD_STATUS.NAME, "Failed error").push()
 
         }
 
@@ -137,6 +148,7 @@ class PdfViewHolder(activityRef: WeakReference<FragmentActivity>, message: ChatM
             downloadBlocks: List<DownloadBlock>,
             totalBlocks: Int
         ) {
+            eta = System.currentTimeMillis()
 
         }
 
@@ -193,6 +205,10 @@ class PdfViewHolder(activityRef: WeakReference<FragmentActivity>, message: ChatM
                 }
             }
         }
+
+        appAnalytics = AppAnalytics.create(AnalyticsEvent.PDF_VH.NAME)
+            .addBasicParam()
+            .addUserDetails()
     }
 
     private fun fileDownloadSuccess() {
@@ -202,6 +218,7 @@ class PdfViewHolder(activityRef: WeakReference<FragmentActivity>, message: ChatM
     }
 
     private fun fileNotDownloadView() {
+        appAnalytics.addParam(AnalyticsEvent.PDF_VIEW_STATUS.NAME, "Not downloaded")
         ivStartDownload.visibility = android.view.View.VISIBLE
         progressDialog.visibility = android.view.View.GONE
         ivCancelDownload.visibility = android.view.View.GONE
@@ -222,6 +239,10 @@ class PdfViewHolder(activityRef: WeakReference<FragmentActivity>, message: ChatM
                     override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
                         report?.areAllPermissionsGranted()?.let { flag ->
                             if (flag) {
+                                appAnalytics.addParam(
+                                    AnalyticsEvent.PDF_VIEW_STATUS.NAME,
+                                    "pdf Opened"
+                                ).push()
                                 openPdf()
                                 return
 
@@ -250,6 +271,7 @@ class PdfViewHolder(activityRef: WeakReference<FragmentActivity>, message: ChatM
     private fun openPdf() {
         message.question?.pdfList?.getOrNull(0)?.let { pdfObj ->
             if (pdfObj.url.isBlank()) {
+                appAnalytics.addParam(AnalyticsEvent.PDF_VIEW_STATUS.NAME, "pdf url Blank").push()
                 return
             }
             if (message.downloadStatus == DOWNLOAD_STATUS.DOWNLOADED && AppDirectory.isFileExist(

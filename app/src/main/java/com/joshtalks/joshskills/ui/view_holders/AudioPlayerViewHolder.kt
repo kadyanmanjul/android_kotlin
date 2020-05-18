@@ -154,7 +154,7 @@ class AudioPlayerViewHolder(activityRef: WeakReference<FragmentActivity>, messag
         }
 
         override fun onError(download: Download, error: Error, throwable: Throwable?) {
-            appAnalytics.addParam(AnalyticsEvent.AUDIO_DOWNLOAD_STATUS.NAME, "Failed").push()
+            appAnalytics.addParam(AnalyticsEvent.AUDIO_DOWNLOAD_STATUS.NAME, "Failed error")
 
         }
 

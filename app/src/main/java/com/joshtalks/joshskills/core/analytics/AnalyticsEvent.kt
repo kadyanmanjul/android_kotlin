@@ -187,6 +187,16 @@ enum class AnalyticsEvent(val NAME: String) {
     VIDEO_FORWARD("Video forward V3"),
     VIDEO_MORE("Video more selected V3"),
 
+    // PDF Events
+    PDF_VH("pdf View Holder V3"),
+    PDF_PLAYER_PLAYED("pdf player Played V3"),
+    PDF_PLAYING_STATUS("pdf playing Status V3"),
+    PDF_DOWNLOAD_STATUS("pdf Download Status V3"),
+    PDF_VIEW_STATUS("pdf View Status V3"),
+    PDF_ID("pdf id V3"),
+    PDF_DURATION("pdf Duration V3"),
+
+
     //Certificates
     CERTIFICATE_SCREEN("CERTIFICATE Screen V3"),
 

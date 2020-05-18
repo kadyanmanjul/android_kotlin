@@ -195,7 +195,7 @@ class VideoViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
     }
 
     private fun fileDownloadSuccess() {
-        appAnalytics.addParam(AnalyticsEvent.VIDEO_VIEW_STATUS.NAME, "Already Downloaded")
+        appAnalytics.addParam(AnalyticsEvent.VIDEO_VIEW_STATUS.NAME, "Downloaded").push()
         downloadContainer.visibility = GONE
         ivStartDownload.visibility = GONE
         progressDialog.visibility = GONE
@@ -204,7 +204,7 @@ class VideoViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
     }
 
     private fun fileNotDownloadView() {
-        appAnalytics.addParam(AnalyticsEvent.VIDEO_VIEW_STATUS.NAME, "Not downloaded")
+        appAnalytics.addParam(AnalyticsEvent.VIDEO_VIEW_STATUS.NAME, "Not downloaded").push()
         downloadContainer.visibility = VISIBLE
         ivStartDownload.visibility = VISIBLE
         progressDialog.visibility = GONE
