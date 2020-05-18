@@ -84,9 +84,11 @@ class PaymentActivity : CoreJoshActivity(),
     private var userSubmitCode = EMPTY
     private var razorpayOrderId = EMPTY
     private lateinit var titleView: AppCompatTextView
+    private lateinit var appAnalytics: AppAnalytics
     private var specialDiscount = false
     private var isEcommereceEventFire = true
     private var hasCertificate = false
+
 
     companion object {
         fun startPaymentActivity(
@@ -118,17 +120,18 @@ class PaymentActivity : CoreJoshActivity(),
         activityPaymentBinding.handler = this
         initView()
 
+
+
         if (intent.hasExtra(COURSE_OBJECT)) {
             courseModel = intent.getParcelableExtra(COURSE_OBJECT) as CourseExploreModel
             testId = courseModel?.id.toString()
             courseModel?.certificate?.run {
                 hasCertificate = this
             }
+
         }
         if (intent.hasExtra(COURSE_ID)) {
             testId = intent.getStringExtra(COURSE_ID)!!
-            AppAnalytics.create(AnalyticsEvent.TEST_ID_OPENED.NAME).addParam("test_id", testId)
-                .push()
         }
         if (testId.isEmpty()) {
             invalidCourseId()
@@ -151,6 +154,23 @@ class PaymentActivity : CoreJoshActivity(),
         val bundle = Bundle()
         bundle.putString(FirebaseAnalytics.Param.ITEM_ID, testId)
         AppObjectController.firebaseAnalytics.logEvent("open_test_id", bundle)
+
+        //TODO redundant
+
+        appAnalytics = AppAnalytics.create(AnalyticsEvent.PAYMENT_STATUS.NAME)
+            .addBasicParam()
+            .addUserDetails()
+            .addParam(AnalyticsEvent.COURSE_NAME.NAME, courseName)
+            .addParam(AnalyticsEvent.SHOWN_COURSE_PRICE.NAME, amount)
+            .addParam("test_id", testId)
+            .addParam(AnalyticsEvent.HAVE_COUPON_CODE_CLICKED.NAME, false)
+
+
+        courseModel?.amount?.let { appAnalytics.addParam(AnalyticsEvent.COURSE_PRICE.NAME, it) }
+
+        //           .addParam(AnalyticsEvent.SHOWN_COURSE_PRICE.NAME, amount)
+
+
     }
 
     private fun getTestCourseDetails() {
@@ -259,7 +279,7 @@ class PaymentActivity : CoreJoshActivity(),
             .text(getString(R.string.something_went_wrong)).cornerRadius(16)
             .textColor(ContextCompat.getColor(applicationContext, R.color.white))
             .length(Toast.LENGTH_LONG).solidBackground().show()
-        AppAnalytics.create(AnalyticsEvent.PAYMENT_FAILED.NAME).push()
+        appAnalytics.addParam(AnalyticsEvent.PAYMENT_FAILED.NAME, p1)
 
     }
 
@@ -282,8 +302,8 @@ class PaymentActivity : CoreJoshActivity(),
             startActivity(getInboxActivityIntent())
             this@PaymentActivity.finish()
         }, 1000 * 59)
-        AppAnalytics.create(AnalyticsEvent.PAYMENT_COMPLETED.NAME).push()
-        FlurryAgent.UserProperties.set(FlurryAgent.UserProperties.PROPERTY_PURCHASER,"true")
+        appAnalytics.addParam(AnalyticsEvent.PAYMENT_COMPLETED.NAME, true)
+        FlurryAgent.UserProperties.set(FlurryAgent.UserProperties.PROPERTY_PURCHASER, "true")
     }
 
     private fun String.verifyPayment() {
@@ -318,6 +338,7 @@ class PaymentActivity : CoreJoshActivity(),
                 }
                 val paymentDetailsResponse: Response<PaymentDetailsResponse> =
                     AppObjectController.signUpNetworkService.getPaymentDetails(map).await()
+                //TODO
                 AppAnalytics.create(AnalyticsEvent.PAYMENT_INITIATED.NAME).push()
                 BranchIOAnalytics.pushToBranch(BRANCH_STANDARD_EVENT.INITIATE_PURCHASE)
                 if (paymentDetailsResponse.code() == 201) {
@@ -412,9 +433,10 @@ class PaymentActivity : CoreJoshActivity(),
                     AppEventsConstants.EVENT_NAME_INITIATED_CHECKOUT,
                     params
                 )
+                // TODO
                 AppAnalytics.create(AnalyticsEvent.RAZORPAY_SDK.NAME).push()
                 razorpayOrderId = response.razorpayOrderId
-
+                appAnalytics.addParam("razor id", razorpayOrderId)
             } catch (e: Exception) {
                 e.printStackTrace()
             }
@@ -440,6 +462,7 @@ class PaymentActivity : CoreJoshActivity(),
             fragmentTransaction.addToBackStack(null)
             CoursePurchaseDetailFragment.newInstance(courseModel, hasCertificate)
                 .show(supportFragmentManager, "purchase_details_dialog")
+            // TODO
             AppAnalytics.create(AnalyticsEvent.PAYMENT_DIALOG.NAME)
                 .push()
 
@@ -454,6 +477,7 @@ class PaymentActivity : CoreJoshActivity(),
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
                     try {
+                        //  TODO
                         AppAnalytics.create(AnalyticsEvent.BUY_NOW_SELECTED.NAME)
                             .addParam("test_id", testId).push()
                         it.courseModel?.let { courseModel ->
@@ -483,6 +507,7 @@ class PaymentActivity : CoreJoshActivity(),
 
     override fun onDestroy() {
         super.onDestroy()
+        appAnalytics.push()
         compositeDisposable.clear()
         Checkout.clearUserData(applicationContext)
         uiHandler.removeCallbacksAndMessages(null)
@@ -514,6 +539,7 @@ class PaymentActivity : CoreJoshActivity(),
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == 101 && resultCode == Activity.RESULT_OK) {
+            // TODO
             AppAnalytics.create(AnalyticsEvent.LOGIN_SUCCESSFULLY.NAME).push()
             userHaveSpecialDiscount()
             requestForPayment()
@@ -525,9 +551,14 @@ class PaymentActivity : CoreJoshActivity(),
     override fun getCouponCode(code: String?) {
         if (code.isNullOrEmpty().not()) {
             userSubmitCode = code!!
+            appAnalytics.addParam(AnalyticsEvent.HAVE_COUPON_CODE.NAME, true)
+            appAnalytics.addParam(AnalyticsEvent.COUPON_INSERTED.NAME, userSubmitCode)
+
+            // TODO remove
             AppAnalytics.create(AnalyticsEvent.COUPON_INSERTED.NAME)
                 .addParam("coupon_code", userSubmitCode).push()
         }
+        appAnalytics.addParam(AnalyticsEvent.HAVE_COUPON_CODE.NAME, false)
         requestForPayment()
 
     }
@@ -538,6 +569,7 @@ class PaymentActivity : CoreJoshActivity(),
             return
         }
         if (supportFragmentManager.findFragmentById(R.id.container) != null) {
+            appAnalytics.addParam("payment cancelled", "back pressed payment cancelled")
             this@PaymentActivity.finish()
             return
         }
@@ -575,8 +607,6 @@ class PaymentActivity : CoreJoshActivity(),
         fragmentTransaction.addToBackStack(null)
         CouponCodeSubmitFragment.newInstance()
             .show(supportFragmentManager, "coupon_code_dialog")
-        AppAnalytics.create(AnalyticsEvent.COUPON_SELECTED.NAME)
-            .push()
     }
 
     private fun showLoginDialog() {
@@ -591,6 +621,7 @@ class PaymentActivity : CoreJoshActivity(),
 
 
     private fun invalidCodeDialog() {
+        appAnalytics.addParam(AnalyticsEvent.INVALID_COUPON_POPUP.NAME, true)
         val dialog = Dialog(this@PaymentActivity)
         dialog.setContentView(R.layout.invalid_coupon_code_layout)
         dialog.findViewById<View>(R.id.tv_ok).setOnClickListener {
@@ -607,7 +638,7 @@ class PaymentActivity : CoreJoshActivity(),
     }
 
     override fun onCouponCode() {
-        AppAnalytics.create(AnalyticsEvent.HAVE_COUPON_CODE.NAME).push()
+        appAnalytics.addParam(AnalyticsEvent.HAVE_COUPON_CODE_CLICKED.NAME, true)
         showCouponCodeEnterScreen()
     }
 
@@ -653,6 +684,7 @@ class PaymentActivity : CoreJoshActivity(),
             .subscribe(
                 { value ->
                     specialDiscount = value
+                    appAnalytics.addParam(AnalyticsEvent.SPECIAL_DISCOUNT.NAME, specialDiscount)
                 },
                 { error ->
                     error.printStackTrace()
@@ -663,6 +695,7 @@ class PaymentActivity : CoreJoshActivity(),
     }
 
     override fun onLoginSuccessfully() {
+        // TODO
         AppAnalytics.create(AnalyticsEvent.LOGIN_SUCCESSFULLY.NAME).push()
         userHaveSpecialDiscount()
         requestForPayment()
@@ -671,6 +704,8 @@ class PaymentActivity : CoreJoshActivity(),
 
     private fun addECommerceEvent(razorpayPaymentId: String) {
         WorkMangerAdmin.newCourseScreenEventWorker(courseName, testId, buyCourse = true)
+        //appAnalytics.push()
+        // TODO
         AppAnalytics.create(AnalyticsEvent.PURCHASE_COURSE.NAME)
             .addParam(FirebaseAnalytics.Param.ITEM_ID, testId)
             .addParam(FirebaseAnalytics.Param.PRICE, (amount).toString())

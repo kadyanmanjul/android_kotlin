@@ -1,5 +1,6 @@
 package com.joshtalks.joshskills.ui.payment
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.Paint
 import android.graphics.Rect
@@ -75,6 +76,7 @@ class CourseDetailType1Fragment : Fragment() {
     private var compositeDisposable = CompositeDisposable()
     private var profileBalloon: Balloon? = null
     private var courseModel: CourseExploreModel = CourseExploreModel()
+    private lateinit var appAnalytics: AppAnalytics
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -169,8 +171,14 @@ class CourseDetailType1Fragment : Fragment() {
         }
         getTestCourseDetails()
 
+        appAnalytics = AppAnalytics.create(AnalyticsEvent.COURSE_OVERVIEW.NAME)
+            .addBasicParam()
+            .addUserDetails()
+            .addParam("test_id", testId)
+
     }
 
+    @SuppressLint("SetTextI18n")
     private fun getTestCourseDetails() {
         CoroutineScope(Dispatchers.IO).launch {
             try {
@@ -228,7 +236,6 @@ class CourseDetailType1Fragment : Fragment() {
                             "₹" + String.format("%.2f", test.amount)
                         courseModel.amount = test.amount
 
-
                         binding.tvUpActualPrice.paintFlags =
                             binding.tvUpActualPrice.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
                         binding.tvDownActualPrice.paintFlags =
@@ -253,10 +260,20 @@ class CourseDetailType1Fragment : Fragment() {
                         videoUrl = response[0].videoObj?.video_url ?: test.videoLink
                         videoId = response[0].videoObj?.id
 
-                        val titleView =
-                            requireActivity().findViewById<AppCompatTextView>(R.id.text_message_title)
+                        //val titleView =
+                        requireActivity().findViewById<AppCompatTextView>(R.id.text_message_title)
                         //titleView.text = courseDetailsResponse.courseName
                         WorkMangerAdmin.newCourseScreenEventWorker(course.name, testId.toString())
+
+                        appAnalytics.addParam(AnalyticsEvent.COURSE_NAME.NAME, course.name)
+                            .addParam(AnalyticsEvent.COURSE_PRICE.NAME, test.amount)
+                            .addParam(AnalyticsEvent.SHOWN_COURSE_PRICE.NAME, test.showAmount)
+                            .addParam(
+                                AnalyticsEvent.COUSR_VIDEO_PRESENT.NAME,
+                                (response[0].videoObj?.video_url.isNullOrEmpty())
+                            )
+
+
                     } catch (ex: Exception) {
                         Crashlytics.logException(ex)
                     }
@@ -313,6 +330,10 @@ class CourseDetailType1Fragment : Fragment() {
             showToast(getString(R.string.video_url_not_exist))
             return
         }
+        appAnalytics.addParam(
+            AnalyticsEvent.COUSR_VIDEO_PLAYED.NAME,
+            binding.courseTitle.text.toString()
+        )
         videoUrl?.let {
             VideoPlayerActivity.startConversionActivityV2(
                 requireActivity(),
@@ -331,10 +352,12 @@ class CourseDetailType1Fragment : Fragment() {
 
     fun backPress() {
         activity?.onBackPressed()
+        appAnalytics.push()
         // activity?.finish()
     }
 
     fun buyCourse() {
+        // TODO
         AppAnalytics.create(AnalyticsEvent.START_COURSE_NOW.NAME).push()
         RxBus2.publish(BuyCourseEventBus(testId.toString(), isUserValidForOffer, courseModel))
     }

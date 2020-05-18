@@ -10,7 +10,6 @@ enum class AnalyticsEvent(val NAME: String) {
     LONGITUDE("Longitude V3"), //Not yet
     */
     APP_VERSION_CODE("App version V3"),
-    //APP_VERSION_NAME("App version name V3"),
 
     //parameters
     TEST_ID_PARAM("test_id"), //DONE
@@ -113,8 +112,10 @@ enum class AnalyticsEvent(val NAME: String) {
     EXPLORE_OPENED("Explore Opened V3"),
     COURSE_LIST_SCROLLED("Course List Scrolled V3"),
     COURSE_CLICKED("Course Clicked V3"),
+    COURSE_THUMBNAIL_CLICKED("Course Thumbnail Clicked V3"),
     BACK_BTN_EXPLORESCREEN("Back Pressed on Explore Screen V3"),
     MORE_ICON_CLICKED("More Icons Clicked V3"),
+    MENU_ICON_CLICKED("Menu Icons Clicked V3"),
     LOGOUT_CLICKED("Logout Menu item clicked V3"),
     USER_LOGGED_OUT("User logged out V3"),
 
@@ -124,12 +125,21 @@ enum class AnalyticsEvent(val NAME: String) {
 
     //CourseDetails Screen
 
+    COURSE_OVERVIEW("Course Overview V3"),
+    COURSE_PRICE("Course price V3"),
+    SHOWN_COURSE_PRICE("Shown course price V3"),
+    COURSE_NAME("Course Name V3"),
+    COURSE_ID("Course ID V3"),
     BUY_NOW_SELECTED("Buy Now Selected V3"),
     PAYMENT_DIALOG("Payment Dialog V3"),
     COUPON_SELECTED("Coupon Selected V3"),
     COUPON_INSERTED("Coupon Inserted V3"),
+    COUPON_APPLY_CLICKED("Coupon Appl btn clicked V3"),
     COUPON_VALID("Coupon Valid V3"),
     COUPON_INVALID("Coupon Invalid V3"),
+    SPECIAL_DISCOUNT("Special Discount V3"),
+    COUSR_VIDEO_PLAYED("Course Video Played V3"),
+    COUSR_VIDEO_PRESENT("Course Video Present V3"),
 
     COURSE_DETAILS("Clicked Course Details V3"),
     COMPLETE_PAYMENT("Complete Payment V3"), //
@@ -137,7 +147,29 @@ enum class AnalyticsEvent(val NAME: String) {
     START_COURSE_NOW("Start your course now V3"), //  COURSE_CLICKED same
 
 
+    //Course Purchase Initiated
+    COURSE_PURCHASE_INITIATED("Course purchase initiated V3"),
 
+    // Course Purchase Confirmed
+
+    ENTER_COUPON_SCREEN("Enter coupon Screen V3"),
+    COURSE_PURCHASE_CONFIRMED("Course Purchase Confirmed V3"),
+
+    //  Payment Status (Post response from razorpay, transaction was successful or failed)
+
+    PAYMENT_STATUS("Payment Status V3"),
+    INVALID_COUPON_POPUP("Invalid coupon popup V3"),
+
+
+    // Audio Downloaded
+
+    AUDIO_DOWNLOADED("Audio Downloaded V3"),
+    AUDIO_PLAYER_PLAYED("Audio player Played V3"),
+    AUDIO_DOWNLOAD_STATUS("Audio Download Status V3"),
+    AUDIO_VIEW_STATUS("Audio View Status V3"),
+    AUDIO_PLAYING_STATUS("Audio playing Status V3"),
+    AUDIO_ID("Audio id V3"),
+    AUDIO_DURATION("Audio Duration V3"),
 
 
     INBOX_SCREEN("Inbox Screen V3"),
@@ -206,8 +238,9 @@ enum class AnalyticsEvent(val NAME: String) {
     SHARE_ON_ALL("Share On All V3"),
 
     AUDIO_RECORD("Audio Record V3"),
+    HAVE_COUPON_CODE_CLICKED("Have Coupon Code Clicked V3"),
     HAVE_COUPON_CODE("Have Coupon Code V3"),
-    COURSE_OVERVIEW("Course Overview V3"),// CourseProgressListingScreen
+    COURSE_PROGRESS_OVERVIEW("Course progress Overview V3"),// CourseProgressListingScreen
     CERTIFICATE_PROGRESS_CLICKED("Certificate Progress Clicked V3"),
     PERFORMANCE_CLICKED("Performance Clicked V3"),
     VIEW_SAMPLE_CERTIFICATE_OPEN("View Sample Certificate Open V3"),
