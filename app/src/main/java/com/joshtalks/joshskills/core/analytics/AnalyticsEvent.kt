@@ -163,13 +163,32 @@ enum class AnalyticsEvent(val NAME: String) {
 
     // Audio Downloaded
 
-    AUDIO_DOWNLOADED("Audio Downloaded V3"),
+    AUDIO_VH("Audio View Holder V3"),
     AUDIO_PLAYER_PLAYED("Audio player Played V3"),
     AUDIO_DOWNLOAD_STATUS("Audio Download Status V3"),
     AUDIO_VIEW_STATUS("Audio View Status V3"),
     AUDIO_PLAYING_STATUS("Audio playing Status V3"),
     AUDIO_ID("Audio id V3"),
     AUDIO_DURATION("Audio Duration V3"),
+    TIME_TAKEN_DOWNLOAD("Time taken to download V3"),
+
+    // Video Played and downloaded
+    VIDEO_VH("Video View Holder V3"),
+    VIDEO_PLAYER_PLAYED("Video player Played V3"),
+    VIDEO_PLAYING_STATUS("Video playing Status V3"),
+    VIDEO_DOWNLOAD_STATUS("Video Download Status V3"),
+    VIDEO_VIEW_STATUS("Video View Status V3"),
+    VIDEO_ID("Video id V3"),
+    VIDEO_DURATION("Video Duration V3"),
+    VIDEO_PAUSE("Video pause V3"),
+    VIDEO_BTM_BTN("Video bottom Button V3"),
+    VIDEO_PLAY("Video play V3"),
+    VIDEO_REWIND("Video rewind V3"),
+    VIDEO_FORWARD("Video forward V3"),
+    VIDEO_MORE("Video more selected V3"),
+
+    //Certificates
+    CERTIFICATE_SCREEN("CERTIFICATE Screen V3"),
 
 
     INBOX_SCREEN("Inbox Screen V3"),

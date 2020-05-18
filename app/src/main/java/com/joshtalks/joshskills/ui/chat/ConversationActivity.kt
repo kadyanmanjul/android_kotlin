@@ -1135,7 +1135,6 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
             .addParam(AnalyticsEvent.COURSE_NAME.NAME, inboxEntity.course_name)
             .addParam(AnalyticsEvent.AUDIO_ID.NAME, audioType!!.id)
             .addParam(AnalyticsEvent.AUDIO_DURATION.NAME, audioType.duration)
-            .addParam(AnalyticsEvent.AUDIO_VIEW_STATUS.NAME, state)
             .addParam(AnalyticsEvent.AUDIO_DOWNLOAD_STATUS.NAME, "Downloaded")
             .addParam("flow", this@ConversationActivity.javaClass.simpleName)
 

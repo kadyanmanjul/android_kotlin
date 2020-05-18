@@ -123,14 +123,14 @@ class AudioPlayerViewHolder(activityRef: WeakReference<FragmentActivity>, messag
         }
 
         override fun onCancelled(download: Download) {
-            appAnalytics.addParam(AnalyticsEvent.AUDIO_DOWNLOAD_STATUS.NAME, "Cancelled")
+            appAnalytics.addParam(AnalyticsEvent.AUDIO_DOWNLOAD_STATUS.NAME, "Cancelled").push()
         }
 
         override fun onCompleted(download: Download) {
             eta = System.currentTimeMillis() - eta
-            appAnalytics.addParam("Time taken to download", eta)
+            appAnalytics.addParam(AnalyticsEvent.TIME_TAKEN_DOWNLOAD.NAME, eta)
             appAnalytics.addParam(AnalyticsEvent.AUDIO_DOWNLOAD_STATUS.NAME, "Completed")
-            appAnalytics.addParam("ChatId", message.chatId)
+            appAnalytics.addParam("ChatId", message.chatId).push()
             DownloadUtils.removeCallbackListener(download.tag)
             CoroutineScope(Dispatchers.IO).launch {
                 DownloadUtils.updateDownloadStatus(download.file, download.extras).let {
@@ -154,7 +154,7 @@ class AudioPlayerViewHolder(activityRef: WeakReference<FragmentActivity>, messag
         }
 
         override fun onError(download: Download, error: Error, throwable: Throwable?) {
-            appAnalytics.addParam(AnalyticsEvent.AUDIO_DOWNLOAD_STATUS.NAME, "Failed")
+            appAnalytics.addParam(AnalyticsEvent.AUDIO_DOWNLOAD_STATUS.NAME, "Failed").push()
 
         }
 
@@ -215,7 +215,7 @@ class AudioPlayerViewHolder(activityRef: WeakReference<FragmentActivity>, messag
         seekBarPlaceHolder.visibility = android.view.View.INVISIBLE
         seekBarThumb.visibility = android.view.View.INVISIBLE
 
-        appAnalytics = AppAnalytics.create(AnalyticsEvent.AUDIO_DOWNLOADED.NAME)
+        appAnalytics = AppAnalytics.create(AnalyticsEvent.AUDIO_VH.NAME)
             .addBasicParam()
             .addUserDetails()
 
@@ -328,7 +328,7 @@ class AudioPlayerViewHolder(activityRef: WeakReference<FragmentActivity>, messag
                 this.duration = audioTypeObj.duration
                 appAnalytics.addParam(AnalyticsEvent.AUDIO_DURATION.NAME, duration)
                     .addParam(AnalyticsEvent.AUDIO_ID.NAME, audioTypeObj.id)
-                    .addParam(AnalyticsEvent.AUDIO_DOWNLOAD_STATUS.NAME, "Not downloaded")
+
                 when {
                     message.downloadStatus === DOWNLOAD_STATUS.DOWNLOADED -> {
                         mediaDownloaded()
@@ -369,6 +369,7 @@ class AudioPlayerViewHolder(activityRef: WeakReference<FragmentActivity>, messag
     }
 
     private fun mediaNotDownloaded() {
+        appAnalytics.addParam(AnalyticsEvent.AUDIO_VIEW_STATUS.NAME, "Already downloaded")
         downloadContainer.visibility = android.view.View.VISIBLE
         seekBarPlaceHolder.visibility = android.view.View.VISIBLE
         startDownloadImageView.visibility = android.view.View.VISIBLE
@@ -381,6 +382,7 @@ class AudioPlayerViewHolder(activityRef: WeakReference<FragmentActivity>, messag
     }
 
     private fun mediaDownloading() {
+        appAnalytics.addParam(AnalyticsEvent.AUDIO_VIEW_STATUS.NAME, "Not downloaded")
         downloadContainer.visibility = android.view.View.VISIBLE
         progressBar.visibility = android.view.View.VISIBLE
         cancelDownloadImageView.visibility = android.view.View.VISIBLE

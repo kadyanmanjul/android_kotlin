@@ -47,6 +47,8 @@ import com.google.android.exoplayer2.upstream.DefaultAllocator
 import com.google.android.exoplayer2.util.ErrorMessageProvider
 import com.google.android.material.textview.MaterialTextView
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
+import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.service.video_download.VideoDownloadController
 import com.mikhaellopez.circularprogressbar.CircularProgressBar
 import java.util.*
@@ -235,6 +237,8 @@ class BitVideoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibili
             )
             if (event.x > mInitialTextureWidth / 2) {
                 viewForward.let {
+                    AppAnalytics.create(AnalyticsEvent.VIDEO_BTM_BTN.NAME)
+                        .addParam("btn", "double tap forward").push()
                     animateViewFade(it, 1)
                     Handler().postDelayed({
                         animateViewFade(it, 0)
@@ -243,6 +247,9 @@ class BitVideoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibili
                 seekTo(getCurrentPosition() + mDoubleTapSeekDuration)
             } else {
                 viewBackward.let {
+
+                    AppAnalytics.create(AnalyticsEvent.VIDEO_BTM_BTN.NAME)
+                        .addParam("btn", "double tap backward").push()
                     animateViewFade(it, 1)
                     Handler().postDelayed({
                         animateViewFade(it, 0)
@@ -420,9 +427,15 @@ class BitVideoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibili
             }
         })
         videoBackward.setOnClickListener {
+
+            AppAnalytics.create(AnalyticsEvent.VIDEO_BTM_BTN.NAME)
+                .addParam("btn", "10 sec forward").push()
             seekTo(getCurrentPosition() - 10 * 1000)
         }
         videoForward.setOnClickListener {
+
+            AppAnalytics.create(AnalyticsEvent.VIDEO_BTM_BTN.NAME)
+                .addParam("btn", "10 sec backward").push()
             seekTo(getCurrentPosition() + 10 * 1000)
         }
     }
@@ -709,15 +722,23 @@ class BitVideoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibili
                         dialog.dismiss()
                         when (videoPlayerOption) {
                             is VideoPlayerOption.Quality -> {
+                                AppAnalytics.create(AnalyticsEvent.VIDEO_MORE.NAME)
+                                    .addParam("btn", "Quality").push()
                                 openVideoTrackBottomBar()
                             }
                             is VideoPlayerOption.AudioLanguage -> {
+                                AppAnalytics.create(AnalyticsEvent.VIDEO_MORE.NAME)
+                                    .addParam("btn", "language").push()
                                 openAudioLanguageTrackOption()
                             }
                             is VideoPlayerOption.PlaybackSpeed -> {
+                                AppAnalytics.create(AnalyticsEvent.VIDEO_MORE.NAME)
+                                    .addParam("btn", "PlayBackSpeed").push()
                                 openPlaybackSpeedOption()
                             }
                             is VideoPlayerOption.Help -> {
+                                AppAnalytics.create(AnalyticsEvent.VIDEO_MORE.NAME)
+                                    .addParam("btn", "Help").push()
                                 playerListener?.helpAndFeedback()
                             }
 
