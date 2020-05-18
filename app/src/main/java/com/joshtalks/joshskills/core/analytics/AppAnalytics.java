@@ -82,6 +82,7 @@ public class AppAnalytics {
     }
 
     private static void updateFlurryUser() {
+        Timber.tag("Furry").d("updateFlurryUser() called");
         User user = User.getInstance();
         Mentor mentor = Mentor.getInstance();
         FlurryAgent.setUserId(mentor.getId());
@@ -98,7 +99,6 @@ public class AppAnalytics {
         list.add(user.getUserType());
         list.add(user.getGender());
         FlurryAgent.UserProperties.set("JoshSkills.User", list);
-        Timber.tag("Furry").d("updateFlurryUser() called " + list + " " + user.toString());
 
 
     }
