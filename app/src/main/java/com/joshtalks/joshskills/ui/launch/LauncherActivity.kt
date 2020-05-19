@@ -13,7 +13,6 @@ import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.LogException
 import com.joshtalks.joshskills.core.service.WorkMangerAdmin
 import com.joshtalks.joshskills.repository.local.model.InstallReferrerModel
-import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.ui.payment.COURSE_ID
 import com.joshtalks.joshskills.ui.payment.PaymentActivity
 import io.branch.referral.Branch
@@ -58,41 +57,39 @@ class LauncherActivity : CoreJoshActivity() {
                 } else if (referringParams == null && sessionParams != null) {
                     jsonParms = sessionParams
                 }
-                if (error == null) {
-                    if (jsonParms != null && jsonParms.has(Defines.Jsonkey.AndroidDeepLinkPath.key)) {
-                        AppObjectController.uiHandler.removeCallbacksAndMessages(null)
-                        val testId =
-                            jsonParms.getString(Defines.Jsonkey.AndroidDeepLinkPath.key)
-                        WorkMangerAdmin.registerUserGIDWithTestId(testId)
-                        AppAnalytics.create(AnalyticsEvent.APP_INSTALL_WITH_DEEP_LINK.NAME)
-                            .addParam(
-                                AnalyticsEvent.APP_VERSION_CODE.NAME,
-                                BuildConfig.VERSION_NAME
-                            )
-                            .addParam(AnalyticsEvent.DEVICE_MANUFACTURER.NAME, Build.MANUFACTURER)
-                            .addParam(AnalyticsEvent.DEVICE_MODEL.NAME, Build.MODEL)
-                            .addParam(AnalyticsEvent.TEST_ID_PARAM.NAME, testId ?: EMPTY)
-                            .addParam(
-                                AnalyticsEvent.USER_GAID.NAME,
-                                PrefManager.getStringValue(USER_UNIQUE_ID)
-                            )
-                            .addUserDetails()
-                            .addParam(
-                                AnalyticsEvent.SOURCE.NAME,
-                                InstallReferrerModel.getPrefObject()?.utmSource ?: EMPTY
-                            )
+                if (error == null && jsonParms != null && jsonParms.has(Defines.Jsonkey.AndroidDeepLinkPath.key)) {
+                    AppObjectController.uiHandler.removeCallbacksAndMessages(null)
+                    val testId =
+                        jsonParms.getString(Defines.Jsonkey.AndroidDeepLinkPath.key)
+                    WorkMangerAdmin.registerUserGIDWithTestId(testId)
+                    AppAnalytics.create(AnalyticsEvent.APP_INSTALL_WITH_DEEP_LINK.NAME)
+                        .addParam(
+                            AnalyticsEvent.APP_VERSION_CODE.NAME,
+                            BuildConfig.VERSION_NAME
+                        )
+                        .addParam(AnalyticsEvent.DEVICE_MANUFACTURER.NAME, Build.MANUFACTURER)
+                        .addParam(AnalyticsEvent.DEVICE_MODEL.NAME, Build.MODEL)
+                        .addParam(AnalyticsEvent.TEST_ID_PARAM.NAME, testId ?: EMPTY)
+                        .addParam(
+                            AnalyticsEvent.USER_GAID.NAME,
+                            PrefManager.getStringValue(USER_UNIQUE_ID)
+                        )
+                        .addUserDetails()
+                        .addParam(
+                            AnalyticsEvent.SOURCE.NAME,
+                            InstallReferrerModel.getPrefObject()?.utmSource ?: EMPTY
+                        )
 
-                            .push()
-                        startActivity(
-                            Intent(
-                                applicationContext,
-                                PaymentActivity::class.java
-                            ).apply {
-                                addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
-                                putExtra(COURSE_ID, testId.split("_")[1])
-                            })
-                        this@LauncherActivity.finish()
-                    }
+                        .push()
+                    startActivity(
+                        Intent(
+                            applicationContext,
+                            PaymentActivity::class.java
+                        ).apply {
+                            addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
+                            putExtra(COURSE_ID, testId.split("_")[1])
+                        })
+                    this@LauncherActivity.finish()
                 }
             } catch (ex: Throwable) {
                 LogException.catchException(ex)

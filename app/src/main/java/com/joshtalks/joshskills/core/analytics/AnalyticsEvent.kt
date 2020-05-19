@@ -4,11 +4,6 @@ enum class AnalyticsEvent(val NAME: String) {
     //Common
     APP_INSTALL("App Install V3"),
     APP_INSTALL_WITH_DEEP_LINK("App Install With Deep Link V3"),
-    APP_UNINSTALLED("App Uninstalled V3"),
-    /*
-    LATITUDE("Latitude V3"),  //Not yet
-    LONGITUDE("Longitude V3"), //Not yet
-    */
     APP_VERSION_CODE("App version V3"),
 
     //parameters
@@ -34,8 +29,6 @@ enum class AnalyticsEvent(val NAME: String) {
     ACTIVITY_PAUSE("Activity Pause V3"),
     ACTIVITY_STOP("Activity Stop V3"),
     ACTIVITY_DESTROY("Activity Destroy V3"),
-    ACTIVITY_OPENED("Activity Opened V3"),
-    ACTIVITY_REOPEN("Activity Reopened V3"),
     BACK_PRESSED("Back Pressed V3"),
 
     // Login Screen
