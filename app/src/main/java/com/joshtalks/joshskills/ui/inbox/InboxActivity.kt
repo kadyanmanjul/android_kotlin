@@ -247,6 +247,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
             RxBus2.listen(OpenCourseEventBus::class.java)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
+                    // remove later if not required
                     AppAnalytics.create(AnalyticsEvent.COURSE_SELECTED.NAME)
                         .addParam("course_id", it.inboxEntity.conversation_id).push()
                     ConversationActivity.startConversionActivity(this, it.inboxEntity)
@@ -258,6 +259,10 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe {
+                AppAnalytics.create(AnalyticsEvent.FIND_MORE_COURSE_CLICKED.NAME)
+                    .addBasicParam()
+                    .addUserDetails()
+                    .push()
                 openCourseExplorer()
             })
     }
@@ -274,7 +279,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         CourseExploreActivity.startCourseExploreActivity(
             this,
             COURSE_EXPLORER_CODE,
-            registerCourses
+            registerCourses, state = ActivityEnum.Inbox
         )
     }
 

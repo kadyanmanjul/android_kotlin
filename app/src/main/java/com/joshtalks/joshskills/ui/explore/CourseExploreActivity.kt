@@ -40,11 +40,13 @@ import kotlin.collections.set
 
 const val COURSE_EXPLORER_SCREEN_NAME = "Course Explorer"
 const val USER_COURSES = "user_courses"
+const val PREV_ACTIVITY = "previous_activity"
 
 class CourseExploreActivity : CoreJoshActivity() {
     private var compositeDisposable = CompositeDisposable()
     private lateinit var courseExploreBinding: ActivityCourseExploreBinding
     private lateinit var appAnalytics: AppAnalytics
+    private var prevAct: String? = EMPTY
     private var screenEngagementModel: ScreenEngagementModel =
         ScreenEngagementModel(COURSE_EXPLORER_SCREEN_NAME)
 
@@ -52,13 +54,15 @@ class CourseExploreActivity : CoreJoshActivity() {
         fun startCourseExploreActivity(
             context: Activity,
             requestCode: Int,
-            list: MutableSet<InboxEntity>?, clearBackStack: Boolean = false
+            list: MutableSet<InboxEntity>?, clearBackStack: Boolean = false, state: ActivityEnum
         ) {
             val intent = Intent(context, CourseExploreActivity::class.java)
             intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
             list?.run {
                 intent.putParcelableArrayListExtra(USER_COURSES, ArrayList(this))
             }
+
+            intent.putExtra(PREV_ACTIVITY, state.toString())
             if (clearBackStack) {
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
@@ -78,6 +82,8 @@ class CourseExploreActivity : CoreJoshActivity() {
         appAnalytics = AppAnalytics.create(AnalyticsEvent.EXPLORE_OPENED.NAME)
             .addUserDetails()
             .addBasicParam()
+        if (prevAct.isNullOrBlank().not())
+            appAnalytics.addParam(AnalyticsEvent.FLOW_FROM_PARAM.NAME, prevAct)
 
     }
 
@@ -114,6 +120,7 @@ class CourseExploreActivity : CoreJoshActivity() {
                         intent.apply {
                             addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
                             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                            putExtra("Flow", "CourseExploreAvtivity")
                         }
                         CoroutineScope(Dispatchers.IO).launch {
                             PrefManager.clearUser()
@@ -164,6 +171,9 @@ class CourseExploreActivity : CoreJoshActivity() {
                     var list: ArrayList<InboxEntity>? = null
                     if (intent.hasExtra(USER_COURSES)) {
                         list = intent.getParcelableArrayListExtra(USER_COURSES)
+                    }
+                    if (intent.hasExtra(PREV_ACTIVITY)) {
+                        prevAct = intent.getStringExtra(PREV_ACTIVITY)
                     }
                     courseExploreBinding.recyclerView.removeAllViews()
                     response.forEach { courseExploreModel ->

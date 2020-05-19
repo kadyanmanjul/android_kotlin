@@ -21,9 +21,7 @@ import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.ErrorTag
 import com.joshtalks.joshskills.core.analytics.LogException
 import com.joshtalks.joshskills.databinding.ActivityOnboardBinding
-import com.joshtalks.joshskills.repository.local.model.InstallReferrerModel
 import com.joshtalks.joshskills.repository.local.model.Mentor
-import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
 import com.joshtalks.joshskills.ui.signup.FROM_ACTIVITY
 import com.joshtalks.joshskills.ui.signup.IS_ACTIVITY_FOR_RESULT
@@ -39,6 +37,7 @@ import java.util.*
 class OnBoardActivity : CoreJoshActivity() {
     private lateinit var layout: ActivityOnboardBinding
     private var activityResultFlag = false
+    private lateinit var appAnalytics: AppAnalytics
 
 
     private val viewModel: SignUpViewModel by lazy {
@@ -47,6 +46,7 @@ class OnBoardActivity : CoreJoshActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        var prevScreen: String? = "Launcher"
         supportActionBar?.hide()
         layout = DataBindingUtil.setContentView(
             this,
@@ -56,14 +56,17 @@ class OnBoardActivity : CoreJoshActivity() {
         if (intent.hasExtra(IS_ACTIVITY_FOR_RESULT)) {
             activityResultFlag = intent?.getBooleanExtra(IS_ACTIVITY_FOR_RESULT, false) ?: false
         }
+
+        if (intent.hasExtra("Flow")) {
+            prevScreen = intent?.getStringExtra("Flow")
+        }
         initTrueCallerSDK()
-        AppAnalytics.create(AnalyticsEvent.LOGIN_SCREEN_1.NAME)
+        appAnalytics = AppAnalytics.create(AnalyticsEvent.LOGIN_SCREEN_1.NAME)
             .addBasicParam()
             .addParam(AnalyticsEvent.USER_GAID.NAME, PrefManager.getStringValue(USER_UNIQUE_ID))
-            //.addParam(AnalyticsEvent.USER_NAME.NAME, User.getInstance().firstName)
-            //.addParam(AnalyticsEvent.USER_EMAIL.NAME, User.getInstance().email)
-            .addParam(AnalyticsEvent.SOURCE.NAME, InstallReferrerModel.getPrefObject()?.utmSource ?: EMPTY)
-            .push(true)
+            .addParam(AnalyticsEvent.FLOW_FROM_PARAM.NAME, prevScreen)
+
+        appAnalytics.push(true)
 
         val sBuilder = SpannableStringBuilder()
         sBuilder.append("Welcome to ").append("Josh Skills")
@@ -95,7 +98,7 @@ class OnBoardActivity : CoreJoshActivity() {
                     return@Observer
                 }
                 SignUpStepStatus.SignUpWithoutRegister -> {
-                    openCourseExplorerScreen()
+                    openCourseExplorerScreen(this@OnBoardActivity)
                     return@Observer
                 }
                 else -> return@Observer

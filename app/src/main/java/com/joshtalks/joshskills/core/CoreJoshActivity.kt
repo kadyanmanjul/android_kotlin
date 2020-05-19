@@ -1,6 +1,7 @@
 package com.joshtalks.joshskills.core
 
 import android.app.Activity
+import android.app.LauncherActivity
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.os.Build
@@ -12,13 +13,20 @@ import com.joshtalks.joshskills.repository.local.entity.ChatModel
 import com.joshtalks.joshskills.repository.server.engage.Graph
 import com.joshtalks.joshskills.repository.server.feedback.FeedbackTypes
 import com.joshtalks.joshskills.repository.service.EngagementNetworkHelper
+import com.joshtalks.joshskills.ui.chat.ConversationActivity
 import com.joshtalks.joshskills.ui.chat.PRACTISE_SUBMIT_REQUEST_CODE
 import com.joshtalks.joshskills.ui.chat.VIDEO_OPEN_REQUEST_CODE
+import com.joshtalks.joshskills.ui.courseprogress.CourseProgressActivity
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
 import com.joshtalks.joshskills.ui.feedback.FeedbackFragment
+import com.joshtalks.joshskills.ui.help.HelpActivity
 import com.joshtalks.joshskills.ui.inbox.COURSE_EXPLORER_WITHOUT_CODE
+import com.joshtalks.joshskills.ui.inbox.InboxActivity
+import com.joshtalks.joshskills.ui.payment.PaymentActivity
 import com.joshtalks.joshskills.ui.practise.PRACTISE_OBJECT
 import com.joshtalks.joshskills.ui.referral.PromotionDialogFragment
+import com.joshtalks.joshskills.ui.sign_up_old.OnBoardActivity
+import com.joshtalks.joshskills.ui.signup.SignUpActivity
 import com.joshtalks.joshskills.ui.video_player.VIDEO_OBJECT
 import kotlinx.android.synthetic.main.base_toolbar.*
 import kotlinx.coroutines.CoroutineScope
@@ -31,6 +39,10 @@ abstract class CoreJoshActivity : BaseActivity() {
     protected var graph: Graph? = null
     protected var currentAudio: String? = null
     protected var cAudioId: String? = null
+
+    enum class ActivityEnum {
+        Conversation, CourseProgress, CourseExplore, Help, Inbox, Launcher, Payment, Onboard, Signup, Empty
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         requestedOrientation = if (Build.VERSION.SDK_INT == 26) {
@@ -57,15 +69,30 @@ abstract class CoreJoshActivity : BaseActivity() {
         finish()
     }
 
-    protected fun openCourseExplorerScreen() {
+    protected fun openCourseExplorerScreen(act: Activity) {
         AppAnalytics.create(AnalyticsEvent.EXPLORE_OPENED.NAME)
             .push()
         CourseExploreActivity.startCourseExploreActivity(
             this,
             COURSE_EXPLORER_WITHOUT_CODE,
-            null, true
+            null, true, getState(act)
         )
         this.finish()
+    }
+
+    private fun getState(act: Activity): ActivityEnum {
+        return when (act) {
+            is ConversationActivity -> ActivityEnum.Conversation
+            is CourseExploreActivity -> ActivityEnum.CourseExplore
+            is CourseProgressActivity -> ActivityEnum.CourseProgress
+            is HelpActivity -> ActivityEnum.Help
+            is InboxActivity -> ActivityEnum.Inbox
+            is LauncherActivity -> ActivityEnum.Launcher
+            is PaymentActivity -> ActivityEnum.Payment
+            is OnBoardActivity -> ActivityEnum.Onboard
+            is SignUpActivity -> ActivityEnum.Signup
+            else -> ActivityEnum.Empty
+        }
     }
 
     protected fun endAudioEngagePart(endTime: Long) {

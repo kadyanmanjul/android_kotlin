@@ -352,13 +352,12 @@ class CourseDetailType1Fragment : Fragment() {
 
     fun backPress() {
         activity?.onBackPressed()
-        appAnalytics.push()
         // activity?.finish()
     }
 
     fun buyCourse() {
-        // TODO
-        AppAnalytics.create(AnalyticsEvent.START_COURSE_NOW.NAME).push()
+        appAnalytics.addParam(AnalyticsEvent.START_COURSE_NOW.NAME, "Clicked")
+        //AppAnalytics.create(AnalyticsEvent.START_COURSE_NOW.NAME).push()
         RxBus2.publish(BuyCourseEventBus(testId.toString(), isUserValidForOffer, courseModel))
     }
 
@@ -394,6 +393,7 @@ class CourseDetailType1Fragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        appAnalytics.push()
         AppAnalytics.create(AnalyticsEvent.BACK_PRESSED.NAME)
             .addParam("name", javaClass.simpleName)
             .push()

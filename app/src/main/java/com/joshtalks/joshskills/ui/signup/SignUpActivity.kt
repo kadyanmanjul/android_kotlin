@@ -102,7 +102,7 @@ class SignUpActivity : CoreJoshActivity() {
                     if(viewModel.phoneNumber.isEmpty().not())
                         appAnalytics.addParam(AnalyticsEvent.USER_DETAILS.NAME,viewModel.countryCode+viewModel.phoneNumber)
                     appAnalytics.push()
-                    openCourseExplorerScreen()
+                    openCourseExplorerScreen(this@SignUpActivity)
                     return@Observer
                 }
                 else -> return@Observer

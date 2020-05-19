@@ -554,9 +554,6 @@ class PaymentActivity : CoreJoshActivity(),
             appAnalytics.addParam(AnalyticsEvent.HAVE_COUPON_CODE.NAME, true)
             appAnalytics.addParam(AnalyticsEvent.COUPON_INSERTED.NAME, userSubmitCode)
 
-            // TODO remove
-            AppAnalytics.create(AnalyticsEvent.COUPON_INSERTED.NAME)
-                .addParam("coupon_code", userSubmitCode).push()
         }
         appAnalytics.addParam(AnalyticsEvent.HAVE_COUPON_CODE.NAME, false)
         requestForPayment()
@@ -565,7 +562,7 @@ class PaymentActivity : CoreJoshActivity(),
 
     override fun onBackPressed() {
         if (Mentor.getInstance().hasId().not()) {
-            openCourseExplorerScreen()
+            openCourseExplorerScreen(this@PaymentActivity)
             return
         }
         if (supportFragmentManager.findFragmentById(R.id.container) != null) {
@@ -695,8 +692,8 @@ class PaymentActivity : CoreJoshActivity(),
     }
 
     override fun onLoginSuccessfully() {
-        // TODO
-        AppAnalytics.create(AnalyticsEvent.LOGIN_SUCCESSFULLY.NAME).push()
+        appAnalytics.addParam(AnalyticsEvent.LOGIN_SUCCESSFULLY.NAME, "From payment Activity")
+        //AppAnalytics.create(AnalyticsEvent.LOGIN_SUCCESSFULLY.NAME).push()
         userHaveSpecialDiscount()
         requestForPayment()
     }
@@ -705,7 +702,11 @@ class PaymentActivity : CoreJoshActivity(),
     private fun addECommerceEvent(razorpayPaymentId: String) {
         WorkMangerAdmin.newCourseScreenEventWorker(courseName, testId, buyCourse = true)
         //appAnalytics.push()
-        // TODO
+
+        appAnalytics.addParam(AnalyticsEvent.PURCHASE_COURSE.NAME, courseName)
+            .addParam(FirebaseAnalytics.Param.ITEM_ID, testId)
+            .addParam(FirebaseAnalytics.Param.PRICE, (amount).toString())
+
         AppAnalytics.create(AnalyticsEvent.PURCHASE_COURSE.NAME)
             .addParam(FirebaseAnalytics.Param.ITEM_ID, testId)
             .addParam(FirebaseAnalytics.Param.PRICE, (amount).toString())
