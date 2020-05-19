@@ -95,7 +95,7 @@ public class VideoDownloadService extends DownloadService {
             InboxEntity entity=  AppObjectController.getAppDatabase().courseDao().chooseRegisterCourseMinimalRX(chatModel.getConversationId()).subscribeOn(Schedulers.io()).blockingGet();
             intent.putExtra(CHAT_ROOM_OBJECT, entity);
         } catch (Exception ex) {
-            ex.printStackTrace();
+        //    ex.printStackTrace();
         }
 
         PendingIntent pendingIntent = PendingIntent.getActivity(
