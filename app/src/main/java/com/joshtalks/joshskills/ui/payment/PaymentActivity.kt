@@ -32,6 +32,8 @@ import com.joshtalks.joshskills.core.analytics.BranchIOAnalytics
 import com.joshtalks.joshskills.core.service.WorkMangerAdmin
 import com.joshtalks.joshskills.databinding.ActivityPaymentBinding
 import com.joshtalks.joshskills.messaging.RxBus2
+import com.joshtalks.joshskills.repository.local.entity.NPSEvent
+import com.joshtalks.joshskills.repository.local.entity.NPSEventModel
 import com.joshtalks.joshskills.repository.local.eventbus.BuyCourseEventBus
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
@@ -89,6 +91,7 @@ class PaymentActivity : CoreJoshActivity(),
     private var specialDiscount = false
     private var isEcommereceEventFire = true
     private var hasCertificate = false
+    private var npsShow = true
     private var flowFrom: String? = EMPTY
 
 
@@ -142,8 +145,10 @@ class PaymentActivity : CoreJoshActivity(),
             invalidCourseId()
             return
         }
+
         val flagForLandingPage =
             AppObjectController.getFirebaseRemoteConfig().getBoolean("testing_landing_page")
+
         if (flagForLandingPage) {
             getTestCourseDetails()
         } else {
@@ -225,6 +230,7 @@ class PaymentActivity : CoreJoshActivity(),
                 if (Mentor.getInstance().getId().isNotEmpty()) {
                     data["mentor"] = Mentor.getInstance().getId()
                 }
+
                 val courseDetailsModelList: List<CourseDetailsModel> =
                     AppObjectController.signUpNetworkService.explorerCourseDetails(data).await()
                 CoroutineScope(Dispatchers.Main).launch {
@@ -239,12 +245,14 @@ class PaymentActivity : CoreJoshActivity(),
                     }
                     activityPaymentBinding.progressBar.visibility = View.GONE
                 }
+
                 amount = courseDetailsModelList[0].testCourseDetail.amount
                 courseName = courseDetailsModelList[0].testCourseDetail.courseName
                 if (courseName.isNotEmpty()) {
                     CoroutineScope(Dispatchers.Main).launch {
                         titleView.text = courseName
                     }
+
                 }
 
             } catch (ex: HttpException) {
@@ -263,6 +271,7 @@ class PaymentActivity : CoreJoshActivity(),
         }
     }
 
+
     override fun onPaymentError(p0: Int, p1: String?) {
         userSubmitCode = EMPTY
         razorpayOrderId = EMPTY
@@ -272,16 +281,23 @@ class PaymentActivity : CoreJoshActivity(),
             .textColor(ContextCompat.getColor(applicationContext, R.color.white))
             .length(Toast.LENGTH_LONG).solidBackground().show()
         appAnalytics.addParam(AnalyticsEvent.PAYMENT_FAILED.NAME, p1)
+        if (npsShow) {
+            showNetPromoterScoreDialog(NPSEvent.PAYMENT_FAILED)
+            npsShow = false
+        }
     }
 
     @Synchronized
     override fun onPaymentSuccess(razorpayPaymentId: String) {
         razorpayOrderId.verifyPayment()
-
+        NPSEventModel.setCurrentNPA(
+            NPSEvent.PAYMENT_SUCCESS
+        )
         if (isEcommereceEventFire && amount > 0 && razorpayPaymentId.isNotEmpty() && testId.isNotEmpty()) {
             isEcommereceEventFire = false
             addECommerceEvent(razorpayPaymentId)
         }
+
         uiHandler.post {
             courseModel?.run {
                 PaymentProcessFragment.newInstance(this)
@@ -339,6 +355,7 @@ class PaymentActivity : CoreJoshActivity(),
                         courseModel?.courseName = response.courseName
                         courseModel?.id = this@PaymentActivity.testId.toInt()
                     }
+
                     compositeDisposable.add(AppObjectController.appDatabase
                         .courseDao()
                         .isUserOldThen7Days()
@@ -428,6 +445,7 @@ class PaymentActivity : CoreJoshActivity(),
         }
     }
 
+
     fun buyCourse(isUserSpecialOffer: Boolean) {
         val courseModel = CourseExploreModel()
         courseModel.amount = amount
@@ -449,6 +467,7 @@ class PaymentActivity : CoreJoshActivity(),
             // TODO
             AppAnalytics.create(AnalyticsEvent.PAYMENT_DIALOG.NAME)
                 .push()
+
         }
     }
 
@@ -517,6 +536,7 @@ class PaymentActivity : CoreJoshActivity(),
                 }
             }, 2500)
         }
+
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -527,6 +547,7 @@ class PaymentActivity : CoreJoshActivity(),
             requestForPayment()
         }
         super.onActivityResult(requestCode, resultCode, data)
+
     }
 
     override fun getCouponCode(code: String?) {
@@ -537,6 +558,7 @@ class PaymentActivity : CoreJoshActivity(),
         }
         appAnalytics.addParam(AnalyticsEvent.HAVE_COUPON_CODE.NAME, false)
         requestForPayment()
+
     }
 
     override fun onBackPressed() {
@@ -593,6 +615,7 @@ class PaymentActivity : CoreJoshActivity(),
         LoginDialogFragment.newInstance().show(supportFragmentManager, "login_dialog")
     }
 
+
     private fun invalidCodeDialog() {
         appAnalytics.addParam(AnalyticsEvent.INVALID_COUPON_POPUP.NAME, true)
         val dialog = Dialog(this@PaymentActivity)
@@ -604,6 +627,7 @@ class PaymentActivity : CoreJoshActivity(),
         dialog.window?.setDimAmount(0.7f)
         dialog.show()
     }
+
 
     override fun onCompletePayment() {
         requestForPayment()
