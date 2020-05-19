@@ -743,7 +743,20 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
             ).show()
             return
         }
-        if (cMessageType == BASE_MESSAGE_TYPE.TX) {        //TODO(FixMe) - Conditions Check at wrong place
+        if (cMessageType == BASE_MESSAGE_TYPE.TX) {
+
+            AppAnalytics.create(AnalyticsEvent.CHAT_ENTERED.NAME)
+                .addUserDetails()
+                .addBasicParam()
+                .addParam(
+                    AnalyticsEvent.CHAT_TEXT.NAME,
+                    conversationBinding.chatEdit.text.toString()
+                )
+                .addParam(
+                    AnalyticsEvent.CHAT_LENGTH.NAME,
+                    conversationBinding.chatEdit.text.toString().length
+                )
+
             val tChatMessage =
                 TChatMessage(conversationBinding.chatEdit.text.toString())
             val cell = MessageBuilderFactory.getMessage(
@@ -1047,7 +1060,7 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
                     AppObjectController.currentPlayingAudioObject?.let { chatModel ->
                         refreshViewAtPos(chatModel)
                     }
-                    analyticsAudioPlayed(it.audioType, it.state)
+                    analyticsAudioPlayed(it.audioType)
 
                     streamingManager?.isPlayMultiple = false
                     endAudioEngagePart(mSeekBarAudio.progress.toLong())
@@ -1104,6 +1117,17 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
+                    //practiceEngagement.isNullOrEmpty()
+
+                    AppAnalytics.create(AnalyticsEvent.PRACTISE_OPENED.NAME)
+                        .addBasicParam()
+                        .addUserDetails()
+                        .addParam(AnalyticsEvent.COURSE_NAME.NAME, inboxEntity.course_name)
+                        .addParam(
+                            AnalyticsEvent.PRACTICE_SOLVED.NAME,
+                            (it.chatModel.question != null) && (it.chatModel.question!!.practiceEngagement.isNullOrEmpty().not())
+                        )
+                        .addParam("chatId", it.chatModel.chatId)
                     PractiseSubmitActivity.startPractiseSubmissionActivity(
                         activityRef.get()!!,
                         PRACTISE_SUBMIT_REQUEST_CODE,
@@ -1125,8 +1149,7 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
     }
 
     private fun analyticsAudioPlayed(
-        audioType: AudioType?,
-        state: Int
+        audioType: AudioType?
     ) {
 
         AppAnalytics.create(AnalyticsEvent.AUDIO_PLAYER_PLAYED.NAME)

@@ -196,9 +196,35 @@ enum class AnalyticsEvent(val NAME: String) {
     PDF_ID("pdf id V3"),
     PDF_DURATION("pdf Duration V3"),
 
+    // Practice Opened
+    PRACTISE_SCREEN("Practise Screen V3"),
+    PRACTISE_ID("Practise id V3"),
+    PRACTISE_OPENED("Practise open clicked V3"),
+    PRACTICE_SUBMITTED("Practice submitted V3"),
+    PRACTICE_TYPE_SUBMITTED("Practice type submitted V3"),
+    AUDIO_RECORD("Audio Record V3"),
+    PRACTICE_SOLVED("Practise Solved V3"),
+    PRACTICE_STATUS("Practise Status V3"),
+    PRACTICE_EXTRA("Practise extra action V3"),
+    PRACTICE_TYPE_PRESENT("Practise type Present V3"),
+    PRACTICE_SCREEN_TIME("Practise opened to  submit time v3"),
+    AUDIO_SUBMITTED("Audio Submitted V3"),
+
+
+    //Chat Entered
+    CHAT_ENTERED("Chat entered V3"),
+    CHAT_TEXT("Chat text V3"),
+    CHAT_LENGTH("Chat text length V3"),
 
     //Certificates
     CERTIFICATE_SCREEN("CERTIFICATE Screen V3"),
+    CERTIFICATE_PROGRESS_CLICKED("Certificate Progress Clicked V3"),
+    PERFORMANCE_CLICKED("Performance Clicked V3"),
+    VIEW_SAMPLE_CERTIFICATE_OPEN("View Sample Certificate Open V3"),
+    VIEW_SAMPLE_CERTIFICATE_CLOSE("View Sample Certificate Close V3"),
+    VIDEO_CLICKED_COURSE_OVERVIEW("Video Click Course Overview V3"),
+    PRACTISE_CLICKED_COURSE_OVERVIEW("Practise Clicked Course Overview V3"),
+    CLAIM_CERTIFICATE("Certifcate claim clicked V3"),
 
 
     INBOX_SCREEN("Inbox Screen V3"),
@@ -256,8 +282,6 @@ enum class AnalyticsEvent(val NAME: String) {
     PAYMENT_INITIATED("Payment Initiated V3"),
     PAYMENT_FAILED("Payment Fail V3"),
 
-    PRACTISE_OPENED("Practise Opened V3"),
-    AUDIO_SUBMITTED("Audio Submitted V3"),
     VIDEO_SUBMITTED("Video Submitted V3"),
     TEXT_SUBMITTED("Text Submitted V3"),
     DOCUMENT_SUBMITTED("Document Submitted V3"),
@@ -266,16 +290,9 @@ enum class AnalyticsEvent(val NAME: String) {
     SHARE_ON_WHATSAPP("Share On Whatsapp V3"),
     SHARE_ON_ALL("Share On All V3"),
 
-    AUDIO_RECORD("Audio Record V3"),
     HAVE_COUPON_CODE_CLICKED("Have Coupon Code Clicked V3"),
     HAVE_COUPON_CODE("Have Coupon Code V3"),
     COURSE_PROGRESS_OVERVIEW("Course progress Overview V3"),// CourseProgressListingScreen
-    CERTIFICATE_PROGRESS_CLICKED("Certificate Progress Clicked V3"),
-    PERFORMANCE_CLICKED("Performance Clicked V3"),
-    VIEW_SAMPLE_CERTIFICATE_OPEN("View Sample Certificate Open V3"),
-    VIEW_SAMPLE_CERTIFICATE_CLOSE("View Sample Certificate Close V3"),
-    VIDEO_CLICKED_COURSE_OVERVIEW("Video Click Course Overview V3"),
-    PRACTISE_CLICKED_COURSE_OVERVIEW("Practise Clicked Course Overview V3"),
     FEEDBACK_INITIATED("Feedback Initiated V3"),
     FEEDBACK_SUBMITTED("Feedback Submitted V3"),
     FEEDBACK_IGNORE("Feedback Ignore V3"),

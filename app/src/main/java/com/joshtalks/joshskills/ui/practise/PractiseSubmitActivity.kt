@@ -92,7 +92,9 @@ class PractiseSubmitActivity : CoreJoshActivity() {
     private var isDocumentAttachDone = false
     private var scaleAnimation: Animation? = null
     private var startTime: Long = 0
+    private var totalTimeSpend: Long = 0
     private var filePath: String? = null
+    private lateinit var appAnalytics: AppAnalytics
 
 
     private val DOCX_FILE_MIME_TYPE = arrayOf(
@@ -128,7 +130,6 @@ class PractiseSubmitActivity : CoreJoshActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        AppAnalytics.create(AnalyticsEvent.PRACTISE_OPENED.NAME).push()
         requestedOrientation = if (Build.VERSION.SDK_INT == 26) {
             ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
         } else {
@@ -138,11 +139,16 @@ class PractiseSubmitActivity : CoreJoshActivity() {
         if (intent.hasExtra(PRACTISE_OBJECT).not()) {
             this.finish()
         }
+        totalTimeSpend = System.currentTimeMillis()
         binding = DataBindingUtil.setContentView(this, R.layout.activity_pratice_submit)
         binding.lifecycleOwner = this
         binding.handler = this
         chatModel = intent.getParcelableExtra(PRACTISE_OBJECT) as ChatModel
         scaleAnimation = AnimationUtils.loadAnimation(this, R.anim.scale)
+        appAnalytics = AppAnalytics.create(AnalyticsEvent.PRACTISE_SCREEN.NAME)
+            .addBasicParam()
+            .addUserDetails()
+            .addParam("chatId", chatModel.chatId)
         initToolbarView()
         setPracticeInfoView()
         doBindService()
@@ -150,14 +156,20 @@ class PractiseSubmitActivity : CoreJoshActivity() {
         chatModel.question?.run {
             if (this.practiceEngagement.isNullOrEmpty()) {
                 binding.submitAnswerBtn.visibility = VISIBLE
+                appAnalytics.addParam(AnalyticsEvent.PRACTICE_SOLVED.NAME, false)
+                appAnalytics.addParam(AnalyticsEvent.PRACTICE_STATUS.NAME, "Not Submitted")
                 setViewAccordingExpectedAnswer()
             } else {
                 binding.practiseInputLayout.visibility = GONE
                 binding.submitAnswerBtn.visibility = GONE
+                appAnalytics.addParam(AnalyticsEvent.PRACTICE_SOLVED.NAME, true)
+                appAnalytics.addParam(AnalyticsEvent.PRACTICE_STATUS.NAME, "Already Submitted")
                 setViewUserSubmitAnswer()
             }
         }
         feedbackEngagementStatus(chatModel.question)
+
+
     }
 
 
@@ -215,7 +227,7 @@ class PractiseSubmitActivity : CoreJoshActivity() {
 
     override fun onStop() {
         super.onStop()
-
+        appAnalytics.push()
         compositeDisposable.clear()
         try {
             binding.videoPlayer.onStop()
@@ -243,11 +255,11 @@ class PractiseSubmitActivity : CoreJoshActivity() {
         }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, returnIntent: Intent?) {
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
 
         try {
             if (requestCode == IMAGE_OR_VIDEO_SELECT_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-                returnIntent?.let { intent ->
+                data?.let { intent ->
                     when {
                         intent.hasExtra(JoshCameraActivity.IMAGE_RESULTS) -> {
                             val returnValue =
@@ -266,7 +278,7 @@ class PractiseSubmitActivity : CoreJoshActivity() {
                     }
                 }
             } else if (requestCode == TEXT_FILE_ATTACHMENT_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-                returnIntent?.data?.let {
+                data?.data?.let {
                     contentResolver.query(it, null, null, null, null)?.use { cursor ->
                         val nameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)
                         //val sizeIndex = cursor.getColumnIndex(OpenableColumns.SIZE)
@@ -294,7 +306,7 @@ class PractiseSubmitActivity : CoreJoshActivity() {
             ex.printStackTrace()
         }
 
-        super.onActivityResult(requestCode, resultCode, returnIntent)
+        super.onActivityResult(requestCode, resultCode, data)
     }
 
     private fun subscribeRXBus() {
@@ -336,6 +348,10 @@ class PractiseSubmitActivity : CoreJoshActivity() {
 
     private fun setPracticeInfoView() {
         chatModel.question?.run {
+            appAnalytics.addParam(
+                AnalyticsEvent.PRACTICE_TYPE_PRESENT.NAME,
+                "${this.material_type} Practice present"
+            )
             when (this.material_type) {
                 BASE_MESSAGE_TYPE.AU -> {
                     binding.audioViewContainer.visibility = VISIBLE
@@ -865,7 +881,8 @@ class PractiseSubmitActivity : CoreJoshActivity() {
                     binding.counterContainer.visibility = VISIBLE
                     binding.uploadPractiseView.startAnimation(scaleAnimation)
                     window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-                    AppAnalytics.create(AnalyticsEvent.AUDIO_RECORD.NAME).push()
+                    appAnalytics.addParam(AnalyticsEvent.AUDIO_RECORD.NAME, "Audio Recording")
+                    //AppAnalytics.create(AnalyticsEvent.AUDIO_RECORD.NAME).push()
                     binding.counterTv.base = SystemClock.elapsedRealtime()
                     startTime = System.currentTimeMillis()
                     binding.counterTv.start()
@@ -1012,6 +1029,7 @@ class PractiseSubmitActivity : CoreJoshActivity() {
         endAudioEngagePart(binding.practiseSeekbar.progress.toLong())
         engageAudio()
         countUpTimer.reset()
+        appAnalytics.addParam(AnalyticsEvent.PRACTICE_EXTRA.NAME, "Audio Played")
 
         if (currentAudio == null) {
             onPlayAudio(chatModel, chatModel.question?.audioList?.getOrNull(0)!!)
@@ -1036,8 +1054,12 @@ class PractiseSubmitActivity : CoreJoshActivity() {
             val audioType = AudioType()
             audioType.audio_url = filePath!!
             audioType.downloadedLocalPath = filePath!!
-            audioType.duration = Utils.getDurationOfMedia(this, filePath!!)?.toInt()?:0
+            audioType.duration = Utils.getDurationOfMedia(this, filePath!!)?.toInt() ?: 0
             audioType.id = Random.nextInt().toString()
+            appAnalytics.addParam(
+                AnalyticsEvent.PRACTICE_EXTRA.NAME,
+                "Already Submitted audio Played"
+            )
 
             val state =
                 if (binding.submitBtnPlayInfo.state == MaterialPlayPauseDrawable.State.Pause && mPlayerInterface!!.isPlaying) {
@@ -1087,6 +1109,8 @@ class PractiseSubmitActivity : CoreJoshActivity() {
             mPlayerInterface?.resumeOrPause()
         }
         disableSubmitButton()
+        appAnalytics.addParam(AnalyticsEvent.PRACTICE_EXTRA.NAME, "Audio practise removed")
+
     }
 
     private fun initVideoPractise(path: String) {
@@ -1203,6 +1227,19 @@ class PractiseSubmitActivity : CoreJoshActivity() {
                     showToast(getString(R.string.submit_practise_msz))
                     return
                 }
+
+
+                appAnalytics.addParam(
+                    AnalyticsEvent.PRACTICE_SCREEN_TIME.NAME,
+                    System.currentTimeMillis() - totalTimeSpend
+                )
+                appAnalytics.addParam(AnalyticsEvent.PRACTICE_SOLVED.NAME, true)
+                appAnalytics.addParam(AnalyticsEvent.PRACTICE_STATUS.NAME, "Submitted")
+                appAnalytics.addParam(
+                    AnalyticsEvent.PRACTICE_TYPE_SUBMITTED.NAME,
+                    "$it Practice Submitted"
+                )
+                appAnalytics.addParam(AnalyticsEvent.PRACTICE_SUBMITTED.NAME, "Submit Practice $")
 
                 val requestEngage = RequestEngage()
                 requestEngage.text = binding.etPractise.text.toString()
