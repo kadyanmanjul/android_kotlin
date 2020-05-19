@@ -49,12 +49,10 @@ import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.core.playback.MusicService
 import com.joshtalks.joshskills.core.playback.PlaybackInfoListener
 import com.joshtalks.joshskills.core.playback.PlayerInterface
+import com.joshtalks.joshskills.core.service.WorkMangerAdmin
 import com.joshtalks.joshskills.databinding.ActivityPraticeSubmitBinding
 import com.joshtalks.joshskills.messaging.RxBus2
-import com.joshtalks.joshskills.repository.local.entity.AudioType
-import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
-import com.joshtalks.joshskills.repository.local.entity.ChatModel
-import com.joshtalks.joshskills.repository.local.entity.EXPECTED_ENGAGE_TYPE
+import com.joshtalks.joshskills.repository.local.entity.*
 import com.joshtalks.joshskills.repository.local.eventbus.SeekBarProgressEventBus
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.RequestEngage
@@ -68,6 +66,10 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.muddzdev.styleabletoast.StyleableToast
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import me.zhanghai.android.materialplaypausedrawable.MaterialPlayPauseDrawable
 import java.util.concurrent.TimeUnit
 import kotlin.random.Random
@@ -503,11 +505,18 @@ class PractiseSubmitActivity : CoreJoshActivity() {
     private fun addObserver() {
         practiseViewModel.requestStatusLiveData.observe(this, Observer {
             if (it) {
-                val resultIntent = Intent().apply {
-                    putExtra(PRACTISE_OBJECT, chatModel)
+                CoroutineScope(Dispatchers.IO).launch {
+                    chatModel.question?.interval?.run {
+                        WorkMangerAdmin.determineNPAEvent(NPSEvent.WATCH_VIDEO, this)
+                    }
+                    delay(250)
+                    val resultIntent = Intent().apply {
+                        putExtra(PRACTISE_OBJECT, chatModel)
+                    }
+                    setResult(RESULT_OK, resultIntent)
+                    finishAndRemoveTask()
                 }
-                setResult(RESULT_OK, resultIntent)
-                finishAndRemoveTask()
+
             } else {
                 binding.progressLayout.visibility = GONE
             }
@@ -543,7 +552,7 @@ class PractiseSubmitActivity : CoreJoshActivity() {
                             filePath = practiseEngagement?.localPath
                             binding.submitPractiseSeekbar.max =
                                 Utils.getDurationOfMedia(this@PractiseSubmitActivity, filePath!!)
-                                    ?.toInt()?:0
+                                    ?.toInt() ?: 0
                         } else {
                             if (practiseEngagement?.duration != null) {
                                 binding.submitPractiseSeekbar.max = practiseEngagement.duration
@@ -823,7 +832,7 @@ class PractiseSubmitActivity : CoreJoshActivity() {
     private fun audioAttachmentInit() {
         binding.practiseSubmitLayout.visibility = VISIBLE
         binding.submitAudioViewContainer.visibility = VISIBLE
-        binding.submitPractiseSeekbar.max = Utils.getDurationOfMedia(this, filePath!!)?.toInt()?:0
+        binding.submitPractiseSeekbar.max = Utils.getDurationOfMedia(this, filePath!!)?.toInt() ?: 0
         enableSubmitButton()
         scrollToEnd()
     }
