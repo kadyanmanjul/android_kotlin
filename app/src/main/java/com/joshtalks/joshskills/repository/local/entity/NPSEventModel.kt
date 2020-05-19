@@ -1,37 +1,67 @@
-package com.joshtalks.joshskills.repository.local.model.nps
+package com.joshtalks.joshskills.repository.local.entity
 
 
 import android.os.Parcelable
+import androidx.room.*
+import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.dateStartOfDay
 import kotlinx.android.parcel.Parcelize
 import java.lang.reflect.Type
+import java.util.*
 
 const val ALL_NPS_STATE = "_all_nps_state"
 const val CURRENT_NPS_STATE = "_current_nps_state"
 
 @Parcelize
+@Entity(
+    tableName = "nps_event_table",
+    primaryKeys = ["day", "event_id", "event_name"]
+)
 data class NPSEventModel(
+    @ColumnInfo
     @SerializedName("id")
-    val id: Int,
+    var id: Int = -1,
 
+    @ColumnInfo
     @SerializedName("day")
-    val day: Int,
+    var day: Int = -1,
 
+    @ColumnInfo
     @SerializedName("enable")
-    val enable: Boolean,
+    var enable: Boolean = false,
 
+    @ColumnInfo
     @SerializedName("event")
-    val event: NPSEvent,
+    var event: NPSEvent = NPSEvent.STANDARD_TIME_EVENT,
 
+    @ColumnInfo(name = "event_name")
     @SerializedName("event_name")
-    val eventName: String,
+    var eventName: String = "",
 
-    @SerializedName("filter_by")
-    val filterBy: NPAFilter
+
+    @ColumnInfo(name = "event_id")
+    @Expose var eventId: String = "",
+
+    @ColumnInfo(name = "created_at")
+    @Expose
+    var createdAt: Date = Date()
+
 ) : Parcelable {
+    constructor() : this(
+        id = -1,
+        eventId = "",
+        day = -1,
+        enable = false,
+        event = NPSEvent.STANDARD_TIME_EVENT,
+        eventName = "",
+        createdAt = Date()
+    )
+
 
     companion object {
 
@@ -45,13 +75,9 @@ data class NPSEventModel(
                     NPS_EVENT_MODEL_TYPE_TOKEN
                 )
             } catch (ex: Exception) {
+                ex.printStackTrace()
                 null
             }
-        }
-
-        @JvmStatic
-        fun setNPSList(npsList: List<NPSEventModel>) {
-            PrefManager.put(ALL_NPS_STATE, AppObjectController.gsonMapper.toJson(npsList))
         }
 
         @JvmStatic
@@ -80,20 +106,42 @@ data class NPSEventModel(
             PrefManager.removeKey(CURRENT_NPS_STATE)
         }
     }
+
 }
 
 @Parcelize
 enum class NPSEvent(val type: String) : Parcelable {
+    STANDARD_TIME_EVENT("Standard Time event"),
+    FIRST_CLASS("First Class"),
     PAYMENT_SUCCESS("Payment Success"),
     PAYMENT_FAILED("Payment Failed"),
-    PRACTICE_COMPLETED("Practise completed"),
-    FIRST_CLASS("First Class"),
-    STANDARD_TIME_EVENT("Standard Time event")
+    PRACTICE_COMPLETED("Practice completed"),
+    WATCH_VIDEO("WATCH_VIDEO")
 }
 
-@Parcelize
-enum class NPAFilter(val type: String) : Parcelable {
-    DAY("Day"),
-    EVENT("Event")
+@Dao
+interface NPSEventModelDao {
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertNPSEvent(npsEventModel: NPSEventModel)
+
+    @Query(value = "SELECT count() FROM nps_event_table where event_name= :eventName AND day= :day AND event_id= :eventId ")
+    suspend fun isEventExist(
+        eventName: String,
+        day: Int,
+        eventId: String = EMPTY
+    ): Long
+
+    @Query(value = "SELECT COUNT() FROM nps_event_table where created_at >= :startDate AND created_at <= :endDate")
+    suspend fun getTotalRecords(startDate: Date, endDate: Date): Long
+
+
+    @Transaction
+    suspend fun getTotalCountOfRows(): Long {
+        val startDate = dateStartOfDay()
+        val endDate = Date()
+        return getTotalRecords(startDate, endDate)
+    }
 }
+
 
