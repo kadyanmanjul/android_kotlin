@@ -52,5 +52,6 @@ interface CommonNetworkService {
     @GET("$DIR/feedback/nps/details/")
     suspend fun getQuestionNPSEvent(@Query("event_name") eventName: String): Response<List<NPSQuestionModel>>
 
-
+    @POST("$DIR/feedback/nps/response/")
+    suspend fun submitNPSResponse(@Body npsByUserRequest: NPSByUserRequest): Any
 }
