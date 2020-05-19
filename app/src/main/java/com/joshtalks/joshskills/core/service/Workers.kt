@@ -14,7 +14,10 @@ import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.LogException
 import com.joshtalks.joshskills.core.notification.FCM_TOKEN
+import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.DatabaseUtils
+import com.joshtalks.joshskills.repository.local.entity.NPSEventModel
+import com.joshtalks.joshskills.repository.local.eventbus.NPSEventGenerateEventBus
 import com.joshtalks.joshskills.repository.local.model.*
 import com.joshtalks.joshskills.repository.server.MessageStatusRequest
 import com.joshtalks.joshskills.repository.service.NetworkRequestHelper
@@ -37,6 +40,15 @@ class AppRunRequiredTaskWorker(context: Context, workerParams: WorkerParameters)
         WorkMangerAdmin.readMessageUpdating()
         WorkMangerAdmin.mappingGIDWithMentor()
         WorkMangerAdmin.pushTokenToServer()
+        AppObjectController.getFirebaseRemoteConfig().fetchAndActivate().addOnCompleteListener {
+            val npsEvent =
+                AppObjectController.getFirebaseRemoteConfig().getString("NPS_EVENT_LIST")
+            NPSEventModel.setNPSList(npsEvent)
+        }.addOnFailureListener { exception ->
+            exception.printStackTrace()
+        }
+
+
         return Result.success()
     }
 }
@@ -537,6 +549,67 @@ class FeedbackStatusForQuestionWorker(
             ex.printStackTrace()
         }
         return Result.failure()
+    }
+}
+
+class NPAQuestionViaEventWorker(
+    context: Context,
+    private var workerParams: WorkerParameters
+) :
+    CoroutineWorker(context, workerParams) {
+    override suspend fun doWork(): Result {
+        try {
+            val event = workerParams.inputData.getString("event")
+            if (event.isNullOrEmpty().not()) {
+                val response =
+                    AppObjectController.commonNetworkService.getQuestionNPSEvent(event!!)
+                if (response.isSuccessful) {
+                    val outputData = workDataOf(
+                        "nps_question_list" to AppObjectController.gsonMapperForLocal.toJson(
+                            response.body()
+                        )
+                    )
+                    return Result.success(outputData)
+                }
+            }
+
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+        }
+        return Result.failure()
+    }
+}
+
+class DeterminedNPSEvent(context: Context, private var workerParams: WorkerParameters) :
+    CoroutineWorker(context, workerParams) {
+    override suspend fun doWork(): Result {
+        try {
+            val conversationId = workerParams.inputData.getString("id") ?: EMPTY
+            var day: Int = workerParams.inputData.getInt("day", -1)
+            if (day < 0) {
+                val time = PrefManager.getLongValue(LOGIN_ON)
+                if (time > 0) {
+                    val temp = Utils.diffFromToday(Date(time))
+                    day = if (temp == 0) {
+                        -1
+                    } else {
+                        temp
+                    }
+                }
+            }
+            NPSEventModel.getAllNpaList()?.filter { it.enable }
+                ?.find { it.day == day }?.run {
+                    val exist = AppObjectController.appDatabase.npsEventModelDao()
+                        .isEventExist(this.eventName, this.day, conversationId)
+                    if (exist == 0L) {
+                        NPSEventModel.setCurrentNPA(this.event)
+                        RxBus2.publish(NPSEventGenerateEventBus())
+                    }
+                }
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+        }
+        return Result.success()
     }
 }
 
