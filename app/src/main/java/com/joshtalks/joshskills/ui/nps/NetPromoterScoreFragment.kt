@@ -16,14 +16,13 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.ApiCallStatus
-import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.custom_ui.decorator.LayoutMarginDecoration
-import com.joshtalks.joshskills.core.hideKeyboard
 import com.joshtalks.joshskills.databinding.FragmentNetPromotorScoreBinding
 import com.joshtalks.joshskills.repository.local.entity.NPSEventModel
+import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.local.model.nps.NPSQuestionModel
 import com.vanniktech.emoji.Utils
@@ -152,6 +151,8 @@ class NetPromoterScoreFragment : BottomSheetDialogFragment(),
                                 "Feedback filled",
                                 binding.editText.text?.isNotEmpty() ?: false
                             )
+                            .addParam("User gaid", PrefManager.getStringValue(USER_UNIQUE_ID))
+                            .addParam("Mentor id", Mentor.getInstance().getId())
                             .push()
                     }
                 }
