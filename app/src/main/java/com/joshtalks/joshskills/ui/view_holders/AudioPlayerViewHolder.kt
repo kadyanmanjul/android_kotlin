@@ -114,7 +114,7 @@ class AudioPlayerViewHolder(activityRef: WeakReference<FragmentActivity>, messag
     private lateinit var appAnalytics: AppAnalytics
     private var duration: Int = 0
     private val compositeDisposable = CompositeDisposable()
-    private var eta = 0L
+    private var eta = System.currentTimeMillis()
 
 
     private var downloadListener = object : FetchListener {
@@ -128,6 +128,8 @@ class AudioPlayerViewHolder(activityRef: WeakReference<FragmentActivity>, messag
 
         override fun onCompleted(download: Download) {
             eta = System.currentTimeMillis() - eta
+            if (eta >= 10000000)
+                eta = 500
             appAnalytics.addParam(AnalyticsEvent.TIME_TAKEN_DOWNLOAD.NAME, eta)
             appAnalytics.addParam(AnalyticsEvent.AUDIO_DOWNLOAD_STATUS.NAME, "Completed")
             appAnalytics.addParam("ChatId", message.chatId).push()
@@ -137,8 +139,6 @@ class AudioPlayerViewHolder(activityRef: WeakReference<FragmentActivity>, messag
                     RxBus2.publish(DownloadCompletedEventBus(audioPlayerViewHolder, message))
                 }
             }
-
-
         }
 
         override fun onDeleted(download: Download) {
@@ -186,7 +186,6 @@ class AudioPlayerViewHolder(activityRef: WeakReference<FragmentActivity>, messag
             downloadBlocks: List<DownloadBlock>,
             totalBlocks: Int
         ) {
-            eta = System.currentTimeMillis()
         }
 
         override fun onWaitingNetwork(download: Download) {

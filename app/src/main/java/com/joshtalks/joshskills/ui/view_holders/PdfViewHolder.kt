@@ -36,6 +36,7 @@ import com.tonyodev.fetch2core.DownloadBlock
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import java.lang.ref.WeakReference
 
 @Layout(R.layout.pdf_view_holder)
@@ -90,6 +91,9 @@ class PdfViewHolder(activityRef: WeakReference<FragmentActivity>, message: ChatM
 
         override fun onCompleted(download: Download) {
             DownloadUtils.removeCallbackListener(download.tag)
+            eta = System.currentTimeMillis() - eta
+            if (eta >= 10000000)
+                eta = 500
             appAnalytics.addParam(AnalyticsEvent.TIME_TAKEN_DOWNLOAD.NAME, eta)
             appAnalytics.addParam(AnalyticsEvent.PDF_DOWNLOAD_STATUS.NAME, "Completed").push()
             appAnalytics.addParam("ChatId", message.chatId).push()
@@ -149,6 +153,7 @@ class PdfViewHolder(activityRef: WeakReference<FragmentActivity>, message: ChatM
             totalBlocks: Int
         ) {
             eta = System.currentTimeMillis()
+            Timber.tag("ETA").e("ETA STArted $eta")
 
         }
 

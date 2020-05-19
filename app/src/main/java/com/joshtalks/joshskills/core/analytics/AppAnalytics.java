@@ -82,7 +82,6 @@ public class AppAnalytics {
     }
 
     private static void updateFlurryUser() {
-        Timber.tag("Furry").d("updateFlurryUser() called");
         User user = User.getInstance();
         Mentor mentor = Mentor.getInstance();
         FlurryAgent.setUserId(mentor.getId());
@@ -99,6 +98,7 @@ public class AppAnalytics {
         list.add(user.getUserType());
         list.add(user.getGender());
         FlurryAgent.UserProperties.set("JoshSkills.User", list);
+        Timber.tag("Furry").d("updateFlurryUser() called " + list + " " + user.toString());
 
 
     }
@@ -162,9 +162,10 @@ public class AppAnalytics {
     }
 
     public AppAnalytics addUserDetails() {
-        if (!Objects.requireNonNull(User.getInstance().getUsername()).isEmpty())
-            parameters.put(AnalyticsEvent.USER_NAME.getNAME(), User.getInstance().getUsername());
-        if (Objects.requireNonNull(User.getInstance().getEmail()).isEmpty())
+        if (!User.getInstance().getFirstName().isEmpty())
+            parameters.put(AnalyticsEvent.USER_NAME.getNAME(), User.getInstance().getFirstName());
+
+        if (!User.getInstance().getEmail().isEmpty())
             parameters.put(AnalyticsEvent.USER_EMAIL.getNAME(), User.getInstance().getEmail());
         return this;
     }

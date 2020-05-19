@@ -79,7 +79,9 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-
+        appAnalytics = AppAnalytics.create(AnalyticsEvent.VIDEO_WATCH_ACTIVITY.NAME)
+            .addBasicParam()
+            .addUserDetails()
         //TODO
         AppAnalytics.create(AnalyticsEvent.VIDEO_WATCH_ACTIVITY.NAME).push()
         super.onCreate(savedInstanceState)
@@ -121,14 +123,17 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener {
         binding.videoPlayer.setUrl(videoUrl)
         binding.videoPlayer.playVideo()
 
-        appAnalytics = AppAnalytics.create(AnalyticsEvent.VIDEO_WATCH_ACTIVITY.NAME)
-            .addBasicParam()
-            .addUserDetails()
-            .addParam(AnalyticsEvent.COURSE_NAME.NAME, binding.textMessageTitle.text.toString())
+
         chatObject?.let {
             appAnalytics.addParam(AnalyticsEvent.VIDEO_ID.NAME, it.chatId)
 
         }
+
+        appAnalytics.addParam(
+            AnalyticsEvent.COURSE_NAME.NAME,
+            binding.textMessageTitle.text.toString()
+        )
+
     }
 
 
