@@ -3,6 +3,7 @@ package com.joshtalks.joshskills.repository.local.entity
 import android.os.Parcelable
 import androidx.room.*
 import com.google.gson.annotations.Expose
+import com.joshtalks.joshskills.core.dateStartOfDay
 import kotlinx.android.parcel.Parcelize
 import java.util.*
 
@@ -25,8 +26,14 @@ interface FeedbackEngageModelDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertFeedbackEngage(feedbackEngageModel: FeedbackEngageModel)
 
-    @Query(value = "SELECT COUNT(id) FROM feedback_engage where created_at < date('now')")
-    suspend fun getTotalCountOfRows(): Long
+    @Query(value = "SELECT COUNT() FROM feedback_engage where created_at >= :startDate AND created_at <= :endDate")
+    suspend fun getTotalRecords(startDate: Date, endDate: Date): Long
 
 
+    @Transaction
+    suspend fun getTotalCountOfRows(): Long {
+        val startDate = dateStartOfDay()
+        val endDate = Date()
+        return getTotalRecords(startDate, endDate)
+    }
 }
