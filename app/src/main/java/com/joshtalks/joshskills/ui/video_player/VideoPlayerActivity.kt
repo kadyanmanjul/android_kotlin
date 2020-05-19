@@ -16,10 +16,12 @@ import com.joshtalks.joshskills.core.CountUpTimer
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
+import com.joshtalks.joshskills.core.service.WorkMangerAdmin
 import com.joshtalks.joshskills.core.service.video_download.VideoDownloadController
 import com.joshtalks.joshskills.core.videoplayer.VideoPlayerEventListener
 import com.joshtalks.joshskills.databinding.ActivityVideoPlayer1Binding
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
+import com.joshtalks.joshskills.repository.local.entity.NPSEvent
 import com.joshtalks.joshskills.repository.local.entity.VideoEngage
 import com.joshtalks.joshskills.repository.server.engage.Graph
 import com.joshtalks.joshskills.repository.service.EngagementNetworkHelper
@@ -93,6 +95,12 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener {
             chatObject = intent.getParcelableExtra(VIDEO_OBJECT) as ChatModel
             videoId = chatObject?.question?.videoList?.getOrNull(0)?.id
             feedbackEngagementStatus(chatObject?.question)
+            chatObject?.question?.interval?.let {
+                WorkMangerAdmin.determineNPAEvent(
+                    NPSEvent.WATCH_VIDEO,
+                    it, chatObject?.question?.questionId
+                )
+            }
 
             if (chatObject?.url != null) {
                 if (chatObject?.downloadedLocalPath.isNullOrEmpty()) {
@@ -233,7 +241,7 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener {
         graph = null
     }
 
-    fun setResult() {
+    private fun setResult() {
         val resultIntent = Intent()
         chatObject?.run {
             resultIntent.putExtra(VIDEO_OBJECT, this)
