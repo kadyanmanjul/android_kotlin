@@ -62,6 +62,10 @@ class LauncherActivity : CoreJoshActivity() {
                     val testId =
                         jsonParms.getString(Defines.Jsonkey.AndroidDeepLinkPath.key)
                     WorkMangerAdmin.registerUserGIDWithTestId(testId)
+                    val referralCode =
+                        if (jsonParms.has(Defines.Jsonkey.ReferralCode.key)) jsonParms.getString(
+                            Defines.Jsonkey.ReferralCode.key
+                        ) else null
                     AppAnalytics.create(AnalyticsEvent.APP_INSTALL_WITH_DEEP_LINK.NAME)
                         .addParam(
                             AnalyticsEvent.APP_VERSION_CODE.NAME,
@@ -79,7 +83,10 @@ class LauncherActivity : CoreJoshActivity() {
                             AnalyticsEvent.SOURCE.NAME,
                             InstallReferrerModel.getPrefObject()?.utmSource ?: EMPTY
                         )
-
+                        .addParam(
+                            AnalyticsEvent.REFERRAL_CODE.NAME,
+                            referralCode
+                        )
                         .push()
                     startActivity(
                         Intent(
