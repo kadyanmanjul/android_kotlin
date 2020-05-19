@@ -3,7 +3,7 @@ package com.joshtalks.joshskills.core.analytics
 enum class AnalyticsEvent(val NAME: String) {
     //Common
     APP_INSTALL("App Install V3"),
-    APP_INSTALL_WITH_DEEP_LINK("App Install With Deep Link V3"),
+    APP_INSTALL_BY_REFERRAL("Install By Referral V3"),
     APP_VERSION_CODE("App version V3"),
 
     //parameters

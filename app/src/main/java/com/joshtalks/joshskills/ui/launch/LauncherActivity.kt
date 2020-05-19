@@ -66,7 +66,7 @@ class LauncherActivity : CoreJoshActivity() {
                         if (jsonParms.has(Defines.Jsonkey.ReferralCode.key)) jsonParms.getString(
                             Defines.Jsonkey.ReferralCode.key
                         ) else null
-                    AppAnalytics.create(AnalyticsEvent.APP_INSTALL_WITH_DEEP_LINK.NAME)
+                    AppAnalytics.create(AnalyticsEvent.APP_INSTALL_BY_REFERRAL.NAME)
                         .addParam(
                             AnalyticsEvent.APP_VERSION_CODE.NAME,
                             BuildConfig.VERSION_NAME
