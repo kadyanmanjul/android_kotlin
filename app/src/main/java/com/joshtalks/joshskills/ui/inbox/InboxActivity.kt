@@ -36,6 +36,7 @@ import com.joshtalks.joshskills.core.inapp_update.InAppUpdateStatus
 import com.joshtalks.joshskills.core.service.WorkMangerAdmin
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.ExploreCourseEventBus
+import com.joshtalks.joshskills.repository.local.eventbus.NPSEventGenerateEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.OpenCourseEventBus
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.local.model.ACTION_UPSELLING_POPUP
@@ -136,6 +137,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
             RxBus2.publish(ExploreCourseEventBus())
         }
         visibleShareEarn()
+
     }
 
     private fun workInBackground() {
@@ -143,6 +145,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
             processIntent(intent)
             delay(1000)
             locationFetch()
+            WorkMangerAdmin.determineNPAEvent()
         }
     }
 
@@ -186,7 +189,6 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
                     )
                 }
             }
-
         }
     }
 
@@ -254,6 +256,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
     private fun addObserver() {
         compositeDisposable.add(
             RxBus2.listen(OpenCourseEventBus::class.java)
+                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
                     ConversationActivity.startConversionActivity(this, it.inboxEntity)
@@ -268,6 +271,13 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
             .subscribe {
                 openCourseExplorer()
             })
+        compositeDisposable.add(RxBus2.listen(NPSEventGenerateEventBus::class.java)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                showNetPromoterScoreDialog()
+            })
+
     }
 
     private fun openCourseExplorer() {
@@ -361,6 +371,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         Runtime.getRuntime().gc()
         addObserver()
         viewModel.getRegisterCourses()
+        showNetPromoterScoreDialog()
     }
 
     override fun onDestroy() {
