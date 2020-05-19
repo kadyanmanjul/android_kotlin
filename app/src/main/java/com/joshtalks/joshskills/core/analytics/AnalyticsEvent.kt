@@ -282,7 +282,7 @@ enum class AnalyticsEvent(val NAME: String) {
     VIDEO_SUBMITTED("Video Submitted V3"),
     TEXT_SUBMITTED("Text Submitted V3"),
     DOCUMENT_SUBMITTED("Document Submitted V3"),
-    REFERRAL_SELECTED("Referral Selected V3"),
+    REFER_BUTTON_CLICKED("Refer Button Clicked V3"),
     CODE_COPIED("Code Copied V3"),
     SHARE_ON_WHATSAPP("Share On Whatsapp V3"),
     SHARE_ON_ALL("Share On All V3"),
