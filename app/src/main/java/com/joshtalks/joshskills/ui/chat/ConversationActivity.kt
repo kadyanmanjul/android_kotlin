@@ -1503,12 +1503,12 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
         uiHandler.removeCallbacksAndMessages(null)
         window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         AppObjectController.uiHandler.removeCallbacksAndMessages(null)
-
     }
 
     override fun onDestroy() {
         super.onDestroy()
         AppObjectController.currentPlayingAudioObject = null
+        NPSEventModel.removeCurrentNPA()
     }
 
     override fun onBackPressed() {
