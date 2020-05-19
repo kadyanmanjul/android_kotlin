@@ -663,14 +663,10 @@ object Utils {
 
     }
 
-    fun compareDateToday(compareDay: Date, cDay: Int): Pair<Boolean, Int> {
+    fun diffFromToday(compareDay: Date): Int {
         val todayDate = Date()
         val diff = todayDate.time - compareDay.time
-        val daysDiff = TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS).toInt()
-        if (daysDiff == cDay) {
-            return Pair(true, cDay)
-        }
-        return Pair(false, daysDiff)
+        return TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS).toInt()
     }
 
 
@@ -767,4 +763,13 @@ fun alphaAnimation(view: View) {
     animation.repeatCount = 12
     animation.repeatMode = Animation.REVERSE
     view.startAnimation(animation)
+}
+
+fun dateStartOfDay(): Date {
+    val c = Calendar.getInstance()
+    c[Calendar.HOUR_OF_DAY] = 0
+    c[Calendar.MINUTE] = 0
+    c[Calendar.SECOND] = 0
+    c[Calendar.MILLISECOND] = 0
+    return c.time
 }
