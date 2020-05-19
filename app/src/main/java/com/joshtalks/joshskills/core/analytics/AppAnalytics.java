@@ -92,7 +92,7 @@ public class AppAnalytics {
 
         //User Properties
         List<String> list = new ArrayList<>();
-        list.add(user.getUsername());
+        list.add(user.getFirstName());
         list.add(mentor.getId());
         list.add(user.getPhoneNumber());
         list.add(user.getDateOfBirth());
