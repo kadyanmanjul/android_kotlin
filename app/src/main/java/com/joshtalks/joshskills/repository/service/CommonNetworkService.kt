@@ -2,6 +2,7 @@ package com.joshtalks.joshskills.repository.service
 
 import com.joshtalks.joshskills.repository.local.model.GaIDMentorModel
 import com.joshtalks.joshskills.repository.local.model.RequestRegisterGId
+import com.joshtalks.joshskills.repository.local.model.nps.NPSQuestionModel
 import com.joshtalks.joshskills.repository.server.*
 import com.joshtalks.joshskills.repository.server.feedback.FeedbackStatusResponse
 import com.joshtalks.joshskills.repository.server.feedback.RatingDetails
@@ -17,10 +18,8 @@ interface CommonNetworkService {
     @GET("$DIR/support/category/")
     suspend fun getHelpCategory(): List<TypeOfHelpModel>
 
-
     @POST("$DIR/support/complaint/")
     suspend fun submitComplaint(@Body requestComplaint: RequestComplaint): ComplaintResponse
-
 
     @POST("$DIR/mentor/gaid/")
     fun registerGAIdAsync(@Body requestRegisterGId: RequestRegisterGId): Deferred<RequestRegisterGId>
@@ -38,7 +37,6 @@ interface CommonNetworkService {
     @POST("$DIR/payment/verify/")
     suspend fun verifyPayment(@Body params: Map<String, String>): Any
 
-
     @POST("$DIR/course/certificate/generate/")
     suspend fun certificateGenerate(@Body requestCertificateGenerate: RequestCertificateGenerate): Response<CertificateDetail>
 
@@ -48,9 +46,11 @@ interface CommonNetworkService {
     @POST("$DIR/feedback/response/")
     suspend fun postUserFeedback(@Body userFeedbackRequest: UserFeedbackRequest): Response<Any>
 
-
     @GET("$DIR/feedback/")
     suspend fun getQuestionFeedbackStatus(@Query("question_id") id: String): Response<FeedbackStatusResponse>
+
+    @GET("$DIR/feedback/nps/details/")
+    suspend fun getQuestionNPSEvent(@Query("event_name") eventName: String): Response<List<NPSQuestionModel>>
 
 
 }
