@@ -47,7 +47,7 @@
     <string name="track_number">Track</string>
     <string name="play_button_description">Play button</string>
     <string name="disclaimer">Disclaimer:This message will be shared directly with the Josh Talks Headquarters and will not be read by any intermediaries of Josh Skills, the course teacher or any sales or customer care executive</string>
-
+    <string name="continue_label">Continue</string>
     <string name="message_size_limit">Message size limit exceeded</string>
 
     <string name="unread_message" formatted="false">%s UNREAD MESSAGES</string>
@@ -241,4 +241,10 @@
     <string name="allow">Allow</string>
     <string name="do_not_ask_again">Dobara na pooche</string>
 
+
+    <string name="skip">Skip</string>
+    <string name="bilkul_nahi">Bilkul nahi</string>
+    <string name="abhi_shuru_karein">Abhi shuru karein</string>
+    <string name="hint_apni_baat">Apni baat yahan likhe</string>
+    <string name="npr_thank_you">Thank you \n for your feedback</string>
 </resources>
