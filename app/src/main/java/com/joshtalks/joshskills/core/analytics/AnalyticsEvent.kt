@@ -124,6 +124,8 @@ enum class AnalyticsEvent(val NAME: String) {
     SHOWN_COURSE_PRICE("Shown course price V3"),
     COURSE_NAME("Course Name V3"),
     COURSE_ID("Course ID V3"),
+    COURSE_DURATION("Course Duration V3"),
+    CONVERSATION_ID("Conversation ID V3"),
     BUY_NOW_SELECTED("Buy Now Selected V3"),
     PAYMENT_DIALOG("Payment Dialog V3"),
     COUPON_SELECTED("Coupon Selected V3"),

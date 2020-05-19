@@ -254,7 +254,19 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
                 .subscribe({
                     // remove later if not required
                     AppAnalytics.create(AnalyticsEvent.COURSE_SELECTED.NAME)
-                        .addParam("course_id", it.inboxEntity.conversation_id).push()
+                        .addBasicParam()
+                        .addUserDetails()
+                        .addParam(
+                            AnalyticsEvent.CONVERSATION_ID.NAME,
+                            it.inboxEntity.conversation_id
+                        )
+                        .addParam(AnalyticsEvent.COURSE_NAME.NAME, it.inboxEntity.course_name)
+                        .addParam(AnalyticsEvent.COURSE_ID.NAME, it.inboxEntity.courseId)
+                        .addParam(
+                            AnalyticsEvent.COURSE_DURATION.NAME,
+                            it.inboxEntity.duration?.toString() ?: EMPTY
+                        )
+                        .push()
                     ConversationActivity.startConversionActivity(this, it.inboxEntity)
                 }, {
                     it.printStackTrace()
