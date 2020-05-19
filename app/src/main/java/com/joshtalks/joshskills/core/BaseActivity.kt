@@ -24,11 +24,10 @@ import com.joshtalks.joshskills.core.analytics.LogException
 import com.joshtalks.joshskills.core.notification.HAS_NOTIFICATION
 import com.joshtalks.joshskills.core.notification.NOTIFICATION_ID
 import com.joshtalks.joshskills.core.service.WorkMangerAdmin
+import com.joshtalks.joshskills.repository.local.entity.NPSEvent
+import com.joshtalks.joshskills.repository.local.entity.NPSEventModel
 import com.joshtalks.joshskills.repository.local.entity.Question
 import com.joshtalks.joshskills.repository.local.model.User
-import com.joshtalks.joshskills.repository.local.model.nps.NPAFilter
-import com.joshtalks.joshskills.repository.local.model.nps.NPSEvent
-import com.joshtalks.joshskills.repository.local.model.nps.NPSEventModel
 import com.joshtalks.joshskills.repository.local.model.nps.NPSQuestionModel
 import com.joshtalks.joshskills.repository.service.EngagementNetworkHelper
 import com.joshtalks.joshskills.ui.chat.ConversationActivity
@@ -49,6 +48,7 @@ import io.github.inflationx.viewpump.ViewPumpContextWrapper
 import io.sentry.core.Sentry
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
 const val HELP_ACTIVITY_REQUEST_CODE = 9010
@@ -223,63 +223,78 @@ abstract class BaseActivity : AppCompatActivity() {
         }
     }
 
+    protected fun showNetPromoterScoreDialog(nps: NPSEvent? = null) {
+        CoroutineScope(Dispatchers.IO).launch(Dispatchers.IO) {
+            canShowNPSDialog(nps)
+        }
+    }
 
-    protected fun showNPSDialog(nps: NPSEvent? = null, courseId: String = EMPTY): Boolean {
-        CoroutineScope(Dispatchers.IO).launch {
+    protected suspend fun canShowNPSDialog(nps: NPSEvent? = null, id: String = EMPTY): Boolean {
+        return CoroutineScope(Dispatchers.IO).async(Dispatchers.IO) {
             var currentState = nps
             if (currentState == null) {
                 currentState = NPSEventModel.getCurrentNPA()
             }
 
             if (currentState == null) {
-                return@launch
+                return@async false
+            }
+            if (!(currentState == NPSEvent.PAYMENT_SUCCESS || currentState == NPSEvent.PAYMENT_FAILED)) {
+                val minNpsInADay = AppObjectController.getFirebaseRemoteConfig()
+                    .getDouble("MINIMUM_NPS_IN_A_DAY_COUNT").toInt()
+                val totalCountToday =
+                    AppObjectController.appDatabase.npsEventModelDao().getTotalCountOfRows()
+                if (totalCountToday >= minNpsInADay) {
+                    return@async false
+                }
             }
 
-            val list =
+            val npsEventModel =
                 NPSEventModel.getAllNpaList()?.filter { it.enable }
-            val npsEventModel = list?.find { it.event == currentState }
-            npsEventModel?.let { npsEventModelInternal ->
-                if (npsEventModelInternal.filterBy == NPAFilter.DAY) {
-                    val date =
-                        AppObjectController.appDatabase.courseDao().getCourseCreatedDate(courseId)
-                    val (flag, _) = Utils.compareDateToday(date, npsEventModelInternal.day)
-                    if (flag.not()) {
-                        return@launch
-                    }
-                }
+                    ?.find { it.event == currentState }
+                    ?: return@async false
+            npsEventModel.eventId = id
+            getQuestionForNPS(npsEventModel)
+            return@async true
+        }.await()
 
-                CoroutineScope(Dispatchers.Main).launch {
-                    WorkManager.getInstance(applicationContext)
-                        .getWorkInfoByIdLiveData(
-                            WorkMangerAdmin.getQuestionNPA(
-                                npsEventModelInternal.eventName
-                            )
-                        )
-                        .observe(this@BaseActivity, Observer {
-                            try {
-                                if (it != null && it.state == WorkInfo.State.SUCCEEDED) {
-                                    val output = it.outputData.getString("nps_question_list")
-                                    if (output.isNullOrEmpty().not()) {
-                                        NPSEventModel.setCurrentNPA(null)
-                                        val questionList =
-                                            NPSQuestionModel.getNPSQuestionModelList(output!!)
-                                        if (questionList.isNullOrEmpty().not()) {
-                                            showNPSFragment(questionList!!)
-                                        }
-                                    }
-                                }
-                            } catch (ex: Exception) {
-                                ex.printStackTrace()
-                            }
-                        })
-                }
-            }
-        }
-        return true
     }
 
-    private fun showNPSFragment(questionList: List<NPSQuestionModel>) {
-        val bottomSheetFragment = NetPromoterScoreFragment.newInstance(questionList)
+    private fun getQuestionForNPS(
+        eventModel: NPSEventModel
+    ) {
+        CoroutineScope(Dispatchers.Main).launch {
+            WorkManager.getInstance(applicationContext)
+                .getWorkInfoByIdLiveData(WorkMangerAdmin.getQuestionNPA(eventModel.eventName))
+                .observe(this@BaseActivity, Observer {
+                    try {
+                        if (it != null && it.state == WorkInfo.State.SUCCEEDED) {
+                            val output = it.outputData.getString("nps_question_list")
+                            if (output.isNullOrEmpty().not()) {
+                                NPSEventModel.removeCurrentNPA()
+                                val questionList =
+                                    NPSQuestionModel.getNPSQuestionModelList(output!!)
+                                if (questionList.isNullOrEmpty().not()) {
+                                    showNPSFragment(eventModel, questionList!!)
+                                    CoroutineScope(Dispatchers.IO).launch(Dispatchers.IO) {
+                                        AppObjectController.appDatabase.npsEventModelDao()
+                                            .insertNPSEvent(eventModel)
+                                    }
+                                }
+                            }
+                        }
+                    } catch (ex: Exception) {
+                        ex.printStackTrace()
+                    }
+                })
+        }
+    }
+
+    private fun showNPSFragment(
+        npsModel: NPSEventModel,
+        questionList: List<NPSQuestionModel>
+    ) {
+        val bottomSheetFragment = NetPromoterScoreFragment.newInstance(npsModel, questionList)
         bottomSheetFragment.show(supportFragmentManager, bottomSheetFragment.tag)
 
     }
