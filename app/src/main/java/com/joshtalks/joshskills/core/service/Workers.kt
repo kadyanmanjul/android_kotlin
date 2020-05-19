@@ -20,6 +20,7 @@ import com.joshtalks.joshskills.repository.local.entity.NPSEventModel
 import com.joshtalks.joshskills.repository.local.eventbus.NPSEventGenerateEventBus
 import com.joshtalks.joshskills.repository.local.model.*
 import com.joshtalks.joshskills.repository.server.MessageStatusRequest
+import com.joshtalks.joshskills.repository.server.UpdateDeviceRequest
 import com.joshtalks.joshskills.repository.service.NetworkRequestHelper
 import com.joshtalks.joshskills.repository.service.SyncChatService
 import io.branch.referral.Branch
@@ -38,8 +39,6 @@ class AppRunRequiredTaskWorker(context: Context, workerParams: WorkerParameters)
         AppObjectController.getFetchObject().awaitFinish()
         WorkMangerAdmin.deviceIdGenerateWorker()
         WorkMangerAdmin.readMessageUpdating()
-        WorkMangerAdmin.mappingGIDWithMentor()
-        WorkMangerAdmin.pushTokenToServer()
         AppObjectController.getFirebaseRemoteConfig().fetchAndActivate().addOnCompleteListener {
             val npsEvent =
                 AppObjectController.getFirebaseRemoteConfig().getString("NPS_EVENT_LIST")
@@ -47,8 +46,6 @@ class AppRunRequiredTaskWorker(context: Context, workerParams: WorkerParameters)
         }.addOnFailureListener { exception ->
             exception.printStackTrace()
         }
-
-
         return Result.success()
     }
 }
@@ -613,13 +610,27 @@ class DeterminedNPSEvent(context: Context, private var workerParams: WorkerParam
     }
 }
 
+class UpdateDeviceDetailsWorker(context: Context, workerParams: WorkerParameters) :
+    CoroutineWorker(context, workerParams) {
+    override suspend fun doWork(): Result {
+        try {
+            if (Mentor.getInstance().hasId()) {
+                AppObjectController.signUpNetworkService.patchDeviceDetails(UpdateDeviceRequest())
+            } else {
+                AppObjectController.signUpNetworkService.postDeviceDetails(UpdateDeviceRequest())
+            }
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+        }
+        return Result.success()
+    }
+}
 
 fun getGoogleAdId(context: Context): String {
     MobileAds.initialize(context)
     val adInfo = AdvertisingIdClient.getAdvertisingIdInfo(context)
     return adInfo.id
 }
-
 
 
 
