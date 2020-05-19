@@ -16,8 +16,8 @@ import java.util.*
 const val DATABASE_NAME = "JoshEnglishDB.db"
 
 @Database(
-    entities = [Course::class, ChatModel::class, Question::class, VideoType::class, AudioType::class, OptionType::class, PdfType::class, ImageType::class, VideoEngage::class, FeedbackEngageModel::class],
-    version = 16,
+    entities = [Course::class, ChatModel::class, Question::class, VideoType::class, AudioType::class, OptionType::class, PdfType::class, ImageType::class, VideoEngage::class, FeedbackEngageModel::class, NPSEventModel::class],
+    version = 17,
     exportSchema = true
 )
 @TypeConverters(
@@ -29,7 +29,8 @@ const val DATABASE_NAME = "JoshEnglishDB.db"
     MessageStatusTypeConverters::class,
     ExpectedEngageTypeConverter::class,
     ConvectorForEngagement::class,
-    ConvectorForGraph::class
+    ConvectorForGraph::class,
+    ConvectorForNPSEvent::class
 
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -61,7 +62,8 @@ abstract class AppDatabase : RoomDatabase() {
                                 MIGRATION_11_12,
                                 MIGRATION_12_13,
                                 MIGRATION_13_14,
-                                MIGRATION_14_16
+                                MIGRATION_14_16,
+                                MIGRATION_16_17
                             )
                             .fallbackToDestructiveMigration()
                             .addCallback(sRoomDatabaseCallback)
@@ -185,6 +187,16 @@ abstract class AppDatabase : RoomDatabase() {
                 }
             }
         }
+        private val MIGRATION_16_17: Migration = object : Migration(16, 17) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                try {
+                    database.execSQL("ALTER TABLE question_table ADD COLUMN interval INTEGER NOT NULL DEFAULT -1")
+                    database.execSQL("CREATE TABLE IF NOT EXISTS `nps_event_table` (`id` INTEGER NOT NULL, `day` INTEGER NOT NULL, `enable` INTEGER NOT NULL, `event` TEXT NOT NULL, `event_name` TEXT NOT NULL, `event_id` TEXT NOT NULL, `created_at` INTEGER NOT NULL, PRIMARY KEY(`day`, `event_id`, `event_name`))")
+                } catch (ex: Exception) {
+                    ex.printStackTrace()
+                }
+            }
+        }
 
 
         fun clearDatabase() {
@@ -212,20 +224,21 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun chatDao(): ChatDao
     abstract fun videoEngageDao(): VideoEngageDao
     abstract fun feedbackEngageModelDao(): FeedbackEngageModelDao
+    abstract fun npsEventModelDao(): NPSEventModelDao
 
 }
 
 class MessageTypeConverters {
     @TypeConverter
     fun fromString(value: String?): BASE_MESSAGE_TYPE? {
-        try {
+        return try {
             val matType = object : TypeToken<BASE_MESSAGE_TYPE>() {}.type
-            return AppObjectController.gsonMapper.fromJson<BASE_MESSAGE_TYPE>(
+            AppObjectController.gsonMapper.fromJson(
                 value ?: BASE_MESSAGE_TYPE.TX.name, matType
             )
         } catch (ex: Exception) {
             ex.printStackTrace()
-            return BASE_MESSAGE_TYPE.Q
+            BASE_MESSAGE_TYPE.Q
         }
     }
 
@@ -370,5 +383,20 @@ class ConvectorForGraph {
         return AppObjectController.gsonMapper.fromJson(value, type)
     }
 }
+
+class ConvectorForNPSEvent {
+    @TypeConverter
+    fun fromNPSEvent(value: NPSEvent): String {
+        val type = object : TypeToken<NPSEvent>() {}.type
+        return AppObjectController.gsonMapper.toJson(value, type)
+    }
+
+    @TypeConverter
+    fun toNPSEvent(value: String): NPSEvent {
+        val type = object : TypeToken<NPSEvent>() {}.type
+        return AppObjectController.gsonMapper.fromJson(value, type)
+    }
+}
+
 
 
