@@ -16,6 +16,7 @@ const val SERVER_GID_ID = "server_gid_id"
 const val CERTIFICATE_GENERATE = "_certificate_generate"
 const val RATING_DETAILS_KEY = "_rating_details"
 const val CUSTOM_PERMISSION_ACTION_KEY = "joshskills_custom_permission"
+const val LOGIN_ON = "_login_on"
 
 object PrefManager {
 
