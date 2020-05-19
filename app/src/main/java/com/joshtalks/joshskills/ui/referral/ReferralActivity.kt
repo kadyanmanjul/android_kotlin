@@ -64,6 +64,7 @@ class ReferralActivity : BaseActivity() {
     private var userReferralCode: String = EMPTY
     private var userReferralURL: String = EMPTY
 
+    @ExperimentalUnsignedTypes
     override fun onCreate(savedInstanceState: Bundle?) {
         requestWindowFeature(Window.FEATURE_NO_TITLE)
         window.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
@@ -162,13 +163,15 @@ class ReferralActivity : BaseActivity() {
         val mDetector = GestureDetector(this, object :
             GestureDetector.OnGestureListener {
             override fun onShowPress(e: MotionEvent?) {
+                // Not Required
             }
 
             override fun onSingleTapUp(event: MotionEvent): Boolean {
-                if (event.action == MotionEvent.ACTION_UP) {
-                    if (event.rawX.toUInt() >= ((activityReferralBinding.tvReferralCode.right - activityReferralBinding.tvReferralCode.compoundDrawables[DRAWABLE_RIGHT].bounds.width()).toUInt())) {
-                        copyCodeIntoClipBoard()
-                    }
+                if (
+                    event.action == MotionEvent.ACTION_UP &&
+                    event.rawX.toUInt() >= ((activityReferralBinding.tvReferralCode.right - activityReferralBinding.tvReferralCode.compoundDrawables[DRAWABLE_RIGHT].bounds.width()).toUInt())
+                ) {
+                    copyCodeIntoClipBoard()
                 }
                 return true
             }
@@ -210,6 +213,11 @@ class ReferralActivity : BaseActivity() {
 
     fun inviteOnlyWhatsapp() {
         inviteFriends("com.whatsapp")
+        AppAnalytics
+            .create(AnalyticsEvent.SHARE_ON_WHATSAPP.NAME)
+            .addUserDetails()
+            .addParam(AnalyticsEvent.REFERRAL_CODE.NAME, userReferralCode)
+            .push()
     }
 
     fun inviteFriends(packageString: String? = null) {
@@ -287,7 +295,11 @@ class ReferralActivity : BaseActivity() {
                         try {
                             sendIntent.setPackage(packageString)
                             startActivity(sendIntent)
-                            AppAnalytics.create(AnalyticsEvent.SHARE_ON_WHATSAPP.NAME).push()
+                            AppAnalytics
+                                .create(AnalyticsEvent.SHARE_ON_WHATSAPP.NAME)
+                                .addUserDetails()
+                                .addParam(AnalyticsEvent.REFERRAL_CODE.NAME, userReferralCode)
+                                .push()
                             return true
                         } catch (ex: ActivityNotFoundException) {
                             val shareIntent =
@@ -295,7 +307,11 @@ class ReferralActivity : BaseActivity() {
                             startActivity(shareIntent)
                         }
                     }
-                    AppAnalytics.create(AnalyticsEvent.SHARE_ON_ALL.NAME).push()
+                    AppAnalytics
+                        .create(AnalyticsEvent.SHARE_ON_ALL.NAME)
+                        .addUserDetails()
+                        .addParam(AnalyticsEvent.REFERRAL_CODE.NAME, userReferralCode)
+                        .push()
                     return false
                 }
             }
@@ -334,13 +350,18 @@ class ReferralActivity : BaseActivity() {
         AppObjectController.uiHandler.postDelayed({
             WorkMangerAdmin.referralEventTracker(REFERRAL_EVENT.LONG_PRESS_CODE)
         }, 1200)
-        AppAnalytics.create(AnalyticsEvent.CODE_COPIED.NAME).push()
+        AppAnalytics
+            .create(AnalyticsEvent.CODE_COPIED.NAME)
+            .addUserDetails()
+            .addBasicParam()
+            .addParam(AnalyticsEvent.REFERRAL_CODE.name, userReferralCode)
+            .push()
     }
 
     override fun onBackPressed() {
-        if (intent.hasExtra(FROM_CLASS) ){
+        if (intent.hasExtra(FROM_CLASS)) {
             intent.getStringExtra(FROM_CLASS)?.run {
-                if (this.equals(InboxActivity::class.java.name,ignoreCase = true)){
+                if (this.equals(InboxActivity::class.java.name, ignoreCase = true)) {
                     startActivity(Intent(this@ReferralActivity, InboxActivity::class.java))
                 }
             }
