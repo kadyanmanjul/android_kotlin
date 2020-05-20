@@ -444,4 +444,8 @@ interface CommonNetworkService {
     @GET("$DIR/payment/payment_history")
     suspend fun getTransactionHistory(): List<TransactionHistory>
 
+    @POST("$DIR/support/complaint/")
+    suspend fun submitComplaint(@Body requestComplaint: RequestComplaint): ComplaintResponse
+
+
 }

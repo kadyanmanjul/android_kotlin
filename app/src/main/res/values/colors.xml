@@ -81,4 +81,7 @@
     
     
     <color name="Transparency_white40">#66ffffff</color>
+
+    <color name="font_color">#373737</color>
+
 </resources>

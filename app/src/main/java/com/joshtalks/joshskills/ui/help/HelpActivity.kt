@@ -33,6 +33,7 @@ import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.local.model.User.Companion.getInstance
 import com.joshtalks.joshskills.repository.server.FAQ
 import com.joshtalks.joshskills.repository.server.FAQCategory
+import com.joshtalks.joshskills.repository.server.TypeOfHelpModel
 import com.joshtalks.joshskills.repository.server.help.Action
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -270,16 +271,17 @@ class HelpActivity : CoreJoshActivity() {
                             PrefManager.put(FRESH_CHAT_UNREAD_MESSAGES, 0)
                         }
                         Action.FAQ == it.option.action -> {
-                            appAnalytics.addParam(
-                                AnalyticsEvent.FAQ_SLECTED.NAME,
-                                it.option.action.toString()
-                            )
-                            MixPanelTracker.publishEvent(MixPanelEvent.FAQ).push()
-                            AppAnalytics.create(AnalyticsEvent.FAQ_SLECTED.NAME)
-                                .addBasicParam()
-                                .addUserDetails()
-                                .push()
-                            openFaqCategory()
+//                            appAnalytics.addParam(
+//                                AnalyticsEvent.FAQ_SLECTED.NAME,
+//                                it.option.action.toString()
+//                            )
+//                            MixPanelTracker.publishEvent(MixPanelEvent.FAQ).push()
+//                            AppAnalytics.create(AnalyticsEvent.FAQ_SLECTED.NAME)
+//                                .addBasicParam()
+//                                .addUserDetails()
+//                                .push()
+//                            openFaqCategory()
+                            compliantScreen()
                         }
                         else -> {
                             showToast(getString(R.string.something_went_wrong))
@@ -293,7 +295,8 @@ class HelpActivity : CoreJoshActivity() {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
-                    showFaqFragment(it.selectedCategory, it.categoryList)
+                    compliantScreen()
+                   // showFaqFragment(it.selectedCategory, it.categoryList)
                 })
 
         compositeDisposable.add(
@@ -301,7 +304,8 @@ class HelpActivity : CoreJoshActivity() {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
-                    showFaqDetailsFragment(it)
+                    compliantScreen()
+                    //showFaqDetailsFragment(it)
                 })
     }
 
@@ -335,5 +339,16 @@ class HelpActivity : CoreJoshActivity() {
     override fun onDestroy() {
         AppObjectController.getLocalBroadcastManager().unregisterReceiver(restoreIdReceiver)
         super.onDestroy()
+    }
+
+    private fun compliantScreen() {
+        supportFragmentManager.commit(true) {
+            addToBackStack(ComplaintFragment::class.java.name)
+            replace(
+                R.id.container,
+                ComplaintFragment.newInstance(),
+                ComplaintFragment::class.java.name
+            )
+        }
     }
 }
