@@ -16,6 +16,7 @@ import com.joshtalks.joshskills.core.analytics.LogException
 import com.joshtalks.joshskills.core.notification.FCM_TOKEN
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.DatabaseUtils
+import com.joshtalks.joshskills.repository.local.entity.NPSEvent
 import com.joshtalks.joshskills.repository.local.entity.NPSEventModel
 import com.joshtalks.joshskills.repository.local.eventbus.NPSEventGenerateEventBus
 import com.joshtalks.joshskills.repository.local.model.*
@@ -37,7 +38,6 @@ class AppRunRequiredTaskWorker(context: Context, workerParams: WorkerParameters)
         AppObjectController.facebookEventLogger.flush()
         AppObjectController.firebaseAnalytics.resetAnalyticsData()
         AppObjectController.getFetchObject().awaitFinish()
-        WorkMangerAdmin.deviceIdGenerateWorker()
         WorkMangerAdmin.readMessageUpdating()
         AppObjectController.getFirebaseRemoteConfig().fetchAndActivate().addOnCompleteListener {
             val npsEvent =
@@ -373,7 +373,6 @@ class RefreshFCMTokenWorker(context: Context, workerParams: WorkerParameters) :
                 }
                 task.result?.token?.run {
                     PrefManager.put(FCM_TOKEN, this)
-                    WorkMangerAdmin.pushTokenToServer()
                 }
             })
         return Result.success()
@@ -468,17 +467,19 @@ class UploadFCMTokenOnServer(context: Context, workerParams: WorkerParameters) :
 class WorkerAfterLoginInApp(context: Context, workerParams: WorkerParameters) :
     CoroutineWorker(context, workerParams) {
     override suspend fun doWork(): Result {
+        PrefManager.put(LOGIN_ON, Date().time)
+        return Result.success()
+    }
+}
+
+class WorkerInLandingScreen(context: Context, workerParams: WorkerParameters) :
+    CoroutineWorker(context, workerParams) {
+    override suspend fun doWork(): Result {
         InstallReferralUtil.installReferrer(applicationContext)
         DatabaseUtils.updateUserMessageSeen()
         AppObjectController.clearDownloadMangerCallback()
         AppAnalytics.updateUser()
-        AppObjectController.joshApplication.updateDeviceDetail()
-        AppObjectController.joshApplication.userActive()
-        WorkMangerAdmin.installReferrerWorker()
-        WorkMangerAdmin.getUserReferralCodeWorker()
         SyncChatService.syncChatWithServer()
-        WorkMangerAdmin.syncVideoEngage()
-        WorkMangerAdmin.fetchFeedbackRating()
         return Result.success()
     }
 }
@@ -583,6 +584,12 @@ class DeterminedNPSEvent(context: Context, private var workerParams: WorkerParam
         try {
             val conversationId = workerParams.inputData.getString("id") ?: EMPTY
             var day: Int = workerParams.inputData.getInt("day", -1)
+
+            val event: NPSEvent = AppObjectController.gsonMapperForLocal.fromJson(
+                workerParams.inputData.getString("event"),
+                NPSEvent::class.java
+            )
+
             if (day < 0) {
                 val time = PrefManager.getLongValue(LOGIN_ON)
                 if (time > 0) {
@@ -596,6 +603,9 @@ class DeterminedNPSEvent(context: Context, private var workerParams: WorkerParam
             }
             NPSEventModel.getAllNpaList()?.filter { it.enable }
                 ?.find { it.day == day }?.run {
+                    if (event == NPSEvent.STANDARD_TIME_EVENT && this.day == 0) {
+                        return@run
+                    }
                     val exist = AppObjectController.appDatabase.npsEventModelDao()
                         .isEventExist(this.eventName, this.day, conversationId)
                     if (exist == 0L) {
@@ -615,9 +625,17 @@ class UpdateDeviceDetailsWorker(context: Context, workerParams: WorkerParameters
     override suspend fun doWork(): Result {
         try {
             if (Mentor.getInstance().hasId()) {
-                AppObjectController.signUpNetworkService.patchDeviceDetails(UpdateDeviceRequest())
+                val id = DeviceDetailsResponse.getInstance()?.id!!
+                val details =
+                    AppObjectController.signUpNetworkService.patchDeviceDetails(
+                        id,
+                        UpdateDeviceRequest()
+                    )
+                details.update()
             } else {
-                AppObjectController.signUpNetworkService.postDeviceDetails(UpdateDeviceRequest())
+                val details =
+                    AppObjectController.signUpNetworkService.postDeviceDetails(UpdateDeviceRequest())
+                details.update()
             }
         } catch (ex: Exception) {
             ex.printStackTrace()
@@ -626,12 +644,40 @@ class UpdateDeviceDetailsWorker(context: Context, workerParams: WorkerParameters
     }
 }
 
+class UserActiveWorker(context: Context, workerParams: WorkerParameters) :
+    CoroutineWorker(context, workerParams) {
+    override suspend fun doWork(): Result {
+        try {
+            AppObjectController.signUpNetworkService.userActive(Mentor.getInstance().getId(), Any())
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+        }
+        return Result.success()
+    }
+}
+
+class MergeMentorWithGAIDWorker(context: Context, workerParams: WorkerParameters) :
+    CoroutineWorker(context, workerParams) {
+    override suspend fun doWork(): Result {
+        try {
+            val id = PrefManager.getIntValue(SERVER_GID_ID)
+            if (id == 0) {
+                return Result.success()
+            }
+            val data = mapOf("mentor" to Mentor.getInstance().getId())
+            AppObjectController.chatNetworkService.mergeMentorWithGId(id.toString(), data)
+            PrefManager.removeKey(SERVER_GID_ID)
+        } catch (ex: Throwable) {
+            LogException.catchException(ex)
+        }
+        return Result.success()
+    }
+}
+
+
 fun getGoogleAdId(context: Context): String {
     MobileAds.initialize(context)
     val adInfo = AdvertisingIdClient.getAdvertisingIdInfo(context)
     return adInfo.id
 }
-
-
-
 
