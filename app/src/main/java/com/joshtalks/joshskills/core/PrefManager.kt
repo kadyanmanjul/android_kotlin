@@ -99,7 +99,6 @@ object PrefManager {
 
     fun logoutUser() {
         prefManager.edit().clear().apply()
-        WorkMangerAdmin.appStartWorker()
     }
 
 
