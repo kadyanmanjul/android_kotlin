@@ -179,8 +179,8 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
 
         conversationBinding =
             DataBindingUtil.setContentView(this, R.layout.activity_conversation)
-        initViewModel()
-        conversationBinding.viewmodel = conversationViewModel
+
+        conversationBinding.viewmodel = initViewModel()
         conversationBinding.handler = this
         activityRef = WeakReference(this)
         init()
@@ -212,16 +212,17 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
         super.onNewIntent(mIntent)
     }
 
-    private fun initViewModel() {
+    private fun initViewModel(): ConversationViewModel {
         try {
-            conversationViewModel =
+            this.conversationViewModel =
                 ViewModelProvider(this, UserViewModelFactory(application, inboxEntity)).get(
                     ConversationViewModel::class.java
                 )
-            conversationBinding.viewmodel = conversationViewModel
-            conversationBinding.lifecycleOwner = this
+            this.conversationBinding.viewmodel = conversationViewModel
+            this.conversationBinding.lifecycleOwner = this
         } catch (ex: Exception) {
         }
+        return this.conversationViewModel
         //var pq: SavedStateHandle
     }
 
