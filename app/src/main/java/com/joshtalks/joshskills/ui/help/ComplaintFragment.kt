@@ -137,9 +137,14 @@ class ComplaintFragment : Fragment() {
         })
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        appAnalytics.push()
+    }
 
     fun attachMedia() {
-        PermissionUtils.storageReadAndWritePermission(activity,
+        PermissionUtils.storageReadAndWritePermission(
+            activity,
             object : MultiplePermissionsListener {
                 override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
                     report?.areAllPermissionsGranted()?.let { flag ->

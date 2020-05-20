@@ -732,8 +732,6 @@ class BitVideoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibili
                                 openAudioLanguageTrackOption()
                             }
                             is VideoPlayerOption.PlaybackSpeed -> {
-                                AppAnalytics.create(AnalyticsEvent.VIDEO_MORE.NAME)
-                                    .addParam("btn", "PlayBackSpeed").push()
                                 openPlaybackSpeedOption()
                             }
                             is VideoPlayerOption.Help -> {
@@ -844,6 +842,8 @@ class BitVideoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibili
                 optionOfSpeedLayer,
                 object : PlaybackSpeedAdapter.OnPlaybackSpeedListener {
                     override fun onSelect(playbackSpeed: PlaybackSpeed) {
+                        AppAnalytics.create(AnalyticsEvent.VIDEO_MORE.NAME)
+                            .addParam("btn", "PlayBackSpeed ${playbackSpeed.speed}").push()
                         bottomSheet.onDismiss()
                         dialog.dismiss()
                         onChangePlaybackSpeed(playbackSpeed)
