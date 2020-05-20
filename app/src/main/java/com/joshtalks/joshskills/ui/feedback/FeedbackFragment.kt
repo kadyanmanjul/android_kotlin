@@ -139,14 +139,25 @@ class FeedbackFragment : DialogFragment(), FeedbackOptionAdapter.OnFeedbackItemL
     }
 
     private fun setupRatingOptions(ratingPos: Int) {
-        binding.feedbackRatingInWords.text = ratingDetailsList[ratingPos - 1].infoText
-        val ratingModelList: ArrayList<RatingModel> = arrayListOf()
-        ratingDetailsList[ratingPos - 1].keywordsList.forEach {
-            ratingModelList.add(RatingModel(it, ratingPos, false, enable = true))
+        try {
+            binding.feedbackRatingInWords.text = ratingDetailsList[ratingPos - 1].infoText
+            val ratingModelList: ArrayList<RatingModel> = arrayListOf()
+            ratingDetailsList[ratingPos - 1].keywordsList.forEach {
+                ratingModelList.add(RatingModel(it, ratingPos, false, enable = true))
+            }
+            ratingModelList.add(
+                RatingModel(
+                    "&#9679;&#9679;&#9679;",
+                    ratingPos,
+                    false,
+                    enable = false
+                )
+            )
+            binding.ratingOptionRv.adapter = FeedbackOptionAdapter(this, ratingModelList)
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+            dismissAllowingStateLoss()
         }
-        ratingModelList.add(RatingModel("&#9679;&#9679;&#9679;", ratingPos, false, enable = false))
-        binding.ratingOptionRv.adapter = FeedbackOptionAdapter(this, ratingModelList)
-
     }
 
 
