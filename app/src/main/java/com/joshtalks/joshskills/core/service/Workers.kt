@@ -352,7 +352,7 @@ class RegisterUserGId(context: Context, private val workerParams: WorkerParamete
             PrefManager.put(SERVER_GID_ID, resp.id)
             PrefManager.put(GID_SET_FOR_USER, true)
         } catch (ex: Throwable) {
-            LogException.catchException(ex)
+            //LogException.catchException(ex)
         }
         return Result.success()
     }
@@ -457,7 +457,7 @@ class UploadFCMTokenOnServer(context: Context, workerParams: WorkerParameters) :
                 }
             }
         } catch (ex: Throwable) {
-            LogException.catchException(ex)
+            //  LogException.catchException(ex)
         }
         return Result.success()
     }
@@ -625,14 +625,14 @@ class UpdateDeviceDetailsWorker(context: Context, workerParams: WorkerParameters
     override suspend fun doWork(): Result {
         try {
             if (Mentor.getInstance().hasId()) {
-                val id = DeviceDetailsResponse.getInstance()?.id!!
-                val details =
-                    AppObjectController.signUpNetworkService.patchDeviceDetails(
-                        id,
-                        UpdateDeviceRequest()
-                    )
-                details.update()
-            } else {
+                /*  val id = DeviceDetailsResponse.getInstance()?.id!!
+                  val details =
+                      AppObjectController.signUpNetworkService.patchDeviceDetails(
+                          id,
+                          UpdateDeviceRequest()
+                      )
+                  details.update()
+              } else {*/
                 val details =
                     AppObjectController.signUpNetworkService.postDeviceDetails(UpdateDeviceRequest())
                 details.update()
