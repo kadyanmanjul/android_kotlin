@@ -10,8 +10,53 @@ import java.util.concurrent.TimeUnit
 object WorkMangerAdmin {
 
     fun appStartWorker() {
+
         WorkManager.getInstance(AppObjectController.joshApplication)
-            .enqueue(OneTimeWorkRequestBuilder<AppRunRequiredTaskWorker>().build())
+            .beginWith(
+                mutableListOf(
+                    OneTimeWorkRequestBuilder<AppRunRequiredTaskWorker>().build(),
+                    OneTimeWorkRequestBuilder<RefreshFCMTokenWorker>().build()
+                )
+            )
+            .then(OneTimeWorkRequestBuilder<UniqueIdGenerationWorker>().build())
+            .then(OneTimeWorkRequestBuilder<MappingGaIDWithMentor>().build())
+            .then(
+                mutableListOf(
+                    OneTimeWorkRequestBuilder<UploadFCMTokenOnServer>().build(),
+                    OneTimeWorkRequestBuilder<UpdateDeviceDetailsWorker>().build()
+                )
+            )
+            .enqueue()
+
+    }
+
+    fun requiredTaskAfterLoginComplete() {
+        WorkManager.getInstance(AppObjectController.joshApplication)
+            .beginWith(OneTimeWorkRequestBuilder<WorkerAfterLoginInApp>().build())
+            .then(OneTimeWorkRequestBuilder<MappingGaIDWithMentor>().build())
+            .then(OneTimeWorkRequestBuilder<MergeMentorWithGAIDWorker>().build())
+            .then(
+                mutableListOf(
+                    OneTimeWorkRequestBuilder<UploadFCMTokenOnServer>().build(),
+                    OneTimeWorkRequestBuilder<UpdateDeviceDetailsWorker>().build(),
+                    OneTimeWorkRequestBuilder<JoshTalksInstallWorker>().build()
+
+                )
+            ).enqueue()
+    }
+
+
+    fun requiredTaskInLandingPage() {
+        WorkManager.getInstance(AppObjectController.joshApplication)
+            .beginWith(OneTimeWorkRequestBuilder<WorkerInLandingScreen>().build())
+            .then(
+                mutableListOf(
+                    OneTimeWorkRequestBuilder<UserActiveWorker>().build(),
+                    OneTimeWorkRequestBuilder<ReferralCodeRefreshWorker>().build(),
+                    OneTimeWorkRequestBuilder<SyncEngageVideo>().build(),
+                    OneTimeWorkRequestBuilder<FeedbackRatingWorker>().build()
+                )
+            ).enqueue()
     }
 
     fun installReferrerWorker() {
@@ -146,10 +191,6 @@ object WorkMangerAdmin {
             .enqueue(OneTimeWorkRequestBuilder<UploadFCMTokenOnServer>().build())
     }
 
-    fun requiredTaskAfterLoginComplete() {
-        WorkManager.getInstance(AppObjectController.joshApplication)
-            .enqueue(OneTimeWorkRequestBuilder<WorkerAfterLoginInApp>().build())
-    }
 
     fun syncVideoEngage() {
         WorkManager.getInstance(AppObjectController.joshApplication)
