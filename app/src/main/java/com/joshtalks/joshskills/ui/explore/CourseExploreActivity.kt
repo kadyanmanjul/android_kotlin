@@ -107,14 +107,12 @@ class CourseExploreActivity : CoreJoshActivity() {
         findViewById<MaterialToolbar>(R.id.toolbar).setOnMenuItemClickListener {
             appAnalytics.addParam(AnalyticsEvent.MENU_ICON_CLICKED.NAME, "Menu 3 dot clicked")
             if (it?.itemId == R.id.menu_logout) {
-                appAnalytics.addParam(AnalyticsEvent.LOGOUT_CLICKED.NAME, "logout btn clicked")
                 MaterialDialog(this@CourseExploreActivity).show {
                     message(R.string.logout_message)
                     positiveButton(R.string.ok) {
-                        appAnalytics.addParam(
-                            AnalyticsEvent.USER_LOGGED_OUT.NAME,
-                            "User clicked Ok on logout"
-                        )
+                        AppAnalytics.create(AnalyticsEvent.LOGOUT_CLICKED.NAME)
+                            .addUserDetails()
+                            .addParam(AnalyticsEvent.USER_LOGGED_OUT.NAME, true).push()
                         val intent =
                             Intent(AppObjectController.joshApplication, OnBoardActivity::class.java)
                         intent.apply {
@@ -127,7 +125,12 @@ class CourseExploreActivity : CoreJoshActivity() {
                             AppObjectController.joshApplication.startActivity(intent)
                         }
                     }
-                    negativeButton(R.string.cancel)
+                    negativeButton(R.string.cancel) {
+
+                        AppAnalytics.create(AnalyticsEvent.LOGOUT_CLICKED.NAME)
+                            .addUserDetails()
+                            .addParam(AnalyticsEvent.USER_LOGGED_OUT.NAME, false).push()
+                    }
                 }
             }
             return@setOnMenuItemClickListener true
