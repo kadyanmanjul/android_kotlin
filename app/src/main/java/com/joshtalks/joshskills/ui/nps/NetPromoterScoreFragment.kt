@@ -151,8 +151,8 @@ class NetPromoterScoreFragment : BottomSheetDialogFragment(),
                                 "Feedback filled",
                                 binding.editText.text?.isNotEmpty() ?: false
                             )
-                            .addParam("User gaid", PrefManager.getStringValue(USER_UNIQUE_ID))
-                            .addParam("Mentor id", Mentor.getInstance().getId())
+                            .addParam("GAID", PrefManager.getStringValue(USER_UNIQUE_ID))
+                            .addParam("Mentor_Id", Mentor.getInstance().getId())
                             .push()
                     }
                 }
@@ -251,6 +251,7 @@ class NetPromoterScoreFragment : BottomSheetDialogFragment(),
                 binding.ivSeparator.rotation = 180F
                 binding.editText.requestFocus()
                 binding.editText.isPressed = true
+                binding.tvQuestion.visibility = View.GONE
                 // showKeyBoard(requireActivity(), binding.editText)
             }
             NPSProcessStatus.EXTRA_INFO -> {
