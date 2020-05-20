@@ -60,7 +60,7 @@ class HelpActivity : CoreJoshActivity() {
 
     override fun onBackPressed() {
         if (supportFragmentManager.backStackEntryCount == 1) {
-            appAnalytics.addParam(AnalyticsEvent.HELP_BACK_CLICKED.NAME,true).push()
+            appAnalytics.addParam(AnalyticsEvent.HELP_BACK_CLICKED.NAME, true)
             this@HelpActivity.finish()
             return
         }
@@ -80,13 +80,21 @@ class HelpActivity : CoreJoshActivity() {
         compositeDisposable.clear()
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        appAnalytics.push()
+    }
+
     private fun addObserver() {
         compositeDisposable.add(
             RxBus2.listen(HelpRequestEventBus::class.java).subscribeOn(Schedulers.io()).observeOn(
                 AndroidSchedulers.mainThread()
             ).subscribe {
                 if (it.typeOfHelpModel.type == "form") {
-                    appAnalytics.addParam(AnalyticsEvent.HELP_CATEGORY_CLICKED.NAME,AnalyticsEvent.HELP_COMPLAINT_FOAM.NAME)
+                    appAnalytics.addParam(
+                        AnalyticsEvent.HELP_CATEGORY_CLICKED.NAME,
+                        AnalyticsEvent.HELP_COMPLAINT_FOAM.NAME
+                    )
                     compliantScreen(it.typeOfHelpModel)
 
                 } else {
