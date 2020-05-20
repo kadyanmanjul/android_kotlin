@@ -180,7 +180,7 @@ class PaymentActivity : CoreJoshActivity(),
         val courseID = courseModel?.course ?: -99
         supportFragmentManager.commit(true) {
             addToBackStack(CourseDetailType1Fragment::class.java.name)
-            add(
+            replace(
                 R.id.container,
                 CourseDetailType1Fragment.newInstance(testId.toInt(), courseID),
                 CourseDetailType1Fragment::class.java.name
