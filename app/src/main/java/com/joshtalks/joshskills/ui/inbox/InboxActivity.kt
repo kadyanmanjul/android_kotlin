@@ -99,6 +99,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
 
     override fun onCreate(savedInstanceState: Bundle?) {
         WorkMangerAdmin.requiredTaskAfterLoginComplete()
+        // TODO add flow if require
         AppAnalytics.create(AnalyticsEvent.INBOX_SCREEN.NAME).push()
         super.onCreate(savedInstanceState)
         lifecycle.addObserver(this)
@@ -129,6 +130,10 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         }
         findMoreLayout = findViewById(R.id.parent_layout)
         find_more.setOnClickListener {
+            AppAnalytics.create(AnalyticsEvent.FIND_MORE_COURSE_CLICKED.NAME)
+                .addBasicParam()
+                .addUserDetails()
+                .push()
             RxBus2.publish(ExploreCourseEventBus())
         }
         visibleShareEarn()
@@ -252,34 +257,16 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
             RxBus2.listen(OpenCourseEventBus::class.java)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
-                    // remove later if not required
-                    AppAnalytics.create(AnalyticsEvent.COURSE_SELECTED.NAME)
-                        .addBasicParam()
-                        .addUserDetails()
-                        .addParam(
-                            AnalyticsEvent.CONVERSATION_ID.NAME,
-                            it.inboxEntity.conversation_id
-                        )
-                        .addParam(AnalyticsEvent.COURSE_NAME.NAME, it.inboxEntity.course_name)
-                        .addParam(AnalyticsEvent.COURSE_ID.NAME, it.inboxEntity.courseId)
-                        .addParam(
-                            AnalyticsEvent.COURSE_DURATION.NAME,
-                            it.inboxEntity.duration?.toString() ?: EMPTY
-                        )
-                        .push()
                     ConversationActivity.startConversionActivity(this, it.inboxEntity)
                 }, {
                     it.printStackTrace()
                 })
         )
+        //TODO --> fix, Called 2-3 times
         compositeDisposable.add(RxBus2.listen(ExploreCourseEventBus::class.java)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe {
-                AppAnalytics.create(AnalyticsEvent.FIND_MORE_COURSE_CLICKED.NAME)
-                    .addBasicParam()
-                    .addUserDetails()
-                    .push()
                 openCourseExplorer()
             })
     }

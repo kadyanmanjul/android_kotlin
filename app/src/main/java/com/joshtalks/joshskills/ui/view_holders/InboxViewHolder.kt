@@ -8,6 +8,9 @@ import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.text.HtmlCompat
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
+import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
 import com.joshtalks.joshskills.repository.local.entity.MESSAGE_DELIVER_STATUS
@@ -190,6 +193,20 @@ class InboxViewHolder(
 
     @Click(R.id.root_view)
     fun onClick() {
+        AppAnalytics.create(AnalyticsEvent.COURSE_SELECTED.NAME)
+            .addBasicParam()
+            .addUserDetails()
+            .addParam(
+                AnalyticsEvent.CONVERSATION_ID.NAME,
+                inboxEntity.conversation_id
+            )
+            .addParam(AnalyticsEvent.COURSE_NAME.NAME, inboxEntity.course_name)
+            .addParam(AnalyticsEvent.COURSE_ID.NAME, inboxEntity.courseId)
+            .addParam(
+                AnalyticsEvent.COURSE_DURATION.NAME,
+                inboxEntity.duration?.toString() ?: EMPTY
+            )
+            .push()
         RxBus2.publish(OpenCourseEventBus(inboxEntity))
     }
 }
