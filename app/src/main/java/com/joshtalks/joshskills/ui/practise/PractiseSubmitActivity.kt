@@ -227,7 +227,6 @@ class PractiseSubmitActivity : CoreJoshActivity() {
 
     override fun onStop() {
         super.onStop()
-        appAnalytics.push()
         compositeDisposable.clear()
         try {
             binding.videoPlayer.onStop()
@@ -247,6 +246,7 @@ class PractiseSubmitActivity : CoreJoshActivity() {
     override fun onDestroy() {
         try {
             super.onDestroy()
+            appAnalytics.push()
             mPlaybackListener = null
             doUnbindService()
             mPlayerInterface?.clearNotification()

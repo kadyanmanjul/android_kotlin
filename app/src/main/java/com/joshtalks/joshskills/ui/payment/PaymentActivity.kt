@@ -112,6 +112,7 @@ class PaymentActivity : CoreJoshActivity(),
         } else {
             ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         }
+        appAnalytics = AppAnalytics.create(AnalyticsEvent.PAYMENT_STATUS.NAME)
         Checkout.preload(application)
         userHaveSpecialDiscount()
         super.onCreate(savedInstanceState)
@@ -155,21 +156,17 @@ class PaymentActivity : CoreJoshActivity(),
         bundle.putString(FirebaseAnalytics.Param.ITEM_ID, testId)
         AppObjectController.firebaseAnalytics.logEvent("open_test_id", bundle)
 
-        //TODO redundant
-
-        appAnalytics = AppAnalytics.create(AnalyticsEvent.PAYMENT_STATUS.NAME)
-            .addBasicParam()
+        appAnalytics.addBasicParam()
             .addUserDetails()
             .addParam(AnalyticsEvent.COURSE_NAME.NAME, courseName)
-            .addParam(AnalyticsEvent.SHOWN_COURSE_PRICE.NAME, amount)
+            .addParam(AnalyticsEvent.SHOWN_COURSE_PRICE.NAME, courseModel?.amount.toString())
             .addParam("test_id", testId)
             .addParam(AnalyticsEvent.HAVE_COUPON_CODE_CLICKED.NAME, false)
+        //2nd by let operator
+        courseModel?.amount?.let {
+            appAnalytics.addParam(AnalyticsEvent.COURSE_PRICE.NAME, it)
 
-
-        courseModel?.amount?.let { appAnalytics.addParam(AnalyticsEvent.COURSE_PRICE.NAME, it) }
-
-        //           .addParam(AnalyticsEvent.SHOWN_COURSE_PRICE.NAME, amount)
-
+        }
 
     }
 

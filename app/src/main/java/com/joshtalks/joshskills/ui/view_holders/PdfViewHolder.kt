@@ -96,7 +96,6 @@ class PdfViewHolder(activityRef: WeakReference<FragmentActivity>, message: ChatM
                 eta = 500
             appAnalytics.addParam(AnalyticsEvent.TIME_TAKEN_DOWNLOAD.NAME, eta)
             appAnalytics.addParam(AnalyticsEvent.PDF_DOWNLOAD_STATUS.NAME, "Completed").push()
-            appAnalytics.addParam("ChatId", message.chatId).push()
             CoroutineScope(Dispatchers.IO).launch {
                 DownloadUtils.updateDownloadStatus(download.file, download.extras).let {
                     RxBus2.publish(DownloadCompletedEventBus(pdfViewHolder, message))
@@ -214,6 +213,8 @@ class PdfViewHolder(activityRef: WeakReference<FragmentActivity>, message: ChatM
         appAnalytics = AppAnalytics.create(AnalyticsEvent.PDF_VH.NAME)
             .addBasicParam()
             .addUserDetails()
+            .addParam("ChatId", message.chatId)
+
     }
 
     private fun fileDownloadSuccess() {
