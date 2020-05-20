@@ -215,6 +215,7 @@ enum class AnalyticsEvent(val NAME: String) {
     //Certificates
     CERTIFICATE_SCREEN("CERTIFICATE Screen V3"),
     CERTIFICATE_PROGRESS_CLICKED("Certificate Progress Clicked V3"),
+    COURSE_PROGRESS_PERCENT("Percent Course Completed V3"),
     PERFORMANCE_CLICKED("Performance Clicked V3"),
     VIEW_SAMPLE_CERTIFICATE_OPEN("View Sample Certificate Open V3"),
     VIEW_SAMPLE_CERTIFICATE_CLOSE("View Sample Certificate Close V3"),

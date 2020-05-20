@@ -125,6 +125,7 @@ class CourseProgressActivity : CoreJoshActivity(), OnDismissDialog,
             .addParam(AnalyticsEvent.VIEW_SAMPLE_CERTIFICATE_OPEN.NAME, false)
             .addParam(AnalyticsEvent.CERTIFICATE_PROGRESS_CLICKED.NAME, false)
             .addParam(AnalyticsEvent.PERFORMANCE_CLICKED.NAME, false)
+            .addParam(AnalyticsEvent.COURSE_PROGRESS_PERCENT.NAME, completePercent)
 
     }
 
