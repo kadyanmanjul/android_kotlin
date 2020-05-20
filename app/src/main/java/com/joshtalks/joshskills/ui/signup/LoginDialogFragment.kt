@@ -98,6 +98,7 @@ class LoginDialogFragment : DialogFragment() {
             hideProgress()
             when (it) {
                 SignUpStepStatus.SignUpCompleted -> {
+                    listener?.onLoginSuccessfully()
                     dismissAllowingStateLoss()
                     return@Observer
                 }
