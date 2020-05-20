@@ -97,9 +97,9 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         })
     }
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
-        WorkMangerAdmin.requiredTaskAfterLoginComplete()
-        // TODO add flow if require
+        WorkMangerAdmin.requiredTaskInLandingPage()
         AppAnalytics.create(AnalyticsEvent.INBOX_SCREEN.NAME).push()
         super.onCreate(savedInstanceState)
         lifecycle.addObserver(this)
@@ -398,6 +398,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
             snackBar.show()
         }
     }
+    }
 
     private fun addCourseExploreView() {
         hintFirstTime.dismiss()
@@ -505,6 +506,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
                         if (offerIn7DaysHint.isShowing.not() && isFinishing.not()) {
                             offerIn7DaysHint.showAlignBottom(root)
                             findViewById<View>(R.id.bottom_line).visibility = View.GONE
+
                         }
                     }
                 },
