@@ -82,8 +82,6 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener {
         appAnalytics = AppAnalytics.create(AnalyticsEvent.VIDEO_WATCH_ACTIVITY.NAME)
             .addBasicParam()
             .addUserDetails()
-        //TODO
-        AppAnalytics.create(AnalyticsEvent.VIDEO_WATCH_ACTIVITY.NAME).push()
         super.onCreate(savedInstanceState)
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_USER
         binding = DataBindingUtil.setContentView(this, R.layout.activity_video_player_1)
@@ -126,6 +124,10 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener {
 
         chatObject?.let {
             appAnalytics.addParam(AnalyticsEvent.VIDEO_ID.NAME, it.chatId)
+            appAnalytics.addParam(
+                AnalyticsEvent.VIDEO_DURATION.NAME,
+                it.mediaDuration?.toString() ?: ""
+            )
 
         }
 
@@ -158,6 +160,7 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener {
     override fun onStop() {
         super.onStop()
         try {
+            appAnalytics.push()
             onPlayerReleased()
             videoId?.run {
                 EngagementNetworkHelper.engageVideoApi(
