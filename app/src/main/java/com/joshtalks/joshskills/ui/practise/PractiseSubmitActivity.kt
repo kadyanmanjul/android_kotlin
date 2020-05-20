@@ -507,7 +507,7 @@ class PractiseSubmitActivity : CoreJoshActivity() {
             if (it) {
                 CoroutineScope(Dispatchers.IO).launch {
                     chatModel.question?.interval?.run {
-                        WorkMangerAdmin.determineNPAEvent(NPSEvent.WATCH_VIDEO, this)
+                        WorkMangerAdmin.determineNPAEvent(NPSEvent.PRACTICE_COMPLETED, this)
                     }
                     delay(250)
                     val resultIntent = Intent().apply {
