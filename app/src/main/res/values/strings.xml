@@ -995,4 +995,16 @@
     <string name="your_hometown" translatable="false">Your Hometown</string>
 
     <string name="start_exam" translatable="false">Start exam</string>
+    <string name="disclaimer">Disclaimer:This message will be shared directly with the Josh Talks Headquarters and will not be read by any intermediaries of Josh Skills, the course teacher or any sales or customer care executive</string>
+    <string name="what_problem">Please share your complaint:</string>
+    <string name="lodge_complaint">Lodge a Complaint</string>
+
+    <string name="report_problem">Report Problem</string>
+    <string name="type_your_name">Type your name</string>
+    <string name="type_your_mobile">Type your mobile</string>
+    <string name="type_your_email">Type your email</string>
+    <string name="type_problem">Please explain your problem in detail</string>
+    <string name="complaint_message" formatted="false">Thanks for reaching out to us. Your request has been recorded against ticket number %s. Our team will reach out to you between 24–72 hours</string>
+
+
 </resources>
