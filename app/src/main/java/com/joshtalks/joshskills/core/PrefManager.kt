@@ -99,13 +99,14 @@ object PrefManager {
 
     fun logoutUser() {
         prefManager.edit().clear().apply()
+        WorkMangerAdmin.appStartWorker()
     }
 
 
     fun clearUser() {
         prefManager.edit().clear().apply()
         AppDatabase.clearDatabase()
-        WorkMangerAdmin.refreshFCMToken()
+        WorkMangerAdmin.appStartWorker()
     }
 
     fun removeKey(key: String) {
