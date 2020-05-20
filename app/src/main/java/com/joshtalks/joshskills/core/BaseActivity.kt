@@ -1,5 +1,7 @@
 package com.joshtalks.joshskills.core
 
+import android.app.Activity
+import android.app.LauncherActivity
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -24,12 +26,17 @@ import com.joshtalks.joshskills.core.service.WorkMangerAdmin
 import com.joshtalks.joshskills.repository.local.entity.Question
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.service.EngagementNetworkHelper
+import com.joshtalks.joshskills.ui.chat.ConversationActivity
+import com.joshtalks.joshskills.ui.courseprogress.CourseProgressActivity
+import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
 import com.joshtalks.joshskills.ui.help.HelpActivity
 import com.joshtalks.joshskills.ui.inbox.InboxActivity
+import com.joshtalks.joshskills.ui.payment.PaymentActivity
 import com.joshtalks.joshskills.ui.profile.CropImageActivity
 import com.joshtalks.joshskills.ui.profile.ProfileActivity
 import com.joshtalks.joshskills.ui.profile.SOURCE_IMAGE
 import com.joshtalks.joshskills.ui.sign_up_old.OnBoardActivity
+import com.joshtalks.joshskills.ui.signup.SignUpActivity
 import com.newrelic.agent.android.NewRelic
 import io.branch.referral.Branch
 import io.github.inflationx.viewpump.ViewPumpContextWrapper
@@ -40,6 +47,10 @@ const val HELP_ACTIVITY_REQUEST_CODE = 9010
 abstract class BaseActivity : AppCompatActivity() {
 
     private lateinit var referrerClient: InstallReferrerClient
+
+    enum class ActivityEnum {
+        Conversation, CourseProgress, CourseExplore, Help, Inbox, Launcher, Payment, Onboard, Signup, Empty
+    }
 
     override fun attachBaseContext(newBase: Context?) {
         super.attachBaseContext(newBase?.let { ViewPumpContextWrapper.wrap(it) })
@@ -75,6 +86,21 @@ abstract class BaseActivity : AppCompatActivity() {
 
     }
 
+    fun getState(act: Activity): ActivityEnum {
+        return when (act) {
+            is ConversationActivity -> ActivityEnum.Conversation
+            is CourseExploreActivity -> ActivityEnum.CourseExplore
+            is CourseProgressActivity -> ActivityEnum.CourseProgress
+            is HelpActivity -> ActivityEnum.Help
+            is InboxActivity -> ActivityEnum.Inbox
+            is LauncherActivity -> ActivityEnum.Launcher
+            is PaymentActivity -> ActivityEnum.Payment
+            is OnBoardActivity -> ActivityEnum.Onboard
+            is SignUpActivity -> ActivityEnum.Signup
+            else -> ActivityEnum.Empty
+        }
+    }
+
 
     fun getIntentForState(): Intent? {
         val intent: Intent? = if (User.getInstance().token == null) {
@@ -98,6 +124,7 @@ abstract class BaseActivity : AppCompatActivity() {
         return Intent(this, InboxActivity::class.java).apply {
             addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                .putExtra(AnalyticsEvent.FLOW_FROM_PARAM.NAME, "")
         }
     }
 

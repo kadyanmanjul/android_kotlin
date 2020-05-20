@@ -132,7 +132,7 @@ class AudioPlayerViewHolder(activityRef: WeakReference<FragmentActivity>, messag
                 eta = 500
             appAnalytics.addParam(AnalyticsEvent.TIME_TAKEN_DOWNLOAD.NAME, eta)
             appAnalytics.addParam(AnalyticsEvent.AUDIO_DOWNLOAD_STATUS.NAME, "Completed")
-            appAnalytics.addParam("ChatId", message.chatId).push()
+                .push()
             DownloadUtils.removeCallbackListener(download.tag)
             CoroutineScope(Dispatchers.IO).launch {
                 DownloadUtils.updateDownloadStatus(download.file, download.extras).let {
@@ -327,6 +327,7 @@ class AudioPlayerViewHolder(activityRef: WeakReference<FragmentActivity>, messag
                 this.duration = audioTypeObj.duration
                 appAnalytics.addParam(AnalyticsEvent.AUDIO_DURATION.NAME, duration)
                     .addParam(AnalyticsEvent.AUDIO_ID.NAME, audioTypeObj.id)
+                    .addParam("ChatId", message.chatId)
 
                 when {
                     message.downloadStatus === DOWNLOAD_STATUS.DOWNLOADED -> {
