@@ -116,8 +116,6 @@ class CourseProgressActivity : CoreJoshActivity(), OnDismissDialog,
                 PrefManager.put(inboxEntity.conversation_id.trim().plus(CERTIFICATE_GENERATE), true)
             }
         }
-        initView()
-        getProgressOfCourse()
         appAnalytics = AppAnalytics.create(AnalyticsEvent.CERTIFICATE_SCREEN.NAME)
             .addBasicParam()
             .addUserDetails()
@@ -125,7 +123,9 @@ class CourseProgressActivity : CoreJoshActivity(), OnDismissDialog,
             .addParam(AnalyticsEvent.VIEW_SAMPLE_CERTIFICATE_OPEN.NAME, false)
             .addParam(AnalyticsEvent.CERTIFICATE_PROGRESS_CLICKED.NAME, false)
             .addParam(AnalyticsEvent.PERFORMANCE_CLICKED.NAME, false)
-            .addParam(AnalyticsEvent.COURSE_PROGRESS_PERCENT.NAME, completePercent)
+        initView()
+        getProgressOfCourse()
+
 
     }
 
@@ -208,6 +208,10 @@ class CourseProgressActivity : CoreJoshActivity(), OnDismissDialog,
                 hideProgressBar()
                 CoroutineScope(Dispatchers.Main).launch {
                     completePercent = cpr.completePercent
+                    appAnalytics.addParam(
+                        AnalyticsEvent.COURSE_PROGRESS_PERCENT.NAME,
+                        completePercent
+                    )
                     unlockPercent = cpr.unlockPercent
                     certificateDetail = cpr.certificateDetail
                     setImageInProgressView(cpr.link)

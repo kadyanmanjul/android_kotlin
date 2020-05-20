@@ -171,7 +171,10 @@ object NetworkRequestHelper {
                     .addParam(
                         "ChatId",
                         chatMessageReceiver.id
-                    ).push()
+                    )
+                    .addParam("Msg", chatMessageReceiver.text)
+                    .addUserDetails()
+                    .push()
                 BASE_MESSAGE_TYPE.IM -> AppAnalytics.create(AnalyticsEvent.MESSAGE_SENT_IMAGE.NAME)
                     .addParam(
                         "ChatId",
