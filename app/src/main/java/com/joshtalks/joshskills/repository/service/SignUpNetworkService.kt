@@ -1,5 +1,6 @@
 package com.joshtalks.joshskills.repository.service
 
+import com.joshtalks.joshskills.repository.local.model.DeviceDetailsResponse
 import com.joshtalks.joshskills.repository.local.model.FCMResponse
 import com.joshtalks.joshskills.repository.local.model.InstallReferrerModel
 import com.joshtalks.joshskills.repository.local.model.Mentor
@@ -63,7 +64,14 @@ interface SignUpNetworkService {
     suspend fun uploadProfilePicture(@Path("id") id: String, @Part file: MultipartBody.Part): Any
 
     @POST("$DIR/mentor/devices/")
-    suspend fun updateDeviceDetails(@Body obj: UpdateDeviceRequest)
+    suspend fun postDeviceDetails(@Body obj: UpdateDeviceRequest): DeviceDetailsResponse
+
+    @PATCH("$DIR/mentor/devices/{id}/")
+    suspend fun patchDeviceDetails(
+        @Path("id") id: Int,
+        @Body obj: UpdateDeviceRequest
+    ): DeviceDetailsResponse
+
 
     @PATCH("$DIR/mentor/fcm/{id}/")
     fun updateFCMToken(@Path("id") id: Int, @Body fcmResponse: FCMResponse): Deferred<Any>
