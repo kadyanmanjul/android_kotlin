@@ -99,8 +99,6 @@ public class AppAnalytics {
         list.add(user.getUserType());
         list.add(user.getGender());
         FlurryAgent.UserProperties.set("JoshSkills.User", list);
-
-
     }
 
     public static int getAge(String dobString) {
@@ -112,7 +110,7 @@ public class AppAnalytics {
         try {
             date = sdf.parse(dobString);
         } catch (ParseException e) {
-            e.printStackTrace();
+            Timber.e(e);
         }
 
         if (date == null) return 0;

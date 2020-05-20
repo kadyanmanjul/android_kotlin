@@ -214,7 +214,6 @@ class PdfViewHolder(activityRef: WeakReference<FragmentActivity>, message: ChatM
             .addBasicParam()
             .addUserDetails()
             .addParam("ChatId", message.chatId)
-
     }
 
     private fun fileDownloadSuccess() {
@@ -235,7 +234,6 @@ class PdfViewHolder(activityRef: WeakReference<FragmentActivity>, message: ChatM
         progressDialog.visibility = android.view.View.VISIBLE
         ivCancelDownload.visibility = android.view.View.VISIBLE
     }
-
 
     @Click(R.id.container_fl)
     fun onClickPdfContainer() {
