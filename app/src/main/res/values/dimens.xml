@@ -53,8 +53,8 @@
     <dimen name="score_rating_size">@dimen/_23sdp</dimen>
 
     <dimen name="roundedBottomSheetCornerRadius">16dp</dimen>
-    <dimen name="roundedBottomSheetCornerRadiusTopPadding">4dp</dimen>
-    <dimen name="roundedBottomSheetCornerRadiusLeftPadding">4dp</dimen>
-    <dimen name="roundedBottomSheetCornerRadiusRightPadding">4dp</dimen>
+    <dimen name="roundedBottomSheetCornerRadiusTopPadding">6dp</dimen>
+    <dimen name="roundedBottomSheetCornerRadiusLeftPadding">6dp</dimen>
+    <dimen name="roundedBottomSheetCornerRadiusRightPadding">6dp</dimen>
 
 </resources>
