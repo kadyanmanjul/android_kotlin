@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="fragment"
+            type="com.joshtalks.joshcamerax.fragments.VideoFragment" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/black"
+        tools:context=".fragments.VideoFragment">
+
+        <TextureView
+                android:id="@+id/viewFinder"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.0" />
+
+        <TextView
+                android:id="@+id/tv_record_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top|center_horizontal"
+                android:layout_marginTop="24dp"
+                android:background="@drawable/bg_timer"
+                android:drawableStart="@drawable/timer_drawable"
+                android:drawablePadding="10dp"
+                android:paddingStart="16dp"
+                android:paddingTop="10dp"
+                android:paddingEnd="16dp"
+                android:paddingBottom="10dp"
+                android:text="00:00"
+                android:textColor="@android:color/white"
+                android:visibility="invisible"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="@+id/viewFinder"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/viewBg2"
+                app:layout_constraintVertical_bias="0"
+                tools:ignore="HardcodedText,UseCompatTextViewDrawableXml" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:alpha="0.4"
+            android:background="@android:color/transparent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/fabRecordVideo" />
+
+        <ImageButton
+            android:id="@+id/fabRecordVideo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/half_margin"
+            android:background="@drawable/ic_ellipse_circle_bg"
+            android:backgroundTint="@android:color/white"
+            android:padding="@dimen/medium_margin"
+            android:src="@drawable/ic_video_record"
+            android:tint="@color/colorButtonRedBg"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+                tools:ignore="ContentDescription" />
+
+        <ImageButton
+            android:id="@+id/buttonGallery"
+            android:layout_width="@dimen/button_size_small"
+            android:layout_height="@dimen/button_size_small"
+            android:background="@drawable/ic_ellipse_circle_bg"
+
+            android:elevation="1dp"
+            android:onClick="@{() -> fragment.openPreview()}"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_no_picture"
+            app:layout_constraintBottom_toBottomOf="@id/fabRecordVideo"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/fabRecordVideo"
+            app:layout_constraintTop_toTopOf="@id/fabRecordVideo"
+                tools:ignore="ContentDescription" />
+
+        <ImageButton
+            android:id="@+id/toogleToVideo"
+            android:layout_width="@dimen/button_size_small"
+            android:layout_height="@dimen/button_size_small"
+            android:background="@drawable/ic_ellipse_circle_bg"
+            android:elevation="1dp"
+            android:onClick="@{() -> fragment.toggleToCamera()}"
+            android:padding="@dimen/half_margin"
+            android:scaleType="centerInside"
+            android:src="@drawable/ic_image_capture"
+            app:layout_constraintBottom_toBottomOf="@id/fabRecordVideo"
+            app:layout_constraintEnd_toStartOf="@id/fabRecordVideo"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/fabRecordVideo"
+                tools:ignore="ContentDescription" />
+
+        <View
+                android:id="@+id/viewBg2"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:alpha="0.4"
+                android:background="@android:color/transparent"
+                android:elevation="1dp"
+                android:padding="@dimen/half_margin"
+                app:layout_constraintBottom_toBottomOf="@id/buttonFlash"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+
+        <ImageButton
+                android:id="@+id/buttonFlash"
+                android:layout_width="@dimen/button_size_small"
+                android:layout_height="@dimen/button_size_small"
+
+                android:layout_margin="@dimen/medium_margin"
+                android:background="@drawable/ic_ellipse_circle_bg"
+                android:elevation="1dp"
+                android:onClick="@{() -> fragment.toggleFlash()}"
+                android:padding="@dimen/half_margin"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_flash_off"
+                app:layout_constraintEnd_toEndOf="@+id/viewFinder"
+                app:layout_constraintHorizontal_bias="01"
+                app:layout_constraintStart_toStartOf="@+id/viewBg2"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:ignore="ContentDescription" />
+
+        <ImageButton
+                android:id="@+id/buttonSwitchCamera"
+                android:layout_width="@dimen/button_size_small"
+                android:layout_height="@dimen/button_size_small"
+                android:layout_margin="@dimen/medium_margin"
+                android:background="@drawable/ic_ellipse_circle_bg"
+                android:elevation="1dp"
+                android:onClick="@{() -> fragment.toggleCamera()}"
+                android:padding="@dimen/half_margin"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_rotate_camera"
+                app:layout_constraintEnd_toStartOf="@+id/buttonFlash"
+                app:layout_constraintHorizontal_bias="1"
+                app:layout_constraintStart_toEndOf="@+id/backBtn"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:ignore="ContentDescription"/>
+
+        <ImageButton
+                android:id="@+id/backBtn"
+                android:layout_width="@dimen/button_size_small"
+                android:layout_height="@dimen/button_size_small"
+                android:layout_margin="@dimen/medium_margin"
+
+                android:layout_marginEnd="142dp"
+                android:background="@drawable/ic_ellipse_circle_bg"
+                android:elevation="1dp"
+                android:onClick="@{() -> fragment.onBackPressed()}"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_arrow_back"
+                app:layout_constraintEnd_toEndOf="@+id/viewFinder"
+                app:layout_constraintHorizontal_bias="0"
+                app:layout_constraintStart_toStartOf="@+id/viewBg2"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:ignore="ContentDescription" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

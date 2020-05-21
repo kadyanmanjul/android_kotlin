@@ -1,9 +1,0 @@
-<resources>
-    <!-- Default screen margins, per the Android Design guidelines. -->
-
-    <dimen name="margin_top">0dp</dimen>
-    <dimen name="margin_top_nve">0dp</dimen>
-    <dimen name="fab_margin">16dp</dimen>
-    <dimen name="fastscroll_scrollbar_padding_end">12dp</dimen>
-
-</resources>

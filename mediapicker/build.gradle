@@ -33,7 +33,7 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation project(path: ':appcamera')
+    implementation project(path: ':joshcamerax')
     implementation project(path: ':pixeditor')
 
 

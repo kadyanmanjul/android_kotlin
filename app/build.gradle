@@ -148,9 +148,6 @@ dependencies {
     implementation project(path: ':emoji-google')
     implementation project(path: ':joshlibrary')
     implementation project(path: ':pdfviewer')
-    implementation(project(path: ':appcamera'), {
-        exclude group: 'com.bumptech.glide'
-    })
     implementation(project(path: ':mediapicker'), {
         exclude group: 'com.bumptech.glide'
     })
@@ -183,6 +180,7 @@ dependencies {
     implementation 'androidx.work:work-runtime:2.3.4'
 
     implementation 'androidx.room:room-runtime:2.2.5'
+    implementation project(path: ':joshcamerax')
     kapt 'androidx.room:room-compiler:2.2.5'
     implementation 'androidx.room:room-ktx:2.2.5'
     implementation 'androidx.room:room-rxjava2:2.2.5'

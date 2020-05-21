@@ -41,9 +41,9 @@ import com.google.android.material.card.MaterialCardView
 import com.google.android.material.snackbar.Snackbar
 import com.greentoad.turtlebody.mediapicker.MediaPicker
 import com.greentoad.turtlebody.mediapicker.core.MediaPickerConfig
-import com.joshtalks.appcamera.pix.JoshCameraActivity
-import com.joshtalks.appcamera.pix.Options
-import com.joshtalks.appcamera.utility.ImageQuality
+import com.joshtalks.joshcamerax.JoshCameraActivity
+import com.joshtalks.joshcamerax.utils.ImageQuality
+import com.joshtalks.joshcamerax.utils.Options
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.Utils.getCurrentMediaVolume
@@ -1364,7 +1364,7 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
                                 .setImageQuality(ImageQuality.HIGH)
                                 .setScreenOrientation(Options.SCREEN_ORIENTATION_PORTRAIT)
 
-                            JoshCameraActivity.start(this@ConversationActivity, options)
+                            JoshCameraActivity.startJoshCameraxActivity(this@ConversationActivity, options)
                             return
 
                         }

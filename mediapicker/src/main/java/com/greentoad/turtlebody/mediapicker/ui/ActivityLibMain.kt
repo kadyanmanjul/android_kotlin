@@ -6,7 +6,6 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -29,15 +28,13 @@ import com.greentoad.turtlebody.mediapicker.ui.component.media.audiovideo.Defaul
 import com.greentoad.turtlebody.mediapicker.ui.component.media.image.ImageListFragment
 import com.greentoad.turtlebody.mediapicker.ui.component.media.video.VideoListFragment
 import com.greentoad.turtlebody.mediapicker.util.UtilMime
-import com.joshtalks.appcamera.VideoTrimmerActivity
-import com.joshtalks.appcamera.pix.JoshCameraActivity.IMAGE_RESULTS
-import com.joshtalks.appcamera.pix.JoshCameraActivity.VIDEO_RESULTS
+import com.joshtalks.joshcamerax.JoshCameraActivity.Companion.IMAGE_RESULTS
+import com.joshtalks.joshcamerax.VideoTrimmerActivity
 import org.jetbrains.anko.find
 import org.jetbrains.anko.info
 import java.io.File
 import java.io.IOException
 import java.io.Serializable
-import kotlin.collections.ArrayList
 
 
 private val IMAGE_SELECT = 124
@@ -112,10 +109,6 @@ class ActivityLibMain : ActivityBase() {
                 onBackPressed()
                 true
             }
-            /*R.id.action_open -> {
-                createPickFromDocumentsIntent()
-                true
-            }*/
             else -> super.onOptionsItemSelected(item)
         }
     }
