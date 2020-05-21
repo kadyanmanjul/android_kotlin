@@ -132,18 +132,23 @@ abstract class CoreJoshActivity : BaseActivity() {
         feedbackTypes: FeedbackTypes,
         questionId: String
     ) {
-        val minFeedbackCount =
-            AppObjectController.getFirebaseRemoteConfig()
-                .getDouble("MINIMUM_FEEDBACK_IN_A_DAY_COUNT").toInt()
-        val todaySubmitCount =
-            AppObjectController.appDatabase.feedbackEngageModelDao().getTotalCountOfRows()
-        if (todaySubmitCount >= minFeedbackCount) {
+
+        if (canShowNPSDialog(id = questionId)) {
             return
-        }
-        val flag =
-            AppObjectController.appDatabase.chatDao().getFeedbackStatusOfQuestion(questionId)
-        if (flag != null && flag) {
-            openFeedbackFragment(feedbackTypes, questionId)
+        } else {
+            val minFeedbackCount =
+                AppObjectController.getFirebaseRemoteConfig()
+                    .getDouble("MINIMUM_FEEDBACK_IN_A_DAY_COUNT").toInt()
+            val todaySubmitCount =
+                AppObjectController.appDatabase.feedbackEngageModelDao().getTotalCountOfRows()
+            if (todaySubmitCount >= minFeedbackCount) {
+                return
+            }
+            val flag =
+                AppObjectController.appDatabase.chatDao().getFeedbackStatusOfQuestion(questionId)
+            if (flag != null && flag) {
+                openFeedbackFragment(feedbackTypes, questionId)
+            }
         }
 
     }

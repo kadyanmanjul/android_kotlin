@@ -12,6 +12,7 @@ import android.util.DisplayMetrics
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
+import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import com.android.installreferrer.api.InstallReferrerClient
 import com.crashlytics.android.Crashlytics
@@ -23,14 +24,18 @@ import com.joshtalks.joshskills.core.analytics.LogException
 import com.joshtalks.joshskills.core.notification.HAS_NOTIFICATION
 import com.joshtalks.joshskills.core.notification.NOTIFICATION_ID
 import com.joshtalks.joshskills.core.service.WorkMangerAdmin
+import com.joshtalks.joshskills.repository.local.entity.NPSEvent
+import com.joshtalks.joshskills.repository.local.entity.NPSEventModel
 import com.joshtalks.joshskills.repository.local.entity.Question
 import com.joshtalks.joshskills.repository.local.model.User
+import com.joshtalks.joshskills.repository.local.model.nps.NPSQuestionModel
 import com.joshtalks.joshskills.repository.service.EngagementNetworkHelper
 import com.joshtalks.joshskills.ui.chat.ConversationActivity
 import com.joshtalks.joshskills.ui.courseprogress.CourseProgressActivity
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
 import com.joshtalks.joshskills.ui.help.HelpActivity
 import com.joshtalks.joshskills.ui.inbox.InboxActivity
+import com.joshtalks.joshskills.ui.nps.NetPromoterScoreFragment
 import com.joshtalks.joshskills.ui.payment.PaymentActivity
 import com.joshtalks.joshskills.ui.profile.CropImageActivity
 import com.joshtalks.joshskills.ui.profile.ProfileActivity
@@ -41,6 +46,10 @@ import com.newrelic.agent.android.NewRelic
 import io.branch.referral.Branch
 import io.github.inflationx.viewpump.ViewPumpContextWrapper
 import io.sentry.core.Sentry
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 
 const val HELP_ACTIVITY_REQUEST_CODE = 9010
 
@@ -177,6 +186,7 @@ abstract class BaseActivity : AppCompatActivity() {
         user.id = PrefManager.getStringValue(USER_UNIQUE_ID)
         user.username = User.getInstance().username
         Sentry.setUser(user)
+
     }
 
     private fun initNewRelic() {
@@ -191,6 +201,7 @@ abstract class BaseActivity : AppCompatActivity() {
         AppAnalytics.create(AnalyticsEvent.CLICK_HELPLINE_SELECTED.NAME).push()
         Utils.call(this, AppObjectController.getFirebaseRemoteConfig().getString("helpline_number"))
     }
+
 
     protected fun isUserHaveNotPersonalDetails(): Boolean {
         return User.getInstance().dateOfBirth.isNullOrEmpty()
@@ -212,5 +223,80 @@ abstract class BaseActivity : AppCompatActivity() {
         }
     }
 
+    protected fun showNetPromoterScoreDialog(nps: NPSEvent? = null) {
+        CoroutineScope(Dispatchers.IO).launch(Dispatchers.IO) {
+            canShowNPSDialog(nps)
+        }
+    }
+
+    protected suspend fun canShowNPSDialog(nps: NPSEvent? = null, id: String = EMPTY): Boolean {
+        return CoroutineScope(Dispatchers.IO).async(Dispatchers.IO) {
+            var currentState = nps
+            if (currentState == null) {
+                currentState = NPSEventModel.getCurrentNPA()
+            }
+
+            if (currentState == null) {
+                return@async false
+            }
+            if (!(currentState == NPSEvent.PAYMENT_SUCCESS || currentState == NPSEvent.PAYMENT_FAILED)) {
+                val minNpsInADay = AppObjectController.getFirebaseRemoteConfig()
+                    .getDouble("MINIMUM_NPS_IN_A_DAY_COUNT").toInt()
+                val totalCountToday =
+                    AppObjectController.appDatabase.npsEventModelDao().getTotalCountOfRows()
+                if (totalCountToday >= minNpsInADay) {
+                    return@async false
+                }
+            }
+
+            val npsEventModel =
+                NPSEventModel.getAllNpaList()?.filter { it.enable }
+                    ?.find { it.event == currentState }
+                    ?: return@async false
+            npsEventModel.eventId = id
+            getQuestionForNPS(npsEventModel)
+            return@async true
+        }.await()
+
+    }
+
+    private fun getQuestionForNPS(
+        eventModel: NPSEventModel
+    ) {
+        CoroutineScope(Dispatchers.Main).launch {
+            WorkManager.getInstance(applicationContext)
+                .getWorkInfoByIdLiveData(WorkMangerAdmin.getQuestionNPA(eventModel.eventName))
+                .observe(this@BaseActivity, Observer {
+                    try {
+                        if (it != null && it.state == WorkInfo.State.SUCCEEDED) {
+                            val output = it.outputData.getString("nps_question_list")
+                            if (output.isNullOrEmpty().not()) {
+                                NPSEventModel.removeCurrentNPA()
+                                val questionList =
+                                    NPSQuestionModel.getNPSQuestionModelList(output!!)
+                                if (questionList.isNullOrEmpty().not()) {
+                                    showNPSFragment(eventModel, questionList!!)
+                                    CoroutineScope(Dispatchers.IO).launch(Dispatchers.IO) {
+                                        AppObjectController.appDatabase.npsEventModelDao()
+                                            .insertNPSEvent(eventModel)
+                                    }
+                                }
+                            }
+                        }
+                    } catch (ex: Exception) {
+                        ex.printStackTrace()
+                    }
+                })
+        }
+    }
+
+    private fun showNPSFragment(
+        npsModel: NPSEventModel,
+        questionList: List<NPSQuestionModel>
+    ) {
+        val bottomSheetFragment = NetPromoterScoreFragment.newInstance(npsModel, questionList)
+        bottomSheetFragment.show(supportFragmentManager, bottomSheetFragment.tag)
+
+    }
 
 }

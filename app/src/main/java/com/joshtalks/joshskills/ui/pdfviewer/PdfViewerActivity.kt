@@ -102,26 +102,32 @@ class PdfViewerActivity : BaseActivity(), DownloadFile.Listener {
                     AppObjectController.appDatabase.chatDao()
                         .getPdfById(intent.getStringExtra(PDF_ID))
                 CoroutineScope(Dispatchers.Main).launch {
-                    if (pdfObject?.downloadedLocalPath.isNullOrEmpty()) {
-                        remotePDFViewPager = RemotePDFViewPager(
-                            applicationContext,
-                            pdfObject?.url,
-                            this@PdfViewerActivity
-                        )
-                        remotePDFViewPager?.pageMargin = 20
+                    try {
+                        if (pdfObject?.downloadedLocalPath.isNullOrEmpty()) {
 
-                    } else {
-                        val pdfViewPager =
-                            PDFViewPager(applicationContext, pdfObject?.downloadedLocalPath)
-                        pdfViewPager.pageMargin = 20
-                        conversationBinding.remotePdfRoot.addView(pdfViewPager)
+                            remotePDFViewPager = RemotePDFViewPager(
+                                applicationContext,
+                                pdfObject?.url,
+                                this@PdfViewerActivity
+                            )
+                            remotePDFViewPager?.pageMargin = 20
 
+                        } else {
+                            val pdfViewPager =
+                                PDFViewPager(applicationContext, pdfObject?.downloadedLocalPath)
+                            pdfViewPager.pageMargin = 20
+                            conversationBinding.remotePdfRoot.addView(pdfViewPager)
+
+                        }
+                        AppAnalytics.create(AnalyticsEvent.PDF_OPENED.NAME)
+                            .addParam("URL", pdfObject?.url)
+                            .push()
+                    } catch (ex: Exception) {
+                        ex.printStackTrace()
                     }
-                    AppAnalytics.create(AnalyticsEvent.PDF_OPENED.NAME)
-                        .addParam("URL", pdfObject?.url)
-                        .push()
                 }
             } catch (ex: Exception) {
+                ex.printStackTrace()
             }
         }
 

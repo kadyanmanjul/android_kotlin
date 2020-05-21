@@ -55,33 +55,12 @@ class FeedbackFragment : DialogFragment(), FeedbackOptionAdapter.OnFeedbackItemL
             questionId = it.getString(QUESTION_ID)
             feedbackType = it.getParcelable(FEEDBACK_TYPE)
         }
-        android.R.style.Theme_Black_NoTitleBar_Fullscreen
         setStyle(STYLE_NO_FRAME, R.style.FullDialogWithAnimation)
         AppAnalytics.create(AnalyticsEvent.FEEDBACK_INITIATED.NAME)
             .addParam("QUESTION_ID", questionId)
             .addParam("type", feedbackType?.name)
             .push()
-
     }
-
-/*
-
-    override fun onStart() {
-        super.onStart()
-        val dialog = dialog
-        if (dialog != null) {
-
-            dialog.window?.setLayout(
-                FrameLayout.LayoutParams.MATCH_PARENT,
-                FrameLayout.LayoutParams.MATCH_PARENT
-            )
-            dialog.setCanceledOnTouchOutside(true)
-            dialog.setCancelable(true)
-            dialog.window?.setBackgroundDrawableResource(android.R.color.white)
-        }
-    }
-*/
-
 
     override fun onDestroy() {
         super.onDestroy()
@@ -160,14 +139,25 @@ class FeedbackFragment : DialogFragment(), FeedbackOptionAdapter.OnFeedbackItemL
     }
 
     private fun setupRatingOptions(ratingPos: Int) {
-        binding.feedbackRatingInWords.text = ratingDetailsList[ratingPos - 1].infoText
-        val ratingModelList: ArrayList<RatingModel> = arrayListOf()
-        ratingDetailsList[ratingPos - 1].keywordsList.forEach {
-            ratingModelList.add(RatingModel(it, ratingPos, false, enable = true))
+        try {
+            binding.feedbackRatingInWords.text = ratingDetailsList[ratingPos - 1].infoText
+            val ratingModelList: ArrayList<RatingModel> = arrayListOf()
+            ratingDetailsList[ratingPos - 1].keywordsList.forEach {
+                ratingModelList.add(RatingModel(it, ratingPos, false, enable = true))
+            }
+            ratingModelList.add(
+                RatingModel(
+                    "&#9679;&#9679;&#9679;",
+                    ratingPos,
+                    false,
+                    enable = false
+                )
+            )
+            binding.ratingOptionRv.adapter = FeedbackOptionAdapter(this, ratingModelList)
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+            dismissAllowingStateLoss()
         }
-        ratingModelList.add(RatingModel("&#9679;&#9679;&#9679;", ratingPos, false, enable = false))
-        binding.ratingOptionRv.adapter = FeedbackOptionAdapter(this, ratingModelList)
-
     }
 
 

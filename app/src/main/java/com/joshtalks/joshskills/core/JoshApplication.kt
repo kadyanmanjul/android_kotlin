@@ -12,15 +12,10 @@ import com.facebook.LoggingBehavior
 import com.facebook.appevents.AppEventsConstants
 import com.facebook.stetho.Stetho
 import com.joshtalks.joshskills.BuildConfig
-import com.joshtalks.joshskills.repository.local.model.Mentor
-import com.joshtalks.joshskills.repository.server.UpdateDeviceRequest
 import io.branch.referral.Branch
 import io.branch.referral.BranchApp
 import io.sentry.core.Sentry
 import io.sentry.core.SentryLevel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import timber.log.Timber
 
 var TAG = "JoshSkill"
@@ -54,34 +49,6 @@ class JoshApplication : BranchApp(), LifecycleObserver/*, Configuration.Provider
     override fun attachBaseContext(base: Context?) {
         super.attachBaseContext(base)
         MultiDex.install(this)
-    }
-
-    fun updateDeviceDetail() {
-        CoroutineScope(Dispatchers.IO).launch {
-            try {
-                if (Mentor.getInstance().hasId()) {
-                    AppObjectController.signUpNetworkService.updateDeviceDetails(UpdateDeviceRequest())
-                }
-            } catch (ex: Exception) {
-                ex.printStackTrace()
-            }
-        }
-    }
-
-    fun userActive() {
-        CoroutineScope(Dispatchers.IO).launch {
-            try {
-                if (Mentor.getInstance().hasId()) {
-                    AppObjectController.signUpNetworkService.userActive(
-                        Mentor.getInstance().getId(),
-                        Any()
-                    )
-                }
-
-            } catch (ex: Exception) {
-                ex.printStackTrace()
-            }
-        }
     }
 
 

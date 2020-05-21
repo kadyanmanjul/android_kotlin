@@ -189,8 +189,10 @@ data class Question(
     @Expose var needFeedback: Boolean? = null,
 
     @ColumnInfo(name = "upload_feedback_status")
-    @Expose var uploadFeedbackStatus: Boolean = false
+    @Expose var uploadFeedbackStatus: Boolean = false,
 
+    @ColumnInfo(name = "interval")
+    @Expose var interval: Int = -1
 
 ) : Parcelable
 
@@ -402,7 +404,6 @@ interface ChatDao {
     @Query(value = "SELECT * FROM chat_table where conversation_id= :conversationId AND is_delete_message=0 ORDER BY created ASC,question_id ASC ")
     suspend fun getLastChats(conversationId: String): List<ChatModel>
 
-
     @Query(value = "SELECT * FROM chat_table  where chat_id=:chatId")
     suspend fun getChatObject(chatId: String): ChatModel
 
@@ -440,7 +441,6 @@ interface ChatDao {
     @Delete
     suspend fun deleteChatMessage(chat: ChatModel)
 
-
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertMessageList(chatModelList: List<ChatModel>)
 
@@ -450,25 +450,20 @@ interface ChatDao {
     @Query("SELECT * FROM question_table WHERE chatId= :chatId")
     suspend fun getQuestion(chatId: String): Question?
 
-
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAudioMessageList(audioList: List<AudioType>)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertVideoMessageList(audioList: List<VideoType>)
 
-
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertPdfMessageList(pdfList: List<PdfType>)
-
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertOptionTypeMessageList(audioList: List<OptionType>)
 
-
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertImageTypeMessageList(audioList: List<ImageType>)
-
 
     @Query("SELECT * FROM ImageTable WHERE questionId= :questionId")
     suspend fun getImagesOfQuestion(questionId: String): List<ImageType>
@@ -481,7 +476,6 @@ interface ChatDao {
 
     @Query("SELECT * FROM PdfTable WHERE questionId= :questionId")
     suspend fun getPdfOfQuestion(questionId: String): List<PdfType>
-
 
     @Update
     suspend fun updateAudioObject(vararg audioList: AudioType)
@@ -516,9 +510,7 @@ interface ChatDao {
             }
         }
         return chatModel
-
     }
-
 
     @Transaction
     suspend fun getUpdatedChatObjectViaId(id: String): ChatModel {
@@ -542,9 +534,7 @@ interface ChatDao {
             }
         }
         return chatModel
-
     }
-
 
     @Transaction
     suspend fun updateDownloadVideoStatus(obj: ChatModel, downloadStatus: DOWNLOAD_STATUS) {
@@ -558,7 +548,6 @@ interface ChatDao {
         if (downloadStatus == DOWNLOAD_STATUS.FAILED || downloadStatus == DOWNLOAD_STATUS.DOWNLOADED) {
             RxBus2.publish(VideoDownloadedBus(obj))
         }
-
     }
 
     @Query("UPDATE chat_table SET downloadStatus = :status where downloadStatus == :whereStatus")
@@ -566,7 +555,6 @@ interface ChatDao {
         status: DOWNLOAD_STATUS = DOWNLOAD_STATUS.NOT_START,
         whereStatus: DOWNLOAD_STATUS = DOWNLOAD_STATUS.DOWNLOADING
     )
-
 
     @Query(value = "UPDATE PdfTable SET total_view = :total_view where id= :id ")
     suspend fun updateTotalViewForPdf(id: String, total_view: Int)
@@ -586,10 +574,8 @@ interface ChatDao {
     @Query("DELETE FROM chat_table where  chat_id IN (:ids)")
     suspend fun deleteUserMessages(ids: List<String>)
 
-
     @Query("UPDATE chat_table SET download_progress = :progress where id= :conversationId ")
     suspend fun videoProgressUpdate(conversationId: String, progress: Int)
-
 
     @Query("SELECT * FROM chat_table where conversation_id= :conversationId  ORDER BY created ASC LIMIT 1;")
     suspend fun getLastRecord(conversationId: String): ChatModel
@@ -600,7 +586,6 @@ interface ChatDao {
     @Query(value = "SELECT chat_id FROM chat_table where status=:status")
     suspend fun getSeenByUserMessages(status: MESSAGE_STATUS = MESSAGE_STATUS.SEEN_BY_USER): List<String>
 
-
     @Update
     suspend fun updateQuestionObject(vararg question: Question)
 
@@ -610,10 +595,8 @@ interface ChatDao {
         practiseEngagement: List<PracticeEngagement>
     )
 
-
     @Query(value = "SELECT message_time_in_milliSeconds FROM chat_table where question_id IS NOT NULL AND conversation_id= :conversationId ORDER BY created DESC LIMIT 1; ")
     suspend fun getLastChatDate(conversationId: String): String?
-
 
     @Query(value = "SELECT * FROM (SELECT *,qt.type AS 'question_type' FROM chat_table ct LEFT JOIN question_table qt ON ct.chat_id = qt.chatId where qt.type= :typeO AND  title IS NOT NULL ) inbox  where type= :typeO AND conversation_id= :conversationId  ORDER BY created ASC;")
     suspend fun getRegisterCourseMinimal22(
@@ -621,10 +604,8 @@ interface ChatDao {
         typeO: BASE_MESSAGE_TYPE = BASE_MESSAGE_TYPE.Q
     ): List<CourseContentEntity>
 
-
     @Query("SELECT * FROM  question_table  WHERE questionId= :questionId")
     suspend fun getQuestionOnId(questionId: String): Question?
-
 
     @Transaction
     suspend fun getPractiseFromQuestionId(id: String): ChatModel? {
@@ -646,6 +627,7 @@ interface ChatDao {
 
     @Query("UPDATE question_table SET upload_feedback_status = 1 WHERE questionId= :questionId")
     suspend fun userSubmitFeedbackStatusUpdate(questionId: String)
+
 }
 
 enum class OPTION_TYPE(val type: String) {

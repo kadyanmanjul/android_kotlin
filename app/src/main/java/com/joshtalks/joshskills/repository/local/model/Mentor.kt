@@ -14,13 +14,11 @@ class Mentor {
     @SerializedName("id")
     private var id: String? = null
 
-
     @SerializedName("user")
     private var user: User? = null
 
     @SerializedName("locality")
     private var locality: Locality? = null
-
 
     @Expose
     var referralCode: String = EMPTY
@@ -31,7 +29,6 @@ class Mentor {
 
         @JvmStatic
         fun getInstance(): Mentor {
-
             return try {
                 instance = AppObjectController.gsonMapper.fromJson(
                     PrefManager.getStringValue(MENTOR_PERSISTANT_KEY), Mentor::class.java
@@ -42,7 +39,6 @@ class Mentor {
             }
         }
     }
-
 
     fun getLocality(): Locality? {
         return locality
@@ -69,12 +65,10 @@ class Mentor {
         return this
     }
 
-
     fun reset() {
         User().update()
         instance = null
     }
-
 
     fun updateFromResponse(mentor: Mentor) {
         setLocality(mentor.getLocality())
@@ -90,7 +84,6 @@ class Mentor {
     fun getId(): String {
         return id ?: EMPTY
     }
-
 
     fun setId(id: String): Mentor {
         this.id = id
@@ -109,7 +102,6 @@ class Mentor {
     fun getUser(): User? {
         return user
     }
-
 
     override fun toString(): String {
         return AppObjectController.gsonMapper.toJson(this)

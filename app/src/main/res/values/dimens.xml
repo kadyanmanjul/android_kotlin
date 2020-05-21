@@ -50,6 +50,11 @@
     <dimen name="notification_large_dim">256dp</dimen>
     <dimen name="tag_height">@dimen/_44sdp</dimen>
     <dimen name="rating_size">@dimen/_48sdp</dimen>
+    <dimen name="score_rating_size">@dimen/_23sdp</dimen>
 
+    <dimen name="roundedBottomSheetCornerRadius">16dp</dimen>
+    <dimen name="roundedBottomSheetCornerRadiusTopPadding">6dp</dimen>
+    <dimen name="roundedBottomSheetCornerRadiusLeftPadding">6dp</dimen>
+    <dimen name="roundedBottomSheetCornerRadiusRightPadding">6dp</dimen>
 
 </resources>

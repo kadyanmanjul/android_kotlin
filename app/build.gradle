@@ -13,8 +13,8 @@ android {
         applicationId "com.joshtalks.joshskills"
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 87
-        versionName "1.0.87"
+        versionCode 89
+        versionName "1.0.89beta"
         vectorDrawables.useSupportLibrary true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField "String", "CLIENT_TOKEN", "\"Ctt75ss5IxyHgBJb48diBbHUXIQ1VANCYRykjdcj\""
@@ -111,7 +111,7 @@ android {
         local {
             buildConfigField "boolean", "PLAY_STORE_DISABLED", "false"
             manifestPlaceholders = [enableCrashReporting: "false"]
-            buildConfigField "String", "BASE_URL", "\"http://192.168.0.102:8080\""
+            buildConfigField "String", "BASE_URL", "\"http://43.239.132.193:8000\""
         }
         dev {
             buildConfigField "boolean", "PLAY_STORE_DISABLED", "false"
@@ -297,6 +297,7 @@ dependencies {
     implementation 'com.google.android:flexbox:2.0.1'
     implementation 'io.sentry:sentry-android-core:2.0.3'
     implementation 'com.newrelic.agent.android:android-agent:5.25.0'
+    implementation 'com.sdsmdg.harjot:materialshadows:1.2.5'
 
 //  implementation 'io.sentry:sentry-android:2.0.3'
 //  implementation "com.truecaller.android.sdk:truecaller-sdk:2.0.0"

@@ -39,10 +39,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import kotlin.random.Random
 
 const val FCM_TOKEN = "fcmToken"
-const val FCM_ID = "fcmId"
 const val HAS_NOTIFICATION = "has_notification"
 const val NOTIFICATION_ID = "notification_id"
 const val HAS_COURSE_REPORT = "has_course_report"
@@ -51,7 +49,6 @@ const val HAS_COURSE_REPORT = "has_course_report"
 class FirebaseNotificationService : FirebaseMessagingService() {
 
     private var notificationChannelId = "101111"
-    private var notificationId = Random(1000).nextInt()
     private var notificationChannelName = "JoshTalksDefault"
 
     @RequiresApi(Build.VERSION_CODES.N)
@@ -60,7 +57,6 @@ class FirebaseNotificationService : FirebaseMessagingService() {
     override fun onNewToken(token: String) {
         super.onNewToken(token)
         PrefManager.put(FCM_TOKEN, token)
-        WorkMangerAdmin.pushTokenToServer()
     }
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {

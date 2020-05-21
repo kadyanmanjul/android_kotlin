@@ -160,7 +160,7 @@
                 android:value="false" />
         <meta-data
                 android:name="io.sentry.anr.enable"
-                android:value="true" />
+                android:value="false" />
         <meta-data
                 android:name="io.sentry.anr.timeout-interval-mills"
                 android:value="10000" />

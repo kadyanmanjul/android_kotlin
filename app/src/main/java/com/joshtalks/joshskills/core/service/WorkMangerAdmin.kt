@@ -1,10 +1,8 @@
 package com.joshtalks.joshskills.core.service
 
 import androidx.work.*
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.GID_SET_FOR_USER
-import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.core.REFERRAL_EVENT
+import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.repository.local.entity.NPSEvent
 import com.joshtalks.joshskills.repository.local.model.ScreenEngagementModel
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -12,8 +10,53 @@ import java.util.concurrent.TimeUnit
 object WorkMangerAdmin {
 
     fun appStartWorker() {
+
         WorkManager.getInstance(AppObjectController.joshApplication)
-            .enqueue(OneTimeWorkRequestBuilder<AppRunRequiredTaskWorker>().build())
+            .beginWith(
+                mutableListOf(
+                    OneTimeWorkRequestBuilder<AppRunRequiredTaskWorker>().build(),
+                    OneTimeWorkRequestBuilder<RefreshFCMTokenWorker>().build()
+                )
+            )
+            .then(OneTimeWorkRequestBuilder<UniqueIdGenerationWorker>().build())
+            .then(OneTimeWorkRequestBuilder<MappingGaIDWithMentor>().build())
+            .then(
+                mutableListOf(
+                    OneTimeWorkRequestBuilder<UploadFCMTokenOnServer>().build(),
+                    OneTimeWorkRequestBuilder<UpdateDeviceDetailsWorker>().build()
+                )
+            )
+            .enqueue()
+
+    }
+
+    fun requiredTaskAfterLoginComplete() {
+        WorkManager.getInstance(AppObjectController.joshApplication)
+            .beginWith(OneTimeWorkRequestBuilder<WorkerAfterLoginInApp>().build())
+            .then(OneTimeWorkRequestBuilder<MappingGaIDWithMentor>().build())
+            .then(OneTimeWorkRequestBuilder<MergeMentorWithGAIDWorker>().build())
+            .then(
+                mutableListOf(
+                    OneTimeWorkRequestBuilder<UploadFCMTokenOnServer>().build(),
+                    OneTimeWorkRequestBuilder<UpdateDeviceDetailsWorker>().build(),
+                    OneTimeWorkRequestBuilder<JoshTalksInstallWorker>().build()
+
+                )
+            ).enqueue()
+    }
+
+
+    fun requiredTaskInLandingPage() {
+        WorkManager.getInstance(AppObjectController.joshApplication)
+            .beginWith(OneTimeWorkRequestBuilder<WorkerInLandingScreen>().build())
+            .then(
+                mutableListOf(
+                    OneTimeWorkRequestBuilder<UserActiveWorker>().build(),
+                    OneTimeWorkRequestBuilder<ReferralCodeRefreshWorker>().build(),
+                    OneTimeWorkRequestBuilder<SyncEngageVideo>().build(),
+                    OneTimeWorkRequestBuilder<FeedbackRatingWorker>().build()
+                )
+            ).enqueue()
     }
 
     fun installReferrerWorker() {
@@ -137,6 +180,7 @@ object WorkMangerAdmin {
         WorkManager.getInstance(AppObjectController.joshApplication)
             .enqueue(OneTimeWorkRequestBuilder<MappingGaIDWithMentor>().build())
     }
+
     fun refreshFCMToken() {
         WorkManager.getInstance(AppObjectController.joshApplication)
             .enqueue(OneTimeWorkRequestBuilder<RefreshFCMTokenWorker>().build())
@@ -147,10 +191,6 @@ object WorkMangerAdmin {
             .enqueue(OneTimeWorkRequestBuilder<UploadFCMTokenOnServer>().build())
     }
 
-    fun requiredTaskAfterLoginComplete() {
-        WorkManager.getInstance(AppObjectController.joshApplication)
-            .enqueue(OneTimeWorkRequestBuilder<WorkerAfterLoginInApp>().build())
-    }
 
     fun syncVideoEngage() {
         WorkManager.getInstance(AppObjectController.joshApplication)
@@ -171,5 +211,30 @@ object WorkMangerAdmin {
         return workRequest.id
     }
 
+    fun getQuestionNPA(eventName: String): UUID {
+        val data = workDataOf("event" to eventName)
+        val workRequest = OneTimeWorkRequestBuilder<NPAQuestionViaEventWorker>()
+            .setInputData(data)
+            .build()
+        WorkManager.getInstance(AppObjectController.joshApplication).enqueue(workRequest)
+        return workRequest.id
+    }
+
+    fun determineNPAEvent(
+        event: NPSEvent = NPSEvent.STANDARD_TIME_EVENT,
+        interval: Int = -1,
+        id: String? = EMPTY
+    ) {
+        val data =
+            workDataOf(
+                "event" to AppObjectController.gsonMapper.toJson(event),
+                "day" to interval,
+                "id" to id
+            )
+        val workRequest = OneTimeWorkRequestBuilder<DeterminedNPSEvent>()
+            .setInputData(data)
+            .build()
+        WorkManager.getInstance(AppObjectController.joshApplication).enqueue(workRequest)
+    }
 
 }

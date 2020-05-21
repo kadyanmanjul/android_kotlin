@@ -663,6 +663,13 @@ object Utils {
 
     }
 
+    fun diffFromToday(compareDay: Date): Int {
+        val todayDate = Date()
+        val diff = todayDate.time - compareDay.time
+        return TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS).toInt()
+    }
+
+
     fun isSameDate(startDate: Date, endDate: Date): Boolean {
         val cal1 = Calendar.getInstance()
         val cal2 = Calendar.getInstance()
@@ -756,4 +763,13 @@ fun alphaAnimation(view: View) {
     animation.repeatCount = 12
     animation.repeatMode = Animation.REVERSE
     view.startAnimation(animation)
+}
+
+fun dateStartOfDay(): Date {
+    val c = Calendar.getInstance()
+    c[Calendar.HOUR_OF_DAY] = 0
+    c[Calendar.MINUTE] = 0
+    c[Calendar.SECOND] = 0
+    c[Calendar.MILLISECOND] = 0
+    return c.time
 }
