@@ -329,7 +329,7 @@ class PaymentActivity : CoreJoshActivity(),
                 val paymentDetailsResponse: Response<PaymentDetailsResponse> =
                     AppObjectController.signUpNetworkService.getPaymentDetails(map).await()
                 //TODO
-                AppAnalytics.create(AnalyticsEvent.PAYMENT_INITIATED.NAME).push()
+                //AppAnalytics.create(AnalyticsEvent.PAYMENT_INITIATED.NAME).push()
                 BranchIOAnalytics.pushToBranch(BRANCH_STANDARD_EVENT.INITIATE_PURCHASE)
                 if (paymentDetailsResponse.code() == 201) {
                     val response: PaymentDetailsResponse = paymentDetailsResponse.body()!!
@@ -679,11 +679,6 @@ class PaymentActivity : CoreJoshActivity(),
         appAnalytics.addParam(AnalyticsEvent.PURCHASE_COURSE.NAME, courseName)
             .addParam(FirebaseAnalytics.Param.ITEM_ID, testId)
             .addParam(FirebaseAnalytics.Param.PRICE, (amount).toString())
-
-        AppAnalytics.create(AnalyticsEvent.PURCHASE_COURSE.NAME)
-            .addParam(FirebaseAnalytics.Param.ITEM_ID, testId)
-            .addParam(FirebaseAnalytics.Param.PRICE, (amount).toString())
-            .push()
 
         AppObjectController.firebaseAnalytics.resetAnalyticsData()
         val bundle = Bundle()
