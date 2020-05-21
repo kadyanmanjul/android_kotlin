@@ -133,7 +133,7 @@ class ProfileActivity : BaseActivity(), MediaSelectCallback, DatePickerDialog.On
 
 
         if (media == Media.CAMERA) {
-            Dexter.withActivity(this)
+            Dexter.withContext(this)
                 .withPermissions(
                     Manifest.permission.READ_EXTERNAL_STORAGE,
                     Manifest.permission.WRITE_EXTERNAL_STORAGE,
@@ -163,7 +163,7 @@ class ProfileActivity : BaseActivity(), MediaSelectCallback, DatePickerDialog.On
                 .check()
         } else if (media == Media.GALLERY) {
 
-            Dexter.withActivity(this)
+            Dexter.withContext(this)
                 .withPermissions(
                     Manifest.permission.READ_EXTERNAL_STORAGE,
                     Manifest.permission.WRITE_EXTERNAL_STORAGE

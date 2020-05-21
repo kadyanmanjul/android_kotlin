@@ -149,7 +149,7 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener {
             this.onBackPressed()
         }
         binding.ivMore.setOnClickListener {
-            appAnalytics.addParam(AnalyticsEvent.VIDEO_MORE.NAME, true)
+            appAnalytics.addParam(AnalyticsEvent.VIDEO_MORE_ACTIONS.NAME, true)
             binding.videoPlayer.openVideoPlayerOptions()
         }
         binding.videoPlayer.getToolbar()?.setNavigationOnClickListener {

@@ -235,4 +235,10 @@
     <string name="feedback_sub_video">Rate this video</string>
     <string name="feedback_hint">Please share your detailed feedback</string>
 
+    <!--    Custom Permission Dialog-->
+    <string name="cancel_button">Cancel Button</string>
+    <string name="permission_dialog_description">Rojana class time par paane ke liye abhi notification on kare</string>
+    <string name="allow">Allow</string>
+    <string name="do_not_ask_again">Dobara na pooche</string>
+
 </resources>

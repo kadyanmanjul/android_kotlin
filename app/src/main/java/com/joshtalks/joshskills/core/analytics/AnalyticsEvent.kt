@@ -283,5 +283,5 @@ enum class AnalyticsEvent(val NAME: String) {
     FEEDBACK_IGNORE("Feedback Ignore V3"),
 
     REFERRAL_CODE("Referral Code V3"),
-
+    CUSTOM_PERMISSION_ACTION("Custom Permission Action V3")
 }

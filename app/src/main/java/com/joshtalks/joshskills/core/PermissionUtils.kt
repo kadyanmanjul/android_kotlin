@@ -13,13 +13,19 @@ import com.joshtalks.joshskills.R
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 
+enum class PermissionAction(val action: String) {
+    ALLOW("ALLOW"),
+    CANCEL("CANCEL"),
+    DO_NOT_ASK_AGAIN("DO_NOT_ASK_AGAIN")
+}
+
 object PermissionUtils {
 
     fun storageReadAndWritePermission(
         activity: Activity?,
         multiplePermissionsListener: MultiplePermissionsListener
     ) {
-        Dexter.withActivity(activity)
+        Dexter.withContext(activity)
             .withPermissions(
                 Manifest.permission.READ_EXTERNAL_STORAGE,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE
@@ -32,7 +38,7 @@ object PermissionUtils {
         activity: Activity?,
         multiplePermissionsListener: MultiplePermissionsListener
     ) {
-        Dexter.withActivity(activity)
+        Dexter.withContext(activity)
             .withPermissions(
                 Manifest.permission.RECORD_AUDIO,
                 Manifest.permission.READ_EXTERNAL_STORAGE,
@@ -122,7 +128,7 @@ object PermissionUtils {
         activity: Activity?,
         multiplePermissionsListener: MultiplePermissionsListener
     ) {
-        Dexter.withActivity(activity)
+        Dexter.withContext(activity)
             .withPermissions(
                 Manifest.permission.CAMERA,
                 Manifest.permission.READ_EXTERNAL_STORAGE,
