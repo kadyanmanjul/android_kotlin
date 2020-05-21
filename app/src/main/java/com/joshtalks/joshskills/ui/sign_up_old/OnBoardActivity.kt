@@ -15,7 +15,9 @@ import com.github.razir.progressbutton.DrawableButton
 import com.github.razir.progressbutton.hideProgress
 import com.github.razir.progressbutton.showProgress
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.CoreJoshActivity
+import com.joshtalks.joshskills.core.SignUpStepStatus
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.ErrorTag
@@ -56,18 +58,15 @@ class OnBoardActivity : CoreJoshActivity() {
         if (intent.hasExtra(IS_ACTIVITY_FOR_RESULT)) {
             activityResultFlag = intent?.getBooleanExtra(IS_ACTIVITY_FOR_RESULT, false) ?: false
         }
-
         if (intent.hasExtra("Flow")) {
             prevScreen = intent?.getStringExtra("Flow")
         }
         initTrueCallerSDK()
         appAnalytics = AppAnalytics.create(AnalyticsEvent.LOGIN_SCREEN_1.NAME)
             .addBasicParam()
-            .addParam(AnalyticsEvent.USER_GAID.NAME, PrefManager.getStringValue(USER_UNIQUE_ID))
+            .addUserDetails()
             .addParam(AnalyticsEvent.FLOW_FROM_PARAM.NAME, prevScreen)
-
         appAnalytics.push(true)
-
         val sBuilder = SpannableStringBuilder()
         sBuilder.append("Welcome to ").append("Josh Skills")
         val typefaceSpan =
@@ -114,12 +113,12 @@ class OnBoardActivity : CoreJoshActivity() {
     fun signUp() {
         AppAnalytics.create(AnalyticsEvent.LOGIN_INITIATED.NAME)
             .addBasicParam()
-            .addParam("name",this.javaClass.simpleName)
-            .addParam(AnalyticsEvent.TYPE_PARAM.NAME,AnalyticsEvent.MOBILE_OTP_PARAM.NAME)
+            .addParam(AnalyticsEvent.FLOW_FROM_PARAM.NAME, this.javaClass.simpleName)
+            .addParam(AnalyticsEvent.LOGIN_VIA.NAME, AnalyticsEvent.MOBILE_OTP_PARAM.NAME)
             .push()
         val intent = Intent(this, SignUpActivity::class.java).apply {
             putExtra(IS_ACTIVITY_FOR_RESULT, activityResultFlag)
-            putExtra(FROM_ACTIVITY, this@OnBoardActivity.javaClass.simpleName)
+            putExtra(FROM_ACTIVITY, "onboarding journey")
         }
         startActivity(intent)
     }
@@ -128,10 +127,8 @@ class OnBoardActivity : CoreJoshActivity() {
         AppAnalytics.create(AnalyticsEvent.EXPLORE_BTN_CLICKED.NAME)
             .addParam("name", this.javaClass.simpleName)
             .addBasicParam()
-            .addParam(AnalyticsEvent.USER_GAID.NAME, PrefManager.getStringValue(USER_UNIQUE_ID))
+            .addUserDetails()
             .push()
-
-
         startActivity(Intent(applicationContext, CourseExploreActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
         })
@@ -164,20 +161,18 @@ class OnBoardActivity : CoreJoshActivity() {
     fun verifyViaTrueCaller() {
         AppAnalytics.create(AnalyticsEvent.LOGIN_INITIATED.NAME)
             .addBasicParam()
-            .addParam("name", this.javaClass.simpleName)
-            .addParam(AnalyticsEvent.TYPE_PARAM.NAME, AnalyticsEvent.TRUECALLER_PARAM.NAME)
+            .addParam(AnalyticsEvent.FLOW_FROM_PARAM.NAME, this.javaClass.simpleName)
+            .addParam(AnalyticsEvent.LOGIN_VIA.NAME, AnalyticsEvent.TRUECALLER_PARAM.NAME)
             .push()
         TrueSDK.getInstance().getUserProfile(this)
         showProgress()
         AppObjectController.uiHandler.postDelayed({ hideProgress() }, 1500)
     }
 
-
     private val trueCallerSDKCallback: ITrueCallback = object : ITrueCallback {
         override fun onSuccessProfileShared(@NonNull trueProfile: TrueProfile) {
             showProgress()
             viewModel.verifyUserViaTrueCaller(trueProfile)
-
         }
 
         override fun onVerificationRequired() {
@@ -205,9 +200,7 @@ class OnBoardActivity : CoreJoshActivity() {
             textMarginRes = R.dimen.dp2
         }
         layout.btnTruecallerLogin.isEnabled = false
-
     }
-
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -232,7 +225,6 @@ class OnBoardActivity : CoreJoshActivity() {
     override fun onDestroy() {
         super.onDestroy()
         AppAnalytics.create(AnalyticsEvent.LOGIN_SCREEN_1.NAME).endSession()
-
     }
 
     override fun onResume() {

@@ -29,16 +29,11 @@ object InstallReferralUtil {
                     override fun onInstallReferrerSetupFinished(responseCode: Int) {
                         when (responseCode) {
                             InstallReferrerClient.InstallReferrerResponse.OK -> try {
-
-                                appAnalytics.addBasicParam()
-                                    .addParam(
-                                        AnalyticsEvent.USER_GAID.NAME,
-                                        PrefManager.getStringValue(USER_UNIQUE_ID)
-                                    )
-
+                                appAnalytics
+                                    .addBasicParam()
+                                    .addUserDetails()
                                 try {
                                     val response = referrerClient.installReferrer
-
                                     val rawReferrerString =
                                         URLDecoder.decode(response.installReferrer, "UTF-8")
                                     val referrerMap = HashMap<String, String>()
@@ -63,8 +58,6 @@ object InstallReferralUtil {
                                             }
                                         }
                                     }
-
-
                                     val installReferrerModel = InstallReferrerModel()
                                     installReferrerModel.otherInfo = referrerMap
                                     installReferrerModel.otherInfo?.apply {
@@ -80,7 +73,6 @@ object InstallReferralUtil {
                                             AnalyticsEvent.UTM_MEDIUM.NAME,
                                             installReferrerModel.utmMedium
                                         )
-
                                     }
                                     if (referrerMap["utm_source"].isNullOrEmpty().not()) {
                                         installReferrerModel.utmSource = referrerMap["utm_source"]
@@ -102,12 +94,10 @@ object InstallReferralUtil {
                                     }
                                     InstallReferrerModel.update(installReferrerModel)
                                     appAnalytics.push()
-
                                 } catch (ex: Exception) {
                                     ex.printStackTrace()
                                     appAnalytics.push()
                                 }
-
                             } catch (ex: RemoteException) {
                                 PrefHelper.Debug("onInstallReferrerSetupFinished() Exception: " + ex.message)
                                 Crashlytics.logException(ex)

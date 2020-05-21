@@ -20,6 +20,7 @@ import com.joshtalks.joshskills.core.interfaces.OnDismissDialog
 import com.joshtalks.joshskills.databinding.FragmentPrmotationDialogBinding
 import com.joshtalks.joshskills.ui.payment.COURSE_ID
 import com.joshtalks.joshskills.ui.payment.PaymentActivity
+import com.joshtalks.joshskills.ui.payment.STARTED_FROM
 import com.joshtalks.joshskills.ui.view_holders.ROUND_CORNER
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation
 
@@ -111,6 +112,7 @@ class PromotionDialogFragment : DialogFragment() {
                     PaymentActivity::class.java
                 ).apply {
                     putExtra(COURSE_ID, courseId)
+                    putExtra(STARTED_FROM, "Promotion")
                 })
             dismissAllowingStateLoss()
         }

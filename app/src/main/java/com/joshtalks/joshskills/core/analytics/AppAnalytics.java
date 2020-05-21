@@ -10,6 +10,7 @@ import com.flurry.android.FlurryAgent;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.joshtalks.joshskills.BuildConfig;
 import com.joshtalks.joshskills.core.AppObjectController;
+import com.joshtalks.joshskills.core.PrefManager;
 import com.joshtalks.joshskills.repository.local.model.InstallReferrerModel;
 import com.joshtalks.joshskills.repository.local.model.Mentor;
 import com.joshtalks.joshskills.repository.local.model.User;
@@ -28,6 +29,8 @@ import java.util.Map;
 import java.util.Objects;
 
 import timber.log.Timber;
+
+import static com.joshtalks.joshskills.core.PrefManagerKt.USER_UNIQUE_ID;
 
 public class AppAnalytics {
 
@@ -49,12 +52,10 @@ public class AppAnalytics {
                 CleverTapAPI.setDebugLevel(CleverTapAPI.LogLevel.DEBUG);
             }
         }
-
         if (firebaseAnalytics == null) {
             firebaseAnalytics = FirebaseAnalytics.getInstance(AppObjectController.getJoshApplication());
         }
     }
-
 
     public static AppAnalytics create(String title) {
         return new AppAnalytics(title);
@@ -82,7 +83,7 @@ public class AppAnalytics {
     }
 
     private static void updateFlurryUser() {
-        Timber.tag("Furry").d("updateFlurryUser() called");
+        Timber.tag("Flurry").d("updateFlurryUser() called");
         User user = User.getInstance();
         Mentor mentor = Mentor.getInstance();
         FlurryAgent.setUserId(mentor.getId());
@@ -121,16 +122,11 @@ public class AppAnalytics {
         int year = dob.get(Calendar.YEAR);
         int month = dob.get(Calendar.MONTH);
         int day = dob.get(Calendar.DAY_OF_MONTH);
-
         dob.set(year, month + 1, day);
-
         int age = today.get(Calendar.YEAR) - dob.get(Calendar.YEAR);
-
         if (today.get(Calendar.DAY_OF_YEAR) < dob.get(Calendar.DAY_OF_YEAR)) {
             age--;
         }
-
-
         return age;
     }
 
@@ -160,9 +156,13 @@ public class AppAnalytics {
     }
 
     public AppAnalytics addUserDetails() {
+        // .addParam(AnalyticsEvent.USER_GAID.NAME, PrefManager.getStringValue(USER_UNIQUE_ID))
+        if (!PrefManager.INSTANCE.getStringValue(USER_UNIQUE_ID).isEmpty())
+            parameters.put(AnalyticsEvent.USER_GAID.getNAME(), PrefManager.INSTANCE.getStringValue(USER_UNIQUE_ID));
+        if (Mentor.getInstance().hasId())
+            parameters.put(AnalyticsEvent.USER_MENTOR_ID.getNAME(), Mentor.getInstance().getId());
         if (!User.getInstance().getFirstName().isEmpty())
             parameters.put(AnalyticsEvent.USER_NAME.getNAME(), User.getInstance().getFirstName());
-
         if (!User.getInstance().getEmail().isEmpty())
             parameters.put(AnalyticsEvent.USER_EMAIL.getNAME(), User.getInstance().getEmail());
         if (!User.getInstance().getPhoneNumber().isEmpty())
@@ -211,7 +211,7 @@ public class AppAnalytics {
     public void push() {
         Timber.v(this.toString());
         if (BuildConfig.DEBUG) {
-            //return;
+            return;
         }
         formatParameters();
         pushToFirebase();
@@ -222,7 +222,7 @@ public class AppAnalytics {
     public void push(boolean trackSession) {
         Timber.v(this.toString());
         if (BuildConfig.DEBUG) {
-            //return;
+            return;
         }
         formatParameters();
         pushToFirebase();

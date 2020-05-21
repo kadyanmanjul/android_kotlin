@@ -79,7 +79,7 @@ class CourseExploreActivity : CoreJoshActivity() {
         initRV()
         initView()
         loadCourses()
-        appAnalytics = AppAnalytics.create(AnalyticsEvent.EXPLORE_OPENED.NAME)
+        appAnalytics = AppAnalytics.create(AnalyticsEvent.COURSE_EXPLORE.NAME)
             .addUserDetails()
             .addBasicParam()
         if (prevAct.isNullOrBlank().not())
@@ -105,7 +105,6 @@ class CourseExploreActivity : CoreJoshActivity() {
             findViewById<MaterialToolbar>(R.id.toolbar).inflateMenu(R.menu.logout_menu)
         }
         findViewById<MaterialToolbar>(R.id.toolbar).setOnMenuItemClickListener {
-            appAnalytics.addParam(AnalyticsEvent.MENU_ICON_CLICKED.NAME, "Menu 3 dot clicked")
             if (it?.itemId == R.id.menu_logout) {
                 MaterialDialog(this@CourseExploreActivity).show {
                     message(R.string.logout_message)
@@ -234,15 +233,12 @@ class CourseExploreActivity : CoreJoshActivity() {
             val extras: HashMap<String, String> = HashMap()
             extras["test_id"] = it.id?.toString() ?: EMPTY
             extras["course_name"] = it.courseName
-            appAnalytics.push()
             AppAnalytics.create(AnalyticsEvent.COURSE_THUMBNAIL_CLICKED.NAME)
                 .addBasicParam()
-                .addParam(AnalyticsEvent.USER_GAID.NAME, PrefManager.getStringValue(USER_UNIQUE_ID))
                 .addUserDetails()
                 .addParam(AnalyticsEvent.COURSE_NAME.NAME, it.courseName)
                 .addParam(AnalyticsEvent.COURSE_PRICE.NAME, it.amount)
                 .push()
-
             PaymentActivity.startPaymentActivity(this, PAYMENT_FOR_COURSE_CODE, it)
         })
     }
@@ -261,9 +257,7 @@ class CourseExploreActivity : CoreJoshActivity() {
     override fun onBackPressed() {
         onCancelResult()
         super.onBackPressed()
-
     }
-
 
     override fun onStart() {
         super.onStart()
@@ -273,6 +267,7 @@ class CourseExploreActivity : CoreJoshActivity() {
     override fun onStop() {
         screenEngagementModel.endTime = System.currentTimeMillis()
         WorkMangerAdmin.screenAnalyticsWorker(screenEngagementModel)
+        appAnalytics.push()
         super.onStop()
     }
 

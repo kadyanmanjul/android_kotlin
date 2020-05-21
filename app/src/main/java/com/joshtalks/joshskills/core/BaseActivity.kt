@@ -49,7 +49,16 @@ abstract class BaseActivity : AppCompatActivity() {
     private lateinit var referrerClient: InstallReferrerClient
 
     enum class ActivityEnum {
-        Conversation, CourseProgress, CourseExplore, Help, Inbox, Launcher, Payment, Onboard, Signup, Empty
+        Conversation,
+        CourseProgress,
+        CourseExplore,
+        Help,
+        Inbox,
+        Launcher,
+        Payment,
+        Onboard,
+        Signup,
+        Empty
     }
 
     override fun attachBaseContext(newBase: Context?) {
@@ -83,10 +92,9 @@ abstract class BaseActivity : AppCompatActivity() {
     fun openHelpActivity() {
         val i = Intent(this, HelpActivity::class.java)
         startActivityForResult(i, HELP_ACTIVITY_REQUEST_CODE)
-
     }
 
-    fun getState(act: Activity): ActivityEnum {
+    fun getActivityType(act: Activity): ActivityEnum {
         return when (act) {
             is ConversationActivity -> ActivityEnum.Conversation
             is CourseExploreActivity -> ActivityEnum.CourseExplore
@@ -100,7 +108,6 @@ abstract class BaseActivity : AppCompatActivity() {
             else -> ActivityEnum.Empty
         }
     }
-
 
     fun getIntentForState(): Intent? {
         val intent: Intent? = if (User.getInstance().token == null) {
@@ -124,7 +131,6 @@ abstract class BaseActivity : AppCompatActivity() {
         return Intent(this, InboxActivity::class.java).apply {
             addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                .putExtra(AnalyticsEvent.FLOW_FROM_PARAM.NAME, "")
         }
     }
 
@@ -171,7 +177,6 @@ abstract class BaseActivity : AppCompatActivity() {
         user.id = PrefManager.getStringValue(USER_UNIQUE_ID)
         user.username = User.getInstance().username
         Sentry.setUser(user)
-
     }
 
     private fun initNewRelic() {
@@ -186,7 +191,6 @@ abstract class BaseActivity : AppCompatActivity() {
         AppAnalytics.create(AnalyticsEvent.CLICK_HELPLINE_SELECTED.NAME).push()
         Utils.call(this, AppObjectController.getFirebaseRemoteConfig().getString("helpline_number"))
     }
-
 
     protected fun isUserHaveNotPersonalDetails(): Boolean {
         return User.getInstance().dateOfBirth.isNullOrEmpty()

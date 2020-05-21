@@ -270,7 +270,7 @@ class CourseDetailType1Fragment : Fragment() {
                             .addParam(AnalyticsEvent.SHOWN_COURSE_PRICE.NAME, test.showAmount)
                             .addParam(
                                 AnalyticsEvent.COUSR_VIDEO_PRESENT.NAME,
-                                (response[0].videoObj?.video_url.isNullOrEmpty())
+                                (videoUrl.isNullOrEmpty().not())
                             )
 
 
@@ -373,7 +373,7 @@ class CourseDetailType1Fragment : Fragment() {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
-
+                    appAnalytics.addParam(AnalyticsEvent.COURSE_DATA_ACTION.NAME, "Image Clicked")
                 }, {
                     it.printStackTrace()
                 })
@@ -384,7 +384,7 @@ class CourseDetailType1Fragment : Fragment() {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
-
+                    appAnalytics.addParam(AnalyticsEvent.COURSE_DATA_ACTION.NAME, "Video Played")
                 }, {
                     it.printStackTrace()
                 })
@@ -395,7 +395,7 @@ class CourseDetailType1Fragment : Fragment() {
         super.onDestroyView()
         appAnalytics.push()
         AppAnalytics.create(AnalyticsEvent.BACK_PRESSED.NAME)
-            .addParam("name", javaClass.simpleName)
+            .addParam("name", this.javaClass.simpleName)
             .push()
     }
 

@@ -5,8 +5,6 @@ import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.os.Build
 import android.os.Bundle
-import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
-import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.LogException
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
 import com.joshtalks.joshskills.repository.server.engage.Graph
@@ -32,7 +30,6 @@ abstract class CoreJoshActivity : BaseActivity() {
     protected var currentAudio: String? = null
     protected var cAudioId: String? = null
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         requestedOrientation = if (Build.VERSION.SDK_INT == 26) {
             ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
@@ -51,7 +48,6 @@ abstract class CoreJoshActivity : BaseActivity() {
         }
     }
 
-
     protected fun setResult() {
         val resultIntent = Intent()
         setResult(Activity.RESULT_OK, resultIntent)
@@ -59,16 +55,16 @@ abstract class CoreJoshActivity : BaseActivity() {
     }
 
     protected fun openCourseExplorerScreen(act: Activity) {
-        AppAnalytics.create(AnalyticsEvent.EXPLORE_OPENED.NAME)
-            .push()
+        //AppAnalytics.create(AnalyticsEvent.EXPLORE_OPENED.NAME).push()
         CourseExploreActivity.startCourseExploreActivity(
             this,
             COURSE_EXPLORER_WITHOUT_CODE,
-            null, true, getState(act)
+            null,
+            true,
+            getActivityType(act)
         )
         this.finish()
     }
-
 
     protected fun endAudioEngagePart(endTime: Long) {
         graph?.endTime = endTime
@@ -107,7 +103,6 @@ abstract class CoreJoshActivity : BaseActivity() {
         FeedbackFragment.newInstance(feedbackTypes, questionId)
             .show(supportFragmentManager, "feedback_fragment_dialog")
     }
-
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)

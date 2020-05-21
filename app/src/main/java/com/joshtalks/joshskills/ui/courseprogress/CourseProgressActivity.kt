@@ -120,7 +120,7 @@ class CourseProgressActivity : CoreJoshActivity(), OnDismissDialog,
             .addBasicParam()
             .addUserDetails()
             .addParam(AnalyticsEvent.COURSE_NAME.NAME, inboxEntity.course_name)
-            .addParam(AnalyticsEvent.VIEW_SAMPLE_CERTIFICATE_OPEN.NAME, false)
+            .addParam(AnalyticsEvent.SAMPLE_CERTIFICATE_OPEN.NAME, false)
             .addParam(AnalyticsEvent.CERTIFICATE_PROGRESS_CLICKED.NAME, false)
             .addParam(AnalyticsEvent.PERFORMANCE_CLICKED.NAME, false)
         initView()
@@ -418,7 +418,7 @@ class CourseProgressActivity : CoreJoshActivity(), OnDismissDialog,
     }
 
     fun openSampleCertificate() {
-        appAnalytics.addParam(AnalyticsEvent.VIEW_SAMPLE_CERTIFICATE_OPEN.NAME, true)
+        appAnalytics.addParam(AnalyticsEvent.SAMPLE_CERTIFICATE_OPEN.NAME, true)
         val url = AppObjectController.getFirebaseRemoteConfig().getString("CERTIFICATE_URL")
         showPromotionScreen(null, url)
     }
@@ -463,7 +463,7 @@ class CourseProgressActivity : CoreJoshActivity(), OnDismissDialog,
                             id = it.id
                             updateIndex = it.postion
                             if (it.practiseOpen) {
-                                AppAnalytics.create(AnalyticsEvent.PRACTISE_CLICKED_COURSE_OVERVIEW.NAME)
+                                AppAnalytics.create(AnalyticsEvent.PRACTICE_CLICKED_COURSE_OVERVIEW.NAME)
                                     .addParam("Question Id ", it.id).push()
                                 updatePractiseId = obj.chatId
                                 PractiseSubmitActivity.startPractiseSubmissionActivity(
@@ -561,7 +561,7 @@ class CourseProgressActivity : CoreJoshActivity(), OnDismissDialog,
     }
 
     override fun onDismiss() {
-        AppAnalytics.create(AnalyticsEvent.VIEW_SAMPLE_CERTIFICATE_CLOSE.NAME).push()
+        AppAnalytics.create(AnalyticsEvent.SAMPLE_CERTIFICATE_CLOSE.NAME).push()
     }
 
     override fun onDismiss(certificateDetail: CertificateDetail?) {

@@ -96,7 +96,6 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         })
     }
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         WorkMangerAdmin.requiredTaskAfterLoginComplete()
         // TODO add flow if require

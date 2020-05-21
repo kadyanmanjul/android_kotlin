@@ -65,6 +65,7 @@ const val COURSE_OBJECT = "course"
 const val COURSE_ID = "course_ID"
 const val PAYMENT_DETAIL_OBJECT = "payment_detail"
 const val HAS_CERTIFICATE = "has_certificate"
+const val STARTED_FROM = "started_from"
 
 
 class PaymentActivity : CoreJoshActivity(),
@@ -88,6 +89,7 @@ class PaymentActivity : CoreJoshActivity(),
     private var specialDiscount = false
     private var isEcommereceEventFire = true
     private var hasCertificate = false
+    private var flowFrom: String? = EMPTY
 
 
     companion object {
@@ -99,6 +101,7 @@ class PaymentActivity : CoreJoshActivity(),
             Intent(context, PaymentActivity::class.java).apply {
                 addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
                 putExtra(COURSE_OBJECT, courseModel)
+                putExtra(STARTED_FROM, context.javaClass.simpleName)
             }.run {
                 context.startActivityForResult(this, requestCode)
             }
@@ -121,27 +124,26 @@ class PaymentActivity : CoreJoshActivity(),
         activityPaymentBinding.handler = this
         initView()
 
-
-
         if (intent.hasExtra(COURSE_OBJECT)) {
             courseModel = intent.getParcelableExtra(COURSE_OBJECT) as CourseExploreModel
             testId = courseModel?.id.toString()
             courseModel?.certificate?.run {
                 hasCertificate = this
             }
-
         }
         if (intent.hasExtra(COURSE_ID)) {
             testId = intent.getStringExtra(COURSE_ID)!!
+        }
+        if (intent.hasExtra(STARTED_FROM)) {
+            flowFrom = intent.getStringExtra(STARTED_FROM)
+            appAnalytics.addParam(AnalyticsEvent.FLOW_FROM_PARAM.NAME, flowFrom)
         }
         if (testId.isEmpty()) {
             invalidCourseId()
             return
         }
-
         val flagForLandingPage =
             AppObjectController.getFirebaseRemoteConfig().getBoolean("testing_landing_page")
-
         if (flagForLandingPage) {
             getTestCourseDetails()
         } else {
@@ -165,9 +167,7 @@ class PaymentActivity : CoreJoshActivity(),
         //2nd by let operator
         courseModel?.amount?.let {
             appAnalytics.addParam(AnalyticsEvent.COURSE_PRICE.NAME, it)
-
         }
-
     }
 
     private fun getTestCourseDetails() {
@@ -199,7 +199,6 @@ class PaymentActivity : CoreJoshActivity(),
             courseName = courseModel?.courseName ?: EMPTY
         } else {
             titleView.text = getString(R.string.explorer_course)
-
         }
         findViewById<View>(R.id.iv_back).visibility = View.VISIBLE
         findViewById<View>(R.id.iv_back).setOnClickListener {
@@ -226,7 +225,6 @@ class PaymentActivity : CoreJoshActivity(),
                 if (Mentor.getInstance().getId().isNotEmpty()) {
                     data["mentor"] = Mentor.getInstance().getId()
                 }
-
                 val courseDetailsModelList: List<CourseDetailsModel> =
                     AppObjectController.signUpNetworkService.explorerCourseDetails(data).await()
                 CoroutineScope(Dispatchers.Main).launch {
@@ -241,14 +239,12 @@ class PaymentActivity : CoreJoshActivity(),
                     }
                     activityPaymentBinding.progressBar.visibility = View.GONE
                 }
-
                 amount = courseDetailsModelList[0].testCourseDetail.amount
                 courseName = courseDetailsModelList[0].testCourseDetail.courseName
                 if (courseName.isNotEmpty()) {
                     CoroutineScope(Dispatchers.Main).launch {
                         titleView.text = courseName
                     }
-
                 }
 
             } catch (ex: HttpException) {
@@ -267,7 +263,6 @@ class PaymentActivity : CoreJoshActivity(),
         }
     }
 
-
     override fun onPaymentError(p0: Int, p1: String?) {
         userSubmitCode = EMPTY
         razorpayOrderId = EMPTY
@@ -277,7 +272,6 @@ class PaymentActivity : CoreJoshActivity(),
             .textColor(ContextCompat.getColor(applicationContext, R.color.white))
             .length(Toast.LENGTH_LONG).solidBackground().show()
         appAnalytics.addParam(AnalyticsEvent.PAYMENT_FAILED.NAME, p1)
-
     }
 
     @Synchronized
@@ -288,7 +282,6 @@ class PaymentActivity : CoreJoshActivity(),
             isEcommereceEventFire = false
             addECommerceEvent(razorpayPaymentId)
         }
-
         uiHandler.post {
             courseModel?.run {
                 PaymentProcessFragment.newInstance(this)
@@ -346,7 +339,6 @@ class PaymentActivity : CoreJoshActivity(),
                         courseModel?.courseName = response.courseName
                         courseModel?.id = this@PaymentActivity.testId.toInt()
                     }
-
                     compositeDisposable.add(AppObjectController.appDatabase
                         .courseDao()
                         .isUserOldThen7Days()
@@ -364,7 +356,6 @@ class PaymentActivity : CoreJoshActivity(),
                                 } else {
                                     initializeRazorpayPayment(response)
                                 }
-
                             },
                             { error ->
                                 error.printStackTrace()
@@ -380,8 +371,6 @@ class PaymentActivity : CoreJoshActivity(),
                             .show(supportFragmentManager, "Payment Process")
                     }
                 }
-
-
             } catch (ex: Exception) {
                 hideProgress()
                 when (ex) {
@@ -398,7 +387,6 @@ class PaymentActivity : CoreJoshActivity(),
             }
         }
     }
-
 
     private fun initializeRazorpayPayment(response: PaymentDetailsResponse) {
         CoroutineScope(Dispatchers.Main).launch {
@@ -440,7 +428,6 @@ class PaymentActivity : CoreJoshActivity(),
         }
     }
 
-
     fun buyCourse(isUserSpecialOffer: Boolean) {
         val courseModel = CourseExploreModel()
         courseModel.amount = amount
@@ -462,7 +449,6 @@ class PaymentActivity : CoreJoshActivity(),
             // TODO
             AppAnalytics.create(AnalyticsEvent.PAYMENT_DIALOG.NAME)
                 .push()
-
         }
     }
 
@@ -531,7 +517,6 @@ class PaymentActivity : CoreJoshActivity(),
                 }
             }, 2500)
         }
-
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -542,7 +527,6 @@ class PaymentActivity : CoreJoshActivity(),
             requestForPayment()
         }
         super.onActivityResult(requestCode, resultCode, data)
-
     }
 
     override fun getCouponCode(code: String?) {
@@ -550,11 +534,9 @@ class PaymentActivity : CoreJoshActivity(),
             userSubmitCode = code!!
             appAnalytics.addParam(AnalyticsEvent.HAVE_COUPON_CODE.NAME, true)
             appAnalytics.addParam(AnalyticsEvent.COUPON_INSERTED.NAME, userSubmitCode)
-
         }
         appAnalytics.addParam(AnalyticsEvent.HAVE_COUPON_CODE.NAME, false)
         requestForPayment()
-
     }
 
     override fun onBackPressed() {
@@ -568,7 +550,6 @@ class PaymentActivity : CoreJoshActivity(),
             return
         }
         super.onBackPressed()
-
     }
 
     private fun requestForPayment() {
@@ -591,7 +572,6 @@ class PaymentActivity : CoreJoshActivity(),
         }
     }
 
-
     private fun showCouponCodeEnterScreen() {
         val fragmentTransaction = supportFragmentManager.beginTransaction()
         val prev = supportFragmentManager.findFragmentByTag("coupon_code_dialog")
@@ -613,7 +593,6 @@ class PaymentActivity : CoreJoshActivity(),
         LoginDialogFragment.newInstance().show(supportFragmentManager, "login_dialog")
     }
 
-
     private fun invalidCodeDialog() {
         appAnalytics.addParam(AnalyticsEvent.INVALID_COUPON_POPUP.NAME, true)
         val dialog = Dialog(this@PaymentActivity)
@@ -625,7 +604,6 @@ class PaymentActivity : CoreJoshActivity(),
         dialog.window?.setDimAmount(0.7f)
         dialog.show()
     }
-
 
     override fun onCompletePayment() {
         requestForPayment()
@@ -695,11 +673,9 @@ class PaymentActivity : CoreJoshActivity(),
         requestForPayment()
     }
 
-
     private fun addECommerceEvent(razorpayPaymentId: String) {
         WorkMangerAdmin.newCourseScreenEventWorker(courseName, testId, buyCourse = true)
         //appAnalytics.push()
-
         appAnalytics.addParam(AnalyticsEvent.PURCHASE_COURSE.NAME, courseName)
             .addParam(FirebaseAnalytics.Param.ITEM_ID, testId)
             .addParam(FirebaseAnalytics.Param.PRICE, (amount).toString())
@@ -726,7 +702,6 @@ class PaymentActivity : CoreJoshActivity(),
         extras["course_name"] = courseName
         BranchIOAnalytics.pushToBranch(BRANCH_STANDARD_EVENT.PURCHASE, extras)
 
-
         try {
             if (this.amount <= 0) {
                 return
@@ -740,12 +715,9 @@ class PaymentActivity : CoreJoshActivity(),
                 Currency.getInstance(currency.trim()),
                 params
             )
-
         } catch (ex: Exception) {
             ex.printStackTrace()
             Crashlytics.logException(ex)
         }
-
     }
-
 }

@@ -43,13 +43,11 @@ class SignUpActivity : CoreJoshActivity() {
         login()
         appAnalytics= AppAnalytics.create(AnalyticsEvent.SIGNUP_SATUS.NAME)
             .addBasicParam()
-            .addParam(AnalyticsEvent.TYPE_PARAM.NAME,AnalyticsEvent.MOBILE_OTP_PARAM.NAME)
-
-
+            .addParam(AnalyticsEvent.LOGIN_VIA.NAME, AnalyticsEvent.MOBILE_OTP_PARAM.NAME)
+            .addUserDetails()
         if(fromActivity.isEmpty().not())
             appAnalytics.addParam(AnalyticsEvent.FLOW_FROM_PARAM.NAME,fromActivity)
     }
-
 
     private fun login() {
         supportFragmentManager.commit(true) {
@@ -130,7 +128,6 @@ class SignUpActivity : CoreJoshActivity() {
                 signUpStep2Fragment::class.java.name
             )
         }
-
     }
 
     override fun onBackPressed() {
@@ -141,8 +138,5 @@ class SignUpActivity : CoreJoshActivity() {
             return
         }
         super.onBackPressed()
-
     }
-
-
 }

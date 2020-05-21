@@ -193,7 +193,7 @@ class InboxViewHolder(
 
     @Click(R.id.root_view)
     fun onClick() {
-        AppAnalytics.create(AnalyticsEvent.COURSE_SELECTED.NAME)
+        AppAnalytics.create(AnalyticsEvent.COURSE_ENGAGEMENT.NAME)
             .addBasicParam()
             .addUserDetails()
             .addParam(

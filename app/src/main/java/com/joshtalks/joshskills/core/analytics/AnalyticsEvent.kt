@@ -15,11 +15,11 @@ enum class AnalyticsEvent(val NAME: String) {
     DEVICE_MANUFACTURER("Device Manufacturer V3"),
     DEVICE_MODEL("Device Model V3"),
     ANDROID_OR_IOS("Android/IOS Version V3"),
-    USER_GAID("User Gaid V3"),
+    USER_GAID("Gaid V3"),
+    USER_MENTOR_ID("Mentor id V3"),
     USER_NAME("User name V3"),
     USER_EMAIL("User email id V3"),
     USER_PHONE_NUMBER("User Phone Number V3"),
-
 
     APP_LAUNCHED("App Launched V3"),
     NETWORK_CARRIER("Network Carrier V3"),
@@ -42,18 +42,16 @@ enum class AnalyticsEvent(val NAME: String) {
     //LOGIN with otp
     PHONENO_ENTERED_NEXT_BTN_CLICKED("Phone Number Entered Next Button Clicked V3"),
     COUNTRY_FLAG_CHANGED("CountryFlag Icon Changed V3"),
-    FLAG_DIALOG_SEARCH_TEXT("Flag Searched V3"),
-    FLAG_DIALOG_CLOSED("Flag Dialog Closed V3"),
-    FLAG_DIALOG_ITEM_CLICKED("Flag Dialog Flag Selected V3"),
     HELP_INITIATED("Help Initiated V3"),
     TERMS_CONDITION_CLICKED("Terms&Conditions Clicked V3"),
 
     //New Login/SignUp Status Status
+    //LOGIN_INITIATED("Login initiated V3"),
     SIGNUP_SATUS("SignUp Status V3"),
-    TYPE_PARAM("Type param V3"),
+    LOGIN_VIA("Login via V3"),
     FLOW_FROM_PARAM("flow from V3"),
-    MOBILE_OTP_PARAM("Via Mobile OTP V3"),
-    TRUECALLER_PARAM("Via Truecaller V3"),
+    MOBILE_OTP_PARAM("Mobile OTP V3"),
+    TRUECALLER_PARAM("Truecaller V3"),
     STATUS("Status param V3"),
     USER_DETAILS("User Details V3"),
     SUCCESS_PARAM("Status success V3"),
@@ -66,7 +64,6 @@ enum class AnalyticsEvent(val NAME: String) {
     USE_OTHER_MOBILE_CLICKED("Another Mobile Number Button Clicked V3"),
 
     // LOGIN FRAGMENTS
-
     RESEND_OTP("Resend OTP V3"),
     INCORRECT_OTP("Incorrect OTP V3"),
     NEXT_OTP_CLICKED("OTP Submit Status V3"),
@@ -80,8 +77,6 @@ enum class AnalyticsEvent(val NAME: String) {
     NO_OF_TIMES_OTP_SEND("Number of times OTP send V3"),
     TIME_TAKEN("Time Taken V3"),
     INCORRECT_OTP_ATTEMPTS("incorrect OTP attempts V3"),
-    //ENTER_OTP_SCREEN("Enter OTP Screen V3"),
-
 
     //HELPLINE SELECTED
     CLICK_HELPLINE_SELECTED("Call Helpline Selected V3"),
@@ -91,9 +86,7 @@ enum class AnalyticsEvent(val NAME: String) {
     HELP_COMPLAINT_FOAM("Help Complain Foam Selected V3"),
     HELP_CATEGORY_CLICKED("Help Category V3"),
 
-
     //Complaint Details
-
     COMPLAINT_EMAIL("Complaint email V3"),
     COMPLAINT_NAME("Complaint name V3"),
     COMPLAINT_NUMBER("Complaint number V3"),
@@ -102,8 +95,7 @@ enum class AnalyticsEvent(val NAME: String) {
 
 
     // ExploreCourses Screen
-
-    EXPLORE_OPENED("Explore Opened V3"),
+    COURSE_EXPLORE("Course Explore V3"),
     COURSE_LIST_SCROLLED("Course List Scrolled V3"),
     COURSE_CLICKED("Course Clicked V3"),
     COURSE_THUMBNAIL_CLICKED("Course Thumbnail Clicked V3"),
@@ -113,12 +105,7 @@ enum class AnalyticsEvent(val NAME: String) {
     LOGOUT_CLICKED("Logout Menu item clicked V3"),
     USER_LOGGED_OUT("User logged out V3"),
 
-
-    //
-
-
     //CourseDetails Screen
-
     COURSE_OVERVIEW("Course Overview V3"),
     COURSE_PRICE("Course price V3"),
     SHOWN_COURSE_PRICE("Shown course price V3"),
@@ -136,31 +123,30 @@ enum class AnalyticsEvent(val NAME: String) {
     SPECIAL_DISCOUNT("Special Discount V3"),
     COUSR_VIDEO_PLAYED("Course Video Played V3"),
     COUSR_VIDEO_PRESENT("Course Video Present V3"),
-
-    COURSE_DETAILS("Clicked Course Details V3"),
+    MEDIA_TYPE("Media type V3"),
     COMPLETE_PAYMENT("Complete Payment V3"), //
     COMPLETE_PAYMENT_CLICKED("Complete Payment Btn Clicked V3"),
     START_COURSE_NOW("Start your course now V3"), //  COURSE_CLICKED same
+    COURSE_DATA_EXPANDED("Course data Expanded V3"), //  COURSE_CLICKED same
+    COURSE_DATA_CONTRACTED("Course data contracted V3"), //  COURSE_CLICKED same
+    COURSE_DATA_ACTION("Course data Action V3"), //  COURSE_CLICKED same
 
 
     //Course Purchase Initiated
     COURSE_PURCHASE_INITIATED("Course purchase initiated V3"),
 
     // Course Purchase Confirmed
-
     ENTER_COUPON_SCREEN("Enter coupon Screen V3"),
     COURSE_PURCHASE_CONFIRMED("Course Purchase Confirmed V3"),
 
     //  Payment Status (Post response from razorpay, transaction was successful or failed)
-
     PAYMENT_STATUS("Payment Status V3"),
     INVALID_COUPON_POPUP("Invalid coupon popup V3"),
 
 
     // Audio Downloaded
-
     AUDIO_VH("Audio View Holder V3"),
-    AUDIO_PLAYER_PLAYED("Audio player Played V3"),
+    AUDIO_PLAYED("Audio Played V3"),
     AUDIO_DOWNLOAD_STATUS("Audio Download Status V3"),
     AUDIO_VIEW_STATUS("Audio View Status V3"),
     AUDIO_PLAYING_STATUS("Audio playing Status V3"),
@@ -177,11 +163,12 @@ enum class AnalyticsEvent(val NAME: String) {
     VIDEO_ID("Video id V3"),
     VIDEO_DURATION("Video Duration V3"),
     VIDEO_PAUSE("Video pause V3"),
-    VIDEO_BTM_BTN("Video bottom Button V3"),
+    VIDEO_ACTION("Video Action V3"),
     VIDEO_PLAY("Video play V3"),
     VIDEO_REWIND("Video rewind V3"),
     VIDEO_FORWARD("Video forward V3"),
-    VIDEO_MORE("Video more selected V3"),
+    VIDEO_MORE_ACTIONS("Video more action V3"),
+    ACTION("Action V3"),
 
     // PDF Events
     PDF_VH("pdf View Holder V3"),
@@ -193,17 +180,17 @@ enum class AnalyticsEvent(val NAME: String) {
     PDF_DURATION("pdf Duration V3"),
 
     // Practice Opened
-    PRACTISE_SCREEN("Practise Screen V3"),
-    PRACTISE_ID("Practise id V3"),
-    PRACTISE_OPENED("Practise open clicked V3"),
+    PRACTICE_SCREEN("Practice Screen V3"),
+    PRACTICE_ID("Practice id V3"),
+    PRACTICE_OPENED("Practice open clicked V3"),
     PRACTICE_SUBMITTED("Practice submitted V3"),
     PRACTICE_TYPE_SUBMITTED("Practice type submitted V3"),
     AUDIO_RECORD("Audio Record V3"),
-    PRACTICE_SOLVED("Practise Solved V3"),
-    PRACTICE_STATUS("Practise Status V3"),
-    PRACTICE_EXTRA("Practise extra action V3"),
-    PRACTICE_TYPE_PRESENT("Practise type Present V3"),
-    PRACTICE_SCREEN_TIME("Practise opened to  submit time v3"),
+    PRACTICE_SOLVED("Practice Solved V3"),
+    PRACTICE_STATUS("Practice Status V3"),
+    PRACTICE_EXTRA("Practice extra action V3"),
+    PRACTICE_TYPE_PRESENT("Practice type Present V3"),
+    PRACTICE_SCREEN_TIME("Practice opened to  submit time v3"),
     AUDIO_SUBMITTED("Audio Submitted V3"),
 
 
@@ -217,18 +204,19 @@ enum class AnalyticsEvent(val NAME: String) {
     CERTIFICATE_PROGRESS_CLICKED("Certificate Progress Clicked V3"),
     COURSE_PROGRESS_PERCENT("Percent Course Completed V3"),
     PERFORMANCE_CLICKED("Performance Clicked V3"),
-    VIEW_SAMPLE_CERTIFICATE_OPEN("View Sample Certificate Open V3"),
-    VIEW_SAMPLE_CERTIFICATE_CLOSE("View Sample Certificate Close V3"),
+    SAMPLE_CERTIFICATE_OPEN("Sample Certificate Open V3"),
+    SAMPLE_CERTIFICATE_CLOSE("Sample Certificate Close V3"),
     VIDEO_CLICKED_COURSE_OVERVIEW("Video Click Course Overview V3"),
-    PRACTISE_CLICKED_COURSE_OVERVIEW("Practise Clicked Course Overview V3"),
+    PRACTICE_CLICKED_COURSE_OVERVIEW("Practice Clicked Course Overview V3"),
     CLAIM_CERTIFICATE("Certifcate claim clicked V3"),
+    DOWNLOAD_CERTIFICATE("Download Certificate"),
+    GENERATE_CERTIFICATE("Generate Certificate"),
 
     // FIND more Course
-
     FIND_MORE_COURSE_CLICKED("Find more course clicked V3"),
 
     INBOX_SCREEN("Inbox Screen V3"),
-    COURSE_SELECTED("Course Selected V3"),
+    COURSE_ENGAGEMENT("Course Engagement V3"),
     AUDIO_BUTTON_CLICKED("Audio Button clicked V3"),
     AUDIO_SENT("Audio Sent V3"),
     AUDIO_CANCELLED("Audio Cancelled V3"),
@@ -239,9 +227,6 @@ enum class AnalyticsEvent(val NAME: String) {
     GALLERY_SELECTED("Gallery Selected V3"),
     MEDIA_DOWNLOAD("Media Download V3"),
     VIDEO_WATCH_ACTIVITY("Video Watch Activity V3"),
-
-    AUDIO_PLAYED("Audio Played V3"),
-
     EMOJI_CLICKED("Emoji Clicked V3"),
 
     PDF_OPENED("PDF Opened V3"),

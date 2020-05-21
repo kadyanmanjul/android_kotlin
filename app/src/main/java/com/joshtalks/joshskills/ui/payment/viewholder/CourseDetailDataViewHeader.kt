@@ -20,7 +20,10 @@ import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
+import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
@@ -195,10 +198,20 @@ class CourseDetailDataViewHeader(
         expand = if (expand) {
             expandIV.setImageResource(R.drawable.ic_expand)
             detailsTV.visibility = View.GONE
+            AppAnalytics.create(AnalyticsEvent.COURSE_DATA_EXPANDED.NAME)
+                .addUserDetails()
+                .addParam(AnalyticsEvent.COURSE_NAME.NAME, courseDetails.title?.toString() ?: EMPTY)
+                .addParam(AnalyticsEvent.MEDIA_TYPE.NAME, courseDetails.type.toString())
+                .push()
             false
         } else {
             detailsTV.visibility = View.VISIBLE
             expandIV.setImageResource(R.drawable.ic_remove_expand)
+            AppAnalytics.create(AnalyticsEvent.COURSE_DATA_CONTRACTED.NAME)
+                .addUserDetails()
+                .addParam(AnalyticsEvent.COURSE_NAME.NAME, courseDetails.title?.toString() ?: EMPTY)
+                .addParam(AnalyticsEvent.MEDIA_TYPE.NAME, courseDetails.type.toString())
+                .push()
             true
         }
     }

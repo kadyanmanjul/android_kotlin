@@ -145,7 +145,7 @@ class PractiseSubmitActivity : CoreJoshActivity() {
         binding.handler = this
         chatModel = intent.getParcelableExtra(PRACTISE_OBJECT) as ChatModel
         scaleAnimation = AnimationUtils.loadAnimation(this, R.anim.scale)
-        appAnalytics = AppAnalytics.create(AnalyticsEvent.PRACTISE_SCREEN.NAME)
+        appAnalytics = AppAnalytics.create(AnalyticsEvent.PRACTICE_SCREEN.NAME)
             .addBasicParam()
             .addUserDetails()
             .addParam("chatId", chatModel.chatId)

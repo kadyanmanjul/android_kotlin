@@ -63,8 +63,7 @@ class ClaimCertificateFragment : DialogFragment() {
         override fun onReceive(context: Context, intent: Intent) {
             val id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1)
             if (downloadID == id) {
-                appAnalytics.addParam("Download Certificate Clicked", "Completed")
-
+                appAnalytics.addParam(AnalyticsEvent.DOWNLOAD_CERTIFICATE.NAME, "Completed")
                 binding.tvSuccessMessage.text = getString(R.string.downloading_complete)
                 AppObjectController.uiHandler.postDelayed({
                     dismissAllowingStateLoss()
@@ -220,7 +219,10 @@ class ClaimCertificateFragment : DialogFragment() {
                     override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
                         report?.areAllPermissionsGranted()?.let { flag ->
                             if (flag) {
-                                appAnalytics.addParam("Download Certificate Clicked", "Clicked")
+                                appAnalytics.addParam(
+                                    AnalyticsEvent.DOWNLOAD_CERTIFICATE.NAME,
+                                    "Clicked"
+                                )
                                 downloadDigitalCopy(certificateDetail?.url!!)
                                 return
                             }
@@ -296,20 +298,20 @@ class ClaimCertificateFragment : DialogFragment() {
                     }
                     delay(1000)
                     CoroutineScope(Dispatchers.Main).launch {
-                        appAnalytics.addParam("Certificate Generated request", "Success")
+                        appAnalytics.addParam(AnalyticsEvent.GENERATE_CERTIFICATE.NAME, "Success")
                         appAnalytics.addParam("NAME", name)
                         appAnalytics.addParam("Email", email)
                         showDialog()
                     }
                     return@launch
                 } else {
-                    appAnalytics.addParam("Certificate Generated request", "Failed")
+                    appAnalytics.addParam(AnalyticsEvent.GENERATE_CERTIFICATE.NAME, "Failed")
                     appAnalytics.addParam("NAME", name)
                     appAnalytics.addParam("Email", email)
                     showToast(getString(R.string.generic_message_for_error))
                 }
             } catch (ex: Exception) {
-                appAnalytics.addParam("Certificate Generated request", "Exception Occured")
+                appAnalytics.addParam(AnalyticsEvent.GENERATE_CERTIFICATE.NAME, "Exception Occured")
                 appAnalytics.addParam("NAME", name)
                 appAnalytics.addParam("Email", email)
                 showToast(getString(R.string.generic_message_for_error))
