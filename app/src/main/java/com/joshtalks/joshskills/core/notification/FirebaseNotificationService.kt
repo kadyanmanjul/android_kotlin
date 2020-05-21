@@ -33,6 +33,7 @@ import com.joshtalks.joshskills.ui.inbox.InboxActivity
 import com.joshtalks.joshskills.ui.launch.LauncherActivity
 import com.joshtalks.joshskills.ui.payment.COURSE_ID
 import com.joshtalks.joshskills.ui.payment.PaymentActivity
+import com.joshtalks.joshskills.ui.payment.STARTED_FROM
 import com.joshtalks.joshskills.ui.referral.ReferralActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -159,6 +160,8 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                     flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
                     flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
                     putExtra(COURSE_ID, actionData)
+                    putExtra(STARTED_FROM, "Notification")
+
                 }
             } else if (ACTION_OPEN_CONVERSATION.equals(
                     action,
@@ -239,6 +242,8 @@ class FirebaseNotificationService : FirebaseMessagingService() {
         }
         return Intent(applicationContext, LauncherActivity::class.java).apply {
             addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+            putExtra(HAS_NOTIFICATION, true)
+            putExtra(NOTIFICATION_ID, notificationObject.id)
         }
     }
 

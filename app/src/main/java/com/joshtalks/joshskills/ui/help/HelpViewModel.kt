@@ -7,8 +7,6 @@ import androidx.lifecycle.viewModelScope
 import com.crashlytics.android.Crashlytics
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
-import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
-import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.repository.server.AmazonPolicyResponse
 import com.joshtalks.joshskills.repository.server.ComplaintResponse
@@ -70,7 +68,6 @@ class HelpViewModel(application: Application) : AndroidViewModel(application) {
             try {
                 complaintResponse =
                     AppObjectController.commonNetworkService.submitComplaint(requestComplaint)
-                AppAnalytics.create(AnalyticsEvent.HELP_SUBMITTED.NAME).push()
                 apiCallStatusLiveData.postValue(ApiCallStatus.SUCCESS)
             } catch (ex: Exception) {
                 apiCallStatusLiveData.postValue(ApiCallStatus.FAILED)

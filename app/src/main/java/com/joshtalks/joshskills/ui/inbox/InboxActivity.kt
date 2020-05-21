@@ -96,9 +96,9 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         })
     }
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         WorkMangerAdmin.requiredTaskAfterLoginComplete()
+        // TODO add flow if require
         AppAnalytics.create(AnalyticsEvent.INBOX_SCREEN.NAME).push()
         super.onCreate(savedInstanceState)
         lifecycle.addObserver(this)
@@ -116,7 +116,12 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         earnIV = findViewById(R.id.iv_earn)
         earnIV.setOnClickListener {
             WorkMangerAdmin.referralEventTracker(REFERRAL_EVENT.CLICK_ON_REFERRAL)
-            AppAnalytics.create(AnalyticsEvent.REFERRAL_SELECTED.NAME).push()
+            AppAnalytics
+                .create(AnalyticsEvent.REFER_BUTTON_CLICKED.NAME)
+                .addBasicParam()
+                .addUserDetails()
+                .addParam(AnalyticsEvent.REFERRAL_CODE.NAME, Mentor.getInstance().referralCode)
+                .push()
             ReferralActivity.startReferralActivity(
                 this@InboxActivity,
                 InboxActivity::class.java.name
@@ -124,6 +129,10 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         }
         findMoreLayout = findViewById(R.id.parent_layout)
         find_more.setOnClickListener {
+            AppAnalytics.create(AnalyticsEvent.FIND_MORE_COURSE_CLICKED.NAME)
+                .addBasicParam()
+                .addUserDetails()
+                .push()
             RxBus2.publish(ExploreCourseEventBus())
         }
         visibleShareEarn()
@@ -184,7 +193,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
 
     private fun locationFetch() {
         if (Mentor.getInstance().getLocality() == null) {
-            Dexter.withActivity(this)
+            Dexter.withContext(this)
                 .withPermissions(
                     Manifest.permission.ACCESS_FINE_LOCATION,
                     Manifest.permission.ACCESS_COARSE_LOCATION
@@ -247,13 +256,12 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
             RxBus2.listen(OpenCourseEventBus::class.java)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
-                    AppAnalytics.create(AnalyticsEvent.COURSE_SELECTED.NAME)
-                        .addParam("course_id", it.inboxEntity.conversation_id).push()
                     ConversationActivity.startConversionActivity(this, it.inboxEntity)
                 }, {
                     it.printStackTrace()
                 })
         )
+        //TODO --> fix, Called 2-3 times
         compositeDisposable.add(RxBus2.listen(ExploreCourseEventBus::class.java)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
@@ -274,7 +282,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         CourseExploreActivity.startCourseExploreActivity(
             this,
             COURSE_EXPLORER_CODE,
-            registerCourses
+            registerCourses, state = ActivityEnum.Inbox
         )
     }
 
@@ -301,17 +309,13 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
                 finish()
                 overridePendingTransition(0, 0)
                 startActivity(intent)
-            } else if (resultCode == Activity.RESULT_CANCELED) {
-                if (viewModel.registerCourseNetworkLiveData.value.isNullOrEmpty()) {
-                    if ((viewModel.registerCourseMinimalLiveData.value.isNullOrEmpty())) {
-                        this@InboxActivity.finish()
-                    }
+            } else if (resultCode == Activity.RESULT_CANCELED && viewModel.registerCourseNetworkLiveData.value.isNullOrEmpty()) {
+                if ((viewModel.registerCourseMinimalLiveData.value.isNullOrEmpty())) {
+                    this@InboxActivity.finish()
                 }
             }
-        } else if (requestCode == USER_DETAILS_CODE) {
-            if (resultCode == Activity.RESULT_CANCELED) {
-                finish()
-            }
+        } else if (requestCode == USER_DETAILS_CODE && resultCode == Activity.RESULT_CANCELED) {
+            finish()
         }
 
 
@@ -341,7 +345,6 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
                             Mentor.getInstance().setLocality(response.locality).update()
                         } catch (e: Exception) {
                             e.printStackTrace()
-                            // onFailedToFetchLocation()
                         }
                         compositeDisposable.clear()
                     }
@@ -371,19 +374,17 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
     }
 
     override fun onInAppUpdateStatus(status: InAppUpdateStatus?) {
-        if (status != null) {
-            if (status.isDownloaded) {
-                val rootView = window.decorView.findViewById<View>(android.R.id.content)
-                val snackBar = Snackbar.make(
-                    rootView,
-                    getString(R.string.update_download_success_message),
-                    Snackbar.LENGTH_INDEFINITE
-                )
-                snackBar.setAction(getString(R.string.restart)) {
-                    inAppUpdateManager?.completeUpdate()
-                }
-                snackBar.show()
+        if (status != null && status.isDownloaded) {
+            val rootView = window.decorView.findViewById<View>(android.R.id.content)
+            val snackBar = Snackbar.make(
+                rootView,
+                getString(R.string.update_download_success_message),
+                Snackbar.LENGTH_INDEFINITE
+            )
+            snackBar.setAction(getString(R.string.restart)) {
+                inAppUpdateManager?.completeUpdate()
             }
+            snackBar.show()
         }
     }
 
@@ -403,11 +404,9 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                     { value ->
-                        if (value) {
-                            if (offerIn7DaysHint.isShowing.not() && isFinishing.not()) {
-                                val root = findViewById<View>(R.id.find_more)
-                                hintFirstTime.showAlignBottom(root)
-                            }
+                        if (value && offerIn7DaysHint.isShowing.not() && isFinishing.not()) {
+                            val root = findViewById<View>(R.id.find_more)
+                            hintFirstTime.showAlignBottom(root)
                         }
                     },
                     { error ->
@@ -473,29 +472,10 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
             if (Mentor.getInstance().hasId() && User.getInstance().dateOfBirth.isNullOrEmpty()) {
                 startActivity(getPersonalDetailsActivityIntent())
             }
-
         } catch (ex: Exception) {
+            ex.printStackTrace()
         }
-
     }
-
-    /* private fun showAppUseWhenComeFirstTime() {
-         try {
-             val entity = viewModel.registerCourseMinimalLiveData.value?.get(0)
-             val entity2 = viewModel.registerCourseNetworkLiveData.value?.get(0)
-             if (entity == null && entity2 == null) {
-                 return
-             }
-
-             if (PrefManager.getBoolValue(FIRST_COURSE_BUY).not()) {
-                 isUserFirstTime = false
-                 PrefManager.put(FIRST_COURSE_BUY, true)
-                 TooltipUtility.showFirstTimeUserTooltip(entity ?: entity2, this, this) {
-                 }
-             }
-         } catch (ex: Exception) {
-         }
-     }*/
 
     fun attachOfferHintView() {
         compositeDisposable.add(AppObjectController.appDatabase
@@ -514,7 +494,6 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
                         if (offerIn7DaysHint.isShowing.not() && isFinishing.not()) {
                             offerIn7DaysHint.showAlignBottom(root)
                             findViewById<View>(R.id.bottom_line).visibility = View.GONE
-
                         }
                     }
                 },

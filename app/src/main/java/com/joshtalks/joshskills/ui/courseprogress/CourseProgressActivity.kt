@@ -86,6 +86,7 @@ class CourseProgressActivity : CoreJoshActivity(), OnDismissDialog,
     private var completePercent: Double = 0.0
     private var unlockPercent: Double = 0.0
     private var certificateDetail: CertificateDetail? = null
+    private lateinit var appAnalytics: AppAnalytics
 
     private val viewModel: CourseProgressViewModel by lazy {
         ViewModelProvider(this).get(CourseProgressViewModel::class.java)
@@ -115,8 +116,17 @@ class CourseProgressActivity : CoreJoshActivity(), OnDismissDialog,
                 PrefManager.put(inboxEntity.conversation_id.trim().plus(CERTIFICATE_GENERATE), true)
             }
         }
+        appAnalytics = AppAnalytics.create(AnalyticsEvent.CERTIFICATE_SCREEN.NAME)
+            .addBasicParam()
+            .addUserDetails()
+            .addParam(AnalyticsEvent.COURSE_NAME.NAME, inboxEntity.course_name)
+            .addParam(AnalyticsEvent.SAMPLE_CERTIFICATE_OPEN.NAME, false)
+            .addParam(AnalyticsEvent.CERTIFICATE_PROGRESS_CLICKED.NAME, false)
+            .addParam(AnalyticsEvent.PERFORMANCE_CLICKED.NAME, false)
         initView()
         getProgressOfCourse()
+
+
     }
 
     @SuppressLint("DefaultLocale")
@@ -198,6 +208,10 @@ class CourseProgressActivity : CoreJoshActivity(), OnDismissDialog,
                 hideProgressBar()
                 CoroutineScope(Dispatchers.Main).launch {
                     completePercent = cpr.completePercent
+                    appAnalytics.addParam(
+                        AnalyticsEvent.COURSE_PROGRESS_PERCENT.NAME,
+                        completePercent
+                    )
                     unlockPercent = cpr.unlockPercent
                     certificateDetail = cpr.certificateDetail
                     setImageInProgressView(cpr.link)
@@ -377,7 +391,7 @@ class CourseProgressActivity : CoreJoshActivity(), OnDismissDialog,
     }
 
     fun certificateProgressView() {
-        AppAnalytics.create(AnalyticsEvent.CERTIFICATE_PROGRESS_CLICKED.NAME).push()
+        appAnalytics.addParam(AnalyticsEvent.CERTIFICATE_PROGRESS_CLICKED.NAME, true)
         if (binding.certficateProgressConatiner.isVisible) {
             AnimationView.collapse(binding.certficateProgressConatiner)
             binding.cpIv.setImageResource(R.drawable.ic_baseline_expand_more)
@@ -389,7 +403,7 @@ class CourseProgressActivity : CoreJoshActivity(), OnDismissDialog,
     }
 
     fun performanceView() {
-        AppAnalytics.create(AnalyticsEvent.PERFORMANCE_CLICKED.NAME).push()
+        appAnalytics.addParam(AnalyticsEvent.PERFORMANCE_CLICKED.NAME, true)
 
         if (binding.performanceContainer.isVisible) {
             AnimationView.collapse(binding.performanceContainer)
@@ -404,7 +418,7 @@ class CourseProgressActivity : CoreJoshActivity(), OnDismissDialog,
     }
 
     fun openSampleCertificate() {
-        AppAnalytics.create(AnalyticsEvent.VIEW_SAMPLE_CERTIFICATE_OPEN.NAME).push()
+        appAnalytics.addParam(AnalyticsEvent.SAMPLE_CERTIFICATE_OPEN.NAME, true)
         val url = AppObjectController.getFirebaseRemoteConfig().getString("CERTIFICATE_URL")
         showPromotionScreen(null, url)
     }
@@ -416,11 +430,11 @@ class CourseProgressActivity : CoreJoshActivity(), OnDismissDialog,
             if (prev != null) {
                 fragmentTransaction.remove(prev)
             }
+            appAnalytics.addParam(AnalyticsEvent.CLAIM_CERTIFICATE.NAME, "Clicked")
             fragmentTransaction.addToBackStack(null)
             ClaimCertificateFragment.newInstance(inboxEntity.conversation_id, certificateDetail!!)
                 .show(supportFragmentManager, "claim_certificate_dialog")
-        }
-
+        } else appAnalytics.addParam(AnalyticsEvent.CLAIM_CERTIFICATE.NAME, "Locked")
 
     }
 
@@ -449,7 +463,7 @@ class CourseProgressActivity : CoreJoshActivity(), OnDismissDialog,
                             id = it.id
                             updateIndex = it.postion
                             if (it.practiseOpen) {
-                                AppAnalytics.create(AnalyticsEvent.PRACTISE_CLICKED_COURSE_OVERVIEW.NAME)
+                                AppAnalytics.create(AnalyticsEvent.PRACTICE_CLICKED_COURSE_OVERVIEW.NAME)
                                     .addParam("Question Id ", it.id).push()
                                 updatePractiseId = obj.chatId
                                 PractiseSubmitActivity.startPractiseSubmissionActivity(
@@ -499,6 +513,7 @@ class CourseProgressActivity : CoreJoshActivity(), OnDismissDialog,
 
     override fun onStop() {
         super.onStop()
+        appAnalytics.push()
         compositeDisposable.clear()
     }
 
@@ -546,7 +561,7 @@ class CourseProgressActivity : CoreJoshActivity(), OnDismissDialog,
     }
 
     override fun onDismiss() {
-        AppAnalytics.create(AnalyticsEvent.VIEW_SAMPLE_CERTIFICATE_CLOSE.NAME).push()
+        AppAnalytics.create(AnalyticsEvent.SAMPLE_CERTIFICATE_CLOSE.NAME).push()
     }
 
     override fun onDismiss(certificateDetail: CertificateDetail?) {

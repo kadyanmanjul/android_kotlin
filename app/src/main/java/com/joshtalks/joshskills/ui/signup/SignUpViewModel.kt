@@ -1,6 +1,7 @@
 package com.joshtalks.joshskills.ui.signup
 
 import android.app.Application
+import android.util.Log
 import androidx.databinding.ObservableField
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
@@ -30,6 +31,8 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
     var text = BindableString()
     var phoneNumber = EMPTY
     var countryCode = EMPTY
+    var resendAttempt: Int =1
+    var incorrectAttempt : Int=0
     val signUpStatus = MutableLiveData<SignUpStepStatus>()
     val progressDialogStatus = MutableLiveData<Boolean>()
     val otpVerifyStatus = MutableLiveData<Boolean>()
@@ -259,6 +262,16 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
             }
 
         }
+    }
+
+    fun incrementResendAttempts(){
+        resendAttempt=resendAttempt+1
+        Log.d(TAG, "incrementResendAttempts() called $resendAttempt")
+
+    }
+    fun incrementIncorrectAttempts(){
+        incorrectAttempt=incorrectAttempt+1
+        Log.d(TAG, "incrementIncorrectAttempts() called $incorrectAttempt")
     }
 
 

@@ -47,6 +47,8 @@ import com.google.android.exoplayer2.upstream.DefaultAllocator
 import com.google.android.exoplayer2.util.ErrorMessageProvider
 import com.google.android.material.textview.MaterialTextView
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
+import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.service.video_download.VideoDownloadController
 import com.mikhaellopez.circularprogressbar.CircularProgressBar
 import java.util.*
@@ -235,6 +237,8 @@ class BitVideoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibili
             )
             if (event.x > mInitialTextureWidth / 2) {
                 viewForward.let {
+                    AppAnalytics.create(AnalyticsEvent.VIDEO_ACTION.NAME)
+                        .addParam(AnalyticsEvent.VIDEO_ACTION.NAME, "Double tap to forward").push()
                     animateViewFade(it, 1)
                     Handler().postDelayed({
                         animateViewFade(it, 0)
@@ -243,6 +247,8 @@ class BitVideoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibili
                 seekTo(getCurrentPosition() + mDoubleTapSeekDuration)
             } else {
                 viewBackward.let {
+                    AppAnalytics.create(AnalyticsEvent.VIDEO_ACTION.NAME)
+                        .addParam(AnalyticsEvent.VIDEO_ACTION.NAME, "Double tap to backward").push()
                     animateViewFade(it, 1)
                     Handler().postDelayed({
                         animateViewFade(it, 0)
@@ -420,9 +426,13 @@ class BitVideoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibili
             }
         })
         videoBackward.setOnClickListener {
+            AppAnalytics.create(AnalyticsEvent.VIDEO_ACTION.NAME)
+                .addParam(AnalyticsEvent.VIDEO_ACTION.NAME, "10 sec forward").push()
             seekTo(getCurrentPosition() - 10 * 1000)
         }
         videoForward.setOnClickListener {
+            AppAnalytics.create(AnalyticsEvent.VIDEO_ACTION.NAME)
+                .addParam(AnalyticsEvent.VIDEO_ACTION.NAME, "10 sec backward").push()
             seekTo(getCurrentPosition() + 10 * 1000)
         }
     }
@@ -709,18 +719,28 @@ class BitVideoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibili
                         dialog.dismiss()
                         when (videoPlayerOption) {
                             is VideoPlayerOption.Quality -> {
+                                AppAnalytics.create(AnalyticsEvent.VIDEO_MORE_ACTIONS.NAME)
+                                    .addParam(
+                                        AnalyticsEvent.VIDEO_ACTION.NAME,
+                                        "Change Video Quality"
+                                    ).push()
                                 openVideoTrackBottomBar()
                             }
                             is VideoPlayerOption.AudioLanguage -> {
+                                AppAnalytics.create(AnalyticsEvent.VIDEO_MORE_ACTIONS.NAME)
+                                    .addParam(AnalyticsEvent.VIDEO_ACTION.NAME, "Change language")
+                                    .push()
                                 openAudioLanguageTrackOption()
                             }
                             is VideoPlayerOption.PlaybackSpeed -> {
                                 openPlaybackSpeedOption()
                             }
                             is VideoPlayerOption.Help -> {
+                                AppAnalytics.create(AnalyticsEvent.VIDEO_MORE_ACTIONS.NAME)
+                                    .addParam(AnalyticsEvent.VIDEO_ACTION.NAME, "Help clicked")
+                                    .push()
                                 playerListener?.helpAndFeedback()
                             }
-
                         }
                     }
                 })
@@ -823,6 +843,11 @@ class BitVideoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibili
                 optionOfSpeedLayer,
                 object : PlaybackSpeedAdapter.OnPlaybackSpeedListener {
                     override fun onSelect(playbackSpeed: PlaybackSpeed) {
+                        AppAnalytics.create(AnalyticsEvent.VIDEO_MORE_ACTIONS.NAME)
+                            .addParam(
+                                AnalyticsEvent.VIDEO_ACTION.NAME,
+                                "PlayBackSpeed ${playbackSpeed.speed}"
+                            ).push()
                         bottomSheet.onDismiss()
                         dialog.dismiss()
                         onChangePlaybackSpeed(playbackSpeed)

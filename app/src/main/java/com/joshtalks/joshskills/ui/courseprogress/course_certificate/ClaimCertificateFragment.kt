@@ -29,8 +29,9 @@ import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.bumptech.glide.request.target.Target
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
+import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.interfaces.OnDismissClaimCertificateDialog
-import com.joshtalks.joshskills.core.interfaces.OnDismissDialog
 import com.joshtalks.joshskills.core.service.CONVERSATION_ID
 import com.joshtalks.joshskills.databinding.FragmentClaimCertificateBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor
@@ -56,13 +57,15 @@ class ClaimCertificateFragment : DialogFragment() {
     private var conversationId: String = EMPTY
     private var downloadID: Long = -1
     private var listener: OnDismissClaimCertificateDialog? = null
+    private lateinit var appAnalytics: AppAnalytics
 
     private var onDownloadComplete = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             val id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1)
             if (downloadID == id) {
+                appAnalytics.addParam(AnalyticsEvent.DOWNLOAD_CERTIFICATE.NAME, "Completed")
                 binding.tvSuccessMessage.text = getString(R.string.downloading_complete)
-                AppObjectController.uiHandler.postDelayed(Runnable {
+                AppObjectController.uiHandler.postDelayed({
                     dismissAllowingStateLoss()
                 }, 4500)
             }
@@ -80,6 +83,9 @@ class ClaimCertificateFragment : DialogFragment() {
         }
         setStyle(STYLE_NO_FRAME, R.style.full_dialog)
         listener = requireActivity() as OnDismissClaimCertificateDialog
+        appAnalytics = AppAnalytics.create(AnalyticsEvent.CLAIM_CERTIFICATE.NAME)
+            .addUserDetails()
+            .addBasicParam()
     }
 
 
@@ -94,13 +100,14 @@ class ClaimCertificateFragment : DialogFragment() {
             dialog.setCanceledOnTouchOutside(true)
             dialog.setCancelable(true)
             dialog.window?.setDimAmount(0.9F)
-            dialog.window?.setBackgroundDrawableResource(android.R.color.white);
+            dialog.window?.setBackgroundDrawableResource(android.R.color.white)
         }
     }
 
 
     override fun onDestroy() {
         super.onDestroy()
+        appAnalytics.push()
         compositeDisposable.clear()
         try {
             requireContext().unregisterReceiver(onDownloadComplete)
@@ -212,6 +219,10 @@ class ClaimCertificateFragment : DialogFragment() {
                     override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
                         report?.areAllPermissionsGranted()?.let { flag ->
                             if (flag) {
+                                appAnalytics.addParam(
+                                    AnalyticsEvent.DOWNLOAD_CERTIFICATE.NAME,
+                                    "Clicked"
+                                )
                                 downloadDigitalCopy(certificateDetail?.url!!)
                                 return
                             }
@@ -287,13 +298,22 @@ class ClaimCertificateFragment : DialogFragment() {
                     }
                     delay(1000)
                     CoroutineScope(Dispatchers.Main).launch {
+                        appAnalytics.addParam(AnalyticsEvent.GENERATE_CERTIFICATE.NAME, "Success")
+                        appAnalytics.addParam("NAME", name)
+                        appAnalytics.addParam("Email", email)
                         showDialog()
                     }
                     return@launch
                 } else {
+                    appAnalytics.addParam(AnalyticsEvent.GENERATE_CERTIFICATE.NAME, "Failed")
+                    appAnalytics.addParam("NAME", name)
+                    appAnalytics.addParam("Email", email)
                     showToast(getString(R.string.generic_message_for_error))
                 }
             } catch (ex: Exception) {
+                appAnalytics.addParam(AnalyticsEvent.GENERATE_CERTIFICATE.NAME, "Exception Occured")
+                appAnalytics.addParam("NAME", name)
+                appAnalytics.addParam("Email", email)
                 showToast(getString(R.string.generic_message_for_error))
                 ex.printStackTrace()
             }
@@ -308,6 +328,7 @@ class ClaimCertificateFragment : DialogFragment() {
     }
 
     override fun dismissAllowingStateLoss() {
+        appAnalytics.addParam("BackButton pressed", "backButton pressed")
         super.dismissAllowingStateLoss()
     }
 
@@ -340,7 +361,7 @@ class ClaimCertificateFragment : DialogFragment() {
                 .setAllowedOverMetered(true)
                 .setAllowedOverRoaming(true)
                 .setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName)
-        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             request.setRequiresCharging(false)

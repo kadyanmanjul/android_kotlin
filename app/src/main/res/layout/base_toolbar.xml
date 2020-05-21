@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.google.android.material.appbar.MaterialToolbar xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -20,7 +21,8 @@
     <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingStart="@dimen/_7sdp">
+            android:paddingStart="@dimen/_7sdp"
+            android:paddingEnd="@dimen/_7sdp">
 
         <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/iv_back"
@@ -36,7 +38,8 @@
                 android:paddingTop="@dimen/_6sdp"
                 android:paddingBottom="@dimen/_6sdp"
                 android:visibility="gone"
-                app:srcCompat="@drawable/ic_arrow_back" />
+                app:srcCompat="@drawable/ic_arrow_back"
+                tools:visibility="visible" />
 
         <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/image_view_logo"
@@ -48,7 +51,8 @@
                 android:background="@drawable/white_button_round_enabled"
                 android:gravity="center_vertical|start"
                 android:src="@drawable/ic_josh_course"
-                android:visibility="gone" />
+                android:visibility="gone"
+                tools:visibility="visible" />
 
         <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_message_title"
@@ -67,21 +71,21 @@
                 android:padding="@dimen/_4sdp"
                 android:singleLine="true"
                 android:textColor="@color/white"
-                android:textSize="@dimen/font_18" />
+                android:textSize="@dimen/font_18"
+                tools:text="Spoken English Course" />
 
         <androidx.appcompat.widget.AppCompatImageView
-                android:visibility="invisible"
                 android:id="@+id/ic_notification_dot"
-                android:layout_marginTop="@dimen/_4sdp"
-                android:layout_alignEnd="@id/text_message_title"
                 android:layout_width="@dimen/_8sdp"
                 android:layout_height="@dimen/_8sdp"
-                android:tint="@color/wh_fc"
+                android:layout_alignEnd="@id/text_message_title"
+                android:layout_marginTop="@dimen/_4sdp"
                 android:background="@drawable/timer_drawable"
-                android:gravity="start"
                 android:backgroundTint="@color/wa_color"
-                />
-
+                android:gravity="start"
+                android:tint="@color/wh_fc"
+                android:visibility="invisible"
+                tools:visibility="visible" />
 
         <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/iv_earn"
@@ -91,8 +95,8 @@
                 android:layout_marginEnd="@dimen/_6sdp"
                 android:layout_toStartOf="@id/iv_help"
                 android:padding="@dimen/_4sdp"
-                android:visibility="gone" />
-
+                android:visibility="gone"
+                tools:visibility="visible" />
 
         <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/iv_help"
@@ -105,6 +109,5 @@
                 android:tint="@color/white"
                 android:visibility="visible" />
     </RelativeLayout>
-
 
 </com.google.android.material.appbar.MaterialToolbar>

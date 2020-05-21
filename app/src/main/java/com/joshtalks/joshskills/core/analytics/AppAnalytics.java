@@ -1,6 +1,7 @@
 package com.joshtalks.joshskills.core.analytics;
 
 import android.annotation.SuppressLint;
+import android.os.Build;
 import android.os.Bundle;
 
 import com.clevertap.android.sdk.CleverTapAPI;
@@ -9,8 +10,12 @@ import com.flurry.android.FlurryAgent;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.joshtalks.joshskills.BuildConfig;
 import com.joshtalks.joshskills.core.AppObjectController;
+import com.joshtalks.joshskills.core.PrefManager;
+import com.joshtalks.joshskills.repository.local.model.InstallReferrerModel;
 import com.joshtalks.joshskills.repository.local.model.Mentor;
 import com.joshtalks.joshskills.repository.local.model.User;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -24,6 +29,8 @@ import java.util.Map;
 import java.util.Objects;
 
 import timber.log.Timber;
+
+import static com.joshtalks.joshskills.core.PrefManagerKt.USER_UNIQUE_ID;
 
 public class AppAnalytics {
 
@@ -45,12 +52,10 @@ public class AppAnalytics {
                 CleverTapAPI.setDebugLevel(CleverTapAPI.LogLevel.DEBUG);
             }
         }
-
         if (firebaseAnalytics == null) {
             firebaseAnalytics = FirebaseAnalytics.getInstance(AppObjectController.getJoshApplication());
         }
     }
-
 
     public static AppAnalytics create(String title) {
         return new AppAnalytics(title);
@@ -78,8 +83,7 @@ public class AppAnalytics {
     }
 
     private static void updateFlurryUser() {
-        //FlurryAgent.deleteData();
-        Timber.tag("Furry").d("updateFlurryUser() called");
+        Timber.tag("Flurry").d("updateFlurryUser() called");
         User user = User.getInstance();
         Mentor mentor = Mentor.getInstance();
         FlurryAgent.setUserId(mentor.getId());
@@ -89,15 +93,13 @@ public class AppAnalytics {
 
         //User Properties
         List<String> list = new ArrayList<>();
-        list.add(user.getUsername());
+        list.add(user.getFirstName());
         list.add(mentor.getId());
         list.add(user.getPhoneNumber());
         list.add(user.getDateOfBirth());
         list.add(user.getUserType());
         list.add(user.getGender());
         FlurryAgent.UserProperties.set("JoshSkills.User", list);
-
-
     }
 
     public static int getAge(String dobString) {
@@ -109,7 +111,7 @@ public class AppAnalytics {
         try {
             date = sdf.parse(dobString);
         } catch (ParseException e) {
-            e.printStackTrace();
+            Timber.e(e);
         }
 
         if (date == null) return 0;
@@ -120,16 +122,11 @@ public class AppAnalytics {
         int year = dob.get(Calendar.YEAR);
         int month = dob.get(Calendar.MONTH);
         int day = dob.get(Calendar.DAY_OF_MONTH);
-
         dob.set(year, month + 1, day);
-
         int age = today.get(Calendar.YEAR) - dob.get(Calendar.YEAR);
-
         if (today.get(Calendar.DAY_OF_YEAR) < dob.get(Calendar.DAY_OF_YEAR)) {
             age--;
         }
-
-
         return age;
     }
 
@@ -141,12 +138,49 @@ public class AppAnalytics {
 
     }
 
+    public AppAnalytics addBasicParam() {
+        parameters.put(AnalyticsEvent.APP_VERSION_CODE.getNAME(), BuildConfig.VERSION_NAME);
+        parameters.put(AnalyticsEvent.DEVICE_MANUFACTURER.getNAME(), Build.MANUFACTURER);
+        parameters.put(AnalyticsEvent.DEVICE_MODEL.getNAME(), Build.MODEL);
+        parameters.put(AnalyticsEvent.ANDROID_OR_IOS.getNAME(), Build.VERSION.SDK_INT);
+        if (InstallReferrerModel.getPrefObject() != null && !Objects.requireNonNull(InstallReferrerModel.getPrefObject().getUtmSource()).isEmpty())
+            parameters.put(AnalyticsEvent.SOURCE.getNAME(), InstallReferrerModel.getPrefObject().getUtmSource());
+
+        if (
+                InstallReferrerModel.getPrefObject() != null &&
+                        InstallReferrerModel.getPrefObject().getUtmMedium() != null &&
+                        !InstallReferrerModel.getPrefObject().getUtmMedium().isEmpty()
+        )
+            parameters.put(AnalyticsEvent.UTM_MEDIUM.getNAME(), InstallReferrerModel.getPrefObject().getUtmMedium());
+        return this;
+    }
+
+    public AppAnalytics addUserDetails() {
+        // .addParam(AnalyticsEvent.USER_GAID.NAME, PrefManager.getStringValue(USER_UNIQUE_ID))
+        if (!PrefManager.INSTANCE.getStringValue(USER_UNIQUE_ID).isEmpty())
+            parameters.put(AnalyticsEvent.USER_GAID.getNAME(), PrefManager.INSTANCE.getStringValue(USER_UNIQUE_ID));
+        if (Mentor.getInstance().hasId())
+            parameters.put(AnalyticsEvent.USER_MENTOR_ID.getNAME(), Mentor.getInstance().getId());
+        if (!User.getInstance().getFirstName().isEmpty())
+            parameters.put(AnalyticsEvent.USER_NAME.getNAME(), User.getInstance().getFirstName());
+        if (!User.getInstance().getEmail().isEmpty())
+            parameters.put(AnalyticsEvent.USER_EMAIL.getNAME(), User.getInstance().getEmail());
+        if (!User.getInstance().getPhoneNumber().isEmpty())
+            parameters.put(AnalyticsEvent.USER_PHONE_NUMBER.getNAME(), User.getInstance().getPhoneNumber());
+        return this;
+    }
+
     public AppAnalytics addParam(String key, String value) {
         parameters.put(key, value);
         return this;
     }
 
     public AppAnalytics addParam(String key, int value) {
+        parameters.put(key, value);
+        return this;
+    }
+
+    public AppAnalytics addParam(String key, long value) {
         parameters.put(key, value);
         return this;
     }
@@ -175,6 +209,7 @@ public class AppAnalytics {
     }
 
     public void push() {
+        Timber.v(this.toString());
         if (BuildConfig.DEBUG) {
             return;
         }
@@ -185,6 +220,7 @@ public class AppAnalytics {
     }
 
     public void push(boolean trackSession) {
+        Timber.v(this.toString());
         if (BuildConfig.DEBUG) {
             return;
         }
@@ -200,9 +236,9 @@ public class AppAnalytics {
 
     private void formatParameters() {
 
-        for (String key : parameters.keySet()) {
-            if (parameters.get(key) == null || Objects.requireNonNull(parameters.get(key)).toString().isEmpty()) {
-                parameters.put(key, "null");
+        for (Map.Entry<String, Object> entry : parameters.entrySet()) {
+            if (entry.getValue() == null || Objects.requireNonNull(entry.getValue()).toString().isEmpty()) {
+                parameters.put(entry.getKey(), "null");
             }
         }
     }
@@ -213,38 +249,44 @@ public class AppAnalytics {
 
     private void pushToFlurry(boolean trackSession) {
         if (trackSession)
-            FlurryAgent.logEvent(event, convertMapToMaoString(parameters), true);
+            FlurryAgent.logEvent(event, typeCastMap(parameters), true);
         else
-            FlurryAgent.logEvent(event, convertMapToMaoString(parameters));
+            FlurryAgent.logEvent(event, typeCastMap(parameters));
     }
 
     private void pushToCleverTap() {
         cleverTapAnalytics.pushEvent(event, parameters);
     }
 
-    private Bundle convertMapToBundle(HashMap properties) {
+    private Bundle convertMapToBundle(HashMap<String, Object> properties) {
         Bundle bundle = new Bundle();
-        for (Object o : properties.keySet()) {
-            String key = format((String) o);
+        for (String o : properties.keySet()) {
+            String key = format(o);
             String value = "" + properties.get(key);
             bundle.putString(key, value);
         }
         return bundle;
     }
 
-    private Map<String, String> convertMapToMaoString(HashMap properties) {
-        Map<String, String> newMap = new HashMap<String, String>();
-        Timber.d("convertMapToMaoString() called with: properites = [" + properties + "]");
+    private Map<String, String> typeCastMap(Map<String, Object> properties) {
+        Map<String, String> newMap = new HashMap<>();
 
-        for (Map.Entry<String, Object> entry : ((Map<String, Object>) properties).entrySet()) {
+        for (Map.Entry<String, Object> entry : (properties).entrySet()) {
             if (entry.getValue() instanceof String) {
                 newMap.put(entry.getKey(), (String) entry.getValue());
             } else {
                 newMap.put(entry.getKey(), "" + entry.getValue());
             }
         }
-        Timber.d("convertMapToMaoString() ended with: properites = [" + newMap + "]");
         return newMap;
     }
 
+    @NotNull
+    @Override
+    public String toString() {
+        return "JoshSkillsAnalytics{" +
+                "Event Name='" + event + '\'' +
+                ", Parameters=" + parameters +
+                '}';
+    }
 }

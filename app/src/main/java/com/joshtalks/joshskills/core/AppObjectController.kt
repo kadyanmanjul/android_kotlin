@@ -84,7 +84,6 @@ internal class AppObjectController {
         var INSTANCE: AppObjectController =
             AppObjectController()
 
-
         @JvmStatic
         lateinit var joshApplication: JoshApplication
             private set
@@ -323,7 +322,7 @@ internal class AppObjectController {
             NewRelic.enableFeature(FeatureFlag.AnalyticsEvents)
             NewRelic.withApplicationToken(BuildConfig.NEW_RELIC_TOKEN)
                 .withLocationServiceEnabled(true)
-               // .withLogLevel(AgentLog.AUDIT)
+                // .withLogLevel(AgentLog.AUDIT)
                 .start(
                     joshApplication
                 )
@@ -345,7 +344,7 @@ internal class AppObjectController {
             )
         }
 
-        private fun initFlurryAnalytics(){
+        private fun initFlurryAnalytics() {
             FlurryAgent.Builder()
                 .withDataSaleOptOut(false) //CCPA - the default value is false
                 .withCaptureUncaughtExceptions(true)
@@ -418,12 +417,12 @@ class StatusCodeInterceptor : Interceptor {
                 intent.apply {
                     addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
                     addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    putExtra("Flow", "StatusCodeInterceptor")
                 }
                 PrefManager.logoutUser()
                 AppObjectController.joshApplication.startActivity(intent)
             }
         }
-
         Timber.i("Status code: %s", response.code)
         return response
     }

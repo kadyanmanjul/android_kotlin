@@ -20,6 +20,7 @@ import io.reactivex.schedulers.Schedulers
 
 class HelpActivity : CoreJoshActivity() {
     private var compositeDisposable = CompositeDisposable()
+    private lateinit var  appAnalytics:AppAnalytics
 
     override fun onCreate(savedInstanceState: Bundle?) {
         requestedOrientation = if (Build.VERSION.SDK_INT == 26) {
@@ -31,6 +32,10 @@ class HelpActivity : CoreJoshActivity() {
         setContentView(R.layout.activity_help)
         setToolbar()
         openListOfHelp()
+        appAnalytics=AppAnalytics.create(AnalyticsEvent.HELP_INITIATED.NAME)
+            .addBasicParam()
+            .addUserDetails()
+
     }
 
     private fun setToolbar() {
@@ -55,7 +60,7 @@ class HelpActivity : CoreJoshActivity() {
 
     override fun onBackPressed() {
         if (supportFragmentManager.backStackEntryCount == 1) {
-            AppAnalytics.create(AnalyticsEvent.HELP_BACK_CLICKED.NAME).push()
+            appAnalytics.addParam(AnalyticsEvent.HELP_BACK_CLICKED.NAME, true)
             this@HelpActivity.finish()
             return
         }
@@ -75,16 +80,27 @@ class HelpActivity : CoreJoshActivity() {
         compositeDisposable.clear()
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        appAnalytics.push()
+    }
+
     private fun addObserver() {
         compositeDisposable.add(
             RxBus2.listen(HelpRequestEventBus::class.java).subscribeOn(Schedulers.io()).observeOn(
                 AndroidSchedulers.mainThread()
             ).subscribe {
                 if (it.typeOfHelpModel.type == "form") {
+                    appAnalytics.addParam(
+                        AnalyticsEvent.HELP_CATEGORY_CLICKED.NAME,
+                        AnalyticsEvent.HELP_COMPLAINT_FOAM.NAME
+                    )
                     compliantScreen(it.typeOfHelpModel)
+
                 } else {
                     Utils.call(this@HelpActivity, it.typeOfHelpModel.mobile)
-                    AppAnalytics.create(AnalyticsEvent.CALL_HELPLINE.NAME).push()
+                    appAnalytics.addParam(AnalyticsEvent.HELP_CATEGORY_CLICKED.NAME,AnalyticsEvent.CLICK_HELPLINE_SELECTED.NAME)
+                    appAnalytics.addParam(AnalyticsEvent.CALL_HELPLINE.NAME,"HelpLine Called ${it.typeOfHelpModel.mobile}")
 
                 }
             })

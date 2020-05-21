@@ -23,7 +23,6 @@ import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.ScreenEngagementModel
-import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.CourseExploreModel
 import com.joshtalks.joshskills.ui.inbox.PAYMENT_FOR_COURSE_CODE
 import com.joshtalks.joshskills.ui.payment.PaymentActivity
@@ -41,10 +40,13 @@ import kotlin.collections.set
 
 const val COURSE_EXPLORER_SCREEN_NAME = "Course Explorer"
 const val USER_COURSES = "user_courses"
+const val PREV_ACTIVITY = "previous_activity"
 
 class CourseExploreActivity : CoreJoshActivity() {
     private var compositeDisposable = CompositeDisposable()
     private lateinit var courseExploreBinding: ActivityCourseExploreBinding
+    private lateinit var appAnalytics: AppAnalytics
+    private var prevAct: String? = EMPTY
     private var screenEngagementModel: ScreenEngagementModel =
         ScreenEngagementModel(COURSE_EXPLORER_SCREEN_NAME)
 
@@ -52,13 +54,15 @@ class CourseExploreActivity : CoreJoshActivity() {
         fun startCourseExploreActivity(
             context: Activity,
             requestCode: Int,
-            list: MutableSet<InboxEntity>?, clearBackStack: Boolean = false
+            list: MutableSet<InboxEntity>?, clearBackStack: Boolean = false, state: ActivityEnum
         ) {
             val intent = Intent(context, CourseExploreActivity::class.java)
             intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
             list?.run {
                 intent.putParcelableArrayListExtra(USER_COURSES, ArrayList(this))
             }
+
+            intent.putExtra(PREV_ACTIVITY, state.toString())
             if (clearBackStack) {
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
@@ -75,6 +79,12 @@ class CourseExploreActivity : CoreJoshActivity() {
         initRV()
         initView()
         loadCourses()
+        appAnalytics = AppAnalytics.create(AnalyticsEvent.COURSE_EXPLORE.NAME)
+            .addUserDetails()
+            .addBasicParam()
+        if (prevAct.isNullOrBlank().not())
+            appAnalytics.addParam(AnalyticsEvent.FLOW_FROM_PARAM.NAME, prevAct)
+
     }
 
 
@@ -95,25 +105,31 @@ class CourseExploreActivity : CoreJoshActivity() {
             findViewById<MaterialToolbar>(R.id.toolbar).inflateMenu(R.menu.logout_menu)
         }
         findViewById<MaterialToolbar>(R.id.toolbar).setOnMenuItemClickListener {
-            AppAnalytics.create(AnalyticsEvent.MORE_ICON_CLICKED.NAME).push()
             if (it?.itemId == R.id.menu_logout) {
-                AppAnalytics.create(AnalyticsEvent.LOGOUT_CLICKED.NAME).push()
                 MaterialDialog(this@CourseExploreActivity).show {
                     message(R.string.logout_message)
                     positiveButton(R.string.ok) {
-                        AppAnalytics.create(AnalyticsEvent.USER_LOGGED_OUT.NAME).push()
+                        AppAnalytics.create(AnalyticsEvent.LOGOUT_CLICKED.NAME)
+                            .addUserDetails()
+                            .addParam(AnalyticsEvent.USER_LOGGED_OUT.NAME, true).push()
                         val intent =
                             Intent(AppObjectController.joshApplication, OnBoardActivity::class.java)
                         intent.apply {
                             addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
                             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                            putExtra("Flow", "CourseExploreAvtivity")
                         }
                         CoroutineScope(Dispatchers.IO).launch {
                             PrefManager.clearUser()
                             AppObjectController.joshApplication.startActivity(intent)
                         }
                     }
-                    negativeButton(R.string.cancel)
+                    negativeButton(R.string.cancel) {
+
+                        AppAnalytics.create(AnalyticsEvent.LOGOUT_CLICKED.NAME)
+                            .addUserDetails()
+                            .addParam(AnalyticsEvent.USER_LOGGED_OUT.NAME, false).push()
+                    }
                 }
             }
             return@setOnMenuItemClickListener true
@@ -157,6 +173,9 @@ class CourseExploreActivity : CoreJoshActivity() {
                     var list: ArrayList<InboxEntity>? = null
                     if (intent.hasExtra(USER_COURSES)) {
                         list = intent.getParcelableArrayListExtra(USER_COURSES)
+                    }
+                    if (intent.hasExtra(PREV_ACTIVITY)) {
+                        prevAct = intent.getStringExtra(PREV_ACTIVITY)
                     }
                     courseExploreBinding.recyclerView.removeAllViews()
                     response.forEach { courseExploreModel ->
@@ -214,13 +233,12 @@ class CourseExploreActivity : CoreJoshActivity() {
             val extras: HashMap<String, String> = HashMap()
             extras["test_id"] = it.id?.toString() ?: EMPTY
             extras["course_name"] = it.courseName
-            AppAnalytics.create(AnalyticsEvent.COURSE_CLICKED.NAME)
-                .addParam("user_unique_id", PrefManager.getStringValue(USER_UNIQUE_ID))
-                .addParam(AnalyticsEvent.USER_GAID.NAME, PrefManager.getStringValue(USER_UNIQUE_ID))
-                .addParam(AnalyticsEvent.USER_NAME.NAME, User.getInstance().firstName)
-                .addParam(AnalyticsEvent.USER_EMAIL.NAME, User.getInstance().email)
-                .addParam("course_name", it.courseName).push()
-
+            AppAnalytics.create(AnalyticsEvent.COURSE_THUMBNAIL_CLICKED.NAME)
+                .addBasicParam()
+                .addUserDetails()
+                .addParam(AnalyticsEvent.COURSE_NAME.NAME, it.courseName)
+                .addParam(AnalyticsEvent.COURSE_PRICE.NAME, it.amount)
+                .push()
             PaymentActivity.startPaymentActivity(this, PAYMENT_FOR_COURSE_CODE, it)
         })
     }
@@ -239,9 +257,7 @@ class CourseExploreActivity : CoreJoshActivity() {
     override fun onBackPressed() {
         onCancelResult()
         super.onBackPressed()
-
     }
-
 
     override fun onStart() {
         super.onStart()
@@ -251,11 +267,12 @@ class CourseExploreActivity : CoreJoshActivity() {
     override fun onStop() {
         screenEngagementModel.endTime = System.currentTimeMillis()
         WorkMangerAdmin.screenAnalyticsWorker(screenEngagementModel)
+        appAnalytics.push()
         super.onStop()
     }
 
     private fun onCancelResult() {
-        AppAnalytics.create(AnalyticsEvent.BACK_BTN_EXPLORESCREEN.NAME).push()
+        appAnalytics.addParam(AnalyticsEvent.BACK_BTN_EXPLORESCREEN.NAME, true).push()
         val resultIntent = Intent()
         setResult(Activity.RESULT_CANCELED, resultIntent)
         this.finish()

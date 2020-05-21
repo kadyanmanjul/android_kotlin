@@ -1,9 +1,7 @@
 package com.joshtalks.joshskills.ui.payment
 
 import android.annotation.SuppressLint
-import android.content.ClipboardManager
 import android.content.Context
-import android.content.Context.CLIPBOARD_SERVICE
 import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
@@ -40,6 +38,8 @@ class CouponCodeSubmitFragment : DialogFragment() {
     private var listener: OnCouponCodeSubmitListener? = null
     private lateinit var binding: FragmentCouponCodeSubmitBinding
     private var validCode = false
+    private lateinit var appAnalyticsP: AppAnalytics
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -72,6 +72,14 @@ class CouponCodeSubmitFragment : DialogFragment() {
             )
         binding.lifecycleOwner = this
         binding.handler = this
+        appAnalyticsP = AppAnalytics.create(AnalyticsEvent.ENTER_COUPON_SCREEN.NAME)
+            .addBasicParam()
+            .addUserDetails()
+            .addParam(AnalyticsEvent.COUPON_APPLY_CLICKED.NAME, true)
+
+        //.addParam(AnalyticsEvent.COURSE_NAME.NAME, courseName)
+        //.addParam(AnalyticsEvent.COURSE_PRICE.NAME, amount)
+        //.addParam("test_id", testId)
         return binding.root
     }
 
@@ -81,12 +89,13 @@ class CouponCodeSubmitFragment : DialogFragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.etCode.requestFocus()
 
-        val clipBoardManager = context?.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
+        //val clipBoardManager = context?.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
         //val copiedString = clipBoardManager.primaryClip?.getItemAt(0)?.text?.toString()
         binding.etCode.setOnTouchListener { _, event ->
             try {
                 if (event.action == MotionEvent.ACTION_UP) {
                     if (event.rawX >= (binding.etCode.right - binding.etCode.compoundDrawables[DRAWABLE_RIGHT].bounds.width())) {
+                        appAnalyticsP.addParam(AnalyticsEvent.COUPON_APPLY_CLICKED.NAME, true)
                         validatingCouponCode(binding.etCode.text.toString().trim())
                         return@setOnTouchListener true
                     }
@@ -118,7 +127,6 @@ class CouponCodeSubmitFragment : DialogFragment() {
         binding.etCode.filters = arrayOf(InputFilter { source, _, _, _, _, _ ->
             source.toString().filterNot { it.isWhitespace() }
         })
-
     }
 
     override fun onAttach(context: Context) {
@@ -214,6 +222,7 @@ class CouponCodeSubmitFragment : DialogFragment() {
         }
     }
 
+    @SuppressLint("SetTextI18n")
     private fun validCode() {
         CoroutineScope(Dispatchers.Main).launch {
             binding.couponValidTv.text = "Coupon Successfully Applied"
@@ -228,10 +237,12 @@ class CouponCodeSubmitFragment : DialogFragment() {
 
             binding.progressBar.visibility = View.INVISIBLE
         }
-        AppAnalytics.create(AnalyticsEvent.COUPON_VALID.NAME).push()
+
+        appAnalyticsP.addParam(AnalyticsEvent.COUPON_VALID.NAME, true)
         validCode = true
     }
 
+    @SuppressLint("SetTextI18n")
     private fun inValidCode() {
         CoroutineScope(Dispatchers.Main).launch {
             binding.couponValidTv.text = "Coupon Code Invalid"
@@ -246,12 +257,13 @@ class CouponCodeSubmitFragment : DialogFragment() {
 
             binding.progressBar.visibility = View.INVISIBLE
         }
-        AppAnalytics.create(AnalyticsEvent.COUPON_INVALID.NAME).push()
+        appAnalyticsP.addParam(AnalyticsEvent.COUPON_VALID.NAME, false)
 
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
+        appAnalyticsP.push()
         AppAnalytics.create(AnalyticsEvent.BACK_PRESSED.NAME)
             .addParam("name", javaClass.simpleName)
             .push()

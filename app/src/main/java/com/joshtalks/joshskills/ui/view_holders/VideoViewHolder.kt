@@ -86,6 +86,8 @@ class VideoViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
 
     private val compositeDisposable = CompositeDisposable()
 
+    private lateinit var appAnalytics: AppAnalytics
+
 
     @Resolve
     override fun onViewInflated() {
@@ -107,7 +109,14 @@ class VideoViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
         if (message.chatId.isNotEmpty() && sId == message.chatId) {
             highlightedViewForSomeTime(rootView)
         }
-
+        appAnalytics = AppAnalytics.create(AnalyticsEvent.VIDEO_VH.NAME)
+            .addBasicParam()
+            .addUserDetails()
+            .addParam(AnalyticsEvent.VIDEO_ID.NAME, message.chatId)
+            .addParam(
+                AnalyticsEvent.VIDEO_DURATION.NAME,
+                message.mediaDuration?.toString() ?: EMPTY
+            )
         updateTime(textMessageTime)
         addMessageAutoLink(textMessageBody)
 
@@ -115,7 +124,8 @@ class VideoViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
             if (message.downloadStatus == DOWNLOAD_STATUS.DOWNLOADED) {
                 if (AppDirectory.isFileExist(message.downloadedLocalPath)) {
                     Utils.fileUrl(message.downloadedLocalPath, message.url)?.run {
-                        setImageInImageView(imageView, message.downloadedLocalPath!!,
+                        setImageInImageView(
+                            imageView, message.downloadedLocalPath!!,
                             Runnable {
                                 playIcon.visibility = VISIBLE
                             })
@@ -189,6 +199,7 @@ class VideoViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
     }
 
     private fun fileDownloadSuccess() {
+        appAnalytics.addParam(AnalyticsEvent.VIDEO_VIEW_STATUS.NAME, "Downloaded")
         downloadContainer.visibility = GONE
         ivStartDownload.visibility = GONE
         progressDialog.visibility = GONE
@@ -197,6 +208,7 @@ class VideoViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
     }
 
     private fun fileNotDownloadView() {
+        appAnalytics.addParam(AnalyticsEvent.VIDEO_VIEW_STATUS.NAME, "Not downloaded")
         downloadContainer.visibility = VISIBLE
         ivStartDownload.visibility = VISIBLE
         progressDialog.visibility = GONE
@@ -217,7 +229,10 @@ class VideoViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
             Uri.parse(url),
             VideoDownloadController.getInstance().buildRenderersFactory(true)
         )
-        AppAnalytics.create(AnalyticsEvent.VIDEO_DOWNLOAD.NAME).push()
+        //TODO
+        // appAnalytics.addParam()
+        appAnalytics.addParam(AnalyticsEvent.VIDEO_DOWNLOAD_STATUS.NAME, "Downloading")
+        //AppAnalytics.create(AnalyticsEvent.VIDEO_DOWNLOAD.NAME).push()
     }
 
 
@@ -291,10 +306,12 @@ class VideoViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
                     showToast(getAppContext().getString(R.string.video_url_not_exist))
                 }
                 else -> {
+                    appAnalytics.push()
                     RxBus2.publish(PlayVideoEvent(message))
                 }
             }
         } else {
+            appAnalytics.push()
             message.question?.videoList?.getOrNull(0)?.let { _ ->
                 if (message.downloadStatus == DOWNLOAD_STATUS.DOWNLOADED) {
                     RxBus2.publish(PlayVideoEvent(message))
@@ -313,6 +330,7 @@ class VideoViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
 
     @Click(R.id.iv_cancel_download)
     fun downloadCancel() {
+        appAnalytics.addParam(AnalyticsEvent.VIDEO_DOWNLOAD_STATUS.NAME, "Cancelled")
         message.question?.videoList?.getOrNull(0)?.video_url?.run {
             AppObjectController.videoDownloadTracker.cancelDownload(Uri.parse(this))
         }

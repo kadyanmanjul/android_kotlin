@@ -74,11 +74,14 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener {
     private var graph: Graph? = null
     private var videoId: String? = null
     private var videoUrl: String? = null
+    private lateinit var appAnalytics: AppAnalytics
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-        AppAnalytics.create(AnalyticsEvent.VIDEO_WATCH_ACTIVITY.NAME).push()
+        appAnalytics = AppAnalytics.create(AnalyticsEvent.VIDEO_WATCH_ACTIVITY.NAME)
+            .addBasicParam()
+            .addUserDetails()
         super.onCreate(savedInstanceState)
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_USER
         binding = DataBindingUtil.setContentView(this, R.layout.activity_video_player_1)
@@ -117,6 +120,22 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener {
 
         binding.videoPlayer.setUrl(videoUrl)
         binding.videoPlayer.playVideo()
+
+
+        chatObject?.let {
+            appAnalytics.addParam(AnalyticsEvent.VIDEO_ID.NAME, it.chatId)
+            appAnalytics.addParam(
+                AnalyticsEvent.VIDEO_DURATION.NAME,
+                it.mediaDuration?.toString() ?: ""
+            )
+
+        }
+
+        appAnalytics.addParam(
+            AnalyticsEvent.COURSE_NAME.NAME,
+            binding.textMessageTitle.text.toString()
+        )
+
     }
 
 
@@ -130,6 +149,7 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener {
             this.onBackPressed()
         }
         binding.ivMore.setOnClickListener {
+            appAnalytics.addParam(AnalyticsEvent.VIDEO_MORE.NAME, true)
             binding.videoPlayer.openVideoPlayerOptions()
         }
         binding.videoPlayer.getToolbar()?.setNavigationOnClickListener {
@@ -140,6 +160,7 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener {
     override fun onStop() {
         super.onStop()
         try {
+            appAnalytics.push()
             onPlayerReleased()
             videoId?.run {
                 EngagementNetworkHelper.engageVideoApi(
@@ -163,9 +184,12 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener {
 
     override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
         if (playWhenReady) {
+            appAnalytics.addParam(AnalyticsEvent.VIDEO_PLAY.NAME, true)
             countUpTimer.resume()
         } else {
             countUpTimer.pause()
+            appAnalytics.addParam(AnalyticsEvent.VIDEO_PAUSE.NAME, true)
+
         }
         if (playbackState == Player.STATE_ENDED) {
             onBackPressed()

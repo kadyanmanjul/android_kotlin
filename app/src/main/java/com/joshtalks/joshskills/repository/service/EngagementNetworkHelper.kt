@@ -8,7 +8,10 @@ import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.repository.local.entity.VideoEngage
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.NotificationObject
-import com.joshtalks.joshskills.repository.server.engage.*
+import com.joshtalks.joshskills.repository.server.engage.AudioEngage
+import com.joshtalks.joshskills.repository.server.engage.Graph
+import com.joshtalks.joshskills.repository.server.engage.ImageEngage
+import com.joshtalks.joshskills.repository.server.engage.PdfEngage
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -74,9 +77,15 @@ object EngagementNetworkHelper {
     fun receivedNotification(notificationObject: NotificationObject) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                AppAnalytics.create(AnalyticsEvent.NOTIFICATION_RECEIVED.NAME)
+                AppAnalytics
+                    .create(AnalyticsEvent.NOTIFICATION_RECEIVED.NAME)
                     .addParam("title", notificationObject.contentTitle)
+                    .addParam("content", notificationObject.contentText)
+                    .addParam("name", notificationObject.name)
                     .addParam("id", notificationObject.id)
+                    .addParam("mentorId", notificationObject.mentorId)
+                    .addParam("notificationType", notificationObject.type)
+                    .addUserDetails()
                     .push()
                 val data = mapOf("is_delivered" to "true")
                 notificationObject.id?.let {
@@ -88,14 +97,18 @@ object EngagementNetworkHelper {
         }
     }
 
-
     fun clickNotification(notificationId: String?) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 if (notificationId.isNullOrEmpty()) {
                     return@launch
                 }
-                AppAnalytics.create(AnalyticsEvent.NOTIFICATION_CLICKED.NAME).push()
+                AppAnalytics
+                    .create(AnalyticsEvent.NOTIFICATION_CLICKED.NAME)
+                    .addParam("id", notificationId)
+                    .addParam("mentorId", Mentor.getInstance().getId())
+                    .addUserDetails()
+                    .push()
                 val data = mapOf("is_clicked" to "true")
                 AppObjectController.chatNetworkService.engageNotificationAsync(
                     notificationId,
@@ -105,21 +118,5 @@ object EngagementNetworkHelper {
                 ex.printStackTrace()
             }
         }
-
-
     }
 }
-
-/* val graphList = IntArray(videoDuration / VIDEO_TIME_LEAP)
-                //val graphList: ArrayList<Int> =arrayListOf((videoDuration / VIDEO_TIME_LEAP))
-                for (graph in videoEngage.graph) {
-                    var startUpdateListIndex = 0
-                    if (graph.startTime != 0L) {
-                        val diff = (graph.startTime.rem(VIDEO_TIME_LEAP)).toInt()
-                        startUpdateListIndex = (graph.startTime / VIDEO_TIME_LEAP).toInt() + if (diff == 0) 0 else 1
-                    }
-                    val endUpdateListIndex = (graph.endTime / VIDEO_TIME_LEAP).toInt() - 1
-                    for (i in startUpdateListIndex..endUpdateListIndex) {
-                        graphList[i] = graphList[i] + 1
-                    }
-                }*/
