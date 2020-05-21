@@ -398,7 +398,6 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
             snackBar.show()
         }
     }
-    }
 
     private fun addCourseExploreView() {
         hintFirstTime.dismiss()
