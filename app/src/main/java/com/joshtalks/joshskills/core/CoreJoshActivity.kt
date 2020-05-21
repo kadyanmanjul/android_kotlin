@@ -18,10 +18,13 @@ import com.joshtalks.joshskills.ui.inbox.COURSE_EXPLORER_WITHOUT_CODE
 import com.joshtalks.joshskills.ui.practise.PRACTISE_OBJECT
 import com.joshtalks.joshskills.ui.referral.PromotionDialogFragment
 import com.joshtalks.joshskills.ui.video_player.VIDEO_OBJECT
+import com.joshtalks.joshskills.ui.video_player.VIDEO_WATCH_TIME
 import kotlinx.android.synthetic.main.base_toolbar.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.util.concurrent.TimeUnit
 
 abstract class CoreJoshActivity : BaseActivity() {
     protected var countUpTimer = CountUpTimer(true)
@@ -111,6 +114,9 @@ abstract class CoreJoshActivity : BaseActivity() {
                 if ((requestCode == PRACTISE_SUBMIT_REQUEST_CODE || requestCode == VIDEO_OPEN_REQUEST_CODE) && resultCode == Activity.RESULT_OK && data != null) {
                     var obj: ChatModel? = null
                     var feedbackType: FeedbackTypes = FeedbackTypes.VIDEO
+                    val videoWatchTime = TimeUnit.MILLISECONDS.toMinutes(
+                        data.getIntExtra(VIDEO_WATCH_TIME, 0).toLong()
+                    )
                     if (data.hasExtra(VIDEO_OBJECT)) {
                         obj = data.getParcelableExtra(VIDEO_OBJECT) as ChatModel
                         feedbackType = FeedbackTypes.VIDEO
@@ -119,7 +125,16 @@ abstract class CoreJoshActivity : BaseActivity() {
                         feedbackType = FeedbackTypes.PRACTISE
                     }
                     obj?.question?.questionId?.run {
-                        canTakeRequestFeedbackFromUser(feedbackType, this)
+                        if (canShowNPSDialog(id = this)) {
+                            return@launch
+                        } else {
+                            if (feedbackType == FeedbackTypes.VIDEO && videoWatchTime < 1) {
+                                return@launch
+                            }
+                            if (canTakeRequestFeedbackFromUser(this)) {
+                                showFeedback(feedbackType, this)
+                            }
+                        }
                     }
                 }
             } catch (ex: Throwable) {
@@ -128,28 +143,27 @@ abstract class CoreJoshActivity : BaseActivity() {
         }
     }
 
-    private suspend fun canTakeRequestFeedbackFromUser(
-        feedbackTypes: FeedbackTypes,
-        questionId: String
-    ) {
-
-        if (canShowNPSDialog(id = questionId)) {
-            return
-        } else {
+    private suspend fun canTakeRequestFeedbackFromUser(questionId: String): Boolean {
+        return withContext(CoroutineScope(Dispatchers.IO).coroutineContext + Dispatchers.IO) {
             val minFeedbackCount =
                 AppObjectController.getFirebaseRemoteConfig()
                     .getDouble("MINIMUM_FEEDBACK_IN_A_DAY_COUNT").toInt()
             val todaySubmitCount =
                 AppObjectController.appDatabase.feedbackEngageModelDao().getTotalCountOfRows()
             if (todaySubmitCount >= minFeedbackCount) {
-                return
+                return@withContext false
             }
             val flag =
                 AppObjectController.appDatabase.chatDao().getFeedbackStatusOfQuestion(questionId)
             if (flag != null && flag) {
-                openFeedbackFragment(feedbackTypes, questionId)
+                return@withContext true
             }
+            return@withContext false
         }
-
     }
+
+    private fun showFeedback(feedbackTypes: FeedbackTypes, questionId: String) {
+        openFeedbackFragment(feedbackTypes, questionId)
+    }
+
 }
