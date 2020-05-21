@@ -29,6 +29,7 @@ import com.joshtalks.joshskills.ui.chat.VIDEO_OPEN_REQUEST_CODE
 import com.joshtalks.joshskills.ui.pdfviewer.COURSE_NAME
 
 const val VIDEO_OBJECT = "video_"
+const val VIDEO_WATCH_TIME = "video_watch_time"
 
 class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener {
 
@@ -245,6 +246,7 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener {
         val resultIntent = Intent()
         chatObject?.run {
             resultIntent.putExtra(VIDEO_OBJECT, this)
+            resultIntent.putExtra(VIDEO_WATCH_TIME, countUpTimer.time)
         }
         setResult(Activity.RESULT_OK, resultIntent)
     }
