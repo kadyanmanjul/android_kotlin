@@ -63,10 +63,10 @@ interface SignUpNetworkService {
     @POST("$DIR/user/{id}/upload_profile_pic/")
     suspend fun uploadProfilePicture(@Path("id") id: String, @Part file: MultipartBody.Part): Any
 
-    @POST("$DIR/mentor/devices/")
+    @POST("$DIR/mentor/devices_v2/")
     suspend fun postDeviceDetails(@Body obj: UpdateDeviceRequest): DeviceDetailsResponse
 
-    @PATCH("$DIR/mentor/devices/{id}/")
+    @PATCH("$DIR/mentor/devices_v2/{id}/")
     suspend fun patchDeviceDetails(
         @Path("id") id: Int,
         @Body obj: UpdateDeviceRequest

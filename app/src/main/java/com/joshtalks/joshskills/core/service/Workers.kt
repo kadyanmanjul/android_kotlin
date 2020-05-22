@@ -625,14 +625,14 @@ class UpdateDeviceDetailsWorker(context: Context, workerParams: WorkerParameters
     override suspend fun doWork(): Result {
         try {
             if (Mentor.getInstance().hasId()) {
-                /*  val id = DeviceDetailsResponse.getInstance()?.id!!
-                  val details =
-                      AppObjectController.signUpNetworkService.patchDeviceDetails(
-                          id,
-                          UpdateDeviceRequest()
-                      )
-                  details.update()
-              } else {*/
+                val id = DeviceDetailsResponse.getInstance()?.id!!
+                val details =
+                    AppObjectController.signUpNetworkService.patchDeviceDetails(
+                        id,
+                        UpdateDeviceRequest()
+                    )
+                details.update()
+            } else {
                 val details =
                     AppObjectController.signUpNetworkService.postDeviceDetails(UpdateDeviceRequest())
                 details.update()
