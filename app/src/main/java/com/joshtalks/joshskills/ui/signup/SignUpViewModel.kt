@@ -237,24 +237,6 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
         task.addOnCompleteListener {
 
         }
-
-    }
-
-    private fun mergeMentorWithGId(mentorId: String) {
-        viewModelScope.launch(Dispatchers.IO) {
-            try {
-                val id = PrefManager.getIntValue(SERVER_GID_ID)
-                if (id == 0) {
-                    return@launch
-                }
-                val data = mapOf("mentor" to mentorId)
-                AppObjectController.chatNetworkService.mergeMentorWithGId(id.toString(), data)
-                PrefManager.removeKey(SERVER_GID_ID)
-            } catch (ex: Throwable) {
-                LogException.catchException(ex)
-            }
-
-        }
     }
 
     fun incrementResendAttempts() {
@@ -264,6 +246,4 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
     fun incrementIncorrectAttempts() {
         incorrectAttempt = incorrectAttempt + 1
     }
-
-
 }
