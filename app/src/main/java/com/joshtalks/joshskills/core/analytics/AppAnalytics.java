@@ -1,6 +1,7 @@
 package com.joshtalks.joshskills.core.analytics;
 
 import android.annotation.SuppressLint;
+import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
 
@@ -79,6 +80,7 @@ public class AppAnalytics {
         profileUpdate.put("date_of_birth", user.getDateOfBirth());
         profileUpdate.put("Username", user.getUsername());
         profileUpdate.put("User Type", user.getUserType());
+        profileUpdate.put("Gender", user.getGender());
         cleverTapAnalytics.pushProfile(profileUpdate);
     }
 
@@ -288,5 +290,14 @@ public class AppAnalytics {
                 "Event Name='" + event + '\'' +
                 ", Parameters=" + parameters +
                 '}';
+    }
+
+    public static void setLocation(double latitude, double longitude) {
+        if (latitude != 0.0d) {
+            Location location = new Location("Location");
+            location.setLatitude(latitude);
+            location.setLongitude(longitude);
+            cleverTapAnalytics.setLocation(location);
+        }
     }
 }

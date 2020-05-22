@@ -48,6 +48,7 @@ enum class AnalyticsEvent(val NAME: String) {
     //New Login/SignUp Status Status
     //LOGIN_INITIATED("Login initiated V3"),
     SIGNUP_SATUS("SignUp Status V3"),
+    OTP_SCREEN_SATUS("OTP Screen Status V3"),
     LOGIN_VIA("Login via V3"),
     FLOW_FROM_PARAM("flow from V3"),
     MOBILE_OTP_PARAM("Mobile OTP V3"),
@@ -148,6 +149,7 @@ enum class AnalyticsEvent(val NAME: String) {
     AUDIO_VH("Audio View Holder V3"),
     AUDIO_PLAYED("Audio Played V3"),
     AUDIO_DOWNLOAD_STATUS("Audio Download Status V3"),
+    AUDIO_LOCAL_PATH("Audio path V3"),
     AUDIO_VIEW_STATUS("Audio View Status V3"),
     AUDIO_PLAYING_STATUS("Audio playing Status V3"),
     AUDIO_ID("Audio id V3"),
@@ -261,9 +263,9 @@ enum class AnalyticsEvent(val NAME: String) {
 
 
     TEST_ID_OPENED("Test ID Opened V3"),
-    NPS_INITIATED("NPS Initiated V2"),
-    NPS_SUBMITTED("NPS Submitted V2"),
-    NPS_IGNORE("NPS Ignore V2"),
+    NPS_INITIATED("NPS Initiated V3"),
+    NPS_SUBMITTED("NPS Submitted V3"),
+    NPS_IGNORE("NPS Ignore V3"),
 
 
     RAZORPAY_SDK("Razorpay SDK V3"),

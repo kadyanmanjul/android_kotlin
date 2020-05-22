@@ -73,7 +73,6 @@ class ConversationViewModel(application: Application, private var inboxEntity: I
 
     fun stopRecording() {
         AudioRecording.audioRecording.stopPlaying()
-
     }
 
 

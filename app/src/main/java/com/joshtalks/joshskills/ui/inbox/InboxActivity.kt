@@ -346,7 +346,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
                             val request = UpdateUserLocality()
                             request.locality =
                                 SearchLocality(location.latitude, location.longitude)
-
+                                AppAnalytics.setLocation(location.latitude, location.longitude)
                             val response: ProfileResponse =
                                 AppObjectController.signUpNetworkService.updateUserAddressAsync(
                                     Mentor.getInstance().getId(),

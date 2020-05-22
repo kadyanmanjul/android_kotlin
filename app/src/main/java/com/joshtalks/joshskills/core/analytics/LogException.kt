@@ -31,7 +31,8 @@ object LogException {
 
 enum class ErrorTag(val NAME: String) {
     TRUE_CALLER("TrueCaller"),
-    OTP_REQUEST("OTP Request")
+    OTP_REQUEST("OTP Request"),
+    AUDIO_RECORDER("Audio Recorder")
 
 }
 

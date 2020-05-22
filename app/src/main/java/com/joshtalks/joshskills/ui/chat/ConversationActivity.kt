@@ -1161,6 +1161,7 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
             .addParam(AnalyticsEvent.AUDIO_ID.NAME, audioType?.id)
             .addParam(AnalyticsEvent.AUDIO_DURATION.NAME, audioType?.duration.toString())
             .addParam(AnalyticsEvent.AUDIO_DOWNLOAD_STATUS.NAME, "Downloaded")
+            .addParam(AnalyticsEvent.AUDIO_LOCAL_PATH.NAME, audioType?.downloadedLocalPath)
             .addParam(
                 AnalyticsEvent.FLOW_FROM_PARAM.NAME,
                 this@ConversationActivity.javaClass.simpleName
