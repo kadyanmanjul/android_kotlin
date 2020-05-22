@@ -96,9 +96,10 @@ object PrefManager {
         return BuildConfig.CLIENT_TOKEN
 
     }
-
+    //TODO 5
     fun logoutUser() {
         prefManager.edit().clear().apply()
+        WorkMangerAdmin.appStartWorker()
     }
 
 
