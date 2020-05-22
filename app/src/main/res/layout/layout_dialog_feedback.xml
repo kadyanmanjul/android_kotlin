@@ -118,7 +118,7 @@
                             android:isIndicator="false"
                             android:numStars="5"
                             android:progressDrawable="@drawable/ratingbar_selector"
-                            android:rating="2"
+                            android:rating="0"
                             android:stepSize="1"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"

@@ -1,6 +1,7 @@
 package com.joshtalks.joshskills.ui.feedback
 
 import android.content.DialogInterface
+import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,6 +9,7 @@ import android.view.ViewGroup
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.Animation
 import android.view.animation.ScaleAnimation
+import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.Observer
@@ -90,6 +92,7 @@ class FeedbackFragment : DialogFragment(), FeedbackOptionAdapter.OnFeedbackItemL
                 ratingBar.rating = 1.0f
                 return@setOnRatingBarChangeListener
             }
+            enabledSubmitButton()
             setupRatingOptions(rating.toInt())
         }
         setUpRatingBar()
@@ -131,7 +134,6 @@ class FeedbackFragment : DialogFragment(), FeedbackOptionAdapter.OnFeedbackItemL
             )
             ratingDetailsList = ratingDetailsList.sortedWith(compareBy { it.rating })
             binding.feedbackRatingBar.numStars = ratingDetailsList.size
-            binding.feedbackRatingBar.rating = ratingDetailsList.size.toFloat()
         } catch (ex: Exception) {
             ex.printStackTrace()
         }
@@ -210,7 +212,16 @@ class FeedbackFragment : DialogFragment(), FeedbackOptionAdapter.OnFeedbackItemL
 
     override fun onSelectOption(label: String) {
         issueLabel = label
+    }
 
+    private fun enabledSubmitButton() {
+        binding.submit.isEnabled = true
+        binding.submit.backgroundTintList = ColorStateList.valueOf(
+            ContextCompat.getColor(
+                requireContext(),
+                R.color.feedback_submit_background
+            )
+        )
     }
 
     override fun onWriteComment() {

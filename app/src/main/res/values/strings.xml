@@ -231,8 +231,8 @@
     <string name="certificate_generate_message">Your certificate will be sent to you on mail.\n Thank you!</string>
     <string name="details_not_change_message">Details cannot be changed again</string>
     <string name="practice_submitted">Practice Submitted!</string>
-    <string name="feedback_sub_practise">Rate this practice</string>
-    <string name="feedback_sub_video">Rate this video</string>
+    <string name="feedback_sub_practise">Please Rate This Practice</string>
+    <string name="feedback_sub_video">Please Rate This Video</string>
     <string name="feedback_hint">Please share your detailed feedback</string>
 
     <!--    Custom Permission Dialog-->
