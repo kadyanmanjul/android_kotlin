@@ -28,7 +28,7 @@ public class AudioRecording {
         recorder.setOnErrorListener(errorListener);
         try {
             recorder.prepare();
-            //Thread.sleep(250);
+            Thread.sleep(250);
             recorder.start();
         } catch (Exception e) {
             LogException.INSTANCE.catchException(e);
