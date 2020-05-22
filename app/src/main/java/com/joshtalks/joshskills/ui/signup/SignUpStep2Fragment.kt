@@ -3,7 +3,6 @@ package com.joshtalks.joshskills.ui.signup
 import android.graphics.Color
 import android.os.Bundle
 import android.os.CountDownTimer
-import android.util.Log
 import android.view.*
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
@@ -39,9 +38,6 @@ class SignUpStep2Fragment : Fragment() {
     private lateinit var viewModel: SignUpViewModel
     private val compositeDisposable = CompositeDisposable()
     private var timer: CountDownTimer? = null
-    private lateinit var appAnalytics: AppAnalytics
-    private val currentTime=System.currentTimeMillis()
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,6 +56,7 @@ class SignUpStep2Fragment : Fragment() {
             DataBindingUtil.inflate(inflater, R.layout.fragment_sign_up_step2, container, false)
         signUpStep2Binding.lifecycleOwner = this
         signUpStep2Binding.signUpViewModel = viewModel
+        viewModel.currentTime = System.currentTimeMillis()
         signUpStep2Binding.handler = this
         return signUpStep2Binding.root
     }
@@ -107,10 +104,6 @@ class SignUpStep2Fragment : Fragment() {
             }
         })
         signUpStep2Binding.tvMobile.text = viewModel.countryCode.plus(viewModel.phoneNumber)
-        appAnalytics=AppAnalytics.create(AnalyticsEvent.ENTER_OTP_SCREEN.NAME)
-            .addBasicParam()
-            .addParam(AnalyticsEvent.USER_DETAILS.NAME,viewModel.countryCode.plus(viewModel.phoneNumber))
-
     }
 
     private fun initProgressView() {
@@ -125,16 +118,24 @@ class SignUpStep2Fragment : Fragment() {
         ) {
             if (Utils.isInternetAvailable().not()) {
                 showToast(getString(R.string.internet_not_available_msz))
-                appAnalytics.addParam(AnalyticsEvent.NEXT_OTP_CLICKED.NAME,"Internet Not Available")
+                AppAnalytics.create(AnalyticsEvent.OTP_SCREEN_SATUS.NAME)
+                    .addParam(
+                        AnalyticsEvent.NEXT_OTP_CLICKED.NAME,
+                        "Internet Not Available"
+                    )
                 return
             }
             showProgress()
             viewModel.verifyOTP(signUpStep2Binding.otpView.text?.toString())
-            appAnalytics.addParam(AnalyticsEvent.NEXT_OTP_CLICKED.NAME,"Otp Submitted")
+            AppAnalytics.create(AnalyticsEvent.OTP_SCREEN_SATUS.NAME)
+                .addParam(AnalyticsEvent.NEXT_OTP_CLICKED.NAME, "Otp Submitted")
+                .push()
 
         } else {
             showToast(getString(R.string.please_enter_otp))
-            appAnalytics.addParam(AnalyticsEvent.NEXT_OTP_CLICKED.NAME,"Blank Otp Submitted")
+            AppAnalytics.create(AnalyticsEvent.OTP_SCREEN_SATUS.NAME)
+                .addParam(AnalyticsEvent.NEXT_OTP_CLICKED.NAME, "Blank Otp Submitted")
+                .push()
             return
         }
     }
@@ -177,11 +178,6 @@ class SignUpStep2Fragment : Fragment() {
         timer?.cancel()
         timer = null
         Timber.tag(TAG).e("************* backgrounded")
-        Log.d(TAG, "onStop() called  ${viewModel.incorrectAttempt} ${viewModel.resendAttempt}")
-        appAnalytics.addParam(AnalyticsEvent.INCORRECT_OTP_ATTEMPTS.NAME,viewModel.incorrectAttempt)
-        appAnalytics.addParam(AnalyticsEvent.NO_OF_TIMES_OTP_SEND.NAME,viewModel.resendAttempt)
-        appAnalytics.addParam(AnalyticsEvent.TIME_TAKEN.NAME.plus("(in ms"),System.currentTimeMillis()-currentTime)
-        appAnalytics.push()
     }
 
     override fun onDestroy() {

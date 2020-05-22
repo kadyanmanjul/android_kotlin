@@ -24,7 +24,7 @@ class SignUpActivity : CoreJoshActivity() {
     private lateinit var layout: ActivitySignUpBinding
     private var activityResultFlag = false
     private var fromActivity = EMPTY
-    private lateinit var appAnalytics :AppAnalytics
+    private lateinit var appAnalytics: AppAnalytics
     private val viewModel: SignUpViewModel by lazy {
         ViewModelProvider(this).get(SignUpViewModel::class.java)
     }
@@ -41,12 +41,12 @@ class SignUpActivity : CoreJoshActivity() {
         }
         addObserver()
         login()
-        appAnalytics= AppAnalytics.create(AnalyticsEvent.SIGNUP_SATUS.NAME)
+        appAnalytics = AppAnalytics.create(AnalyticsEvent.SIGNUP_SATUS.NAME)
             .addBasicParam()
             .addParam(AnalyticsEvent.LOGIN_VIA.NAME, AnalyticsEvent.MOBILE_OTP_PARAM.NAME)
             .addUserDetails()
-        if(fromActivity.isEmpty().not())
-            appAnalytics.addParam(AnalyticsEvent.FLOW_FROM_PARAM.NAME,fromActivity)
+        if (fromActivity.isEmpty().not())
+            appAnalytics.addParam(AnalyticsEvent.FLOW_FROM_PARAM.NAME, fromActivity)
     }
 
     private fun login() {
@@ -77,9 +77,24 @@ class SignUpActivity : CoreJoshActivity() {
                     return@Observer
                 }
                 SignUpStepStatus.SignUpCompleted -> {
-                    appAnalytics.addParam(AnalyticsEvent.STATUS.NAME,AnalyticsEvent.SUCCESS_PARAM.NAME)
-                    if(viewModel.phoneNumber.isEmpty().not())
-                    appAnalytics.addParam(AnalyticsEvent.USER_DETAILS.NAME,viewModel.countryCode+viewModel.phoneNumber)
+                    appAnalytics.addParam(
+                        AnalyticsEvent.STATUS.NAME,
+                        AnalyticsEvent.SUCCESS_PARAM.NAME
+                    )
+                        .addParam(
+                            AnalyticsEvent.INCORRECT_OTP_ATTEMPTS.NAME,
+                            viewModel.incorrectAttempt
+                        )
+                        .addParam(AnalyticsEvent.NO_OF_TIMES_OTP_SEND.NAME, viewModel.resendAttempt)
+                        .addParam(
+                            AnalyticsEvent.TIME_TAKEN.NAME.plus("(in ms"),
+                            System.currentTimeMillis() - viewModel.currentTime
+                        )
+                    if (viewModel.phoneNumber.isEmpty().not())
+                        appAnalytics.addParam(
+                            AnalyticsEvent.USER_DETAILS.NAME,
+                            viewModel.countryCode + viewModel.phoneNumber
+                        )
                     appAnalytics.push()
                     if (activityResultFlag) {
                         setResult()
@@ -96,9 +111,25 @@ class SignUpActivity : CoreJoshActivity() {
                     return@Observer
                 }
                 SignUpStepStatus.SignUpWithoutRegister -> {
-                    appAnalytics.addParam(AnalyticsEvent.STATUS.NAME,AnalyticsEvent.SUCCESS_PARAM.NAME)
-                    if(viewModel.phoneNumber.isEmpty().not())
-                        appAnalytics.addParam(AnalyticsEvent.USER_DETAILS.NAME,viewModel.countryCode+viewModel.phoneNumber)
+                    appAnalytics.addParam(
+                        AnalyticsEvent.STATUS.NAME,
+                        AnalyticsEvent.SUCCESS_PARAM.NAME
+                    )
+                        .addParam(
+                            AnalyticsEvent.INCORRECT_OTP_ATTEMPTS.NAME,
+                            viewModel.incorrectAttempt
+                        )
+                        .addParam(AnalyticsEvent.NO_OF_TIMES_OTP_SEND.NAME, viewModel.resendAttempt)
+                        .addParam(
+                            AnalyticsEvent.TIME_TAKEN.NAME.plus("(in ms"),
+                            System.currentTimeMillis() - viewModel.currentTime
+                        )
+
+                    if (viewModel.phoneNumber.isEmpty().not())
+                        appAnalytics.addParam(
+                            AnalyticsEvent.USER_DETAILS.NAME,
+                            viewModel.countryCode + viewModel.phoneNumber
+                        )
                     appAnalytics.push()
                     openCourseExplorerScreen(this@SignUpActivity)
                     return@Observer
@@ -132,7 +163,7 @@ class SignUpActivity : CoreJoshActivity() {
 
     override fun onBackPressed() {
         if (supportFragmentManager.backStackEntryCount == 1) {
-            appAnalytics.addParam(AnalyticsEvent.STATUS.NAME,AnalyticsEvent.CANCELLED_PARAM.NAME)
+            appAnalytics.addParam(AnalyticsEvent.STATUS.NAME, AnalyticsEvent.CANCELLED_PARAM.NAME)
             appAnalytics.push()
             this@SignUpActivity.finish()
             return

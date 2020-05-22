@@ -1,7 +1,6 @@
 package com.joshtalks.joshskills.ui.signup
 
 import android.app.Application
-import android.util.Log
 import androidx.databinding.ObservableField
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
@@ -31,7 +30,8 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
     var phoneNumber = EMPTY
     var countryCode = EMPTY
     var resendAttempt: Int =1
-    var incorrectAttempt : Int=0
+    var incorrectAttempt: Int = 0
+    var currentTime: Long = 0
     val signUpStatus = MutableLiveData<SignUpStepStatus>()
     val progressDialogStatus = MutableLiveData<Boolean>()
     val otpVerifyStatus = MutableLiveData<Boolean>()
@@ -240,16 +240,29 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
 
     }
 
+    private fun mergeMentorWithGId(mentorId: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val id = PrefManager.getIntValue(SERVER_GID_ID)
+                if (id == 0) {
+                    return@launch
+                }
+                val data = mapOf("mentor" to mentorId)
+                AppObjectController.chatNetworkService.mergeMentorWithGId(id.toString(), data)
+                PrefManager.removeKey(SERVER_GID_ID)
+            } catch (ex: Throwable) {
+                LogException.catchException(ex)
+            }
 
-
-    fun incrementResendAttempts(){
-        resendAttempt=resendAttempt+1
-        Log.d(TAG, "incrementResendAttempts() called $resendAttempt")
-
+        }
     }
-    fun incrementIncorrectAttempts(){
-        incorrectAttempt=incorrectAttempt+1
-        Log.d(TAG, "incrementIncorrectAttempts() called $incorrectAttempt")
+
+    fun incrementResendAttempts() {
+        resendAttempt = resendAttempt + 1
+    }
+
+    fun incrementIncorrectAttempts() {
+        incorrectAttempt = incorrectAttempt + 1
     }
 
 
