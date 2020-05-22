@@ -201,7 +201,7 @@ class SignUpStep2Fragment : Fragment() {
     }
 
     private fun startTimer() {
-        timer = object : CountDownTimer(10_000, 1000) {
+        timer = object : CountDownTimer(60_000, 1000) {
             override fun onTick(millisUntilFinished: Long) {
                 if (timer != null) {
                     CoroutineScope(Dispatchers.Main).launch {

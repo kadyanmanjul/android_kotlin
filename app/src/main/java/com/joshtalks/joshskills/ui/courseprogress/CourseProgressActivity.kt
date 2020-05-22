@@ -203,114 +203,119 @@ class CourseProgressActivity : CoreJoshActivity(), OnDismissDialog,
     private fun getProgressOfCourse() {
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                val cpr =
+                val cprponnse =
                     AppObjectController.chatNetworkService.getCourseProgressDetailsAsync(inboxEntity.conversation_id)
                 hideProgressBar()
-                CoroutineScope(Dispatchers.Main).launch {
-                    completePercent = cpr.completePercent
-                    appAnalytics.addParam(
-                        AnalyticsEvent.COURSE_PROGRESS_PERCENT.NAME,
-                        completePercent
-                    )
-                    unlockPercent = cpr.unlockPercent
-                    certificateDetail = cpr.certificateDetail
-                    setImageInProgressView(cpr.link)
-                    binding.tvCourseDuration.text =
-                        getString(
-                            R.string.course_duration_day,
-                            cpr.startedDay.toString(),
-                            cpr.duration.toString()
+                if (cprponnse.code() == 200) {
+                    var cpr = cprponnse.body()!!
+                    CoroutineScope(Dispatchers.Main).launch {
+                        completePercent = cpr.completePercent
+                        appAnalytics.addParam(
+                            AnalyticsEvent.COURSE_PROGRESS_PERCENT.NAME,
+                            completePercent
                         )
-
-                    binding.tvWelcome.text = cpr.header
-                    binding.tvCourseStatus.text = cpr.statement
-
-                    val sb = SpannableStringBuilder(
-                        getString(
-                            R.string.unlock_progress_header,
-                            cpr.unlockPercent.toString().plus("%")
-                        )
-                    )
-                    sb.setSpan(
-                        StyleSpan(Typeface.BOLD),
-                        0,
-                        sb.length,
-                        Spannable.SPAN_INCLUSIVE_INCLUSIVE
-                    )
-                    sb.setSpan(
-                        StyleSpan(Typeface.ITALIC),
-                        0,
-                        sb.length,
-                        Spannable.SPAN_INCLUSIVE_INCLUSIVE
-                    )
-
-                    binding.textView1.text = sb
-
-                    val sb2 = SpannableStringBuilder(
-                        getString(
-                            R.string.course_progress_detail,
-                            cpr.completePercent.toString().plus("%")
-                        )
-                    )
-                    val endPos = 19 + cpr.completePercent.toString().length + 1
-                    sb2.setSpan(
-                        StyleSpan(Typeface.BOLD),
-                        19,
-                        endPos,
-                        Spannable.SPAN_INCLUSIVE_INCLUSIVE
-                    )
-                    sb2.setSpan(
-                        ForegroundColorSpan(
-                            ContextCompat.getColor(
-                                applicationContext,
-                                R.color.font_color
+                        unlockPercent = cpr.unlockPercent
+                        certificateDetail = cpr.certificateDetail
+                        setImageInProgressView(cpr.link)
+                        binding.tvCourseDuration.text =
+                            getString(
+                                R.string.course_duration_day,
+                                cpr.startedDay.toString(),
+                                cpr.duration.toString()
                             )
-                        ), 19, endPos, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-                    )
-                    binding.tvCourseCompleteStatus.text = sb2
 
-                    binding.courseProgressBar.progress = abs(cpr.completePercent).toInt()
-                    if (cpr.completePercent >= cpr.unlockPercent) {
-                        binding.claimCertificateBtn.icon = null
-                        binding.claimCertificateBtn.backgroundTintList = ColorStateList.valueOf(
-                            ContextCompat.getColor(
-                                applicationContext,
-                                R.color.button_primary_color
+                        binding.tvWelcome.text = cpr.header
+                        binding.tvCourseStatus.text = cpr.statement
+
+                        val sb = SpannableStringBuilder(
+                            getString(
+                                R.string.unlock_progress_header,
+                                cpr.unlockPercent.toString().plus("%")
                             )
                         )
-                    }
-                    binding.progressDetailRv.addView(
-                        PerformHeaderViewHolder(
-                            cpr.totalVideoPractice,
-                            cpr.seenVideoPractice
+                        sb.setSpan(
+                            StyleSpan(Typeface.BOLD),
+                            0,
+                            sb.length,
+                            Spannable.SPAN_INCLUSIVE_INCLUSIVE
                         )
-                    )
+                        sb.setSpan(
+                            StyleSpan(Typeface.ITALIC),
+                            0,
+                            sb.length,
+                            Spannable.SPAN_INCLUSIVE_INCLUSIVE
+                        )
 
-                    if (cpr.moduleData.isNullOrEmpty().not()) {
-                        var index = 0
-                        cpr.moduleData.forEachIndexed { _, moduleData ->
-                            index++
-                            binding.progressDetailRv.addView(
-                                PerformItemViewHolder(
+                        binding.textView1.text = sb
+
+                        val sb2 = SpannableStringBuilder(
+                            getString(
+                                R.string.course_progress_detail,
+                                cpr.completePercent.toString().plus("%")
+                            )
+                        )
+                        val endPos = 19 + cpr.completePercent.toString().length + 1
+                        sb2.setSpan(
+                            StyleSpan(Typeface.BOLD),
+                            19,
+                            endPos,
+                            Spannable.SPAN_INCLUSIVE_INCLUSIVE
+                        )
+                        sb2.setSpan(
+                            ForegroundColorSpan(
+                                ContextCompat.getColor(
                                     applicationContext,
-                                    moduleData, index
+                                    R.color.font_color
+                                )
+                            ), 19, endPos, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                        )
+                        binding.tvCourseCompleteStatus.text = sb2
+
+                        binding.courseProgressBar.progress = abs(cpr.completePercent).toInt()
+                        if (cpr.completePercent >= cpr.unlockPercent) {
+                            binding.claimCertificateBtn.icon = null
+                            binding.claimCertificateBtn.backgroundTintList = ColorStateList.valueOf(
+                                ContextCompat.getColor(
+                                    applicationContext,
+                                    R.color.button_primary_color
                                 )
                             )
                         }
-                    }
-                    binding.rootView.setBackgroundColor(
-                        ContextCompat.getColor(
-                            applicationContext,
-                            R.color.wh_fc
+                        binding.progressDetailRv.addView(
+                            PerformHeaderViewHolder(
+                                cpr.totalVideoPractice,
+                                cpr.seenVideoPractice
+                            )
                         )
-                    )
-                    binding.bottomImageView.visibility = View.VISIBLE
-                    binding.bottomImageView.setImageResource(R.drawable.bk_progress)
-                    val transition: Transition = Fade()
-                    transition.duration = 250
-                    transition.addTarget(binding.subRootView.id)
-                    TransitionManager.beginDelayedTransition(binding.rootView, transition)
-                    binding.subRootView.visibility = View.VISIBLE
+
+                        if (cpr.moduleData.isNullOrEmpty().not()) {
+                            var index = 0
+                            cpr.moduleData.forEachIndexed { _, moduleData ->
+                                index++
+                                binding.progressDetailRv.addView(
+                                    PerformItemViewHolder(
+                                        applicationContext,
+                                        moduleData, index
+                                    )
+                                )
+                            }
+                        }
+                        binding.rootView.setBackgroundColor(
+                            ContextCompat.getColor(
+                                applicationContext,
+                                R.color.wh_fc
+                            )
+                        )
+                        binding.bottomImageView.visibility = View.VISIBLE
+                        binding.bottomImageView.setImageResource(R.drawable.bk_progress)
+                        val transition: Transition = Fade()
+                        transition.duration = 250
+                        transition.addTarget(binding.subRootView.id)
+                        TransitionManager.beginDelayedTransition(binding.rootView, transition)
+                        binding.subRootView.visibility = View.VISIBLE
+                    }
+                } else if (cprponnse.code() == 204) {
+                    showCourseContents()
                 }
             } catch (ex: Exception) {
                 when (ex) {

@@ -66,7 +66,7 @@ interface ChatNetworkService {
     suspend fun mergeMentorWithGId(@Path("id") id: String, @FieldMap params: Map<String, String>)
 
     @GET("$DIR/chat/conversation/{id}/")
-    suspend fun getCourseProgressDetailsAsync(@Path("id") cId: String): CoursePerformanceResponse
+    suspend fun getCourseProgressDetailsAsync(@Path("id") cId: String): Response<CoursePerformanceResponse>
 
 
 
