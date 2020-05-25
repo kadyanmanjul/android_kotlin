@@ -78,6 +78,8 @@ class NetPromoterScoreFragment : BottomSheetDialogFragment(),
         }
         setStyle(DialogFragment.STYLE_NORMAL, R.style.BaseBottomSheetDialog)
         AppAnalytics.create(AnalyticsEvent.NPS_INITIATED.NAME)
+            .addBasicParam()
+            .addUserDetails()
             .addParam("event name", npsModel?.eventName)
             .addParam("event from", npsModel?.event?.name)
             .addParam("event id", npsModel?.eventId)
@@ -141,7 +143,9 @@ class NetPromoterScoreFragment : BottomSheetDialogFragment(),
                         if (User.getInstance().firstName.isEmpty()) {
                             binding.tvUserName.visibility = View.GONE
                         }
-                        AppAnalytics.create(AnalyticsEvent.NPS_SUBMITTED.NAME)
+                        AppAnalytics.create(AnalyticsEvent.NPS_FEEDBACK_SUBMITTED.NAME)
+                            .addBasicParam()
+                            .addUserDetails()
                             .addParam("event name", npsModel?.eventName)
                             .addParam("event from", npsModel?.event?.name)
                             .addParam("event id", npsModel?.eventId)
@@ -253,6 +257,13 @@ class NetPromoterScoreFragment : BottomSheetDialogFragment(),
                 binding.editText.isPressed = true
                 binding.tvQuestion.visibility = View.GONE
                 // showKeyBoard(requireActivity(), binding.editText)
+                AppAnalytics.create(AnalyticsEvent.NPS_SCORE_SUBMITTED.NAME)
+                    .addBasicParam()
+                    .addUserDetails()
+                    .addParam("event name", npsModel?.eventName)
+                    .addParam("event from", npsModel?.event?.name)
+                    .addParam("event id", npsModel?.eventId)
+                    .push()
             }
             NPSProcessStatus.EXTRA_INFO -> {
                 hideKeyboard(requireActivity(), binding.editText)
@@ -280,6 +291,8 @@ class NetPromoterScoreFragment : BottomSheetDialogFragment(),
 
     fun cancel() {
         AppAnalytics.create(AnalyticsEvent.NPS_IGNORE.NAME)
+            .addBasicParam()
+            .addUserDetails()
             .addParam("event name", npsModel?.eventName)
             .addParam("event from", npsModel?.event?.name)
             .addParam("event id", npsModel?.eventId)
