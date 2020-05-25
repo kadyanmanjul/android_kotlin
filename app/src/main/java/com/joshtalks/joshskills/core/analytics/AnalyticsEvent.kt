@@ -264,7 +264,7 @@ enum class AnalyticsEvent(val NAME: String) {
 
     TEST_ID_OPENED("Test ID Opened V3"),
     NPS_INITIATED("NPS Initiated V3"),
-    NPS_SUBMITTED("NPS Submitted V3"),
+    NPS_Feedback_SUBMITTED("NPS Feedback Submitted V3"),
     NPS_IGNORE("NPS Ignore V3"),
 
 
