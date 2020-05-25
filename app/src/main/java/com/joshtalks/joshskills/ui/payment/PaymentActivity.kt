@@ -282,7 +282,8 @@ class PaymentActivity : CoreJoshActivity(),
             .length(Toast.LENGTH_LONG).solidBackground().show()
         appAnalytics.addParam(AnalyticsEvent.PAYMENT_FAILED.NAME, p1)
         if (npsShow) {
-            showNetPromoterScoreDialog(NPSEvent.PAYMENT_FAILED)
+            NPSEventModel.setCurrentNPA(NPSEvent.PAYMENT_FAILED)
+            showNetPromoterScoreDialog()
             npsShow = false
         }
     }
