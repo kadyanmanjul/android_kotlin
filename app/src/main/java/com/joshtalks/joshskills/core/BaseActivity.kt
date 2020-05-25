@@ -231,14 +231,8 @@ abstract class BaseActivity : AppCompatActivity() {
 
     protected suspend fun canShowNPSDialog(nps: NPSEvent? = null, id: String = EMPTY): Boolean {
         return CoroutineScope(Dispatchers.IO).async(Dispatchers.IO) {
-            var currentState = nps
-            if (currentState == null) {
-                currentState = NPSEventModel.getCurrentNPA()
-            }
+            val currentState: NPSEvent? = getCurrentNpsState(nps) ?: return@async false
 
-            if (currentState == null) {
-                return@async false
-            }
             if (!(currentState == NPSEvent.PAYMENT_SUCCESS || currentState == NPSEvent.PAYMENT_FAILED)) {
                 val minNpsInADay = AppObjectController.getFirebaseRemoteConfig()
                     .getDouble("MINIMUM_NPS_IN_A_DAY_COUNT").toInt()
@@ -257,36 +251,49 @@ abstract class BaseActivity : AppCompatActivity() {
             getQuestionForNPS(npsEventModel)
             return@async true
         }.await()
+    }
 
+    private fun getCurrentNpsState(nps: NPSEvent? = null): NPSEvent? {
+        var currentState = nps
+        if (currentState == null) {
+            currentState = NPSEventModel.getCurrentNPA()
+        }
+        return currentState
     }
 
     private fun getQuestionForNPS(
         eventModel: NPSEventModel
     ) {
         CoroutineScope(Dispatchers.Main).launch {
-            WorkManager.getInstance(applicationContext)
-                .getWorkInfoByIdLiveData(WorkMangerAdmin.getQuestionNPA(eventModel.eventName))
-                .observe(this@BaseActivity, Observer {
-                    try {
-                        if (it != null && it.state == WorkInfo.State.SUCCEEDED) {
-                            val output = it.outputData.getString("nps_question_list")
-                            if (output.isNullOrEmpty().not()) {
-                                NPSEventModel.removeCurrentNPA()
-                                val questionList =
-                                    NPSQuestionModel.getNPSQuestionModelList(output!!)
-                                if (questionList.isNullOrEmpty().not()) {
-                                    showNPSFragment(eventModel, questionList!!)
-                                    CoroutineScope(Dispatchers.IO).launch(Dispatchers.IO) {
-                                        AppObjectController.appDatabase.npsEventModelDao()
-                                            .insertNPSEvent(eventModel)
-                                    }
+            val observer = Observer<WorkInfo> { workInfo ->
+                try {
+                    val currentState: NPSEvent? = getCurrentNpsState()
+                    if (workInfo != null && workInfo.state == WorkInfo.State.SUCCEEDED && currentState != null) {
+                        val output = workInfo.outputData.getString("nps_question_list")
+                        if (output.isNullOrEmpty().not()) {
+                            NPSEventModel.removeCurrentNPA()
+                            val questionList =
+                                NPSQuestionModel.getNPSQuestionModelList(output!!)
+                            if (questionList.isNullOrEmpty().not()) {
+                                showNPSFragment(eventModel, questionList!!)
+                                CoroutineScope(Dispatchers.IO).launch(Dispatchers.IO) {
+                                    AppObjectController.appDatabase.npsEventModelDao()
+                                        .insertNPSEvent(eventModel)
                                 }
                             }
                         }
-                    } catch (ex: Exception) {
-                        ex.printStackTrace()
                     }
-                })
+                } catch (ex: Exception) {
+                    ex.printStackTrace()
+                }
+
+                WorkManager.getInstance(applicationContext)
+                    .getWorkInfoByIdLiveData(WorkMangerAdmin.getQuestionNPA(eventModel.eventName))
+                    .removeObservers(this@BaseActivity)
+            }
+            WorkManager.getInstance(applicationContext)
+                .getWorkInfoByIdLiveData(WorkMangerAdmin.getQuestionNPA(eventModel.eventName))
+                .observe(this@BaseActivity, observer)
         }
     }
 
