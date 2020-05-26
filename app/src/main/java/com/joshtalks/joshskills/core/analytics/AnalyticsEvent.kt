@@ -134,14 +134,17 @@ enum class AnalyticsEvent(val NAME: String) {
 
 
     //Course Purchase Initiated
-    COURSE_PURCHASE_INITIATED("Course purchase initiated V3"),
+    COURSE_PAYMENT_INITIATED("Course payment initiated V3"),
+    COURSE_PAYMENT_CONFIRMED("Course payment confirmed V3"),
 
     // Course Purchase Confirmed
     ENTER_COUPON_SCREEN("Enter coupon Screen V3"),
     COURSE_PURCHASE_CONFIRMED("Course Purchase Confirmed V3"),
 
     //  Payment Status (Post response from razorpay, transaction was successful or failed)
-    PAYMENT_STATUS("Payment Status V3"),
+    PAYMENT_STATUS("Post Payment Status V3"),
+    POST_TRANSATION_STATUS("Post transaction Status V3"),
+    //PAYMENT_INITIATED("Payment Initiated V3"),
     INVALID_COUPON_POPUP("Invalid coupon popup V3"),
 
 
@@ -271,7 +274,6 @@ enum class AnalyticsEvent(val NAME: String) {
 
     RAZORPAY_SDK("Razorpay SDK V3"),
     PAYMENT_COMPLETED("Payment Completed V3"),
-    PAYMENT_INITIATED("Payment Initiated V3"),
     PAYMENT_FAILED("Payment Fail V3"),
 
     VIDEO_SUBMITTED("Video Submitted V3"),

@@ -135,7 +135,8 @@ class LoginDialogFragment : DialogFragment() {
     fun verifyViaTrueCaller() {
         AppAnalytics.create(AnalyticsEvent.LOGIN_INITIATED.NAME)
             .addBasicParam()
-            .addParam(AnalyticsEvent.FLOW_FROM_PARAM.NAME, this.javaClass.simpleName)
+            .addUserDetails()
+            .addParam(AnalyticsEvent.FLOW_FROM_PARAM.NAME, "Course Purchase journey")
             .addParam(AnalyticsEvent.LOGIN_VIA.NAME, AnalyticsEvent.TRUECALLER_PARAM.NAME)
             .push()
         TrueSDK.getInstance().getUserProfile(this)
@@ -146,7 +147,8 @@ class LoginDialogFragment : DialogFragment() {
     fun signUp() {
         AppAnalytics.create(AnalyticsEvent.LOGIN_INITIATED.NAME)
             .addBasicParam()
-            .addParam(AnalyticsEvent.FLOW_FROM_PARAM.NAME, this.javaClass.simpleName)
+            .addUserDetails()
+            .addParam(AnalyticsEvent.FLOW_FROM_PARAM.NAME, "Course Purchase journey")
             .addParam(AnalyticsEvent.LOGIN_VIA.NAME, AnalyticsEvent.MOBILE_OTP_PARAM.NAME)
             .push()
         startActivityForResult(Intent(requireActivity(), SignUpActivity::class.java).apply {

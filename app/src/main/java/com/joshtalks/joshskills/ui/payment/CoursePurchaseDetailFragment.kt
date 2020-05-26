@@ -27,7 +27,6 @@ import com.joshtalks.skydoves.balloon.OnBalloonDismissListener
 class CoursePurchaseDetailFragment : DialogFragment() {
     private var listener: OnCourseDetailInteractionListener? = null
     private lateinit var binding: FragmentCoursePurchaseDetailBinding
-    private lateinit var appAnalytics: AppAnalytics
     private var courseModel: CourseExploreModel? = null
     private var hasCertificate: Boolean = false
 
@@ -67,9 +66,6 @@ class CoursePurchaseDetailFragment : DialogFragment() {
             )
         binding.lifecycleOwner = this
         binding.handler = this
-        appAnalytics = AppAnalytics.create(AnalyticsEvent.COURSE_PURCHASE_INITIATED.NAME)
-            .addBasicParam()
-            .addUserDetails()
         return binding.root
     }
 
@@ -107,12 +103,6 @@ class CoursePurchaseDetailFragment : DialogFragment() {
                 }
 
             })
-
-        courseModel?.let {
-            appAnalytics
-                .addParam(AnalyticsEvent.COURSE_NAME.NAME, it.courseName)
-                .addParam(AnalyticsEvent.SHOWN_COURSE_PRICE.NAME, it.amount)
-        }
     }
 
     private fun showTooltip() {
@@ -137,11 +127,15 @@ class CoursePurchaseDetailFragment : DialogFragment() {
 
     fun completePayment() {
         //TODO
-        AppAnalytics.create(AnalyticsEvent.COMPLETE_PAYMENT_CLICKED.NAME).push()
-        appAnalytics.addParam(
-            AnalyticsEvent.COMPLETE_PAYMENT_CLICKED.NAME,
-            AnalyticsEvent.COMPLETE_PAYMENT_CLICKED.NAME
-        )
+        AppAnalytics.create(AnalyticsEvent.COURSE_PAYMENT_CONFIRMED.NAME)
+            .addBasicParam()
+            .addUserDetails()
+            .addParam(
+                AnalyticsEvent.ACTION.NAME,
+                AnalyticsEvent.COMPLETE_PAYMENT_CLICKED.NAME
+            )
+            .addParam(AnalyticsEvent.COURSE_NAME.NAME, courseModel?.courseName)
+            .addParam(AnalyticsEvent.SHOWN_COURSE_PRICE.NAME, courseModel?.amount.toString()).push()
         listener?.onCompletePayment()
         dismissAllowingStateLoss()
 
@@ -167,8 +161,6 @@ class CoursePurchaseDetailFragment : DialogFragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        appAnalytics.addParam(AnalyticsEvent.BACK_PRESSED.NAME, true)
-        appAnalytics.push()
         AppAnalytics.create(AnalyticsEvent.BACK_PRESSED.NAME)
             .addParam("name", javaClass.simpleName)
             .push()
