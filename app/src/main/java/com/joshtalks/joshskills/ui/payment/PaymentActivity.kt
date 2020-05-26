@@ -87,7 +87,7 @@ class PaymentActivity : CoreJoshActivity(),
     private var userSubmitCode = EMPTY
     private var razorpayOrderId = EMPTY
     private lateinit var titleView: AppCompatTextView
-    private lateinit var appAnalytics: AppAnalytics
+    private lateinit var appAnalytics:AppAnalytics
     private var specialDiscount = false
     private var isEcommereceEventFire = true
     private var hasCertificate = false
@@ -118,7 +118,6 @@ class PaymentActivity : CoreJoshActivity(),
         } else {
             ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         }
-        appAnalytics = AppAnalytics.create(AnalyticsEvent.PAYMENT_STATUS.NAME)
         Checkout.preload(application)
         userHaveSpecialDiscount()
         super.onCreate(savedInstanceState)
@@ -139,7 +138,6 @@ class PaymentActivity : CoreJoshActivity(),
         }
         if (intent.hasExtra(STARTED_FROM)) {
             flowFrom = intent.getStringExtra(STARTED_FROM)
-            appAnalytics.addParam(AnalyticsEvent.FLOW_FROM_PARAM.NAME, flowFrom)
         }
         if (testId.isEmpty()) {
             invalidCourseId()
@@ -163,16 +161,16 @@ class PaymentActivity : CoreJoshActivity(),
         bundle.putString(FirebaseAnalytics.Param.ITEM_ID, testId)
         AppObjectController.firebaseAnalytics.logEvent("open_test_id", bundle)
 
-        appAnalytics.addBasicParam()
+        AppAnalytics.create(AnalyticsEvent.COURSE_PAYMENT_INITIATED.NAME)
+            .addParam(AnalyticsEvent.FLOW_FROM_PARAM.NAME, flowFrom)
+            .addBasicParam()
             .addUserDetails()
             .addParam(AnalyticsEvent.COURSE_NAME.NAME, courseName)
             .addParam(AnalyticsEvent.SHOWN_COURSE_PRICE.NAME, courseModel?.amount.toString())
             .addParam("test_id", testId)
-            .addParam(AnalyticsEvent.HAVE_COUPON_CODE_CLICKED.NAME, false)
-        //2nd by let operator
-        courseModel?.amount?.let {
-            appAnalytics.addParam(AnalyticsEvent.COURSE_PRICE.NAME, it)
-        }
+            .addParam(AnalyticsEvent.COURSE_PRICE.NAME, courseModel?.amount.toString()).push()
+        appAnalytics= AppAnalytics.create(AnalyticsEvent.POST_TRANSATION_STATUS.NAME)
+
     }
 
     private fun getTestCourseDetails() {
@@ -280,7 +278,7 @@ class PaymentActivity : CoreJoshActivity(),
             .text(getString(R.string.something_went_wrong)).cornerRadius(16)
             .textColor(ContextCompat.getColor(applicationContext, R.color.white))
             .length(Toast.LENGTH_LONG).solidBackground().show()
-        appAnalytics.addParam(AnalyticsEvent.PAYMENT_FAILED.NAME, p1)
+        appAnalytics.addParam(AnalyticsEvent.PAYMENT_FAILED.NAME, p1).push()
         if (npsShow) {
             showNetPromoterScoreDialog(NPSEvent.PAYMENT_FAILED)
             npsShow = false
@@ -308,7 +306,7 @@ class PaymentActivity : CoreJoshActivity(),
             startActivity(getInboxActivityIntent())
             this@PaymentActivity.finish()
         }, 1000 * 59)
-        appAnalytics.addParam(AnalyticsEvent.PAYMENT_COMPLETED.NAME, true)
+        appAnalytics.addParam(AnalyticsEvent.PAYMENT_COMPLETED.NAME, true).push()
         FlurryAgent.UserProperties.set(FlurryAgent.UserProperties.PROPERTY_PURCHASER, "true")
     }
 
@@ -509,7 +507,6 @@ class PaymentActivity : CoreJoshActivity(),
 
     override fun onDestroy() {
         super.onDestroy()
-        appAnalytics.push()
         compositeDisposable.clear()
         Checkout.clearUserData(applicationContext)
         uiHandler.removeCallbacksAndMessages(null)
@@ -567,7 +564,6 @@ class PaymentActivity : CoreJoshActivity(),
             return
         }
         if (supportFragmentManager.findFragmentById(R.id.container) != null) {
-            appAnalytics.addParam("payment cancelled", "back pressed payment cancelled")
             this@PaymentActivity.finish()
             return
         }
@@ -691,8 +687,7 @@ class PaymentActivity : CoreJoshActivity(),
     }
 
     override fun onLoginSuccessfully() {
-        appAnalytics.addParam(AnalyticsEvent.LOGIN_SUCCESSFULLY.NAME, "From payment Activity")
-        //AppAnalytics.create(AnalyticsEvent.LOGIN_SUCCESSFULLY.NAME).push()
+        AppAnalytics.create(AnalyticsEvent.LOGIN_SUCCESSFULLY.NAME).push()
         userHaveSpecialDiscount()
         requestForPayment()
     }
