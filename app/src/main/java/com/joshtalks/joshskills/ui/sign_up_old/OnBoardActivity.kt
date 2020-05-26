@@ -113,6 +113,7 @@ class OnBoardActivity : CoreJoshActivity() {
     fun signUp() {
         AppAnalytics.create(AnalyticsEvent.LOGIN_INITIATED.NAME)
             .addBasicParam()
+            .addUserDetails()
             .addParam(AnalyticsEvent.FLOW_FROM_PARAM.NAME, this.javaClass.simpleName)
             .addParam(AnalyticsEvent.LOGIN_VIA.NAME, AnalyticsEvent.MOBILE_OTP_PARAM.NAME)
             .push()
@@ -161,6 +162,7 @@ class OnBoardActivity : CoreJoshActivity() {
     fun verifyViaTrueCaller() {
         AppAnalytics.create(AnalyticsEvent.LOGIN_INITIATED.NAME)
             .addBasicParam()
+            .addUserDetails()
             .addParam(AnalyticsEvent.FLOW_FROM_PARAM.NAME, this.javaClass.simpleName)
             .addParam(AnalyticsEvent.LOGIN_VIA.NAME, AnalyticsEvent.TRUECALLER_PARAM.NAME)
             .push()
