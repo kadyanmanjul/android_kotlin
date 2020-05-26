@@ -141,11 +141,11 @@ public class AppAnalytics {
     }
 
     public AppAnalytics addBasicParam() {
-        parameters.put(AnalyticsEvent.APP_VERSION_CODE.getNAME(), BuildConfig.VERSION_NAME);
-        parameters.put(AnalyticsEvent.DEVICE_MANUFACTURER.getNAME(), Build.MANUFACTURER);
-        parameters.put(AnalyticsEvent.DEVICE_MODEL.getNAME(), Build.MODEL);
-        parameters.put(AnalyticsEvent.ANDROID_OR_IOS.getNAME(), Build.VERSION.SDK_INT);
         try {
+            parameters.put(AnalyticsEvent.APP_VERSION_CODE.getNAME(), BuildConfig.VERSION_NAME);
+            parameters.put(AnalyticsEvent.DEVICE_MANUFACTURER.getNAME(), Build.MANUFACTURER);
+            parameters.put(AnalyticsEvent.DEVICE_MODEL.getNAME(), Build.MODEL);
+            parameters.put(AnalyticsEvent.ANDROID_OR_IOS.getNAME(), Build.VERSION.SDK_INT);
             if (InstallReferrerModel.getPrefObject() != null && !Objects.requireNonNull(InstallReferrerModel.getPrefObject().getUtmSource()).isEmpty())
                 parameters.put(AnalyticsEvent.SOURCE.getNAME(), InstallReferrerModel.getPrefObject().getUtmSource());
 
@@ -156,14 +156,13 @@ public class AppAnalytics {
             )
                 parameters.put(AnalyticsEvent.UTM_MEDIUM.getNAME(), InstallReferrerModel.getPrefObject().getUtmMedium());
         } catch (Exception e) {
-
         }
         return this;
     }
 
     public AppAnalytics addUserDetails() {
         try {
-            if (!PrefManager.INSTANCE.getStringValue(USER_UNIQUE_ID).isEmpty())
+            if (PrefManager.INSTANCE != null && !PrefManager.INSTANCE.getStringValue(USER_UNIQUE_ID).isEmpty())
                 parameters.put(AnalyticsEvent.USER_GAID.getNAME(), PrefManager.INSTANCE.getStringValue(USER_UNIQUE_ID));
             if (Mentor.getInstance().hasId())
                 parameters.put(AnalyticsEvent.USER_MENTOR_ID.getNAME(), Mentor.getInstance().getId());
@@ -174,7 +173,6 @@ public class AppAnalytics {
             if (!User.getInstance().getPhoneNumber().isEmpty())
                 parameters.put(AnalyticsEvent.USER_PHONE_NUMBER.getNAME(), User.getInstance().getPhoneNumber());
         } catch (Exception e) {
-
         }
         return this;
     }
