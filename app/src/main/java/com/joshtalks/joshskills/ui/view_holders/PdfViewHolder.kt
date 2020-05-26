@@ -76,7 +76,7 @@ class PdfViewHolder(activityRef: WeakReference<FragmentActivity>, message: ChatM
     lateinit var pdfViewHolder: PdfViewHolder
     private var eta = 0L
 
-    private lateinit var appAnalytics: AppAnalytics
+    private var appAnalytics: AppAnalytics? = null
 
 
     private var downloadListener = object : FetchListener {
@@ -85,7 +85,7 @@ class PdfViewHolder(activityRef: WeakReference<FragmentActivity>, message: ChatM
         }
 
         override fun onCancelled(download: Download) {
-            appAnalytics.addParam(AnalyticsEvent.PDF_DOWNLOAD_STATUS.NAME, "Cancelled").push()
+            appAnalytics?.addParam(AnalyticsEvent.PDF_DOWNLOAD_STATUS.NAME, "Cancelled")?.push()
 
         }
 
@@ -94,8 +94,8 @@ class PdfViewHolder(activityRef: WeakReference<FragmentActivity>, message: ChatM
             eta = System.currentTimeMillis() - eta
             if (eta >= 10000000)
                 eta = 500
-            appAnalytics.addParam(AnalyticsEvent.TIME_TAKEN_DOWNLOAD.NAME, eta)
-            appAnalytics.addParam(AnalyticsEvent.PDF_DOWNLOAD_STATUS.NAME, "Completed").push()
+            appAnalytics?.addParam(AnalyticsEvent.TIME_TAKEN_DOWNLOAD.NAME, eta)
+            appAnalytics?.addParam(AnalyticsEvent.PDF_DOWNLOAD_STATUS.NAME, "Completed")?.push()
             CoroutineScope(Dispatchers.IO).launch {
                 DownloadUtils.updateDownloadStatus(download.file, download.extras).let {
                     RxBus2.publish(DownloadCompletedEventBus(pdfViewHolder, message))
@@ -118,7 +118,7 @@ class PdfViewHolder(activityRef: WeakReference<FragmentActivity>, message: ChatM
         }
 
         override fun onError(download: Download, error: Error, throwable: Throwable?) {
-            appAnalytics.addParam(AnalyticsEvent.PDF_DOWNLOAD_STATUS.NAME, "Failed error").push()
+            appAnalytics?.addParam(AnalyticsEvent.PDF_DOWNLOAD_STATUS.NAME, "Failed error")?.push()
 
         }
 
@@ -223,7 +223,7 @@ class PdfViewHolder(activityRef: WeakReference<FragmentActivity>, message: ChatM
     }
 
     private fun fileNotDownloadView() {
-        appAnalytics.addParam(AnalyticsEvent.PDF_VIEW_STATUS.NAME, "Not downloaded")
+        appAnalytics?.addParam(AnalyticsEvent.PDF_VIEW_STATUS.NAME, "Not downloaded")
         ivStartDownload.visibility = android.view.View.VISIBLE
         progressDialog.visibility = android.view.View.GONE
         ivCancelDownload.visibility = android.view.View.GONE
@@ -243,10 +243,10 @@ class PdfViewHolder(activityRef: WeakReference<FragmentActivity>, message: ChatM
                     override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
                         report?.areAllPermissionsGranted()?.let { flag ->
                             if (flag) {
-                                appAnalytics.addParam(
+                                appAnalytics?.addParam(
                                     AnalyticsEvent.PDF_VIEW_STATUS.NAME,
                                     "pdf Opened"
-                                ).push()
+                                )?.push()
                                 openPdf()
                                 return
 
@@ -275,7 +275,7 @@ class PdfViewHolder(activityRef: WeakReference<FragmentActivity>, message: ChatM
     private fun openPdf() {
         message.question?.pdfList?.getOrNull(0)?.let { pdfObj ->
             if (pdfObj.url.isBlank()) {
-                appAnalytics.addParam(AnalyticsEvent.PDF_VIEW_STATUS.NAME, "pdf url Blank").push()
+                appAnalytics?.addParam(AnalyticsEvent.PDF_VIEW_STATUS.NAME, "pdf url Blank")?.push()
                 return
             }
             if (message.downloadStatus == DOWNLOAD_STATUS.DOWNLOADED && AppDirectory.isFileExist(
