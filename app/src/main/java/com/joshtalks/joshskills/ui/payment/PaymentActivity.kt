@@ -118,6 +118,7 @@ class PaymentActivity : CoreJoshActivity(),
         } else {
             ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         }
+        appAnalytics = AppAnalytics.create(AnalyticsEvent.POST_TRANSATION_STATUS.NAME)
         Checkout.preload(application)
         userHaveSpecialDiscount()
         super.onCreate(savedInstanceState)
@@ -169,7 +170,6 @@ class PaymentActivity : CoreJoshActivity(),
             .addParam(AnalyticsEvent.SHOWN_COURSE_PRICE.NAME, courseModel?.amount.toString())
             .addParam("test_id", testId)
             .addParam(AnalyticsEvent.COURSE_PRICE.NAME, courseModel?.amount.toString()).push()
-        appAnalytics= AppAnalytics.create(AnalyticsEvent.POST_TRANSATION_STATUS.NAME)
 
     }
 
