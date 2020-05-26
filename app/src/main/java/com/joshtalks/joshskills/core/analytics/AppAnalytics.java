@@ -145,30 +145,37 @@ public class AppAnalytics {
         parameters.put(AnalyticsEvent.DEVICE_MANUFACTURER.getNAME(), Build.MANUFACTURER);
         parameters.put(AnalyticsEvent.DEVICE_MODEL.getNAME(), Build.MODEL);
         parameters.put(AnalyticsEvent.ANDROID_OR_IOS.getNAME(), Build.VERSION.SDK_INT);
-        if (InstallReferrerModel.getPrefObject() != null && !Objects.requireNonNull(InstallReferrerModel.getPrefObject().getUtmSource()).isEmpty())
-            parameters.put(AnalyticsEvent.SOURCE.getNAME(), InstallReferrerModel.getPrefObject().getUtmSource());
+        try {
+            if (InstallReferrerModel.getPrefObject() != null && !Objects.requireNonNull(InstallReferrerModel.getPrefObject().getUtmSource()).isEmpty())
+                parameters.put(AnalyticsEvent.SOURCE.getNAME(), InstallReferrerModel.getPrefObject().getUtmSource());
 
-        if (
-                InstallReferrerModel.getPrefObject() != null &&
-                        InstallReferrerModel.getPrefObject().getUtmMedium() != null &&
-                        !InstallReferrerModel.getPrefObject().getUtmMedium().isEmpty()
-        )
-            parameters.put(AnalyticsEvent.UTM_MEDIUM.getNAME(), InstallReferrerModel.getPrefObject().getUtmMedium());
+            if (
+                    InstallReferrerModel.getPrefObject() != null &&
+                            InstallReferrerModel.getPrefObject().getUtmMedium() != null &&
+                            !InstallReferrerModel.getPrefObject().getUtmMedium().isEmpty()
+            )
+                parameters.put(AnalyticsEvent.UTM_MEDIUM.getNAME(), InstallReferrerModel.getPrefObject().getUtmMedium());
+        } catch (Exception e) {
+
+        }
         return this;
     }
 
     public AppAnalytics addUserDetails() {
-        // .addParam(AnalyticsEvent.USER_GAID.NAME, PrefManager.getStringValue(USER_UNIQUE_ID))
-        if (!PrefManager.INSTANCE.getStringValue(USER_UNIQUE_ID).isEmpty())
-            parameters.put(AnalyticsEvent.USER_GAID.getNAME(), PrefManager.INSTANCE.getStringValue(USER_UNIQUE_ID));
-        if (Mentor.getInstance().hasId())
-            parameters.put(AnalyticsEvent.USER_MENTOR_ID.getNAME(), Mentor.getInstance().getId());
-        if (!User.getInstance().getFirstName().isEmpty())
-            parameters.put(AnalyticsEvent.USER_NAME.getNAME(), User.getInstance().getFirstName());
-        if (!User.getInstance().getEmail().isEmpty())
-            parameters.put(AnalyticsEvent.USER_EMAIL.getNAME(), User.getInstance().getEmail());
-        if (!User.getInstance().getPhoneNumber().isEmpty())
-            parameters.put(AnalyticsEvent.USER_PHONE_NUMBER.getNAME(), User.getInstance().getPhoneNumber());
+        try {
+            if (!PrefManager.INSTANCE.getStringValue(USER_UNIQUE_ID).isEmpty())
+                parameters.put(AnalyticsEvent.USER_GAID.getNAME(), PrefManager.INSTANCE.getStringValue(USER_UNIQUE_ID));
+            if (Mentor.getInstance().hasId())
+                parameters.put(AnalyticsEvent.USER_MENTOR_ID.getNAME(), Mentor.getInstance().getId());
+            if (!User.getInstance().getFirstName().isEmpty())
+                parameters.put(AnalyticsEvent.USER_NAME.getNAME(), User.getInstance().getFirstName());
+            if (!User.getInstance().getEmail().isEmpty())
+                parameters.put(AnalyticsEvent.USER_EMAIL.getNAME(), User.getInstance().getEmail());
+            if (!User.getInstance().getPhoneNumber().isEmpty())
+                parameters.put(AnalyticsEvent.USER_PHONE_NUMBER.getNAME(), User.getInstance().getPhoneNumber());
+        } catch (Exception e) {
+
+        }
         return this;
     }
 
