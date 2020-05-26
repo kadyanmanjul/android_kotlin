@@ -69,7 +69,13 @@ class CustomPermissionDialogFragment : BottomSheetDialogFragment() {
      * Navigate To Power Manager Settings
      * */
     fun navigateToSettings() {
-        activity?.startActivity(mIntent)
+        try {
+            activity?.startActivity(mIntent)
+        } catch (ex: Throwable) {
+            PrefManager.put(CUSTOM_PERMISSION_ACTION_KEY, PermissionAction.DO_NOT_ASK_AGAIN.name)
+            dismissAllowingStateLoss()
+            interactionListener.navigateToNextScreen()
+        }
     }
 
     fun logAction(actionPerformed: PermissionAction) {
