@@ -3,8 +3,12 @@
     <string name="inbox_header">Josh Skills</string>
     <string name="help_header">Student Support</string>
 
+    <string name="facebook_app_id">249107439733197</string>
+    <string name="fb_login_protocol_scheme">fb249107439733197</string>
+
 
     <string name="welcome_josh_skill">Welcome to Josh Skills</string>
+    <string name="welcome_josh_skill_new">welcome</string>
     <string name="next">Next</string>
     <string name="verify">Verify</string>
 
@@ -41,6 +45,7 @@
     <string name="profile_photo">Profile photo</string>
 
     <string name="splash_sub_string">ज़िन्दगी में आगे बढ़ो, जोश के साथ</string>
+    <string name="splash_sub_string_english">Zindagi mein aage bhado,josh\n ke sath </string>
 
     <string name="open">OPEN</string>
     <string name="submit">Submit</string>
@@ -63,6 +68,7 @@
     <string name="buy_course">Buy Course</string>
 
     <string name="explore">Explore</string>
+    <string name="explore_new">Courses Dekhe</string>
 
     <string name="explorer_courses">Explore Courses</string>
     <string name="start_course">Start Course</string>
@@ -93,6 +99,13 @@
     <string name="please_enter_otp">Please enter OTP</string>
     <string name="please_enter_name">Please enter name</string>
     <string name="please_enter_email">Please enter valid Email Id</string>
+
+    <string name="join_social_text">Join through your social accounts</string>
+    <string name="google">Google</string>
+    <string name="facebook">Facebook</string>
+    <string name="confirm_number">Confirm your number</string>
+    <string name="otp_info">A 4 digit number will be sent via SMS to verify \n your mobile number</string>
+    <string name="send_otp">Send OTP</string>
 
 
     <string name="course_not_exist_number">Sorry! Ye Number hamare paas Registered nahi hai</string>
@@ -163,6 +176,7 @@
     <string name="viewing_support_app_not_exist">you may have not proper app for viewing this content</string>
     <string name="login_with_truecaller_label">TrueCaller Login</string>
     <string name="login_with_otp">Login with OTP</string>
+    <string name="login_signup">Login\/Signup</string>
     <string name="wrong_otp">The OTP entered is incorrect. Please enter correct OTP or try regenerating the OTP</string>
     <string name="refer_and_earn">Refer &amp; Earn</string>
     <string name="paise_kamao">Paise Kamao</string>
