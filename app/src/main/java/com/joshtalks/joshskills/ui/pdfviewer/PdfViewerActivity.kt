@@ -14,8 +14,6 @@ import android.view.WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS
 import android.view.WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
-import com.github.barteksc.pdfviewer.scroll.DefaultScrollHandle
-import com.github.barteksc.pdfviewer.util.FitPolicy
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.BaseActivity
@@ -108,12 +106,14 @@ class PdfViewerActivity : BaseActivity() {
                             conversationBinding.pdfView
                                 .fromFile(File(pdfObject?.downloadedLocalPath!!))
                         }
+                        val scrollHandle = PdfScrollHandle(this@PdfViewerActivity)
+
                         pdfConfigurator.enableSwipe(true)
                             .pageSnap(true)
                             .autoSpacing(true)
                             .pageFling(true)
                             .fitEachPage(true)
-                            .scrollHandle(DefaultScrollHandle(this@PdfViewerActivity))
+                            .scrollHandle(scrollHandle)
                             .load()
 
                         AppAnalytics.create(AnalyticsEvent.PDF_OPENED.NAME)
