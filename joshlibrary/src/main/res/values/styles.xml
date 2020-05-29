@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
 
   <style name="Normal">
     <item name="android:windowEnterAnimation">@anim/show_up_center</item>
@@ -23,6 +23,30 @@
   <style name="Overshoot">
     <item name="android:windowEnterAnimation">@anim/overshoot_center</item>
     <item name="android:windowExitAnimation">@anim/dispose_center</item>
+  </style>
+
+  <style name="TextStyle">
+    <item name="android:fontFamily">@font/poppins</item>
+  </style>
+
+  <style name="TextStyle.LandingPageHeading25" parent="TextStyle">
+    <item name="android:textSize">@dimen/_18sdp</item>
+  </style>
+
+  <style name="TextStyle.TopBarNoScroll" parent="TextStyle">
+    <item name="android:textSize">@dimen/_16sdp</item>
+  </style>
+
+  <style name="TextStyle.TopBarScroll" parent="TextStyle">
+    <item name="android:textSize">@dimen/_14sdp</item>
+  </style>
+
+  <style name="TextStyle.ButtonText" parent="TextStyle">
+    <item name="android:textSize">@dimen/_14sdp</item>
+  </style>
+
+  <style name="TextStyle.NormalText" parent="TextStyle">
+    <item name="android:textSize">@dimen/_12sdp</item>
   </style>
 
 </resources>
