@@ -1,11 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="error_color">#FF0000</color>
-  <color name="text_color">#000</color>
-  <color name="black">#000000</color>
-  <color name="red">#d32f2f</color>
-  <color name="grey">#a9a9a9</color>
-  <color name="white">#ffffff</color>
-  <color name="transparent">#00000000</color>
+    <color name="text_color">#000</color>
+    <color name="red">#d32f2f</color>
+    <color name="grey">#a9a9a9</color>
+    <color name="white">#ffffff</color>
+
+    <color name="buton_color">#107BE5</color>
+    <color name="black">#172344</color>
+    <color name="pitch_black">#181B20</color>
+    <color name="dark_grey">#596273</color>
+    <color name="light_grey">#9098B1</color>
+    <color name="lighter_grey">#F1F2F4</color>
+    <color name="green">#20BA70</color>
+    <color name="artboard_color">#F1F2F4</color>
+    <color name="error">#E33333</color>
+    <color name="transparent">#00000000</color>
 
 </resources>
