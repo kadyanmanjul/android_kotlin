@@ -25,6 +25,9 @@ interface SignUpNetworkService {
     @POST("$DIR/mentor/instance/")
     suspend fun getInstanceIdAsync(): InstanceIdResponse
 
+    @POST("$DIR/user/gmail/")
+    suspend fun gmailLogin(@Body requestSocialSignUp: RequestSocialSignUp): Response<LoginResponse>
+
     @GET("$DIR/user/login/")
     suspend fun getOtpForNumberAsync(@QueryMap params: Map<String, String>): Response<Any>
 
