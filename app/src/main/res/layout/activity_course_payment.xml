@@ -9,193 +9,169 @@
             android:layout_height="match_parent"
             android:background="@color/white">
 
+        <TextView
+                android:id="@+id/header"
+                style="@style/TextStyle.LandingPageHeading25"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/_16sdp"
+                android:layout_marginTop="@dimen/_8sdp"
+                android:text="Order Summary"
+                android:textColor="@color/black"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-        <androidx.cardview.widget.CardView
 
+        <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/root_sub_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:clickable="true"
+                android:layout_marginHorizontal="@dimen/_16sdp"
+                android:layout_marginTop="@dimen/_8sdp"
+                android:background="@drawable/round_rect_default"
                 android:elevation="@dimen/_4sdp"
-                android:enabled="true"
-                android:focusable="true"
-                android:foreground="?android:attr/selectableItemBackground"
-                app:cardBackgroundColor="@color/white"
-                app:cardCornerRadius="@dimen/_4sdp"
-                app:cardElevation="0dp"
-                app:contentPaddingLeft="@dimen/_14sdp"
-                app:contentPaddingRight="@dimen/_14sdp"
-                app:contentPaddingTop="@dimen/_10sdp"
-                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.03"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.009"
-                tools:cardPreventCornerOverlap="false"
-                tools:ignore="MissingConstraints">
+                app:layout_constraintTop_toBottomOf="@+id/header">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_width="match_parent"
+            <ImageView
+                    android:id="@+id/profile_image"
+                    android:layout_width="@dimen/_130sdp"
+                    android:layout_height="@dimen/_145sdp"
+                    android:layout_marginHorizontal="@dimen/_8sdp"
+                    android:layout_marginTop="@dimen/_8sdp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:background="@drawable/sample_pic_" />
+
+            <TextView
+                    android:id="@+id/course_name"
+                    style="@style/TextStyle.TopBarScroll"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/ic_payment_card_bg">
+                    android:layout_marginHorizontal="@dimen/_12sdp"
+                    android:layout_marginTop="@dimen/_16sdp"
+                    android:gravity="start"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/font_16"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/profile_image"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="Personal\nDevelopment\nCourse" />
 
-                <ImageView
-                        android:id="@+id/profile_image"
-                        android:layout_width="@dimen/_150sdp"
-                        android:layout_height="@dimen/_195sdp"
-                        android:layout_weight="01"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintHorizontal_bias="0.0"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintVertical_bias="0.0"
-                        tools:background="@drawable/sample_pic_"
-                        tools:ignore="ContentDescription" />
+            <TextView
+                    android:id="@+id/tutor_name"
+                    style="@style/TextStyle.NormalText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginHorizontal="@dimen/_12sdp"
+                    android:layout_marginTop="@dimen/_2sdp"
+                    android:gravity="start"
+                    android:textColor="@color/dark_grey"
+                    android:textSize="@dimen/font_12"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/profile_image"
+                    app:layout_constraintTop_toBottomOf="@+id/course_name"
+                    tools:text="with Ankur Warikoo" />
 
-                <TextView
-                        android:id="@+id/course_name"
-                        fontPath="fonts/OpenSans-Regular.ttf"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:layout_marginTop="@dimen/half_margin"
-                        android:layout_weight=".75"
-                        android:gravity="center"
-                        android:textColor="@color/black"
-                        android:textSize="@dimen/font_18"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintHorizontal_bias="0.5"
-                        app:layout_constraintStart_toEndOf="@+id/profile_image"
-                        app:layout_constraintTop_toTopOf="parent"
-                        tools:text="Personal\nDevelopment\nCourse" />
+            <ImageView
+                    android:id="@+id/imageView3"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/_4sdp"
+                    android:layout_marginTop="@dimen/_2sdp"
+                    android:background="@drawable/ic_rectangle_81"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/profile_image"
+                    app:layout_constraintTop_toBottomOf="@+id/tutor_name"
+                    tools:ignore="ContentDescription" />
 
-                <com.google.android.material.textview.MaterialTextView
-                        android:id="@+id/tutor_name"
-                        fontPath="fonts/OpenSans-Regular.ttf"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:layout_marginTop="@dimen/half_margin"
-                        android:gravity="center"
-                        android:textColor="@color/black"
-                        android:textSize="@dimen/font_14"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintHorizontal_bias="0.5"
-                        app:layout_constraintStart_toEndOf="@+id/profile_image"
-                        app:layout_constraintTop_toBottomOf="@+id/course_name"
-                        tools:text="with Ankur wariku" />
+            <TextView
+                    android:id="@+id/number_of_downloads"
+                    style="@style/TextStyle.TopBarScroll"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/_12sdp"
+                    android:layout_marginTop="@dimen/_8sdp"
+                    android:gravity="start"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/font_16"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toEndOf="@+id/profile_image"
+                    app:layout_constraintTop_toBottomOf="@+id/imageView3"
+                    tools:text="28,000+" />
 
-                <ImageView
-                        android:id="@+id/imageView3"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/half_margin"
-                        android:background="@drawable/ic_rectangle_81"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintHorizontal_bias="0.515"
-                        app:layout_constraintStart_toEndOf="@+id/profile_image"
-                        app:layout_constraintTop_toBottomOf="@+id/tutor_name"
-                        tools:ignore="ContentDescription" />
+            <TextView
+                    android:id="@+id/txt_joined"
+                    style="@style/TextStyle.NormalText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/_12sdp"
+                    android:gravity="start"
+                    android:textColor="@color/dark_grey"
+                    android:textSize="@dimen/font_12"
+                    app:layout_constraintStart_toEndOf="@+id/profile_image"
+                    app:layout_constraintTop_toBottomOf="@+id/number_of_downloads"
+                    tools:text="Joined" />
 
-                <TextView
-                        android:id="@+id/number_of_downloads"
-                        fontPath="fonts/OpenSans-Regular.ttf"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/fab_margin"
-                        android:layout_weight="1"
-                        android:gravity="center"
-                        android:textColor="@color/black"
-                        android:textSize="@dimen/font_20"
-                        app:layout_constraintEnd_toStartOf="@+id/rating"
-                        app:layout_constraintHorizontal_bias="0.323"
-                        app:layout_constraintStart_toEndOf="@+id/profile_image"
-                        app:layout_constraintTop_toBottomOf="@+id/imageView3"
-                        tools:text="2000+\njoined" />
+            <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/rating"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_8sdp"
+                    android:background="@drawable/ic_payment_rating"
+                    android:gravity="center"
+                    android:paddingStart="@dimen/medium_margin"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/font_20"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/imageView3"
+                    tools:text="4.8" />
 
-                <com.google.android.material.textview.MaterialTextView
-                        android:id="@+id/rating"
-                        fontPath="fonts/OpenSans-Regular.ttf"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:layout_marginStart="@dimen/double_margin"
-                        android:layout_marginTop="@dimen/fab_margin"
-                        android:layout_weight="1"
-                        android:background="@drawable/ic_payment_rating"
-                        android:gravity="center"
-                        android:paddingStart="@dimen/medium_margin"
-                        android:textColor="@color/white"
-                        android:textSize="@dimen/font_20"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintHorizontal_bias="1.0"
-                        app:layout_constraintStart_toEndOf="@+id/profile_image"
-                        app:layout_constraintTop_toBottomOf="@+id/imageView3"
-                        tools:ignore="RtlSymmetry"
-                        tools:text="4.0" />
+            <View
+                    android:id="@+id/multi_line_ll"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_2sdp"
+                    android:layout_marginTop="@dimen/_12sdp"
+                    android:background="@drawable/dotted_line"
+                    android:orientation="vertical"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/profile_image" />
 
-                <LinearLayout
-                        android:id="@+id/multi_line_ll"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/half_margin"
-                        android:orientation="vertical"
-                        android:paddingTop="@dimen/_2sdp"
-                        android:visibility="visible"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/profile_image" />
+            <TextView
+                    android:id="@+id/total_amount"
+                    style="@style/TextStyle.TopBarScroll"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/_14sdp"
+                    android:layout_marginVertical="@dimen/_10sdp"
+                    android:text="Total Amount"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/font_16"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/multi_line_ll" />
 
-                <ImageView
-                        android:id="@+id/double_line"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="@dimen/half_margin"
-                        android:src="@drawable/dotted_line"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/multi_line_ll"
-                        tools:ignore="ContentDescription" />
+            <TextView
+                    android:id="@+id/txt_price"
+                    style="@style/TextStyle.TopBarScroll"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/_14sdp"
+                    android:layout_marginVertical="@dimen/_10sdp"
+                    android:text="$ 499"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/font_18"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/multi_line_ll" />
 
-                <TextView
-                        android:id="@+id/total_amount"
-                        fontPath="fonts/OpenSans-Regular.ttf"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="@dimen/half_margin"
-                        android:layout_weight="1"
-                        android:gravity="center"
-                        android:text="Total Amount"
-                        android:textColor="@color/black"
-                        android:textSize="@dimen/font_20"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintHorizontal_bias="0.0"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/multi_line_ll"
-                        tools:ignore="HardcodedText" />
-
-                <TextView
-                        android:id="@+id/fee"
-                        fontPath="fonts/OpenSans-Regular.ttf"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="@dimen/half_margin"
-                        android:layout_weight="1"
-                        android:gravity="center"
-                        android:textColor="@color/black"
-                        android:textSize="@dimen/font_20"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintHorizontal_bias="1"
-                        app:layout_constraintStart_toEndOf="@+id/total_amount"
-                        app:layout_constraintTop_toBottomOf="@+id/multi_line_ll"
-                        tools:text="499" />
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
-        </androidx.cardview.widget.CardView>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/tip_used_msg"
@@ -216,27 +192,23 @@
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/root_sub_view"
-                app:layout_constraintVertical_bias="0.0"
-                tools:ignore="UnusedAttribute" />
+                app:layout_constraintVertical_bias="0.0" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/et_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/double_margin"
-                android:background="@drawable/rect_with_black_bound"
-                app:layout_constraintBottom_toTopOf="@+id/imageView2"
+                android:layout_marginHorizontal="@dimen/_32sdp"
+                android:layout_marginTop="@dimen/_32sdp"
+                android:background="@drawable/rounded_rectangle_with_border"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/root_sub_view"
-                app:layout_constraintVertical_bias="0.1"
-                app:layout_constraintWidth_default="percent">
+                app:layout_constraintTop_toBottomOf="@+id/root_sub_view">
 
             <com.joshtalks.joshskills.ui.signup.countrycodepicker.CountryCodePicker
                     android:id="@+id/country_code_picker"
                     android:layout_width="@dimen/_30sdp"
                     android:layout_height="@dimen/_25sdp"
-                    android:layout_marginEnd="@dimen/half_margin"
                     android:gravity="end"
                     android:padding="@dimen/_6sdp"
                     app:ccpDialog_allowSearch="true"
@@ -274,42 +246,36 @@
                     app:ccp_textGravity="RIGHT"
                     app:ccp_textSize="@dimen/font_15"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@+id/input_layout_password"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintWidth_default="percent"
-                    app:layout_constraintWidth_percent="0.1" />
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
             <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/input_layout_password"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:background="@drawable/transparent"
+                    app:boxBackgroundMode="none"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintWidth_default="percent"
-                    app:layout_constraintWidth_percent="0.6">
+                    app:layout_constraintStart_toEndOf="@+id/country_code_picker"
+                    app:layout_constraintTop_toTopOf="parent">
 
                 <com.joshtalks.joshskills.core.custom_ui.PrefixEditText
                         android:id="@+id/mobile_et"
-                        fontPath="fonts/Roboto-Regular.ttf"
+                        style="@style/TextStyle.NormalText"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:gravity="start|center"
                         android:imeOptions="actionDone"
                         android:importantForAutofill="no"
-                        android:inputType="phone"
+                        android:inputType="number"
                         android:lines="1"
                         android:maxLength="13"
                         android:minWidth="@dimen/_180sdp"
-                        android:padding="@dimen/_10sdp"
-                        android:textSize="@dimen/font_17"
+                        android:padding="@dimen/_8sdp"
+                        android:textSize="@dimen/font_16"
                         app:backgroundTint="@color/white"
                         app:prefix="+91 " />
-
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -322,10 +288,8 @@
                     android:tint="@color/black"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.339"
                     app:layout_constraintStart_toEndOf="@+id/input_layout_password"
-                    app:layout_constraintTop_toTopOf="parent"
-                    tools:ignore="ContentDescription" />
+                    app:layout_constraintTop_toTopOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -333,14 +297,13 @@
                 android:id="@+id/textview_number"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/_52sdp"
+                android:layout_marginTop="@dimen/_24sdp"
                 android:background="@color/white"
                 android:text="@string/your_mobile_number"
-                app:layout_constraintBottom_toTopOf="@+id/imageView2"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.219"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/root_sub_view"
-                app:layout_constraintVertical_bias="0.13"
+                app:layout_constraintWidth_default="percent"
                 tools:ignore="MissingConstraints" />
 
         <ImageView
@@ -351,16 +314,13 @@
                 android:src="@drawable/payment_bottom"
                 app:layout_constraintBottom_toTopOf="@+id/materialButton"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.333"
-                app:layout_constraintStart_toStartOf="parent"
-                tools:ignore="ContentDescription,MissingConstraints" />
+                app:layout_constraintStart_toStartOf="parent" />
 
         <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/materialButton"
-                fontPath="fonts/OpenSans-Bold.ttf"
+                style="@style/TextStyle.ButtonText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
                 android:layout_margin="@dimen/medium_margin"
                 android:background="@drawable/round_rectangle_for_course_expo"
                 android:clickable="true"
@@ -373,8 +333,6 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintWidth_default="percent"
-                app:layout_constraintWidth_percent="0.45"
                 tools:text="PAY $500" />
 
         <FrameLayout
@@ -389,8 +347,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/root_sub_view"
                 app:layout_constraintVertical_bias="0.135"
-                tools:ignore="MissingConstraints"
-                tools:visibility="gone">
+                tools:visibility="visible">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
