@@ -16,7 +16,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/_16sdp"
                 android:layout_marginTop="@dimen/_8sdp"
-                android:text="Order Summary"
+                android:text="@string/order_summary"
                 android:textColor="@color/black"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
@@ -43,7 +43,8 @@
                     android:layout_marginTop="@dimen/_8sdp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    tools:background="@drawable/sample_pic_" />
+                    tools:background="@drawable/sample_pic_"
+                    tools:ignore="ContentDescription" />
 
             <TextView
                     android:id="@+id/course_name"
@@ -129,6 +130,7 @@
                     android:textStyle="bold"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/imageView3"
+                    tools:ignore="RtlSymmetry"
                     tools:text="4.8" />
 
             <View
@@ -159,11 +161,11 @@
             <TextView
                     android:id="@+id/txt_price"
                     style="@style/TextStyle.TopBarScroll"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="@dimen/_14sdp"
                     android:layout_marginVertical="@dimen/_10sdp"
-                    android:text="$ 499"
+                    tools:text="$ 499"
                     android:textColor="@color/black"
                     android:textSize="@dimen/font_18"
                     android:textStyle="bold"
@@ -182,7 +184,7 @@
                 android:background="#20BA70"
                 android:drawableEnd="@drawable/ic_small_tick"
                 android:drawableTint="@color/white"
-                android:padding="@dimen/half_margin"
+                android:padding="@dimen/_12sdp"
                 android:shadowRadius="@integer/defaultBackgroundAlpha"
                 android:text="@string/tip_used_info"
                 android:textColor="@color/white"
@@ -191,6 +193,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
+                android:visibility="gone"
                 app:layout_constraintTop_toBottomOf="@+id/root_sub_view"
                 app:layout_constraintVertical_bias="0.0" />
 
@@ -289,7 +292,8 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/input_layout_password"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:ignore="ContentDescription" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -314,7 +318,8 @@
                 android:src="@drawable/payment_bottom"
                 app:layout_constraintBottom_toTopOf="@+id/materialButton"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
+                app:layout_constraintStart_toStartOf="parent"
+                tools:ignore="ContentDescription" />
 
         <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/materialButton"
@@ -326,7 +331,7 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:gravity="center"
-                android:padding="@dimen/half_margin"
+                android:padding="@dimen/_6sdp"
                 android:textColor="@color/white"
                 android:textSize="@dimen/font_22"
                 app:cornerRadius="@dimen/_8sdp"
@@ -335,129 +340,93 @@
                 app:layout_constraintStart_toStartOf="parent"
                 tools:text="PAY $500" />
 
-        <FrameLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/bade_bhaiya_tip_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/half_margin"
-                android:padding="@dimen/half_margin"
+                android:layout_margin="@dimen/_12sdp"
+                android:layout_marginHorizontal="@dimen/_32sdp"
+                android:background="@drawable/ic_use_tip_bg"
+                android:padding="@dimen/_12sdp"
                 android:visibility="gone"
-                app:layout_constraintBottom_toTopOf="@+id/imageView2"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/root_sub_view"
-                app:layout_constraintVertical_bias="0.135"
                 tools:visibility="visible">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_width="match_parent"
+            <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/text_view_1"
+                    style="@style/TextStyle.TopBarScroll"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/half_margin"
-                    android:background="@drawable/ic_use_tip_bg"
-                    app:layout_constraintEnd_toEndOf="parent"
+                    android:drawableTint="@color/white"
+                    android:gravity="start|center"
+                    android:text="@string/bade_bhaiya_tips_new"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/font_14"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    tools:ignore="MissingConstraints">
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:ignore="UnusedAttribute" />
 
+            <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tv_tip"
+                    style="@style/TextStyle.TopBarScroll"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/_6sdp"
+                    android:gravity="start|center"
+                    android:text="@string/tip_title"
+                    android:textColor="@color/font_color"
+                    android:textSize="@dimen/font_13"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/text_view_1"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-                <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/text_view_1"
-                        fontPath="fonts/OpenSans-Bold.ttf"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="10dp"
-                        android:drawableTint="@color/white"
-                        android:gravity="start|center"
-                        android:padding="@dimen/half_margin"
-                        android:text="@string/bade_bhaiya_tips_new"
-                        android:textColor="@color/white"
-                        android:textSize="@dimen/font_14"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintHeight_percent="01"
-                        app:layout_constraintLeft_toLeftOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        tools:ignore="UnusedAttribute" />
+            <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tv_tip_off"
+                    style="@style/TextStyle.TopBarScroll"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/_6sdp"
+                    android:gravity="start|center"
+                    android:text="@string/tip_discount"
+                    android:textColor="@color/font_color"
+                    android:textSize="@dimen/font_18"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/text_view_1"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_tip" />
 
-                <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/tv_tip"
-                        fontPath="fonts/OpenSans-SemiBold.ttf"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="@dimen/small_margin"
-                        android:gravity="start|center"
-                        android:marqueeRepeatLimit="marquee_forever"
-                        android:text="@string/tip_title"
-                        android:textColor="@color/font_color"
-                        android:textSize="@dimen/font_13"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toEndOf="@+id/text_view_1"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintVertical_bias="0.0"
-                        app:layout_constraintWidth_default="percent"
-                        app:layout_constraintWidth_percent="0.6" />
+            <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tv_tip_valid"
+                    style="@style/TextStyle.TopBarScroll"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/_6sdp"
+                    android:gravity="start|center"
+                    android:text="@string/tip_valid"
+                    android:textColor="@color/error_color"
+                    android:textSize="@dimen/font_13"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/text_view_1"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_tip_off" />
 
-                <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/tv_tip_off"
-                        fontPath="fonts/OpenSans-SemiBold.ttf"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="@dimen/small_margin"
-                        android:gravity="start|center"
-                        android:marqueeRepeatLimit="marquee_forever"
-                        android:text="@string/tip_discount"
-                        android:textColor="@color/font_color"
-                        android:textSize="@dimen/font_18"
-                        app:layout_constraintBottom_toTopOf="@+id/tv_tip_valid"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toEndOf="@+id/text_view_1"
-                        app:layout_constraintTop_toBottomOf="@+id/tv_tip"
-                        app:layout_constraintVertical_bias="0.0"
-                        app:layout_constraintWidth_default="percent"
-                        app:layout_constraintWidth_percent="0.6" />
+            <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tv_tip_used"
+                    android:layout_width="@dimen/_40sdp"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/rect_with_black_bound"
+                    android:backgroundTint="#20BA70"
+                    android:gravity="center"
+                    android:text="@string/use_tip"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/font_8"
+                    app:layout_constraintBottom_toBottomOf="@+id/tv_tip_valid"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/tv_tip_valid"
+                    tools:ignore="MissingConstraints" />
 
-                <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/tv_tip_valid"
-                        fontPath="fonts/OpenSans-Regular.ttf"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="@dimen/small_margin"
-                        android:gravity="start|center"
-                        android:marqueeRepeatLimit="marquee_forever"
-                        android:text="@string/tip_valid"
-                        android:textColor="@color/error_color"
-                        android:textSize="@dimen/font_13"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toEndOf="@+id/text_view_1"
-                        app:layout_constraintTop_toBottomOf="@+id/tv_tip"
-                        app:layout_constraintVertical_bias="1.0"
-                        app:layout_constraintWidth_default="percent"
-                        app:layout_constraintWidth_percent="0.7" />
-
-                <com.google.android.material.button.MaterialButton
-                        android:id="@+id/tv_tip_used"
-                        fontPath="fonts/OpenSans-SemiBold.ttf"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="@dimen/small_margin"
-                        android:background="@drawable/rect_with_bound"
-                        android:backgroundTint="#20BA70"
-                        android:clickable="false"
-                        android:enabled="false"
-                        android:focusable="false"
-                        android:gravity="center"
-                        android:padding="@dimen/small_margin"
-                        android:text="@string/use_tip"
-                        android:textColor="@color/white"
-                        android:textSize="@dimen/font_8"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toEndOf="@+id/tv_tip_valid"
-                        app:layout_constraintWidth_default="percent"
-                        app:rippleColor="@color/white" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
-        </FrameLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.Group
                 android:id="@+id/group_1"
@@ -466,19 +435,6 @@
                 app:constraint_referenced_ids="et_container,textview_number"
                 tools:visibility="visible" />
 
-        <androidx.constraintlayout.widget.Group
-                android:id="@+id/group_2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:constraint_referenced_ids="bade_bhaiya_tip_container"
-                tools:visibility="gone" />
-
-        <androidx.constraintlayout.widget.Group
-                android:id="@+id/group_3"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:constraint_referenced_ids="tip_used_msg"
-                tools:visibility="gone" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

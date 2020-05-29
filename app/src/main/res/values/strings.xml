@@ -190,7 +190,7 @@
     <string name="bade_bhaiya_tips">Bade Bhaiya Tips</string>
     <string name="tip_message">Agar aap apne pehle 7 dino main hain to aap ye course 50\u0025 kam main pa sakte hain.</string>
     <string name="tip_used">TIP USED</string>
-    <string name="use_tip">USE TIP</string>
+    <string name="use_tip">Use Tip</string>
 
     <string name="record_answer_label">Record your answer</string>
     <string name="type_answer_label">Type your answer</string>
@@ -261,6 +261,7 @@
     <string name="tip_title">You can get discount on all Coures!</string>
     <string name="tip_valid">Valid for next %s Days</string>
     <string name="tip_discount">%s OFF</string>
+    <string name="order_summary">Order Summary</string>
 
 
     <string name="skip">Skip</string>
