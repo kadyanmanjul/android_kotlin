@@ -1,0 +1,527 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        tools:ignore="MissingPrefix">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/white">
+
+
+        <androidx.cardview.widget.CardView
+
+                android:id="@+id/root_sub_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:elevation="@dimen/_4sdp"
+                android:enabled="true"
+                android:focusable="true"
+                android:foreground="?android:attr/selectableItemBackground"
+                app:cardBackgroundColor="@color/white"
+                app:cardCornerRadius="@dimen/_4sdp"
+                app:cardElevation="0dp"
+                app:contentPaddingLeft="@dimen/_14sdp"
+                app:contentPaddingRight="@dimen/_14sdp"
+                app:contentPaddingTop="@dimen/_10sdp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.03"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.009"
+                tools:cardPreventCornerOverlap="false"
+                tools:ignore="MissingConstraints">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/ic_payment_card_bg">
+
+                <ImageView
+                        android:id="@+id/profile_image"
+                        android:layout_width="@dimen/_150sdp"
+                        android:layout_height="@dimen/_195sdp"
+                        android:layout_weight="01"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.0"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintVertical_bias="0.0"
+                        tools:background="@drawable/sample_pic_"
+                        tools:ignore="ContentDescription" />
+
+                <TextView
+                        android:id="@+id/course_name"
+                        fontPath="fonts/OpenSans-Regular.ttf"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="@dimen/half_margin"
+                        android:layout_weight=".75"
+                        android:gravity="center"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/font_18"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.5"
+                        app:layout_constraintStart_toEndOf="@+id/profile_image"
+                        app:layout_constraintTop_toTopOf="parent"
+                        tools:text="Personal\nDevelopment\nCourse" />
+
+                <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/tutor_name"
+                        fontPath="fonts/OpenSans-Regular.ttf"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="@dimen/half_margin"
+                        android:gravity="center"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/font_14"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.5"
+                        app:layout_constraintStart_toEndOf="@+id/profile_image"
+                        app:layout_constraintTop_toBottomOf="@+id/course_name"
+                        tools:text="with Ankur wariku" />
+
+                <ImageView
+                        android:id="@+id/imageView3"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/half_margin"
+                        android:background="@drawable/ic_rectangle_81"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.515"
+                        app:layout_constraintStart_toEndOf="@+id/profile_image"
+                        app:layout_constraintTop_toBottomOf="@+id/tutor_name"
+                        tools:ignore="ContentDescription" />
+
+                <TextView
+                        android:id="@+id/number_of_downloads"
+                        fontPath="fonts/OpenSans-Regular.ttf"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/fab_margin"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/font_20"
+                        app:layout_constraintEnd_toStartOf="@+id/rating"
+                        app:layout_constraintHorizontal_bias="0.323"
+                        app:layout_constraintStart_toEndOf="@+id/profile_image"
+                        app:layout_constraintTop_toBottomOf="@+id/imageView3"
+                        tools:text="2000+\njoined" />
+
+                <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/rating"
+                        fontPath="fonts/OpenSans-Regular.ttf"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginStart="@dimen/double_margin"
+                        android:layout_marginTop="@dimen/fab_margin"
+                        android:layout_weight="1"
+                        android:background="@drawable/ic_payment_rating"
+                        android:gravity="center"
+                        android:paddingStart="@dimen/medium_margin"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/font_20"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="1.0"
+                        app:layout_constraintStart_toEndOf="@+id/profile_image"
+                        app:layout_constraintTop_toBottomOf="@+id/imageView3"
+                        tools:ignore="RtlSymmetry"
+                        tools:text="4.0" />
+
+                <LinearLayout
+                        android:id="@+id/multi_line_ll"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/half_margin"
+                        android:orientation="vertical"
+                        android:paddingTop="@dimen/_2sdp"
+                        android:visibility="visible"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/profile_image" />
+
+                <ImageView
+                        android:id="@+id/double_line"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/half_margin"
+                        android:src="@drawable/dotted_line"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/multi_line_ll"
+                        tools:ignore="ContentDescription" />
+
+                <TextView
+                        android:id="@+id/total_amount"
+                        fontPath="fonts/OpenSans-Regular.ttf"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/half_margin"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="Total Amount"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/font_20"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.0"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/multi_line_ll"
+                        tools:ignore="HardcodedText" />
+
+                <TextView
+                        android:id="@+id/fee"
+                        fontPath="fonts/OpenSans-Regular.ttf"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/half_margin"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/font_20"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="1"
+                        app:layout_constraintStart_toEndOf="@+id/total_amount"
+                        app:layout_constraintTop_toBottomOf="@+id/multi_line_ll"
+                        tools:text="499" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.cardview.widget.CardView>
+
+        <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/tip_used_msg"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/_14sdp"
+                android:layout_marginRight="@dimen/_14sdp"
+                android:background="#20BA70"
+                android:drawableEnd="@drawable/ic_small_tick"
+                android:drawableTint="@color/white"
+                android:padding="@dimen/half_margin"
+                android:shadowRadius="@integer/defaultBackgroundAlpha"
+                android:text="@string/tip_used_info"
+                android:textColor="@color/white"
+                android:textSize="@dimen/font_14"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/root_sub_view"
+                app:layout_constraintVertical_bias="0.0"
+                tools:ignore="UnusedAttribute" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/et_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/double_margin"
+                android:background="@drawable/rect_with_black_bound"
+                app:layout_constraintBottom_toTopOf="@+id/imageView2"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/root_sub_view"
+                app:layout_constraintVertical_bias="0.1"
+                app:layout_constraintWidth_default="percent">
+
+            <com.joshtalks.joshskills.ui.signup.countrycodepicker.CountryCodePicker
+                    android:id="@+id/country_code_picker"
+                    android:layout_width="@dimen/_30sdp"
+                    android:layout_height="@dimen/_25sdp"
+                    android:layout_marginEnd="@dimen/half_margin"
+                    android:gravity="end"
+                    android:padding="@dimen/_6sdp"
+                    app:ccpDialog_allowSearch="true"
+                    app:ccpDialog_backgroundColor="@color/white"
+                    app:ccpDialog_fastScroller_bubbleColor="@color/white"
+                    app:ccpDialog_fastScroller_handleColor="@color/colorPrimary"
+                    app:ccpDialog_initialScrollToSelection="true"
+                    app:ccpDialog_keyboardAutoPopup="false"
+                    app:ccpDialog_searchEditTextTint="@color/seek_bar_background"
+                    app:ccpDialog_showCloseIcon="true"
+                    app:ccpDialog_showFastScroller="true"
+                    app:ccpDialog_showFlag="true"
+                    app:ccpDialog_showPhoneCode="true"
+                    app:ccpDialog_showTitle="false"
+                    app:ccpDialog_textColor="@color/font_color"
+                    app:ccp_arrowColor="@color/button_activated"
+                    app:ccp_arrowSize="@dimen/_2sdp"
+                    app:ccp_autoDetectCountry="true"
+                    app:ccp_autoDetectLanguage="true"
+                    app:ccp_autoFormatNumber="false"
+                    app:ccp_clickable="true"
+                    app:ccp_contentColor="@color/font_color"
+                    app:ccp_countryAutoDetectionPref="SIM_LOCALE"
+                    app:ccp_countryPreference="IN"
+                    app:ccp_defaultLanguage="ENGLISH"
+                    app:ccp_defaultNameCode="IN"
+                    app:ccp_flagBorderColor="@color/transparent"
+                    app:ccp_hintExampleNumber="false"
+                    app:ccp_rememberLastSelection="true"
+                    app:ccp_showArrow="false"
+                    app:ccp_showFlag="true"
+                    app:ccp_showFullName="false"
+                    app:ccp_showNameCode="false"
+                    app:ccp_showPhoneCode="false"
+                    app:ccp_textGravity="RIGHT"
+                    app:ccp_textSize="@dimen/font_15"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/input_layout_password"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintWidth_default="percent"
+                    app:layout_constraintWidth_percent="0.1" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/input_layout_password"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintWidth_default="percent"
+                    app:layout_constraintWidth_percent="0.6">
+
+                <com.joshtalks.joshskills.core.custom_ui.PrefixEditText
+                        android:id="@+id/mobile_et"
+                        fontPath="fonts/Roboto-Regular.ttf"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:gravity="start|center"
+                        android:imeOptions="actionDone"
+                        android:importantForAutofill="no"
+                        android:inputType="phone"
+                        android:lines="1"
+                        android:maxLength="13"
+                        android:minWidth="@dimen/_180sdp"
+                        android:padding="@dimen/_10sdp"
+                        android:textSize="@dimen/font_17"
+                        app:backgroundTint="@color/white"
+                        app:prefix="+91 " />
+
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <ImageButton
+                    android:id="@+id/btn_clear"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@color/white"
+                    android:src="@drawable/ic_cross"
+                    android:tint="@color/black"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.339"
+                    app:layout_constraintStart_toEndOf="@+id/input_layout_password"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:ignore="ContentDescription" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <TextView
+                android:id="@+id/textview_number"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:text="@string/your_mobile_number"
+                app:layout_constraintBottom_toTopOf="@+id/imageView2"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.219"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/root_sub_view"
+                app:layout_constraintVertical_bias="0.13"
+                tools:ignore="MissingConstraints" />
+
+        <ImageView
+                android:id="@+id/imageView2"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_80sdp"
+                android:layout_margin="@dimen/double_margin"
+                android:src="@drawable/payment_bottom"
+                app:layout_constraintBottom_toTopOf="@+id/materialButton"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.333"
+                app:layout_constraintStart_toStartOf="parent"
+                tools:ignore="ContentDescription,MissingConstraints" />
+
+        <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/materialButton"
+                fontPath="fonts/OpenSans-Bold.ttf"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_margin="@dimen/medium_margin"
+                android:background="@drawable/round_rectangle_for_course_expo"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center"
+                android:padding="@dimen/half_margin"
+                android:textColor="@color/white"
+                android:textSize="@dimen/font_22"
+                app:cornerRadius="@dimen/_8sdp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintWidth_default="percent"
+                app:layout_constraintWidth_percent="0.45"
+                tools:text="PAY $500" />
+
+        <FrameLayout
+                android:id="@+id/bade_bhaiya_tip_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/half_margin"
+                android:padding="@dimen/half_margin"
+                android:visibility="gone"
+                app:layout_constraintBottom_toTopOf="@+id/imageView2"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/root_sub_view"
+                app:layout_constraintVertical_bias="0.135"
+                tools:ignore="MissingConstraints"
+                tools:visibility="gone">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/half_margin"
+                    android:background="@drawable/ic_use_tip_bg"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    tools:ignore="MissingConstraints">
+
+
+                <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/text_view_1"
+                        fontPath="fonts/OpenSans-Bold.ttf"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:drawableTint="@color/white"
+                        android:gravity="start|center"
+                        android:padding="@dimen/half_margin"
+                        android:text="@string/bade_bhaiya_tips_new"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/font_14"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintHeight_percent="01"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        tools:ignore="UnusedAttribute" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tv_tip"
+                        fontPath="fonts/OpenSans-SemiBold.ttf"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/small_margin"
+                        android:gravity="start|center"
+                        android:marqueeRepeatLimit="marquee_forever"
+                        android:text="@string/tip_title"
+                        android:textColor="@color/font_color"
+                        android:textSize="@dimen/font_13"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/text_view_1"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintVertical_bias="0.0"
+                        app:layout_constraintWidth_default="percent"
+                        app:layout_constraintWidth_percent="0.6" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tv_tip_off"
+                        fontPath="fonts/OpenSans-SemiBold.ttf"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/small_margin"
+                        android:gravity="start|center"
+                        android:marqueeRepeatLimit="marquee_forever"
+                        android:text="@string/tip_discount"
+                        android:textColor="@color/font_color"
+                        android:textSize="@dimen/font_18"
+                        app:layout_constraintBottom_toTopOf="@+id/tv_tip_valid"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/text_view_1"
+                        app:layout_constraintTop_toBottomOf="@+id/tv_tip"
+                        app:layout_constraintVertical_bias="0.0"
+                        app:layout_constraintWidth_default="percent"
+                        app:layout_constraintWidth_percent="0.6" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tv_tip_valid"
+                        fontPath="fonts/OpenSans-Regular.ttf"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/small_margin"
+                        android:gravity="start|center"
+                        android:marqueeRepeatLimit="marquee_forever"
+                        android:text="@string/tip_valid"
+                        android:textColor="@color/error_color"
+                        android:textSize="@dimen/font_13"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/text_view_1"
+                        app:layout_constraintTop_toBottomOf="@+id/tv_tip"
+                        app:layout_constraintVertical_bias="1.0"
+                        app:layout_constraintWidth_default="percent"
+                        app:layout_constraintWidth_percent="0.7" />
+
+                <com.google.android.material.button.MaterialButton
+                        android:id="@+id/tv_tip_used"
+                        fontPath="fonts/OpenSans-SemiBold.ttf"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/small_margin"
+                        android:background="@drawable/rect_with_bound"
+                        android:backgroundTint="#20BA70"
+                        android:clickable="false"
+                        android:enabled="false"
+                        android:focusable="false"
+                        android:gravity="center"
+                        android:padding="@dimen/small_margin"
+                        android:text="@string/use_tip"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/font_8"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/tv_tip_valid"
+                        app:layout_constraintWidth_default="percent"
+                        app:rippleColor="@color/white" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </FrameLayout>
+
+        <androidx.constraintlayout.widget.Group
+                android:id="@+id/group_1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:constraint_referenced_ids="et_container,textview_number"
+                tools:visibility="visible" />
+
+        <androidx.constraintlayout.widget.Group
+                android:id="@+id/group_2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:constraint_referenced_ids="bade_bhaiya_tip_container"
+                tools:visibility="gone" />
+
+        <androidx.constraintlayout.widget.Group
+                android:id="@+id/group_3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:constraint_referenced_ids="tip_used_msg"
+                tools:visibility="gone" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
