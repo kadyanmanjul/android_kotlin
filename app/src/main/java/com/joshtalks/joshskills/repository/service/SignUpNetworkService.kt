@@ -7,6 +7,8 @@ import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.googlelocation.Locality
 import com.joshtalks.joshskills.repository.server.*
 import com.joshtalks.joshskills.repository.server.course_detail.CourseDetailsResponse
+import com.joshtalks.joshskills.repository.server.signup.LoginResponse
+import com.joshtalks.joshskills.repository.server.signup.RequestSocialSignUp
 import kotlinx.coroutines.Deferred
 import okhttp3.MultipartBody
 import retrofit2.Response
@@ -16,6 +18,9 @@ const val DIR = "api/skill/v1"
 
 @JvmSuppressWildcards
 interface SignUpNetworkService {
+
+    @POST("$DIR/user/facebook/")
+    suspend fun facebookLogin(@Body requestSocialSignUp: RequestSocialSignUp): Response<LoginResponse>
 
     @POST("$DIR/mentor/instance/")
     suspend fun getInstanceIdAsync(): InstanceIdResponse
@@ -38,7 +43,7 @@ interface SignUpNetworkService {
 
 
     @GET("$DIR/mentor/{id}/personal_profile/")
-    fun getPersonalProfileAsync(@Path("id") id: String): Deferred<Mentor>
+    suspend fun getPersonalProfileAsync(@Path("id") id: String): Response<Mentor>
 
 
     @PATCH("$DIR/mentor/{id}/")
