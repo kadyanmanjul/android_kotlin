@@ -10,53 +10,33 @@
             android:background="@android:color/transparent"
             tools:background="@color/black">
 
-
         <View
                 android:id="@+id/view"
                 android:layout_width="0dp"
                 android:layout_height="@dimen/_300sdp"
-                android:layout_marginBottom="4dp"
                 android:background="@drawable/rectangle_top_rounded"
                 android:orientation="vertical"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent" />
 
-        <TextView
-                android:id="@+id/textView3"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/_16sdp"
-                android:layout_marginTop="64dp"
-                android:gravity="center"
-                android:text="@string/title"
-                android:textColor="@color/black"
-                android:textSize="@dimen/_18sdp"
-                app:layout_constraintEnd_toEndOf="@+id/view"
-                app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toStartOf="@+id/view"
-                app:layout_constraintTop_toTopOf="@+id/view" />
-
-        <TextView
-                android:id="@+id/reason"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/_16sdp"
-                android:gravity="center"
-                android:text="@string/reason"
-                android:textColor="@color/black"
-                android:textSize="@dimen/_12sdp"
-                app:layout_constraintEnd_toEndOf="@+id/view"
-                app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toStartOf="@+id/view"
-                app:layout_constraintTop_toBottomOf="@+id/textView3" />
+        <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/iv_rating_view"
+                android:layout_width="@dimen/_80sdp"
+                android:layout_height="@dimen/_80sdp"
+                android:background="@drawable/ic_pink_circle"
+                android:src="@drawable/ic_sad_white"
+                app:layout_constraintBottom_toBottomOf="@+id/view"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.46" />
 
         <ImageButton
-                android:layout_width="@dimen/_24sdp"
-                android:layout_height="@dimen/_24sdp"
-                android:layout_marginTop="12dp"
-                android:layout_marginEnd="28dp"
+                android:layout_width="@dimen/_20sdp"
+                android:layout_height="@dimen/_20sdp"
+                android:layout_marginTop="@dimen/_16sdp"
+                android:layout_marginEnd="@dimen/_16sdp"
                 android:background="@drawable/ic_cross"
                 android:backgroundTint="@color/black"
                 android:contentDescription="@string/cancel_button"
@@ -64,81 +44,97 @@
                 app:layout_constraintTop_toTopOf="@+id/view" />
 
         <TextView
-                android:id="@+id/transation_id"
-                android:layout_width="0dp"
+                android:id="@+id/textView3"
+                style="@style/TextStyle.TopBarNoScroll"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_64sdp"
+                android:text="@string/title"
+                android:textColor="@color/black"
+                android:textSize="@dimen/font_20"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/view" />
+
+        <TextView
+                android:id="@+id/reason"
+                style="@style/TextStyle.TopBarNoScroll"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/_16sdp"
+                android:layout_marginTop="@dimen/_8sdp"
+                android:gravity="center"
+                android:text="@string/reason"
+                android:textColor="@color/dark_grey"
+                android:textSize="@dimen/_12sdp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView3" />
+
+        <TextView
+                android:id="@+id/transation_id"
+                style="@style/TextStyle.TopBarNoScroll"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/_16sdp"
+                android:layout_marginTop="@dimen/_8sdp"
                 android:gravity="center"
                 android:text="@string/trx_id"
-                android:textColor="@color/grey"
+                android:textColor="@color/light_grey"
                 android:textSize="@dimen/_10sdp"
                 app:layout_constraintEnd_toEndOf="@+id/view"
-                app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="@+id/view"
                 app:layout_constraintTop_toBottomOf="@+id/reason"
                 tools:ignore="MissingConstraints" />
 
         <com.google.android.material.button.MaterialButton
-                android:id="@+id/tv_select_address"
+                android:id="@+id/retry"
+                style="@style/TextStyle.TopBarNoScroll"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_marginHorizontal="@dimen/_54sdp"
-                android:layout_marginTop="40dp"
-                android:background="@drawable/rect_with_black_bound"
-                android:backgroundTint="@color/colorPrimary"
+                android:layout_marginHorizontal="@dimen/_24sdp"
+                android:layout_marginTop="24dp"
                 android:gravity="center"
-                android:paddingTop="@dimen/_10sdp"
-                android:paddingBottom="@dimen/_10sdp"
+                android:paddingHorizontal="@dimen/_8sdp"
+                android:paddingVertical="@dimen/_8sdp"
                 android:text="@string/try_again"
+                android:textAllCaps="false"
                 android:textColor="@color/white"
                 android:textSize="@dimen/_14sdp"
                 app:cornerRadius="@dimen/_20sdp"
-                app:layout_constraintEnd_toEndOf="@+id/view"
-                app:layout_constraintStart_toStartOf="@+id/view"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/transation_id" />
 
         <com.google.android.material.button.MaterialButton
                 android:id="@+id/chat_pay"
+                style="@style/TextStyle.TopBarNoScroll"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_marginHorizontal="@dimen/_54sdp"
-                android:layout_marginTop="32dp"
-                android:background="@drawable/rect_with_black_bound"
+                android:layout_marginHorizontal="@dimen/_24sdp"
+                android:layout_marginTop="24dp"
                 android:gravity="center"
-                android:paddingTop="@dimen/_10sdp"
-                android:paddingBottom="@dimen/_10sdp"
+                android:paddingHorizontal="@dimen/_8sdp"
+                android:paddingVertical="@dimen/_8sdp"
                 android:text="@string/chat_option"
-                android:textColor="@color/colorPrimary"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
                 android:textSize="@dimen/_14sdp"
                 app:cornerRadius="@dimen/_20sdp"
-                app:layout_constraintEnd_toEndOf="@+id/view"
-                app:layout_constraintStart_toStartOf="@+id/view"
-                app:layout_constraintTop_toBottomOf="@+id/tv_select_address" />
-
-        <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/iv_rating_view"
-                android:layout_width="@dimen/_72sdp"
-                android:layout_height="@dimen/_72sdp"
-                android:layout_marginTop="400dp"
-                android:background="@drawable/ic_pink_circle"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:src="@drawable/ic_sad_white" />
+                app:layout_constraintTop_toBottomOf="@+id/retry" />
 
         <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/none"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
+                android:id="@+id/whatsapp_help"
+                android:layout_width="@dimen/_22sdp"
+                android:layout_height="@dimen/_22sdp"
+                app:layout_constraintBottom_toBottomOf="@+id/chat_pay"
                 app:layout_constraintEnd_toEndOf="@+id/chat_pay"
-                app:layout_constraintHorizontal_bias="0.815"
-                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintHorizontal_bias="0.8"
+                app:layout_constraintStart_toStartOf="@+id/chat_pay"
                 app:layout_constraintTop_toTopOf="@+id/chat_pay"
-                tools:src="@drawable/ic_whatsapp_payment" />
+                app:src="@drawable/ic_whatsapp_payment" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

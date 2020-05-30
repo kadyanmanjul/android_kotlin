@@ -245,7 +245,7 @@
     <!--    Payment Failed Dialog-->
     <string name="try_again">Try again</string>
     <string name="chat_option">Chat &amp; Pay</string>
-    <string name="title">Opps! Payment failed.</string>
+    <string name="title">Oops! Payment failed.</string>
     <string name="trx_id">Transation ID : %s</string>
     <string name="reason">Reason : %s</string>
     <string name="wohoo">Woohoo!</string>
