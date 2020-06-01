@@ -48,6 +48,7 @@ import com.joshtalks.joshskills.ui.payment.PaymentProcessingFragment
 import com.joshtalks.joshskills.ui.payment.PaymentSuccessFragment
 import com.joshtalks.joshskills.ui.signup.DEFAULT_COUNTRY_CODE
 import com.joshtalks.joshskills.ui.signup.RC_HINT
+import com.joshtalks.joshskills.ui.startcourse.StartCourseActivity
 import com.joshtalks.joshskills.ui.view_holders.ROUND_CORNER
 import com.razorpay.Checkout
 import com.razorpay.PaymentResultListener
@@ -389,8 +390,13 @@ class PaymentSummaryActivity : CoreJoshActivity(),
         }, 1000 * 10)
 
         uiHandler.postDelayed({
-            //TODO - Open StartCourse Activity Instead
-            startActivity(getInboxActivityIntent())
+            StartCourseActivity.openStartCourseActivity(
+                this,
+                viewModel.responsePaymentSummary.value?.courseName ?: "Course",
+                viewModel.responsePaymentSummary.value?.teacherName ?: EMPTY,
+                viewModel.responsePaymentSummary.value?.imageUrl ?: EMPTY,
+                viewModel.mPaymentDetailsResponse.value?.joshtalksOrderId ?: 0
+            )
             this@PaymentSummaryActivity.finish()
         }, 1000 * 15)
 
