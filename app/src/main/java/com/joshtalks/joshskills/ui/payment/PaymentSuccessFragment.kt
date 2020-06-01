@@ -10,13 +10,6 @@ import com.joshtalks.joshskills.R
 class PaymentSuccessFragment : Fragment() {
     private var courseId: String? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            courseId = it.getString(COURSE_ID)
-        }
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -27,11 +20,7 @@ class PaymentSuccessFragment : Fragment() {
 
     companion object {
         @JvmStatic
-        fun newInstance(courseId: String) =
-            PaymentSuccessFragment().apply {
-                arguments = Bundle().apply {
-                    putString(COURSE_ID, courseId)
-                }
-            }
+        fun newInstance() =
+            PaymentSuccessFragment()
     }
 }
