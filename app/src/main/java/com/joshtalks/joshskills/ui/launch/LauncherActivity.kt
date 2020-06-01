@@ -10,7 +10,7 @@ import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.LogException
 import com.joshtalks.joshskills.core.service.WorkMangerAdmin
-import com.joshtalks.joshskills.ui.extra.CustomPermissionDialogFragment
+import com.joshtalks.joshskills.ui.extra.CustomPermissionDialogFragment.Companion.showCustomPermissionDialog
 import com.joshtalks.joshskills.ui.extra.CustomPermissionDialogInteractionListener
 import com.joshtalks.joshskills.ui.payment.COURSE_ID
 import com.joshtalks.joshskills.ui.payment.PaymentActivity
@@ -27,14 +27,7 @@ class LauncherActivity : CoreJoshActivity(), CustomPermissionDialogInteractionLi
         WorkMangerAdmin.appStartWorker()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_launcher)
-        val tManager: TelephonyManager? =
-            baseContext.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager?
-        // launcher Activity analytics
-        AppAnalytics.create(AnalyticsEvent.APP_LAUNCHED.NAME)
-            .addBasicParam()
-            .addUserDetails()
-            .addParam(AnalyticsEvent.NETWORK_CARRIER.NAME, tManager?.networkOperatorName)
-            .push(true)
+        logAppLaunchEvent(getNetworkOperatorName())
     }
 
     private fun handleIntent() {
@@ -57,15 +50,9 @@ class LauncherActivity : CoreJoshActivity(), CustomPermissionDialogInteractionLi
                         if (jsonParms.has(Defines.Jsonkey.ReferralCode.key)) jsonParms.getString(
                             Defines.Jsonkey.ReferralCode.key
                         ) else null
-                    AppAnalytics.create(AnalyticsEvent.APP_INSTALL_BY_REFERRAL.NAME)
-                        .addBasicParam()
-                        .addUserDetails()
-                        .addParam(AnalyticsEvent.TEST_ID_PARAM.NAME, testId ?: EMPTY)
-                        .addParam(
-                            AnalyticsEvent.REFERRAL_CODE.NAME,
-                            referralCode
-                        )
-                        .push()
+                    referralCode?.let {
+                        logInstallByReferralEvent(testId, it)
+                    }
                     startActivity(
                         Intent(
                             applicationContext,
@@ -90,12 +77,8 @@ class LauncherActivity : CoreJoshActivity(), CustomPermissionDialogInteractionLi
         handleIntent()
 
         val oemIntent = PowerManagers.getIntentForOEM(this)
-        val performedAction = PrefManager.getStringValue(CUSTOM_PERMISSION_ACTION_KEY)
-        if (
-            oemIntent != null &&
-            (performedAction == EMPTY || performedAction == PermissionAction.CANCEL.name)
-        ) {
-            showCustomPermissionDialog(oemIntent)
+        if (oemIntent != null && shouldRequireCustomPermission()) {
+            showCustomPermissionDialog(oemIntent, supportFragmentManager)
         } else {
             navigateToNextScreen()
         }
@@ -123,20 +106,6 @@ class LauncherActivity : CoreJoshActivity(), CustomPermissionDialogInteractionLi
         this.finishAndRemoveTask()
     }
 
-    /**
-     *  Show fragment asking for custom permission to start app in background for proper working of notifications
-     */
-    private fun showCustomPermissionDialog(intent: Intent) {
-        val fragmentTransaction = supportFragmentManager.beginTransaction()
-        val prev = supportFragmentManager.findFragmentByTag("custom_permission_fragment_dialog")
-        if (prev != null) {
-            fragmentTransaction.remove(prev)
-        }
-        fragmentTransaction.addToBackStack(null)
-        CustomPermissionDialogFragment.newInstance(intent)
-            .show(supportFragmentManager, "custom_permission_fragment_dialog")
-    }
-
     override fun navigateToNextScreen() {
         AppObjectController.uiHandler.postDelayed({
             val intent = getIntentForState()
@@ -145,4 +114,31 @@ class LauncherActivity : CoreJoshActivity(), CustomPermissionDialogInteractionLi
         }, 2500)
     }
 
+    private fun logInstallByReferralEvent(testId: String, referralCode: String) =
+        AppAnalytics.create(AnalyticsEvent.APP_INSTALL_BY_REFERRAL.NAME)
+            .addBasicParam()
+            .addUserDetails()
+            .addParam(AnalyticsEvent.TEST_ID_PARAM.NAME, testId)
+            .addParam(
+                AnalyticsEvent.REFERRAL_CODE.NAME,
+                referralCode
+            )
+            .push()
+
+    private fun logAppLaunchEvent(networkOperatorName: String) =
+        AppAnalytics.create(AnalyticsEvent.APP_LAUNCHED.NAME)
+            .addBasicParam()
+            .addUserDetails()
+            .addParam(AnalyticsEvent.NETWORK_CARRIER.NAME, networkOperatorName)
+            .push(true)
+
+
+    private fun getNetworkOperatorName() =
+        (baseContext.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager?)?.networkOperatorName
+            ?: ""
+
+    private fun shouldRequireCustomPermission(): Boolean {
+        val performedAction = PrefManager.getStringValue(CUSTOM_PERMISSION_ACTION_KEY)
+        return performedAction == EMPTY || performedAction == PermissionAction.CANCEL.name
+    }
 }

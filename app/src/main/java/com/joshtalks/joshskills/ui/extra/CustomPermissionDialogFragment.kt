@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.FragmentManager
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.CUSTOM_PERMISSION_ACTION_KEY
@@ -25,6 +26,20 @@ class CustomPermissionDialogFragment : BottomSheetDialogFragment() {
         fun newInstance(intent: Intent): CustomPermissionDialogFragment {
             mIntent = intent
             return CustomPermissionDialogFragment()
+        }
+
+        /**
+         *  Show fragment asking for custom permission to start app in background for proper working of notifications
+         */
+        fun showCustomPermissionDialog(intent: Intent, supportFragmentManager: FragmentManager) {
+            val fragmentTransaction = supportFragmentManager.beginTransaction()
+            val prev = supportFragmentManager.findFragmentByTag("custom_permission_fragment_dialog")
+            if (prev != null) {
+                fragmentTransaction.remove(prev)
+            }
+            fragmentTransaction.addToBackStack(null)
+            newInstance(intent)
+                .show(supportFragmentManager, "custom_permission_fragment_dialog")
         }
     }
 
