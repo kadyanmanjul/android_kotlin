@@ -41,6 +41,7 @@ import com.joshtalks.joshskills.databinding.ActivityCoursePaymentBinding
 import com.joshtalks.joshskills.repository.local.entity.NPSEvent
 import com.joshtalks.joshskills.repository.local.entity.NPSEventModel
 import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.OrderDetailResponse
 import com.joshtalks.joshskills.ui.signup.DEFAULT_COUNTRY_CODE
 import com.joshtalks.joshskills.ui.signup.RC_HINT
@@ -209,6 +210,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                 }
                 viewModel.getPaymentSummaryDetails(data)
             } catch (ex: Exception) {
+                LogException.catchException(ex)
             }
         }
     }
@@ -222,7 +224,9 @@ class PaymentSummaryActivity : CoreJoshActivity(),
             try {
                 val preFill = JSONObject()
                     .put("email", Utils.getUserPrimaryEmail(applicationContext))
-                    .put("contact", binding.mobileEt.text.toString())
+                if (User.getInstance().phoneNumber.isEmpty())
+                    preFill.put("contact", binding.mobileEt.text.toString())
+                else preFill.put("contact", User.getInstance().phoneNumber)
                 val options = JSONObject()
                 options.put("key", response.razorpayKeyId)
                 options.put("name", "Josh Skills")
