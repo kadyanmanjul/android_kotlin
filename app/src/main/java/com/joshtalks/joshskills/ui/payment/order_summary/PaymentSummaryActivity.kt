@@ -140,7 +140,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
         })
 
         viewModel.responsePaymentSummary.observe(this, androidx.lifecycle.Observer {
-            val stringListName = it.name.split(" with ")
+            val stringListName = it.courseName.split(" with ")
             binding.courseName.text = stringListName.get(0)
             binding.tutorName.text = "with ".plus(it.teacherName)
             val df = DecimalFormat("###,###", DecimalFormatSymbols(Locale.US))

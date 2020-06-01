@@ -45,7 +45,7 @@ class OrderSummaryViewModel(application: Application) : AndroidViewModel(applica
         }
     }
 
-    fun getCourseName(): String = responsePaymentSummary.value?.name ?: EMPTY
+    fun getCourseName(): String = responsePaymentSummary.value?.courseName ?: EMPTY
 
     fun getCourseAmount(): Double = responsePaymentSummary.value?.discountAmount ?: 0.0
 
@@ -79,7 +79,7 @@ class OrderSummaryViewModel(application: Application) : AndroidViewModel(applica
     @SuppressLint("LogNotTimber")
     fun getOrderDetails(testId: String?, mobileNumber: String) {
         WorkMangerAdmin.newCourseScreenEventWorker(
-            responsePaymentSummary.value?.name,
+            responsePaymentSummary.value?.courseName,
             testId,
             buyInitialize = true
         )

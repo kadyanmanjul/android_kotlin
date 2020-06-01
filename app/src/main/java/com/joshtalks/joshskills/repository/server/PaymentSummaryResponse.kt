@@ -8,7 +8,7 @@ import kotlinx.android.parcel.Parcelize
 @Parcelize
 data class PaymentSummaryResponse(
     @SerializedName("name")
-    val name: String,
+    val courseName: String,
     @SerializedName("total_enrolled")
     val totalEnrolled: Int,
     @SerializedName("rating")
