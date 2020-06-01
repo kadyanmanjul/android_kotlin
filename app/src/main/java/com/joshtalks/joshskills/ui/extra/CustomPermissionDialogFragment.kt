@@ -63,6 +63,7 @@ class CustomPermissionDialogFragment : BottomSheetDialogFragment() {
     fun allow() {
         PrefManager.put(CUSTOM_PERMISSION_ACTION_KEY, PermissionAction.ALLOW.name)
         logAction(PermissionAction.ALLOW)
+        dismiss()
         navigateToSettings()
     }
 
