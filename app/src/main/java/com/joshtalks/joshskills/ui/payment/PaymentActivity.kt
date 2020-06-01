@@ -41,6 +41,7 @@ import com.joshtalks.joshskills.repository.server.CourseDetailsModel
 import com.joshtalks.joshskills.repository.server.CourseExploreModel
 import com.joshtalks.joshskills.repository.server.PaymentDetailsResponse
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
+import com.joshtalks.joshskills.ui.payment.order_summary.PaymentSummaryActivity
 import com.joshtalks.joshskills.ui.signup.LoginDialogFragment
 import com.joshtalks.joshskills.ui.view_holders.CourseDetailViewHolder
 import com.muddzdev.styleabletoast.StyleableToast
@@ -455,15 +456,7 @@ class PaymentActivity : CoreJoshActivity(),
         if (isUserSpecialOffer || specialDiscount) {
             onCompletePayment()
         } else {
-            val fragmentTransaction = supportFragmentManager.beginTransaction()
-            val prev = supportFragmentManager.findFragmentByTag("purchase_details_dialog")
-            if (prev != null) {
-                fragmentTransaction.remove(prev)
-            }
-            fragmentTransaction.addToBackStack(null)
-            CoursePurchaseDetailFragment.newInstance(courseModel, hasCertificate)
-                .show(supportFragmentManager, "purchase_details_dialog")
-            // TODO
+            PaymentSummaryActivity.startPaymentSummaryActivity(this, testId)
             AppAnalytics.create(AnalyticsEvent.PAYMENT_DIALOG.NAME)
                 .push()
 
@@ -627,7 +620,7 @@ class PaymentActivity : CoreJoshActivity(),
 
 
     override fun onCompletePayment() {
-        requestForPayment()
+        PaymentSummaryActivity.startPaymentSummaryActivity(this, testId)
     }
 
     override fun onCouponCode() {
