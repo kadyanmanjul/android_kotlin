@@ -43,6 +43,9 @@ import com.joshtalks.joshskills.repository.local.entity.NPSEventModel
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.OrderDetailResponse
+import com.joshtalks.joshskills.ui.payment.PaymentFailedDialogFragment
+import com.joshtalks.joshskills.ui.payment.PaymentProcessingFragment
+import com.joshtalks.joshskills.ui.payment.PaymentSuccessFragment
 import com.joshtalks.joshskills.ui.signup.DEFAULT_COUNTRY_CODE
 import com.joshtalks.joshskills.ui.signup.RC_HINT
 import com.joshtalks.joshskills.ui.view_holders.ROUND_CORNER
@@ -61,6 +64,8 @@ import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
 import java.util.*
 import kotlin.math.roundToInt
+
+const val TRANSACTION_ID = "TRANSACTION_ID"
 
 class PaymentSummaryActivity : CoreJoshActivity(),
     PaymentResultListener {
@@ -352,7 +357,9 @@ class PaymentSummaryActivity : CoreJoshActivity(),
 
     override fun onPaymentError(p0: Int, p1: String?) {
         showToast("Payment Failed")
-        // TODO sahil on PaymentError
+
+        showPaymentFailedDialog()
+
         if (npsShow) {
             NPSEventModel.setCurrentNPA(NPSEvent.PAYMENT_FAILED)
             showNetPromoterScoreDialog()
@@ -374,12 +381,19 @@ class PaymentSummaryActivity : CoreJoshActivity(),
         }
 
         uiHandler.post {
-            // TODO sahil on PaymentSuccess
+            showPaymentProcessingFragment()
         }
+
         uiHandler.postDelayed({
+            showPaymentSuccessfulFragment()
+        }, 1000 * 10)
+
+        uiHandler.postDelayed({
+            //TODO - Open StartCourse Activity Instead
             startActivity(getInboxActivityIntent())
             this@PaymentSummaryActivity.finish()
-        }, 1000 * 59)
+        }, 1000 * 15)
+
         FlurryAgent.UserProperties.set(FlurryAgent.UserProperties.PROPERTY_PURCHASER, "true")
     }
 
@@ -446,5 +460,33 @@ class PaymentSummaryActivity : CoreJoshActivity(),
         Checkout.clearUserData(applicationContext)
         uiHandler.removeCallbacksAndMessages(null)
         AppObjectController.facebookEventLogger.flush()
+    }
+
+    private fun showPaymentProcessingFragment() {
+        supportFragmentManager
+            .beginTransaction()
+            .replace(
+                R.id.container,
+                PaymentProcessingFragment.newInstance(),
+                "Payment Processing"
+            )
+            .commit()
+    }
+
+    private fun showPaymentFailedDialog() {
+        PaymentFailedDialogFragment.newInstance(
+            viewModel.mPaymentDetailsResponse.value?.joshtalksOrderId ?: 0
+        ).show(supportFragmentManager, "Payment Failed")
+    }
+
+    private fun showPaymentSuccessfulFragment() {
+        supportFragmentManager
+            .beginTransaction()
+            .replace(
+                R.id.container,
+                PaymentSuccessFragment.newInstance(),
+                "Payment Success"
+            )
+            .commit()
     }
 }

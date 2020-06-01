@@ -75,9 +75,11 @@
                 android:text="@string/reason"
                 android:textColor="@color/dark_grey"
                 android:textSize="@dimen/_12sdp"
+                android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView3" />
+                app:layout_constraintTop_toBottomOf="@+id/textView3"
+                tools:visibility="visible" />
 
         <TextView
                 android:id="@+id/transation_id"
