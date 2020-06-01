@@ -31,7 +31,6 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-
         <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/root_sub_view"
                 android:layout_width="match_parent"
@@ -79,6 +78,7 @@
                     android:layout_marginHorizontal="@dimen/_12sdp"
                     android:layout_marginTop="@dimen/_2sdp"
                     android:gravity="start"
+                    android:text="with Ankur Warikoo"
                     android:textColor="@color/dark_grey"
                     android:textSize="@dimen/font_12"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -120,10 +120,10 @@
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="@dimen/_12sdp"
                     android:gravity="start"
+                    android:text="Joined"
                     android:textColor="@color/dark_grey"
                     android:textSize="@dimen/font_12"
                     app:layout_constraintStart_toEndOf="@+id/profile_image"
-                    android:text="Joined"
                     app:layout_constraintTop_toBottomOf="@+id/enrolled" />
 
             <com.google.android.material.textview.MaterialTextView
@@ -185,13 +185,13 @@
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="@dimen/_14sdp"
                     android:layout_marginVertical="@dimen/_10sdp"
-                    tools:text="$ 499"
                     android:textColor="@color/black"
                     android:textSize="@dimen/font_18"
                     android:textStyle="bold"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/double_line" />
+                    app:layout_constraintTop_toBottomOf="@+id/double_line"
+                    tools:text="$ 499" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -291,6 +291,7 @@
                         android:maxLength="13"
                         android:minWidth="@dimen/_180sdp"
                         android:padding="@dimen/_8sdp"
+                        android:text="9013222256"
                         android:textSize="@dimen/font_16"
                         app:backgroundTint="@color/white"
                         app:prefix="+91 " />
@@ -302,8 +303,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="@color/white"
-                    android:src="@drawable/ic_cross"
                     android:onClick="@{()->handler.clearText()}"
+                    android:src="@drawable/ic_cross"
                     android:tint="@color/black"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -345,9 +346,9 @@
                 android:layout_margin="@dimen/_10sdp"
                 android:background="@drawable/round_rectangle_for_course_expo"
                 android:clickable="true"
-                android:onClick="@{()->handler.startPayment()}"
                 android:focusable="true"
                 android:gravity="center"
+                android:onClick="@{()->handler.startPayment()}"
                 android:padding="@dimen/_6sdp"
                 android:textColor="@color/white"
                 android:textSize="@dimen/font_22"
@@ -369,6 +370,7 @@
                 android:id="@+id/progress_bar"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:elevation="@dimen/_8sdp"
                 android:background="#29000000"
                 android:visibility="gone">
 
@@ -389,6 +391,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@color/transparent_black"
+                android:elevation="@dimen/_6sdp"
                 android:visibility="gone"
                 tools:visibility="visible">
 
@@ -396,6 +399,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
+                    android:layout_marginTop="@dimen/_65sdp"
                     android:layout_marginHorizontal="@dimen/_12sdp"
                     android:background="@drawable/ic_use_tip_bg"
                     android:padding="@dimen/_12sdp">
