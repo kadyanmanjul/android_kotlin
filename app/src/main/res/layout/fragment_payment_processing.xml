@@ -49,7 +49,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/image"
-            app:matProg_barColor="@color/buton_color"
+            app:matProg_barColor="@color/button_color"
             app:matProg_barWidth="@dimen/_4sdp"
             app:matProg_fillRadius="true"
             app:matProg_linearProgress="false"
