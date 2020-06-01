@@ -17,6 +17,9 @@ const val DIR = "api/skill/v1"
 @JvmSuppressWildcards
 interface SignUpNetworkService {
 
+    @POST("$DIR/mentor/instance/")
+    suspend fun getInstanceIdAsync(): InstanceIdResponse
+
     @GET("$DIR/user/login/")
     suspend fun getOtpForNumberAsync(@QueryMap params: Map<String, String>): Response<Any>
 
@@ -92,6 +95,9 @@ interface SignUpNetworkService {
     @GET("$DIR/payment/create_order")
     fun getPaymentDetails(@QueryMap params: Map<String, String>): Deferred<Response<PaymentDetailsResponse>>
 
+    @POST("$DIR/payment/create_order_v2")
+    fun createPaymentOrder(@Body params: Map<String, String?>): Deferred<Response<OrderDetailResponse>>
+
 
     @GET("$DIR/course/test/")
     suspend fun explorerCourse(@QueryMap params: Map<String, String> = mapOf("is_default" to "true")): List<CourseExploreModel>
@@ -106,6 +112,9 @@ interface SignUpNetworkService {
 
     @GET("$DIR/payment/coupon/")
     fun validateOrGetAndReferralOrCouponAsync(@QueryMap params: Map<String, String>): Deferred<List<CouponCodeResponse>>
+
+    @GET("$DIR/payment/summary/")
+    suspend fun getPaymentSummaryDetails(@QueryMap params: Map<String, String>): PaymentSummaryResponse
 
 
 }

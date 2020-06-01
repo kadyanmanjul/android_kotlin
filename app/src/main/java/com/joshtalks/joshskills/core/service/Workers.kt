@@ -153,6 +153,24 @@ class ScreenEngagementWorker(context: Context, private val workerParams: WorkerP
 
 }
 
+class InstanceIdGenerationWorker(var context: Context, workerParams: WorkerParameters) :
+    CoroutineWorker(context, workerParams) {
+
+    override suspend fun doWork(): Result {
+        try {
+            if (PrefManager.hasKey(INSTANCE_ID).not()) {
+                val res = AppObjectController.signUpNetworkService.getInstanceIdAsync()
+                if (res.instanceId.isEmpty().not())
+                    PrefManager.put(INSTANCE_ID, res.instanceId)
+            }
+
+        } catch (ex: Throwable) {
+            LogException.catchException(ex)
+        }
+        return Result.success()
+    }
+}
+
 
 class UniqueIdGenerationWorker(var context: Context, workerParams: WorkerParameters) :
     Worker(context, workerParams) {
