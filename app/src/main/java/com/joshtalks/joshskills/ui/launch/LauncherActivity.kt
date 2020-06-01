@@ -33,36 +33,17 @@ class LauncherActivity : CoreJoshActivity(), CustomPermissionDialogInteractionLi
     private fun handleIntent() {
         Branch.sessionBuilder(this).withCallback { referringParams, error ->
             try {
-                var jsonParms: JSONObject? = referringParams
-                val sessionParams = Branch.getInstance().latestReferringParams
-                val installParams = Branch.getInstance().firstReferringParams
-                if (referringParams == null && installParams != null) {
-                    jsonParms = installParams
-                } else if (referringParams == null && sessionParams != null) {
-                    jsonParms = sessionParams
-                }
-                if (error == null && jsonParms != null && jsonParms.has(Defines.Jsonkey.AndroidDeepLinkPath.key)) {
+                val jsonParams = referringParams ?: (Branch.getInstance().firstReferringParams
+                    ?: Branch.getInstance().latestReferringParams)
+                if (error == null && jsonParams?.has(Defines.Jsonkey.AndroidDeepLinkPath.key) == true) {
                     AppObjectController.uiHandler.removeCallbacksAndMessages(null)
-                    val testId =
-                        jsonParms.getString(Defines.Jsonkey.AndroidDeepLinkPath.key)
+                    val testId = jsonParams.getString(Defines.Jsonkey.AndroidDeepLinkPath.key)
                     WorkMangerAdmin.registerUserGIDWithTestId(testId)
-                    val referralCode =
-                        if (jsonParms.has(Defines.Jsonkey.ReferralCode.key)) jsonParms.getString(
-                            Defines.Jsonkey.ReferralCode.key
-                        ) else null
+                    val referralCode = parseReferralCode(jsonParams)
                     referralCode?.let {
                         logInstallByReferralEvent(testId, it)
                     }
-                    startActivity(
-                        Intent(
-                            applicationContext,
-                            PaymentActivity::class.java
-                        ).apply {
-                            addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
-                            putExtra(COURSE_ID, testId.split("_")[1])
-                            putExtra(STARTED_FROM, this@LauncherActivity.javaClass.simpleName)
-
-                        })
+                    navigateToPaymentScreen(testId)
                     this@LauncherActivity.finish()
                 }
             } catch (ex: Throwable) {
@@ -114,6 +95,19 @@ class LauncherActivity : CoreJoshActivity(), CustomPermissionDialogInteractionLi
         }, 2500)
     }
 
+    fun navigateToPaymentScreen(testId: String) {
+        startActivity(
+            Intent(
+                applicationContext,
+                PaymentActivity::class.java
+            ).apply {
+                addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
+                putExtra(COURSE_ID, testId.split("_")[1])
+                putExtra(STARTED_FROM, this@LauncherActivity.javaClass.simpleName)
+
+            })
+    }
+
     private fun logInstallByReferralEvent(testId: String, referralCode: String) =
         AppAnalytics.create(AnalyticsEvent.APP_INSTALL_BY_REFERRAL.NAME)
             .addBasicParam()
@@ -141,4 +135,9 @@ class LauncherActivity : CoreJoshActivity(), CustomPermissionDialogInteractionLi
         val performedAction = PrefManager.getStringValue(CUSTOM_PERMISSION_ACTION_KEY)
         return performedAction == EMPTY || performedAction == PermissionAction.CANCEL.name
     }
+
+    private fun parseReferralCode(jsonParams: JSONObject) =
+        if (jsonParams.has(Defines.Jsonkey.ReferralCode.key)) jsonParams.getString(
+            Defines.Jsonkey.ReferralCode.key
+        ) else null
 }
