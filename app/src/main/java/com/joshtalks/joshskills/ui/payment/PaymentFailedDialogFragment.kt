@@ -10,17 +10,18 @@ import androidx.databinding.DataBindingUtil
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.databinding.FragmentPaymentFailedDialogBinding
+import com.joshtalks.joshskills.ui.payment.order_summary.TRANSACTION_ID
 import kotlinx.android.synthetic.main.fragment_payment_failed_dialog.*
 import java.net.URLEncoder
 
 class PaymentFailedDialogFragment : BottomSheetDialogFragment() {
     private lateinit var binding: FragmentPaymentFailedDialogBinding
-    private var courseId: String? = null
+    private var transactionId: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            courseId = it.getString(COURSE_ID)
+            transactionId = it.getInt(TRANSACTION_ID)
         }
     }
 
@@ -37,6 +38,7 @@ class PaymentFailedDialogFragment : BottomSheetDialogFragment() {
         )
         binding.lifecycleOwner = this
         binding.fragment = this
+        transation_id.text = resources.getString(R.string.trx_id, transactionId.toString())
         setListeners()
         return binding.root
     }
@@ -56,7 +58,7 @@ class PaymentFailedDialogFragment : BottomSheetDialogFragment() {
             data = Uri.parse(whatsappUrl)
         }
         startActivity(intent)
-
+        activity?.finish()
     }
 
     private fun generateWhatsappUrl(text: String?, phoneNumber: String?) =
@@ -68,10 +70,10 @@ class PaymentFailedDialogFragment : BottomSheetDialogFragment() {
 
     companion object {
         @JvmStatic
-        fun newInstance(courseId: String) =
+        fun newInstance(transactionId: Int) =
             PaymentFailedDialogFragment().apply {
                 arguments = Bundle().apply {
-                    putString(COURSE_ID, courseId)
+                    putInt(TRANSACTION_ID, transactionId)
                 }
             }
     }
