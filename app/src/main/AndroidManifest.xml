@@ -298,6 +298,7 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".ui.startcourse.StartCourseActivity" />
 
         <activity
                 android:name=".ui.courseprogress.CourseProgressActivity"
