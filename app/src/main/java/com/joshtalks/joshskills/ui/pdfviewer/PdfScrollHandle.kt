@@ -1,15 +1,11 @@
 package com.joshtalks.joshskills.ui.pdfviewer
 
 import android.content.Context
-import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.os.Handler
-import android.util.TypedValue
 import android.view.MotionEvent
 import android.view.View
-import android.view.ViewGroup
 import android.widget.RelativeLayout
-import android.widget.TextView
 import androidx.core.content.ContextCompat
 import com.github.barteksc.pdfviewer.PDFView
 import com.github.barteksc.pdfviewer.scroll.ScrollHandle
@@ -21,7 +17,6 @@ class PdfScrollHandle(
     private val inverted: Boolean = false
 ) : RelativeLayout(mContext), ScrollHandle {
     private var relativeHandlerMiddle = 0f
-    protected var textView: TextView
     private var pdfView: PDFView? = null
     private var currentPos = 0f
     private val mHandler = Handler()
@@ -34,8 +29,8 @@ class PdfScrollHandle(
         val background: Drawable
         // determine handler position, default is right (when scrolling vertically) or bottom (when scrolling horizontally)
         if (pdfView.isSwipeVertical) {
-            width = HANDLE_LONG
-            height = HANDLE_SHORT
+            width = HANDLE_SHORT
+            height = HANDLE_LONG
             if (inverted) { // left
                 align = ALIGN_PARENT_LEFT
                 background =
@@ -43,7 +38,7 @@ class PdfScrollHandle(
             } else { // right
                 align = ALIGN_PARENT_RIGHT
                 background =
-                    ContextCompat.getDrawable(mContext, R.drawable.default_scroll_handle_right)!!
+                    ContextCompat.getDrawable(mContext, R.drawable.default_scroll_handle)!!
             }
         } else {
             width = HANDLE_SHORT
@@ -67,16 +62,6 @@ class PdfScrollHandle(
                 ), Util.getDP(mContext, height)
             )
         lp.setMargins(0, 0, 0, 0)
-        val tvlp =
-            LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT
-            )
-        tvlp.addRule(
-            CENTER_IN_PARENT,
-            TRUE
-        )
-        addView(textView, tvlp)
         lp.addRule(align)
         pdfView.addView(this, lp)
         this.pdfView = pdfView
@@ -151,10 +136,7 @@ class PdfScrollHandle(
     }
 
     override fun setPageNum(pageNum: Int) {
-        val text = pageNum.toString()
-        if (textView.text != text) {
-            textView.text = text
-        }
+        // Do nothing
     }
 
     override fun shown(): Boolean {
@@ -167,17 +149,6 @@ class PdfScrollHandle(
 
     override fun hide() {
         visibility = View.INVISIBLE
-    }
-
-    fun setTextColor(color: Int) {
-        textView.setTextColor(color)
-    }
-
-    /**
-     * @param size text size in dp
-     */
-    private fun setTextSize(size: Int) {
-        textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, size.toFloat())
     }
 
     private val isPDFViewReady: Boolean
@@ -237,15 +208,7 @@ class PdfScrollHandle(
     }
 
     companion object {
-        private const val HANDLE_LONG = 65
-        private const val HANDLE_SHORT = 40
-        private const val DEFAULT_TEXT_SIZE = 16
-    }
-
-    init {
-        textView = TextView(mContext)
-        visibility = View.INVISIBLE
-        setTextColor(Color.BLACK)
-        setTextSize(DEFAULT_TEXT_SIZE)
+        private const val HANDLE_LONG = 160
+        private const val HANDLE_SHORT = 8
     }
 }
