@@ -79,6 +79,8 @@ class PaymentSummaryActivity : CoreJoshActivity(),
     val PHONE_NUMBER_REGEX = Regex(pattern = "^[6789]\\d{9}\$")
     private var isEcommereceEventFire = true
     private var npsShow = true
+    private var razorpayOrderId = EMPTY
+
 
     companion object {
         fun startPaymentSummaryActivity(
@@ -127,6 +129,9 @@ class PaymentSummaryActivity : CoreJoshActivity(),
     private fun subscribeObservers() {
         viewModel.viewState?.observe(this, androidx.lifecycle.Observer {
             when (it) {
+                OrderSummaryViewModel.ViewState.API_ERROR -> {
+                    binding.container.visibility = View.GONE
+                }
                 OrderSummaryViewModel.ViewState.INTERNET_NOT_AVAILABLE -> {
                     binding.progressBar.visibility = View.GONE
                     showToast(getString(R.string.internet_not_available_msz))
@@ -244,6 +249,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                 options.put("amount", response.amount * 100)
                 options.put("prefill", preFill)
                 checkout.open(this@PaymentSummaryActivity, options)
+                razorpayOrderId = response.razorpayOrderId
                 binding.progressBar.visibility = View.GONE
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -369,7 +375,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
 
     @Synchronized
     override fun onPaymentSuccess(razorpayPaymentId: String) {
-        razorpayPaymentId.verifyPayment()
+        razorpayOrderId.verifyPayment()
         NPSEventModel.setCurrentNPA(
             NPSEvent.PAYMENT_SUCCESS
         )
