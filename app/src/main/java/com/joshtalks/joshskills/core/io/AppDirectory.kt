@@ -202,6 +202,10 @@ object AppDirectory {
         Environment.getExternalStorageDirectory()
             .toString() + File.separator + APP_DIRECTORY + File.separator + MEDIA_DIRECTORY + "/JoshAppTemp"
 
+    val KEY_PATH =
+        Environment.getExternalStorageDirectory()
+            .toString() + File.separator + APP_DIRECTORY + File.separator + MEDIA_DIRECTORY + "/Keys"
+
 
     private fun getImageFileName(): String {
         return "IMG".plus("-").plus(getDate()).plus("-".plus(APP_SHORT_NAME)) + getFileEndName(
@@ -309,6 +313,16 @@ object AppDirectory {
             f.mkdirs()
         }
         val file = File(VIDEO_SENT_PATH + File.separator + getVideoFileName())
+        file.createNewFile()
+        return file
+    }
+
+    fun keyFile(): File {
+        val f = File(KEY_PATH)
+        if (f.exists().not()) {
+            f.mkdirs()
+        }
+        val file = File(KEY_PATH + File.separator + "Key.txt")
         file.createNewFile()
         return file
     }
@@ -478,5 +492,32 @@ object AppDirectory {
         return file
     }
 
+    fun writeToFile(data: String) {
+        try {
+            val stream = FileOutputStream(keyFile())
+            try {
+                stream.write(data.toByteArray())
+            } catch (e: Exception) {
+                e.printStackTrace()
+            } finally {
+                stream.close()
+            }
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+    }
 
+    fun readFromFile(): String? {
+        var res: String? = null
+        try {
+            val fis = FileInputStream(keyFile())
+            val input = DataInputStream(fis)
+            val br = BufferedReader(InputStreamReader(input))
+            res = br.readLine()
+            input.close()
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+        return res
+    }
 }

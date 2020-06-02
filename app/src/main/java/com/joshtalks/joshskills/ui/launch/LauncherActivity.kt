@@ -9,12 +9,17 @@ import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.LogException
+import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.core.service.WorkMangerAdmin
 import com.joshtalks.joshskills.ui.extra.CustomPermissionDialogFragment.Companion.showCustomPermissionDialog
 import com.joshtalks.joshskills.ui.extra.CustomPermissionDialogInteractionListener
 import com.joshtalks.joshskills.ui.payment.COURSE_ID
 import com.joshtalks.joshskills.ui.payment.PaymentActivity
 import com.joshtalks.joshskills.ui.payment.STARTED_FROM
+import com.karumi.dexter.MultiplePermissionsReport
+import com.karumi.dexter.PermissionToken
+import com.karumi.dexter.listener.PermissionRequest
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import io.branch.referral.Branch
 import io.branch.referral.Defines
 import org.json.JSONObject
@@ -71,6 +76,51 @@ class LauncherActivity : CoreJoshActivity(), CustomPermissionDialogInteractionLi
         handleIntent()
     }
 
+    override fun onResume() {
+        super.onResume()
+        storeInstanceId(PrefManager.getStringValue(INSTANCE_ID))
+    }
+
+    private fun storeInstanceId(instanceId: String) {
+        if (PermissionUtils.isStoragePermissionEnable(this).not()) {
+            PermissionUtils.storageReadAndWritePermission(
+                this,
+                object : MultiplePermissionsListener {
+                    override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
+                        report?.areAllPermissionsGranted()?.let { flag ->
+                            if (flag) {
+                                val id = AppDirectory.readFromFile()
+                                if (id.isNullOrEmpty())
+                                    writeInstanceIdInFile(instanceId)
+                                else PrefManager.put(INSTANCE_ID, id)
+                                return
+                            }
+                            if (report.isAnyPermissionPermanentlyDenied) {
+                                PermissionUtils.permissionPermanentlyDeniedDialog(this@LauncherActivity)
+                                return
+                            }
+                        }
+                    }
+
+                    override fun onPermissionRationaleShouldBeShown(
+                        permissions: MutableList<PermissionRequest>?,
+                        token: PermissionToken?
+                    ) {
+                        token?.continuePermissionRequest()
+                    }
+                })
+            return
+        } else {
+            val id = AppDirectory.readFromFile()
+            if (id.isNullOrEmpty()) {
+                writeInstanceIdInFile(instanceId)
+            }
+        }
+    }
+
+    private fun writeInstanceIdInFile(instanceId: String) {
+        AppDirectory.writeToFile(instanceId)
+    }
 
     override fun onStop() {
         super.onStop()
