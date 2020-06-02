@@ -18,7 +18,7 @@ data class PaymentSummaryResponse(
     @SerializedName("teacher_name")
     val teacherName: String,
     @SerializedName("features")
-    val features: String,
+    val features: String?,
     @SerializedName("image")
     val imageUrl: String,
     @SerializedName("amount")

@@ -79,7 +79,6 @@ class PaymentSummaryActivity : CoreJoshActivity(),
     val PHONE_NUMBER_REGEX = Regex(pattern = "^[6789]\\d{9}\$")
     private var isEcommereceEventFire = true
     private var npsShow = true
-    private var isRegisteredAlready = false
 
     companion object {
         fun startPaymentSummaryActivity(
@@ -94,7 +93,6 @@ class PaymentSummaryActivity : CoreJoshActivity(),
         }
 
         const val TEST_ID_PAYMENT = "test_ID"
-
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -115,6 +113,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
         }
         binding = DataBindingUtil.setContentView(this, R.layout.activity_course_payment)
         binding.lifecycleOwner = this
+        binding.handler = this
         typefaceSpan = TypefaceUtils.load(
             assets,
             "fonts/Roboto-Regular.ttf"
@@ -172,11 +171,13 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                 "Pay ₹ ${it.discountAmount.roundToInt()}"
             multiLineLL = binding.multiLineLl
 
-            val stringList = it.features.split(",")
-            if (stringList.isNullOrEmpty().not())
-                stringList.forEach {
-                    if (it.isEmpty().not()) multiLineLL.addView(getTextView(it))
-                }
+            it.features?.let {
+                val stringList = it.split(",")
+                if (stringList.isNullOrEmpty().not())
+                    stringList.forEach {
+                        if (it.isEmpty().not()) multiLineLL.addView(getTextView(it))
+                    }
+            }
             if (it.couponDetails.title.isEmpty().not()) {
                 binding.textView1.text = it.couponDetails.name
                 binding.tvTip.text = it.couponDetails.title
@@ -190,9 +191,10 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                 }
             }
         })
-        if (isRegisteredAlready) {
+        if (viewModel.isRegisteredAlready) {
             binding.group1.visibility = View.GONE
         } else requestHint()
+
         viewModel.mPaymentDetailsResponse.observe(this, androidx.lifecycle.Observer {
             initializeRazorpayPayment(it)
         })
@@ -208,7 +210,6 @@ class PaymentSummaryActivity : CoreJoshActivity(),
 
                 if (Mentor.getInstance().getId().isNotEmpty()) {
                     data["mentor_id"] = Mentor.getInstance().getId()
-                    isRegisteredAlready = true
                 }
                 // TODO later for coupons
                 if (false) {
@@ -230,9 +231,10 @@ class PaymentSummaryActivity : CoreJoshActivity(),
             try {
                 val preFill = JSONObject()
                     .put("email", Utils.getUserPrimaryEmail(applicationContext))
-                if (User.getInstance().phoneNumber.isEmpty())
+                if (!viewModel.isRegisteredAlready)
                     preFill.put("contact", binding.mobileEt.text.toString())
-                else preFill.put("contact", User.getInstance().phoneNumber)
+                else
+                    preFill.put("contact", User.getInstance().phoneNumber)
                 val options = JSONObject()
                 options.put("key", response.razorpayKeyId)
                 options.put("name", "Josh Skills")
@@ -319,28 +321,27 @@ class PaymentSummaryActivity : CoreJoshActivity(),
     }
 
     fun startPayment() {
-        if (!isRegisteredAlready && binding.mobileEt.text.isNullOrEmpty()) {
-            Toast.makeText(
-                AppObjectController.joshApplication,
-                getString(R.string.please_enter_your_mobile_number),
-                Toast.LENGTH_SHORT
-            ).show()
-            return
-        }
         if (Utils.isInternetAvailable().not()) {
             showToast(getString(R.string.internet_not_available_msz))
             return
         }
-
-        if (!isRegisteredAlready && validationForIndiaOnly() && validPhoneNumber(binding.mobileEt.text.toString()).not()) {
-            binding.inputLayoutPassword.error = "Please enter valid phone number"
-            binding.inputLayoutPassword.isErrorEnabled = true
-            return
+        if (viewModel.isRegisteredAlready.not()) {
+            if (binding.mobileEt.text.isNullOrEmpty()) {
+                Toast.makeText(
+                    AppObjectController.joshApplication,
+                    getString(R.string.please_enter_your_mobile_number),
+                    Toast.LENGTH_SHORT
+                ).show()
+                return
+            }
+            if (validationForIndiaOnly() && validPhoneNumber(binding.mobileEt.text.toString()).not()) {
+                binding.inputLayoutPassword.error = "Please enter valid phone number"
+                binding.inputLayoutPassword.isErrorEnabled = true
+                return
+            }
+            binding.inputLayoutPassword.isErrorEnabled = false
         }
-        if (!PrefManager.hasKey("mobile_no"))
-            PrefManager.put("mobile_no", binding.mobileEt.text.toString())
-        binding.inputLayoutPassword.isErrorEnabled = false
-        viewModel.getOrderDetails(testId, PrefManager.getStringValue("mobile_no"))
+        viewModel.getOrderDetails(testId, binding.mobileEt.text.toString())
     }
 
     private fun validPhoneNumber(number: String): Boolean {
@@ -352,12 +353,10 @@ class PaymentSummaryActivity : CoreJoshActivity(),
     }
 
     fun clearText() {
-        showToast("Mobile number entered is cleared")
         binding.mobileEt.setText("")
     }
 
     override fun onPaymentError(p0: Int, p1: String?) {
-        showToast("Payment Failed")
 
         showPaymentFailedDialog()
 
@@ -366,12 +365,10 @@ class PaymentSummaryActivity : CoreJoshActivity(),
             showNetPromoterScoreDialog()
             npsShow = false
         }
-
     }
 
     @Synchronized
     override fun onPaymentSuccess(razorpayPaymentId: String) {
-        showToast("Payment Verified")
         razorpayPaymentId.verifyPayment()
         NPSEventModel.setCurrentNPA(
             NPSEvent.PAYMENT_SUCCESS

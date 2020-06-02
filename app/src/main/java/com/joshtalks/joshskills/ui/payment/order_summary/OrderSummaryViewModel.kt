@@ -1,8 +1,6 @@
 package com.joshtalks.joshskills.ui.payment.order_summary
 
-import android.annotation.SuppressLint
 import android.app.Application
-import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
@@ -12,9 +10,9 @@ import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.BranchIOAnalytics
 import com.joshtalks.joshskills.core.service.WorkMangerAdmin
 import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.OrderDetailResponse
 import com.joshtalks.joshskills.repository.server.PaymentSummaryResponse
-import com.joshtalks.joshskills.util.BindableString
 import io.branch.referral.util.BRANCH_STANDARD_EVENT
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -31,12 +29,12 @@ class OrderSummaryViewModel(application: Application) : AndroidViewModel(applica
         PROCESSING, PROCESSED, INTERNET_NOT_AVAILABLE, ERROR_OCCURED
     }
 
-    var text = BindableString()
     var phoneNumber = EMPTY
-    private var mTestId: String? = null
+    var mTestId: String? = null
     var responsePaymentSummary = MediatorLiveData<PaymentSummaryResponse>()
     var mPaymentDetailsResponse = MediatorLiveData<OrderDetailResponse>()
     var viewState: MutableLiveData<ViewState>? = null
+    val isRegisteredAlready by lazy { Mentor.getInstance().getId().isNotBlank() }
 
     init {
         if (viewState == null) {
@@ -51,7 +49,6 @@ class OrderSummaryViewModel(application: Application) : AndroidViewModel(applica
 
     fun getCurrency(): String = responsePaymentSummary.value?.currency ?: "INR"
 
-    @SuppressLint("LogNotTimber")
     fun getPaymentSummaryDetails(data: HashMap<String, String>) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
@@ -76,7 +73,6 @@ class OrderSummaryViewModel(application: Application) : AndroidViewModel(applica
         }
     }
 
-    @SuppressLint("LogNotTimber")
     fun getOrderDetails(testId: String?, mobileNumber: String) {
         WorkMangerAdmin.newCourseScreenEventWorker(
             responsePaymentSummary.value?.courseName,
@@ -95,25 +91,20 @@ class OrderSummaryViewModel(application: Application) : AndroidViewModel(applica
                     "mobile" to mobileNumber,
                     "test_id" to mTestId.toString()
                 )
-                if (Mentor.getInstance().getId().isNotEmpty()) {
+                if (isRegisteredAlready) {
                     data["mentor_id"] = Mentor.getInstance().getId()
+                    data["mobile"] = User.getInstance().phoneNumber
                 }
-                Log.d(TAG, "getPaymentDetails() called map ${data}")
                 val paymentDetailsResponse: Response<OrderDetailResponse> =
                     AppObjectController.signUpNetworkService.createPaymentOrder(data).await()
-                Log.d(TAG, "getPaymentDetails() called map ${paymentDetailsResponse}")
 
                 BranchIOAnalytics.pushToBranch(BRANCH_STANDARD_EVENT.INITIATE_PURCHASE)
                 if (paymentDetailsResponse.code() == 201) {
-                    Log.d(TAG, "getPaymentDetails() called map ${paymentDetailsResponse.body()}")
-
                     val response: OrderDetailResponse = paymentDetailsResponse.body()!!
                     mPaymentDetailsResponse.postValue(response)
                 }
                 viewState?.postValue(ViewState.PROCESSED)
             } catch (ex: Exception) {
-                Log.d(TAG, "getPaymentDetails() called map ${ex}")
-
                 when (ex) {
                     is HttpException -> {
                         viewState?.postValue(ViewState.ERROR_OCCURED)
