@@ -79,7 +79,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
     private lateinit var viewModel: OrderSummaryViewModel
     val PHONE_NUMBER_REGEX = Regex(pattern = "^[6789]\\d{9}\$")
     private var isEcommereceEventFire = true
-    private var npsShow = false
+    private var npsShow = true
     private var isBackPressDisabled = false
     private var razorpayOrderId = EMPTY
 
@@ -381,6 +381,10 @@ class PaymentSummaryActivity : CoreJoshActivity(),
         razorpayOrderId.verifyPayment()
         NPSEventModel.setCurrentNPA(
             NPSEvent.PAYMENT_SUCCESS
+        )
+        PrefManager.put(
+            PAYMENT_MOBILE_NUMBER,
+            binding.mobileEt.prefix.plus(SINGLE_SPACE).plus(binding.mobileEt.text.toString())
         )
         if (isEcommereceEventFire && (viewModel.mPaymentDetailsResponse.value?.amount!! > 0) && razorpayPaymentId.isNotEmpty() && testId.isNotEmpty()) {
             isEcommereceEventFire = false

@@ -18,6 +18,7 @@ const val RATING_DETAILS_KEY = "_rating_details"
 const val CUSTOM_PERMISSION_ACTION_KEY = "joshskills_custom_permission"
 const val LOGIN_ON = "_login_on"
 const val INSTANCE_ID = "joshskills_instance_id"
+const val PAYMENT_MOBILE_NUMBER = "payment_mobile_number"
 const val API_TOKEN = "api_token"
 const val COUNTRY_ISO = "country_iso"
 
