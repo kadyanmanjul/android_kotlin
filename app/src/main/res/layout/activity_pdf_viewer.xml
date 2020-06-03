@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools">
 
     <FrameLayout
             android:layout_width="match_parent"
@@ -11,7 +12,29 @@
                 android:id="@+id/remote_pdf_root"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@color/wh_fc" />
+                android:background="@color/emoji_bg_color">
+
+            <com.github.barteksc.pdfviewer.PDFView
+                    android:id="@+id/pdfView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="?attr/actionBarSize"
+                    android:background="@color/emoji_bg_color"
+                    tools:background="@color/bg_tint" />
+
+        </FrameLayout>
+
+        <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/txtPageNumber"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end|bottom"
+                android:layout_margin="@dimen/_16sdp"
+                android:background="@drawable/round_rectangle"
+                android:backgroundTint="@color/emoji_icon_color"
+                android:padding="@dimen/_12sdp"
+                android:text="@string/page_number"
+                android:textColor="@color/white" />
 
         <com.google.android.material.appbar.MaterialToolbar xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:id="@+id/toolbar"

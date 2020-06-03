@@ -311,4 +311,5 @@
     <string name="timer_text" formatted="false">00:%s</string>
     <string name="registration">Registration</string>
     <!--End-->
+    <string name="page_number" formatted="false">Page %s / %s</string>
 </resources>
