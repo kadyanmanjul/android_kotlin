@@ -3,6 +3,7 @@ package com.joshtalks.joshskills.ui.signup_v2
 import android.content.Intent
 import android.os.Bundle
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.commit
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -121,7 +122,7 @@ class SignUpV2Activity : BaseActivity() {
 
     private fun setupTrueCaller() {
         val trueScope = TruecallerSdkScope.Builder(this, object : ITrueCallback {
-            override fun onFailureProfileShared(p0: TrueError) {
+            override fun onFailureProfileShared(trueError: TrueError) {
                 hideProgressBar()
             }
 
@@ -135,7 +136,7 @@ class SignUpV2Activity : BaseActivity() {
             .consentMode(TruecallerSdkScope.CONSENT_MODE_POPUP)
             .consentTitleOption(TruecallerSdkScope.SDK_CONSENT_TITLE_VERIFY)
             .footerType(TruecallerSdkScope.FOOTER_TYPE_SKIP)
-            .sdkOptions(TruecallerSdkScope.SDK_OPTION_WITH_OTP)
+            .sdkOptions(TruecallerSdkScope.SDK_OPTION_WITHOUT_OTP)
             .build()
         TruecallerSDK.init(trueScope)
         if (TruecallerSDK.getInstance().isUsable) {
@@ -156,6 +157,7 @@ class SignUpV2Activity : BaseActivity() {
     }
 
     private fun openProfileDetailFragment() {
+        supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
         supportFragmentManager.commit(true) {
             addToBackStack(null)
             replace(
@@ -295,7 +297,6 @@ class SignUpV2Activity : BaseActivity() {
                             viewModel.signUpUsingSMS(it.countryCode, it.mNumber)
                         }
                     }
-
                 }, {
                     it.printStackTrace()
                 })
