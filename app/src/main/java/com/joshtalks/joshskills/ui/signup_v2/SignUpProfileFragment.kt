@@ -16,20 +16,19 @@ import com.joshtalks.joshskills.core.custom_ui.spinnerdatepicker.DatePickerDialo
 import com.joshtalks.joshskills.core.custom_ui.spinnerdatepicker.SpinnerDatePickerDialogBuilder
 import com.joshtalks.joshskills.core.isValidFullNumber
 import com.joshtalks.joshskills.core.showToast
-import com.joshtalks.joshskills.databinding.FragmentSignUpCompleteBinding
+import com.joshtalks.joshskills.databinding.FragmentSignUpProfileBinding
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.ui.profile.MAX_YEAR
 import com.joshtalks.joshskills.ui.signup.DEFAULT_COUNTRY_CODE
 import java.text.SimpleDateFormat
 import java.util.*
 
-
 class SignUpProfileFragment : BaseSignUpFragment() {
 
     private val DATE_FORMATTER = SimpleDateFormat("yyyy-MM-dd")
     private val DATE_FORMATTER_2 = SimpleDateFormat("dd - MMM - yyyy")
     private lateinit var viewModel: SignUpV2ViewModel
-    private lateinit var binding: FragmentSignUpCompleteBinding
+    private lateinit var binding: FragmentSignUpProfileBinding
     private var datePicker: DatePickerDialog? = null
     private var gender: GENDER? = null
     private var genderIdArray: Array<Int> =
@@ -50,7 +49,7 @@ class SignUpProfileFragment : BaseSignUpFragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding =
-            DataBindingUtil.inflate(inflater, R.layout.fragment_sign_up_complete, container, false)
+            DataBindingUtil.inflate(inflater, R.layout.fragment_sign_up_profile, container, false)
         binding.lifecycleOwner = this
         binding.handler = this
         return binding.root
