@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:context=".ui.launch.LauncherActivity">
+
+        <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/man1"
+                android:layout_width="@dimen/_146sdp"
+                android:layout_height="@dimen/_186sdp"
+                android:layout_gravity="center"
+                android:layout_marginHorizontal="@dimen/_6sdp"
+                android:src="@drawable/red_man"
+                app:layout_constraintBottom_toTopOf="@+id/line"
+                app:layout_constraintEnd_toStartOf="@+id/man"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="1" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/plant"
+                android:layout_width="@dimen/_76sdp"
+                android:layout_height="@dimen/_66sdp"
+                android:layout_gravity="center"
+                android:src="@drawable/plant_two"
+                app:layout_constraintBottom_toTopOf="@+id/line"
+                app:layout_constraintEnd_toStartOf="@+id/man" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/man"
+                android:layout_width="@dimen/_156sdp"
+                android:layout_height="@dimen/_126sdp"
+                android:layout_gravity="center"
+                android:layout_marginEnd="@dimen/_6sdp"
+                android:src="@drawable/sitted_man"
+                app:layout_constraintBottom_toTopOf="@+id/line"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="1" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/tick"
+                android:layout_width="@dimen/_46sdp"
+                android:layout_height="@dimen/_46sdp"
+                android:layout_gravity="center"
+                android:layout_marginEnd="@dimen/_90sdp"
+                android:layout_marginBottom="@dimen/_110sdp"
+                android:src="@drawable/ic_green_tick"
+                app:layout_constraintBottom_toTopOf="@+id/line"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/line"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="clip_vertical"
+                android:layout_marginHorizontal="@dimen/_6sdp"
+                android:layout_marginBottom="@dimen/_16sdp"
+                android:adjustViewBounds="true"
+                android:src="@drawable/ic_rectangle_81"
+                android:tint="@color/black"
+                app:layout_constraintBottom_toTopOf="@+id/transation_id"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+                android:id="@+id/textView3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/_16sdp"
+                android:layout_marginBottom="@dimen/_6sdp"
+                android:gravity="center"
+                android:text="@string/starting_title"
+                android:textColor="@color/black"
+                android:textSize="@dimen/_22sdp"
+                app:layout_constraintBottom_toTopOf="@+id/course"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+                android:id="@+id/course"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/_16sdp"
+                android:layout_marginBottom="@dimen/_10sdp"
+                android:gravity="center"
+            android:text="@string/starting_info"
+                android:textColor="@color/black"
+                android:textSize="@dimen/_16sdp"
+                app:layout_constraintBottom_toTopOf="@+id/author_layout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+            android:id="@+id/transation_id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/_16sdp"
+            android:layout_marginBottom="@dimen/_10sdp"
+            android:gravity="center"
+            android:text="@string/trx_id"
+            android:textColor="@color/grey"
+            android:textSize="@dimen/_10sdp"
+            app:layout_constraintBottom_toTopOf="@+id/textView3"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/author_layout"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_72sdp"
+                android:layout_marginHorizontal="@dimen/_12sdp"
+                android:layout_marginBottom="@dimen/_82sdp"
+                android:background="@drawable/rect_with_bound"
+                android:backgroundTint="@color/gray_e6"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+        <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/circle_dp"
+                android:layout_width="@dimen/_72sdp"
+                android:layout_height="@dimen/_72sdp"
+                android:layout_margin="@dimen/_12sdp"
+                android:background="@drawable/circle"
+                android:backgroundTint="@color/gray_e6"
+                android:padding="@dimen/_4sdp"
+                app:layout_constraintBottom_toBottomOf="@+id/author_layout"
+                app:layout_constraintEnd_toEndOf="@+id/author_layout"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="@+id/author_layout"
+                app:layout_constraintTop_toTopOf="@+id/author_layout"
+                tools:src="@drawable/sample_circle_dp" />
+
+        <TextView
+                android:id="@+id/tutor_line"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_12sdp"
+                android:layout_marginRight="@dimen/_22sdp"
+                android:gravity="right"
+                android:text="@string/tutor_line"
+                android:textColor="@color/gray_3B"
+                android:textSize="@dimen/_10sdp"
+                app:layout_constraintEnd_toEndOf="@+id/author_layout"
+                app:layout_constraintTop_toTopOf="@+id/author_layout"
+                tools:ignore="MissingConstraints,RtlHardcoded" />
+
+        <TextView
+                android:id="@+id/start_register"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_6sdp"
+                android:layout_marginRight="@dimen/_22sdp"
+                android:gravity="right"
+                android:text="@string/tutor_register"
+                android:textColor="@color/gray_3B"
+                android:textSize="@dimen/_10sdp"
+                app:layout_constraintEnd_toEndOf="@+id/author_layout"
+                app:layout_constraintTop_toBottomOf="@+id/tutor_line"
+                tools:ignore="MissingConstraints,RtlHardcoded" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/corner"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_down_arrow"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/author_layout" />
+
+        <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/materialButton"
+                fontPath="fonts/OpenSans-Bold.ttf"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginHorizontal="@dimen/_24sdp"
+                android:layout_marginBottom="@dimen/_19sdp"
+                android:background="@drawable/round_rectangle_for_course_expo"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center"
+                android:padding="@dimen/_6sdp"
+                android:text="@string/register_now"
+                android:textColor="@color/white"
+                android:textSize="@dimen/font_22"
+                app:cornerRadius="@dimen/_8sdp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:rippleColor="@color/white" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

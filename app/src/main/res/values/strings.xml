@@ -85,6 +85,7 @@
     <string name="resend_otp">Didn\'t get an otp?</string>
     <string name="terms_and_condition_msz">By signing up, you confirm that you have read and \n  agree to Josh Skills\' Terms &amp; Conditions </string>
     <string name="enter_your_mobile_number">Enter your Mobile Number </string>
+    <string name="your_mobile_number">Your Mobile Number </string>
     <string name="send_otp_msz">We will send you an OTP</string>
     <string name="please_enter_your_mobile_number">Please enter your mobile number </string>
     <string name="resend_otp_toast" formatted="false">OTP sent to %s</string>
@@ -189,7 +190,7 @@
     <string name="bade_bhaiya_tips">Bade Bhaiya Tips</string>
     <string name="tip_message">Agar aap apne pehle 7 dino main hain to aap ye course 50\u0025 kam main pa sakte hain.</string>
     <string name="tip_used">TIP USED</string>
-    <string name="use_tip">USE TIP</string>
+    <string name="use_tip">Use Tip</string>
 
     <string name="record_answer_label">Record your answer</string>
     <string name="type_answer_label">Type your answer</string>
@@ -240,6 +241,31 @@
     <string name="permission_dialog_description">Rojana class time par paane ke liye abhi notification on kare</string>
     <string name="allow">Allow</string>
     <string name="do_not_ask_again">Dobara na pooche</string>
+
+    <!--    Payment Failed Dialog-->
+    <string name="try_again">Try again</string>
+    <string name="chat_option">Chat &amp; Pay</string>
+    <string name="title">Oops! Payment failed.</string>
+    <string name="trx_id">Transation ID : %s</string>
+    <string name="reason">Reason : %s</string>
+    <string name="wohoo">Woohoo!</string>
+    <string name="starting_title">You Made it!</string>
+    <string name="starting_info">Aapka Swagat hai\n %s Mein.</string>
+    <string name="starting_info_2">Your are Succesfully enrolled in\n %s.</string>
+    <string name="tutor_line">I am excited to teach you!.</string>
+    <string name="tutor_register">Please register to start</string>
+    <string name="tutor_start">Let\'s get started</string>
+    <string name="register_now">Register Now !</string>
+    <string name="start">Start My Course !</string>
+    <string name="tip_used_info">Tip Used! You got bade bhaiya\ndiscount of Rs%s</string>
+    <string name="bade_bhaiya_tips_new">Bade\nBhaiya\nTip!</string>
+    <string name="tip_title">You can get discount on all Coures!</string>
+    <string name="tip_valid">Valid for next %s Days</string>
+    <string name="tip_discount">%s OFF</string>
+    <string name="order_summary">Order Summary</string>
+    <string name="be_calm">Be Calm</string>
+    <string name="dont_close">&amp; don\'t close this window</string>
+    <string name="processing">We are processing your payment.\n This may take some time</string>
 
 
     <string name="skip">Skip</string>

@@ -34,7 +34,7 @@ interface CommonNetworkService {
     ): Deferred<SuccessResponse>
 
 
-    @POST("$DIR/payment/verify/")
+    @POST("$DIR/payment/verify_v2/")
     suspend fun verifyPayment(@Body params: Map<String, String>): Any
 
     @POST("$DIR/course/certificate/generate/")

@@ -210,6 +210,18 @@
                 android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize"
                 android:launchMode="singleTask"
                 android:theme="@style/AppNoBarTheme" />
+
+        <activity
+                android:name=".ui.payment.order_summary.PaymentSummaryActivity"
+                android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize"
+                android:launchMode="singleTask"
+                android:theme="@style/AppNoBarTheme" />
+        <activity
+                android:name=".ui.startcourse.StartCourseActivity"
+                android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize"
+                android:launchMode="singleTask"
+                android:theme="@style/AppNoBarTheme" />
+
         <activity
                 android:name=".ui.chat.ConversationActivity"
                 android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize"
@@ -290,7 +302,6 @@
                 <action android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-
 
         <activity
                 android:name=".ui.courseprogress.CourseProgressActivity"

@@ -48,7 +48,7 @@ object PermissionUtils {
     }
 
 
-    fun isStoragePermissionEnable(context: Context): Boolean {
+    fun isStoragePermissionEnabled(context: Context): Boolean {
         return ContextCompat.checkSelfPermission(
             context,
             Manifest.permission.READ_EXTERNAL_STORAGE

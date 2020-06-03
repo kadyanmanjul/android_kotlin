@@ -11,19 +11,14 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.view.Gravity
 import android.view.View
-import android.widget.Toast
 import androidx.appcompat.widget.AppCompatTextView
-import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.commit
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.crashlytics.android.Crashlytics
 import com.facebook.appevents.AppEventsConstants
-import com.flurry.android.FlurryAgent
 import com.google.firebase.analytics.FirebaseAnalytics
-import com.google.firebase.analytics.FirebaseAnalytics.Event.PURCHASE
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
@@ -32,8 +27,6 @@ import com.joshtalks.joshskills.core.analytics.BranchIOAnalytics
 import com.joshtalks.joshskills.core.service.WorkMangerAdmin
 import com.joshtalks.joshskills.databinding.ActivityPaymentBinding
 import com.joshtalks.joshskills.messaging.RxBus2
-import com.joshtalks.joshskills.repository.local.entity.NPSEvent
-import com.joshtalks.joshskills.repository.local.entity.NPSEventModel
 import com.joshtalks.joshskills.repository.local.eventbus.BuyCourseEventBus
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
@@ -41,13 +34,11 @@ import com.joshtalks.joshskills.repository.server.CourseDetailsModel
 import com.joshtalks.joshskills.repository.server.CourseExploreModel
 import com.joshtalks.joshskills.repository.server.PaymentDetailsResponse
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
+import com.joshtalks.joshskills.ui.payment.order_summary.PaymentSummaryActivity
 import com.joshtalks.joshskills.ui.signup.LoginDialogFragment
 import com.joshtalks.joshskills.ui.view_holders.CourseDetailViewHolder
-import com.muddzdev.styleabletoast.StyleableToast
 import com.razorpay.Checkout
-import com.razorpay.PaymentResultListener
 import io.branch.referral.util.BRANCH_STANDARD_EVENT
-import io.branch.referral.util.CurrencyType
 import io.reactivex.Maybe
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -70,8 +61,7 @@ const val HAS_CERTIFICATE = "has_certificate"
 const val STARTED_FROM = "started_from"
 
 
-class PaymentActivity : CoreJoshActivity(),
-    PaymentResultListener, CouponCodeSubmitFragment.OnCouponCodeSubmitListener,
+class PaymentActivity : CoreJoshActivity(), CouponCodeSubmitFragment.OnCouponCodeSubmitListener,
     CoursePurchaseDetailFragment.OnCourseDetailInteractionListener,
     OfferCoursePaymentDetailFragment.OnCourseBuyOfferInteractionListener,
     LoginDialogFragment.OnLoginCallback {
@@ -270,61 +260,6 @@ class PaymentActivity : CoreJoshActivity(),
     }
 
 
-    override fun onPaymentError(p0: Int, p1: String?) {
-        userSubmitCode = EMPTY
-        razorpayOrderId = EMPTY
-        StyleableToast.Builder(this).gravity(Gravity.TOP)
-            .backgroundColor(ContextCompat.getColor(applicationContext, R.color.error_color))
-            .text(getString(R.string.something_went_wrong)).cornerRadius(16)
-            .textColor(ContextCompat.getColor(applicationContext, R.color.white))
-            .length(Toast.LENGTH_LONG).solidBackground().show()
-        appAnalytics.addParam(AnalyticsEvent.PAYMENT_FAILED.NAME, p1).push()
-        if (npsShow) {
-            NPSEventModel.setCurrentNPA(NPSEvent.PAYMENT_FAILED)
-            showNetPromoterScoreDialog()
-            npsShow = false
-        }
-    }
-
-    @Synchronized
-    override fun onPaymentSuccess(razorpayPaymentId: String) {
-        razorpayOrderId.verifyPayment()
-        NPSEventModel.setCurrentNPA(
-            NPSEvent.PAYMENT_SUCCESS
-        )
-        if (isEcommereceEventFire && amount > 0 && razorpayPaymentId.isNotEmpty() && testId.isNotEmpty()) {
-            isEcommereceEventFire = false
-            addECommerceEvent(razorpayPaymentId)
-        }
-
-        uiHandler.post {
-            courseModel?.run {
-                PaymentProcessFragment.newInstance(this)
-                    .show(supportFragmentManager, "Payment Process")
-            }
-        }
-        uiHandler.postDelayed({
-            startActivity(getInboxActivityIntent())
-            this@PaymentActivity.finish()
-        }, 1000 * 59)
-        appAnalytics.addParam(AnalyticsEvent.PAYMENT_COMPLETED.NAME, true).push()
-        FlurryAgent.UserProperties.set(FlurryAgent.UserProperties.PROPERTY_PURCHASER, "true")
-    }
-
-    private fun String.verifyPayment() {
-        CoroutineScope(Dispatchers.IO).launch {
-            try {
-                val data = mapOf("razorpay_order_id" to this@verifyPayment)
-                AppObjectController.commonNetworkService.verifyPayment(data)
-            } catch (ex: HttpException) {
-                ex.printStackTrace()
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }
-    }
-
-
     private fun getPaymentDetails(testId: String?) {
         WorkMangerAdmin.newCourseScreenEventWorker(courseName, testId, buyInitialize = true)
         AppObjectController.uiHandler.post {
@@ -455,15 +390,7 @@ class PaymentActivity : CoreJoshActivity(),
         if (isUserSpecialOffer || specialDiscount) {
             onCompletePayment()
         } else {
-            val fragmentTransaction = supportFragmentManager.beginTransaction()
-            val prev = supportFragmentManager.findFragmentByTag("purchase_details_dialog")
-            if (prev != null) {
-                fragmentTransaction.remove(prev)
-            }
-            fragmentTransaction.addToBackStack(null)
-            CoursePurchaseDetailFragment.newInstance(courseModel, hasCertificate)
-                .show(supportFragmentManager, "purchase_details_dialog")
-            // TODO
+            PaymentSummaryActivity.startPaymentSummaryActivity(this, testId)
             AppAnalytics.create(AnalyticsEvent.PAYMENT_DIALOG.NAME)
                 .push()
 
@@ -627,7 +554,7 @@ class PaymentActivity : CoreJoshActivity(),
 
 
     override fun onCompletePayment() {
-        requestForPayment()
+        PaymentSummaryActivity.startPaymentSummaryActivity(this, testId)
     }
 
     override fun onCouponCode() {
@@ -691,48 +618,5 @@ class PaymentActivity : CoreJoshActivity(),
         AppAnalytics.create(AnalyticsEvent.LOGIN_SUCCESSFULLY.NAME).push()
         userHaveSpecialDiscount()
         requestForPayment()
-    }
-
-    private fun addECommerceEvent(razorpayPaymentId: String) {
-        WorkMangerAdmin.newCourseScreenEventWorker(courseName, testId, buyCourse = true)
-        //appAnalytics.push()
-        appAnalytics.addParam(AnalyticsEvent.PURCHASE_COURSE.NAME, courseName)
-            .addParam(FirebaseAnalytics.Param.ITEM_ID, testId)
-            .addParam(FirebaseAnalytics.Param.PRICE, (amount).toString())
-
-        AppObjectController.firebaseAnalytics.resetAnalyticsData()
-        val bundle = Bundle()
-        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, testId)
-        bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, courseName)
-        bundle.putDouble(FirebaseAnalytics.Param.PRICE, amount)
-        bundle.putString(FirebaseAnalytics.Param.TRANSACTION_ID, razorpayPaymentId)
-        bundle.putString(FirebaseAnalytics.Param.CURRENCY, "INR")
-        AppObjectController.firebaseAnalytics.logEvent(PURCHASE, bundle)
-
-        val extras: HashMap<String, String> = HashMap()
-        extras["test_id"] = testId
-        extras["payment_id"] = razorpayPaymentId
-        extras["currency"] = CurrencyType.INR.name
-        extras["amount"] = amount.toString()
-        extras["course_name"] = courseName
-        BranchIOAnalytics.pushToBranch(BRANCH_STANDARD_EVENT.PURCHASE, extras)
-
-        try {
-            if (this.amount <= 0) {
-                return
-            }
-            AppObjectController.facebookEventLogger.flush()
-            val params = Bundle().apply {
-                putString(AppEventsConstants.EVENT_PARAM_CONTENT_ID, testId)
-            }
-            AppObjectController.facebookEventLogger.logPurchase(
-                amount.toBigDecimal(),
-                Currency.getInstance(currency.trim()),
-                params
-            )
-        } catch (ex: Exception) {
-            ex.printStackTrace()
-            Crashlytics.logException(ex)
-        }
     }
 }

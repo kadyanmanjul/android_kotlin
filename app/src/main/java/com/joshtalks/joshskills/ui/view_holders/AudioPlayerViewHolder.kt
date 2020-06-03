@@ -423,8 +423,9 @@ class AudioPlayerViewHolder(activityRef: WeakReference<FragmentActivity>, messag
 
     @Click(R.id.btnPlay)
     fun play() {
-        if (PermissionUtils.isStoragePermissionEnable(activityRef.get()!!).not()) {
-            PermissionUtils.storageReadAndWritePermission(activityRef.get()!!,
+        if (PermissionUtils.isStoragePermissionEnabled(activityRef.get()!!).not()) {
+            PermissionUtils.storageReadAndWritePermission(
+                activityRef.get()!!,
                 object : MultiplePermissionsListener {
                     override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
                         report?.areAllPermissionsGranted()?.let { flag ->
