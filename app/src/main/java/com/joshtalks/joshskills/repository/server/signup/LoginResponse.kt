@@ -20,5 +20,5 @@ data class LoginResponse(
     @SerializedName("new_user")
     val newUser: Boolean,
     @SerializedName("created_source")
-    val createdSource: String
+    val createdSource: String?
 )
