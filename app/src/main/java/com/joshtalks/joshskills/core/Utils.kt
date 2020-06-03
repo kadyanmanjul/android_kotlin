@@ -49,6 +49,7 @@ import com.joshtalks.joshskills.core.datetimeutils.DateTimeUtils
 import com.joshtalks.joshskills.repository.local.model.User
 import com.muddzdev.styleabletoast.StyleableToast
 import github.nisrulz.easydeviceinfo.base.EasyConfigMod
+import io.michaelrocks.libphonenumber.android.PhoneNumberUtil
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -713,6 +714,10 @@ object Utils {
             false
         }
     }
+
+    fun isTrueCallerAppExist(): Boolean {
+        return isPackageInstalled("com.truecaller", AppObjectController.joshApplication)
+    }
 }
 
 fun milliSecondsToSeconds(time: Long): Long {
@@ -772,4 +777,20 @@ fun dateStartOfDay(): Date {
     c[Calendar.SECOND] = 0
     c[Calendar.MILLISECOND] = 0
     return c.time
+}
+
+fun getFBProfilePicture(id: String): String {
+    return "http://graph.facebook.com/$id/picture?height=800&width=800&type=normal"
+}
+
+
+fun isValidFullNumber(countryCode: String, number: String? = EMPTY): Boolean {
+    return try {
+        val phoneUtil = PhoneNumberUtil.createInstance(AppObjectController.joshApplication)
+        val phoneNumber = phoneUtil.parse(countryCode + number, null)
+        phoneUtil.isValidNumber(phoneNumber)
+    } catch (ex: Exception) {
+        ex.printStackTrace()
+        true
+    }
 }
