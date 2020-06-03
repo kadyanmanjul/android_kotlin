@@ -120,13 +120,11 @@ abstract class BaseActivity : AppCompatActivity() {
     }
 
     fun getIntentForState(): Intent? {
-        val intent: Intent? = if (PrefManager.getStringValue(API_TOKEN)
-                .isEmpty() || User.getInstance().phoneNumber.isEmpty() || User.getInstance().dateOfBirth.isNullOrEmpty()
-        ) {
+        val intent: Intent? = if (PrefManager.getStringValue(API_TOKEN).isEmpty()) {
+            Intent(this, OnBoardActivity::class.java)
+        } else if (User.getInstance().phoneNumber.isEmpty() || User.getInstance().dateOfBirth.isNullOrEmpty()) {
             Intent(this, SignUpV2Activity::class.java)
-        } else {
-            getInboxActivityIntent()
-        }
+        } else getInboxActivityIntent()
         return intent?.apply {
             addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)

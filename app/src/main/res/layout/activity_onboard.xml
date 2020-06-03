@@ -5,7 +5,6 @@
         tools:ignore="MissingPrefix">
 
     <data>
-
         <variable
                 name="handler"
                 type="com.joshtalks.joshskills.ui.sign_up_old.OnBoardActivity" />
@@ -17,17 +16,42 @@
             android:background="@color/white"
             tools:context="com.joshtalks.joshskills.ui.signup.SignUpStep1Fragment">
 
+        <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/tvNativeLogin"
+                fontPath="fonts/OpenSans-Bold.ttf"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="40dp"
+                android:layout_weight=".5"
+                android:background="@drawable/rect_with_black_bound"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center"
+                android:onClick="@{()->handler.signUp()}"
+                android:padding="@dimen/half_margin"
+                android:text="@string/login_signup"
+                android:textColor="@color/black"
+                android:textSize="@dimen/font_13"
+                android:visibility="visible"
+                app:cornerRadius="@dimen/_8sdp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.099"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:rippleColor="@color/white" />
 
         <TextView
                 android:id="@+id/textView"
                 fontPath="fonts/OpenSans-SemiBold.ttf"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_48sdp"
+                android:layout_marginTop="432dp"
                 android:gravity="center"
-                android:text="@string/welcome_josh_skill"
-                android:textColor="@color/primary_text"
-                android:textSize="@dimen/font_22"
+                android:text="@string/welcome_josh_skill_new"
+                android:textColor="@color/black"
+                android:textSize="@dimen/font_42"
+                app:layout_constraintHorizontal_bias="0.185"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -37,15 +61,15 @@
                 fontPath="fonts/OpenSans-Regular.ttf"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_7sdp"
-                android:gravity="center"
-                android:text="@string/splash_sub_string"
-                android:textColor="@color/button_primary_color"
-                android:textSize="@dimen/font_16"
+                android:layout_marginTop="4dp"
+                android:gravity="left"
+                android:text="@string/splash_sub_string_english"
+                android:textColor="@color/black"
+                android:textSize="@dimen/font_13"
+                app:layout_constraintHorizontal_bias="0.187"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textView" />
-
 
         <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/image_view"
@@ -53,131 +77,38 @@
                 android:layout_height="wrap_content"
                 android:adjustViewBounds="true"
                 android:scaleType="fitCenter"
-                android:src="@drawable/app_bg"
-                app:layout_constraintBottom_toTopOf="@+id/materialButton"
+                android:src="@drawable/man_suitcase"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintHorizontal_bias="0.995"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView_sub"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.218"
                 app:layout_constraintWidth_default="percent"
                 app:layout_constraintWidth_percent="0.5" />
-
-
-        <!--     <TextView
-                     fontPath="fonts/OpenSans-SemiBold.ttf"
-                     android:layout_width="wrap_content"
-                     android:layout_height="wrap_content"
-                     android:gravity="center"
-                     android:text="@string/register_number_title"
-                     android:textColor="#a8adb1"
-                     android:textSize="@dimen/font_10"
-                     android:visibility="gone"
-                     app:layout_constraintBottom_toTopOf="@+id/abcd"
-                     app:layout_constraintLeft_toLeftOf="parent"
-                     app:layout_constraintRight_toRightOf="parent" />-->
 
         <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/materialButton"
                 fontPath="fonts/OpenSans-Bold.ttf"
-                android:layout_width="0dp"
-                android:layout_height="@dimen/_40sdp"
+                android:layout_width="185dp"
+                android:layout_height="51dp"
                 android:layout_gravity="center"
-                android:layout_marginBottom="@dimen/_16sdp"
+                android:layout_marginTop="52dp"
                 android:background="@drawable/round_rectangle_for_course_expo"
-                android:backgroundTint="#00E200"
                 android:clickable="true"
                 android:focusable="true"
                 android:gravity="center"
                 android:onClick="@{()->handler.openCourseExplore()}"
-                android:text="@string/explore"
-                android:textAllCaps="true"
                 android:textColor="@color/white"
-                android:textSize="@dimen/font_15"
+                android:text="@string/explore_new"
                 app:cornerRadius="@dimen/_8sdp"
-                app:layout_constraintBottom_toTopOf="@+id/tvText"
+                android:textSize="@dimen/font_17"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.146"
                 app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView_sub"
                 app:layout_constraintWidth_default="percent"
                 app:layout_constraintWidth_percent="0.45" />
-
-
-        <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
-                android:id="@+id/tvText"
-                fontPath="fonts/OpenSans-SemiBold.ttf"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:layout_centerVertical="true"
-                android:layout_gravity="start"
-                android:layout_marginBottom="@dimen/_16sdp"
-                android:gravity="center_vertical|start"
-                android:text="Already Paid?"
-                android:textColor="#7D7D7D"
-                android:textSize="@dimen/font_13"
-                app:layout_constraintBottom_toTopOf="@+id/bottom_ll"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
-
-
-        <LinearLayout
-                android:id="@+id/bottom_ll"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/_40sdp"
-                android:background="@color/button_primary_color"
-                android:orientation="horizontal"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent">
-
-
-            <com.google.android.material.textview.MaterialTextView
-                    android:id="@+id/tvNativeLogin"
-                    fontPath="fonts/OpenSans-SemiBold.ttf"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight=".5"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:gravity="center"
-                    android:onClick="@{()->handler.signUp()}"
-                    android:text="@string/login_with_otp"
-                    android:textAllCaps="true"
-                    android:textColor="@color/white"
-                    android:textSize="@dimen/font_13"
-                    android:visibility="visible"
-                    app:rippleColor="@color/white" />
-
-            <FrameLayout
-                    android:id="@+id/login_true_caller_container"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight=".5"
-                    android:visibility="gone">
-
-                <View
-                        android:layout_width="@dimen/_1sdp"
-                        android:layout_height="match_parent"
-                        android:layout_marginTop="@dimen/_8sdp"
-                        android:layout_marginBottom="@dimen/_8sdp"
-                        android:background="@color/white" />
-
-                <com.google.android.material.textview.MaterialTextView
-                        android:id="@+id/btn_truecaller_login"
-                        fontPath="fonts/OpenSans-SemiBold.ttf"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:clickable="true"
-                        android:focusable="true"
-                        android:gravity="center"
-                        android:onClick="@{()->handler.verifyViaTrueCaller()}"
-                        android:text="@string/login_with_truecaller_label"
-                        android:textAllCaps="true"
-                        android:textColor="@color/white"
-                        android:textSize="@dimen/font_13"
-                        android:visibility="visible"
-                        app:rippleColor="@color/white" />
-            </FrameLayout>
-
-        </LinearLayout>
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
