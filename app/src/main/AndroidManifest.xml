@@ -216,6 +216,11 @@
                 android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize"
                 android:launchMode="singleTask"
                 android:theme="@style/AppNoBarTheme" />
+        <activity
+                android:name=".ui.startcourse.StartCourseActivity"
+                android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize"
+                android:launchMode="singleTask"
+                android:theme="@style/AppNoBarTheme" />
 
         <activity
                 android:name=".ui.chat.ConversationActivity"
@@ -297,8 +302,6 @@
                 <action android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-
-        <activity android:name=".ui.startcourse.StartCourseActivity" />
 
         <activity
                 android:name=".ui.courseprogress.CourseProgressActivity"
