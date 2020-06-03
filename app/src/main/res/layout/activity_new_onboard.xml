@@ -6,9 +6,6 @@
 
     <data>
 
-        <variable
-                name="handler"
-                type="com.joshtalks.joshskills.ui.sign_up_old.OnBoardActivityNew" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -30,7 +27,6 @@
                 android:focusable="true"
                 android:gravity="center"
                 android:padding="@dimen/half_margin"
-                android:onClick="@{()->handler.signUp()}"
                 android:text="@string/login_signup"
                 android:textColor="@color/black"
                 android:textSize="@dimen/font_13"
@@ -99,7 +95,6 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:gravity="center"
-                android:onClick="@{()->handler.openCourseExplore()}"
                 android:text="@string/explore_new"
                 android:textColor="@color/white"
                 android:textSize="@dimen/font_17"
