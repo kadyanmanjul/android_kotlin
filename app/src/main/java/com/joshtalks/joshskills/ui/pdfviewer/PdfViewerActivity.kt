@@ -14,7 +14,6 @@ import android.view.WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS
 import android.view.WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
-import com.github.barteksc.pdfviewer.listener.OnPageChangeListener
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.BaseActivity
@@ -33,7 +32,7 @@ import java.io.File
 const val PDF_ID = "pdf_id"
 const val COURSE_NAME = "course_name"
 
-class PdfViewerActivity : BaseActivity(), OnPageChangeListener {
+class PdfViewerActivity : BaseActivity() {
     private lateinit var conversationBinding: ActivityPdfViewerBinding
     private var pdfObject: PdfType? = null
 
@@ -116,7 +115,14 @@ class PdfViewerActivity : BaseActivity(), OnPageChangeListener {
                             .pageFling(true)
                             .fitEachPage(true)
                             .scrollHandle(scrollHandle)
-                            .onPageChange(this@PdfViewerActivity)
+                            .onPageChange { page: Int, pageCount: Int ->
+                                txtPageNumber.text =
+                                    resources.getString(
+                                        R.string.page_number,
+                                        page.plus(1).toString(),
+                                        pageCount.toString()
+                                    )
+                            }
                             .load()
 
                         AppAnalytics.create(AnalyticsEvent.PDF_OPENED.NAME)
@@ -156,10 +162,5 @@ class PdfViewerActivity : BaseActivity(), OnPageChangeListener {
             }
         }
 
-    }
-
-    override fun onPageChanged(page: Int, pageCount: Int) {
-        txtPageNumber.text =
-            resources.getString(R.string.page_number, page.plus(1).toString(), pageCount.toString())
     }
 }
