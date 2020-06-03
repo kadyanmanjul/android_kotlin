@@ -11,24 +11,24 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_40sdp"
+            android:text="@string/be_calm"
             android:textColor="@color/dark_grey"
             android:textSize="@dimen/font_22"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:text="Be Calm" />
+            app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.textview.MaterialTextView
             android:id="@+id/dont_close"
-            style="@style/TextStyle.TopBarScroll"
+            style="@style/TextStyle.TopBarNoScroll"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:text="@string/dont_close"
             android:textColor="@color/dark_grey"
             android:textSize="@dimen/font_14"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/be_calm"
-            tools:text="&amp; don't close this window" />
+            app:layout_constraintTop_toBottomOf="@+id/be_calm" />
 
     <ImageView
             android:id="@+id/image"
@@ -59,16 +59,16 @@
 
     <com.google.android.material.textview.MaterialTextView
             android:id="@+id/info"
-            style="@style/TextStyle.TopBarScroll"
+            style="@style/TextStyle.TopBarNoScroll"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_24sdp"
             android:gravity="center"
+            android:text="@string/processing"
             android:textColor="@color/dark_grey"
             android:textSize="@dimen/font_14"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/progress_bar"
-            tools:text="We are processing your payment.\n This may take some time" />
+            app:layout_constraintTop_toBottomOf="@+id/progress_bar" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

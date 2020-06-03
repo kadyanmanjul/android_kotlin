@@ -263,6 +263,9 @@
     <string name="tip_valid">Valid for next %s Days</string>
     <string name="tip_discount">%s OFF</string>
     <string name="order_summary">Order Summary</string>
+    <string name="be_calm">Be Calm</string>
+    <string name="dont_close">&amp; don\'t close this window</string>
+    <string name="processing">We are processing your payment.\n This may take some time</string>
 
 
     <string name="skip">Skip</string>

@@ -126,17 +126,18 @@
                 android:layout_marginHorizontal="@dimen/_24sdp"
                 android:layout_marginTop="24dp"
                 android:gravity="center"
+                android:backgroundTint="@color/white"
                 android:paddingHorizontal="@dimen/_8sdp"
                 android:paddingVertical="@dimen/_8sdp"
                 android:text="@string/chat_option"
                 android:textAllCaps="false"
-                android:textColor="@color/white"
+                android:textColor="@color/black"
                 android:textSize="@dimen/_14sdp"
                 app:cornerRadius="@dimen/_20sdp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/retry"
-                app:rippleColor="@color/white" />
+                app:rippleColor="@color/colorPrimary" />
 
         <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/whatsapp_help"
