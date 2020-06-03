@@ -545,7 +545,7 @@ class PractiseSubmitActivity : CoreJoshActivity() {
                     EXPECTED_ENGAGE_TYPE.AU == it -> {
                         binding.submitAudioViewContainer.visibility = VISIBLE
                         filePath = practiseEngagement?.answerUrl
-                        if (PermissionUtils.isStoragePermissionEnable(this@PractiseSubmitActivity) && AppDirectory.isFileExist(
+                        if (PermissionUtils.isStoragePermissionEnabled(this@PractiseSubmitActivity) && AppDirectory.isFileExist(
                                 practiseEngagement?.localPath
                             )
                         ) {
@@ -569,7 +569,7 @@ class PractiseSubmitActivity : CoreJoshActivity() {
                         filePath = practiseEngagement?.answerUrl
                         binding.videoPlayerSubmit.visibility = VISIBLE
 
-                        if (PermissionUtils.isStoragePermissionEnable(this@PractiseSubmitActivity) && AppDirectory.isFileExist(
+                        if (PermissionUtils.isStoragePermissionEnabled(this@PractiseSubmitActivity) && AppDirectory.isFileExist(
                                 practiseEngagement?.localPath
                             )
                         ) {

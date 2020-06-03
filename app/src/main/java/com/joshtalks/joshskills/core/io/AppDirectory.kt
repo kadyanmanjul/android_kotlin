@@ -317,7 +317,7 @@ object AppDirectory {
         return file
     }
 
-    fun keyFile(): File {
+    fun getInstanceIdKeyFile(): File {
         val f = File(KEY_PATH)
         if (f.exists().not()) {
             f.mkdirs()
@@ -492,9 +492,9 @@ object AppDirectory {
         return file
     }
 
-    fun writeToFile(data: String) {
+    fun writeToFile(data: String, file: File) {
         try {
-            val stream = FileOutputStream(keyFile())
+            val stream = FileOutputStream(getInstanceIdKeyFile())
             try {
                 stream.write(data.toByteArray())
             } catch (e: Exception) {
@@ -507,10 +507,10 @@ object AppDirectory {
         }
     }
 
-    fun readFromFile(): String? {
+    fun readFromFile(file: File): String? {
         var res: String? = null
         try {
-            val fis = FileInputStream(keyFile())
+            val fis = FileInputStream(getInstanceIdKeyFile())
             val input = DataInputStream(fis)
             val br = BufferedReader(InputStreamReader(input))
             res = br.readLine()

@@ -265,8 +265,9 @@ class VideoViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
 
 
     private fun executeDownload() {
-        if (PermissionUtils.isStoragePermissionEnable(activityRef.get()!!).not()) {
-            PermissionUtils.storageReadAndWritePermission(activityRef.get()!!,
+        if (PermissionUtils.isStoragePermissionEnabled(activityRef.get()!!).not()) {
+            PermissionUtils.storageReadAndWritePermission(
+                activityRef.get()!!,
                 object : MultiplePermissionsListener {
                     override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
                         report?.areAllPermissionsGranted()?.let { flag ->

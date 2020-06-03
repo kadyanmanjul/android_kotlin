@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.telephony.TelephonyManager
+import android.util.Log
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
@@ -61,7 +62,20 @@ class LauncherActivity : CoreJoshActivity(), CustomPermissionDialogInteractionLi
     override fun onStart() {
         super.onStart()
         handleIntent()
+    }
 
+    override fun onResume() {
+        super.onResume()
+        if (PermissionUtils.isStoragePermissionEnabled(this).not()) {
+            getPermission()
+        } else {
+            initInstanceId()
+            checkForOemNotifications()
+        }
+    }
+
+    private fun checkForOemNotifications() {
+        Log.d(TAG, "checkForOemNotifications() called")
         val oemIntent = PowerManagers.getIntentForOEM(this)
         if (oemIntent != null && shouldRequireCustomPermission()) {
             showCustomPermissionDialog(oemIntent, supportFragmentManager)
@@ -70,56 +84,59 @@ class LauncherActivity : CoreJoshActivity(), CustomPermissionDialogInteractionLi
         }
     }
 
+    private fun getPermission() {
+        PermissionUtils.storageReadAndWritePermission(this, object : MultiplePermissionsListener {
+            override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
+                report?.areAllPermissionsGranted()?.let { isGranted ->
+                    if (isGranted) {
+                        initInstanceId()
+                        checkForOemNotifications()
+                        return
+                    }
+                    if (report.isAnyPermissionPermanentlyDenied) {
+                        PermissionUtils.permissionPermanentlyDeniedDialog(this@LauncherActivity)
+                        checkForOemNotifications()
+                        return
+                    }
+                }
+            }
+
+            override fun onPermissionRationaleShouldBeShown(
+                permissions: MutableList<PermissionRequest>?,
+                token: PermissionToken?
+            ) {
+                token?.continuePermissionRequest()
+            }
+        })
+    }
+
+    private fun initInstanceId() {
+        val instanceId = AppDirectory.readFromFile(AppDirectory.getInstanceIdKeyFile())
+        showToast("instanceId from file $instanceId")
+        Log.d(
+            TAG, "initInstanceId() called $instanceId pref ${PrefManager.getStringValue(
+                INSTANCE_ID
+            )}"
+        )
+        if (instanceId.isNullOrBlank())
+            writeInstanceIdInFile(PrefManager.getStringValue(INSTANCE_ID))
+        else PrefManager.put(INSTANCE_ID, instanceId)
+        showToast(
+            "instanceId from prefmanager  ${PrefManager.getStringValue(
+                INSTANCE_ID
+            )}"
+        )
+
+    }
+
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         this.intent = intent
         handleIntent()
     }
 
-    override fun onResume() {
-        super.onResume()
-        storeInstanceId(PrefManager.getStringValue(INSTANCE_ID))
-    }
-
-    private fun storeInstanceId(instanceId: String) {
-        if (PermissionUtils.isStoragePermissionEnable(this).not()) {
-            PermissionUtils.storageReadAndWritePermission(
-                this,
-                object : MultiplePermissionsListener {
-                    override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
-                        report?.areAllPermissionsGranted()?.let { flag ->
-                            if (flag) {
-                                val id = AppDirectory.readFromFile()
-                                if (id.isNullOrEmpty())
-                                    writeInstanceIdInFile(instanceId)
-                                else PrefManager.put(INSTANCE_ID, id)
-                                return
-                            }
-                            if (report.isAnyPermissionPermanentlyDenied) {
-                                PermissionUtils.permissionPermanentlyDeniedDialog(this@LauncherActivity)
-                                return
-                            }
-                        }
-                    }
-
-                    override fun onPermissionRationaleShouldBeShown(
-                        permissions: MutableList<PermissionRequest>?,
-                        token: PermissionToken?
-                    ) {
-                        token?.continuePermissionRequest()
-                    }
-                })
-            return
-        } else {
-            val id = AppDirectory.readFromFile()
-            if (id.isNullOrEmpty()) {
-                writeInstanceIdInFile(instanceId)
-            }
-        }
-    }
-
     private fun writeInstanceIdInFile(instanceId: String) {
-        AppDirectory.writeToFile(instanceId)
+        AppDirectory.writeToFile(instanceId, AppDirectory.getInstanceIdKeyFile())
     }
 
     override fun onStop() {

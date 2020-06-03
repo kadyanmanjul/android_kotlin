@@ -13,6 +13,7 @@ import com.google.firebase.iid.FirebaseInstanceId
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.LogException
+import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.core.notification.FCM_TOKEN
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.DatabaseUtils
@@ -162,6 +163,11 @@ class InstanceIdGenerationWorker(var context: Context, workerParams: WorkerParam
                 val res = AppObjectController.signUpNetworkService.getInstanceIdAsync()
                 if (res.instanceId.isEmpty().not())
                     PrefManager.put(INSTANCE_ID, res.instanceId)
+                if (PermissionUtils.isStoragePermissionEnabled(applicationContext)) {
+                    val instanceId = AppDirectory.readFromFile(AppDirectory.getInstanceIdKeyFile())
+                    if (instanceId.isNullOrBlank().not())
+                        PrefManager.put(INSTANCE_ID, instanceId!!)
+                }
             }
 
         } catch (ex: Throwable) {
