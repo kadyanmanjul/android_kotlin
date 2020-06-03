@@ -21,4 +21,5 @@ class PaymentProcessingFragment : Fragment() {
         @JvmStatic
         fun newInstance() = PaymentProcessingFragment()
     }
+
 }

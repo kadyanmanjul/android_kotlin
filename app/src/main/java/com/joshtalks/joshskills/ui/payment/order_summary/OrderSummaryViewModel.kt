@@ -26,7 +26,7 @@ class OrderSummaryViewModel(application: Application) : AndroidViewModel(applica
     var context: JoshApplication = getApplication()
 
     enum class ViewState {
-        PROCESSING, PROCESSED, INTERNET_NOT_AVAILABLE, ERROR_OCCURED, API_ERROR
+        PROCESSING, PROCESSED, INTERNET_NOT_AVAILABLE, ERROR_OCCURED
     }
 
     var phoneNumber = EMPTY
@@ -58,7 +58,6 @@ class OrderSummaryViewModel(application: Application) : AndroidViewModel(applica
                 responsePaymentSummary.postValue(res)
 
             } catch (ex: Exception) {
-                viewState?.postValue(ViewState.API_ERROR)
                 when (ex) {
                     is HttpException -> {
                         viewState?.postValue(ViewState.ERROR_OCCURED)

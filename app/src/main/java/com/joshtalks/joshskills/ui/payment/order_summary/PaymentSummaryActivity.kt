@@ -12,6 +12,7 @@ import android.os.Looper
 import android.text.SpannableString
 import android.text.Spanned
 import android.text.style.IconMarginSpan
+import android.util.Log
 import android.util.TypedValue
 import android.view.View
 import android.widget.LinearLayout
@@ -78,7 +79,8 @@ class PaymentSummaryActivity : CoreJoshActivity(),
     private lateinit var viewModel: OrderSummaryViewModel
     val PHONE_NUMBER_REGEX = Regex(pattern = "^[6789]\\d{9}\$")
     private var isEcommereceEventFire = true
-    private var npsShow = true
+    private var npsShow = false
+    private var isBackPressDisabled = false
     private var razorpayOrderId = EMPTY
 
 
@@ -128,10 +130,8 @@ class PaymentSummaryActivity : CoreJoshActivity(),
     @SuppressLint("SetTextI18n")
     private fun subscribeObservers() {
         viewModel.viewState?.observe(this, androidx.lifecycle.Observer {
+            Log.d(TAG, "subscribeObservers() called viewState ${it}")
             when (it) {
-                OrderSummaryViewModel.ViewState.API_ERROR -> {
-                    binding.container.visibility = View.GONE
-                }
                 OrderSummaryViewModel.ViewState.INTERNET_NOT_AVAILABLE -> {
                     binding.progressBar.visibility = View.GONE
                     showToast(getString(R.string.internet_not_available_msz))
@@ -145,6 +145,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                 }
                 else -> {
                     binding.progressBar.visibility = View.GONE
+                    binding.container.visibility = View.VISIBLE
                 }
             }
         })
@@ -363,9 +364,10 @@ class PaymentSummaryActivity : CoreJoshActivity(),
     }
 
     override fun onPaymentError(p0: Int, p1: String?) {
-
-        showPaymentFailedDialog()
-
+        isBackPressDisabled = true
+        uiHandler.post {
+            showPaymentFailedDialog()
+        }
         if (npsShow) {
             NPSEventModel.setCurrentNPA(NPSEvent.PAYMENT_FAILED)
             showNetPromoterScoreDialog()
@@ -375,6 +377,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
 
     @Synchronized
     override fun onPaymentSuccess(razorpayPaymentId: String) {
+        isBackPressDisabled = true
         razorpayOrderId.verifyPayment()
         NPSEventModel.setCurrentNPA(
             NPSEvent.PAYMENT_SUCCESS
@@ -464,6 +467,11 @@ class PaymentSummaryActivity : CoreJoshActivity(),
         }
     }
 
+    override fun onBackPressed() {
+        if (!isBackPressDisabled)
+            super.onBackPressed()
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         Checkout.clearUserData(applicationContext)
@@ -472,10 +480,11 @@ class PaymentSummaryActivity : CoreJoshActivity(),
     }
 
     private fun showPaymentProcessingFragment() {
+        binding.container.visibility = View.GONE
         supportFragmentManager
             .beginTransaction()
             .replace(
-                R.id.container,
+                R.id.parent_Container,
                 PaymentProcessingFragment.newInstance(),
                 "Payment Processing"
             )
@@ -483,16 +492,24 @@ class PaymentSummaryActivity : CoreJoshActivity(),
     }
 
     private fun showPaymentFailedDialog() {
-        PaymentFailedDialogFragment.newInstance(
-            viewModel.mPaymentDetailsResponse.value?.joshtalksOrderId ?: 0
-        ).show(supportFragmentManager, "Payment Failed")
-    }
-
-    private fun showPaymentSuccessfulFragment() {
         supportFragmentManager
             .beginTransaction()
             .replace(
-                R.id.container,
+                R.id.parent_Container,
+                PaymentFailedDialogFragment.newInstance(
+                    viewModel.mPaymentDetailsResponse.value?.joshtalksOrderId ?: 0
+                ),
+                "Payment Success"
+            )
+            .commit()
+    }
+
+    private fun showPaymentSuccessfulFragment() {
+        binding.container.visibility = View.GONE
+        supportFragmentManager
+            .beginTransaction()
+            .replace(
+                R.id.parent_Container,
                 PaymentSuccessFragment.newInstance(),
                 "Payment Success"
             )
