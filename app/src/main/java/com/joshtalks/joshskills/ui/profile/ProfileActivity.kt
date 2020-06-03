@@ -356,7 +356,7 @@ class ProfileActivity : BaseActivity(), MediaSelectCallback, DatePickerDialog.On
 
                 val updateProfileResponse: UpdateProfileResponse =
                     AppObjectController.signUpNetworkService.updateUserAsync(
-                        User.getInstance().id,
+                        User.getInstance().userId,
                         obj
                     ).await()
 
