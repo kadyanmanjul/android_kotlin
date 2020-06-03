@@ -42,6 +42,7 @@ import com.joshtalks.joshskills.ui.profile.ProfileActivity
 import com.joshtalks.joshskills.ui.profile.SOURCE_IMAGE
 import com.joshtalks.joshskills.ui.sign_up_old.OnBoardActivity
 import com.joshtalks.joshskills.ui.signup.SignUpActivity
+import com.joshtalks.joshskills.ui.signup_v2.SignUpV2Activity
 import com.newrelic.agent.android.NewRelic
 import io.branch.referral.Branch
 import io.github.inflationx.viewpump.ViewPumpContextWrapper
@@ -119,8 +120,10 @@ abstract class BaseActivity : AppCompatActivity() {
     }
 
     fun getIntentForState(): Intent? {
-        val intent: Intent? = if (User.getInstance().token == null) {
-            Intent(this, OnBoardActivity::class.java)
+        val intent: Intent? = if (PrefManager.getStringValue(API_TOKEN)
+                .isEmpty() || User.getInstance().phoneNumber.isEmpty()
+        ) {
+            Intent(this, SignUpV2Activity::class.java)
         } else {
             getInboxActivityIntent()
         }
