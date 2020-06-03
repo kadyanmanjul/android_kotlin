@@ -22,7 +22,7 @@ object UploadWorker {
             try {
                 val filePart: MultipartBody.Part = createMultipartBody(imageObject.imageLocalPath)
                 AppObjectController.signUpNetworkService.uploadProfilePicture(
-                    User.getInstance().id,
+                    User.getInstance().userId,
                     filePart
                 )
                 AppAnalytics.create(AnalyticsEvent.PROFILE_IMAGE_UPLOAD.NAME)

@@ -5,7 +5,6 @@ import android.graphics.Color
 import android.os.Bundle
 import android.text.SpannableStringBuilder
 import android.text.Spanned
-import android.view.View
 import android.widget.TextView
 import androidx.annotation.NonNull
 import androidx.core.content.ContextCompat
@@ -29,11 +28,12 @@ import com.joshtalks.joshskills.ui.signup.FROM_ACTIVITY
 import com.joshtalks.joshskills.ui.signup.IS_ACTIVITY_FOR_RESULT
 import com.joshtalks.joshskills.ui.signup.SignUpActivity
 import com.joshtalks.joshskills.ui.signup.SignUpViewModel
-import com.truecaller.android.sdk.*
+import com.truecaller.android.sdk.ITrueCallback
+import com.truecaller.android.sdk.TrueError
 import com.truecaller.android.sdk.TrueError.ERROR_TYPE_CONTINUE_WITH_DIFFERENT_NUMBER
+import com.truecaller.android.sdk.TrueProfile
 import io.github.inflationx.calligraphy3.CalligraphyTypefaceSpan
 import io.github.inflationx.calligraphy3.TypefaceUtils
-import java.util.*
 
 
 class OnBoardActivity : CoreJoshActivity() {
@@ -61,6 +61,7 @@ class OnBoardActivity : CoreJoshActivity() {
         if (intent.hasExtra("Flow")) {
             prevScreen = intent?.getStringExtra("Flow")
         }
+
         initTrueCallerSDK()
         appAnalytics = AppAnalytics.create(AnalyticsEvent.LOGIN_SCREEN_1.NAME)
             .addBasicParam()
@@ -141,7 +142,7 @@ class OnBoardActivity : CoreJoshActivity() {
     }
 
     private fun initTrueCallerSDK() {
-        try {
+        /*try {
             val trueScope = TrueSdkScope.Builder(this, trueCallerSDKCallback)
                 .consentMode(TrueSdkScope.CONSENT_MODE_POPUP)  //TrueSdkScope.CONSENT_MODE_POPUP
                 .consentTitleOption(TrueSdkScope.SDK_CONSENT_TITLE_VERIFY)
@@ -156,7 +157,7 @@ class OnBoardActivity : CoreJoshActivity() {
             }
         } catch (ex: Throwable) {
             LogException.catchException(ex)
-        }
+        }*/
     }
 
     fun verifyViaTrueCaller() {
@@ -166,7 +167,7 @@ class OnBoardActivity : CoreJoshActivity() {
             .addParam(AnalyticsEvent.FLOW_FROM_PARAM.NAME, this.javaClass.simpleName)
             .addParam(AnalyticsEvent.LOGIN_VIA.NAME, AnalyticsEvent.TRUECALLER_PARAM.NAME)
             .push()
-        TrueSDK.getInstance().getUserProfile(this)
+        // TrueSDK.getInstance().getUserProfile(this)
         showProgress()
         AppObjectController.uiHandler.postDelayed({ hideProgress() }, 1500)
     }
@@ -202,17 +203,6 @@ class OnBoardActivity : CoreJoshActivity() {
             textMarginRes = R.dimen.dp2
         }
         layout.btnTruecallerLogin.isEnabled = false
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        try {
-            if (TrueSDK.getInstance().isUsable) {
-                TrueSDK.getInstance().onActivityResultObtained(this, resultCode, data)
-            }
-        } catch (ex: Throwable) {
-            LogException.catchException(ex)
-        }
     }
 
     private fun hideProgress() {

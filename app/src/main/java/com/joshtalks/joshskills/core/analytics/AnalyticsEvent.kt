@@ -53,6 +53,8 @@ enum class AnalyticsEvent(val NAME: String) {
     FLOW_FROM_PARAM("flow from V3"),
     MOBILE_OTP_PARAM("Mobile OTP V3"),
     TRUECALLER_PARAM("Truecaller V3"),
+    GMAIL_PARAM("Gmail V3"),
+    FACEBOOK_PARAM("Facebook V3"),
     STATUS("Status param V3"),
     USER_DETAILS("User Details V3"),
     SUCCESS_PARAM("Status success V3"),

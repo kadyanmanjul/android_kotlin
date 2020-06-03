@@ -25,6 +25,7 @@ import com.joshtalks.joshskills.repository.server.MessageStatusRequest
 import com.joshtalks.joshskills.repository.server.UpdateDeviceRequest
 import com.joshtalks.joshskills.repository.service.NetworkRequestHelper
 import com.joshtalks.joshskills.repository.service.SyncChatService
+import com.sinch.verification.PhoneNumberUtils
 import io.branch.referral.Branch
 import retrofit2.HttpException
 import java.util.*
@@ -32,13 +33,20 @@ import java.util.*
 const val INSTALL_REFERRER_SYNC = "install_referrer_sync"
 const val CONVERSATION_ID = "conversation_id"
 
-class AppRunRequiredTaskWorker(context: Context, workerParams: WorkerParameters) :
+class AppRunRequiredTaskWorker(var context: Context, workerParams: WorkerParameters) :
     CoroutineWorker(context, workerParams) {
     override suspend fun doWork(): Result {
         AppAnalytics.flush()
         AppObjectController.facebookEventLogger.flush()
         AppObjectController.firebaseAnalytics.resetAnalyticsData()
         AppObjectController.getFetchObject().awaitFinish()
+        if (PrefManager.getStringValue(API_TOKEN).isEmpty()) {
+            PrefManager.put(API_TOKEN, User.getInstance().token)
+        }
+        if (PrefManager.getStringValue(COUNTRY_ISO).isEmpty()) {
+            PrefManager.put(COUNTRY_ISO, PhoneNumberUtils.getDefaultCountryIso(context))
+        }
+
         WorkMangerAdmin.readMessageUpdating()
         AppObjectController.getFirebaseRemoteConfig().fetchAndActivate().addOnCompleteListener {
             val npsEvent =
@@ -657,9 +665,13 @@ class UpdateDeviceDetailsWorker(context: Context, workerParams: WorkerParameters
                     )
                 details.update()
             } else {
-                val details =
-                    AppObjectController.signUpNetworkService.postDeviceDetails(UpdateDeviceRequest())
-                details.update()
+                if (DeviceDetailsResponse.getInstance() == null) {
+                    val details =
+                        AppObjectController.signUpNetworkService.postDeviceDetails(
+                            UpdateDeviceRequest()
+                        )
+                    details.update()
+                }
             }
         } catch (ex: Exception) {
             ex.printStackTrace()

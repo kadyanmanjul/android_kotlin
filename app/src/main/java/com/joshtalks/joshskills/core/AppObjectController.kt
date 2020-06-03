@@ -31,12 +31,11 @@ import com.joshtalks.joshskills.core.service.video_download.DownloadTracker
 import com.joshtalks.joshskills.core.service.video_download.VideoDownloadController
 import com.joshtalks.joshskills.repository.local.AppDatabase
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
-import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.service.ChatNetworkService
 import com.joshtalks.joshskills.repository.service.CommonNetworkService
 import com.joshtalks.joshskills.repository.service.MediaDUNetworkService
 import com.joshtalks.joshskills.repository.service.SignUpNetworkService
-import com.joshtalks.joshskills.ui.sign_up_old.OnBoardActivity
+import com.joshtalks.joshskills.ui.signup_v2.SignUpV2Activity
 import com.joshtalks.joshskills.ui.view_holders.IMAGE_SIZE
 import com.joshtalks.joshskills.ui.view_holders.ROUND_CORNER
 import com.newrelic.agent.android.FeatureFlag
@@ -223,10 +222,9 @@ internal class AppObjectController {
                 override fun intercept(chain: Interceptor.Chain): Response {
                     val original = chain.request()
                     val newRequest: Request.Builder = original.newBuilder()
-                    if (User.getInstance().token != null) {
+                    if (PrefManager.getStringValue(API_TOKEN).isNotEmpty()) {
                         newRequest.addHeader(
-                            KEY_AUTHORIZATION,
-                            "JWT " + (User.getInstance().token ?: "")
+                            KEY_AUTHORIZATION, "JWT " + PrefManager.getStringValue(API_TOKEN)
                         )
                     }
                     newRequest.addHeader(KEY_APP_VERSION_NAME, BuildConfig.VERSION_NAME)
@@ -413,7 +411,7 @@ class StatusCodeInterceptor : Interceptor {
                 )
             ) {
                 val intent =
-                    Intent(AppObjectController.joshApplication, OnBoardActivity::class.java)
+                    Intent(AppObjectController.joshApplication, SignUpV2Activity::class.java)
                 intent.apply {
                     addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
                     addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
