@@ -160,8 +160,8 @@ class SignUpV2Activity : BaseActivity() {
             addToBackStack(null)
             replace(
                 R.id.container,
-                SignUpCompleteFragment.newInstance(),
-                SignUpCompleteFragment::class.java.name
+                SignUpProfileFragment.newInstance(),
+                SignUpProfileFragment::class.java.name
             )
         }
     }
