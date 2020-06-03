@@ -2,56 +2,47 @@ package com.joshtalks.joshskills.repository.local.model
 
 import com.google.gson.annotations.SerializedName
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.PrefManager
-
 
 const val USER_PERSISTANT_KEY = "user"
 
 open class User {
     @SerializedName("mobile")
-    var phoneNumber: String = ""
+    var phoneNumber: String = EMPTY
 
-    /* @SerializedName("token")
-     var token: ProfileToken? = null*/
     @SerializedName("token")
-    var token: String? = null
-
+    var token: String = EMPTY
 
     @SerializedName("username")
-    var username: String = ""
+    var username: String = EMPTY
 
     @SerializedName("email")
-    var email: String = ""
+    var email: String = EMPTY
 
     @SerializedName("gender")
-    var gender: String = ""
+    var gender: String = EMPTY
 
     @SerializedName("date_of_birth")
-    var dateOfBirth: String? = ""
+    var dateOfBirth: String? = EMPTY
 
     @SerializedName("first_name")
-    var firstName: String = ""
-    // get() = field.substring(0, 1).toUpperCase().plus(field.substring(1))
-
+    var firstName: String = EMPTY
 
     @SerializedName("photo_url")
     var photo: String? = null
 
     @SerializedName("social_id")
-    var socialId: String = ""
+    var socialId: String = EMPTY
 
-    @SerializedName("user_id")
-    var id: String = ""
+    @SerializedName("id")
+    var userId: String = EMPTY
 
     @SerializedName("user_type")
-    var userType: String = ""
+    var userType: String = EMPTY
 
     @SerializedName("source")
-    var source: String = ""
-
-    @SerializedName("isLoggedIn")
-    var isLoggedIn = false
-
+    var source: String = EMPTY
 
     fun update() {
         PrefManager.put(USER_PERSISTANT_KEY, toString())
@@ -61,15 +52,13 @@ open class User {
         return AppObjectController.gsonMapper.toJson(this)
     }
 
+
     fun updateFromResponse(user: User) {
-        this.photo = user.photo
-        this.phoneNumber = user.phoneNumber
-        this.gender = user.gender
-        this.dateOfBirth = user.dateOfBirth
-        this.firstName = user.firstName
-        this.socialId = user.socialId
-        this.userType = user.userType
-        update()
+        user.token = getInstance().token
+        user.phoneNumber = user.phoneNumber
+        user.dateOfBirth = user.dateOfBirth
+        user.gender = user.gender
+        update(user.toString())
     }
 
     companion object {
