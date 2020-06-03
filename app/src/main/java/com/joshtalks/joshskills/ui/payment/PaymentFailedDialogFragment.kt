@@ -11,7 +11,6 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.databinding.FragmentPaymentFailedDialogBinding
 import com.joshtalks.joshskills.ui.payment.order_summary.TRANSACTION_ID
-import kotlinx.android.synthetic.main.fragment_payment_failed_dialog.*
 import java.net.URLEncoder
 
 class PaymentFailedDialogFragment : BottomSheetDialogFragment() {
@@ -38,14 +37,20 @@ class PaymentFailedDialogFragment : BottomSheetDialogFragment() {
         )
         binding.lifecycleOwner = this
         binding.fragment = this
-        transation_id.text = resources.getString(R.string.trx_id, transactionId.toString())
+        binding.transationId.text = resources.getString(R.string.trx_id, transactionId.toString())
         setListeners()
         return binding.root
     }
 
     private fun setListeners() {
-        retry.setOnClickListener { dismiss() }
-        chat_pay.setOnClickListener { openWhatsapp() }
+        binding.retry.setOnClickListener { dismiss() }
+        binding.chatPay.setOnClickListener { openWhatsapp() }
+        binding.close.setOnClickListener { dismissAndCloseActivity() }
+    }
+
+    private fun dismissAndCloseActivity() {
+        dismiss()
+        activity?.finish()
     }
 
     private fun openWhatsapp() {
