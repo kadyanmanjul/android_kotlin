@@ -18,6 +18,7 @@ import com.joshtalks.joshskills.databinding.ActivityStartCourseBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.ui.payment.order_summary.TRANSACTION_ID
 import com.joshtalks.joshskills.ui.pdfviewer.COURSE_NAME
+import com.joshtalks.joshskills.ui.signup_v2.SignUpV2Activity
 import com.joshtalks.joshskills.ui.view_holders.ROUND_CORNER
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation
 
@@ -129,9 +130,10 @@ class StartCourseActivity : CoreJoshActivity() {
         binding.materialButton.setOnClickListener(View.OnClickListener {
             if (isUserRegistered) {
                 startActivity(getInboxActivityIntent())
-                finish()
+                this.finish()
             } else {
-                // TODO(Mohit) - Open Sign Up Activity
+                startActivity(Intent(this, SignUpV2Activity::class.java))
+                this.finish()
             }
         })
 
