@@ -3,10 +3,6 @@
     <string name="inbox_header">Josh Skills</string>
     <string name="help_header">Student Support</string>
 
-    <string name="facebook_app_id">249107439733197</string>
-    <string name="fb_login_protocol_scheme">fb249107439733197</string>
-
-
     <string name="welcome_josh_skill">Welcome to Josh Skills</string>
     <string name="welcome_josh_skill_new">welcome</string>
     <string name="next">Next</string>
@@ -104,7 +100,7 @@
     <string name="google">Google</string>
     <string name="facebook">Facebook</string>
     <string name="confirm_number">Confirm your number</string>
-    <string name="otp_info">A 4 digit number will be sent via SMS to verify \n your mobile number</string>
+    <string name="otp_info">A 4 digit OTP will be sent via SMS to verify \n your mobile number</string>
     <string name="send_otp">Send OTP</string>
 
 
@@ -283,8 +279,36 @@
 
 
     <string name="skip">Skip</string>
-    <string name="bilkul_nahi">Bilkul nahi</string>
-    <string name="abhi_shuru_karein">Abhi shuru karein</string>
+    <string name="bilkul_nahi">No</string>
+    <string name="abhi_shuru_karein">Yes</string>
     <string name="hint_apni_baat">Apni baat yahan likhe</string>
     <string name="npr_thank_you">Thank you \n for your feedback</string>
+
+
+    <!-- Signup V2 Screen  -->
+    <string name="otp_verify_label">Apna OTP verify kare</string>
+    <string name="otp_received_message" formatted="false">Enter the OTP you received to %s </string>
+    <string name="edit_number">Edit number</string>
+    <string name="truecaller_label">True Caller Se Jude </string>
+    <string name="register">Register</string>
+    <string name="your_name">Your Name</string>
+    <string name="phone_number">Phone Number</string>
+    <string name="date_of_birth">Date Of Birth</string>
+    <string name="otp_wait_message">Wait kare. Aapko iss time se \n pehle OTP mil jaayega.</string>
+    <string name="did_not_received_message"> Didn\'t recieve OTP? </string>
+    <string name="enter_valid_details_toast">Please enter valid Email Id or Phone Number</string>
+    <string name="select_gender">Please choose gender</string>
+    <string name="dob_error_toast">Please enter Date of birth</string>
+    <string name="name_error_toast">Name cannot be empty!</string>
+    <string name="please_enter_valid_number">Please enter valid mobile number </string>
+
+    <string name="missed_call_verify_message"> We make use of missed call verification.\nPlease grant permission to verify</string>
+    <string name="otp_verify_message">A 4 digit OTP will be sent via SMS to verify \n your mobile number</string>
+    <string name="missed_call_label">Missed Call Verification </string>
+    <string name="wait_for_second">Wait for %s seconds</string>
+    <string name="retry_miss_call_verify">Retry Missed Call Verification </string>
+    <string name="flash_call_verify_permission_message">For verifying your number, JoshSkills need Calls and Phone permission. Tap Settings > Permissions, and Call logs.</string>
+    <string name="timer_text" formatted="false">00:%s</string>
+    <string name="registration">Registration</string>
+    <!--End-->
 </resources>
