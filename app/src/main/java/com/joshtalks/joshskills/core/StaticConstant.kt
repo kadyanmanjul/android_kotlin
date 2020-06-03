@@ -3,13 +3,17 @@ package com.joshtalks.joshskills.core
 const val ARG_PHONE_NUMBER = "phone_number"
 
 enum class SignUpStepStatus {
-    SignUpStepFirst, SignUpStepSecond, SignUpCompleted, SignUpResendOTP, SignUpWithoutRegister, CoursesNotExist
+    SignUpStepFirst, SignUpStepSecond, SignUpCompleted,
+    RequestForOTP, ReGeneratedOTP, ProfileCompleted,
+    ProfileInCompleted, SignUpResendOTP, SignUpWithoutRegister,
+    WRONG_OTP, ERROR
 }
 
 enum class ApiCallStatus {
     SUCCESS, FAILED, RETRY
 }
 
+const val TIMEOUT_TIME = 60_000L
 const val MESSAGE_CHAT_SIZE_LIMIT = 2048
 const val EMPTY = ""
 
@@ -28,7 +32,19 @@ enum class REFERRAL_EVENT(val type: String) {
 
 
 enum class RegistrationMethods(val type: String) {
-    MOBILE_NUMBER("Mobile Number"), TRUE_CALLER("True Caller")
+    MOBILE_NUMBER("Mobile Number"), TRUE_CALLER("True Caller"), GOOGLE("Google"), FACEBOOK("Facebook")
+}
+
+enum class GENDER(val gValue: String) {
+    MALE("M"), FEMALE("F"), OTHER("O")
+}
+
+enum class VerificationService {
+    TRUECALLER, SINCH, SMS_COUNTRY
+}
+
+enum class VerificationVia {
+    FLASH_CALL, SMS
 }
 
 
