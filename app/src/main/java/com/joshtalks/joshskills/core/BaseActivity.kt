@@ -121,7 +121,7 @@ abstract class BaseActivity : AppCompatActivity() {
 
     fun getIntentForState(): Intent? {
         val intent: Intent? = if (PrefManager.getStringValue(API_TOKEN)
-                .isEmpty() || User.getInstance().phoneNumber.isEmpty()
+                .isEmpty() || User.getInstance().phoneNumber.isEmpty() || User.getInstance().dateOfBirth.isNullOrEmpty()
         ) {
             Intent(this, SignUpV2Activity::class.java)
         } else {
