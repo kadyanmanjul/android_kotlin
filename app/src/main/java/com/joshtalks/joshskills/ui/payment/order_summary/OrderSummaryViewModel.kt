@@ -35,6 +35,11 @@ class OrderSummaryViewModel(application: Application) : AndroidViewModel(applica
     var mPaymentDetailsResponse = MediatorLiveData<OrderDetailResponse>()
     var viewState: MutableLiveData<ViewState>? = null
     val isRegisteredAlready by lazy { Mentor.getInstance().getId().isNotBlank() }
+    val hasMobileNumber by lazy {
+        User.getInstance().phoneNumber.isNotBlank() && PrefManager.getStringValue(
+            PAYMENT_MOBILE_NUMBER
+        ).isNotBlank()
+    }
 
     init {
         if (viewState == null) {
@@ -93,7 +98,6 @@ class OrderSummaryViewModel(application: Application) : AndroidViewModel(applica
                 )
                 if (isRegisteredAlready) {
                     data["mentor_id"] = Mentor.getInstance().getId()
-                    data["mobile"] = User.getInstance().phoneNumber
                 }
                 val paymentDetailsResponse: Response<OrderDetailResponse> =
                     AppObjectController.signUpNetworkService.createPaymentOrder(data).await()

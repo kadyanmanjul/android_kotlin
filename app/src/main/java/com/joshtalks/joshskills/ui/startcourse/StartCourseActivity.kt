@@ -87,7 +87,8 @@ class StartCourseActivity : CoreJoshActivity() {
     private fun getCustomString(string: String) = SpannableStringBuilder(string)
 
     private fun getIntentData() {
-        courseName = dataFromIntent(COURSE_NAME)
+        val string = dataFromIntent(COURSE_NAME).split("with")
+        courseName = string[0]
         teacherName = dataFromIntent(TEACHER_NAME)
         imageUrl = dataFromIntent(IMAGE_URL)
         transactionId = dataFromIntent(TRANSACTION_ID)

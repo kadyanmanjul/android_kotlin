@@ -41,7 +41,7 @@
     <string name="profile_photo">Profile photo</string>
 
     <string name="splash_sub_string">ज़िन्दगी में आगे बढ़ो, जोश के साथ</string>
-    <string name="splash_sub_string_english">Zindagi mein aage bhado,josh\n ke sath </string>
+    <string name="splash_sub_string_english">Zindagi mein aage bhado,\njosh ke sath </string>
 
     <string name="open">OPEN</string>
     <string name="submit">Submit</string>
@@ -64,7 +64,7 @@
     <string name="buy_course">Buy Course</string>
 
     <string name="explore">Explore</string>
-    <string name="explore_new">Courses Dekhe</string>
+    <string name="explore_new">Course Dekhe</string>
 
     <string name="explorer_courses">Explore Courses</string>
     <string name="start_course">Start Course</string>
