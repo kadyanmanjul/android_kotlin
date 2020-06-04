@@ -79,7 +79,8 @@ class PaymentSummaryActivity : CoreJoshActivity(),
     private lateinit var viewModel: OrderSummaryViewModel
     val PHONE_NUMBER_REGEX = Regex(pattern = "^[6789]\\d{9}\$")
     private var isEcommereceEventFire = true
-    private var npsShow = true
+    // TODO (Later)--> payment failed
+    private var npsShow = false
     private var isBackPressDisabled = false
     private var razorpayOrderId = EMPTY
 
