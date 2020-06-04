@@ -44,6 +44,7 @@ import com.joshtalks.joshskills.repository.local.entity.NPSEventModel
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.OrderDetailResponse
+import com.joshtalks.joshskills.ui.payment.ChatNPayDialogFragment
 import com.joshtalks.joshskills.ui.payment.PaymentFailedDialogFragment
 import com.joshtalks.joshskills.ui.payment.PaymentProcessingFragment
 import com.joshtalks.joshskills.ui.payment.PaymentSuccessFragment
@@ -517,6 +518,17 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                 R.id.parent_Container,
                 PaymentSuccessFragment.newInstance(),
                 "Payment Success"
+            )
+            .commit()
+    }
+
+    private fun showChatNPayDialog() {
+        supportFragmentManager
+            .beginTransaction()
+            .replace(
+                R.id.parent_Container,
+                ChatNPayDialogFragment.newInstance(),
+                "Chat N Pay"
             )
             .commit()
     }
