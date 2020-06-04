@@ -9,21 +9,12 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.databinding.FragmentPaymentFailedDialogBinding
-import com.joshtalks.joshskills.ui.payment.order_summary.TRANSACTION_ID
+import com.joshtalks.joshskills.databinding.FragmentChatNPayBinding
 
-const val WHATSAPP_URL_PAYMENT_FAILED = "http://english-new.joshtalks.org/whats_app/201"
+const val WHATSAPP_URL_BANGLADESH = "http://english-new.joshtalks.org/whats_app/202"
 
-class PaymentFailedDialogFragment : BottomSheetDialogFragment() {
-    private lateinit var binding: FragmentPaymentFailedDialogBinding
-    private var transactionId: Int = 0
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            transactionId = it.getInt(TRANSACTION_ID)
-        }
-    }
+class ChatNPayDialogFragment : BottomSheetDialogFragment() {
+    private lateinit var binding: FragmentChatNPayBinding
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -32,19 +23,17 @@ class PaymentFailedDialogFragment : BottomSheetDialogFragment() {
         isCancelable = false
         binding = DataBindingUtil.inflate(
             inflater,
-            R.layout.fragment_payment_failed_dialog,
+            R.layout.fragment_chat_n_pay,
             container,
             false
         )
         binding.lifecycleOwner = this
         binding.fragment = this
-        binding.transationId.text = resources.getString(R.string.trx_id, transactionId.toString())
         setListeners()
         return binding.root
     }
 
     private fun setListeners() {
-        binding.retry.setOnClickListener { dismiss() }
         binding.chatPay.setOnClickListener { openWhatsapp() }
         binding.close.setOnClickListener { dismissAndCloseActivity() }
     }
@@ -57,7 +46,7 @@ class PaymentFailedDialogFragment : BottomSheetDialogFragment() {
     private fun openWhatsapp() {
         val intent = Intent().apply {
             action = Intent.ACTION_VIEW
-            data = Uri.parse(WHATSAPP_URL_PAYMENT_FAILED)
+            data = Uri.parse(WHATSAPP_URL_BANGLADESH)
         }
         startActivity(intent)
         activity?.finish()
@@ -65,11 +54,6 @@ class PaymentFailedDialogFragment : BottomSheetDialogFragment() {
 
     companion object {
         @JvmStatic
-        fun newInstance(transactionId: Int) =
-            PaymentFailedDialogFragment().apply {
-                arguments = Bundle().apply {
-                    putInt(TRANSACTION_ID, transactionId)
-                }
-            }
+        fun newInstance() = PaymentFailedDialogFragment()
     }
 }

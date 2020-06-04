@@ -148,7 +148,8 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
                 val trueCallerLoginRequest = TrueCallerLoginRequest(
                     profile.payload,
                     profile.signature,
-                    profile.signatureAlgorithm
+                    profile.signatureAlgorithm,
+                    PrefManager.getStringValue(INSTANCE_ID)
                 )
                 val response: LoginResponse =
                     AppObjectController.signUpNetworkService.verifyViaTrueCaller(

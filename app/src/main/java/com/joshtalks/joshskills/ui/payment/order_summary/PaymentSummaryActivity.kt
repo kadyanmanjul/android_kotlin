@@ -44,6 +44,7 @@ import com.joshtalks.joshskills.repository.local.entity.NPSEventModel
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.OrderDetailResponse
+import com.joshtalks.joshskills.ui.payment.ChatNPayDialogFragment
 import com.joshtalks.joshskills.ui.payment.PaymentFailedDialogFragment
 import com.joshtalks.joshskills.ui.payment.PaymentProcessingFragment
 import com.joshtalks.joshskills.ui.payment.PaymentSuccessFragment
@@ -79,7 +80,8 @@ class PaymentSummaryActivity : CoreJoshActivity(),
     private lateinit var viewModel: OrderSummaryViewModel
     val PHONE_NUMBER_REGEX = Regex(pattern = "^[6789]\\d{9}\$")
     private var isEcommereceEventFire = true
-    private var npsShow = true
+    // TODO (Later)--> payment failed
+    private var npsShow = false
     private var isBackPressDisabled = false
     private var razorpayOrderId = EMPTY
 
@@ -516,6 +518,17 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                 R.id.parent_Container,
                 PaymentSuccessFragment.newInstance(),
                 "Payment Success"
+            )
+            .commit()
+    }
+
+    private fun showChatNPayDialog() {
+        supportFragmentManager
+            .beginTransaction()
+            .replace(
+                R.id.parent_Container,
+                ChatNPayDialogFragment.newInstance(),
+                "Chat N Pay"
             )
             .commit()
     }
