@@ -55,7 +55,8 @@ object WorkMangerAdmin {
                     OneTimeWorkRequestBuilder<UserActiveWorker>().build(),
                     OneTimeWorkRequestBuilder<ReferralCodeRefreshWorker>().build(),
                     OneTimeWorkRequestBuilder<SyncEngageVideo>().build(),
-                    OneTimeWorkRequestBuilder<FeedbackRatingWorker>().build()
+                    OneTimeWorkRequestBuilder<FeedbackRatingWorker>().build(),
+                    OneTimeWorkRequestBuilder<SyncSavedNPSFeedbackWorker>().build()
                 )
             ).enqueue()
     }
