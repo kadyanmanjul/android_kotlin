@@ -17,7 +17,7 @@ import android.util.TypedValue
 import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
-import android.widget.Toast
+import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
@@ -54,6 +54,7 @@ import com.joshtalks.joshskills.ui.startcourse.StartCourseActivity
 import com.joshtalks.joshskills.ui.view_holders.ROUND_CORNER
 import com.razorpay.Checkout
 import com.razorpay.PaymentResultListener
+import com.sinch.verification.PhoneNumberUtils
 import io.branch.referral.util.BRANCH_STANDARD_EVENT
 import io.branch.referral.util.CurrencyType
 import io.github.inflationx.calligraphy3.TypefaceUtils
@@ -78,7 +79,6 @@ class PaymentSummaryActivity : CoreJoshActivity(),
     lateinit var multiLineLL: LinearLayout
     lateinit var typefaceSpan: Typeface
     private lateinit var viewModel: OrderSummaryViewModel
-    val PHONE_NUMBER_REGEX = Regex(pattern = "^[6789]\\d{9}\$")
     private var isEcommereceEventFire = true
     // TODO (Later)--> payment failed
     private var npsShow = false
@@ -124,9 +124,19 @@ class PaymentSummaryActivity : CoreJoshActivity(),
             assets,
             "fonts/Roboto-Regular.ttf"
         )
+        initToolbarView()
         initViewModel()
         subscribeObservers()
         initCountryCode()
+    }
+
+    private fun initToolbarView() {
+        val titleView = findViewById<AppCompatTextView>(R.id.text_message_title)
+        titleView.text = getString(R.string.order_summary)
+        findViewById<View>(R.id.iv_back).visibility = View.VISIBLE
+        findViewById<View>(R.id.iv_back).setOnClickListener {
+            this.finish()
+        }
     }
 
     @SuppressLint("SetTextI18n")
@@ -159,6 +169,8 @@ class PaymentSummaryActivity : CoreJoshActivity(),
             val df = DecimalFormat("###,###", DecimalFormatSymbols(Locale.US))
             val enrollUser = df.format(it.totalEnrolled)
             binding.enrolled.text = enrollUser.plus("+")
+            binding.enrolled.text = enrollUser.plus("+")
+            binding.enrolled.setTypeface(binding.enrolled.typeface, Typeface.BOLD)
             binding.rating.text = it.rating.toString()
 
             val multi = MultiTransformation(
@@ -174,7 +186,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                 .override(Target.SIZE_ORIGINAL)
                 .into(binding.profileImage)
             binding.txtPrice.text =
-                "₹ ${String.format("%.2f", it.discountAmount)}"
+                "₹ ${String.format("%.2f", it.amount)}"
             binding.materialButton.text =
                 "Pay ₹ ${it.discountAmount.roundToInt()}"
             multiLineLL = binding.multiLineLl
@@ -190,18 +202,22 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                 binding.textView1.text = it.couponDetails.name
                 binding.tvTip.text = it.couponDetails.title
                 binding.tvTipValid.text = it.couponDetails.validity
-                binding.tvTipValid.text = it.couponDetails.header
+                binding.tvTipOff.text = it.couponDetails.header
                 binding.group1.visibility = View.GONE
                 binding.badeBhaiyaTipContainer.visibility = View.VISIBLE
                 binding.badeBhaiyaTipContainer.setOnClickListener {
                     binding.badeBhaiyaTipContainer.visibility = View.INVISIBLE
+                    binding.txtPrice.text =
+                        "₹ ${String.format("%.2f", viewModel.getCourseAmount())}"
                     binding.tipUsedMsg.visibility = View.VISIBLE
                 }
             }
         })
-        if (viewModel.isRegisteredAlready) {
+        if (viewModel.hasMobileNumber) {
             binding.group1.visibility = View.GONE
-        } else requestHint()
+        }
+        if (viewModel.isRegisteredAlready.not())
+            requestHint()
 
         viewModel.mPaymentDetailsResponse.observe(this, androidx.lifecycle.Observer {
             initializeRazorpayPayment(it)
@@ -239,10 +255,12 @@ class PaymentSummaryActivity : CoreJoshActivity(),
             try {
                 val preFill = JSONObject()
                     .put("email", Utils.getUserPrimaryEmail(applicationContext))
-                if (!viewModel.isRegisteredAlready)
+                if (!viewModel.hasMobileNumber)
                     preFill.put("contact", binding.mobileEt.text.toString())
-                else
+                else if (User.getInstance().phoneNumber.isNotBlank())
                     preFill.put("contact", User.getInstance().phoneNumber)
+                else
+                    preFill.put("contact", PrefManager.getStringValue(PAYMENT_MOBILE_NUMBER))
                 val options = JSONObject()
                 options.put("key", response.razorpayKeyId)
                 options.put("name", "Josh Skills")
@@ -334,31 +352,31 @@ class PaymentSummaryActivity : CoreJoshActivity(),
             showToast(getString(R.string.internet_not_available_msz))
             return
         }
-        if (viewModel.isRegisteredAlready.not()) {
-            if (binding.mobileEt.text.isNullOrEmpty()) {
-                Toast.makeText(
-                    AppObjectController.joshApplication,
-                    getString(R.string.please_enter_your_mobile_number),
-                    Toast.LENGTH_SHORT
-                ).show()
-                return
+        val defaultRegion: String = PhoneNumberUtils.getDefaultCountryIso(applicationContext)
+        if (defaultRegion == "IN") {
+            if (viewModel.hasMobileNumber.not()) {
+                if (binding.mobileEt.text.isNullOrEmpty()) {
+                    binding.inputLayoutPassword.error = "Please enter your phone number first"
+                    binding.inputLayoutPassword.isErrorEnabled = true
+                    return
+                } else if (isValidFullNumber(
+                        binding.mobileEt.prefix,
+                        binding.mobileEt.text.toString()
+                    ).not()
+                ) {
+                    binding.inputLayoutPassword.error = "Please enter valid phone number"
+                    binding.inputLayoutPassword.isErrorEnabled = true
+                    return
+                } else viewModel.getOrderDetails(testId, binding.mobileEt.text.toString())
+                binding.inputLayoutPassword.isErrorEnabled = false
+            } else if (User.getInstance().phoneNumber.isNotBlank())
+                viewModel.getOrderDetails(testId, User.getInstance().phoneNumber)
+            else
+                viewModel.getOrderDetails(testId, PrefManager.getStringValue(PAYMENT_MOBILE_NUMBER))
+        } else
+            uiHandler.post {
+                showChatNPayDialog()
             }
-            if (validationForIndiaOnly() && validPhoneNumber(binding.mobileEt.text.toString()).not()) {
-                binding.inputLayoutPassword.error = "Please enter valid phone number"
-                binding.inputLayoutPassword.isErrorEnabled = true
-                return
-            }
-            binding.inputLayoutPassword.isErrorEnabled = false
-        }
-        viewModel.getOrderDetails(testId, binding.mobileEt.text.toString())
-    }
-
-    private fun validPhoneNumber(number: String): Boolean {
-        return this.PHONE_NUMBER_REGEX.containsMatchIn(input = number)
-    }
-
-    private fun validationForIndiaOnly(): Boolean {
-        return binding.mobileEt.prefix.startsWith("+91")
     }
 
     fun clearText() {
@@ -399,7 +417,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
 
         uiHandler.postDelayed({
             showPaymentSuccessfulFragment()
-        }, 1000 * 10)
+        }, 1000 * 5)
 
         uiHandler.postDelayed({
             StartCourseActivity.openStartCourseActivity(
@@ -410,7 +428,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                 viewModel.mPaymentDetailsResponse.value?.joshtalksOrderId ?: 0
             )
             this@PaymentSummaryActivity.finish()
-        }, 1000 * 15)
+        }, 1000 * 8)
 
         FlurryAgent.UserProperties.set(FlurryAgent.UserProperties.PROPERTY_PURCHASER, "true")
     }
