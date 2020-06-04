@@ -11,7 +11,8 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.databinding.FragmentPaymentFailedDialogBinding
 import com.joshtalks.joshskills.ui.payment.order_summary.TRANSACTION_ID
-import java.net.URLEncoder
+
+const val WHATSAPP_URL_PAYMENT_FAILED = "http://english-new.joshtalks.org/whats_app/201"
 
 class PaymentFailedDialogFragment : BottomSheetDialogFragment() {
     private lateinit var binding: FragmentPaymentFailedDialogBinding
@@ -54,24 +55,13 @@ class PaymentFailedDialogFragment : BottomSheetDialogFragment() {
     }
 
     private fun openWhatsapp() {
-        val text = "Pay on Whatsapp"
-        val phoneNumber = "91xxxxxxxxxx"
-        val whatsappUrl = generateWhatsappUrl(text, phoneNumber)
-
         val intent = Intent().apply {
             action = Intent.ACTION_VIEW
-            data = Uri.parse(whatsappUrl)
+            data = Uri.parse(WHATSAPP_URL_PAYMENT_FAILED)
         }
         startActivity(intent)
         activity?.finish()
     }
-
-    private fun generateWhatsappUrl(text: String?, phoneNumber: String?) =
-        if (text != null) {
-            "https://wa.me/${phoneNumber ?: ""}?text=${URLEncoder.encode(text, "utf-8")}"
-        } else {
-            "https://wa.me/${phoneNumber ?: ""}"
-        }
 
     companion object {
         @JvmStatic
