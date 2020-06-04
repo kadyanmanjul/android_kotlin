@@ -10,12 +10,9 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.textview.MaterialTextView
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.GENDER
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.custom_ui.spinnerdatepicker.DatePickerDialog
 import com.joshtalks.joshskills.core.custom_ui.spinnerdatepicker.SpinnerDatePickerDialogBuilder
-import com.joshtalks.joshskills.core.isValidFullNumber
-import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.FragmentSignUpProfileBinding
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.ui.profile.MAX_YEAR
@@ -99,20 +96,26 @@ class SignUpProfileFragment : BaseSignUpFragment() {
         initCountryCodePicker()
         val user = User.getInstance()
         binding.nameEditText.setText(user.firstName)
-        if (user.email.isNotEmpty()) {
+        if (user.email.isNotBlank()) {
             binding.emailEditText.setText(user.email)
             binding.emailEditText.isFocusableInTouchMode = false
             binding.emailEditText.isEnabled = false
             binding.emailEditText.setOnClickListener(null)
         }
-        if (user.phoneNumber.isNotEmpty()) {
+        if (user.phoneNumber.isNotBlank()) {
             binding.phoneNumberEt.setText(user.phoneNumber)
             binding.phoneNumberEt.isFocusableInTouchMode = false
             binding.phoneNumberEt.isEnabled = false
             binding.ivTick.visibility = View.VISIBLE
             binding.phoneNumberEt.prefix = EMPTY
+        } else if (PrefManager.getStringValue(PAYMENT_MOBILE_NUMBER).isNotBlank()) {
+            val string = PrefManager.getStringValue(PAYMENT_MOBILE_NUMBER).split(SINGLE_SPACE)
+            binding.phoneNumberEt.setText(string[1])
+            binding.phoneNumberEt.isFocusableInTouchMode = false
+            binding.phoneNumberEt.isEnabled = false
+            binding.ivTick.visibility = View.VISIBLE
+            binding.phoneNumberEt.prefix = string[0]
         }
-
     }
 
     private fun initCountryCodePicker() {
