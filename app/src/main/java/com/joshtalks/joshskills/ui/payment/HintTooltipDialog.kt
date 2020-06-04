@@ -88,9 +88,9 @@ class HintTooltipDialog : DialogFragment() {
 
         compositeDisposable.add(AppObjectController.appDatabase
             .courseDao()
-            .isUserOldThen7Days()
+            .isUserInOfferDays()
             .concatMap {
-                val (_, dayRemain) = com.joshtalks.joshskills.core.Utils.isUser7DaysOld(it.courseCreatedDate)
+                val (_, dayRemain) = com.joshtalks.joshskills.core.Utils.isUserInDaysOld(it.courseCreatedDate)
                 return@concatMap Maybe.just(dayRemain)
             }
             .subscribeOn(Schedulers.io())

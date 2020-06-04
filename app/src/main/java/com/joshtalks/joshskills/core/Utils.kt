@@ -650,14 +650,16 @@ object Utils {
     }
 
 
-    fun isUser7DaysOld(courseCreatedDate: Date?): Pair<Boolean, Int> {
+    fun isUserInDaysOld(courseCreatedDate: Date?): Pair<Boolean, Int> {
         if (courseCreatedDate == null) {
             return Pair(false, 0)
         }
         val todayDate = Date()
         val diff = todayDate.time - courseCreatedDate.time
         val daysDiff = 7 - TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS)
-        if (daysDiff in 0..7) {
+        val offerDays =
+            AppObjectController.getFirebaseRemoteConfig().getLong("COURSE_BUY_MIN_OFFER_DAYS")
+        if (daysDiff <= offerDays) {
             return Pair(true, daysDiff.toInt())
         }
         return Pair(false, daysDiff.toInt())

@@ -406,9 +406,9 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         if (PrefManager.getBoolValue(FIRST_TIME_OFFER_SHOW).not()) {
             PrefManager.put(FIRST_TIME_OFFER_SHOW, true)
             compositeDisposable.add(AppObjectController.appDatabase.courseDao()
-                .isUserOldThen7Days()
+                .isUserInOfferDays()
                 .concatMap {
-                    val (flag, _) = Utils.isUser7DaysOld(it.courseCreatedDate)
+                    val (flag, _) = Utils.isUserInDaysOld(it.courseCreatedDate)
                     return@concatMap Maybe.just(flag)
                 }
                 .subscribeOn(Schedulers.io())
@@ -489,11 +489,12 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
     }
 
     fun attachOfferHintView() {
-        compositeDisposable.add(AppObjectController.appDatabase
-            .courseDao()
-            .isUserOldThen7Days()
+        compositeDisposable.add(
+            AppObjectController.appDatabase
+                .courseDao()
+                .isUserInOfferDays()
             .concatMap {
-                val (flag, _) = Utils.isUser7DaysOld(it.courseCreatedDate)
+                val (flag, _) = Utils.isUserInDaysOld(it.courseCreatedDate)
                 return@concatMap Maybe.just(flag)
             }
             .subscribeOn(Schedulers.io())

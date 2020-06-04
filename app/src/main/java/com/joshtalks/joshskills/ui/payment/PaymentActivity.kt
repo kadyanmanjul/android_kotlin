@@ -292,9 +292,9 @@ class PaymentActivity : CoreJoshActivity(), CouponCodeSubmitFragment.OnCouponCod
 
                     compositeDisposable.add(AppObjectController.appDatabase
                         .courseDao()
-                        .isUserOldThen7Days()
+                        .isUserInOfferDays()
                         .concatMap {
-                            val (flag, _) = Utils.isUser7DaysOld(it.courseCreatedDate)
+                            val (flag, _) = Utils.isUserInDaysOld(it.courseCreatedDate)
                             return@concatMap Maybe.just(flag)
                         }
                         .subscribeOn(Schedulers.io())
@@ -593,12 +593,13 @@ class PaymentActivity : CoreJoshActivity(), CouponCodeSubmitFragment.OnCouponCod
     }
 
     private fun userHaveSpecialDiscount() {
-        compositeDisposable.add(AppObjectController.appDatabase
-            .courseDao()
-            .isUserOldThen7Days()
+        compositeDisposable.add(
+            AppObjectController.appDatabase
+                .courseDao()
+                .isUserInOfferDays()
             .subscribeOn(Schedulers.io())
             .concatMap {
-                val (flag, _) = Utils.isUser7DaysOld(it.courseCreatedDate)
+                val (flag, _) = Utils.isUserInDaysOld(it.courseCreatedDate)
                 return@concatMap Maybe.just(flag)
             }
             .subscribe(
