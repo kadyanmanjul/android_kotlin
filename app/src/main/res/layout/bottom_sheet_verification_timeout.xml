@@ -56,7 +56,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_64sdp"
-                android:text="Verification Failed"
+                android:text="@string/verification_failed"
                 android:textColor="@color/font_color"
                 android:textSize="@dimen/font_20"
                 app:layout_constraintEnd_toEndOf="parent"

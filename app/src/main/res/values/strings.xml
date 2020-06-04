@@ -287,7 +287,7 @@
 
     <!-- Signup V2 Screen  -->
     <string name="otp_verify_label">Apna OTP verify kare</string>
-    <string name="otp_received_message" formatted="false">Enter the OTP you received to %s </string>
+    <string name="otp_received_message" formatted="false">Enter the OTP you received to \n  %s </string>
     <string name="edit_number">Edit number</string>
     <string name="truecaller_label">True Caller Se Jude </string>
     <string name="register">Register</string>
@@ -310,6 +310,12 @@
     <string name="flash_call_verify_permission_message">For verifying your number, JoshSkills need Calls and Phone permission. Tap Settings > Permissions, and Call logs.</string>
     <string name="timer_text" formatted="false">00:%s</string>
     <string name="registration">Registration</string>
+    <string name="verification_failed">Verification Failed</string>
+    <string name="gender">Gender</string>
+    <string name="male">Male</string>
+    <string name="female">Female</string>
+    <string name="other">Other</string>
+
     <!--End-->
     <string name="page_number" formatted="false">Page %s / %s</string>
 </resources>

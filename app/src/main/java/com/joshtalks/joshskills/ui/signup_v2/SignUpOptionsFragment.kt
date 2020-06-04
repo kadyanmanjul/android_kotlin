@@ -12,6 +12,8 @@ import androidx.lifecycle.ViewModelProvider
 import com.github.razir.progressbutton.*
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
+import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.databinding.FragmentSignUpOptionsBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.LoginViaEventBus
@@ -138,6 +140,10 @@ class SignUpOptionsFragment : BaseSignUpFragment() {
         evaluateVerificationService()
     }
 
+    fun clearPhoneNumber() {
+        binding.mobileEt.setText(EMPTY)
+    }
+
     private fun setupVerificationSystem(countryRegion: String? = null) {
         var defaultRegion: String = countryRegion ?: EMPTY
         if (defaultRegion.isEmpty()) {
@@ -258,6 +264,11 @@ class SignUpOptionsFragment : BaseSignUpFragment() {
     override fun retryVerificationThrowFlashCall() {
         verificationVia = VerificationVia.FLASH_CALL
         updateLoginButtonText()
+        AppAnalytics.create(AnalyticsEvent.LOGIN_INITIATED.NAME)
+            .addBasicParam()
+            .addUserDetails()
+            .addParam(AnalyticsEvent.LOGIN_VIA.NAME, AnalyticsEvent.MOBILE_OTP_PARAM.NAME)
+            .push()
     }
 
     override fun retryVerificationThrowSms() {

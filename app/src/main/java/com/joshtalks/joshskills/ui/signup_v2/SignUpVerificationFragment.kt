@@ -10,6 +10,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import com.joshtalks.joshlibrary.codeinputview.OTPListener
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
@@ -58,8 +59,18 @@ class SignUpVerificationFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.otpView.setText(EMPTY)
-        binding.otpView.requestFocus()
+        // binding.otpView.setText(EMPTY)
+        //  binding.otpView.requestFocus()
+        binding.otpView2.otpListener = object : OTPListener {
+            override fun onOTPComplete(otp: String) {
+                verifyOTP()
+            }
+
+            override fun onInteractionListener() {
+            }
+
+        }
+
         binding.textView2.text = getString(
             R.string.otp_received_message,
             viewModel.countryCode + " " + viewModel.phoneNumber
@@ -70,7 +81,7 @@ class SignUpVerificationFragment : Fragment() {
         viewModel.signUpStatus.observe(this, Observer {
             it?.run {
                 if (this == SignUpStepStatus.ReGeneratedOTP || this == SignUpStepStatus.WRONG_OTP) {
-                    binding.otpView.setText(EMPTY)
+                    binding.otpView2.otp = EMPTY
                     lastTime = 0
                     startVerificationTimer()
                 }
@@ -106,7 +117,7 @@ class SignUpVerificationFragment : Fragment() {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
-                    binding.otpView.setText(it.otp)
+                    binding.otpView2.otp = it.otp
                 }, {
                     it.printStackTrace()
                 })
@@ -146,10 +157,11 @@ class SignUpVerificationFragment : Fragment() {
     }
 
     fun verifyOTP() {
-        if (binding.otpView.text.isNullOrEmpty().not() || viewModel.otpField.get().isNullOrEmpty()
+
+        if (binding.otpView2.otp.isNullOrEmpty().not() || viewModel.otpField.get().isNullOrEmpty()
                 .not()
         ) {
-            viewModel.verifyOTP(binding.otpView.text?.toString())
+            viewModel.verifyOTP(binding.otpView2.otp)
             AppAnalytics.create(AnalyticsEvent.OTP_SCREEN_SATUS.NAME)
                 .addParam(AnalyticsEvent.NEXT_OTP_CLICKED.NAME, "Otp Submitted")
                 .push()

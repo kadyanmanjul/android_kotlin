@@ -279,14 +279,38 @@ class SignUpV2Activity : BaseActivity() {
                 .subscribe({
                     when (it.loginViaStatus) {
                         LoginViaStatus.FACEBOOK -> {
+                            AppAnalytics.create(AnalyticsEvent.LOGIN_INITIATED.NAME)
+                                .addBasicParam()
+                                .addUserDetails()
+                                .addParam(
+                                    AnalyticsEvent.LOGIN_VIA.NAME,
+                                    AnalyticsEvent.FACEBOOK_PARAM.NAME
+                                )
+                                .push()
                             showProgressBar()
                             facebookLogin()
                         }
                         LoginViaStatus.GMAIL -> {
+                            AppAnalytics.create(AnalyticsEvent.LOGIN_INITIATED.NAME)
+                                .addBasicParam()
+                                .addUserDetails()
+                                .addParam(
+                                    AnalyticsEvent.LOGIN_VIA.NAME,
+                                    AnalyticsEvent.GMAIL_PARAM.NAME
+                                )
+                                .push()
                             showProgressBar()
                             gmailLogin()
                         }
                         LoginViaStatus.TRUECALLER -> {
+                            AppAnalytics.create(AnalyticsEvent.LOGIN_INITIATED.NAME)
+                                .addBasicParam()
+                                .addUserDetails()
+                                .addParam(
+                                    AnalyticsEvent.LOGIN_VIA.NAME,
+                                    AnalyticsEvent.TRUECALLER_PARAM.NAME
+                                )
+                                .push()
                             showProgressBar()
                             trueCallerLogin()
                         }
@@ -294,6 +318,14 @@ class SignUpV2Activity : BaseActivity() {
                             viewModel.signUpAfterPhoneVerify(it.countryCode, it.mNumber)
                         }
                         else -> {
+                            AppAnalytics.create(AnalyticsEvent.LOGIN_INITIATED.NAME)
+                                .addBasicParam()
+                                .addUserDetails()
+                                .addParam(
+                                    AnalyticsEvent.LOGIN_VIA.NAME,
+                                    AnalyticsEvent.MOBILE_OTP_PARAM.NAME
+                                )
+                                .push()
                             viewModel.signUpUsingSMS(it.countryCode, it.mNumber)
                         }
                     }

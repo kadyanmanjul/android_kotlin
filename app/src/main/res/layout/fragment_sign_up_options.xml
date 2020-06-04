@@ -235,6 +235,7 @@
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:clickable="true"
                     android:focusable="true"
+                    android:onClick="@{()->handler.clearPhoneNumber()}"
                     android:gravity="center_vertical|start"
                     android:padding="@dimen/_4sdp"
                     app:layout_constraintBottom_toBottomOf="parent"

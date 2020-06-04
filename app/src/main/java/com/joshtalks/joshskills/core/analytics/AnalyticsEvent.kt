@@ -38,6 +38,9 @@ enum class AnalyticsEvent(val NAME: String) {
     LOGIN_INITIATED("Login Initiated V3"),//  called in both onBoardActivity and from payment LoginDialogFragment
     LOGIN_WITH_TRUECALLER("Login With Truecaller V3"),
     LOGIN_WITH_OTP("Login With Otp V3"),
+    LOGIN_WITH_GMAIL("Login With Gmail V3"),
+    LOGIN_WITH_FACEBOOK("Login With Facebook V3"),
+
 
     //LOGIN with otp
     PHONENO_ENTERED_NEXT_BTN_CLICKED("Phone Number Entered Next Button Clicked V3"),
@@ -55,6 +58,7 @@ enum class AnalyticsEvent(val NAME: String) {
     TRUECALLER_PARAM("Truecaller V3"),
     GMAIL_PARAM("Gmail V3"),
     FACEBOOK_PARAM("Facebook V3"),
+    SINCH_PARAM("Sinch V3"),
     STATUS("Status param V3"),
     USER_DETAILS("User Details V3"),
     SUCCESS_PARAM("Status success V3"),

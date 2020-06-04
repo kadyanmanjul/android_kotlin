@@ -11,6 +11,8 @@ import com.google.android.gms.auth.api.credentials.*
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
+import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.LogException
 import com.joshtalks.joshskills.core.interfaces.OnSelectVerificationMethodListener
 import com.joshtalks.joshskills.messaging.RxBus2
@@ -125,9 +127,15 @@ open class BaseSignUpFragment : Fragment(), OnSelectVerificationMethodListener {
     ) {
         when (service) {
             VerificationService.SINCH -> {
+                AppAnalytics.create(AnalyticsEvent.LOGIN_INITIATED.NAME)
+                    .addBasicParam()
+                    .addUserDetails()
+                    .addParam(AnalyticsEvent.LOGIN_VIA.NAME, AnalyticsEvent.SINCH_PARAM.NAME)
+                    .push()
                 verificationThroughSinch(phoneNumber, verificationVia)
             }
             VerificationService.TRUECALLER -> {
+
                 verificationThroughTrueCaller(phoneNumber, verificationVia)
             }
             else -> {
@@ -168,6 +176,7 @@ open class BaseSignUpFragment : Fragment(), OnSelectVerificationMethodListener {
             override fun onVerified() {
                 Timber.tag("Verification Number Sinch").e("Sinch Verify Completed")
                 onVerificationNumberCompleted()
+
             }
 
             override fun onInitiated(p0: InitiationResult) {
