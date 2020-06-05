@@ -79,6 +79,15 @@
         <key>COURSE_BUY_MIN_OFFER_DAYS</key>
         <value>5</value>
     </entry>
+    <entry>
+        <key>SUPPORTED_COUNTRY_LIST</key>
+        <value></value>
+    </entry>
+
+    <entry>
+        <key>COURSE_MAX_OFFER_PER</key>
+        <value>50%</value>
+    </entry>
 
 
 </defaultsMap>
