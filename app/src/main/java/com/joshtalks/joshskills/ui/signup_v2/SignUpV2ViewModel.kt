@@ -25,11 +25,14 @@ import com.truecaller.android.sdk.TrueProfile
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
+
 class SignUpV2ViewModel(application: Application) :
     AndroidViewModel(application) {
     private val _signUpStatus: MutableLiveData<SignUpStepStatus> = MutableLiveData()
     val signUpStatus: LiveData<SignUpStepStatus> = _signUpStatus
     val progressBarStatus: MutableLiveData<Boolean> = MutableLiveData()
+
+    val verificationStatus: MutableLiveData<VerificationStatus> = MutableLiveData()
 
     val otpField = ObservableField<String>()
     var context: JoshApplication = getApplication()
@@ -256,15 +259,13 @@ class SignUpV2ViewModel(application: Application) :
 
     private fun analyzeUserProfile() {
         val user = User.getInstance()
-        if (user.email.isNotEmpty() && user.phoneNumber.isNotEmpty()) {
-            if (user.firstName.isEmpty() || user.dateOfBirth.isNullOrEmpty()) {
-                _signUpStatus.postValue(SignUpStepStatus.ProfileInCompleted)
-            } else {
-                _signUpStatus.postValue(SignUpStepStatus.SignUpCompleted)
-            }
-        } else {
+        if (user.phoneNumber.isNotEmpty() && user.firstName.isEmpty()) {
             _signUpStatus.postValue(SignUpStepStatus.ProfileInCompleted)
         }
+        if (user.firstName.isEmpty()) {
+            _signUpStatus.postValue(SignUpStepStatus.ProfileInCompleted)
+        }
+        _signUpStatus.postValue(SignUpStepStatus.SignUpCompleted)
     }
 
 
@@ -300,7 +301,7 @@ class SignUpV2ViewModel(application: Application) :
     }
 
 
-    private fun registerSMSReceiver() {
+    fun registerSMSReceiver() {
         val client = SmsRetriever.getClient(context)
         val task: Task<Void> = client.startSmsRetriever()
         task.addOnSuccessListener {
@@ -313,6 +314,5 @@ class SignUpV2ViewModel(application: Application) :
 
         }
     }
-
 
 }
