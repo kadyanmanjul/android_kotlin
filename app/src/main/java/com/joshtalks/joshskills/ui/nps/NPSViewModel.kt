@@ -5,9 +5,9 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.joshtalks.joshskills.core.API_TOKEN
 import com.joshtalks.joshskills.core.ApiCallStatus
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.INSTANCE_ID
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.NPSByUserRequest
@@ -20,20 +20,17 @@ class NPSViewModel(application: Application) : AndroidViewModel(application) {
     private val _apiCallStatusLiveData: MutableLiveData<ApiCallStatus> = MutableLiveData()
     val apiCallStatusLiveData: LiveData<ApiCallStatus> = _apiCallStatusLiveData
 
-    fun submitNPS(eventName: String?, extraInfo: String?) {
+    fun submitNPS(eventName: String?, extraInfo: String?, courseId: String? = null) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val npsByUserRequest = NPSByUserRequest(
+                    PrefManager.getStringValue(INSTANCE_ID),
                     Mentor.getInstance().getId(),
                     eventName,
                     selectedRating,
-                    extraInfo
+                    extraInfo,
+                    courseId
                 )
-                if (PrefManager.getStringValue(API_TOKEN).isEmpty()) {
-                    NPSByUserRequest.update(npsByUserRequest.toString())
-                    _apiCallStatusLiveData.postValue(ApiCallStatus.SUCCESS)
-                    return@launch
-                }
 
                 AppObjectController.commonNetworkService.submitNPSResponse(npsByUserRequest)
                 _apiCallStatusLiveData.postValue(ApiCallStatus.SUCCESS)
