@@ -24,7 +24,6 @@ const val IMAGE_PATTERN = "([^\\s]+(\\.(?i)(jpg|png|gif|bmp)|WEBP|webp|JPEG|PNG|
 val IMAGE_REGEX = Regex(pattern = IMAGE_PATTERN)
 
 const val MINIMUM_VIDEO_DOWNLOAD_PROGRESS = 20
-const val COURSE_OFFER = "50%"
 const val ARG_PLACEHOLDER_URL = "placeholder_image_url"
 
 enum class REFERRAL_EVENT(val type: String) {
@@ -48,5 +47,9 @@ enum class VerificationVia {
     FLASH_CALL, SMS
 }
 
+enum class VerificationStatus {
+    INITIATED, SUCCESS, FAILED, USER_DENY, TIMEOUT
+
+}
 
 
