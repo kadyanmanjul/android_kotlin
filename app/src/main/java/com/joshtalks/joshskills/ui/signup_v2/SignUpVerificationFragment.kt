@@ -17,6 +17,8 @@ import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.databinding.FragmentSignUpVerificationBinding
 import com.joshtalks.joshskills.messaging.RxBus2
+import com.joshtalks.joshskills.repository.local.eventbus.LoginViaEventBus
+import com.joshtalks.joshskills.repository.local.eventbus.LoginViaStatus
 import com.joshtalks.joshskills.repository.local.eventbus.OTPReceivedEventBus
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -59,8 +61,6 @@ class SignUpVerificationFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        // binding.otpView.setText(EMPTY)
-        //  binding.otpView.requestFocus()
         binding.otpView2.otpListener = object : OTPListener {
             override fun onOTPComplete(otp: String) {
                 verifyOTP()
@@ -68,7 +68,6 @@ class SignUpVerificationFragment : Fragment() {
 
             override fun onInteractionListener() {
             }
-
         }
 
         binding.textView2.text = getString(
@@ -88,6 +87,31 @@ class SignUpVerificationFragment : Fragment() {
                 if (this == SignUpStepStatus.WRONG_OTP) {
                     showToast(getString(R.string.wrong_otp))
                 }
+            }
+        })
+        viewModel.verificationStatus.observe(this, Observer {
+            it.run {
+                when {
+                    this == VerificationStatus.INITIATED -> {
+                        binding.otpView2.otp = EMPTY
+                        lastTime = 0
+                        startVerificationTimer()
+                    }
+                    this == VerificationStatus.SUCCESS -> {
+                        RxBus2.publish(
+                            LoginViaEventBus(
+                                LoginViaStatus.NUMBER_VERIFY,
+                                viewModel.countryCode,
+                                viewModel.phoneNumber
+                            )
+                        )
+                    }
+
+                    else -> {
+                        onTimeoutSMSVerification()
+                    }
+                }
+
             }
         })
         startVerificationTimer()
@@ -125,6 +149,7 @@ class SignUpVerificationFragment : Fragment() {
     }
 
     private fun startVerificationTimer() {
+        timer?.cancel()
         binding.otpCl.visibility = View.VISIBLE
         binding.otpResendCl.visibility = View.GONE
         timer = object : CountDownTimer(TIMEOUT_TIME, 1000) {
@@ -144,24 +169,32 @@ class SignUpVerificationFragment : Fragment() {
             }
 
             override fun onFinish() {
-                AppObjectController.uiHandler.post {
-                    if (requireActivity().isFinishing.not() && isAdded && isVisible) {
-                        binding.tvOtpTimer.text = EMPTY
-                        binding.otpCl.visibility = View.GONE
-                        binding.otpResendCl.visibility = View.VISIBLE
-                    }
-                }
+                onTimeoutSMSVerification()
             }
         }
         timer?.start()
     }
 
-    fun verifyOTP() {
+    fun onTimeoutSMSVerification() {
+        AppObjectController.uiHandler.post {
+            if (isResumed) {
+                binding.tvOtpTimer.text = EMPTY
+                binding.otpCl.visibility = View.GONE
+                binding.otpResendCl.visibility = View.VISIBLE
+            }
+        }
+    }
 
+    fun verifyOTP() {
         if (binding.otpView2.otp.isNullOrEmpty().not() || viewModel.otpField.get().isNullOrEmpty()
                 .not()
         ) {
-            viewModel.verifyOTP(binding.otpView2.otp)
+            if ((requireActivity() as SignUpV2Activity).verification != null) {
+                viewModel.progressBarStatus.postValue(true)
+                (requireActivity() as SignUpV2Activity).verification?.verify(binding.otpView2.otp)
+            } else {
+                viewModel.verifyOTP(binding.otpView2.otp)
+            }
             AppAnalytics.create(AnalyticsEvent.OTP_SCREEN_SATUS.NAME)
                 .addParam(AnalyticsEvent.NEXT_OTP_CLICKED.NAME, "Otp Submitted")
                 .push()
@@ -175,5 +208,16 @@ class SignUpVerificationFragment : Fragment() {
 
     fun editNumber() {
         requireActivity().onBackPressed()
+    }
+
+    fun regeneratedOTP() {
+        if ((requireActivity() as SignUpV2Activity).verification != null) {
+            (requireActivity() as SignUpV2Activity).createVerification(
+                viewModel.countryCode,
+                viewModel.phoneNumber
+            )
+        } else {
+            viewModel.regeneratedOTP()
+        }
     }
 }
