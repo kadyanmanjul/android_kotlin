@@ -22,7 +22,7 @@ import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 import java.util.*
 
-class OrderSummaryViewModel(application: Application) : AndroidViewModel(application) {
+class PaymentSummaryViewModel(application: Application) : AndroidViewModel(application) {
     var context: JoshApplication = getApplication()
 
     enum class ViewState {
@@ -40,6 +40,11 @@ class OrderSummaryViewModel(application: Application) : AndroidViewModel(applica
             PAYMENT_MOBILE_NUMBER
         ).isNotBlank()
     }
+    val hasAnyUserDetails by lazy {
+        (User.getInstance().phoneNumber.isNotBlank() && PrefManager.getStringValue(
+            PAYMENT_MOBILE_NUMBER
+        ).isNotBlank()) || User.getInstance().email.isNotBlank()
+    }
 
     init {
         if (viewState == null) {
@@ -51,6 +56,9 @@ class OrderSummaryViewModel(application: Application) : AndroidViewModel(applica
     fun getCourseName(): String = responsePaymentSummary.value?.courseName ?: EMPTY
 
     fun getCourseAmount(): Double = responsePaymentSummary.value?.discountAmount ?: 0.0
+
+    fun getDiscount(): Int? =
+        responsePaymentSummary.value?.amount?.minus(responsePaymentSummary.value?.discountAmount!!)?.toInt()
 
     fun getCurrency(): String = responsePaymentSummary.value?.currency ?: "INR"
 

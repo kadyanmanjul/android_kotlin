@@ -697,8 +697,17 @@ object Utils {
         }
     }
 
-    fun getBitmapFromVectorDrawable(context: Context, resource: Int): Bitmap {
+    fun getBitmapFromVectorDrawable(
+        context: Context,
+        resource: Int,
+        tintColor: Int = R.color.colorPrimary
+    ): Bitmap {
         val drawable = ContextCompat.getDrawable(context, resource)
+        if (drawable != null) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                drawable.setTint(context.resources.getColor(tintColor, null))
+            }
+        }
         val bitmap = Bitmap.createBitmap(
             drawable!!.intrinsicWidth,
             drawable.intrinsicHeight, Bitmap.Config.ARGB_8888

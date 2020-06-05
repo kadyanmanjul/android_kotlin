@@ -10,15 +10,16 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.text.SpannableString
+import android.text.SpannableStringBuilder
 import android.text.Spanned
 import android.text.style.IconMarginSpan
-import android.util.Log
 import android.util.TypedValue
 import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
@@ -57,7 +58,6 @@ import com.razorpay.PaymentResultListener
 import com.sinch.verification.PhoneNumberUtils
 import io.branch.referral.util.BRANCH_STANDARD_EVENT
 import io.branch.referral.util.CurrencyType
-import io.github.inflationx.calligraphy3.TypefaceUtils
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -78,14 +78,14 @@ class PaymentSummaryActivity : CoreJoshActivity(),
     private val uiHandler = Handler(Looper.getMainLooper())
     lateinit var multiLineLL: LinearLayout
     lateinit var typefaceSpan: Typeface
-    private lateinit var viewModel: OrderSummaryViewModel
+    private lateinit var viewModel: PaymentSummaryViewModel
     private var isEcommereceEventFire = true
 
     // TODO (Later)--> payment failed
     private var npsShow = false
     private var isBackPressDisabled = false
+    private var isRequestHintAppearred = false
     private var razorpayOrderId = EMPTY
-
 
     companion object {
         fun startPaymentSummaryActivity(
@@ -121,10 +121,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
         binding = DataBindingUtil.setContentView(this, R.layout.activity_payment_summary)
         binding.lifecycleOwner = this
         binding.handler = this
-        typefaceSpan = TypefaceUtils.load(
-            assets,
-            "fonts/Roboto-Regular.ttf"
-        )
+        typefaceSpan = ResourcesCompat.getFont(applicationContext, R.font.poppins)!!
         initToolbarView()
         initViewModel()
         subscribeObservers()
@@ -143,17 +140,16 @@ class PaymentSummaryActivity : CoreJoshActivity(),
     @SuppressLint("SetTextI18n")
     private fun subscribeObservers() {
         viewModel.viewState?.observe(this, androidx.lifecycle.Observer {
-            Log.d(TAG, "subscribeObservers() called viewState ${it}")
             when (it) {
-                OrderSummaryViewModel.ViewState.INTERNET_NOT_AVAILABLE -> {
+                PaymentSummaryViewModel.ViewState.INTERNET_NOT_AVAILABLE -> {
                     binding.progressBar.visibility = View.GONE
                     showToast(getString(R.string.internet_not_available_msz))
                 }
-                OrderSummaryViewModel.ViewState.ERROR_OCCURED -> {
+                PaymentSummaryViewModel.ViewState.ERROR_OCCURED -> {
                     binding.progressBar.visibility = View.GONE
                     showToast(AppObjectController.joshApplication.getString(R.string.generic_message_for_error))
                 }
-                OrderSummaryViewModel.ViewState.PROCESSING -> {
+                PaymentSummaryViewModel.ViewState.PROCESSING -> {
                     binding.progressBar.visibility = View.VISIBLE
                 }
                 else -> {
@@ -210,23 +206,27 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                     binding.badeBhaiyaTipContainer.visibility = View.INVISIBLE
                     binding.txtPrice.text =
                         "₹ ${String.format("%.2f", viewModel.getCourseAmount())}"
+
+                    binding.tipUsedMsg.text = SpannableStringBuilder(
+                        getString(
+                            R.string.tip_used_info,
+                            viewModel.getDiscount().toString()
+                        )
+                    )
                     binding.tipUsedMsg.visibility = View.VISIBLE
                 }
             }
         })
-        if (viewModel.hasMobileNumber) {
+        if (viewModel.hasAnyUserDetails) {
             binding.group1.visibility = View.GONE
         }
-        if (viewModel.isRegisteredAlready.not())
-            requestHint()
-
         viewModel.mPaymentDetailsResponse.observe(this, androidx.lifecycle.Observer {
             initializeRazorpayPayment(it)
         })
     }
 
     private fun initViewModel() {
-        viewModel = ViewModelProvider(this).get(OrderSummaryViewModel::class.java)
+        viewModel = ViewModelProvider(this).get(PaymentSummaryViewModel::class.java)
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 val data = HashMap<String, String>()
@@ -255,13 +255,20 @@ class PaymentSummaryActivity : CoreJoshActivity(),
             checkout.setKeyID(response.razorpayKeyId)
             try {
                 val preFill = JSONObject()
-                    .put("email", Utils.getUserPrimaryEmail(applicationContext))
-                if (!viewModel.hasMobileNumber)
+
+                if (!viewModel.hasAnyUserDetails && User.getInstance().email.isNotBlank())
+                    preFill.put("email", User.getInstance().email)
+                else
+                    preFill.put("email", Utils.getUserPrimaryEmail(applicationContext))
+
+                if (!viewModel.hasAnyUserDetails)
                     preFill.put("contact", binding.mobileEt.text.toString())
                 else if (User.getInstance().phoneNumber.isNotBlank())
                     preFill.put("contact", User.getInstance().phoneNumber)
-                else
+                else if (PrefManager.getStringValue(PAYMENT_MOBILE_NUMBER).isNotBlank())
                     preFill.put("contact", PrefManager.getStringValue(PAYMENT_MOBILE_NUMBER))
+                else
+                    preFill.put("contact", "9999999999")
                 val options = JSONObject()
                 options.put("key", response.razorpayKeyId)
                 options.put("name", "Josh Skills")
@@ -293,19 +300,26 @@ class PaymentSummaryActivity : CoreJoshActivity(),
             binding.mobileEt.prefix =
                 binding.countryCodePicker.selectedCountryCodeWithPlus
         }
+        binding.mobileEt.setOnFocusChangeListener { v, hasFocus ->
+            if (hasFocus)
+                requestHint()
+        }
     }
 
     private fun requestHint() {
-        val hintRequest = HintRequest.Builder()
-            .setPhoneNumberIdentifierSupported(true)
-            .setEmailAddressIdentifierSupported(false)
-            .build()
-        val options = CredentialsOptions.Builder()
-            .forceEnableSaveDialog()
-            .build()
-        val pendingIntent = Credentials.getClient(AppObjectController.joshApplication, options)
-            .getHintPickerIntent(hintRequest)
-        startIntentSenderForResult(pendingIntent.intentSender, RC_HINT, null, 0, 0, 0, null)
+        if (!isRequestHintAppearred) {
+            isRequestHintAppearred = true
+            val hintRequest = HintRequest.Builder()
+                .setPhoneNumberIdentifierSupported(true)
+                .setEmailAddressIdentifierSupported(false)
+                .build()
+            val options = CredentialsOptions.Builder()
+                .forceEnableSaveDialog()
+                .build()
+            val pendingIntent = Credentials.getClient(AppObjectController.joshApplication, options)
+                .getHintPickerIntent(hintRequest)
+            startIntentSenderForResult(pendingIntent.intentSender, RC_HINT, null, 0, 0, 0, null)
+        }
     }
 
     private fun getTextView(text: String): TextView {
@@ -315,13 +329,17 @@ class PaymentSummaryActivity : CoreJoshActivity(),
         val spanString = SpannableString(text)
         spanString.setSpan(
             IconMarginSpan(
-                Utils.getBitmapFromVectorDrawable(applicationContext, R.drawable.ic_small_tick),
+                Utils.getBitmapFromVectorDrawable(
+                    applicationContext,
+                    R.drawable.ic_small_tick,
+                    R.color.green
+                ),
                 22
             ), 0, text.length,
             Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
         )
         textView.text = spanString
-        textView.setPadding(0, 2, 0, 2)
+        textView.setPadding(2, 2, 0, 2)
         textView.setLineSpacing(
             TypedValue.applyDimension(
                 TypedValue.COMPLEX_UNIT_DIP,
@@ -355,10 +373,13 @@ class PaymentSummaryActivity : CoreJoshActivity(),
         }
         val defaultRegion: String = PhoneNumberUtils.getDefaultCountryIso(applicationContext)
         if (defaultRegion == "IN") {
-            if (viewModel.hasMobileNumber.not()) {
+            if (viewModel.hasAnyUserDetails.not()) {
                 if (binding.mobileEt.text.isNullOrEmpty()) {
-                    binding.inputLayoutPassword.error = "Please enter your phone number first"
-                    binding.inputLayoutPassword.isErrorEnabled = true
+                    if (isRequestHintAppearred) {
+                        binding.inputLayoutPassword.error = "Please enter your phone number first"
+                        binding.inputLayoutPassword.isErrorEnabled = true
+                    }
+                    requestHint()
                     return
                 } else if (isValidFullNumber(
                         binding.mobileEt.prefix,
