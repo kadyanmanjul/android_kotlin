@@ -95,27 +95,35 @@ class SignUpProfileFragment : BaseSignUpFragment() {
     private fun initUI() {
         initCountryCodePicker()
         val user = User.getInstance()
-        binding.nameEditText.setText(user.firstName)
-        if (user.email.isNotBlank()) {
+
+        if (user.firstName.isNotEmpty()) {
+            binding.nameEditText.setText(user.firstName)
+            binding.nameEditText.isEnabled = false
+        }
+
+        if (user.email.isNotEmpty()) {
+            binding.textViewEmail.visibility = View.VISIBLE
             binding.emailEditText.setText(user.email)
-            binding.emailEditText.isFocusableInTouchMode = false
-            binding.emailEditText.isEnabled = false
-            binding.emailEditText.setOnClickListener(null)
+            binding.emailEditText.visibility = View.VISIBLE
         }
-        if (user.phoneNumber.isNotBlank()) {
+
+        if (user.phoneNumber.isNotEmpty()) {
             binding.phoneNumberEt.setText(user.phoneNumber)
-            binding.phoneNumberEt.isFocusableInTouchMode = false
-            binding.phoneNumberEt.isEnabled = false
-            binding.ivTick.visibility = View.VISIBLE
-            binding.phoneNumberEt.prefix = EMPTY
-        } else if (PrefManager.getStringValue(PAYMENT_MOBILE_NUMBER).isNotBlank()) {
-            val string = PrefManager.getStringValue(PAYMENT_MOBILE_NUMBER).split(SINGLE_SPACE)
-            binding.phoneNumberEt.setText(string[1])
-            binding.phoneNumberEt.isFocusableInTouchMode = false
-            binding.phoneNumberEt.isEnabled = false
-            binding.ivTick.visibility = View.VISIBLE
-            binding.phoneNumberEt.prefix = string[0]
+            binding.etContainer.visibility = View.VISIBLE
+            binding.textViewPhone.visibility = View.VISIBLE
+        } else if (PrefManager.getStringValue(PAYMENT_MOBILE_NUMBER).isNotEmpty()) {
+            binding.phoneNumberEt.setText(PrefManager.getStringValue(PAYMENT_MOBILE_NUMBER))
+            binding.etContainer.visibility = View.VISIBLE
+            binding.textViewPhone.visibility = View.VISIBLE
         }
+        if (binding.phoneNumberEt.text.isNullOrEmpty() && user.email.isEmpty()) {
+            binding.textViewEmail.visibility = View.VISIBLE
+            binding.emailEditText.isFocusableInTouchMode = true
+            binding.emailEditText.isClickable = true
+            binding.emailEditText.isEnabled = true
+            binding.emailEditText.visibility = View.VISIBLE
+        }
+
     }
 
     private fun initCountryCodePicker() {
@@ -196,14 +204,11 @@ class SignUpProfileFragment : BaseSignUpFragment() {
             showToast(getString(R.string.name_error_toast))
             return
         }
-        if (binding.phoneNumberEt.text.isNullOrEmpty() || isValidFullNumber(
-                binding.phoneNumberEt.prefix,
-                binding.phoneNumberEt.text?.toString()
-            ).not()
-        ) {
-            showToast(getString(R.string.please_enter_valid_number))
-            return
+
+        if (binding.phoneNumberEt.text.isNullOrEmpty() && binding.emailEditText.text.isNullOrEmpty()) {
+            showToast(getString(R.string.enter_valid_email_toast))
         }
+
         if (binding.dobEditText.text.isNullOrEmpty()) {
             showToast(getString(R.string.dob_error_toast))
             return
@@ -215,9 +220,9 @@ class SignUpProfileFragment : BaseSignUpFragment() {
 
         val requestMap = mutableMapOf<String, String?>()
         requestMap["first_name"] = binding.nameEditText.text?.toString() ?: EMPTY
-        requestMap["email"] = binding.emailEditText.text?.toString() ?: EMPTY
-        requestMap["mobile"] =
-            binding.phoneNumberEt.prefix + binding.phoneNumberEt.text?.toString()
+        if (binding.emailEditText.text.isNullOrEmpty().not()) {
+            requestMap["email"] = binding.emailEditText.text?.toString() ?: EMPTY
+        }
         requestMap["date_of_birth"] = userDateOfBirth ?: EMPTY
         requestMap["gender"] = gender?.gValue ?: EMPTY
         viewModel.completingProfile(requestMap)
