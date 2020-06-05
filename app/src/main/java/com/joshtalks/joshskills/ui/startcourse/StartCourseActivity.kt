@@ -14,10 +14,13 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.CoreJoshActivity
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
+import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.databinding.ActivityStartCourseBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.ui.payment.order_summary.TRANSACTION_ID
 import com.joshtalks.joshskills.ui.pdfviewer.COURSE_NAME
+import com.joshtalks.joshskills.ui.signup_v2.FLOW_FROM
 import com.joshtalks.joshskills.ui.signup_v2.SignUpV2Activity
 import com.joshtalks.joshskills.ui.view_holders.ROUND_CORNER
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation
@@ -130,10 +133,24 @@ class StartCourseActivity : CoreJoshActivity() {
     private fun setListeners() {
         binding.materialButton.setOnClickListener(View.OnClickListener {
             if (isUserRegistered) {
+                AppAnalytics.create(AnalyticsEvent.COURSE_START_CLCIKED.NAME)
+                    .addUserDetails()
+                    .addBasicParam()
+                    .addParam(AnalyticsEvent.COURSE_NAME.NAME, courseName)
+                    .addParam(AnalyticsEvent.TRANSACTION_ID.NAME, transactionId)
+                    .push()
                 startActivity(getInboxActivityIntent())
                 this.finish()
             } else {
-                startActivity(Intent(this, SignUpV2Activity::class.java))
+                AppAnalytics.create(AnalyticsEvent.REGISTER_NOW_CLICKED.NAME)
+                    .addUserDetails()
+                    .addBasicParam()
+                    .addParam(AnalyticsEvent.COURSE_NAME.NAME, courseName)
+                    .addParam(AnalyticsEvent.TRANSACTION_ID.NAME, transactionId)
+                    .push()
+                val intent = Intent(this, SignUpV2Activity::class.java)
+                intent.putExtra(FLOW_FROM, "payment journey")
+                startActivity(intent)
                 this.finish()
             }
         })

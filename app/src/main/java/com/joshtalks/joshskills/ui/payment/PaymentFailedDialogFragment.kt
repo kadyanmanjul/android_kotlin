@@ -9,6 +9,8 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
+import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.HELP_ACTIVITY_REQUEST_CODE
 import com.joshtalks.joshskills.databinding.FragmentPaymentFailedDialogBinding
 import com.joshtalks.joshskills.ui.help.HelpActivity
@@ -53,11 +55,19 @@ class PaymentFailedDialogFragment : BottomSheetDialogFragment() {
     }
 
     private fun dismissAndCloseActivity() {
+        AppAnalytics.create(AnalyticsEvent.RETRY_PAYMENT.NAME)
+            .addUserDetails()
+            .addBasicParam()
+            .push()
         dismiss()
         activity?.finish()
     }
 
     private fun openWhatsapp() {
+        AppAnalytics.create(AnalyticsEvent.WHATSAPP_CLICKED_PAYMENT_FAILED.NAME)
+            .addUserDetails()
+            .addBasicParam()
+            .push()
         val intent = Intent().apply {
             action = Intent.ACTION_VIEW
             data = Uri.parse(WHATSAPP_URL_PAYMENT_FAILED)
