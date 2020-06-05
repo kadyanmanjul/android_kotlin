@@ -287,9 +287,11 @@ class PaymentSummaryActivity : CoreJoshActivity(),
     }
 
     private fun initCountryCode() {
-        binding.countryCodePicker.setDefaultCountryUsingNameCode(
-            DEFAULT_COUNTRY_CODE
-        )
+        val supportedCountryList =
+            AppObjectController.getFirebaseRemoteConfig().getString("SUPPORTED_COUNTRY_LIST")
+        if (supportedCountryList.isNotEmpty()) {
+            binding.countryCodePicker.setCustomMasterCountries(supportedCountryList)
+        }
         binding.countryCodePicker.setAutoDetectedCountry(true)
         binding.countryCodePicker.setCountryForNameCode(DEFAULT_COUNTRY_CODE)
         binding.countryCodePicker.setDetectCountryWithAreaCode(true)
