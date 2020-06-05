@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.github.razir.progressbutton.*
 import com.joshtalks.joshskills.R
@@ -58,19 +59,46 @@ class SignUpOptionsFragment : BaseSignUpFragment() {
         if (Utils.isTrueCallerAppExist()) {
             binding.btnTruecallerLogin.visibility = View.VISIBLE
         }
-        binding.countryCodePicker.setDefaultCountryUsingNameCode(
-            DEFAULT_COUNTRY_CODE
-        )
         binding.countryCodePicker.setAutoDetectedCountry(true)
         binding.countryCodePicker.setCountryForNameCode(DEFAULT_COUNTRY_CODE)
         binding.countryCodePicker.setDetectCountryWithAreaCode(true)
         binding.mobileEt.prefix = binding.countryCodePicker.defaultCountryCodeWithPlus
         binding.countryCodePicker.setOnCountryChangeListener {
             binding.mobileEt.prefix = binding.countryCodePicker.selectedCountryCodeWithPlus
-            setupVerificationSystem()
+            setupVerificationSystem(binding.countryCodePicker.selectedCountryNameCode)
+        }
+        val supportedCountryList =
+            AppObjectController.getFirebaseRemoteConfig().getString("SUPPORTED_COUNTRY_LIST")
+        if (supportedCountryList.isNotEmpty()) {
+            binding.countryCodePicker.setCustomMasterCountries(supportedCountryList)
         }
         bindProgressButton(binding.btnLogin)
         binding.btnLogin.attachTextChangeAnimator()
+        viewModel.verificationStatus.observe(this, Observer {
+            it.run {
+                when {
+                    this == VerificationStatus.INITIATED -> {
+                        onVerificationNumberStarting()
+                    }
+                    this == VerificationStatus.SUCCESS -> {
+                        onVerificationNumberCompleted()
+                    }
+                    this == VerificationStatus.FAILED -> {
+                        onVerificationNumberFailed()
+                    }
+                    this == VerificationStatus.USER_DENY -> {
+                        onVerificationPermissionDeny()
+                    }
+                    this == VerificationStatus.TIMEOUT -> {
+
+                    }
+                    else -> {
+
+                    }
+                }
+
+            }
+        })
     }
 
     private fun startProgress() {
@@ -161,13 +189,11 @@ class SignUpOptionsFragment : BaseSignUpFragment() {
         val defaultRegion: String = PhoneNumberUtils.getDefaultCountryIso(requireContext())
         verificationService = if (defaultRegion == "IN") {
             VerificationService.SMS_COUNTRY
-/*
-            if (VerificationVia.FLASH_CALL == verificationVia) {
+            /*if (VerificationVia.FLASH_CALL == verificationVia) {
                 VerificationService.TRUECALLER
             } else {
                 VerificationService.SMS_COUNTRY
-            }
-*/
+            }*/
         } else {
             VerificationService.SINCH
         }
@@ -177,7 +203,7 @@ class SignUpOptionsFragment : BaseSignUpFragment() {
     }
 
     private fun callVerificationService() {
-        createVerification(
+        (requireActivity() as SignUpV2Activity).createVerification(
             binding.mobileEt.prefix,
             binding.mobileEt.text!!.toString(),
             service = verificationService,
@@ -230,28 +256,30 @@ class SignUpOptionsFragment : BaseSignUpFragment() {
         timer?.start()
     }
 
-    override fun onVerificationNumberStarting() {
+    private fun onVerificationNumberStarting() {
         binding.progressBarGroup.visibility = View.VISIBLE
         binding.btnLogin.visibility = View.GONE
         startVerificationTimer()
     }
 
-    override fun onVerificationNumberFailed() {
-        if (requireActivity().isFinishing.not()) {
+    private fun onVerificationNumberFailed() {
+        if (isResumed) {
             timer?.cancel()
             timer = null
             AppObjectController.uiHandler.post {
-                binding.btnLogin.visibility = View.VISIBLE
-                binding.progressBar.progress = 0
-                binding.timerTv.text = EMPTY
-                binding.progressBarGroup.visibility = View.GONE
-                enableMobileEditText()
-                flashCallVerificationFailed()
+                if (isAdded && isVisible) {
+                    binding.btnLogin.visibility = View.VISIBLE
+                    binding.progressBar.progress = 0
+                    binding.timerTv.text = EMPTY
+                    binding.progressBarGroup.visibility = View.GONE
+                    enableMobileEditText()
+                    flashCallVerificationFailed()
+                }
             }
         }
     }
 
-    override fun onVerificationNumberCompleted() {
+    private fun onVerificationNumberCompleted() {
         RxBus2.publish(
             LoginViaEventBus(
                 LoginViaStatus.NUMBER_VERIFY,
@@ -259,6 +287,13 @@ class SignUpOptionsFragment : BaseSignUpFragment() {
                 binding.mobileEt.text!!.toString()
             )
         )
+        if (isResumed) {
+            timer?.cancel()
+            binding.btnLogin.visibility = View.VISIBLE
+            binding.progressBar.progress = 0
+            binding.timerTv.text = EMPTY
+            binding.progressBarGroup.visibility = View.GONE
+        }
     }
 
     override fun retryVerificationThrowFlashCall() {
@@ -276,7 +311,8 @@ class SignUpOptionsFragment : BaseSignUpFragment() {
         updateLoginButtonText()
     }
 
-    override fun onVerificationPermissionDeny() {
+    private fun onVerificationPermissionDeny() {
         hideProgress()
+        onVerificationNumberFailed()
     }
 }
