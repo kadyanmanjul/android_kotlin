@@ -33,7 +33,7 @@
 
         <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/plant"
-                android:layout_width="@dimen/_76sdp"
+                android:layout_width="@dimen/_68sdp"
                 android:layout_height="@dimen/_80sdp"
                 android:layout_gravity="center"
                 android:src="@drawable/plant_two"
@@ -188,10 +188,10 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:gravity="center"
-                android:padding="@dimen/_6sdp"
+                android:padding="@dimen/_8sdp"
                 android:text="@string/register_now"
                 android:textColor="@color/white"
-                android:textSize="@dimen/font_22"
+                android:textSize="@dimen/font_18"
                 app:cornerRadius="@dimen/_8sdp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
