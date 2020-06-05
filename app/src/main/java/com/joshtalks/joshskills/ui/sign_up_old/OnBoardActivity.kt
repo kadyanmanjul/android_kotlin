@@ -9,7 +9,7 @@ import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.databinding.ActivityOnboardBinding
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
-import com.joshtalks.joshskills.ui.signup.FROM_ACTIVITY
+import com.joshtalks.joshskills.ui.signup_v2.FLOW_FROM
 import com.joshtalks.joshskills.ui.signup_v2.SignUpV2Activity
 
 
@@ -36,7 +36,7 @@ class OnBoardActivity : CoreJoshActivity() {
             .addParam(AnalyticsEvent.LOGIN_VIA.NAME, AnalyticsEvent.MOBILE_OTP_PARAM.NAME)
             .push()
         val intent = Intent(this, SignUpV2Activity::class.java).apply {
-            putExtra(FROM_ACTIVITY, "onboarding journey")
+            putExtra(FLOW_FROM, "onboarding journey")
         }
         startActivity(intent)
     }

@@ -230,6 +230,10 @@ class SignUpV2ViewModel(application: Application) :
         AppAnalytics.updateUser()
         WorkMangerAdmin.requiredTaskAfterLoginComplete()
         fetchMentor()
+        AppAnalytics.create(AnalyticsEvent.LOGIN_SUCCESSFULLY.NAME)
+            .addBasicParam()
+            .addUserDetails()
+            .addParam(AnalyticsEvent.LOGIN_WITH.NAME,AnalyticsEvent.GMAIL_PARAM.NAME)
     }
 
     private fun fetchMentor() {

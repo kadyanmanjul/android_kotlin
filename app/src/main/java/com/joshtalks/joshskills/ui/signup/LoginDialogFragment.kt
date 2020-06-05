@@ -24,6 +24,7 @@ import com.joshtalks.joshskills.core.SignUpStepStatus
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.databinding.FragmentLoginDialogBinding
+import com.joshtalks.joshskills.ui.signup_v2.FLOW_FROM
 import com.truecaller.android.sdk.ITrueCallback
 import com.truecaller.android.sdk.TrueError
 import com.truecaller.android.sdk.TrueProfile
@@ -154,7 +155,7 @@ class LoginDialogFragment : DialogFragment() {
             .push()
         startActivityForResult(Intent(requireActivity(), SignUpActivity::class.java).apply {
             putExtra(IS_ACTIVITY_FOR_RESULT, true)
-            putExtra(FROM_ACTIVITY, "course purchase journey")
+            putExtra(FLOW_FROM, "course purchase journey")
 
         }, 101)
     }
