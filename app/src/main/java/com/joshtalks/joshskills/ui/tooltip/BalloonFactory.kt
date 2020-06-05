@@ -5,7 +5,6 @@ import android.content.Context
 import androidx.lifecycle.LifecycleOwner
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.COURSE_OFFER
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.skydoves.balloon.*
 import io.github.inflationx.calligraphy3.TypefaceUtils
@@ -53,7 +52,9 @@ object BalloonFactory {
 
     fun hintOfferFirstTime(
         baseContext: Context,
-        lifecycleOwner: LifecycleOwner, onBalloonDismissListener: OnBalloonDismissListener
+        lifecycleOwner: LifecycleOwner,
+        remainDay: String,
+        onBalloonDismissListener: OnBalloonDismissListener
     ): Balloon {
         var userName = "User"
         try {
@@ -63,8 +64,16 @@ object BalloonFactory {
         } catch (ex: NullPointerException) {
 
         }
+        val offerPercentage =
+            AppObjectController.getFirebaseRemoteConfig().getString("COURSE_MAX_OFFER_PER")
+
         val text =
-            baseContext.getString(R.string.find_more_course_hint_ftime, userName, COURSE_OFFER)
+            baseContext.getString(
+                R.string.find_more_course_hint_ftime,
+                userName,
+                remainDay,
+                offerPercentage
+            )
         val typefaceSpan = TypefaceUtils.load(baseContext.assets, "fonts/Roboto-Medium.ttf")
         val textForm: TextForm = TextForm.Builder(baseContext)
             .setText(text)
@@ -99,7 +108,7 @@ object BalloonFactory {
     @SuppressLint("DefaultLocale")
     fun offerIn7Days(
         baseContext: Context,
-        lifecycleOwner: LifecycleOwner
+        lifecycleOwner: LifecycleOwner, remainDay: String
     ): Balloon {
         var userName = "User"
         try {
@@ -109,8 +118,16 @@ object BalloonFactory {
         } catch (ex: NullPointerException) {
 
         }
+        val offerPercentage =
+            AppObjectController.getFirebaseRemoteConfig().getString("COURSE_MAX_OFFER_PER")
+
         val text =
-            baseContext.getString(R.string.find_more_course_hint_ftime, userName, COURSE_OFFER)
+            baseContext.getString(
+                R.string.find_more_course_hint_ftime,
+                userName,
+                remainDay,
+                offerPercentage
+            )
         val typefaceSpan = TypefaceUtils.load(baseContext.assets, "fonts/Roboto-Medium.ttf")
         val textForm: TextForm = TextForm.Builder(baseContext)
             .setText(text)
@@ -146,9 +163,13 @@ object BalloonFactory {
         onBalloonClickListener: OnBalloonClickListener
     ): Balloon {
 
+        val offerPercentage =
+            AppObjectController.getFirebaseRemoteConfig().getString("COURSE_MAX_OFFER_PER")
+
+
         val text = baseContext.getString(
             R.string.buy_course_offer_tooltip,
-            COURSE_OFFER,
+            offerPercentage,
             remainDay
         )
         val typefaceSpan = TypefaceUtils.load(baseContext.assets, "fonts/Roboto-Medium.ttf")
