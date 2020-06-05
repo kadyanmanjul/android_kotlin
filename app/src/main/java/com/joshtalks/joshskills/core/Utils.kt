@@ -656,10 +656,11 @@ object Utils {
         }
         val todayDate = Date()
         val diff = todayDate.time - courseCreatedDate.time
-        val daysDiff = 7 - TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS)
         val offerDays =
             AppObjectController.getFirebaseRemoteConfig().getLong("COURSE_BUY_MIN_OFFER_DAYS")
-        if (daysDiff <= offerDays) {
+        val daysDiff = offerDays - TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS)
+
+        if (daysDiff >= 0) {
             return Pair(true, daysDiff.toInt())
         }
         return Pair(false, daysDiff.toInt())
