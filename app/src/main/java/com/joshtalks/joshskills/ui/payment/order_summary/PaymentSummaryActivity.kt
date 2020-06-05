@@ -36,6 +36,8 @@ import com.google.android.gms.auth.api.credentials.HintRequest
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
+import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.BranchIOAnalytics
 import com.joshtalks.joshskills.core.analytics.LogException
 import com.joshtalks.joshskills.core.service.WorkMangerAdmin
@@ -80,6 +82,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
     lateinit var typefaceSpan: Typeface
     private lateinit var viewModel: PaymentSummaryViewModel
     private var isEcommereceEventFire = true
+    private lateinit var appAnalytics: AppAnalytics
 
     // TODO (Later)--> payment failed
     private var npsShow = false
@@ -110,6 +113,9 @@ class PaymentSummaryActivity : CoreJoshActivity(),
         }
         Checkout.preload(application)
         super.onCreate(savedInstanceState)
+        appAnalytics = AppAnalytics.create(AnalyticsEvent.PAYMENT_SUMMARY_OPENED.NAME)
+            .addUserDetails()
+            .addBasicParam()
         if (intent.hasExtra(TEST_ID_PAYMENT)) {
             val temp = intent.getStringExtra(TEST_ID_PAYMENT)
             if (temp.isNullOrEmpty()) {
@@ -117,6 +123,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                 return
             }
             this.testId = temp
+            appAnalytics.addParam(AnalyticsEvent.TEST_ID_PARAM.NAME, temp)
         }
         binding = DataBindingUtil.setContentView(this, R.layout.activity_payment_summary)
         binding.lifecycleOwner = this
@@ -133,6 +140,10 @@ class PaymentSummaryActivity : CoreJoshActivity(),
         titleView.text = getString(R.string.order_summary)
         findViewById<View>(R.id.iv_back).visibility = View.VISIBLE
         findViewById<View>(R.id.iv_back).setOnClickListener {
+            appAnalytics.addParam(AnalyticsEvent.BACK_PRESSED.NAME, true)
+            AppAnalytics.create(AnalyticsEvent.BACK_PRESSED.NAME)
+                .addParam("name", javaClass.simpleName)
+                .push()
             this.finish()
         }
     }
@@ -169,6 +180,8 @@ class PaymentSummaryActivity : CoreJoshActivity(),
             binding.enrolled.text = enrollUser.plus("+")
             binding.enrolled.setTypeface(binding.enrolled.typeface, Typeface.BOLD)
             binding.rating.text = it.rating.toString()
+            appAnalytics.addParam(AnalyticsEvent.COURSE_NAME.NAME, it.courseName)
+            appAnalytics.addParam(AnalyticsEvent.COURSE_PRICE.NAME, it.discountAmount)
 
             val multi = MultiTransformation(
                 RoundedCornersTransformation(
@@ -201,8 +214,10 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                 binding.tvTipValid.text = it.couponDetails.validity
                 binding.tvTipOff.text = it.couponDetails.header
                 binding.group1.visibility = View.GONE
+                appAnalytics.addParam(AnalyticsEvent.SPECIAL_DISCOUNT.NAME, it.couponDetails.title)
                 binding.badeBhaiyaTipContainer.visibility = View.VISIBLE
                 binding.badeBhaiyaTipContainer.setOnClickListener {
+                    appAnalytics.addParam(AnalyticsEvent.HAVE_COUPON_CODE.NAME, true)
                     binding.badeBhaiyaTipContainer.visibility = View.INVISIBLE
                     binding.txtPrice.text =
                         "₹ ${String.format("%.2f", viewModel.getCourseAmount())}"
@@ -280,6 +295,10 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                 checkout.open(this@PaymentSummaryActivity, options)
                 razorpayOrderId = response.razorpayOrderId
                 binding.progressBar.visibility = View.GONE
+                appAnalytics
+                    .addParam("razor id", razorpayOrderId)
+                    .addParam(AnalyticsEvent.TRANSACTION_ID.NAME, response.joshtalksOrderId)
+
             } catch (e: Exception) {
                 e.printStackTrace()
             }
@@ -305,6 +324,13 @@ class PaymentSummaryActivity : CoreJoshActivity(),
         binding.mobileEt.setOnFocusChangeListener { v, hasFocus ->
             if (hasFocus)
                 requestHint()
+            if (isRequestHintAppearred) {
+                appAnalytics.addParam(AnalyticsEvent.MOBILE_MANUAL_ENTERED.NAME, true)
+                AppAnalytics.create(AnalyticsEvent.MOBILE_MANUAL_ENTERED.NAME)
+                    .addUserDetails()
+                    .addBasicParam()
+                    .push()
+            }
         }
     }
 
@@ -363,6 +389,9 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                     EMPTY
                 )
             )
+            if (credential?.id.isNullOrBlank().not())
+                appAnalytics.addParam(AnalyticsEvent.MOBILE_AUTOMATICALLY_ENTERED.NAME, true)
+
         } catch (ex: Throwable) {
             LogException.catchException(ex)
         }
@@ -374,6 +403,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
             return
         }
         val defaultRegion: String = PhoneNumberUtils.getDefaultCountryIso(applicationContext)
+        appAnalytics.addParam(AnalyticsEvent.COUNTRY_ISO_CODE.NAME, defaultRegion)
         if (defaultRegion == "IN") {
             if (viewModel.hasAnyUserDetails.not()) {
                 if (binding.mobileEt.text.isNullOrEmpty()) {
@@ -405,9 +435,11 @@ class PaymentSummaryActivity : CoreJoshActivity(),
 
     fun clearText() {
         binding.mobileEt.setText("")
+        appAnalytics.addParam(AnalyticsEvent.MOBILE_NUMBER_CLEARED.NAME, true)
     }
 
     override fun onPaymentError(p0: Int, p1: String?) {
+        appAnalytics.addParam(AnalyticsEvent.PAYMENT_FAILED.NAME, p1)
         isBackPressDisabled = true
         uiHandler.post {
             showPaymentFailedDialog()
@@ -417,6 +449,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
 
     @Synchronized
     override fun onPaymentSuccess(razorpayPaymentId: String) {
+        appAnalytics.addParam(AnalyticsEvent.PAYMENT_COMPLETED.NAME, true)
         isBackPressDisabled = true
         razorpayOrderId.verifyPayment()
         NPSEventModel.setCurrentNPA(
@@ -517,6 +550,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
     }
 
     override fun onDestroy() {
+        appAnalytics.push()
         super.onDestroy()
         Checkout.clearUserData(applicationContext)
         uiHandler.removeCallbacksAndMessages(null)

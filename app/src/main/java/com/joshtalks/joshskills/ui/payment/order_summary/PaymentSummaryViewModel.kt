@@ -7,6 +7,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.crashlytics.android.Crashlytics
 import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
+import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.BranchIOAnalytics
 import com.joshtalks.joshskills.core.service.WorkMangerAdmin
 import com.joshtalks.joshskills.repository.local.model.Mentor
@@ -109,7 +111,10 @@ class PaymentSummaryViewModel(application: Application) : AndroidViewModel(appli
                 }
                 val paymentDetailsResponse: Response<OrderDetailResponse> =
                     AppObjectController.signUpNetworkService.createPaymentOrder(data).await()
-
+                AppAnalytics.create(AnalyticsEvent.PAY_NOW_CLICKED.NAME)
+                    .addUserDetails()
+                    .addBasicParam()
+                    .push()
                 BranchIOAnalytics.pushToBranch(BRANCH_STANDARD_EVENT.INITIATE_PURCHASE)
                 if (paymentDetailsResponse.code() == 201) {
                     val response: OrderDetailResponse = paymentDetailsResponse.body()!!
