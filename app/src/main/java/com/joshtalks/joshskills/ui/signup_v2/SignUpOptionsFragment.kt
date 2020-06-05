@@ -299,10 +299,10 @@ class SignUpOptionsFragment : BaseSignUpFragment() {
     override fun retryVerificationThrowFlashCall() {
         verificationVia = VerificationVia.FLASH_CALL
         updateLoginButtonText()
-        AppAnalytics.create(AnalyticsEvent.LOGIN_INITIATED.NAME)
+        AppAnalytics.create(AnalyticsEvent.LOGIN_WITH.NAME)
             .addBasicParam()
             .addUserDetails()
-            .addParam(AnalyticsEvent.LOGIN_VIA.NAME, AnalyticsEvent.MOBILE_OTP_PARAM.NAME)
+            .addParam(AnalyticsEvent.LOGIN_VIA.NAME, AnalyticsEvent.MOBILE_FLASH_PARAM.NAME)
             .push()
     }
 

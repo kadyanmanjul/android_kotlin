@@ -48,6 +48,7 @@ import kotlinx.coroutines.launch
 import java.util.*
 
 private const val GOOGLE_SIGN_UP_REQUEST_CODE = 9001
+const val FLOW_FROM = "Flow"
 
 class SignUpV2Activity : BaseActivity() {
 
@@ -62,6 +63,7 @@ class SignUpV2Activity : BaseActivity() {
     var verification: Verification? = null
     private var sinchConfig: Config? = null
 
+
     init {
         sinchConfig = SinchVerification.config()
             .applicationKey(BuildConfig.SINCH_API_KEY)
@@ -74,8 +76,13 @@ class SignUpV2Activity : BaseActivity() {
         appAnalytics = AppAnalytics.create(AnalyticsEvent.LOGIN_INITIATED.NAME)
             .addBasicParam()
             .addUserDetails()
-        appAnalytics.push(true)
         super.onCreate(savedInstanceState)
+        if (intent.hasExtra(FLOW_FROM))
+            appAnalytics.addParam(
+                AnalyticsEvent.FLOW_FROM_PARAM.NAME,
+                intent.getStringExtra(FLOW_FROM)
+            )
+
         binding = DataBindingUtil.setContentView(this, R.layout.activity_sign_up_v2)
         binding.handler = this
         addViewModelObserver()
@@ -99,6 +106,10 @@ class SignUpV2Activity : BaseActivity() {
                     openProfileDetailFragment()
                 }
                 SignUpStepStatus.ProfileCompleted, SignUpStepStatus.SignUpCompleted -> {
+                    appAnalytics.addParam(
+                        AnalyticsEvent.STATUS.NAME,
+                        AnalyticsEvent.SUCCESS_PARAM.NAME
+                    )
                     startActivity(getInboxActivityIntent())
                     this@SignUpV2Activity.finishAffinity()
                 }
@@ -196,6 +207,7 @@ class SignUpV2Activity : BaseActivity() {
     }
 
     private fun openNumberVerificationFragment() {
+        appAnalytics.addParam(AnalyticsEvent.LOGIN_VIA.NAME,AnalyticsEvent.MOBILE_OTP_PARAM.NAME)
         supportFragmentManager.commit(true) {
             addToBackStack(SignUpVerificationFragment::class.java.name)
             replace(
@@ -230,7 +242,7 @@ class SignUpV2Activity : BaseActivity() {
     }
 
     private fun gmailLogin() {
-        AppAnalytics.create(AnalyticsEvent.LOGIN_INITIATED.NAME)
+        AppAnalytics.create(AnalyticsEvent.LOGIN_WITH.NAME)
             .addBasicParam()
             .addUserDetails()
             .addParam(AnalyticsEvent.FLOW_FROM_PARAM.NAME, this.javaClass.simpleName)
@@ -242,7 +254,7 @@ class SignUpV2Activity : BaseActivity() {
     }
 
     private fun facebookLogin() {
-        AppAnalytics.create(AnalyticsEvent.LOGIN_INITIATED.NAME)
+        AppAnalytics.create(AnalyticsEvent.LOGIN_WITH.NAME)
             .addBasicParam()
             .addUserDetails()
             .addParam(AnalyticsEvent.FLOW_FROM_PARAM.NAME, this.javaClass.simpleName)
@@ -253,7 +265,7 @@ class SignUpV2Activity : BaseActivity() {
     }
 
     private fun trueCallerLogin() {
-        AppAnalytics.create(AnalyticsEvent.LOGIN_INITIATED.NAME)
+        AppAnalytics.create(AnalyticsEvent.LOGIN_WITH.NAME)
             .addBasicParam()
             .addUserDetails()
             .addParam(AnalyticsEvent.FLOW_FROM_PARAM.NAME, this.javaClass.simpleName)
@@ -263,6 +275,10 @@ class SignUpV2Activity : BaseActivity() {
     }
 
     fun getUserDetailsFromFB(accessToken: AccessToken) {
+        AppAnalytics.create(AnalyticsEvent.LOGIN_SUCCESSFULLY.NAME)
+            .addBasicParam()
+            .addUserDetails()
+            .addParam(AnalyticsEvent.LOGIN_WITH.NAME,AnalyticsEvent.FACEBOOK_PARAM.NAME)
         val request: GraphRequest = GraphRequest.newMeRequest(accessToken) { jsonObject, _ ->
             val id = jsonObject.getString("id")
             var name: String? = null
@@ -307,38 +323,26 @@ class SignUpV2Activity : BaseActivity() {
                 .subscribe({
                     when (it.loginViaStatus) {
                         LoginViaStatus.FACEBOOK -> {
-                            AppAnalytics.create(AnalyticsEvent.LOGIN_INITIATED.NAME)
-                                .addBasicParam()
-                                .addUserDetails()
-                                .addParam(
-                                    AnalyticsEvent.LOGIN_VIA.NAME,
-                                    AnalyticsEvent.FACEBOOK_PARAM.NAME
-                                )
-                                .push()
+                            appAnalytics.addParam(
+                                AnalyticsEvent.LOGIN_VIA.NAME,
+                                AnalyticsEvent.FACEBOOK_PARAM.NAME
+                            )
                             showProgressBar()
                             facebookLogin()
                         }
                         LoginViaStatus.GMAIL -> {
-                            AppAnalytics.create(AnalyticsEvent.LOGIN_INITIATED.NAME)
-                                .addBasicParam()
-                                .addUserDetails()
-                                .addParam(
-                                    AnalyticsEvent.LOGIN_VIA.NAME,
-                                    AnalyticsEvent.GMAIL_PARAM.NAME
-                                )
-                                .push()
+                            appAnalytics.addParam(
+                                AnalyticsEvent.LOGIN_VIA.NAME,
+                                AnalyticsEvent.GMAIL_PARAM.NAME
+                            )
                             showProgressBar()
                             gmailLogin()
                         }
                         LoginViaStatus.TRUECALLER -> {
-                            AppAnalytics.create(AnalyticsEvent.LOGIN_INITIATED.NAME)
-                                .addBasicParam()
-                                .addUserDetails()
-                                .addParam(
-                                    AnalyticsEvent.LOGIN_VIA.NAME,
-                                    AnalyticsEvent.TRUECALLER_PARAM.NAME
-                                )
-                                .push()
+                            appAnalytics.addParam(
+                                AnalyticsEvent.LOGIN_VIA.NAME,
+                                AnalyticsEvent.TRUECALLER_PARAM.NAME
+                            )
                             showProgressBar()
                             trueCallerLogin()
                         }
@@ -346,12 +350,16 @@ class SignUpV2Activity : BaseActivity() {
                             viewModel.signUpAfterPhoneVerify(it.countryCode, it.mNumber)
                         }
                         else -> {
-                            AppAnalytics.create(AnalyticsEvent.LOGIN_INITIATED.NAME)
+                            appAnalytics.addParam(
+                                AnalyticsEvent.LOGIN_VIA.NAME,
+                                AnalyticsEvent.SMS_OTP_PARAM.NAME
+                            )
+                            AppAnalytics.create(AnalyticsEvent.LOGIN_WITH.NAME)
                                 .addBasicParam()
                                 .addUserDetails()
                                 .addParam(
                                     AnalyticsEvent.LOGIN_VIA.NAME,
-                                    AnalyticsEvent.MOBILE_OTP_PARAM.NAME
+                                    AnalyticsEvent.SMS_OTP_PARAM.NAME
                                 )
                                 .push()
                             viewModel.signUpUsingSMS(it.countryCode, it.mNumber)
@@ -387,7 +395,7 @@ class SignUpV2Activity : BaseActivity() {
     ) {
         when (service) {
             VerificationService.SINCH -> {
-                AppAnalytics.create(AnalyticsEvent.LOGIN_INITIATED.NAME)
+                AppAnalytics.create(AnalyticsEvent.LOGIN_WITH.NAME)
                     .addBasicParam()
                     .addUserDetails()
                     .addParam(AnalyticsEvent.LOGIN_VIA.NAME, AnalyticsEvent.SINCH_PARAM.NAME)
@@ -592,6 +600,11 @@ class SignUpV2Activity : BaseActivity() {
     override fun onPause() {
         super.onPause()
         compositeDisposable.clear()
+    }
+
+    override fun onDestroy() {
+        appAnalytics.push()
+        super.onDestroy()
     }
 }
 
