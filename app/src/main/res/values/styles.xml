@@ -107,7 +107,6 @@
     <!-- ______________New App Typography's_______________-->
     <style name="TextStyle">
         <item name="android:fontFamily">@font/poppins</item>
-        <item name="android:typeface">@font/poppins</item>
     </style>
 
     <style name="TextStyle.TopBarNoScroll" parent="TextStyle">

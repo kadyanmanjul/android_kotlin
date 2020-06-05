@@ -57,14 +57,14 @@
 
         <TextView
                 android:id="@+id/textView_sub"
-                fontPath="fonts/OpenSans-Regular.ttf"
+                fontPath="fonts/OpenSans-SemiBold.ttf"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
+                android:layout_marginTop="@dimen/_2sdp"
                 android:gravity="start"
                 android:text="@string/splash_sub_string_english"
                 android:textColor="@color/black"
-                android:textSize="@dimen/font_13"
+                android:textSize="@dimen/font_14"
                 app:layout_constraintHorizontal_bias="0.187"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
