@@ -122,7 +122,7 @@ abstract class BaseActivity : AppCompatActivity() {
     fun getIntentForState(): Intent? {
         val intent: Intent? = if (PrefManager.getStringValue(API_TOKEN).isEmpty()) {
             Intent(this, OnBoardActivity::class.java)
-        } else if (User.getInstance().phoneNumber.isEmpty() || User.getInstance().dateOfBirth.isNullOrEmpty()) {
+        } else if (isUserProfileComplete()) {
             Intent(this, SignUpV2Activity::class.java)
         } else getInboxActivityIntent()
         return intent?.apply {
@@ -305,6 +305,17 @@ abstract class BaseActivity : AppCompatActivity() {
         val bottomSheetFragment = NetPromoterScoreFragment.newInstance(npsModel, questionList)
         bottomSheetFragment.show(supportFragmentManager, bottomSheetFragment.tag)
 
+    }
+
+    private fun isUserProfileComplete(): Boolean {
+        val user = User.getInstance()
+        if (user.phoneNumber.isNotEmpty() && user.firstName.isEmpty()) {
+            return true
+        }
+        if (user.firstName.isEmpty()) {
+            return true
+        }
+        return false
     }
 
 }
