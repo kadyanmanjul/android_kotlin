@@ -51,6 +51,7 @@ import com.joshtalks.joshskills.ui.payment.COURSE_ID
 import com.joshtalks.joshskills.ui.referral.ReferralActivity
 import com.joshtalks.joshskills.ui.tooltip.BalloonFactory
 import com.joshtalks.joshskills.ui.view_holders.InboxViewHolder
+import com.joshtalks.skydoves.balloon.Balloon
 import com.joshtalks.skydoves.balloon.OnBalloonDismissListener
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
@@ -87,16 +88,8 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
     private var inAppUpdateManager: InAppUpdateManager? = null
     private lateinit var earnIV: AppCompatImageView
     private lateinit var findMoreLayout: FrameLayout
-    private val offerIn7DaysHint by lazy { BalloonFactory.offerIn7Days(this, this) }
-    private val hintFirstTime by lazy {
-        BalloonFactory.hintOfferFirstTime(this, this, object :
-            OnBalloonDismissListener {
-            override fun onBalloonDismiss() {
-                attachOfferHintView()
-            }
-        })
-    }
-
+    private var offerIn7DaysHint: Balloon? = null
+    private var hintFirstTime: Balloon? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         WorkMangerAdmin.requiredTaskInLandingPage()
@@ -346,7 +339,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
                             val request = UpdateUserLocality()
                             request.locality =
                                 SearchLocality(location.latitude, location.longitude)
-                                AppAnalytics.setLocation(location.latitude, location.longitude)
+                            AppAnalytics.setLocation(location.latitude, location.longitude)
                             val response: ProfileResponse =
                                 AppObjectController.signUpNetworkService.updateUserAddressAsync(
                                     Mentor.getInstance().getId(),
@@ -400,7 +393,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
     }
 
     private fun addCourseExploreView() {
-        hintFirstTime.dismiss()
+        hintFirstTime?.dismiss()
         //  offerIn7DaysHint.dismiss()
         findMoreLayout.visibility = View.VISIBLE
         if (PrefManager.getBoolValue(FIRST_TIME_OFFER_SHOW).not()) {
@@ -408,16 +401,18 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
             compositeDisposable.add(AppObjectController.appDatabase.courseDao()
                 .isUserInOfferDays()
                 .concatMap {
-                    val (flag, _) = Utils.isUserInDaysOld(it.courseCreatedDate)
+                    val (flag, remainDay) = Utils.isUserInDaysOld(it.courseCreatedDate)
+                    initOfferView(remainDay.toString())
                     return@concatMap Maybe.just(flag)
                 }
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                     { value ->
-                        if (value && offerIn7DaysHint.isShowing.not() && isFinishing.not()) {
+                        if (value && isFinishing.not()) {
+
                             val root = findViewById<View>(R.id.find_more)
-                            hintFirstTime.showAlignBottom(root)
+                            hintFirstTime?.showAlignBottom(root)
                         }
                     },
                     { error ->
@@ -428,6 +423,20 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
             attachOfferHintView()
         }
         userProfileActivityNotExist()
+    }
+
+    private fun initOfferView(remainDay: String) {
+        AppObjectController.uiHandler.post {
+            hintFirstTime = BalloonFactory.hintOfferFirstTime(
+                this,
+                this,
+                remainDay,
+                object : OnBalloonDismissListener {
+                    override fun onBalloonDismiss() {
+                        attachOfferHintView()
+                    }
+                })
+        }
     }
 
 
@@ -493,26 +502,29 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
             AppObjectController.appDatabase
                 .courseDao()
                 .isUserInOfferDays()
-            .concatMap {
-                val (flag, _) = Utils.isUserInDaysOld(it.courseCreatedDate)
-                return@concatMap Maybe.just(flag)
-            }
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(
-                { value ->
-                    if (value) {
-                        val root = findViewById<View>(R.id.find_more)
-                        if (offerIn7DaysHint.isShowing.not() && isFinishing.not()) {
-                            offerIn7DaysHint.showAlignBottom(root)
-                            findViewById<View>(R.id.bottom_line).visibility = View.GONE
-
-                        }
+                .concatMap {
+                    val (flag, remainDay) = Utils.isUserInDaysOld(it.courseCreatedDate)
+                    if (offerIn7DaysHint == null) {
+                        offerIn7DaysHint =
+                            BalloonFactory.offerIn7Days(this, this, remainDay.toString())
                     }
-                },
-                { error ->
-                    error.printStackTrace()
+                    return@concatMap Maybe.just(flag)
                 }
-            ))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                    { value ->
+                        val root = findViewById<View>(R.id.find_more)
+                        offerIn7DaysHint?.run {
+                            if (this.isShowing.not() && isFinishing.not() && value) {
+                                this.showAlignBottom(root)
+                                findViewById<View>(R.id.bottom_line).visibility = View.GONE
+                            }
+                        }
+                    },
+                    { error ->
+                        error.printStackTrace()
+                    }
+                ))
     }
 }
