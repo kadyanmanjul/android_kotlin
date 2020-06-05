@@ -233,7 +233,7 @@ class SignUpV2ViewModel(application: Application) :
         AppAnalytics.create(AnalyticsEvent.LOGIN_SUCCESSFULLY.NAME)
             .addBasicParam()
             .addUserDetails()
-            .addParam(AnalyticsEvent.LOGIN_WITH.NAME,AnalyticsEvent.GMAIL_PARAM.NAME)
+            .addParam(AnalyticsEvent.LOGIN_WITH.NAME, AnalyticsEvent.GMAIL_PARAM.NAME)
     }
 
     private fun fetchMentor() {
@@ -264,10 +264,10 @@ class SignUpV2ViewModel(application: Application) :
     private fun analyzeUserProfile() {
         val user = User.getInstance()
         if (user.phoneNumber.isNotEmpty() && user.firstName.isEmpty()) {
-            _signUpStatus.postValue(SignUpStepStatus.ProfileInCompleted)
+            return _signUpStatus.postValue(SignUpStepStatus.ProfileInCompleted)
         }
         if (user.firstName.isEmpty()) {
-            _signUpStatus.postValue(SignUpStepStatus.ProfileInCompleted)
+            return _signUpStatus.postValue(SignUpStepStatus.ProfileInCompleted)
         }
         _signUpStatus.postValue(SignUpStepStatus.SignUpCompleted)
     }
