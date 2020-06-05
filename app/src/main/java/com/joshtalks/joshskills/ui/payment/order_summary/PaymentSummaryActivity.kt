@@ -38,7 +38,7 @@ import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.BranchIOAnalytics
 import com.joshtalks.joshskills.core.analytics.LogException
 import com.joshtalks.joshskills.core.service.WorkMangerAdmin
-import com.joshtalks.joshskills.databinding.ActivityCoursePaymentBinding
+import com.joshtalks.joshskills.databinding.ActivityPaymentSummaryBinding
 import com.joshtalks.joshskills.repository.local.entity.NPSEvent
 import com.joshtalks.joshskills.repository.local.entity.NPSEventModel
 import com.joshtalks.joshskills.repository.local.model.Mentor
@@ -73,7 +73,7 @@ const val TRANSACTION_ID = "TRANSACTION_ID"
 
 class PaymentSummaryActivity : CoreJoshActivity(),
     PaymentResultListener {
-    private lateinit var binding: ActivityCoursePaymentBinding
+    private lateinit var binding: ActivityPaymentSummaryBinding
     private var testId: String = EMPTY
     private val uiHandler = Handler(Looper.getMainLooper())
     lateinit var multiLineLL: LinearLayout
@@ -118,7 +118,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
             }
             this.testId = temp
         }
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_course_payment)
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_payment_summary)
         binding.lifecycleOwner = this
         binding.handler = this
         typefaceSpan = TypefaceUtils.load(

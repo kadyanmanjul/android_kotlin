@@ -11,8 +11,8 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/_2sdp"
             android:layout_marginHorizontal="@dimen/_16sdp"
-            android:background="@color/dark_grey"
             android:layout_marginBottom="@dimen/_88sdp"
+            android:background="@color/dark_grey"
             app:layout_constraintBottom_toTopOf="@+id/textView4"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
@@ -37,8 +37,8 @@
 
     <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/man"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="@dimen/_120sdp"
+            android:layout_height="@dimen/_300sdp"
             android:src="@drawable/splash_man"
             app:layout_constraintBottom_toTopOf="@+id/line"
             app:layout_constraintEnd_toEndOf="parent"

@@ -27,6 +27,7 @@
                 android:background="@color/white"
                 android:visibility="gone"
                 tools:visibility="visible">
+
             <include
                     android:id="@+id/header"
                     layout="@layout/new_base_toolbar" />
@@ -174,6 +175,7 @@
                         android:text="Total Amount"
                         android:textColor="@color/black"
                         android:textSize="@dimen/font_16"
+                        app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/double_line" />
 

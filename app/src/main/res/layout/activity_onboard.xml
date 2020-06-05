@@ -61,7 +61,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
-                android:gravity="left"
+                android:gravity="start"
                 android:text="@string/splash_sub_string_english"
                 android:textColor="@color/black"
                 android:textSize="@dimen/font_13"
@@ -72,15 +72,15 @@
 
         <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/image_view"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="@dimen/_180sdp"
+                android:layout_height="@dimen/_320sdp"
                 android:adjustViewBounds="true"
-                android:scaleType="fitCenter"
+                android:scaleType="fitXY"
                 android:src="@drawable/man_suitcase"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.2"
+                app:layout_constraintVertical_bias="0.12"
                 app:layout_constraintWidth_default="percent" />
 
         <com.google.android.material.textview.MaterialTextView
