@@ -22,7 +22,6 @@ import com.joshtalks.joshskills.repository.local.entity.NPSEventModel
 import com.joshtalks.joshskills.repository.local.eventbus.NPSEventGenerateEventBus
 import com.joshtalks.joshskills.repository.local.model.*
 import com.joshtalks.joshskills.repository.server.MessageStatusRequest
-import com.joshtalks.joshskills.repository.server.NPSByUserRequest
 import com.joshtalks.joshskills.repository.server.UpdateDeviceRequest
 import com.joshtalks.joshskills.repository.service.NetworkRequestHelper
 import com.joshtalks.joshskills.repository.service.SyncChatService
@@ -706,20 +705,6 @@ class MergeMentorWithGAIDWorker(context: Context, workerParams: WorkerParameters
             PrefManager.removeKey(SERVER_GID_ID)
         } catch (ex: Throwable) {
             LogException.catchException(ex)
-        }
-        return Result.success()
-    }
-}
-
-class SyncSavedNPSFeedbackWorker(context: Context, workerParams: WorkerParameters) :
-    CoroutineWorker(context, workerParams) {
-    override suspend fun doWork(): Result {
-        try {
-            NPSByUserRequest.getInstance()?.run {
-                AppObjectController.commonNetworkService.submitNPSResponse(this)
-                NPSByUserRequest.update(EMPTY)
-            }
-        } catch (ex: Throwable) {
         }
         return Result.success()
     }
