@@ -102,6 +102,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         checkAppUpdate()
         workInBackground()
         handelIntentAction()
+        checkForOemNotifications()
     }
 
     private fun setToolbar() {
@@ -130,7 +131,6 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
             RxBus2.publish(ExploreCourseEventBus())
         }
         visibleShareEarn()
-
     }
 
     private fun workInBackground() {

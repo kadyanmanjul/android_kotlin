@@ -71,14 +71,12 @@ class CustomPermissionDialogFragment : BottomSheetDialogFragment() {
         PrefManager.put(CUSTOM_PERMISSION_ACTION_KEY, PermissionAction.CANCEL.name)
         logAction(PermissionAction.CANCEL)
         dismiss()
-        interactionListener.navigateToNextScreen()
     }
 
     fun doNotAskAgain() {
         PrefManager.put(CUSTOM_PERMISSION_ACTION_KEY, PermissionAction.DO_NOT_ASK_AGAIN.name)
         logAction(PermissionAction.DO_NOT_ASK_AGAIN)
         dismiss()
-        interactionListener.navigateToNextScreen()
     }
 
     /**
@@ -90,7 +88,6 @@ class CustomPermissionDialogFragment : BottomSheetDialogFragment() {
         } catch (ex: Throwable) {
             PrefManager.put(CUSTOM_PERMISSION_ACTION_KEY, PermissionAction.DO_NOT_ASK_AGAIN.name)
             dismissAllowingStateLoss()
-            interactionListener.navigateToNextScreen()
         }
     }
 

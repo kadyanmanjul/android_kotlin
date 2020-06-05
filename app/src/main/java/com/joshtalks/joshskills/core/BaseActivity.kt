@@ -33,6 +33,7 @@ import com.joshtalks.joshskills.repository.service.EngagementNetworkHelper
 import com.joshtalks.joshskills.ui.chat.ConversationActivity
 import com.joshtalks.joshskills.ui.courseprogress.CourseProgressActivity
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
+import com.joshtalks.joshskills.ui.extra.CustomPermissionDialogFragment
 import com.joshtalks.joshskills.ui.help.HelpActivity
 import com.joshtalks.joshskills.ui.inbox.InboxActivity
 import com.joshtalks.joshskills.ui.nps.NetPromoterScoreFragment
@@ -217,9 +218,6 @@ abstract class BaseActivity : AppCompatActivity() {
             WorkManager.getInstance(applicationContext)
                 .getWorkInfoByIdLiveData(WorkMangerAdmin.getQuestionFeedback(question.questionId))
                 .observe(this, Observer {
-                    /* if (workInfo != null && workInfo.state == WorkInfo.State.SUCCEEDED) {
-
-                     }*/
                 })
         }
     }
@@ -307,6 +305,21 @@ abstract class BaseActivity : AppCompatActivity() {
 
     }
 
+    fun checkForOemNotifications() {
+        val oemIntent = PowerManagers.getIntentForOEM(this)
+        if (oemIntent != null && shouldRequireCustomPermission()) {
+            CustomPermissionDialogFragment.showCustomPermissionDialog(
+                oemIntent,
+                supportFragmentManager
+            )
+        }
+    }
+
+    private fun shouldRequireCustomPermission(): Boolean {
+        val performedAction = PrefManager.getStringValue(CUSTOM_PERMISSION_ACTION_KEY)
+        return performedAction == EMPTY || performedAction == PermissionAction.CANCEL.name
+    }
+
     private fun isUserProfileComplete(): Boolean {
         val user = User.getInstance()
         if (user.phoneNumber.isNotEmpty() && user.firstName.isEmpty()) {
@@ -317,5 +330,4 @@ abstract class BaseActivity : AppCompatActivity() {
         }
         return false
     }
-
 }

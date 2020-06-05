@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.telephony.TelephonyManager
-import android.util.Log
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
@@ -12,7 +11,6 @@ import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.LogException
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.core.service.WorkMangerAdmin
-import com.joshtalks.joshskills.ui.extra.CustomPermissionDialogFragment.Companion.showCustomPermissionDialog
 import com.joshtalks.joshskills.ui.extra.CustomPermissionDialogInteractionListener
 import com.joshtalks.joshskills.ui.payment.COURSE_ID
 import com.joshtalks.joshskills.ui.payment.PaymentActivity
@@ -62,40 +60,26 @@ class LauncherActivity : CoreJoshActivity(), CustomPermissionDialogInteractionLi
     override fun onStart() {
         super.onStart()
         handleIntent()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        if (PermissionUtils.isStoragePermissionEnabled(this).not()) {
-            getPermission()
-        } else {
-            initInstanceId()
-            checkForOemNotifications()
-        }
-    }
-
-    private fun checkForOemNotifications() {
-        Log.d(TAG, "checkForOemNotifications() called")
-        val oemIntent = PowerManagers.getIntentForOEM(this)
-        if (oemIntent != null && shouldRequireCustomPermission()) {
-            showCustomPermissionDialog(oemIntent, supportFragmentManager)
-        } else {
-            navigateToNextScreen()
-        }
+        if (PrefManager.getBoolValue(READ_WRITE_PERMISSION_GIVEN).not()) {
+            if (PermissionUtils.isStoragePermissionEnabled(this).not()) {
+                getPermission()
+            } else {
+                initInstanceId()
+            }
+        } else navigateToNextScreen()
     }
 
     private fun getPermission() {
         PermissionUtils.storageReadAndWritePermission(this, object : MultiplePermissionsListener {
             override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
                 report?.areAllPermissionsGranted()?.let { isGranted ->
+                    PrefManager.put(READ_WRITE_PERMISSION_GIVEN, true)
                     if (isGranted) {
                         initInstanceId()
-                        checkForOemNotifications()
                         return
                     }
                     if (report.isAnyPermissionPermanentlyDenied) {
                         PermissionUtils.permissionPermanentlyDeniedDialog(this@LauncherActivity)
-                        checkForOemNotifications()
                         return
                     }
                 }
@@ -112,21 +96,10 @@ class LauncherActivity : CoreJoshActivity(), CustomPermissionDialogInteractionLi
 
     private fun initInstanceId() {
         val instanceId = AppDirectory.readFromFile(AppDirectory.getInstanceIdKeyFile())
-        showToast("instanceId from file $instanceId")
-        Log.d(
-            TAG, "initInstanceId() called $instanceId pref ${PrefManager.getStringValue(
-                INSTANCE_ID
-            )}"
-        )
         if (instanceId.isNullOrBlank())
             writeInstanceIdInFile(PrefManager.getStringValue(INSTANCE_ID))
         else PrefManager.put(INSTANCE_ID, instanceId)
-        showToast(
-            "instanceId from prefmanager  ${PrefManager.getStringValue(
-                INSTANCE_ID
-            )}"
-        )
-
+        navigateToNextScreen()
     }
 
     override fun onNewIntent(intent: Intent) {
@@ -198,10 +171,6 @@ class LauncherActivity : CoreJoshActivity(), CustomPermissionDialogInteractionLi
         (baseContext.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager?)?.networkOperatorName
             ?: ""
 
-    private fun shouldRequireCustomPermission(): Boolean {
-        val performedAction = PrefManager.getStringValue(CUSTOM_PERMISSION_ACTION_KEY)
-        return performedAction == EMPTY || performedAction == PermissionAction.CANCEL.name
-    }
 
     private fun parseReferralCode(jsonParams: JSONObject) =
         if (jsonParams.has(Defines.Jsonkey.ReferralCode.key)) jsonParams.getString(
