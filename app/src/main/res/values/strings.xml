@@ -208,7 +208,7 @@
     <string name="course_duration" formatted="false">Course Duration - %s Days</string>
 
 
-    <string name="find_more_course_hint_ftime" formatted="false">Hello %s, Agar aap es course ke sath kuch aur bhi seekhna chahte hain to pehle 7 dino mai aapke paas har course pe %s off hai </string>
+    <string name="find_more_course_hint_ftime" formatted="false">Hello %s, Agar aap es course ke sath kuch aur bhi seekhna chahte hain to pehle %s dino mai aapke paas har course pe %s off hai </string>
     <string name="buy_course_offer_tooltip" formatted="false"> Get %s off on the next course you buy, Valid for %s days.</string>
     <string name="first_time_user_hint">Aapko apne course se related saari videos aur claases isko click karke milengi</string>
     <string name="certificate_tooltip_hint">Iss course ke lessons aur practices %s complete karne par aapko ek digital certificate milega.</string>
@@ -301,6 +301,7 @@
     <string name="dob_error_toast">Please enter Date of birth</string>
     <string name="name_error_toast">Name cannot be empty!</string>
     <string name="please_enter_valid_number">Please enter valid mobile number </string>
+    <string name="enter_valid_email_toast">Please enter valid Email Id</string>
 
     <string name="missed_call_verify_message"> We make use of missed call verification.\nPlease grant permission to verify</string>
     <string name="otp_verify_message">A 4 digit OTP will be sent via SMS to verify \n your mobile number</string>
