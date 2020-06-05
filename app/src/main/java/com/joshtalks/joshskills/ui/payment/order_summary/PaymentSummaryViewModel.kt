@@ -43,7 +43,7 @@ class PaymentSummaryViewModel(application: Application) : AndroidViewModel(appli
         ).isNotBlank()
     }
     val hasAnyUserDetails by lazy {
-        (User.getInstance().phoneNumber.isNotBlank() && PrefManager.getStringValue(
+        (User.getInstance().phoneNumber.isNotBlank() || PrefManager.getStringValue(
             PAYMENT_MOBILE_NUMBER
         ).isNotBlank()) || User.getInstance().email.isNotBlank()
     }
