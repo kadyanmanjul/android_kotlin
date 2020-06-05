@@ -80,6 +80,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
     lateinit var typefaceSpan: Typeface
     private lateinit var viewModel: OrderSummaryViewModel
     private var isEcommereceEventFire = true
+
     // TODO (Later)--> payment failed
     private var npsShow = false
     private var isBackPressDisabled = false
@@ -388,11 +389,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
         uiHandler.post {
             showPaymentFailedDialog()
         }
-        if (npsShow) {
-            NPSEventModel.setCurrentNPA(NPSEvent.PAYMENT_FAILED)
-            showNetPromoterScoreDialog()
-            npsShow = false
-        }
+        NPSEventModel.setCurrentNPA(NPSEvent.PAYMENT_FAILED)
     }
 
     @Synchronized
