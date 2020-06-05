@@ -40,15 +40,28 @@
                 app:layout_constraintVertical_bias="0.46" />
 
         <ImageButton
+                android:id="@+id/help"
+                android:layout_width="@dimen/_20sdp"
+                android:layout_height="@dimen/_20sdp"
+                android:layout_marginHorizontal="@dimen/_16sdp"
+                android:layout_marginVertical="@dimen/_16sdp"
+                android:background="@drawable/ic_help_outline"
+                android:backgroundTint="@color/black"
+                android:contentDescription="@string/help"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/view"
+                app:rippleColor="@color/transparent_black" />
+
+        <ImageButton
                 android:id="@+id/close"
                 android:layout_width="@dimen/_20sdp"
                 android:layout_height="@dimen/_20sdp"
-                android:layout_marginTop="@dimen/_16sdp"
-                android:layout_marginEnd="@dimen/_16sdp"
+                android:layout_marginHorizontal="@dimen/_16sdp"
+                android:layout_marginVertical="@dimen/_16sdp"
                 android:background="@drawable/ic_cross"
                 android:backgroundTint="@color/black"
                 android:contentDescription="@string/cancel_button"
-                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/view"
                 app:rippleColor="@color/transparent_black" />
 
