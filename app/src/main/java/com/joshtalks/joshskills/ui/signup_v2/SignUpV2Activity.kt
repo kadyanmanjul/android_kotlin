@@ -1,7 +1,10 @@
 package com.joshtalks.joshskills.ui.signup_v2
 
+import android.Manifest
 import android.content.Intent
 import android.os.Bundle
+import androidx.annotation.NonNull
+import androidx.annotation.Nullable
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.commit
@@ -17,6 +20,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.tasks.Task
+import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
@@ -26,7 +30,15 @@ import com.joshtalks.joshskills.databinding.ActivitySignUpV2Binding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.LoginViaEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.LoginViaStatus
+import com.karumi.dexter.Dexter
+import com.karumi.dexter.MultiplePermissionsReport
+import com.karumi.dexter.PermissionToken
+import com.karumi.dexter.listener.PermissionRequest
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener
+import com.sinch.verification.*
 import com.truecaller.android.sdk.*
+import com.truecaller.android.sdk.clients.VerificationCallback
+import com.truecaller.android.sdk.clients.VerificationDataBundle
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -47,6 +59,16 @@ class SignUpV2Activity : BaseActivity() {
     private var fbCallbackManager = CallbackManager.Factory.create()
     private var mGoogleSignInClient: GoogleSignInClient? = null
     private var compositeDisposable = CompositeDisposable()
+    var verification: Verification? = null
+    private var sinchConfig: Config? = null
+
+    init {
+        sinchConfig = SinchVerification.config()
+            .applicationKey(BuildConfig.SINCH_API_KEY)
+            .appHash(AppSignatureHelper(AppObjectController.joshApplication).appSignatures[0])
+            .context(AppObjectController.joshApplication)
+            .build()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         appAnalytics = AppAnalytics.create(AnalyticsEvent.LOGIN_INITIATED.NAME)
@@ -99,6 +121,7 @@ class SignUpV2Activity : BaseActivity() {
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestEmail().requestId().requestProfile().build()
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso)
+        mGoogleSignInClient?.signOut()
     }
 
     private fun setupFacebookLogin() {
@@ -106,16 +129,20 @@ class SignUpV2Activity : BaseActivity() {
         LoginManager.getInstance().registerCallback(fbCallbackManager,
             object : FacebookCallback<LoginResult?> {
                 override fun onSuccess(loginResult: LoginResult?) {
+                    // Toast.makeText(applicationContext,"onSuccess"+loginResult?.accessToken,Toast.LENGTH_LONG).show()
                     if (loginResult != null && loginResult.accessToken != null) {
                         getUserDetailsFromFB(loginResult.accessToken)
                     }
                 }
 
                 override fun onCancel() {
+                    // Toast.makeText(applicationContext,"onCancel",Toast.LENGTH_LONG).show()
+
                 }
 
                 override fun onError(exception: FacebookException) {
                     exception.printStackTrace()
+                    // Toast.makeText(applicationContext,"error"+exception.message+" "+ exception.localizedMessage,Toast.LENGTH_LONG).show()
                 }
             })
     }
@@ -185,6 +212,7 @@ class SignUpV2Activity : BaseActivity() {
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == GOOGLE_SIGN_UP_REQUEST_CODE) {
             val task: Task<GoogleSignInAccount> = GoogleSignIn.getSignedInAccountFromIntent(data)
             if (task.isSuccessful) {
@@ -199,7 +227,6 @@ class SignUpV2Activity : BaseActivity() {
         if (TruecallerSDK.getInstance().isUsable) {
             TruecallerSDK.getInstance().onActivityResultObtained(this, resultCode, data)
         }
-        super.onActivityResult(requestCode, resultCode, data)
     }
 
     private fun gmailLogin() {
@@ -221,6 +248,7 @@ class SignUpV2Activity : BaseActivity() {
             .addParam(AnalyticsEvent.FLOW_FROM_PARAM.NAME, this.javaClass.simpleName)
             .addParam(AnalyticsEvent.LOGIN_VIA.NAME, AnalyticsEvent.FACEBOOK_PARAM.NAME)
             .push()
+        LoginManager.getInstance().logOut()
         LoginManager.getInstance().logIn(this, listOf("public_profile", "email"))
     }
 
@@ -243,7 +271,7 @@ class SignUpV2Activity : BaseActivity() {
             }
             var email: String? = null
             if (jsonObject.has("email")) {
-                email = jsonObject.getString("name")
+                email = jsonObject.getString("email")
             }
             viewModel.signUpUsingSocial(
                 LoginViaStatus.FACEBOOK,
@@ -351,5 +379,219 @@ class SignUpV2Activity : BaseActivity() {
         }
     }
 
+    fun createVerification(
+        countryCode: String,
+        phoneNumber: String,
+        service: VerificationService = VerificationService.SINCH,
+        verificationVia: VerificationVia = VerificationVia.FLASH_CALL
+    ) {
+        when (service) {
+            VerificationService.SINCH -> {
+                AppAnalytics.create(AnalyticsEvent.LOGIN_INITIATED.NAME)
+                    .addBasicParam()
+                    .addUserDetails()
+                    .addParam(AnalyticsEvent.LOGIN_VIA.NAME, AnalyticsEvent.SINCH_PARAM.NAME)
+                    .push()
+                verificationThroughSinch(countryCode, phoneNumber, verificationVia)
+            }
+            VerificationService.TRUECALLER -> {
+                verificationThroughTrueCaller(phoneNumber, verificationVia)
+            }
+            else -> {
+                RxBus2.publish(
+                    LoginViaEventBus(
+                        LoginViaStatus.SMS_VERIFY,
+                        countryCode,
+                        phoneNumber
+                    )
+                )
+            }
+        }
+    }
+
+    //Use link = https://developers.sinch.com/docs/verification-for-android
+    private fun verificationThroughSinch(
+        countryCode: String,
+        phoneNumber: String,
+        verificationVia: VerificationVia
+    ) {
+        val listener = object : VerificationListener {
+            override fun onInitiationFailed(e: Exception) {
+                viewModel.verificationStatus.postValue(VerificationStatus.FAILED)
+                e.printStackTrace()
+                when (e) {
+                    is InvalidInputException -> {
+                    }
+                    is ServiceErrorException -> {
+                    }
+                    else -> {
+                    }
+                }
+            }
+
+            override fun onVerified() {
+                viewModel.verificationStatus.postValue(VerificationStatus.SUCCESS)
+            }
+
+            override fun onInitiated(p0: InitiationResult) {
+                viewModel.verificationStatus.postValue(VerificationStatus.INITIATED)
+            }
+
+            override fun onVerificationFailed(e: Exception) {
+                e.printStackTrace()
+                when (e) {
+                    is InvalidInputException -> {
+                        viewModel.verificationStatus.postValue(VerificationStatus.FAILED)
+                        // Incorrect number or code provided
+                    }
+                    is CodeInterceptionException -> {
+                        // Intercepting the verification code automatically failed, input the code manually with verify()
+                    }
+                    is IncorrectCodeException -> {
+                        viewModel.verificationStatus.postValue(VerificationStatus.FAILED)
+
+                        // The verification code provided was incorrect
+                    }
+                    is ServiceErrorException -> {
+                        viewModel.verificationStatus.postValue(VerificationStatus.FAILED)
+                        // Sinch service error
+                    }
+                    else -> {
+                        // Other system error, such as UnknownHostException in case of network error
+                    }
+                }
+                e.printStackTrace()
+            }
+
+            override fun onVerificationFallback() {
+            }
+        }
+
+        val defaultRegion: String = PhoneNumberUtils.getDefaultCountryIso(this)
+        val phoneNumberInE164: String =
+            PhoneNumberUtils.formatNumberToE164(phoneNumber, defaultRegion)
+
+        if (verificationVia == VerificationVia.FLASH_CALL) {
+            flashCallVerificationPermissionCheck {
+                verificationViaFLASHCallUsingSinch(sinchConfig, phoneNumberInE164, listener)
+            }
+        } else {
+            verificationViaSMSUsingSinch(
+                sinchConfig,
+                countryCode,
+                phoneNumber,
+                phoneNumberInE164,
+                listener
+            )
+        }
+    }
+
+    private fun verificationViaSMSUsingSinch(
+        config: Config?,
+        countryCode: String,
+        phoneNumber: String,
+        phoneNumberInE164: String,
+        listener: VerificationListener
+    ) {
+        verification =
+            SinchVerification.createSmsVerification(config, phoneNumberInE164, listener)
+        verification?.initiate()
+        viewModel.countryCode = countryCode
+        viewModel.phoneNumber = phoneNumber
+        openNumberVerificationFragment()
+        viewModel.registerSMSReceiver()
+    }
+
+    private fun verificationViaFLASHCallUsingSinch(
+        config: Config?,
+        phoneNumberInE164: String,
+        listener: VerificationListener
+    ) {
+        verification =
+            SinchVerification.createFlashCallVerification(config, phoneNumberInE164, listener)
+        verification?.initiate()
+    }
+
+    //Use link = https://docs.truecaller.com/truecaller-sdk/android/integrating-with-your-app/verifying-non-truecaller-users
+    private fun verificationThroughTrueCaller(
+        phoneNumber: String,
+        verificationVia: VerificationVia
+    ) {
+        val apiCallback: VerificationCallback = object : VerificationCallback {
+            override fun onRequestSuccess(
+                requestCode: Int,
+                @Nullable extras: VerificationDataBundle?
+            ) {
+                when (requestCode) {
+                    VerificationCallback.TYPE_MISSED_CALL_INITIATED -> {
+                        viewModel.verificationStatus.postValue(VerificationStatus.INITIATED)
+                    }
+                    VerificationCallback.TYPE_MISSED_CALL_RECEIVED -> {
+                        viewModel.verificationStatus.postValue(VerificationStatus.SUCCESS)
+                    }
+                    VerificationCallback.TYPE_OTP_INITIATED -> {
+                        viewModel.verificationStatus.postValue(VerificationStatus.INITIATED)
+                    }
+                    VerificationCallback.TYPE_OTP_RECEIVED -> {
+                        viewModel.verificationStatus.postValue(VerificationStatus.SUCCESS)
+
+                    }
+                    VerificationCallback.TYPE_VERIFICATION_COMPLETE -> {
+                        viewModel.verificationStatus.postValue(VerificationStatus.SUCCESS)
+                    }
+                    VerificationCallback.TYPE_PROFILE_VERIFIED_BEFORE -> {
+                    }
+                }
+            }
+
+            override fun onRequestFailure(requestCode: Int, @NonNull e: TrueException) {
+                viewModel.verificationStatus.postValue(VerificationStatus.FAILED)
+            }
+        }
+
+        flashCallVerificationPermissionCheck {
+            TruecallerSDK.getInstance().requestVerification("IN", phoneNumber, apiCallback, this)
+        }
+    }
+
+    private fun flashCallVerificationPermissionCheck(callback: () -> Unit = {}) {
+        Dexter.withContext(this)
+            .withPermissions(
+                Manifest.permission.READ_PHONE_STATE,
+                Manifest.permission.READ_CALL_LOG,
+                Manifest.permission.ANSWER_PHONE_CALLS
+            )
+            .withListener(object : MultiplePermissionsListener {
+                override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
+                    report?.areAllPermissionsGranted()?.let { flag ->
+                        if (flag) {
+                            callback()
+                            return@let
+                        }
+                        if (report.isAnyPermissionPermanentlyDenied) {
+                            viewModel.verificationStatus.postValue(VerificationStatus.USER_DENY)
+                            PermissionUtils.permissionPermanentlyDeniedDialog(
+                                this@SignUpV2Activity,
+                                R.string.flash_call_verify_permission_message
+                            )
+                            return
+                        }
+                    }
+                }
+
+                override fun onPermissionRationaleShouldBeShown(
+                    p0: MutableList<PermissionRequest>?,
+                    token: PermissionToken?
+                ) {
+                    viewModel.verificationStatus.postValue(VerificationStatus.USER_DENY)
+                    token?.continuePermissionRequest()
+                }
+            }).check()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        compositeDisposable.clear()
+    }
 }
 
