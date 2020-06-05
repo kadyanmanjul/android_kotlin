@@ -165,6 +165,9 @@ class CourseExploreActivity : CoreJoshActivity() {
                 if (PrefManager.getStringValue(USER_UNIQUE_ID).isNotEmpty()) {
                     data["gaid"] = PrefManager.getStringValue(USER_UNIQUE_ID)
                 }
+                if (PrefManager.getStringValue(INSTANCE_ID).isNotEmpty()) {
+                    data["instance"] = PrefManager.getStringValue(INSTANCE_ID)
+                }
                 if (Mentor.getInstance().getId().isNotEmpty()) {
                     data["mentor"] = Mentor.getInstance().getId()
                 } else {
