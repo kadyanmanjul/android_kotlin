@@ -54,6 +54,6 @@ class ChatNPayDialogFragment : BottomSheetDialogFragment() {
 
     companion object {
         @JvmStatic
-        fun newInstance() = PaymentFailedDialogFragment()
+        fun newInstance() = ChatNPayDialogFragment()
     }
 }
