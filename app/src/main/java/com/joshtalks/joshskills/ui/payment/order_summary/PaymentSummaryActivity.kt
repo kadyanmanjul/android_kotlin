@@ -352,7 +352,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
 
     private fun getTextView(text: String): TextView {
         val textView = TextView(applicationContext)
-        textView.setTextColor(ContextCompat.getColor(applicationContext, R.color.gray_48))
+        textView.setTextColor(ContextCompat.getColor(applicationContext, R.color.dark_grey))
         textView.typeface = typefaceSpan
         val spanString = SpannableString(text)
         spanString.setSpan(

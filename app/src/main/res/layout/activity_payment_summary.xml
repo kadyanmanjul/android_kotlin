@@ -64,7 +64,7 @@
                         android:layout_marginTop="@dimen/_10sdp"
                         android:gravity="start"
                         android:textColor="@color/black"
-                        android:textSize="@dimen/font_16"
+                        android:textSize="@dimen/font_18"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toEndOf="@+id/profile_image"
                         app:layout_constraintTop_toTopOf="parent"
@@ -80,7 +80,7 @@
                         android:layout_marginTop="@dimen/_2sdp"
                         android:gravity="start"
                         android:textColor="@color/dark_grey"
-                        android:textSize="@dimen/font_12"
+                        android:textSize="@dimen/font_14"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toEndOf="@+id/profile_image"
                         app:layout_constraintTop_toBottomOf="@+id/course_name"
@@ -107,7 +107,7 @@
                         android:layout_marginTop="@dimen/_8sdp"
                         android:gravity="start"
                         android:textColor="@color/black"
-                        android:textSize="@dimen/font_16"
+                        android:textSize="@dimen/font_18"
                         android:textStyle="bold"
                         app:layout_constraintStart_toEndOf="@+id/profile_image"
                         app:layout_constraintTop_toBottomOf="@+id/imageView3"
@@ -170,7 +170,7 @@
                         style="@style/TextStyle.TopBarScroll"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginHorizontal="@dimen/_14sdp"
+                        android:layout_marginHorizontal="@dimen/_10sdp"
                         android:paddingVertical="@dimen/_8sdp"
                         android:text="Total Amount"
                         android:textColor="@color/black"
@@ -199,7 +199,7 @@
                         android:layout_marginVertical="@dimen/_6sdp"
                         android:background="@drawable/round_both_bottom_bg"
                         android:backgroundTint="@color/green"
-                        android:padding="@dimen/_6sdp"
+                        android:padding="@dimen/_10sdp"
                         android:text="@string/tip_used_info"
                         android:textColor="@color/white"
                         android:textSize="@dimen/font_14"
@@ -336,7 +336,8 @@
                     android:id="@+id/imageView2"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/_60sdp"
-                    android:layout_margin="@dimen/_8sdp"
+                    android:layout_marginHorizontal="@dimen/_24sdp"
+                    android:layout_marginVertical="@dimen/_16sdp"
                     android:src="@drawable/payment_bottom"
                     app:layout_constraintBottom_toTopOf="@+id/materialButton"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -399,15 +400,15 @@
                     android:background="@color/transparent_black"
                     android:elevation="@dimen/_6sdp"
                     android:visibility="gone"
-                    tools:visibility="gone">
+                    tools:visibility="visible">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:layout_marginHorizontal="@dimen/_16sdp"
-                        android:layout_marginTop="@dimen/_24sdp"
-                        android:background="@drawable/ic_use_tip_bg">
+                        android:background="@drawable/ic_use_tip_bg"
+                        android:elevation="@dimen/_16sdp">
 
                     <FrameLayout
                             android:id="@+id/fl_container"
@@ -434,7 +435,7 @@
                                 android:gravity="start|center"
                                 android:text="@string/bade_bhaiya_tips_new"
                                 android:textColor="@color/white"
-                                android:textSize="@dimen/font_14"
+                                android:textSize="@dimen/font_20"
                                 tools:ignore="UnusedAttribute" />
                     </FrameLayout>
 
@@ -474,7 +475,8 @@
                                 android:gravity="start|center"
                                 android:text="@string/tip_discount"
                                 android:textColor="@color/font_color"
-                                android:textSize="@dimen/font_20"
+                                android:textSize="@dimen/font_22"
+                                android:textStyle="bold"
                                 app:layout_constraintBottom_toBottomOf="parent"
                                 app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintTop_toTopOf="parent" />
@@ -494,15 +496,17 @@
 
                         <androidx.appcompat.widget.AppCompatTextView
                                 android:id="@+id/tv_tip_used"
-                                android:layout_width="@dimen/_40sdp"
+                                android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginEnd="@dimen/_12sdp"
                                 android:background="@drawable/rect_with_black_bound"
-                                android:backgroundTint="#20BA70"
+                                android:backgroundTint="@color/green"
                                 android:gravity="center"
+                                android:paddingHorizontal="@dimen/_16sdp"
+                                android:paddingVertical="@dimen/_4sdp"
                                 android:text="@string/use_tip"
                                 android:textColor="@color/white"
-                                android:textSize="@dimen/font_10"
+                                android:textSize="@dimen/font_14"
                                 app:layout_constraintBottom_toBottomOf="@+id/tv_tip_valid"
                                 app:layout_constraintEnd_toEndOf="parent"
                                 app:layout_constraintTop_toTopOf="@+id/tv_tip_valid"

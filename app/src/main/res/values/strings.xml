@@ -267,7 +267,7 @@
     <string name="tutor_start">Let\'s get started</string>
     <string name="register_now">Register Now !</string>
     <string name="start">Start My Course !</string>
-    <string name="tip_used_info">Tip Used! You got bade bhaiya\ndiscount of ₹ %s</string>
+    <string name="tip_used_info">Tip Used! You got bade bhaiya\ndiscount of <b>₹ %s</b></string>
     <string name="bade_bhaiya_tips_new">Bade\nBhaiya\nTip!</string>
     <string name="tip_title">You can get discount on all Coures!</string>
     <string name="tip_valid">Valid for next %s Days</string>
