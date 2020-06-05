@@ -36,6 +36,7 @@ enum class AnalyticsEvent(val NAME: String) {
     COURSE_EXPLORER("Course Explorer V3"),
     EXPLORE_BTN_CLICKED("Explore Button Clicked V3"),
     LOGIN_INITIATED("Login Initiated V3"),//  called in both onBoardActivity and from payment LoginDialogFragment
+    LOGIN_WITH("Login with V3"),
     LOGIN_WITH_TRUECALLER("Login With Truecaller V3"),
     LOGIN_WITH_OTP("Login With Otp V3"),
     LOGIN_WITH_GMAIL("Login With Gmail V3"),
@@ -55,7 +56,11 @@ enum class AnalyticsEvent(val NAME: String) {
     LOGIN_VIA("Login via V3"),
     FLOW_FROM_PARAM("flow from V3"),
     MOBILE_OTP_PARAM("Mobile OTP V3"),
+    MOBILE_FLASH_PARAM("Flash Call V3"),
+    SMS_OTP_PARAM("SMS OTP V3"),
     TRUECALLER_PARAM("Truecaller V3"),
+    TRUECALLER_FLASH_PARAM("Truecaller Flash V3"),
+    TRUECALLER_OTP_PARAM("Truecaller OTP V3"),
     GMAIL_PARAM("Gmail V3"),
     FACEBOOK_PARAM("Facebook V3"),
     SINCH_PARAM("Sinch V3"),
@@ -298,5 +303,23 @@ enum class AnalyticsEvent(val NAME: String) {
     FEEDBACK_IGNORE("Feedback Ignore V3"),
 
     REFERRAL_CODE("Referral Code V3"),
-    CUSTOM_PERMISSION_ACTION("Custom Permission Action V3")
+    CUSTOM_PERMISSION_ACTION("Custom Permission Action V3"),
+
+    //Payment Summary Events
+    INSTANCE_ID("Instance Id V3"),
+    PAYMENT_SUMMARY_OPENED("Payment summary opened V3"),
+    MOBILE_MANUAL_ENTERED("Mobile Manual Entered V3"),
+    MOBILE_NUMBER_CLEARED("Mobile Number cleared V3"),
+    MOBILE_AUTOMATICALLY_ENTERED("Mobile Automatically Entered V3"),
+    PAY_NOW_CLICKED("Pay Now Clicked V3"),
+    REGISTER_NOW_CLICKED("Register Now Clicked V3"),
+    COURSE_START_CLCIKED("Course Start Clicked V3"),
+    LOGIN_WITH_GOOGLE("Login With Google V3"),
+    LOGIN_WITH_FB("Login With Fb V3"),
+    RETRY_PAYMENT("Retry Payment V3"),
+    WHATSAPP_CLICKED_PAYMENT_FAILED("Whatsapp Clicked for payment failed V3"),
+    WHATSAPP_CLICKED_PAYMENT_OTHER_COUNTRY("Whatsapp Clicked for other country payment V3"),
+    COUNTRY_ISO_CODE("Country iso code V3"),
+    TRANSACTION_ID("Transaction id V3"),
+
 }
