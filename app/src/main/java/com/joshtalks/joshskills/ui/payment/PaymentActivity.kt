@@ -27,6 +27,7 @@ import com.joshtalks.joshskills.core.analytics.BranchIOAnalytics
 import com.joshtalks.joshskills.core.service.WorkMangerAdmin
 import com.joshtalks.joshskills.databinding.ActivityPaymentBinding
 import com.joshtalks.joshskills.messaging.RxBus2
+import com.joshtalks.joshskills.repository.local.entity.NPSEventModel
 import com.joshtalks.joshskills.repository.local.eventbus.BuyCourseEventBus
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
@@ -77,7 +78,7 @@ class PaymentActivity : CoreJoshActivity(), CouponCodeSubmitFragment.OnCouponCod
     private var userSubmitCode = EMPTY
     private var razorpayOrderId = EMPTY
     private lateinit var titleView: AppCompatTextView
-    private lateinit var appAnalytics:AppAnalytics
+    private lateinit var appAnalytics: AppAnalytics
     private var specialDiscount = false
     private var isEcommereceEventFire = true
     private var hasCertificate = false
@@ -426,6 +427,10 @@ class PaymentActivity : CoreJoshActivity(), CouponCodeSubmitFragment.OnCouponCod
     override fun onResume() {
         super.onResume()
         addObserver()
+        if (NPSEventModel.getCurrentNPA() != null && npsShow) {
+            showNetPromoterScoreDialog()
+            npsShow = false
+        }
     }
 
     override fun onPause() {
@@ -597,22 +602,22 @@ class PaymentActivity : CoreJoshActivity(), CouponCodeSubmitFragment.OnCouponCod
             AppObjectController.appDatabase
                 .courseDao()
                 .isUserInOfferDays()
-            .subscribeOn(Schedulers.io())
-            .concatMap {
-                val (flag, _) = Utils.isUserInDaysOld(it.courseCreatedDate)
-                return@concatMap Maybe.just(flag)
-            }
-            .subscribe(
-                { value ->
-                    specialDiscount = value
-                    appAnalytics.addParam(AnalyticsEvent.SPECIAL_DISCOUNT.NAME, specialDiscount)
-                },
-                { error ->
-                    error.printStackTrace()
-
-                }, {
+                .subscribeOn(Schedulers.io())
+                .concatMap {
+                    val (flag, _) = Utils.isUserInDaysOld(it.courseCreatedDate)
+                    return@concatMap Maybe.just(flag)
                 }
-            ))
+                .subscribe(
+                    { value ->
+                        specialDiscount = value
+                        appAnalytics.addParam(AnalyticsEvent.SPECIAL_DISCOUNT.NAME, specialDiscount)
+                    },
+                    { error ->
+                        error.printStackTrace()
+
+                    }, {
+                    }
+                ))
     }
 
     override fun onLoginSuccessfully() {
