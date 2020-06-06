@@ -19,7 +19,6 @@ import com.joshtalks.joshskills.databinding.FragmentSignUpOptionsBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.LoginViaEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.LoginViaStatus
-import com.joshtalks.joshskills.ui.signup.DEFAULT_COUNTRY_CODE
 import com.sinch.verification.PhoneNumberUtils
 import java.util.concurrent.TimeUnit
 
@@ -60,7 +59,6 @@ class SignUpOptionsFragment : BaseSignUpFragment() {
             binding.btnTruecallerLogin.visibility = View.VISIBLE
         }
         binding.countryCodePicker.setAutoDetectedCountry(true)
-        binding.countryCodePicker.setCountryForNameCode(DEFAULT_COUNTRY_CODE)
         binding.countryCodePicker.setDetectCountryWithAreaCode(true)
         binding.mobileEt.prefix = binding.countryCodePicker.defaultCountryCodeWithPlus
         binding.countryCodePicker.setOnCountryChangeListener {
@@ -74,7 +72,7 @@ class SignUpOptionsFragment : BaseSignUpFragment() {
         }
         bindProgressButton(binding.btnLogin)
         binding.btnLogin.attachTextChangeAnimator()
-        viewModel.verificationStatus.observe(this, Observer {
+        viewModel.verificationStatus.observe(viewLifecycleOwner, Observer {
             it.run {
                 when {
                     this == VerificationStatus.INITIATED -> {

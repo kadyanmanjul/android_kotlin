@@ -35,6 +35,7 @@ import com.joshtalks.joshskills.core.inapp_update.InAppUpdateManager
 import com.joshtalks.joshskills.core.inapp_update.InAppUpdateStatus
 import com.joshtalks.joshskills.core.service.WorkMangerAdmin
 import com.joshtalks.joshskills.messaging.RxBus2
+import com.joshtalks.joshskills.repository.local.entity.NPSEventModel
 import com.joshtalks.joshskills.repository.local.eventbus.ExploreCourseEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.NPSEventGenerateEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.OpenCourseEventBus
@@ -66,7 +67,6 @@ import kotlinx.android.synthetic.main.activity_inbox.*
 import kotlinx.android.synthetic.main.find_more_layout.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.jetbrains.anko.collections.forEachWithIndex
 
@@ -101,7 +101,6 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         checkAppUpdate()
         workInBackground()
         handelIntentAction()
-        checkForOemNotifications()
     }
 
     private fun setToolbar() {
@@ -135,11 +134,22 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
     private fun workInBackground() {
         CoroutineScope(Dispatchers.Default).launch {
             processIntent(intent)
-            delay(1000)
-            locationFetch()
             WorkMangerAdmin.determineNPAEvent()
         }
+        when {
+            shouldRequireCustomPermission() -> {
+                checkForOemNotifications()
+            }
+            NPSEventModel.getCurrentNPA() != null -> {
+                showNetPromoterScoreDialog()
+            }
+            else -> {
+                locationFetch()
+            }
+        }
+
     }
+
 
     private fun checkAppUpdate() {
         val forceUpdateMinVersion =
@@ -363,7 +373,6 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         Runtime.getRuntime().gc()
         addObserver()
         viewModel.getRegisterCourses()
-        showNetPromoterScoreDialog()
     }
 
     override fun onPause() {

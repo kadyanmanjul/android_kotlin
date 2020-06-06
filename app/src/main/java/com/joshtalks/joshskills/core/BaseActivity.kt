@@ -315,7 +315,7 @@ abstract class BaseActivity : AppCompatActivity() {
         }
     }
 
-    private fun shouldRequireCustomPermission(): Boolean {
+    protected fun shouldRequireCustomPermission(): Boolean {
         val performedAction = PrefManager.getStringValue(CUSTOM_PERMISSION_ACTION_KEY)
         return performedAction == EMPTY || performedAction == PermissionAction.CANCEL.name
     }

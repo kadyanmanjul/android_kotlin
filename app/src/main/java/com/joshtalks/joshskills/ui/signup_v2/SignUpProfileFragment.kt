@@ -16,7 +16,6 @@ import com.joshtalks.joshskills.core.custom_ui.spinnerdatepicker.SpinnerDatePick
 import com.joshtalks.joshskills.databinding.FragmentSignUpProfileBinding
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.ui.profile.MAX_YEAR
-import com.joshtalks.joshskills.ui.signup.DEFAULT_COUNTRY_CODE
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -127,11 +126,7 @@ class SignUpProfileFragment : BaseSignUpFragment() {
     }
 
     private fun initCountryCodePicker() {
-        binding.countryCodePicker.setDefaultCountryUsingNameCode(
-            DEFAULT_COUNTRY_CODE
-        )
         binding.countryCodePicker.setAutoDetectedCountry(true)
-        binding.countryCodePicker.setCountryForNameCode(DEFAULT_COUNTRY_CODE)
         binding.countryCodePicker.setDetectCountryWithAreaCode(true)
         binding.phoneNumberEt.prefix = binding.countryCodePicker.defaultCountryCodeWithPlus
         binding.countryCodePicker.setOnCountryChangeListener {
