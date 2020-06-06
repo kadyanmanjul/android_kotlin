@@ -18,13 +18,18 @@
 
         <View
                 android:id="@+id/view"
-                android:layout_width="0dp"
-                android:layout_height="@dimen/_300sdp"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
                 android:background="@drawable/rectangle_top_rounded"
                 android:orientation="vertical"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
+                app:layout_constraintHeight_default="percent"
+                app:layout_constraintHeight_percent="0.4"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="1.0" />
 
         <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/iv_rating_view"
@@ -36,19 +41,20 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.46" />
+                app:layout_constraintVertical_bias="0.616" />
 
         <ImageButton
                 android:id="@+id/close"
                 android:layout_width="@dimen/_20sdp"
                 android:layout_height="@dimen/_20sdp"
-                android:layout_marginTop="@dimen/_16sdp"
-                android:layout_marginEnd="@dimen/_16sdp"
                 android:background="@drawable/ic_cross"
                 android:backgroundTint="@color/black"
-                android:contentDescription="@string/cancel_button"
-                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="@+id/view"
+                app:layout_constraintHorizontal_bias="0.95"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/view"
+                app:layout_constraintVertical_bias="0.05"
                 app:rippleColor="@color/transparent_black" />
 
         <TextView
@@ -56,13 +62,14 @@
                 style="@style/TextStyle.TopBarNoScroll"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_64sdp"
                 android:text="@string/complete_payment"
                 android:textColor="@color/black"
                 android:textSize="@dimen/font_20"
+                app:layout_constraintBottom_toBottomOf="@+id/view"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/view" />
+                app:layout_constraintTop_toTopOf="@+id/view"
+                app:layout_constraintVertical_bias="0.35" />
 
         <com.google.android.material.button.MaterialButton
                 android:id="@+id/chat_pay"
@@ -70,7 +77,6 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/_24sdp"
-                android:layout_marginTop="@dimen/_48sdp"
                 android:backgroundTint="@color/button_color"
                 android:gravity="center"
                 android:paddingHorizontal="@dimen/_8sdp"
@@ -80,9 +86,11 @@
                 android:textColor="@color/white"
                 android:textSize="@dimen/_14sdp"
                 app:cornerRadius="@dimen/_20sdp"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textView3"
+                app:layout_constraintVertical_bias="0.6"
                 app:rippleColor="@color/colorPrimary" />
 
         <androidx.appcompat.widget.AppCompatImageView
