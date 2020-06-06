@@ -24,9 +24,11 @@ import com.joshtalks.joshskills.core.SignUpStepStatus
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.databinding.FragmentLoginDialogBinding
-import com.truecaller.android.sdk.*
+import com.joshtalks.joshskills.ui.signup_v2.FLOW_FROM
+import com.truecaller.android.sdk.ITrueCallback
+import com.truecaller.android.sdk.TrueError
+import com.truecaller.android.sdk.TrueProfile
 import io.reactivex.disposables.CompositeDisposable
-import java.util.*
 
 class LoginDialogFragment : DialogFragment() {
 
@@ -74,23 +76,23 @@ class LoginDialogFragment : DialogFragment() {
     }
 
     private fun initTrueCallerSDK() {
-        try {
-            val trueScope = TrueSdkScope.Builder(requireContext(), trueCallerSDKCallback)
-                .consentMode(TrueSdkScope.CONSENT_MODE_POPUP)  //TrueSdkScope.CONSENT_MODE_POPUP
-                .consentTitleOption(TrueSdkScope.SDK_CONSENT_TITLE_VERIFY)
-                .footerType(TrueSdkScope.FOOTER_TYPE_CONTINUE) //TrueSdkScope.FOOTER_TYPE_CONTINUE
-                .build()
+        /* try {
+             val trueScope = TrueSdkScope.Builder(requireContext(), trueCallerSDKCallback)
+                 .consentMode(TrueSdkScope.CONSENT_MODE_POPUP)  //TrueSdkScope.CONSENT_MODE_POPUP
+                 .consentTitleOption(TrueSdkScope.SDK_CONSENT_TITLE_VERIFY)
+                 .footerType(TrueSdkScope.FOOTER_TYPE_CONTINUE) //TrueSdkScope.FOOTER_TYPE_CONTINUE
+                 .build()
 
-            TrueSDK.init(trueScope)
-            if (TrueSDK.getInstance().isUsable) {
-                val locale = Locale("en")
-                TrueSDK.getInstance().setLocale(locale)
-                binding.orRl.visibility = View.VISIBLE
-                binding.btnTruecallerLogin.visibility = View.VISIBLE
-            }
-        } catch (ex: Exception) {
-            ex.printStackTrace()
-        }
+             TrueSDK.init(trueScope)
+             if (TrueSDK.getInstance().isUsable) {
+                 val locale = Locale("en")
+                 TrueSDK.getInstance().setLocale(locale)
+                 binding.orRl.visibility = View.VISIBLE
+                 binding.btnTruecallerLogin.visibility = View.VISIBLE
+             }
+         } catch (ex: Exception) {
+             ex.printStackTrace()
+         }*/
     }
 
     private fun addObserver() {
@@ -139,7 +141,7 @@ class LoginDialogFragment : DialogFragment() {
             .addParam(AnalyticsEvent.FLOW_FROM_PARAM.NAME, "Course Purchase journey")
             .addParam(AnalyticsEvent.LOGIN_VIA.NAME, AnalyticsEvent.TRUECALLER_PARAM.NAME)
             .push()
-        TrueSDK.getInstance().getUserProfile(this)
+        //  TrueSDK.getInstance().getUserProfile(this)
         showProgress()
         AppObjectController.uiHandler.postDelayed({ hideProgress() }, 1500)
     }
@@ -153,7 +155,7 @@ class LoginDialogFragment : DialogFragment() {
             .push()
         startActivityForResult(Intent(requireActivity(), SignUpActivity::class.java).apply {
             putExtra(IS_ACTIVITY_FOR_RESULT, true)
-            putExtra(FROM_ACTIVITY, "course purchase journey")
+            putExtra(FLOW_FROM, "course purchase journey")
 
         }, 101)
     }
@@ -191,12 +193,12 @@ class LoginDialogFragment : DialogFragment() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        try {
+        /*try {
             if (TrueSDK.getInstance().isUsable) {
                 TrueSDK.getInstance().onActivityResultObtained(requireActivity(), resultCode, data)
             }
         } catch (ex: Exception) {
-        }
+        }*/
         if (requestCode == 101 && resultCode == Activity.RESULT_OK) {
             listener?.onLoginSuccessfully()
             dismissAllowingStateLoss()

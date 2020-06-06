@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.FragmentManager
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.CUSTOM_PERMISSION_ACTION_KEY
@@ -26,6 +27,20 @@ class CustomPermissionDialogFragment : BottomSheetDialogFragment() {
             mIntent = intent
             return CustomPermissionDialogFragment()
         }
+
+        /**
+         *  Show fragment asking for custom permission to start app in background for proper working of notifications
+         */
+        fun showCustomPermissionDialog(intent: Intent, supportFragmentManager: FragmentManager) {
+            val fragmentTransaction = supportFragmentManager.beginTransaction()
+            val prev = supportFragmentManager.findFragmentByTag("custom_permission_fragment_dialog")
+            if (prev != null) {
+                fragmentTransaction.remove(prev)
+            }
+            fragmentTransaction.addToBackStack(null)
+            newInstance(intent)
+                .show(supportFragmentManager, "custom_permission_fragment_dialog")
+        }
     }
 
     override fun onCreateView(
@@ -45,9 +60,15 @@ class CustomPermissionDialogFragment : BottomSheetDialogFragment() {
         return binding.root
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        PrefManager.put(CUSTOM_PERMISSION_ACTION_KEY, PermissionAction.DO_NOT_ASK_AGAIN.name)
+    }
+
     fun allow() {
         PrefManager.put(CUSTOM_PERMISSION_ACTION_KEY, PermissionAction.ALLOW.name)
         logAction(PermissionAction.ALLOW)
+        dismiss()
         navigateToSettings()
     }
 
@@ -55,14 +76,12 @@ class CustomPermissionDialogFragment : BottomSheetDialogFragment() {
         PrefManager.put(CUSTOM_PERMISSION_ACTION_KEY, PermissionAction.CANCEL.name)
         logAction(PermissionAction.CANCEL)
         dismiss()
-        interactionListener.navigateToNextScreen()
     }
 
     fun doNotAskAgain() {
         PrefManager.put(CUSTOM_PERMISSION_ACTION_KEY, PermissionAction.DO_NOT_ASK_AGAIN.name)
         logAction(PermissionAction.DO_NOT_ASK_AGAIN)
         dismiss()
-        interactionListener.navigateToNextScreen()
     }
 
     /**
@@ -74,7 +93,6 @@ class CustomPermissionDialogFragment : BottomSheetDialogFragment() {
         } catch (ex: Throwable) {
             PrefManager.put(CUSTOM_PERMISSION_ACTION_KEY, PermissionAction.DO_NOT_ASK_AGAIN.name)
             dismissAllowingStateLoss()
-            interactionListener.navigateToNextScreen()
         }
     }
 

@@ -18,6 +18,7 @@ object WorkMangerAdmin {
                     OneTimeWorkRequestBuilder<RefreshFCMTokenWorker>().build()
                 )
             )
+            .then(OneTimeWorkRequestBuilder<InstanceIdGenerationWorker>().build())
             .then(OneTimeWorkRequestBuilder<UniqueIdGenerationWorker>().build())
             .then(OneTimeWorkRequestBuilder<MappingGaIDWithMentor>().build())
             .then(

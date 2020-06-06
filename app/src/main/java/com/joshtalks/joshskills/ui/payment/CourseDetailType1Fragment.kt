@@ -88,9 +88,9 @@ class CourseDetailType1Fragment : Fragment() {
 
         compositeDisposable.add(AppObjectController.appDatabase
             .courseDao()
-            .isUserOldThen7Days()
+            .isUserInOfferDays()
             .concatMap {
-                val (flag, dayRemain) = com.joshtalks.joshskills.core.Utils.isUser7DaysOld(it.courseCreatedDate)
+                val (flag, dayRemain) = com.joshtalks.joshskills.core.Utils.isUserInDaysOld(it.courseCreatedDate)
                 this.dayRemain = dayRemain.toString()
                 return@concatMap Maybe.just(flag)
             }

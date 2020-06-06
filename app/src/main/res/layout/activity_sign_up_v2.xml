@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+                name="handler"
+                type="com.joshtalks.joshskills.ui.signup_v2.SignUpV2Activity" />
+    </data>
+
+    <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/top_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingStart="@dimen/_8sdp"
+                android:paddingTop="@dimen/_12sdp"
+                android:paddingEnd="@dimen/_8sdp"
+                android:paddingBottom="@dimen/_12sdp">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/iv_back"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerVertical="true"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center_vertical|start"
+                    android:onClick="@{()->handler.onBackPressed()}"
+                    android:padding="@dimen/_4sdp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/ic_arrow_back"
+                    app:tint="@color/gray_3B" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/text_message_title"
+                    fontPath="fonts/Roboto-Medium.ttf"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_8sdp"
+                    android:autoSizeMaxTextSize="@dimen/font_18"
+                    android:gravity="start"
+                    android:text="@string/registration"
+                    android:textColor="@color/gray_3B"
+                    android:textSize="@dimen/font_22"
+                    app:layout_constraintStart_toStartOf="@+id/iv_back"
+                    app:layout_constraintTop_toBottomOf="@+id/iv_back"
+                    tools:targetApi="o" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                    android:onClick="@{()->handler.openHelpActivity()}"
+                    android:id="@+id/iv_help"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/_4sdp"
+                    android:src="@drawable/ic_help_outline"
+                    android:tint="@color/gray_3B"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <FrameLayout
+                android:id="@+id/container"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@+id/top_view" />
+    </RelativeLayout>
+
+</layout>

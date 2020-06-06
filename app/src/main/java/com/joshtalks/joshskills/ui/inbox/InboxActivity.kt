@@ -35,13 +35,13 @@ import com.joshtalks.joshskills.core.inapp_update.InAppUpdateManager
 import com.joshtalks.joshskills.core.inapp_update.InAppUpdateStatus
 import com.joshtalks.joshskills.core.service.WorkMangerAdmin
 import com.joshtalks.joshskills.messaging.RxBus2
+import com.joshtalks.joshskills.repository.local.entity.NPSEventModel
 import com.joshtalks.joshskills.repository.local.eventbus.ExploreCourseEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.NPSEventGenerateEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.OpenCourseEventBus
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.local.model.ACTION_UPSELLING_POPUP
 import com.joshtalks.joshskills.repository.local.model.Mentor
-import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.ProfileResponse
 import com.joshtalks.joshskills.repository.server.SearchLocality
 import com.joshtalks.joshskills.repository.server.UpdateUserLocality
@@ -51,6 +51,7 @@ import com.joshtalks.joshskills.ui.payment.COURSE_ID
 import com.joshtalks.joshskills.ui.referral.ReferralActivity
 import com.joshtalks.joshskills.ui.tooltip.BalloonFactory
 import com.joshtalks.joshskills.ui.view_holders.InboxViewHolder
+import com.joshtalks.skydoves.balloon.Balloon
 import com.joshtalks.skydoves.balloon.OnBalloonDismissListener
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
@@ -66,7 +67,6 @@ import kotlinx.android.synthetic.main.activity_inbox.*
 import kotlinx.android.synthetic.main.find_more_layout.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.jetbrains.anko.collections.forEachWithIndex
 
@@ -87,16 +87,8 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
     private var inAppUpdateManager: InAppUpdateManager? = null
     private lateinit var earnIV: AppCompatImageView
     private lateinit var findMoreLayout: FrameLayout
-    private val offerIn7DaysHint by lazy { BalloonFactory.offerIn7Days(this, this) }
-    private val hintFirstTime by lazy {
-        BalloonFactory.hintOfferFirstTime(this, this, object :
-            OnBalloonDismissListener {
-            override fun onBalloonDismiss() {
-                attachOfferHintView()
-            }
-        })
-    }
-
+    private var offerIn7DaysHint: Balloon? = null
+    private var hintFirstTime: Balloon? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         WorkMangerAdmin.requiredTaskInLandingPage()
@@ -137,17 +129,27 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
             RxBus2.publish(ExploreCourseEventBus())
         }
         visibleShareEarn()
-
     }
 
     private fun workInBackground() {
         CoroutineScope(Dispatchers.Default).launch {
             processIntent(intent)
-            delay(1000)
-            locationFetch()
             WorkMangerAdmin.determineNPAEvent()
         }
+        when {
+            shouldRequireCustomPermission() -> {
+                checkForOemNotifications()
+            }
+            NPSEventModel.getCurrentNPA() != null -> {
+                showNetPromoterScoreDialog()
+            }
+            else -> {
+                locationFetch()
+            }
+        }
+
     }
+
 
     private fun checkAppUpdate() {
         val forceUpdateMinVersion =
@@ -346,7 +348,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
                             val request = UpdateUserLocality()
                             request.locality =
                                 SearchLocality(location.latitude, location.longitude)
-                                AppAnalytics.setLocation(location.latitude, location.longitude)
+                            AppAnalytics.setLocation(location.latitude, location.longitude)
                             val response: ProfileResponse =
                                 AppObjectController.signUpNetworkService.updateUserAddressAsync(
                                     Mentor.getInstance().getId(),
@@ -371,7 +373,6 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         Runtime.getRuntime().gc()
         addObserver()
         viewModel.getRegisterCourses()
-        showNetPromoterScoreDialog()
     }
 
     override fun onPause() {
@@ -400,24 +401,26 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
     }
 
     private fun addCourseExploreView() {
-        hintFirstTime.dismiss()
+        hintFirstTime?.dismiss()
         //  offerIn7DaysHint.dismiss()
         findMoreLayout.visibility = View.VISIBLE
         if (PrefManager.getBoolValue(FIRST_TIME_OFFER_SHOW).not()) {
             PrefManager.put(FIRST_TIME_OFFER_SHOW, true)
             compositeDisposable.add(AppObjectController.appDatabase.courseDao()
-                .isUserOldThen7Days()
+                .isUserInOfferDays()
                 .concatMap {
-                    val (flag, _) = Utils.isUser7DaysOld(it.courseCreatedDate)
+                    val (flag, remainDay) = Utils.isUserInDaysOld(it.courseCreatedDate)
+                    initOfferView(remainDay.toString())
                     return@concatMap Maybe.just(flag)
                 }
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                     { value ->
-                        if (value && offerIn7DaysHint.isShowing.not() && isFinishing.not()) {
+                        if (value && isFinishing.not()) {
+
                             val root = findViewById<View>(R.id.find_more)
-                            hintFirstTime.showAlignBottom(root)
+                            hintFirstTime?.showAlignBottom(root)
                         }
                     },
                     { error ->
@@ -427,7 +430,20 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         } else {
             attachOfferHintView()
         }
-        userProfileActivityNotExist()
+    }
+
+    private fun initOfferView(remainDay: String) {
+        AppObjectController.uiHandler.post {
+            hintFirstTime = BalloonFactory.hintOfferFirstTime(
+                this,
+                this,
+                remainDay,
+                object : OnBalloonDismissListener {
+                    override fun onBalloonDismiss() {
+                        attachOfferHintView()
+                    }
+                })
+        }
     }
 
 
@@ -472,46 +488,34 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
             .into(earnIV)
     }
 
-
-    private fun userProfileActivityNotExist() {
-        try {
-            val entity = viewModel.registerCourseMinimalLiveData.value?.get(0)
-            val entity2 = viewModel.registerCourseNetworkLiveData.value?.get(0)
-            if (entity == null && entity2 == null) {
-                return
-            }
-            if (Mentor.getInstance().hasId() && User.getInstance().dateOfBirth.isNullOrEmpty()) {
-                startActivity(getPersonalDetailsActivityIntent())
-            }
-        } catch (ex: Exception) {
-            ex.printStackTrace()
-        }
-    }
-
     fun attachOfferHintView() {
-        compositeDisposable.add(AppObjectController.appDatabase
-            .courseDao()
-            .isUserOldThen7Days()
-            .concatMap {
-                val (flag, _) = Utils.isUser7DaysOld(it.courseCreatedDate)
-                return@concatMap Maybe.just(flag)
-            }
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(
-                { value ->
-                    if (value) {
-                        val root = findViewById<View>(R.id.find_more)
-                        if (offerIn7DaysHint.isShowing.not() && isFinishing.not()) {
-                            offerIn7DaysHint.showAlignBottom(root)
-                            findViewById<View>(R.id.bottom_line).visibility = View.GONE
-
-                        }
+        compositeDisposable.add(
+            AppObjectController.appDatabase
+                .courseDao()
+                .isUserInOfferDays()
+                .concatMap {
+                    val (flag, remainDay) = Utils.isUserInDaysOld(it.courseCreatedDate)
+                    if (offerIn7DaysHint == null) {
+                        offerIn7DaysHint =
+                            BalloonFactory.offerIn7Days(this, this, remainDay.toString())
                     }
-                },
-                { error ->
-                    error.printStackTrace()
+                    return@concatMap Maybe.just(flag)
                 }
-            ))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                    { value ->
+                        val root = findViewById<View>(R.id.find_more)
+                        offerIn7DaysHint?.run {
+                            if (this.isShowing.not() && isFinishing.not() && value) {
+                                this.showAlignBottom(root)
+                                findViewById<View>(R.id.bottom_line).visibility = View.GONE
+                            }
+                        }
+                    },
+                    { error ->
+                        error.printStackTrace()
+                    }
+                ))
     }
 }

@@ -26,7 +26,8 @@ import com.joshtalks.joshskills.repository.local.model.ScreenEngagementModel
 import com.joshtalks.joshskills.repository.server.CourseExploreModel
 import com.joshtalks.joshskills.ui.inbox.PAYMENT_FOR_COURSE_CODE
 import com.joshtalks.joshskills.ui.payment.PaymentActivity
-import com.joshtalks.joshskills.ui.sign_up_old.OnBoardActivity
+import com.joshtalks.joshskills.ui.signup_v2.FLOW_FROM
+import com.joshtalks.joshskills.ui.signup_v2.SignUpV2Activity
 import com.joshtalks.joshskills.ui.view_holders.CourseExplorerViewHolder
 import com.vanniktech.emoji.Utils
 import io.reactivex.disposables.CompositeDisposable
@@ -113,11 +114,14 @@ class CourseExploreActivity : CoreJoshActivity() {
                             .addUserDetails()
                             .addParam(AnalyticsEvent.USER_LOGGED_OUT.NAME, true).push()
                         val intent =
-                            Intent(AppObjectController.joshApplication, OnBoardActivity::class.java)
+                            Intent(
+                                AppObjectController.joshApplication,
+                                SignUpV2Activity::class.java
+                            )
                         intent.apply {
                             addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
                             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                            putExtra("Flow", "CourseExploreAvtivity")
+                            putExtra(FLOW_FROM, "CourseExploreActivity")
                         }
                         CoroutineScope(Dispatchers.IO).launch {
                             PrefManager.clearUser()
@@ -161,6 +165,9 @@ class CourseExploreActivity : CoreJoshActivity() {
                 val data = HashMap<String, String>()
                 if (PrefManager.getStringValue(USER_UNIQUE_ID).isNotEmpty()) {
                     data["gaid"] = PrefManager.getStringValue(USER_UNIQUE_ID)
+                }
+                if (PrefManager.getStringValue(INSTANCE_ID).isNotEmpty()) {
+                    data["instance"] = PrefManager.getStringValue(INSTANCE_ID)
                 }
                 if (Mentor.getInstance().getId().isNotEmpty()) {
                     data["mentor"] = Mentor.getInstance().getId()

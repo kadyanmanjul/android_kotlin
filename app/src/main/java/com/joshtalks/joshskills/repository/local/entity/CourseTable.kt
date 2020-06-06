@@ -65,6 +65,6 @@ interface CourseDao {
 
 
     @Query(value = "SELECT * from course ORDER BY course_created_date ASC LIMIT 1")
-    fun isUserOldThen7Days(): Maybe<Course>
+    fun isUserInOfferDays(): Maybe<Course>
 }
 

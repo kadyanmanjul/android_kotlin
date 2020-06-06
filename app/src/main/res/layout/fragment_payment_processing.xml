@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/be_calm"
+            style="@style/TextStyle.TopBarNoScroll"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/be_calm"
+            android:textColor="@color/black"
+            android:textSize="@dimen/font_22"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.1" />
+
+    <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/dont_close"
+            style="@style/TextStyle.TopBarNoScroll"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/dont_close"
+            android:textColor="@color/black"
+            android:textSize="@dimen/font_14"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/be_calm" />
+
+    <ImageView
+            android:id="@+id/image"
+            android:layout_width="@dimen/_172sdp"
+            android:layout_height="@dimen/_213sdp"
+            android:src="@drawable/payment_processing"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.4"
+            tools:ignore="ContentDescription" />
+
+    <com.pnikosis.materialishprogress.ProgressWheel
+            android:id="@+id/progress_bar"
+            android:layout_width="@dimen/_56sdp"
+            android:layout_height="@dimen/_56sdp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.75"
+            app:matProg_barColor="@color/button_color"
+            app:matProg_barWidth="@dimen/_4sdp"
+            app:matProg_fillRadius="true"
+            app:matProg_linearProgress="false"
+            app:matProg_progressIndeterminate="true"
+            app:matProg_rimColor="#33128C7E"
+            app:matProg_rimWidth="@dimen/_4sdp" />
+
+    <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/info"
+            style="@style/TextStyle.TopBarNoScroll"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/processing"
+            android:textColor="@color/dark_grey"
+            android:textSize="@dimen/font_14"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.9" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

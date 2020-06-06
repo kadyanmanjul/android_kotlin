@@ -13,9 +13,8 @@ import com.joshtalks.joshskills.core.analytics.*
 import com.joshtalks.joshskills.core.service.WorkMangerAdmin
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
-import com.joshtalks.joshskills.repository.server.LoginResponse
-import com.joshtalks.joshskills.repository.server.RequestVerifyOTP
 import com.joshtalks.joshskills.repository.server.TrueCallerLoginRequest
+import com.joshtalks.joshskills.repository.server.signup.LoginResponse
 import com.joshtalks.joshskills.util.BindableString
 import com.truecaller.android.sdk.TrueProfile
 import kotlinx.coroutines.Dispatchers
@@ -99,46 +98,46 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
 
     fun verifyOTP(otp: String?) {
 
-        viewModelScope.launch(Dispatchers.IO) {
-            try {
+        /* viewModelScope.launch(Dispatchers.IO) {
+             try {
 
-                val reqObj = RequestVerifyOTP(phoneNumber, otp ?: otpField.get()!!)
-                val response: LoginResponse =
-                    AppObjectController.signUpNetworkService.verifyOTP(reqObj).await()
-                MarketingAnalytics.completeRegistrationAnalytics(
-                    response.isUserExist,
-                    RegistrationMethods.MOBILE_NUMBER
-                )
-                val user = User.getInstance()
-                user.id = response.userId
-                user.source = "OTP"
-                user.token = response.token
-                User.update(user.toString())
-                Mentor.getInstance()
-                    .setId(response.mentorId)
-                    .setReferralCode(response.referralCode)
-                    .update()
-                AppAnalytics.updateUser()
-                AppAnalytics.create(AnalyticsEvent.OTP_VERIFIED.NAME).push()
-                fetchMentor()
+                 val reqObj = RequestVerifyOTP(phoneNumber, otp ?: otpField.get()!!)
+                 val response: LoginResponse =
+                     AppObjectController.signUpNetworkService.verifyOTP(reqObj)
+                 MarketingAnalytics.completeRegistrationAnalytics(
+                     response.newUser,
+                     RegistrationMethods.MOBILE_NUMBER
+                 )
+                 val user = User.getInstance()
+                 user.userId = response.userId
+                 user.source = "OTP"
+                 user.token = response.token
+                 User.update(user.toString())
+                 Mentor.getInstance()
+                     .setId(response.mentorId)
+                     .setReferralCode(response.referralCode)
+                     .update()
+                 AppAnalytics.updateUser()
+                 AppAnalytics.create(AnalyticsEvent.OTP_VERIFIED.NAME).push()
+                 fetchMentor()
 
-            } catch (ex: Throwable) {
-                LogException.catchException(ex)
-                progressDialogStatus.postValue(false)
-                when (ex) {
-                    is HttpException -> {
-                        if (ex.code() == 400) {
-                            otpVerifyStatus.postValue(true)
-                        }
-                    }
-                    is SocketTimeoutException, is UnknownHostException -> {
-                        showToast(context.getString(R.string.internet_not_available_msz))
-                    }
-                    else -> {
-                    }
-                }
-            }
-        }
+             } catch (ex: Throwable) {
+                 LogException.catchException(ex)
+                 progressDialogStatus.postValue(false)
+                 when (ex) {
+                     is HttpException -> {
+                         if (ex.code() == 400) {
+                             otpVerifyStatus.postValue(true)
+                         }
+                     }
+                     is SocketTimeoutException, is UnknownHostException -> {
+                         showToast(context.getString(R.string.internet_not_available_msz))
+                     }
+                     else -> {
+                     }
+                 }
+             }
+         }*/
 
     }
 
@@ -149,19 +148,20 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
                 val trueCallerLoginRequest = TrueCallerLoginRequest(
                     profile.payload,
                     profile.signature,
-                    profile.signatureAlgorithm
+                    profile.signatureAlgorithm,
+                    PrefManager.getStringValue(INSTANCE_ID)
                 )
                 val response: LoginResponse =
                     AppObjectController.signUpNetworkService.verifyViaTrueCaller(
                         trueCallerLoginRequest
-                    ).await()
+                    ).body()!!
                 MarketingAnalytics.completeRegistrationAnalytics(
-                    response.isUserExist,
+                    response.newUser,
                     RegistrationMethods.MOBILE_NUMBER
                 )
 
                 val user = User.getInstance()
-                user.id = response.userId
+                user.userId = response.userId
                 user.source = "OTP"
                 user.token = response.token
 
@@ -200,8 +200,7 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
                 val mentor: Mentor =
                     AppObjectController.signUpNetworkService.getPersonalProfileAsync(
                         Mentor.getInstance().getId()
-                    )
-                        .await()
+                    ).body()!!
                 Mentor.getInstance().updateFromResponse(mentor)
                 mentor.getUser()?.let {
                     User.getInstance().updateFromResponse(it)

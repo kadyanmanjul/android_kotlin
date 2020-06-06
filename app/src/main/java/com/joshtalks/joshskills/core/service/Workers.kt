@@ -13,6 +13,7 @@ import com.google.firebase.iid.FirebaseInstanceId
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.LogException
+import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.core.notification.FCM_TOKEN
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.DatabaseUtils
@@ -24,6 +25,7 @@ import com.joshtalks.joshskills.repository.server.MessageStatusRequest
 import com.joshtalks.joshskills.repository.server.UpdateDeviceRequest
 import com.joshtalks.joshskills.repository.service.NetworkRequestHelper
 import com.joshtalks.joshskills.repository.service.SyncChatService
+import com.sinch.verification.PhoneNumberUtils
 import io.branch.referral.Branch
 import retrofit2.HttpException
 import java.util.*
@@ -31,13 +33,20 @@ import java.util.*
 const val INSTALL_REFERRER_SYNC = "install_referrer_sync"
 const val CONVERSATION_ID = "conversation_id"
 
-class AppRunRequiredTaskWorker(context: Context, workerParams: WorkerParameters) :
+class AppRunRequiredTaskWorker(var context: Context, workerParams: WorkerParameters) :
     CoroutineWorker(context, workerParams) {
     override suspend fun doWork(): Result {
         AppAnalytics.flush()
         AppObjectController.facebookEventLogger.flush()
         AppObjectController.firebaseAnalytics.resetAnalyticsData()
         AppObjectController.getFetchObject().awaitFinish()
+        if (PrefManager.getStringValue(API_TOKEN).isEmpty()) {
+            PrefManager.put(API_TOKEN, User.getInstance().token)
+        }
+        if (PrefManager.getStringValue(COUNTRY_ISO).isEmpty()) {
+            PrefManager.put(COUNTRY_ISO, PhoneNumberUtils.getDefaultCountryIso(context))
+        }
+
         WorkMangerAdmin.readMessageUpdating()
         AppObjectController.getFirebaseRemoteConfig().fetchAndActivate().addOnCompleteListener {
             val npsEvent =
@@ -151,6 +160,29 @@ class ScreenEngagementWorker(context: Context, private val workerParams: WorkerP
         return Result.success()
     }
 
+}
+
+class InstanceIdGenerationWorker(var context: Context, workerParams: WorkerParameters) :
+    CoroutineWorker(context, workerParams) {
+
+    override suspend fun doWork(): Result {
+        try {
+            if (PrefManager.hasKey(INSTANCE_ID).not()) {
+                val res = AppObjectController.signUpNetworkService.getInstanceIdAsync()
+                if (res.instanceId.isEmpty().not())
+                    PrefManager.put(INSTANCE_ID, res.instanceId)
+                if (PermissionUtils.isStoragePermissionEnabled(applicationContext)) {
+                    val instanceId = AppDirectory.readFromFile(AppDirectory.getInstanceIdKeyFile())
+                    if (instanceId.isNullOrBlank().not())
+                        PrefManager.put(INSTANCE_ID, instanceId!!)
+                }
+            }
+
+        } catch (ex: Throwable) {
+            LogException.catchException(ex)
+        }
+        return Result.success()
+    }
 }
 
 
@@ -633,9 +665,13 @@ class UpdateDeviceDetailsWorker(context: Context, workerParams: WorkerParameters
                     )
                 details.update()
             } else {
-                val details =
-                    AppObjectController.signUpNetworkService.postDeviceDetails(UpdateDeviceRequest())
-                details.update()
+                if (DeviceDetailsResponse.getInstance() == null) {
+                    val details =
+                        AppObjectController.signUpNetworkService.postDeviceDetails(
+                            UpdateDeviceRequest()
+                        )
+                    details.update()
+                }
             }
         } catch (ex: Exception) {
             ex.printStackTrace()
@@ -673,7 +709,6 @@ class MergeMentorWithGAIDWorker(context: Context, workerParams: WorkerParameters
         return Result.success()
     }
 }
-
 
 fun getGoogleAdId(context: Context): String {
     MobileAds.initialize(context)
