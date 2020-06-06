@@ -232,15 +232,15 @@ abstract class BaseActivity : AppCompatActivity() {
         return CoroutineScope(Dispatchers.IO).async(Dispatchers.IO) {
             val currentState: NPSEvent? = getCurrentNpsState(nps) ?: return@async false
 
-            if (!(currentState == NPSEvent.PAYMENT_SUCCESS || currentState == NPSEvent.PAYMENT_FAILED)) {
-                val minNpsInADay = AppObjectController.getFirebaseRemoteConfig()
-                    .getDouble("MINIMUM_NPS_IN_A_DAY_COUNT").toInt()
-                val totalCountToday =
-                    AppObjectController.appDatabase.npsEventModelDao().getTotalCountOfRows()
-                if (totalCountToday >= minNpsInADay) {
-                    return@async false
-                }
+            // if (!(currentState == NPSEvent.PAYMENT_SUCCESS || currentState == NPSEvent.PAYMENT_FAILED)) {
+            val minNpsInADay = AppObjectController.getFirebaseRemoteConfig()
+                .getDouble("MINIMUM_NPS_IN_A_DAY_COUNT").toInt()
+            val totalCountToday =
+                AppObjectController.appDatabase.npsEventModelDao().getTotalCountOfRows()
+            if (totalCountToday >= minNpsInADay) {
+                return@async false
             }
+            // }
 
             val npsEventModel =
                 NPSEventModel.getAllNpaList()?.filter { it.enable }
@@ -317,7 +317,7 @@ abstract class BaseActivity : AppCompatActivity() {
 
     protected fun shouldRequireCustomPermission(): Boolean {
         val performedAction = PrefManager.getStringValue(CUSTOM_PERMISSION_ACTION_KEY)
-        return performedAction == EMPTY || performedAction == PermissionAction.CANCEL.name
+        return performedAction == EMPTY
     }
 
     private fun isUserProfileComplete(): Boolean {
