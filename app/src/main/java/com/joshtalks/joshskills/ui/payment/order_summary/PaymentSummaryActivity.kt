@@ -212,7 +212,6 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                 binding.tvTip.text = it.couponDetails.title
                 binding.tvTipValid.text = it.couponDetails.validity
                 binding.tvTipOff.text = it.couponDetails.header
-                binding.group1.visibility = View.GONE
                 appAnalytics.addParam(AnalyticsEvent.SPECIAL_DISCOUNT.NAME, it.couponDetails.title)
                 binding.badeBhaiyaTipContainer.visibility = View.VISIBLE
                 binding.badeBhaiyaTipContainer.setOnClickListener {
