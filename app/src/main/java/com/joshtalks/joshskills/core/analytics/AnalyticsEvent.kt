@@ -154,6 +154,7 @@ enum class AnalyticsEvent(val NAME: String) {
 
     //  Payment Status (Post response from razorpay, transaction was successful or failed)
     PAYMENT_STATUS("Post Payment Status V3"),
+    PAYMENT_STATUS_NEW("Payment Status V3"),
     POST_TRANSATION_STATUS("Post transaction Status V3"),
     //PAYMENT_INITIATED("Payment Initiated V3"),
     INVALID_COUPON_POPUP("Invalid coupon popup V3"),
@@ -307,11 +308,15 @@ enum class AnalyticsEvent(val NAME: String) {
 
     //Payment Summary Events
     INSTANCE_ID("Instance Id V3"),
+    IS_USER_REGISTERD("is user registered V3"),
     PAYMENT_SUMMARY_OPENED("Payment summary opened V3"),
+    PAYMENT_SUMMARY_INITIATED("Payment summary initiated V3"),
+    REASON("reason V3"),
     MOBILE_MANUAL_ENTERED("Mobile Manual Entered V3"),
     MOBILE_NUMBER_CLEARED("Mobile Number cleared V3"),
     MOBILE_AUTOMATICALLY_ENTERED("Mobile Automatically Entered V3"),
     PAY_NOW_CLICKED("Pay Now Clicked V3"),
+    RAZOR_PAY_ID("razorpay id V3"),
     REGISTER_NOW_CLICKED("Register Now Clicked V3"),
     COURSE_START_CLCIKED("Course Start Clicked V3"),
     LOGIN_WITH_GOOGLE("Login With Google V3"),
