@@ -152,7 +152,7 @@
                         android:visibility="visible"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/profile_image" />
+                        app:layout_constraintTop_toBottomOf="@+id/txt_joined" />
 
                 <View
                         android:id="@+id/double_line"
@@ -394,10 +394,11 @@
                     android:id="@+id/bade_bhaiya_tip_container"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:background="@color/transparent_black"
+                    android:alpha="0.75"
+                    android:background="#000000"
                     android:elevation="@dimen/_6sdp"
                     android:visibility="gone"
-                    tools:visibility="visible">
+                    tools:visibility="gone">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
