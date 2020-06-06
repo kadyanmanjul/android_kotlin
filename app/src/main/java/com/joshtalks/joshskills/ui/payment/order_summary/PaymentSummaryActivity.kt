@@ -240,7 +240,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                 binding.badeBhaiyaTipContainer.visibility = View.VISIBLE
                 binding.badeBhaiyaTipContainer.setOnClickListener {
                     appAnalytics.addParam(AnalyticsEvent.HAVE_COUPON_CODE.NAME, true)
-                    binding.badeBhaiyaTipContainer.visibility = View.INVISIBLE
+                    binding.badeBhaiyaTipContainer.visibility = View.GONE
                     binding.txtPrice.text =
                         "₹ ${String.format("%.2f", viewModel.getCourseDiscountedAmount())}"
                     binding.tipUsedMsg.text = SpannableStringBuilder(
