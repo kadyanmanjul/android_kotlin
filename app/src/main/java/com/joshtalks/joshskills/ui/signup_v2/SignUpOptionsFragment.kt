@@ -60,7 +60,6 @@ class SignUpOptionsFragment : BaseSignUpFragment() {
         }
         binding.countryCodePicker.setAutoDetectedCountry(true)
         binding.countryCodePicker.setDetectCountryWithAreaCode(true)
-        binding.mobileEt.prefix = binding.countryCodePicker.defaultCountryCodeWithPlus
         binding.countryCodePicker.setOnCountryChangeListener {
             binding.mobileEt.prefix = binding.countryCodePicker.selectedCountryCodeWithPlus
             setupVerificationSystem(binding.countryCodePicker.selectedCountryNameCode)
@@ -70,6 +69,7 @@ class SignUpOptionsFragment : BaseSignUpFragment() {
         if (supportedCountryList.isNotEmpty()) {
             binding.countryCodePicker.setCustomMasterCountries(supportedCountryList)
         }
+        binding.mobileEt.prefix = binding.countryCodePicker.defaultCountryCodeWithPlus
         bindProgressButton(binding.btnLogin)
         binding.btnLogin.attachTextChangeAnimator()
         viewModel.verificationStatus.observe(viewLifecycleOwner, Observer {

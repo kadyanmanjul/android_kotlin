@@ -252,10 +252,8 @@
                         app:ccp_autoFormatNumber="false"
                         app:ccp_clickable="true"
                         app:ccp_contentColor="@color/font_color"
-                        app:ccp_countryAutoDetectionPref="SIM_LOCALE"
-                        app:ccp_countryPreference="IN"
+                        app:ccp_countryAutoDetectionPref="SIM_NETWORK_LOCALE"
                         app:ccp_defaultLanguage="ENGLISH"
-                        app:ccp_defaultNameCode="IN"
                         app:ccp_flagBorderColor="@color/transparent"
                         app:ccp_hintExampleNumber="false"
                         app:ccp_rememberLastSelection="true"
@@ -298,7 +296,6 @@
                             android:padding="@dimen/_8sdp"
                             android:textSize="@dimen/font_16"
                             app:backgroundTint="@color/white"
-                            app:prefix="+91 "
                             tools:text="9999999999" />
 
                 </com.google.android.material.textfield.TextInputLayout>

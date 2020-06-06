@@ -27,6 +27,7 @@ import com.joshtalks.joshskills.core.analytics.BranchIOAnalytics
 import com.joshtalks.joshskills.core.service.WorkMangerAdmin
 import com.joshtalks.joshskills.databinding.ActivityPaymentBinding
 import com.joshtalks.joshskills.messaging.RxBus2
+import com.joshtalks.joshskills.repository.local.entity.NPSEvent
 import com.joshtalks.joshskills.repository.local.entity.NPSEventModel
 import com.joshtalks.joshskills.repository.local.eventbus.BuyCourseEventBus
 import com.joshtalks.joshskills.repository.local.model.Mentor
@@ -427,9 +428,11 @@ class PaymentActivity : CoreJoshActivity(), CouponCodeSubmitFragment.OnCouponCod
     override fun onResume() {
         super.onResume()
         addObserver()
-        if (NPSEventModel.getCurrentNPA() != null && npsShow) {
-            showNetPromoterScoreDialog()
-            npsShow = false
+        NPSEventModel.getCurrentNPA()?.run {
+            if (this == NPSEvent.PAYMENT_FAILED && npsShow) {
+                showNetPromoterScoreDialog()
+                npsShow = false
+            }
         }
     }
 

@@ -51,7 +51,6 @@ import com.joshtalks.joshskills.ui.payment.ChatNPayDialogFragment
 import com.joshtalks.joshskills.ui.payment.PaymentFailedDialogFragment
 import com.joshtalks.joshskills.ui.payment.PaymentProcessingFragment
 import com.joshtalks.joshskills.ui.payment.PaymentSuccessFragment
-import com.joshtalks.joshskills.ui.signup.DEFAULT_COUNTRY_CODE
 import com.joshtalks.joshskills.ui.signup.RC_HINT
 import com.joshtalks.joshskills.ui.startcourse.StartCourseActivity
 import com.joshtalks.joshskills.ui.view_holders.ROUND_CORNER
@@ -312,15 +311,12 @@ class PaymentSummaryActivity : CoreJoshActivity(),
             binding.countryCodePicker.setCustomMasterCountries(supportedCountryList)
         }
         binding.countryCodePicker.setAutoDetectedCountry(true)
-        binding.countryCodePicker.setCountryForNameCode(DEFAULT_COUNTRY_CODE)
         binding.countryCodePicker.setDetectCountryWithAreaCode(true)
-        binding.mobileEt.prefix =
-            binding.countryCodePicker.defaultCountryCodeWithPlus
-
         binding.countryCodePicker.setOnCountryChangeListener {
             binding.mobileEt.prefix =
                 binding.countryCodePicker.selectedCountryCodeWithPlus
         }
+        binding.mobileEt.prefix = binding.countryCodePicker.defaultCountryCodeWithPlus
         binding.mobileEt.setOnFocusChangeListener { v, hasFocus ->
             if (hasFocus)
                 requestHint()
