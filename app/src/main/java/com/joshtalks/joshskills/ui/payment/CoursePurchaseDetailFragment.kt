@@ -126,16 +126,7 @@ class CoursePurchaseDetailFragment : DialogFragment() {
     }
 
     fun completePayment() {
-        //TODO
-        AppAnalytics.create(AnalyticsEvent.COURSE_PAYMENT_CONFIRMED.NAME)
-            .addBasicParam()
-            .addUserDetails()
-            .addParam(
-                AnalyticsEvent.ACTION.NAME,
-                AnalyticsEvent.COMPLETE_PAYMENT_CLICKED.NAME
-            )
-            .addParam(AnalyticsEvent.COURSE_NAME.NAME, courseModel?.courseName)
-            .addParam(AnalyticsEvent.SHOWN_COURSE_PRICE.NAME, courseModel?.amount.toString()).push()
+
         listener?.onCompletePayment()
         dismissAllowingStateLoss()
 
