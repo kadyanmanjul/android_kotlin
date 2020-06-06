@@ -37,15 +37,10 @@ class PaymentSummaryViewModel(application: Application) : AndroidViewModel(appli
     var mPaymentDetailsResponse = MediatorLiveData<OrderDetailResponse>()
     var viewState: MutableLiveData<ViewState>? = null
     val isRegisteredAlready by lazy { Mentor.getInstance().getId().isNotBlank() }
-    val hasMobileNumber by lazy {
-        User.getInstance().phoneNumber.isNotBlank() && PrefManager.getStringValue(
-            PAYMENT_MOBILE_NUMBER
-        ).isNotBlank()
-    }
-    val hasAnyUserDetails by lazy {
+
+    val hasRegisteredMobileNumber by lazy {
         (User.getInstance().phoneNumber.isNotBlank() || PrefManager.getStringValue(
-            PAYMENT_MOBILE_NUMBER
-        ).isNotBlank()) || User.getInstance().email.isNotBlank()
+            PAYMENT_MOBILE_NUMBER).isNotBlank())
     }
 
     init {

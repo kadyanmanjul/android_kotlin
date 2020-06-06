@@ -231,7 +231,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                 }
             }
         })
-        if (viewModel.hasAnyUserDetails) {
+        if (viewModel.hasRegisteredMobileNumber) {
             binding.group1.visibility = View.GONE
         }
         viewModel.mPaymentDetailsResponse.observe(this, androidx.lifecycle.Observer {
@@ -270,12 +270,12 @@ class PaymentSummaryActivity : CoreJoshActivity(),
             try {
                 val preFill = JSONObject()
 
-                if (!viewModel.hasAnyUserDetails && User.getInstance().email.isNotBlank())
+                if (!viewModel.hasRegisteredMobileNumber && User.getInstance().email.isNotBlank())
                     preFill.put("email", User.getInstance().email)
                 else
                     preFill.put("email", Utils.getUserPrimaryEmail(applicationContext))
 
-                if (!viewModel.hasAnyUserDetails)
+                if (!viewModel.hasRegisteredMobileNumber)
                     preFill.put("contact", binding.mobileEt.text.toString())
                 else if (User.getInstance().phoneNumber.isNotBlank())
                     preFill.put("contact", User.getInstance().phoneNumber)
@@ -400,33 +400,41 @@ class PaymentSummaryActivity : CoreJoshActivity(),
         }
         val defaultRegion: String = PhoneNumberUtils.getDefaultCountryIso(applicationContext)
         appAnalytics.addParam(AnalyticsEvent.COUNTRY_ISO_CODE.NAME, defaultRegion)
-        if (defaultRegion == "IN") {
-            if (viewModel.hasAnyUserDetails.not()) {
-                if (binding.mobileEt.text.isNullOrEmpty()) {
-                    if (isRequestHintAppearred) {
-                        binding.inputLayoutPassword.error = "Please enter your phone number first"
-                        binding.inputLayoutPassword.isErrorEnabled = true
+
+        when {
+            viewModel.hasRegisteredMobileNumber.not() -> {
+                when {
+                    binding.mobileEt.text.isNullOrEmpty() -> {
+                        if (isRequestHintAppearred) {
+                            binding.inputLayoutPassword.error = "Please enter your phone number first"
+                            binding.inputLayoutPassword.isErrorEnabled = true
+                        }
+                        requestHint()
+                        return
                     }
-                    requestHint()
-                    return
-                } else if (isValidFullNumber(
+                    isValidFullNumber(
                         binding.mobileEt.prefix,
                         binding.mobileEt.text.toString()
-                    ).not()
-                ) {
-                    binding.inputLayoutPassword.error = "Please enter valid phone number"
-                    binding.inputLayoutPassword.isErrorEnabled = true
-                    return
-                } else viewModel.getOrderDetails(testId, binding.mobileEt.text.toString())
+                    ).not() -> {
+                        binding.inputLayoutPassword.error = "Please enter valid phone number"
+                        binding.inputLayoutPassword.isErrorEnabled = true
+                        return
+                    }
+                    binding.mobileEt.prefix.equals("+91") -> viewModel.getOrderDetails(testId, binding.mobileEt.text.toString())
+                    else ->
+                        uiHandler.post {
+                            showChatNPayDialog()
+                        }
+                }
                 binding.inputLayoutPassword.isErrorEnabled = false
-            } else if (User.getInstance().phoneNumber.isNotBlank())
-                viewModel.getOrderDetails(testId, User.getInstance().phoneNumber)
-            else
-                viewModel.getOrderDetails(testId, PrefManager.getStringValue(PAYMENT_MOBILE_NUMBER))
-        } else
-            uiHandler.post {
-                showChatNPayDialog()
             }
+            User.getInstance().phoneNumber.isNotBlank() -> viewModel.getOrderDetails(testId, User.getInstance().phoneNumber)
+            else -> viewModel.getOrderDetails(
+                testId, PrefManager.getStringValue(PAYMENT_MOBILE_NUMBER).replace(
+                    SINGLE_SPACE, EMPTY
+                )
+            )
+        }
     }
 
     fun clearText() {
