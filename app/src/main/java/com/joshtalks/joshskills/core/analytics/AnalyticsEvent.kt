@@ -109,7 +109,6 @@ enum class AnalyticsEvent(val NAME: String) {
     // ExploreCourses Screen
     COURSE_EXPLORE("Course Explore V3"),
     COURSE_LIST_SCROLLED("Course List Scrolled V3"),
-    COURSE_CLICKED("Course Clicked V3"),
     COURSE_THUMBNAIL_CLICKED("Course Thumbnail Clicked V3"),
     BACK_BTN_EXPLORESCREEN("Back Pressed on Explore Screen V3"),
     MORE_ICON_CLICKED("More Icons Clicked V3"),

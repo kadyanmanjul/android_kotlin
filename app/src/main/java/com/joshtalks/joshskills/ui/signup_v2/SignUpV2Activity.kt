@@ -73,7 +73,7 @@ class SignUpV2Activity : BaseActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        appAnalytics = AppAnalytics.create(AnalyticsEvent.LOGIN_INITIATED.NAME)
+        appAnalytics = AppAnalytics.create(AnalyticsEvent.SIGNUP_SATUS.NAME)
             .addBasicParam()
             .addUserDetails()
         super.onCreate(savedInstanceState)
