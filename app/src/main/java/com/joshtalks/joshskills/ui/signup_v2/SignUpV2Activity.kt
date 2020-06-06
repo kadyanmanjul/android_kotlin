@@ -2,6 +2,7 @@ package com.joshtalks.joshskills.ui.signup_v2
 
 import android.Manifest
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import androidx.annotation.NonNull
 import androidx.annotation.Nullable
@@ -207,7 +208,7 @@ class SignUpV2Activity : BaseActivity() {
     }
 
     private fun openNumberVerificationFragment() {
-        appAnalytics.addParam(AnalyticsEvent.LOGIN_VIA.NAME,AnalyticsEvent.MOBILE_OTP_PARAM.NAME)
+        appAnalytics.addParam(AnalyticsEvent.LOGIN_VIA.NAME, AnalyticsEvent.MOBILE_OTP_PARAM.NAME)
         supportFragmentManager.commit(true) {
             addToBackStack(SignUpVerificationFragment::class.java.name)
             replace(
@@ -278,7 +279,7 @@ class SignUpV2Activity : BaseActivity() {
         AppAnalytics.create(AnalyticsEvent.LOGIN_SUCCESSFULLY.NAME)
             .addBasicParam()
             .addUserDetails()
-            .addParam(AnalyticsEvent.LOGIN_WITH.NAME,AnalyticsEvent.FACEBOOK_PARAM.NAME)
+            .addParam(AnalyticsEvent.LOGIN_WITH.NAME, AnalyticsEvent.FACEBOOK_PARAM.NAME)
         val request: GraphRequest = GraphRequest.newMeRequest(accessToken) { jsonObject, _ ->
             val id = jsonObject.getString("id")
             var name: String? = null
@@ -563,12 +564,21 @@ class SignUpV2Activity : BaseActivity() {
     }
 
     private fun flashCallVerificationPermissionCheck(callback: () -> Unit = {}) {
-        Dexter.withContext(this)
-            .withPermissions(
+        val permission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            arrayListOf(
                 Manifest.permission.READ_PHONE_STATE,
                 Manifest.permission.READ_CALL_LOG,
                 Manifest.permission.ANSWER_PHONE_CALLS
             )
+        } else {
+            arrayListOf(
+                Manifest.permission.READ_PHONE_STATE,
+                Manifest.permission.READ_CALL_LOG,
+                Manifest.permission.CALL_PHONE
+            )
+        }
+        Dexter.withContext(this)
+            .withPermissions(permission)
             .withListener(object : MultiplePermissionsListener {
                 override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
                     report?.areAllPermissionsGranted()?.let { flag ->

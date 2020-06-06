@@ -58,6 +58,7 @@ class SignUpOptionsFragment : BaseSignUpFragment() {
         if (Utils.isTrueCallerAppExist()) {
             binding.btnTruecallerLogin.visibility = View.VISIBLE
         }
+
         binding.countryCodePicker.setAutoDetectedCountry(true)
         binding.countryCodePicker.setDetectCountryWithAreaCode(true)
         binding.countryCodePicker.setOnCountryChangeListener {
@@ -69,7 +70,8 @@ class SignUpOptionsFragment : BaseSignUpFragment() {
         if (supportedCountryList.isNotEmpty()) {
             binding.countryCodePicker.setCustomMasterCountries(supportedCountryList)
         }
-        binding.mobileEt.prefix = binding.countryCodePicker.defaultCountryCodeWithPlus
+        val defaultRegion: String = PhoneNumberUtils.getDefaultCountryIso(requireContext())
+        binding.mobileEt.prefix = binding.countryCodePicker.getCountryCodeByName(defaultRegion)
         bindProgressButton(binding.btnLogin)
         binding.btnLogin.attachTextChangeAnimator()
         viewModel.verificationStatus.observe(viewLifecycleOwner, Observer {

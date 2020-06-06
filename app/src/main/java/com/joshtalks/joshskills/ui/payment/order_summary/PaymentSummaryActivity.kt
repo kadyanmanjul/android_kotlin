@@ -339,7 +339,8 @@ class PaymentSummaryActivity : CoreJoshActivity(),
             binding.mobileEt.prefix =
                 binding.countryCodePicker.selectedCountryCodeWithPlus
         }
-        binding.mobileEt.prefix = binding.countryCodePicker.defaultCountryCodeWithPlus
+        val defaultRegion: String = PhoneNumberUtils.getDefaultCountryIso(this)
+        binding.mobileEt.prefix = binding.countryCodePicker.getCountryCodeByName(defaultRegion)
         binding.mobileEt.setOnFocusChangeListener { v, hasFocus ->
             if (hasFocus)
                 requestHint()

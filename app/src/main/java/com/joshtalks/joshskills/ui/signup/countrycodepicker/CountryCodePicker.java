@@ -1296,6 +1296,15 @@ public class CountryCodePicker extends RelativeLayout {
         }
     }
 
+    public String getCountryCodeByName(String code) {
+        for (CCPCountry cPCountry : CCPCountry.getLibraryMasterCountriesEnglish()) {
+            if (cPCountry.nameCode.equalsIgnoreCase(code)) {
+                return "+" + cPCountry.phoneCode;
+            }
+        }
+        return "";
+    }
+
     /**
      * this will load preferredCountries based on countryPreference
      */
