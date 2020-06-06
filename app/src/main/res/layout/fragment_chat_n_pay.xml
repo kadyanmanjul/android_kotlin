@@ -77,13 +77,14 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/_24sdp"
-                android:backgroundTint="@color/button_color"
+                android:backgroundTint="@color/white"
+                android:drawableEnd="@drawable/ic_whatsapp_payment"
                 android:gravity="center"
-                android:paddingHorizontal="@dimen/_8sdp"
+                android:paddingHorizontal="@dimen/_56sdp"
                 android:paddingVertical="@dimen/_8sdp"
                 android:text="@string/chat_option"
                 android:textAllCaps="false"
-                android:textColor="@color/white"
+                android:textColor="@color/dark_grey"
                 android:textSize="@dimen/_14sdp"
                 app:cornerRadius="@dimen/_20sdp"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -93,17 +94,6 @@
                 app:layout_constraintVertical_bias="0.6"
                 app:rippleColor="@color/colorPrimary" />
 
-        <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/whatsapp_help"
-                android:layout_width="@dimen/_22sdp"
-                android:layout_height="@dimen/_22sdp"
-                android:background="@drawable/ic_whatsapp_payment"
-                app:layout_constraintBottom_toBottomOf="@+id/chat_pay"
-                app:layout_constraintEnd_toEndOf="@+id/chat_pay"
-                app:layout_constraintHorizontal_bias="0.8"
-                app:layout_constraintStart_toStartOf="@+id/chat_pay"
-                app:layout_constraintTop_toTopOf="@+id/chat_pay"
-                app:src="@drawable/ic_whatsapp_payment" />
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
+
