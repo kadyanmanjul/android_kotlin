@@ -302,7 +302,8 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                 else if (User.getInstance().phoneNumber.isNotBlank())
                     preFill.put("contact", User.getInstance().phoneNumber)
                 else if (PrefManager.getStringValue(PAYMENT_MOBILE_NUMBER).isNotBlank())
-                    preFill.put("contact", PrefManager.getStringValue(PAYMENT_MOBILE_NUMBER))
+                    preFill.put("contact", PrefManager.getStringValue(PAYMENT_MOBILE_NUMBER).replace(SINGLE_SPACE,
+                        EMPTY))
                 else
                     preFill.put("contact", "9999999999")
                 val options = JSONObject()
@@ -454,11 +455,12 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                 testId,
                 User.getInstance().phoneNumber
             )
-            else -> viewModel.getOrderDetails(
-                testId, PrefManager.getStringValue(PAYMENT_MOBILE_NUMBER).replace(
-                    SINGLE_SPACE, EMPTY
-                )
+            else -> {  val mobileNmber=
+                viewModel.getOrderDetails(
+                testId, PrefManager.getStringValue(PAYMENT_MOBILE_NUMBER).replace(SINGLE_SPACE,
+                        EMPTY)
             )
+        }
         }
     }
 
@@ -488,7 +490,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
         )
         PrefManager.put(
             PAYMENT_MOBILE_NUMBER,
-            binding.mobileEt.prefix.plus(SINGLE_SPACE).plus(binding.mobileEt.text.toString())
+            binding.mobileEt.prefix.plus(SINGLE_SPACE).plus(binding.mobileEt.text)
         )
         if (isEcommereceEventFire && (viewModel.mPaymentDetailsResponse.value?.amount!! > 0) && razorpayPaymentId.isNotEmpty() && testId.isNotEmpty()) {
             isEcommereceEventFire = false
