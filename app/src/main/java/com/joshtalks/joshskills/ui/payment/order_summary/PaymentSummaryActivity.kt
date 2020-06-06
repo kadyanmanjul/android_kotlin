@@ -132,6 +132,30 @@ class PaymentSummaryActivity : CoreJoshActivity(),
         initViewModel()
         subscribeObservers()
         initCountryCode()
+        logPaymentAnalyticsEvents()
+    }
+
+    private fun logPaymentAnalyticsEvents() {
+        AppAnalytics.create(AnalyticsEvent.PAYMENT_SUMMARY_INITIATED.NAME)
+            .addParam(AnalyticsEvent.FLOW_FROM_PARAM.NAME, "Course Over View")
+            .addBasicParam()
+            .addUserDetails()
+            .addParam(AnalyticsEvent.COURSE_NAME.NAME, viewModel.getCourseName())
+            .addParam(AnalyticsEvent.SHOWN_COURSE_PRICE.NAME, viewModel.getCourseDiscountedAmount())
+            .addParam("test_id", testId)
+            .addParam(AnalyticsEvent.COURSE_PRICE.NAME, viewModel.getCourseActualAmount()).push()
+    }
+
+    private fun logPaymentStatusAnalyticsEvents(status: String, reason: String? = "Completed") {
+        AppAnalytics.create(AnalyticsEvent.PAYMENT_STATUS_NEW.NAME)
+            .addBasicParam()
+            .addUserDetails()
+            .addParam(AnalyticsEvent.PAYMENT_STATUS.NAME, status)
+            .addParam(AnalyticsEvent.REASON.NAME, reason)
+            .addParam(AnalyticsEvent.COURSE_NAME.NAME, viewModel.getCourseName())
+            .addParam(AnalyticsEvent.SHOWN_COURSE_PRICE.NAME, viewModel.getCourseDiscountedAmount())
+            .addParam("test_id", testId)
+            .addParam(AnalyticsEvent.COURSE_PRICE.NAME, viewModel.getCourseActualAmount()).push()
     }
 
     private fun initToolbarView() {
@@ -218,8 +242,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                     appAnalytics.addParam(AnalyticsEvent.HAVE_COUPON_CODE.NAME, true)
                     binding.badeBhaiyaTipContainer.visibility = View.INVISIBLE
                     binding.txtPrice.text =
-                        "₹ ${String.format("%.2f", viewModel.getCourseAmount())}"
-
+                        "₹ ${String.format("%.2f", viewModel.getCourseDiscountedAmount())}"
                     binding.tipUsedMsg.text = SpannableStringBuilder(
                         getString(
                             R.string.tip_used_info,
@@ -405,8 +428,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                 when {
                     binding.mobileEt.text.isNullOrEmpty() -> {
                         if (isRequestHintAppearred) {
-                            binding.inputLayoutPassword.error = "Please enter your phone number first"
-                            binding.inputLayoutPassword.isErrorEnabled = true
+                            showToast(getString(R.string.please_enter_valid_number))
                         }
                         requestHint()
                         return
@@ -415,19 +437,23 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                         binding.mobileEt.prefix,
                         binding.mobileEt.text.toString()
                     ).not() -> {
-                        binding.inputLayoutPassword.error = "Please enter valid phone number"
-                        binding.inputLayoutPassword.isErrorEnabled = true
+                        showToast(getString(R.string.please_enter_valid_number))
                         return
                     }
-                    binding.mobileEt.prefix.equals("+91") -> viewModel.getOrderDetails(testId, binding.mobileEt.text.toString())
+                    binding.mobileEt.prefix.equals("+91") -> viewModel.getOrderDetails(
+                        testId,
+                        binding.mobileEt.text.toString()
+                    )
                     else ->
                         uiHandler.post {
                             showChatNPayDialog()
                         }
                 }
-                binding.inputLayoutPassword.isErrorEnabled = false
             }
-            User.getInstance().phoneNumber.isNotBlank() -> viewModel.getOrderDetails(testId, User.getInstance().phoneNumber)
+            User.getInstance().phoneNumber.isNotBlank() -> viewModel.getOrderDetails(
+                testId,
+                User.getInstance().phoneNumber
+            )
             else -> viewModel.getOrderDetails(
                 testId, PrefManager.getStringValue(PAYMENT_MOBILE_NUMBER).replace(
                     SINGLE_SPACE, EMPTY
@@ -437,12 +463,13 @@ class PaymentSummaryActivity : CoreJoshActivity(),
     }
 
     fun clearText() {
-        binding.mobileEt.setText("")
+        binding.mobileEt.setText(EMPTY)
         appAnalytics.addParam(AnalyticsEvent.MOBILE_NUMBER_CLEARED.NAME, true)
     }
 
     override fun onPaymentError(p0: Int, p1: String?) {
         appAnalytics.addParam(AnalyticsEvent.PAYMENT_FAILED.NAME, p1)
+        logPaymentStatusAnalyticsEvents(AnalyticsEvent.FAILED_PARAM.NAME, p1)
         isBackPressDisabled = true
         uiHandler.post {
             showPaymentFailedDialog()
@@ -453,6 +480,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
     @Synchronized
     override fun onPaymentSuccess(razorpayPaymentId: String) {
         appAnalytics.addParam(AnalyticsEvent.PAYMENT_COMPLETED.NAME, true)
+        logPaymentStatusAnalyticsEvents(AnalyticsEvent.SUCCESS_PARAM.NAME)
         isBackPressDisabled = true
         razorpayOrderId.verifyPayment()
         NPSEventModel.setCurrentNPA(
@@ -501,7 +529,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
         bundle.putString(FirebaseAnalytics.Param.ITEM_ID, testId)
         bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, viewModel.getCourseName())
         bundle.putDouble(
-            FirebaseAnalytics.Param.PRICE, viewModel.getCourseAmount()
+            FirebaseAnalytics.Param.PRICE, viewModel.getCourseDiscountedAmount()
         )
         bundle.putString(FirebaseAnalytics.Param.TRANSACTION_ID, razorpayPaymentId)
         bundle.putString(FirebaseAnalytics.Param.CURRENCY, "INR")
@@ -511,12 +539,12 @@ class PaymentSummaryActivity : CoreJoshActivity(),
         extras["test_id"] = testId
         extras["payment_id"] = razorpayPaymentId
         extras["currency"] = CurrencyType.INR.name
-        extras["amount"] = viewModel.getCourseAmount().toString()
+        extras["amount"] = viewModel.getCourseDiscountedAmount().toString()
         extras["course_name"] = viewModel.getCourseName()
         BranchIOAnalytics.pushToBranch(BRANCH_STANDARD_EVENT.PURCHASE, extras)
 
         try {
-            if (viewModel.getCourseAmount() <= 0) {
+            if (viewModel.getCourseDiscountedAmount() <= 0) {
                 return
             }
             AppObjectController.facebookEventLogger.flush()
@@ -524,7 +552,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                 putString(AppEventsConstants.EVENT_PARAM_CONTENT_ID, testId)
             }
             AppObjectController.facebookEventLogger.logPurchase(
-                viewModel.getCourseAmount().toBigDecimal(),
+                viewModel.getCourseDiscountedAmount().toBigDecimal(),
                 Currency.getInstance(viewModel.getCurrency().trim()),
                 params
             )

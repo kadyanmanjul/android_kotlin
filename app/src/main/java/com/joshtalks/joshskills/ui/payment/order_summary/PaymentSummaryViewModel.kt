@@ -52,7 +52,11 @@ class PaymentSummaryViewModel(application: Application) : AndroidViewModel(appli
 
     fun getCourseName(): String = responsePaymentSummary.value?.courseName ?: EMPTY
 
-    fun getCourseAmount(): Double = responsePaymentSummary.value?.discountAmount ?: 0.0
+    fun getCourseDiscountedAmount(): Double = responsePaymentSummary.value?.discountAmount ?: 0.0
+
+    fun getCourseActualAmount(): Double = responsePaymentSummary.value?.amount ?: 0.0
+
+    fun haveCoupon(): Boolean = responsePaymentSummary.value?.couponDetails?.title.isNullOrBlank()
 
     fun getDiscount(): Int? =
         responsePaymentSummary.value?.amount?.minus(responsePaymentSummary.value?.discountAmount!!)?.toInt()
@@ -106,10 +110,7 @@ class PaymentSummaryViewModel(application: Application) : AndroidViewModel(appli
                 }
                 val paymentDetailsResponse: Response<OrderDetailResponse> =
                     AppObjectController.signUpNetworkService.createPaymentOrder(data).await()
-                AppAnalytics.create(AnalyticsEvent.PAY_NOW_CLICKED.NAME)
-                    .addUserDetails()
-                    .addBasicParam()
-                    .push()
+                logPayNowAnalyticEvents(paymentDetailsResponse.body()?.razorpayOrderId)
                 BranchIOAnalytics.pushToBranch(BRANCH_STANDARD_EVENT.INITIATE_PURCHASE)
                 if (paymentDetailsResponse.code() == 201) {
                     val response: OrderDetailResponse = paymentDetailsResponse.body()!!
@@ -131,5 +132,15 @@ class PaymentSummaryViewModel(application: Application) : AndroidViewModel(appli
                 }
             }
         }
+    }
+    private fun logPayNowAnalyticEvents(razorpayOrderId: String?) {
+        AppAnalytics.create(AnalyticsEvent.PAY_NOW_CLICKED.NAME)
+            .addBasicParam()
+            .addUserDetails()
+            .addParam(AnalyticsEvent.COURSE_NAME.NAME, getCourseDiscountedAmount())
+            .addParam(AnalyticsEvent.HAVE_COUPON_CODE.NAME, haveCoupon())
+            .addParam(AnalyticsEvent.IS_USER_REGISTERD.NAME, isRegisteredAlready)
+            .addParam(AnalyticsEvent.RAZOR_PAY_ID.NAME, razorpayOrderId)
+            .addParam(AnalyticsEvent.SHOWN_COURSE_PRICE.NAME, getCourseActualAmount()).push()
     }
 }
