@@ -402,29 +402,28 @@
                             app:constraint_referenced_ids="et_container,textview_number"
                             tools:visibility="visible" />
 
-                    <FrameLayout
-                            android:id="@+id/progress_bar"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:background="#29000000"
-                            android:elevation="@dimen/_8sdp"
-                            android:visibility="gone">
-
-                        <com.pnikosis.materialishprogress.ProgressWheel
-                                android:layout_width="@dimen/_82sdp"
-                                android:layout_height="@dimen/_82sdp"
-                                android:layout_gravity="center"
-                                wheel:matProg_barColor="@color/button_primary_color"
-                                wheel:matProg_fillRadius="true"
-                                wheel:matProg_linearProgress="false"
-                                wheel:matProg_progressIndeterminate="true"
-                                wheel:matProg_rimColor="#33128C7E"
-                                wheel:matProg_rimWidth="@dimen/_2sdp" />
-                    </FrameLayout>
-
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </FrameLayout>
         </ScrollView>
+        <FrameLayout
+                android:id="@+id/progress_bar"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#29000000"
+                android:elevation="@dimen/_8sdp"
+                android:visibility="gone">
+
+            <com.pnikosis.materialishprogress.ProgressWheel
+                    android:layout_width="@dimen/_82sdp"
+                    android:layout_height="@dimen/_82sdp"
+                    android:layout_gravity="center"
+                    wheel:matProg_barColor="@color/button_primary_color"
+                    wheel:matProg_fillRadius="true"
+                    wheel:matProg_linearProgress="false"
+                    wheel:matProg_progressIndeterminate="true"
+                    wheel:matProg_rimColor="#33128C7E"
+                    wheel:matProg_rimWidth="@dimen/_2sdp" />
+        </FrameLayout>
 
         <FrameLayout
                 android:id="@+id/bade_bhaiya_tip_container"
