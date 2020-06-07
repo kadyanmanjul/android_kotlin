@@ -78,6 +78,7 @@ class LauncherActivity : CoreJoshActivity(), CustomPermissionDialogInteractionLi
                         initInstanceId()
                         return
                     }
+                    else navigateToNextScreen()
                     if (report.isAnyPermissionPermanentlyDenied) {
                         PermissionUtils.permissionPermanentlyDeniedDialog(this@LauncherActivity)
                         return
