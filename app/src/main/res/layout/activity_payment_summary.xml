@@ -30,7 +30,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
-
                 <androidx.constraintlayout.widget.ConstraintLayout
                         android:id="@+id/container"
                         android:layout_width="match_parent"
@@ -173,7 +172,7 @@
                                 android:visibility="visible"
                                 app:layout_constraintEnd_toEndOf="parent"
                                 app:layout_constraintStart_toStartOf="parent"
-                                app:layout_constraintTop_toBottomOf="@+id/iv_container"></LinearLayout>
+                                app:layout_constraintTop_toBottomOf="@+id/barrier" />
 
                         <View
                                 android:id="@+id/double_line"
@@ -232,8 +231,14 @@
                                 app:layout_constraintTop_toBottomOf="@id/total_amount"
                                 tools:visibility="visible" />
 
-                    </androidx.constraintlayout.widget.ConstraintLayout>
+                        <androidx.constraintlayout.widget.Barrier
+                                android:id="@+id/barrier"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                app:barrierDirection="bottom"
+                                app:constraint_referenced_ids="iv_container,txt_joined" />
 
+                    </androidx.constraintlayout.widget.ConstraintLayout>
 
                     <androidx.constraintlayout.widget.ConstraintLayout
                             android:id="@+id/et_container"
@@ -394,7 +399,6 @@
                             app:rippleColor="@color/white"
                             tools:text="PAY $500" />
 
-
                     <androidx.constraintlayout.widget.Group
                             android:id="@+id/group_1"
                             android:layout_width="wrap_content"
@@ -403,8 +407,11 @@
                             tools:visibility="visible" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
+
             </FrameLayout>
+
         </ScrollView>
+
         <FrameLayout
                 android:id="@+id/progress_bar"
                 android:layout_width="match_parent"
@@ -423,6 +430,7 @@
                     wheel:matProg_progressIndeterminate="true"
                     wheel:matProg_rimColor="#33128C7E"
                     wheel:matProg_rimWidth="@dimen/_2sdp" />
+
         </FrameLayout>
 
         <FrameLayout
@@ -470,6 +478,7 @@
                             android:textColor="@color/white"
                             android:textSize="@dimen/font_20"
                             tools:ignore="UnusedAttribute" />
+
                 </FrameLayout>
 
                 <androidx.constraintlayout.widget.ConstraintLayout
@@ -548,7 +557,9 @@
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
             </androidx.constraintlayout.widget.ConstraintLayout>
+
         </FrameLayout>
 
     </FrameLayout>
+
 </layout>
