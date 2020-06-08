@@ -89,7 +89,7 @@ public class AppAnalytics {
         Timber.tag("Flurry").d("updateFlurryUser() called");
         User user = User.getInstance();
         Mentor mentor = Mentor.getInstance();
-        FlurryAgent.setUserId(mentor.getId());
+        FlurryAgent.setUserId(PrefManager.INSTANCE.getStringValue(INSTANCE_ID));
         FlurryAgent.setVersionName(BuildConfig.VERSION_NAME);
         FlurryAgent.setAge(getAge(user.getDateOfBirth()));
         FlurryAgent.setGender((user.getGender().equals("M") ? Constants.MALE : Constants.FEMALE));
@@ -97,7 +97,7 @@ public class AppAnalytics {
         //User Properties
         List<String> list = new ArrayList<>();
         list.add(user.getFirstName());
-        list.add(mentor.getId());
+        list.add(PrefManager.INSTANCE.getStringValue(INSTANCE_ID));
         list.add(user.getPhoneNumber());
         list.add(user.getDateOfBirth());
         list.add(user.getUserType());
