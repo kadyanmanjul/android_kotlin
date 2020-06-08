@@ -33,7 +33,6 @@ class OnBoardActivity : CoreJoshActivity() {
             .addBasicParam()
             .addUserDetails()
             .addParam(AnalyticsEvent.FLOW_FROM_PARAM.NAME, this.javaClass.simpleName)
-            .addParam(AnalyticsEvent.LOGIN_VIA.NAME, AnalyticsEvent.MOBILE_OTP_PARAM.NAME)
             .push()
         val intent = Intent(this, SignUpV2Activity::class.java).apply {
             putExtra(FLOW_FROM, "onboarding journey")
