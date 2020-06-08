@@ -13,8 +13,6 @@ import androidx.lifecycle.ViewModelProvider
 import com.github.razir.progressbutton.*
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
-import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
-import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.databinding.FragmentSignUpOptionsBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.LoginViaEventBus
@@ -143,14 +141,17 @@ class SignUpOptionsFragment : BaseSignUpFragment() {
     }
 
     fun loginViaTrueCaller() {
+        viewModel.loginAnalyticsEvent(LoginViaStatus.TRUECALLER.name)
         RxBus2.publish(LoginViaEventBus(LoginViaStatus.TRUECALLER))
     }
 
     fun loginViaGoogle() {
+        viewModel.loginAnalyticsEvent(LoginViaStatus.GMAIL.name)
         RxBus2.publish(LoginViaEventBus(LoginViaStatus.GMAIL))
     }
 
     fun loginViaFacebook() {
+        viewModel.loginAnalyticsEvent(LoginViaStatus.FACEBOOK.name)
         RxBus2.publish(LoginViaEventBus(LoginViaStatus.FACEBOOK))
     }
 
@@ -189,15 +190,9 @@ class SignUpOptionsFragment : BaseSignUpFragment() {
         val defaultRegion: String = PhoneNumberUtils.getDefaultCountryIso(requireContext())
         verificationService = if (defaultRegion == "IN") {
             VerificationService.SMS_COUNTRY
-            /*if (VerificationVia.FLASH_CALL == verificationVia) {
-                VerificationService.TRUECALLER
-            } else {
-                VerificationService.SMS_COUNTRY
-            }*/
         } else {
             VerificationService.SINCH
         }
-
         callVerificationService()
         disableMobileEditText()
     }
@@ -299,11 +294,6 @@ class SignUpOptionsFragment : BaseSignUpFragment() {
     override fun retryVerificationThrowFlashCall() {
         verificationVia = VerificationVia.FLASH_CALL
         updateLoginButtonText()
-        AppAnalytics.create(AnalyticsEvent.LOGIN_WITH.NAME)
-            .addBasicParam()
-            .addUserDetails()
-            .addParam(AnalyticsEvent.LOGIN_VIA.NAME, AnalyticsEvent.MOBILE_FLASH_PARAM.NAME)
-            .push()
     }
 
     override fun retryVerificationThrowSms() {

@@ -52,6 +52,7 @@ enum class AnalyticsEvent(val NAME: String) {
     //New Login/SignUp Status Status
     //LOGIN_INITIATED("Login initiated V3"),
     SIGNUP_SATUS("SignUp Status V3"),
+    LOGIN_SCREEN("Login Screen V3"),
     OTP_SCREEN_SATUS("OTP Screen Status V3"),
     LOGIN_VIA("Login via V3"),
     FLOW_FROM_PARAM("flow from V3"),

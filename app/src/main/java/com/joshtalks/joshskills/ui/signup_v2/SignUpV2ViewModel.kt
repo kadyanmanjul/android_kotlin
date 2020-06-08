@@ -31,14 +31,17 @@ class SignUpV2ViewModel(application: Application) :
     private val _signUpStatus: MutableLiveData<SignUpStepStatus> = MutableLiveData()
     val signUpStatus: LiveData<SignUpStepStatus> = _signUpStatus
     val progressBarStatus: MutableLiveData<Boolean> = MutableLiveData()
-
+    var resendAttempt: Int = 1
+    var incorrectAttempt: Int = 0
+    var currentTime: Long = 0
+    var fromVerifictionScreen = MutableLiveData<Boolean>(false)
     val verificationStatus: MutableLiveData<VerificationStatus> = MutableLiveData()
 
     val otpField = ObservableField<String>()
     var context: JoshApplication = getApplication()
     var phoneNumber = String()
     var countryCode = String()
-
+    var loginViaStatus: LoginViaStatus? = null
 
     fun signUpUsingSocial(
         loginViaStatus: LoginViaStatus,
@@ -47,6 +50,7 @@ class SignUpV2ViewModel(application: Application) :
         email: String?,
         profilePicture: String? = null
     ) {
+        this.loginViaStatus = loginViaStatus
         progressBarStatus.postValue(true)
         viewModelScope.launch(Dispatchers.IO) {
             try {
@@ -83,6 +87,7 @@ class SignUpV2ViewModel(application: Application) :
         progressBarStatus.postValue(true)
         viewModelScope.launch(Dispatchers.IO) {
             try {
+                loginAnalyticsEvent(VerificationVia.SMS.name)
                 val reqObj = mapOf("country_code" to cCode, "mobile" to mNumber)
                 val response = AppObjectController.signUpNetworkService.getOtpForNumberAsync(reqObj)
                 if (response.isSuccessful) {
@@ -137,8 +142,6 @@ class SignUpV2ViewModel(application: Application) :
                             RegistrationMethods.MOBILE_NUMBER
                         )
                         updateFromLoginResponse(this)
-                        AppAnalytics.create(AnalyticsEvent.LOGIN_WITH_TRUECALLER.NAME)
-                            .addParam(AnalyticsEvent.VERIFIED_VIA_TRUECALLER.NAME, true).push()
                     }
                     return@launch
                 }
@@ -167,8 +170,6 @@ class SignUpV2ViewModel(application: Application) :
                             RegistrationMethods.MOBILE_NUMBER
                         )
                         updateFromLoginResponse(this)
-                        AppAnalytics.create(AnalyticsEvent.LOGIN_WITH_TRUECALLER.NAME)
-                            .addParam(AnalyticsEvent.VERIFIED_VIA_TRUECALLER.NAME, true).push()
                     }
                     return@launch
                 }
@@ -191,13 +192,12 @@ class SignUpV2ViewModel(application: Application) :
                 val response = AppObjectController.signUpNetworkService.verifyOTP(reqObj)
                 if (response.isSuccessful) {
                     response.body()?.run {
+
                         MarketingAnalytics.completeRegistrationAnalytics(
                             this.newUser,
                             RegistrationMethods.MOBILE_NUMBER
                         )
                         updateFromLoginResponse(this)
-                        AppAnalytics.create(AnalyticsEvent.OTP_VERIFIED.NAME)
-                            .addParam(AnalyticsEvent.OTP_VERIFIED.NAME, true).push()
                     }
                     return@launch
                 } else {
@@ -230,10 +230,6 @@ class SignUpV2ViewModel(application: Application) :
         AppAnalytics.updateUser()
         WorkMangerAdmin.requiredTaskAfterLoginComplete()
         fetchMentor()
-        AppAnalytics.create(AnalyticsEvent.LOGIN_SUCCESSFULLY.NAME)
-            .addBasicParam()
-            .addUserDetails()
-            .addParam(AnalyticsEvent.LOGIN_WITH.NAME, AnalyticsEvent.GMAIL_PARAM.NAME)
     }
 
     private fun fetchMentor() {
@@ -270,6 +266,8 @@ class SignUpV2ViewModel(application: Application) :
             return _signUpStatus.postValue(SignUpStepStatus.ProfileInCompleted)
         }
         _signUpStatus.postValue(SignUpStepStatus.SignUpCompleted)
+        if (loginViaStatus == LoginViaStatus.SMS_VERIFY)
+            fromVerifictionScreen.postValue(true)
     }
 
 
@@ -319,4 +317,19 @@ class SignUpV2ViewModel(application: Application) :
         }
     }
 
+    fun loginAnalyticsEvent(viaStatus: String) {
+        AppAnalytics.create(AnalyticsEvent.LOGIN_WITH.NAME)
+            .addUserDetails()
+            .addBasicParam()
+            .addParam(AnalyticsEvent.ACTION.NAME, viaStatus)
+            .push()
+    }
+
+    fun incrementResendAttempts() {
+        resendAttempt = resendAttempt + 1
+    }
+
+    fun incrementIncorrectAttempts() {
+        incorrectAttempt = incorrectAttempt + 1
+    }
 }

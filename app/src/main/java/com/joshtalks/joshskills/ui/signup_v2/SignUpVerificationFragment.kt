@@ -40,6 +40,7 @@ class SignUpVerificationFragment : Fragment() {
         super.onCreate(savedInstanceState)
         activity?.window?.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         viewModel = ViewModelProvider(requireActivity()).get(SignUpV2ViewModel::class.java)
+        viewModel.currentTime = System.currentTimeMillis()
     }
 
     override fun onCreateView(
@@ -85,6 +86,7 @@ class SignUpVerificationFragment : Fragment() {
                     startVerificationTimer()
                 }
                 if (this == SignUpStepStatus.WRONG_OTP) {
+                    viewModel.incrementIncorrectAttempts()
                     showToast(getString(R.string.wrong_otp))
                 }
             }
@@ -217,6 +219,7 @@ class SignUpVerificationFragment : Fragment() {
                 viewModel.phoneNumber
             )
         } else {
+            viewModel.incrementResendAttempts()
             viewModel.regeneratedOTP()
         }
     }
