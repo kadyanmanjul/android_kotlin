@@ -88,12 +88,10 @@ class CourseExploreActivity : CoreJoshActivity() {
 
     }
 
-
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         setIntent(intent)
     }
-
 
     private fun initView() {
         val titleView = findViewById<AppCompatTextView>(R.id.text_message_title)
@@ -158,7 +156,6 @@ class CourseExploreActivity : CoreJoshActivity() {
         )
     }
 
-
     private fun loadCourses() {
         CoroutineScope(Dispatchers.IO).launch {
             try {
@@ -222,7 +219,6 @@ class CourseExploreActivity : CoreJoshActivity() {
         }
     }
 
-
     override fun onResume() {
         super.onResume()
         Runtime.getRuntime().gc()
@@ -252,12 +248,10 @@ class CourseExploreActivity : CoreJoshActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == PAYMENT_FOR_COURSE_CODE) {
-            if (resultCode == Activity.RESULT_OK) {
-                val resultIntent = Intent()
-                setResult(Activity.RESULT_OK, resultIntent)
-                finish()
-            }
+        if (requestCode == PAYMENT_FOR_COURSE_CODE && resultCode == Activity.RESULT_OK) {
+            val resultIntent = Intent()
+            setResult(Activity.RESULT_OK, resultIntent)
+            finish()
         }
     }
 
