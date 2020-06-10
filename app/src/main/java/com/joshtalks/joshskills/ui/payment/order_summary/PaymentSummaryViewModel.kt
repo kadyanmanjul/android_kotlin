@@ -52,14 +52,15 @@ class PaymentSummaryViewModel(application: Application) : AndroidViewModel(appli
 
     fun getCourseName(): String = responsePaymentSummary.value?.courseName ?: EMPTY
 
-    fun getCourseDiscountedAmount(): Double = responsePaymentSummary.value?.discountAmount ?: 0.0
+    fun getCourseDiscountedAmount(): Double = responsePaymentSummary.value?.discountedAmount ?: 0.0
 
     fun getCourseActualAmount(): Double = responsePaymentSummary.value?.amount ?: 0.0
 
     fun haveCoupon(): Boolean = responsePaymentSummary.value?.couponDetails?.title.isNullOrBlank()
 
     fun getDiscount(): Int? =
-        responsePaymentSummary.value?.amount?.minus(responsePaymentSummary.value?.discountAmount!!)?.toInt()
+        responsePaymentSummary.value?.amount?.minus(responsePaymentSummary.value?.discountedAmount!!)
+            ?.toInt()
 
     fun getCurrency(): String = responsePaymentSummary.value?.currency ?: "INR"
 

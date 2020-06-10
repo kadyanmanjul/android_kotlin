@@ -83,11 +83,17 @@
         <key>SUPPORTED_COUNTRY_LIST</key>
         <value></value>
     </entry>
-
     <entry>
         <key>COURSE_MAX_OFFER_PER</key>
         <value>50%</value>
     </entry>
-
+    <entry>
+        <key>show_details_label</key>
+        <value>Show Details</value>
+    </entry>
+    <entry>
+        <key>CTA_PAYMENT_SUMMARY</key>
+        <value>PAY</value>
+    </entry>
 
 </defaultsMap>

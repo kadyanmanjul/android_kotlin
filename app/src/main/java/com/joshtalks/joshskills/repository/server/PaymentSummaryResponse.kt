@@ -28,7 +28,7 @@ data class PaymentSummaryResponse(
     @SerializedName("currency")
     val currency: String,
     @SerializedName("discounted_amount")
-    val discountAmount: Double
+    val discountedAmount: Double
 ) : Parcelable
 
 @Parcelize
@@ -48,7 +48,6 @@ data class CouponDetails(
     @SerializedName("discount_type")
     val discountType: DISCOUNT_TYPE
 ) : Parcelable
-
 
 enum class DISCOUNT_TYPE(val state: String) {
     PERCENTAGE("PERCENTAGE"), OTHER("OTHER")

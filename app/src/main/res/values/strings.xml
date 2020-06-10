@@ -320,4 +320,5 @@
     <!--End-->
     <string name="page_number" formatted="false">Page %s / %s</string>
     <string name="help">Help</string>
+    <string name="show_details">Show Details</string>
 </resources>

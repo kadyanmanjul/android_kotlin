@@ -204,7 +204,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
             binding.enrolled.setTypeface(binding.enrolled.typeface, Typeface.BOLD)
             binding.rating.text = it.rating.toString()
             appAnalytics.addParam(AnalyticsEvent.COURSE_NAME.NAME, it.courseName)
-            appAnalytics.addParam(AnalyticsEvent.COURSE_PRICE.NAME, it.discountAmount)
+            appAnalytics.addParam(AnalyticsEvent.COURSE_PRICE.NAME, it.discountedAmount)
 
             val multi = MultiTransformation(
                 RoundedCornersTransformation(
@@ -221,7 +221,8 @@ class PaymentSummaryActivity : CoreJoshActivity(),
             binding.txtPrice.text =
                 "₹ ${String.format("%.2f", it.amount)}"
             binding.materialButton.text =
-                "Pay ₹ ${it.discountAmount.roundToInt()}"
+                "${AppObjectController.getFirebaseRemoteConfig()
+                    .getString("CTA_PAYMENT_SUMMARY")} ₹ ${it.discountedAmount.roundToInt()}"
             multiLineLL = binding.multiLineLl
 
             it.features?.let {
