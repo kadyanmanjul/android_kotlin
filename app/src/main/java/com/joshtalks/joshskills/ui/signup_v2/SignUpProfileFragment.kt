@@ -107,13 +107,20 @@ class SignUpProfileFragment : BaseSignUpFragment() {
         }
 
         if (user.phoneNumber.isNotEmpty()) {
-            binding.phoneNumberEt.setText(user.phoneNumber)
-            binding.etContainer.visibility = View.VISIBLE
-            binding.textViewPhone.visibility = View.VISIBLE
+            val word =user.phoneNumber
+            val length = word.length
+            if(length>10) {
+                binding.phoneNumberEt.setText(word.substring(length - 10))
+                binding.etContainer.visibility = View.VISIBLE
+                binding.textViewPhone.visibility = View.VISIBLE
+            }
         } else if (PrefManager.getStringValue(PAYMENT_MOBILE_NUMBER).isNotEmpty()) {
-            binding.phoneNumberEt.setText(PrefManager.getStringValue(PAYMENT_MOBILE_NUMBER))
-            binding.etContainer.visibility = View.VISIBLE
-            binding.textViewPhone.visibility = View.VISIBLE
+            val mobileNumber= PrefManager.getStringValue(PAYMENT_MOBILE_NUMBER).split(SINGLE_SPACE)
+            if(mobileNumber.isNullOrEmpty().not()){
+                binding.phoneNumberEt.setText(mobileNumber[1])
+                binding.etContainer.visibility = View.VISIBLE
+                binding.textViewPhone.visibility = View.VISIBLE
+            }
         }
         if (binding.phoneNumberEt.text.isNullOrEmpty() && user.email.isEmpty()) {
             binding.textViewEmail.visibility = View.VISIBLE
