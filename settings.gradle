@@ -1,4 +1,4 @@
 include ':joshcamerax'
-include ':app', ':joshlibrary', ':recordview', ':emojiBase',  ':emoji-google', ':mediapicker', ':pixeditor', ':pdfviewer'
+include ':app', ':joshlibrary', ':recordview', ':emojiBase',  ':emoji-google', ':mediapicker', ':pixeditor'
 
 //':animationlibrary',

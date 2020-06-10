@@ -150,7 +150,6 @@ dependencies {
     implementation project(path: ':recordview')
     implementation project(path: ':emoji-google')
     implementation project(path: ':joshlibrary')
-    implementation project(path: ':pdfviewer')
     implementation(project(path: ':mediapicker'), {
         exclude group: 'com.bumptech.glide'
     })
