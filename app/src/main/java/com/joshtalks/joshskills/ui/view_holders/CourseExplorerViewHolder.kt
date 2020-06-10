@@ -30,7 +30,6 @@ class CourseExplorerViewHolder(private val courseExploreModel: CourseExploreMode
     @View(R.id.buy_now_button)
     lateinit var buyNow: MaterialButton
 
-
     @Resolve
     fun onResolved() {
 
@@ -66,8 +65,7 @@ class CourseExplorerViewHolder(private val courseExploreModel: CourseExploreMode
 
             }).into(imageView)
 
-        buyNow.text = AppObjectController.getFirebaseRemoteConfig().getString("buy_course_label")
-
+        buyNow.text = AppObjectController.getFirebaseRemoteConfig().getString("show_details_label")
     }
 
     @Click(R.id.buy_now_button)
@@ -82,6 +80,3 @@ class CourseExplorerViewHolder(private val courseExploreModel: CourseExploreMode
         RxBus2.publish(courseExploreModel)
     }
 }
-
-
-
