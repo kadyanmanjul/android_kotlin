@@ -96,12 +96,9 @@ public class AppAnalytics {
 
         //User Properties
         List<String> list = new ArrayList<>();
-        list.add(user.getFirstName());
-        list.add(PrefManager.INSTANCE.getStringValue(INSTANCE_ID));
-        list.add(user.getPhoneNumber());
-        list.add(user.getDateOfBirth());
         list.add(user.getUserType());
         list.add(user.getGender());
+        list.add("Age "+getAge(user.getDateOfBirth()));
         FlurryAgent.UserProperties.set("JoshSkills.User", list);
     }
 
