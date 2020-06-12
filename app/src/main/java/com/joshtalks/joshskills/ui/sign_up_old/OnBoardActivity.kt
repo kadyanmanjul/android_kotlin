@@ -9,6 +9,7 @@ import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.databinding.ActivityOnboardBinding
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
+import com.joshtalks.joshskills.ui.referral.EnterReferralCodeFragment
 import com.joshtalks.joshskills.ui.signup_v2.FLOW_FROM
 import com.joshtalks.joshskills.ui.signup_v2.SignUpV2Activity
 
@@ -49,6 +50,17 @@ class OnBoardActivity : CoreJoshActivity() {
         startActivity(Intent(applicationContext, CourseExploreActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
         })
+    }
+
+    fun openReferralDialogue() {
+        supportFragmentManager
+            .beginTransaction()
+            .replace(
+                R.id.parent_Container,
+                EnterReferralCodeFragment.newInstance(),
+                "enter_referral_code"
+            )
+            .commit()
     }
 
     override fun onBackPressed() {
