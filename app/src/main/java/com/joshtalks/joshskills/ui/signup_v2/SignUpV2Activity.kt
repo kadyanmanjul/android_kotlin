@@ -79,7 +79,7 @@ class SignUpV2Activity : BaseActivity() {
             .addUserDetails()
             .addParam(
                 AnalyticsEvent.STATUS.NAME,
-                AnalyticsEvent.SUCCESS_PARAM.NAME
+                AnalyticsEvent.FAILED_PARAM.NAME
             )
         super.onCreate(savedInstanceState)
         if (intent.hasExtra(FLOW_FROM))
