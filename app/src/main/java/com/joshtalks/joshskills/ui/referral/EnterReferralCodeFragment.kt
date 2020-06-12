@@ -75,7 +75,7 @@ class EnterReferralCodeFragment : BottomSheetDialogFragment() {
                         .beginTransaction()
                         .replace(
                             R.id.parent_Container,
-                            CongratulationFragment.newInstance(res),
+                            ValidReferralCodeFragment.newInstance(res),
                             "Congratulation"
                         )
                         .commit()
