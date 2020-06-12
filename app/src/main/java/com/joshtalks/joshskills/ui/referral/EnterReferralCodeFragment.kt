@@ -12,7 +12,6 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.databinding.FragmentEnterReferralCodeBinding
-import com.joshtalks.joshskills.repository.server.ReferralCouponDetailResponse
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -63,13 +62,12 @@ class EnterReferralCodeFragment : BottomSheetDialogFragment() {
             binding.progressBar.visibility=View.VISIBLE
             try {
                 val data = HashMap<String, String>()
-                data["coupon"] = binding.tvReferralCode.text.toString()
                 data["instance_id"] = PrefManager.getStringValue(INSTANCE_ID)
+                data["coupon"] = binding.tvReferralCode.text.toString()
 
                 val res =
                     AppObjectController.signUpNetworkService.validateAndGetReferralDetails(data)
-                val res2= ReferralCouponDetailResponse(true,"Manjul","get as much as discount you want")
-                if (res2.referralStatus) {
+                if (res.referralStatus) {
                     PrefManager.put(REFERRED_REFERRAL_CODE, data["coupon"].toString())
                     requireActivity().supportFragmentManager
                         .beginTransaction()
