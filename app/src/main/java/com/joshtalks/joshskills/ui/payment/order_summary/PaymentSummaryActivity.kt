@@ -267,6 +267,15 @@ class PaymentSummaryActivity : CoreJoshActivity(),
         viewModel.mPaymentDetailsResponse.observe(this, androidx.lifecycle.Observer {
             initializeRazorpayPayment(it)
         })
+
+        viewModel.freeOrderCreated.observe(this, androidx.lifecycle.Observer {
+            if(it)
+                moveToStartCourseScreen()
+        })
+    }
+
+    private fun moveToStartCourseScreen() {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     private fun initViewModel() {

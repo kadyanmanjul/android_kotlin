@@ -37,6 +37,7 @@ class PaymentSummaryViewModel(application: Application) : AndroidViewModel(appli
     var mPaymentDetailsResponse = MediatorLiveData<OrderDetailResponse>()
     var viewState: MutableLiveData<ViewState>? = null
     val isRegisteredAlready by lazy { Mentor.getInstance().getId().isNotBlank() }
+    var freeOrderCreated= MutableLiveData<Boolean>(false)
 
     val hasRegisteredMobileNumber by lazy {
         (User.getInstance().phoneNumber.isNotBlank() || PrefManager.getStringValue(
@@ -148,6 +149,36 @@ class PaymentSummaryViewModel(application: Application) : AndroidViewModel(appli
     }
 
     fun createFreeOrder(testId: String, mobileNumber: String) {
-
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                viewState?.postValue(ViewState.PROCESSING)
+                val data = HashMap<String, String>()
+                data["test_id"] = testId
+                data["instance_id"] = PrefManager.getStringValue(INSTANCE_ID)
+                data["mobile"] = mobileNumber
+                data["encrypted_text"] = responsePaymentSummary.value?.encryptedText.toString()
+                if (Mentor.getInstance().getId().isNotEmpty()) {
+                    data["mentor_id"] = Mentor.getInstance().getId()
+                }
+                val res =
+                    AppObjectController.signUpNetworkService.createFreeOrder(data)
+                if(res.isSuccessful){
+                    freeOrderCreated.postValue(true)
+                }
+            } catch (ex: Exception) {
+                when (ex) {
+                    is HttpException -> {
+                        viewState?.postValue(ViewState.ERROR_OCCURED)
+                    }
+                    is SocketTimeoutException, is UnknownHostException -> {
+                        viewState?.postValue(ViewState.INTERNET_NOT_AVAILABLE)
+                    }
+                    else -> {
+                        Crashlytics.logException(ex)
+                    }
+                }
+            }
+            viewState?.postValue(ViewState.PROCESSED)
+        }
     }
 }
