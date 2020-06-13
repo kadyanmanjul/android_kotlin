@@ -268,7 +268,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
             initializeRazorpayPayment(it)
         })
 
-        viewModel.freeOrderCreated.observe(this, androidx.lifecycle.Observer {
+        viewModel.isFreeOrderCreated.observe(this, androidx.lifecycle.Observer {
             if (it)
                 navigateToStartCourseActivity(false)
         })

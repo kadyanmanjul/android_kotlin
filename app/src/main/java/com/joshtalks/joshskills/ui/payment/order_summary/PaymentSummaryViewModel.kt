@@ -37,7 +37,7 @@ class PaymentSummaryViewModel(application: Application) : AndroidViewModel(appli
     var mPaymentDetailsResponse = MediatorLiveData<OrderDetailResponse>()
     var viewState: MutableLiveData<ViewState>? = null
     val isRegisteredAlready by lazy { Mentor.getInstance().getId().isNotBlank() }
-    var freeOrderCreated = MutableLiveData<Boolean>(false)
+    var isFreeOrderCreated = MutableLiveData<Boolean>(false)
 
     val hasRegisteredMobileNumber by lazy {
         (User.getInstance().phoneNumber.isNotBlank() || PrefManager.getStringValue(
@@ -163,7 +163,7 @@ class PaymentSummaryViewModel(application: Application) : AndroidViewModel(appli
                 val response =
                     AppObjectController.signUpNetworkService.createFreeOrder(data)
                 if (response.isSuccessful) {
-                    freeOrderCreated.postValue(true)
+                    isFreeOrderCreated.postValue(true)
                 }
             } catch (ex: Exception) {
                 when (ex) {
