@@ -58,14 +58,9 @@ class OnBoardActivity : CoreJoshActivity() {
     }
 
     fun openReferralDialogue() {
-        supportFragmentManager
-            .beginTransaction()
-            .replace(
-                R.id.parent_Container,
-                EnterReferralCodeFragment.newInstance(),
-                "enter_referral_code"
-            )
-            .commit()
+
+        val bottomSheetFragment = EnterReferralCodeFragment.newInstance()
+        bottomSheetFragment.show(supportFragmentManager, bottomSheetFragment.tag)
     }
 
     override fun onBackPressed() {
