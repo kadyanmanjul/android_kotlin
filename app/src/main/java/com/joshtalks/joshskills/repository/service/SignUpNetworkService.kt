@@ -115,5 +115,6 @@ interface SignUpNetworkService {
     @GET("$DIR/payment/summary/")
     suspend fun getPaymentSummaryDetails(@QueryMap params: Map<String, String>): PaymentSummaryResponse
 
-
+    @POST("$DIR/payment/create_free_order/")
+    suspend fun createFreeOrder(@QueryMap params: Map<String, String>): Response<Any>
 }

@@ -67,12 +67,15 @@ class StartCourseActivity : CoreJoshActivity() {
             binding.startRegister.text = resources.getText(R.string.tutor_register)
         }
 
-        binding.transationId.text = getCustomString(
-            getString(
-                R.string.trx_id,
-                transactionId
-            )
-        )
+        if (transactionId.toInt() > 0)
+            binding.transationId.text = getCustomString(
+                getString(
+                    R.string.trx_id,
+                    transactionId
+                )
+            ) else {
+            binding.transationId.visibility = View.GONE
+        }
         val multi = MultiTransformation(
             RoundedCornersTransformation(
                 Utils.dpToPx(ROUND_CORNER),

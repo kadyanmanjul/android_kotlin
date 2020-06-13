@@ -37,10 +37,12 @@ class PaymentSummaryViewModel(application: Application) : AndroidViewModel(appli
     var mPaymentDetailsResponse = MediatorLiveData<OrderDetailResponse>()
     var viewState: MutableLiveData<ViewState>? = null
     val isRegisteredAlready by lazy { Mentor.getInstance().getId().isNotBlank() }
+    var isFreeOrderCreated = MutableLiveData<Boolean>(false)
 
     val hasRegisteredMobileNumber by lazy {
         (User.getInstance().phoneNumber.isNotBlank() || PrefManager.getStringValue(
-            PAYMENT_MOBILE_NUMBER).isNotBlank())
+            PAYMENT_MOBILE_NUMBER
+        ).isNotBlank())
     }
 
     init {
@@ -134,6 +136,7 @@ class PaymentSummaryViewModel(application: Application) : AndroidViewModel(appli
             }
         }
     }
+
     private fun logPayNowAnalyticEvents(razorpayOrderId: String?) {
         AppAnalytics.create(AnalyticsEvent.PAY_NOW_CLICKED.NAME)
             .addBasicParam()
@@ -143,5 +146,39 @@ class PaymentSummaryViewModel(application: Application) : AndroidViewModel(appli
             .addParam(AnalyticsEvent.IS_USER_REGISTERD.NAME, isRegisteredAlready)
             .addParam(AnalyticsEvent.RAZOR_PAY_ID.NAME, razorpayOrderId)
             .addParam(AnalyticsEvent.SHOWN_COURSE_PRICE.NAME, getCourseActualAmount()).push()
+    }
+
+    fun createFreeOrder(testId: String, mobileNumber: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                viewState?.postValue(ViewState.PROCESSING)
+                val data = HashMap<String, String>()
+                data["test_id"] = testId
+                data["instance_id"] = PrefManager.getStringValue(INSTANCE_ID)
+                data["mobile"] = mobileNumber
+                data["encrypted_text"] = responsePaymentSummary.value?.encryptedText.toString()
+                if (Mentor.getInstance().getId().isNotEmpty()) {
+                    data["mentor_id"] = Mentor.getInstance().getId()
+                }
+                val response =
+                    AppObjectController.signUpNetworkService.createFreeOrder(data)
+                if (response.isSuccessful) {
+                    isFreeOrderCreated.postValue(true)
+                }
+            } catch (ex: Exception) {
+                when (ex) {
+                    is HttpException -> {
+                        viewState?.postValue(ViewState.ERROR_OCCURED)
+                    }
+                    is SocketTimeoutException, is UnknownHostException -> {
+                        viewState?.postValue(ViewState.INTERNET_NOT_AVAILABLE)
+                    }
+                    else -> {
+                        Crashlytics.logException(ex)
+                    }
+                }
+            }
+            viewState?.postValue(ViewState.PROCESSED)
+        }
     }
 }
