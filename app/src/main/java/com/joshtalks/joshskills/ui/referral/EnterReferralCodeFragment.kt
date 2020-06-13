@@ -10,7 +10,7 @@ import com.crashlytics.android.Crashlytics
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
-import com.joshtalks.joshskills.databinding.FragmentReferr
+import com.joshtalks.joshskills.databinding.FragmentEnterReferralCodeBinding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -25,7 +25,8 @@ class EnterReferralCodeFragment : BottomSheetDialogFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setStyle(DialogFragment.STYLE_NORMAL, R.style.BaseBottomSheetDialog)
+        setStyle(DialogFragment.STYLE_NORMAL, R.style.BaseBottomSheetDialogResizable)
+        changeDialogConfiguration()
     }
 
     override fun onCreateView(
@@ -47,7 +48,6 @@ class EnterReferralCodeFragment : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setListeners()
-        changeDialogConfiguration()
     }
 
     private fun setListeners() {
@@ -100,6 +100,7 @@ class EnterReferralCodeFragment : BottomSheetDialogFragment() {
                             "Congratulation"
                         )
                         .commit()
+                    this@EnterReferralCodeFragment.dismiss()
                 }
                 else binding.wrongCode.visibility=View.VISIBLE
             } catch (ex: Exception) {

@@ -132,5 +132,11 @@
                 app:layout_constraintWidth_default="percent"
                 app:layout_constraintWidth_percent="0.45" />
 
+        <FrameLayout
+                android:id="@+id/parent_Container"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:visibility="gone" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
