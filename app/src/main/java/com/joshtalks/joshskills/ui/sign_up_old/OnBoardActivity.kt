@@ -30,7 +30,7 @@ class OnBoardActivity : CoreJoshActivity() {
         )
         layout.handler = this
         layout.lifecycleOwner = this
-        if(PrefManager.getStringValue(REFERRED_REFERRAL_CODE).isNullOrBlank())
+        if(PrefManager.getStringValue(REFERRED_REFERRAL_CODE).isBlank())
             layout.haveAReferralCode.visibility=View.VISIBLE
     }
 
