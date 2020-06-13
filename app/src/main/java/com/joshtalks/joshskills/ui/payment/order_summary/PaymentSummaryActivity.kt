@@ -269,13 +269,9 @@ class PaymentSummaryActivity : CoreJoshActivity(),
         })
 
         viewModel.freeOrderCreated.observe(this, androidx.lifecycle.Observer {
-            if(it)
-                moveToStartCourseScreen()
+            if (it)
+                navigateToStartCourseActivity(false)
         })
-    }
-
-    private fun moveToStartCourseScreen() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     private fun initViewModel() {
@@ -522,14 +518,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
         }, 1000 * 5)
 
         uiHandler.postDelayed({
-            StartCourseActivity.openStartCourseActivity(
-                this,
-                viewModel.responsePaymentSummary.value?.courseName ?: "Course",
-                viewModel.responsePaymentSummary.value?.teacherName ?: EMPTY,
-                viewModel.responsePaymentSummary.value?.imageUrl ?: EMPTY,
-                viewModel.mPaymentDetailsResponse.value?.joshtalksOrderId ?: 0
-            )
-            this@PaymentSummaryActivity.finish()
+            navigateToStartCourseActivity(true)
         }, 1000 * 8)
 
         FlurryAgent.UserProperties.set(FlurryAgent.UserProperties.PROPERTY_PURCHASER, "true")
@@ -663,4 +652,17 @@ class PaymentSummaryActivity : CoreJoshActivity(),
             else ->
                 EMPTY
         }
+
+    private fun navigateToStartCourseActivity(hasOrderId: Boolean) {
+        StartCourseActivity.openStartCourseActivity(
+            this,
+            viewModel.responsePaymentSummary.value?.courseName ?: "Course",
+            viewModel.responsePaymentSummary.value?.teacherName ?: EMPTY,
+            viewModel.responsePaymentSummary.value?.imageUrl ?: EMPTY,
+            if (hasOrderId)
+                viewModel.mPaymentDetailsResponse.value?.joshtalksOrderId ?: 0
+            else 0
+        )
+        this@PaymentSummaryActivity.finish()
+    }
 }
