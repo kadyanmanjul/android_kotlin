@@ -52,12 +52,10 @@
 
     <permission android:name="android.permission.MEDIA_CONTENT_CONTROL" />
 
-    <!--
-         <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY" />
 
-     <uses-permission
-             android:name="android.permission.PACKAGE_USAGE_STATS"
-             tools:ignore="ProtectedPermissions" />-->
+    <!-- Add New Permission for phone number verification -->
+    <uses-permission android:name="android.permission.READ_CALL_LOG" />
+    <uses-permission android:name="android.permission.ANSWER_PHONE_CALLS" />
 
     <application
             android:name=".core.JoshApplication"
@@ -171,7 +169,7 @@
 
         <activity
                 android:name=".ui.launch.LauncherActivity"
-                android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize"
+                android:configChanges="touchscreen|keyboard|keyboardHidden|screenLayout|screenSize"
                 android:launchMode="singleTask"
                 android:screenOrientation="portrait"
                 android:theme="@style/AppNoBarTheme">
@@ -210,6 +208,18 @@
                 android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize"
                 android:launchMode="singleTask"
                 android:theme="@style/AppNoBarTheme" />
+
+        <activity
+                android:name=".ui.payment.order_summary.PaymentSummaryActivity"
+                android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize"
+                android:launchMode="singleTask"
+                android:theme="@style/AppNoBarTheme" />
+        <activity
+                android:name=".ui.startcourse.StartCourseActivity"
+                android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize"
+                android:launchMode="singleTask"
+                android:theme="@style/AppNoBarTheme" />
+
         <activity
                 android:name=".ui.chat.ConversationActivity"
                 android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize"
@@ -290,7 +300,6 @@
                 <action android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-
 
         <activity
                 android:name=".ui.courseprogress.CourseProgressActivity"
@@ -404,6 +413,31 @@
                 android:name="com.clevertap.android.sdk.CTBackgroundJobService"
                 android:exported="false"
                 android:permission="android.permission.BIND_JOB_SERVICE" />
+
+        <activity
+                android:name="com.facebook.FacebookActivity"
+                android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+                android:label="@string/app_name" />
+
+        <activity
+                android:name="com.facebook.CustomTabActivity"
+                android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="@string/fb_login_protocol_scheme" />
+            </intent-filter>
+        </activity>
+        <activity
+                android:name=".ui.signup_v2.SignUpV2Activity"
+                android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize"
+                android:launchMode="singleTask"
+                android:screenOrientation="portrait"
+                android:windowSoftInputMode="adjustResize"
+                android:theme="@style/AppNoBarTheme" />
     </application>
 
 </manifest>

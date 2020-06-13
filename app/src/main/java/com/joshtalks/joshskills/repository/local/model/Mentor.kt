@@ -20,6 +20,10 @@ class Mentor {
     @SerializedName("locality")
     private var locality: Locality? = null
 
+    @SerializedName("user_id")
+    private var userId: String? = null
+
+
     @Expose
     var referralCode: String = EMPTY
 
@@ -85,6 +89,10 @@ class Mentor {
         return id ?: EMPTY
     }
 
+    fun getUserId(): String {
+        return userId ?: EMPTY
+    }
+
     fun setId(id: String): Mentor {
         this.id = id
         return this
@@ -92,6 +100,11 @@ class Mentor {
 
     fun setReferralCode(code: String): Mentor {
         this.referralCode = code
+        return this
+    }
+
+    fun setUserId(userId: String): Mentor {
+        this.userId = userId
         return this
     }
 

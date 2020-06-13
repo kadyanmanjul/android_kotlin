@@ -9,5 +9,7 @@ data class TrueCallerLoginRequest(
     @SerializedName("signature")
     val signature: String,
     @SerializedName("signature_algo")
-    val signatureAlgo: String
+    val signatureAlgo: String,
+    @SerializedName("instance_id")
+    val instanceID: String
 )

@@ -13,8 +13,8 @@ android {
         applicationId "com.joshtalks.joshskills"
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 94
-        versionName "1.0.94"
+        versionCode 96
+        versionName "1.0.96"
         vectorDrawables.useSupportLibrary true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField "String", "CLIENT_TOKEN", "\"Ctt75ss5IxyHgBJb48diBbHUXIQ1VANCYRykjdcj\""
@@ -29,10 +29,12 @@ android {
         }
         resConfigs "en"
         multiDexEnabled true
-        dataBinding {
-            enabled = true
-        }
     }
+
+    buildFeatures {
+        dataBinding = true
+    }
+
     signingConfigs {
         debug {
             storeFile file("JoshSkill.jks")
@@ -58,13 +60,15 @@ android {
             resValue("bool", "branch_test", "true")
             resValue("string", "truecaller_key", "P31uP46c15762366b41fdba957b16b9a7c620")
             buildConfigField "String", "FLURRY_API_KEY", "\"2MHQRXWJ93XX7BWRHXWS\""
+            buildConfigField "String", "SINCH_API_KEY", "\"86f34ed9-cdcf-497c-af80-3f352170164f\""
+
         }
         release {
             resValue("string", "branch_id", "key_live_hmRIENEBxRompOkPRCOXujibxFgew8w4")
             resValue("bool", "branch_test", "false")
             resValue("string", "truecaller_key", "KQRWJ8cb0afe64bd6449daf31962c9009e763")
             buildConfigField "String", "FLURRY_API_KEY", "\"466BRVHZTGCMRRQW67KX\""
-
+            buildConfigField "String", "SINCH_API_KEY", "\"86f34ed9-cdcf-497c-af80-3f352170164f\""
             debuggable false
             minifyEnabled false
             shrinkResources false
@@ -72,9 +76,6 @@ android {
             signingConfig signingConfigs.release
         }
     }
-   /* buildFeatures {
-        dataBinding = true
-    }*/
     kotlinOptions {
         jvmTarget = "1.8"
     }
@@ -144,15 +145,11 @@ android {
 }
 
 dependencies {
-    //    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.0.4'
-    // implementation project(path: ':animationlibrary')
-    implementation 'com.jakewharton.threetenabp:threetenabp:1.2.2'
 
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation project(path: ':recordview')
     implementation project(path: ':emoji-google')
     implementation project(path: ':joshlibrary')
-    implementation project(path: ':pdfviewer')
     implementation(project(path: ':mediapicker'), {
         exclude group: 'com.bumptech.glide'
     })
@@ -167,7 +164,7 @@ dependencies {
 
     implementation 'androidx.preference:preference:1.1.1'
     implementation 'androidx.appcompat:appcompat:1.1.0'
-    implementation 'androidx.core:core-ktx:1.2.0'
+    implementation 'androidx.core:core-ktx:1.3.0'
     implementation "androidx.collection:collection-ktx:1.1.0"
     implementation "androidx.fragment:fragment-ktx:1.2.4"
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
@@ -200,9 +197,6 @@ dependencies {
     kapt 'com.github.bumptech.glide:compiler:4.11.0'
     implementation 'jp.wasabeef:glide-transformations:4.1.0'
     implementation 'com.zlc.glide:webpdecoder:1.6.4.9.0'
-    /*implementation("com.github.bumptech.glide:recyclerview-integration:4.9.0") {
-        transitive = false
-    }*/
     implementation 'com.github.corouteam:GlideToVectorYou:v2.0.0'
 
     implementation 'com.google.android.exoplayer:exoplayer:2.11.4'
@@ -210,9 +204,9 @@ dependencies {
 
     implementation 'com.crashlytics.sdk.android:crashlytics:2.10.1'
     implementation 'com.google.firebase:firebase-appindexing:19.1.0'
-    implementation 'com.google.firebase:firebase-analytics:17.4.1'
-    implementation 'com.google.firebase:firebase-core:17.4.1'
-    implementation 'com.google.firebase:firebase-messaging:20.1.7'
+    implementation 'com.google.firebase:firebase-analytics:17.4.3'
+    implementation 'com.google.firebase:firebase-core:17.4.3'
+    implementation 'com.google.firebase:firebase-messaging:20.2.0'
     implementation 'com.google.firebase:firebase-perf:19.0.7'
     implementation 'com.google.firebase:firebase-config:19.1.4'
     implementation 'com.google.firebase:firebase-database-ktx:19.3.0'
@@ -222,15 +216,16 @@ dependencies {
     implementation 'com.huawei.hms:ads-identifier:3.4.28.305' // ads identifier for Huawei devices
     implementation 'com.google.android.gms:play-services-ads:19.1.0'
     implementation 'com.google.android.gms:play-services-auth:18.0.0'
-    implementation 'com.google.android.gms:play-services-base:17.2.1'
-    implementation 'com.google.android.libraries.places:places:2.2.0'
-    implementation 'com.google.android.play:core:1.7.2'
+    implementation 'com.google.android.gms:play-services-base:17.3.0'
+    implementation 'com.google.android.libraries.places:places:2.3.0'
+    implementation 'com.google.android.play:core:1.7.3'
     implementation 'com.android.installreferrer:installreferrer:1.1.2'
 
     implementation 'com.facebook.shimmer:shimmer:0.4.0'
     implementation 'com.facebook.android:facebook-android-sdk:5.12.0'
     implementation 'com.facebook.stetho:stetho:1.5.1'
     implementation 'com.facebook.stetho:stetho-okhttp3:1.5.1'
+    implementation 'com.facebook.android:facebook-login:5.15.3'
 
     implementation 'io.reactivex.rxjava2:rxjava:2.2.19'
     implementation 'io.reactivex.rxjava2:rxkotlin:2.4.0'
@@ -247,11 +242,11 @@ dependencies {
     implementation 'io.github.inflationx:viewpump:2.0.3'
     implementation 'com.intuit.sdp:sdp-android:1.0.6'
 
-    implementation 'com.squareup.retrofit2:retrofit:2.8.1'
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.8.1'
     implementation 'com.jakewharton.retrofit:retrofit2-kotlin-coroutines-adapter:0.9.2'
     implementation 'com.github.esafirm.android-image-picker:imagepicker:2.1.0'
-    implementation 'com.squareup.okhttp3:logging-interceptor:4.4.1'
+    implementation 'com.squareup.okhttp3:logging-interceptor:4.7.2'
 
     implementation 'com.mindorks.android:placeholderview:1.0.3'
     kapt 'com.mindorks.android:placeholderview-compiler:1.0.3'
@@ -277,7 +272,8 @@ dependencies {
     implementation('com.futuremind.recyclerfastscroll:fastscroll:0.2.5', {
         exclude group: 'com.android.support'
     })
-    implementation 'io.michaelrocks:libphonenumber-android:8.10.14'
+
+    implementation 'io.michaelrocks:libphonenumber-android:8.12.3'
     implementation 'com.github.razir.progressbutton:progressbutton:1.0.3'
 
     implementation 'com.github.pwittchen:reactivenetwork-rx2:3.0.6'
@@ -286,8 +282,8 @@ dependencies {
     implementation 'me.zhanghai.android.materialplaypausedrawable:library:1.0.0'
 
     implementation 'io.branch.sdk.android:library:5.0.0'
-    implementation(name: "truesdk-0.7-releasePartner", ext: "aar")
     implementation 'com.clevertap.android:clevertap-android-sdk:3.5.1'
+    implementation 'com.flurry.android:analytics:12.3.0@aar'
 
     //Payment Razor pay
     implementation 'com.razorpay:checkout:1.5.13'
@@ -298,23 +294,19 @@ dependencies {
     implementation 'com.github.vipulasri:timelineview:1.1.4'
     implementation 'com.afollestad.material-dialogs:bottomsheets:3.2.1'
     implementation 'com.mikhaellopez:circularprogressbar:3.0.3'
+    implementation 'com.jakewharton.threetenabp:threetenabp:1.2.2'
 
     implementation 'com.google.android:flexbox:2.0.1'
     implementation 'io.sentry:sentry-android-core:2.0.3'
     implementation 'com.newrelic.agent.android:android-agent:5.25.0'
     implementation 'com.sdsmdg.harjot:materialshadows:1.2.5'
-
-//  implementation 'io.sentry:sentry-android:2.0.3'
-//  implementation "com.truecaller.android.sdk:truecaller-sdk:2.0.0"
-//  implementation 'com.github.GetStream:stream-chat-android:4.0.13'
-
-
+    implementation "com.truecaller.android.sdk:truecaller-sdk:2.0.0"
+    implementation(name: 'sinch-android-verification-1.6.1', ext: 'aar')
+    //pdf viewer
+    implementation 'com.github.barteksc:android-pdf-viewer:3.2.0-beta.1'
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.2.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
-
-    // Flurry Analytics SDK
-    implementation 'com.flurry.android:analytics:12.3.0@aar'
 
 }

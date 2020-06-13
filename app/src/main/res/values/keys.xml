@@ -5,5 +5,5 @@
     <string name="google_places_api_key">AIzaSyC_KjBhV_22E3S29sF0NU55bKIaqtrajwU</string>
     <string name="facebook_app_id">503297633840171</string>
     <string name="ads_id">ca-app-pub-6081280554747332~5345328239</string>
-
+    <string name="fb_login_protocol_scheme">fb503297633840171</string>
 </resources>

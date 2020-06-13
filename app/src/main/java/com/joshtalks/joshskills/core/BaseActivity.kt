@@ -33,6 +33,7 @@ import com.joshtalks.joshskills.repository.service.EngagementNetworkHelper
 import com.joshtalks.joshskills.ui.chat.ConversationActivity
 import com.joshtalks.joshskills.ui.courseprogress.CourseProgressActivity
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
+import com.joshtalks.joshskills.ui.extra.CustomPermissionDialogFragment
 import com.joshtalks.joshskills.ui.help.HelpActivity
 import com.joshtalks.joshskills.ui.inbox.InboxActivity
 import com.joshtalks.joshskills.ui.nps.NetPromoterScoreFragment
@@ -42,6 +43,7 @@ import com.joshtalks.joshskills.ui.profile.ProfileActivity
 import com.joshtalks.joshskills.ui.profile.SOURCE_IMAGE
 import com.joshtalks.joshskills.ui.sign_up_old.OnBoardActivity
 import com.joshtalks.joshskills.ui.signup.SignUpActivity
+import com.joshtalks.joshskills.ui.signup_v2.SignUpV2Activity
 import com.newrelic.agent.android.NewRelic
 import io.branch.referral.Branch
 import io.github.inflationx.viewpump.ViewPumpContextWrapper
@@ -119,11 +121,11 @@ abstract class BaseActivity : AppCompatActivity() {
     }
 
     fun getIntentForState(): Intent? {
-        val intent: Intent? = if (User.getInstance().token == null) {
+        val intent: Intent? = if (PrefManager.getStringValue(API_TOKEN).isEmpty()) {
             Intent(this, OnBoardActivity::class.java)
-        } else {
-            getInboxActivityIntent()
-        }
+        } else if (isUserProfileComplete()) {
+            Intent(this, SignUpV2Activity::class.java)
+        } else getInboxActivityIntent()
         return intent?.apply {
             addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
@@ -216,9 +218,6 @@ abstract class BaseActivity : AppCompatActivity() {
             WorkManager.getInstance(applicationContext)
                 .getWorkInfoByIdLiveData(WorkMangerAdmin.getQuestionFeedback(question.questionId))
                 .observe(this, Observer {
-                    /* if (workInfo != null && workInfo.state == WorkInfo.State.SUCCEEDED) {
-
-                     }*/
                 })
         }
     }
@@ -233,15 +232,15 @@ abstract class BaseActivity : AppCompatActivity() {
         return CoroutineScope(Dispatchers.IO).async(Dispatchers.IO) {
             val currentState: NPSEvent? = getCurrentNpsState(nps) ?: return@async false
 
-            if (!(currentState == NPSEvent.PAYMENT_SUCCESS || currentState == NPSEvent.PAYMENT_FAILED)) {
-                val minNpsInADay = AppObjectController.getFirebaseRemoteConfig()
-                    .getDouble("MINIMUM_NPS_IN_A_DAY_COUNT").toInt()
-                val totalCountToday =
-                    AppObjectController.appDatabase.npsEventModelDao().getTotalCountOfRows()
-                if (totalCountToday >= minNpsInADay) {
-                    return@async false
-                }
+            // if (!(currentState == NPSEvent.PAYMENT_SUCCESS || currentState == NPSEvent.PAYMENT_FAILED)) {
+            val minNpsInADay = AppObjectController.getFirebaseRemoteConfig()
+                .getDouble("MINIMUM_NPS_IN_A_DAY_COUNT").toInt()
+            val totalCountToday =
+                AppObjectController.appDatabase.npsEventModelDao().getTotalCountOfRows()
+            if (totalCountToday >= minNpsInADay) {
+                return@async false
             }
+            // }
 
             val npsEventModel =
                 NPSEventModel.getAllNpaList()?.filter { it.enable }
@@ -306,4 +305,29 @@ abstract class BaseActivity : AppCompatActivity() {
 
     }
 
+    fun checkForOemNotifications() {
+        val oemIntent = PowerManagers.getIntentForOEM(this)
+        if (oemIntent != null && shouldRequireCustomPermission()) {
+            CustomPermissionDialogFragment.showCustomPermissionDialog(
+                oemIntent,
+                supportFragmentManager
+            )
+        }
+    }
+
+    protected fun shouldRequireCustomPermission(): Boolean {
+        val performedAction = PrefManager.getStringValue(CUSTOM_PERMISSION_ACTION_KEY)
+        return performedAction == EMPTY
+    }
+
+    private fun isUserProfileComplete(): Boolean {
+        val user = User.getInstance()
+        if (user.phoneNumber.isNotEmpty() && user.firstName.isEmpty()) {
+            return true
+        }
+        if (user.firstName.isEmpty()) {
+            return true
+        }
+        return false
+    }
 }

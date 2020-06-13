@@ -2,6 +2,7 @@ package com.joshtalks.joshskills.ui.pdfviewer
 
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -22,26 +23,21 @@ import com.joshtalks.joshskills.databinding.ActivityPdfViewerBinding
 import com.joshtalks.joshskills.repository.local.entity.PdfType
 import com.joshtalks.joshskills.repository.server.engage.PdfEngage
 import com.joshtalks.joshskills.repository.service.EngagementNetworkHelper
-import es.voghdev.pdfviewpager.library.PDFViewPager
-import es.voghdev.pdfviewpager.library.RemotePDFViewPager
-import es.voghdev.pdfviewpager.library.adapter.PDFPagerAdapter
-import es.voghdev.pdfviewpager.library.remote.DownloadFile
+import kotlinx.android.synthetic.main.activity_pdf_viewer.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.io.File
 
 const val PDF_ID = "pdf_id"
 const val COURSE_NAME = "course_name"
 
-class PdfViewerActivity : BaseActivity(), DownloadFile.Listener {
+class PdfViewerActivity : BaseActivity() {
     private lateinit var conversationBinding: ActivityPdfViewerBinding
     private var pdfObject: PdfType? = null
 
-    private var pdfViewPager: PDFViewPager? = null
     private var gestureDetector: GestureDetector? = null
     private var uiHandler = Handler(Looper.getMainLooper())
-    private var adapter: PDFPagerAdapter? = null
-    private var remotePDFViewPager: RemotePDFViewPager? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -100,25 +96,35 @@ class PdfViewerActivity : BaseActivity(), DownloadFile.Listener {
             try {
                 pdfObject =
                     AppObjectController.appDatabase.chatDao()
-                        .getPdfById(intent.getStringExtra(PDF_ID))
+                        .getPdfById(intent.getStringExtra(PDF_ID)!!)
                 CoroutineScope(Dispatchers.Main).launch {
                     try {
-                        if (pdfObject?.downloadedLocalPath.isNullOrEmpty()) {
-
-                            remotePDFViewPager = RemotePDFViewPager(
-                                applicationContext,
-                                pdfObject?.url,
-                                this@PdfViewerActivity
-                            )
-                            remotePDFViewPager?.pageMargin = 20
+                        val pdfConfigurator = if (pdfObject?.downloadedLocalPath.isNullOrEmpty()) {
+                            conversationBinding.pdfView
+                                .fromUri(Uri.parse(pdfObject?.url))
 
                         } else {
-                            val pdfViewPager =
-                                PDFViewPager(applicationContext, pdfObject?.downloadedLocalPath)
-                            pdfViewPager.pageMargin = 20
-                            conversationBinding.remotePdfRoot.addView(pdfViewPager)
-
+                            conversationBinding.pdfView
+                                .fromFile(File(pdfObject?.downloadedLocalPath!!))
                         }
+                        val scrollHandle = PdfScrollHandle(this@PdfViewerActivity)
+
+                        pdfConfigurator.enableSwipe(true)
+                            .pageSnap(true)
+                            .autoSpacing(true)
+                            .pageFling(true)
+                            .fitEachPage(true)
+                            .scrollHandle(scrollHandle)
+                            .onPageChange { page: Int, pageCount: Int ->
+                                txtPageNumber.text =
+                                    resources.getString(
+                                        R.string.page_number,
+                                        page.plus(1).toString(),
+                                        pageCount.toString()
+                                    )
+                            }
+                            .load()
+
                         AppAnalytics.create(AnalyticsEvent.PDF_OPENED.NAME)
                             .addParam("URL", pdfObject?.url)
                             .push()
@@ -142,21 +148,6 @@ class PdfViewerActivity : BaseActivity(), DownloadFile.Listener {
         uiHandler.removeCallbacksAndMessages(null)
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        try {
-            (pdfViewPager?.adapter as PDFPagerAdapter).close()
-        } catch (ex: Exception) {
-
-        }
-        try {
-            adapter?.close()
-        } catch (ex: Exception) {
-
-        }
-
-    }
-
     companion object {
         fun startPdfActivity(
             context: Context,
@@ -169,25 +160,7 @@ class PdfViewerActivity : BaseActivity(), DownloadFile.Listener {
             }.run {
                 context.startActivity(this)
             }
-
-
         }
 
     }
-
-    override fun onSuccess(url: String?, destinationPath: String?) {
-        destinationPath?.let {
-            adapter = PDFPagerAdapter(this, it)
-            remotePDFViewPager?.adapter = adapter
-            conversationBinding.remotePdfRoot.addView(remotePDFViewPager)
-        }
-
-    }
-
-    override fun onFailure(e: java.lang.Exception?) {
-    }
-
-    override fun onProgressUpdate(progress: Int, total: Int) {
-    }
-
 }

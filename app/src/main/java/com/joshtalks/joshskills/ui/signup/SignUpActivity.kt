@@ -15,9 +15,9 @@ import com.joshtalks.joshskills.core.SignUpStepStatus
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.databinding.ActivitySignUpBinding
+import com.joshtalks.joshskills.ui.signup_v2.FLOW_FROM
 
 const val IS_ACTIVITY_FOR_RESULT = "is_activity_for_result"
-const val FROM_ACTIVITY = "from_activity"
 
 class SignUpActivity : CoreJoshActivity() {
 
@@ -37,7 +37,7 @@ class SignUpActivity : CoreJoshActivity() {
         supportActionBar?.hide()
         if (intent.hasExtra(IS_ACTIVITY_FOR_RESULT)) {
             activityResultFlag = intent?.getBooleanExtra(IS_ACTIVITY_FOR_RESULT, false) ?: false
-            fromActivity = intent?.getStringExtra(FROM_ACTIVITY) ?: EMPTY
+            fromActivity = intent?.getStringExtra(FLOW_FROM) ?: EMPTY
         }
         addObserver()
         login()

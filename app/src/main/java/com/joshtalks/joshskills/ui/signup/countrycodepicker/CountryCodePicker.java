@@ -205,7 +205,7 @@ public class CountryCodePicker extends RelativeLayout {
         }
         removeAllViewsInLayout();
         //at run time, match parent value returns LayoutParams.MATCH_PARENT ("-1"), for some android xml preview it returns "fill_parent"
-        if (attrs != null && xmlWidth != null && (xmlWidth.equals(LayoutParams.MATCH_PARENT + "") || xmlWidth.equals(LayoutParams.FILL_PARENT + "") || xmlWidth.equals("fill_parent") || xmlWidth.equals("match_parent"))) {
+        if (attrs != null && xmlWidth != null && (xmlWidth.equals(LayoutParams.MATCH_PARENT + "") || xmlWidth.equals("fill_parent") || xmlWidth.equals("match_parent"))) {
             holderView = mInflater.inflate(R.layout.layout_full_width_code_picker, this, true);
         } else {
             holderView = mInflater.inflate(R.layout.layout_code_picker, this, true);
@@ -1294,6 +1294,15 @@ public class CountryCodePicker extends RelativeLayout {
         } else {
             //            Log.d("preference list", " has no country");
         }
+    }
+
+    public String getCountryCodeByName(String code) {
+        for (CCPCountry cPCountry : CCPCountry.getLibraryMasterCountriesEnglish()) {
+            if (cPCountry.nameCode.equalsIgnoreCase(code)) {
+                return "+" + cPCountry.phoneCode;
+            }
+        }
+        return "";
     }
 
     /**

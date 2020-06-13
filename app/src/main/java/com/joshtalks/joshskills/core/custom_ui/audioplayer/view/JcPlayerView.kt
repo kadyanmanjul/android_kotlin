@@ -362,8 +362,9 @@ class JcPlayerView : LinearLayout, View.OnClickListener, SeekBar.OnSeekBarChange
     override fun onClick(view: View) {
         when (view.id) {
             R.id.btnPlay -> {
-                if (PermissionUtils.isStoragePermissionEnable(activity!!).not()) {
-                    PermissionUtils.storageReadAndWritePermission(activity!!,
+                if (PermissionUtils.isStoragePermissionEnabled(activity!!).not()) {
+                    PermissionUtils.storageReadAndWritePermission(
+                        activity!!,
                         object : MultiplePermissionsListener {
                             override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
                                 report?.areAllPermissionsGranted()?.let { flag ->

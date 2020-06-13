@@ -1,12 +1,11 @@
 package com.joshtalks.joshskills.repository.service
 
-import com.joshtalks.joshskills.repository.local.model.DeviceDetailsResponse
-import com.joshtalks.joshskills.repository.local.model.FCMResponse
-import com.joshtalks.joshskills.repository.local.model.InstallReferrerModel
-import com.joshtalks.joshskills.repository.local.model.Mentor
-import com.joshtalks.joshskills.repository.local.model.googlelocation.Locality
+import com.joshtalks.joshskills.repository.local.model.*
 import com.joshtalks.joshskills.repository.server.*
 import com.joshtalks.joshskills.repository.server.course_detail.CourseDetailsResponse
+import com.joshtalks.joshskills.repository.server.signup.LoginResponse
+import com.joshtalks.joshskills.repository.server.signup.RequestSocialSignUp
+import com.joshtalks.joshskills.repository.server.signup.RequestUserVerification
 import kotlinx.coroutines.Deferred
 import okhttp3.MultipartBody
 import retrofit2.Response
@@ -17,25 +16,36 @@ const val DIR = "api/skill/v1"
 @JvmSuppressWildcards
 interface SignUpNetworkService {
 
+    @POST("$DIR/user/{path}/")
+    suspend fun socialLogin(
+        @Path("path") path: String,
+        @Body requestSocialSignUp: RequestSocialSignUp
+    ): Response<LoginResponse>
+
+    @POST("$DIR/mentor/instance/")
+    suspend fun getInstanceIdAsync(): InstanceIdResponse
+
     @GET("$DIR/user/login/")
     suspend fun getOtpForNumberAsync(@QueryMap params: Map<String, String>): Response<Any>
 
     @POST("$DIR/user/otp_verify/")
-    fun verifyOTP(@Body requestVerifyOTP: RequestVerifyOTP): Deferred<LoginResponse>
-
+    suspend fun verifyOTP(@Body requestVerifyOTP: RequestVerifyOTP): Response<LoginResponse>
 
     @POST("$DIR/user/truecaller/login/")
-    fun verifyViaTrueCaller(@Body requestVerifyOTP: TrueCallerLoginRequest): Deferred<LoginResponse>
+    suspend fun verifyViaTrueCaller(@Body requestVerifyOTP: TrueCallerLoginRequest): Response<LoginResponse>
 
-    @GET("$DIR/core/meta/")
-    fun getCoreMeta(): Deferred<CoreMeta>
-
-    @POST("$DIR/mentor/account_kit/")
-    fun accountKitAuthorizationAsync(@Body accountKitRequest: AccountKitRequest): Deferred<CreateAccountResponse>
-
+    @POST("$DIR/user/user_verification/")
+    suspend fun userVerification(@Body requestUserVerification: RequestUserVerification): Response<LoginResponse>
 
     @GET("$DIR/mentor/{id}/personal_profile/")
-    fun getPersonalProfileAsync(@Path("id") id: String): Deferred<Mentor>
+    suspend fun getPersonalProfileAsync(@Path("id") id: String): Response<Mentor>
+
+    @FormUrlEncoded
+    @PATCH("$DIR/user/{id}/")
+    suspend fun updateUserProfile(
+        @Path("id") userId: String,
+        @FieldMap params: Map<String, String?>
+    ): Response<User>
 
 
     @PATCH("$DIR/mentor/{id}/")
@@ -44,10 +54,6 @@ interface SignUpNetworkService {
         @Body params: UpdateUserLocality
     ): Deferred<ProfileResponse>
 
-
-    @FormUrlEncoded
-    @POST("$DIR/mentor/location/locality/")
-    fun confirmUserLocationAsync(@FieldMap params: Map<String, String>): Deferred<Locality>
 
     @PATCH("$DIR/user/{id}/")
     fun updateUserAsync(
@@ -80,10 +86,6 @@ interface SignUpNetworkService {
     @POST("$DIR/mentor/fcm/")
     fun uploadFCMToken(@FieldMap params: Map<String, String>): Deferred<FCMResponse>
 
-    @FormUrlEncoded
-    @POST("$DIR/mentor/register/anonymous/")
-    fun registerAnonymousUser(@FieldMap params: Map<String, String>): Deferred<SuccessResponse>
-
 
     @POST("$DIR/mentor/install_source")
     suspend fun getInstallReferrerAsync(@Body installReferrerModel: InstallReferrerModel)
@@ -91,6 +93,9 @@ interface SignUpNetworkService {
 
     @GET("$DIR/payment/create_order")
     fun getPaymentDetails(@QueryMap params: Map<String, String>): Deferred<Response<PaymentDetailsResponse>>
+
+    @POST("$DIR/payment/create_order_v2")
+    fun createPaymentOrder(@Body params: Map<String, String?>): Deferred<Response<OrderDetailResponse>>
 
 
     @GET("$DIR/course/test/")
@@ -106,6 +111,9 @@ interface SignUpNetworkService {
 
     @GET("$DIR/payment/coupon/")
     fun validateOrGetAndReferralOrCouponAsync(@QueryMap params: Map<String, String>): Deferred<List<CouponCodeResponse>>
+
+    @GET("$DIR/payment/summary/")
+    suspend fun getPaymentSummaryDetails(@QueryMap params: Map<String, String>): PaymentSummaryResponse
 
 
 }

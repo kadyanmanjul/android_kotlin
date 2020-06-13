@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/line"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="clip_vertical"
+                android:layout_marginHorizontal="@dimen/_6sdp"
+                android:adjustViewBounds="true"
+                android:src="@drawable/ic_rectangle_81"
+                android:tint="@color/black"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.4" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/man1"
+                android:layout_width="@dimen/_146sdp"
+                android:layout_height="@dimen/_186sdp"
+                android:layout_gravity="center"
+                android:src="@drawable/red_man"
+                app:layout_constraintBottom_toTopOf="@+id/line"
+                app:layout_constraintStart_toStartOf="parent" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/plant"
+                android:layout_width="@dimen/_68sdp"
+                android:layout_height="@dimen/_80sdp"
+                android:layout_gravity="center"
+                android:src="@drawable/plant_two"
+                app:layout_constraintBottom_toTopOf="@+id/line"
+                app:layout_constraintEnd_toStartOf="@+id/man" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/man"
+                android:layout_width="@dimen/_156sdp"
+                android:layout_height="@dimen/_140sdp"
+                android:layout_gravity="center"
+                android:layout_marginEnd="@dimen/_6sdp"
+                android:src="@drawable/man_with_chair"
+                app:layout_constraintBottom_toTopOf="@+id/line"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="1" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/tick"
+                android:layout_width="@dimen/_36sdp"
+                android:layout_height="@dimen/_36sdp"
+                android:layout_gravity="center"
+                android:layout_marginEnd="@dimen/_90sdp"
+                android:layout_marginBottom="@dimen/_120sdp"
+                android:src="@drawable/ic_green_tick"
+                app:layout_constraintBottom_toTopOf="@+id/line"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+        <TextView
+                android:id="@+id/textView3"
+                style="@style/TextStyle.TopBarNoScroll"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/_16sdp"
+                android:layout_marginTop="@dimen/_20sdp"
+                android:gravity="center"
+                android:text="@string/starting_title"
+                android:textColor="@color/black"
+                android:textSize="@dimen/font_22"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/transation_id" />
+
+        <TextView
+                android:id="@+id/course"
+                style="@style/TextStyle.TopBarNoScroll"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/_16sdp"
+                android:layout_marginTop="@dimen/_6sdp"
+                android:gravity="center"
+                android:text="@string/starting_info"
+                android:textColor="@color/dark_grey"
+                android:textSize="@dimen/font_16"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.497"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView3" />
+
+        <TextView
+                android:id="@+id/transation_id"
+                style="@style/TextStyle.TopBarNoScroll"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/_16sdp"
+                android:layout_marginTop="@dimen/_16sdp"
+                android:gravity="center"
+                android:text="@string/trx_id"
+                android:textColor="@color/grey"
+                android:textSize="@dimen/_10sdp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/line" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/author_layout"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_80sdp"
+                android:layout_marginHorizontal="@dimen/_12sdp"
+                android:layout_marginBottom="104dp"
+                android:background="@drawable/rect_with_bound"
+                android:backgroundTint="#F3F3F3"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.516"
+                app:layout_constraintStart_toStartOf="parent" />
+
+        <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/circle_dp"
+                android:layout_width="@dimen/_68sdp"
+                android:layout_height="@dimen/_68sdp"
+                android:layout_marginHorizontal="@dimen/_12sdp"
+                android:layout_marginVertical="@dimen/_12sdp"
+                android:background="@drawable/circle"
+                android:backgroundTint="@color/gray_e6"
+                android:padding="@dimen/_1sdp"
+                app:layout_constraintBottom_toBottomOf="@+id/author_layout"
+                app:layout_constraintEnd_toEndOf="@+id/author_layout"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="@+id/author_layout"
+                app:layout_constraintTop_toTopOf="@+id/author_layout"
+                tools:src="@drawable/sample_circle_dp" />
+
+        <TextView
+                android:id="@+id/tutor_line"
+                style="@style/TextStyle.TopBarNoScroll"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_20sdp"
+                android:layout_marginEnd="@dimen/_20sdp"
+                android:gravity="right"
+                android:text="@string/tutor_line"
+                android:textColor="@color/dark_grey"
+                android:textSize="@dimen/font_14"
+                app:layout_constraintEnd_toEndOf="@+id/author_layout"
+                app:layout_constraintTop_toTopOf="@+id/author_layout"
+                tools:ignore="MissingConstraints,RtlHardcoded" />
+
+        <TextView
+                android:id="@+id/start_register"
+                style="@style/TextStyle.TopBarNoScroll"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/_20sdp"
+                android:gravity="right"
+                android:text="@string/tutor_register"
+                android:textColor="@color/dark_grey"
+                android:textSize="@dimen/font_14"
+                app:layout_constraintEnd_toEndOf="@+id/author_layout"
+                app:layout_constraintTop_toBottomOf="@+id/tutor_line"
+                tools:ignore="MissingConstraints,RtlHardcoded" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/corner"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_down_arrow"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/author_layout" />
+
+        <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/materialButton"
+                style="@style/TextStyle.TopBarNoScroll"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginHorizontal="@dimen/_24sdp"
+                android:layout_marginBottom="@dimen/_19sdp"
+                android:background="@drawable/round_rectangle_for_course_expo"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center"
+                android:padding="@dimen/_8sdp"
+                android:text="@string/register_now"
+                android:textColor="@color/white"
+                android:textSize="@dimen/font_18"
+                app:cornerRadius="@dimen/_8sdp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:rippleColor="@color/white" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

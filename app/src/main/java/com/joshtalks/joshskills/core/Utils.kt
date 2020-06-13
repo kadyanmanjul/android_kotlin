@@ -49,6 +49,7 @@ import com.joshtalks.joshskills.core.datetimeutils.DateTimeUtils
 import com.joshtalks.joshskills.repository.local.model.User
 import com.muddzdev.styleabletoast.StyleableToast
 import github.nisrulz.easydeviceinfo.base.EasyConfigMod
+import io.michaelrocks.libphonenumber.android.PhoneNumberUtil
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -649,14 +650,17 @@ object Utils {
     }
 
 
-    fun isUser7DaysOld(courseCreatedDate: Date?): Pair<Boolean, Int> {
+    fun isUserInDaysOld(courseCreatedDate: Date?): Pair<Boolean, Int> {
         if (courseCreatedDate == null) {
             return Pair(false, 0)
         }
         val todayDate = Date()
         val diff = todayDate.time - courseCreatedDate.time
-        val daysDiff = 7 - TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS)
-        if (daysDiff in 0..7) {
+        val offerDays =
+            AppObjectController.getFirebaseRemoteConfig().getLong("COURSE_BUY_MIN_OFFER_DAYS")
+        val daysDiff = offerDays - TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS)
+
+        if (daysDiff >= 0) {
             return Pair(true, daysDiff.toInt())
         }
         return Pair(false, daysDiff.toInt())
@@ -693,8 +697,17 @@ object Utils {
         }
     }
 
-    fun getBitmapFromVectorDrawable(context: Context, resource: Int): Bitmap {
+    fun getBitmapFromVectorDrawable(
+        context: Context,
+        resource: Int,
+        tintColor: Int = R.color.colorPrimary
+    ): Bitmap {
         val drawable = ContextCompat.getDrawable(context, resource)
+        if (drawable != null) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                drawable.setTint(context.resources.getColor(tintColor, null))
+            }
+        }
         val bitmap = Bitmap.createBitmap(
             drawable!!.intrinsicWidth,
             drawable.intrinsicHeight, Bitmap.Config.ARGB_8888
@@ -712,6 +725,10 @@ object Utils {
         } catch (e: PackageManager.NameNotFoundException) {
             false
         }
+    }
+
+    fun isTrueCallerAppExist(): Boolean {
+        return isPackageInstalled("com.truecaller", AppObjectController.joshApplication)
     }
 }
 
@@ -772,4 +789,20 @@ fun dateStartOfDay(): Date {
     c[Calendar.SECOND] = 0
     c[Calendar.MILLISECOND] = 0
     return c.time
+}
+
+fun getFBProfilePicture(id: String): String {
+    return "http://graph.facebook.com/$id/picture?height=800&width=800&type=normal"
+}
+
+
+fun isValidFullNumber(countryCode: String, number: String? = EMPTY): Boolean {
+    return try {
+        val phoneUtil = PhoneNumberUtil.createInstance(AppObjectController.joshApplication)
+        val phoneNumber = phoneUtil.parse(countryCode + number, null)
+        phoneUtil.isValidNumber(phoneNumber)
+    } catch (ex: Exception) {
+        ex.printStackTrace()
+        true
+    }
 }

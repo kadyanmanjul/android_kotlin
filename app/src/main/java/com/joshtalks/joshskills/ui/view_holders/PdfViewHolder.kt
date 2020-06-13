@@ -237,8 +237,9 @@ class PdfViewHolder(activityRef: WeakReference<FragmentActivity>, message: ChatM
 
     @Click(R.id.container_fl)
     fun onClickPdfContainer() {
-        if (PermissionUtils.isStoragePermissionEnable(activityRef.get()!!).not()) {
-            PermissionUtils.storageReadAndWritePermission(activityRef.get()!!,
+        if (PermissionUtils.isStoragePermissionEnabled(activityRef.get()!!).not()) {
+            PermissionUtils.storageReadAndWritePermission(
+                activityRef.get()!!,
                 object : MultiplePermissionsListener {
                     override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
                         report?.areAllPermissionsGranted()?.let { flag ->
