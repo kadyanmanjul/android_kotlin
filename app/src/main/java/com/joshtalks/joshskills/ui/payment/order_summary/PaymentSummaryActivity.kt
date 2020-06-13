@@ -248,10 +248,6 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                                 viewModel.getDiscount().toString()
                             )
                         )
-                        binding.materialButton.text =
-                            "${AppObjectController.getFirebaseRemoteConfig()
-                                .getString("CTA_PAYMENT_SUMMARY")} ₹ ${viewModel.getCourseDiscountedAmount()
-                                .roundToInt()}"
                     } else {
                         binding.tipUsedMsg.text = getString(R.string.coupon_applied_free_course)
                         binding.materialButton.text = AppObjectController.getFirebaseRemoteConfig()
@@ -260,6 +256,10 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                     binding.tipUsedMsg.visibility = View.VISIBLE
                 }
             }
+            binding.materialButton.text =
+                "${AppObjectController.getFirebaseRemoteConfig()
+                    .getString("CTA_PAYMENT_SUMMARY")} ₹ ${viewModel.getCourseDiscountedAmount()
+                    .roundToInt()}"
         })
         if (viewModel.hasRegisteredMobileNumber) {
             binding.group1.visibility = View.GONE

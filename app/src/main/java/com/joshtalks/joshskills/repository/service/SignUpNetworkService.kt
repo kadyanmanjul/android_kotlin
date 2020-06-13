@@ -119,5 +119,5 @@ interface SignUpNetworkService {
     suspend fun validateAndGetReferralDetails(@QueryMap params: Map<String, String>): ReferralCouponDetailResponse
 
     @POST("$DIR/payment/create_free_order/")
-    suspend fun createFreeOrder(@QueryMap params: Map<String, String>): Response<Any>
+    suspend fun createFreeOrder(@Body params: CreateOrderResponse): Response<Any>
 }
