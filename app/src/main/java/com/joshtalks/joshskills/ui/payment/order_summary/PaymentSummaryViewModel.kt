@@ -40,7 +40,8 @@ class PaymentSummaryViewModel(application: Application) : AndroidViewModel(appli
 
     val hasRegisteredMobileNumber by lazy {
         (User.getInstance().phoneNumber.isNotBlank() || PrefManager.getStringValue(
-            PAYMENT_MOBILE_NUMBER).isNotBlank())
+            PAYMENT_MOBILE_NUMBER
+        ).isNotBlank())
     }
 
     init {
@@ -134,6 +135,7 @@ class PaymentSummaryViewModel(application: Application) : AndroidViewModel(appli
             }
         }
     }
+
     private fun logPayNowAnalyticEvents(razorpayOrderId: String?) {
         AppAnalytics.create(AnalyticsEvent.PAY_NOW_CLICKED.NAME)
             .addBasicParam()
@@ -143,5 +145,9 @@ class PaymentSummaryViewModel(application: Application) : AndroidViewModel(appli
             .addParam(AnalyticsEvent.IS_USER_REGISTERD.NAME, isRegisteredAlready)
             .addParam(AnalyticsEvent.RAZOR_PAY_ID.NAME, razorpayOrderId)
             .addParam(AnalyticsEvent.SHOWN_COURSE_PRICE.NAME, getCourseActualAmount()).push()
+    }
+
+    fun createFreeOrder(testId: String, mobileNumber: String) {
+
     }
 }

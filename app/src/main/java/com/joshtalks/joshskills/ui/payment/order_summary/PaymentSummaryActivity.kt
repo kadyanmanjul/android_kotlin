@@ -220,9 +220,6 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                 .into(binding.profileImage)
             binding.txtPrice.text =
                 "₹ ${String.format("%.2f", it.amount)}"
-            binding.materialButton.text =
-                "${AppObjectController.getFirebaseRemoteConfig()
-                    .getString("CTA_PAYMENT_SUMMARY")} ₹ ${it.discountedAmount.roundToInt()}"
             multiLineLL = binding.multiLineLl
 
             it.features?.let {
@@ -244,12 +241,22 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                     binding.badeBhaiyaTipContainer.visibility = View.GONE
                     binding.txtPrice.text =
                         "₹ ${String.format("%.2f", viewModel.getCourseDiscountedAmount())}"
-                    binding.tipUsedMsg.text = SpannableStringBuilder(
-                        getString(
-                            R.string.tip_used_info,
-                            viewModel.getDiscount().toString()
+                    if (viewModel.getCourseDiscountedAmount() > 0) {
+                        binding.tipUsedMsg.text = SpannableStringBuilder(
+                            getString(
+                                R.string.tip_used_info,
+                                viewModel.getDiscount().toString()
+                            )
                         )
-                    )
+                        binding.materialButton.text =
+                            "${AppObjectController.getFirebaseRemoteConfig()
+                                .getString("CTA_PAYMENT_SUMMARY")} ₹ ${viewModel.getCourseDiscountedAmount()
+                                .roundToInt()}"
+                    } else {
+                        binding.tipUsedMsg.text = getString(R.string.coupon_applied_free_course)
+                        binding.materialButton.text = AppObjectController.getFirebaseRemoteConfig()
+                            .getString("CTA_PAYMENT_SUMMARY_FREE")
+                    }
                     binding.tipUsedMsg.visibility = View.VISIBLE
                 }
             }
@@ -273,9 +280,8 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                 if (Mentor.getInstance().getId().isNotEmpty()) {
                     data["mentor_id"] = Mentor.getInstance().getId()
                 }
-                // TODO later for coupons
-                if (false) {
-                    data["coupon"] = "testcoupon"
+                if (PrefManager.getStringValue(REFERRED_REFERRAL_CODE).isNotBlank()) {
+                    data["coupon"] = PrefManager.getStringValue(REFERRED_REFERRAL_CODE)
                 }
                 viewModel.getPaymentSummaryDetails(data)
             } catch (ex: Exception) {
@@ -427,11 +433,12 @@ class PaymentSummaryActivity : CoreJoshActivity(),
             showToast(getString(R.string.internet_not_available_msz))
             return
         }
+
         val defaultRegion: String = PhoneNumberUtils.getDefaultCountryIso(applicationContext)
         appAnalytics.addParam(AnalyticsEvent.COUNTRY_ISO_CODE.NAME, defaultRegion)
 
         when {
-            viewModel.hasRegisteredMobileNumber.not() -> {
+            getPhoneNumber().isBlank() -> {
                 when {
                     binding.mobileEt.text.isNullOrEmpty() -> {
                         if (isRequestHintAppearred) {
@@ -447,26 +454,19 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                         showToast(getString(R.string.please_enter_valid_number))
                         return
                     }
-                    binding.mobileEt.prefix.equals("+91") -> viewModel.getOrderDetails(
-                        testId,
-                        binding.mobileEt.text.toString()
-                    )
+                    viewModel.getCourseDiscountedAmount() < 1 -> {
+                        viewModel.createFreeOrder(testId, binding.mobileEt.text.toString())
+                        return
+                    }
+                    binding.mobileEt.prefix.equals("+91") ->
+                        viewModel.getOrderDetails(testId, binding.mobileEt.text.toString())
                     else ->
                         uiHandler.post {
                             showChatNPayDialog()
                         }
                 }
             }
-            User.getInstance().phoneNumber.isNotBlank() -> viewModel.getOrderDetails(
-                testId,
-                User.getInstance().phoneNumber
-            )
-            else -> viewModel.getOrderDetails(
-                testId, PrefManager.getStringValue(PAYMENT_MOBILE_NUMBER).replace(
-                    SINGLE_SPACE,
-                    EMPTY
-                )
-            )
+            else -> viewModel.getOrderDetails(testId, getPhoneNumber())
         }
     }
 
@@ -494,7 +494,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
         NPSEventModel.setCurrentNPA(
             NPSEvent.PAYMENT_SUCCESS
         )
-        if (PrefManager.getStringValue(PAYMENT_MOBILE_NUMBER).isNullOrBlank())
+        if (PrefManager.getStringValue(PAYMENT_MOBILE_NUMBER).isBlank())
             PrefManager.put(
                 PAYMENT_MOBILE_NUMBER,
                 binding.mobileEt.prefix.plus(SINGLE_SPACE).plus(binding.mobileEt.text)
@@ -644,4 +644,14 @@ class PaymentSummaryActivity : CoreJoshActivity(),
             )
             .commit()
     }
+
+    private fun getPhoneNumber() =
+        when {
+            User.getInstance().phoneNumber.isNotBlank() ->
+                User.getInstance().phoneNumber
+            PrefManager.getStringValue(PAYMENT_MOBILE_NUMBER).isNotBlank() ->
+                PrefManager.getStringValue(PAYMENT_MOBILE_NUMBER).replace(SINGLE_SPACE, EMPTY)
+            else ->
+                EMPTY
+        }
 }

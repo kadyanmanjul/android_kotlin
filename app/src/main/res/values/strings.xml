@@ -321,4 +321,5 @@
     <string name="page_number" formatted="false">Page %s / %s</string>
     <string name="help">Help</string>
     <string name="show_details">Show Details</string>
+    <string name="coupon_applied_free_course">Coupon Applied! You got this course\nfor free. Register Now</string>
 </resources>

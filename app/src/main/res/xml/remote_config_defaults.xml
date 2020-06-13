@@ -95,5 +95,9 @@
         <key>CTA_PAYMENT_SUMMARY</key>
         <value>PAY</value>
     </entry>
+    <entry>
+        <key>CTA_PAYMENT_SUMMARY_FREE</key>
+        <value>Get this course for free</value>
+    </entry>
 
 </defaultsMap>
