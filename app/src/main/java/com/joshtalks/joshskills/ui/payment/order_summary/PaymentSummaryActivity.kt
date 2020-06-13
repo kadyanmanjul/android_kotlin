@@ -78,7 +78,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
     private var testId: String = EMPTY
     private val uiHandler = Handler(Looper.getMainLooper())
     lateinit var multiLineLL: LinearLayout
-    lateinit var typefaceSpan: Typeface
+    private var typefaceSpan: Typeface? = null
     private lateinit var viewModel: PaymentSummaryViewModel
     private var isEcommereceEventFire = true
     private lateinit var appAnalytics: AppAnalytics
@@ -127,7 +127,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
         binding = DataBindingUtil.setContentView(this, R.layout.activity_payment_summary)
         binding.lifecycleOwner = this
         binding.handler = this
-        typefaceSpan = ResourcesCompat.getFont(applicationContext, R.font.poppins)!!
+        typefaceSpan = ResourcesCompat.getFont(applicationContext, R.font.poppins)
         initToolbarView()
         initViewModel()
         subscribeObservers()

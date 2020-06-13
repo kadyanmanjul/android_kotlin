@@ -47,8 +47,8 @@ class VideoFragment : BaseFragment<FragmentVideoBinding>(R.layout.fragment_video
     private var displayId = -1
     private var duration = 0
     private var lensFacing = CameraX.LensFacing.BACK
-    private var timer=  Timer()
-    private lateinit var absoulutePath:String
+    private var timer = Timer()
+    private var absoulutePath: String? = null
     private var flashMode by Delegates.observable(FlashMode.OFF.ordinal) { _, _, new ->
         binding.buttonFlash.setImageResource(
             when (new) {
@@ -319,7 +319,7 @@ class VideoFragment : BaseFragment<FragmentVideoBinding>(R.layout.fragment_video
                 // Setting current display ID
                 displayId = vf.display.displayId
                 recreateCamera()
-                lifecycleScope.launch(Dispatchers.IO) {
+                lifecycleScope.launch(Dispatchers.Main) {
                     // Do on IO Dispatcher
                     // Check if there are any photos or videos in the app directory and preview the last one
                     outputDirectory.listFiles()?.lastOrNull()?.let {
@@ -363,11 +363,11 @@ class VideoFragment : BaseFragment<FragmentVideoBinding>(R.layout.fragment_video
 }
 
     private fun deleteVideoFile() {
-        absoulutePath.let {
-            val f0 = File(absoulutePath)
+        absoulutePath?.let {
+            val f0 = File(it)
             if (f0.exists()) {
                 val d0 = f0.delete()
-                Log.w(TAG, "File deleted: $absoulutePath/myFile $d0")
+                Log.w(TAG, "File deleted: $it/myFile $d0")
             }
         }
     }

@@ -14,6 +14,7 @@ import com.facebook.stetho.Stetho
 import com.joshtalks.joshskills.BuildConfig
 import io.branch.referral.Branch
 import io.branch.referral.BranchApp
+import io.github.inflationx.viewpump.ViewPumpContextWrapper
 import io.sentry.core.Sentry
 import io.sentry.core.SentryLevel
 import timber.log.Timber
@@ -21,6 +22,10 @@ import timber.log.Timber
 var TAG = "JoshSkill"
 
 class JoshApplication : BranchApp(), LifecycleObserver/*, Configuration.Provider*/ {
+    companion object {
+        @JvmStatic
+        var isAppVisible = false
+    }
 
     override fun onCreate() {
         super.onCreate()
@@ -49,6 +54,7 @@ class JoshApplication : BranchApp(), LifecycleObserver/*, Configuration.Provider
     override fun attachBaseContext(base: Context?) {
         super.attachBaseContext(base)
         MultiDex.install(this)
+        base?.let { ViewPumpContextWrapper.wrap(it) }
     }
 
 
@@ -65,6 +71,7 @@ class JoshApplication : BranchApp(), LifecycleObserver/*, Configuration.Provider
         Timber.tag(TAG).e("************* foregrounded")
         Timber.tag(TAG).e("************* ${isActivityVisible()}")
         AppObjectController.facebookEventLogger.logEvent(AppEventsConstants.EVENT_NAME_ACTIVATED_APP)
+        isAppVisible = true
     }
 
     private fun isActivityVisible(): String {

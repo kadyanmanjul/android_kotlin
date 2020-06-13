@@ -321,12 +321,16 @@ abstract class BaseActivity : AppCompatActivity() {
     }
 
     private fun isUserProfileComplete(): Boolean {
-        val user = User.getInstance()
-        if (user.phoneNumber.isNotEmpty() && user.firstName.isEmpty()) {
-            return true
-        }
-        if (user.firstName.isEmpty()) {
-            return true
+        try {
+            val user = User.getInstance()
+            if (user.phoneNumber.isNotEmpty() && user.firstName.isEmpty()) {
+                return true
+            }
+            if (user.firstName.isEmpty()) {
+                return true
+            }
+        } catch (ex: Exception) {
+            ex.printStackTrace()
         }
         return false
     }
