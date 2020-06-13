@@ -63,7 +63,7 @@ class JoshApplication : BranchApp(), LifecycleObserver/*, Configuration.Provider
         Timber.tag(TAG).e("************* backgrounded")
         Timber.tag(TAG).e("************* ${isActivityVisible()}")
         AppObjectController.facebookEventLogger.logEvent(AppEventsConstants.EVENT_NAME_DEACTIVATED_APP)
-
+        isAppVisible = false
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
@@ -77,10 +77,4 @@ class JoshApplication : BranchApp(), LifecycleObserver/*, Configuration.Provider
     private fun isActivityVisible(): String {
         return ProcessLifecycleOwner.get().lifecycle.currentState.name
     }
-/*
-    override fun getWorkManagerConfiguration(): Configuration {
-        return Configuration.Builder()
-            .setMinimumLoggingLevel(Log.VERBOSE)
-            .build()
-    }*/
 }
