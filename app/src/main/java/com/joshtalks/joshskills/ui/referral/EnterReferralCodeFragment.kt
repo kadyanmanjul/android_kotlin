@@ -27,7 +27,6 @@ class EnterReferralCodeFragment : BottomSheetDialogFragment() {
         super.onCreate(savedInstanceState)
         setStyle(DialogFragment.STYLE_NORMAL, R.style.BaseBottomSheetDialog)
         changeDialogConfiguration()
-        setListeners()
     }
 
     override fun onCreateView(
@@ -44,6 +43,11 @@ class EnterReferralCodeFragment : BottomSheetDialogFragment() {
         binding.lifecycleOwner = this
         binding.fragment = this
         return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        setListeners()
     }
 
     private fun setListeners() {
