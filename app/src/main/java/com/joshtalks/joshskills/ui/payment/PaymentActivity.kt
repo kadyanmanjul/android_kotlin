@@ -81,7 +81,6 @@ class PaymentActivity : CoreJoshActivity(), CouponCodeSubmitFragment.OnCouponCod
     private lateinit var titleView: AppCompatTextView
     private lateinit var appAnalytics: AppAnalytics
     private var specialDiscount = false
-    private var isEcommereceEventFire = true
     private var hasCertificate = false
     private var npsShow = true
     private var flowFrom: String? = EMPTY
@@ -507,7 +506,7 @@ class PaymentActivity : CoreJoshActivity(), CouponCodeSubmitFragment.OnCouponCod
     }
 
     private fun requestForPayment() {
-        if (User.getInstance().token == null) {
+        if (PrefManager.getStringValue(API_TOKEN).isEmpty()) {
             showLoginDialog()
             return
         }

@@ -142,7 +142,7 @@ class SignUpV2Activity : BaseActivity() {
         }
     }
 
-    fun addRetryCountAnalytics() {
+    private fun addRetryCountAnalytics() {
         appAnalytics.addParam(
             AnalyticsEvent.INCORRECT_OTP_ATTEMPTS.NAME,
             viewModel.incorrectAttempt
@@ -405,6 +405,9 @@ class SignUpV2Activity : BaseActivity() {
         phoneNumber: String,
         verificationVia: VerificationVia
     ) {
+        if (phoneNumber.isEmpty()) {
+            return
+        }
         val listener = object : VerificationListener {
             override fun onInitiationFailed(e: Exception) {
                 viewModel.verificationStatus.postValue(VerificationStatus.FAILED)

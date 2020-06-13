@@ -410,15 +410,17 @@ class StatusCodeInterceptor : Interceptor {
                     AppObjectController.joshApplication.packageName
                 )
             ) {
-                val intent =
-                    Intent(AppObjectController.joshApplication, SignUpV2Activity::class.java)
-                intent.apply {
-                    addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                    putExtra("Flow", "StatusCodeInterceptor")
-                }
                 PrefManager.logoutUser()
-                AppObjectController.joshApplication.startActivity(intent)
+                if (JoshApplication.isAppVisible) {
+                    val intent =
+                        Intent(AppObjectController.joshApplication, SignUpV2Activity::class.java)
+                    intent.apply {
+                        addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                        putExtra("Flow", "StatusCodeInterceptor")
+                    }
+                    AppObjectController.joshApplication.startActivity(intent)
+                }
             }
         }
         Timber.i("Status code: %s", response.code)
