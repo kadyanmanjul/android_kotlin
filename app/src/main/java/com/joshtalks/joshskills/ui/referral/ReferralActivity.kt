@@ -41,6 +41,7 @@ import java.io.IOException
 
 const val REFERRAL_EARN_AMOUNT_KEY = "REFERRAL_EARN_AMOUNT"
 const val REFERRAL_SHARE_TEXT_KEY = "REFERRAL_SHARE_TEXT"
+const val REFERRAL_SHARE_TEXT_KEY2 = "referral_text_video"
 const val REFERRAL_IMAGE_URL_KEY = "REFERRAL_IMAGE_URL"
 const val SHARE_DOMAIN = "SHARE_DOMAIN"
 const val REPLACE_HOLDER = "****"
@@ -223,7 +224,7 @@ class ReferralActivity : BaseActivity() {
     fun inviteFriends(packageString: String? = null) {
         WorkMangerAdmin.referralEventTracker(REFERRAL_EVENT.CLICK_ON_SHARE)
         var referralText =
-            AppObjectController.getFirebaseRemoteConfig().getString(REFERRAL_SHARE_TEXT_KEY)
+            AppObjectController.getFirebaseRemoteConfig().getString(REFERRAL_SHARE_TEXT_KEY2)
         val refAmount =
             AppObjectController.getFirebaseRemoteConfig().getLong(REFERRAL_EARN_AMOUNT_KEY)
                 .toString()

@@ -3,10 +3,9 @@ package com.joshtalks.joshskills.ui.referral
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.DialogFragment
 import com.crashlytics.android.Crashlytics
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.joshtalks.joshskills.R
@@ -24,6 +23,13 @@ import java.util.*
 class EnterReferralCodeFragment : BottomSheetDialogFragment() {
     private lateinit var binding: FragmentEnterReferralCodeBinding
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setStyle(DialogFragment.STYLE_NORMAL, R.style.BaseBottomSheetDialog)
+        changeDialogConfiguration()
+        setListeners()
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -37,7 +43,6 @@ class EnterReferralCodeFragment : BottomSheetDialogFragment() {
         )
         binding.lifecycleOwner = this
         binding.fragment = this
-        setListeners()
         return binding.root
     }
 
@@ -57,8 +62,18 @@ class EnterReferralCodeFragment : BottomSheetDialogFragment() {
         })
     }
 
+    private fun changeDialogConfiguration() {
+        val params: WindowManager.LayoutParams? = dialog?.window?.attributes
+        params?.width = WindowManager.LayoutParams.MATCH_PARENT
+        params?.height = WindowManager.LayoutParams.MATCH_PARENT
+        params?.gravity = Gravity.CENTER
+        dialog?.window?.attributes = params
+        dialog?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
+    }
+
     fun validateAndMoveToNextFragment() {
         CoroutineScope(Dispatchers.Main).launch(Dispatchers.Main) {
+            hideKeyboard(requireActivity(), binding.tvReferralCode)
             binding.progressBar.visibility=View.VISIBLE
             try {
                 val data = HashMap<String, String>()
@@ -68,6 +83,7 @@ class EnterReferralCodeFragment : BottomSheetDialogFragment() {
                 val res =
                     AppObjectController.signUpNetworkService.validateAndGetReferralDetails(data)
                 if (res.referralStatus) {
+                    binding.wrongCode.visibility=View.GONE
                     PrefManager.put(REFERRED_REFERRAL_CODE, data["coupon"].toString())
                     requireActivity().supportFragmentManager
                         .beginTransaction()
@@ -78,6 +94,7 @@ class EnterReferralCodeFragment : BottomSheetDialogFragment() {
                         )
                         .commit()
                 }
+                else binding.wrongCode.visibility=View.VISIBLE
             } catch (ex: Exception) {
                 when (ex) {
                     is HttpException -> {

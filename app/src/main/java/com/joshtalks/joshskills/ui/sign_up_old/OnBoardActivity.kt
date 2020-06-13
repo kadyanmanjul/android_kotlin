@@ -2,9 +2,12 @@ package com.joshtalks.joshskills.ui.sign_up_old
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import androidx.databinding.DataBindingUtil
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.CoreJoshActivity
+import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.REFERRED_REFERRAL_CODE
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.databinding.ActivityOnboardBinding
@@ -27,6 +30,8 @@ class OnBoardActivity : CoreJoshActivity() {
         )
         layout.handler = this
         layout.lifecycleOwner = this
+        if(PrefManager.getStringValue(REFERRED_REFERRAL_CODE).isNullOrBlank())
+            layout.haveAReferralCode.visibility=View.VISIBLE
     }
 
     fun signUp() {

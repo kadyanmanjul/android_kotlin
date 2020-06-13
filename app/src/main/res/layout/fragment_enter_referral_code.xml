@@ -15,23 +15,7 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/transparent_black">
-
-        <View
-                android:id="@+id/view"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:background="@drawable/rectangle_top_rounded"
-                android:orientation="vertical"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHeight_default="percent"
-                app:layout_constraintHeight_percent="0.53"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="1.0" />
+            android:layout_height="match_parent">
 
         <ImageButton
                 android:id="@+id/close"
@@ -41,11 +25,10 @@
                 android:backgroundTint="@color/black"
                 android:contentDescription="@string/close"
                 android:onClick="@{()->fragment.dismiss()}"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="@+id/view"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.95"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/view"
+                app:layout_constraintTop_toTopOf="@+id/imageView"
                 app:layout_constraintVertical_bias="0.05"
                 app:rippleColor="@color/transparent_black" />
 
@@ -56,10 +39,10 @@
                 android:layout_height="wrap_content"
                 android:contentDescription="@string/enter_referral_code"
                 android:src="@drawable/have_a_referral"
-                app:layout_constraintBottom_toBottomOf="@+id/view"
+                android:layout_marginBottom="@dimen/_10sdp"
+                app:layout_constraintBottom_toTopOf="@+id/tv_referral_code"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/view"
                 app:layout_constraintVertical_bias="0.1" />
 
 
@@ -83,10 +66,10 @@
                 android:textAllCaps="true"
                 android:textColor="@color/light_grey"
                 android:textSize="@dimen/font_16"
+                android:layout_marginBottom="@dimen/_10sdp"
                 app:layout_constraintBottom_toTopOf="@+id/next"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/imageView"
                 app:rippleColor="@color/white" />
 
         <TextView
@@ -103,6 +86,20 @@
                 app:layout_constraintStart_toStartOf="@+id/tv_referral_code"
                 tools:ignore="MissingConstraints" />
 
+        <TextView
+                android:id="@+id/wrong_code"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:text="@string/wrong_coupon"
+                android:textColor="#F92626"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="@+id/tv_referral_code"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="@+id/tv_referral_code"
+                app:layout_constraintTop_toBottomOf="@+id/tv_referral_code"
+                tools:ignore="MissingConstraints" />
+
         <ImageView
                 android:id="@+id/next"
                 style="@style/TextStyle.TopBarNoScroll"
@@ -116,8 +113,9 @@
                 android:padding="@dimen/_6sdp"
                 android:rotation="180"
                 android:src="@drawable/ic_arrow_back"
-                android:visibility="visible"
-                app:layout_constraintBottom_toBottomOf="@+id/view"
+                android:visibility="invisible"
+                app:layout_constraintBottom_toBottomOf="parent"
+                tools:visibility="visible"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.913"
                 app:layout_constraintStart_toStartOf="parent"
