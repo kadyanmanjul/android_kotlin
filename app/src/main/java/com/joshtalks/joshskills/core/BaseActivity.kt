@@ -47,7 +47,6 @@ import com.joshtalks.joshskills.ui.signup_v2.SignUpV2Activity
 import com.newrelic.agent.android.NewRelic
 import io.branch.referral.Branch
 import io.github.inflationx.viewpump.ViewPumpContextWrapper
-import io.sentry.core.Sentry
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -94,7 +93,6 @@ abstract class BaseActivity : AppCompatActivity() {
     private fun initIdentifierForTools() {
         if (PrefManager.getStringValue(USER_UNIQUE_ID).isNotEmpty()) {
             Branch.getInstance().setIdentity(PrefManager.getStringValue(USER_UNIQUE_ID))
-            setupSentryUser()
             initNewRelic()
             initFlurry()
         }
@@ -181,14 +179,6 @@ abstract class BaseActivity : AppCompatActivity() {
         } catch (ex: Throwable) {
             LogException.catchException(ex)
         }
-    }
-
-    private fun setupSentryUser() {
-        val user = io.sentry.core.protocol.User()
-        user.id = PrefManager.getStringValue(USER_UNIQUE_ID)
-        user.username = User.getInstance().username
-        Sentry.setUser(user)
-
     }
 
     private fun initNewRelic() {

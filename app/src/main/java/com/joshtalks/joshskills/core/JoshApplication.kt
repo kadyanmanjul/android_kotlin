@@ -14,8 +14,6 @@ import com.joshtalks.joshskills.BuildConfig
 import io.branch.referral.Branch
 import io.branch.referral.BranchApp
 import io.github.inflationx.viewpump.ViewPumpContextWrapper
-import io.sentry.core.Sentry
-import io.sentry.core.SentryLevel
 import timber.log.Timber
 
 var TAG = "JoshSkill"
@@ -44,8 +42,6 @@ class JoshApplication : BranchApp(), LifecycleObserver/*, Configuration.Provider
             Branch.enableSimulateInstalls()
             Branch.enableTestMode()
             Timber.plant(Timber.DebugTree())
-            Sentry.setLevel(SentryLevel.ERROR)
-
         }
         AppObjectController.init(this)
     }
