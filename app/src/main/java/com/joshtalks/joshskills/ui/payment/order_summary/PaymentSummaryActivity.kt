@@ -564,6 +564,11 @@ class PaymentSummaryActivity : CoreJoshActivity(),
             AppObjectController.facebookEventLogger.flush()
             val params = Bundle().apply {
                 putString(AppEventsConstants.EVENT_PARAM_CONTENT_ID, testId)
+                putString(
+                    AppEventsConstants.EVENT_PARAM_SUCCESS,
+                    AppEventsConstants.EVENT_PARAM_VALUE_YES
+                )
+                putString(AppEventsConstants.EVENT_PARAM_CURRENCY, CurrencyType.INR.name)
             }
             AppObjectController.facebookEventLogger.logPurchase(
                 viewModel.getCourseDiscountedAmount().toBigDecimal(),
@@ -594,12 +599,16 @@ class PaymentSummaryActivity : CoreJoshActivity(),
             super.onBackPressed()
     }
 
+    override fun onStop() {
+        super.onStop()
+        AppObjectController.facebookEventLogger.flush()
+    }
+
     override fun onDestroy() {
         appAnalytics.push()
         super.onDestroy()
         Checkout.clearUserData(applicationContext)
         uiHandler.removeCallbacksAndMessages(null)
-        AppObjectController.facebookEventLogger.flush()
     }
 
     private fun showPaymentProcessingFragment() {
@@ -611,7 +620,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                 PaymentProcessingFragment.newInstance(),
                 "Payment Processing"
             )
-            .commit()
+            .commitAllowingStateLoss()
     }
 
     private fun showPaymentFailedDialog() {
@@ -624,7 +633,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                 ),
                 "Payment Success"
             )
-            .commit()
+            .commitAllowingStateLoss()
     }
 
     private fun showPaymentSuccessfulFragment() {
@@ -636,7 +645,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                 PaymentSuccessFragment.newInstance(),
                 "Payment Success"
             )
-            .commit()
+            .commitAllowingStateLoss()
     }
 
     private fun showChatNPayDialog() {
@@ -647,7 +656,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                 ChatNPayDialogFragment.newInstance(),
                 "Chat N Pay"
             )
-            .commit()
+            .commitAllowingStateLoss()
     }
 
     private fun getPhoneNumber() =

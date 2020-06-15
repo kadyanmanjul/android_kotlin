@@ -15,7 +15,6 @@ import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.LogException
-import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
 import com.joshtalks.joshskills.core.custom_ui.decorator.LayoutMarginDecoration
 import com.joshtalks.joshskills.core.service.WorkMangerAdmin
 import com.joshtalks.joshskills.databinding.ActivityCourseExploreBinding
@@ -232,7 +231,6 @@ class CourseExploreActivity : CoreJoshActivity() {
 
     private fun addObserver() {
         compositeDisposable.add(RxBus2.listen(CourseExploreModel::class.java).subscribe {
-            MarketingAnalytics.courseViewAnalytics(it)
             val extras: HashMap<String, String> = HashMap()
             extras["test_id"] = it.id?.toString() ?: EMPTY
             extras["course_name"] = it.courseName

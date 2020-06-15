@@ -248,11 +248,9 @@ class ReferralActivity : BaseActivity() {
 
             val waIntent = Intent(Intent.ACTION_SEND)
             waIntent.type = "text/plain"
-            val info = pm.getPackageInfo(packageString, PackageManager.GET_META_DATA)
-            //Check if package exists or not. If not then code
-            //in catch block will be called
-            waIntent.setPackage(packageString)
-
+            if (packageString.isNullOrEmpty().not()) {
+                waIntent.setPackage(packageString)
+            }
             waIntent.putExtra(Intent.EXTRA_TEXT, referralText)
             startActivity(Intent.createChooser(waIntent, "Share with"))
             AppAnalytics
