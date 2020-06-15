@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.ActivityInfo
+import android.graphics.Paint
 import android.graphics.Typeface
 import android.os.Build
 import android.os.Bundle
@@ -229,6 +230,10 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                         if (it.isEmpty().not()) multiLineLL.addView(getTextView(it))
                     }
             }
+            binding.materialButton.text =
+                "${AppObjectController.getFirebaseRemoteConfig()
+                    .getString("CTA_PAYMENT_SUMMARY")} ₹ ${viewModel.getCourseDiscountedAmount()
+                    .roundToInt()}"
             if (it.couponDetails.title.isEmpty().not()) {
                 binding.textView1.text = it.couponDetails.name
                 binding.tvTip.text = it.couponDetails.title
@@ -241,6 +246,11 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                     binding.badeBhaiyaTipContainer.visibility = View.GONE
                     binding.txtPrice.text =
                         "₹ ${String.format("%.2f", viewModel.getCourseDiscountedAmount())}"
+                    binding.actualTxtPrice.visibility = View.VISIBLE
+                    binding.actualTxtPrice.text =
+                        "₹ ${String.format("%.2f", viewModel.getCourseActualAmount())}"
+                    binding.actualTxtPrice.paintFlags =
+                        binding.actualTxtPrice.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
                     if (viewModel.getCourseDiscountedAmount() > 0) {
                         binding.tipUsedMsg.text = SpannableStringBuilder(
                             getString(
@@ -256,10 +266,6 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                     binding.tipUsedMsg.visibility = View.VISIBLE
                 }
             }
-            binding.materialButton.text =
-                "${AppObjectController.getFirebaseRemoteConfig()
-                    .getString("CTA_PAYMENT_SUMMARY")} ₹ ${viewModel.getCourseDiscountedAmount()
-                    .roundToInt()}"
         })
         if (viewModel.hasRegisteredMobileNumber) {
             binding.group1.visibility = View.GONE
