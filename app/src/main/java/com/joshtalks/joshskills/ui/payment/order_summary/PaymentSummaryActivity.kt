@@ -469,7 +469,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                         viewModel.createFreeOrder(testId, binding.mobileEt.text.toString())
                         return
                     }
-                    binding.mobileEt.prefix.equals("+91") ->
+                    binding.mobileEt.prefix.equals("+91") && viewModel.getCourseDiscountedAmount() >= 1 ->
                         viewModel.getOrderDetails(testId, binding.mobileEt.text.toString())
                     else ->
                         uiHandler.post {
@@ -477,6 +477,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                         }
                 }
             }
+            viewModel.getCourseDiscountedAmount() < 1 -> viewModel.createFreeOrder(testId, getPhoneNumber())
             else -> viewModel.getOrderDetails(testId, getPhoneNumber())
         }
     }
