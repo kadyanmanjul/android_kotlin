@@ -118,10 +118,12 @@ class BitVideoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibili
             player?.duration?.let {
                 progressBarBottom.max = it.toInt()
                 tvPlayerEndTime.text = stringForTime(it.toInt())
+                defaultTimeBar.setDuration(it)
             }
             if (currentPosition == lastPosition) return
             lastPosition = currentPosition
             progressBarBottom.progress = currentPosition.toInt()
+            defaultTimeBar.setPosition(currentPosition)
             playerListener?.onCurrentTimeUpdated(lastPosition)
         }
     }

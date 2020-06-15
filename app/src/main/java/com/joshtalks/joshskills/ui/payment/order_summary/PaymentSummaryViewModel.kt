@@ -13,6 +13,7 @@ import com.joshtalks.joshskills.core.analytics.BranchIOAnalytics
 import com.joshtalks.joshskills.core.service.WorkMangerAdmin
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
+import com.joshtalks.joshskills.repository.server.CreateOrderResponse
 import com.joshtalks.joshskills.repository.server.OrderDetailResponse
 import com.joshtalks.joshskills.repository.server.PaymentSummaryResponse
 import io.branch.referral.util.BRANCH_STANDARD_EVENT
@@ -152,14 +153,16 @@ class PaymentSummaryViewModel(application: Application) : AndroidViewModel(appli
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 viewState?.postValue(ViewState.PROCESSING)
-                val data = HashMap<String, String>()
-                data["test_id"] = testId
-                data["instance_id"] = PrefManager.getStringValue(INSTANCE_ID)
-                data["mobile"] = mobileNumber
-                data["encrypted_text"] = responsePaymentSummary.value?.encryptedText.toString()
-                if (Mentor.getInstance().getId().isNotEmpty()) {
-                    data["mentor_id"] = Mentor.getInstance().getId()
-                }
+                val data = CreateOrderResponse(
+                    testId,
+                    PrefManager.getStringValue(INSTANCE_ID),
+                    mobileNumber,
+                    responsePaymentSummary.value?.encryptedText.toString(),
+                    null
+                )
+                    if (Mentor.getInstance().getId().isNotEmpty()) {
+                        data.mentorId = Mentor.getInstance().getId()
+                    }
                 val response =
                     AppObjectController.signUpNetworkService.createFreeOrder(data)
                 if (response.isSuccessful) {

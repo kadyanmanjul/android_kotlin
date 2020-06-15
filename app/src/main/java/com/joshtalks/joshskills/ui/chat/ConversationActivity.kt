@@ -128,7 +128,9 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
         }
     }
 
-    private lateinit var conversationViewModel: ConversationViewModel
+    private val conversationViewModel: ConversationViewModel by lazy {
+        ViewModelProvider(this).get(ConversationViewModel::class.java)
+    }
     private lateinit var conversationBinding: ActivityConversationBinding
     private lateinit var inboxEntity: InboxEntity
     private lateinit var emojiPopup: EmojiPopup
@@ -214,10 +216,7 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
 
     private fun initViewModel(): ConversationViewModel {
         try {
-            this.conversationViewModel =
-                ViewModelProvider(this, UserViewModelFactory(application, inboxEntity)).get(
-                    ConversationViewModel::class.java
-                )
+            this.conversationViewModel.inboxEntity = this.inboxEntity
             this.conversationBinding.viewmodel = conversationViewModel
             this.conversationBinding.lifecycleOwner = this
         } catch (ex: Exception) {

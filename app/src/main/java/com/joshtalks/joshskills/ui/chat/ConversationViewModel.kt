@@ -46,8 +46,9 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 
 
-class ConversationViewModel(application: Application, private var inboxEntity: InboxEntity) :
+class ConversationViewModel(application: Application) :
     AndroidViewModel(application) {
+    lateinit var inboxEntity: InboxEntity
     private var compositeDisposable = CompositeDisposable()
     lateinit var recordFile: File
     private var lastChatTime: Date? = null
@@ -89,7 +90,10 @@ class ConversationViewModel(application: Application, private var inboxEntity: I
                 getUserRecentChats()
             })
         val filter = IntentFilter("android.net.conn.CONNECTIVITY_CHANGE")
-        context.registerReceiver(broadCastForNetwork, filter)       //TODO(FixMe) - ViewModel should not hold any reference of Context
+        context.registerReceiver(
+            broadCastForNetwork,
+            filter
+        )       //TODO(FixMe) - ViewModel should not hold any reference of Context
     }
 
     inner class CheckConnectivity : BroadcastReceiver() {

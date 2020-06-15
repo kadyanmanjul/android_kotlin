@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.ActivityInfo
+import android.graphics.Paint
 import android.graphics.Typeface
 import android.os.Build
 import android.os.Bundle
@@ -229,6 +230,10 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                         if (it.isEmpty().not()) multiLineLL.addView(getTextView(it))
                     }
             }
+            binding.materialButton.text =
+                "${AppObjectController.getFirebaseRemoteConfig()
+                    .getString("CTA_PAYMENT_SUMMARY")} ₹ ${viewModel.getCourseDiscountedAmount()
+                    .roundToInt()}"
             if (it.couponDetails.title.isEmpty().not()) {
                 binding.textView1.text = it.couponDetails.name
                 binding.tvTip.text = it.couponDetails.title
@@ -241,6 +246,11 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                     binding.badeBhaiyaTipContainer.visibility = View.GONE
                     binding.txtPrice.text =
                         "₹ ${String.format("%.2f", viewModel.getCourseDiscountedAmount())}"
+                    binding.actualTxtPrice.visibility = View.VISIBLE
+                    binding.actualTxtPrice.text =
+                        "₹ ${String.format("%.2f", viewModel.getCourseActualAmount())}"
+                    binding.actualTxtPrice.paintFlags =
+                        binding.actualTxtPrice.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
                     if (viewModel.getCourseDiscountedAmount() > 0) {
                         binding.tipUsedMsg.text = SpannableStringBuilder(
                             getString(
@@ -248,10 +258,6 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                                 viewModel.getDiscount().toString()
                             )
                         )
-                        binding.materialButton.text =
-                            "${AppObjectController.getFirebaseRemoteConfig()
-                                .getString("CTA_PAYMENT_SUMMARY")} ₹ ${viewModel.getCourseDiscountedAmount()
-                                .roundToInt()}"
                     } else {
                         binding.tipUsedMsg.text = getString(R.string.coupon_applied_free_course)
                         binding.materialButton.text = AppObjectController.getFirebaseRemoteConfig()
@@ -463,7 +469,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                         viewModel.createFreeOrder(testId, binding.mobileEt.text.toString())
                         return
                     }
-                    binding.mobileEt.prefix.equals("+91") ->
+                    binding.mobileEt.prefix.equals("+91") && viewModel.getCourseDiscountedAmount() >= 1 ->
                         viewModel.getOrderDetails(testId, binding.mobileEt.text.toString())
                     else ->
                         uiHandler.post {
@@ -471,6 +477,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                         }
                 }
             }
+            viewModel.getCourseDiscountedAmount() < 1 -> viewModel.createFreeOrder(testId, getPhoneNumber())
             else -> viewModel.getOrderDetails(testId, getPhoneNumber())
         }
     }
@@ -557,6 +564,11 @@ class PaymentSummaryActivity : CoreJoshActivity(),
             AppObjectController.facebookEventLogger.flush()
             val params = Bundle().apply {
                 putString(AppEventsConstants.EVENT_PARAM_CONTENT_ID, testId)
+                putString(
+                    AppEventsConstants.EVENT_PARAM_SUCCESS,
+                    AppEventsConstants.EVENT_PARAM_VALUE_YES
+                )
+                putString(AppEventsConstants.EVENT_PARAM_CURRENCY, CurrencyType.INR.name)
             }
             AppObjectController.facebookEventLogger.logPurchase(
                 viewModel.getCourseDiscountedAmount().toBigDecimal(),
@@ -587,12 +599,16 @@ class PaymentSummaryActivity : CoreJoshActivity(),
             super.onBackPressed()
     }
 
+    override fun onStop() {
+        super.onStop()
+        AppObjectController.facebookEventLogger.flush()
+    }
+
     override fun onDestroy() {
         appAnalytics.push()
         super.onDestroy()
         Checkout.clearUserData(applicationContext)
         uiHandler.removeCallbacksAndMessages(null)
-        AppObjectController.facebookEventLogger.flush()
     }
 
     private fun showPaymentProcessingFragment() {
@@ -604,7 +620,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                 PaymentProcessingFragment.newInstance(),
                 "Payment Processing"
             )
-            .commit()
+            .commitAllowingStateLoss()
     }
 
     private fun showPaymentFailedDialog() {
@@ -617,7 +633,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                 ),
                 "Payment Success"
             )
-            .commit()
+            .commitAllowingStateLoss()
     }
 
     private fun showPaymentSuccessfulFragment() {
@@ -629,7 +645,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                 PaymentSuccessFragment.newInstance(),
                 "Payment Success"
             )
-            .commit()
+            .commitAllowingStateLoss()
     }
 
     private fun showChatNPayDialog() {
@@ -640,7 +656,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                 ChatNPayDialogFragment.newInstance(),
                 "Chat N Pay"
             )
-            .commit()
+            .commitAllowingStateLoss()
     }
 
     private fun getPhoneNumber() =

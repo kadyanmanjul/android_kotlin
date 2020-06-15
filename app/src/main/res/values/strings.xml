@@ -268,6 +268,8 @@
     <string name="register_now">Register Now</string>
     <string name="start">Start My Course</string>
     <string name="tip_used_info">Tip Used! You got bade bhaiya\ndiscount of <b>₹ %s</b></string>
+    <string name="tip_used_info_referral_free">Coupon Applied! You got his course\nfor <b>free</b>. Register now. </string>
+    <string name="tip_used_info_referral_off">Coupon Applied! You got discount of <b>₹ 50</b></string>
     <string name="bade_bhaiya_tips_new">Bade\nBhaiya\nTip!</string>
     <string name="tip_title">You can get discount on all Coures!</string>
     <string name="tip_valid">Valid for next %s Days</string>
@@ -295,7 +297,7 @@
     <string name="phone_number">Phone Number</string>
     <string name="date_of_birth">Date Of Birth</string>
     <string name="otp_wait_message">Wait kare. Aapko iss time se \n pehle OTP mil jaayega.</string>
-    <string name="did_not_received_message"> Didn\'t recieve OTP? </string>
+    <string name="did_not_received_message"> Didn\'t receive OTP? </string>
     <string name="enter_valid_details_toast">Please enter valid Email Id or Phone Number</string>
     <string name="select_gender">Please choose gender</string>
     <string name="dob_error_toast">Please enter Date of birth</string>
@@ -317,9 +319,20 @@
     <string name="female">Female</string>
     <string name="other">Other</string>
 
+    <!--Referral Activity-->
+    <string name="give_50_get_50">Give 50, Get 50</string>
+    <string name="give_50_description">Give your friend</string>
+    <string name="have_a_referral_code">Have a referral code?</string>
+    <string name="enter_referral_code">Enter a referral code</string>
+    <string name="wrong_coupon">Wrong coupon code</string>
+    <string name="referral_success_info">You have been referred by your friend\n%s</string>
+    <string name="referral_success_info2">&amp; you get ₹ 50 off on your first course.</string>
+    <string name="back_button_desc">Back Button</string>
+
     <!--End-->
     <string name="page_number" formatted="false">Page %s / %s</string>
     <string name="help">Help</string>
+    <string name="close">Close</string>
     <string name="show_details">Show Details</string>
     <string name="coupon_applied_free_course">Coupon Applied! You got this course\nfor free. Register Now</string>
 </resources>

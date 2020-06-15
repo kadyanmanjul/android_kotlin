@@ -17,13 +17,13 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.commit
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.crashlytics.android.Crashlytics
-import com.facebook.appevents.AppEventsConstants
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.BranchIOAnalytics
+import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
 import com.joshtalks.joshskills.core.service.WorkMangerAdmin
 import com.joshtalks.joshskills.databinding.ActivityPaymentBinding
 import com.joshtalks.joshskills.messaging.RxBus2
@@ -123,6 +123,9 @@ class PaymentActivity : CoreJoshActivity(), CouponCodeSubmitFragment.OnCouponCod
             testId = courseModel?.id.toString()
             courseModel?.certificate?.run {
                 hasCertificate = this
+            }
+            courseModel?.run {
+                MarketingAnalytics.courseViewAnalytics(this)
             }
         }
         if (intent.hasExtra(COURSE_ID)) {
@@ -363,14 +366,7 @@ class PaymentActivity : CoreJoshActivity(), CouponCodeSubmitFragment.OnCouponCod
                 courseModel?.amount = amount
                 checkout.open(this@PaymentActivity, options)
                 activityPaymentBinding.progressBar.visibility = View.GONE
-                val params = Bundle().apply {
-                    putString(AppEventsConstants.EVENT_PARAM_CONTENT_ID, testId)
-                }
-                AppObjectController.facebookEventLogger.logEvent(
-                    AppEventsConstants.EVENT_NAME_INITIATED_CHECKOUT,
-                    params
-                )
-                // TODO
+                MarketingAnalytics.initCheckoutCourseAnalytics(testId)
                 AppAnalytics.create(AnalyticsEvent.RAZORPAY_SDK.NAME).push()
                 razorpayOrderId = response.razorpayOrderId
                 appAnalytics.addParam("razor id", razorpayOrderId)
@@ -440,12 +436,16 @@ class PaymentActivity : CoreJoshActivity(), CouponCodeSubmitFragment.OnCouponCod
         compositeDisposable.clear()
     }
 
+    override fun onStop() {
+        super.onStop()
+        AppObjectController.facebookEventLogger.flush()
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         compositeDisposable.clear()
         Checkout.clearUserData(applicationContext)
         uiHandler.removeCallbacksAndMessages(null)
-        AppObjectController.facebookEventLogger.flush()
     }
 
     private fun openWhatsAppHelp() {

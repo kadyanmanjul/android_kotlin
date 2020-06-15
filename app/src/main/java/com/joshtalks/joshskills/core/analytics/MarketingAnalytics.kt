@@ -25,6 +25,11 @@ object MarketingAnalytics {
                 AppEventsConstants.EVENT_PARAM_REGISTRATION_METHOD,
                 registrationMethod.type
             )
+            params.putString(
+                AppEventsConstants.EVENT_PARAM_SUCCESS,
+                AppEventsConstants.EVENT_PARAM_VALUE_YES
+            )
+
             AppObjectController.facebookEventLogger.logEvent(
                 AppEventsConstants.EVENT_NAME_COMPLETED_REGISTRATION,
                 params
@@ -34,7 +39,6 @@ object MarketingAnalytics {
 
     //todo  setup locale according user country
     fun courseViewAnalytics(courseModel: CourseExploreModel) {
-
         //Facebook start
         val params = Bundle()
         params.putString(AppEventsConstants.EVENT_PARAM_CONTENT_ID, courseModel.id.toString())
@@ -42,6 +46,12 @@ object MarketingAnalytics {
         params.putString(AppEventsConstants.EVENT_PARAM_CONTENT, courseModel.toString())
         params.putString(AppEventsConstants.EVENT_PARAM_CURRENCY, CurrencyType.INR.name)
         params.putString(AppEventsConstants.EVENT_PARAM_SEARCH_STRING, courseModel.courseName)
+        params.putString(AppEventsConstants.EVENT_PARAM_VALUE_TO_SUM, courseModel.amount.toString())
+        params.putString(
+            AppEventsConstants.EVENT_PARAM_SUCCESS,
+            AppEventsConstants.EVENT_PARAM_VALUE_YES
+        )
+
         AppObjectController.facebookEventLogger.logEvent(
             AppEventsConstants.EVENT_NAME_VIEWED_CONTENT,
             params
@@ -71,6 +81,20 @@ object MarketingAnalytics {
 
         branchEvent.logEvent(AppObjectController.joshApplication)
         //Branch end
+    }
+
+    fun initCheckoutCourseAnalytics(testId: String) {
+        val params = Bundle().apply {
+            putString(AppEventsConstants.EVENT_PARAM_CONTENT_ID, testId)
+            putString(
+                AppEventsConstants.EVENT_PARAM_SUCCESS,
+                AppEventsConstants.EVENT_PARAM_VALUE_YES
+            )
+        }
+        AppObjectController.facebookEventLogger.logEvent(
+            AppEventsConstants.EVENT_NAME_INITIATED_CHECKOUT,
+            params
+        )
     }
 
 }
