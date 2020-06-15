@@ -61,10 +61,6 @@ class OnBoardActivity : CoreJoshActivity() {
 
         val bottomSheetFragment = EnterReferralCodeFragment.newInstance()
         bottomSheetFragment.show(supportFragmentManager, bottomSheetFragment.tag)
-        AppAnalytics.create(AnalyticsEvent.HAVE_COUPON_CODE_CLICKED.NAME)
-            .addUserDetails()
-            .addBasicParam()
-            .push()
     }
 
     override fun onBackPressed() {

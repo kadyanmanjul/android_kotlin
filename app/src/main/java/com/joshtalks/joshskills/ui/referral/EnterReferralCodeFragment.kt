@@ -30,9 +30,10 @@ class EnterReferralCodeFragment : BottomSheetDialogFragment() {
         super.onCreate(savedInstanceState)
         setStyle(DialogFragment.STYLE_NORMAL, R.style.BaseBottomSheetDialogResizable)
         changeDialogConfiguration()
-        appAnalyticsP = AppAnalytics.create(AnalyticsEvent.ENTER_COUPON_SCREEN.NAME)
+        appAnalyticsP = AppAnalytics.create(AnalyticsEvent.HAVE_COUPON_CODE_CLICKED.NAME)
             .addBasicParam()
             .addUserDetails()
+            .addParam(AnalyticsEvent.COUPON_INSERTED.NAME, false)
     }
 
     override fun onCreateView(
@@ -64,6 +65,8 @@ class EnterReferralCodeFragment : BottomSheetDialogFragment() {
                         binding.next.visibility = View.VISIBLE
 
                     } else binding.next.visibility = View.INVISIBLE
+                    appAnalyticsP
+                        .addParam(AnalyticsEvent.COUPON_INSERTED.NAME, true)
                 }
             }
 

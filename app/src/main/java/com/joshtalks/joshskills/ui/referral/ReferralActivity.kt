@@ -63,6 +63,7 @@ class ReferralActivity : BaseActivity() {
     private lateinit var activityReferralBinding: ActivityReferralBinding
     private var userReferralCode: String = EMPTY
     private var userReferralURL: String = EMPTY
+    var flowFrom: String? = null
 
     @ExperimentalUnsignedTypes
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -119,6 +120,16 @@ class ReferralActivity : BaseActivity() {
                 it.printStackTrace()
 
             }
+        if (intent.hasExtra(FROM_CLASS)) {
+            flowFrom = intent.getStringExtra(FROM_CLASS)
+        }
+        AppAnalytics
+            .create(AnalyticsEvent.REFERRAL_PAGE.NAME)
+            .addUserDetails()
+            .addBasicParam()
+            .addParam(AnalyticsEvent.REFERRAL_CODE.name, userReferralCode)
+            .addParam(AnalyticsEvent.FLOW_FROM_PARAM.name, flowFrom)
+            .push()
     }
 
 
@@ -213,17 +224,13 @@ class ReferralActivity : BaseActivity() {
 
     fun inviteOnlyWhatsapp() {
         inviteFriends("com.whatsapp")
-        AppAnalytics
-            .create(AnalyticsEvent.SHARE_ON_WHATSAPP.NAME)
-            .addUserDetails()
-            .addParam(AnalyticsEvent.REFERRAL_CODE.NAME, userReferralCode)
-            .push()
     }
 
     fun inviteFriends(packageString: String? = null) {
         WorkMangerAdmin.referralEventTracker(REFERRAL_EVENT.CLICK_ON_SHARE)
-        var referralText =VIDEO_URL.plus("\n").plus(
-            AppObjectController.getFirebaseRemoteConfig().getString(REFERRAL_SHARE_TEXT_KEY))
+        var referralText = VIDEO_URL.plus("\n").plus(
+            AppObjectController.getFirebaseRemoteConfig().getString(REFERRAL_SHARE_TEXT_KEY)
+        )
         val refAmount =
             AppObjectController.getFirebaseRemoteConfig().getLong(REFERRAL_EARN_AMOUNT_KEY)
                 .toString()
@@ -249,7 +256,8 @@ class ReferralActivity : BaseActivity() {
             waIntent.putExtra(Intent.EXTRA_TEXT, referralText)
             startActivity(Intent.createChooser(waIntent, "Share with"))
             AppAnalytics
-                .create(AnalyticsEvent.SHARE_ON_WHATSAPP.NAME)
+                .create(AnalyticsEvent.REFERRAL_SCREEN_ACTION.NAME)
+                .addParam(AnalyticsEvent.ACTION.NAME, AnalyticsEvent.SHARE_ON_WHATSAPP.NAME)
                 .addUserDetails()
                 .addParam(AnalyticsEvent.REFERRAL_CODE.NAME, userReferralCode)
                 .push()
@@ -293,7 +301,8 @@ class ReferralActivity : BaseActivity() {
             WorkMangerAdmin.referralEventTracker(REFERRAL_EVENT.LONG_PRESS_CODE)
         }, 1200)
         AppAnalytics
-            .create(AnalyticsEvent.CODE_COPIED.NAME)
+            .create(AnalyticsEvent.REFERRAL_SCREEN_ACTION.NAME)
+            .addParam(AnalyticsEvent.ACTION.NAME, AnalyticsEvent.CODE_COPIED.NAME)
             .addUserDetails()
             .addBasicParam()
             .addParam(AnalyticsEvent.REFERRAL_CODE.name, userReferralCode)

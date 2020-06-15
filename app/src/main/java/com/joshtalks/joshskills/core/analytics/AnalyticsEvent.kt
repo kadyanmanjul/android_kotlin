@@ -304,6 +304,8 @@ enum class AnalyticsEvent(val NAME: String) {
     FEEDBACK_IGNORE("Feedback Ignore V3"),
 
     REFERRAL_CODE("Referral Code V3"),
+    REFERRAL_SCREEN_ACTION("Referral Screen Action V3"),
+    REFERRAL_PAGE("Referral Page V3"),
     CUSTOM_PERMISSION_ACTION("Custom Permission Action V3"),
 
     //Payment Summary Events
