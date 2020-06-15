@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.view.WindowManager
 import androidx.annotation.NonNull
 import androidx.annotation.Nullable
 import androidx.databinding.DataBindingUtil
@@ -98,6 +99,7 @@ class SignUpV2Activity : BaseActivity() {
         } else {
             openProfileDetailFragment()
         }
+        window?.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
     }
 
     private fun addViewModelObserver() {
@@ -600,6 +602,7 @@ class SignUpV2Activity : BaseActivity() {
 
     override fun onDestroy() {
         appAnalytics.push()
+        window?.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         super.onDestroy()
     }
 }
