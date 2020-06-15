@@ -167,7 +167,8 @@ class CourseExploreActivity : CoreJoshActivity() {
                 }
                 if (Mentor.getInstance().getId().isNotEmpty()) {
                     data["mentor"] = Mentor.getInstance().getId()
-                } else {
+                }
+                if (data.isNullOrEmpty()) {
                     data["is_default"] = "true"
                 }
                 val response: List<CourseExploreModel> =
