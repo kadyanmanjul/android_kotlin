@@ -91,7 +91,7 @@ class EnterReferralCodeFragment : BottomSheetDialogFragment() {
     fun validateAndMoveToNextFragment() {
         CoroutineScope(Dispatchers.Main).launch(Dispatchers.Main) {
             hideKeyboard(requireActivity(), binding.tvReferralCode)
-            binding.progressBar.visibility = View.VISIBLE
+            showProgress()
             try {
                 val data = HashMap<String, String>()
                 data["instance_id"] = PrefManager.getStringValue(INSTANCE_ID)
@@ -129,8 +129,20 @@ class EnterReferralCodeFragment : BottomSheetDialogFragment() {
                     }
                 }
             }
-            binding.progressBar.visibility = View.GONE
+            binding.progressBarButton.visibility = View.GONE
+            hideProgress()
         }
+    }
+
+    fun showProgress(){
+        binding.progressBarButton.visibility = View.VISIBLE
+        binding.next.visibility = View.GONE
+
+    }
+
+    fun hideProgress(){
+        binding.progressBarButton.visibility = View.INVISIBLE
+        binding.next.visibility = View.VISIBLE
     }
 
     override fun onDestroy() {

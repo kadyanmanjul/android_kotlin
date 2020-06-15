@@ -73,7 +73,7 @@
                     android:textAllCaps="true"
                     android:textColor="@color/light_grey"
                     android:textSize="@dimen/font_16"
-                    app:layout_constraintBottom_toTopOf="@+id/next"
+                    app:layout_constraintBottom_toTopOf="@+id/progress_bar_button"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:rippleColor="@color/white" />
@@ -109,8 +109,8 @@
             <ImageView
                     android:id="@+id/next"
                     style="@style/TextStyle.TopBarNoScroll"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="@dimen/_32sdp"
+                    android:layout_height="@dimen/_32sdp"
                     android:layout_margin="@dimen/_12sdp"
                     android:background="@drawable/circle"
                     android:backgroundTint="@color/button_primary_color"
@@ -125,26 +125,23 @@
                     app:layout_constraintHorizontal_bias="0.913"
                     tools:visibility="visible" />
 
-            <FrameLayout
-                    android:id="@+id/progress_bar"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="#AD000000"
-                    android:elevation="@dimen/_8sdp"
-                    android:visibility="gone">
-
-                <com.pnikosis.materialishprogress.ProgressWheel
-                        android:layout_width="@dimen/_82sdp"
-                        android:layout_height="@dimen/_82sdp"
-                        android:layout_gravity="center"
-                        wheel:matProg_barColor="@color/button_primary_color"
-                        wheel:matProg_fillRadius="true"
-                        wheel:matProg_linearProgress="false"
-                        wheel:matProg_progressIndeterminate="true"
-                        wheel:matProg_rimColor="#33128C7E"
-                        wheel:matProg_rimWidth="@dimen/_2sdp" />
-
-            </FrameLayout>
+            <com.pnikosis.materialishprogress.ProgressWheel
+                    android:id="@+id/progress_bar_button"
+                    android:layout_width="@dimen/_32sdp"
+                    android:layout_height="@dimen/_32sdp"
+                    android:layout_margin="@dimen/_12sdp"
+                    android:padding="@dimen/_6sdp"
+                    android:visibility="invisible"
+                    wheel:matProg_barColor="@color/button_primary_color"
+                    wheel:matProg_fillRadius="true"
+                    wheel:matProg_linearProgress="false"
+                    wheel:matProg_progressIndeterminate="true"
+                    wheel:matProg_rimColor="#33128C7E"
+                    wheel:matProg_rimWidth="@dimen/_3sdp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.913"
+                    tools:visibility="visible" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
 </layout>
