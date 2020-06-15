@@ -30,8 +30,8 @@ class OnBoardActivity : CoreJoshActivity() {
         )
         layout.handler = this
         layout.lifecycleOwner = this
-        if(PrefManager.getStringValue(REFERRED_REFERRAL_CODE).isBlank())
-            layout.haveAReferralCode.visibility=View.VISIBLE
+        if (PrefManager.getStringValue(REFERRED_REFERRAL_CODE).isBlank())
+            layout.haveAReferralCode.visibility = View.VISIBLE
     }
 
     fun signUp() {
@@ -61,6 +61,10 @@ class OnBoardActivity : CoreJoshActivity() {
 
         val bottomSheetFragment = EnterReferralCodeFragment.newInstance()
         bottomSheetFragment.show(supportFragmentManager, bottomSheetFragment.tag)
+        AppAnalytics.create(AnalyticsEvent.HAVE_COUPON_CODE_CLICKED.NAME)
+            .addUserDetails()
+            .addBasicParam()
+            .push()
     }
 
     override fun onBackPressed() {

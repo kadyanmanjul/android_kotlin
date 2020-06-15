@@ -10,6 +10,8 @@ import com.crashlytics.android.Crashlytics
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
+import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.databinding.FragmentEnterReferralCodeBinding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -22,11 +24,15 @@ import java.util.*
 
 class EnterReferralCodeFragment : BottomSheetDialogFragment() {
     private lateinit var binding: FragmentEnterReferralCodeBinding
+    private lateinit var appAnalyticsP: AppAnalytics
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setStyle(DialogFragment.STYLE_NORMAL, R.style.BaseBottomSheetDialogResizable)
         changeDialogConfiguration()
+        appAnalyticsP = AppAnalytics.create(AnalyticsEvent.ENTER_COUPON_SCREEN.NAME)
+            .addBasicParam()
+            .addUserDetails()
     }
 
     override fun onCreateView(
@@ -54,9 +60,10 @@ class EnterReferralCodeFragment : BottomSheetDialogFragment() {
         binding.tvReferralCode.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
                 s?.let {
-                    if(it.length>0){binding.next.visibility = View.VISIBLE
+                    if (it.length > 0) {
+                        binding.next.visibility = View.VISIBLE
 
-                    }else binding.next.visibility = View.INVISIBLE
+                    } else binding.next.visibility = View.INVISIBLE
                 }
             }
 
@@ -81,7 +88,7 @@ class EnterReferralCodeFragment : BottomSheetDialogFragment() {
     fun validateAndMoveToNextFragment() {
         CoroutineScope(Dispatchers.Main).launch(Dispatchers.Main) {
             hideKeyboard(requireActivity(), binding.tvReferralCode)
-            binding.progressBar.visibility=View.VISIBLE
+            binding.progressBar.visibility = View.VISIBLE
             try {
                 val data = HashMap<String, String>()
                 data["instance_id"] = PrefManager.getStringValue(INSTANCE_ID)
@@ -90,7 +97,11 @@ class EnterReferralCodeFragment : BottomSheetDialogFragment() {
                 val res =
                     AppObjectController.signUpNetworkService.validateAndGetReferralDetails(data)
                 if (res.referralStatus) {
-                    binding.wrongCode.visibility=View.GONE
+                    appAnalyticsP
+                        .addParam(AnalyticsEvent.COUPON_VALID.NAME, true)
+                        .addParam(AnalyticsEvent.REFERRAL_CODE.NAME,binding.tvReferralCode.text.toString().plus(
+                            SINGLE_SPACE).plus(res.referrerName))
+                    binding.wrongCode.visibility = View.GONE
                     PrefManager.put(REFERRED_REFERRAL_CODE, data["coupon"].toString())
                     requireActivity().supportFragmentManager
                         .beginTransaction()
@@ -101,8 +112,7 @@ class EnterReferralCodeFragment : BottomSheetDialogFragment() {
                         )
                         .commit()
                     this@EnterReferralCodeFragment.dismiss()
-                }
-                else binding.wrongCode.visibility=View.VISIBLE
+                } else binding.wrongCode.visibility = View.VISIBLE
             } catch (ex: Exception) {
                 when (ex) {
                     is HttpException -> {
@@ -116,8 +126,13 @@ class EnterReferralCodeFragment : BottomSheetDialogFragment() {
                     }
                 }
             }
-            binding.progressBar.visibility=View.GONE
+            binding.progressBar.visibility = View.GONE
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        appAnalyticsP.push()
     }
 
     companion object {
