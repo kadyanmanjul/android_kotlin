@@ -335,4 +335,7 @@
     <string name="close">Close</string>
     <string name="show_details">Show Details</string>
     <string name="coupon_applied_free_course">Coupon Applied! You got this course\nfor free. Register Now</string>
+
+
+    <string name="faq_title">FAQ</string>
 </resources>

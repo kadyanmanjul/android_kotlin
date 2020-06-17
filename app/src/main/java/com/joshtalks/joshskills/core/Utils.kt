@@ -277,8 +277,6 @@ object Utils {
     }
 
     fun call(context: Context, phoneNumber: String) {
-
-
         val intent = Intent(Intent.ACTION_DIAL).apply {
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         }

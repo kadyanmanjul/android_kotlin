@@ -15,8 +15,8 @@ import java.util.*
 @JvmSuppressWildcards
 interface CommonNetworkService {
 
-    @GET("$DIR/support/category/")
-    suspend fun getHelpCategory(): List<TypeOfHelpModel>
+    @GET("$DIR/support/category_v2/")
+    suspend fun getHelpCategoryV2(): Response<List<TypeOfHelpModel>>
 
     @POST("$DIR/support/complaint/")
     suspend fun submitComplaint(@Body requestComplaint: RequestComplaint): ComplaintResponse

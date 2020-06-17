@@ -86,5 +86,6 @@
     <color name="artboard_color">#F1F2F4</color>
     <color name="error">#E33333</color>
     <color name="transparent">#00000000</color>
+    <color name="faq_f1">#F1F7FE</color>
 
 </resources>

@@ -8,15 +8,18 @@ import com.github.twocoffeesoneteam.glidetovectoryou.GlideToVectorYou
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.messaging.RxBus2
-import com.joshtalks.joshskills.repository.local.eventbus.HelpRequestEventBus
-import com.joshtalks.joshskills.repository.server.help.Option
+import com.joshtalks.joshskills.repository.local.eventbus.CategorySelectEventBus
+import com.joshtalks.joshskills.repository.server.TypeOfHelpModel
 import com.mindorks.placeholderview.annotations.Click
 import com.mindorks.placeholderview.annotations.Layout
 import com.mindorks.placeholderview.annotations.Resolve
 import com.mindorks.placeholderview.annotations.View
 
-@Layout(R.layout.help_view_layout)
-class HelpViewHolder(var option: Option) {
+@Layout(R.layout.faq_category_item_layout)
+class FaqCategoryViewHolder(
+    val listTypeOfHelpModel: List<TypeOfHelpModel>,
+    var typeOfHelpModel: TypeOfHelpModel
+) {
 
     @View(R.id.iv_category_icon)
     lateinit var categoryIconIV: AppCompatImageView
@@ -26,12 +29,12 @@ class HelpViewHolder(var option: Option) {
 
     @Resolve
     fun onViewInflated() {
-        categoryNameTV.text = option.name
+        categoryNameTV.text = typeOfHelpModel.categoryName
         GlideToVectorYou
             .init()
             .with(AppObjectController.joshApplication)
             .requestBuilder
-            .load(option.url)
+            .load(typeOfHelpModel.iconUrl)
             .transition(DrawableTransitionOptions.withCrossFade())
             .apply(RequestOptions().centerCrop())
             .into(categoryIconIV)
@@ -39,7 +42,7 @@ class HelpViewHolder(var option: Option) {
 
     @Click(R.id.root_view)
     fun onClick() {
-        RxBus2.publish(HelpRequestEventBus(option))
+        RxBus2.publish(CategorySelectEventBus(listTypeOfHelpModel, typeOfHelpModel))
     }
 
 }
