@@ -2,9 +2,9 @@ package com.joshtalks.joshskills.ui.view_holders
 
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.bumptech.glide.request.target.Target
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
+import com.bumptech.glide.request.RequestOptions
+import com.github.twocoffeesoneteam.glidetovectoryou.GlideToVectorYou
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.messaging.RxBus2
@@ -27,10 +27,13 @@ class HelpViewHolder(var option: Option) {
     @Resolve
     fun onViewInflated() {
         categoryNameTV.text = option.name
-        Glide.with(AppObjectController.joshApplication)
+        GlideToVectorYou
+            .init()
+            .with(AppObjectController.joshApplication)
+            .requestBuilder
             .load(option.url)
-            .diskCacheStrategy(DiskCacheStrategy.ALL)
-            .override(Target.SIZE_ORIGINAL)
+            .transition(DrawableTransitionOptions.withCrossFade())
+            .apply(RequestOptions().centerCrop())
             .into(categoryIconIV)
     }
 

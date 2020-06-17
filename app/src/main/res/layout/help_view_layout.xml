@@ -11,8 +11,8 @@
 
     <FrameLayout
             android:id="@+id/fl_container"
-            android:layout_width="@dimen/_36sdp"
-            android:layout_height="@dimen/_36sdp"
+            android:layout_width="@dimen/_40sdp"
+            android:layout_height="@dimen/_40sdp"
             android:background="@drawable/timer_drawable"
             android:backgroundTint="@color/button_primary_color"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -23,12 +23,7 @@
                 android:id="@+id/iv_category_icon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:adjustViewBounds="true"
-                android:background="@drawable/timer_drawable"
-                android:backgroundTint="@color/button_primary_color"
-                android:scaleType="fitCenter"
-                app:tint="@color/white" />
+                android:layout_gravity="center" />
     </FrameLayout>
 
     <androidx.appcompat.widget.AppCompatTextView
