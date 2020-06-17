@@ -15,7 +15,10 @@ import com.mindorks.placeholderview.annotations.Resolve
 import com.mindorks.placeholderview.annotations.View
 
 @Layout(R.layout.faq_category_item_layout)
-class FaqCategoryViewHolder(var typeOfHelpModel: TypeOfHelpModel) {
+class FaqCategoryViewHolder(
+    val listTypeOfHelpModel: List<TypeOfHelpModel>,
+    var typeOfHelpModel: TypeOfHelpModel
+) {
 
     @View(R.id.iv_category_icon)
     lateinit var categoryIconIV: AppCompatImageView
@@ -38,7 +41,7 @@ class FaqCategoryViewHolder(var typeOfHelpModel: TypeOfHelpModel) {
 
     @Click(R.id.root_view)
     fun onClick() {
-        RxBus2.publish(typeOfHelpModel)
+        RxBus2.publish(listTypeOfHelpModel)
     }
 
 }
