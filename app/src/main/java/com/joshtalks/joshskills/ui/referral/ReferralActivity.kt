@@ -2,22 +2,20 @@ package com.joshtalks.joshskills.ui.referral
 
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.content.*
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
+import android.content.Intent
 import android.content.pm.ActivityInfo
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.view.*
 import android.widget.Toast
-import androidx.core.content.FileProvider
 import androidx.core.text.HtmlCompat
 import androidx.databinding.DataBindingUtil
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.DataSource
-import com.bumptech.glide.load.engine.GlideException
-import com.bumptech.glide.request.RequestListener
-import com.bumptech.glide.request.target.Target
 import com.google.firebase.dynamiclinks.ShortDynamicLink
 import com.google.firebase.dynamiclinks.ktx.androidParameters
 import com.google.firebase.dynamiclinks.ktx.dynamicLinks
@@ -41,7 +39,9 @@ import java.io.IOException
 
 const val REFERRAL_EARN_AMOUNT_KEY = "REFERRAL_EARN_AMOUNT"
 const val REFERRAL_SHARE_TEXT_KEY = "REFERRAL_SHARE_TEXT"
+const val REFERRAL_SHARE_TEXT_KEY2 = "referral_text_video"
 const val REFERRAL_IMAGE_URL_KEY = "REFERRAL_IMAGE_URL"
+const val VIDEO_URL = "https://www.youtube.com/watch?v=CMZohcIMQfc "
 const val SHARE_DOMAIN = "SHARE_DOMAIN"
 const val REPLACE_HOLDER = "****"
 const val REFERRAL_AMOUNT_HOLDER = "**"
@@ -63,6 +63,7 @@ class ReferralActivity : BaseActivity() {
     private lateinit var activityReferralBinding: ActivityReferralBinding
     private var userReferralCode: String = EMPTY
     private var userReferralURL: String = EMPTY
+    var flowFrom: String? = null
 
     @ExperimentalUnsignedTypes
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -119,6 +120,16 @@ class ReferralActivity : BaseActivity() {
                 it.printStackTrace()
 
             }
+        if (intent.hasExtra(FROM_CLASS)) {
+            flowFrom = intent.getStringExtra(FROM_CLASS)
+        }
+        AppAnalytics
+            .create(AnalyticsEvent.REFERRAL_PAGE.NAME)
+            .addUserDetails()
+            .addBasicParam()
+            .addParam(AnalyticsEvent.REFERRAL_CODE.name, userReferralCode)
+            .addParam(AnalyticsEvent.FLOW_FROM_PARAM.name, flowFrom)
+            .push()
     }
 
 
@@ -213,17 +224,13 @@ class ReferralActivity : BaseActivity() {
 
     fun inviteOnlyWhatsapp() {
         inviteFriends("com.whatsapp")
-        AppAnalytics
-            .create(AnalyticsEvent.SHARE_ON_WHATSAPP.NAME)
-            .addUserDetails()
-            .addParam(AnalyticsEvent.REFERRAL_CODE.NAME, userReferralCode)
-            .push()
     }
 
     fun inviteFriends(packageString: String? = null) {
         WorkMangerAdmin.referralEventTracker(REFERRAL_EVENT.CLICK_ON_SHARE)
-        var referralText =
+        var referralText = VIDEO_URL.plus("\n").plus(
             AppObjectController.getFirebaseRemoteConfig().getString(REFERRAL_SHARE_TEXT_KEY)
+        )
         val refAmount =
             AppObjectController.getFirebaseRemoteConfig().getLong(REFERRAL_EARN_AMOUNT_KEY)
                 .toString()
@@ -236,86 +243,27 @@ class ReferralActivity : BaseActivity() {
             referralText.plus("\n").plus(userReferralURL)
         }
 
-        val referralImageUrl =
-            AppObjectController.getFirebaseRemoteConfig().getString(REFERRAL_IMAGE_URL_KEY)
+        val pm = packageManager
+        try {
 
-        Glide.with(AppObjectController.joshApplication)
-            .asBitmap()
-            .override(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL)
-            .load(referralImageUrl)
-            .listener(object : RequestListener<Bitmap> {
-                override fun onLoadFailed(
-                    e: GlideException?,
-                    model: Any?,
-                    target: Target<Bitmap>?,
-                    isFirstResource: Boolean
-                ): Boolean {
-                    return false
-                }
-
-                override fun onResourceReady(
-                    resource: Bitmap?,
-                    model: Any?,
-                    target: Target<Bitmap>?,
-                    dataSource: DataSource?,
-                    isFirstResource: Boolean
-                ): Boolean {
-
-                    val sendIntent: Intent = Intent().apply {
-                        action = Intent.ACTION_SEND
-                        putExtra(Intent.EXTRA_TEXT, referralText)
-                    }
-                    sendIntent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
-                    sendIntent.flags = Intent.FLAG_GRANT_WRITE_URI_PERMISSION
-                    try {
-                        sendIntent.putExtra(
-                            Intent.EXTRA_STREAM,
-                            FileProvider.getUriForFile(
-                                this@ReferralActivity,
-                                BuildConfig.APPLICATION_ID + ".provider",
-                                getBitmapFromView(resource)!!
-                            )
-                        )
-                    } catch (ignore: Exception) {
-                        ignore.printStackTrace()
-                        sendIntent.putExtra(
-                            Intent.EXTRA_STREAM,
-                            Uri.fromFile(getBitmapFromView(resource)!!)
-                        )
-                    }
-
-                    sendIntent.type = "image/*"
-                    sendIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-
-                    if (packageString.isNullOrEmpty()) {
-                        val shareIntent =
-                            Intent.createChooser(sendIntent, getString(R.string.app_name))
-                        startActivity(shareIntent)
-                    } else {
-                        try {
-                            sendIntent.setPackage(packageString)
-                            startActivity(sendIntent)
-                            AppAnalytics
-                                .create(AnalyticsEvent.SHARE_ON_WHATSAPP.NAME)
-                                .addUserDetails()
-                                .addParam(AnalyticsEvent.REFERRAL_CODE.NAME, userReferralCode)
-                                .push()
-                            return true
-                        } catch (ex: ActivityNotFoundException) {
-                            val shareIntent =
-                                Intent.createChooser(sendIntent, getString(R.string.app_name))
-                            startActivity(shareIntent)
-                        }
-                    }
-                    AppAnalytics
-                        .create(AnalyticsEvent.SHARE_ON_ALL.NAME)
-                        .addUserDetails()
-                        .addParam(AnalyticsEvent.REFERRAL_CODE.NAME, userReferralCode)
-                        .push()
-                    return false
-                }
+            val waIntent = Intent(Intent.ACTION_SEND)
+            waIntent.type = "text/plain"
+            if (packageString.isNullOrEmpty().not()) {
+                waIntent.setPackage(packageString)
             }
-            ).submit()
+            waIntent.putExtra(Intent.EXTRA_TEXT, referralText)
+            startActivity(Intent.createChooser(waIntent, "Share with"))
+            AppAnalytics
+                .create(AnalyticsEvent.REFERRAL_SCREEN_ACTION.NAME)
+                .addParam(AnalyticsEvent.ACTION.NAME, AnalyticsEvent.SHARE_ON_WHATSAPP.NAME)
+                .addUserDetails()
+                .addParam(AnalyticsEvent.REFERRAL_CODE.NAME, userReferralCode)
+                .push()
+
+        } catch (e: PackageManager.NameNotFoundException) {
+            Toast.makeText(this, "WhatsApp not Installed", Toast.LENGTH_SHORT)
+                .show()
+        }
     }
 
     fun getBitmapFromView(bmp: Bitmap?): File? {
@@ -351,7 +299,8 @@ class ReferralActivity : BaseActivity() {
             WorkMangerAdmin.referralEventTracker(REFERRAL_EVENT.LONG_PRESS_CODE)
         }, 1200)
         AppAnalytics
-            .create(AnalyticsEvent.CODE_COPIED.NAME)
+            .create(AnalyticsEvent.REFERRAL_SCREEN_ACTION.NAME)
+            .addParam(AnalyticsEvent.ACTION.NAME, AnalyticsEvent.CODE_COPIED.NAME)
             .addUserDetails()
             .addBasicParam()
             .addParam(AnalyticsEvent.REFERRAL_CODE.name, userReferralCode)

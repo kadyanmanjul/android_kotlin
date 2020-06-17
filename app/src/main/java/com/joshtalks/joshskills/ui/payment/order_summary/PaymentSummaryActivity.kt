@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.ActivityInfo
+import android.graphics.Paint
 import android.graphics.Typeface
 import android.os.Build
 import android.os.Bundle
@@ -78,7 +79,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
     private var testId: String = EMPTY
     private val uiHandler = Handler(Looper.getMainLooper())
     lateinit var multiLineLL: LinearLayout
-    lateinit var typefaceSpan: Typeface
+    private var typefaceSpan: Typeface? = null
     private lateinit var viewModel: PaymentSummaryViewModel
     private var isEcommereceEventFire = true
     private lateinit var appAnalytics: AppAnalytics
@@ -127,7 +128,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
         binding = DataBindingUtil.setContentView(this, R.layout.activity_payment_summary)
         binding.lifecycleOwner = this
         binding.handler = this
-        typefaceSpan = ResourcesCompat.getFont(applicationContext, R.font.poppins)!!
+        typefaceSpan = ResourcesCompat.getFont(applicationContext, R.font.poppins)
         initToolbarView()
         initViewModel()
         subscribeObservers()
@@ -220,9 +221,6 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                 .into(binding.profileImage)
             binding.txtPrice.text =
                 "₹ ${String.format("%.2f", it.amount)}"
-            binding.materialButton.text =
-                "${AppObjectController.getFirebaseRemoteConfig()
-                    .getString("CTA_PAYMENT_SUMMARY")} ₹ ${it.discountedAmount.roundToInt()}"
             multiLineLL = binding.multiLineLl
 
             it.features?.let {
@@ -232,6 +230,10 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                         if (it.isEmpty().not()) multiLineLL.addView(getTextView(it))
                     }
             }
+            binding.materialButton.text =
+                "${AppObjectController.getFirebaseRemoteConfig()
+                    .getString("CTA_PAYMENT_SUMMARY")} ₹ ${viewModel.getCourseDiscountedAmount()
+                    .roundToInt()}"
             if (it.couponDetails.title.isEmpty().not()) {
                 binding.textView1.text = it.couponDetails.name
                 binding.tvTip.text = it.couponDetails.title
@@ -244,12 +246,23 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                     binding.badeBhaiyaTipContainer.visibility = View.GONE
                     binding.txtPrice.text =
                         "₹ ${String.format("%.2f", viewModel.getCourseDiscountedAmount())}"
-                    binding.tipUsedMsg.text = SpannableStringBuilder(
-                        getString(
-                            R.string.tip_used_info,
-                            viewModel.getDiscount().toString()
+                    binding.actualTxtPrice.visibility = View.VISIBLE
+                    binding.actualTxtPrice.text =
+                        "₹ ${String.format("%.2f", viewModel.getCourseActualAmount())}"
+                    binding.actualTxtPrice.paintFlags =
+                        binding.actualTxtPrice.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
+                    if (viewModel.getCourseDiscountedAmount() > 0) {
+                        binding.tipUsedMsg.text = SpannableStringBuilder(
+                            getString(
+                                R.string.tip_used_info,
+                                viewModel.getDiscount().toString()
+                            )
                         )
-                    )
+                    } else {
+                        binding.tipUsedMsg.text = getString(R.string.coupon_applied_free_course)
+                        binding.materialButton.text = AppObjectController.getFirebaseRemoteConfig()
+                            .getString("CTA_PAYMENT_SUMMARY_FREE")
+                    }
                     binding.tipUsedMsg.visibility = View.VISIBLE
                 }
             }
@@ -259,6 +272,11 @@ class PaymentSummaryActivity : CoreJoshActivity(),
         }
         viewModel.mPaymentDetailsResponse.observe(this, androidx.lifecycle.Observer {
             initializeRazorpayPayment(it)
+        })
+
+        viewModel.isFreeOrderCreated.observe(this, androidx.lifecycle.Observer {
+            if (it)
+                navigateToStartCourseActivity(false)
         })
     }
 
@@ -273,9 +291,8 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                 if (Mentor.getInstance().getId().isNotEmpty()) {
                     data["mentor_id"] = Mentor.getInstance().getId()
                 }
-                // TODO later for coupons
-                if (false) {
-                    data["coupon"] = "testcoupon"
+                if (PrefManager.getStringValue(REFERRED_REFERRAL_CODE).isNotBlank()) {
+                    data["coupon"] = PrefManager.getStringValue(REFERRED_REFERRAL_CODE)
                 }
                 viewModel.getPaymentSummaryDetails(data)
             } catch (ex: Exception) {
@@ -427,11 +444,12 @@ class PaymentSummaryActivity : CoreJoshActivity(),
             showToast(getString(R.string.internet_not_available_msz))
             return
         }
+
         val defaultRegion: String = PhoneNumberUtils.getDefaultCountryIso(applicationContext)
         appAnalytics.addParam(AnalyticsEvent.COUNTRY_ISO_CODE.NAME, defaultRegion)
 
         when {
-            viewModel.hasRegisteredMobileNumber.not() -> {
+            getPhoneNumber().isBlank() -> {
                 when {
                     binding.mobileEt.text.isNullOrEmpty() -> {
                         if (isRequestHintAppearred) {
@@ -447,26 +465,20 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                         showToast(getString(R.string.please_enter_valid_number))
                         return
                     }
-                    binding.mobileEt.prefix.equals("+91") -> viewModel.getOrderDetails(
-                        testId,
-                        binding.mobileEt.text.toString()
-                    )
+                    viewModel.getCourseDiscountedAmount() < 1 -> {
+                        viewModel.createFreeOrder(testId, binding.mobileEt.text.toString())
+                        return
+                    }
+                    binding.mobileEt.prefix.equals("+91") && viewModel.getCourseDiscountedAmount() >= 1 ->
+                        viewModel.getOrderDetails(testId, binding.mobileEt.text.toString())
                     else ->
                         uiHandler.post {
                             showChatNPayDialog()
                         }
                 }
             }
-            User.getInstance().phoneNumber.isNotBlank() -> viewModel.getOrderDetails(
-                testId,
-                User.getInstance().phoneNumber
-            )
-            else -> viewModel.getOrderDetails(
-                testId, PrefManager.getStringValue(PAYMENT_MOBILE_NUMBER).replace(
-                    SINGLE_SPACE,
-                    EMPTY
-                )
-            )
+            viewModel.getCourseDiscountedAmount() < 1 -> viewModel.createFreeOrder(testId, getPhoneNumber())
+            else -> viewModel.getOrderDetails(testId, getPhoneNumber())
         }
     }
 
@@ -494,7 +506,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
         NPSEventModel.setCurrentNPA(
             NPSEvent.PAYMENT_SUCCESS
         )
-        if (PrefManager.getStringValue(PAYMENT_MOBILE_NUMBER).isNullOrBlank())
+        if (PrefManager.getStringValue(PAYMENT_MOBILE_NUMBER).isBlank())
             PrefManager.put(
                 PAYMENT_MOBILE_NUMBER,
                 binding.mobileEt.prefix.plus(SINGLE_SPACE).plus(binding.mobileEt.text)
@@ -513,14 +525,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
         }, 1000 * 5)
 
         uiHandler.postDelayed({
-            StartCourseActivity.openStartCourseActivity(
-                this,
-                viewModel.responsePaymentSummary.value?.courseName ?: "Course",
-                viewModel.responsePaymentSummary.value?.teacherName ?: EMPTY,
-                viewModel.responsePaymentSummary.value?.imageUrl ?: EMPTY,
-                viewModel.mPaymentDetailsResponse.value?.joshtalksOrderId ?: 0
-            )
-            this@PaymentSummaryActivity.finish()
+            navigateToStartCourseActivity(true)
         }, 1000 * 8)
 
         FlurryAgent.UserProperties.set(FlurryAgent.UserProperties.PROPERTY_PURCHASER, "true")
@@ -559,6 +564,11 @@ class PaymentSummaryActivity : CoreJoshActivity(),
             AppObjectController.facebookEventLogger.flush()
             val params = Bundle().apply {
                 putString(AppEventsConstants.EVENT_PARAM_CONTENT_ID, testId)
+                putString(
+                    AppEventsConstants.EVENT_PARAM_SUCCESS,
+                    AppEventsConstants.EVENT_PARAM_VALUE_YES
+                )
+                putString(AppEventsConstants.EVENT_PARAM_CURRENCY, CurrencyType.INR.name)
             }
             AppObjectController.facebookEventLogger.logPurchase(
                 viewModel.getCourseDiscountedAmount().toBigDecimal(),
@@ -589,12 +599,16 @@ class PaymentSummaryActivity : CoreJoshActivity(),
             super.onBackPressed()
     }
 
+    override fun onStop() {
+        super.onStop()
+        AppObjectController.facebookEventLogger.flush()
+    }
+
     override fun onDestroy() {
         appAnalytics.push()
         super.onDestroy()
         Checkout.clearUserData(applicationContext)
         uiHandler.removeCallbacksAndMessages(null)
-        AppObjectController.facebookEventLogger.flush()
     }
 
     private fun showPaymentProcessingFragment() {
@@ -606,7 +620,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                 PaymentProcessingFragment.newInstance(),
                 "Payment Processing"
             )
-            .commit()
+            .commitAllowingStateLoss()
     }
 
     private fun showPaymentFailedDialog() {
@@ -619,7 +633,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                 ),
                 "Payment Success"
             )
-            .commit()
+            .commitAllowingStateLoss()
     }
 
     private fun showPaymentSuccessfulFragment() {
@@ -631,7 +645,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                 PaymentSuccessFragment.newInstance(),
                 "Payment Success"
             )
-            .commit()
+            .commitAllowingStateLoss()
     }
 
     private fun showChatNPayDialog() {
@@ -642,6 +656,29 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                 ChatNPayDialogFragment.newInstance(),
                 "Chat N Pay"
             )
-            .commit()
+            .commitAllowingStateLoss()
+    }
+
+    private fun getPhoneNumber() =
+        when {
+            User.getInstance().phoneNumber.isNotBlank() ->
+                User.getInstance().phoneNumber
+            PrefManager.getStringValue(PAYMENT_MOBILE_NUMBER).isNotBlank() ->
+                PrefManager.getStringValue(PAYMENT_MOBILE_NUMBER).replace(SINGLE_SPACE, EMPTY)
+            else ->
+                EMPTY
+        }
+
+    private fun navigateToStartCourseActivity(hasOrderId: Boolean) {
+        StartCourseActivity.openStartCourseActivity(
+            this,
+            viewModel.responsePaymentSummary.value?.courseName ?: "Course",
+            viewModel.responsePaymentSummary.value?.teacherName ?: EMPTY,
+            viewModel.responsePaymentSummary.value?.imageUrl ?: EMPTY,
+            if (hasOrderId)
+                viewModel.mPaymentDetailsResponse.value?.joshtalksOrderId ?: 0
+            else 0
+        )
+        this@PaymentSummaryActivity.finish()
     }
 }

@@ -13,6 +13,7 @@ import com.joshtalks.joshskills.core.analytics.BranchIOAnalytics
 import com.joshtalks.joshskills.core.service.WorkMangerAdmin
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
+import com.joshtalks.joshskills.repository.server.CreateOrderResponse
 import com.joshtalks.joshskills.repository.server.OrderDetailResponse
 import com.joshtalks.joshskills.repository.server.PaymentSummaryResponse
 import io.branch.referral.util.BRANCH_STANDARD_EVENT
@@ -37,10 +38,12 @@ class PaymentSummaryViewModel(application: Application) : AndroidViewModel(appli
     var mPaymentDetailsResponse = MediatorLiveData<OrderDetailResponse>()
     var viewState: MutableLiveData<ViewState>? = null
     val isRegisteredAlready by lazy { Mentor.getInstance().getId().isNotBlank() }
+    var isFreeOrderCreated = MutableLiveData<Boolean>(false)
 
     val hasRegisteredMobileNumber by lazy {
         (User.getInstance().phoneNumber.isNotBlank() || PrefManager.getStringValue(
-            PAYMENT_MOBILE_NUMBER).isNotBlank())
+            PAYMENT_MOBILE_NUMBER
+        ).isNotBlank())
     }
 
     init {
@@ -134,6 +137,7 @@ class PaymentSummaryViewModel(application: Application) : AndroidViewModel(appli
             }
         }
     }
+
     private fun logPayNowAnalyticEvents(razorpayOrderId: String?) {
         AppAnalytics.create(AnalyticsEvent.PAY_NOW_CLICKED.NAME)
             .addBasicParam()
@@ -143,5 +147,41 @@ class PaymentSummaryViewModel(application: Application) : AndroidViewModel(appli
             .addParam(AnalyticsEvent.IS_USER_REGISTERD.NAME, isRegisteredAlready)
             .addParam(AnalyticsEvent.RAZOR_PAY_ID.NAME, razorpayOrderId)
             .addParam(AnalyticsEvent.SHOWN_COURSE_PRICE.NAME, getCourseActualAmount()).push()
+    }
+
+    fun createFreeOrder(testId: String, mobileNumber: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                viewState?.postValue(ViewState.PROCESSING)
+                val data = CreateOrderResponse(
+                    testId,
+                    PrefManager.getStringValue(INSTANCE_ID),
+                    mobileNumber,
+                    responsePaymentSummary.value?.encryptedText.toString(),
+                    null
+                )
+                    if (Mentor.getInstance().getId().isNotEmpty()) {
+                        data.mentorId = Mentor.getInstance().getId()
+                    }
+                val response =
+                    AppObjectController.signUpNetworkService.createFreeOrder(data)
+                if (response.isSuccessful) {
+                    isFreeOrderCreated.postValue(true)
+                }
+            } catch (ex: Exception) {
+                when (ex) {
+                    is HttpException -> {
+                        viewState?.postValue(ViewState.ERROR_OCCURED)
+                    }
+                    is SocketTimeoutException, is UnknownHostException -> {
+                        viewState?.postValue(ViewState.INTERNET_NOT_AVAILABLE)
+                    }
+                    else -> {
+                        Crashlytics.logException(ex)
+                    }
+                }
+            }
+            viewState?.postValue(ViewState.PROCESSED)
+        }
     }
 }

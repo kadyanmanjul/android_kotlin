@@ -37,7 +37,7 @@ import java.util.*
 
 class PaymentProcessFragment : DialogFragment() {
     private var compositeDisposable = CompositeDisposable()
-    private  var courseModel: CourseExploreModel?=null
+    private var courseModel: CourseExploreModel? = null
     private lateinit var paymentProcessFragmentBinding: PaymentProcessFragmentBinding
     private var timer = Timer()
 
@@ -93,8 +93,8 @@ class PaymentProcessFragment : DialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         animAlpha?.reset()
-        if (courseModel?.amount==0.0){
-            paymentProcessFragmentBinding.textView.visibility=View.GONE
+        if (courseModel?.amount == 0.0) {
+            paymentProcessFragmentBinding.textView.visibility = View.GONE
         }
 
         paymentProcessFragmentBinding.tvCourse.text = courseModel?.courseName
@@ -219,9 +219,9 @@ class PaymentProcessFragment : DialogFragment() {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
-                    Handler().postDelayed({
-                        startActivity((activity as PaymentActivity).getInboxActivityIntent())
-                        (activity as PaymentActivity).finish()
+                    AppObjectController.uiHandler.postDelayed({
+                        startActivity((requireActivity() as BaseActivity).getInboxActivityIntent())
+                        requireActivity().finish()
                     }, 1000 * 60)
                 }, {
                     it.printStackTrace()

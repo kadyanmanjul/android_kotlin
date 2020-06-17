@@ -115,5 +115,9 @@ interface SignUpNetworkService {
     @GET("$DIR/payment/summary/")
     suspend fun getPaymentSummaryDetails(@QueryMap params: Map<String, String>): PaymentSummaryResponse
 
+    @GET("$DIR/payment/validate/coupon/")
+    suspend fun validateAndGetReferralDetails(@QueryMap params: Map<String, String>): ReferralCouponDetailResponse
 
+    @POST("$DIR/payment/create_free_order/")
+    suspend fun createFreeOrder(@Body params: CreateOrderResponse): Response<Any>
 }

@@ -22,6 +22,7 @@ const val READ_WRITE_PERMISSION_GIVEN = "read_write_permission_given"
 const val PAYMENT_MOBILE_NUMBER = "payment_mobile_number"
 const val API_TOKEN = "api_token"
 const val COUNTRY_ISO = "country_iso"
+const val REFERRED_REFERRAL_CODE = "referred_referral_code"
 
 object PrefManager {
 
@@ -101,12 +102,11 @@ object PrefManager {
         return BuildConfig.CLIENT_TOKEN
 
     }
-    //TODO 5
+
     fun logoutUser() {
         prefManager.edit().clear().apply()
-        WorkMangerAdmin.appStartWorker()
+        WorkMangerAdmin.appStartWorker()    // TODO(TBD) - Mohit
     }
-
 
     fun clearUser() {
         prefManager.edit().clear().apply()

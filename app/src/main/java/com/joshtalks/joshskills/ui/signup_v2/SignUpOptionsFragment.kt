@@ -293,16 +293,22 @@ class SignUpOptionsFragment : BaseSignUpFragment() {
 
     override fun retryVerificationThrowFlashCall() {
         verificationVia = VerificationVia.FLASH_CALL
-        updateLoginButtonText()
+        retryVerification()
     }
 
     override fun retryVerificationThrowSms() {
         verificationVia = VerificationVia.SMS
-        updateLoginButtonText()
+        retryVerification()
     }
 
     private fun onVerificationPermissionDeny() {
         hideProgress()
         onVerificationNumberFailed()
+    }
+
+    private fun retryVerification() {
+        updateLoginButtonText()
+        callVerificationService()
+        disableMobileEditText()
     }
 }

@@ -67,12 +67,15 @@ class StartCourseActivity : CoreJoshActivity() {
             binding.startRegister.text = resources.getText(R.string.tutor_register)
         }
 
-        binding.transationId.text = getCustomString(
-            getString(
-                R.string.trx_id,
-                transactionId
-            )
-        )
+        if (transactionId.toInt() > 0)
+            binding.transationId.text = getCustomString(
+                getString(
+                    R.string.trx_id,
+                    transactionId
+                )
+            ) else {
+            binding.transationId.visibility = View.GONE
+        }
         val multi = MultiTransformation(
             RoundedCornersTransformation(
                 Utils.dpToPx(ROUND_CORNER),
@@ -148,12 +151,15 @@ class StartCourseActivity : CoreJoshActivity() {
                     .addParam(AnalyticsEvent.COURSE_NAME.NAME, courseName)
                     .addParam(AnalyticsEvent.TRANSACTION_ID.NAME, transactionId)
                     .push()
-                val intent = Intent(this, SignUpV2Activity::class.java)
-                intent.putExtra(FLOW_FROM, "payment journey")
+                val intent = Intent(this, SignUpV2Activity::class.java).apply {
+                    addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    putExtra(FLOW_FROM, "payment journey")
+                }
                 startActivity(intent)
                 this.finish()
             }
         })
-
     }
+
 }

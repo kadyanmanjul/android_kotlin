@@ -198,7 +198,7 @@ class CameraFragment : BaseFragment<FragmentCameraBinding>(R.layout.fragment_cam
                 // Setting current display ID
                 displayId = vf.display.displayId
                 recreateCamera()
-                lifecycleScope.launch(Dispatchers.IO) {
+                lifecycleScope.launch(Dispatchers.Main) {
                     // Do on IO Dispatcher
                     // Check if there are any photos or videos in the app directory and preview the last one
                     outputDirectory.listFiles()?.lastOrNull()?.let {

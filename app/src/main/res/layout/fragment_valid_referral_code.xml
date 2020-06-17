@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools">
+    <data>
+        <variable
+                name="handler"
+                type="com.joshtalks.joshskills.ui.referral.ValidReferralCodeFragment" />
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@android:color/white"
+            tools:context=".ui.sign_up_old.OnBoardActivity">
+
+        <TextView
+                android:id="@+id/success_title"
+                style="@style/TextStyle.TopBarNoScroll"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:gravity="center"
+                android:text="@string/header_congratulation"
+                android:textColor="@color/black"
+                android:textSize="@dimen/font_20"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+                android:id="@+id/description"
+                style="@style/TextStyle.TopBarNoScroll"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:gravity="center"
+                android:text="@string/referral_success_info"
+                android:textColor="@color/black"
+                android:textSize="@dimen/font_14"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/success_title" />
+
+        <ImageView
+                android:id="@+id/iv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/header_congratulation"
+                android:src="@drawable/congratulations"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/description" />
+
+        <TextView
+                android:id="@+id/offer_text"
+                style="@style/TextStyle.TopBarNoScroll"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/referral_success_info2"
+                android:textColor="@color/black"
+                android:textSize="@dimen/font_14"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/iv" />
+
+        <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/explore_course_btn"
+                style="@style/TextStyle.TopBarNoScroll"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginHorizontal="@dimen/_22sdp"
+                android:layout_marginBottom="@dimen/_12sdp"
+                android:background="@drawable/round_rectangle_for_course_expo"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center"
+                android:onClick="@{()->handler.openCourseExplore()}"
+                android:padding="@dimen/_6sdp"
+                android:text="@string/explore_new"
+                android:textColor="@color/white"
+                android:textSize="@dimen/font_22"
+                app:cornerRadius="@dimen/_8sdp"
+                app:layout_constraintBottom_toTopOf="@+id/login_btn"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.146"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintVertical_bias="0.3"
+                app:layout_constraintWidth_default="percent"
+                app:layout_constraintWidth_percent="0.45" />
+
+        <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/login_btn"
+                style="@style/TextStyle.TopBarNoScroll"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_margin="@dimen/_22sdp"
+                android:background="@drawable/rect_with_black_bound"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center"
+                android:onClick="@{()->handler.signUp()}"
+                android:padding="@dimen/_6sdp"
+                android:text="@string/login_signup"
+                android:textColor="@color/light_grey"
+                android:textSize="@dimen/font_22"
+                app:cornerRadius="@dimen/_8sdp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>
