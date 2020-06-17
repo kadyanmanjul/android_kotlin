@@ -12,8 +12,8 @@ import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.messaging.RxBus2
+import com.joshtalks.joshskills.repository.local.eventbus.CategorySelectEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.HelpRequestEventBus
-import com.joshtalks.joshskills.repository.server.TypeOfHelpModel
 import com.joshtalks.joshskills.repository.server.help.Action
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -122,10 +122,11 @@ class HelpActivity : CoreJoshActivity() {
 
 
         compositeDisposable.add(
-            RxBus2.listen(TypeOfHelpModel::class.java)
+            RxBus2.listen(CategorySelectEventBus::class.java)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
+                    //Todo @Sahil
                 })
     }
 }

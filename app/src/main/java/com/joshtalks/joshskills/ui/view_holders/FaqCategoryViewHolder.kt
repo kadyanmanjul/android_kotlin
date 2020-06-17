@@ -8,6 +8,7 @@ import com.github.twocoffeesoneteam.glidetovectoryou.GlideToVectorYou
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.messaging.RxBus2
+import com.joshtalks.joshskills.repository.local.eventbus.CategorySelectEventBus
 import com.joshtalks.joshskills.repository.server.TypeOfHelpModel
 import com.mindorks.placeholderview.annotations.Click
 import com.mindorks.placeholderview.annotations.Layout
@@ -41,7 +42,7 @@ class FaqCategoryViewHolder(
 
     @Click(R.id.root_view)
     fun onClick() {
-        RxBus2.publish(listTypeOfHelpModel)
+        RxBus2.publish(CategorySelectEventBus(listTypeOfHelpModel, typeOfHelpModel))
     }
 
 }
