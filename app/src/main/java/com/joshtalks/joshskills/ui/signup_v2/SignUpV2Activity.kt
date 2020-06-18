@@ -1,6 +1,7 @@
 package com.joshtalks.joshskills.ui.signup_v2
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -27,6 +28,7 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
+import com.joshtalks.joshskills.core.analytics.LogException
 import com.joshtalks.joshskills.core.custom_ui.FullScreenProgressDialog
 import com.joshtalks.joshskills.databinding.ActivitySignUpV2Binding
 import com.joshtalks.joshskills.messaging.RxBus2
@@ -44,9 +46,6 @@ import com.truecaller.android.sdk.clients.VerificationDataBundle
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import java.util.*
 
 private const val GOOGLE_SIGN_UP_REQUEST_CODE = 9001
@@ -157,38 +156,38 @@ class SignUpV2Activity : BaseActivity() {
     }
 
     private fun initLoginFeatures() {
-        CoroutineScope(Dispatchers.IO).launch(Dispatchers.IO) {
-            setupGoogleLogin()
-            setupFacebookLogin()
-        }
+        setupGoogleLogin()
+        setupFacebookLogin()
     }
 
     private fun setupGoogleLogin() {
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestIdToken(getString(R.string.default_web_client_id))
             .requestEmail().requestId().requestProfile().build()
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso)
         mGoogleSignInClient?.signOut()
     }
 
     private fun setupFacebookLogin() {
+        LoginManager.getInstance().logOut()
         LoginManager.getInstance().loginBehavior = LoginBehavior.NATIVE_WITH_FALLBACK
-        LoginManager.getInstance().registerCallback(fbCallbackManager,
-            object : FacebookCallback<LoginResult?> {
-                override fun onSuccess(loginResult: LoginResult?) {
-                    // Toast.makeText(applicationContext,"onSuccess"+loginResult?.accessToken,Toast.LENGTH_LONG).show()
-                    if (loginResult != null && loginResult.accessToken != null) {
+        LoginManager.getInstance().registerCallback(
+            fbCallbackManager,
+            object : FacebookCallback<LoginResult> {
+                override fun onSuccess(loginResult: LoginResult) {
+                    if (loginResult.accessToken != null) {
                         getUserDetailsFromFB(loginResult.accessToken)
+                    } else {
+                        showToast(getString(R.string.something_went_wrong))
                     }
                 }
 
                 override fun onCancel() {
-                    // Toast.makeText(applicationContext,"onCancel",Toast.LENGTH_LONG).show()
-
                 }
 
                 override fun onError(exception: FacebookException) {
                     exception.printStackTrace()
-                    // Toast.makeText(applicationContext,"error"+exception.message+" "+ exception.localizedMessage,Toast.LENGTH_LONG).show()
+                    LogException.catchException(exception)
                 }
             })
     }
@@ -261,14 +260,16 @@ class SignUpV2Activity : BaseActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == GOOGLE_SIGN_UP_REQUEST_CODE) {
-            val task: Task<GoogleSignInAccount> = GoogleSignIn.getSignedInAccountFromIntent(data)
-            if (task.isSuccessful) {
+            try {
+                val task: Task<GoogleSignInAccount> =
+                    GoogleSignIn.getSignedInAccountFromIntent(data)
                 val account: GoogleSignInAccount = task.getResult(ApiException::class.java)
                 handleGoogleSignInResult(account)
-                return
-            } else {
+
+            } catch (e: ApiException) {
                 hideProgressBar()
             }
+            return
         }
         fbCallbackManager.onActivityResult(requestCode, resultCode, data)
         if (TruecallerSDK.getInstance().isUsable) {
@@ -282,7 +283,6 @@ class SignUpV2Activity : BaseActivity() {
     }
 
     private fun facebookLogin() {
-        LoginManager.getInstance().logOut()
         LoginManager.getInstance().logIn(this, listOf("public_profile", "email"))
     }
 
@@ -292,22 +292,26 @@ class SignUpV2Activity : BaseActivity() {
 
     fun getUserDetailsFromFB(accessToken: AccessToken) {
         val request: GraphRequest = GraphRequest.newMeRequest(accessToken) { jsonObject, _ ->
-            val id = jsonObject.getString("id")
-            var name: String? = null
-            if (jsonObject.has("name")) {
-                name = jsonObject.getString("name")
+            try {
+                val id = jsonObject.getString("id")
+                var name: String? = null
+                if (jsonObject.has("name")) {
+                    name = jsonObject.getString("name")
+                }
+                var email: String? = null
+                if (jsonObject.has("email")) {
+                    email = jsonObject.getString("email")
+                }
+                viewModel.signUpUsingSocial(
+                    LoginViaStatus.FACEBOOK,
+                    id,
+                    name,
+                    email,
+                    getFBProfilePicture(id)
+                )
+            } catch (ex: Exception) {
+                LogException.catchException(ex)
             }
-            var email: String? = null
-            if (jsonObject.has("email")) {
-                email = jsonObject.getString("email")
-            }
-            viewModel.signUpUsingSocial(
-                LoginViaStatus.FACEBOOK,
-                id,
-                name,
-                email,
-                getFBProfilePicture(id)
-            )
         }
         val parameters = Bundle()
         parameters.putString("fields", "id,name,email")
@@ -387,7 +391,7 @@ class SignUpV2Activity : BaseActivity() {
                 verificationThroughSinch(countryCode, phoneNumber, verificationVia)
             }
             VerificationService.TRUECALLER -> {
-                verificationThroughTrueCaller(phoneNumber, verificationVia)
+                verificationThroughTrueCaller(phoneNumber)
             }
             else -> {
                 RxBus2.publish(
@@ -414,14 +418,6 @@ class SignUpV2Activity : BaseActivity() {
             override fun onInitiationFailed(e: Exception) {
                 viewModel.verificationStatus.postValue(VerificationStatus.FAILED)
                 e.printStackTrace()
-                when (e) {
-                    is InvalidInputException -> {
-                    }
-                    is ServiceErrorException -> {
-                    }
-                    else -> {
-                    }
-                }
             }
 
             override fun onVerified() {
@@ -511,10 +507,10 @@ class SignUpV2Activity : BaseActivity() {
 
     //Use link = https://docs.truecaller.com/truecaller-sdk/android/integrating-with-your-app/verifying-non-truecaller-users
     private fun verificationThroughTrueCaller(
-        phoneNumber: String,
-        verificationVia: VerificationVia
+        phoneNumber: String
     ) {
         val apiCallback: VerificationCallback = object : VerificationCallback {
+            @SuppressLint("SwitchIntDef")
             override fun onRequestSuccess(
                 requestCode: Int,
                 @Nullable extras: VerificationDataBundle?
@@ -535,8 +531,6 @@ class SignUpV2Activity : BaseActivity() {
                     }
                     VerificationCallback.TYPE_VERIFICATION_COMPLETE -> {
                         viewModel.verificationStatus.postValue(VerificationStatus.SUCCESS)
-                    }
-                    VerificationCallback.TYPE_PROFILE_VERIFIED_BEFORE -> {
                     }
                 }
             }

@@ -54,9 +54,14 @@ class FaqCategoryFragment : Fragment() {
     }
 
     private fun addObservable() {
-        viewModel.typeOfHelpModelLiveData.observe(viewLifecycleOwner, Observer {
-            it.forEach { typeOfHelpModel ->
-                faqCategoryBinding.recyclerView.addView(FaqCategoryViewHolder(it, typeOfHelpModel))
+        viewModel.typeOfHelpModelLiveData.observe(viewLifecycleOwner, Observer { list ->
+            list.sortedBy { it.id }.forEach { typeOfHelpModel ->
+                faqCategoryBinding.recyclerView.addView(
+                    FaqCategoryViewHolder(
+                        list,
+                        typeOfHelpModel
+                    )
+                )
             }
         })
         viewModel.apiCallStatusLiveData.observe(viewLifecycleOwner, Observer {
