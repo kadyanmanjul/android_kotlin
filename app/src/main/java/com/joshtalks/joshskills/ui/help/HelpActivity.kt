@@ -8,10 +8,7 @@ import androidx.appcompat.widget.AppCompatImageView
 import androidx.fragment.app.commit
 import com.freshchat.consumer.sdk.Freshchat
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.CoreJoshActivity
-import com.joshtalks.joshskills.core.FRESH_CHAT_UNREAD_MESSAGES
-import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.messaging.RxBus2
@@ -119,11 +116,10 @@ class HelpActivity : CoreJoshActivity() {
                             openFaqCategory()
                         }
                         else -> {
-
+                            showToast(getString(R.string.something_went_wrong))
                         }
                     }
                 })
-
 
         compositeDisposable.add(
             RxBus2.listen(CategorySelectEventBus::class.java)
