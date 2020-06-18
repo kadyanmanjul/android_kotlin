@@ -8,6 +8,8 @@ import android.os.Bundle;
 import com.clevertap.android.sdk.CleverTapAPI;
 import com.flurry.android.Constants;
 import com.flurry.android.FlurryAgent;
+import com.freshchat.consumer.sdk.FreshchatUser;
+import com.freshchat.consumer.sdk.exception.MethodNotAllowedException;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.joshtalks.joshskills.BuildConfig;
 import com.joshtalks.joshskills.core.AppObjectController;
@@ -33,6 +35,7 @@ import timber.log.Timber;
 
 import static com.joshtalks.joshskills.core.PrefManagerKt.INSTANCE_ID;
 import static com.joshtalks.joshskills.core.PrefManagerKt.USER_UNIQUE_ID;
+import static com.joshtalks.joshskills.core.UtilsKt.getPhoneNumber;
 
 public class AppAnalytics {
 
@@ -67,6 +70,26 @@ public class AppAnalytics {
         init();
         updateCleverTapUser();
         updateFlurryUser();
+        updateFreshchatSdkUser();
+    }
+
+    private static void updateFreshchatSdkUser() {
+        FreshchatUser freshchatUser = AppObjectController.getFreshChat().getUser();
+        freshchatUser.setFirstName(User.getInstance().getFirstName());
+        freshchatUser.setEmail(User.getInstance().getEmail());
+        String mobileNumber = getPhoneNumber();
+        if (!mobileNumber.isEmpty()) {
+            int length = mobileNumber.length();
+            if (length > 10) {
+                freshchatUser.setPhone(mobileNumber.substring(0, length - 10), mobileNumber.substring(length - 10));
+            }
+        } else freshchatUser.setPhone("+91", "9999999999");
+
+        try {
+            AppObjectController.getFreshChat().setUser(freshchatUser);
+        } catch (MethodNotAllowedException e) {
+            e.printStackTrace();
+        }
     }
 
     private static void updateCleverTapUser() {
@@ -88,7 +111,6 @@ public class AppAnalytics {
     private static void updateFlurryUser() {
         Timber.tag("Flurry").d("updateFlurryUser() called");
         User user = User.getInstance();
-        Mentor mentor = Mentor.getInstance();
         FlurryAgent.setUserId(PrefManager.INSTANCE.getStringValue(INSTANCE_ID));
         FlurryAgent.setVersionName(BuildConfig.VERSION_NAME);
         FlurryAgent.setAge(getAge(user.getDateOfBirth()));
@@ -98,7 +120,7 @@ public class AppAnalytics {
         List<String> list = new ArrayList<>();
         list.add(user.getUserType());
         list.add(user.getGender());
-        list.add("Age "+getAge(user.getDateOfBirth()));
+        list.add("Age " + getAge(user.getDateOfBirth()));
         FlurryAgent.UserProperties.set("JoshSkills.User", list);
     }
 

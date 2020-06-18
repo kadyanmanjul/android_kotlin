@@ -477,7 +477,10 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                         }
                 }
             }
-            viewModel.getCourseDiscountedAmount() < 1 -> viewModel.createFreeOrder(testId, getPhoneNumber())
+            viewModel.getCourseDiscountedAmount() < 1 -> viewModel.createFreeOrder(
+                testId,
+                getPhoneNumber()
+            )
             else -> viewModel.getOrderDetails(testId, getPhoneNumber())
         }
     }
@@ -658,16 +661,6 @@ class PaymentSummaryActivity : CoreJoshActivity(),
             )
             .commitAllowingStateLoss()
     }
-
-    private fun getPhoneNumber() =
-        when {
-            User.getInstance().phoneNumber.isNotBlank() ->
-                User.getInstance().phoneNumber
-            PrefManager.getStringValue(PAYMENT_MOBILE_NUMBER).isNotBlank() ->
-                PrefManager.getStringValue(PAYMENT_MOBILE_NUMBER).replace(SINGLE_SPACE, EMPTY)
-            else ->
-                EMPTY
-        }
 
     private fun navigateToStartCourseActivity(hasOrderId: Boolean) {
         StartCourseActivity.openStartCourseActivity(
