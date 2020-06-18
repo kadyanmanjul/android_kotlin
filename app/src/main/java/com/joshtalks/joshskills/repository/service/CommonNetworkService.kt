@@ -24,6 +24,13 @@ interface CommonNetworkService {
     @POST("$DIR/mentor/gaid/")
     fun registerGAIdAsync(@Body requestRegisterGId: RequestRegisterGId): Deferred<RequestRegisterGId>
 
+    @GET("$DIR/mentor/restore_id/{id}/")
+    suspend fun getFreshChatRestoreIdAsync(@Path("id") id: String): FreshChatRestoreIDResponse
+
+    @FormUrlEncoded
+    @PATCH("$DIR/mentor/restore_id/{id}/")
+    suspend fun postFreshChatRestoreIDAsync(@Path("id") id: String, @FieldMap params: Map<String, String?>): FreshChatRestoreIDResponse
+
     @POST("$DIR/mentor/gaid_detail/")
     fun registerGAIdDetailsAsync(@Body params: Map<String, String>): Deferred<GaIDMentorModel>
 

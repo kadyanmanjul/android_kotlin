@@ -680,6 +680,26 @@ class UpdateDeviceDetailsWorker(context: Context, workerParams: WorkerParameters
     }
 }
 
+class GenerateRestoreIdWorker(context: Context, workerParams: WorkerParameters) :
+    CoroutineWorker(context, workerParams) {
+    override suspend fun doWork(): Result {
+        try {
+            if (PrefManager.getStringValue(RESTORE_ID).isBlank()) {
+                val id = PrefManager.getStringValue(USER_UNIQUE_ID)
+                val details =
+                    AppObjectController.commonNetworkService.getFreshChatRestoreIdAsync(id)
+                if (details.restoreId.isNullOrBlank().not()) {
+                    PrefManager.put(RESTORE_ID, details.restoreId!!)
+                    AppObjectController.restoreUser(details.restoreId!!)
+                } else AppObjectController.restoreUser(null)
+            } else AppObjectController.restoreUser(PrefManager.getStringValue(RESTORE_ID))
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+        }
+        return Result.success()
+    }
+}
+
 class UserActiveWorker(context: Context, workerParams: WorkerParameters) :
     CoroutineWorker(context, workerParams) {
     override suspend fun doWork(): Result {

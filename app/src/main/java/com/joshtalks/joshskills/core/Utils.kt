@@ -804,3 +804,13 @@ fun isValidFullNumber(countryCode: String, number: String? = EMPTY): Boolean {
         true
     }
 }
+
+fun getPhoneNumber() =
+    when {
+        User.getInstance().phoneNumber.isNotBlank() ->
+            User.getInstance().phoneNumber
+        PrefManager.getStringValue(PAYMENT_MOBILE_NUMBER).isNotBlank() ->
+            PrefManager.getStringValue(PAYMENT_MOBILE_NUMBER).replace(SINGLE_SPACE, EMPTY)
+        else ->
+            EMPTY
+    }

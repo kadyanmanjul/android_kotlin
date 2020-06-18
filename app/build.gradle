@@ -18,6 +18,8 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField "String", "CLIENT_TOKEN", "\"Ctt75ss5IxyHgBJb48diBbHUXIQ1VANCYRykjdcj\""
         buildConfigField "String", "NEW_RELIC_TOKEN", "\"AAd8bc1e3740f51d8d131e42fff378fa2168243e00-NRMA\""
+        buildConfigField "String", "FRESH_CHAT_APP_ID", "\"e29909bd-f7d3-45f8-b346-e520dd053ea4\""
+        buildConfigField "String", "FRESH_CHAT_APP_KEY", "\"dda815f3-0e82-450a-a6d5-e2644a055bf1\""
         javaCompileOptions {
             annotationProcessorOptions {
                 arguments = [
@@ -298,5 +300,7 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.2.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+    // fresh chat
+    implementation 'com.github.freshdesk:freshchat-android:2.6.1'
 
 }

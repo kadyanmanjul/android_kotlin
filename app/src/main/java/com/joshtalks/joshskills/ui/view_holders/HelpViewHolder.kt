@@ -7,6 +7,7 @@ import com.bumptech.glide.request.RequestOptions
 import com.github.twocoffeesoneteam.glidetovectoryou.GlideToVectorYou
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.SINGLE_SPACE
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.HelpRequestEventBus
 import com.joshtalks.joshskills.repository.server.help.Option
@@ -16,7 +17,7 @@ import com.mindorks.placeholderview.annotations.Resolve
 import com.mindorks.placeholderview.annotations.View
 
 @Layout(R.layout.help_view_layout)
-class HelpViewHolder(var option: Option) {
+class HelpViewHolder(var option: Option, var unreadMessages: Int) {
 
     @View(R.id.iv_category_icon)
     lateinit var categoryIconIV: AppCompatImageView
@@ -26,7 +27,10 @@ class HelpViewHolder(var option: Option) {
 
     @Resolve
     fun onViewInflated() {
-        categoryNameTV.text = option.name
+        if (unreadMessages <= 1)
+            categoryNameTV.text = option.name
+        else categoryNameTV.text = option.name.plus(SINGLE_SPACE).plus("(${unreadMessages} Msg)")
+
         GlideToVectorYou
             .init()
             .with(AppObjectController.joshApplication)
