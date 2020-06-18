@@ -23,6 +23,9 @@ const val PAYMENT_MOBILE_NUMBER = "payment_mobile_number"
 const val API_TOKEN = "api_token"
 const val COUNTRY_ISO = "country_iso"
 const val REFERRED_REFERRAL_CODE = "referred_referral_code"
+const val RESTORE_ID = "restore_id"
+const val FRESH_CHAT_UNREAD_MESSAGES = "fresh_chat_unread_messages"
+const val FRESH_CHAT_ID_RESTORED = "fresh_chat_id_restored"
 
 object PrefManager {
 
