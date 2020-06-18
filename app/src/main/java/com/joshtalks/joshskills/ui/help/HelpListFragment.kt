@@ -13,7 +13,11 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.FRESH_CHAT_UNREAD_MESSAGES
+import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.databinding.FragmentHelpListBinding
+import com.joshtalks.joshskills.repository.server.help.Action
 import com.joshtalks.joshskills.repository.server.help.HelpCenterOptions
 import com.joshtalks.joshskills.ui.view_holders.HelpViewHolder
 
@@ -32,7 +36,7 @@ class HelpListFragment : Fragment() {
         viewModel = activity?.run {
             ViewModelProvider(this).get(HelpViewModel::class.java)
         }!!
-
+        AppObjectController.getUnreadFreshchatMessages()
     }
 
     override fun onCreateView(
@@ -55,7 +59,16 @@ class HelpListFragment : Fragment() {
                 requireActivity().findViewById<AppCompatTextView>(R.id.text_message_title)
             titleView?.text = helpCenterOptionsModel.title
             helpCenterOptionsModel.options.forEach {
-                helpListBinding.recyclerView.addView(HelpViewHolder(it))
+                if (it.action == Action.HELPCHAT)
+                    helpListBinding.recyclerView.addView(
+                        HelpViewHolder(
+                            it, PrefManager.getIntValue(
+                                FRESH_CHAT_UNREAD_MESSAGES
+                            )
+                        )
+                    )
+                else helpListBinding.recyclerView.addView(HelpViewHolder(it, 0))
+
             }
             helpCenterOptionsModel.supportMessage?.run {
                 helpListBinding.infoSupport.visibility = View.VISIBLE
