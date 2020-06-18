@@ -6,8 +6,11 @@ import android.os.Bundle
 import android.view.View
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.fragment.app.commit
+import com.freshchat.consumer.sdk.Freshchat
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.CoreJoshActivity
+import com.joshtalks.joshskills.core.FRESH_CHAT_UNREAD_MESSAGES
+import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
@@ -108,8 +111,9 @@ class HelpActivity : CoreJoshActivity() {
                                 Utils.call(this@HelpActivity, this)
                             }
                         }
-                        Action.HELP_DESK == it.option.action -> {
-
+                        Action.HELPCHAT == it.option.action -> {
+                            Freshchat.showConversations(applicationContext)
+                            PrefManager.put(FRESH_CHAT_UNREAD_MESSAGES, 0)
                         }
                         Action.FAQ == it.option.action -> {
                             openFaqCategory()
