@@ -16,6 +16,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
+import timber.log.Timber
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 
@@ -87,17 +88,7 @@ class HelpViewModel(application: Application) : AndroidViewModel(application) {
                     requestMap["no_count"] = "1"
                 AppObjectController.commonNetworkService.patchFaqFeedback(id, requestMap)
             } catch (ex: Exception) {
-                when (ex) {
-                    is HttpException -> {
-                        showToast(context.getString(R.string.generic_message_for_error))
-                    }
-                    is SocketTimeoutException, is UnknownHostException -> {
-                        showToast(context.getString(R.string.internet_not_available_msz))
-                    }
-                    else -> {
-                        Crashlytics.logException(ex)
-                    }
-                }
+                Timber.tag("FAQ Feedback").e(ex)
             }
         }
     }
