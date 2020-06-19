@@ -33,7 +33,7 @@ class FaqFragment : Fragment() {
             categoryList = it.getParcelableArrayList(ARG_CATEGORY_LIST) ?: ArrayList()
             selectedCategory = it.getParcelable(ARG_SELECTED_CATEGORY)
         }
-        appAnalytics= AppAnalytics.create(AnalyticsEvent.FAQ_QUESTIONS_LIST_SCREEN.NAME)
+        appAnalytics = AppAnalytics.create(AnalyticsEvent.FAQ_QUESTIONS_LIST_SCREEN.NAME)
             .addBasicParam()
             .addUserDetails()
             .addParam(AnalyticsEvent.FAQ_CATEGORY_SELECTED.NAME, selectedCategory?.categoryName)
@@ -78,6 +78,7 @@ class FaqFragment : Fragment() {
 
         chipGroupCategory.setOnCheckedChangeListener { group, checkedId ->
             selectedCategory = categoryList.filter { it.id == checkedId }[0]
+            logCategorySelectedEvent()
             txtCategoryName.text = selectedCategory?.categoryName
             faqAdapter.updateList(viewModel.faqListLiveData.value?.filter {
                 it.categoryId == selectedCategory?.id
@@ -114,6 +115,13 @@ class FaqFragment : Fragment() {
                 }
             }
     }
+
+    private fun logCategorySelectedEvent() =
+        AppAnalytics.create(AnalyticsEvent.FAQ_QUESTIONS_LIST_SCREEN.NAME)
+            .addBasicParam()
+            .addUserDetails()
+            .addParam(AnalyticsEvent.FAQ_CATEGORY_SELECTED.NAME, selectedCategory?.categoryName)
+            .push()
 
     override fun onDestroyView() {
         super.onDestroyView()
