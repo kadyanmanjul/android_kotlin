@@ -14,6 +14,8 @@ import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.CategorySelectEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.HelpRequestEventBus
+import com.joshtalks.joshskills.repository.server.FAQ
+import com.joshtalks.joshskills.repository.server.FAQCategory
 import com.joshtalks.joshskills.repository.server.help.Action
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -105,14 +107,29 @@ class HelpActivity : CoreJoshActivity() {
                     when {
                         Action.CALL == it.option.action -> {
                             it.option.actionData?.run {
+                                appAnalytics.addParam(AnalyticsEvent.CALL_HELPLINE.NAME,it.option.actionData.toString())
+                                AppAnalytics.create(AnalyticsEvent.CLICK_HELPLINE_SELECTED.NAME)
+                                    .addBasicParam()
+                                    .addUserDetails()
+                                    .push()
                                 Utils.call(this@HelpActivity, this)
                             }
                         }
                         Action.HELPCHAT == it.option.action -> {
+                            appAnalytics.addParam(AnalyticsEvent.HELP_CHAT.NAME,it.option.action.toString())
+                            AppAnalytics.create(AnalyticsEvent.HELP_CHAT.NAME)
+                                .addBasicParam()
+                                .addUserDetails()
+                                .push()
                             Freshchat.showConversations(applicationContext)
                             PrefManager.put(FRESH_CHAT_UNREAD_MESSAGES, 0)
                         }
                         Action.FAQ == it.option.action -> {
+                            appAnalytics.addParam(AnalyticsEvent.FAQ_SLECTED.NAME,it.option.action.toString())
+                            AppAnalytics.create(AnalyticsEvent.FAQ_SLECTED.NAME)
+                                .addBasicParam()
+                                .addUserDetails()
+                                .push()
                             openFaqCategory()
                         }
                         else -> {
@@ -121,12 +138,45 @@ class HelpActivity : CoreJoshActivity() {
                     }
                 })
 
+
         compositeDisposable.add(
             RxBus2.listen(CategorySelectEventBus::class.java)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
-                    //Todo @Sahil
+                    showFaqFragment(it.selectedCategory, it.categoryList)
                 })
+
+        compositeDisposable.add(
+            RxBus2.listen(FAQ::class.java)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe {
+                    showFaqDetailsFragment(it)
+                })
+    }
+
+    private fun showFaqFragment(selectedCategory: FAQCategory, categoryList: List<FAQCategory>) {
+        appAnalytics.addParam(AnalyticsEvent.FAQ_CATEGORY_SELECTED.NAME,selectedCategory.categoryName)
+        supportFragmentManager.commit(true) {
+            addToBackStack(FaqFragment::class.java.name)
+            replace(
+                R.id.container,
+                FaqFragment.newInstance(selectedCategory, ArrayList(categoryList)),
+                FaqFragment::class.java.name
+            )
+        }
+    }
+
+    private fun showFaqDetailsFragment(faq: FAQ) {
+        appAnalytics.addParam(AnalyticsEvent.FAQ_SELECTED.NAME,faq.id)
+        supportFragmentManager.commit(true) {
+            addToBackStack(FaqDetailsFragment::class.java.name)
+            add(
+                R.id.container,
+                FaqDetailsFragment.newInstance(faq),
+                FaqDetailsFragment::class.java.name
+            )
+        }
     }
 }

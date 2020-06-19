@@ -212,6 +212,7 @@
                                 app:layout_constraintEnd_toEndOf="parent"
                                 app:layout_constraintTop_toBottomOf="@+id/double_line"
                                 tools:text="$ 499" />
+
                         <TextView
                                 android:id="@+id/txt_price"
                                 style="@style/TextStyle.TopBarScroll"
@@ -398,6 +399,7 @@
                             android:layout_marginEnd="@dimen/_16sdp"
                             android:layout_marginBottom="@dimen/_16sdp"
                             android:background="@drawable/round_rectangle_for_course_expo"
+                            android:backgroundTint="@color/button_color"
                             android:clickable="true"
                             android:focusable="true"
                             android:gravity="center"

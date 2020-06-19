@@ -16,7 +16,7 @@ import java.util.*
 interface CommonNetworkService {
 
     @GET("$DIR/support/category_v2/")
-    suspend fun getHelpCategoryV2(): Response<List<TypeOfHelpModel>>
+    suspend fun getHelpCategoryV2(): Response<List<FAQCategory>>
 
     @POST("$DIR/support/complaint/")
     suspend fun submitComplaint(@Body requestComplaint: RequestComplaint): ComplaintResponse
@@ -61,4 +61,13 @@ interface CommonNetworkService {
 
     @POST("$DIR/feedback/nps/response/")
     suspend fun submitNPSResponse(@Body npsByUserRequest: NPSByUserRequest): Any
+
+    @GET("$DIR/support/faq/")
+    suspend fun getFaqList(): List<FAQ>
+
+    @PATCH("$DIR/support/faq/{id}/")
+    suspend fun patchFaqFeedback(
+        @Path("id") id: String,
+        @Body params: Map<String, String?>
+    ): FAQ
 }

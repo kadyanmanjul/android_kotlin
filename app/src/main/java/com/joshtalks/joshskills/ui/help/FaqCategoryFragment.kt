@@ -48,14 +48,14 @@ class FaqCategoryFragment : Fragment() {
         titleView?.text = getString(R.string.faq_title)
         addObservable()
         initRV()
-        if (viewModel.typeOfHelpModelLiveData.value.isNullOrEmpty()) {
+        if (viewModel.faqCategoryLiveData.value.isNullOrEmpty()) {
             viewModel.getAllHelpCategory()
         }
     }
 
     private fun addObservable() {
-        viewModel.typeOfHelpModelLiveData.observe(viewLifecycleOwner, Observer { list ->
-            list.sortedBy { it.id }.forEach { typeOfHelpModel ->
+        viewModel.faqCategoryLiveData.observe(viewLifecycleOwner, Observer { list ->
+            list.sortedBy { it.sortOrder }.forEach { typeOfHelpModel ->
                 faqCategoryBinding.recyclerView.addView(
                     FaqCategoryViewHolder(
                         list,
