@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/container"
+        android:name="com.joshtalks.joshskills.ui.help.FaqFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".ui.help.FaqFragment">
+
+    <com.google.android.material.chip.ChipGroup
+            android:id="@+id/chipGroupCategory"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_12sdp"
+            android:textAlignment="center"
+
+            app:chipSpacingHorizontal="@dimen/_8sdp"
+            app:chipSpacingVertical="@dimen/_2sdp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:singleLine="false"
+            app:singleSelection="true">
+
+    </com.google.android.material.chip.ChipGroup>
+
+    <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+            android:id="@+id/txtCategoryName"
+            style="@style/TextStyle.TopBarScroll"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/_12sdp"
+            android:layout_marginTop="@dimen/_12sdp"
+            android:textColor="@color/black"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/chipGroupCategory"
+            tools:text="Course Information" />
+
+    <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/faqList"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="@dimen/_12sdp"
+            app:layoutManager="LinearLayoutManager"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/txtCategoryName"
+            app:layout_constraintVertical_bias="0"
+            tools:listitem="@layout/faq_item" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

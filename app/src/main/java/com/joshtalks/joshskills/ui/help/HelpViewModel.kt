@@ -10,8 +10,8 @@ import com.joshtalks.joshskills.core.ApiCallStatus
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.JoshApplication
 import com.joshtalks.joshskills.core.showToast
-import com.joshtalks.joshskills.repository.server.ComplaintResponse
-import com.joshtalks.joshskills.repository.server.TypeOfHelpModel
+import com.joshtalks.joshskills.repository.server.FAQ
+import com.joshtalks.joshskills.repository.server.FAQCategory
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
@@ -22,9 +22,9 @@ import java.net.UnknownHostException
 class HelpViewModel(application: Application) : AndroidViewModel(application) {
 
     var context: JoshApplication = getApplication()
-    val typeOfHelpModelLiveData: MutableLiveData<List<TypeOfHelpModel>> = MutableLiveData()
+    val faqCategoryLiveData: MutableLiveData<List<FAQCategory>> = MutableLiveData()
     val apiCallStatusLiveData: MutableLiveData<ApiCallStatus> = MutableLiveData()
-    lateinit var complaintResponse: ComplaintResponse
+    val faqListLiveData: MutableLiveData<List<FAQ>> = MutableLiveData()
     private val jobs = arrayListOf<Job>()
 
     fun getAllHelpCategory() {
@@ -34,13 +34,14 @@ class HelpViewModel(application: Application) : AndroidViewModel(application) {
                     AppObjectController.commonNetworkService.getHelpCategoryV2()
                 if (response.isSuccessful) {
                     apiCallStatusLiveData.postValue(ApiCallStatus.SUCCESS)
-                    typeOfHelpModelLiveData.postValue(response.body())
+                    faqCategoryLiveData.postValue(response.body())
                     return@launch
                 }
 
             } catch (ex: Exception) {
                 when (ex) {
                     is HttpException -> {
+                        showToast(context.getString(R.string.generic_message_for_error))
                     }
                     is SocketTimeoutException, is UnknownHostException -> {
                         showToast(context.getString(R.string.internet_not_available_msz))
@@ -51,6 +52,53 @@ class HelpViewModel(application: Application) : AndroidViewModel(application) {
                 }
             }
             apiCallStatusLiveData.postValue(ApiCallStatus.FAILED)
+        }
+    }
+
+    fun getFaq() {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val response: List<FAQ> =
+                    AppObjectController.commonNetworkService.getFaqList()
+                faqListLiveData.postValue(response)
+            } catch (ex: Exception) {
+                when (ex) {
+                    is HttpException -> {
+                        showToast(context.getString(R.string.generic_message_for_error))
+                    }
+                    is SocketTimeoutException, is UnknownHostException -> {
+                        showToast(context.getString(R.string.internet_not_available_msz))
+                    }
+                    else -> {
+                        Crashlytics.logException(ex)
+                    }
+                }
+            }
+        }
+    }
+
+    fun postFaqFeedback(id: String, boolean: Boolean) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val requestMap = mutableMapOf<String, String?>()
+                if (boolean)
+                    requestMap["yes_count"] = "1"
+                else
+                    requestMap["no_count"] = "1"
+                AppObjectController.commonNetworkService.patchFaqFeedback(id, requestMap)
+            } catch (ex: Exception) {
+                when (ex) {
+                    is HttpException -> {
+                        showToast(context.getString(R.string.generic_message_for_error))
+                    }
+                    is SocketTimeoutException, is UnknownHostException -> {
+                        showToast(context.getString(R.string.internet_not_available_msz))
+                    }
+                    else -> {
+                        Crashlytics.logException(ex)
+                    }
+                }
+            }
         }
     }
 

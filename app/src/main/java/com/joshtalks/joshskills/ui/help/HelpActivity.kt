@@ -14,6 +14,8 @@ import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.CategorySelectEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.HelpRequestEventBus
+import com.joshtalks.joshskills.repository.server.FAQ
+import com.joshtalks.joshskills.repository.server.FAQCategory
 import com.joshtalks.joshskills.repository.server.help.Action
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -51,6 +53,17 @@ class HelpActivity : CoreJoshActivity() {
     private fun openListOfHelp() {
         supportFragmentManager.commit(true) {
             addToBackStack(HelpListFragment::class.java.name)
+            add(
+                R.id.container,
+                HelpListFragment.newInstance(),
+                HelpListFragment::class.java.name
+            )
+        }
+    }
+
+    fun goHome() {
+        supportFragmentManager.commit(true) {
+            addToBackStack(null)
             add(
                 R.id.container,
                 HelpListFragment.newInstance(),
@@ -121,12 +134,43 @@ class HelpActivity : CoreJoshActivity() {
                     }
                 })
 
+
         compositeDisposable.add(
             RxBus2.listen(CategorySelectEventBus::class.java)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
-                    //Todo @Sahil
+                    showFaqFragment(it.selectedCategory, it.categoryList)
                 })
+
+        compositeDisposable.add(
+            RxBus2.listen(FAQ::class.java)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe {
+                    showFaqDetailsFragment(it)
+                })
+    }
+
+    private fun showFaqFragment(selectedCategory: FAQCategory, categoryList: List<FAQCategory>) {
+        supportFragmentManager.commit(true) {
+            addToBackStack(FaqFragment::class.java.name)
+            replace(
+                R.id.container,
+                FaqFragment.newInstance(selectedCategory, ArrayList(categoryList)),
+                FaqFragment::class.java.name
+            )
+        }
+    }
+
+    private fun showFaqDetailsFragment(faq: FAQ) {
+        supportFragmentManager.commit(true) {
+            addToBackStack(FaqDetailsFragment::class.java.name)
+            add(
+                R.id.container,
+                FaqDetailsFragment.newInstance(faq),
+                FaqDetailsFragment::class.java.name
+            )
+        }
     }
 }
