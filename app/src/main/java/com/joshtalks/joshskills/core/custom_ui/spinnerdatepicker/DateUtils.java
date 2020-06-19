@@ -41,7 +41,7 @@ public class DateUtils {
     private static final SimpleDateFormat[] DATE_FORMATS = {
             CommonDateUtils.FULL_DATE_FORMAT,
             CommonDateUtils.DATE_AND_TIME_FORMAT,
-            new SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'", Locale.US),
+            new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US),
             new SimpleDateFormat("yyyyMMdd", Locale.US),
             new SimpleDateFormat("yyyyMMdd'T'HHmmssSSS'Z'", Locale.US),
             new SimpleDateFormat("yyyyMMdd'T'HHmmss'Z'", Locale.US),

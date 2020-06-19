@@ -277,8 +277,6 @@ object Utils {
     }
 
     fun call(context: Context, phoneNumber: String) {
-
-
         val intent = Intent(Intent.ACTION_DIAL).apply {
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         }
@@ -806,3 +804,13 @@ fun isValidFullNumber(countryCode: String, number: String? = EMPTY): Boolean {
         true
     }
 }
+
+fun getPhoneNumber() =
+    when {
+        User.getInstance().phoneNumber.isNotBlank() ->
+            User.getInstance().phoneNumber
+        PrefManager.getStringValue(PAYMENT_MOBILE_NUMBER).isNotBlank() ->
+            PrefManager.getStringValue(PAYMENT_MOBILE_NUMBER).replace(SINGLE_SPACE, EMPTY)
+        else ->
+            EMPTY
+    }

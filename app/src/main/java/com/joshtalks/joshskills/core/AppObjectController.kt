@@ -13,6 +13,8 @@ import com.facebook.appevents.AppEventsLogger
 import com.facebook.stetho.okhttp3.StethoInterceptor
 import com.flurry.android.FlurryAgent
 import com.flurry.android.FlurryPerformance
+import com.freshchat.consumer.sdk.Freshchat
+import com.freshchat.consumer.sdk.FreshchatConfig
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.Logger
@@ -142,6 +144,8 @@ internal class AppObjectController {
 
         @JvmStatic
         lateinit var firebaseAnalytics: FirebaseAnalytics
+        @JvmStatic
+        lateinit var freshChat: Freshchat
 
         @JvmStatic
         var currentPlayingAudioObject: ChatModel? = null
@@ -164,6 +168,7 @@ internal class AppObjectController {
             WorkMangerAdmin.deviceIdGenerateWorker()
             configureCrashlytics()
             initFlurryAnalytics()
+            initialiseFreshchat()
             initNewRelic()
             EmojiManager.install(GoogleEmojiProvider())
             videoDownloadTracker = VideoDownloadController.getInstance().downloadTracker
@@ -352,6 +357,31 @@ internal class AppObjectController {
                 .build(joshApplication, BuildConfig.FLURRY_API_KEY)
         }
 
+        private fun initialiseFreshchat() {
+            val config =
+                FreshchatConfig(BuildConfig.FRESH_CHAT_APP_ID, BuildConfig.FRESH_CHAT_APP_KEY)
+            config.isCameraCaptureEnabled = true
+            config.isGallerySelectionEnabled = true
+            config.isResponseExpectationEnabled = true
+            config.domain = "https://msdk.in.freshchat.com"
+            freshChat = Freshchat.getInstance(joshApplication)
+            freshChat.init(config)
+        }
+
+        fun restoreUser(restoreId: String?) {
+            if (restoreId.isNullOrBlank()) {
+                freshChat.identifyUser(PrefManager.getStringValue(USER_UNIQUE_ID), null)
+            } else if (PrefManager.getBoolValue(FRESH_CHAT_ID_RESTORED).not()) {
+                PrefManager.put(FRESH_CHAT_ID_RESTORED, true)
+                freshChat.identifyUser(PrefManager.getStringValue(USER_UNIQUE_ID), restoreId)
+            }
+        }
+
+        fun getUnreadFreshchatMessages() {
+            freshChat.getUnreadCountAsync { _, unreadCount ->
+                PrefManager.put(FRESH_CHAT_UNREAD_MESSAGES, unreadCount)
+            }
+        }
 
         fun clearDownloadMangerCallback() {
             try {

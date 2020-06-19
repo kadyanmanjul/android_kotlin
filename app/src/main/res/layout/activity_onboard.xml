@@ -92,6 +92,7 @@
                 android:layout_height="51dp"
                 android:layout_gravity="center"
                 android:background="@drawable/round_rectangle_for_course_expo"
+                android:backgroundTint="@color/button_color"
                 android:clickable="true"
                 android:focusable="true"
                 android:gravity="center"

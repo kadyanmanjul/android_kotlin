@@ -15,14 +15,21 @@ import java.util.*
 @JvmSuppressWildcards
 interface CommonNetworkService {
 
-    @GET("$DIR/support/category/")
-    suspend fun getHelpCategory(): List<TypeOfHelpModel>
+    @GET("$DIR/support/category_v2/")
+    suspend fun getHelpCategoryV2(): Response<List<FAQCategory>>
 
     @POST("$DIR/support/complaint/")
     suspend fun submitComplaint(@Body requestComplaint: RequestComplaint): ComplaintResponse
 
     @POST("$DIR/mentor/gaid/")
     fun registerGAIdAsync(@Body requestRegisterGId: RequestRegisterGId): Deferred<RequestRegisterGId>
+
+    @GET("$DIR/mentor/restore_id/{id}/")
+    suspend fun getFreshChatRestoreIdAsync(@Path("id") id: String): FreshChatRestoreIDResponse
+
+    @FormUrlEncoded
+    @PATCH("$DIR/mentor/restore_id/{id}/")
+    suspend fun postFreshChatRestoreIDAsync(@Path("id") id: String, @FieldMap params: Map<String, String?>): FreshChatRestoreIDResponse
 
     @POST("$DIR/mentor/gaid_detail/")
     fun registerGAIdDetailsAsync(@Body params: Map<String, String>): Deferred<GaIDMentorModel>
@@ -54,4 +61,13 @@ interface CommonNetworkService {
 
     @POST("$DIR/feedback/nps/response/")
     suspend fun submitNPSResponse(@Body npsByUserRequest: NPSByUserRequest): Any
+
+    @GET("$DIR/support/faq/")
+    suspend fun getFaqList(): List<FAQ>
+
+    @PATCH("$DIR/support/faq/{id}/")
+    suspend fun patchFaqFeedback(
+        @Path("id") id: String,
+        @Body params: Map<String, String?>
+    ): FAQ
 }

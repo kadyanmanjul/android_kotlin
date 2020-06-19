@@ -193,14 +193,19 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
         super.processIntent(mIntent)
         if (intent.hasExtra(UPDATED_CHAT_ROOM_OBJECT)) {
             flowFrom = "Notification"
-            // TODO fix notification issue
             val temp = intent.getParcelableExtra(CHAT_ROOM_OBJECT) as InboxEntity?
             temp?.let { inboxObj ->
-                if (inboxEntity.conversation_id != inboxObj.conversation_id) {
-                    inboxEntity = inboxObj
-                    initViewModel()
-                    fetchMessage()
+                try {
+                    val tempIn: InboxEntity? = inboxEntity
+                    if (tempIn?.conversation_id != inboxObj.conversation_id) {
+                        this.inboxEntity = inboxObj
+                    }
+                } catch (ex: Exception) {
+                    this.finish()
+                    ex.printStackTrace()
                 }
+                initViewModel()
+                fetchMessage()
             }
         }
         if (intent.hasExtra(HAS_COURSE_REPORT)) {
@@ -220,6 +225,7 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
             this.conversationBinding.viewmodel = conversationViewModel
             this.conversationBinding.lifecycleOwner = this
         } catch (ex: Exception) {
+            ex.printStackTrace()
         }
         return this.conversationViewModel
         //var pq: SavedStateHandle
@@ -1127,7 +1133,8 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
                         .addParam(AnalyticsEvent.COURSE_NAME.NAME, inboxEntity.course_name)
                         .addParam(
                             AnalyticsEvent.PRACTICE_SOLVED.NAME,
-                            (it.chatModel.question != null) && (it.chatModel.question!!.practiceEngagement.isNullOrEmpty().not())
+                            (it.chatModel.question != null) && (it.chatModel.question!!.practiceEngagement.isNullOrEmpty()
+                                .not())
                         )
                         .addParam("chatId", it.chatModel.chatId)
                     PractiseSubmitActivity.startPractiseSubmissionActivity(
@@ -1365,7 +1372,10 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
                                 .setImageQuality(ImageQuality.HIGH)
                                 .setScreenOrientation(Options.SCREEN_ORIENTATION_PORTRAIT)
 
-                            JoshCameraActivity.startJoshCameraxActivity(this@ConversationActivity, options)
+                            JoshCameraActivity.startJoshCameraxActivity(
+                                this@ConversationActivity,
+                                options
+                            )
                             return
 
                         }

@@ -2,6 +2,7 @@ package com.joshtalks.joshskills.ui.referral
 
 import android.os.Bundle
 import android.text.Editable
+import android.text.InputFilter
 import android.text.TextWatcher
 import android.view.*
 import androidx.databinding.DataBindingUtil
@@ -48,12 +49,14 @@ class EnterReferralCodeFragment : BottomSheetDialogFragment() {
             false
         )
         binding.lifecycleOwner = this
-        binding.fragment = this
+        binding.handler = this
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.tvReferralCode.filters =
+            arrayOf(InputFilter.AllCaps(), InputFilter.LengthFilter(5))
         setListeners()
     }
 
@@ -70,12 +73,9 @@ class EnterReferralCodeFragment : BottomSheetDialogFragment() {
                 }
             }
 
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-            }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-
-            }
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
         })
     }
 
@@ -102,8 +102,12 @@ class EnterReferralCodeFragment : BottomSheetDialogFragment() {
                 if (res.referralStatus) {
                     appAnalyticsP
                         .addParam(AnalyticsEvent.COUPON_VALID.NAME, true)
-                        .addParam(AnalyticsEvent.REFERRAL_CODE.NAME,binding.tvReferralCode.text.toString().plus(
-                            SINGLE_SPACE).plus(res.referrerName))
+                        .addParam(
+                            AnalyticsEvent.REFERRAL_CODE.NAME,
+                            binding.tvReferralCode.text.toString().plus(
+                                SINGLE_SPACE
+                            ).plus(res.referrerName)
+                        )
                     binding.wrongCode.visibility = View.GONE
                     PrefManager.put(REFERRED_REFERRAL_CODE, data["coupon"].toString())
                     requireActivity().supportFragmentManager
@@ -134,13 +138,13 @@ class EnterReferralCodeFragment : BottomSheetDialogFragment() {
         }
     }
 
-    fun showProgress(){
+    private fun showProgress() {
         binding.progressBarButton.visibility = View.VISIBLE
         binding.next.visibility = View.GONE
 
     }
 
-    fun hideProgress(){
+    private fun hideProgress() {
         binding.progressBarButton.visibility = View.INVISIBLE
         binding.next.visibility = View.VISIBLE
     }

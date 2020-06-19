@@ -7,17 +7,19 @@ import com.bumptech.glide.request.RequestOptions
 import com.github.twocoffeesoneteam.glidetovectoryou.GlideToVectorYou
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.SINGLE_SPACE
 import com.joshtalks.joshskills.messaging.RxBus2
-import com.joshtalks.joshskills.repository.local.eventbus.HelpRequestEventBus
-import com.joshtalks.joshskills.repository.server.help.Option
+import com.joshtalks.joshskills.repository.local.eventbus.CategorySelectEventBus
+import com.joshtalks.joshskills.repository.server.FAQCategory
 import com.mindorks.placeholderview.annotations.Click
 import com.mindorks.placeholderview.annotations.Layout
 import com.mindorks.placeholderview.annotations.Resolve
 import com.mindorks.placeholderview.annotations.View
 
-@Layout(R.layout.help_view_layout)
-class HelpViewHolder(var option: Option, var unreadMessages: Int) {
+@Layout(R.layout.faq_category_item_layout)
+class FaqCategoryViewHolder(
+    val listFAQCategory: List<FAQCategory>,
+    var faqCategory: FAQCategory
+) {
 
     @View(R.id.iv_category_icon)
     lateinit var categoryIconIV: AppCompatImageView
@@ -27,15 +29,12 @@ class HelpViewHolder(var option: Option, var unreadMessages: Int) {
 
     @Resolve
     fun onViewInflated() {
-        if (unreadMessages <= 1)
-            categoryNameTV.text = option.name
-        else categoryNameTV.text = option.name.plus(SINGLE_SPACE).plus("(${unreadMessages} Msg)")
-
+        categoryNameTV.text = faqCategory.categoryName
         GlideToVectorYou
             .init()
             .with(AppObjectController.joshApplication)
             .requestBuilder
-            .load(option.url)
+            .load(faqCategory.iconUrl)
             .transition(DrawableTransitionOptions.withCrossFade())
             .apply(RequestOptions().centerCrop())
             .into(categoryIconIV)
@@ -43,7 +42,7 @@ class HelpViewHolder(var option: Option, var unreadMessages: Int) {
 
     @Click(R.id.root_view)
     fun onClick() {
-        RxBus2.publish(HelpRequestEventBus(option))
+        RxBus2.publish(CategorySelectEventBus(listFAQCategory, faqCategory))
     }
 
 }

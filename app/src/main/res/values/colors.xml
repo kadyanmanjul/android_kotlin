@@ -77,6 +77,7 @@
 
     <!-- ______________New App Colors_______________-->
     <color name="button_color">#107BE5</color>
+    <color name="light_blue">#F1F7FE</color>
     <color name="black">#172344</color>
     <color name="pitch_black">#181B20</color>
     <color name="dark_grey">#596273</color>
@@ -86,5 +87,6 @@
     <color name="artboard_color">#F1F2F4</color>
     <color name="error">#E33333</color>
     <color name="transparent">#00000000</color>
+    <color name="faq_f1">#F1F7FE</color>
 
 </resources>

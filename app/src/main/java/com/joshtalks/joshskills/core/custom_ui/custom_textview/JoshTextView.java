@@ -18,7 +18,6 @@ import androidx.appcompat.widget.AppCompatTextView;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -126,7 +125,7 @@ public class JoshTextView extends AppCompatTextView {
 
     private List<AutoLinkItem> matchedRanges(CharSequence text) {
 
-        List<AutoLinkItem> autoLinkItems = new LinkedList<>();
+        List<AutoLinkItem> autoLinkItems = new ArrayList<>();
 
         if (autoLinkModes == null) {
             addAutoLinkMode(

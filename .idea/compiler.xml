@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <bytecodeTargetLevel>
+      <module name="josh-skills.app" target="1.8" />
+      <module name="josh-skills.emoji-google" target="1.8" />
+      <module name="josh-skills.emojiBase" target="1.8" />
+      <module name="josh-skills.joshcamerax" target="1.8" />
+      <module name="josh-skills.joshlibrary" target="1.7" />
+      <module name="josh-skills.mediapicker" target="1.7" />
+      <module name="josh-skills.pdfviewer" target="1.7" />
+      <module name="josh-skills.pixeditor" target="1.7" />
+      <module name="josh-skills.recordview" target="1.7" />
+    </bytecodeTargetLevel>
+  </component>
+</project>

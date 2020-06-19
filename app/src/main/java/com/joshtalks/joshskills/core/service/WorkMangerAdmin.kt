@@ -27,6 +27,7 @@ object WorkMangerAdmin {
                     OneTimeWorkRequestBuilder<UpdateDeviceDetailsWorker>().build()
                 )
             )
+            .then(OneTimeWorkRequestBuilder<GenerateRestoreIdWorker>().build())
             .enqueue()
 
     }

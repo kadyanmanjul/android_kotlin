@@ -335,4 +335,11 @@
     <string name="close">Close</string>
     <string name="show_details">Show Details</string>
     <string name="coupon_applied_free_course">Coupon Applied! You got this course\nfor free. Register Now</string>
+
+    <string name="freshchat_file_provider_authority">com.joshtalks.joshskills.provider</string>
+    <string name="help_answer">Was this answer helpful?</string>
+    <string name="go_home_text">Go home</string>
+    <string name="faq_title">FAQ</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
 </resources>
