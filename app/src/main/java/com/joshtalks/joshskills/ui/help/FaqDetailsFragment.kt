@@ -9,6 +9,8 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
+import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.databinding.FragmentFaqDetailBinding
 import com.joshtalks.joshskills.repository.server.FAQ
 import kotlinx.android.synthetic.main.fragment_faq_detail.*
@@ -18,6 +20,7 @@ class FaqDetailsFragment : Fragment() {
     private lateinit var binding: FragmentFaqDetailBinding
     private lateinit var viewModel: HelpViewModel
     private lateinit var faq: FAQ
+    private lateinit var appAnalytics: AppAnalytics
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,6 +29,11 @@ class FaqDetailsFragment : Fragment() {
             faq = it.getParcelable(FAQ_DETAILS)!!
         }
         viewModel = ViewModelProvider(this).get(HelpViewModel::class.java)
+        appAnalytics=AppAnalytics.create(AnalyticsEvent.FAQ_QUESTION_SCREEN.NAME)
+            .addBasicParam()
+            .addUserDetails()
+            .addParam(AnalyticsEvent.FAQ_SLECTED.NAME.plus(" id"),faq.id)
+            .addParam(AnalyticsEvent.FAQ_QUESTION_FEEDBACK.NAME,"none")
     }
 
     override fun onCreateView(
@@ -57,6 +65,7 @@ class FaqDetailsFragment : Fragment() {
         }
         yes_btn.isEnabled = false
         no_btn.isEnabled = false
+        appAnalytics.addParam(AnalyticsEvent.FAQ_QUESTION_FEEDBACK.NAME,isAnswerHelpful)
         patchRequestForAnswer(isAnswerHelpful)
     }
 
@@ -66,6 +75,11 @@ class FaqDetailsFragment : Fragment() {
 
     fun dismiss() {
         requireActivity().finish()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        appAnalytics.push()
     }
 
     companion object {

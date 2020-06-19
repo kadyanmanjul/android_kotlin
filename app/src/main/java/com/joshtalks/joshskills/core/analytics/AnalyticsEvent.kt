@@ -48,6 +48,13 @@ enum class AnalyticsEvent(val NAME: String) {
     COUNTRY_FLAG_CHANGED("CountryFlag Icon Changed V3"),
     HELP_INITIATED("Help Initiated V3"),
     TERMS_CONDITION_CLICKED("Terms&Conditions Clicked V3"),
+    HELP_CHAT("Help chat selected V3"),
+    FAQ_SLECTED("faq selected V3"),
+    FAQ_QUESTIONS_LIST_SCREEN("faq questions list screen V3"),
+    FAQ_QUESTION_SCREEN("faq question screen V3"),
+    FAQ_QUESTION_FEEDBACK("faq question feedback V3"),
+    FAQ_CATEGORY_SELECTED("faq category selected V3"),
+    FAQ_SELECTED("faq selected V3"),
 
     //New Login/SignUp Status Status
     //LOGIN_INITIATED("Login initiated V3"),

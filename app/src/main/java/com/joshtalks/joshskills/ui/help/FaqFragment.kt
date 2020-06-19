@@ -13,6 +13,8 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.chip.Chip
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
+import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.repository.server.FAQCategory
 import kotlinx.android.synthetic.main.fragment_faq.*
 
@@ -22,6 +24,7 @@ class FaqFragment : Fragment() {
     private var selectedCategory: FAQCategory? = null
     private val viewModel by lazy { ViewModelProvider(this).get(HelpViewModel::class.java) }
     private val faqAdapter by lazy { FaqAdapter(ArrayList()) }
+    private lateinit var appAnalytics: AppAnalytics
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,6 +33,10 @@ class FaqFragment : Fragment() {
             categoryList = it.getParcelableArrayList(ARG_CATEGORY_LIST) ?: ArrayList()
             selectedCategory = it.getParcelable(ARG_SELECTED_CATEGORY)
         }
+        appAnalytics= AppAnalytics.create(AnalyticsEvent.FAQ_QUESTIONS_LIST_SCREEN.NAME)
+            .addBasicParam()
+            .addUserDetails()
+            .addParam(AnalyticsEvent.FAQ_CATEGORY_SELECTED.NAME, selectedCategory?.categoryName)
     }
 
     override fun onCreateView(
@@ -106,5 +113,10 @@ class FaqFragment : Fragment() {
                     putParcelable(ARG_SELECTED_CATEGORY, selectedCategory)
                 }
             }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        appAnalytics.push()
     }
 }

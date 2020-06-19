@@ -61,17 +61,6 @@ class HelpActivity : CoreJoshActivity() {
         }
     }
 
-    fun goHome() {
-        supportFragmentManager.commit(true) {
-            addToBackStack(null)
-            add(
-                R.id.container,
-                HelpListFragment.newInstance(),
-                HelpListFragment::class.java.name
-            )
-        }
-    }
-
     private fun openFaqCategory() {
         supportFragmentManager.commit(true) {
             addToBackStack(FaqCategoryFragment::class.java.name)
@@ -118,14 +107,29 @@ class HelpActivity : CoreJoshActivity() {
                     when {
                         Action.CALL == it.option.action -> {
                             it.option.actionData?.run {
+                                appAnalytics.addParam(AnalyticsEvent.CALL_HELPLINE.NAME,it.option.actionData.toString())
+                                AppAnalytics.create(AnalyticsEvent.CLICK_HELPLINE_SELECTED.NAME)
+                                    .addBasicParam()
+                                    .addUserDetails()
+                                    .push()
                                 Utils.call(this@HelpActivity, this)
                             }
                         }
                         Action.HELPCHAT == it.option.action -> {
+                            appAnalytics.addParam(AnalyticsEvent.HELP_CHAT.NAME,it.option.action.toString())
+                            AppAnalytics.create(AnalyticsEvent.HELP_CHAT.NAME)
+                                .addBasicParam()
+                                .addUserDetails()
+                                .push()
                             Freshchat.showConversations(applicationContext)
                             PrefManager.put(FRESH_CHAT_UNREAD_MESSAGES, 0)
                         }
                         Action.FAQ == it.option.action -> {
+                            appAnalytics.addParam(AnalyticsEvent.FAQ_SLECTED.NAME,it.option.action.toString())
+                            AppAnalytics.create(AnalyticsEvent.FAQ_SLECTED.NAME)
+                                .addBasicParam()
+                                .addUserDetails()
+                                .push()
                             openFaqCategory()
                         }
                         else -> {
@@ -153,6 +157,7 @@ class HelpActivity : CoreJoshActivity() {
     }
 
     private fun showFaqFragment(selectedCategory: FAQCategory, categoryList: List<FAQCategory>) {
+        appAnalytics.addParam(AnalyticsEvent.FAQ_CATEGORY_SELECTED.NAME,selectedCategory.categoryName)
         supportFragmentManager.commit(true) {
             addToBackStack(FaqFragment::class.java.name)
             replace(
@@ -164,6 +169,7 @@ class HelpActivity : CoreJoshActivity() {
     }
 
     private fun showFaqDetailsFragment(faq: FAQ) {
+        appAnalytics.addParam(AnalyticsEvent.FAQ_SELECTED.NAME,faq.id)
         supportFragmentManager.commit(true) {
             addToBackStack(FaqDetailsFragment::class.java.name)
             add(
