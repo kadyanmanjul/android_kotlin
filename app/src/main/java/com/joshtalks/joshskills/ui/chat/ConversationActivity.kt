@@ -193,7 +193,7 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
         super.processIntent(mIntent)
         if (intent.hasExtra(UPDATED_CHAT_ROOM_OBJECT)) {
             flowFrom = "Notification"
-            val temp = intent.getParcelableExtra(CHAT_ROOM_OBJECT) as InboxEntity?
+            val temp = intent.getParcelableExtra(UPDATED_CHAT_ROOM_OBJECT) as InboxEntity?
             temp?.let { inboxObj ->
                 try {
                     val tempIn: InboxEntity? = inboxEntity
@@ -228,7 +228,6 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
             ex.printStackTrace()
         }
         return this.conversationViewModel
-        //var pq: SavedStateHandle
     }
 
 
@@ -256,7 +255,6 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
                 ex.printStackTrace()
             }
         }, 5000)
-
     }
 
     private fun fetchMessage() {
