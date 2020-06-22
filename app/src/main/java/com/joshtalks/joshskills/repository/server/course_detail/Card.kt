@@ -9,7 +9,7 @@ data class Card(
     val sequenceNumber: Int,
 
     @SerializedName("card_name")
-    val cardType: String,
+    val cardType: CardType,
 
     @SerializedName("data")
     val data: JsonObject
