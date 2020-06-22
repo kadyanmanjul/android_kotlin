@@ -743,10 +743,10 @@ fun convertCamelCase(string: String): String {
     return output.toString().trim()
 }
 
-fun showToast(message: String) {
+fun showToast(message: String, length: Int = Toast.LENGTH_SHORT) {
     AppObjectController.uiHandler.post {
         StyleableToast.Builder(AppObjectController.joshApplication).gravity(Gravity.BOTTOM)
-            .text(message).cornerRadius(16).length(Toast.LENGTH_SHORT)
+            .text(message).cornerRadius(16).length(length)
             .solidBackground().show()
     }
 
