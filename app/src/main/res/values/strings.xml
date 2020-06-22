@@ -81,7 +81,7 @@
 
     <string name="find_more_courses">Find More Courses</string>
     <string name="please_enter_detail_toast">Please enter your details to continue</string>
-    <string name="internet_not_available_msz">Internet not available</string>
+    <string name="internet_not_available_msz">Seems like your Internet is too slow or not available.</string>
 
     <string name="plz_wait">Please wait&#8230;</string>
     <string name="resend_otp">Didn\'t get an otp?</string>
