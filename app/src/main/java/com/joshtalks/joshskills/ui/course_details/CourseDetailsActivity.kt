@@ -4,9 +4,12 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.R
 
 class CourseDetailsActivity : AppCompatActivity() {
+
+    private val viewModel by lazy { ViewModelProvider(this).get(CourseDetailsViewModel::class.java) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -20,7 +23,7 @@ class CourseDetailsActivity : AppCompatActivity() {
     }
 
     private fun getCourseDetails(testId: Int) {
-        // TODO() - Call Api here
+        viewModel.fetchCourseDetails(testId)
     }
 
 

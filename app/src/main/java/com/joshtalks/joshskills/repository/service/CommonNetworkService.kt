@@ -4,6 +4,7 @@ import com.joshtalks.joshskills.repository.local.model.GaIDMentorModel
 import com.joshtalks.joshskills.repository.local.model.RequestRegisterGId
 import com.joshtalks.joshskills.repository.local.model.nps.NPSQuestionModel
 import com.joshtalks.joshskills.repository.server.*
+import com.joshtalks.joshskills.repository.server.course_detail.CourseDetailsResponseV2
 import com.joshtalks.joshskills.repository.server.feedback.FeedbackStatusResponse
 import com.joshtalks.joshskills.repository.server.feedback.RatingDetails
 import com.joshtalks.joshskills.repository.server.feedback.UserFeedbackRequest
@@ -29,7 +30,10 @@ interface CommonNetworkService {
 
     @FormUrlEncoded
     @PATCH("$DIR/mentor/restore_id/{id}/")
-    suspend fun postFreshChatRestoreIDAsync(@Path("id") id: String, @FieldMap params: Map<String, String?>): FreshChatRestoreIDResponse
+    suspend fun postFreshChatRestoreIDAsync(
+        @Path("id") id: String,
+        @FieldMap params: Map<String, String?>
+    ): FreshChatRestoreIDResponse
 
     @POST("$DIR/mentor/gaid_detail/")
     fun registerGAIdDetailsAsync(@Body params: Map<String, String>): Deferred<GaIDMentorModel>
@@ -70,4 +74,9 @@ interface CommonNetworkService {
         @Path("id") id: String,
         @Body params: Map<String, String?>
     ): FAQ
+
+    @GET("$DIR/course/course_details/")
+    suspend fun getCourseDetails(
+        @Body params: Map<String, String>
+    ): Response<CourseDetailsResponseV2>
 }
