@@ -78,7 +78,7 @@ class SignUpVerificationFragment : Fragment() {
         binding.otpView.setOtpCompletionListener {
             verifyOTP()
         }
-        viewModel.signUpStatus.observe(this, Observer {
+        viewModel.signUpStatus.observe(requireActivity(), Observer {
             it?.run {
                 if (this == SignUpStepStatus.ReGeneratedOTP || this == SignUpStepStatus.WRONG_OTP) {
                     binding.otpView2.otp = EMPTY
@@ -91,7 +91,7 @@ class SignUpVerificationFragment : Fragment() {
                 }
             }
         })
-        viewModel.verificationStatus.observe(this, Observer {
+        viewModel.verificationStatus.observe(requireActivity(), Observer {
             it.run {
                 when {
                     this == VerificationStatus.INITIATED -> {
