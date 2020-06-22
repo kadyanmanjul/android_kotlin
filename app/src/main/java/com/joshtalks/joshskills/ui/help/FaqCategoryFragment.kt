@@ -20,16 +20,11 @@ import com.vanniktech.emoji.Utils
 class FaqCategoryFragment : Fragment() {
 
     private lateinit var faqCategoryBinding: FragmentFaqCategoryBinding
-    private lateinit var viewModel: HelpViewModel
+    private val viewModel by lazy { ViewModelProvider(requireActivity()).get(HelpViewModel::class.java) }
 
     companion object {
         @JvmStatic
         fun newInstance() = FaqCategoryFragment()
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        viewModel = ViewModelProvider(requireActivity()).get(HelpViewModel::class.java)
     }
 
     override fun onCreateView(
