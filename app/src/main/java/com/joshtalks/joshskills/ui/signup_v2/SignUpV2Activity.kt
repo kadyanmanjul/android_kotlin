@@ -22,7 +22,9 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
-import com.google.android.gms.tasks.Task
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.GoogleAuthProvider
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
@@ -46,6 +48,7 @@ import com.truecaller.android.sdk.clients.VerificationDataBundle
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import timber.log.Timber
 import java.util.*
 
 private const val GOOGLE_SIGN_UP_REQUEST_CODE = 9001
@@ -63,6 +66,7 @@ class SignUpV2Activity : BaseActivity() {
     private var compositeDisposable = CompositeDisposable()
     var verification: Verification? = null
     private var sinchConfig: Config? = null
+    private lateinit var auth: FirebaseAuth
 
 
     init {
@@ -156,6 +160,7 @@ class SignUpV2Activity : BaseActivity() {
     }
 
     private fun initLoginFeatures() {
+        auth = FirebaseAuth.getInstance()
         setupGoogleLogin()
         setupFacebookLogin()
     }
@@ -165,7 +170,6 @@ class SignUpV2Activity : BaseActivity() {
             .requestIdToken(getString(R.string.default_web_client_id))
             .requestEmail().requestId().requestProfile().build()
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso)
-        mGoogleSignInClient?.signOut()
     }
 
     private fun setupFacebookLogin() {
@@ -260,13 +264,17 @@ class SignUpV2Activity : BaseActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == GOOGLE_SIGN_UP_REQUEST_CODE) {
+            val task = GoogleSignIn.getSignedInAccountFromIntent(data)
             try {
-                val task: Task<GoogleSignInAccount> =
-                    GoogleSignIn.getSignedInAccountFromIntent(data)
-                val account: GoogleSignInAccount = task.getResult(ApiException::class.java)
+                val account = task.getResult(ApiException::class.java)!!
+                Timber.e("firebaseAuthWithGoogle:" + account.id)
                 handleGoogleSignInResult(account)
-
             } catch (e: ApiException) {
+                hideProgressBar()
+                if (BuildConfig.DEBUG) {
+                    showToast(getString(R.string.gmail_login_error_message))
+                }
+            } catch (e: Exception) {
                 hideProgressBar()
             }
             return
@@ -320,14 +328,36 @@ class SignUpV2Activity : BaseActivity() {
     }
 
     private fun handleGoogleSignInResult(account: GoogleSignInAccount) {
-        if (account.id.isNullOrEmpty().not()) {
+        if (account.idToken.isNullOrEmpty().not()) {
+            val credential = GoogleAuthProvider.getCredential(account.idToken!!, null)
+            auth.signInWithCredential(credential)
+                .addOnCompleteListener(this) { task ->
+                    if (task.isSuccessful) {
+                        val accountUser = auth.currentUser
+                        handleFirebaseAuth(account.id, accountUser)
+                    } else {
+                        showToast(getString(R.string.generic_message_for_error))
+                    }
+                }
+        } else {
+            showToast(getString(R.string.generic_message_for_error))
+        }
+    }
+
+    private fun handleFirebaseAuth(
+        gId: String?,
+        accountUser: FirebaseUser?
+    ) {
+        if (accountUser != null) {
             viewModel.signUpUsingSocial(
                 LoginViaStatus.GMAIL,
-                account.id!!,
-                account.displayName,
-                account.email,
-                account.photoUrl?.toString()
+                gId ?: accountUser.uid,
+                accountUser.displayName,
+                accountUser.email,
+                accountUser.photoUrl?.toString()
             )
+        } else {
+            showToast(getString(R.string.generic_message_for_error))
         }
     }
 
