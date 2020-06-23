@@ -1,3 +1,3 @@
 package com.joshtalks.joshskills.ui.view_holders
 
-abstract class CourseDetailsBaseCell
+abstract class CourseDetailsBaseCell(open val sequenceNumber: Int)
