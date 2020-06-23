@@ -194,6 +194,8 @@
     <string name="start_course_now">Start Your Course Now</string>
     <string name="show_more">SHOW MORE</string>
     <string name="show_less">SHOW LESS</string>
+    <string name="read_more">Read More</string>
+    <string name="read_less">Read Less</string>
     <string name="answer_not_submitted">Answer not submitted</string>
     <string name="answer_submitted">Practice Successfully Submitted</string>
     <string name="offer_bachat" formatted="false">Aapne is course par pure %s ki bachat ki hai</string>
