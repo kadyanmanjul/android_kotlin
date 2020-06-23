@@ -183,15 +183,18 @@ class SignUpV2Activity : BaseActivity() {
                         getUserDetailsFromFB(loginResult.accessToken)
                     } else {
                         showToast(getString(R.string.something_went_wrong))
+                        hideProgressBar()
                     }
                 }
 
                 override fun onCancel() {
+                    hideProgressBar()
                 }
 
                 override fun onError(exception: FacebookException) {
                     exception.printStackTrace()
                     LogException.catchException(exception)
+                    hideProgressBar()
                 }
             })
     }
@@ -277,12 +280,13 @@ class SignUpV2Activity : BaseActivity() {
             } catch (e: Exception) {
                 hideProgressBar()
             }
-            return
         }
         fbCallbackManager.onActivityResult(requestCode, resultCode, data)
         if (TruecallerSDK.getInstance().isUsable) {
             TruecallerSDK.getInstance().onActivityResultObtained(this, resultCode, data)
+            return
         }
+        hideProgressBar()
     }
 
     private fun gmailLogin() {

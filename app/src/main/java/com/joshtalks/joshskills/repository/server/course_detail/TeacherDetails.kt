@@ -14,7 +14,7 @@ data class TeacherDetails(
     val designation: String,
 
     @SerializedName("dp_url")
-    val dpUrl: String,
+    val dpUrl: String?,
 
     @SerializedName("short_description")
     val shortDescription: String,
@@ -23,6 +23,6 @@ data class TeacherDetails(
     val longDescription: String,
 
     @SerializedName("bg_url")
-    val bgUrl: String
+    val bgUrl: String?
 
 ) : Parcelable
