@@ -342,4 +342,6 @@
     <string name="faq_title">FAQ</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
+    <string name="gmail_login_error_message">An error occurred, please try again!</string>
+
 </resources>

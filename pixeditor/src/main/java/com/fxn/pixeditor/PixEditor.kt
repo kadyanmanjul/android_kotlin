@@ -23,7 +23,6 @@ import com.fxn.pixeditor.imageeditengine.adapters.FilterImageAdapter
 import com.fxn.pixeditor.imageeditengine.adapters.PreviewImageAdapter
 import com.fxn.pixeditor.imageeditengine.adapters.PreviewViewPagerAdapter
 import com.fxn.pixeditor.imageeditengine.filter.ApplyFilterTask
-import com.fxn.pixeditor.imageeditengine.filter.GetFiltersTask
 import com.fxn.pixeditor.imageeditengine.filter.ProcessingImage
 import com.fxn.pixeditor.imageeditengine.interfaces.OnSelectionStringListener
 import com.fxn.pixeditor.imageeditengine.interfaces.WorkFinish
@@ -36,7 +35,6 @@ import com.fxn.pixeditor.imageeditengine.views.ViewTouchListener
 import com.fxn.pixeditor.imageeditengine.views.imagezoom.ImageViewTouch
 import kotlinx.android.synthetic.main.activity_pix_editor.*
 import java.io.Serializable
-
 
 
 class PixEditor : AppCompatActivity(), View.OnClickListener, FilterImageAdapter.FilterImageAdapterListener,
@@ -141,7 +139,8 @@ class PixEditor : AppCompatActivity(), View.OnClickListener, FilterImageAdapter.
             filterLayoutHeight = filter_list_layout.height
             filter_list_layout.translationY = filterLayoutHeight.toFloat()
             photoEditorView =
-                mainViewPager.getChildAt(position).findViewById(R.id.photo_editor_view) as PhotoEditorView
+                mainViewPager.getChildAt(position)
+                    ?.findViewById(R.id.photo_editor_view) as PhotoEditorView
             val mainImageView = mainViewPager.getChildAt(position).findViewById(R.id.image_iv) as ImageViewTouch
 
 

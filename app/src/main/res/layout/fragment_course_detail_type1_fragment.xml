@@ -35,7 +35,8 @@
                 android:layout_height="match_parent"
                 android:layout_above="@+id/below_buy_cv"
                 android:background="#f4f4f4"
-                android:visibility="gone">
+                android:visibility="gone"
+                card_view:visibility="visible">
 
             <LinearLayout
                     android:layout_width="match_parent"
@@ -325,7 +326,8 @@
                 android:elevation="@dimen/_8sdp"
                 android:visibility="gone"
                 card_view:cardElevation="@dimen/_8sdp"
-                card_view:cardPreventCornerOverlap="false">
+                card_view:cardPreventCornerOverlap="false"
+                card_view:visibility="visible">
 
             <View
                     android:layout_width="match_parent"
