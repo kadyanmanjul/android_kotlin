@@ -6,7 +6,6 @@ import android.content.pm.ActivityInfo
 import android.graphics.Rect
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
@@ -15,26 +14,16 @@ import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.databinding.ActivityCourseDetailsBinding
-import com.joshtalks.joshskills.repository.server.course_detail.AboutJosh
-import com.joshtalks.joshskills.repository.server.course_detail.Card
-import com.joshtalks.joshskills.repository.server.course_detail.CardType
-import com.joshtalks.joshskills.repository.server.course_detail.CourseOverviewData
-import com.joshtalks.joshskills.repository.server.course_detail.DemoLesson
-import com.joshtalks.joshskills.repository.server.course_detail.FAQData
-import com.joshtalks.joshskills.repository.server.course_detail.Guidelines
-import com.joshtalks.joshskills.repository.server.course_detail.LocationStats
-import com.joshtalks.joshskills.repository.server.course_detail.LongDescription
-import com.joshtalks.joshskills.repository.server.course_detail.OtherInfo
-import com.joshtalks.joshskills.repository.server.course_detail.Reviews
-import com.joshtalks.joshskills.repository.server.course_detail.StudentFeedback
-import com.joshtalks.joshskills.repository.server.course_detail.SyllabusData
-import com.joshtalks.joshskills.repository.server.course_detail.TeacherDetails
+import com.joshtalks.joshskills.repository.server.course_detail.*
 import com.joshtalks.joshskills.ui.view_holders.CourseDetailsBaseCell
 import com.joshtalks.joshskills.ui.view_holders.CourseOverviewViewHolder
 import com.joshtalks.joshskills.ui.view_holders.DemoLessonViewHolder
 import com.joshtalks.joshskills.ui.view_holders.OtherInfoViewHolder
 import com.joshtalks.joshskills.ui.view_holders.SingleImageViewHolder
 import com.joshtalks.joshskills.ui.view_holders.TeacherDetailsViewHolder
+import com.joshtalks.joshskills.ui.payment.viewholder.AboutJoshViewHolder
+import com.joshtalks.joshskills.ui.payment.viewholder.LongDescriptionViewHolder
+import com.joshtalks.joshskills.ui.payment.viewholder.StudentFeedbackViewHolder
 
 class CourseDetailsActivity : AppCompatActivity() {
 
@@ -120,7 +109,7 @@ class CourseDetailsActivity : AppCompatActivity() {
                 card.data.toString(),
                 LongDescription::class.java
             )
-            // TODO - return ViewHolder(data)
+            return LongDescriptionViewHolder(data)
         }
         CardType.SYLLABUS -> {
             val data = AppObjectController.gsonMapperForLocal.fromJson(
@@ -162,7 +151,7 @@ class CourseDetailsActivity : AppCompatActivity() {
                 card.data.toString(),
                 StudentFeedback::class.java
             )
-            // TODO - return ViewHolder(data)
+            return StudentFeedbackViewHolder(data)
         }
         CardType.FAQ -> {
             val data = AppObjectController.gsonMapperForLocal.fromJson(
@@ -176,7 +165,7 @@ class CourseDetailsActivity : AppCompatActivity() {
                 card.data.toString(),
                 AboutJosh::class.java
             )
-            // TODO - return ViewHolder(data)
+            return AboutJoshViewHolder(data)
         }
         CardType.OTHER_INFO -> {
             val data = AppObjectController.gsonMapperForLocal.fromJson(
