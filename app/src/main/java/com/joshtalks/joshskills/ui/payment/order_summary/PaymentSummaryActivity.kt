@@ -48,6 +48,7 @@ import com.joshtalks.joshskills.repository.local.entity.NPSEventModel
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.OrderDetailResponse
+import com.joshtalks.joshskills.ui.extra.setOnSingleClickListener
 import com.joshtalks.joshskills.ui.payment.ChatNPayDialogFragment
 import com.joshtalks.joshskills.ui.payment.PaymentFailedDialogFragment
 import com.joshtalks.joshskills.ui.payment.PaymentProcessingFragment
@@ -266,6 +267,10 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                     binding.tipUsedMsg.visibility = View.VISIBLE
                 }
             }
+
+            binding.materialButton.setOnSingleClickListener(View.OnClickListener {
+              startPayment()
+            })
         })
         if (viewModel.hasRegisteredMobileNumber) {
             binding.group1.visibility = View.GONE

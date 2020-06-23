@@ -403,7 +403,6 @@
                             android:clickable="true"
                             android:focusable="true"
                             android:gravity="center"
-                            android:onClick="@{()->handler.startPayment()}"
                             android:padding="@dimen/_6sdp"
                             android:textColor="@color/white"
                             android:textSize="@dimen/font_22"
