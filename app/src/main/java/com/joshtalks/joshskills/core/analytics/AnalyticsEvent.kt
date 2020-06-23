@@ -336,4 +336,7 @@ enum class AnalyticsEvent(val NAME: String) {
     COUNTRY_ISO_CODE("Country iso code V3"),
     TRANSACTION_ID("Transaction id V3"),
 
+    SINCH_TEST("Sinch phone number test V3"),
+    VERIFICATION_VIA_SINCH_TEST("Verification via test V3"),
+
 }

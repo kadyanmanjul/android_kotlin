@@ -487,8 +487,15 @@ class SignUpV2Activity : BaseActivity() {
             override fun onVerificationFallback() {
             }
         }
-
-        val defaultRegion: String = PhoneNumberUtils.getDefaultCountryIso(this)
+        val defaultRegion: String? = PhoneNumberUtils.getDefaultCountryIso(this)
+        AppAnalytics.create(AnalyticsEvent.SINCH_TEST.NAME)
+            .addBasicParam()
+            .addUserDetails()
+            .addParam(AnalyticsEvent.USER_PHONE_NUMBER.NAME, phoneNumber)
+            .addParam(AnalyticsEvent.COUNTRY_FLAG_CHANGED.NAME, countryCode)
+            .addParam(AnalyticsEvent.COUNTRY_ISO_CODE.NAME, defaultRegion ?: "NULL")
+            .addParam(AnalyticsEvent.VERIFICATION_VIA_SINCH_TEST.NAME, verificationVia.toString())
+            .push()
         val phoneNumberInE164: String =
             PhoneNumberUtils.formatNumberToE164(phoneNumber, defaultRegion)
 
