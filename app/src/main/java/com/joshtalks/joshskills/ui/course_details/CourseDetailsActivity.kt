@@ -14,7 +14,7 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.databinding.ActivityCourseDetailsBinding
 import com.joshtalks.joshskills.repository.server.course_detail.*
-import com.joshtalks.joshskills.ui.view_holders.BaseCell
+import com.joshtalks.joshskills.ui.view_holders.CourseDetailsBaseCell
 import com.joshtalks.joshskills.ui.view_holders.SingleImageViewHolder
 
 class CourseDetailsActivity : AppCompatActivity() {
@@ -61,7 +61,7 @@ class CourseDetailsActivity : AppCompatActivity() {
         viewModel.fetchCourseDetails(testId)
     }
 
-    private fun getViewHolder(card: Card): BaseCell = when (card.cardType) {
+    private fun getViewHolder(card: Card): CourseDetailsBaseCell = when (card.cardType) {
         CardType.COURSE_OVERVIEW -> {
             val data = AppObjectController.gsonMapperForLocal.fromJson(
                 card.data.toString(),
@@ -146,7 +146,7 @@ class CourseDetailsActivity : AppCompatActivity() {
             )
             SingleImageViewHolder(data.imgUrl)
         }
-    } as BaseCell
+    } as CourseDetailsBaseCell
 
 
     companion object {
