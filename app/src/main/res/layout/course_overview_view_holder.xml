@@ -259,21 +259,23 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-            <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
-                    android:id="@+id/joshTextView2"
-                    style="@style/TextStyle.TopBarNoScroll"
+            <com.joshtalks.joshskills.core.custom_ui.JoshRatingBar
+                    android:id="@+id/feedback_ratingBar"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="@dimen/_24sdp"
                     android:layout_gravity="start|center"
-                    android:textColor="@color/white"
-                    android:textSize="@dimen/_24sdp"
-                    android:textStyle="bold"
+                    android:clickable="false"
+                    android:isIndicator="false"
+                    android:numStars="5"
+                    android:progressDrawable="@drawable/course_overview_ratingbar_selector"
+                    android:rating="4"
+                    android:stepSize="1"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/txtRating"
                     app:layout_constraintHorizontal_bias="0.5"
-                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    tools:text="* * * * *" />
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintVertical_bias="0.5" />
 
             <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
                     android:id="@+id/txtRating"
@@ -287,7 +289,7 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.5"
-                    app:layout_constraintStart_toEndOf="@+id/joshTextView2"
+                    app:layout_constraintStart_toEndOf="@+id/feedback_ratingBar"
                     app:layout_constraintTop_toTopOf="parent"
                     tools:text="4.0" />
 
