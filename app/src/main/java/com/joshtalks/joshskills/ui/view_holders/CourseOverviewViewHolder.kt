@@ -41,6 +41,9 @@ class CourseOverviewViewHolder(
     @com.mindorks.placeholderview.annotations.View(R.id.txtDescription)
     lateinit var txtDescription: JoshTextView
 
+    @com.mindorks.placeholderview.annotations.View(R.id.txtRating)
+    lateinit var txtRating: JoshTextView
+
     @com.mindorks.placeholderview.annotations.View(R.id.icon1)
     lateinit var statsIcon1: AppCompatImageView
 
@@ -74,6 +77,7 @@ class CourseOverviewViewHolder(
         txtTeacherName.text = data.teacherName
         txtViewers.text = data.viewerText
         txtDescription.text = data.shortDescription
+        txtRating.text = String.format("%.1f", data.rating)
         setCourseStats()
         setCarouselView()
     }
