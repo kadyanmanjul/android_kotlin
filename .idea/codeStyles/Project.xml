@@ -1,8 +1,60 @@
 <component name="ProjectCodeStyleConfiguration">
   <code_scheme name="Project" version="173">
+    <JavaCodeStyleSettings>
+      <option name="IMPORT_LAYOUT_TABLE">
+        <value>
+          <package name="android" withSubpackages="false" static="false" />
+          <emptyLine />
+          <package name="androidx" withSubpackages="false" static="false" />
+          <emptyLine />
+          <package name="com" withSubpackages="false" static="false" />
+          <emptyLine />
+          <package name="junit" withSubpackages="false" static="false" />
+          <emptyLine />
+          <package name="net" withSubpackages="false" static="false" />
+          <emptyLine />
+          <package name="org" withSubpackages="false" static="false" />
+          <emptyLine />
+          <package name="java" withSubpackages="false" static="false" />
+          <emptyLine />
+          <package name="javax" withSubpackages="false" static="false" />
+          <emptyLine />
+          <package name="" withSubpackages="true" static="false" />
+          <emptyLine />
+          <package name="" withSubpackages="true" static="true" />
+          <emptyLine />
+        </value>
+      </option>
+    </JavaCodeStyleSettings>
     <JetCodeStyleSettings>
+      <option name="PACKAGES_TO_USE_STAR_IMPORTS">
+        <value>
+          <package name="java.util" withSubpackages="false" static="false" />
+          <package name="kotlinx.android.synthetic" withSubpackages="false" static="false" />
+        </value>
+      </option>
+      <option name="NAME_COUNT_TO_USE_STAR_IMPORT" value="2147483647" />
+      <option name="NAME_COUNT_TO_USE_STAR_IMPORT_FOR_MEMBERS" value="2147483647" />
       <option name="CODE_STYLE_DEFAULTS" value="KOTLIN_OFFICIAL" />
     </JetCodeStyleSettings>
+    <codeStyleSettings language="JAVA">
+      <arrangement>
+        <groups>
+          <group>
+            <type>GETTERS_AND_SETTERS</type>
+            <order>KEEP</order>
+          </group>
+          <group>
+            <type>OVERRIDDEN_METHODS</type>
+            <order>KEEP</order>
+          </group>
+          <group>
+            <type>DEPENDENT_METHODS</type>
+            <order>BREADTH_FIRST</order>
+          </group>
+        </groups>
+      </arrangement>
+    </codeStyleSettings>
     <codeStyleSettings language="XML">
       <arrangement>
         <rules>
