@@ -12,6 +12,7 @@ import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.bumptech.glide.request.target.Target
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.custom_ui.JoshRatingBar
 import com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
 import com.joshtalks.joshskills.core.custom_ui.decorator.LayoutMarginDecoration
 import com.joshtalks.joshskills.repository.server.course_detail.CourseOverviewData
@@ -43,6 +44,9 @@ class CourseOverviewViewHolder(
 
     @com.mindorks.placeholderview.annotations.View(R.id.txtRating)
     lateinit var txtRating: JoshTextView
+
+    @com.mindorks.placeholderview.annotations.View(R.id.rating_bar)
+    lateinit var ratingBar: JoshRatingBar
 
     @com.mindorks.placeholderview.annotations.View(R.id.icon1)
     lateinit var statsIcon1: AppCompatImageView
@@ -78,6 +82,7 @@ class CourseOverviewViewHolder(
         txtViewers.text = data.viewerText
         txtDescription.text = data.shortDescription
         txtRating.text = String.format("%.1f", data.rating)
+        ratingBar.rating= data.rating.toFloat()
         setCourseStats()
         setCarouselView()
     }
