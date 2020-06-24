@@ -251,7 +251,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.54"
+            app:layout_constraintVertical_bias="0.505"
             app:layout_constraintWidth_default="percent"
             app:layout_constraintWidth_percent="0.575">
 
@@ -273,8 +273,8 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/txtRating"
                     app:layout_constraintHorizontal_bias="0.5"
-                    app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintVertical_bias="0.5" />
 
             <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
@@ -289,7 +289,7 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.5"
-                    app:layout_constraintStart_toEndOf="@+id/feedback_ratingBar"
+                    app:layout_constraintStart_toEndOf="@+id/rating_bar"
                     app:layout_constraintTop_toTopOf="parent"
                     tools:text="4.0" />
 
