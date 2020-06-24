@@ -15,6 +15,7 @@ import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.facebook.share.internal.ShareConstants.ACTION_TYPE
+import com.freshchat.consumer.sdk.Freshchat
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.google.gson.Gson
@@ -57,19 +58,24 @@ class FirebaseNotificationService : FirebaseMessagingService() {
     override fun onNewToken(token: String) {
         super.onNewToken(token)
         PrefManager.put(FCM_TOKEN, token)
+        AppObjectController.freshChat.setPushRegistrationToken(token)
     }
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         super.onMessageReceived(remoteMessage)
-        val nc: NotificationObject = Gson().fromJson(
-            Gson().toJson(remoteMessage.data),
-            NotificationObject::class.java
-        )
-        Timber.i(
-            FirebaseNotificationService::class.java.simpleName,
-            Gson().toJson(remoteMessage.data)
-        )
-        sendNotification(nc)
+        if (Freshchat.isFreshchatNotification(remoteMessage)) {
+            Freshchat.handleFcmMessage(this, remoteMessage)
+        } else {
+            val nc: NotificationObject = Gson().fromJson(
+                Gson().toJson(remoteMessage.data),
+                NotificationObject::class.java
+            )
+            Timber.i(
+                FirebaseNotificationService::class.java.simpleName,
+                Gson().toJson(remoteMessage.data)
+            )
+            sendNotification(nc)
+        }
     }
 
     private fun sendNotification(notificationObject: NotificationObject) {

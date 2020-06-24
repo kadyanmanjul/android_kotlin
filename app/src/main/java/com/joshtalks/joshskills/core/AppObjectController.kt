@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
+import androidx.core.app.NotificationManagerCompat
 import com.bumptech.glide.load.MultiTransformation
 import com.clevertap.android.sdk.ActivityLifecycleCallback
 import com.crashlytics.android.Crashlytics
@@ -15,6 +16,7 @@ import com.flurry.android.FlurryAgent
 import com.flurry.android.FlurryPerformance
 import com.freshchat.consumer.sdk.Freshchat
 import com.freshchat.consumer.sdk.FreshchatConfig
+import com.freshchat.consumer.sdk.FreshchatNotificationConfig
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.Logger
@@ -366,6 +368,10 @@ internal class AppObjectController {
             config.domain = "https://msdk.in.freshchat.com"
             freshChat = Freshchat.getInstance(joshApplication)
             freshChat.init(config)
+            val notificationConfig = FreshchatNotificationConfig()
+                .setImportance(NotificationManagerCompat.IMPORTANCE_MAX)
+
+            freshChat.setNotificationConfig(notificationConfig)
         }
 
         fun restoreUser(restoreId: String?) {
