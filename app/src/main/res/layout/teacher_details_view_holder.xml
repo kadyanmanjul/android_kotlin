@@ -55,30 +55,23 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/txtDescription" />
 
-    <androidx.cardview.widget.CardView
-            android:id="@+id/card_view"
+    <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/imgTeacher"
             android:layout_width="@dimen/_100sdp"
             android:layout_height="@dimen/_124sdp"
             android:layout_marginStart="@dimen/_16sdp"
+            android:scaleType="centerCrop"
             app:cardCornerRadius="@dimen/_6sdp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@id/barrier"
-            app:layout_constraintTop_toTopOf="parent">
-
-        <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/imgTeacher"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:scaleType="centerCrop"
-                tools:src="@drawable/com_facebook_profile_picture_blank_portrait" />
-
-    </androidx.cardview.widget.CardView>
+            app:layout_constraintTop_toTopOf="parent"
+            tools:src="@drawable/com_facebook_profile_picture_blank_portrait" />
 
     <androidx.constraintlayout.widget.Barrier
             android:id="@+id/barrier"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:barrierDirection="start"
-            app:constraint_referenced_ids="card_view" />
+            app:constraint_referenced_ids="imgTeacher" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
