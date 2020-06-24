@@ -343,5 +343,6 @@
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="gmail_login_error_message">An error occurred, please try again!</string>
+    <string name="meet_me">Meet me</string>
 
 </resources>
