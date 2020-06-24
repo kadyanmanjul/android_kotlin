@@ -8,7 +8,7 @@ import kotlinx.android.parcel.Parcelize
 @Parcelize
 data class CourseOverviewData(
     @SerializedName("name")
-    val name: String,
+    val courseName: String,
 
     @SerializedName("rating")
     val rating: Double,

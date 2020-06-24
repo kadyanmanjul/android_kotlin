@@ -1,0 +1,289 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/constraintLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/black"
+                android:paddingTop="@dimen/_16sdp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+            <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+                    android:id="@+id/txtCourseName"
+                    style="@style/TextStyle.TopBarNoScroll"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingHorizontal="@dimen/_16sdp"
+                    android:textColor="@color/white"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="Effective Life Habits For Life Transformation" />
+
+            <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+                    android:id="@+id/txtTeacherName"
+                    style="@style/TextStyle.TopBarScroll"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:maxLines="1"
+                    android:paddingHorizontal="@dimen/_16sdp"
+                    android:textColor="@color/white"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/txtCourseName"
+                    tools:text="Vivek Atray" />
+
+            <com.mindorks.placeholderview.PlaceHolderView
+                    android:id="@+id/carousel_recycler_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_4sdp"
+                    android:layout_marginBottom="@dimen/_36sdp"
+                    android:orientation="horizontal"
+                    android:scrollbars="none"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/txtTeacherName"
+                    tools:itemCount="1"
+                    tools:listitem="@layout/course_overview_media_item" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                app:layout_constraintTop_toBottomOf="@+id/constraintLayout">
+
+            <View
+                    android:id="@+id/emptyView"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_48sdp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.constraintlayout.widget.Barrier
+                    android:id="@+id/icons_top_barier"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:barrierDirection="top"
+                    app:constraint_referenced_ids="icon1,icon2,icon3,icon4" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/icon1"
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/_60sdp"
+                    android:layout_gravity="center"
+                    android:clickable="false"
+                    android:padding="@dimen/_12sdp"
+                    android:scaleType="fitCenter"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toTopOf="@id/icons_bottom_barier"
+                    app:layout_constraintEnd_toStartOf="@+id/icon2"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/emptyView"
+                    app:tint="@color/dark_grey"
+                    tools:src="@drawable/ic_play_24dp"
+                    tools:visibility="visible" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/icon2"
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/_60sdp"
+                    android:layout_gravity="center"
+                    android:clickable="false"
+                    android:padding="@dimen/_12sdp"
+                    android:scaleType="fitCenter"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toTopOf="@id/icons_bottom_barier"
+                    app:layout_constraintEnd_toStartOf="@+id/icon3"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toEndOf="@+id/icon1"
+                    app:layout_constraintTop_toBottomOf="@id/icons_top_barier"
+                    app:tint="@color/dark_grey"
+                    tools:src="@drawable/ic_play_24dp"
+                    tools:visibility="visible" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/icon3"
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/_60sdp"
+                    android:layout_gravity="center"
+                    android:clickable="false"
+                    android:padding="@dimen/_12sdp"
+                    android:scaleType="fitCenter"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toTopOf="@id/icons_bottom_barier"
+                    app:layout_constraintEnd_toStartOf="@+id/icon4"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toEndOf="@+id/icon2"
+                    app:layout_constraintTop_toBottomOf="@id/icons_top_barier"
+                    app:tint="@color/dark_grey"
+                    tools:src="@drawable/ic_play_24dp"
+                    tools:visibility="visible" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/icon4"
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/_60sdp"
+                    android:layout_gravity="center"
+                    android:clickable="false"
+                    android:padding="@dimen/_12sdp"
+                    android:scaleType="fitCenter"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toTopOf="@id/icons_bottom_barier"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toEndOf="@+id/icon3"
+                    app:layout_constraintTop_toBottomOf="@id/icons_top_barier"
+                    app:tint="@color/dark_grey"
+                    tools:src="@drawable/ic_play_24dp"
+                    tools:visibility="visible" />
+
+            <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+                    android:id="@+id/captionIcon1"
+                    style="@style/TextStyle.ChipText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:paddingHorizontal="@dimen/_8sdp"
+                    android:textColor="@color/dark_grey"
+                    android:visibility="gone"
+                    app:layout_constraintEnd_toStartOf="@+id/captionIcon2"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/icon1"
+                    tools:text="27400 Students"
+                    tools:visibility="visible" />
+
+            <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+                    android:id="@+id/captionIcon2"
+                    style="@style/TextStyle.ChipText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:paddingHorizontal="@dimen/_8sdp"
+                    android:textColor="@color/dark_grey"
+                    android:visibility="gone"
+                    app:layout_constraintEnd_toStartOf="@+id/captionIcon3"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toEndOf="@+id/captionIcon1"
+                    app:layout_constraintTop_toBottomOf="@id/icon2"
+                    tools:text="50 Day Course"
+                    tools:visibility="visible" />
+
+            <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+                    android:id="@+id/captionIcon3"
+                    style="@style/TextStyle.ChipText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:paddingHorizontal="@dimen/_8sdp"
+                    android:textColor="@color/dark_grey"
+                    android:visibility="gone"
+                    app:layout_constraintEnd_toStartOf="@+id/captionIcon4"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toEndOf="@+id/captionIcon2"
+                    app:layout_constraintTop_toBottomOf="@id/icon3"
+                    tools:text="Unlimited Access"
+                    tools:visibility="visible" />
+
+            <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+                    android:id="@+id/captionIcon4"
+                    style="@style/TextStyle.ChipText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:paddingHorizontal="@dimen/_8sdp"
+                    android:textColor="@color/dark_grey"
+                    android:visibility="gone"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toEndOf="@+id/captionIcon3"
+                    app:layout_constraintTop_toBottomOf="@id/icon4"
+                    tools:text="Certificate Available"
+                    tools:visibility="visible" />
+
+            <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+                    android:id="@+id/txtDescription"
+                    style="@style/TextStyle.NormalText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_14sdp"
+                    android:paddingHorizontal="@dimen/_16sdp"
+                    android:textColor="@color/light_grey"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/icons_bottom_barier"
+                    tools:text="Learn the secrets to become a dynamic personality and impress your peers - in the office, college and everywhere else. India’s highest rated Personality Development course is here!" />
+
+            <androidx.constraintlayout.widget.Barrier
+                    android:id="@+id/icons_bottom_barier"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:barrierDirection="bottom"
+                    app:constraint_referenced_ids="captionIcon1,captionIcon2,captionIcon3,captionIcon4" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.cardview.widget.CardView
+                android:id="@+id/ratingView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:background="@color/green"
+                app:cardCornerRadius="@dimen/_128sdp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.56"
+                app:layout_constraintWidth_default="percent"
+                app:layout_constraintWidth_percent="0.75">
+
+            <com.joshtalks.joshskills.core.custom_ui.JoshRatingBar
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:background="@color/green"
+                    android:numStars="5"
+                    android:paddingHorizontal="@dimen/_20sdp"
+                    android:paddingVertical="@dimen/_4sdp" />
+
+        </androidx.cardview.widget.CardView>
+
+        <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+                android:id="@+id/txtViewers"
+                style="@style/TextStyle.ChipText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_4sdp"
+                android:gravity="center"
+                android:paddingHorizontal="@dimen/_16sdp"
+                android:textColor="@color/light_grey"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/ratingView"
+                tools:text="37 log iss page ko dekh rahe hai" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

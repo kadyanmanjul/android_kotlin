@@ -60,6 +60,21 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener {
             context.startActivity(intent)
         }
 
+        fun startVideoActivity(
+            context: Context,
+            videoTitle: String?,
+            videoId: String?,
+            videoUrl: String?
+
+        ) {
+            val intent = Intent(context, VideoPlayerActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            intent.putExtra(VIDEO_URL, videoUrl)
+            intent.putExtra(VIDEO_ID, videoId)
+            intent.putExtra(COURSE_NAME, videoTitle)
+            context.startActivity(intent)
+        }
+
         const val VIDEO_URL = "video_url"
         const val VIDEO_ID = "video_id"
 

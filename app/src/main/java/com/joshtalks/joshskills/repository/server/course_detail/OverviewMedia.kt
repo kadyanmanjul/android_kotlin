@@ -17,7 +17,10 @@ data class OverviewMedia(
     val url: String,
 
     @SerializedName("text")
-    val text: String?
+    val text: String?,
+
+    @SerializedName("thumbnail_url")
+    val thumbnailUrl: String?
 
 ) : Parcelable
 
