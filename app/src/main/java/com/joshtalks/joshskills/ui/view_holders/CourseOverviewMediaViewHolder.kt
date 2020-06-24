@@ -56,7 +56,7 @@ class CourseOverviewMediaViewHolder(
     @Click(R.id.playIcon)
     fun onClick() {
         VideoPlayerActivity.startVideoActivity(
-            AppObjectController.joshApplication,
+            context,
             null,
             "123",
             overviewMedia.url
