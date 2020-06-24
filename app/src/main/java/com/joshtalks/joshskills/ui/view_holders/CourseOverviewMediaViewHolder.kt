@@ -2,6 +2,7 @@ package com.joshtalks.joshskills.ui.view_holders
 
 import android.content.Context
 import android.view.View
+import android.widget.ImageView
 import androidx.appcompat.widget.AppCompatImageView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.integration.webp.decoder.WebpDrawable
@@ -41,7 +42,7 @@ class CourseOverviewMediaViewHolder(
         val imageUrl =
             if (overviewMedia.type == OverviewMediaType.VIDEO) overviewMedia.thumbnailUrl else overviewMedia.url
 
-        imageUrl?.let { setImageView(it) }
+        imageUrl?.let { setImageView(it, imageView) }
 
         if (overviewMedia.type == OverviewMediaType.VIDEO) {
             backgroundFade.visibility = View.VISIBLE
@@ -62,7 +63,7 @@ class CourseOverviewMediaViewHolder(
         )
     }
 
-    private fun setImageView(url: String) {
+    private fun setImageView(url: String, imageView: ImageView) {
         val multi = MultiTransformation(
             RoundedCornersTransformation(
                 Utils.dpToPx(ROUND_CORNER),
