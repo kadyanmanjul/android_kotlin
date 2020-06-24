@@ -30,6 +30,7 @@ class LongDescriptionViewHolder(
     fun onResolved() {
         title.text = longDescription.title
         description.text = longDescription.description
+        description.text = description.text.toString().plus(longDescription.description)
     }
 
     @Click(R.id.text_read_more)

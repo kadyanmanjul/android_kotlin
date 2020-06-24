@@ -4,6 +4,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/_6sdp"
+        app:cardCornerRadius="@dimen/_8sdp"
         android:background="@drawable/round_rectangle_for_course_expo"
         android:elevation="@dimen/_4sdp">
 
