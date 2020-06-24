@@ -15,7 +15,9 @@ import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.databinding.ActivityCourseDetailsBinding
 import com.joshtalks.joshskills.repository.server.course_detail.*
 import com.joshtalks.joshskills.ui.view_holders.CourseDetailsBaseCell
+import com.joshtalks.joshskills.ui.view_holders.CourseOverviewViewHolder
 import com.joshtalks.joshskills.ui.view_holders.SingleImageViewHolder
+import com.joshtalks.joshskills.ui.view_holders.TeacherDetailsViewHolder
 
 class CourseDetailsActivity : AppCompatActivity() {
 
@@ -67,14 +69,14 @@ class CourseDetailsActivity : AppCompatActivity() {
                 card.data.toString(),
                 CourseOverviewData::class.java
             )
-            // TODO - return ViewHolder(data)
+            CourseOverviewViewHolder(card.sequenceNumber, data, this)
         }
         CardType.TEACHER_DETAILS -> {
             val data = AppObjectController.gsonMapperForLocal.fromJson(
                 card.data.toString(),
                 TeacherDetails::class.java
             )
-            // TODO - return ViewHolder(data)
+            TeacherDetailsViewHolder(card.sequenceNumber, data, this)
         }
         CardType.LONG_DESCRIPTION -> {
             val data = AppObjectController.gsonMapperForLocal.fromJson(
