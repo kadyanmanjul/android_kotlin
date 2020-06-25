@@ -28,16 +28,16 @@ class DemoLessonViewHolder(
     private val context: Context = AppObjectController.joshApplication
 ) : CourseDetailsBaseCell(sequenceNumber) {
 
-    @com.mindorks.placeholderview.annotations.View(R.id.txtTeacherName)
+    @com.mindorks.placeholderview.annotations.View(R.id.txt_title)
     lateinit var txtTitle: JoshTextView
 
-    @com.mindorks.placeholderview.annotations.View(R.id.imgTeacher)
-    lateinit var imgTeacher: AppCompatImageView
+    @com.mindorks.placeholderview.annotations.View(R.id.imageView)
+    lateinit var imgView: AppCompatImageView
 
     @Resolve
     fun onResolved() {
         txtTitle.text = data.title
-        setImageView(data.thumbnailUrl, imgTeacher)
+        setImageView(data.thumbnailUrl, imgView)
     }
 
     @Click(R.id.playIcon)
