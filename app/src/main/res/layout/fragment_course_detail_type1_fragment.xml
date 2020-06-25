@@ -361,7 +361,8 @@
                             android:gravity="start|center|bottom"
                             android:maxLines="1"
                             android:textColor="@color/font_color"
-                            android:textSize="@dimen/font_18" />
+                            android:textSize="@dimen/font_18"
+                            card_view:text="$ 249" />
 
                     <androidx.appcompat.widget.AppCompatTextView
                             android:id="@+id/tv_down_actual_price"
@@ -372,7 +373,8 @@
                             android:gravity="start|center"
                             android:maxLines="1"
                             android:textColor="@color/emoji_icon_color"
-                            android:textSize="@dimen/font_12" />
+                            android:textSize="@dimen/font_12"
+                            card_view:text="$ 299" />
 
 
                 </LinearLayout>

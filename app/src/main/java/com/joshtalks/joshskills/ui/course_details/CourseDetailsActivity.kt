@@ -3,6 +3,7 @@ package com.joshtalks.joshskills.ui.course_details
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.ActivityInfo
+import android.graphics.Rect
 import android.os.Build
 import android.os.Bundle
 import android.view.View
@@ -59,6 +60,25 @@ class CourseDetailsActivity : AppCompatActivity() {
     }
 
     private fun addObserver() {
+
+        binding.nestedScrollView.viewTreeObserver.addOnScrollChangedListener {
+            if (binding.nestedScrollView.scrollY == 0) {
+                binding.footerBuyCourse.visibility = View.GONE
+                binding.txtExtraHint.visibility = View.GONE
+                return@addOnScrollChangedListener
+            }
+            val rect = Rect()
+            if (binding.btnStartCourse.getGlobalVisibleRect(rect)
+                && binding.btnStartCourse.height == rect.height()
+                && binding.btnStartCourse.width == rect.width()
+            ) {
+                binding.footerBuyCourse.visibility = View.GONE
+                binding.txtExtraHint.visibility = View.GONE
+            } else {
+                binding.footerBuyCourse.visibility = View.VISIBLE
+                binding.txtExtraHint.visibility = View.VISIBLE
+            }
+        }
 
         viewModel.courseDetailsLiveData.observe(this, Observer { list ->
             list.sortedBy { it.sequenceNumber }.forEach { card ->
