@@ -22,15 +22,15 @@ import com.joshtalks.joshskills.repository.server.course_detail.FAQData
 import com.joshtalks.joshskills.repository.server.course_detail.Guidelines
 import com.joshtalks.joshskills.repository.server.course_detail.LocationStats
 import com.joshtalks.joshskills.repository.server.course_detail.LongDescription
+import com.joshtalks.joshskills.repository.server.course_detail.OtherInfo
 import com.joshtalks.joshskills.repository.server.course_detail.Reviews
-import com.joshtalks.joshskills.repository.server.course_detail.SingleImageData
 import com.joshtalks.joshskills.repository.server.course_detail.StudentFeedback
 import com.joshtalks.joshskills.repository.server.course_detail.SyllabusData
 import com.joshtalks.joshskills.repository.server.course_detail.TeacherDetails
 import com.joshtalks.joshskills.ui.view_holders.CourseDetailsBaseCell
 import com.joshtalks.joshskills.ui.view_holders.CourseOverviewViewHolder
 import com.joshtalks.joshskills.ui.view_holders.DemoLessonViewHolder
-import com.joshtalks.joshskills.ui.view_holders.SingleImageViewHolder
+import com.joshtalks.joshskills.ui.view_holders.OtherInfoViewHolder
 import com.joshtalks.joshskills.ui.view_holders.TeacherDetailsViewHolder
 
 class CourseDetailsActivity : AppCompatActivity() {
@@ -158,9 +158,9 @@ class CourseDetailsActivity : AppCompatActivity() {
         CardType.OTHER_INFO -> {
             val data = AppObjectController.gsonMapperForLocal.fromJson(
                 card.data.toString(),
-                SingleImageData::class.java
+                OtherInfo::class.java
             )
-            SingleImageViewHolder(data.imgUrl)
+            OtherInfoViewHolder(card.sequenceNumber, data, this)
         }
     } as CourseDetailsBaseCell
 
