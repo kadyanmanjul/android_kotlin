@@ -13,9 +13,23 @@ import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.databinding.ActivityCourseDetailsBinding
-import com.joshtalks.joshskills.repository.server.course_detail.*
+import com.joshtalks.joshskills.repository.server.course_detail.AboutJosh
+import com.joshtalks.joshskills.repository.server.course_detail.Card
+import com.joshtalks.joshskills.repository.server.course_detail.CardType
+import com.joshtalks.joshskills.repository.server.course_detail.CourseOverviewData
+import com.joshtalks.joshskills.repository.server.course_detail.DemoLesson
+import com.joshtalks.joshskills.repository.server.course_detail.FAQData
+import com.joshtalks.joshskills.repository.server.course_detail.Guidelines
+import com.joshtalks.joshskills.repository.server.course_detail.LocationStats
+import com.joshtalks.joshskills.repository.server.course_detail.LongDescription
+import com.joshtalks.joshskills.repository.server.course_detail.Reviews
+import com.joshtalks.joshskills.repository.server.course_detail.SingleImageData
+import com.joshtalks.joshskills.repository.server.course_detail.StudentFeedback
+import com.joshtalks.joshskills.repository.server.course_detail.SyllabusData
+import com.joshtalks.joshskills.repository.server.course_detail.TeacherDetails
 import com.joshtalks.joshskills.ui.view_holders.CourseDetailsBaseCell
 import com.joshtalks.joshskills.ui.view_holders.CourseOverviewViewHolder
+import com.joshtalks.joshskills.ui.view_holders.DemoLessonViewHolder
 import com.joshtalks.joshskills.ui.view_holders.SingleImageViewHolder
 import com.joshtalks.joshskills.ui.view_holders.TeacherDetailsViewHolder
 
@@ -104,7 +118,7 @@ class CourseDetailsActivity : AppCompatActivity() {
                 card.data.toString(),
                 DemoLesson::class.java
             )
-            // TODO - return ViewHolder(data)
+            DemoLessonViewHolder(card.sequenceNumber, data, this)
         }
         CardType.REVIEWS -> {
             val data = AppObjectController.gsonMapperForLocal.fromJson(

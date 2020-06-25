@@ -11,6 +11,9 @@ data class DemoLesson(
     val title: String,
 
     @SerializedName("demo_video_url")
-    val videoUrl: String
+    val videoUrl: String,
+
+    @SerializedName("video_thumbnail")
+    val thumbnailUrl: String
 
 ) : Parcelable

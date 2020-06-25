@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingHorizontal="@dimen/_12sdp"
+        android:paddingVertical="@dimen/_16sdp">
+
+    <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+            android:id="@+id/txt_title"
+            style="@style/TextStyle.TopBarScroll"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Watch A Demo Lesson" />
+
+    <androidx.cardview.widget.CardView
+            android:id="@+id/cardView"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_164sdp"
+            app:cardCornerRadius="@dimen/_8sdp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/txt_title">
+
+        <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/imageView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                tools:src="@drawable/app_bg" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/backgroundFade"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/transparent_black"
+                android:visibility="gone"
+                tools:visibility="visible" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/playIcon"
+                android:layout_width="@dimen/_60sdp"
+                android:layout_height="@dimen/_60sdp"
+                android:layout_gravity="center"
+                android:clickable="false"
+                android:padding="@dimen/_12sdp"
+                android:src="@drawable/ic_play_24dp"
+                android:visibility="gone"
+                app:tint="@color/white"
+                tools:visibility="visible" />
+
+    </androidx.cardview.widget.CardView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
