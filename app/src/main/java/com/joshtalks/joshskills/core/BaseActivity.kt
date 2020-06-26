@@ -5,7 +5,6 @@ import android.app.LauncherActivity
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.util.DisplayMetrics
@@ -77,10 +76,7 @@ abstract class BaseActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            window.statusBarColor =
-                ContextCompat.getColor(applicationContext, R.color.status_bar_color)
-        }
+        window.statusBarColor = ContextCompat.getColor(applicationContext, R.color.status_bar_color)
         val displayMetrics = DisplayMetrics()
         windowManager.defaultDisplay.getMetrics(displayMetrics)
         AppObjectController.screenHeight = displayMetrics.heightPixels

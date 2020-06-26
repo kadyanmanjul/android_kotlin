@@ -14,6 +14,7 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.server.course_detail.TeacherDetails
 import com.mindorks.placeholderview.annotations.Click
 import com.mindorks.placeholderview.annotations.Layout
@@ -51,7 +52,7 @@ class TeacherDetailsViewHolder(
 
     @Click(R.id.btn_meet_me)
     fun onClick() {
-        // TODO(Mohit) - Show Teacher Details Fragment
+        RxBus2.publish(data)
     }
 
     private fun setImageView(url: String, imageView: ImageView) {
