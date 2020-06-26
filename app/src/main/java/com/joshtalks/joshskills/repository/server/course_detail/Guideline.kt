@@ -11,6 +11,6 @@ data class Guideline(
     val category: String,
 
     @SerializedName("text")
-    val text: String
+    val text: List<String>
 
 ) : Parcelable
