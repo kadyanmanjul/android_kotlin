@@ -11,6 +11,9 @@ data class LocationStats(
     val studentText: String,
 
     @SerializedName("location_text")
-    val locationText: String
+    val locationText: String,
+
+    @SerializedName("bg_images_urls")
+    val imageUrls: List<String>
 
 ) : Parcelable
