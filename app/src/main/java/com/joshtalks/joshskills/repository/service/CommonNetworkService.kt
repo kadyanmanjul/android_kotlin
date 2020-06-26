@@ -77,6 +77,6 @@ interface CommonNetworkService {
 
     @GET("$DIR/course/course_details/")
     suspend fun getCourseDetails(
-        @Body params: Map<String, String>
+        @QueryMap params: Map<String, String>
     ): Response<CourseDetailsResponseV2>
 }
