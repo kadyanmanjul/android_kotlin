@@ -16,17 +16,29 @@ data class Card(
 
 )
 
-enum class CardType(cardType: String) {
-    COURSE_OVERVIEW("CourseOverview"),
-    LONG_DESCRIPTION("LongDescription"),
-    TEACHER_DETAILS("TeacherDetails"),
-    SYLLABUS("Syllabus"),
-    GUIDELINES("Guidelines"),
-    DEMO_LESSON("DemoLesson"),
-    REVIEWS("Reviews"),
-    LOCATION_STATS("LocationStats"),
-    STUDENT_FEEDBACK("StudentFeedback"),
-    FAQ("FAQ"),
-    ABOUT_JOSH("AboutJosh"),
-    OTHER_INFO("OtherInfo")
+enum class CardType {
+    @SerializedName("CourseOverview")
+    COURSE_OVERVIEW,
+    @SerializedName("LongDescription")
+    LONG_DESCRIPTION,
+    @SerializedName("TeacherDetails")
+    TEACHER_DETAILS,
+    @SerializedName("Syllabus")
+    SYLLABUS,
+    @SerializedName("Guidelines")
+    GUIDELINES,
+    @SerializedName("DemoLesson")
+    DEMO_LESSON,
+    @SerializedName("Reviews")
+    REVIEWS,
+    @SerializedName("LocationStats")
+    LOCATION_STATS,
+    @SerializedName("StudentFeedback")
+    STUDENT_FEEDBACK,
+    @SerializedName("FAQ")
+    FAQ,
+    @SerializedName("AboutJosh")
+    ABOUT_JOSH,
+    @SerializedName("OtherInfo")
+    OTHER_INFO
 }
