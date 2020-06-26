@@ -1,6 +1,7 @@
 package com.joshtalks.joshskills.ui.course_details
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.graphics.Rect
@@ -12,10 +13,19 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import com.flurry.sdk.it
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.CoreJoshActivity
+import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
 import com.joshtalks.joshskills.databinding.ActivityCourseDetailsBinding
+import com.joshtalks.joshskills.repository.server.CourseExploreModel
 import com.joshtalks.joshskills.repository.server.course_detail.*
+import com.joshtalks.joshskills.ui.course_details.extra.TeacherDetailsFragment
+import com.joshtalks.joshskills.ui.payment.COURSE_ID
+import com.joshtalks.joshskills.ui.payment.COURSE_OBJECT
+import com.joshtalks.joshskills.ui.payment.STARTED_FROM
 import com.joshtalks.joshskills.ui.view_holders.CourseDetailsBaseCell
 import com.joshtalks.joshskills.ui.view_holders.CourseOverviewViewHolder
 import com.joshtalks.joshskills.ui.view_holders.DemoLessonViewHolder
@@ -25,11 +35,16 @@ import com.joshtalks.joshskills.ui.view_holders.TeacherDetailsViewHolder
 import com.joshtalks.joshskills.ui.payment.viewholder.AboutJoshViewHolder
 import com.joshtalks.joshskills.ui.payment.viewholder.LongDescriptionViewHolder
 import com.joshtalks.joshskills.ui.payment.viewholder.StudentFeedbackViewHolder
+import com.joshtalks.joshskills.ui.view_holders.ReviewRatingViewHolder
+import java.io.IOException
 
-class CourseDetailsActivity : AppCompatActivity() {
+class CourseDetailsActivity : CoreJoshActivity() {
 
     private lateinit var binding: ActivityCourseDetailsBinding
     private val viewModel by lazy { ViewModelProvider(this).get(CourseDetailsViewModel::class.java) }
+    private var courseModel: CourseExploreModel? = null
+    private var testId: String = EMPTY
+    private var flowFrom: String? = EMPTY
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -77,8 +92,8 @@ class CourseDetailsActivity : AppCompatActivity() {
                 val cardViewHolder = getViewHolder(card)
                 binding.placeHolderView.addView(cardViewHolder)
             }.also {
-                binding.placeHolderView.addView(SingleImageViewHolder())
-            }
+            binding.placeHolderView.addView(SingleImageViewHolder(12, "  ", " "))
+        }
         })
 
         viewModel.apiCallStatusLiveData.observe(this, Observer {

@@ -25,11 +25,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-            <nl.dionsegijn.konfetti.KonfettiView
-                    android:id="@+id/view_konfetti"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:visibility="visible" />
 
             <RelativeLayout
 

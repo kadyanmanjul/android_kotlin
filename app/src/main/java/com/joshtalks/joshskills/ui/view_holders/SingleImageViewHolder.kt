@@ -1,17 +1,11 @@
 package com.joshtalks.joshskills.ui.view_holders
 
-import android.view.ViewGroup
-import android.widget.LinearLayout
 import androidx.appcompat.widget.AppCompatImageView
-import androidx.core.content.ContextCompat
-import com.google.android.material.card.MaterialCardView
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
 import com.mindorks.placeholderview.annotations.Layout
 import com.mindorks.placeholderview.annotations.Resolve
 import com.mindorks.placeholderview.annotations.View
-import org.jetbrains.anko.padding
 
 
 @Layout(R.layout.single_image_view_holder)

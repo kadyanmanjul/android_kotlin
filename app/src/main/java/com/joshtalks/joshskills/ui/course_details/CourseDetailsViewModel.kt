@@ -6,7 +6,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.core.ApiCallStatus
 import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.service.getGoogleAdId
+import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.USER_UNIQUE_ID
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.course_detail.Card
 import com.joshtalks.joshskills.util.showAppropriateMsg
@@ -20,23 +21,25 @@ class CourseDetailsViewModel(application: Application) : AndroidViewModel(applic
     val courseDetailsLiveData: MutableLiveData<List<Card>> = MutableLiveData()
     val apiCallStatusLiveData: MutableLiveData<ApiCallStatus> = MutableLiveData()
 
-    fun fetchCourseDetails(testId: Int) {
+    fun fetchCourseDetails(testId: String) {
         jobs += viewModelScope.launch(Dispatchers.IO) {
             try {
                 val requestParams: HashMap<String, String> = HashMap()
-                requestParams["test_id"] = testId.toString()
-                requestParams["gaid"] = getGoogleAdId(getApplication())
-                requestParams["mentor_id"] = Mentor.getInstance().getId()
+                requestParams["test_id"] = "99"//testId
+                requestParams["gaid"] = PrefManager.getStringValue(USER_UNIQUE_ID)
+                if (Mentor.getInstance().getId().isNotEmpty()) {
+                    requestParams["mentor_id"] = Mentor.getInstance().getId()
+                }
                 val response =
                     AppObjectController.commonNetworkService.getCourseDetails(requestParams)
                 if (response.isSuccessful) {
-                    response.body()
                     apiCallStatusLiveData.postValue(ApiCallStatus.SUCCESS)
                     courseDetailsLiveData.postValue(response.body()?.cards)
                     return@launch
                 }
 
             } catch (ex: Exception) {
+                ex.printStackTrace()
                 ex.showAppropriateMsg()
             }
             apiCallStatusLiveData.postValue(ApiCallStatus.FAILED)

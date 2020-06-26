@@ -220,6 +220,7 @@
                             android:layout_centerVertical="true"
                             android:layout_marginStart="@dimen/_4sdp"
                             android:gravity="center_vertical|start"
+                            android:tint="@color/colorPrimary"
                             android:src="@drawable/ic_small_tick"
                             android:visibility="visible"
                             app:layout_constraintBottom_toBottomOf="parent"

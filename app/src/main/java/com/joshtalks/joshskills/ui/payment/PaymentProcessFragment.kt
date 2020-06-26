@@ -1,14 +1,15 @@
 package com.joshtalks.joshskills.ui.payment
 
 import android.annotation.SuppressLint
-import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.view.*
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.view.WindowManager
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
-import android.widget.FrameLayout
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
 import com.bumptech.glide.Glide
@@ -18,7 +19,6 @@ import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.BaseActivity
-import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.databinding.PaymentProcessFragmentBinding
@@ -28,11 +28,6 @@ import com.joshtalks.joshskills.repository.server.CourseExploreModel
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import nl.dionsegijn.konfetti.KonfettiView
-import nl.dionsegijn.konfetti.ParticleSystem
-import nl.dionsegijn.konfetti.listeners.OnParticleSystemUpdateListener
-import nl.dionsegijn.konfetti.models.Shape
-import nl.dionsegijn.konfetti.models.Size
 import java.util.*
 
 class PaymentProcessFragment : DialogFragment() {
@@ -116,7 +111,6 @@ class PaymentProcessFragment : DialogFragment() {
             }
 
             override fun onAnimationEnd(animation: Animation?) {
-                paymentProcessFragmentBinding.viewKonfetti.performClick()
 
             }
 
@@ -131,12 +125,7 @@ class PaymentProcessFragment : DialogFragment() {
             }
 
             override fun onAnimationEnd(animation: Animation?) {
-                paymentProcessFragmentBinding.viewKonfetti.setOnClickListener(null)
-                paymentProcessFragmentBinding.viewKonfetti.layoutParams = FrameLayout.LayoutParams(
-                    FrameLayout.LayoutParams.WRAP_CONTENT,
-                    FrameLayout.LayoutParams.WRAP_CONTENT,
-                    Gravity.TOP
-                )
+
                 paymentProcessFragmentBinding.rlContainer.visibility = View.VISIBLE
                 paymentProcessFragmentBinding.successIv.visibility = View.GONE
                 paymentProcessFragmentBinding.btnInbox.visibility = View.VISIBLE
@@ -147,45 +136,10 @@ class PaymentProcessFragment : DialogFragment() {
             }
 
         })
-        paymentProcessFragmentBinding.viewKonfetti.onParticleSystemUpdateListener =
-            object : OnParticleSystemUpdateListener {
-                override fun onParticleSystemEnded(
-                    view: KonfettiView,
-                    system: ParticleSystem,
-                    activeSystems: Int
-                ) {
-                    paymentProcessFragmentBinding.successIv.startAnimation(animMoveToTop)
-                }
-
-                override fun onParticleSystemStarted(
-                    view: KonfettiView,
-                    system: ParticleSystem,
-                    activeSystems: Int
-                ) {
-                }
-
-            }
 
 
-        paymentProcessFragmentBinding.viewKonfetti.setOnClickListener {
-            paymentProcessFragmentBinding.viewKonfetti.build()
-                .addColors(Color.YELLOW, Color.GREEN, Color.MAGENTA)
-                .setDirection(0.0, 359.0)
-                .setSpeed(1f, 10f)
-                .setTimeToLive(1000L)
-                .addShapes(Shape.RECT, Shape.CIRCLE)
-                .addSizes(Size(6, 6f))
-                .setPosition(
-                    (AppObjectController.screenWidth / 2).toFloat() - Utils.dpToPx(72),
-                    (AppObjectController.screenWidth / 2).toFloat() + Utils.dpToPx(72),
-                    AppObjectController.screenHeight.toFloat() - Utils.dpToPx(124),
-                    AppObjectController.screenHeight.toFloat() - Utils.dpToPx(16)
-                )
-                .burst(800)
-        }
 
         Handler(Looper.getMainLooper()).postDelayed({
-            paymentProcessFragmentBinding.viewKonfetti.visibility = View.VISIBLE
             paymentProcessFragmentBinding.successIv.startAnimation(animAlpha)
         }, 750)
 
