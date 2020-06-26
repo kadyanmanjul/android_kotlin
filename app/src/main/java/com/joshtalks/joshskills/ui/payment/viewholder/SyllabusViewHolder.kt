@@ -21,9 +21,10 @@ import com.mindorks.placeholderview.annotations.Resolve
 
 @Layout(R.layout.layout_syllabus_view)
 class SyllabusViewHolder(
+    override val sequenceNumber: Int,
     private var syllabusData: SyllabusData,
     private val context: Context = AppObjectController.joshApplication
-) : CourseDetailsBaseCell() {
+) : CourseDetailsBaseCell(sequenceNumber) {
 
     @com.mindorks.placeholderview.annotations.View(R.id.title)
     lateinit var title: JoshTextView

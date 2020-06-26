@@ -5,7 +5,6 @@ import android.app.Activity
 import android.content.Context
 import android.location.Geocoder
 import android.location.Location
-import android.util.Log
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.ImageView
@@ -39,17 +38,24 @@ import java.util.regex.Pattern
 
 @Layout(R.layout.layout_location_stats_view_holder)
 class LocationStatViewHolder(
+    override val sequenceNumber: Int,
     private var locationStats: LocationStats,
-    private val context: Context = AppObjectController.joshApplication,val activity:Activity
-) : CourseDetailsBaseCell() {
+    val activity: Activity,
+    private val context: Context = AppObjectController.joshApplication
+) : CourseDetailsBaseCell(sequenceNumber) {
+
     @com.mindorks.placeholderview.annotations.View(R.id.background_image_view)
     lateinit var imageView: ImageView
+
     @com.mindorks.placeholderview.annotations.View(R.id.students_enrolled_nearby)
     lateinit var stateName: JoshTextView
+
     @com.mindorks.placeholderview.annotations.View(R.id.state_country)
     lateinit var nearbyEnrolledStudents: JoshTextView
+
     @com.mindorks.placeholderview.annotations.View(R.id.check_location_btn)
     lateinit var checkLocation: MaterialTextView
+
     @com.mindorks.placeholderview.annotations.View(R.id.progress_bar)
     lateinit var progressBar: FrameLayout
 
@@ -58,9 +64,9 @@ class LocationStatViewHolder(
     private var lastLocation: Location? = null
 
     private lateinit var fusedLocationClient: FusedLocationProviderClient
-    private var index=0
-    private var totalStudent=3000
-    private var shownStudent=0
+    private var index = 0
+    private var totalStudent = 3000
+    private var shownStudent = 0
     val p: Pattern = Pattern.compile("\\d+")
 
 
@@ -71,12 +77,12 @@ class LocationStatViewHolder(
         if (matcher.find()) {
             shownStudent = matcher.group().toInt()
         }
-        stateName.text=locationStats.locationText
-        nearbyEnrolledStudents.text=locationStats.locationText
+        stateName.text = locationStats.locationText
+        nearbyEnrolledStudents.text = locationStats.locationText
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(activity)
-        setDefaultImageView(imageView,locationStats.imageUrls.get(index))
+        setDefaultImageView(imageView, locationStats.imageUrls.get(index))
         checkLocation.setOnClickListener {
-            progressBar.visibility= View.VISIBLE
+            progressBar.visibility = View.VISIBLE
             onClick()
         }
     }
@@ -84,18 +90,18 @@ class LocationStatViewHolder(
     fun onClick() {
         showNextImageAndRandomData()
         showToast("Check Location")
-        if(locationPermissionGranted().not())
-        getlocationPermissionAndLoction()
+        if (locationPermissionGranted().not())
+            getlocationPermissionAndLoction()
         else getLocation()
     }
 
     private fun showNextImageAndRandomData() {
         index++
-        if(index>=locationStats.imageUrls.size)
-            index=0
-        shownStudent=rand(totalStudent.div(25),totalStudent.div(75))
-        stateName.text=shownStudent.toString().plus(" students from")
-        setDefaultImageView(imageView,locationStats.imageUrls.get(index))
+        if (index >= locationStats.imageUrls.size)
+            index = 0
+        shownStudent = rand(totalStudent.div(25), totalStudent.div(75))
+        stateName.text = shownStudent.toString().plus(" students from")
+        setDefaultImageView(imageView, locationStats.imageUrls.get(index))
     }
 
     fun rand(start: Int, end: Int): Int {
@@ -103,7 +109,7 @@ class LocationStatViewHolder(
         return (start..end).random()
     }
 
-    private fun locationPermissionGranted()=(PermissionUtils.isLocationPermissionEnabled(context))
+    private fun locationPermissionGranted() = (PermissionUtils.isLocationPermissionEnabled(context))
 
     private fun getlocationPermissionAndLoction() {
         PermissionUtils.locationPermission(activity,
@@ -117,6 +123,7 @@ class LocationStatViewHolder(
                         }
                     }
                 }
+
                 override fun onPermissionRationaleShouldBeShown(
                     permissions: MutableList<PermissionRequest>?,
                     token: PermissionToken?
@@ -128,27 +135,29 @@ class LocationStatViewHolder(
 
     @SuppressLint("MissingPermission")
     private fun getLocation() {
-        fusedLocationClient.lastLocation?.addOnSuccessListener(activity, OnSuccessListener { location ->
-            if (location == null) {
-                progressBar.visibility= View.GONE
-                return@OnSuccessListener
-            }
+        fusedLocationClient.lastLocation?.addOnSuccessListener(
+            activity,
+            OnSuccessListener { location ->
+                if (location == null) {
+                    progressBar.visibility = View.GONE
+                    return@OnSuccessListener
+                }
 
-            lastLocation = location
-            showToast("location : ${location}")
-            getLocationAndUpload()
+                lastLocation = location
+                showToast("location : ${location}")
+                getLocationAndUpload()
 
-            // Determine whether a Geocoder is available.
-            if (!Geocoder.isPresent()) {
-                progressBar.visibility= View.GONE
-                return@OnSuccessListener
-            }
+                // Determine whether a Geocoder is available.
+                if (!Geocoder.isPresent()) {
+                    progressBar.visibility = View.GONE
+                    return@OnSuccessListener
+                }
 
-            // If the user pressed the fetch address button before we had the location,
-            // this will be set to true indicating that we should kick off the intent
-            // service after fetching the location.
-            //if (addressRequested) startIntentService()
-        })?.addOnFailureListener(activity) {
+                // If the user pressed the fetch address button before we had the location,
+                // this will be set to true indicating that we should kick off the intent
+                // service after fetching the location.
+                //if (addressRequested) startIntentService()
+            })?.addOnFailureListener(activity) {
             showToast(activity.getString(R.string.generic_message_for_error))
         }
     }
@@ -168,10 +177,9 @@ class LocationStatViewHolder(
                             val request = UpdateUserLocality()
                             request.locality =
                                 SearchLocality(location.latitude, location.longitude)
-                            Log.d("Manjul", "getLocationAndUpload() called $request")
-                            progressBar.visibility= View.GONE
+                            progressBar.visibility = View.GONE
                         } catch (e: Exception) {
-                            progressBar.visibility= View.GONE
+                            progressBar.visibility = View.GONE
                             e.printStackTrace()
                         }
                         compositeDisposable.clear()

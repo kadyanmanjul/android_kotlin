@@ -15,7 +15,10 @@ import com.mindorks.placeholderview.annotations.Resolve
 import com.mindorks.placeholderview.annotations.View
 
 @Layout(R.layout.review_and_rating_layout)
-class ReviewRatingViewHolder(private var reviews: Reviews) : CourseDetailsBaseCell() {
+class ReviewRatingViewHolder(
+    override val sequenceNumber: Int,
+    private var reviews: Reviews
+) : CourseDetailsBaseCell(sequenceNumber) {
 
     @View(R.id.header)
     lateinit var headerTV: AppCompatTextView
@@ -46,6 +49,3 @@ class ReviewRatingViewHolder(private var reviews: Reviews) : CourseDetailsBaseCe
         reviewRV.post { reviewRV.adapter = ReviewsAdapter(reviews.reviews) }
     }
 }
-
-
-

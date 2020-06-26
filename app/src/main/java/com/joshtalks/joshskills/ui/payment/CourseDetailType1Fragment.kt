@@ -247,6 +247,7 @@ class CourseDetailType1Fragment : Fragment() {
                             if (it.type == BASE_MESSAGE_TYPE.IM) {
                                 binding.courseDetailRv.addView(
                                     SingleImageViewHolder(
+                                        0,
                                         it.url,
                                         it.title
                                     )

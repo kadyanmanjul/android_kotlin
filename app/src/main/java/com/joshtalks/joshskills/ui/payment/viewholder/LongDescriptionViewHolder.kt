@@ -13,9 +13,10 @@ import com.mindorks.placeholderview.annotations.Resolve
 
 @Layout(R.layout.layout_long_description_card_view_holder)
 class LongDescriptionViewHolder(
+    override val sequenceNumber: Int,
     private var longDescription: LongDescription,
     private val context: Context = AppObjectController.joshApplication
-): CourseDetailsBaseCell() {
+) : CourseDetailsBaseCell(sequenceNumber) {
 
     @com.mindorks.placeholderview.annotations.View(R.id.title)
     lateinit var title: TextView

@@ -14,11 +14,14 @@ import com.mindorks.placeholderview.annotations.Resolve
 
 @Layout(R.layout.layout_student_feedback_viewholder)
 class StudentFeedbackViewHolder(
+    override val sequenceNumber: Int,
     private var studentFeedback: StudentFeedback,
     private val context: Context = AppObjectController.joshApplication
-) : CourseDetailsBaseCell() {
+) : CourseDetailsBaseCell(sequenceNumber) {
+
     @com.mindorks.placeholderview.annotations.View(R.id.story_recycler_view)
     lateinit var item: PlaceHolderView
+
     @com.mindorks.placeholderview.annotations.View(R.id.title)
     lateinit var title: TextView
 

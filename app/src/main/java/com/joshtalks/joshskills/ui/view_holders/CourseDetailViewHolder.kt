@@ -9,8 +9,11 @@ import com.mindorks.placeholderview.annotations.View
 
 
 @Layout(R.layout.course_details_view_holder)
-class CourseDetailViewHolder(private val courseDetailsModel: CourseDetailsModel) :
-    CourseDetailsBaseCell() {
+class CourseDetailViewHolder(
+    override val sequenceNumber: Int,
+    private val courseDetailsModel: CourseDetailsModel
+) :
+    CourseDetailsBaseCell(sequenceNumber) {
 
     @View(R.id.image_view)
     lateinit var imageView: AppCompatImageView

@@ -15,13 +15,17 @@ import com.vanniktech.emoji.Utils
 
 @Layout(R.layout.layout_about_josh_view_holder)
 class AboutJoshViewHolder(
+    override val sequenceNumber: Int,
     private var aboutJoshData: AboutJosh,
     private val context: Context = AppObjectController.joshApplication
-) : CourseDetailsBaseCell() {
+) : CourseDetailsBaseCell(sequenceNumber) {
+
     @com.mindorks.placeholderview.annotations.View(R.id.my_josh_recycler_view)
     lateinit var my_josh_recycler_view: PlaceHolderView
+
     @com.mindorks.placeholderview.annotations.View(R.id.description)
     lateinit var description: TextView
+
     @com.mindorks.placeholderview.annotations.View(R.id.title)
     lateinit var title: TextView
 

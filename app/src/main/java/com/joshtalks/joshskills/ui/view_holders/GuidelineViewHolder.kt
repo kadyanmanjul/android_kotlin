@@ -16,9 +16,10 @@ import com.tbuonomo.viewpagerdotsindicator.WormDotsIndicator
 
 @Layout(R.layout.guideline_view_holder)
 class GuidelineViewHolder(
+    override val sequenceNumber: Int,
     private val guidelines: Guidelines,
     private val fragmentManager: FragmentManager
-) : CourseDetailsBaseCell() {
+) : CourseDetailsBaseCell(sequenceNumber) {
 
     @View(R.id.header)
     lateinit var headerTV: AppCompatTextView
@@ -44,5 +45,4 @@ class GuidelineViewHolder(
             LinearLayout.LayoutParams.WRAP_CONTENT
         )
     }
-
 }

@@ -10,6 +10,7 @@ import com.bumptech.glide.request.target.Target
 import com.joshtalks.joshskills.core.AppObjectController
 
 abstract class CourseDetailsBaseCell(open val sequenceNumber: Int){
+
     fun getAppContext() = AppObjectController.joshApplication
 
     fun setDefaultImageView(iv: ImageView, url: String) {

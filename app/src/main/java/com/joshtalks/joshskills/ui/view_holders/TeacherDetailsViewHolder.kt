@@ -44,7 +44,9 @@ class TeacherDetailsViewHolder(
         txtTeacherName.text = data.name
         txtDesignation.text = data.designation
         txtDescription.text = data.shortDescription
-        setImageView(data.dpUrl, imgTeacher)
+        data.dpUrl?.let {
+            setImageView(it, imgTeacher)
+        }
     }
 
     @Click(R.id.btn_meet_me)

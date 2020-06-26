@@ -220,7 +220,7 @@
                 android:name=".ui.sign_up_old.OnBoardActivity"
                 android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize"
                 android:launchMode="singleTask"
-                android:theme="@style/AppNoBarTheme"  />
+                android:theme="@style/AppNoBarTheme" />
         <activity
                 android:name=".ui.profile.ProfileActivity"
                 android:configChanges="touchscreen|keyboard|orientation|screenLayout|screenSize"
@@ -243,12 +243,6 @@
         <activity android:name=".ui.profile.CropImageActivity" />
         <activity
                 android:name=".ui.explore.CourseExploreActivity"
-                android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize"
-                android:launchMode="singleTask"
-                android:parentActivityName=".ui.inbox.InboxActivity"
-                android:theme="@style/AppNoBarTheme" />
-        <activity
-                android:name=".ui.course_details.CourseDetailsActivity"
                 android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize"
                 android:launchMode="singleTask"
                 android:parentActivityName=".ui.inbox.InboxActivity"
