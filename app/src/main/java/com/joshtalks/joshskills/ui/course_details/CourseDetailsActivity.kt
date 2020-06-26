@@ -6,6 +6,7 @@ import android.content.pm.ActivityInfo
 import android.graphics.Rect
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
@@ -32,6 +33,7 @@ import com.joshtalks.joshskills.ui.view_holders.CourseDetailsBaseCell
 import com.joshtalks.joshskills.ui.view_holders.CourseOverviewViewHolder
 import com.joshtalks.joshskills.ui.view_holders.DemoLessonViewHolder
 import com.joshtalks.joshskills.ui.view_holders.OtherInfoViewHolder
+import com.joshtalks.joshskills.ui.view_holders.SingleImageViewHolder
 import com.joshtalks.joshskills.ui.view_holders.TeacherDetailsViewHolder
 
 class CourseDetailsActivity : AppCompatActivity() {
@@ -97,20 +99,21 @@ class CourseDetailsActivity : AppCompatActivity() {
         viewModel.fetchCourseDetails(testId)
     }
 
-    private fun getViewHolder(card: Card): CourseDetailsBaseCell = when (card.cardType) {
+    private fun getViewHolder(card: Card): CourseDetailsBaseCell {
+        when (card.cardType) {
         CardType.COURSE_OVERVIEW -> {
             val data = AppObjectController.gsonMapperForLocal.fromJson(
                 card.data.toString(),
                 CourseOverviewData::class.java
             )
-            CourseOverviewViewHolder(card.sequenceNumber, data, this)
+            return CourseOverviewViewHolder(card.sequenceNumber, data, this)
         }
         CardType.TEACHER_DETAILS -> {
             val data = AppObjectController.gsonMapperForLocal.fromJson(
                 card.data.toString(),
                 TeacherDetails::class.java
             )
-            TeacherDetailsViewHolder(card.sequenceNumber, data, this)
+            return TeacherDetailsViewHolder(card.sequenceNumber, data, this)
         }
         CardType.LONG_DESCRIPTION -> {
             val data = AppObjectController.gsonMapperForLocal.fromJson(
@@ -138,7 +141,7 @@ class CourseDetailsActivity : AppCompatActivity() {
                 card.data.toString(),
                 DemoLesson::class.java
             )
-            DemoLessonViewHolder(card.sequenceNumber, data, this)
+            return DemoLessonViewHolder(card.sequenceNumber, data, this)
         }
         CardType.REVIEWS -> {
             val data = AppObjectController.gsonMapperForLocal.fromJson(
@@ -180,9 +183,11 @@ class CourseDetailsActivity : AppCompatActivity() {
                 card.data.toString(),
                 OtherInfo::class.java
             )
-            OtherInfoViewHolder(card.sequenceNumber, data, this)
+            return OtherInfoViewHolder(card.sequenceNumber,data,this)
         }
-    } as CourseDetailsBaseCell
+        }
+        return SingleImageViewHolder(card.sequenceNumber, "  ", " ")
+    }
 
 
     companion object {

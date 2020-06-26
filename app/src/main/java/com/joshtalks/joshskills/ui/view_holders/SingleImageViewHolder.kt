@@ -9,7 +9,10 @@ import com.mindorks.placeholderview.annotations.View
 
 
 @Layout(R.layout.single_image_view_holder)
-class SingleImageViewHolder(val url: String, var title: String? = null) : BaseCell() {
+class SingleImageViewHolder(
+    override val sequenceNumber: Int,
+    val url: String, var title: String? = null
+) : CourseDetailsBaseCell(sequenceNumber) {
 
     @com.mindorks.placeholderview.annotations.View(R.id.text_title)
     lateinit var titleTV: JoshTextView
@@ -19,11 +22,5 @@ class SingleImageViewHolder(val url: String, var title: String? = null) : BaseCe
 
     @Resolve
     fun onViewInflated() {
-        setDefaultImageView(imageView, url)
-        if (title.isNullOrEmpty().not()) {
-            titleTV.text = title
-            titleTV.visibility = android.view.View.VISIBLE
-        }
-
     }
 }
