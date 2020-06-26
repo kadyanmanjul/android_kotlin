@@ -752,11 +752,10 @@ fun showToast(message: String, length: Int = Toast.LENGTH_SHORT) {
 
 }
 
-fun getUserNameInShort(): String {
-    val name = User.getInstance().firstName.trim().toUpperCase()
+fun getUserNameInShort(name: String = User.getInstance().firstName.trim().toUpperCase()): String {
     if (name.contains(" ")) {
         val nameSplit = name.split(" ")
-        return nameSplit[0].plus(nameSplit[1])
+        nameSplit[0][0].plus(nameSplit[1][0].toString())
     }
     return try {
         name.substring(0, 2)
