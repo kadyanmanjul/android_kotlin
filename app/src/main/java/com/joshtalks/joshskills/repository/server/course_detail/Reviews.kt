@@ -10,8 +10,11 @@ data class Reviews(
     @SerializedName("title")
     val title: String,
 
-    @SerializedName("rating")
-    val rating: Rating,
+    @SerializedName("value")
+    val value: Double,
+
+    @SerializedName("ratings")
+    val ratingList: List<Rating>,
 
     @SerializedName("reviews")
     val reviews: List<Review>

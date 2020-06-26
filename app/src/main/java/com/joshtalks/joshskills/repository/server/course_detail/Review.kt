@@ -14,7 +14,7 @@ data class Review(
     val description: String,
 
     @SerializedName("dp_url")
-    val dpUrl: String,
+    val dpUrl: String?,
 
     @SerializedName("username")
     val username: String,
