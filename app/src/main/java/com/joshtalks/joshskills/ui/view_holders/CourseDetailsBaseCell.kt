@@ -1,6 +1,7 @@
 package com.joshtalks.joshskills.ui.view_holders
 
 import android.widget.ImageView
+import androidx.appcompat.widget.AppCompatImageView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.integration.webp.decoder.WebpDrawable
 import com.bumptech.glide.integration.webp.decoder.WebpDrawableTransformation
@@ -15,6 +16,18 @@ abstract class CourseDetailsBaseCell(open val sequenceNumber: Int){
         Glide.with(getAppContext())
             .load(url)
             .override(Target.SIZE_ORIGINAL)
+            .optionalTransform(
+                WebpDrawable::class.java,
+                WebpDrawableTransformation(CircleCrop())
+            )
+            .into(iv)
+    }
+
+    fun setCircleImageInView(iv: AppCompatImageView, url: String) {
+        Glide.with(getAppContext())
+            .load(iv)
+            .override(Target.SIZE_ORIGINAL)
+
             .optionalTransform(
                 WebpDrawable::class.java,
                 WebpDrawableTransformation(CircleCrop())

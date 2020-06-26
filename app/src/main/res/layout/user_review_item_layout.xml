@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/_4sdp">
+
+    <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/rating"
+            fontPath="fonts/Roboto-Medium.ttf"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/round_rect_default"
+            android:backgroundTint="@color/green"
+            android:drawableEnd="@drawable/ic_baseline_star"
+            android:drawablePadding="@dimen/_4sdp"
+            android:paddingStart="@dimen/_8sdp"
+            android:paddingTop="@dimen/_2sdp"
+            android:paddingEnd="@dimen/_8sdp"
+            android:paddingBottom="@dimen/_2sdp"
+            android:textColor="@color/white"
+            android:textSize="@dimen/font_18"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="5" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/user_review_title"
+            fontPath="fonts/Roboto-Bold.ttf"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:layout_marginHorizontal="@dimen/_8sdp"
+            android:gravity="center_vertical|start"
+            android:paddingBottom="@dimen/_4sdp"
+            android:textColor="@color/gray_48"
+            android:textSize="@dimen/font_16"
+            app:layout_constraintBottom_toBottomOf="@+id/rating"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/rating"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="@string/answer_not_submitted" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/user_review_message"
+            fontPath="fonts/Roboto-Medium.ttf"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:layout_marginVertical="@dimen/_4sdp"
+            android:gravity="center_vertical|start"
+            android:letterSpacing="0.15"
+            android:text="dwdwdw dw dw d w d wd wd"
+            android:textColor="@color/gray_48"
+            android:textSize="@dimen/font_12"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/rating"
+            app:layout_constraintTop_toBottomOf="@+id/rating" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/user_picture"
+            android:layout_width="@dimen/_40sdp"
+            android:layout_height="@dimen/_40sdp"
+            android:layout_marginVertical="@dimen/_8sdp"
+            app:layout_constraintStart_toStartOf="@+id/user_review_message"
+            app:layout_constraintTop_toBottomOf="@+id/user_review_message"
+            tools:src="@color/button_primary_color" />
+
+
+    <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/user_name"
+            fontPath="fonts/Roboto-Regular.ttf"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:layout_marginHorizontal="@dimen/_8sdp"
+            android:layout_marginVertical="@dimen/_2sdp"
+            android:gravity="center_vertical|start"
+            android:textColor="@color/dark_grey"
+            android:textSize="@dimen/font_14"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/user_picture"
+            app:layout_constraintTop_toTopOf="@+id/user_picture"
+            tools:text="@string/bilkul_nahi" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/user_location"
+            fontPath="fonts/Roboto-Light.ttf"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:gravity="center_vertical|start"
+            android:textColor="@color/dark_grey"
+            android:textSize="@dimen/font_12"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/user_name"
+            app:layout_constraintTop_toBottomOf="@+id/user_name"
+            tools:text="@string/bill_detail_header" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
