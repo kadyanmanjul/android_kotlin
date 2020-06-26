@@ -11,6 +11,9 @@ data class Syllabus(
     val iconUrl: String,
 
     @SerializedName("text")
-    val text: String
+    val text: String,
+
+    @SerializedName("sort_order")
+    val sortOrder: Int
 
 ) : Parcelable

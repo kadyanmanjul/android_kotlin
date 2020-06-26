@@ -39,10 +39,10 @@ class SyllabusViewHolder(
     fun onResolved() {
         title.text = syllabusData.title
         if (linearLayout.childCount == 0) {
-            syllabusData.syllabusList.forEach {
-                linearLayout.addView(addLinerLayout(it))
-            }
+            syllabusData.syllabusList.sortedBy { it.sortOrder }.forEach {
+            linearLayout.addView(addLinerLayout(it))
         }
+    }
     }
 
     @SuppressLint("WrongViewCast")
