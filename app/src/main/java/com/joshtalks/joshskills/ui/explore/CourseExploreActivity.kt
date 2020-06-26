@@ -37,6 +37,8 @@ import retrofit2.HttpException
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 import kotlin.collections.set
+import com.joshtalks.joshskills.ui.course_details.CourseDetailsActivity
+
 
 const val COURSE_EXPLORER_SCREEN_NAME = "Course Explorer"
 const val USER_COURSES = "user_courses"
@@ -241,7 +243,8 @@ class CourseExploreActivity : CoreJoshActivity() {
                 .addParam(AnalyticsEvent.COURSE_NAME.NAME, it.courseName)
                 .addParam(AnalyticsEvent.COURSE_PRICE.NAME, it.amount)
                 .push()
-            PaymentActivity.startPaymentActivity(this, PAYMENT_FOR_COURSE_CODE, it)
+            CourseDetailsActivity.startCourseDetailsActivity(this,99)
+            // PaymentActivity.startPaymentActivity(this, PAYMENT_FOR_COURSE_CODE, it)
         })
     }
 
@@ -279,3 +282,4 @@ class CourseExploreActivity : CoreJoshActivity() {
     }
 
 }
+
