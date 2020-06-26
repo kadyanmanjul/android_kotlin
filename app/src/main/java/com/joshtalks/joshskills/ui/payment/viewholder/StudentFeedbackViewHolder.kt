@@ -12,7 +12,7 @@ import com.mindorks.placeholderview.PlaceHolderView
 import com.mindorks.placeholderview.annotations.Layout
 import com.mindorks.placeholderview.annotations.Resolve
 
-@Layout(R.layout.layout_scroll_stories)
+@Layout(R.layout.layout_student_feedback_viewholder)
 class StudentFeedbackViewHolder(
     private var studentFeedback: StudentFeedback,
     private val context: Context = AppObjectController.joshApplication
