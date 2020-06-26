@@ -14,9 +14,9 @@ data class Feedback(
     val shortDescription: String,
 
     @SerializedName("thumbnail_url")
-    val thumbnailUrl: String,
+    val thumbnailUrl: String?,
 
     @SerializedName("video_url")
-    val videoUrl: String
+    val videoUrl: String?
 
 ) : Parcelable
