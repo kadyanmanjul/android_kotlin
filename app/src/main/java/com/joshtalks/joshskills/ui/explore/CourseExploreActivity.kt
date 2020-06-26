@@ -23,8 +23,8 @@ import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.ScreenEngagementModel
 import com.joshtalks.joshskills.repository.server.CourseExploreModel
+import com.joshtalks.joshskills.ui.course_details.CourseDetailsActivity
 import com.joshtalks.joshskills.ui.inbox.PAYMENT_FOR_COURSE_CODE
-import com.joshtalks.joshskills.ui.payment.PaymentActivity
 import com.joshtalks.joshskills.ui.signup_v2.FLOW_FROM
 import com.joshtalks.joshskills.ui.signup_v2.SignUpV2Activity
 import com.joshtalks.joshskills.ui.view_holders.CourseExplorerViewHolder
@@ -37,8 +37,6 @@ import retrofit2.HttpException
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 import kotlin.collections.set
-import com.joshtalks.joshskills.ui.course_details.CourseDetailsActivity
-
 
 const val COURSE_EXPLORER_SCREEN_NAME = "Course Explorer"
 const val USER_COURSES = "user_courses"
@@ -244,7 +242,6 @@ class CourseExploreActivity : CoreJoshActivity() {
                 .addParam(AnalyticsEvent.COURSE_PRICE.NAME, it.amount)
                 .push()
             CourseDetailsActivity.startCourseDetailsActivity(this,99)
-            // PaymentActivity.startPaymentActivity(this, PAYMENT_FOR_COURSE_CODE, it)
         })
     }
 
@@ -282,4 +279,3 @@ class CourseExploreActivity : CoreJoshActivity() {
     }
 
 }
-

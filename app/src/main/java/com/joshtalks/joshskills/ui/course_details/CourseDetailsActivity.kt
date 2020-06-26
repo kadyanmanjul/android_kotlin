@@ -6,6 +6,7 @@ import android.content.pm.ActivityInfo
 import android.graphics.Rect
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
@@ -75,6 +76,8 @@ class CourseDetailsActivity : AppCompatActivity() {
             list.sortedBy { it.sequenceNumber }.forEach { card ->
                 val cardViewHolder = getViewHolder(card)
                 binding.placeHolderView.addView(cardViewHolder)
+            }.also {
+                binding.placeHolderView.addView(SingleImageViewHolder())
             }
         })
 
