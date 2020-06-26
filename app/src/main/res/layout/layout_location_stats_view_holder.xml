@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        xmlns:wheel="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_176sdp"
+        android:layout_margin="@dimen/_10sdp"
+        android:background="@drawable/round_rectangle_for_course_expo"
+        android:backgroundTint="@color/colorPrimaryDark">
+
+    <ImageView
+            android:id="@+id/background_image_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:contentDescription="@string/attach_image"
+            android:scaleType="fitXY" />
+
+    <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+            android:id="@+id/students_enrolled_nearby"
+            style="@style/TextStyle.TopBarScroll"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:textSize="@dimen/font_13"
+            app:layout_constraintBottom_toTopOf="@+id/state_country"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.15"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="01"
+            tools:text="2655 students from" />
+
+    <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+            android:id="@+id/state_country"
+            style="@style/TextStyle.TopBarScroll"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:textSize="@dimen/font_24"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@+id/check_location_btn"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.15"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.9"
+            tools:text="Bihar, India" />
+
+    <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/check_location_btn"
+            style="@style/TextStyle.ButtonText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="@dimen/_6sdp"
+            android:background="@drawable/round_rectangle_for_course_expo"
+            android:backgroundTint="@color/white"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center"
+            android:padding="@dimen/_6sdp"
+            android:text="@string/chech_location"
+            android:textColor="@color/black"
+            android:textSize="@dimen/font_14"
+            app:cornerRadius="@dimen/_8sdp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.15"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.88"
+            app:layout_constraintWidth_default="percent"
+            app:layout_constraintWidth_percent="0.6"
+            app:rippleColor="@color/white" />
+
+    <FrameLayout
+            android:id="@+id/progress_bar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#BF000000"
+            android:elevation="@dimen/_8sdp"
+            android:visibility="gone">
+
+        <com.pnikosis.materialishprogress.ProgressWheel
+                android:layout_width="@dimen/_82sdp"
+                android:layout_height="@dimen/_82sdp"
+                android:layout_gravity="center"
+                wheel:matProg_barColor="@color/white"
+                wheel:matProg_fillRadius="true"
+                wheel:matProg_linearProgress="false"
+                wheel:matProg_progressIndeterminate="true"
+                wheel:matProg_rimColor="#33128C7E"
+                wheel:matProg_rimWidth="@dimen/_2sdp" />
+
+    </FrameLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

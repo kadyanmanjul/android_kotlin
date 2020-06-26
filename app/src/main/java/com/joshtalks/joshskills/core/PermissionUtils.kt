@@ -33,6 +33,18 @@ object PermissionUtils {
             .withListener(multiplePermissionsListener).check()
     }
 
+    fun locationPermission(
+        activity: Activity?,
+        multiplePermissionsListener: MultiplePermissionsListener
+    ) {
+        Dexter.withContext(activity)
+            .withPermissions(
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            )
+            .withListener(multiplePermissionsListener).check()
+    }
+
 
     fun audioRecordStorageReadAndWritePermission(
         activity: Activity?,
@@ -55,6 +67,16 @@ object PermissionUtils {
         ) + ContextCompat.checkSelfPermission(
             context,
             Manifest.permission.WRITE_EXTERNAL_STORAGE
+        ) == PackageManager.PERMISSION_GRANTED
+    }
+
+    fun isLocationPermissionEnabled(context: Context): Boolean {
+        return ContextCompat.checkSelfPermission(
+            context,
+            Manifest.permission.ACCESS_FINE_LOCATION
+        ) + ContextCompat.checkSelfPermission(
+            context,
+            Manifest.permission.ACCESS_COARSE_LOCATION
         ) == PackageManager.PERMISSION_GRANTED
     }
 
