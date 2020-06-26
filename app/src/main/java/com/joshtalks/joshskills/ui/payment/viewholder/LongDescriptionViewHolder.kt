@@ -5,16 +5,17 @@ import android.widget.TextView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.repository.server.course_detail.LongDescription
+import com.joshtalks.joshskills.ui.view_holders.CourseDetailsBaseCell
 import com.mindorks.placeholderview.annotations.Click
 import com.mindorks.placeholderview.annotations.Layout
 import com.mindorks.placeholderview.annotations.Resolve
 
 
-@Layout(R.layout.layout_long_description_card)
+@Layout(R.layout.layout_long_description_card_view_holder)
 class LongDescriptionViewHolder(
     private var longDescription: LongDescription,
     private val context: Context = AppObjectController.joshApplication
-) {
+): CourseDetailsBaseCell() {
 
     @com.mindorks.placeholderview.annotations.View(R.id.title)
     lateinit var title: TextView
@@ -31,6 +32,7 @@ class LongDescriptionViewHolder(
         title.text = longDescription.title
         description.text = longDescription.description
         description.text = description.text.toString().plus(longDescription.description)
+        description.maxLines = MIN_LINES
     }
 
     @Click(R.id.text_read_more)
