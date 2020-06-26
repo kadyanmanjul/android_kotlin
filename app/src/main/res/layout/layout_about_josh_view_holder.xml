@@ -5,14 +5,15 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="#f2f2f2"
-        tools:context=".ui.payment.PaymentActivity">
+        android:layout_marginBottom="@dimen/_6sdp"
+        tools:context=".ui.course_details.CourseDetailsActivity">
 
     <TextView
             android:id="@+id/title"
             style="@style/TextStyle.TopBarScroll"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_14sdp"
+            android:layout_marginTop="@dimen/_20sdp"
             android:text="Why Josh Skills ?"
             android:textColor="@color/black"
             android:textSize="@dimen/font_16"
@@ -47,26 +48,10 @@
             android:nestedScrollingEnabled="true"
             android:padding="@dimen/_4sdp"
             android:scrollbars="horizontal"
-            android:orientation="horizontal"
-            tools:listitem="@layout/layout_about_josh_card"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/description"
             app:layout_constraintWidth_default="percent"
-            app:layout_constraintWidth_percent="0.9" />
-
-    <ImageView
-            android:id="@+id/imageView2"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/_24sdp"
-            android:src="@drawable/payment_bottom"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/my_josh_recycler_view"
-            app:layout_constraintWidth_default="percent"
-
-            app:layout_constraintWidth_percent="0.9"
-            tools:ignore="ContentDescription" />
+            app:layout_constraintWidth_percent="01" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
