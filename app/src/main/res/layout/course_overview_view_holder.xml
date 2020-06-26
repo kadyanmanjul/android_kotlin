@@ -17,11 +17,12 @@
 
         <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
                 android:id="@+id/txtCourseName"
-                style="@style/TextStyle.TopBarNoScroll"
+                fontPath="fonts/Roboto-Bold.ttf"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingHorizontal="@dimen/_16sdp"
                 android:textColor="@color/white"
+                android:textSize="@dimen/font_20"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -30,12 +31,13 @@
 
         <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
                 android:id="@+id/txtTeacherName"
-                style="@style/TextStyle.TopBarScroll"
+                fontPath="fonts/Roboto.ttf"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:maxLines="1"
                 android:paddingHorizontal="@dimen/_16sdp"
                 android:textColor="@color/white"
+                android:textSize="@dimen/font_18"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/txtCourseName"
@@ -45,7 +47,7 @@
                 android:id="@+id/carousel_recycler_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_4sdp"
+                android:layout_marginTop="@dimen/_8sdp"
                 android:layout_marginBottom="@dimen/_36sdp"
                 android:orientation="horizontal"
                 android:scrollbars="none"
@@ -96,7 +98,6 @@
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/emptyView"
-                app:tint="@color/dark_grey"
                 tools:src="@drawable/ic_play_24dp"
                 tools:visibility="visible" />
 
@@ -114,7 +115,6 @@
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toEndOf="@+id/icon1"
                 app:layout_constraintTop_toBottomOf="@id/icons_top_barier"
-                app:tint="@color/dark_grey"
                 tools:src="@drawable/ic_play_24dp"
                 tools:visibility="visible" />
 
@@ -132,7 +132,6 @@
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toEndOf="@+id/icon2"
                 app:layout_constraintTop_toBottomOf="@id/icons_top_barier"
-                app:tint="@color/dark_grey"
                 tools:src="@drawable/ic_play_24dp"
                 tools:visibility="visible" />
 
@@ -150,18 +149,18 @@
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toEndOf="@+id/icon3"
                 app:layout_constraintTop_toBottomOf="@id/icons_top_barier"
-                app:tint="@color/dark_grey"
                 tools:src="@drawable/ic_play_24dp"
                 tools:visibility="visible" />
 
         <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
                 android:id="@+id/captionIcon1"
-                style="@style/TextStyle.ChipText"
+                fontPath="fonts/Roboto.ttf"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:paddingHorizontal="@dimen/_8sdp"
-                android:textColor="@color/dark_grey"
+                android:textColor="@color/black"
+                android:textSize="@dimen/font_14"
                 android:visibility="gone"
                 app:layout_constraintEnd_toStartOf="@+id/captionIcon2"
                 app:layout_constraintHorizontal_bias="0.5"
@@ -172,12 +171,13 @@
 
         <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
                 android:id="@+id/captionIcon2"
-                style="@style/TextStyle.ChipText"
+                fontPath="fonts/Roboto.ttf"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:paddingHorizontal="@dimen/_8sdp"
-                android:textColor="@color/dark_grey"
+                android:textColor="@color/black"
+                android:textSize="@dimen/font_14"
                 android:visibility="gone"
                 app:layout_constraintEnd_toStartOf="@+id/captionIcon3"
                 app:layout_constraintHorizontal_bias="0.5"
@@ -188,12 +188,13 @@
 
         <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
                 android:id="@+id/captionIcon3"
-                style="@style/TextStyle.ChipText"
+                fontPath="fonts/Roboto.ttf"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:paddingHorizontal="@dimen/_8sdp"
-                android:textColor="@color/dark_grey"
+                android:textColor="@color/black"
+                android:textSize="@dimen/font_14"
                 android:visibility="gone"
                 app:layout_constraintEnd_toStartOf="@+id/captionIcon4"
                 app:layout_constraintHorizontal_bias="0.5"
@@ -204,12 +205,13 @@
 
         <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
                 android:id="@+id/captionIcon4"
-                style="@style/TextStyle.ChipText"
+                fontPath="fonts/Roboto.ttf"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:paddingHorizontal="@dimen/_8sdp"
-                android:textColor="@color/dark_grey"
+                android:textColor="@color/black"
+                android:textSize="@dimen/font_14"
                 android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
@@ -220,12 +222,13 @@
 
         <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
                 android:id="@+id/txtDescription"
-                style="@style/TextStyle.NormalText"
+                fontPath="fonts/Roboto.ttf"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_14sdp"
                 android:paddingHorizontal="@dimen/_16sdp"
                 android:textColor="@color/light_grey"
+                android:textSize="@dimen/font_14"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/icons_bottom_barier"
@@ -251,7 +254,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.505"
+            app:layout_constraintVertical_bias="0.65"
             app:layout_constraintWidth_default="percent"
             app:layout_constraintWidth_percent="0.575">
 
@@ -279,12 +282,12 @@
 
             <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
                     android:id="@+id/txtRating"
-                    style="@style/TextStyle.TopBarNoScroll"
+                    fontPath="fonts/Roboto-Bold.ttf"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="end|center"
                     android:textColor="@color/white"
-                    android:textSize="@dimen/_24sdp"
+                    android:textSize="@dimen/font_32"
                     android:textStyle="bold"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -299,13 +302,14 @@
 
     <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
             android:id="@+id/txtViewers"
-            style="@style/TextStyle.ChipText"
+            fontPath="fonts/Roboto.ttf"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_4sdp"
             android:gravity="center"
             android:paddingHorizontal="@dimen/_16sdp"
             android:textColor="@color/light_grey"
+            android:textSize="@dimen/font_12"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/ratingView"

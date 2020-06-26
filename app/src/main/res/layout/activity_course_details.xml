@@ -51,7 +51,6 @@
 
         </com.google.android.material.appbar.AppBarLayout>
 
-
         <com.mindorks.placeholderview.PlaceHolderView
                 android:id="@+id/placeHolderView"
                 android:layout_width="match_parent"
@@ -164,8 +163,6 @@
 
         </androidx.cardview.widget.CardView>
 
-
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
-
 
 </layout>

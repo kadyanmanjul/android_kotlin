@@ -4,41 +4,38 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#f2f2f2"
         android:layout_marginBottom="@dimen/_6sdp"
+        android:background="#f2f2f2"
         tools:context=".ui.course_details.CourseDetailsActivity">
 
     <TextView
             android:id="@+id/title"
-            style="@style/TextStyle.TopBarScroll"
+            fontPath="fonts/Roboto-Bold.ttf"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_20sdp"
-            android:text="Why Josh Skills ?"
             android:textColor="@color/black"
-            android:textSize="@dimen/font_16"
-            android:textStyle="bold"
+            android:textSize="@dimen/font_18"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintWidth_default="percent"
-            app:layout_constraintWidth_percent="0.9" />
+            tools:text="Why Josh Skills ?" />
 
     <TextView
             android:id="@+id/description"
-            style="@style/TextStyle.TopBarScroll"
+            fontPath="fonts/Roboto.ttf"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_below="@id/title"
             android:layout_marginTop="@dimen/_4sdp"
-            android:text="Josh Talks - India ke youth ki awaaz! With over 7 Million Youtube Subs &amp; multiple awards,  Josh is here to help you speed your career"
             android:textColor="@color/dark_grey"
-            android:textSize="@dimen/font_12"
+            android:textSize="@dimen/font_14"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/title"
             app:layout_constraintWidth_default="percent"
-            app:layout_constraintWidth_percent="0.9" />
+            tools:text="Josh Talks - India ke youth ki awaaz! With over 7 Million Youtube Subs &amp; multiple awards,  Josh is here to help you speed your career" />
 
     <com.mindorks.placeholderview.PlaceHolderView
             android:id="@+id/my_josh_recycler_view"
@@ -50,8 +47,6 @@
             android:scrollbars="horizontal"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/description"
-            app:layout_constraintWidth_default="percent"
-            app:layout_constraintWidth_percent="01" />
+            app:layout_constraintTop_toBottomOf="@+id/description" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

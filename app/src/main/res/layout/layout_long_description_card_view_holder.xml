@@ -1,44 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
     <TextView
             android:id="@+id/title"
-            style="@style/TextStyle.TopBarScroll"
+            fontPath="fonts/Roboto-Bold.ttf"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_20sdp"
-            android:text="Key to a dynamic personality"
             android:textColor="@color/black"
-            android:textSize="@dimen/font_16"
-            android:textStyle="bold"
+            android:textSize="@dimen/font_18"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintWidth_default="percent"
-            app:layout_constraintWidth_percent="0.9" />
+            tools:text="Key to a dynamic personality" />
 
     <TextView
             android:id="@+id/description"
-            style="@style/TextStyle.TopBarScroll"
+            fontPath="fonts/Roboto.ttf"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_below="@id/title"
             android:layout_marginTop="@dimen/_4sdp"
             android:text="Learn the secrets to become a dynamic personality and impress your peers - in the office, college and everywhere else. India’s highest rated Personality Development course is here!"
             android:textColor="@color/dark_grey"
-            android:textSize="@dimen/font_12"
+            android:textSize="@dimen/font_14"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/title"
-            app:layout_constraintWidth_default="percent"
-            app:layout_constraintWidth_percent="0.9" />
+            app:layout_constraintWidth_default="percent" />
 
     <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
             android:id="@+id/text_read_more"
-            style="@style/TextStyle.TopBarScroll"
+            fontPath="fonts/Roboto.ttf"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="start"
@@ -47,13 +44,11 @@
             android:paddingTop="@dimen/_4sdp"
             android:text="@string/read_more"
             android:textColor="@color/button_primary_color"
-            android:textSize="@dimen/font_13"
+            android:textSize="@dimen/font_14"
             android:visibility="visible"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/description"
-
-            app:layout_constraintWidth_default="percent"
-            app:layout_constraintWidth_percent="0.9" />
+            app:layout_constraintWidth_default="percent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

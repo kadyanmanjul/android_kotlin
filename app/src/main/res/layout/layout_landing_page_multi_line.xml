@@ -17,13 +17,13 @@
 
     <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
             android:id="@+id/landing_text"
-            style="@style/TextStyle.TopBarScroll"
+            fontPath="fonts/Roboto.ttf"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="@dimen/_6sdp"
             android:text="@string/download_certificate"
             android:textColor="@color/dark_grey"
-            android:textSize="@dimen/font_12"
+            android:textSize="@dimen/font_14"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@+id/landing_image"
             app:layout_constraintTop_toTopOf="parent" />

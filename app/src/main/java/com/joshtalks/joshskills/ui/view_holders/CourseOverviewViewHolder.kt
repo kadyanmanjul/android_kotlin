@@ -82,7 +82,7 @@ class CourseOverviewViewHolder(
         txtViewers.text = data.viewerText
         txtDescription.text = data.shortDescription
         txtRating.text = String.format("%.1f", data.rating)
-        ratingBar.rating= data.rating.toFloat()
+        ratingBar.rating = data.rating.toFloat()
         setCourseStats()
         setCarouselView()
     }

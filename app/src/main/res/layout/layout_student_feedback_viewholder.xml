@@ -9,19 +9,15 @@
 
     <TextView
             android:id="@+id/title"
-            style="@style/TextStyle.TopBarScroll"
+            fontPath="fonts/Roboto-Bold.ttf"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_20sdp"
-            android:text="Meet the Students"
+            android:text="@string/meet_the_students"
             android:textColor="@color/black"
-            android:textSize="@dimen/font_16"
-            android:textStyle="bold"
+            android:textSize="@dimen/font_18"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintWidth_default="percent"
-            app:layout_constraintWidth_percent="0.9" />
+            app:layout_constraintTop_toTopOf="parent" />
 
     <com.mindorks.placeholderview.PlaceHolderView
             android:id="@+id/story_recycler_view"
@@ -32,8 +28,6 @@
             android:scrollbars="horizontal"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/title"
-            app:layout_constraintWidth_default="percent"
-            app:layout_constraintWidth_percent="0.9" />
+            app:layout_constraintTop_toBottomOf="@+id/title" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

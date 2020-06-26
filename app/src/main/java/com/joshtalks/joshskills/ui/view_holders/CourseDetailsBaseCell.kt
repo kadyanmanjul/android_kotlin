@@ -9,7 +9,7 @@ import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.bumptech.glide.request.target.Target
 import com.joshtalks.joshskills.core.AppObjectController
 
-abstract class CourseDetailsBaseCell(open val sequenceNumber: Int){
+abstract class CourseDetailsBaseCell(open val sequenceNumber: Int) {
 
     fun getAppContext() = AppObjectController.joshApplication
 
@@ -24,15 +24,14 @@ abstract class CourseDetailsBaseCell(open val sequenceNumber: Int){
             .into(iv)
     }
 
-    fun setCircleImageInView(iv: AppCompatImageView, url: String) {
+    fun setCircleImageInView(imgView: AppCompatImageView, url: String) {
         Glide.with(getAppContext())
-            .load(iv)
+            .load(url)
             .override(Target.SIZE_ORIGINAL)
-
             .optionalTransform(
                 WebpDrawable::class.java,
                 WebpDrawableTransformation(CircleCrop())
             )
-            .into(iv)
+            .into(imgView)
     }
 }

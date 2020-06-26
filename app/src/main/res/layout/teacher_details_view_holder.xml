@@ -3,16 +3,15 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingHorizontal="@dimen/_12sdp"
-        android:paddingVertical="@dimen/_16sdp">
+        android:layout_height="wrap_content">
 
     <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
             android:id="@+id/txtTeacherName"
-            style="@style/TextStyle.NormalText"
+            fontPath="fonts/Roboto-Bold.ttf"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:textColor="@color/black"
+            android:textSize="@dimen/font_18"
             android:textStyle="bold"
             app:layout_constraintEnd_toStartOf="@+id/barrier"
             app:layout_constraintHorizontal_bias="0"
@@ -22,10 +21,11 @@
 
     <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
             android:id="@+id/txtDesignation"
-            style="@style/TextStyle.ChipText"
+            fontPath="fonts/Roboto.ttf"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:textColor="@color/light_grey"
+            android:textSize="@dimen/font_14"
             app:layout_constraintEnd_toStartOf="@+id/barrier"
             app:layout_constraintHorizontal_bias="0"
             app:layout_constraintStart_toStartOf="parent"
@@ -34,10 +34,11 @@
 
     <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
             android:id="@+id/txtDescription"
-            style="@style/TextStyle.ChipText"
+            fontPath="fonts/Roboto.ttf"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:textColor="@color/black"
+            android:textSize="@dimen/font_14"
             app:layout_constraintEnd_toStartOf="@+id/barrier"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/txtDesignation"
@@ -45,12 +46,14 @@
 
     <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_meet_me"
+            fontPath="fonts/Roboto.ttf"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_10sdp"
             android:backgroundTint="@color/button_color"
             android:text="@string/meet_me"
             android:textAllCaps="false"
+            android:textSize="@dimen/font_16"
             app:cornerRadius="@dimen/_32sdp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/txtDescription" />

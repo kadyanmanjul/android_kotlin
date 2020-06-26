@@ -9,21 +9,17 @@
 
     <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
             android:id="@+id/title"
-            style="@style/TextStyle.TopBarScroll"
+            fontPath="fonts/Roboto-Bold.ttf"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_20sdp"
-            android:text="How will I learn?"
             android:textColor="@color/black"
-            android:textSize="@dimen/font_16"
-            android:textStyle="bold"
+            android:textSize="@dimen/font_18"
             app:layout_constraintBottom_toTopOf="@+id/multi_linelayout"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintWidth_default="percent"
-            app:layout_constraintWidth_percent="0.9" />
+            tools:text="How will I learn?" />
 
     <LinearLayout
             android:id="@+id/multi_linelayout"
@@ -35,14 +31,12 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/title"
-            app:layout_constraintWidth_default="percent"
-            app:layout_constraintWidth_percent="0.9" />
+            app:layout_constraintTop_toBottomOf="@+id/title" />
 
 
     <com.google.android.material.textview.MaterialTextView
             android:id="@+id/download_syllabus"
-            style="@style/TextStyle.ButtonText"
+            fontPath="fonts/Roboto.ttf"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginVertical="@dimen/_6sdp"
@@ -54,11 +48,11 @@
             android:padding="@dimen/_6sdp"
             android:text="@string/download_syllabus"
             android:textColor="@color/white"
-            android:textSize="@dimen/font_14"
+            android:textSize="@dimen/font_16"
             app:cornerRadius="@dimen/_8sdp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.1"
+            app:layout_constraintHorizontal_bias="0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/multi_linelayout"
             app:layout_constraintWidth_default="percent"

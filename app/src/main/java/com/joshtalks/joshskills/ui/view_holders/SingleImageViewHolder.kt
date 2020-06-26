@@ -39,8 +39,7 @@ class SingleImageViewHolder(
                 AppObjectController.joshApplication,
                 R.drawable.payment_bottom
             )
-            cardView.layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, 128)
-            cardView.setPadding(30, 30, 30, 30)
+            cardView.layoutParams = ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, 200)
             layout.visibility = android.view.View.GONE
         } else setDefaultImageView(imageView, url)
         if (title.isNullOrEmpty().not()) {
