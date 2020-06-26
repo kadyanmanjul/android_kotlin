@@ -94,7 +94,7 @@ class CourseDetailsActivity : CoreJoshActivity() {
                 val cardViewHolder = getViewHolder(card)
                 binding.placeHolderView.addView(cardViewHolder)
             }.also {
-                binding.placeHolderView.addView(SingleImageViewHolder(12, "  ", " "))
+                binding.placeHolderView.addView(SingleImageViewHolder(list.size, "  ", " "))
             }
         })
 
