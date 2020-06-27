@@ -99,5 +99,29 @@
         <key>CTA_PAYMENT_SUMMARY_FREE</key>
         <value>Get this course for free</value>
     </entry>
+    <entry>
+        <key>FIND_MORE_COURSE_HINT_FIRST_TIME</key>
+        <value>
+            Hello %s, Agar aap es course ke sath kuch aur bhi seekhna chahte hain to pehle %s dino
+            mai aapke paas har course pe %s off hai
+        </value>
+    </entry>
+    <entry>
+        <key>BUY_COURSE_OFFER_HINT</key>
+        <value>Get %s off on the next course you buy, Valid for %s days</value>
+    </entry>
+    <entry>
+        <key>COMPLETION_CERTIFICATE_HINT</key>
+        <value>
+            Iss course ke lessons aur practices %s complete karne par aapko ek digital certificate
+            milega
+        </value>
+    </entry>
+    <entry>
+        <key>FIRST_TIME_USER_HINT</key>
+        <value>
+            Aapko apne course se related saari videos aur classes isko click karke milengi
+        </value>
+    </entry>
 
 </defaultsMap>
