@@ -32,6 +32,8 @@ import com.joshtalks.joshskills.repository.server.course_detail.StudentFeedback
 import com.joshtalks.joshskills.repository.server.course_detail.SyllabusData
 import com.joshtalks.joshskills.repository.server.course_detail.TeacherDetails
 import com.joshtalks.joshskills.ui.course_details.extra.TeacherDetailsFragment
+import com.joshtalks.joshskills.ui.extra.setOnSingleClickListener
+import com.joshtalks.joshskills.ui.payment.order_summary.PaymentSummaryActivity
 import com.joshtalks.joshskills.ui.payment.viewholder.AboutJoshViewHolder
 import com.joshtalks.joshskills.ui.payment.viewholder.LocationStatViewHolder
 import com.joshtalks.joshskills.ui.payment.viewholder.LongDescriptionViewHolder
@@ -56,6 +58,7 @@ class CourseDetailsActivity : CoreJoshActivity() {
     private val viewModel by lazy { ViewModelProvider(this).get(CourseDetailsViewModel::class.java) }
     private lateinit var linearLayoutManager: LinearLayoutManager
     private var compositeDisposable = CompositeDisposable()
+    private var testId: Int = 0
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -71,7 +74,7 @@ class CourseDetailsActivity : CoreJoshActivity() {
         binding.lifecycleOwner = this
         binding.handler = this
         initView()
-        val testId = intent.getIntExtra(KEY_TEST_ID, 0)
+        testId = intent.getIntExtra(KEY_TEST_ID, 0)
         if (testId != 0) {
             getCourseDetails(testId)
         } else {
@@ -264,6 +267,10 @@ class CourseDetailsActivity : CoreJoshActivity() {
 
         compositeDisposable.add(RxBus2.listen(TeacherDetails::class.java).subscribe {
             TeacherDetailsFragment.newInstance(it).show(supportFragmentManager, "Teacher Details")
+        })
+
+        binding.btnStartCourse.setOnSingleClickListener(View.OnClickListener {
+            PaymentSummaryActivity.startPaymentSummaryActivity(this, testId.toString())
         })
 
 
