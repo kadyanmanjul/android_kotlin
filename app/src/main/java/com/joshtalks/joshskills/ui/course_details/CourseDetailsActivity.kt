@@ -108,13 +108,20 @@ class CourseDetailsActivity : CoreJoshActivity() {
     }
 
     private fun subscribeLiveData() {
-        viewModel.courseDetailsLiveData.observe(this, Observer { list ->
-            list.sortedBy { it.sequenceNumber }.forEach { card ->
+        viewModel.courseDetailsLiveData.observe(this, Observer { data ->
+            if (data.paymentdata.discountText.isNotBlank()) {
+                binding.txtActualPrice.text = String.format("%.2f", data.paymentdata.actualAmount)
+                binding.txtDiscountedPrice.text =
+                    String.format("%.2f", data.paymentdata.discountedAmount)
+                binding.txtExtraHint.text = data.paymentdata.discountText
+                binding.txtExtraHint.visibility = View.VISIBLE
+            }
+            data.cards.sortedBy { it.sequenceNumber }.forEach { card ->
                 getViewHolder(card)?.run {
                     binding.placeHolderView.addView(this)
                 }
             }.also {
-                binding.placeHolderView.addView(SingleImageViewHolder(list.size, "  ", " "))
+                binding.placeHolderView.addView(SingleImageViewHolder(data.cards.size, "  ", " "))
             }
         })
 

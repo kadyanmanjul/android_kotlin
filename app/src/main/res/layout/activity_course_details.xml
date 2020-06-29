@@ -41,10 +41,10 @@
                         android:background="?attr/selectableItemBackgroundBorderless"
                         android:clickable="true"
                         android:focusable="true"
-                        android:visibility="visible"
                         android:gravity="center_vertical|start"
                         android:paddingTop="@dimen/_6sdp"
                         android:paddingBottom="@dimen/_6sdp"
+                        android:visibility="visible"
                         app:srcCompat="@drawable/ic_arrow_back" />
 
 
@@ -95,7 +95,7 @@
                     android:gravity="center"
                     android:padding="@dimen/_2sdp"
                     android:textColor="@color/white"
-                    android:visibility="visible"
+                    android:visibility="gone"
                     app:layout_constraintBottom_toTopOf="@+id/footer_buy_course"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
