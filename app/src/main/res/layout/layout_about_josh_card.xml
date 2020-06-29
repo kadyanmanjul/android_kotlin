@@ -11,7 +11,6 @@
             android:layout_height="0dp"
             android:contentDescription="@string/attach_image"
             android:scaleType="fitXY"
-            android:src="@drawable/aboutjosh"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHeight_default="percent"
             app:layout_constraintHeight_percent="0.60"
