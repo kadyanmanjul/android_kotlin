@@ -88,5 +88,6 @@
     <color name="error">#E33333</color>
     <color name="transparent">#00000000</color>
     <color name="faq_f1">#F1F7FE</color>
+    <color name="blue_tint">#107BE5</color>
 
 </resources>
