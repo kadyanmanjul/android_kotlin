@@ -14,7 +14,6 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.repository.server.course_detail.Detail
-import com.joshtalks.joshskills.ui.view_holders.ROUND_CORNER
 import com.mindorks.placeholderview.annotations.Layout
 import com.mindorks.placeholderview.annotations.Resolve
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation
@@ -44,7 +43,7 @@ class AboutJoshCardView(
     private fun setImageView(url: String) {
         val multi = MultiTransformation(
             RoundedCornersTransformation(
-                Utils.dpToPx(ROUND_CORNER),
+                Utils.dpToPx(4),
                 0,
                 RoundedCornersTransformation.CornerType.ALL
             )

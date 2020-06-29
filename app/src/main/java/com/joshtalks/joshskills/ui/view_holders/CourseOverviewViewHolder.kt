@@ -139,7 +139,7 @@ class CourseOverviewViewHolder(
             .setLayoutManager(linearLayoutManager)
 
         if (carouselRecyclerView.itemDecorationCount < 1) {
-            val cardWidthPixels = (context.resources.displayMetrics.widthPixels * 0.80f).toInt()
+            val cardWidthPixels = (context.resources.displayMetrics.widthPixels * 0.90f).toInt()
             val cardHintPercent = 0.01f
             carouselRecyclerView.addItemDecoration(
                 RecyclerViewCarouselItemDecorator(
