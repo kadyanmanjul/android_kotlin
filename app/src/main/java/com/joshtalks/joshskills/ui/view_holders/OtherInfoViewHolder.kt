@@ -3,6 +3,7 @@ package com.joshtalks.joshskills.ui.view_holders
 import android.content.Context
 import android.widget.ImageView
 import androidx.appcompat.widget.AppCompatImageView
+import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.Target
 import com.joshtalks.joshskills.R
@@ -14,7 +15,7 @@ import com.mindorks.placeholderview.annotations.Resolve
 @Layout(R.layout.other_info_view_holder)
 class OtherInfoViewHolder(
     override val sequenceNumber: Int,
-    val data: OtherInfo,
+    val data: OtherInfo?,
     private val context: Context = AppObjectController.joshApplication
 ) : CourseDetailsBaseCell(sequenceNumber) {
 
@@ -23,7 +24,16 @@ class OtherInfoViewHolder(
 
     @Resolve
     fun onResolved() {
-        setImageView(data.imgUrl, imgView)
+        if (sequenceNumber != -1)
+            data?.imgUrl?.let {
+                setImageView(data.imgUrl, imgView)
+            }
+        else imgView.setImageDrawable(
+            ContextCompat.getDrawable(
+                AppObjectController.joshApplication,
+                R.drawable.payment_bottom
+            )
+        )
     }
 
     private fun setImageView(url: String, imageView: ImageView) {
