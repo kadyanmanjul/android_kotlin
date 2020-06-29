@@ -36,7 +36,7 @@ class ReviewsAdapter(private val reviews: List<Review>) :
         val review = reviews[position]
         holder.name.text = review.username
         holder.location.text = review.userLocaton
-        holder.rating.text = "5"
+        holder.rating.text = review.rating
         holder.reviewTitle.text = review.title
         holder.reviewMessage.text = review.description
         if (review.dpUrl.isNullOrEmpty()) {

@@ -14,6 +14,7 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.repository.server.course_detail.DemoLesson
 import com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity
 import com.mindorks.placeholderview.annotations.Click
@@ -37,15 +38,19 @@ class DemoLessonViewHolder(
     @Resolve
     fun onResolved() {
         txtTitle.text = data.title
-        setImageView(data.thumbnailUrl, imgView)
+        data.thumbnailUrl?.let { setDefaultImageView(imgView, it) }
     }
 
     @Click(R.id.playIcon)
     fun onClick() {
+        if (data.videoUrl.isNullOrEmpty()) {
+            showToast(getAppContext().getString(R.string.video_url_not_exist))
+            return
+        }
         VideoPlayerActivity.startVideoActivity(
             context,
             data.title,
-            "123",
+            data.videoId,
             data.videoUrl
         )
     }

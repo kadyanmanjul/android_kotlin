@@ -22,7 +22,12 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.Logger
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
-import com.google.gson.*
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
+import com.google.gson.JsonDeserializationContext
+import com.google.gson.JsonDeserializer
+import com.google.gson.JsonElement
+import com.google.gson.JsonParseException
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import com.jakewharton.threetenabp.AndroidThreeTen
 import com.joshtalks.joshskills.BuildConfig
@@ -370,7 +375,6 @@ internal class AppObjectController {
             freshChat.init(config)
             val notificationConfig = FreshchatNotificationConfig()
                 .setImportance(NotificationManagerCompat.IMPORTANCE_MAX)
-
             freshChat.setNotificationConfig(notificationConfig)
         }
 

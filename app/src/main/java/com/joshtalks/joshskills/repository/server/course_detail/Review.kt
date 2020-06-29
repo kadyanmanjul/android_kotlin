@@ -7,6 +7,10 @@ import kotlinx.android.parcel.Parcelize
 
 @Parcelize
 data class Review(
+
+    @SerializedName("rating")
+    val rating: String,
+
     @SerializedName("title")
     val title: String,
 

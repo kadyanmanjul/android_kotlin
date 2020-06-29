@@ -3,6 +3,9 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
+
+        android:background="@drawable/bottom_divider_line_bg"
+        android:paddingHorizontal="@dimen/_12sdp"
         android:layout_height="wrap_content">
 
     <androidx.appcompat.widget.AppCompatTextView
@@ -12,7 +15,7 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:textColor="@color/font_color"
-            android:textSize="@dimen/font_20"
+            android:textSize="@dimen/font_18"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Reviews and rating" />
@@ -22,12 +25,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_constraintTop_toBottomOf="@+id/header"
-            app:tabIndicator="@color/font_color"
-            app:tabMode="fixed" />
-    <!--
-        app:tabTextAppearance="@android:style/TextAppearance.Widget.TabWidget"
-    -->
-
+            app:tabIndicatorColor="@color/black"
+            app:tabIndicatorFullWidth="true"
+            app:tabIndicatorHeight="@dimen/_2sdp"
+            app:tabMode="scrollable"
+            app:tabSelectedTextColor="@color/black"
+            app:tabTextAppearance="@style/TabLayoutStyle"
+            app:tabTextColor="@color/dark_grey" />
     <com.joshtalks.joshskills.core.custom_ui.HeightWrappingViewPager
             android:id="@+id/view_pager"
             android:layout_width="match_parent"

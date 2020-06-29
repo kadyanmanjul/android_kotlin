@@ -3,9 +3,10 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
+        android:paddingHorizontal="@dimen/_12sdp"
         android:layout_height="wrap_content">
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/title"
             fontPath="fonts/Roboto-Bold.ttf"
             android:layout_width="0dp"
@@ -16,32 +17,35 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintWidth_default="percent"
+            tools:ignore="MissingPrefix"
             tools:text="Key to a dynamic personality" />
 
     <TextView
             android:id="@+id/description"
-            fontPath="fonts/Roboto.ttf"
+            fontPath="fonts/Poppins-Regular.ttf"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_below="@id/title"
-            android:layout_marginTop="@dimen/_4sdp"
-            android:text="Learn the secrets to become a dynamic personality and impress your peers - in the office, college and everywhere else. India’s highest rated Personality Development course is here!"
+            android:layout_marginTop="@dimen/_6sdp"
+            android:letterSpacing="0.03"
+            app:layout_constraintWidth_default="percent"
             android:textColor="@color/dark_grey"
             android:textSize="@dimen/font_14"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/title"
-            app:layout_constraintWidth_default="percent" />
+            tools:ignore="MissingPrefix"
+            tools:text="Learn the secrets to become a dynamic personality and impress your peers - in the office, college and everywhere else. India’s highest rated Personality Development course is here!" />
 
     <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
             android:id="@+id/text_read_more"
-            fontPath="fonts/Roboto.ttf"
+            fontPath="fonts/Roboto-Medium.ttf"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="start"
             android:gravity="center_vertical|start"
             android:maxLines="1"
-            android:paddingTop="@dimen/_4sdp"
+            android:layout_marginTop="@dimen/_6sdp"
             android:text="@string/read_more"
             android:textColor="@color/button_primary_color"
             android:textSize="@dimen/font_14"

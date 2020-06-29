@@ -4,9 +4,8 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/_6sdp"
-        android:background="#f2f2f2"
-        tools:context=".ui.course_details.CourseDetailsActivity">
+        android:paddingHorizontal="@dimen/_12sdp"
+        tools:ignore="MissingPrefix">
 
     <TextView
             android:id="@+id/title"
@@ -15,7 +14,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_20sdp"
             android:textColor="@color/black"
-            android:textSize="@dimen/font_18"
+            android:textSize="@dimen/font_20"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -24,7 +23,7 @@
 
     <TextView
             android:id="@+id/description"
-            fontPath="fonts/Roboto.ttf"
+            fontPath="fonts/Poppins-Regular.ttf"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_below="@id/title"
@@ -41,7 +40,7 @@
             android:id="@+id/my_josh_recycler_view"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginVertical="@dimen/_6sdp"
+            android:layout_marginVertical="@dimen/_10sdp"
             android:nestedScrollingEnabled="true"
             android:padding="@dimen/_4sdp"
             android:scrollbars="horizontal"

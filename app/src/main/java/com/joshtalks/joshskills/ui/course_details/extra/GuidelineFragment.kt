@@ -16,7 +16,7 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.repository.server.course_detail.Guideline
 import io.github.inflationx.calligraphy3.TypefaceUtils
-import kotlinx.android.synthetic.main.guideline_item_view.*
+import kotlinx.android.synthetic.main.guideline_item_view.container
 
 const val GUIDELINE_OBJECT = "guideline_obj"
 
@@ -57,7 +57,7 @@ class GuidelineFragment : Fragment() {
     private fun getTextView(text: String, typefaceSpan: Typeface): AppCompatTextView {
         val textView = AppCompatTextView(requireContext())
         textView.setTextColor(ContextCompat.getColor(requireContext(), R.color.gray_48))
-        textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 15F)
+        textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14F)
         textView.typeface = typefaceSpan
         val spanString = SpannableString(text)
         spanString.setSpan(

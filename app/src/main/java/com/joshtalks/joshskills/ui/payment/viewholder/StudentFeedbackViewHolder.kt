@@ -44,7 +44,6 @@ class StudentFeedbackViewHolder(
         item.itemAnimator = null
         studentFeedback.feedbacks.forEach {
             item.addView(StudentFeedbackCard(it))
-
         }
     }
 }

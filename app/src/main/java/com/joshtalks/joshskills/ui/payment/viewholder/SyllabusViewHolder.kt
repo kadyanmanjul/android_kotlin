@@ -38,8 +38,10 @@ class SyllabusViewHolder(
     @Resolve
     fun onResolved() {
         title.text = syllabusData.title
-        syllabusData.syllabusList.forEach {
-            linearLayout.addView(addLinerLayout(it))
+        if (linearLayout.childCount == 0) {
+            syllabusData.syllabusList.forEach {
+                linearLayout.addView(addLinerLayout(it))
+            }
         }
     }
 

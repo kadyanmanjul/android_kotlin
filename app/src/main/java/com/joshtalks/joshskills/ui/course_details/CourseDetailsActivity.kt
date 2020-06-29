@@ -11,10 +11,10 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.android.material.appbar.AppBarLayout
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.CoreJoshActivity
+import com.joshtalks.joshskills.core.custom_ui.decorator.LayoutMarginDecoration
 import com.joshtalks.joshskills.databinding.ActivityCourseDetailsBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.GotoCourseCard
@@ -39,7 +39,6 @@ import com.joshtalks.joshskills.ui.payment.viewholder.LongDescriptionViewHolder
 import com.joshtalks.joshskills.ui.payment.viewholder.StudentFeedbackViewHolder
 import com.joshtalks.joshskills.ui.payment.viewholder.SyllabusViewHolder
 import com.joshtalks.joshskills.ui.view_holders.CourseDetailsBaseCell
-import com.joshtalks.joshskills.ui.view_holders.CourseOptionTitleViewHolder
 import com.joshtalks.joshskills.ui.view_holders.CourseOverviewViewHolder
 import com.joshtalks.joshskills.ui.view_holders.DemoLessonViewHolder
 import com.joshtalks.joshskills.ui.view_holders.GuidelineViewHolder
@@ -47,11 +46,11 @@ import com.joshtalks.joshskills.ui.view_holders.OtherInfoViewHolder
 import com.joshtalks.joshskills.ui.view_holders.ReviewRatingViewHolder
 import com.joshtalks.joshskills.ui.view_holders.SingleImageViewHolder
 import com.joshtalks.joshskills.ui.view_holders.TeacherDetailsViewHolder
+import com.vanniktech.emoji.Utils
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlin.math.abs
 
 class CourseDetailsActivity : CoreJoshActivity() {
 
@@ -85,38 +84,35 @@ class CourseDetailsActivity : CoreJoshActivity() {
 
     private fun initView() {
         linearLayoutManager = LinearLayoutManager(this)
-        linearLayoutManager.stackFromEnd = true
         linearLayoutManager.isSmoothScrollbarEnabled = true
         binding.placeHolderView.builder.setHasFixedSize(true).setLayoutManager(linearLayoutManager)
+        binding.placeHolderView.addItemDecoration(
+            LayoutMarginDecoration(
+                Utils.dpToPx(
+                    applicationContext,
+                    8f
+                )
+            )
+        )/* binding.placeHolderView.addOnScrollListener(object :
+            RecyclerView.OnScrollListener() {
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                super.onScrollStateChanged(recyclerView, newState)
+                val itemPosition = linearLayoutManager.findFirstCompletelyVisibleItemPosition()
 
-        binding.courseAllOptionRv.builder
-            .setHasFixedSize(true)
-            .setLayoutManager(LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false))
+                if (itemPosition >= 2 ) {
+                    binding.buyCourseLl.visibility = View.VISIBLE
+                } else {
+                    binding.buyCourseLl.visibility = View.GONE
+                }
+            }
+        })*/
     }
 
     private fun subscribeLiveData() {
-        binding.appBarLayout.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { appBarLayout, verticalOffset ->
-            if (abs(verticalOffset) - appBarLayout.totalScrollRange == 0) {
-                binding.footerBuyCourse.visibility = View.VISIBLE
-                binding.txtExtraHint.visibility = View.VISIBLE
-                binding.courseAllOptionRv.visibility = View.VISIBLE
-            } else {
-                binding.footerBuyCourse.visibility = View.GONE
-                binding.txtExtraHint.visibility = View.GONE
-                binding.courseAllOptionRv.visibility = View.GONE
-
-            }
-        })
         viewModel.courseDetailsLiveData.observe(this, Observer { list ->
             list.sortedBy { it.sequenceNumber }.forEach { card ->
                 getViewHolder(card)?.run {
                     binding.placeHolderView.addView(this)
-                    binding.courseAllOptionRv.addView(
-                        CourseOptionTitleViewHolder(
-                            card.cardType.type,
-                            card.sequenceNumber
-                        )
-                    )
                 }
             }.also {
                 binding.placeHolderView.addView(SingleImageViewHolder(list.size, "  ", " "))
@@ -139,22 +135,7 @@ class CourseDetailsActivity : CoreJoshActivity() {
                     card.data.toString(),
                     CourseOverviewData::class.java
                 )
-                binding.courseOverViewRv.addView(
-                    CourseOverviewViewHolder(
-                        card.sequenceNumber,
-                        data,
-                        this
-                    )
-                )
-                return null
-
-            }
-            CardType.TEACHER_DETAILS -> {
-                val data = AppObjectController.gsonMapperForLocal.fromJson(
-                    card.data.toString(),
-                    TeacherDetails::class.java
-                )
-                return TeacherDetailsViewHolder(card.sequenceNumber, data, this)
+                return CourseOverviewViewHolder(card.sequenceNumber, data, this)
             }
             CardType.LONG_DESCRIPTION -> {
                 val data = AppObjectController.gsonMapperForLocal.fromJson(
@@ -162,6 +143,13 @@ class CourseDetailsActivity : CoreJoshActivity() {
                     LongDescription::class.java
                 )
                 return LongDescriptionViewHolder(card.sequenceNumber, data, this)
+            }
+            CardType.TEACHER_DETAILS -> {
+                val data = AppObjectController.gsonMapperForLocal.fromJson(
+                    card.data.toString(),
+                    TeacherDetails::class.java
+                )
+                return TeacherDetailsViewHolder(card.sequenceNumber, data, this)
             }
             CardType.SYLLABUS -> {
                 val data = AppObjectController.gsonMapperForLocal.fromJson(

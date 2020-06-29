@@ -11,16 +11,17 @@
             android:layout_height="@dimen/_16sdp"
             android:contentDescription="@string/attach_image"
             android:scaleType="fitXY"
+            android:adjustViewBounds="true"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
     <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
             android:id="@+id/landing_text"
-            fontPath="fonts/Roboto.ttf"
+            fontPath="fonts/Poppins-Regular.ttf"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="@dimen/_6sdp"
+            android:padding="@dimen/_4sdp"
             android:text="@string/download_certificate"
             android:textColor="@color/dark_grey"
             android:textSize="@dimen/font_14"

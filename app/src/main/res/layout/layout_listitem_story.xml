@@ -3,6 +3,7 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_margin="@dimen/_6sdp">
 
     <FrameLayout
@@ -11,7 +12,7 @@
             android:layout_height="wrap_content"
             android:background="@drawable/circle2"
             android:backgroundTint="@color/button_primary_color"
-            android:padding="2dp"
+            android:padding="@dimen/_2sdp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
@@ -29,27 +30,23 @@
 
     <TextView
             android:id="@+id/name"
-            style="@style/TextStyle.NormalText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Rahul Dey"
+            android:textSize="@dimen/font_12"
             android:textColor="@color/black"
-            android:textSize="@dimen/font_10"
+            tools:text="@string/bilkul_nahi"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/frameLayout" />
 
     <TextView
             android:id="@+id/profession"
-            style="@style/TextStyle.NormalText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Student"
             android:textColor="@color/dark_grey"
-            android:textSize="@dimen/font_8"
+            android:textSize="@dimen/font_10"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/name" />
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

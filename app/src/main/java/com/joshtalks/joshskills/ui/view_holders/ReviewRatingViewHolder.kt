@@ -2,9 +2,7 @@ package com.joshtalks.joshskills.ui.view_holders
 
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.LinearSnapHelper
 import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.SnapHelper
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.repository.server.course_detail.Reviews
@@ -44,8 +42,10 @@ class ReviewRatingViewHolder(
         reviewRV.layoutManager =
             LinearLayoutManager(getAppContext(), LinearLayoutManager.VERTICAL, false)
         reviewRV.setHasFixedSize(true)
+/*
         val snapHelper: SnapHelper = LinearSnapHelper()
         snapHelper.attachToRecyclerView(reviewRV)
+*/
         reviewRV.post { reviewRV.adapter = ReviewsAdapter(reviews.reviews) }
     }
 }

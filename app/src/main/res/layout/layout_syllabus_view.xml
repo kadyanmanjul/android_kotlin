@@ -4,6 +4,9 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+
+        android:background="@drawable/bottom_divider_line_bg"
+        android:paddingHorizontal="@dimen/_12sdp"
         tools:context=".ui.course_details.CourseDetailsActivity">
 
 
@@ -22,6 +25,7 @@
             tools:text="How will I learn?" />
 
     <LinearLayout
+            android:paddingTop="@dimen/_6sdp"
             android:id="@+id/multi_linelayout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -36,10 +40,10 @@
 
     <com.google.android.material.textview.MaterialTextView
             android:id="@+id/download_syllabus"
-            fontPath="fonts/Roboto.ttf"
+            fontPath="fonts/Roboto-Medium.ttf"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginVertical="@dimen/_6sdp"
+            android:layout_marginTop="@dimen/_6sdp"
             android:background="@drawable/round_rectangle_for_course_expo"
             android:backgroundTint="@color/button_color"
             android:clickable="true"
