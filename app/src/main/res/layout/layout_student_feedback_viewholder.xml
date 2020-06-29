@@ -4,7 +4,8 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/top_divider_with_padding_bg">
+        android:background="@drawable/top_divider_with_padding_bg"
+        tools:context=".ui.payment.PaymentActivity">
 
     <TextView
             android:layout_marginHorizontal="@dimen/_16sdp"
@@ -17,8 +18,7 @@
             android:textSize="@dimen/font_18"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:ignore="MissingPrefix" />
+            app:layout_constraintTop_toTopOf="parent" />
 
     <com.mindorks.placeholderview.PlaceHolderView
             android:id="@+id/story_recycler_view"
