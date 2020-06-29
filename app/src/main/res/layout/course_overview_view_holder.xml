@@ -31,7 +31,7 @@
 
         <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
                 android:id="@+id/txtTeacherName"
-                fontPath="fonts/Roboto.ttf"
+                fontPath="fonts/Roboto-Regular.ttf"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:maxLines="1"
@@ -154,7 +154,7 @@
 
         <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
                 android:id="@+id/captionIcon1"
-                fontPath="fonts/Roboto.ttf"
+                fontPath="fonts/Roboto-Regular.ttf"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:gravity="center"
@@ -171,7 +171,7 @@
 
         <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
                 android:id="@+id/captionIcon2"
-                fontPath="fonts/Roboto.ttf"
+                fontPath="fonts/Roboto-Regular.ttf"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:gravity="center"
@@ -188,7 +188,7 @@
 
         <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
                 android:id="@+id/captionIcon3"
-                fontPath="fonts/Roboto.ttf"
+                fontPath="fonts/Roboto-Regular.ttf"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:gravity="center"
@@ -205,7 +205,7 @@
 
         <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
                 android:id="@+id/captionIcon4"
-                fontPath="fonts/Roboto.ttf"
+                fontPath="fonts/Roboto-Regular.ttf"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:gravity="center"
@@ -222,7 +222,7 @@
 
         <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
                 android:id="@+id/txtDescription"
-                fontPath="fonts/Roboto.ttf"
+                fontPath="fonts/Roboto-Regular.ttf"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_14sdp"
@@ -302,7 +302,7 @@
 
     <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
             android:id="@+id/txtViewers"
-            fontPath="fonts/Roboto.ttf"
+            fontPath="fonts/Roboto-Medium.ttf"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_4sdp"

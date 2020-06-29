@@ -35,7 +35,7 @@
 
     <TextView
             android:id="@+id/description"
-            fontPath="fonts/Roboto.ttf"
+            fontPath="fonts/Roboto-Regular.ttf"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_below="@id/title"

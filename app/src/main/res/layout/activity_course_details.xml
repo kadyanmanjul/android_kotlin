@@ -96,7 +96,7 @@
                     android:gravity="center"
                     android:padding="@dimen/_2sdp"
                     android:textColor="@color/white"
-                    android:textSize="@dimen/font_12"
+                    android:textSize="@dimen/font_14"
                     android:visibility="gone"
                     app:layout_constraintBottom_toTopOf="@+id/footer_buy_course"
                     app:layout_constraintEnd_toEndOf="parent"

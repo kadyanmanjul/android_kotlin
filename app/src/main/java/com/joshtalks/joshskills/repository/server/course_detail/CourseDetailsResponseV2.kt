@@ -11,5 +11,5 @@ data class CourseDetailsResponseV2(
     val version: String,
 
     @SerializedName("payment_data")
-    val paymentdata: PaymentData
+    val paymentData: PaymentData
 )

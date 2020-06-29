@@ -9,10 +9,10 @@ import kotlinx.android.parcel.Parcelize
 data class PaymentData(
 
     @SerializedName("actual_amount")
-    val actualAmount: Double,
+    val actualAmount: String,
 
     @SerializedName("discounted_amount")
-    val discountedAmount: Double,
+    val discountedAmount: String,
 
     @SerializedName("discount_text")
     val discountText: String

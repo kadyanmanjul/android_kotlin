@@ -24,6 +24,6 @@ class RatingViewHolder(var rating: Rating) {
     fun onViewInflated() {
         userRating.text = rating.rating.toString()
         progressBar.progress = rating.percent
-        userRatingPercentage.text = rating.rating.toString().plus("%")
+        userRatingPercentage.text = rating.percent.toString().plus("%")
     }
 }

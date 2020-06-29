@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.core.ApiCallStatus
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.INSTANCE_ID
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.USER_UNIQUE_ID
 import com.joshtalks.joshskills.repository.local.model.Mentor
@@ -27,6 +28,7 @@ class CourseDetailsViewModel(application: Application) : AndroidViewModel(applic
                 val requestParams: HashMap<String, String> = HashMap()
                 requestParams["test_id"] = "99"//testId
                 requestParams["gaid"] = PrefManager.getStringValue(USER_UNIQUE_ID)
+                requestParams["instance_id"] = PrefManager.getStringValue(INSTANCE_ID)
                 if (Mentor.getInstance().getId().isNotEmpty()) {
                     requestParams["mentor_id"] = Mentor.getInstance().getId()
                 }

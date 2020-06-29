@@ -1,6 +1,9 @@
 package com.joshtalks.joshskills.ui.course_details
 
 import android.app.Activity
+import android.app.DownloadManager
+import android.content.BroadcastReceiver
+import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.ActivityInfo
@@ -14,7 +17,6 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.android.material.appbar.AppBarLayout
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.CoreJoshActivity
@@ -74,7 +76,7 @@ class CourseDetailsActivity : CoreJoshActivity() {
     private var compositeDisposable = CompositeDisposable()
     private var testId: Int = 0
     private var downloadID: Long = -1
-    private var syllabusViewHolder:SyllabusViewHolder?= null
+    private var syllabusViewHolder: SyllabusViewHolder? = null
 
 
     private var onDownloadComplete = object : BroadcastReceiver() {
@@ -117,11 +119,10 @@ class CourseDetailsActivity : CoreJoshActivity() {
 
     private fun subscribeLiveData() {
         viewModel.courseDetailsLiveData.observe(this, Observer { data ->
-            if (data.paymentdata.discountText.isNotBlank()) {
-                binding.txtActualPrice.text = String.format("%.2f", data.paymentdata.actualAmount)
-                binding.txtDiscountedPrice.text =
-                    String.format("%.2f", data.paymentdata.discountedAmount)
-                binding.txtExtraHint.text = data.paymentdata.discountText
+            if (data.paymentData.discountText.isNotBlank()) {
+                binding.txtActualPrice.text = data.paymentData.actualAmount
+                binding.txtDiscountedPrice.text = data.paymentData.discountedAmount
+                binding.txtExtraHint.text = data.paymentData.discountText
                 binding.txtExtraHint.visibility = View.VISIBLE
             }
             data.cards.sortedBy { it.sequenceNumber }.forEach { card ->
@@ -283,8 +284,8 @@ class CourseDetailsActivity : CoreJoshActivity() {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
-                    if(it.syllabusData.syllabusDownloadUrl.isBlank().not()) {
-                        syllabusViewHolder=it.syllabusViewHolder
+                    if (it.syllabusData.syllabusDownloadUrl.isBlank().not()) {
+                        syllabusViewHolder = it.syllabusViewHolder
                         getPermissionAndDownloadSyllabus(it.syllabusData)
                     }
                 }, {
@@ -358,6 +359,7 @@ class CourseDetailsActivity : CoreJoshActivity() {
         try {
             this.unregisterReceiver(onDownloadComplete)
         } catch (ex: Exception) {
+            ex.printStackTrace()
         }
         super.onDestroy()
     }

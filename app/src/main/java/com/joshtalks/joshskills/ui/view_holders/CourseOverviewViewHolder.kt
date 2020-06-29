@@ -87,7 +87,8 @@ class CourseOverviewViewHolder(
     }
 
     private fun setCourseStats() {
-        val statsList = data.media.filter { it.type == OverviewMediaType.ICON }
+        val statsList =
+            data.media.filter { it.type == OverviewMediaType.ICON }.sortedBy { it.sortOrder }
         if (statsList.isNotEmpty()) {
             statsIcon1.visibility = View.VISIBLE
             statsCaption1.visibility = View.VISIBLE

@@ -25,19 +25,13 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.joshtalks.joshskills.BuildConfig;
 import com.joshtalks.joshskills.R;
-
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-
 import io.michaelrocks.libphonenumber.android.NumberParseException;
 import io.michaelrocks.libphonenumber.android.PhoneNumberUtil;
 import io.michaelrocks.libphonenumber.android.Phonenumber;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 /**
  * Created by hbb20 on 11/1/16.
@@ -462,14 +456,6 @@ public class CountryCodePicker extends RelativeLayout {
             setCcpClickable(a.getBoolean(R.styleable.CountryCodePicker_ccp_clickable, true));
 
         } catch (Exception e) {
-            if (BuildConfig.DEBUG) {
-                StringWriter sw = new StringWriter();
-                PrintWriter pw = new PrintWriter(sw);
-                e.printStackTrace(pw);
-                textView_selectedCountry.setMaxLines(25);
-                textView_selectedCountry.setTextSize(10);
-                textView_selectedCountry.setText(sw.toString());
-            }
             e.printStackTrace();
         } finally {
             a.recycle();
