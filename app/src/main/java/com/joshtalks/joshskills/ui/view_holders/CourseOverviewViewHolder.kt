@@ -14,13 +14,12 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.custom_ui.JoshRatingBar
 import com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
-import com.joshtalks.joshskills.core.custom_ui.decorator.LayoutMarginDecoration
 import com.joshtalks.joshskills.repository.server.course_detail.CourseOverviewData
 import com.joshtalks.joshskills.repository.server.course_detail.OverviewMediaType
+import com.joshtalks.joshskills.repository.server.course_detail.RecyclerViewCarouselItemDecorator
 import com.mindorks.placeholderview.PlaceHolderView
 import com.mindorks.placeholderview.annotations.Layout
 import com.mindorks.placeholderview.annotations.Resolve
-import com.vanniktech.emoji.Utils
 
 
 @Layout(R.layout.course_overview_view_holder)
@@ -139,14 +138,17 @@ class CourseOverviewViewHolder(
             .setHasFixedSize(true)
             .setLayoutManager(linearLayoutManager)
 
-        carouselRecyclerView.addItemDecoration(
-            LayoutMarginDecoration(
-                Utils.dpToPx(
+        if (carouselRecyclerView.itemDecorationCount < 1) {
+            val cardWidthPixels = (context.resources.displayMetrics.widthPixels * 0.80f).toInt()
+            val cardHintPercent = 0.01f
+            carouselRecyclerView.addItemDecoration(
+                RecyclerViewCarouselItemDecorator(
                     context,
-                    2f
+                    cardWidthPixels,
+                    cardHintPercent
                 )
             )
-        )
+        }
 
         carouselRecyclerView.itemAnimator = null
 
@@ -155,5 +157,4 @@ class CourseOverviewViewHolder(
                 carouselRecyclerView.addView(CourseOverviewMediaViewHolder(it))
             }
     }
-
 }

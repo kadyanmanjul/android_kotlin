@@ -4,7 +4,6 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-
         android:background="@drawable/bottom_divider_line_bg"
         android:paddingHorizontal="@dimen/_12sdp"
         tools:context=".ui.course_details.CourseDetailsActivity">
@@ -25,12 +24,12 @@
             tools:text="How will I learn?" />
 
     <LinearLayout
-            android:paddingTop="@dimen/_6sdp"
             android:id="@+id/multi_linelayout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_below="@id/title"
             android:orientation="vertical"
+            android:paddingTop="@dimen/_6sdp"
             app:layout_constraintBottom_toTopOf="@+id/download_syllabus"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
@@ -49,7 +48,7 @@
             android:clickable="true"
             android:focusable="true"
             android:gravity="center"
-            android:padding="@dimen/_6sdp"
+            android:paddingVertical="@dimen/_6sdp"
             android:text="@string/download_syllabus"
             android:textColor="@color/white"
             android:textSize="@dimen/font_16"
