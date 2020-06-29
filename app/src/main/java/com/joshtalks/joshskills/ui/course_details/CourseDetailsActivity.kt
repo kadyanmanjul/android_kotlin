@@ -11,6 +11,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.appbar.AppBarLayout
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.CoreJoshActivity
@@ -43,9 +44,9 @@ import com.joshtalks.joshskills.ui.view_holders.CourseDetailsBaseCell
 import com.joshtalks.joshskills.ui.view_holders.CourseOverviewViewHolder
 import com.joshtalks.joshskills.ui.view_holders.DemoLessonViewHolder
 import com.joshtalks.joshskills.ui.view_holders.GuidelineViewHolder
+import com.joshtalks.joshskills.ui.view_holders.MasterFaqViewHolder
 import com.joshtalks.joshskills.ui.view_holders.OtherInfoViewHolder
 import com.joshtalks.joshskills.ui.view_holders.ReviewRatingViewHolder
-import com.joshtalks.joshskills.ui.view_holders.SingleImageViewHolder
 import com.joshtalks.joshskills.ui.view_holders.TeacherDetailsViewHolder
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.coroutines.CoroutineScope
@@ -87,27 +88,6 @@ class CourseDetailsActivity : CoreJoshActivity() {
         linearLayoutManager = LinearLayoutManager(this)
         linearLayoutManager.isSmoothScrollbarEnabled = true
         binding.placeHolderView.builder.setHasFixedSize(true).setLayoutManager(linearLayoutManager)
-        /* binding.placeHolderView.addItemDecoration(
-             LayoutMarginDecoration(
-                 Utils.dpToPx(
-                     applicationContext,
-                     8f
-                 )
-             )
-         )*/
-        /* binding.placeHolderView.addOnScrollListener(object :
-            RecyclerView.OnScrollListener() {
-            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-                super.onScrollStateChanged(recyclerView, newState)
-                val itemPosition = linearLayoutManager.findFirstCompletelyVisibleItemPosition()
-
-                if (itemPosition >= 2 ) {
-                    binding.buyCourseLl.visibility = View.VISIBLE
-                } else {
-                    binding.buyCourseLl.visibility = View.GONE
-                }
-            }
-        })*/
     }
 
     private fun subscribeLiveData() {
@@ -124,7 +104,7 @@ class CourseDetailsActivity : CoreJoshActivity() {
                     binding.placeHolderView.addView(this)
                 }
             }.also {
-                binding.placeHolderView.addView(SingleImageViewHolder(data.cards.size, "  ", " "))
+                binding.placeHolderView.addView(OtherInfoViewHolder(-1, null, this))
             }
         })
 
@@ -207,7 +187,7 @@ class CourseDetailsActivity : CoreJoshActivity() {
                     card.data.toString(),
                     FAQData::class.java
                 )
-                // TODO - return ViewHolder(data)
+                return MasterFaqViewHolder(card.sequenceNumber, data)
             }
             CardType.ABOUT_JOSH -> {
                 val data = AppObjectController.gsonMapperForLocal.fromJson(
@@ -224,7 +204,7 @@ class CourseDetailsActivity : CoreJoshActivity() {
                 return OtherInfoViewHolder(card.sequenceNumber, data, this)
             }
         }
-        return SingleImageViewHolder(card.sequenceNumber, "  ", " ")
+        return OtherInfoViewHolder(card.sequenceNumber, null, this)
     }
 
     private fun scrollToPosition(pos: Int) {
