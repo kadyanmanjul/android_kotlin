@@ -2,9 +2,12 @@ package com.joshtalks.joshskills.ui.course_details
 
 import android.app.Activity
 import android.content.Intent
+import android.content.IntentFilter
 import android.content.pm.ActivityInfo
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.Environment
 import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
@@ -15,8 +18,12 @@ import com.google.android.material.appbar.AppBarLayout
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.CoreJoshActivity
+import com.joshtalks.joshskills.core.PermissionUtils
+import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.ActivityCourseDetailsBinding
 import com.joshtalks.joshskills.messaging.RxBus2
+import com.joshtalks.joshskills.repository.local.eventbus.DownloadSyllabusEvent
 import com.joshtalks.joshskills.repository.local.eventbus.GotoCourseCard
 import com.joshtalks.joshskills.repository.server.course_detail.AboutJosh
 import com.joshtalks.joshskills.repository.server.course_detail.Card
@@ -48,7 +55,13 @@ import com.joshtalks.joshskills.ui.view_holders.MasterFaqViewHolder
 import com.joshtalks.joshskills.ui.view_holders.OtherInfoViewHolder
 import com.joshtalks.joshskills.ui.view_holders.ReviewRatingViewHolder
 import com.joshtalks.joshskills.ui.view_holders.TeacherDetailsViewHolder
+import com.karumi.dexter.MultiplePermissionsReport
+import com.karumi.dexter.PermissionToken
+import com.karumi.dexter.listener.PermissionRequest
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -60,7 +73,19 @@ class CourseDetailsActivity : CoreJoshActivity() {
     private lateinit var linearLayoutManager: LinearLayoutManager
     private var compositeDisposable = CompositeDisposable()
     private var testId: Int = 0
+    private var downloadID: Long = -1
+    private var syllabusViewHolder:SyllabusViewHolder?= null
 
+
+    private var onDownloadComplete = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            val id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1)
+            if (downloadID == id) {
+                showToast(getString(R.string.downloaded_syllabus))
+            }
+            syllabusViewHolder?.hideProgressBar()
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -253,7 +278,88 @@ class CourseDetailsActivity : CoreJoshActivity() {
             PaymentSummaryActivity.startPaymentSummaryActivity(this, testId.toString())
         })
 
+        compositeDisposable.add(
+            RxBus2.listen(DownloadSyllabusEvent::class.java)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({
+                    if(it.syllabusData.syllabusDownloadUrl.isBlank().not()) {
+                        syllabusViewHolder=it.syllabusViewHolder
+                        getPermissionAndDownloadSyllabus(it.syllabusData)
+                    }
+                }, {
+                    it.printStackTrace()
+                })
+        )
 
+    }
+
+    private fun getPermissionAndDownloadSyllabus(syllabusData: SyllabusData) {
+        PermissionUtils.storageReadAndWritePermission(this,
+            object : MultiplePermissionsListener {
+                override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
+                    report?.areAllPermissionsGranted()?.let { flag ->
+                        if (flag) {
+                            downloadDigitalCopy(syllabusData)
+                            return
+                        }
+                        if (report.isAnyPermissionPermanentlyDenied) {
+                            PermissionUtils.permissionPermanentlyDeniedDialog(this@CourseDetailsActivity)
+                            return
+                        }
+                    }
+                }
+
+                override fun onPermissionRationaleShouldBeShown(
+                    permissions: MutableList<PermissionRequest>?,
+                    token: PermissionToken?
+                ) {
+                    token?.continuePermissionRequest()
+                }
+            })
+    }
+
+    private fun downloadDigitalCopy(syllabusData: SyllabusData) {
+        registerDownloadReceiver()
+        var fileName = Utils.getFileNameFromURL(syllabusData.syllabusDownloadUrl)
+        if (fileName.isEmpty()) {
+            syllabusData.title.run {
+                fileName = this + "_syllabus.pdf"
+            }
+        }
+        val request: DownloadManager.Request =
+            DownloadManager.Request(Uri.parse(syllabusData.syllabusDownloadUrl))
+                .setTitle("Josh Talks")
+                .setDescription("Downloading syllabus")
+                .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE)
+                .setAllowedOverMetered(true)
+                .setAllowedOverRoaming(true)
+                .setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName)
+        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            request.setRequiresCharging(false)
+                .setRequiresDeviceIdle(false)
+        }
+
+        val downloadManager =
+            AppObjectController.joshApplication.getSystemService(Context.DOWNLOAD_SERVICE) as (DownloadManager)
+        downloadID = downloadManager.enqueue(request)
+    }
+
+    private fun registerDownloadReceiver() {
+        AppObjectController.joshApplication.registerReceiver(
+            onDownloadComplete,
+            IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE)
+        )
+    }
+
+    override fun onDestroy() {
+        try {
+            this.unregisterReceiver(onDownloadComplete)
+        } catch (ex: Exception) {
+        }
+        super.onDestroy()
     }
 
     companion object {
