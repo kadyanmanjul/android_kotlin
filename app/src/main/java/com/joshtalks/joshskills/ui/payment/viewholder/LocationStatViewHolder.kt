@@ -162,7 +162,7 @@ class LocationStatViewHolder(
         index++
         if (index >= locationStats.imageUrls.size)
             index = 0
-        randomStudents = rand(
+        randomStudents = randomNumberGenerator(
             locationStats.totalEnrolled.times(0.25).toInt(),
             locationStats.totalEnrolled.times(0.75).toInt()
         )
@@ -170,8 +170,10 @@ class LocationStatViewHolder(
         setDefaultImageView(imageView, locationStats.imageUrls.get(index))
     }
 
-    fun rand(start: Int, end: Int): Int {
-        require(start <= end) { "Illegal Argument" }
+    fun randomNumberGenerator(start: Int, end: Int): Int {
+        require(start <= end) {
+            return 0
+        }
         return (start..end).random()
     }
 }
