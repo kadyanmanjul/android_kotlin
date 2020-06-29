@@ -66,8 +66,6 @@ class LocationStatViewHolder(
 
     @Resolve
     fun onResolved() {
-        val matcher = p.matcher(locationStats.studentText)
-
         studentsNearby.text = locationStats.studentText
         if (randomStudents > 0) studentsNearby.text =
             randomStudents.toString().plus(" students from")
