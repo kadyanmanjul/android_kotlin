@@ -5,7 +5,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.custom_ui.decorator.LayoutMarginDecoration
+import com.joshtalks.joshskills.repository.server.course_detail.RecyclerViewCarouselItemDecorator
 import com.joshtalks.joshskills.repository.server.course_detail.StudentFeedback
 import com.joshtalks.joshskills.ui.view_holders.CourseDetailsBaseCell
 import com.mindorks.placeholderview.PlaceHolderView
@@ -24,24 +24,25 @@ class StudentFeedbackViewHolder(
 
     @com.mindorks.placeholderview.annotations.View(R.id.title)
     lateinit var title: TextView
+    private val linearLayoutManager =
+        LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
 
     @Resolve
     fun onResolved() {
-        val linearLayoutManager =
-            LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
         linearLayoutManager.isSmoothScrollbarEnabled = true
-        item.builder
-            .setHasFixedSize(true)
-            .setLayoutManager(linearLayoutManager)
-        item.addItemDecoration(
-            LayoutMarginDecoration(
-                com.vanniktech.emoji.Utils.dpToPx(
+        item.itemAnimator = null
+        item.builder.setHasFixedSize(true).setLayoutManager(linearLayoutManager)
+        if (item.itemDecorationCount < 1) {
+            val cardWidthPixels = (context.resources.displayMetrics.widthPixels * 0.90f).toInt()
+            val cardHintPercent = 0.01f
+            item.addItemDecoration(
+                RecyclerViewCarouselItemDecorator(
                     context,
-                    2f
+                    cardWidthPixels,
+                    cardHintPercent
                 )
             )
-        )
-        item.itemAnimator = null
+        }
         studentFeedback.feedbacks.forEach {
             item.addView(StudentFeedbackCard(it))
         }

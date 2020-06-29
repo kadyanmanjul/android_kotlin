@@ -4,8 +4,8 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/bottom_divider_line_bg"
-        android:paddingHorizontal="@dimen/_12sdp">
+        android:layout_marginHorizontal="@dimen/_16sdp"
+        android:background="@drawable/top_divider_with_padding_bg">
 
     <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/header"
@@ -14,7 +14,7 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:textColor="@color/font_color"
-            android:textSize="@dimen/font_20"
+            android:textSize="@dimen/font_18"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Reviews and rating" />
@@ -43,6 +43,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:drawableEnd="@drawable/ic_baseline_star_big"
+                    android:drawablePadding="@dimen/_6sdp"
                     android:gravity="center"
                     android:textColor="@color/font_color"
                     android:textSize="@dimen/font_28"
@@ -60,18 +61,29 @@
                 app:layout_constraintWidth_default="percent"
                 app:layout_constraintWidth_percent="0.65" />
 
-
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <View
+            android:id="@+id/divider"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/_1sdp"
+            android:layout_marginTop="@dimen/_16sdp"
+            android:background="#F1F2F4"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/rating_container"
+            app:layout_constraintWidth_default="percent"
+            app:layout_constraintWidth_percent="0.45" />
 
     <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/review_rv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginVertical="@dimen/_4sdp"
+            android:layout_marginTop="@dimen/_16sdp"
             android:orientation="horizontal"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/rating_container" />
+            app:layout_constraintTop_toBottomOf="@+id/divider" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

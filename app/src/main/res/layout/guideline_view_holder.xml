@@ -3,9 +3,8 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-
-        android:background="@drawable/bottom_divider_line_bg"
-        android:paddingHorizontal="@dimen/_12sdp"
+        android:layout_marginHorizontal="@dimen/_16sdp"
+        android:background="@drawable/top_divider_with_padding_bg"
         android:layout_height="wrap_content">
 
     <androidx.appcompat.widget.AppCompatTextView

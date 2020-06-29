@@ -80,7 +80,7 @@ class LocationStatViewHolder(
         stateName.text = locationStats.locationText
         nearbyEnrolledStudents.text = locationStats.locationText
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(activity)
-        setDefaultImageView(imageView, locationStats.imageUrls.get(index))
+        setDefaultImageView(imageView, locationStats.imageUrls[index])
         checkLocation.setOnClickListener {
             progressBar.visibility = View.VISIBLE
             onClick()

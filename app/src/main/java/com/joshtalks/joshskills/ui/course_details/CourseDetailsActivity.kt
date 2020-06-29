@@ -14,7 +14,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.CoreJoshActivity
-import com.joshtalks.joshskills.core.custom_ui.decorator.LayoutMarginDecoration
 import com.joshtalks.joshskills.databinding.ActivityCourseDetailsBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.GotoCourseCard
@@ -46,7 +45,6 @@ import com.joshtalks.joshskills.ui.view_holders.OtherInfoViewHolder
 import com.joshtalks.joshskills.ui.view_holders.ReviewRatingViewHolder
 import com.joshtalks.joshskills.ui.view_holders.SingleImageViewHolder
 import com.joshtalks.joshskills.ui.view_holders.TeacherDetailsViewHolder
-import com.vanniktech.emoji.Utils
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -86,14 +84,15 @@ class CourseDetailsActivity : CoreJoshActivity() {
         linearLayoutManager = LinearLayoutManager(this)
         linearLayoutManager.isSmoothScrollbarEnabled = true
         binding.placeHolderView.builder.setHasFixedSize(true).setLayoutManager(linearLayoutManager)
-        binding.placeHolderView.addItemDecoration(
-            LayoutMarginDecoration(
-                Utils.dpToPx(
-                    applicationContext,
-                    8f
-                )
-            )
-        )/* binding.placeHolderView.addOnScrollListener(object :
+        /* binding.placeHolderView.addItemDecoration(
+             LayoutMarginDecoration(
+                 Utils.dpToPx(
+                     applicationContext,
+                     8f
+                 )
+             )
+         )*/
+        /* binding.placeHolderView.addOnScrollListener(object :
             RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)

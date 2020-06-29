@@ -4,9 +4,8 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/bottom_divider_line_bg"
-        android:paddingHorizontal="@dimen/_12sdp"
-        tools:context=".ui.course_details.CourseDetailsActivity">
+        android:layout_marginHorizontal="@dimen/_16sdp"
+        android:background="@drawable/top_divider_with_padding_bg">
 
 
     <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
@@ -40,15 +39,16 @@
     <com.google.android.material.textview.MaterialTextView
             android:id="@+id/download_syllabus"
             fontPath="fonts/Roboto-Medium.ttf"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_6sdp"
+            android:layout_marginTop="@dimen/_10sdp"
             android:background="@drawable/round_rectangle_for_course_expo"
             android:backgroundTint="@color/button_color"
             android:clickable="true"
             android:focusable="true"
             android:gravity="center"
-            android:paddingVertical="@dimen/_6sdp"
+            android:paddingHorizontal="@dimen/_16sdp"
+            android:paddingVertical="@dimen/_8sdp"
             android:text="@string/download_syllabus"
             android:textColor="@color/white"
             android:textSize="@dimen/font_16"
@@ -58,8 +58,6 @@
             app:layout_constraintHorizontal_bias="0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/multi_linelayout"
-            app:layout_constraintWidth_default="percent"
-            app:layout_constraintWidth_percent="0.5"
             app:rippleColor="@color/white" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

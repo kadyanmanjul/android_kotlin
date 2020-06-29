@@ -44,7 +44,7 @@
 
     <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/user_rating_percentage"
-            fontPath="fonts/Poppins-Regular.ttf"
+            fontPath="fonts/Roboto-Medium.ttf"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"

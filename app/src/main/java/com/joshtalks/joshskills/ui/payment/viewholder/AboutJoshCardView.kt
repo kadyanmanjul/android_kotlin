@@ -18,7 +18,6 @@ import com.mindorks.placeholderview.annotations.Layout
 import com.mindorks.placeholderview.annotations.Resolve
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation
 
-
 @Layout(R.layout.layout_about_josh_card)
 class AboutJoshCardView(
     private var aboutJoshData: Detail,

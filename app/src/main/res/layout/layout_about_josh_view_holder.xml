@@ -4,17 +4,18 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginVertical="@dimen/_16sdp"
+        android:background="@drawable/top_divider_with_padding_bg"
         tools:ignore="MissingPrefix">
+
 
     <TextView
             android:id="@+id/title"
             fontPath="fonts/Roboto-Bold.ttf"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:paddingHorizontal="@dimen/_12sdp"
+            android:paddingHorizontal="@dimen/_16sdp"
             android:textColor="@color/black"
-            android:textSize="@dimen/font_20"
+            android:textSize="@dimen/font_18"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -28,7 +29,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/title"
             android:layout_marginTop="@dimen/_4sdp"
-            android:paddingHorizontal="@dimen/_12sdp"
+            android:paddingHorizontal="@dimen/_16sdp"
             android:textColor="@color/dark_grey"
             android:textSize="@dimen/font_14"
             app:layout_constraintEnd_toEndOf="parent"

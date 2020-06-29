@@ -42,10 +42,6 @@ class ReviewRatingViewHolder(
         reviewRV.layoutManager =
             LinearLayoutManager(getAppContext(), LinearLayoutManager.VERTICAL, false)
         reviewRV.setHasFixedSize(true)
-/*
-        val snapHelper: SnapHelper = LinearSnapHelper()
-        snapHelper.attachToRecyclerView(reviewRV)
-*/
         reviewRV.post { reviewRV.adapter = ReviewsAdapter(reviews.reviews) }
     }
 }
