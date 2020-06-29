@@ -25,7 +25,15 @@ import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.service.WorkMangerAdmin
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
-import com.joshtalks.joshskills.repository.local.model.*
+import com.joshtalks.joshskills.repository.local.model.ACTION_OPEN_CONVERSATION
+import com.joshtalks.joshskills.repository.local.model.ACTION_OPEN_CONVERSATION_LIST
+import com.joshtalks.joshskills.repository.local.model.ACTION_OPEN_COURSE_EXPLORER
+import com.joshtalks.joshskills.repository.local.model.ACTION_OPEN_COURSE_REPORT
+import com.joshtalks.joshskills.repository.local.model.ACTION_OPEN_REFERRAL
+import com.joshtalks.joshskills.repository.local.model.ACTION_OPEN_TEST
+import com.joshtalks.joshskills.repository.local.model.ACTION_OPEN_URL
+import com.joshtalks.joshskills.repository.local.model.ACTION_UPSELLING_POPUP
+import com.joshtalks.joshskills.repository.local.model.NotificationObject
 import com.joshtalks.joshskills.repository.service.EngagementNetworkHelper
 import com.joshtalks.joshskills.ui.chat.ConversationActivity
 import com.joshtalks.joshskills.ui.chat.UPDATED_CHAT_ROOM_OBJECT
@@ -113,7 +121,6 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                     .setContentText(notificationObject.contentText)
                     .setContentIntent(pendingIntent)
                     .setStyle(style)
-                    .setTimeoutAfter(60 * 60 * 24)
                     .setColor(
                         ContextCompat.getColor(
                             this@FirebaseNotificationService,
@@ -248,6 +255,4 @@ class FirebaseNotificationService : FirebaseMessagingService() {
             putExtra(NOTIFICATION_ID, notificationObject.id)
         }
     }
-
-
 }
