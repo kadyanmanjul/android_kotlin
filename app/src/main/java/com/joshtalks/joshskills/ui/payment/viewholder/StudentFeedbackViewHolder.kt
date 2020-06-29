@@ -29,6 +29,7 @@ class StudentFeedbackViewHolder(
 
     @Resolve
     fun onResolved() {
+        title.text=studentFeedback.title
         linearLayoutManager.isSmoothScrollbarEnabled = true
         item.itemAnimator = null
         item.builder.setHasFixedSize(true).setLayoutManager(linearLayoutManager)
