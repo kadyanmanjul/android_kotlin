@@ -54,7 +54,8 @@ class FaqCategoryFragment : Fragment() {
                 faqCategoryBinding.recyclerView.addView(
                     FaqCategoryViewHolder(
                         list,
-                        typeOfHelpModel
+                        typeOfHelpModel,
+                        -1
                     )
                 )
             }
