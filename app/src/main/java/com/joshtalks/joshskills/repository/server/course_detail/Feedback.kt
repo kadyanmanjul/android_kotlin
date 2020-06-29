@@ -10,7 +10,7 @@ data class Feedback(
     @SerializedName("name")
     val name: String,
 
-    @SerializedName("short description")
+    @SerializedName("short_description")
     val shortDescription: String,
 
     @SerializedName("thumbnail_url")
