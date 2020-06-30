@@ -364,17 +364,21 @@ internal class AppObjectController {
         }
 
         private fun initialiseFreshchat() {
-            val config =
-                FreshchatConfig(BuildConfig.FRESH_CHAT_APP_ID, BuildConfig.FRESH_CHAT_APP_KEY)
-            config.isCameraCaptureEnabled = true
-            config.isGallerySelectionEnabled = true
-            config.isResponseExpectationEnabled = true
-            config.domain = "https://msdk.in.freshchat.com"
-            freshChat = Freshchat.getInstance(joshApplication)
-            freshChat.init(config)
-            val notificationConfig = FreshchatNotificationConfig()
-                .setImportance(NotificationManagerCompat.IMPORTANCE_MAX)
-            freshChat.setNotificationConfig(notificationConfig)
+            try {
+                val config =
+                    FreshchatConfig(BuildConfig.FRESH_CHAT_APP_ID, BuildConfig.FRESH_CHAT_APP_KEY)
+                config.isCameraCaptureEnabled = true
+                config.isGallerySelectionEnabled = true
+                config.isResponseExpectationEnabled = true
+                config.domain = "https://msdk.in.freshchat.com"
+                freshChat = Freshchat.getInstance(joshApplication)
+                freshChat.init(config)
+                val notificationConfig = FreshchatNotificationConfig()
+                    .setImportance(NotificationManagerCompat.IMPORTANCE_MAX)
+                freshChat.setNotificationConfig(notificationConfig)
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+            }
         }
 
         fun restoreUser(restoreId: String?) {
