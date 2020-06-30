@@ -13,7 +13,8 @@ import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.databinding.FragmentFaqDetailBinding
 import com.joshtalks.joshskills.repository.server.FAQ
-import kotlinx.android.synthetic.main.fragment_faq_detail.*
+import kotlinx.android.synthetic.main.fragment_faq_detail.no_btn
+import kotlinx.android.synthetic.main.fragment_faq_detail.yes_btn
 import org.jetbrains.anko.textColor
 
 class FaqDetailsFragment : Fragment() {
@@ -77,9 +78,9 @@ class FaqDetailsFragment : Fragment() {
         requireActivity().finish()
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
+    override fun onStop() {
         appAnalytics.push()
+        super.onStop()
     }
 
     companion object {

@@ -16,7 +16,9 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.repository.server.FAQCategory
-import kotlinx.android.synthetic.main.fragment_faq.*
+import kotlinx.android.synthetic.main.fragment_faq.chipGroupCategory
+import kotlinx.android.synthetic.main.fragment_faq.faqList
+import kotlinx.android.synthetic.main.fragment_faq.txtCategoryName
 
 class FaqFragment : Fragment() {
 
@@ -123,8 +125,8 @@ class FaqFragment : Fragment() {
             .addParam(AnalyticsEvent.FAQ_CATEGORY_SELECTED.NAME, selectedCategory?.categoryName)
             .push()
 
-    override fun onDestroyView() {
-        super.onDestroyView()
+    override fun onStop() {
         appAnalytics.push()
+        super.onStop()
     }
 }

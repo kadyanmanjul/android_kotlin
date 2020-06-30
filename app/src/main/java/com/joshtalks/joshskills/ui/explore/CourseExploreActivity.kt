@@ -11,12 +11,18 @@ import com.afollestad.materialdialogs.MaterialDialog
 import com.crashlytics.android.Crashlytics
 import com.google.android.material.appbar.MaterialToolbar
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.CoreJoshActivity
+import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.INSTANCE_ID
+import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.USER_UNIQUE_ID
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.LogException
 import com.joshtalks.joshskills.core.custom_ui.decorator.LayoutMarginDecoration
 import com.joshtalks.joshskills.core.service.WorkMangerAdmin
+import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.ActivityCourseExploreBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
@@ -272,7 +278,7 @@ class CourseExploreActivity : CoreJoshActivity() {
     }
 
     private fun onCancelResult() {
-        appAnalytics.addParam(AnalyticsEvent.BACK_BTN_EXPLORESCREEN.NAME, true).push()
+        appAnalytics.addParam(AnalyticsEvent.BACK_BTN_EXPLORESCREEN.NAME, true)
         val resultIntent = Intent()
         setResult(Activity.RESULT_CANCELED, resultIntent)
         this.finish()

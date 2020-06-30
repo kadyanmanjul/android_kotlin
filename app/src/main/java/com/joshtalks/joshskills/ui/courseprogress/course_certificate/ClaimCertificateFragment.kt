@@ -28,11 +28,16 @@ import com.bumptech.glide.integration.webp.decoder.WebpDrawableTransformation
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.bumptech.glide.request.target.Target
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.PermissionUtils
+import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
+import com.joshtalks.joshskills.core.hideKeyboard
 import com.joshtalks.joshskills.core.interfaces.OnDismissClaimCertificateDialog
 import com.joshtalks.joshskills.core.service.CONVERSATION_ID
+import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.FragmentClaimCertificateBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.CertificateDetail
@@ -104,10 +109,13 @@ class ClaimCertificateFragment : DialogFragment() {
         }
     }
 
+    override fun onStop() {
+        appAnalytics.push()
+        super.onStop()
+    }
 
     override fun onDestroy() {
         super.onDestroy()
-        appAnalytics.push()
         compositeDisposable.clear()
         try {
             requireContext().unregisterReceiver(onDownloadComplete)

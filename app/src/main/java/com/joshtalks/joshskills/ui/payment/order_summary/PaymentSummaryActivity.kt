@@ -36,12 +36,23 @@ import com.google.android.gms.auth.api.credentials.CredentialsOptions
 import com.google.android.gms.auth.api.credentials.HintRequest
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.CoreJoshActivity
+import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.INSTANCE_ID
+import com.joshtalks.joshskills.core.PAYMENT_MOBILE_NUMBER
+import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.REFERRED_REFERRAL_CODE
+import com.joshtalks.joshskills.core.SINGLE_SPACE
+import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.BranchIOAnalytics
 import com.joshtalks.joshskills.core.analytics.LogException
+import com.joshtalks.joshskills.core.getPhoneNumber
+import com.joshtalks.joshskills.core.isValidFullNumber
 import com.joshtalks.joshskills.core.service.WorkMangerAdmin
+import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.ActivityPaymentSummaryBinding
 import com.joshtalks.joshskills.repository.local.entity.NPSEvent
 import com.joshtalks.joshskills.repository.local.entity.NPSEventModel
@@ -608,12 +619,12 @@ class PaymentSummaryActivity : CoreJoshActivity(),
     }
 
     override fun onStop() {
+        appAnalytics.push()
         super.onStop()
         AppObjectController.facebookEventLogger.flush()
     }
 
     override fun onDestroy() {
-        appAnalytics.push()
         super.onDestroy()
         Checkout.clearUserData(applicationContext)
         uiHandler.removeCallbacksAndMessages(null)

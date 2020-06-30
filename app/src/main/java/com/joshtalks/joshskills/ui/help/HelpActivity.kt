@@ -8,9 +8,13 @@ import androidx.appcompat.widget.AppCompatImageView
 import androidx.fragment.app.commit
 import com.freshchat.consumer.sdk.Freshchat
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.CoreJoshActivity
+import com.joshtalks.joshskills.core.FRESH_CHAT_UNREAD_MESSAGES
+import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
+import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.CategorySelectEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.HelpRequestEventBus
@@ -93,9 +97,9 @@ class HelpActivity : CoreJoshActivity() {
         compositeDisposable.clear()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onStop() {
         appAnalytics.push()
+        super.onStop()
     }
 
     private fun addObserver() {
