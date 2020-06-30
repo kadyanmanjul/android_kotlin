@@ -124,9 +124,13 @@ class CourseDetailsActivity : BaseActivity() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)
                 if (linearLayoutManager.findFirstVisibleItemPosition() > 0) {
-                    binding.buyCourseLl.visibility = View.VISIBLE
+                    if (binding.buyCourseLl.visibility == View.GONE) {
+                        binding.buyCourseLl.visibility = View.VISIBLE
+                    }
                 } else {
-                    binding.buyCourseLl.visibility = View.GONE
+                    if (binding.buyCourseLl.visibility == View.VISIBLE) {
+                        binding.buyCourseLl.visibility = View.GONE
+                    }
                 }
             }
         })
