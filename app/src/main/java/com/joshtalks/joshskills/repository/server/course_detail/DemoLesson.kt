@@ -13,7 +13,7 @@ data class DemoLesson(
     @SerializedName("demo_video_url")
     val videoUrl: String?,
 
-    @SerializedName("video_thumbnail")
+    @SerializedName("demo_video_thumbnail_url")
     val thumbnailUrl: String?,
 
     @SerializedName("video_id")

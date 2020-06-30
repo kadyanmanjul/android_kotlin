@@ -23,7 +23,7 @@ data class Review(
     @SerializedName("username")
     val username: String,
 
-    @SerializedName("user_locaton")
+    @SerializedName("user_location")
     val userLocaton: String
 
 ) : Parcelable
