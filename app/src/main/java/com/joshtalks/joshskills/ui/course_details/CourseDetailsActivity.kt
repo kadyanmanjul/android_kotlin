@@ -33,6 +33,8 @@ import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.core.PermissionUtils
 import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
+import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.ActivityCourseDetailsBinding
 import com.joshtalks.joshskills.messaging.RxBus2
@@ -91,6 +93,8 @@ class CourseDetailsActivity : BaseActivity() {
     private var compositeDisposable = CompositeDisposable()
     private var testId: Int = 0
     private var downloadID: Long = -1
+    private val appAnalytics by lazy { AppAnalytics.create(AnalyticsEvent.COURSE_OVERVIEW.NAME) }
+
 
     private var onDownloadComplete = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
@@ -126,6 +130,9 @@ class CourseDetailsActivity : BaseActivity() {
         } else {
             finish()
         }
+        appAnalytics.addBasicParam()
+            .addUserDetails()
+            .addParam("test_id", testId)
         initView()
         subscribeLiveData()
     }
@@ -176,6 +183,14 @@ class CourseDetailsActivity : BaseActivity() {
             if (data.paymentData.discountText.isNullOrEmpty().not()) {
                 binding.txtExtraHint.text = data.paymentData.discountText
                 binding.txtExtraHint.visibility = View.VISIBLE
+                appAnalytics.addParam(
+                    AnalyticsEvent.COURSE_PRICE.NAME,
+                    data.paymentData.actualAmount
+                )
+                    .addParam(
+                        AnalyticsEvent.SHOWN_COURSE_PRICE.NAME,
+                        data.paymentData.discountedAmount
+                    )
             }
             binding.txtActualPrice.paintFlags =
                 binding.txtActualPrice.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
@@ -212,6 +227,8 @@ class CourseDetailsActivity : BaseActivity() {
                     card.data.toString(),
                     CourseOverviewData::class.java
                 )
+                if (data.courseName.isNotBlank())
+                    appAnalytics.addParam(AnalyticsEvent.COURSE_NAME.NAME, data.courseName)
                 return CourseOverviewViewHolder(card.cardType, card.sequenceNumber, data, this)
             }
             CardType.LONG_DESCRIPTION -> {
@@ -361,10 +378,12 @@ class CourseDetailsActivity : BaseActivity() {
         })
 
         compositeDisposable.add(RxBus2.listen(TeacherDetails::class.java).subscribe {
+            logMeetMeAnalyticEvent()
             TeacherDetailsFragment.newInstance(it).show(supportFragmentManager, "Teacher Details")
         })
 
         binding.btnStartCourse.setOnSingleClickListener(View.OnClickListener {
+            appAnalytics.addParam(AnalyticsEvent.START_COURSE_NOW.NAME, "Clicked")
             PaymentSummaryActivity.startPaymentSummaryActivity(this, testId.toString())
         })
 
@@ -374,6 +393,7 @@ class CourseDetailsActivity : BaseActivity() {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
                     if (it.syllabusData.syllabusDownloadUrl.isBlank().not()) {
+                        logDownloadFileAnalyticEvent()
                         getPermissionAndDownloadSyllabus(it.syllabusData)
                     }
                 }, {
@@ -408,6 +428,19 @@ class CourseDetailsActivity : BaseActivity() {
         )
 
 
+    }
+
+    private fun logMeetMeAnalyticEvent() {
+        AppAnalytics.create(AnalyticsEvent.MEET_ME_CLICKED.NAME)
+            .addBasicParam()
+            .addUserDetails()
+            .addParam(AnalyticsEvent.TEST_ID_PARAM.NAME, testId).push()
+    }
+
+    private fun logDownloadFileAnalyticEvent() {
+        AppAnalytics.create(AnalyticsEvent.DOWNLOAD_FILE_CLICKED.NAME)
+            .addBasicParam()
+            .addUserDetails().push()
     }
 
     private fun getPermissionAndDownloadSyllabus(syllabusData: SyllabusData) {
