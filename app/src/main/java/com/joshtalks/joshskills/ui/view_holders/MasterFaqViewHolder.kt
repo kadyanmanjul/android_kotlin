@@ -5,7 +5,6 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.esafirm.imagepicker.view.GridSpacingItemDecoration
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
 import com.joshtalks.joshskills.core.custom_ui.decorator.LayoutMarginDecoration
 import com.joshtalks.joshskills.messaging.RxBus2
@@ -52,17 +51,18 @@ class MasterFaqViewHolder(
     }
 
     private fun addViews() {
-        recyclerView.removeAllViews()
-        faqData.categoryList.sortedBy { it.sortOrder }.forEach { typeOfHelpModel ->
-            recyclerView.addView(
-                FaqCategoryViewHolder(
-                    faqData.categoryList,
-                    typeOfHelpModel,
-                    typeOfHelpModel.sortOrder
+        if (recyclerView.viewAdapter == null || recyclerView.viewAdapter.itemCount == 0) {
+            faqData.categoryList.sortedBy { it.sortOrder }.forEach { typeOfHelpModel ->
+                recyclerView.addView(
+                    FaqCategoryViewHolder(
+                        faqData.categoryList,
+                        typeOfHelpModel,
+                        typeOfHelpModel.sortOrder
+                    )
                 )
-            )
+            }
+            addExpandableList(faqData.faqList, categoryId)
         }
-        addExpandableList(faqData.faqList, categoryId)
     }
 
     private fun addExpandableList(faqList: List<FAQ>, categoryId: Int) {
@@ -101,17 +101,14 @@ class MasterFaqViewHolder(
         a.forEach {
             if (it is FaqCategoryViewHolder) {
                 if (it.position == position) {
-
                     it.cardView.strokeColor = ResourcesCompat.getColor(
-                        AppObjectController.joshApplication.resources,
+                        getAppContext().resources,
                         R.color.button_primary_color,
                         null
                     )
-
                 } else {
-
                     it.cardView.strokeColor = ResourcesCompat.getColor(
-                        AppObjectController.joshApplication.resources,
+                        getAppContext().resources,
                         R.color.white,
                         null
                     )
@@ -124,14 +121,14 @@ class MasterFaqViewHolder(
 
     private fun initRV() {
         if (recyclerView.viewAdapter == null || recyclerView.viewAdapter.itemCount == 0) {
-            val layoutManager = GridLayoutManager(AppObjectController.joshApplication, 2)
+            val layoutManager = GridLayoutManager(getAppContext(), 2)
             recyclerView.builder.setHasFixedSize(true)
                 .setLayoutManager(layoutManager)
             recyclerView.addItemDecoration(
                 GridSpacingItemDecoration(
                     2,
-                    Utils.dpToPx(AppObjectController.joshApplication, 16f),
-                    true
+                    Utils.dpToPx(getAppContext(), 16f),
+                    false
                 )
             )
         }
@@ -139,7 +136,7 @@ class MasterFaqViewHolder(
 
     private fun initExpandableRV() {
         if (expndableRV.viewAdapter == null || expndableRV.viewAdapter.itemCount == 0) {
-            val linearLayoutManager = LinearLayoutManager(AppObjectController.joshApplication)
+            val linearLayoutManager = LinearLayoutManager(getAppContext())
             linearLayoutManager.isSmoothScrollbarEnabled = true
             expndableRV.builder
                 .setHasFixedSize(true)
@@ -147,7 +144,7 @@ class MasterFaqViewHolder(
             expndableRV.addItemDecoration(
                 LayoutMarginDecoration(
                     Utils.dpToPx(
-                        AppObjectController.joshApplication,
+                        getAppContext(),
                         8f
                     )
                 )

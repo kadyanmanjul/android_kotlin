@@ -173,7 +173,7 @@
     </style>
 
     <style name="TabLayoutStyle" parent="Base.Widget.Design.TabLayout">
-        <item name="android:textSize">@dimen/font_15</item>
+        <item name="android:textSize">@dimen/font_14</item>
         <item name="android:textAllCaps">false</item>
         <item name="fontPath">fonts/Roboto-Medium.ttf</item>
 

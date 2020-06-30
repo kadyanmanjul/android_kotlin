@@ -62,7 +62,11 @@ class GuidelineFragment : Fragment() {
         val spanString = SpannableString(text)
         spanString.setSpan(
             IconMarginSpan(
-                Utils.getBitmapFromVectorDrawable(requireContext(), R.drawable.ic_small_tick),
+                Utils.getBitmapFromVectorDrawable(
+                    requireContext(),
+                    R.drawable.ic_small_tick,
+                    R.color.green
+                ),
                 22
             ), 0, text.length,
             Spanned.SPAN_EXCLUSIVE_EXCLUSIVE

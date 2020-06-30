@@ -6,7 +6,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.repository.server.course_detail.CardType
-import com.joshtalks.joshskills.repository.server.course_detail.RecyclerViewCarouselItemDecorator
 import com.joshtalks.joshskills.repository.server.course_detail.StudentFeedback
 import com.joshtalks.joshskills.ui.view_holders.CourseDetailsBaseCell
 import com.mindorks.placeholderview.PlaceHolderView
@@ -31,11 +30,17 @@ class StudentFeedbackViewHolder(
 
     @Resolve
     fun onResolved() {
-        title.text=studentFeedback.title
-        linearLayoutManager.isSmoothScrollbarEnabled = true
-        item.itemAnimator = null
-        item.builder.setHasFixedSize(true).setLayoutManager(linearLayoutManager)
-        if (item.itemDecorationCount < 1) {
+        title.text = studentFeedback.title
+        if (item.adapter == null || item.adapter!!.itemCount == 0) {
+            linearLayoutManager.isSmoothScrollbarEnabled = true
+            item.itemAnimator = null
+            item.builder.setHasFixedSize(true).setLayoutManager(linearLayoutManager)
+            studentFeedback.feedbacks.forEach {
+                item.addView(StudentFeedbackCard(it))
+            }
+        }
+
+        /*if (item.itemDecorationCount < 1) {
             val cardWidthPixels = (context.resources.displayMetrics.widthPixels * 0.90f).toInt()
             val cardHintPercent = 0.01f
             item.addItemDecoration(
@@ -45,9 +50,7 @@ class StudentFeedbackViewHolder(
                     cardHintPercent
                 )
             )
-        }
-        studentFeedback.feedbacks.forEach {
-            item.addView(StudentFeedbackCard(it))
-        }
+        }*/
+
     }
 }

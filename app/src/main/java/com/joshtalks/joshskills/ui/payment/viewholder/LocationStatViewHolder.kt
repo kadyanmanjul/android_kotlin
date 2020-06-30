@@ -69,13 +69,19 @@ class LocationStatViewHolder(
     @Resolve
     fun onResolved() {
         studentsNearby.text = locationStats.studentText
-        if (randomStudents > 0) studentsNearby.text =
-            randomStudents.toString().plus(" students from")
-        if (city.isNullOrBlank())
+        if (randomStudents > 0) {
+            studentsNearby.text = randomStudents.toString().plus(" students from")
+        }
+        if (city.isNullOrBlank()) {
             stateCityName.text = locationStats.locationText
-        else stateCityName.text = city.plus(" , ").plus(state)
-        setDefaultImageView(imageView, locationStats.imageUrls.get(index))
-
+        } else {
+            stateCityName.text = city.plus(" , ").plus(state)
+        }
+        locationStats.imageUrls[index].run {
+            if (this.isNotEmpty()) {
+                setDefaultImageView(imageView, this)
+            }
+        }
         checkLocation.setOnClickListener {
             progressBar.visibility = View.VISIBLE
             onClick()
@@ -84,14 +90,15 @@ class LocationStatViewHolder(
 
     fun onClick() {
         if (locationPermissionGranted().not())
-            getlocationPermissionAndLoction()
+            getLocationPermissionAndLocation()
         else getLocationAndUpload()
     }
 
     private fun locationPermissionGranted() = (PermissionUtils.isLocationPermissionEnabled(context))
 
-    private fun getlocationPermissionAndLoction() {
-        PermissionUtils.locationPermission(activity,
+    private fun getLocationPermissionAndLocation() {
+        PermissionUtils.locationPermission(
+            activity,
             object : MultiplePermissionsListener {
                 override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
                     report?.areAllPermissionsGranted()?.let { flag ->
@@ -172,7 +179,7 @@ class LocationStatViewHolder(
         setDefaultImageView(imageView, locationStats.imageUrls.get(index))
     }
 
-    fun randomNumberGenerator(start: Int, end: Int): Int {
+    private fun randomNumberGenerator(start: Int, end: Int): Int {
         require(start <= end) {
             return 0
         }

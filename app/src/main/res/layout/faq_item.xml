@@ -6,7 +6,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:paddingHorizontal="@dimen/_8sdp"
+        android:paddingHorizontal="@dimen/_4sdp"
+        tools:ignore="MissingPrefix"
         android:paddingVertical="@dimen/_12sdp">
 
     <TextView
