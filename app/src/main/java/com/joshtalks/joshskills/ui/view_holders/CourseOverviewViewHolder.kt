@@ -45,6 +45,9 @@ class CourseOverviewViewHolder(
     @com.mindorks.placeholderview.annotations.View(R.id.txtDescription)
     lateinit var txtDescription: JoshTextView
 
+    @com.mindorks.placeholderview.annotations.View(R.id.img_top_icon)
+    lateinit var imgTopIcon: AppCompatImageView
+
     @com.mindorks.placeholderview.annotations.View(R.id.txtRating)
     lateinit var txtRating: JoshTextView
 
@@ -86,6 +89,10 @@ class CourseOverviewViewHolder(
         txtDescription.text = data.shortDescription
         txtRating.text = String.format("%.1f", data.rating)
         ratingBar.rating = data.rating.toFloat()
+        if (data.topIconUrl.isNullOrBlank().not()) {
+            setImage(data.topIconUrl!!, imgTopIcon)
+            imgTopIcon.visibility = View.VISIBLE
+        }
         setCourseStats()
         setCarouselView()
     }
@@ -158,6 +165,7 @@ class CourseOverviewViewHolder(
         carouselRecyclerView.itemAnimator = null
 
         data.media.filter { it.type == OverviewMediaType.IMAGE || it.type == OverviewMediaType.VIDEO }
+            .sortedBy { it.sortOrder }
             .forEach {
                 carouselRecyclerView.addView(CourseOverviewMediaViewHolder(it))
             }

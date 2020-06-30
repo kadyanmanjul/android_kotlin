@@ -18,30 +18,47 @@
         <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
                 android:id="@+id/txtCourseName"
                 fontPath="fonts/Roboto-Bold.ttf"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:paddingHorizontal="@dimen/_12sdp"
+                android:paddingStart="@dimen/_12sdp"
+                android:paddingEnd="@dimen/_4sdp"
                 android:textColor="@color/white"
                 android:textSize="@dimen/font_20"
                 android:textStyle="bold"
-                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintWidth_percent="0.8"
                 tools:text="Effective Life Habits For Life Transformation" />
 
         <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
                 android:id="@+id/txtTeacherName"
                 fontPath="fonts/Roboto-Regular.ttf"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:maxLines="1"
-                android:paddingHorizontal="@dimen/_12sdp"
+                android:paddingStart="@dimen/_12sdp"
+                android:paddingEnd="@dimen/_4sdp"
                 android:textColor="@color/white"
                 android:textSize="@dimen/font_18"
-                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/txtCourseName"
+                app:layout_constraintWidth_percent="0.8"
                 tools:text="Vivek Atray" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/img_top_icon"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:paddingStart="@dimen/_4sdp"
+                android:paddingEnd="@dimen/_12sdp"
+                android:scaleType="fitCenter"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="@+id/txtTeacherName"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/txtCourseName"
+                app:layout_constraintTop_toTopOf="@+id/txtCourseName"
+                tools:src="@drawable/ic_whatsapp"
+                tools:visibility="visible" />
 
         <com.mindorks.placeholderview.PlaceHolderView
                 android:id="@+id/carousel_recycler_view"
@@ -226,7 +243,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_14sdp"
+                android:gravity="center"
                 android:paddingHorizontal="@dimen/_12sdp"
+                android:textAlignment="center"
                 android:textColor="@color/light_grey"
                 android:textSize="@dimen/font_14"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -250,6 +269,9 @@
             android:backgroundTint="@color/green"
             android:orientation="horizontal"
             app:cardCornerRadius="@dimen/_128sdp"
+            app:contentPaddingBottom="@dimen/_4sdp"
+            app:contentPaddingLeft="@dimen/_4sdp"
+            app:contentPaddingTop="@dimen/_4sdp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -265,7 +287,7 @@
             <com.joshtalks.joshskills.core.custom_ui.JoshRatingBar
                     android:id="@+id/rating_bar"
                     android:layout_width="wrap_content"
-                    android:layout_height="@dimen/_24sdp"
+                    android:layout_height="@dimen/_20sdp"
                     android:layout_gravity="start|center"
                     android:clickable="false"
                     android:isIndicator="true"
@@ -277,8 +299,7 @@
                     app:layout_constraintEnd_toStartOf="@+id/txtRating"
                     app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="0.5" />
+                    app:layout_constraintTop_toTopOf="parent" />
 
             <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
                     android:id="@+id/txtRating"
@@ -286,15 +307,31 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="end|center"
+                    android:gravity="center"
+                    android:paddingBottom="@dimen/_2sdp"
+                    android:textAlignment="center"
                     android:textColor="@color/white"
-                    android:textSize="@dimen/font_32"
+                    android:textSize="@dimen/font_24"
                     android:textStyle="bold"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/rating_arrow"
                     app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintStart_toEndOf="@+id/rating_bar"
                     app:layout_constraintTop_toTopOf="parent"
                     tools:text="4.0" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/rating_arrow"
+                    android:layout_width="@dimen/_24sdp"
+                    android:layout_height="@dimen/_24sdp"
+                    android:rotation="180"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toEndOf="@+id/txtRating"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/recv_ic_arrow"
+                    app:tint="@color/white" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

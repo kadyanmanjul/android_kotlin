@@ -3,9 +3,9 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/_16sdp"
-        android:background="@drawable/top_divider_with_padding_bg"
-        android:layout_height="wrap_content">
+        android:background="@drawable/top_divider_with_padding_bg">
 
     <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
             android:id="@+id/txt_title"
@@ -20,15 +20,15 @@
             tools:text="Watch A Demo Lesson" />
 
     <androidx.cardview.widget.CardView
+            android:id="@+id/cardView"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_164sdp"
             android:layout_marginTop="@dimen/_8sdp"
             android:clickable="true"
             android:elevation="0dp"
             android:enabled="true"
             android:focusable="true"
             android:foreground="?android:attr/selectableItemBackground"
-            android:id="@+id/cardView"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/_164sdp"
             app:cardCornerRadius="@dimen/_8sdp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

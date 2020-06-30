@@ -23,6 +23,9 @@ data class CourseOverviewData(
     val media: List<OverviewMedia>,
 
     @SerializedName("viewer_text")
-    val viewerText: String
+    val viewerText: String,
+
+    @SerializedName("top_icon_url")
+    val topIconUrl: String?
 
 ) : Parcelable

@@ -11,14 +11,14 @@
 
     <TextView
             android:id="@+id/question"
-            style="@style/TextStyle.TopBarScroll"
+            fontPath="fonts/Roboto-Regular.ttf"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="@dimen/_4sdp"
             android:ellipsize="end"
             android:maxLength="100"
             android:textColor="@color/black"
-            android:textSize="@dimen/_12sdp"
+            android:textSize="@dimen/font_14"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/imageView4"
             app:layout_constraintStart_toStartOf="parent"
@@ -27,17 +27,16 @@
 
     <ImageView
             android:id="@+id/imageView4"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:rotation="180"
             android:src="@drawable/recv_ic_arrow"
-            android:textAppearance="?attr/textAppearanceListItem"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.9"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintWidth_default="percent"
-            android:contentDescription="@string/attach_image"
             app:layout_constraintWidth_percent="0.05" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

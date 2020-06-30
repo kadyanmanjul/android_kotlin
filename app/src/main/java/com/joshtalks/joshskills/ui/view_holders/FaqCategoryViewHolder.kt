@@ -1,6 +1,5 @@
 package com.joshtalks.joshskills.ui.view_holders
 
-import android.util.Log
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.res.ResourcesCompat
@@ -37,7 +36,6 @@ class FaqCategoryViewHolder(
 
     @Resolve
     fun onViewInflated() {
-        Log.d("Manjul", "onViewInflated() called $position")
         categoryNameTV.text = faqCategory.categoryName
         GlideToVectorYou
             .init()

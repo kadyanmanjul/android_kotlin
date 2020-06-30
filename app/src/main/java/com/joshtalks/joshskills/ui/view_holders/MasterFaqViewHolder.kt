@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.esafirm.imagepicker.view.GridSpacingItemDecoration
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
 import com.joshtalks.joshskills.core.custom_ui.decorator.LayoutMarginDecoration
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.LandingPageCategorySelectEventBus
@@ -29,6 +30,9 @@ class MasterFaqViewHolder(
     private val faqData: FAQData
 ) : CourseDetailsBaseCell(type, sequenceNumber) {
 
+    @com.mindorks.placeholderview.annotations.View(R.id.txt_title)
+    lateinit var txtTitle: JoshTextView
+
     @com.mindorks.placeholderview.annotations.View(R.id.expandableView)
     lateinit var expndableRV: ExpandablePlaceHolderView
 
@@ -40,6 +44,7 @@ class MasterFaqViewHolder(
 
     @Resolve
     fun onViewInflated() {
+        txtTitle.text = faqData.title
         initRV()
         initExpandableRV()
         addViews()
@@ -125,7 +130,7 @@ class MasterFaqViewHolder(
             recyclerView.addItemDecoration(
                 GridSpacingItemDecoration(
                     2,
-                    Utils.dpToPx(AppObjectController.joshApplication, 12f),
+                    Utils.dpToPx(AppObjectController.joshApplication, 16f),
                     true
                 )
             )
@@ -143,7 +148,7 @@ class MasterFaqViewHolder(
                 LayoutMarginDecoration(
                     Utils.dpToPx(
                         AppObjectController.joshApplication,
-                        2f
+                        8f
                     )
                 )
             )
