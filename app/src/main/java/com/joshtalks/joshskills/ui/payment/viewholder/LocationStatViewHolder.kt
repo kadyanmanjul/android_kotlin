@@ -12,6 +12,8 @@ import com.google.android.material.textview.MaterialTextView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.PermissionUtils
+import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
+import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
 import com.joshtalks.joshskills.repository.server.SearchLocality
 import com.joshtalks.joshskills.repository.server.UpdateUserLocality
@@ -94,6 +96,13 @@ class LocationStatViewHolder(
         if (locationPermissionGranted().not())
             getLocationPermissionAndLocation()
         else getLocationAndUpload()
+        logAnalyticsEvent()
+    }
+
+    fun logAnalyticsEvent() {
+        AppAnalytics.create(AnalyticsEvent.CHECK_LOCATION_CLICKED.NAME)
+            .addBasicParam()
+            .addUserDetails().push()
     }
 
     private fun locationPermissionGranted() = (PermissionUtils.isLocationPermissionEnabled(context))
