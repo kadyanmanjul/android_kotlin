@@ -30,9 +30,9 @@
                     android:background="@color/black"
                     android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
                     app:contentScrim="@color/black"
+                    app:layout_scrollFlags="scroll|exitUntilCollapsed"
                     app:scrimAnimationDuration="300"
-                    app:scrimVisibleHeightTrigger="@dimen/_30sdp"
-                    app:layout_scrollFlags="scroll|exitUntilCollapsed">
+                    app:scrimVisibleHeightTrigger="@dimen/_30sdp">
 
                 <androidx.appcompat.widget.AppCompatImageView
                         android:id="@+id/iv_back"
@@ -63,7 +63,8 @@
                 app:layout_behavior="@string/appbar_scrolling_view_behavior"
                 app:layout_constraintBottom_toTopOf="@+id/txt_extra_hint"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                tools:itemCount="50" />
 
 
         <com.pnikosis.materialishprogress.ProgressWheel
@@ -108,9 +109,9 @@
                 android:animateLayoutChanges="true"
                 android:orientation="vertical"
                 android:visibility="gone"
-                tools:visibility="visible"
                 app:layout_anchor="@id/placeHolderView"
-                app:layout_anchorGravity="bottom|end">
+                app:layout_anchorGravity="bottom|end"
+                tools:visibility="visible">
 
             <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
                     android:id="@+id/txt_extra_hint"
@@ -129,74 +130,57 @@
                     tools:text="Save ₹ 1700 if you join today!"
                     tools:visibility="visible" />
 
-            <androidx.cardview.widget.CardView
-                    android:id="@+id/footer_buy_course"
+            <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:animateLayoutChanges="true"
-                    android:clipChildren="false"
-                    android:clipToPadding="false"
-                    android:divider="@android:color/transparent"
-                    android:dividerHeight="0.0px"
-                    android:elevation="@dimen/_8sdp"
-                    android:visibility="visible"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    tools:visibility="visible">
+                    android:layout_height="match_parent"
+                    android:background="@color/white"
+                    android:paddingHorizontal="@dimen/_14sdp"
+                    android:paddingVertical="@dimen/_4sdp">
 
-                <androidx.constraintlayout.widget.ConstraintLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:paddingHorizontal="@dimen/_14sdp"
-                        android:paddingVertical="@dimen/_4sdp">
+                <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+                        android:id="@+id/txt_actual_price"
+                        fontPath="fonts/Roboto-Regular.ttf"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/font_13"
+                        app:layout_constraintBottom_toTopOf="@+id/txt_discounted_price"
+                        app:layout_constraintEnd_toEndOf="@+id/txt_discounted_price"
+                        app:layout_constraintStart_toStartOf="@+id/txt_discounted_price"
+                        app:layout_constraintTop_toTopOf="parent"
+                        tools:text="$1999" />
 
-                    <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
-                            android:id="@+id/txt_actual_price"
-                            fontPath="fonts/Roboto-Regular.ttf"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textColor="@color/black"
-                            android:textSize="@dimen/font_13"
-                            app:layout_constraintBottom_toTopOf="@+id/txt_discounted_price"
-                            app:layout_constraintEnd_toEndOf="@+id/txt_discounted_price"
-                            app:layout_constraintStart_toStartOf="@+id/txt_discounted_price"
-                            app:layout_constraintTop_toTopOf="parent"
-                            tools:text="$1999" />
+                <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+                        android:id="@+id/txt_discounted_price"
+                        fontPath="fonts/Roboto-Bold.ttf"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="@dimen/_12sdp"
+                        android:paddingBottom="@dimen/_1sdp"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/font_20"
+                        app:layout_constraintBottom_toBottomOf="@+id/btn_start_course"
+                        app:layout_constraintEnd_toStartOf="@+id/btn_start_course"
+                        tools:text="$299" />
 
-                    <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
-                            android:id="@+id/txt_discounted_price"
-                            fontPath="fonts/Roboto-Bold.ttf"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_marginEnd="@dimen/_12sdp"
-                            android:textColor="@color/black"
-                            android:textSize="@dimen/font_20"
-                            android:paddingBottom="@dimen/_1sdp"
-                            app:layout_constraintBottom_toBottomOf="@+id/btn_start_course"
-                            app:layout_constraintEnd_toStartOf="@+id/btn_start_course"
-                            tools:text="$299" />
+                <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_start_course"
+                        fontPath="fonts/Roboto-Bold.ttf"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:backgroundTint="@color/button_color"
+                        android:paddingVertical="@dimen/_8sdp"
+                        android:text="@string/start_course"
+                        android:textAllCaps="false"
+                        android:textSize="@dimen/font_18"
+                        app:cornerRadius="@dimen/_32sdp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintWidth_default="percent"
+                        app:layout_constraintWidth_percent="0.75" />
 
-                    <com.google.android.material.button.MaterialButton
-                            android:id="@+id/btn_start_course"
-                            fontPath="fonts/Roboto-Bold.ttf"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:backgroundTint="@color/button_color"
-                            android:paddingVertical="@dimen/_8sdp"
-                            android:text="@string/start_course"
-                            android:textAllCaps="false"
-                            android:textSize="@dimen/font_18"
-                            app:cornerRadius="@dimen/_32sdp"
-                            app:layout_constraintWidth_default="percent"
-                            app:layout_constraintWidth_percent="0.75"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintTop_toTopOf="parent" />
-
-                </androidx.constraintlayout.widget.ConstraintLayout>
-
-            </androidx.cardview.widget.CardView>
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
         </LinearLayout>
 
