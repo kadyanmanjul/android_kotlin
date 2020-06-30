@@ -5,6 +5,8 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.esafirm.imagepicker.view.GridSpacingItemDecoration
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
+import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
 import com.joshtalks.joshskills.core.custom_ui.decorator.LayoutMarginDecoration
 import com.joshtalks.joshskills.messaging.RxBus2
@@ -89,8 +91,16 @@ class MasterFaqViewHolder(
                 .subscribeOn(Schedulers.computation())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
+                    logAnalyticsEvent(it.selectedCategory)
                     highlightAndShowFaq(it.position)
                 })
+    }
+
+    fun logAnalyticsEvent(selectedCategory: String) {
+        AppAnalytics.create(AnalyticsEvent.QNA_CLICKED.NAME)
+            .addBasicParam()
+            .addUserDetails()
+            .addParam(AnalyticsEvent.QNA_CARD_CLICKED.NAME, selectedCategory).push()
     }
 
     private fun highlightAndShowFaq(
@@ -101,12 +111,15 @@ class MasterFaqViewHolder(
         a.forEach {
             if (it is FaqCategoryViewHolder) {
                 if (it.position == position) {
+
                     it.cardView.strokeColor = ResourcesCompat.getColor(
                         getAppContext().resources,
                         R.color.button_primary_color,
                         null
                     )
+
                 } else {
+
                     it.cardView.strokeColor = ResourcesCompat.getColor(
                         getAppContext().resources,
                         R.color.white,

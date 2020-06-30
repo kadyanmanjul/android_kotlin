@@ -61,13 +61,6 @@ class FaqCategoryViewHolder(
             R.color.button_primary_color,
             null
         )
-        cardView.setCardBackgroundColor(
-            ResourcesCompat.getColor(
-                AppObjectController.joshApplication.resources,
-                R.color.white,
-                null
-            )
-        )
         categoryIconIV.setColorFilter(
             ResourcesCompat.getColor(
                 AppObjectController.joshApplication.resources,
@@ -80,22 +73,7 @@ class FaqCategoryViewHolder(
     @Click(R.id.root_view)
     fun onClick() {
         if (position != -1)
-            RxBus2.publish(LandingPageCategorySelectEventBus(position))
+            RxBus2.publish(LandingPageCategorySelectEventBus(position,faqCategory.categoryName))
         else RxBus2.publish(CategorySelectEventBus(listFAQCategory, faqCategory))
-    }
-
-    private fun setCardTint() {
-        categoryIconIV.setColorFilter(
-            ResourcesCompat.getColor(
-                AppObjectController.joshApplication.resources,
-                R.color.black,
-                null
-            )
-        )
-        cardView.strokeColor = ResourcesCompat.getColor(
-            AppObjectController.joshApplication.resources,
-            R.color.button_primary_color,
-            null
-        )
     }
 }
