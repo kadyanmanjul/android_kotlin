@@ -302,6 +302,6 @@ dependencies {
     androidTestImplementation 'androidx.test:runner:1.2.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
     // fresh chat
-    implementation 'com.github.freshdesk:freshchat-android:2.6.1'
+    implementation 'com.github.freshdesk:freshchat-android:3.6.1'
 
 }
