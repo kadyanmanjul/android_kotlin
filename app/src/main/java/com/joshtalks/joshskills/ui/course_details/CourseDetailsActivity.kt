@@ -260,7 +260,6 @@ class CourseDetailsActivity : BaseActivity() {
                 return OtherInfoViewHolder(card.cardType, card.sequenceNumber, data, this)
             }
         }
-        return OtherInfoViewHolder(card.cardType, card.sequenceNumber, null, this)
     }
 
     private fun scrollToPosition(pos: Int) {
