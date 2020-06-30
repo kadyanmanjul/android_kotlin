@@ -5,6 +5,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.custom_ui.decorator.LayoutMarginDecoration
+import com.joshtalks.joshskills.repository.server.course_detail.CardType
 import com.joshtalks.joshskills.repository.server.course_detail.Reviews
 import com.joshtalks.joshskills.ui.course_details.extra.ReviewsAdapter
 import com.mindorks.placeholderview.PlaceHolderView
@@ -14,9 +17,10 @@ import com.mindorks.placeholderview.annotations.View
 
 @Layout(R.layout.review_and_rating_layout)
 class ReviewRatingViewHolder(
+    override val type: CardType,
     override val sequenceNumber: Int,
     private var reviews: Reviews
-) : CourseDetailsBaseCell(sequenceNumber) {
+) : CourseDetailsBaseCell(type, sequenceNumber) {
 
     @View(R.id.header)
     lateinit var headerTV: AppCompatTextView
@@ -34,14 +38,21 @@ class ReviewRatingViewHolder(
     fun onViewInflated() {
         headerTV.text = reviews.title
         courseRating.text = reviews.value.toString()
-        ratingRV.builder.setHasFixedSize(true)
-            .setLayoutManager(LinearLayoutManager(AppObjectController.joshApplication))
-        reviews.ratingList.sortedByDescending { it.rating }.forEach {
-            ratingRV.addView(RatingViewHolder(it))
+        if (ratingRV.viewAdapter == null || ratingRV.viewAdapter.itemCount == 0) {
+            ratingRV.builder.setHasFixedSize(true)
+                .setLayoutManager(LinearLayoutManager(AppObjectController.joshApplication))
+            ratingRV.addItemDecoration(LayoutMarginDecoration(Utils.dpToPx(getAppContext(), 4f)))
+            reviews.ratingList.sortedByDescending { it.rating }.forEach {
+                ratingRV.addView(RatingViewHolder(it))
+            }
         }
-        reviewRV.layoutManager =
-            LinearLayoutManager(getAppContext(), LinearLayoutManager.VERTICAL, false)
-        reviewRV.setHasFixedSize(true)
-        reviewRV.post { reviewRV.adapter = ReviewsAdapter(reviews.reviews) }
+
+        if (reviewRV.adapter == null || reviewRV.adapter!!.itemCount == 0) {
+            reviewRV.layoutManager =
+                LinearLayoutManager(getAppContext(), LinearLayoutManager.VERTICAL, false)
+            reviewRV.setHasFixedSize(true)
+            reviewRV.addItemDecoration(LayoutMarginDecoration(Utils.dpToPx(getAppContext(), 16f)))
+            reviewRV.post { reviewRV.adapter = ReviewsAdapter(reviews.reviews) }
+        }
     }
 }

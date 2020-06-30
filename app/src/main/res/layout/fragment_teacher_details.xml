@@ -5,9 +5,9 @@
         xmlns:tools="http://schemas.android.com/tools">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-            android:background="#E5E5E5"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:background="#E5E5E5">
 
         <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/background_view"
@@ -40,8 +40,8 @@
 
         <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/iv_profile_pic"
-                android:layout_width="@dimen/_84sdp"
-                android:layout_height="@dimen/_84sdp"
+                android:layout_width="@dimen/_90sdp"
+                android:layout_height="@dimen/_90sdp"
                 app:layout_constraintBottom_toBottomOf="@+id/background_view"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.1"
@@ -55,11 +55,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/_16sdp"
-                android:layout_marginTop="@dimen/_2sdp"
+                android:layout_marginTop="@dimen/_1sdp"
                 android:gravity="center"
                 android:text="Hi! I am"
                 android:textColor="@color/font_color"
-                android:textSize="@dimen/font_18"
+                android:textSize="@dimen/font_20"
                 app:layout_constraintStart_toEndOf="@+id/iv_profile_pic"
                 app:layout_constraintTop_toBottomOf="@+id/background_view" />
 
@@ -70,10 +70,10 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:textColor="@color/font_color"
-                android:textSize="@dimen/font_18"
-                tools:text="Mohit Kumar"
+                android:textSize="@dimen/font_20"
                 app:layout_constraintStart_toStartOf="@+id/textView"
-                app:layout_constraintTop_toBottomOf="@+id/textView" />
+                app:layout_constraintTop_toBottomOf="@+id/textView"
+                tools:text="Mohit Kumar" />
 
 
         <androidx.constraintlayout.widget.Barrier
@@ -93,12 +93,14 @@
                 android:layout_marginVertical="@dimen/_16sdp"
                 android:layout_marginEnd="@dimen/_16sdp"
                 android:gravity="center_vertical|start"
+                android:letterSpacing="0.03"
+                android:lineSpacingExtra="@dimen/_1sdp"
                 android:scrollbars="vertical"
                 android:textColor="@color/gray_48"
                 android:textSize="@dimen/font_14"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="@+id/iv_profile_pic"
-                app:layout_constraintTop_toBottomOf="@+id/barrier"
-                app:layout_constraintEnd_toEndOf="parent" />
+                app:layout_constraintTop_toBottomOf="@+id/barrier" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
 

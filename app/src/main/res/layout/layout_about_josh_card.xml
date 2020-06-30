@@ -3,6 +3,7 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="@dimen/_203sdp"
+        tools:ignore="MissingPrefix"
         android:layout_height="wrap_content">
 
     <ImageView
@@ -41,7 +42,6 @@
             android:layout_below="@id/title"
             android:layout_marginTop="@dimen/_4sdp"
             android:maxLines="5"
-            android:minLines="4"
             android:textColor="@color/light_grey"
             android:textSize="@dimen/font_14"
             app:layout_constraintEnd_toEndOf="parent"

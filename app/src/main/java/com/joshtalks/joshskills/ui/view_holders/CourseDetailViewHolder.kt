@@ -3,6 +3,7 @@ package com.joshtalks.joshskills.ui.view_holders
 import androidx.appcompat.widget.AppCompatImageView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.repository.server.CourseDetailsModel
+import com.joshtalks.joshskills.repository.server.course_detail.CardType
 import com.mindorks.placeholderview.annotations.Layout
 import com.mindorks.placeholderview.annotations.Resolve
 import com.mindorks.placeholderview.annotations.View
@@ -13,7 +14,7 @@ class CourseDetailViewHolder(
     override val sequenceNumber: Int,
     private val courseDetailsModel: CourseDetailsModel
 ) :
-    CourseDetailsBaseCell(sequenceNumber) {
+    CourseDetailsBaseCell(CardType.OTHER_INFO, sequenceNumber) {
 
     @View(R.id.image_view)
     lateinit var imageView: AppCompatImageView

@@ -4,6 +4,7 @@ import android.content.Context
 import android.widget.TextView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.repository.server.course_detail.CardType
 import com.joshtalks.joshskills.repository.server.course_detail.LongDescription
 import com.joshtalks.joshskills.ui.view_holders.CourseDetailsBaseCell
 import com.mindorks.placeholderview.annotations.Click
@@ -13,10 +14,11 @@ import com.mindorks.placeholderview.annotations.Resolve
 
 @Layout(R.layout.layout_long_description_card_view_holder)
 class LongDescriptionViewHolder(
+    override val type: CardType,
     override val sequenceNumber: Int,
     private var longDescription: LongDescription,
     private val context: Context = AppObjectController.joshApplication
-) : CourseDetailsBaseCell(sequenceNumber) {
+) : CourseDetailsBaseCell(type, sequenceNumber) {
 
     @com.mindorks.placeholderview.annotations.View(R.id.title)
     lateinit var title: TextView

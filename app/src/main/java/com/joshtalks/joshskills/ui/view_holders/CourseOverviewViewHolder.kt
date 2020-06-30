@@ -14,20 +14,24 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.custom_ui.JoshRatingBar
 import com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+import com.joshtalks.joshskills.messaging.RxBus2
+import com.joshtalks.joshskills.repository.server.course_detail.CardType
 import com.joshtalks.joshskills.repository.server.course_detail.CourseOverviewData
 import com.joshtalks.joshskills.repository.server.course_detail.OverviewMediaType
 import com.joshtalks.joshskills.repository.server.course_detail.RecyclerViewCarouselItemDecorator
 import com.mindorks.placeholderview.PlaceHolderView
+import com.mindorks.placeholderview.annotations.Click
 import com.mindorks.placeholderview.annotations.Layout
 import com.mindorks.placeholderview.annotations.Resolve
 
 
 @Layout(R.layout.course_overview_view_holder)
 class CourseOverviewViewHolder(
+    override val type: CardType,
     override val sequenceNumber: Int,
     private val data: CourseOverviewData,
     private val context: Context = AppObjectController.joshApplication
-) : CourseDetailsBaseCell(sequenceNumber) {
+) : CourseDetailsBaseCell(type, sequenceNumber) {
 
     @com.mindorks.placeholderview.annotations.View(R.id.txtCourseName)
     lateinit var txtCourseName: JoshTextView
@@ -157,5 +161,10 @@ class CourseOverviewViewHolder(
             .forEach {
                 carouselRecyclerView.addView(CourseOverviewMediaViewHolder(it))
             }
+    }
+
+    @Click(R.id.ratingView)
+    fun onClickRatingView() {
+        RxBus2.publish(CardType.REVIEWS)
     }
 }

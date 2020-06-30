@@ -8,8 +8,12 @@ import com.bumptech.glide.integration.webp.decoder.WebpDrawableTransformation
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.bumptech.glide.request.target.Target
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.repository.server.course_detail.CardType
 
-abstract class CourseDetailsBaseCell(open val sequenceNumber: Int) {
+abstract class CourseDetailsBaseCell(
+    open val type: CardType = CardType.OTHER_INFO,
+    open val sequenceNumber: Int
+) {
 
     fun getAppContext() = AppObjectController.joshApplication
 

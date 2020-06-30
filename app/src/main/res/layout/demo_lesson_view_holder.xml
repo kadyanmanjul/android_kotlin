@@ -20,7 +20,12 @@
             tools:text="Watch A Demo Lesson" />
 
     <androidx.cardview.widget.CardView
-            android:layout_marginTop="@dimen/_6sdp"
+            android:layout_marginTop="@dimen/_8sdp"
+            android:clickable="true"
+            android:elevation="0dp"
+            android:enabled="true"
+            android:focusable="true"
+            android:foreground="?android:attr/selectableItemBackground"
             android:id="@+id/cardView"
             android:layout_width="match_parent"
             android:layout_height="@dimen/_164sdp"
@@ -49,7 +54,6 @@
                 android:layout_width="@dimen/_60sdp"
                 android:layout_height="@dimen/_60sdp"
                 android:layout_gravity="center"
-                android:clickable="false"
                 android:padding="@dimen/_12sdp"
                 android:src="@drawable/ic_play_24dp"
                 android:visibility="gone"

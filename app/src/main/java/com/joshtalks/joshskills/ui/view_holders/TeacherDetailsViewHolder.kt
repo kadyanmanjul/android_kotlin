@@ -15,6 +15,7 @@ import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
 import com.joshtalks.joshskills.messaging.RxBus2
+import com.joshtalks.joshskills.repository.server.course_detail.CardType
 import com.joshtalks.joshskills.repository.server.course_detail.TeacherDetails
 import com.mindorks.placeholderview.annotations.Click
 import com.mindorks.placeholderview.annotations.Layout
@@ -23,10 +24,11 @@ import jp.wasabeef.glide.transformations.RoundedCornersTransformation
 
 @Layout(R.layout.teacher_details_view_holder)
 class TeacherDetailsViewHolder(
+    override val type: CardType,
     override val sequenceNumber: Int,
     val data: TeacherDetails,
     private val context: Context = AppObjectController.joshApplication
-) : CourseDetailsBaseCell(sequenceNumber) {
+) : CourseDetailsBaseCell(type, sequenceNumber) {
 
     @com.mindorks.placeholderview.annotations.View(R.id.txtTeacherName)
     lateinit var txtTeacherName: JoshTextView

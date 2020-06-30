@@ -7,19 +7,23 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.ActivityInfo
+import android.graphics.Paint
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.view.View
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.appbar.AppBarLayout
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.CoreJoshActivity
+import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.core.PermissionUtils
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.showToast
@@ -68,7 +72,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class CourseDetailsActivity : CoreJoshActivity() {
+class CourseDetailsActivity : BaseActivity() {
 
     private lateinit var binding: ActivityCourseDetailsBinding
     private val viewModel by lazy { ViewModelProvider(this).get(CourseDetailsViewModel::class.java) }
@@ -90,12 +94,12 @@ class CourseDetailsActivity : CoreJoshActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
         requestedOrientation = if (Build.VERSION.SDK_INT == 26) {
             ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
         } else {
             ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         }
+        super.onCreate(savedInstanceState)
         window.statusBarColor = ContextCompat.getColor(applicationContext, R.color.black)
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_course_details)
@@ -115,6 +119,17 @@ class CourseDetailsActivity : CoreJoshActivity() {
         linearLayoutManager = LinearLayoutManager(this)
         linearLayoutManager.isSmoothScrollbarEnabled = true
         binding.placeHolderView.builder.setHasFixedSize(true).setLayoutManager(linearLayoutManager)
+        binding.placeHolderView.addOnScrollListener(object :
+            RecyclerView.OnScrollListener() {
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                super.onScrollStateChanged(recyclerView, newState)
+                if (linearLayoutManager.findFirstVisibleItemPosition() > 0) {
+                    binding.buyCourseLl.visibility = View.VISIBLE
+                } else {
+                    binding.buyCourseLl.visibility = View.GONE
+                }
+            }
+        })
     }
 
     private fun subscribeLiveData() {
@@ -124,13 +139,23 @@ class CourseDetailsActivity : CoreJoshActivity() {
                 binding.txtDiscountedPrice.text = data.paymentData.discountedAmount
                 binding.txtExtraHint.text = data.paymentData.discountText
                 binding.txtExtraHint.visibility = View.VISIBLE
+                binding.txtActualPrice.paintFlags =
+                    binding.txtActualPrice.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
+
             }
             data.cards.sortedBy { it.sequenceNumber }.forEach { card ->
                 getViewHolder(card)?.run {
                     binding.placeHolderView.addView(this)
                 }
             }.also {
-                binding.placeHolderView.addView(OtherInfoViewHolder(-1, null, this))
+                binding.placeHolderView.addView(
+                    OtherInfoViewHolder(
+                        CardType.OTHER_INFO,
+                        -1,
+                        null,
+                        this
+                    )
+                )
             }
         })
 
@@ -150,87 +175,92 @@ class CourseDetailsActivity : CoreJoshActivity() {
                     card.data.toString(),
                     CourseOverviewData::class.java
                 )
-                return CourseOverviewViewHolder(card.sequenceNumber, data, this)
+                return CourseOverviewViewHolder(card.cardType, card.sequenceNumber, data, this)
             }
             CardType.LONG_DESCRIPTION -> {
                 val data = AppObjectController.gsonMapperForLocal.fromJson(
                     card.data.toString(),
                     LongDescription::class.java
                 )
-                return LongDescriptionViewHolder(card.sequenceNumber, data, this)
+                return LongDescriptionViewHolder(card.cardType, card.sequenceNumber, data, this)
             }
             CardType.TEACHER_DETAILS -> {
                 val data = AppObjectController.gsonMapperForLocal.fromJson(
                     card.data.toString(),
                     TeacherDetails::class.java
                 )
-                return TeacherDetailsViewHolder(card.sequenceNumber, data, this)
+                return TeacherDetailsViewHolder(card.cardType, card.sequenceNumber, data, this)
             }
             CardType.SYLLABUS -> {
                 val data = AppObjectController.gsonMapperForLocal.fromJson(
                     card.data.toString(),
                     SyllabusData::class.java
                 )
-                return SyllabusViewHolder(card.sequenceNumber, data, this)
+                return SyllabusViewHolder(card.cardType, card.sequenceNumber, data, this)
             }
             CardType.GUIDELINES -> {
                 val data = AppObjectController.gsonMapperForLocal.fromJson(
                     card.data.toString(),
                     Guidelines::class.java
                 )
-                return GuidelineViewHolder(card.sequenceNumber, data, supportFragmentManager)
+                return GuidelineViewHolder(
+                    card.cardType,
+                    card.sequenceNumber,
+                    data,
+                    supportFragmentManager
+                )
             }
             CardType.DEMO_LESSON -> {
                 val data = AppObjectController.gsonMapperForLocal.fromJson(
                     card.data.toString(),
                     DemoLesson::class.java
                 )
-                return DemoLessonViewHolder(card.sequenceNumber, data, this)
+                return DemoLessonViewHolder(card.cardType, card.sequenceNumber, data, this)
             }
             CardType.REVIEWS -> {
                 val data = AppObjectController.gsonMapperForLocal.fromJson(
                     card.data.toString(),
                     Reviews::class.java
                 )
-                return ReviewRatingViewHolder(card.sequenceNumber, data)
+                return ReviewRatingViewHolder(card.cardType, card.sequenceNumber, data)
             }
             CardType.LOCATION_STATS -> {
                 val data = AppObjectController.gsonMapperForLocal.fromJson(
                     card.data.toString(),
                     LocationStats::class.java
                 )
-                return LocationStatViewHolder(card.sequenceNumber, data, this, this)
+                return LocationStatViewHolder(card.cardType, card.sequenceNumber, data, this, this)
             }
             CardType.STUDENT_FEEDBACK -> {
                 val data = AppObjectController.gsonMapperForLocal.fromJson(
                     card.data.toString(),
                     StudentFeedback::class.java
                 )
-                return StudentFeedbackViewHolder(card.sequenceNumber, data, this)
+                return StudentFeedbackViewHolder(card.cardType, card.sequenceNumber, data, this)
             }
             CardType.FAQ -> {
                 val data = AppObjectController.gsonMapperForLocal.fromJson(
                     card.data.toString(),
                     FAQData::class.java
                 )
-                return MasterFaqViewHolder(card.sequenceNumber, data)
+                return MasterFaqViewHolder(card.cardType, card.sequenceNumber, data)
             }
             CardType.ABOUT_JOSH -> {
                 val data = AppObjectController.gsonMapperForLocal.fromJson(
                     card.data.toString(),
                     AboutJosh::class.java
                 )
-                return AboutJoshViewHolder(card.sequenceNumber, data, this)
+                return AboutJoshViewHolder(card.cardType, card.sequenceNumber, data, this)
             }
             CardType.OTHER_INFO -> {
                 val data = AppObjectController.gsonMapperForLocal.fromJson(
                     card.data.toString(),
                     OtherInfo::class.java
                 )
-                return OtherInfoViewHolder(card.sequenceNumber, data, this)
+                return OtherInfoViewHolder(card.cardType, card.sequenceNumber, data, this)
             }
         }
-        return OtherInfoViewHolder(card.sequenceNumber, null, this)
+        return OtherInfoViewHolder(card.cardType, card.sequenceNumber, null, this)
     }
 
     private fun scrollToPosition(pos: Int) {
@@ -254,6 +284,29 @@ class CourseDetailsActivity : CoreJoshActivity() {
             }
         }
     }
+
+    private fun scrollToCard(type: CardType) {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                var tempView: CourseDetailsBaseCell
+                binding.placeHolderView.allViewResolvers.let {
+                    it.forEachIndexed { index, view ->
+                        if (view is CourseDetailsBaseCell) {
+                            tempView = view
+                            if (tempView.type == type) {
+                                AppObjectController.uiHandler.post {
+                                    linearLayoutManager.scrollToPositionWithOffset(index, 0)
+                                }
+                            }
+                        }
+                    }
+                }
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+            }
+        }
+    }
+
 
     override fun onResume() {
         super.onResume()
@@ -292,6 +345,18 @@ class CourseDetailsActivity : CoreJoshActivity() {
                     it.printStackTrace()
                 })
         )
+
+        compositeDisposable.add(
+            RxBus2.listen(CardType::class.java)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({
+                    scrollToCard(it)
+                }, {
+                    it.printStackTrace()
+                })
+        )
+
 
     }
 
@@ -346,6 +411,7 @@ class CourseDetailsActivity : CoreJoshActivity() {
         val downloadManager =
             AppObjectController.joshApplication.getSystemService(Context.DOWNLOAD_SERVICE) as (DownloadManager)
         downloadID = downloadManager.enqueue(request)
+        showToast(getString(R.string.downloading_start))
     }
 
     private fun registerDownloadReceiver() {
@@ -363,6 +429,21 @@ class CourseDetailsActivity : CoreJoshActivity() {
         }
         super.onDestroy()
     }
+
+    fun goToTop() {
+        val params: CoordinatorLayout.LayoutParams =
+            binding.appBarLayout.layoutParams as CoordinatorLayout.LayoutParams
+        val behavior = params.behavior as AppBarLayout.Behavior
+        behavior.onNestedFling(
+            binding.coordinator,
+            binding.appBarLayout,
+            binding.coordinator,
+            0f,
+            10000f,
+            true
+        )
+    }
+
 
     companion object {
         const val KEY_TEST_ID = "test-id"

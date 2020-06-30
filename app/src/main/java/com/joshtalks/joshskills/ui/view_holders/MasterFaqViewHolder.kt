@@ -10,6 +10,7 @@ import com.joshtalks.joshskills.core.custom_ui.decorator.LayoutMarginDecoration
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.LandingPageCategorySelectEventBus
 import com.joshtalks.joshskills.repository.server.FAQ
+import com.joshtalks.joshskills.repository.server.course_detail.CardType
 import com.joshtalks.joshskills.repository.server.course_detail.FAQData
 import com.mindorks.placeholderview.ExpandablePlaceHolderView
 import com.mindorks.placeholderview.PlaceHolderView
@@ -23,9 +24,10 @@ import io.reactivex.schedulers.Schedulers
 
 @Layout(R.layout.layout_expandable_view_holder)
 class MasterFaqViewHolder(
+    override val type: CardType,
     override val sequenceNumber: Int,
-    val faqData: FAQData
-) : CourseDetailsBaseCell(sequenceNumber) {
+    private val faqData: FAQData
+) : CourseDetailsBaseCell(type, sequenceNumber) {
 
     @com.mindorks.placeholderview.annotations.View(R.id.expandableView)
     lateinit var expndableRV: ExpandablePlaceHolderView
@@ -116,32 +118,36 @@ class MasterFaqViewHolder(
 
 
     private fun initRV() {
-        val layoutManager = GridLayoutManager(AppObjectController.joshApplication, 2)
-        recyclerView.builder.setHasFixedSize(true)
-            .setLayoutManager(layoutManager)
-        recyclerView.addItemDecoration(
-            GridSpacingItemDecoration(
-                2,
-                Utils.dpToPx(AppObjectController.joshApplication, 12f),
-                true
+        if (recyclerView.viewAdapter == null || recyclerView.viewAdapter.itemCount == 0) {
+            val layoutManager = GridLayoutManager(AppObjectController.joshApplication, 2)
+            recyclerView.builder.setHasFixedSize(true)
+                .setLayoutManager(layoutManager)
+            recyclerView.addItemDecoration(
+                GridSpacingItemDecoration(
+                    2,
+                    Utils.dpToPx(AppObjectController.joshApplication, 12f),
+                    true
+                )
             )
-        )
+        }
     }
 
     private fun initExpandableRV() {
-        val linearLayoutManager = LinearLayoutManager(AppObjectController.joshApplication)
-        linearLayoutManager.isSmoothScrollbarEnabled = true
-        expndableRV.builder
-            .setHasFixedSize(true)
-            .setLayoutManager(linearLayoutManager)
-        expndableRV.addItemDecoration(
-            LayoutMarginDecoration(
-                Utils.dpToPx(
-                    AppObjectController.joshApplication,
-                    2f
+        if (expndableRV.viewAdapter == null || expndableRV.viewAdapter.itemCount == 0) {
+            val linearLayoutManager = LinearLayoutManager(AppObjectController.joshApplication)
+            linearLayoutManager.isSmoothScrollbarEnabled = true
+            expndableRV.builder
+                .setHasFixedSize(true)
+                .setLayoutManager(linearLayoutManager)
+            expndableRV.addItemDecoration(
+                LayoutMarginDecoration(
+                    Utils.dpToPx(
+                        AppObjectController.joshApplication,
+                        2f
+                    )
                 )
             )
-        )
+        }
     }
 
     @Recycle

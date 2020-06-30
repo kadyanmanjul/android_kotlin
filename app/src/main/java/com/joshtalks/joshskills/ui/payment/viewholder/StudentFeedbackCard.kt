@@ -6,6 +6,7 @@ import android.widget.FrameLayout
 import android.widget.TextView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.repository.server.course_detail.CardType
 import com.joshtalks.joshskills.repository.server.course_detail.Feedback
 import com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity
 import com.joshtalks.joshskills.ui.view_holders.CourseDetailsBaseCell
@@ -19,7 +20,7 @@ import de.hdodenhof.circleimageview.CircleImageView
 class StudentFeedbackCard(
     private var feedback: Feedback,
     private val context: Context = AppObjectController.joshApplication
-) :CourseDetailsBaseCell(0){
+) : CourseDetailsBaseCell(CardType.OTHER_INFO, 0) {
 
     @com.mindorks.placeholderview.annotations.View(R.id.name)
     lateinit var name: TextView

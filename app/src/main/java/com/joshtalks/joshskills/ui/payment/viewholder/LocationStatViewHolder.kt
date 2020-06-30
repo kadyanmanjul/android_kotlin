@@ -15,6 +15,7 @@ import com.joshtalks.joshskills.core.PermissionUtils
 import com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
 import com.joshtalks.joshskills.repository.server.SearchLocality
 import com.joshtalks.joshskills.repository.server.UpdateUserLocality
+import com.joshtalks.joshskills.repository.server.course_detail.CardType
 import com.joshtalks.joshskills.repository.server.course_detail.LocationStats
 import com.joshtalks.joshskills.ui.view_holders.CourseDetailsBaseCell
 import com.karumi.dexter.MultiplePermissionsReport
@@ -34,11 +35,12 @@ import java.util.regex.Pattern
 
 @Layout(R.layout.layout_location_stats_view_holder)
 class LocationStatViewHolder(
+    override val type: CardType,
     override val sequenceNumber: Int,
     private var locationStats: LocationStats,
     val activity: Activity,
     private val context: Context = AppObjectController.joshApplication
-) : CourseDetailsBaseCell(sequenceNumber) {
+) : CourseDetailsBaseCell(type, sequenceNumber) {
 
     @com.mindorks.placeholderview.annotations.View(R.id.background_image_view)
     lateinit var imageView: ImageView

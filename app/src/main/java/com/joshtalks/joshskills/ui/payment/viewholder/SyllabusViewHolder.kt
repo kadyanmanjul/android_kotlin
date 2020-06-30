@@ -14,6 +14,7 @@ import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.DownloadSyllabusEvent
+import com.joshtalks.joshskills.repository.server.course_detail.CardType
 import com.joshtalks.joshskills.repository.server.course_detail.Syllabus
 import com.joshtalks.joshskills.repository.server.course_detail.SyllabusData
 import com.joshtalks.joshskills.ui.view_holders.CourseDetailsBaseCell
@@ -24,10 +25,11 @@ import com.mindorks.placeholderview.annotations.Resolve
 
 @Layout(R.layout.layout_syllabus_view)
 class SyllabusViewHolder(
+    override val type: CardType,
     override val sequenceNumber: Int,
     private var syllabusData: SyllabusData,
     private val context: Context = AppObjectController.joshApplication
-) : CourseDetailsBaseCell(sequenceNumber) {
+) : CourseDetailsBaseCell(type, sequenceNumber) {
 
     @com.mindorks.placeholderview.annotations.View(R.id.root_view)
     lateinit var rootView: ConstraintLayout
@@ -68,7 +70,7 @@ class SyllabusViewHolder(
 
     @Click(R.id.download_syllabus)
     fun onClick() {
-        progressBar.visibility=View.VISIBLE
+        // progressBar.visibility=View.VISIBLE
         RxBus2.publish(DownloadSyllabusEvent(syllabusData,this))
     }
 

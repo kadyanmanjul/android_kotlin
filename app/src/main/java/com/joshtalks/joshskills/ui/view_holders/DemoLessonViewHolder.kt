@@ -15,6 +15,7 @@ import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
 import com.joshtalks.joshskills.core.showToast
+import com.joshtalks.joshskills.repository.server.course_detail.CardType
 import com.joshtalks.joshskills.repository.server.course_detail.DemoLesson
 import com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity
 import com.mindorks.placeholderview.annotations.Click
@@ -24,10 +25,11 @@ import jp.wasabeef.glide.transformations.RoundedCornersTransformation
 
 @Layout(R.layout.demo_lesson_view_holder)
 class DemoLessonViewHolder(
+    override val type: CardType,
     override val sequenceNumber: Int,
     val data: DemoLesson,
     private val context: Context = AppObjectController.joshApplication
-) : CourseDetailsBaseCell(sequenceNumber) {
+) : CourseDetailsBaseCell(type, sequenceNumber) {
 
     @com.mindorks.placeholderview.annotations.View(R.id.txt_title)
     lateinit var txtTitle: JoshTextView
@@ -38,10 +40,12 @@ class DemoLessonViewHolder(
     @Resolve
     fun onResolved() {
         txtTitle.text = data.title
-        data.thumbnailUrl?.let { setDefaultImageView(imgView, it) }
+        data.thumbnailUrl?.let {
+            setDefaultImageView(imgView, it)
+        }
     }
 
-    @Click(R.id.playIcon)
+    @Click(R.id.cardView)
     fun onClick() {
         if (data.videoUrl.isNullOrEmpty()) {
             showToast(getAppContext().getString(R.string.video_url_not_exist))
