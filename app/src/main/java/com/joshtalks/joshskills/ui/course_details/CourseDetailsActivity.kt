@@ -70,6 +70,7 @@ import com.joshtalks.joshskills.ui.view_holders.MasterFaqViewHolder
 import com.joshtalks.joshskills.ui.view_holders.OtherInfoViewHolder
 import com.joshtalks.joshskills.ui.view_holders.ReviewRatingViewHolder
 import com.joshtalks.joshskills.ui.view_holders.TeacherDetailsViewHolder
+import com.joshtalks.joshskills.util.DividerItemDecoration
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
@@ -149,6 +150,12 @@ class CourseDetailsActivity : BaseActivity() {
                 }
             }
         })
+        binding.placeHolderView.addItemDecoration(
+            DividerItemDecoration(
+                this,
+                R.drawable.list_divider
+            )
+        )
     }
 
     fun visibleBuyButton() {

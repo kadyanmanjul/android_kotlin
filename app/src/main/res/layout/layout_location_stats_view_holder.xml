@@ -6,7 +6,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/course_padding_dimen"
-        android:background="@drawable/top_divider_with_padding_bg">
+        android:layout_marginVertical="@dimen/_18sdp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"

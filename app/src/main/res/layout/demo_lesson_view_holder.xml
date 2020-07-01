@@ -5,7 +5,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/course_padding_dimen"
-        android:background="@drawable/top_divider_with_padding_bg">
+        android:layout_marginVertical="@dimen/_18sdp">
 
     <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
             android:id="@+id/txt_title"
