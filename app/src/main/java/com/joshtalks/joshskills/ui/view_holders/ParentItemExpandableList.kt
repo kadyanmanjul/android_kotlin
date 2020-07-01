@@ -25,10 +25,10 @@ class ParentItemExpandableList(val question: String) {
     @View(R.id.question)
     lateinit var itemNameTxt: TextView
 
-    @Toggle(R.id.imageView4)
     @View(R.id.imageView4)
     lateinit var itemIcon: ImageView
 
+    @Toggle(R.id.mainView)
     @View(R.id.mainView)
     lateinit var mainView: ConstraintLayout
 
