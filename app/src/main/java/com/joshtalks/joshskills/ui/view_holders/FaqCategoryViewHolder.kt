@@ -61,6 +61,13 @@ class FaqCategoryViewHolder(
             R.color.button_primary_color,
             null
         )
+        cardView.setCardBackgroundColor(
+            ResourcesCompat.getColor(
+                AppObjectController.joshApplication.resources,
+                R.color.white,
+                null
+            )
+        )
         categoryIconIV.setColorFilter(
             ResourcesCompat.getColor(
                 AppObjectController.joshApplication.resources,
