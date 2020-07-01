@@ -137,17 +137,29 @@ class CourseDetailsActivity : BaseActivity() {
             RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)
-                if (binding.buyCourseLl.visibility == View.GONE) {
-                    val transition: Transition = Slide(Gravity.BOTTOM)
-                    transition.duration = 800
-                    transition.interpolator = LinearInterpolator()
-                    transition.addTarget(binding.buyCourseLl)
-                    TransitionManager.beginDelayedTransition(binding.coordinator, transition)
-                    binding.buyCourseLl.visibility = View.VISIBLE
+                if (linearLayoutManager.findFirstCompletelyVisibleItemPosition() > 0) {
+                    visibleBuyButton()
                 }
+            }
 
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                if (dy > 100) {
+                    visibleBuyButton()
+                }
             }
         })
+    }
+
+    fun visibleBuyButton() {
+        if (binding.buyCourseLl.visibility == View.GONE) {
+            val transition: Transition = Slide(Gravity.BOTTOM)
+            transition.duration = 800
+            transition.interpolator = LinearInterpolator()
+            transition.addTarget(binding.buyCourseLl)
+            TransitionManager.beginDelayedTransition(binding.coordinator, transition)
+            binding.buyCourseLl.visibility = View.VISIBLE
+        }
     }
 
     private fun subscribeLiveData() {
