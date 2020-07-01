@@ -120,7 +120,7 @@
                     android:gravity="center"
                     android:paddingVertical="@dimen/_2sdp"
                     android:textColor="@color/white"
-                    android:textSize="@dimen/font_14"
+                    android:textSize="@dimen/font_12_5"
                     android:visibility="gone"
                     app:layout_constraintBottom_toTopOf="@+id/footer_buy_course"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -137,7 +137,7 @@
 
                 <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
                         android:id="@+id/txt_actual_price"
-                        fontPath="fonts/Roboto-Regular.ttf"
+                        fontPath="fonts/Roboto-Medium.ttf"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textColor="@color/black"
@@ -169,7 +169,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:backgroundTint="@color/button_color"
-                        android:paddingVertical="@dimen/_10sdp"
+                        android:paddingVertical="@dimen/_8sdp"
                         android:text="@string/start_course"
                         android:textAllCaps="false"
                         android:textSize="@dimen/font_18"

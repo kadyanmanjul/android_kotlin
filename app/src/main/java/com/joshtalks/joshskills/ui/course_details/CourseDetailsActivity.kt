@@ -119,13 +119,13 @@ class CourseDetailsActivity : BaseActivity() {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_course_details)
         binding.lifecycleOwner = this
         binding.handler = this
-        initView()
         testId = intent.getIntExtra(KEY_TEST_ID, 0)
         if (testId != 0) {
             getCourseDetails(testId)
         } else {
             finish()
         }
+        initView()
         subscribeLiveData()
     }
 
