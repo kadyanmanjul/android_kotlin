@@ -154,7 +154,8 @@
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="@dimen/_12sdp"
                         android:textColor="@color/black"
-                        android:textSize="@dimen/font_22"
+                        android:paddingBottom="@dimen/_2sdp"
+                        android:textSize="@dimen/font_20"
                         app:layout_constraintBottom_toBottomOf="@+id/btn_start_course"
                         app:layout_constraintEnd_toStartOf="@+id/btn_start_course"
                         tools:text="$299" />
@@ -168,7 +169,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:backgroundTint="@color/button_color"
-                        android:paddingVertical="@dimen/_8sdp"
+                        android:paddingVertical="@dimen/_10sdp"
                         android:text="@string/start_course"
                         android:textAllCaps="false"
                         android:textSize="@dimen/font_18"
@@ -177,7 +178,7 @@
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintWidth_default="percent"
-                        app:layout_constraintWidth_percent="0.7" />
+                        app:layout_constraintWidth_percent="0.75" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
