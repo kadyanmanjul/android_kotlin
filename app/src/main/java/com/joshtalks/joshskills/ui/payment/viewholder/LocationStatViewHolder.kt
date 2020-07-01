@@ -25,7 +25,9 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.mindorks.placeholderview.annotations.Layout
 import com.mindorks.placeholderview.annotations.Resolve
 import com.patloew.rxlocation.RxLocation
+import io.reactivex.CompletableObserver
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -106,6 +108,8 @@ class LocationStatViewHolder(
                             getLocationAndUpload()
                             return
 
+                        } else {
+                            progressBar.visibility = View.GONE
                         }
                     }
                 }
@@ -125,27 +129,41 @@ class LocationStatViewHolder(
         val locationRequest = LocationRequest.create()
             .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
             .setInterval(10000)
-        compositeDisposable.add(
-            rxLocation.location().updates(locationRequest)
-                .subscribeOn(Schedulers.computation())
-                .subscribe({ location ->
-                    CoroutineScope(Dispatchers.IO).launch {
-                        try {
-                            val request = UpdateUserLocality()
-                            request.locality = SearchLocality(location.latitude, location.longitude)
-                            getAddressAndSetView(location.latitude, location.longitude)
-                            progressBar.visibility = View.GONE
-                        } catch (e: Exception) {
-                            progressBar.visibility = View.GONE
-                            e.printStackTrace()
-                        }
-                        compositeDisposable.clear()
-                    }
-                }, { ex ->
-                    ex.printStackTrace()
-                })
-        )
+        rxLocation.settings().checkAndHandleResolutionCompletable(locationRequest)
+            .subscribeOn(Schedulers.computation())
+            .observeOn(Schedulers.computation())
+            .subscribe(object : CompletableObserver {
+                override fun onSubscribe(d: Disposable) {
+                }
 
+                override fun onComplete() {
+                    compositeDisposable.add(
+                        rxLocation.location().updates(locationRequest)
+                            .subscribeOn(Schedulers.computation())
+                            .subscribe({ location ->
+                                CoroutineScope(Dispatchers.IO).launch {
+                                    try {
+                                        val request = UpdateUserLocality()
+                                        request.locality =
+                                            SearchLocality(location.latitude, location.longitude)
+                                        getAddressAndSetView(location.latitude, location.longitude)
+                                        progressBar.visibility = View.GONE
+                                    } catch (e: Exception) {
+                                        progressBar.visibility = View.GONE
+                                        e.printStackTrace()
+                                    }
+                                    compositeDisposable.clear()
+                                }
+                            }, { ex ->
+                                ex.printStackTrace()
+                            })
+                    )
+                }
+
+                override fun onError(e: Throwable) {
+                    //  e.printStackTrace()
+                }
+            })
     }
 
     private fun getAddressAndSetView(latitude: Double, longitude: Double) {
@@ -177,6 +195,7 @@ class LocationStatViewHolder(
         )
         studentsNearby.text = randomStudents.toString().plus(" students from")
         setDefaultImageView(imageView, locationStats.imageUrls.get(index))
+        checkLocation.visibility = View.GONE
     }
 
     private fun randomNumberGenerator(start: Int, end: Int): Int {
