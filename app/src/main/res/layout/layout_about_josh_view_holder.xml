@@ -4,15 +4,15 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="@dimen/course_padding_dimen"
         android:layout_marginVertical="@dimen/_20sdp"
         tools:ignore="MissingPrefix">
 
     <TextView
             android:id="@+id/title"
             fontPath="fonts/Roboto-Bold.ttf"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/course_padding_dimen"
             android:textColor="@color/black"
             android:textSize="@dimen/font_18"
             app:layout_constraintEnd_toEndOf="parent"
@@ -24,9 +24,10 @@
     <TextView
             android:id="@+id/description"
             fontPath="fonts/Roboto-Regular.ttf"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/title"
+            android:layout_marginHorizontal="@dimen/course_padding_dimen"
             android:layout_marginTop="@dimen/_4sdp"
             android:textColor="@color/dark_grey"
             android:textSize="@dimen/font_14"

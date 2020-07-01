@@ -5,11 +5,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         tools:ignore="MissingPrefix"
-        android:layout_marginHorizontal="@dimen/course_padding_dimen"
         android:layout_marginVertical="@dimen/_20sdp"
         tools:context=".ui.payment.PaymentActivity">
 
     <TextView
+            android:layout_marginHorizontal="@dimen/course_padding_dimen"
             android:id="@+id/title"
             fontPath="fonts/Roboto-Bold.ttf"
             android:layout_width="0dp"
@@ -26,7 +26,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:nestedScrollingEnabled="true"
-            android:padding="@dimen/_4sdp"
+            android:paddingVertical="@dimen/_4sdp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/title" />

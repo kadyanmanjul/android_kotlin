@@ -145,7 +145,6 @@ class CourseOverviewViewHolder(
             false
         )
         linearLayoutManager.isSmoothScrollbarEnabled = true
-
         carouselRecyclerView.builder
             .setHasFixedSize(true)
             .setLayoutManager(linearLayoutManager)
@@ -163,7 +162,6 @@ class CourseOverviewViewHolder(
         }
 
         carouselRecyclerView.itemAnimator = null
-
         data.media.filter { it.type == OverviewMediaType.IMAGE || it.type == OverviewMediaType.VIDEO }
             .sortedBy { it.sortOrder }
             .forEach {

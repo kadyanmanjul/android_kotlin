@@ -9,6 +9,7 @@ import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.custom_ui.decorator.LayoutMarginDecoration
 import com.joshtalks.joshskills.repository.server.course_detail.AboutJosh
 import com.joshtalks.joshskills.repository.server.course_detail.CardType
+import com.joshtalks.joshskills.repository.server.course_detail.RecyclerViewCarouselItemDecorator
 import com.joshtalks.joshskills.ui.view_holders.CourseDetailsBaseCell
 import com.mindorks.placeholderview.PlaceHolderView
 import com.mindorks.placeholderview.annotations.Layout
@@ -51,17 +52,16 @@ class AboutJoshViewHolder(
             myJoshRecyclerView.builder
                 .setHasFixedSize(true)
                 .setLayoutManager(linearLayoutManager)
-            /*if (myJoshRecyclerView.itemDecorationCount < 1) {
-                val cardWidthPixels = (context.resources.displayMetrics.widthPixels * 0.90f).toInt()
-                val cardHintPercent = 0.01f
-                myJoshRecyclerView.addItemDecoration(
-                    RecyclerViewCarouselItemDecorator(
-                        context,
-                        cardWidthPixels,
-                        cardHintPercent
-                    )
+            val cardWidthPixels = (context.resources.displayMetrics.widthPixels * 0.90f).toInt()
+            val cardHintPercent = 0.01f
+            myJoshRecyclerView.addItemDecoration(
+                RecyclerViewCarouselItemDecorator(
+                    context,
+                    cardWidthPixels,
+                    cardHintPercent
                 )
-            }*/
+            )
+
             aboutJoshData.details.forEach {
                 myJoshRecyclerView.addView(AboutJoshCardView(it))
             }

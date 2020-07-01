@@ -103,20 +103,13 @@ class SignUpOptionsFragment : BaseSignUpFragment() {
                     }
                     else -> return@Observer
                 }
+
             }
         })
         viewModel.signUpStatus.observe(viewLifecycleOwner, Observer {
             when (it) {
                 SignUpStepStatus.ERROR -> {
-                    binding.btnLogin.isEnabled = true
-                    binding.btnLogin.hideProgress()
-                    binding.btnLogin.setTextColor(
-                        ContextCompat.getColor(
-                            requireContext(),
-                            R.color.text_color_10
-                        )
-                    )
-                    enableMobileEditText()
+                    hideProgress()
                 }
                 else -> return@Observer
             }
@@ -136,16 +129,19 @@ class SignUpOptionsFragment : BaseSignUpFragment() {
     }
 
     private fun hideProgress() {
-        binding.btnLogin.isEnabled = true
-        binding.btnLogin.hideProgress()
-        binding.btnLogin.setTextColor(
-            ContextCompat.getColor(
-                requireContext(),
-                R.color.text_color_10
-            )
-        )
         updateLoginButtonText()
+        binding.btnLogin.isEnabled = true
+        binding.btnLogin.hideProgress(getButtonText())
     }
+
+    private fun getButtonText(): Int {
+        return if (verificationVia == VerificationVia.FLASH_CALL) {
+            R.string.missed_call_label
+        } else {
+            R.string.send_otp
+        }
+    }
+
 
     private fun updateLoginButtonText() {
         if (verificationVia == VerificationVia.FLASH_CALL) {

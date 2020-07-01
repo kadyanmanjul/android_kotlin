@@ -45,13 +45,13 @@
     <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/user_rating_percentage"
             fontPath="fonts/Roboto-Medium.ttf"
-            android:layout_width="wrap_content"
+            android:layout_width="@dimen/_28sdp"
             android:layout_height="wrap_content"
             android:gravity="center"
             android:textColor="@color/dark_grey"
             android:textSize="@dimen/font_13"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:text="50%" />
+            tools:text="10%" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

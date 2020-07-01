@@ -26,7 +26,7 @@ class CourseDetailsViewModel(application: Application) : AndroidViewModel(applic
         jobs += viewModelScope.launch(Dispatchers.IO) {
             try {
                 val requestParams: HashMap<String, String> = HashMap()
-                requestParams["test_id"] = "99"//testId
+                requestParams["test_id"] = testId
                 requestParams["gaid"] = PrefManager.getStringValue(USER_UNIQUE_ID)
                 requestParams["instance_id"] = PrefManager.getStringValue(INSTANCE_ID)
                 if (Mentor.getInstance().getId().isNotEmpty()) {

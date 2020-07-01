@@ -3,7 +3,7 @@
         android:insetLeft="@dimen/_16sdp"
         android:insetRight="@dimen/_16sdp">
     <shape android:shape="rectangle">
-        <size android:height="1dp" />
+        <size android:height="@dimen/_1sdp" />
         <solid android:color="@color/lighter_grey" />
     </shape>
 </inset>

@@ -7,6 +7,9 @@ import kotlinx.android.parcel.Parcelize
 
 @Parcelize
 data class Guidelines(
+    @SerializedName("sort_order")
+    val sortOrder: Int,
+
     @SerializedName("title")
     val title: String,
 

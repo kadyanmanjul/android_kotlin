@@ -122,7 +122,6 @@ class CourseDetailsActivity : BaseActivity() {
         }
         super.onCreate(savedInstanceState)
         window.statusBarColor = ContextCompat.getColor(applicationContext, R.color.black)
-
         binding = DataBindingUtil.setContentView(this, R.layout.activity_course_details)
         binding.lifecycleOwner = this
         binding.handler = this

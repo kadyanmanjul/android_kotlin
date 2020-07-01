@@ -98,7 +98,7 @@ class MasterFaqViewHolder(
                 })
     }
 
-    fun logAnalyticsEvent() {
+    private fun logAnalyticsEvent() {
         AppAnalytics.create(AnalyticsEvent.QNA_CLICKED.NAME)
             .addBasicParam()
             .addUserDetails()
@@ -114,15 +114,12 @@ class MasterFaqViewHolder(
         a.forEach {
             if (it is FaqCategoryViewHolder) {
                 if (it.position == position) {
-
                     it.cardView.strokeColor = ResourcesCompat.getColor(
                         getAppContext().resources,
                         R.color.button_primary_color,
                         null
                     )
-
                 } else {
-
                     it.cardView.strokeColor = ResourcesCompat.getColor(
                         getAppContext().resources,
                         R.color.white,
@@ -143,7 +140,7 @@ class MasterFaqViewHolder(
             recyclerView.addItemDecoration(
                 GridSpacingItemDecoration(
                     2,
-                    Utils.dpToPx(getAppContext(), 16f),
+                    Utils.dpToPx(getAppContext(), 12f),
                     true
                 )
             )
