@@ -3,9 +3,9 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/course_padding_dimen"
-        android:layout_marginVertical="@dimen/_18sdp"
-        android:layout_height="wrap_content">
+        android:layout_marginVertical="@dimen/_20sdp">
 
     <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
             android:id="@+id/txtTeacherName"
@@ -23,9 +23,9 @@
     <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
             android:id="@+id/txtDesignation"
             fontPath="fonts/Roboto-Regular.ttf"
-            android:paddingTop="@dimen/_4sdp"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:paddingTop="@dimen/_4sdp"
             android:textColor="#858585"
             android:textSize="@dimen/font_14"
             app:layout_constraintEnd_toStartOf="@+id/barrier"
@@ -36,13 +36,14 @@
 
     <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
             android:id="@+id/txtDescription"
+            fontPath="fonts/Roboto-Regular.ttf"
             android:layout_width="0dp"
-            android:paddingTop="@dimen/_4sdp"
             android:layout_height="wrap_content"
+            android:letterSpacing="0.05"
+            android:lineSpacingExtra="@dimen/_2sdp"
+            android:paddingTop="@dimen/_4sdp"
             android:textColor="@color/black"
             android:textSize="@dimen/font_14"
-            fontPath="fonts/Roboto-Regular.ttf"
-            android:letterSpacing="0.03"
             app:layout_constraintEnd_toStartOf="@+id/barrier"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/txtDesignation"
@@ -50,18 +51,18 @@
 
 
     <com.google.android.material.textview.MaterialTextView
-            android:background="@drawable/round_rectangle_for_course_expo"
-            android:textColor="@color/white"
             android:id="@+id/btn_meet_me"
             fontPath="fonts/Roboto-Medium.ttf"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_8sdp"
+            android:background="@drawable/round_rectangle_for_course_expo"
             android:backgroundTint="@color/button_color"
-            android:text="@string/meet_me"
-            android:textAllCaps="false"
             android:paddingHorizontal="@dimen/_20sdp"
             android:paddingVertical="@dimen/_6sdp"
+            android:text="@string/meet_me"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
             android:textSize="@dimen/font_16"
             app:cornerRadius="@dimen/_32sdp"
             app:layout_constraintStart_toStartOf="parent"

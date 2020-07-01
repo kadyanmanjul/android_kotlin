@@ -5,7 +5,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/course_padding_dimen"
-        android:layout_marginVertical="@dimen/_18sdp">
+        android:layout_marginVertical="@dimen/_20sdp">
 
     <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/header"
@@ -46,7 +46,7 @@
                     android:drawablePadding="@dimen/_6sdp"
                     android:gravity="center"
                     android:textColor="@color/font_color"
-                    android:textSize="@dimen/font_28"
+                    android:textSize="@dimen/font_32"
                     app:drawableTint="@color/font_color"
                     tools:text="4.7" />
         </FrameLayout>
@@ -84,6 +84,5 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/divider" />
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -14,10 +14,10 @@
     </data>
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
-            android:fitsSystemWindows="true"
             android:id="@+id/coordinator"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:fitsSystemWindows="true">
 
         <com.google.android.material.appbar.AppBarLayout
                 android:id="@+id/app_bar_layout"
@@ -47,7 +47,7 @@
                         android:focusable="true"
                         android:gravity="center_vertical|start"
                         android:onClick="@{()->handler.onBackPressed()}"
-                        android:paddingTop="@dimen/_6sdp"
+                        android:paddingTop="@dimen/_14sdp"
                         android:paddingBottom="@dimen/_6sdp"
                         android:visibility="visible"
                         app:srcCompat="@drawable/ic_arrow_back" />
@@ -104,10 +104,10 @@
                 android:id="@+id/buy_course_ll"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
                 android:orientation="vertical"
                 android:visibility="gone"
                 app:layout_anchor="@id/placeHolderView"
-                android:layout_gravity="bottom"
                 app:layout_anchorGravity="bottom"
                 tools:visibility="visible">
 
@@ -153,25 +153,25 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="@dimen/_12sdp"
-                        android:textColor="@color/black"
                         android:paddingBottom="@dimen/_2sdp"
+                        android:textColor="@color/black"
                         android:textSize="@dimen/font_20"
                         app:layout_constraintBottom_toBottomOf="@+id/btn_start_course"
                         app:layout_constraintEnd_toStartOf="@+id/btn_start_course"
                         tools:text="$299" />
 
                 <com.google.android.material.textview.MaterialTextView
-                        android:background="@drawable/round_rectangle_for_course_expo"
-                        android:gravity="center"
                         android:id="@+id/btn_start_course"
-                        android:textColor="@color/white"
                         fontPath="fonts/Roboto-Bold.ttf"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:background="@drawable/round_rectangle_for_course_expo"
                         android:backgroundTint="@color/button_color"
+                        android:gravity="center"
                         android:paddingVertical="@dimen/_8sdp"
                         android:text="@string/start_course"
                         android:textAllCaps="false"
+                        android:textColor="@color/white"
                         android:textSize="@dimen/font_18"
                         app:cornerRadius="@dimen/_32sdp"
                         app:layout_constraintBottom_toBottomOf="parent"

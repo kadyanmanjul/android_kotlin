@@ -248,6 +248,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_14sdp"
                 android:gravity="center"
+                android:letterSpacing="0.03"
+                android:lineSpacingExtra="@dimen/_2sdp"
                 android:paddingHorizontal="@dimen/_12sdp"
                 android:textAlignment="center"
                 android:textColor="@color/light_grey"

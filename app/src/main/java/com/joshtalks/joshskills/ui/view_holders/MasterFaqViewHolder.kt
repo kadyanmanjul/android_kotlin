@@ -128,7 +128,7 @@ class MasterFaqViewHolder(
                 GridSpacingItemDecoration(
                     2,
                     Utils.dpToPx(getAppContext(), 16f),
-                    false
+                    true
                 )
             )
         }

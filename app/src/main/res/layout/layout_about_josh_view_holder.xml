@@ -5,7 +5,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/course_padding_dimen"
-        android:layout_marginVertical="@dimen/_18sdp"
+        android:layout_marginVertical="@dimen/_20sdp"
         tools:ignore="MissingPrefix">
 
     <TextView

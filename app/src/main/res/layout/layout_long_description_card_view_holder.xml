@@ -3,9 +3,9 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/course_padding_dimen"
-        android:layout_marginVertical="@dimen/_18sdp"
-        android:layout_height="wrap_content">
+        android:layout_marginVertical="@dimen/_20sdp">
 
     <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/title"
@@ -28,14 +28,15 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/title"
             android:layout_marginTop="@dimen/_6sdp"
-            android:letterSpacing="0.03"
-            app:layout_constraintWidth_default="percent"
-            android:textColor="@color/dark_grey"
+            android:gravity="fill"
+            android:letterSpacing="0.04"
+            android:lineSpacingExtra="@dimen/_2sdp"
+            android:textColor="@color/black"
             android:textSize="@dimen/font_14"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/title"
-            tools:ignore="MissingPrefix"
+            app:layout_constraintWidth_default="percent"
             tools:text="Learn the secrets to become a dynamic personality and impress your peers - in the office, college and everywhere else. India’s highest rated Personality Development course is here!" />
 
     <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
@@ -44,9 +45,9 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="start"
+            android:layout_marginTop="@dimen/_6sdp"
             android:gravity="center_vertical|start"
             android:maxLines="1"
-            android:layout_marginTop="@dimen/_6sdp"
             android:text="@string/read_more"
             android:textColor="@color/button_primary_color"
             android:textSize="@dimen/font_14"
