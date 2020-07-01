@@ -32,10 +32,10 @@
                 android:textSize="@dimen/font_14"
                 app:layout_constraintBottom_toTopOf="@+id/state_country"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.15"
+                app:layout_constraintHorizontal_bias="0.12"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="01"
+                app:layout_constraintVertical_bias="0.95"
                 tools:text="2655 students from" />
 
         <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
@@ -45,18 +45,18 @@
                 android:layout_height="wrap_content"
                 android:textColor="@color/white"
                 android:textSize="@dimen/font_24"
-                app:layout_constraintBottom_toTopOf="@+id/check_location_btn"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.15"
+                app:layout_constraintHorizontal_bias="0.12"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.9"
+                app:layout_constraintVertical_bias="0.5"
                 tools:text="Bihar, India" />
 
         <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/check_location_btn"
-                fontPath="fonts/Roboto-Regular.ttf"
-                android:layout_width="0dp"
+                fontPath="fonts/Poppins-Regular.ttf"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginVertical="@dimen/_6sdp"
                 android:background="@drawable/round_rectangle_for_course_expo"
@@ -74,9 +74,7 @@
                 app:layout_constraintHorizontal_bias="0.15"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.88"
-                app:layout_constraintWidth_default="percent"
-                app:layout_constraintWidth_percent="0.55"
+                app:layout_constraintVertical_bias="0.85"
                 app:rippleColor="@color/white" />
 
         <FrameLayout
