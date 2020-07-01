@@ -27,7 +27,13 @@ import com.google.android.gms.location.LocationRequest
 import com.google.android.material.snackbar.Snackbar
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.ARG_PLACEHOLDER_URL
+import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.CoreJoshActivity
+import com.joshtalks.joshskills.core.FIRST_TIME_OFFER_SHOW
+import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.REFERRAL_EVENT
+import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.inapp_update.Constants
@@ -59,12 +65,15 @@ import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.patloew.rxlocation.RxLocation
+import io.reactivex.CompletableObserver
 import io.reactivex.Maybe
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.activity_inbox.*
-import kotlinx.android.synthetic.main.find_more_layout.*
+import kotlinx.android.synthetic.main.activity_inbox.progress_bar
+import kotlinx.android.synthetic.main.activity_inbox.recycler_view_inbox
+import kotlinx.android.synthetic.main.find_more_layout.find_more
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -266,7 +275,6 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
                     it.printStackTrace()
                 })
         )
-        //TODO --> fix, Called 2-3 times
         compositeDisposable.add(RxBus2.listen(ExploreCourseEventBus::class.java)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
@@ -339,32 +347,49 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         val locationRequest = LocationRequest.create()
             .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
             .setInterval(10000)
-        compositeDisposable.add(
-            rxLocation.location().updates(locationRequest)
-                .subscribeOn(Schedulers.computation())
-                .subscribe({ location ->
-                    CoroutineScope(Dispatchers.IO).launch {
-                        try {
-                            val request = UpdateUserLocality()
-                            request.locality =
-                                SearchLocality(location.latitude, location.longitude)
-                            AppAnalytics.setLocation(location.latitude, location.longitude)
-                            val response: ProfileResponse =
-                                AppObjectController.signUpNetworkService.updateUserAddressAsync(
-                                    Mentor.getInstance().getId(),
-                                    request
-                                ).await()
-                            Mentor.getInstance().setLocality(response.locality).update()
-                        } catch (e: Exception) {
-                            e.printStackTrace()
-                        }
-                        compositeDisposable.clear()
-                    }
-                }, { ex ->
-                    ex.printStackTrace()
-                })
-        )
 
+        rxLocation.settings().checkAndHandleResolutionCompletable(locationRequest)
+            .subscribeOn(Schedulers.computation())
+            .observeOn(Schedulers.computation())
+            .subscribe(object : CompletableObserver {
+                override fun onSubscribe(d: Disposable) {
+                }
+
+                override fun onComplete() {
+                    compositeDisposable.add(
+                        rxLocation.location().updates(locationRequest)
+                            .subscribeOn(Schedulers.computation())
+                            .subscribe({ location ->
+                                CoroutineScope(Dispatchers.IO).launch {
+                                    try {
+                                        val request = UpdateUserLocality()
+                                        request.locality =
+                                            SearchLocality(location.latitude, location.longitude)
+                                        AppAnalytics.setLocation(
+                                            location.latitude,
+                                            location.longitude
+                                        )
+                                        val response: ProfileResponse =
+                                            AppObjectController.signUpNetworkService.updateUserAddressAsync(
+                                                Mentor.getInstance().getId(),
+                                                request
+                                            ).await()
+                                        Mentor.getInstance().setLocality(response.locality).update()
+                                    } catch (e: Exception) {
+                                        e.printStackTrace()
+                                    }
+                                    compositeDisposable.clear()
+                                }
+                            }, { ex ->
+                                // ex.printStackTrace()
+                            })
+                    )
+                }
+
+                override fun onError(e: Throwable) {
+                    //  e.printStackTrace()
+                }
+            })
     }
 
 
