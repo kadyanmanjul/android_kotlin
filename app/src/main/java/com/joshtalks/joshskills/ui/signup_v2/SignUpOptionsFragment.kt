@@ -108,7 +108,14 @@ class SignUpOptionsFragment : BaseSignUpFragment() {
         viewModel.signUpStatus.observe(viewLifecycleOwner, Observer {
             when (it) {
                 SignUpStepStatus.ERROR -> {
-                    hideProgress()
+                    binding.btnLogin.isEnabled = true
+                    binding.btnLogin.hideProgress()
+                    binding.btnLogin.setTextColor(
+                        ContextCompat.getColor(
+                            requireContext(),
+                            R.color.text_color_10
+                        )
+                    )
                     enableMobileEditText()
                 }
                 else -> return@Observer
@@ -131,6 +138,12 @@ class SignUpOptionsFragment : BaseSignUpFragment() {
     private fun hideProgress() {
         binding.btnLogin.isEnabled = true
         binding.btnLogin.hideProgress()
+        binding.btnLogin.setTextColor(
+            ContextCompat.getColor(
+                requireContext(),
+                R.color.text_color_10
+            )
+        )
         updateLoginButtonText()
     }
 
