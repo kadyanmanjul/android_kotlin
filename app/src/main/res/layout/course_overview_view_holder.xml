@@ -115,6 +115,7 @@
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/emptyView"
+                app:layout_constraintVertical_bias="0"
                 tools:src="@drawable/ic_play_24dp"
                 tools:visibility="visible" />
 
@@ -132,6 +133,7 @@
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toEndOf="@+id/icon1"
                 app:layout_constraintTop_toBottomOf="@id/icons_top_barier"
+                app:layout_constraintVertical_bias="0"
                 tools:src="@drawable/ic_play_24dp"
                 tools:visibility="visible" />
 
@@ -149,6 +151,7 @@
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toEndOf="@+id/icon2"
                 app:layout_constraintTop_toBottomOf="@id/icons_top_barier"
+                app:layout_constraintVertical_bias="0"
                 tools:src="@drawable/ic_play_24dp"
                 tools:visibility="visible" />
 
@@ -166,6 +169,7 @@
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toEndOf="@+id/icon3"
                 app:layout_constraintTop_toBottomOf="@id/icons_top_barier"
+                app:layout_constraintVertical_bias="0"
                 tools:src="@drawable/ic_play_24dp"
                 tools:visibility="visible" />
 
