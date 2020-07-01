@@ -281,7 +281,6 @@ internal class AppObjectController {
                     val original = chain.request()
                     val newRequest: Request.Builder = original.newBuilder()
                     newRequest.addHeader("Connection", "close")
-
                     return chain.proceed(newRequest.build())
                 }
             })

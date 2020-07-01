@@ -10,9 +10,23 @@ import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import com.github.razir.progressbutton.*
+import com.github.razir.progressbutton.DrawableButton
+import com.github.razir.progressbutton.attachTextChangeAnimator
+import com.github.razir.progressbutton.bindProgressButton
+import com.github.razir.progressbutton.hideProgress
+import com.github.razir.progressbutton.showProgress
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.SignUpStepStatus
+import com.joshtalks.joshskills.core.TIMEOUT_TIME
+import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.VerificationService
+import com.joshtalks.joshskills.core.VerificationStatus
+import com.joshtalks.joshskills.core.VerificationVia
+import com.joshtalks.joshskills.core.hideKeyboard
+import com.joshtalks.joshskills.core.isValidFullNumber
+import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.FragmentSignUpOptionsBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.LoginViaEventBus
@@ -87,14 +101,17 @@ class SignUpOptionsFragment : BaseSignUpFragment() {
                     this == VerificationStatus.USER_DENY -> {
                         onVerificationPermissionDeny()
                     }
-                    this == VerificationStatus.TIMEOUT -> {
-
-                    }
-                    else -> {
-
-                    }
+                    else -> return@Observer
                 }
-
+            }
+        })
+        viewModel.signUpStatus.observe(viewLifecycleOwner, Observer {
+            when (it) {
+                SignUpStepStatus.ERROR -> {
+                    hideProgress()
+                    enableMobileEditText()
+                }
+                else -> return@Observer
             }
         })
     }

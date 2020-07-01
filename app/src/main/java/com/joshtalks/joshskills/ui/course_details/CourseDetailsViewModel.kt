@@ -40,8 +40,7 @@ class CourseDetailsViewModel(application: Application) : AndroidViewModel(applic
                     return@launch
                 }
 
-            } catch (ex: Exception) {
-                ex.printStackTrace()
+            } catch (ex: Throwable) {
                 ex.showAppropriateMsg()
             }
             apiCallStatusLiveData.postValue(ApiCallStatus.FAILED)

@@ -8,7 +8,16 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.auth.api.phone.SmsRetriever
 import com.google.android.gms.tasks.Task
-import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.API_TOKEN
+import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.INSTANCE_ID
+import com.joshtalks.joshskills.core.JoshApplication
+import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.RegistrationMethods
+import com.joshtalks.joshskills.core.SignUpStepStatus
+import com.joshtalks.joshskills.core.VerificationStatus
+import com.joshtalks.joshskills.core.VerificationVia
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
@@ -21,6 +30,7 @@ import com.joshtalks.joshskills.repository.server.TrueCallerLoginRequest
 import com.joshtalks.joshskills.repository.server.signup.LoginResponse
 import com.joshtalks.joshskills.repository.server.signup.RequestSocialSignUp
 import com.joshtalks.joshskills.repository.server.signup.RequestUserVerification
+import com.joshtalks.joshskills.util.showAppropriateMsg
 import com.truecaller.android.sdk.TrueProfile
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -77,7 +87,7 @@ class SignUpV2ViewModel(application: Application) :
                     return@launch
                 }
             } catch (ex: Throwable) {
-                ex.printStackTrace()
+                ex.showAppropriateMsg()
             }
             _signUpStatus.postValue(SignUpStepStatus.ERROR)
         }
@@ -98,7 +108,7 @@ class SignUpV2ViewModel(application: Application) :
                     return@launch
                 }
             } catch (ex: Throwable) {
-                ex.printStackTrace()
+                ex.showAppropriateMsg()
             }
             _signUpStatus.postValue(SignUpStepStatus.ERROR)
         }
@@ -115,7 +125,7 @@ class SignUpV2ViewModel(application: Application) :
                     return@launch
                 }
             } catch (ex: Throwable) {
-                ex.printStackTrace()
+                ex.showAppropriateMsg()
             }
             _signUpStatus.postValue(SignUpStepStatus.ERROR)
         }
@@ -146,7 +156,7 @@ class SignUpV2ViewModel(application: Application) :
                     return@launch
                 }
             } catch (ex: Throwable) {
-                ex.printStackTrace()
+                ex.showAppropriateMsg()
             }
             _signUpStatus.postValue(SignUpStepStatus.ERROR)
         }
@@ -174,7 +184,7 @@ class SignUpV2ViewModel(application: Application) :
                     return@launch
                 }
             } catch (ex: Throwable) {
-                ex.printStackTrace()
+                ex.showAppropriateMsg()
             }
             _signUpStatus.postValue(SignUpStepStatus.ERROR)
         }
@@ -207,7 +217,7 @@ class SignUpV2ViewModel(application: Application) :
                     }
                 }
             } catch (ex: Throwable) {
-                ex.printStackTrace()
+                ex.showAppropriateMsg()
             }
             _signUpStatus.postValue(SignUpStepStatus.ERROR)
         }
@@ -251,7 +261,7 @@ class SignUpV2ViewModel(application: Application) :
                     return@launch
                 }
             } catch (ex: Throwable) {
-                ex.printStackTrace()
+                ex.showAppropriateMsg()
             }
             _signUpStatus.postValue(SignUpStepStatus.ERROR)
         }
@@ -296,7 +306,7 @@ class SignUpV2ViewModel(application: Application) :
                     return@launch
                 }
             } catch (ex: Throwable) {
-                ex.printStackTrace()
+                ex.showAppropriateMsg()
             }
             _signUpStatus.postValue(SignUpStepStatus.ERROR)
         }
@@ -326,10 +336,10 @@ class SignUpV2ViewModel(application: Application) :
     }
 
     fun incrementResendAttempts() {
-        resendAttempt = resendAttempt + 1
+        resendAttempt += 1
     }
 
     fun incrementIncorrectAttempts() {
-        incorrectAttempt = incorrectAttempt + 1
+        incorrectAttempt += 1
     }
 }
