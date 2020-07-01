@@ -32,7 +32,9 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.core.PermissionUtils
+import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.VERSION
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.showToast
@@ -191,6 +193,11 @@ class CourseDetailsActivity : BaseActivity() {
                         AnalyticsEvent.SHOWN_COURSE_PRICE.NAME,
                         data.paymentData.discountedAmount
                     )
+            }
+            if (data.version.isNotBlank()) {
+                appAnalytics.addParam(VERSION, PrefManager.getStringValue(VERSION))
+
+                PrefManager.put(VERSION, data.version)
             }
             binding.txtActualPrice.paintFlags =
                 binding.txtActualPrice.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
@@ -434,13 +441,16 @@ class CourseDetailsActivity : BaseActivity() {
         AppAnalytics.create(AnalyticsEvent.MEET_ME_CLICKED.NAME)
             .addBasicParam()
             .addUserDetails()
+            .addParam(VERSION, PrefManager.getStringValue(VERSION))
             .addParam(AnalyticsEvent.TEST_ID_PARAM.NAME, testId).push()
     }
 
     private fun logDownloadFileAnalyticEvent() {
         AppAnalytics.create(AnalyticsEvent.DOWNLOAD_FILE_CLICKED.NAME)
             .addBasicParam()
-            .addUserDetails().push()
+            .addUserDetails()
+            .addParam(VERSION, PrefManager.getStringValue(VERSION))
+            .push()
     }
 
     private fun getPermissionAndDownloadSyllabus(syllabusData: SyllabusData) {

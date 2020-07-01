@@ -12,6 +12,8 @@ import com.google.android.material.textview.MaterialTextView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.PermissionUtils
+import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.VERSION
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
@@ -102,7 +104,8 @@ class LocationStatViewHolder(
     fun logAnalyticsEvent() {
         AppAnalytics.create(AnalyticsEvent.CHECK_LOCATION_CLICKED.NAME)
             .addBasicParam()
-            .addUserDetails().push()
+            .addUserDetails()
+            .addParam(VERSION, PrefManager.getStringValue(VERSION)).push()
     }
 
     private fun locationPermissionGranted() = (PermissionUtils.isLocationPermissionEnabled(context))
@@ -199,8 +202,8 @@ class LocationStatViewHolder(
         if (index >= locationStats.imageUrls.size)
             index = 0
         randomStudents = randomNumberGenerator(
-            locationStats.totalEnrolled.times(0.25).toInt(),
-            locationStats.totalEnrolled.times(0.75).toInt()
+            locationStats.totalEnrolled.times(0.70).toInt(),
+            locationStats.totalEnrolled.times(0.90).toInt()
         )
         studentsNearby.text = randomStudents.toString().plus(" students from")
         setDefaultImageView(imageView, locationStats.imageUrls.get(index))

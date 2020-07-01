@@ -8,6 +8,8 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.res.ResourcesCompat
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.VERSION
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.mindorks.placeholderview.annotations.Layout
@@ -77,6 +79,8 @@ class ParentItemExpandableList(val question: String) {
         AppAnalytics.create(AnalyticsEvent.QNA_QUESTION_CLICKED.NAME)
             .addBasicParam()
             .addUserDetails()
-            .addParam(AnalyticsEvent.QNA_CARD_CLICKED.NAME, selectedCategory).push()
+            .addParam(AnalyticsEvent.QNA_CARD_CLICKED.NAME, selectedCategory)
+            .addParam(VERSION, PrefManager.getStringValue(VERSION))
+            .push()
     }
 }

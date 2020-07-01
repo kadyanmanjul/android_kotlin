@@ -6,6 +6,8 @@ import android.widget.FrameLayout
 import android.widget.TextView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.VERSION
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.repository.server.course_detail.CardType
@@ -65,6 +67,8 @@ class StudentFeedbackCard(
         AppAnalytics.create(AnalyticsEvent.MEET_STUDENT_CLICKED.NAME)
             .addBasicParam()
             .addUserDetails()
-            .addParam(AnalyticsEvent.USER_NAME.NAME,name).push()
+            .addParam(AnalyticsEvent.USER_NAME.NAME,name)
+            .addParam(VERSION,PrefManager.getStringValue(VERSION))
+            .push()
     }
 }
