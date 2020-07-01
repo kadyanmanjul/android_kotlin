@@ -298,7 +298,7 @@
                     android:numStars="5"
                     android:progressDrawable="@drawable/course_overview_ratingbar_selector"
                     android:rating="4"
-                    android:stepSize="1"
+                    android:stepSize="0.1"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/txtRating"
                     app:layout_constraintHorizontal_bias="0.5"
