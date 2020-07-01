@@ -15,7 +15,11 @@ import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.repository.server.course_detail.TeacherDetails
-import kotlinx.android.synthetic.main.fragment_teacher_details.*
+import kotlinx.android.synthetic.main.fragment_teacher_details.background_view
+import kotlinx.android.synthetic.main.fragment_teacher_details.iv_cross
+import kotlinx.android.synthetic.main.fragment_teacher_details.iv_profile_pic
+import kotlinx.android.synthetic.main.fragment_teacher_details.teacher_details
+import kotlinx.android.synthetic.main.fragment_teacher_details.teacher_name
 
 const val TEACHER_DETAIL_SOURCE = "teacher_detail_source"
 
@@ -37,7 +41,7 @@ class TeacherDetailsFragment : DialogFragment() {
         arguments?.let {
             tgDetails = it.getParcelable<TeacherDetails>(TEACHER_DETAIL_SOURCE) as TeacherDetails
         }
-        setStyle(STYLE_NO_FRAME, R.style.full_dialog)
+        setStyle(STYLE_NO_FRAME, R.style.FullDialogWithAnimationV2)
     }
 
     override fun onStart() {

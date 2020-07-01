@@ -69,10 +69,10 @@
 
     <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/user_name"
-            fontPath="fonts/Poppins-Regular.ttf"
+            fontPath="fonts/Roboto-Regular.ttf"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_gravity="start"
+            android:layout_gravity="start|center"
             android:layout_marginHorizontal="@dimen/_8sdp"
             android:gravity="center_vertical|start"
             android:textColor="@color/dark_grey"
@@ -85,10 +85,10 @@
 
     <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/user_location"
-            fontPath="fonts/Roboto-Light.ttf"
+            fontPath="fonts/Roboto-Regular.ttf"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_gravity="start"
+            android:layout_gravity="top|start"
             android:gravity="center_vertical|start"
             android:textColor="@color/dark_grey"
             android:textSize="@dimen/font_12"

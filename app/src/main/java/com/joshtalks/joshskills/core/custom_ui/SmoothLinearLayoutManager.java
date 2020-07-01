@@ -3,7 +3,6 @@ package com.joshtalks.joshskills.core.custom_ui;
 import android.content.Context;
 import android.graphics.PointF;
 import android.util.DisplayMetrics;
-
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.LinearSmoothScroller;
 import androidx.recyclerview.widget.RecyclerView;
@@ -25,6 +24,7 @@ public class SmoothLinearLayoutManager extends LinearLayoutManager {
         smoothScroller.setTargetPosition(position);
         startSmoothScroll(smoothScroller);
     }
+
 
     private class TopSnappedSmoothScroller extends LinearSmoothScroller {
 

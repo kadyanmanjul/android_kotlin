@@ -13,15 +13,14 @@ import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.repository.server.engage.ImageEngage
 import com.joshtalks.joshskills.repository.service.EngagementNetworkHelper
 import com.joshtalks.joshskills.ui.pdfviewer.COURSE_NAME
-import kotlinx.android.synthetic.main.fragment_image_show.*
-
+import kotlinx.android.synthetic.main.fragment_image_show.big_image_view
 
 const val IMAGE_SOURCE = "image_source"
 const val IMAGE_ID = "image_id"
 
 class ImageShowFragment : DialogFragment() {
-    private lateinit var imagePath: String
-    private lateinit var courseName: String
+    private var imagePath: String? = null
+    private var courseName: String? = null
     private var imageId: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,11 +36,9 @@ class ImageShowFragment : DialogFragment() {
             it.getString(IMAGE_ID)?.let { id ->
                 imageId = id
             }
-
         }
         setStyle(STYLE_NO_FRAME, R.style.full_dialog)
         AppAnalytics.create(AnalyticsEvent.IMAGE_OPENED.NAME).push()
-
     }
 
     override fun onStart() {
@@ -67,7 +64,10 @@ class ImageShowFragment : DialogFragment() {
             .load(imagePath)
             .into(big_image_view)
         big_image_view.doubleTapToZoom = true
-        view.findViewById<AppCompatTextView>(R.id.text_message_title).text = courseName
+        courseName?.run {
+            view.findViewById<AppCompatTextView>(R.id.text_message_title).text = courseName
+
+        }
         view.findViewById<View>(R.id.iv_back).setOnClickListener {
             AppAnalytics.create(AnalyticsEvent.BACK_PRESSED.NAME)
                 .addParam("name", javaClass.simpleName)
@@ -80,32 +80,10 @@ class ImageShowFragment : DialogFragment() {
         big_image_view.setGestureDetectorInterface {
             dismissAllowingStateLoss()
         }
-
     }
 
-    //TODO(FixMe) - Remove Commented Code
-
-    /* private fun hideSystemUI() { // Set the IMMERSIVE flag.
- // Set the content to appear under the system bars so that the content
- // doesn't resize when the system bars hide and show.
-         val decorView: View = activity!!.getWindow().getDecorView()
-         decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                 or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                 or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                 or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION // hide nav bar
-                 or View.SYSTEM_UI_FLAG_FULLSCREEN // hide status bar
-                 or View.SYSTEM_UI_FLAG_IMMERSIVE)
-     }
-     private fun showSystemUI() {
-         val decorView: View =  activity!!.getWindow().getDecorView()
-         decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                 or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                 or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN)
-     }
- */
-
     companion object {
-        fun newInstance(path: String, courseName: String, imageId: String?) =
+        fun newInstance(path: String?, courseName: String?, imageId: String?) =
             ImageShowFragment().apply {
                 arguments = Bundle().apply {
                     putString(IMAGE_SOURCE, path)

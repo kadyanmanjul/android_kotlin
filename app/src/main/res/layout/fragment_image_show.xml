@@ -11,8 +11,7 @@
         android:focusable="true"
         android:orientation="vertical">
 
-    <com.google.android.material.appbar.MaterialToolbar xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:app="http://schemas.android.com/apk/res-auto"
+    <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -27,9 +26,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/_5sdp"
                 android:paddingTop="@dimen/_5sdp"
+                android:paddingEnd="@dimen/_5sdp"
                 android:paddingBottom="@dimen/_5sdp"
                 android:visibility="visible"
-                app:srcCompat="@drawable/ic_arrow_back" />
+                app:srcCompat="@drawable/ic_cross" />
 
 
         <androidx.appcompat.widget.AppCompatTextView
@@ -39,7 +39,7 @@
                 android:layout_height="wrap_content"
                 android:ellipsize="marquee"
                 android:gravity="center_vertical|start"
-                android:padding="@dimen/_5sdp"
+                android:paddingVertical="@dimen/_5sdp"
                 android:singleLine="true"
                 android:text=""
                 android:textColor="@color/white"

@@ -16,6 +16,7 @@ import android.view.Gravity
 import android.view.View
 import android.view.Window
 import android.view.WindowManager
+import android.view.animation.LinearInterpolator
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
@@ -37,6 +38,7 @@ import com.joshtalks.joshskills.databinding.ActivityCourseDetailsBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.DownloadSyllabusEvent
 import com.joshtalks.joshskills.repository.local.eventbus.GotoCourseCard
+import com.joshtalks.joshskills.repository.local.eventbus.ImageShowEvent
 import com.joshtalks.joshskills.repository.server.course_detail.AboutJosh
 import com.joshtalks.joshskills.repository.server.course_detail.Card
 import com.joshtalks.joshskills.repository.server.course_detail.CardType
@@ -52,6 +54,7 @@ import com.joshtalks.joshskills.repository.server.course_detail.StudentFeedback
 import com.joshtalks.joshskills.repository.server.course_detail.SyllabusData
 import com.joshtalks.joshskills.repository.server.course_detail.TeacherDetails
 import com.joshtalks.joshskills.ui.course_details.extra.TeacherDetailsFragment
+import com.joshtalks.joshskills.ui.extra.ImageShowFragment
 import com.joshtalks.joshskills.ui.extra.setOnSingleClickListener
 import com.joshtalks.joshskills.ui.payment.order_summary.PaymentSummaryActivity
 import com.joshtalks.joshskills.ui.payment.viewholder.AboutJoshViewHolder
@@ -71,6 +74,7 @@ import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
+import com.mindorks.placeholderview.SmoothLinearLayoutManager
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -91,7 +95,7 @@ class CourseDetailsActivity : BaseActivity() {
         override fun onReceive(context: Context, intent: Intent) {
             val id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1)
             if (downloadID == id) {
-                showToast(getString(R.string.download_syllabus))
+                showToast(getString(R.string.downloaded_syllabus))
             }
         }
     }
@@ -126,22 +130,22 @@ class CourseDetailsActivity : BaseActivity() {
     }
 
     private fun initView() {
-        linearLayoutManager = LinearLayoutManager(this)
+        linearLayoutManager = SmoothLinearLayoutManager(this)
         linearLayoutManager.isSmoothScrollbarEnabled = true
         binding.placeHolderView.builder.setHasFixedSize(true).setLayoutManager(linearLayoutManager)
         binding.placeHolderView.addOnScrollListener(object :
             RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)
-                if (linearLayoutManager.findFirstVisibleItemPosition() > 0) {
-                    if (binding.buyCourseLl.visibility == View.GONE) {
-                        val transition: Transition = Slide(Gravity.BOTTOM)
-                        transition.duration = 600
-                        transition.addTarget(binding.buyCourseLl)
-                        TransitionManager.beginDelayedTransition(binding.coordinator, transition)
-                        binding.buyCourseLl.visibility = View.VISIBLE
-                    }
+                if (binding.buyCourseLl.visibility == View.GONE) {
+                    val transition: Transition = Slide(Gravity.BOTTOM)
+                    transition.duration = 800
+                    transition.interpolator = LinearInterpolator()
+                    transition.addTarget(binding.buyCourseLl)
+                    TransitionManager.beginDelayedTransition(binding.coordinator, transition)
+                    binding.buyCourseLl.visibility = View.VISIBLE
                 }
+
             }
         })
     }
@@ -367,6 +371,21 @@ class CourseDetailsActivity : BaseActivity() {
                 }, {
                     it.printStackTrace()
                 })
+        )
+        compositeDisposable.add(
+            RxBus2.listen(ImageShowEvent::class.java)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                    {
+                        Utils.fileUrl(it.localPath, it.serverPath)?.run {
+                            ImageShowFragment.newInstance(this, null, null)
+                                .show(supportFragmentManager, "ImageShow")
+                        }
+                    },
+                    {
+                        it.printStackTrace()
+                    })
         )
 
 
