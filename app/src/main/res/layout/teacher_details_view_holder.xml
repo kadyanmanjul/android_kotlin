@@ -22,7 +22,7 @@
 
     <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
             android:id="@+id/txtDesignation"
-            fontPath="fonts/Poppins-Regular.ttf"
+            fontPath="fonts/Roboto-Regular.ttf"
             android:paddingTop="@dimen/_4sdp"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -36,18 +36,22 @@
 
     <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
             android:id="@+id/txtDescription"
-            fontPath="fonts/Poppins-Regular.ttf"
             android:layout_width="0dp"
             android:paddingTop="@dimen/_4sdp"
             android:layout_height="wrap_content"
             android:textColor="@color/black"
             android:textSize="@dimen/font_14"
+            fontPath="fonts/Roboto-Regular.ttf"
+            android:letterSpacing="0.03"
             app:layout_constraintEnd_toStartOf="@+id/barrier"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/txtDesignation"
             tools:text="I will be your teacher in this course, and I am super excited to teach you.\nLet’s start! " />
 
-    <com.google.android.material.button.MaterialButton
+
+    <com.google.android.material.textview.MaterialTextView
+            android:background="@drawable/round_rectangle_for_course_expo"
+            android:textColor="@color/white"
             android:id="@+id/btn_meet_me"
             fontPath="fonts/Roboto-Medium.ttf"
             android:layout_width="wrap_content"

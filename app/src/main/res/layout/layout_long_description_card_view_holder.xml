@@ -21,9 +21,9 @@
             tools:ignore="MissingPrefix"
             tools:text="Key to a dynamic personality" />
 
-    <TextView
+    <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/description"
-            fontPath="fonts/Poppins-Regular.ttf"
+            fontPath="fonts/Roboto-Regular.ttf"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_below="@id/title"

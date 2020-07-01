@@ -18,7 +18,8 @@
 
     <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
             android:id="@+id/landing_text"
-            fontPath="fonts/Poppins-Regular.ttf"
+            fontPath="fonts/Roboto-Regular.ttf"
+            android:letterSpacing="0.03"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="@dimen/_4sdp"

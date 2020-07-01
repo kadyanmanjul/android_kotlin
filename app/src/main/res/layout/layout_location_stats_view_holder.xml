@@ -19,7 +19,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:contentDescription="@string/attach_image"
-                android:adjustViewBounds="true"
                 android:scaleType="centerCrop"
                 tools:layout_editor_absoluteX="0dp"
                 tools:layout_editor_absoluteY="0dp" />
@@ -56,7 +55,7 @@
 
         <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/check_location_btn"
-                fontPath="fonts/Poppins-Regular.ttf"
+                fontPath="fonts/Roboto-Regular.ttf"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginVertical="@dimen/_6sdp"

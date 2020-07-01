@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
-import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.LinearLayout
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -42,9 +41,6 @@ class SyllabusViewHolder(
 
     @com.mindorks.placeholderview.annotations.View(R.id.download_syllabus)
     lateinit var downloadSyllabus: MaterialTextView
-
-    @com.mindorks.placeholderview.annotations.View(R.id.progress_bar)
-    lateinit var progressBar: FrameLayout
 
     @Resolve
     fun onResolved() {

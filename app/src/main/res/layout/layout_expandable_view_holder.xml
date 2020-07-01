@@ -25,7 +25,6 @@
 
     <com.mindorks.placeholderview.ExpandablePlaceHolderView
             android:layout_marginTop="@dimen/_6sdp"
-
             android:id="@+id/expandableView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

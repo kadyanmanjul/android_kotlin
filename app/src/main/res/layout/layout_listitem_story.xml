@@ -3,8 +3,9 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_margin="@dimen/_4sdp"
         xmlns:tools="http://schemas.android.com/tools"
-        android:layout_margin="@dimen/_6sdp">
+        tools:ignore="MissingPrefix">
 
     <FrameLayout
             android:id="@+id/frameLayout"
@@ -29,10 +30,11 @@
     </FrameLayout>
 
     <TextView
+            fontPath="fonts/Roboto-Regular.ttf"
             android:id="@+id/name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="@dimen/font_12"
+            android:textSize="@dimen/font_14"
             android:textColor="@color/black"
             tools:text="@string/bilkul_nahi"
             app:layout_constraintEnd_toEndOf="parent"
@@ -40,13 +42,15 @@
             app:layout_constraintTop_toBottomOf="@+id/frameLayout" />
 
     <TextView
+            fontPath="fonts/Roboto-Regular.ttf"
             android:id="@+id/profession"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/dark_grey"
             android:textSize="@dimen/font_10"
+            app:layout_constraintTop_toBottomOf="@+id/name"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/name" />
+            tools:text="@string/bilkul_nahi" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

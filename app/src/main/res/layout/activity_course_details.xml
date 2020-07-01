@@ -153,15 +153,17 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="@dimen/_12sdp"
-                        android:layout_marginBottom="@dimen/_4sdp"
                         android:textColor="@color/black"
-                        android:textSize="@dimen/font_20"
+                        android:textSize="@dimen/font_22"
                         app:layout_constraintBottom_toBottomOf="@+id/btn_start_course"
                         app:layout_constraintEnd_toStartOf="@+id/btn_start_course"
                         tools:text="$299" />
 
-                <com.google.android.material.button.MaterialButton
+                <com.google.android.material.textview.MaterialTextView
+                        android:background="@drawable/round_rectangle_for_course_expo"
+                        android:gravity="center"
                         android:id="@+id/btn_start_course"
+                        android:textColor="@color/white"
                         fontPath="fonts/Roboto-Bold.ttf"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
@@ -175,7 +177,7 @@
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintWidth_default="percent"
-                        app:layout_constraintWidth_percent="0.75" />
+                        app:layout_constraintWidth_percent="0.7" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 

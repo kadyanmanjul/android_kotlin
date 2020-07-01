@@ -48,7 +48,7 @@ class GuidelineFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val typefaceSpan = TypefaceUtils.load(requireContext().assets, "fonts/Poppins-Regular.ttf")
+        val typefaceSpan = TypefaceUtils.load(requireContext().assets, "fonts/Roboto-Regular.ttf")
         guideLine.text.forEach {
             container.addView(getTextView(it, typefaceSpan))
         }

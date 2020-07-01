@@ -2,6 +2,7 @@ package com.joshtalks.joshskills.ui.payment.viewholder
 
 import android.content.Context
 import android.widget.TextView
+import androidx.appcompat.widget.AppCompatTextView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.repository.server.course_detail.CardType
@@ -24,7 +25,7 @@ class LongDescriptionViewHolder(
     lateinit var title: TextView
 
     @com.mindorks.placeholderview.annotations.View(R.id.description)
-    lateinit var description: TextView
+    lateinit var description: AppCompatTextView
 
     @com.mindorks.placeholderview.annotations.View(R.id.text_read_more)
     lateinit var readMoreTV: TextView

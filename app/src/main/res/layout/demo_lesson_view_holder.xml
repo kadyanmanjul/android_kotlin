@@ -23,7 +23,7 @@
             android:id="@+id/cardView"
             android:layout_width="match_parent"
             android:layout_height="@dimen/_164sdp"
-            android:layout_marginTop="@dimen/_8sdp"
+            android:layout_marginTop="@dimen/_10sdp"
             android:clickable="true"
             android:elevation="0dp"
             android:enabled="true"

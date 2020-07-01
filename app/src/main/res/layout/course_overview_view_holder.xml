@@ -43,7 +43,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/txtCourseName"
                 app:layout_constraintWidth_percent="0.8"
-                tools:text="Vivek Atray" />
+                tools:text="@string/bilkul_nahi" />
 
         <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/img_top_icon"
