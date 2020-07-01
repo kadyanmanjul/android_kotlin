@@ -70,10 +70,6 @@ class SyllabusViewHolder(
 
     @Click(R.id.download_syllabus)
     fun onClick() {
-        RxBus2.publish(DownloadSyllabusEvent(syllabusData,this))
-    }
-
-    fun hideProgressBar() {
-        progressBar.visibility=View.GONE
+        RxBus2.publish(DownloadSyllabusEvent(syllabusData))
     }
 }

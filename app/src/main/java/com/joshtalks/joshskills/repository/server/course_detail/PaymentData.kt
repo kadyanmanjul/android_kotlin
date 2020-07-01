@@ -15,6 +15,6 @@ data class PaymentData(
     val discountedAmount: String,
 
     @SerializedName("discount_text")
-    val discountText: String
+    val discountText: String?
 
 ) : Parcelable

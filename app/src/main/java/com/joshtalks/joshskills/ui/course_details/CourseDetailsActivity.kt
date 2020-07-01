@@ -12,6 +12,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
+import android.view.Gravity
 import android.view.View
 import android.view.Window
 import android.view.WindowManager
@@ -22,6 +23,9 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.transition.Slide
+import androidx.transition.Transition
+import androidx.transition.TransitionManager
 import com.google.android.material.appbar.AppBarLayout
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
@@ -82,16 +86,13 @@ class CourseDetailsActivity : BaseActivity() {
     private var compositeDisposable = CompositeDisposable()
     private var testId: Int = 0
     private var downloadID: Long = -1
-    private var syllabusViewHolder: SyllabusViewHolder? = null
-
 
     private var onDownloadComplete = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             val id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1)
             if (downloadID == id) {
-                showToast(getString(R.string.downloaded_syllabus))
+                showToast(getString(R.string.download_syllabus))
             }
-            syllabusViewHolder?.hideProgressBar()
         }
     }
 
@@ -134,11 +135,11 @@ class CourseDetailsActivity : BaseActivity() {
                 super.onScrollStateChanged(recyclerView, newState)
                 if (linearLayoutManager.findFirstVisibleItemPosition() > 0) {
                     if (binding.buyCourseLl.visibility == View.GONE) {
+                        val transition: Transition = Slide(Gravity.BOTTOM)
+                        transition.duration = 600
+                        transition.addTarget(binding.buyCourseLl)
+                        TransitionManager.beginDelayedTransition(binding.coordinator, transition)
                         binding.buyCourseLl.visibility = View.VISIBLE
-                    }
-                } else {
-                    if (binding.buyCourseLl.visibility == View.VISIBLE) {
-                        binding.buyCourseLl.visibility = View.GONE
                     }
                 }
             }
@@ -147,15 +148,15 @@ class CourseDetailsActivity : BaseActivity() {
 
     private fun subscribeLiveData() {
         viewModel.courseDetailsLiveData.observe(this, Observer { data ->
-            if (data.paymentData.discountText.isNotBlank()) {
-                binding.txtActualPrice.text = data.paymentData.actualAmount
-                binding.txtDiscountedPrice.text = data.paymentData.discountedAmount
+            binding.txtActualPrice.text = data.paymentData.actualAmount
+            binding.txtDiscountedPrice.text = data.paymentData.discountedAmount
+            if (data.paymentData.discountText.isNullOrEmpty().not()) {
                 binding.txtExtraHint.text = data.paymentData.discountText
                 binding.txtExtraHint.visibility = View.VISIBLE
-                binding.txtActualPrice.paintFlags =
-                    binding.txtActualPrice.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
-
             }
+            binding.txtActualPrice.paintFlags =
+                binding.txtActualPrice.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
+
             data.cards.sortedBy { it.sequenceNumber }.forEach { card ->
                 getViewHolder(card)?.run {
                     binding.placeHolderView.addView(this)
@@ -350,7 +351,6 @@ class CourseDetailsActivity : BaseActivity() {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
                     if (it.syllabusData.syllabusDownloadUrl.isBlank().not()) {
-                        syllabusViewHolder = it.syllabusViewHolder
                         getPermissionAndDownloadSyllabus(it.syllabusData)
                     }
                 }, {
@@ -407,7 +407,7 @@ class CourseDetailsActivity : BaseActivity() {
         }
         val request: DownloadManager.Request =
             DownloadManager.Request(Uri.parse(syllabusData.syllabusDownloadUrl))
-                .setTitle("Josh Talks")
+                .setTitle(getString(R.string.app_name))
                 .setDescription("Downloading syllabus")
                 .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE)
                 .setAllowedOverMetered(true)
@@ -437,6 +437,7 @@ class CourseDetailsActivity : BaseActivity() {
         try {
             this.unregisterReceiver(onDownloadComplete)
         } catch (ex: Exception) {
+            ex.printStackTrace()
         }
         super.onDestroy()
     }

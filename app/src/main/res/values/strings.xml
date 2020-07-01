@@ -346,9 +346,10 @@
     <!--landing flow-->
     <string name="read_more">Read More</string>
     <string name="read_less">Read Less</string>
-    <string name="downloading_start">Downloading start</string>
+
+    <string name="downloading_start">Downloading Syllabus&#8230;</string>
+    <string name="downloaded_syllabus">Syllabus PDF downloaded successfully! </string>
     <string name="download_syllabus">Download Syllabus</string>
-    <string name="downloaded_syllabus">Syllabus downloaded check your storage !</string>
     <string name="chech_location">Check for your location</string>
     <string name="meet_me">Meet me</string>
     <string name="meet_the_students">Meet the Students</string>
