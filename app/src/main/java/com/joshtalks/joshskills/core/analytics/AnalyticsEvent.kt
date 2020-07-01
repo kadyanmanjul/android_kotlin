@@ -339,4 +339,13 @@ enum class AnalyticsEvent(val NAME: String) {
     SINCH_TEST("Sinch phone number test V3"),
     VERIFICATION_VIA_SINCH_TEST("Verification via test V3"),
 
+    // landing page extra events
+    MEET_ME_CLICKED("meet_me_clicked v3"),
+    DOWNLOAD_FILE_CLICKED("download_file_clicked v3"),
+    CHECK_LOCATION_CLICKED("check_location_clicked v3"),
+    MEET_STUDENT_CLICKED("meet_student_clicked v3"),
+    QNA_CLICKED("qna_clicked v3"),
+    QNA_CARD_CLICKED("qna_card_clicked v3"),
+    QNA_QUESTION_CLICKED("qna_question_clicked v3")
+
 }

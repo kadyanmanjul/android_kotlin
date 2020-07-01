@@ -6,6 +6,8 @@ import android.widget.FrameLayout
 import android.widget.TextView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
+import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.repository.server.course_detail.CardType
 import com.joshtalks.joshskills.repository.server.course_detail.Feedback
 import com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity
@@ -45,6 +47,7 @@ class StudentFeedbackCard(
 
     @Click(R.id.image_circle)
     fun onClick() {
+        logAnalyticsEvent(feedback.name)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             frameLayout.background.setTint(context.resources.getColor(R.color.dark_grey, null))
         }
@@ -57,5 +60,11 @@ class StudentFeedbackCard(
             )
         }
 
+    }
+    fun logAnalyticsEvent(name: String) {
+        AppAnalytics.create(AnalyticsEvent.MEET_STUDENT_CLICKED.NAME)
+            .addBasicParam()
+            .addUserDetails()
+            .addParam(AnalyticsEvent.USER_NAME.NAME,name).push()
     }
 }
