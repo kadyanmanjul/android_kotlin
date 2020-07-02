@@ -22,6 +22,7 @@ import com.google.gson.Gson
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.ARG_PLACEHOLDER_URL
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.COURSE_ID
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.service.WorkMangerAdmin
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
@@ -36,12 +37,10 @@ import com.joshtalks.joshskills.repository.local.model.ACTION_UPSELLING_POPUP
 import com.joshtalks.joshskills.repository.local.model.NotificationObject
 import com.joshtalks.joshskills.repository.service.EngagementNetworkHelper
 import com.joshtalks.joshskills.ui.chat.UPDATED_CHAT_ROOM_OBJECT
+import com.joshtalks.joshskills.ui.course_details.CourseDetailsActivity
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
 import com.joshtalks.joshskills.ui.inbox.InboxActivity
 import com.joshtalks.joshskills.ui.launch.LauncherActivity
-import com.joshtalks.joshskills.ui.payment.COURSE_ID
-import com.joshtalks.joshskills.ui.payment.PaymentActivity
-import com.joshtalks.joshskills.ui.payment.STARTED_FROM
 import com.joshtalks.joshskills.ui.referral.ReferralActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -164,13 +163,13 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                     importance = NotificationManager.IMPORTANCE_HIGH
                 }
                 notificationChannelId = ACTION_OPEN_TEST
-                return Intent(applicationContext, PaymentActivity::class.java).apply {
-                    flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
-                    flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
-                    putExtra(COURSE_ID, actionData)
-                    putExtra(STARTED_FROM, "Notification")
+                return CourseDetailsActivity.getIntent(
+                    applicationContext,
+                    actionData!!.toInt(),
+                    "Notification",
+                    arrayOf(Intent.FLAG_ACTIVITY_CLEAR_TOP, Intent.FLAG_ACTIVITY_SINGLE_TOP)
+                )
 
-                }
             } else if (ACTION_OPEN_CONVERSATION.equals(
                     action,
                     ignoreCase = true

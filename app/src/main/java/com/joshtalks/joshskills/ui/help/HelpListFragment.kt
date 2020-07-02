@@ -19,7 +19,7 @@ import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.databinding.FragmentHelpListBinding
 import com.joshtalks.joshskills.repository.server.help.Action
 import com.joshtalks.joshskills.repository.server.help.HelpCenterOptions
-import com.joshtalks.joshskills.ui.view_holders.HelpViewHolder
+import com.joshtalks.joshskills.ui.help.viewholder.HelpViewHolder
 
 
 class HelpListFragment : Fragment() {
@@ -67,7 +67,12 @@ class HelpListFragment : Fragment() {
                             )
                         )
                     )
-                else helpListBinding.recyclerView.addView(HelpViewHolder(it, 0))
+                else helpListBinding.recyclerView.addView(
+                    HelpViewHolder(
+                        it,
+                        0
+                    )
+                )
 
             }
             helpCenterOptionsModel.supportMessage?.run {

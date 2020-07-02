@@ -92,7 +92,6 @@
                 android:textSize="@dimen/font_12" />
 
         <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/tv_notification"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignTop="@id/tv_last_message"

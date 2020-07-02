@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.esafirm.imagepicker.view.GridSpacingItemDecoration
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.databinding.FragmentFaqCategoryBinding
-import com.joshtalks.joshskills.ui.view_holders.FaqCategoryViewHolder
+import com.joshtalks.joshskills.ui.help.viewholder.FaqCategoryViewHolder
 import com.vanniktech.emoji.Utils
 
 

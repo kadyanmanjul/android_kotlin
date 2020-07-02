@@ -6,7 +6,7 @@
         android:layout_height="wrap_content"
         tools:ignore="MissingPrefix"
         android:layout_marginVertical="@dimen/_20sdp"
-        tools:context=".ui.payment.PaymentActivity">
+        tools:context=".ui.course_details.CourseDetailsActivity">
 
     <TextView
             android:layout_marginHorizontal="@dimen/course_padding_dimen"

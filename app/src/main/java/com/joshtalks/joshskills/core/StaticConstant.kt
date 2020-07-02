@@ -21,6 +21,10 @@ const val SINGLE_SPACE = " "
 const val IMAGE_PATTERN = "([^\\s]+(\\.(?i)(jpg|png|gif|bmp)|WEBP|webp|JPEG|PNG|Jpeg)$)"
 //const val VIDEO_PATTERN = "([^\\s]+(\\.(?i)(mp4|MP4)$)"
 
+const val STARTED_FROM = "started_from"
+const val COURSE_ID = "course_ID"
+const val MIN_LINES = 4
+
 val IMAGE_REGEX = Regex(pattern = IMAGE_PATTERN)
 
 const val MINIMUM_VIDEO_DOWNLOAD_PROGRESS = 20

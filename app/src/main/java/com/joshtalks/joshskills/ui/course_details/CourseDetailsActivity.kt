@@ -31,8 +31,10 @@ import com.google.android.material.appbar.AppBarLayout
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.BaseActivity
+import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.PermissionUtils
 import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.STARTED_FROM
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.VERSION
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
@@ -58,22 +60,22 @@ import com.joshtalks.joshskills.repository.server.course_detail.StudentFeedback
 import com.joshtalks.joshskills.repository.server.course_detail.SyllabusData
 import com.joshtalks.joshskills.repository.server.course_detail.TeacherDetails
 import com.joshtalks.joshskills.ui.course_details.extra.TeacherDetailsFragment
+import com.joshtalks.joshskills.ui.course_details.view_holders.AboutJoshViewHolder
+import com.joshtalks.joshskills.ui.course_details.view_holders.CourseDetailsBaseCell
+import com.joshtalks.joshskills.ui.course_details.view_holders.CourseOverviewViewHolder
+import com.joshtalks.joshskills.ui.course_details.view_holders.DemoLessonViewHolder
+import com.joshtalks.joshskills.ui.course_details.view_holders.GuidelineViewHolder
+import com.joshtalks.joshskills.ui.course_details.view_holders.LocationStatViewHolder
+import com.joshtalks.joshskills.ui.course_details.view_holders.LongDescriptionViewHolder
+import com.joshtalks.joshskills.ui.course_details.view_holders.MasterFaqViewHolder
+import com.joshtalks.joshskills.ui.course_details.view_holders.OtherInfoViewHolder
+import com.joshtalks.joshskills.ui.course_details.view_holders.ReviewRatingViewHolder
+import com.joshtalks.joshskills.ui.course_details.view_holders.StudentFeedbackViewHolder
+import com.joshtalks.joshskills.ui.course_details.view_holders.SyllabusViewHolder
+import com.joshtalks.joshskills.ui.course_details.view_holders.TeacherDetailsViewHolder
 import com.joshtalks.joshskills.ui.extra.ImageShowFragment
 import com.joshtalks.joshskills.ui.extra.setOnSingleClickListener
 import com.joshtalks.joshskills.ui.payment.order_summary.PaymentSummaryActivity
-import com.joshtalks.joshskills.ui.payment.viewholder.AboutJoshViewHolder
-import com.joshtalks.joshskills.ui.payment.viewholder.LocationStatViewHolder
-import com.joshtalks.joshskills.ui.payment.viewholder.LongDescriptionViewHolder
-import com.joshtalks.joshskills.ui.payment.viewholder.StudentFeedbackViewHolder
-import com.joshtalks.joshskills.ui.payment.viewholder.SyllabusViewHolder
-import com.joshtalks.joshskills.ui.view_holders.CourseDetailsBaseCell
-import com.joshtalks.joshskills.ui.view_holders.CourseOverviewViewHolder
-import com.joshtalks.joshskills.ui.view_holders.DemoLessonViewHolder
-import com.joshtalks.joshskills.ui.view_holders.GuidelineViewHolder
-import com.joshtalks.joshskills.ui.view_holders.MasterFaqViewHolder
-import com.joshtalks.joshskills.ui.view_holders.OtherInfoViewHolder
-import com.joshtalks.joshskills.ui.view_holders.ReviewRatingViewHolder
-import com.joshtalks.joshskills.ui.view_holders.TeacherDetailsViewHolder
 import com.joshtalks.joshskills.util.DividerItemDecoration
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
@@ -94,6 +96,7 @@ class CourseDetailsActivity : BaseActivity() {
     private lateinit var linearLayoutManager: LinearLayoutManager
     private var compositeDisposable = CompositeDisposable()
     private var testId: Int = 0
+    private var flowFrom: String? = null
     private var downloadID: Long = -1
     private val appAnalytics by lazy { AppAnalytics.create(AnalyticsEvent.COURSE_OVERVIEW.NAME) }
 
@@ -126,6 +129,9 @@ class CourseDetailsActivity : BaseActivity() {
         binding.lifecycleOwner = this
         binding.handler = this
         testId = intent.getIntExtra(KEY_TEST_ID, 0)
+        if (intent.hasExtra(STARTED_FROM)) {
+            flowFrom = intent.getStringExtra(STARTED_FROM)
+        }
         if (testId != 0) {
             getCourseDetails(testId)
         } else {
@@ -133,10 +139,14 @@ class CourseDetailsActivity : BaseActivity() {
         }
         AppAnalytics.create(AnalyticsEvent.LANDING_SCREEN.NAME)
             .addBasicParam()
-            .addUserDetails().push()
+            .addUserDetails()
+            .addParam(AnalyticsEvent.FLOW_FROM_PARAM.NAME, flowFrom)
+
+            .push()
         appAnalytics.addBasicParam()
             .addUserDetails()
             .addParam("test_id", testId)
+            .addParam(AnalyticsEvent.FLOW_FROM_PARAM.NAME, flowFrom)
         initView()
         subscribeLiveData()
     }
@@ -238,28 +248,48 @@ class CourseDetailsActivity : BaseActivity() {
                 )
                 if (data.courseName.isNotBlank())
                     appAnalytics.addParam(AnalyticsEvent.COURSE_NAME.NAME, data.courseName)
-                return CourseOverviewViewHolder(card.cardType, card.sequenceNumber, data, this)
+                return CourseOverviewViewHolder(
+                    card.cardType,
+                    card.sequenceNumber,
+                    data,
+                    this
+                )
             }
             CardType.LONG_DESCRIPTION -> {
                 val data = AppObjectController.gsonMapperForLocal.fromJson(
                     card.data.toString(),
                     LongDescription::class.java
                 )
-                return LongDescriptionViewHolder(card.cardType, card.sequenceNumber, data, this)
+                return LongDescriptionViewHolder(
+                    card.cardType,
+                    card.sequenceNumber,
+                    data,
+                    this
+                )
             }
             CardType.TEACHER_DETAILS -> {
                 val data = AppObjectController.gsonMapperForLocal.fromJson(
                     card.data.toString(),
                     TeacherDetails::class.java
                 )
-                return TeacherDetailsViewHolder(card.cardType, card.sequenceNumber, data, this)
+                return TeacherDetailsViewHolder(
+                    card.cardType,
+                    card.sequenceNumber,
+                    data,
+                    this
+                )
             }
             CardType.SYLLABUS -> {
                 val data = AppObjectController.gsonMapperForLocal.fromJson(
                     card.data.toString(),
                     SyllabusData::class.java
                 )
-                return SyllabusViewHolder(card.cardType, card.sequenceNumber, data, this)
+                return SyllabusViewHolder(
+                    card.cardType,
+                    card.sequenceNumber,
+                    data,
+                    this
+                )
             }
             CardType.GUIDELINES -> {
                 val data = AppObjectController.gsonMapperForLocal.fromJson(
@@ -278,49 +308,83 @@ class CourseDetailsActivity : BaseActivity() {
                     card.data.toString(),
                     DemoLesson::class.java
                 )
-                return DemoLessonViewHolder(card.cardType, card.sequenceNumber, data, this)
+                return DemoLessonViewHolder(
+                    card.cardType,
+                    card.sequenceNumber,
+                    data,
+                    this
+                )
             }
             CardType.REVIEWS -> {
                 val data = AppObjectController.gsonMapperForLocal.fromJson(
                     card.data.toString(),
                     Reviews::class.java
                 )
-                return ReviewRatingViewHolder(card.cardType, card.sequenceNumber, data)
+                return ReviewRatingViewHolder(
+                    card.cardType,
+                    card.sequenceNumber,
+                    data
+                )
             }
             CardType.LOCATION_STATS -> {
                 val data = AppObjectController.gsonMapperForLocal.fromJson(
                     card.data.toString(),
                     LocationStats::class.java
                 )
-                return LocationStatViewHolder(card.cardType, card.sequenceNumber, data, this, this)
+                return LocationStatViewHolder(
+                    card.cardType,
+                    card.sequenceNumber,
+                    data,
+                    this,
+                    this
+                )
             }
             CardType.STUDENT_FEEDBACK -> {
                 val data = AppObjectController.gsonMapperForLocal.fromJson(
                     card.data.toString(),
                     StudentFeedback::class.java
                 )
-                return StudentFeedbackViewHolder(card.cardType, card.sequenceNumber, data, this)
+                return StudentFeedbackViewHolder(
+                    card.cardType,
+                    card.sequenceNumber,
+                    data,
+                    this
+                )
             }
             CardType.FAQ -> {
                 val data = AppObjectController.gsonMapperForLocal.fromJson(
                     card.data.toString(),
                     FAQData::class.java
                 )
-                return MasterFaqViewHolder(card.cardType, card.sequenceNumber, data)
+                return MasterFaqViewHolder(
+                    card.cardType,
+                    card.sequenceNumber,
+                    data
+                )
             }
             CardType.ABOUT_JOSH -> {
                 val data = AppObjectController.gsonMapperForLocal.fromJson(
                     card.data.toString(),
                     AboutJosh::class.java
                 )
-                return AboutJoshViewHolder(card.cardType, card.sequenceNumber, data, this)
+                return AboutJoshViewHolder(
+                    card.cardType,
+                    card.sequenceNumber,
+                    data,
+                    this
+                )
             }
             CardType.OTHER_INFO -> {
                 val data = AppObjectController.gsonMapperForLocal.fromJson(
                     card.data.toString(),
                     OtherInfo::class.java
                 )
-                return OtherInfoViewHolder(card.cardType, card.sequenceNumber, data, this)
+                return OtherInfoViewHolder(
+                    card.cardType,
+                    card.sequenceNumber,
+                    data,
+                    this
+                )
             }
         }
     }
@@ -543,11 +607,33 @@ class CourseDetailsActivity : BaseActivity() {
     companion object {
         const val KEY_TEST_ID = "test-id"
 
-        fun startCourseDetailsActivity(activity: Activity, testId: Int) {
+        fun startCourseDetailsActivity(
+            activity: Activity,
+            testId: Int,
+            startedFrom: String = EMPTY, flags: Array<Int> = arrayOf()
+        ) {
             Intent(activity, CourseDetailsActivity::class.java).apply {
                 putExtra(KEY_TEST_ID, testId)
+                if (startedFrom.isNotBlank())
+                    putExtra(STARTED_FROM, startedFrom)
+                flags.forEach { flag ->
+                    this.addFlags(flag)
+                }
             }.run {
                 activity.startActivity(this)
+            }
+        }
+
+        fun getIntent(
+            context: Context,
+            testId: Int,
+            startedFrom: String = EMPTY, flags: Array<Int> = arrayOf()
+        ) = Intent(context, CourseDetailsActivity::class.java).apply {
+            putExtra(KEY_TEST_ID, testId)
+            if (startedFrom.isNotBlank())
+                putExtra(STARTED_FROM, startedFrom)
+            flags.forEach { flag ->
+                this.addFlags(flag)
             }
         }
     }

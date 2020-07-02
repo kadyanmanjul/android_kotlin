@@ -1,6 +1,5 @@
 package com.joshtalks.joshskills.ui.referral
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -18,9 +17,7 @@ import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.interfaces.OnDismissDialog
 import com.joshtalks.joshskills.databinding.FragmentPrmotationDialogBinding
-import com.joshtalks.joshskills.ui.payment.COURSE_ID
-import com.joshtalks.joshskills.ui.payment.PaymentActivity
-import com.joshtalks.joshskills.ui.payment.STARTED_FROM
+import com.joshtalks.joshskills.ui.course_details.CourseDetailsActivity
 import com.joshtalks.joshskills.ui.view_holders.ROUND_CORNER
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation
 
@@ -106,14 +103,7 @@ class PromotionDialogFragment : DialogFragment() {
 
     fun openPromotion() {
         courseId?.run {
-            requireActivity().startActivity(
-                Intent(
-                    requireActivity(),
-                    PaymentActivity::class.java
-                ).apply {
-                    putExtra(COURSE_ID, courseId)
-                    putExtra(STARTED_FROM, "Promotion")
-                })
+            CourseDetailsActivity.startCourseDetailsActivity(requireActivity(),this.toInt(),"Promotion")
             dismissAllowingStateLoss()
         }
     }

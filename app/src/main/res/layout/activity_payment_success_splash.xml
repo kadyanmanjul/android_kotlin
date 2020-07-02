@@ -18,7 +18,6 @@
             app:layout_constraintStart_toStartOf="parent" />
 
     <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/plant2"
             android:layout_width="@dimen/_52sdp"
             android:layout_height="@dimen/_156sdp"
             android:src="@drawable/plant_one"

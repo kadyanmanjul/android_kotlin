@@ -29,6 +29,7 @@ import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.ARG_PLACEHOLDER_URL
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.COURSE_ID
 import com.joshtalks.joshskills.core.CoreJoshActivity
 import com.joshtalks.joshskills.core.FIRST_TIME_OFFER_SHOW
 import com.joshtalks.joshskills.core.PrefManager
@@ -53,7 +54,6 @@ import com.joshtalks.joshskills.repository.server.SearchLocality
 import com.joshtalks.joshskills.repository.server.UpdateUserLocality
 import com.joshtalks.joshskills.ui.chat.ConversationActivity
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
-import com.joshtalks.joshskills.ui.payment.COURSE_ID
 import com.joshtalks.joshskills.ui.referral.ReferralActivity
 import com.joshtalks.joshskills.ui.tooltip.BalloonFactory
 import com.joshtalks.joshskills.ui.view_holders.InboxViewHolder

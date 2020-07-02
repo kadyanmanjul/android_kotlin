@@ -5,16 +5,19 @@ import android.content.Intent
 import android.os.Bundle
 import android.telephony.TelephonyManager
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.CoreJoshActivity
+import com.joshtalks.joshskills.core.INSTANCE_ID
+import com.joshtalks.joshskills.core.PermissionUtils
+import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.READ_WRITE_PERMISSION_GIVEN
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.LogException
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.core.service.WorkMangerAdmin
+import com.joshtalks.joshskills.ui.course_details.CourseDetailsActivity
 import com.joshtalks.joshskills.ui.extra.CustomPermissionDialogInteractionListener
-import com.joshtalks.joshskills.ui.payment.COURSE_ID
-import com.joshtalks.joshskills.ui.payment.PaymentActivity
-import com.joshtalks.joshskills.ui.payment.STARTED_FROM
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
@@ -77,8 +80,7 @@ class LauncherActivity : CoreJoshActivity(), CustomPermissionDialogInteractionLi
                     if (isGranted) {
                         initInstanceId()
                         return
-                    }
-                    else navigateToNextScreen()
+                    } else navigateToNextScreen()
                     if (report.isAnyPermissionPermanentlyDenied) {
                         PermissionUtils.permissionPermanentlyDeniedDialog(this@LauncherActivity)
                         return
@@ -137,16 +139,12 @@ class LauncherActivity : CoreJoshActivity(), CustomPermissionDialogInteractionLi
     }
 
     fun navigateToPaymentScreen(testId: String) {
-        startActivity(
-            Intent(
-                applicationContext,
-                PaymentActivity::class.java
-            ).apply {
-                addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
-                putExtra(COURSE_ID, testId.split("_")[1])
-                putExtra(STARTED_FROM, this@LauncherActivity.javaClass.simpleName)
-
-            })
+        CourseDetailsActivity.startCourseDetailsActivity(
+            this,
+            testId.split("_")[1].toInt(),
+            this@LauncherActivity.javaClass.simpleName,
+            arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
+        )
     }
 
     private fun logInstallByReferralEvent(testId: String, referralCode: String) =

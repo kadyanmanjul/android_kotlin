@@ -248,16 +248,6 @@
                 android:parentActivityName=".ui.inbox.InboxActivity"
                 android:theme="@style/AppNoBarTheme" />
         <activity
-                android:name=".ui.payment.PaymentActivity"
-                android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize"
-                android:launchMode="singleTask"
-                android:parentActivityName=".ui.inbox.InboxActivity"
-                android:theme="@style/AppNoBarTheme">
-            <meta-data
-                    android:name="android.support.PARENT_ACTIVITY"
-                    android:value=".ui.explore.CourseExploreActivity" />
-        </activity>
-        <activity
                 android:name=".ui.practise.PractiseSubmitActivity"
                 android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize"
                 android:launchMode="singleTask"

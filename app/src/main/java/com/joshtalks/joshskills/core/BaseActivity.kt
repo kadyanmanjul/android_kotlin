@@ -30,13 +30,13 @@ import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.local.model.nps.NPSQuestionModel
 import com.joshtalks.joshskills.repository.service.EngagementNetworkHelper
 import com.joshtalks.joshskills.ui.chat.ConversationActivity
+import com.joshtalks.joshskills.ui.course_details.CourseDetailsActivity
 import com.joshtalks.joshskills.ui.courseprogress.CourseProgressActivity
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
 import com.joshtalks.joshskills.ui.extra.CustomPermissionDialogFragment
 import com.joshtalks.joshskills.ui.help.HelpActivity
 import com.joshtalks.joshskills.ui.inbox.InboxActivity
 import com.joshtalks.joshskills.ui.nps.NetPromoterScoreFragment
-import com.joshtalks.joshskills.ui.payment.PaymentActivity
 import com.joshtalks.joshskills.ui.profile.CropImageActivity
 import com.joshtalks.joshskills.ui.profile.ProfileActivity
 import com.joshtalks.joshskills.ui.profile.SOURCE_IMAGE
@@ -64,7 +64,7 @@ abstract class BaseActivity : AppCompatActivity() {
         Help,
         Inbox,
         Launcher,
-        Payment,
+        CourseDetails,
         Onboard,
         Signup,
         Empty
@@ -107,7 +107,7 @@ abstract class BaseActivity : AppCompatActivity() {
             is HelpActivity -> ActivityEnum.Help
             is InboxActivity -> ActivityEnum.Inbox
             is LauncherActivity -> ActivityEnum.Launcher
-            is PaymentActivity -> ActivityEnum.Payment
+            is CourseDetailsActivity -> ActivityEnum.CourseDetails
             is OnBoardActivity -> ActivityEnum.Onboard
             is SignUpActivity -> ActivityEnum.Signup
             else -> ActivityEnum.Empty

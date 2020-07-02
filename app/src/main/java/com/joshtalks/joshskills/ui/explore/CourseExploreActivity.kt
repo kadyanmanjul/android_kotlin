@@ -247,7 +247,13 @@ class CourseExploreActivity : CoreJoshActivity() {
                 .addParam(AnalyticsEvent.COURSE_NAME.NAME, it.courseName)
                 .addParam(AnalyticsEvent.COURSE_PRICE.NAME, it.amount)
                 .push()
-            CourseDetailsActivity.startCourseDetailsActivity(this,99)
+            it.id?.let {
+                CourseDetailsActivity.startCourseDetailsActivity(
+                    this,
+                    it,
+                    this@CourseExploreActivity.javaClass.simpleName
+                )
+            }
         })
     }
 
