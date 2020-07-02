@@ -131,6 +131,9 @@ class CourseDetailsActivity : BaseActivity() {
         } else {
             finish()
         }
+        AppAnalytics.create(AnalyticsEvent.LANDING_SCREEN.NAME)
+            .addBasicParam()
+            .addUserDetails().push()
         appAnalytics.addBasicParam()
             .addUserDetails()
             .addParam("test_id", testId)
