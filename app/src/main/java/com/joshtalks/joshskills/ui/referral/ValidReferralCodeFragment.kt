@@ -10,7 +10,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.databinding.FragmentValidReferralCodeBinding
 import com.joshtalks.joshskills.repository.server.ReferralCouponDetailResponse
-import com.joshtalks.joshskills.ui.sign_up_old.OnBoardActivity
+import com.joshtalks.joshskills.ui.signup.OnBoardActivity
 
 
 class ValidReferralCodeFragment : BottomSheetDialogFragment() {

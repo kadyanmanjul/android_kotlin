@@ -15,7 +15,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@android:color/white"
-            tools:context=".ui.sign_up_old.OnBoardActivity">
+            tools:context=".ui.signup.OnBoardActivity">
 
         <TextView
                 android:id="@+id/success_title"

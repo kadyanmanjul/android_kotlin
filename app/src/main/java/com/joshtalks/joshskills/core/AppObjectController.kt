@@ -44,7 +44,7 @@ import com.joshtalks.joshskills.repository.service.ChatNetworkService
 import com.joshtalks.joshskills.repository.service.CommonNetworkService
 import com.joshtalks.joshskills.repository.service.MediaDUNetworkService
 import com.joshtalks.joshskills.repository.service.SignUpNetworkService
-import com.joshtalks.joshskills.ui.signup_v2.SignUpV2Activity
+import com.joshtalks.joshskills.ui.signup.SignUpActivity
 import com.joshtalks.joshskills.ui.view_holders.IMAGE_SIZE
 import com.joshtalks.joshskills.ui.view_holders.ROUND_CORNER
 import com.newrelic.agent.android.FeatureFlag
@@ -456,7 +456,7 @@ class StatusCodeInterceptor : Interceptor {
                 PrefManager.logoutUser()
                 if (JoshApplication.isAppVisible) {
                     val intent =
-                        Intent(AppObjectController.joshApplication, SignUpV2Activity::class.java)
+                        Intent(AppObjectController.joshApplication, SignUpActivity::class.java)
                     intent.apply {
                         addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
                         addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)

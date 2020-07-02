@@ -24,6 +24,8 @@ const val IMAGE_PATTERN = "([^\\s]+(\\.(?i)(jpg|png|gif|bmp)|WEBP|webp|JPEG|PNG|
 const val STARTED_FROM = "started_from"
 const val COURSE_ID = "course_ID"
 const val MIN_LINES = 4
+const val RC_HINT = 2
+const val MAX_YEAR = 6
 
 val IMAGE_REGEX = Regex(pattern = IMAGE_PATTERN)
 

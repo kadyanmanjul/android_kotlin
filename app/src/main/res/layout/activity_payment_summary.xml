@@ -270,7 +270,7 @@
                             app:layout_constraintWidth_default="percent"
                             app:layout_constraintWidth_percent="0.75">
 
-                        <com.joshtalks.joshskills.ui.signup.countrycodepicker.CountryCodePicker
+                        <com.joshtalks.joshskills.core.custom_ui.countrycodepicker.CountryCodePicker
                                 android:id="@+id/country_code_picker"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"

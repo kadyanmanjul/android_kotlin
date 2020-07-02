@@ -42,6 +42,7 @@ import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.INSTANCE_ID
 import com.joshtalks.joshskills.core.PAYMENT_MOBILE_NUMBER
 import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.RC_HINT
 import com.joshtalks.joshskills.core.REFERRED_REFERRAL_CODE
 import com.joshtalks.joshskills.core.SINGLE_SPACE
 import com.joshtalks.joshskills.core.Utils
@@ -64,7 +65,6 @@ import com.joshtalks.joshskills.ui.payment.ChatNPayDialogFragment
 import com.joshtalks.joshskills.ui.payment.PaymentFailedDialogFragment
 import com.joshtalks.joshskills.ui.payment.PaymentProcessingFragment
 import com.joshtalks.joshskills.ui.payment.PaymentSuccessFragment
-import com.joshtalks.joshskills.ui.signup.RC_HINT
 import com.joshtalks.joshskills.ui.startcourse.StartCourseActivity
 import com.joshtalks.joshskills.ui.view_holders.ROUND_CORNER
 import com.razorpay.Checkout

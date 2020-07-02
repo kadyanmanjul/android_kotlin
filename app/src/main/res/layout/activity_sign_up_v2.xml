@@ -7,7 +7,7 @@
 
         <variable
                 name="handler"
-                type="com.joshtalks.joshskills.ui.signup_v2.SignUpV2Activity" />
+                type="com.joshtalks.joshskills.ui.signup.SignUpActivity" />
     </data>
 
     <RelativeLayout

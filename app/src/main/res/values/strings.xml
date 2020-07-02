@@ -1,14 +1,9 @@
 <resources>
     <string name="app_name">Josh Skills</string>
     <string name="inbox_header">Josh Skills</string>
-    <string name="help_header">Student Support</string>
 
-    <string name="welcome_josh_skill">Welcome to Josh Skills</string>
     <string name="welcome_josh_skill_new">welcome</string>
     <string name="next">Next</string>
-    <string name="verify">Verify</string>
-
-    <string name="finish">Finish</string>
 
     <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
@@ -19,13 +14,9 @@
     <string name="settings">Settings</string>
     <string name="header_congratulation">Congratulations</string>
 
-    <string name="edit">edit</string>
-    <string name="label_6_digit_code">Enter 4-digit code</string>
-
     <string name="name">Name</string>
     <string name="email">Email Id</string>
 
-    <string name="dob">Date of Birth</string>
     <string name="gallery">Gallery</string>
     <string name="audio">Audio</string>
 
@@ -38,20 +29,16 @@
     <string name="camera_permission_message">To capture photos and videos allow Josh Skills access to your camera  and your device\'s  photos, media and files.</string>
 
     <string name="type_message_hint">Type a Message</string>
-    <string name="profile_photo">Profile photo</string>
 
-    <string name="splash_sub_string">ज़िन्दगी में आगे बढ़ो, जोश के साथ</string>
     <string name="splash_sub_string_english">Zindagi mein aage badho,\nJosh ke saath! </string>
 
     <string name="open">OPEN</string>
     <string name="submit">Submit</string>
     <string name="track_number">Track</string>
     <string name="play_button_description">Play button</string>
-    <string name="disclaimer">Disclaimer:This message will be shared directly with the Josh Talks Headquarters and will not be read by any intermediaries of Josh Skills, the course teacher or any sales or customer care executive</string>
     <string name="continue_label">Continue</string>
     <string name="message_size_limit">Message size limit exceeded</string>
 
-    <string name="unread_message" formatted="false">%s UNREAD MESSAGES</string>
     <string name="media_not_found_message">Sorry, this media file doesn\'t exist on your internal storage. can you download it?</string>
     <string name="pdf_desc" formatted="false">%s Page \u2022 PDF</string>
     <string name="restart">Restart</string>
@@ -61,18 +48,14 @@
     <string name="update_download_success_message">An update has just been downloaded.</string>
 
     <string name="slide_to_cancel">Slide To Cancel</string>
-    <string name="buy_course">Buy Course</string>
 
-    <string name="explore">Explore</string>
     <string name="explore_new">Course Dekhe</string>
 
     <string name="explorer_courses">Explore Courses</string>
     <string name="start_course">Start Course</string>
-    <string name="explorer_course">Explore Courses</string>
     <string name="paid">Paid</string>
     <string name="transaction_status">Your Transaction status:</string>
     <string name="course_payment_label">Course Payment</string>
-    <string name="payment_details">Payment Details</string>
     <string name="done">Done</string>
     <string name="course_started_label">Course Started</string>
     <string name="in_progress_label">In Progress</string>
@@ -80,35 +63,20 @@
 
 
     <string name="find_more_courses">Find More Courses</string>
-    <string name="please_enter_detail_toast">Please enter your details to continue</string>
     <string name="internet_not_available_msz">Seems like your Internet is too slow or not available.</string>
 
     <string name="plz_wait">Please wait&#8230;</string>
-    <string name="resend_otp">Didn\'t get an otp?</string>
-    <string name="terms_and_condition_msz">By signing up, you confirm that you have read and \n  agree to Josh Skills\' Terms &amp; Conditions </string>
-    <string name="enter_your_mobile_number">Enter your Mobile Number </string>
     <string name="your_mobile_number">Your Mobile Number </string>
-    <string name="send_otp_msz">We will send you an OTP</string>
-    <string name="please_enter_your_mobile_number">Please enter your mobile number </string>
-    <string name="resend_otp_toast" formatted="false">OTP sent to %s</string>
-    <string name="resend_timer_text" formatted="false">Resend in 00:%s</string>
     <string name="please_enter_otp">Please enter OTP</string>
     <string name="please_enter_name">Please enter name</string>
     <string name="please_enter_email">Please enter valid Email Id</string>
 
     <string name="join_social_text">Join through your social accounts</string>
-    <string name="google">Google</string>
-    <string name="facebook">Facebook</string>
     <string name="confirm_number">Confirm your number</string>
-    <string name="otp_info">A 4 digit OTP will be sent via SMS to verify \n your mobile number</string>
     <string name="send_otp">Send OTP</string>
 
 
-    <string name="course_not_exist_number">Sorry! Ye Number hamare paas Registered nahi hai</string>
-    <string name="other_number_register">Kya aapne kisi or number se REGISTERED kiya tha</string>
-    <string name="relogin">Dobara Login Kare</string>
     <string name="or">OR</string>
-    <string name="explore_more_course">EXPLORE MORE COURSES</string>
 
     <string name="no_new_message_arrive">No new classes</string>
     <string name="new_message_arrive">New classes downloaded</string>
@@ -138,16 +106,9 @@
     <string name="time_ago_months">%1$d m ago</string>
 
     <!-- Help Screen  -->
-    <string name="mobile_number">Mobile Number</string>
     <string name="email_address">Email Address</string>
 
-    <string name="what_problem">Please share your complaint:</string>
-
     <string name="attach_image">Attach an image</string>
-    <string name="type_your_name">Type your name</string>
-    <string name="type_your_mobile">Type your mobile</string>
-    <string name="type_your_email">Type your email</string>
-    <string name="type_problem">Please explain your problem in detail</string>
 
 
     <!-- Payment process-->
@@ -170,49 +131,29 @@
 
     <string name="type_your_answer_hint">Type your answer here&#8230;&#8230;&#8230;</string>
     <string name="viewing_support_app_not_exist">you may have not proper app for viewing this content</string>
-    <string name="login_with_truecaller_label">TrueCaller Login</string>
-    <string name="login_with_otp">Login with OTP</string>
     <string name="login_signup">Login\/Signup</string>
     <string name="wrong_otp">The OTP entered is incorrect. Please enter correct OTP or try regenerating the OTP</string>
     <string name="refer_and_earn">Refer &amp; Earn</string>
     <string name="paise_kamao">Paise Kamao</string>
     <string name="copy_code">Referral code copied to clipboard</string>
-    <string name="discount_header">Do you have discount code?</string>
     <string name="complete_payment">Complete Payment</string>
-    <string name="enter_the_code">Enter the code</string>
-    <string name="oops">Oops!</string>
-    <string name="coupon_not_exist_label">It looks like you have applied  wrong \n coupon code.</string>
 
-    <string name="course_details_header">Course Details</string>
     <string name="bill_detail_header">Bill Details</string>
-    <string name="coupon_code_exist">Do you have a discount code?</string>
-    <string name="course_fees">Course Fees</string>
-    <string name="bade_bhaiya_header">Bade Bhaiya Discount </string>
-    <string name="total_amount">Total Amount</string>
     <string name="network_type">Network Type</string>
 
-    <string name="start_course_now">Start Your Course Now</string>
-    <string name="show_more">SHOW MORE</string>
-    <string name="show_less">SHOW LESS</string>
     <string name="answer_not_submitted">Answer not submitted</string>
     <string name="answer_submitted">Practice Successfully Submitted</string>
-    <string name="offer_bachat" formatted="false">Aapne is course par pure %s ki bachat ki hai</string>
-    <string name="bade_bhaiya_tips">Bade Bhaiya Tips</string>
-    <string name="tip_message">Agar aap apne pehle 7 dino main hain to aap ye course 50\u0025 kam main pa sakte hain.</string>
-    <string name="tip_used">TIP USED</string>
     <string name="use_tip">Use Tip</string>
 
     <string name="record_answer_label">Record your answer</string>
     <string name="type_answer_label">Type your answer</string>
     <string name="upload_answer_label">Upload your answer</string>
-    <string name="course_duration" formatted="false">Course Duration - %s Days</string>
 
 
     <string name="find_more_course_hint_ftime" formatted="false">Hello %s, Agar aap es course ke sath kuch aur bhi seekhna chahte hain to pehle %s dino mai aapke paas har course pe %s off hai </string>
     <string name="buy_course_offer_tooltip" formatted="false"> Get %s off on the next course you buy, Valid for %s days.</string>
     <string name="first_time_user_hint">Aapko apne course se related saari videos aur claases isko click karke milengi</string>
     <string name="certificate_tooltip_hint">Iss course ke lessons aur practices %s complete karne par aapko ek digital certificate milega.</string>
-    <string name="login_dialog_header">Payment complete karne ke liye</string>
     <string name="course_overview">Course Overview</string>
     <string name="submit_practise_msz">Please complete your task before Submitting</string>
     <string name="generic_message_for_error">An error occurred, please try again!</string>
@@ -268,8 +209,6 @@
     <string name="register_now">Register Now</string>
     <string name="start">Start My Course</string>
     <string name="tip_used_info">Tip Used! You got bade bhaiya\ndiscount of <b>₹ %s</b></string>
-    <string name="tip_used_info_referral_free">Coupon Applied! You got his course\nfor <b>free</b>. Register now. </string>
-    <string name="tip_used_info_referral_off">Coupon Applied! You got discount of <b>₹ 50</b></string>
     <string name="bade_bhaiya_tips_new">Bade\nBhaiya\nTip!</string>
     <string name="tip_title">You can get discount on all Coures!</string>
     <string name="tip_valid">Valid for next %s Days</string>
@@ -280,7 +219,6 @@
     <string name="processing">We are processing your payment.\n This may take some time</string>
 
 
-    <string name="skip">Skip</string>
     <string name="bilkul_nahi">No</string>
     <string name="abhi_shuru_karein">Yes</string>
     <string name="hint_apni_baat">Apni baat yahan likhe</string>
@@ -298,7 +236,6 @@
     <string name="date_of_birth">Date Of Birth</string>
     <string name="otp_wait_message">Wait kare. Aapko iss time se \n pehle OTP mil jaayega.</string>
     <string name="did_not_received_message"> Didn\'t receive OTP? </string>
-    <string name="enter_valid_details_toast">Please enter valid Email Id or Phone Number</string>
     <string name="select_gender">Please choose gender</string>
     <string name="dob_error_toast">Please enter Date of birth</string>
     <string name="name_error_toast">Name cannot be empty!</string>
@@ -311,7 +248,6 @@
     <string name="wait_for_second">Wait for %s seconds</string>
     <string name="retry_miss_call_verify">Retry Missed Call Verification </string>
     <string name="flash_call_verify_permission_message">For verifying your number, JoshSkills need Calls and Phone permission. Tap Settings > Permissions, and Call logs.</string>
-    <string name="timer_text" formatted="false">00:%s</string>
     <string name="registration">Registration</string>
     <string name="verification_failed">Verification Failed</string>
     <string name="gender">Gender</string>
@@ -320,8 +256,6 @@
     <string name="other">Other</string>
 
     <!--Referral Activity-->
-    <string name="give_50_get_50">Give 50, Get 50</string>
-    <string name="give_50_description">Give your friend</string>
     <string name="have_a_referral_code">Have a referral code?</string>
     <string name="enter_referral_code">Enter a referral code</string>
     <string name="wrong_coupon">Wrong coupon code</string>

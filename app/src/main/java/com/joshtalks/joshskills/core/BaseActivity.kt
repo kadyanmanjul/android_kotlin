@@ -37,12 +37,8 @@ import com.joshtalks.joshskills.ui.extra.CustomPermissionDialogFragment
 import com.joshtalks.joshskills.ui.help.HelpActivity
 import com.joshtalks.joshskills.ui.inbox.InboxActivity
 import com.joshtalks.joshskills.ui.nps.NetPromoterScoreFragment
-import com.joshtalks.joshskills.ui.profile.CropImageActivity
-import com.joshtalks.joshskills.ui.profile.ProfileActivity
-import com.joshtalks.joshskills.ui.profile.SOURCE_IMAGE
-import com.joshtalks.joshskills.ui.sign_up_old.OnBoardActivity
+import com.joshtalks.joshskills.ui.signup.OnBoardActivity
 import com.joshtalks.joshskills.ui.signup.SignUpActivity
-import com.joshtalks.joshskills.ui.signup_v2.SignUpV2Activity
 import com.newrelic.agent.android.NewRelic
 import io.branch.referral.Branch
 import io.github.inflationx.viewpump.ViewPumpContextWrapper
@@ -118,17 +114,11 @@ abstract class BaseActivity : AppCompatActivity() {
         val intent: Intent? = if (PrefManager.getStringValue(API_TOKEN).isEmpty()) {
             Intent(this, OnBoardActivity::class.java)
         } else if (isUserProfileComplete()) {
-            Intent(this, SignUpV2Activity::class.java)
+            Intent(this, SignUpActivity::class.java)
         } else getInboxActivityIntent()
         return intent?.apply {
             addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        }
-    }
-
-    fun getCroppingActivity(filePath: String): Intent {
-        return Intent(this, CropImageActivity::class.java).apply {
-            putExtra(SOURCE_IMAGE, filePath)
         }
     }
 
@@ -193,10 +183,6 @@ abstract class BaseActivity : AppCompatActivity() {
 
     protected fun isUserHaveNotPersonalDetails(): Boolean {
         return User.getInstance().dateOfBirth.isNullOrEmpty()
-    }
-
-    protected fun getPersonalDetailsActivityIntent(): Intent {
-        return Intent(this, ProfileActivity::class.java)
     }
 
     protected fun feedbackEngagementStatus(question: Question?) {

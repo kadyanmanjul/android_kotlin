@@ -31,8 +31,8 @@ import com.joshtalks.joshskills.repository.local.model.ScreenEngagementModel
 import com.joshtalks.joshskills.repository.server.CourseExploreModel
 import com.joshtalks.joshskills.ui.course_details.CourseDetailsActivity
 import com.joshtalks.joshskills.ui.inbox.PAYMENT_FOR_COURSE_CODE
-import com.joshtalks.joshskills.ui.signup_v2.FLOW_FROM
-import com.joshtalks.joshskills.ui.signup_v2.SignUpV2Activity
+import com.joshtalks.joshskills.ui.signup.FLOW_FROM
+import com.joshtalks.joshskills.ui.signup.SignUpActivity
 import com.joshtalks.joshskills.ui.view_holders.CourseExplorerViewHolder
 import com.vanniktech.emoji.Utils
 import io.reactivex.disposables.CompositeDisposable
@@ -119,7 +119,7 @@ class CourseExploreActivity : CoreJoshActivity() {
                         val intent =
                             Intent(
                                 AppObjectController.joshApplication,
-                                SignUpV2Activity::class.java
+                                SignUpActivity::class.java
                             )
                         intent.apply {
                             addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)

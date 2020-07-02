@@ -20,8 +20,8 @@ import com.joshtalks.joshskills.databinding.ActivityStartCourseBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.ui.payment.order_summary.TRANSACTION_ID
 import com.joshtalks.joshskills.ui.pdfviewer.COURSE_NAME
-import com.joshtalks.joshskills.ui.signup_v2.FLOW_FROM
-import com.joshtalks.joshskills.ui.signup_v2.SignUpV2Activity
+import com.joshtalks.joshskills.ui.signup.FLOW_FROM
+import com.joshtalks.joshskills.ui.signup.SignUpActivity
 import com.joshtalks.joshskills.ui.view_holders.ROUND_CORNER
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation
 
@@ -151,7 +151,7 @@ class StartCourseActivity : CoreJoshActivity() {
                     .addParam(AnalyticsEvent.COURSE_NAME.NAME, courseName)
                     .addParam(AnalyticsEvent.TRANSACTION_ID.NAME, transactionId)
                     .push()
-                val intent = Intent(this, SignUpV2Activity::class.java).apply {
+                val intent = Intent(this, SignUpActivity::class.java).apply {
                     addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
                     addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                     putExtra(FLOW_FROM, "payment journey")

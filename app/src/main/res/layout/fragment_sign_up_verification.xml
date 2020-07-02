@@ -7,11 +7,11 @@
 
         <variable
                 name="handler"
-                type="com.joshtalks.joshskills.ui.signup_v2.SignUpVerificationFragment" />
+                type="com.joshtalks.joshskills.ui.signup.SignUpVerificationFragment" />
 
         <variable
                 name="viewModel"
-                type="com.joshtalks.joshskills.ui.signup_v2.SignUpV2ViewModel" />
+                type="com.joshtalks.joshskills.ui.signup.SignUpViewModel" />
 
     </data>
 

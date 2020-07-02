@@ -21,13 +21,6 @@
     </style>
 
 
-    <style name="EditTextTheme" parent="AppTheme">
-        <item name="colorControlNormal">@color/gray_53</item>
-        <item name="colorControlActivated">@color/squash_light</item>
-        <item name="colorControlHighlight">@color/squash_light</item>
-    </style>
-
-
     <style name="Theme.GuidelinesCompat.Light.DarkToolbar" parent="Theme.MaterialComponents.Light.DarkActionBar">
         <item name="android:textColorSecondary">@color/white</item>
         <item name="actionOverflowButtonStyle">@style/OverFlow</item>
