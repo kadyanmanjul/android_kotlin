@@ -4,7 +4,7 @@ import android.graphics.drawable.Drawable
 import android.os.Build
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.cardview.widget.CardView
 import androidx.core.content.res.ResourcesCompat
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
@@ -34,7 +34,7 @@ class ParentItemExpandableList(val question: String) {
 
     @Toggle(R.id.mainView)
     @View(R.id.mainView)
-    lateinit var mainView: ConstraintLayout
+    lateinit var mainView: CardView
 
     val drawable: Drawable? by lazy {
         ResourcesCompat.getDrawable(
@@ -55,7 +55,7 @@ class ParentItemExpandableList(val question: String) {
     fun onResolved() {
         itemIcon.setImageDrawable(drawable2)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-            mainView.setBackgroundColor(
+            mainView.setCardBackgroundColor(
                 AppObjectController.joshApplication.resources.getColor(
                     R.color.light_blue,
                     null

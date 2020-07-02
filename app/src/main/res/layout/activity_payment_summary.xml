@@ -54,12 +54,13 @@
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toBottomOf="@+id/header">
 
-                        <FrameLayout
+                        <androidx.cardview.widget.CardView
                                 android:id="@+id/iv_container"
                                 android:layout_width="0dp"
                                 android:layout_height="0dp"
                                 android:layout_marginHorizontal="@dimen/_6sdp"
                                 android:layout_marginVertical="@dimen/_6sdp"
+                                app:cardCornerRadius="@dimen/_4sdp"
                                 app:layout_constraintHeight_default="percent"
                                 app:layout_constraintHeight_percent="0.42"
                                 app:layout_constraintStart_toStartOf="parent"
@@ -70,13 +71,14 @@
                             <ImageView
                                     android:id="@+id/profile_image"
                                     android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
+                                    android:layout_height="match_parent"
                                     android:layout_gravity="top|center"
                                     android:adjustViewBounds="true"
-                                    android:scaleType="centerCrop"
+                                    android:scaleType="fitXY"
+                                    tools:background="@drawable/app_bg"
                                     tools:ignore="ContentDescription" />
 
-                        </FrameLayout>
+                        </androidx.cardview.widget.CardView>
 
                         <TextView
                                 android:id="@+id/course_name"
@@ -411,7 +413,8 @@
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toBottomOf="@+id/imageView2"
                             app:rippleColor="@color/white"
-                            tools:text="PAY $500" />
+                            app:textAllCaps="false"
+                            tools:text="Pay $500" />
 
                     <androidx.constraintlayout.widget.Group
                             android:id="@+id/group_1"

@@ -24,9 +24,6 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.MultiTransformation
-import com.bumptech.glide.request.RequestOptions
-import com.bumptech.glide.request.target.Target
 import com.crashlytics.android.Crashlytics
 import com.facebook.appevents.AppEventsConstants
 import com.flurry.android.FlurryAgent
@@ -66,13 +63,11 @@ import com.joshtalks.joshskills.ui.payment.PaymentFailedDialogFragment
 import com.joshtalks.joshskills.ui.payment.PaymentProcessingFragment
 import com.joshtalks.joshskills.ui.payment.PaymentSuccessFragment
 import com.joshtalks.joshskills.ui.startcourse.StartCourseActivity
-import com.joshtalks.joshskills.ui.view_holders.ROUND_CORNER
 import com.razorpay.Checkout
 import com.razorpay.PaymentResultListener
 import com.sinch.verification.PhoneNumberUtils
 import io.branch.referral.util.BRANCH_STANDARD_EVENT
 import io.branch.referral.util.CurrencyType
-import jp.wasabeef.glide.transformations.RoundedCornersTransformation
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -221,17 +216,9 @@ class PaymentSummaryActivity : CoreJoshActivity(),
             appAnalytics.addParam(AnalyticsEvent.COURSE_NAME.NAME, it.courseName)
             appAnalytics.addParam(AnalyticsEvent.COURSE_PRICE.NAME, it.discountedAmount)
 
-            val multi = MultiTransformation(
-                RoundedCornersTransformation(
-                    Utils.dpToPx(ROUND_CORNER),
-                    0,
-                    RoundedCornersTransformation.CornerType.ALL
-                )
-            )
             Glide.with(applicationContext)
                 .load(it.imageUrl)
-                .override(Target.SIZE_ORIGINAL)
-                .apply(RequestOptions.bitmapTransform(multi))
+                .fitCenter()
                 .into(binding.profileImage)
             binding.txtPrice.text =
                 "₹ ${String.format("%.2f", it.amount)}"

@@ -4,7 +4,7 @@ import android.os.Build
 import android.view.View.GONE
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.cardview.widget.CardView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.mindorks.placeholderview.annotations.Layout
@@ -23,13 +23,13 @@ class ChildItemExpandableList(val answer: String) {
     lateinit var itemIcon: ImageView
 
     @View(R.id.mainView)
-    lateinit var mainView: ConstraintLayout
+    lateinit var mainView: CardView
 
     @Resolve
     fun onResolved() {
         itemIcon.visibility = GONE
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-            mainView.setBackgroundColor(
+            mainView.setCardBackgroundColor(
                 AppObjectController.joshApplication.resources.getColor(
                     R.color.white,
                     null
