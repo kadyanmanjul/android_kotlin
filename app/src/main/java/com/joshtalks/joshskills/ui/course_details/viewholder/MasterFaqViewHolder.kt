@@ -1,10 +1,12 @@
 package com.joshtalks.joshskills.ui.course_details.viewholder
 
+import android.graphics.Typeface
 import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.esafirm.imagepicker.view.GridSpacingItemDecoration
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.VERSION
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
@@ -46,6 +48,8 @@ class MasterFaqViewHolder(
     var categoryId = 1
     private var compositeDisposable = CompositeDisposable()
 
+    var typefaceSpan: Typeface? = null
+
     @Resolve
     fun onViewInflated() {
         txtTitle.text = faqData.title
@@ -56,6 +60,8 @@ class MasterFaqViewHolder(
     }
 
     private fun addViews() {
+        typefaceSpan =
+            ResourcesCompat.getFont(AppObjectController.joshApplication, R.font.poppins_medium)
         if (recyclerView.viewAdapter == null || recyclerView.viewAdapter.itemCount == 0) {
             faqData.categoryList.sortedBy { it.sortOrder }.forEach { typeOfHelpModel ->
                 recyclerView.addView(
@@ -120,17 +126,18 @@ class MasterFaqViewHolder(
                         R.color.button_primary_color,
                         null
                     )
+                    it.categoryNameTV.setTypeface(typefaceSpan, Typeface.BOLD)
+
                 } else {
                     it.cardView.strokeColor = ResourcesCompat.getColor(
                         getAppContext().resources,
                         R.color.white,
                         null
                     )
-
+                    it.categoryNameTV.setTypeface(typefaceSpan, Typeface.NORMAL)
                 }
             }
         }
-
     }
 
 

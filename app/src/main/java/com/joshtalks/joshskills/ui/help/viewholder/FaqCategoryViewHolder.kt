@@ -1,5 +1,6 @@
 package com.joshtalks.joshskills.ui.help.viewholder
 
+import android.graphics.Typeface
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.res.ResourcesCompat
@@ -34,6 +35,8 @@ class FaqCategoryViewHolder(
     @View(R.id.root_view)
     lateinit var cardView: MaterialCardView
 
+    var typefaceSpan: Typeface? = null
+
     @Resolve
     fun onViewInflated() {
         categoryNameTV.text = faqCategory.categoryName
@@ -45,33 +48,32 @@ class FaqCategoryViewHolder(
             .transition(DrawableTransitionOptions.withCrossFade())
             .apply(RequestOptions().centerCrop())
             .into(categoryIconIV)
+        typefaceSpan =
+            ResourcesCompat.getFont(AppObjectController.joshApplication, R.font.poppins_medium)
         if (position != -1)
             setCardDefaultTint()
     }
 
     private fun setCardDefaultTint() {
-        if (position != 1)
+        if (position != 1) {
+            categoryNameTV.setTypeface(typefaceSpan, Typeface.NORMAL)
             cardView.strokeColor = ResourcesCompat.getColor(
                 AppObjectController.joshApplication.resources,
                 R.color.white,
                 null
             )
-        else cardView.strokeColor = ResourcesCompat.getColor(
-            AppObjectController.joshApplication.resources,
-            R.color.button_primary_color,
-            null
-        )
+        } else {
+            categoryNameTV.setTypeface(typefaceSpan, Typeface.BOLD)
+            cardView.strokeColor = ResourcesCompat.getColor(
+                AppObjectController.joshApplication.resources,
+                R.color.button_primary_color,
+                null
+            )
+        }
         cardView.setCardBackgroundColor(
             ResourcesCompat.getColor(
                 AppObjectController.joshApplication.resources,
                 R.color.white,
-                null
-            )
-        )
-        categoryIconIV.setColorFilter(
-            ResourcesCompat.getColor(
-                AppObjectController.joshApplication.resources,
-                R.color.transparent,
                 null
             )
         )
