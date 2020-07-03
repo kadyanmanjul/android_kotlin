@@ -6,14 +6,18 @@ apply plugin: 'io.fabric'
 apply plugin: 'com.google.gms.google-services'
 apply plugin: 'newrelic'
 
+def majorVersion = 1
+def minorVersion = 1
+def patchVersion = 0
+
 android {
     compileSdkVersion 29
     defaultConfig {
         applicationId "com.joshtalks.joshskills"
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 102
-        versionName "1.0.102Beta"
+        versionCode majorVersion*10000 + minorVersion*100 + patchVersion
+        versionName "${majorVersion}.${minorVersion}.${patchVersion}"
         vectorDrawables.useSupportLibrary true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField "String", "CLIENT_TOKEN", "\"Ctt75ss5IxyHgBJb48diBbHUXIQ1VANCYRykjdcj\""
@@ -302,5 +306,4 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
     // fresh chat
     implementation 'com.github.freshdesk:freshchat-android:3.6.1'
-
 }
