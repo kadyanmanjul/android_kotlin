@@ -9,9 +9,9 @@
             android:id="@+id/landing_image"
             android:layout_width="@dimen/_16sdp"
             android:layout_height="@dimen/_16sdp"
+            android:adjustViewBounds="true"
             android:contentDescription="@string/attach_image"
             android:scaleType="fitXY"
-            android:adjustViewBounds="true"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -19,9 +19,9 @@
     <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
             android:id="@+id/landing_text"
             fontPath="fonts/Roboto-Regular.ttf"
-            android:letterSpacing="0.03"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:letterSpacing="0.03"
             android:padding="@dimen/_4sdp"
             android:text="@string/download_certificate"
             android:textColor="@color/dark_grey"

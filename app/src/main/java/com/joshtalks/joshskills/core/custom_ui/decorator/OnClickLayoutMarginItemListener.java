@@ -2,7 +2,6 @@ package com.joshtalks.joshskills.core.custom_ui.decorator;
 
 import android.content.Context;
 import android.view.View;
-
 import androidx.recyclerview.widget.RecyclerView;
 
 

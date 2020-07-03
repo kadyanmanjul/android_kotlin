@@ -23,7 +23,7 @@ import com.joshtalks.joshskills.databinding.ActivityPdfViewerBinding
 import com.joshtalks.joshskills.repository.local.entity.PdfType
 import com.joshtalks.joshskills.repository.server.engage.PdfEngage
 import com.joshtalks.joshskills.repository.service.EngagementNetworkHelper
-import kotlinx.android.synthetic.main.activity_pdf_viewer.*
+import kotlinx.android.synthetic.main.activity_pdf_viewer.txtPageNumber
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

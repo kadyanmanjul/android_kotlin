@@ -3,7 +3,6 @@ package com.joshtalks.joshskills.core.custom_ui.decorator;
 import android.content.Context;
 import android.graphics.Rect;
 import android.view.View;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Px;
 import androidx.recyclerview.widget.RecyclerView;

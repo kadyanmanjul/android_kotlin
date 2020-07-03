@@ -72,11 +72,11 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/_16sdp"
                         android:gravity="start"
-                        android:visibility="gone"
-                        tools:visibility="visible"
                         android:text="@string/email_address"
                         android:textColor="@color/grey_7A"
-                        android:textSize="@dimen/font_16" />
+                        android:textSize="@dimen/font_16"
+                        android:visibility="gone"
+                        tools:visibility="visible" />
 
                 <androidx.appcompat.widget.AppCompatEditText
                         android:id="@+id/email_edit_text"
@@ -88,8 +88,6 @@
                         android:clickable="false"
                         android:enabled="false"
                         android:focusable="false"
-                        android:textSize="@dimen/font_14"
-                        android:visibility="gone"
                         android:gravity="start"
                         android:hint="e.g. abc@xyz.com"
                         android:imeOptions="actionNext"
@@ -104,6 +102,8 @@
                         android:paddingBottom="@dimen/_10sdp"
                         android:textColor="@color/gray_53"
                         android:textColorHint="@color/hint_new_color"
+                        android:textSize="@dimen/font_14"
+                        android:visibility="gone"
                         tools:visibility="visible" />
 
                 <com.google.android.material.textview.MaterialTextView
@@ -114,16 +114,14 @@
                         android:layout_marginTop="@dimen/_16sdp"
                         android:gravity="start"
 
-                        android:visibility="gone"
-                        tools:visibility="visible"
                         android:text="@string/phone_number"
                         android:textColor="@color/grey_7A"
-                        android:textSize="@dimen/font_16" />
+                        android:textSize="@dimen/font_16"
+                        android:visibility="gone"
+                        tools:visibility="visible" />
 
                 <androidx.constraintlayout.widget.ConstraintLayout
 
-                        android:visibility="gone"
-                        tools:visibility="visible"
                         android:id="@+id/et_container"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -132,7 +130,9 @@
                         android:paddingStart="@dimen/_14sdp"
                         android:paddingTop="@dimen/_10sdp"
                         android:paddingEnd="@dimen/_14sdp"
-                        android:paddingBottom="@dimen/_10sdp">
+                        android:paddingBottom="@dimen/_10sdp"
+                        android:visibility="gone"
+                        tools:visibility="visible">
 
                     <com.joshtalks.joshskills.core.custom_ui.countrycodepicker.CountryCodePicker
                             android:id="@+id/country_code_picker"
@@ -220,8 +220,8 @@
                             android:layout_centerVertical="true"
                             android:layout_marginStart="@dimen/_4sdp"
                             android:gravity="center_vertical|start"
-                            android:tint="@color/colorPrimary"
                             android:src="@drawable/ic_small_tick"
+                            android:tint="@color/colorPrimary"
                             android:visibility="visible"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
@@ -348,7 +348,7 @@
                     android:layout_marginTop="@dimen/_24sdp">
 
                 <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btn_truecaller_login"
+                        android:id="@+id/btn_login"
                         style="@style/Widget.MaterialComponents.Button"
                         fontPath="fonts/OpenSans-SemiBold.ttf"
                         android:layout_width="0dp"

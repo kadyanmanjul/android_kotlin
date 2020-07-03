@@ -28,28 +28,32 @@ class ScoreListAdapter(context: NetPromoterScoreFragment) :
     inner class ViewHolder(val binding: ScoreItemLayoutBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(number: Int) {
-            binding.tvNumber.text = number.toString()
-            binding.tvNumber.setTextColor(
-                ContextCompat.getColor(
-                    binding.root.context,
-                    R.color.ca_color
-                )
-            )
-            binding.tvNumber.setBackgroundResource(R.drawable.score_unselect_drawable)
-            binding.tvNumber.setOnClickListener {
-                if (lastSelected == number) {
-                    return@setOnClickListener
-                }
-                notifyItemChanged(lastSelected)
+            try {
+                binding.tvNumber.text = number.toString()
                 binding.tvNumber.setTextColor(
                     ContextCompat.getColor(
                         binding.root.context,
-                        R.color.white
+                        R.color.ca_color
                     )
                 )
-                binding.tvNumber.setBackgroundResource(R.drawable.score_select_drawable)
-                lastSelected = number
-                onRatingSelectListener.onSelectRating(lastSelected)
+                binding.tvNumber.setBackgroundResource(R.drawable.score_unselect_drawable)
+                binding.tvNumber.setOnClickListener {
+                    if (lastSelected == number) {
+                        return@setOnClickListener
+                    }
+                    notifyItemChanged(lastSelected)
+                    binding.tvNumber.setTextColor(
+                        ContextCompat.getColor(
+                            binding.root.context,
+                            R.color.white
+                        )
+                    )
+                    binding.tvNumber.setBackgroundResource(R.drawable.score_select_drawable)
+                    lastSelected = number
+                    onRatingSelectListener.onSelectRating(lastSelected)
+                }
+            } catch (ex: Exception) {
+
             }
 
         }

@@ -3,12 +3,9 @@ package com.joshtalks.joshskills.core;
 import android.app.Activity;
 import android.app.Application;
 import android.os.Bundle;
-
 import androidx.annotation.NonNull;
-
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent;
 import com.joshtalks.joshskills.core.analytics.AppAnalytics;
-
 import timber.log.Timber;
 
 public class ActivityLifecycleCallback {
@@ -65,6 +62,11 @@ public class ActivityLifecycleCallback {
                     }
 
                     @Override
+                    public void onActivityPostStopped(@NonNull Activity activity) {
+
+                    }
+
+                    @Override
                     public void onActivitySaveInstanceState(Activity activity, Bundle bundle) {
 
                     }
@@ -76,11 +78,6 @@ public class ActivityLifecycleCallback {
                                 .push();
 
                         Timber.tag("Josh_Activity_Destroyed").d(activity.getClass().getSimpleName());
-
-                    }
-
-                    @Override
-                    public void onActivityPostStopped(@NonNull Activity activity) {
 
                     }
 

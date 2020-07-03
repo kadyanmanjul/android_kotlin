@@ -11,10 +11,8 @@ import android.text.TextUtils;
 import android.text.style.StyleSpan;
 import android.util.AttributeSet;
 import android.view.View;
-
 import androidx.annotation.ColorInt;
 import androidx.appcompat.widget.AppCompatTextView;
-
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -184,6 +182,10 @@ public class JoshTextView extends AppCompatTextView {
         }
     }
 
+    public void addAutoLinkMode(AutoLinkMode... autoLinkModes) {
+        this.autoLinkModes = autoLinkModes;
+    }
+
     public void setMentionModeColor(@ColorInt int mentionModeColor) {
         this.mentionModeColor = mentionModeColor;
     }
@@ -210,10 +212,6 @@ public class JoshTextView extends AppCompatTextView {
 
     public void setSelectedStateColor(@ColorInt int defaultSelectedColor) {
         this.defaultSelectedColor = defaultSelectedColor;
-    }
-
-    public void addAutoLinkMode(AutoLinkMode... autoLinkModes) {
-        this.autoLinkModes = autoLinkModes;
     }
 
     public void setBoldAutoLinkModes(AutoLinkMode... autoLinkModes) {

@@ -6,11 +6,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import com.joshtalks.joshlibrary.codeinputview.OTPListener
+import com.github.razir.progressbutton.DrawableButton
+import com.github.razir.progressbutton.hideProgress
+import com.github.razir.progressbutton.showProgress
+import com.joshtalks.codeinputview.OTPListener
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
@@ -80,9 +84,6 @@ class SignUpVerificationFragment : Fragment() {
             R.string.otp_received_message,
             viewModel.countryCode + " " + viewModel.phoneNumber
         )
-        binding.otpView.setOtpCompletionListener {
-            verifyOTP()
-        }
         viewModel.signUpStatus.observe(requireActivity(), Observer {
             it?.run {
                 if (this == SignUpStepStatus.ReGeneratedOTP || this == SignUpStepStatus.WRONG_OTP) {
@@ -95,6 +96,7 @@ class SignUpVerificationFragment : Fragment() {
                     showToast(getString(R.string.wrong_otp))
                 }
             }
+            hideProgress()
         })
         viewModel.verificationStatus.observe(requireActivity(), Observer {
             it.run {
@@ -113,12 +115,19 @@ class SignUpVerificationFragment : Fragment() {
                             )
                         )
                     }
-
                     else -> {
                         onTimeoutSMSVerification()
                     }
                 }
-
+            }
+            hideProgress()
+        })
+        viewModel.signUpStatus.observe(viewLifecycleOwner, Observer {
+            when (it) {
+                SignUpStepStatus.ERROR -> {
+                    hideProgress()
+                }
+                else -> return@Observer
             }
         })
         startVerificationTimer()
@@ -162,15 +171,13 @@ class SignUpVerificationFragment : Fragment() {
         timer = object : CountDownTimer(TIMEOUT_TIME, 1000) {
             override fun onTick(millisUntilFinished: Long) {
                 lastTime = millisUntilFinished.toInt()
-                if (timer != null) {
-                    if (isAdded && isVisible) {
-                        AppObjectController.uiHandler.post {
-                            binding.tvOtpTimer.visibility = View.VISIBLE
-                            binding.tvOtpTimer.text = String.format(
-                                "00:%02d",
-                                TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished)
-                            )
-                        }
+                if (timer != null && isAdded && isVisible) {
+                    AppObjectController.uiHandler.post {
+                        binding.tvOtpTimer.visibility = View.VISIBLE
+                        binding.tvOtpTimer.text = String.format(
+                            "00:%02d",
+                            TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished)
+                        )
                     }
                 }
             }
@@ -200,6 +207,7 @@ class SignUpVerificationFragment : Fragment() {
                 viewModel.progressBarStatus.postValue(true)
                 (requireActivity() as SignUpActivity).verification?.verify(binding.otpView2.otp)
             } else {
+                startProgress()
                 viewModel.verifyOTP(binding.otpView2.otp)
             }
             AppAnalytics.create(AnalyticsEvent.OTP_SCREEN_SATUS.NAME)
@@ -227,5 +235,23 @@ class SignUpVerificationFragment : Fragment() {
             viewModel.incrementResendAttempts()
             viewModel.regeneratedOTP()
         }
+    }
+
+    private fun startProgress() {
+        binding.btnVerify.showProgress {
+            buttonTextRes = R.string.plz_wait
+            progressColors = intArrayOf(ContextCompat.getColor(requireContext(), R.color.white))
+            gravity = DrawableButton.GRAVITY_CENTER
+            progressRadiusRes = R.dimen.dp8
+            progressStrokeRes = R.dimen.dp2
+            textMarginRes = R.dimen.dp8
+
+        }
+        binding.btnVerify.isEnabled = false
+    }
+
+    private fun hideProgress() {
+        binding.btnVerify.isEnabled = true
+        binding.btnVerify.hideProgress(R.string.next)
     }
 }

@@ -24,7 +24,6 @@ import android.opengl.GLES11Ext;
 import android.opengl.GLES20;
 import android.opengl.Matrix;
 import android.util.Log;
-
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
@@ -123,6 +122,22 @@ class TextureRender {
         GLES20.glFinish();
     }
 
+    private int loadShader(int shaderType, String source) {
+        int shader = GLES20.glCreateShader(shaderType);
+        checkGlError("glCreateShader type=" + shaderType);
+        GLES20.glShaderSource(shader, source);
+        GLES20.glCompileShader(shader);
+        int[] compiled = new int[1];
+        GLES20.glGetShaderiv(shader, GLES20.GL_COMPILE_STATUS, compiled, 0);
+        if (compiled[0] == 0) {
+            Log.e(TAG, "Could not compile shader " + shaderType + ":");
+            Log.e(TAG, " " + GLES20.glGetShaderInfoLog(shader));
+            GLES20.glDeleteShader(shader);
+            shader = 0;
+        }
+        return shader;
+    }
+
     /**
      * Initializes GL state.  Call this after the EGL surface has been created and made current.
      */
@@ -167,29 +182,6 @@ class TextureRender {
         checkGlError("glTexParameter");
     }
 
-    /**
-     * Replaces the fragment shader.
-     */
-    public void changeFragmentShader(String fragmentShader) {
-        throw new UnsupportedOperationException("Not implemented");
-    }
-
-    private int loadShader(int shaderType, String source) {
-        int shader = GLES20.glCreateShader(shaderType);
-        checkGlError("glCreateShader type=" + shaderType);
-        GLES20.glShaderSource(shader, source);
-        GLES20.glCompileShader(shader);
-        int[] compiled = new int[1];
-        GLES20.glGetShaderiv(shader, GLES20.GL_COMPILE_STATUS, compiled, 0);
-        if (compiled[0] == 0) {
-            Log.e(TAG, "Could not compile shader " + shaderType + ":");
-            Log.e(TAG, " " + GLES20.glGetShaderInfoLog(shader));
-            GLES20.glDeleteShader(shader);
-            shader = 0;
-        }
-        return shader;
-    }
-
     private int createProgram(String vertexSource, String fragmentSource) {
         int vertexShader = loadShader(GLES20.GL_VERTEX_SHADER, vertexSource);
         if (vertexShader == 0) {
@@ -226,5 +218,12 @@ class TextureRender {
             Log.e(TAG, op + ": glError " + error);
             throw new RuntimeException(op + ": glError " + error);
         }
+    }
+
+    /**
+     * Replaces the fragment shader.
+     */
+    public void changeFragmentShader(String fragmentShader) {
+        throw new UnsupportedOperationException("Not implemented");
     }
 }

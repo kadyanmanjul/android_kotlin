@@ -42,7 +42,7 @@ class StudentFeedbackCard(
         name.text = feedback.name
         profession.text = feedback.shortDescription
         feedback.thumbnailUrl?.let {
-            setDefaultImageView(circleImage,feedback.thumbnailUrl!!)
+            setDefaultImageView(circleImage, feedback.thumbnailUrl!!)
         }
     }
 
@@ -62,12 +62,13 @@ class StudentFeedbackCard(
         }
 
     }
+
     fun logAnalyticsEvent(name: String) {
         AppAnalytics.create(AnalyticsEvent.MEET_STUDENT_CLICKED.NAME)
             .addBasicParam()
             .addUserDetails()
-            .addParam(AnalyticsEvent.USER_NAME.NAME,name)
-            .addParam(VERSION,PrefManager.getStringValue(VERSION))
+            .addParam(AnalyticsEvent.USER_NAME.NAME, name)
+            .addParam(VERSION, PrefManager.getStringValue(VERSION))
             .push()
     }
 }

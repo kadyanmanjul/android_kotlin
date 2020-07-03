@@ -74,7 +74,6 @@ import com.joshtalks.joshskills.ui.course_details.viewholder.StudentFeedbackView
 import com.joshtalks.joshskills.ui.course_details.viewholder.SyllabusViewHolder
 import com.joshtalks.joshskills.ui.course_details.viewholder.TeacherDetailsViewHolder
 import com.joshtalks.joshskills.ui.extra.ImageShowFragment
-import com.joshtalks.joshskills.ui.extra.setOnSingleClickListener
 import com.joshtalks.joshskills.ui.payment.order_summary.PaymentSummaryActivity
 import com.joshtalks.joshskills.util.DividerItemDecoration
 import com.karumi.dexter.MultiplePermissionsReport
@@ -454,12 +453,6 @@ class CourseDetailsActivity : BaseActivity() {
             logMeetMeAnalyticEvent()
             TeacherDetailsFragment.newInstance(it).show(supportFragmentManager, "Teacher Details")
         })
-
-        binding.btnStartCourse.setOnSingleClickListener(View.OnClickListener {
-            appAnalytics.addParam(AnalyticsEvent.START_COURSE_NOW.NAME, "Clicked")
-            PaymentSummaryActivity.startPaymentSummaryActivity(this, testId.toString())
-        })
-
         compositeDisposable.add(
             RxBus2.listen(DownloadSyllabusEvent::class.java)
                 .subscribeOn(Schedulers.io())
@@ -499,8 +492,11 @@ class CourseDetailsActivity : BaseActivity() {
                         it.printStackTrace()
                     })
         )
+    }
 
-
+    fun buyCourse() {
+        PaymentSummaryActivity.startPaymentSummaryActivity(this, testId.toString())
+        appAnalytics.addParam(AnalyticsEvent.START_COURSE_NOW.NAME, "Clicked")
     }
 
     private fun logMeetMeAnalyticEvent() {

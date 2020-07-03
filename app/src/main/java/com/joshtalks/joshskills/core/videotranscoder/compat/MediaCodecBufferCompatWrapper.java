@@ -2,7 +2,6 @@ package com.joshtalks.joshskills.core.videotranscoder.compat;
 
 import android.media.MediaCodec;
 import android.os.Build;
-
 import java.nio.ByteBuffer;
 
 /**

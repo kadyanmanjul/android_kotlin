@@ -3,9 +3,7 @@ package com.joshtalks.joshskills.util;
 import android.app.Service;
 import android.content.Context;
 import android.net.Uri;
-
 import androidx.work.impl.foreground.SystemForegroundDispatcher;
-
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.Player;
@@ -18,7 +16,6 @@ import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
-
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
@@ -107,12 +104,12 @@ public class AudioPlayerManager {
         return (int) (exoPlayer.getDuration());
     }
 
-    public void seekTo(int i) {
-        exoPlayer.seekTo(i);
-    }
-
     public int getCurrentPosition() {
         return (int) exoPlayer.getCurrentPosition();
+    }
+
+    public void seekTo(int i) {
+        exoPlayer.seekTo(i);
     }
 }
 /*
@@ -197,6 +194,8 @@ public class Temp extends LifecycleService {
  * Stops the foreground {@link Service} by asking {@link SystemForegroundDispatcher} to
  * handle a stop request.
  *
+ * @return The current instance of {@link androidx.work.impl.foreground.SystemForegroundService}.
+ * @return The current instance of {@link androidx.work.impl.foreground.SystemForegroundService}.
  * @return The current instance of {@link androidx.work.impl.foreground.SystemForegroundService}.
  *//*
 

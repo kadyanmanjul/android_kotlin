@@ -45,6 +45,7 @@ import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.LogException
 import com.joshtalks.joshskills.core.custom_ui.FullScreenProgressDialog
+import com.joshtalks.joshskills.core.custom_ui.countrycodepicker.CountryCodePicker
 import com.joshtalks.joshskills.core.getFBProfilePicture
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.ActivitySignUpV2Binding
@@ -75,10 +76,11 @@ import com.truecaller.android.sdk.TruecallerSDK
 import com.truecaller.android.sdk.TruecallerSdkScope
 import com.truecaller.android.sdk.clients.VerificationCallback
 import com.truecaller.android.sdk.clients.VerificationDataBundle
+import io.michaelrocks.libphonenumber.android.PhoneNumberUtil
+import io.michaelrocks.libphonenumber.android.Phonenumber
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import timber.log.Timber
 import java.util.*
 
 private const val GOOGLE_SIGN_UP_REQUEST_CODE = 9001
@@ -157,7 +159,7 @@ class SignUpActivity : BaseActivity() {
         viewModel.progressBarStatus.observe(this, Observer {
             showProgressBar()
         })
-        viewModel.fromVerifictionScreen.observe(this, Observer {
+        viewModel.fromVerificationScreen.observe(this, Observer {
             if (it)
                 addRetryCountAnalytics()
         })
@@ -233,6 +235,11 @@ class SignUpActivity : BaseActivity() {
         val trueScope = TruecallerSdkScope.Builder(this, object : ITrueCallback {
             override fun onFailureProfileShared(trueError: TrueError) {
                 hideProgressBar()
+                if (TrueError.ERROR_TYPE_NETWORK == trueError.errorType) {
+                    showToast(application.getString(R.string.internet_not_available_msz))
+                } else {
+                    showToast(application.getString(R.string.something_went_wrong))
+                }
             }
 
             override fun onSuccessProfileShared(trueProfile: TrueProfile) {
@@ -300,7 +307,6 @@ class SignUpActivity : BaseActivity() {
             val task = GoogleSignIn.getSignedInAccountFromIntent(data)
             try {
                 val account = task.getResult(ApiException::class.java)!!
-                Timber.e("firebaseAuthWithGoogle:" + account.id)
                 handleGoogleSignInResult(account)
             } catch (e: ApiException) {
                 hideProgressBar()
@@ -452,6 +458,7 @@ class SignUpActivity : BaseActivity() {
         service: VerificationService = VerificationService.SINCH,
         verificationVia: VerificationVia = VerificationVia.FLASH_CALL
     ) {
+
         when (service) {
             VerificationService.SINCH -> {
                 verificationThroughSinch(countryCode, phoneNumber, verificationVia)
@@ -523,7 +530,12 @@ class SignUpActivity : BaseActivity() {
             override fun onVerificationFallback() {
             }
         }
-        val defaultRegion: String? = PhoneNumberUtils.getDefaultCountryIso(this)
+        var defaultRegion: String? = PhoneNumberUtils.getDefaultCountryIso(this)
+
+        if (defaultRegion.isNullOrEmpty()) {
+            defaultRegion = CountryCodePicker.getRegion(countryCode)
+        }
+
         AppAnalytics.create(AnalyticsEvent.SINCH_TEST.NAME)
             .addBasicParam()
             .addUserDetails()
@@ -532,8 +544,21 @@ class SignUpActivity : BaseActivity() {
             .addParam(AnalyticsEvent.COUNTRY_ISO_CODE.NAME, defaultRegion ?: "NULL")
             .addParam(AnalyticsEvent.VERIFICATION_VIA_SINCH_TEST.NAME, verificationVia.toString())
             .push()
-        val phoneNumberInE164: String =
-            PhoneNumberUtils.formatNumberToE164(phoneNumber, defaultRegion)
+
+        val pnu: PhoneNumberUtil = PhoneNumberUtil.createInstance(applicationContext)
+        var phoneNumberInE164: String
+        try {
+            val pn: Phonenumber.PhoneNumber = pnu.parse(phoneNumber, defaultRegion)
+            val pnE164: String = pnu.format(pn, PhoneNumberUtil.PhoneNumberFormat.E164)
+            phoneNumberInE164 = if (pnE164.isNotEmpty()) {
+                pnE164
+            } else {
+                PhoneNumberUtils.formatNumberToE164(phoneNumber, defaultRegion)
+            }
+        } catch (ex: Throwable) {
+            phoneNumberInE164 = countryCode + phoneNumber
+            LogException.catchException(ex)
+        }
 
         if (verificationVia == VerificationVia.FLASH_CALL) {
             flashCallVerificationPermissionCheck {

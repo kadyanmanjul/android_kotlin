@@ -20,6 +20,13 @@ public class CCPCountryGroup {
         this.nameCodeToAreaCodesMap = nameCodeToAreaCodesMap;
     }
 
+    public static CCPCountryGroup getCountryGroupForPhoneCode(int countryCode) {
+        if (countryGroups == null) {
+            initializeGroups();
+        }
+        return countryGroups.get(countryCode);
+    }
+
     private static void initializeGroups() {
 
         countryGroups = new SparseArray<>();
@@ -33,24 +40,6 @@ public class CCPCountryGroup {
         //create group for +358
         addGroupForPhoneCode358();
     }
-
-    private static void addGroupForPhoneCode358() {
-        HashMap<String, String> nameCodeToAreaCodes = new HashMap<>();
-        nameCodeToAreaCodes.put("ax", "18"); //Åland Islands
-        countryGroups.put(358, new CCPCountryGroup("fi", 2, nameCodeToAreaCodes)); // Finland
-    }
-
-    /**
-     * +44 group
-     */
-    private static void addGroupForPhoneCode44() {
-        HashMap<String, String> nameCodeToAreaCodes = new HashMap<>();
-        nameCodeToAreaCodes.put("gg", "1481"); //Guernsey
-        nameCodeToAreaCodes.put("im", "1624"); //ISLE_OF_MAN
-        nameCodeToAreaCodes.put("je", "1534"); //Jersey
-        countryGroups.put(44, new CCPCountryGroup("gb", 4, nameCodeToAreaCodes)); // UK
-    }
-
 
     /**
      * NANP countries (+1)
@@ -84,11 +73,21 @@ public class CCPCountryGroup {
         countryGroups.put(1, new CCPCountryGroup("us", 3, nameCodeToAreaCodes)); // USA
     }
 
-    public static CCPCountryGroup getCountryGroupForPhoneCode(int countryCode) {
-        if (countryGroups == null) {
-            initializeGroups();
-        }
-        return countryGroups.get(countryCode);
+    /**
+     * +44 group
+     */
+    private static void addGroupForPhoneCode44() {
+        HashMap<String, String> nameCodeToAreaCodes = new HashMap<>();
+        nameCodeToAreaCodes.put("gg", "1481"); //Guernsey
+        nameCodeToAreaCodes.put("im", "1624"); //ISLE_OF_MAN
+        nameCodeToAreaCodes.put("je", "1534"); //Jersey
+        countryGroups.put(44, new CCPCountryGroup("gb", 4, nameCodeToAreaCodes)); // UK
+    }
+
+    private static void addGroupForPhoneCode358() {
+        HashMap<String, String> nameCodeToAreaCodes = new HashMap<>();
+        nameCodeToAreaCodes.put("ax", "18"); //Åland Islands
+        countryGroups.put(358, new CCPCountryGroup("fi", 2, nameCodeToAreaCodes)); // Finland
     }
 
     /**

@@ -18,13 +18,10 @@ package com.joshtalks.joshskills.core.playback;
 
 import android.app.Activity;
 import android.media.MediaPlayer;
-
 import androidx.annotation.NonNull;
-
 import com.joshtalks.joshskills.repository.local.entity.AudioType;
 import com.joshtalks.joshskills.repository.local.entity.ChatModel;
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity;
-
 import java.util.List;
 
 

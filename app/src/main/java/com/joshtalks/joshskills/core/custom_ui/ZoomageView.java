@@ -17,11 +17,9 @@ import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.ScaleGestureDetector.OnScaleGestureListener;
 import android.widget.ImageView;
-
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.core.view.ScaleGestureDetectorCompat;
-
 import com.joshtalks.joshskills.R;
 
 /**
@@ -72,30 +70,9 @@ public class ZoomageView extends AppCompatImageView implements OnScaleGestureLis
     private boolean singleTapDetected = false;
     private final GestureDetector.OnGestureListener gestureListener = new GestureDetector.SimpleOnGestureListener() {
         @Override
-        public boolean onDoubleTapEvent(MotionEvent e) {
-            if (e.getAction() == MotionEvent.ACTION_UP) {
-                doubleTapDetected = true;
-            }
-
-            return false;
-        }
-
-        @Override
         public boolean onSingleTapUp(MotionEvent e) {
             singleTapDetected = true;
             return false;
-        }
-
-        @Override
-        public boolean onSingleTapConfirmed(MotionEvent e) {
-            singleTapDetected = false;
-            return false;
-        }
-
-        @Override
-        public boolean onDown(MotionEvent e) {
-
-            return true;
         }
 
         @Override
@@ -115,22 +92,33 @@ public class ZoomageView extends AppCompatImageView implements OnScaleGestureLis
             return super.onFling(e1, e2, velocityX, velocityY);
         }
 
+        @Override
+        public boolean onDown(MotionEvent e) {
+
+            return true;
+        }
+
+        @Override
+        public boolean onDoubleTapEvent(MotionEvent e) {
+            if (e.getAction() == MotionEvent.ACTION_UP) {
+                doubleTapDetected = true;
+            }
+
+            return false;
+        }
+
+        @Override
+        public boolean onSingleTapConfirmed(MotionEvent e) {
+            singleTapDetected = false;
+            return false;
+        }
+
 
     };
 
     public ZoomageView(Context context) {
         super(context);
         init(context, null);
-    }
-
-    public ZoomageView(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        init(context, attrs);
-    }
-
-    public ZoomageView(Context context, AttributeSet attrs, int defStyle) {
-        super(context, attrs, defStyle);
-        init(context, attrs);
     }
 
     private void init(Context context, AttributeSet attrs) {
@@ -177,6 +165,16 @@ public class ZoomageView extends AppCompatImageView implements OnScaleGestureLis
         if (doubleTapToZoomScaleFactor < minScale) {
             doubleTapToZoomScaleFactor = minScale;
         }
+    }
+
+    public ZoomageView(Context context, AttributeSet attrs) {
+        super(context, attrs);
+        init(context, attrs);
+    }
+
+    public ZoomageView(Context context, AttributeSet attrs, int defStyle) {
+        super(context, attrs, defStyle);
+        init(context, attrs);
     }
 
     /**
@@ -362,18 +360,6 @@ public class ZoomageView extends AppCompatImageView implements OnScaleGestureLis
     }
 
     /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void setScaleType(@Nullable ScaleType scaleType) {
-        if (scaleType != null) {
-            super.setScaleType(scaleType);
-            startScaleType = scaleType;
-            startValues = null;
-        }
-    }
-
-    /**
      * Set enabled state of the view. Note that this will reset the image's
      * {@link android.widget.ImageView.ScaleType} to its pre-zoom state.
      *
@@ -395,82 +381,6 @@ public class ZoomageView extends AppCompatImageView implements OnScaleGestureLis
     public void setImageResource(int resId) {
         super.setImageResource(resId);
         setScaleType(startScaleType);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void setImageDrawable(@Nullable Drawable drawable) {
-        super.setImageDrawable(drawable);
-        setScaleType(startScaleType);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void setImageBitmap(Bitmap bm) {
-        super.setImageBitmap(bm);
-        setScaleType(startScaleType);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void setImageURI(@Nullable Uri uri) {
-        super.setImageURI(uri);
-        setScaleType(startScaleType);
-    }
-
-    /**
-     * Update the bounds of the displayed image based on the current matrix.
-     *
-     * @param values the image's current matrix values.
-     */
-    private void updateBounds(final float[] values) {
-        if (getDrawable() != null) {
-            bounds.set(values[Matrix.MTRANS_X],
-                    values[Matrix.MTRANS_Y],
-                    getDrawable().getIntrinsicWidth() * values[Matrix.MSCALE_X] + values[Matrix.MTRANS_X],
-                    getDrawable().getIntrinsicHeight() * values[Matrix.MSCALE_Y] + values[Matrix.MTRANS_Y]);
-        }
-    }
-
-    /**
-     * Get the width of the displayed image.
-     *
-     * @return the current width of the image as displayed (not the width of the {@link ImageView} itself.
-     */
-    private float getCurrentDisplayedWidth() {
-        if (getDrawable() != null)
-            return getDrawable().getIntrinsicWidth() * matrixValues[Matrix.MSCALE_X];
-        else
-            return 0;
-    }
-
-    /**
-     * Get the height of the displayed image.
-     *
-     * @return the current height of the image as displayed (not the height of the {@link ImageView} itself.
-     */
-    private float getCurrentDisplayedHeight() {
-        if (getDrawable() != null)
-            return getDrawable().getIntrinsicHeight() * matrixValues[Matrix.MSCALE_Y];
-        else
-            return 0;
-    }
-
-    /**
-     * Remember our starting values so we can animate our image back to its original position.
-     */
-    private void setStartValues() {
-        startValues = new float[9];
-        startMatrix = new Matrix(getImageMatrix());
-        startMatrix.getValues(startValues);
-        calculatedMinScale = minScale * startValues[Matrix.MSCALE_X];
-        calculatedMaxScale = maxScale * startValues[Matrix.MSCALE_X];
     }
 
     @Override
@@ -552,6 +462,94 @@ public class ZoomageView extends AppCompatImageView implements OnScaleGestureLis
         }
 
         return super.onTouchEvent(event);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setScaleType(@Nullable ScaleType scaleType) {
+        if (scaleType != null) {
+            super.setScaleType(scaleType);
+            startScaleType = scaleType;
+            startValues = null;
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setImageDrawable(@Nullable Drawable drawable) {
+        super.setImageDrawable(drawable);
+        setScaleType(startScaleType);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setImageBitmap(Bitmap bm) {
+        super.setImageBitmap(bm);
+        setScaleType(startScaleType);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setImageURI(@Nullable Uri uri) {
+        super.setImageURI(uri);
+        setScaleType(startScaleType);
+    }
+
+    /**
+     * Update the bounds of the displayed image based on the current matrix.
+     *
+     * @param values the image's current matrix values.
+     */
+    private void updateBounds(final float[] values) {
+        if (getDrawable() != null) {
+            bounds.set(values[Matrix.MTRANS_X],
+                    values[Matrix.MTRANS_Y],
+                    getDrawable().getIntrinsicWidth() * values[Matrix.MSCALE_X] + values[Matrix.MTRANS_X],
+                    getDrawable().getIntrinsicHeight() * values[Matrix.MSCALE_Y] + values[Matrix.MTRANS_Y]);
+        }
+    }
+
+    /**
+     * Get the width of the displayed image.
+     *
+     * @return the current width of the image as displayed (not the width of the {@link ImageView} itself.
+     */
+    private float getCurrentDisplayedWidth() {
+        if (getDrawable() != null)
+            return getDrawable().getIntrinsicWidth() * matrixValues[Matrix.MSCALE_X];
+        else
+            return 0;
+    }
+
+    /**
+     * Get the height of the displayed image.
+     *
+     * @return the current height of the image as displayed (not the height of the {@link ImageView} itself.
+     */
+    private float getCurrentDisplayedHeight() {
+        if (getDrawable() != null)
+            return getDrawable().getIntrinsicHeight() * matrixValues[Matrix.MSCALE_Y];
+        else
+            return 0;
+    }
+
+    /**
+     * Remember our starting values so we can animate our image back to its original position.
+     */
+    private void setStartValues() {
+        startValues = new float[9];
+        startMatrix = new Matrix(getImageMatrix());
+        startMatrix.getValues(startValues);
+        calculatedMinScale = minScale * startValues[Matrix.MSCALE_X];
+        calculatedMaxScale = maxScale * startValues[Matrix.MSCALE_X];
     }
 
     /**
@@ -871,13 +869,13 @@ public class ZoomageView extends AppCompatImageView implements OnScaleGestureLis
         return true;
     }
 
-    public void setGestureDetectorInterface(GestureDetectorInterface gestureDetectorInterface) {
-        this.gestureDetectorInterface = gestureDetectorInterface;
-    }
-
     @Override
     public void onScaleEnd(ScaleGestureDetector detector) {
         scaleBy = 1f;
+    }
+
+    public void setGestureDetectorInterface(GestureDetectorInterface gestureDetectorInterface) {
+        this.gestureDetectorInterface = gestureDetectorInterface;
     }
 
     public interface GestureDetectorInterface {

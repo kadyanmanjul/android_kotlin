@@ -163,6 +163,7 @@ enum class AnalyticsEvent(val NAME: String) {
     PAYMENT_STATUS("Post Payment Status V3"),
     PAYMENT_STATUS_NEW("Payment Status V3"),
     POST_TRANSATION_STATUS("Post transaction Status V3"),
+
     //PAYMENT_INITIATED("Payment Initiated V3"),
     INVALID_COUPON_POPUP("Invalid coupon popup V3"),
 

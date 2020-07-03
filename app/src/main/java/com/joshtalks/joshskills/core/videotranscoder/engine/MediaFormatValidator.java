@@ -16,7 +16,6 @@
 package com.joshtalks.joshskills.core.videotranscoder.engine;
 
 import android.media.MediaFormat;
-
 import com.joshtalks.joshskills.core.videotranscoder.format.MediaFormatExtraConstants;
 
 

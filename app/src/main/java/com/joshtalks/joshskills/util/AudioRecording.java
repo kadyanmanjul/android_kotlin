@@ -1,10 +1,8 @@
 package com.joshtalks.joshskills.util;
 
 import android.media.MediaRecorder;
-
 import com.joshtalks.joshskills.core.analytics.ErrorTag;
 import com.joshtalks.joshskills.core.analytics.LogException;
-
 import java.io.File;
 
 

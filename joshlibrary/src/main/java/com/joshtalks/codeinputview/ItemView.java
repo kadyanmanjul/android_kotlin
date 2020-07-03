@@ -1,4 +1,4 @@
-package com.joshtalks.joshlibrary.codeinputview;
+package com.joshtalks.codeinputview;
 
 import android.annotation.SuppressLint;
 import android.content.Context;

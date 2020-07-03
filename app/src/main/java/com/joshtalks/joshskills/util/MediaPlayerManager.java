@@ -1,7 +1,6 @@
 package com.joshtalks.joshskills.util;
 
 import android.media.MediaPlayer;
-
 import java.io.IOException;
 
 public class MediaPlayerManager {

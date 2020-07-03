@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
-
 import com.clevertap.android.sdk.CleverTapAPI;
 import com.flurry.android.Constants;
 import com.flurry.android.FlurryAgent;
@@ -17,9 +16,6 @@ import com.joshtalks.joshskills.core.PrefManager;
 import com.joshtalks.joshskills.repository.local.model.InstallReferrerModel;
 import com.joshtalks.joshskills.repository.local.model.Mentor;
 import com.joshtalks.joshskills.repository.local.model.User;
-
-import org.jetbrains.annotations.NotNull;
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -30,7 +26,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
-
+import org.jetbrains.annotations.NotNull;
 import timber.log.Timber;
 
 import static com.joshtalks.joshskills.core.PrefManagerKt.INSTANCE_ID;
@@ -62,17 +58,6 @@ public class AppAnalytics {
         }
     }
 
-    public static AppAnalytics create(String title) {
-        return new AppAnalytics(title);
-    }
-
-    public static void updateUser() {
-        init();
-        updateCleverTapUser();
-        updateFlurryUser();
-        updateFreshchatSdkUser();
-    }
-
     private static void updateFreshchatSdkUser() {
         FreshchatUser freshchatUser = AppObjectController.getFreshChat().getUser();
         freshchatUser.setFirstName(User.getInstance().getFirstName());
@@ -90,6 +75,17 @@ public class AppAnalytics {
         } catch (MethodNotAllowedException e) {
             e.printStackTrace();
         }
+    }
+
+    public static AppAnalytics create(String title) {
+        return new AppAnalytics(title);
+    }
+
+    public static void updateUser() {
+        init();
+        updateCleverTapUser();
+        updateFlurryUser();
+        updateFreshchatSdkUser();
     }
 
     private static void updateCleverTapUser() {
@@ -122,6 +118,15 @@ public class AppAnalytics {
         list.add(user.getGender());
         list.add("Age " + getAge(user.getDateOfBirth()));
         FlurryAgent.UserProperties.set("JoshSkills.User", list);
+    }
+
+    public static void setLocation(double latitude, double longitude) {
+        if (latitude != 0.0d) {
+            Location location = new Location("Location");
+            location.setLatitude(latitude);
+            location.setLongitude(longitude);
+            cleverTapAnalytics.setLocation(location);
+        }
     }
 
     public static int getAge(String dobString) {
@@ -158,6 +163,19 @@ public class AppAnalytics {
         }
         cleverTapAnalytics.flush();
 
+    }
+
+    private String format(String unformatted) {
+        unformatted = unformatted.trim().toLowerCase();
+        StringBuilder formatted = new StringBuilder();
+        for (int index = 0; index < unformatted.length(); index++) {
+            char c = unformatted.charAt(index);
+            if (!(c >= 'a' && c <= 'z' || c >= '0' && c <= '9')) {
+                c = '_';
+            }
+            formatted.append(c);
+        }
+        return formatted.toString();
     }
 
     public AppAnalytics addBasicParam() {
@@ -224,19 +242,6 @@ public class AppAnalytics {
         return this;
     }
 
-    private String format(String unformatted) {
-        unformatted = unformatted.trim().toLowerCase();
-        StringBuilder formatted = new StringBuilder();
-        for (int index = 0; index < unformatted.length(); index++) {
-            char c = unformatted.charAt(index);
-            if (!(c >= 'a' && c <= 'z' || c >= '0' && c <= '9')) {
-                c = '_';
-            }
-            formatted.append(c);
-        }
-        return formatted.toString();
-    }
-
     public void push() {
         Timber.v(this.toString());
         if (BuildConfig.DEBUG) {
@@ -259,10 +264,6 @@ public class AppAnalytics {
         pushToFlurry(trackSession);
     }
 
-    public void endSession() {
-        FlurryAgent.endTimedEvent(event);
-    }
-
     private void formatParameters() {
 
         for (Map.Entry<String, Object> entry : parameters.entrySet()) {
@@ -276,15 +277,20 @@ public class AppAnalytics {
         firebaseAnalytics.logEvent(event, convertMapToBundle(parameters));
     }
 
+    @NotNull
+    @Override
+    public String toString() {
+        return "JoshSkillsAnalytics{" +
+                "Event Name='" + event + '\'' +
+                ", Parameters=" + parameters +
+                '}';
+    }
+
     private void pushToFlurry(boolean trackSession) {
         if (trackSession)
             FlurryAgent.logEvent(event, typeCastMap(parameters), true);
         else
             FlurryAgent.logEvent(event, typeCastMap(parameters));
-    }
-
-    private void pushToCleverTap() {
-        cleverTapAnalytics.pushEvent(event, parameters);
     }
 
     private Bundle convertMapToBundle(HashMap<String, Object> properties) {
@@ -310,21 +316,11 @@ public class AppAnalytics {
         return newMap;
     }
 
-    @NotNull
-    @Override
-    public String toString() {
-        return "JoshSkillsAnalytics{" +
-                "Event Name='" + event + '\'' +
-                ", Parameters=" + parameters +
-                '}';
+    private void pushToCleverTap() {
+        cleverTapAnalytics.pushEvent(event, parameters);
     }
 
-    public static void setLocation(double latitude, double longitude) {
-        if (latitude != 0.0d) {
-            Location location = new Location("Location");
-            location.setLatitude(latitude);
-            location.setLongitude(longitude);
-            cleverTapAnalytics.setLocation(location);
-        }
+    public void endSession() {
+        FlurryAgent.endTimedEvent(event);
     }
 }

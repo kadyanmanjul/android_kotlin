@@ -19,7 +19,6 @@ import android.media.MediaCodec;
 import android.media.MediaFormat;
 import android.media.MediaMuxer;
 import android.util.Log;
-
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.ArrayList;
@@ -89,6 +88,17 @@ public class QueuedMuxer {
         mByteBuffer = null;
     }
 
+    private int getTrackIndexForSampleType(SampleType sampleType) {
+        switch (sampleType) {
+            case VIDEO:
+                return mVideoTrackIndex;
+            case AUDIO:
+                return mAudioTrackIndex;
+            default:
+                throw new AssertionError();
+        }
+    }
+
     public void writeSampleData(SampleType sampleType, ByteBuffer byteBuf, MediaCodec.BufferInfo bufferInfo) {
         if (mStarted) {
             mMuxer.writeSampleData(getTrackIndexForSampleType(sampleType), byteBuf, bufferInfo);
@@ -101,17 +111,6 @@ public class QueuedMuxer {
         }
         mByteBuffer.put(byteBuf);
         mSampleInfoList.add(new SampleInfo(sampleType, bufferInfo.size, bufferInfo));
-    }
-
-    private int getTrackIndexForSampleType(SampleType sampleType) {
-        switch (sampleType) {
-            case VIDEO:
-                return mVideoTrackIndex;
-            case AUDIO:
-                return mAudioTrackIndex;
-            default:
-                throw new AssertionError();
-        }
     }
 
     public enum SampleType {VIDEO, AUDIO}

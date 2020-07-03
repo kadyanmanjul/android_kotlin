@@ -18,7 +18,6 @@ package com.joshtalks.joshskills.core.videotranscoder.compat;
 import android.media.MediaCodecInfo;
 import android.media.MediaCodecList;
 import android.media.MediaFormat;
-
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -37,20 +36,8 @@ public class MediaCodecListCompat {
         }
     }
 
-    private static int getCodecCount() {
-        return MediaCodecList.getCodecCount();
-    }
-
-    private static MediaCodecInfo getCodecInfoAt(int index) {
-        return MediaCodecList.getCodecInfoAt(index);
-    }
-
     public final String findDecoderForFormat(MediaFormat format) {
         return findCoderForFormat(format, false);
-    }
-
-    public final String findEncoderForFormat(MediaFormat format) {
-        return findCoderForFormat(format, true);
     }
 
     private String findCoderForFormat(MediaFormat format, boolean findEncoder) {
@@ -66,6 +53,10 @@ public class MediaCodecListCompat {
         return null;
     }
 
+    private static int getCodecCount() {
+        return MediaCodecList.getCodecCount();
+    }
+
     public final MediaCodecInfo[] getCodecInfos() {
         int codecCount = getCodecCount();
         MediaCodecInfo[] codecInfos = new MediaCodecInfo[codecCount];
@@ -74,6 +65,14 @@ public class MediaCodecListCompat {
             codecInfos[i] = getCodecInfoAt(i);
         }
         return codecInfos;
+    }
+
+    private static MediaCodecInfo getCodecInfoAt(int index) {
+        return MediaCodecList.getCodecInfoAt(index);
+    }
+
+    public final String findEncoderForFormat(MediaFormat format) {
+        return findCoderForFormat(format, true);
     }
 
     private final class MediaCodecInfoIterator implements Iterator<MediaCodecInfo> {

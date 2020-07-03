@@ -6,18 +6,18 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:paddingHorizontal="@dimen/_4sdp"
-        tools:ignore="MissingPrefix"
-        android:paddingVertical="@dimen/_12sdp">
+        android:paddingHorizontal="@dimen/_8sdp"
+        android:paddingVertical="@dimen/_12sdp"
+        tools:ignore="MissingPrefix">
 
     <TextView
             android:id="@+id/question"
             fontPath="fonts/Roboto-Regular.ttf"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/_4sdp"
             android:ellipsize="end"
             android:maxLength="100"
+            android:paddingHorizontal="@dimen/_4sdp"
             android:textColor="@color/black"
             android:textSize="@dimen/font_14"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -34,10 +34,6 @@
             android:src="@drawable/recv_ic_arrow"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.98"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintWidth_default="percent"
-            app:layout_constraintWidth_percent="0.05" />
+            app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

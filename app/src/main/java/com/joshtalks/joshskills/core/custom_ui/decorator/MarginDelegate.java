@@ -1,7 +1,6 @@
 package com.joshtalks.joshskills.core.custom_ui.decorator;
 
 import android.graphics.Rect;
-
 import androidx.annotation.IntRange;
 import androidx.annotation.Px;
 import androidx.recyclerview.widget.OrientationHelper;

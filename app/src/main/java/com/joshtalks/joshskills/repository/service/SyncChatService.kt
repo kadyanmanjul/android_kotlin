@@ -7,8 +7,17 @@ import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
 import com.joshtalks.joshskills.repository.server.AmazonPolicyResponse
-import com.joshtalks.joshskills.repository.server.chat_message.*
-import kotlinx.coroutines.*
+import com.joshtalks.joshskills.repository.server.chat_message.BaseChatMessage
+import com.joshtalks.joshskills.repository.server.chat_message.BaseMediaMessage
+import com.joshtalks.joshskills.repository.server.chat_message.TAudioMessage
+import com.joshtalks.joshskills.repository.server.chat_message.TChatMessage
+import com.joshtalks.joshskills.repository.server.chat_message.TImageMessage
+import com.joshtalks.joshskills.repository.server.chat_message.TVideoMessage
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -46,7 +55,8 @@ object SyncChatService {
                                         uploadOnS3Server(responseObj, filePath).await()
 
                                     if (statusCode in 200..210) {
-                                        url =responseObj.url.plus(File.separator).plus(responseObj.fields["key"])
+                                        url = responseObj.url.plus(File.separator)
+                                            .plus(responseObj.fields["key"])
                                     }
                                 }
                             }

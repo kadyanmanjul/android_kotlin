@@ -14,12 +14,9 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.ImageView;
-
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
-
 import com.joshtalks.joshskills.R;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -129,37 +126,6 @@ public class FlipProgressDialog extends DialogFragment {
         this.canceledOnTouchOutside = canceledOnTouchOutside;
     }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setStyle(STYLE_NO_FRAME, R.style.full_dialog);
-
-    }
-
- /*   override fun onStart() {
-        super.onStart()
-        val dialog = dialog
-        if (dialog != null) {
-            dialog.window?.setLayout(
-                    FrameLayout.LayoutParams.MATCH_PARENT,
-                    FrameLayout.LayoutParams.MATCH_PARENT
-            )
-        }
-    }*/
-
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        try {
-            setBackgroundDim();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-    }
-
-
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -174,19 +140,16 @@ public class FlipProgressDialog extends DialogFragment {
         return view;
     }
 
-    @Override
-    public void onDestroyView() {
-        try {
-            Dialog dialog = getDialog();
-            if (dialog != null && getRetainInstance()) {
-                dialog.setDismissMessage(null);
-            }
-            handler.removeCallbacks(r);
-        } catch (Exception e) {
-            e.printStackTrace();
+ /*   override fun onStart() {
+        super.onStart()
+        val dialog = dialog
+        if (dialog != null) {
+            dialog.window?.setLayout(
+                    FrameLayout.LayoutParams.MATCH_PARENT,
+                    FrameLayout.LayoutParams.MATCH_PARENT
+            )
         }
-        super.onDestroyView();
-    }
+    }*/
 
     private void animateAnimatorSetSample(ImageView target) {
 
@@ -222,17 +185,6 @@ public class FlipProgressDialog extends DialogFragment {
         animatorSet.start();
     }
 
-    private void setBackgroundDim() {
-        try {
-            Window window = getDialog().getWindow();
-            WindowManager.LayoutParams windowParams = window.getAttributes();
-            windowParams.dimAmount = dimAmount;
-            windowParams.flags |= WindowManager.LayoutParams.FLAG_DIM_BEHIND;
-            window.setAttributes(windowParams);
-        } catch (Exception e) {
-        }
-    }
-
     public void fullRound() {
         this.duration = duration * 2;
         this.endAngle = endAngle * 2;
@@ -242,5 +194,48 @@ public class FlipProgressDialog extends DialogFragment {
     public void dismiss() {
         super.dismiss();
 
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setStyle(STYLE_NO_FRAME, R.style.full_dialog);
+
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        try {
+            setBackgroundDim();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    @Override
+    public void onDestroyView() {
+        try {
+            Dialog dialog = getDialog();
+            if (dialog != null && getRetainInstance()) {
+                dialog.setDismissMessage(null);
+            }
+            handler.removeCallbacks(r);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        super.onDestroyView();
+    }
+
+    private void setBackgroundDim() {
+        try {
+            Window window = getDialog().getWindow();
+            WindowManager.LayoutParams windowParams = window.getAttributes();
+            windowParams.dimAmount = dimAmount;
+            windowParams.flags |= WindowManager.LayoutParams.FLAG_DIM_BEHIND;
+            window.setAttributes(windowParams);
+        } catch (Exception e) {
+        }
     }
 }

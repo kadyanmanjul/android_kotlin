@@ -17,7 +17,6 @@ package com.joshtalks.joshskills.core.custom_ui.spinnerdatepicker;/*
 import android.content.Context;
 import android.text.format.DateFormat;
 import android.text.format.Time;
-
 import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -54,71 +53,6 @@ public class DateUtils {
             format.setTimeZone(UTC_TIMEZONE);
         }
         CommonDateUtils.NO_YEAR_DATE_FORMAT.setTimeZone(UTC_TIMEZONE);
-    }
-
-    /**
-     * Parses the supplied string to see if it looks like a date.
-     *
-     * @param string          The string representation of the provided date
-     * @param mustContainYear If true, the string is parsed as a date containing a year. If false,
-     *                        the string is parsed into a valid date even if the year field is missing.
-     * @return A Calendar object corresponding to the date if the string is successfully parsed.
-     * If not, null is returned.
-     */
-    public static Calendar parseDate(String string, boolean mustContainYear) {
-        ParsePosition parsePosition = new ParsePosition(0);
-        Date date;
-        if (!mustContainYear) {
-            final boolean noYearParsed;
-            // Unfortunately, we can't parse Feb 29th correctly, so let's handle this day seperately
-            if (NO_YEAR_DATE_FEB29TH.equals(string)) {
-                return getUtcDate(0, Calendar.FEBRUARY, 29);
-            } else {
-                synchronized (CommonDateUtils.NO_YEAR_DATE_FORMAT) {
-                    date = CommonDateUtils.NO_YEAR_DATE_FORMAT.parse(string, parsePosition);
-                }
-                noYearParsed = parsePosition.getIndex() == string.length();
-            }
-            if (noYearParsed) {
-                return getUtcDate(date, true);
-            }
-        }
-        for (int i = 0; i < DATE_FORMATS.length; i++) {
-            SimpleDateFormat f = DATE_FORMATS[i];
-            synchronized (f) {
-                parsePosition.setIndex(0);
-                date = f.parse(string, parsePosition);
-                if (parsePosition.getIndex() == string.length()) {
-                    return getUtcDate(date, false);
-                }
-            }
-        }
-        return null;
-    }
-
-    private static final Calendar getUtcDate(Date date, boolean noYear) {
-        final Calendar calendar = Calendar.getInstance(UTC_TIMEZONE, Locale.US);
-        calendar.setTime(date);
-        if (noYear) {
-            calendar.set(Calendar.YEAR, 0);
-        }
-        return calendar;
-    }
-
-    private static final Calendar getUtcDate(int year, int month, int dayOfMonth) {
-        final Calendar calendar = Calendar.getInstance(UTC_TIMEZONE, Locale.US);
-        calendar.clear();
-        calendar.set(Calendar.YEAR, year);
-        calendar.set(Calendar.MONTH, month);
-        calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-        return calendar;
-    }
-
-    public static boolean isYearSet(Calendar cal) {
-        // use the Calendar.YEAR field to track whether or not the year is set instead of
-        // Calendar.isSet() because doing Calendar.get() causes Calendar.isSet() to become
-        // true irregardless of what the previous value was
-        return cal.get(Calendar.YEAR) > 1;
     }
 
     /**
@@ -172,17 +106,53 @@ public class DateUtils {
         }
     }
 
-    public static boolean isMonthBeforeDay(Context context) {
-        char[] dateFormatOrder = DateFormat.getDateFormatOrder(context);
-        for (int i = 0; i < dateFormatOrder.length; i++) {
-            if (dateFormatOrder[i] == 'd') {
-                return false;
+    /**
+     * Parses the supplied string to see if it looks like a date.
+     *
+     * @param string          The string representation of the provided date
+     * @param mustContainYear If true, the string is parsed as a date containing a year. If false,
+     *                        the string is parsed into a valid date even if the year field is missing.
+     * @return A Calendar object corresponding to the date if the string is successfully parsed.
+     * If not, null is returned.
+     */
+    public static Calendar parseDate(String string, boolean mustContainYear) {
+        ParsePosition parsePosition = new ParsePosition(0);
+        Date date;
+        if (!mustContainYear) {
+            final boolean noYearParsed;
+            // Unfortunately, we can't parse Feb 29th correctly, so let's handle this day seperately
+            if (NO_YEAR_DATE_FEB29TH.equals(string)) {
+                return getUtcDate(0, Calendar.FEBRUARY, 29);
+            } else {
+                synchronized (CommonDateUtils.NO_YEAR_DATE_FORMAT) {
+                    date = CommonDateUtils.NO_YEAR_DATE_FORMAT.parse(string, parsePosition);
+                }
+                noYearParsed = parsePosition.getIndex() == string.length();
             }
-            if (dateFormatOrder[i] == 'M') {
-                return true;
+            if (noYearParsed) {
+                return getUtcDate(date, true);
             }
         }
-        return false;
+        for (int i = 0; i < DATE_FORMATS.length; i++) {
+            SimpleDateFormat f = DATE_FORMATS[i];
+            synchronized (f) {
+                parsePosition.setIndex(0);
+                date = f.parse(string, parsePosition);
+                if (parsePosition.getIndex() == string.length()) {
+                    return getUtcDate(date, false);
+                }
+            }
+        }
+        return null;
+    }
+
+    private static final Calendar getUtcDate(int year, int month, int dayOfMonth) {
+        final Calendar calendar = Calendar.getInstance(UTC_TIMEZONE, Locale.US);
+        calendar.clear();
+        calendar.set(Calendar.YEAR, year);
+        calendar.set(Calendar.MONTH, month);
+        calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+        return calendar;
     }
 
     /**
@@ -206,6 +176,35 @@ public class DateUtils {
             return new SimpleDateFormat(
                     DateUtils.isMonthBeforeDay(context) ? "MMMM dd" : "dd MMMM");
         }
+    }
+
+    private static final Calendar getUtcDate(Date date, boolean noYear) {
+        final Calendar calendar = Calendar.getInstance(UTC_TIMEZONE, Locale.US);
+        calendar.setTime(date);
+        if (noYear) {
+            calendar.set(Calendar.YEAR, 0);
+        }
+        return calendar;
+    }
+
+    public static boolean isYearSet(Calendar cal) {
+        // use the Calendar.YEAR field to track whether or not the year is set instead of
+        // Calendar.isSet() because doing Calendar.get() causes Calendar.isSet() to become
+        // true irregardless of what the previous value was
+        return cal.get(Calendar.YEAR) > 1;
+    }
+
+    public static boolean isMonthBeforeDay(Context context) {
+        char[] dateFormatOrder = DateFormat.getDateFormatOrder(context);
+        for (int i = 0; i < dateFormatOrder.length; i++) {
+            if (dateFormatOrder[i] == 'd') {
+                return false;
+            }
+            if (dateFormatOrder[i] == 'M') {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

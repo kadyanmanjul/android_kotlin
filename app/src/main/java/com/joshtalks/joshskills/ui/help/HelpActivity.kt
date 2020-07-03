@@ -111,7 +111,10 @@ class HelpActivity : CoreJoshActivity() {
                     when {
                         Action.CALL == it.option.action -> {
                             it.option.actionData?.run {
-                                appAnalytics.addParam(AnalyticsEvent.CALL_HELPLINE.NAME,it.option.actionData.toString())
+                                appAnalytics.addParam(
+                                    AnalyticsEvent.CALL_HELPLINE.NAME,
+                                    it.option.actionData.toString()
+                                )
                                 AppAnalytics.create(AnalyticsEvent.CLICK_HELPLINE_SELECTED.NAME)
                                     .addBasicParam()
                                     .addUserDetails()
@@ -120,7 +123,10 @@ class HelpActivity : CoreJoshActivity() {
                             }
                         }
                         Action.HELPCHAT == it.option.action -> {
-                            appAnalytics.addParam(AnalyticsEvent.HELP_CHAT.NAME,it.option.action.toString())
+                            appAnalytics.addParam(
+                                AnalyticsEvent.HELP_CHAT.NAME,
+                                it.option.action.toString()
+                            )
                             AppAnalytics.create(AnalyticsEvent.HELP_CHAT.NAME)
                                 .addBasicParam()
                                 .addUserDetails()
@@ -129,7 +135,10 @@ class HelpActivity : CoreJoshActivity() {
                             PrefManager.put(FRESH_CHAT_UNREAD_MESSAGES, 0)
                         }
                         Action.FAQ == it.option.action -> {
-                            appAnalytics.addParam(AnalyticsEvent.FAQ_SLECTED.NAME,it.option.action.toString())
+                            appAnalytics.addParam(
+                                AnalyticsEvent.FAQ_SLECTED.NAME,
+                                it.option.action.toString()
+                            )
                             AppAnalytics.create(AnalyticsEvent.FAQ_SLECTED.NAME)
                                 .addBasicParam()
                                 .addUserDetails()
@@ -161,7 +170,10 @@ class HelpActivity : CoreJoshActivity() {
     }
 
     private fun showFaqFragment(selectedCategory: FAQCategory, categoryList: List<FAQCategory>) {
-        appAnalytics.addParam(AnalyticsEvent.FAQ_CATEGORY_SELECTED.NAME,selectedCategory.categoryName)
+        appAnalytics.addParam(
+            AnalyticsEvent.FAQ_CATEGORY_SELECTED.NAME,
+            selectedCategory.categoryName
+        )
         supportFragmentManager.commit(true) {
             addToBackStack(FaqFragment::class.java.name)
             replace(
@@ -173,7 +185,7 @@ class HelpActivity : CoreJoshActivity() {
     }
 
     private fun showFaqDetailsFragment(faq: FAQ) {
-        appAnalytics.addParam(AnalyticsEvent.FAQ_SELECTED.NAME,faq.id)
+        appAnalytics.addParam(AnalyticsEvent.FAQ_SELECTED.NAME, faq.id)
         supportFragmentManager.commit(true) {
             addToBackStack(FaqDetailsFragment::class.java.name)
             add(

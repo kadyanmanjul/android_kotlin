@@ -2,9 +2,7 @@ package com.joshtalks.joshskills.core.videotranscoder.engine;
 
 import android.media.MediaCodec;
 import android.media.MediaFormat;
-
 import com.joshtalks.joshskills.core.videotranscoder.compat.MediaCodecBufferCompatWrapper;
-
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.ShortBuffer;
@@ -45,12 +43,6 @@ class AudioChannel {
 
         mDecoderBuffers = new MediaCodecBufferCompatWrapper(mDecoder);
         mEncoderBuffers = new MediaCodecBufferCompatWrapper(mEncoder);
-    }
-
-    private static long sampleCountToDurationUs(final int sampleCount,
-                                                final int sampleRate,
-                                                final int channelCount) {
-        return (sampleCount / (sampleRate * MICROSECS_PER_SEC)) / channelCount;
     }
 
     public void setActualDecodedFormat(final MediaFormat decodedFormat) {
@@ -212,6 +204,12 @@ class AudioChannel {
         }
 
         return input.presentationTimeUs;
+    }
+
+    private static long sampleCountToDurationUs(final int sampleCount,
+                                                final int sampleRate,
+                                                final int channelCount) {
+        return (sampleCount / (sampleRate * MICROSECS_PER_SEC)) / channelCount;
     }
 
     private static class AudioBuffer {

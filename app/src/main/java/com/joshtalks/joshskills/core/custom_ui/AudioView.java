@@ -1,6 +1,7 @@
 package com.joshtalks.joshskills.core.custom_ui;
 
 import android.Manifest;
+
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
@@ -14,10 +15,8 @@ import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatImageView;
-
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.PlaybackParameters;
@@ -42,7 +41,6 @@ import com.karumi.dexter.listener.PermissionGrantedResponse;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.single.PermissionListener;
 import com.pnikosis.materialishprogress.ProgressWheel;
-
 import java.io.File;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
@@ -176,137 +174,6 @@ public class AudioView extends FrameLayout {
 
     }
 
-
-    private void initSeekBar() {
-        seekPlayerProgress.requestFocus();
-        seekPlayerProgress.setProgress(0);
-
-        seekPlayerProgress.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                if (!fromUser) {
-                    // We're not interested in programmatically generated changes to
-                    // the progress bar's position.
-                    return;
-                }
-
-                audioPlayerManager.seekTo(progress * AUDIO_PROGRESS_UPDATE_TIME);
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-
-            }
-        });
-
-        seekPlayerProgress.setMax(0);
-        seekPlayerProgress.setMax(audioPlayerManager.getDuration() / AUDIO_PROGRESS_UPDATE_TIME);
-
-    }
-
-    @Override
-    protected void onAttachedToWindow() {
-        super.onAttachedToWindow();
-        //  if (!EventBus.getDefault().isRegistered(this)) EventBus.getDefault().register(this);
-    }
-
-    @Override
-    protected void onDetachedFromWindow() {
-        super.onDetachedFromWindow();
-    }
-
-    private void setPlay() {
-        controlToggle.displayQuick(pauseButton);
-        AppAnalytics.create(AnalyticsEvent.AUDIO_PLAYED.getNAME()).addParam("ChatId", message.getChatId()).push();
-
-        String audioId = null;
-        try {
-            audioId = message.getQuestion().getAudioList().get(0).getId();
-        } catch (Exception e) {
-
-        }
-        audioPlayerManager.play(this.uri, eventListener, audioId);
-        setProgress();
-        if (Utils.INSTANCE.getCurrentMediaVolume(getContext()) <= 0) {
-            showToast();
-        }
-
-    }
-
-    private void setPause() {
-        isPlaying = false;
-        audioPlayerManager.pause();
-        controlToggle.displayQuick(playButton);
-
-    }
-
-    private void setProgress() {
-        seekPlayerProgress.setMax(audioPlayerManager.getDuration() / AUDIO_PROGRESS_UPDATE_TIME);
-        AppObjectController.getUiHandler().post(new Runnable() {
-            @Override
-            public void run() {
-                if (audioPlayerManager != null && isPlaying) {
-                    seekPlayerProgress.setMax(audioPlayerManager.getDuration() / AUDIO_PROGRESS_UPDATE_TIME);
-                    int mCurrentPosition = audioPlayerManager.getCurrentPosition() / AUDIO_PROGRESS_UPDATE_TIME;
-                    seekPlayerProgress.setProgress(mCurrentPosition);
-                    timestamp.setText(String.format(Locale.getDefault(), "%02d:%02d",
-                            TimeUnit.MILLISECONDS.toMinutes(audioPlayerManager.getCurrentPosition()),
-                            TimeUnit.MILLISECONDS.toSeconds(audioPlayerManager.getCurrentPosition())));
-
-                    AppObjectController.getUiHandler().postDelayed(this, AUDIO_PROGRESS_UPDATE_TIME);
-                }
-            }
-        });
-    }
-
-    void setTimeStampOfAudio() {
-        try {
-
-            if (seekPlayerProgress.getProgress() > 0) {
-                duration = (long) seekPlayerProgress.getProgress();
-            } else {
-
-                Long duration = Utils.getDurationOfMedia(getContext(), uri.getPath());
-                if (duration == null) {
-                    duration = this.duration;
-
-                }
-            }
-            timestamp.setText(String.format(Locale.getDefault(), "%02d:%02d",
-                    TimeUnit.MILLISECONDS.toMinutes(duration),
-                    TimeUnit.MILLISECONDS.toSeconds(duration)));
-        } catch (Exception e) {
-            //  e.printStackTrace();
-        }
-    }
-
-    void setTotalTimeStampOfAudio() {
-        try {
-
-            Long duration = Utils.getDurationOfMedia(getContext(), uri.getPath());
-            if (duration == null) {
-                duration = this.duration;
-
-            }
-            timestamp.setText(String.format(Locale.getDefault(), "%02d:%02d",
-                    TimeUnit.MILLISECONDS.toMinutes(duration),
-                    TimeUnit.MILLISECONDS.toSeconds(duration)));
-        } catch (Exception e) {
-            //  e.printStackTrace();
-        }
-    }
-
-    private void showToast() {
-        Toast toast = Toast.makeText(getContext(), getContext().getString(R.string.volume_up_message), Toast.LENGTH_LONG);
-        toast.setGravity(Gravity.CENTER, 0, 0);
-        toast.show();
-    }
-
     void updateUI() {
         if (message.getUrl() != null) {
             if (message.getDownloadStatus() == DOWNLOAD_STATUS.DOWNLOADED) {
@@ -384,6 +251,15 @@ public class AudioView extends FrameLayout {
         }
     }
 
+    private void mediaDownloaded() {
+        downloadContainer.setVisibility(GONE);
+        controlToggle.setVisibility(VISIBLE);
+        initSeekBar();
+        setTimeStampOfAudio();
+        updateUri();
+
+    }
+
     private void mediaNotDownloaded() {
         downloadContainer.setVisibility(VISIBLE);
         controlToggle.setVisibility(GONE);
@@ -401,13 +277,57 @@ public class AudioView extends FrameLayout {
         startDownloadIV.setVisibility(GONE);
     }
 
-    private void mediaDownloaded() {
-        downloadContainer.setVisibility(GONE);
-        controlToggle.setVisibility(VISIBLE);
-        initSeekBar();
-        setTimeStampOfAudio();
-        updateUri();
+    private void initSeekBar() {
+        seekPlayerProgress.requestFocus();
+        seekPlayerProgress.setProgress(0);
 
+        seekPlayerProgress.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                if (!fromUser) {
+                    // We're not interested in programmatically generated changes to
+                    // the progress bar's position.
+                    return;
+                }
+
+                audioPlayerManager.seekTo(progress * AUDIO_PROGRESS_UPDATE_TIME);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+
+        seekPlayerProgress.setMax(0);
+        seekPlayerProgress.setMax(audioPlayerManager.getDuration() / AUDIO_PROGRESS_UPDATE_TIME);
+
+    }
+
+    void setTimeStampOfAudio() {
+        try {
+
+            if (seekPlayerProgress.getProgress() > 0) {
+                duration = (long) seekPlayerProgress.getProgress();
+            } else {
+
+                Long duration = Utils.getDurationOfMedia(getContext(), uri.getPath());
+                if (duration == null) {
+                    duration = this.duration;
+
+                }
+            }
+            timestamp.setText(String.format(Locale.getDefault(), "%02d:%02d",
+                    TimeUnit.MILLISECONDS.toMinutes(duration),
+                    TimeUnit.MILLISECONDS.toSeconds(duration)));
+        } catch (Exception e) {
+            //  e.printStackTrace();
+        }
     }
 
     private void updateUri() {
@@ -435,6 +355,83 @@ public class AudioView extends FrameLayout {
             }
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        //  if (!EventBus.getDefault().isRegistered(this)) EventBus.getDefault().register(this);
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+    }
+
+    private void setPlay() {
+        controlToggle.displayQuick(pauseButton);
+        AppAnalytics.create(AnalyticsEvent.AUDIO_PLAYED.getNAME()).addParam("ChatId", message.getChatId()).push();
+
+        String audioId = null;
+        try {
+            audioId = message.getQuestion().getAudioList().get(0).getId();
+        } catch (Exception e) {
+
+        }
+        audioPlayerManager.play(this.uri, eventListener, audioId);
+        setProgress();
+        if (Utils.INSTANCE.getCurrentMediaVolume(getContext()) <= 0) {
+            showToast();
+        }
+
+    }
+
+    private void setProgress() {
+        seekPlayerProgress.setMax(audioPlayerManager.getDuration() / AUDIO_PROGRESS_UPDATE_TIME);
+        AppObjectController.getUiHandler().post(new Runnable() {
+            @Override
+            public void run() {
+                if (audioPlayerManager != null && isPlaying) {
+                    seekPlayerProgress.setMax(audioPlayerManager.getDuration() / AUDIO_PROGRESS_UPDATE_TIME);
+                    int mCurrentPosition = audioPlayerManager.getCurrentPosition() / AUDIO_PROGRESS_UPDATE_TIME;
+                    seekPlayerProgress.setProgress(mCurrentPosition);
+                    timestamp.setText(String.format(Locale.getDefault(), "%02d:%02d",
+                            TimeUnit.MILLISECONDS.toMinutes(audioPlayerManager.getCurrentPosition()),
+                            TimeUnit.MILLISECONDS.toSeconds(audioPlayerManager.getCurrentPosition())));
+
+                    AppObjectController.getUiHandler().postDelayed(this, AUDIO_PROGRESS_UPDATE_TIME);
+                }
+            }
+        });
+    }
+
+    private void showToast() {
+        Toast toast = Toast.makeText(getContext(), getContext().getString(R.string.volume_up_message), Toast.LENGTH_LONG);
+        toast.setGravity(Gravity.CENTER, 0, 0);
+        toast.show();
+    }
+
+    private void setPause() {
+        isPlaying = false;
+        audioPlayerManager.pause();
+        controlToggle.displayQuick(playButton);
+
+    }
+
+    void setTotalTimeStampOfAudio() {
+        try {
+
+            Long duration = Utils.getDurationOfMedia(getContext(), uri.getPath());
+            if (duration == null) {
+                duration = this.duration;
+
+            }
+            timestamp.setText(String.format(Locale.getDefault(), "%02d:%02d",
+                    TimeUnit.MILLISECONDS.toMinutes(duration),
+                    TimeUnit.MILLISECONDS.toSeconds(duration)));
+        } catch (Exception e) {
+            //  e.printStackTrace();
         }
     }
 

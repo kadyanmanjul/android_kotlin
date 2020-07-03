@@ -30,8 +30,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
-                tools:visibility="visible"
-                android:visibility="gone" />
+                android:visibility="gone"
+                tools:visibility="visible" />
 
 
         <RelativeLayout
@@ -71,8 +71,8 @@
                             android:padding="@dimen/_4sdp"
                             android:src="@drawable/ic_download"
                             android:tint="#7A7A7A"
-                            tools:visibility="invisible"
-                            android:visibility="gone" />
+                            android:visibility="gone"
+                            tools:visibility="invisible" />
 
 
                     <androidx.appcompat.widget.AppCompatImageView
@@ -85,9 +85,9 @@
                             android:padding="@dimen/_4sdp"
                             android:src="@drawable/ic_cross"
                             android:tint="#7A7A7A"
-                            tools:visibility="invisible"
+                            android:visibility="invisible"
 
-                            android:visibility="invisible" />
+                            tools:visibility="invisible" />
 
                     <ProgressBar
                             android:id="@+id/progress_bar"
@@ -95,10 +95,10 @@
                             android:layout_height="@dimen/_36sdp"
                             android:layout_gravity="center"
                             android:indeterminate="true"
-                            tools:visibility="visible"
-
                             android:indeterminateTint="@color/button_primary_color"
-                            android:visibility="invisible" />
+
+                            android:visibility="invisible"
+                            tools:visibility="visible" />
 
 
                 </FrameLayout>
@@ -110,10 +110,10 @@
                         android:layout_gravity="center"
                         android:background="@null"
                         android:contentDescription="@string/play_button_description"
-                        tools:visibility="visible"
-
                         android:visibility="invisible"
-                        app:srcCompat="@drawable/ic_play_24dp" />
+
+                        app:srcCompat="@drawable/ic_play_24dp"
+                        tools:visibility="visible" />
 
                 <androidx.appcompat.widget.AppCompatImageView
                         android:id="@+id/btnPause"
@@ -122,10 +122,10 @@
                         android:layout_gravity="center"
                         android:background="@null"
                         android:contentDescription="@string/play_button_description"
-                        tools:visibility="visible"
-
                         android:visibility="invisible"
-                        app:srcCompat="@drawable/ic_pause_24dp" />
+
+                        app:srcCompat="@drawable/ic_pause_24dp"
+                        tools:visibility="visible" />
 
 
             </FrameLayout>
@@ -208,9 +208,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
-                tools:visibility="visible"
+                android:visibility="gone"
 
-                android:visibility="gone" />
+                tools:visibility="visible" />
     </RelativeLayout>
 
 </FrameLayout>

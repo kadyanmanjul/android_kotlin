@@ -6,7 +6,12 @@ import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.crashlytics.android.Crashlytics
-import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.INSTANCE_ID
+import com.joshtalks.joshskills.core.JoshApplication
+import com.joshtalks.joshskills.core.PAYMENT_MOBILE_NUMBER
+import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.BranchIOAnalytics
@@ -160,9 +165,9 @@ class PaymentSummaryViewModel(application: Application) : AndroidViewModel(appli
                     responsePaymentSummary.value?.encryptedText.toString(),
                     null
                 )
-                    if (Mentor.getInstance().getId().isNotEmpty()) {
-                        data.mentorId = Mentor.getInstance().getId()
-                    }
+                if (Mentor.getInstance().getId().isNotEmpty()) {
+                    data.mentorId = Mentor.getInstance().getId()
+                }
                 val response =
                     AppObjectController.signUpNetworkService.createFreeOrder(data)
                 if (response.isSuccessful) {

@@ -24,10 +24,10 @@
             tools:listitem="@layout/faq_category_item_layout" />
 
     <com.mindorks.placeholderview.ExpandablePlaceHolderView
-            android:layout_marginTop="@dimen/_6sdp"
             android:id="@+id/expandableView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_6sdp"
             android:scrollbars="vertical"
             tools:listitem="@layout/faq_item" />
 </LinearLayout>

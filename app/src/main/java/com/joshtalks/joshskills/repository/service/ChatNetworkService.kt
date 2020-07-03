@@ -2,10 +2,21 @@ package com.joshtalks.joshskills.repository.service
 
 import com.joshtalks.joshskills.repository.local.entity.Course
 import com.joshtalks.joshskills.repository.local.entity.PracticeEngagement
-import com.joshtalks.joshskills.repository.server.*
+import com.joshtalks.joshskills.repository.server.AmazonPolicyResponse
+import com.joshtalks.joshskills.repository.server.ChatMessageReceiver
+import com.joshtalks.joshskills.repository.server.CoursePerformanceResponse
+import com.joshtalks.joshskills.repository.server.RequestEngage
+import com.joshtalks.joshskills.repository.server.ResponseChatMessage
 import kotlinx.coroutines.Deferred
 import retrofit2.Response
-import retrofit2.http.*
+import retrofit2.http.Body
+import retrofit2.http.FieldMap
+import retrofit2.http.FormUrlEncoded
+import retrofit2.http.GET
+import retrofit2.http.PATCH
+import retrofit2.http.POST
+import retrofit2.http.Path
+import retrofit2.http.QueryMap
 
 @JvmSuppressWildcards
 interface ChatNetworkService {
@@ -67,7 +78,6 @@ interface ChatNetworkService {
 
     @GET("$DIR/chat/conversation/{id}/")
     suspend fun getCourseProgressDetailsAsync(@Path("id") cId: String): Response<CoursePerformanceResponse>
-
 
 
 }

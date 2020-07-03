@@ -7,11 +7,9 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
-
 import com.joshtalks.joshskills.R;
 
 
@@ -58,15 +56,6 @@ public class AnimatingToggle extends FrameLayout {
         current = view;
     }
 
-    public void displayQuick(@Nullable View view) {
-        if (view == current) return;
-        if (current != null) current.setVisibility(View.GONE);
-        if (view != null) view.setVisibility(View.VISIBLE);
-
-        current = view;
-    }
-
-
     public void animateOut(final @NonNull View view, final @NonNull Animation animation, final int visibility) {
         if (view.getVisibility() == visibility) {
         } else {
@@ -79,12 +68,12 @@ public class AnimatingToggle extends FrameLayout {
                 }
 
                 @Override
-                public void onAnimationRepeat(Animation animation) {
+                public void onAnimationEnd(Animation animation) {
+                    view.setVisibility(visibility);
                 }
 
                 @Override
-                public void onAnimationEnd(Animation animation) {
-                    view.setVisibility(visibility);
+                public void onAnimationRepeat(Animation animation) {
                 }
             });
             view.startAnimation(animation);
@@ -100,6 +89,14 @@ public class AnimatingToggle extends FrameLayout {
         animation.setStartTime(0);
         view.setVisibility(View.VISIBLE);
         view.startAnimation(animation);
+    }
+
+    public void displayQuick(@Nullable View view) {
+        if (view == current) return;
+        if (current != null) current.setVisibility(View.GONE);
+        if (view != null) view.setVisibility(View.VISIBLE);
+
+        current = view;
     }
 
 }

@@ -18,9 +18,7 @@ package com.joshtalks.joshskills.core.videotranscoder.engine;
 import android.media.MediaCodec;
 import android.media.MediaExtractor;
 import android.media.MediaFormat;
-
 import com.joshtalks.joshskills.core.videotranscoder.format.MediaFormatExtraConstants;
-
 import java.io.IOException;
 import java.nio.ByteBuffer;
 
@@ -146,54 +144,6 @@ public class VideoTrackTranscoder implements TrackTranscoder {
         }
     }
 
-    private int drainExtractor(long timeoutUs) {
-        if (mIsExtractorEOS) return DRAIN_STATE_NONE;
-        int trackIndex = mExtractor.getSampleTrackIndex();
-        if (trackIndex >= 0 && trackIndex != mTrackIndex) {
-            return DRAIN_STATE_NONE;
-        }
-        int result = mDecoder.dequeueInputBuffer(timeoutUs);
-        if (result < 0) return DRAIN_STATE_NONE;
-        if (trackIndex < 0) {
-            mIsExtractorEOS = true;
-            mDecoder.queueInputBuffer(result, 0, 0, 0, MediaCodec.BUFFER_FLAG_END_OF_STREAM);
-            return DRAIN_STATE_NONE;
-        }
-        int sampleSize = mExtractor.readSampleData(mDecoderInputBuffers[result], 0);
-        boolean isKeyFrame = (mExtractor.getSampleFlags() & MediaExtractor.SAMPLE_FLAG_SYNC) != 0;
-        mDecoder.queueInputBuffer(result, 0, sampleSize, mExtractor.getSampleTime(), isKeyFrame ? MediaCodec.BUFFER_FLAG_SYNC_FRAME : 0);
-        mExtractor.advance();
-        return DRAIN_STATE_CONSUMED;
-    }
-
-    private int drainDecoder(long timeoutUs) {
-        if (mIsDecoderEOS) return DRAIN_STATE_NONE;
-        int result = mDecoder.dequeueOutputBuffer(mBufferInfo, timeoutUs);
-        switch (result) {
-            case MediaCodec.INFO_TRY_AGAIN_LATER:
-                return DRAIN_STATE_NONE;
-            case MediaCodec.INFO_OUTPUT_FORMAT_CHANGED:
-            case MediaCodec.INFO_OUTPUT_BUFFERS_CHANGED:
-                return DRAIN_STATE_SHOULD_RETRY_IMMEDIATELY;
-        }
-        if ((mBufferInfo.flags & MediaCodec.BUFFER_FLAG_END_OF_STREAM) != 0) {
-            mEncoder.signalEndOfInputStream();
-            mIsDecoderEOS = true;
-            mBufferInfo.size = 0;
-        }
-        boolean doRender = (mBufferInfo.size > 0);
-        // NOTE: doRender will block if buffer (of encoder) is full.
-        // Refer: http://bigflake.com/mediacodec/CameraToMpegTest.java.txt
-        mDecoder.releaseOutputBuffer(result, doRender);
-        if (doRender) {
-            mDecoderOutputSurfaceWrapper.awaitNewImage();
-            mDecoderOutputSurfaceWrapper.drawImage();
-            mEncoderInputSurfaceWrapper.setPresentationTime(mBufferInfo.presentationTimeUs * 1000);
-            mEncoderInputSurfaceWrapper.swapBuffers();
-        }
-        return DRAIN_STATE_CONSUMED;
-    }
-
     private int drainEncoder(long timeoutUs) {
         if (mIsEncoderEOS) return DRAIN_STATE_NONE;
         int result = mEncoder.dequeueOutputBuffer(mBufferInfo, timeoutUs);
@@ -226,6 +176,54 @@ public class VideoTrackTranscoder implements TrackTranscoder {
         mMuxer.writeSampleData(QueuedMuxer.SampleType.VIDEO, mEncoderOutputBuffers[result], mBufferInfo);
         mWrittenPresentationTimeUs = mBufferInfo.presentationTimeUs;
         mEncoder.releaseOutputBuffer(result, false);
+        return DRAIN_STATE_CONSUMED;
+    }
+
+    private int drainDecoder(long timeoutUs) {
+        if (mIsDecoderEOS) return DRAIN_STATE_NONE;
+        int result = mDecoder.dequeueOutputBuffer(mBufferInfo, timeoutUs);
+        switch (result) {
+            case MediaCodec.INFO_TRY_AGAIN_LATER:
+                return DRAIN_STATE_NONE;
+            case MediaCodec.INFO_OUTPUT_FORMAT_CHANGED:
+            case MediaCodec.INFO_OUTPUT_BUFFERS_CHANGED:
+                return DRAIN_STATE_SHOULD_RETRY_IMMEDIATELY;
+        }
+        if ((mBufferInfo.flags & MediaCodec.BUFFER_FLAG_END_OF_STREAM) != 0) {
+            mEncoder.signalEndOfInputStream();
+            mIsDecoderEOS = true;
+            mBufferInfo.size = 0;
+        }
+        boolean doRender = (mBufferInfo.size > 0);
+        // NOTE: doRender will block if buffer (of encoder) is full.
+        // Refer: http://bigflake.com/mediacodec/CameraToMpegTest.java.txt
+        mDecoder.releaseOutputBuffer(result, doRender);
+        if (doRender) {
+            mDecoderOutputSurfaceWrapper.awaitNewImage();
+            mDecoderOutputSurfaceWrapper.drawImage();
+            mEncoderInputSurfaceWrapper.setPresentationTime(mBufferInfo.presentationTimeUs * 1000);
+            mEncoderInputSurfaceWrapper.swapBuffers();
+        }
+        return DRAIN_STATE_CONSUMED;
+    }
+
+    private int drainExtractor(long timeoutUs) {
+        if (mIsExtractorEOS) return DRAIN_STATE_NONE;
+        int trackIndex = mExtractor.getSampleTrackIndex();
+        if (trackIndex >= 0 && trackIndex != mTrackIndex) {
+            return DRAIN_STATE_NONE;
+        }
+        int result = mDecoder.dequeueInputBuffer(timeoutUs);
+        if (result < 0) return DRAIN_STATE_NONE;
+        if (trackIndex < 0) {
+            mIsExtractorEOS = true;
+            mDecoder.queueInputBuffer(result, 0, 0, 0, MediaCodec.BUFFER_FLAG_END_OF_STREAM);
+            return DRAIN_STATE_NONE;
+        }
+        int sampleSize = mExtractor.readSampleData(mDecoderInputBuffers[result], 0);
+        boolean isKeyFrame = (mExtractor.getSampleFlags() & MediaExtractor.SAMPLE_FLAG_SYNC) != 0;
+        mDecoder.queueInputBuffer(result, 0, sampleSize, mExtractor.getSampleTime(), isKeyFrame ? MediaCodec.BUFFER_FLAG_SYNC_FRAME : 0);
+        mExtractor.advance();
         return DRAIN_STATE_CONSUMED;
     }
 }

@@ -1,7 +1,6 @@
 package com.joshtalks.joshskills.core.custom_ui;
 
 import android.view.View;
-
 import androidx.viewpager.widget.ViewPager;
 
 public final class PageTransformer implements ViewPager.PageTransformer {

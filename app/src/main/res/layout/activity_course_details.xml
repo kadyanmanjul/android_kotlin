@@ -168,6 +168,7 @@
                         android:background="@drawable/round_rectangle_for_course_expo"
                         android:backgroundTint="@color/button_color"
                         android:gravity="center"
+                        android:onClick="@{()->handler.buyCourse()}"
                         android:paddingVertical="@dimen/_8sdp"
                         android:text="@string/start_course"
                         android:textAllCaps="false"

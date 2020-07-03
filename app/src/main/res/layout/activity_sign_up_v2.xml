@@ -56,10 +56,10 @@
                     tools:targetApi="o" />
 
             <androidx.appcompat.widget.AppCompatImageView
-                    android:onClick="@{()->handler.openHelpActivity()}"
                     android:id="@+id/iv_help"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:onClick="@{()->handler.openHelpActivity()}"
                     android:padding="@dimen/_4sdp"
                     android:src="@drawable/ic_help_outline"
                     android:tint="@color/gray_3B"

@@ -10,11 +10,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
 import androidx.appcompat.app.AlertDialog;
-
 import com.joshtalks.joshskills.R;
-
 import java.text.DateFormat;
 import java.util.Calendar;
 
@@ -76,6 +73,17 @@ public class DatePickerDialog extends AlertDialog implements OnClickListener,
         mDatePicker.init(defaultDate.get(Calendar.YEAR), defaultDate.get(Calendar.MONTH), defaultDate.get(Calendar.DAY_OF_MONTH), isDayShown, this);
     }
 
+    private void updateTitle(Calendar updatedDate) {
+        if (mIsTitleShown && mCustomTitle != null && !mCustomTitle.isEmpty()) {
+            setTitle(mCustomTitle);
+        } else if (mIsTitleShown) {
+            final DateFormat dateFormat = mTitleDateFormat;
+            setTitle(dateFormat.format(updatedDate.getTime()));
+        } else {
+            setTitle(" ");
+        }
+    }
+
     @Override
     public void onClick(DialogInterface dialog, int which) {
         switch (which) {
@@ -104,17 +112,6 @@ public class DatePickerDialog extends AlertDialog implements OnClickListener,
         updatedDate.set(Calendar.MONTH, monthOfYear);
         updatedDate.set(Calendar.DAY_OF_MONTH, dayOfMonth);
         updateTitle(updatedDate);
-    }
-
-    private void updateTitle(Calendar updatedDate) {
-        if (mIsTitleShown && mCustomTitle != null && !mCustomTitle.isEmpty()) {
-            setTitle(mCustomTitle);
-        } else if (mIsTitleShown) {
-            final DateFormat dateFormat = mTitleDateFormat;
-            setTitle(dateFormat.format(updatedDate.getTime()));
-        } else {
-            setTitle(" ");
-        }
     }
 
     void setCTitle(String value) {

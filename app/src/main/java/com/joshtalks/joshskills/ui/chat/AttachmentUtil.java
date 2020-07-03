@@ -7,7 +7,6 @@ import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
 import android.view.animation.OvershootInterpolator;
 import android.widget.LinearLayout;
-
 import com.joshtalks.joshskills.databinding.ActivityConversationBinding;
 
 public class AttachmentUtil {
@@ -32,7 +31,7 @@ public class AttachmentUtil {
                 @Override
                 public void onAnimationStart(Animator animation) {
                     super.onAnimationStart(animation);
-                    childAnimate((ViewGroup) conversationBinding.attachmentContainer);
+                    childAnimate(conversationBinding.attachmentContainer);
                 }
 
             });
@@ -76,6 +75,10 @@ public class AttachmentUtil {
         }
     }
 
+    public static void setViewVisibility(View v, boolean isVisible) {
+        v.setVisibility(isVisible ? View.VISIBLE : View.GONE);
+    }
+
     private static void animateView(View view, int delay) {
 
         view.setScaleY(0f);
@@ -86,9 +89,5 @@ public class AttachmentUtil {
                 .setInterpolator(new OvershootInterpolator(1.f))
                 .setDuration(200)
                 .setStartDelay(0);
-    }
-
-    public static void setViewVisibility(View v, boolean isVisible) {
-        v.setVisibility(isVisible ? View.VISIBLE : View.GONE);
     }
 }

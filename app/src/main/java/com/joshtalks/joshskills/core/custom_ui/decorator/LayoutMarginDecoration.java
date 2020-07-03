@@ -2,7 +2,6 @@ package com.joshtalks.joshskills.core.custom_ui.decorator;
 
 import android.graphics.Rect;
 import android.view.View;
-
 import androidx.annotation.Px;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -22,6 +21,11 @@ public class LayoutMarginDecoration extends BaseLayoutMargin {
     }
 
     @Override
+    public void setOnClickLayoutMarginItemListener(OnClickLayoutMarginItemListener listener) {
+        super.setOnClickLayoutMarginItemListener(listener);
+    }
+
+    @Override
     public void setPadding(RecyclerView rv, @Px int margin) {
         super.setPadding(rv, margin);
     }
@@ -29,11 +33,6 @@ public class LayoutMarginDecoration extends BaseLayoutMargin {
     @Override
     public void setPadding(RecyclerView rv, @Px int top, @Px int bottom, @Px int left, @Px int right) {
         super.setPadding(rv, top, bottom, left, right);
-    }
-
-    @Override
-    public void setOnClickLayoutMarginItemListener(OnClickLayoutMarginItemListener listener) {
-        super.setOnClickLayoutMarginItemListener(listener);
     }
 
     @Override

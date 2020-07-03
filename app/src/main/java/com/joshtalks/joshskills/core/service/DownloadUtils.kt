@@ -31,6 +31,7 @@ import java.lang.reflect.Type
 import java.util.*
 
 const val DOWNLOAD_OBJECT = "DownloadObject"
+
 object DownloadUtils {
 
     val CHAT_MODEL_TYPE_TOKEN: Type = object : TypeToken<ChatModel>() {}.type
@@ -69,7 +70,9 @@ object DownloadUtils {
                 Func {
                     it.throwable?.printStackTrace()
                     request.tag?.let { tag ->
-                        objectFetchListener[tag]?.let { it1 -> AppObjectController.getFetchObject().removeListener(it1) }
+                        objectFetchListener[tag]?.let { it1 ->
+                            AppObjectController.getFetchObject().removeListener(it1)
+                        }
                     }
                 })
         }

@@ -10,7 +10,12 @@ import android.os.Looper
 import android.util.AttributeSet
 import android.view.Gravity
 import android.view.View
-import android.widget.*
+import android.widget.Button
+import android.widget.LinearLayout
+import android.widget.ProgressBar
+import android.widget.SeekBar
+import android.widget.TextView
+import android.widget.Toast
 import androidx.core.content.res.ResourcesCompat
 import com.afollestad.materialdialogs.MaterialDialog
 import com.crashlytics.android.Crashlytics
@@ -44,7 +49,16 @@ import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.muddzdev.styleabletoast.StyleableToast
 import io.reactivex.disposables.CompositeDisposable
-import kotlinx.android.synthetic.main.view_jcplayer.view.*
+import kotlinx.android.synthetic.main.view_jcplayer.view.btnPause
+import kotlinx.android.synthetic.main.view_jcplayer.view.btnPlay
+import kotlinx.android.synthetic.main.view_jcplayer.view.cancelDownload
+import kotlinx.android.synthetic.main.view_jcplayer.view.download_container
+import kotlinx.android.synthetic.main.view_jcplayer.view.message_time
+import kotlinx.android.synthetic.main.view_jcplayer.view.progressBarPlayer
+import kotlinx.android.synthetic.main.view_jcplayer.view.seekBar
+import kotlinx.android.synthetic.main.view_jcplayer.view.seekBar_ph
+import kotlinx.android.synthetic.main.view_jcplayer.view.startDownload
+import kotlinx.android.synthetic.main.view_jcplayer.view.txtCurrentDuration
 import java.util.*
 
 class JcPlayerView : LinearLayout, View.OnClickListener, SeekBar.OnSeekBarChangeListener,
@@ -780,7 +794,7 @@ class JcPlayerView : LinearLayout, View.OnClickListener, SeekBar.OnSeekBarChange
                 cAudioObj = JcAudio.createFromFilePath(message.downloadedLocalPath!!)
                 isMedia = true
                 this.duration =
-                    Utils.getDurationOfMedia(context, message.downloadedLocalPath!!)?.toInt()?:0
+                    Utils.getDurationOfMedia(context, message.downloadedLocalPath!!)?.toInt() ?: 0
             }
 
         } catch (e: Exception) {

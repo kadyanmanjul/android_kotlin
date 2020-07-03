@@ -10,13 +10,10 @@ import android.media.AudioAttributes;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.PowerManager;
-
 import androidx.annotation.NonNull;
-
 import com.joshtalks.joshskills.repository.local.entity.AudioType;
 import com.joshtalks.joshskills.repository.local.entity.ChatModel;
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity;
-
 import java.io.File;
 import java.util.List;
 import java.util.concurrent.Executors;
@@ -101,68 +98,6 @@ public final class MediaPlayerHolder implements PlayerInterface, MediaPlayer.OnC
         mAudioManager = (AudioManager) mContext.getSystemService(AUDIO_SERVICE);
     }
 
-    private void registerActionsReceiver() {
-        mNotificationActionsReceiver = new NotificationReceiver();
-        final IntentFilter intentFilter = new IntentFilter();
-
-        intentFilter.addAction(MusicNotificationManager.PREV_ACTION);
-        intentFilter.addAction(MusicNotificationManager.PLAY_PAUSE_ACTION);
-        intentFilter.addAction(MusicNotificationManager.NEXT_ACTION);
-        intentFilter.addAction(MusicNotificationManager.STOP_ACTION);
-        intentFilter.addAction(BluetoothDevice.ACTION_ACL_CONNECTED);
-        intentFilter.addAction(BluetoothDevice.ACTION_ACL_DISCONNECTED);
-        intentFilter.addAction(Intent.ACTION_HEADSET_PLUG);
-        intentFilter.addAction(AudioManager.ACTION_AUDIO_BECOMING_NOISY);
-
-        mMusicService.registerReceiver(mNotificationActionsReceiver, intentFilter);
-    }
-
-    private void unregisterActionsReceiver() {
-        if (mMusicService != null && mNotificationActionsReceiver != null) {
-            try {
-                mMusicService.unregisterReceiver(mNotificationActionsReceiver);
-            } catch (IllegalArgumentException e) {
-                e.printStackTrace();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    @Override
-    public final String getNavigationArtist() {
-        return mNavigationArtist;
-    }
-
-    @Override
-    public void setNavigationArtist(@NonNull final String navigationArtist) {
-        mNavigationArtist = navigationArtist;
-    }
-
-
-    @Override
-    public final AudioType getCurrentSong() {
-        return mSelectedSong;
-    }
-
-    @Override
-    public void registerNotificationActionsReceiver(final boolean isReceiver) {
-
-        if (isReceiver) {
-            registerActionsReceiver();
-        } else {
-            unregisterActionsReceiver();
-        }
-    }
-
-    @Override
-    public void setCurrentSong(InboxEntity inboxEntityObject, final ChatModel chatModelObject, @NonNull final AudioType song, @NonNull final List<AudioType> songs) {
-        inboxEntity = inboxEntityObject;
-        chatModel = chatModelObject;
-        mSelectedSong = song;
-        mSongs = songs;
-    }
-
     @Override
     public void onCompletion(@NonNull final MediaPlayer mediaPlayer) {
         if (mPlaybackInfoListener != null) {
@@ -184,30 +119,32 @@ public final class MediaPlayerHolder implements PlayerInterface, MediaPlayer.OnC
         }
     }
 
-    @Override
-    public void onResumeActivity() {
-        startUpdatingCallbackWithPosition();
-    }
+    private void getSkipSong(final boolean isNext) {
+        final int currentIndex = mSongs.indexOf(mSelectedSong);
+        int index;
 
-    @Override
-    public InboxEntity getConversation() {
-        return inboxEntity;
-    }
-
-    @Override
-    public void clearNotification() {
         try {
-            mMusicNotificationManager.getNotificationManager().cancel(101);
-            mNotificationActionsReceiver.clearAbortBroadcast();
-        } catch (Exception e) {
+            index = isNext ? currentIndex + 1 : currentIndex - 1;
+            mSelectedSong = mSongs.get(index);
+        } catch (IndexOutOfBoundsException e) {
+            mSelectedSong = currentIndex != 0 ? mSongs.get(0) : mSongs.get(mSongs.size() - 1);
             e.printStackTrace();
-            // e.printStackTrace();
         }
+        initMediaPlayer(chatModel, mSelectedSong);
     }
 
-    @Override
-    public void onPauseActivity() {
-        stopUpdatingCallbackWithPosition();
+    private void resetSong() {
+        mMediaPlayer.seekTo(0);
+        mMediaPlayer.start();
+        setStatus(PlaybackInfoListener.State.PLAYING);
+    }
+
+    private void setStatus(final @PlaybackInfoListener.State int state) {
+
+        mState = state;
+        if (mPlaybackInfoListener != null) {
+            mPlaybackInfoListener.onStateChanged(state);
+        }
     }
 
     private void tryToGetAudioFocus() {
@@ -220,118 +157,6 @@ public final class MediaPlayerHolder implements PlayerInterface, MediaPlayer.OnC
             mCurrentAudioFocusState = AUDIO_FOCUSED;
         } else {
             mCurrentAudioFocusState = AUDIO_NO_FOCUS_NO_DUCK;
-        }
-    }
-
-    private void giveUpAudioFocus() {
-        if (mAudioManager.abandonAudioFocus(mOnAudioFocusChangeListener)
-                == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
-            mCurrentAudioFocusState = AUDIO_NO_FOCUS_NO_DUCK;
-        }
-    }
-
-    public void setPlaybackInfoListener(@NonNull final PlaybackInfoListener listener) {
-        mPlaybackInfoListener = listener;
-    }
-
-    public PlaybackInfoListener getmPlaybackInfoListener() {
-        return mPlaybackInfoListener;
-    }
-
-    private void setStatus(final @PlaybackInfoListener.State int state) {
-
-        mState = state;
-        if (mPlaybackInfoListener != null) {
-            mPlaybackInfoListener.onStateChanged(state);
-        }
-    }
-
-    private void resumeMediaPlayer() {
-        try {
-            if (!isPlaying()) {
-                mMediaPlayer.start();
-                setStatus(PlaybackInfoListener.State.RESUMED);
-                mMusicService.startForeground(MusicNotificationManager.NOTIFICATION_ID, mMusicNotificationManager.createNotification());
-                mMusicNotificationManager.getNotificationManager().cancel(MusicNotificationManager.NOTIFICATION_ID);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void pauseMediaPlayer() {
-        try {
-            setStatus(PlaybackInfoListener.State.PAUSED);
-            mMediaPlayer.pause();
-            mMusicService.stopForeground(true);
-            mMusicNotificationManager.getNotificationManager().notify(MusicNotificationManager.NOTIFICATION_ID, mMusicNotificationManager.createNotification());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-
-    private void resetSong() {
-        mMediaPlayer.seekTo(0);
-        mMediaPlayer.start();
-        setStatus(PlaybackInfoListener.State.PLAYING);
-    }
-
-    /**
-     * Syncs the mMediaPlayer position with mPlaybackProgressCallback via recurring task.
-     */
-    private void startUpdatingCallbackWithPosition() {
-        if (mExecutor == null) {
-            mExecutor = Executors.newSingleThreadScheduledExecutor();
-        }
-        if (mSeekBarPositionUpdateTask == null) {
-            mSeekBarPositionUpdateTask = this::updateProgressCallbackTask;
-        }
-
-        mExecutor.scheduleAtFixedRate(
-                mSeekBarPositionUpdateTask,
-                0,
-                1000,
-                TimeUnit.MILLISECONDS
-        );
-    }
-
-    // Reports media playback position to mPlaybackProgressCallback.
-    private void stopUpdatingCallbackWithPosition() {
-
-        try {
-            setStatus(PlaybackInfoListener.State.PAUSED);
-            mMediaPlayer.pause();
-            mMusicService.stopForeground(true);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        if (mExecutor != null) {
-            mExecutor.shutdownNow();
-            mExecutor = null;
-            mSeekBarPositionUpdateTask = null;
-        }
-    }
-
-    private void updateProgressCallbackTask() {
-        if (isMediaPlayer() && mMediaPlayer.isPlaying()) {
-            int currentPosition = mMediaPlayer.getCurrentPosition();
-            if (mPlaybackInfoListener != null) {
-                mPlaybackInfoListener.onPositionChanged(currentPosition);
-            }
-        }
-    }
-
-    @Override
-    public void instantReset() {
-        if (isMediaPlayer()) {
-            if (mMediaPlayer.getCurrentPosition() < 5000) {
-                skip(false);
-            } else {
-                resetSong();
-            }
         }
     }
 
@@ -377,21 +202,11 @@ public final class MediaPlayerHolder implements PlayerInterface, MediaPlayer.OnC
         }
     }
 
-
-    @Override
-    public final MediaPlayer getMediaPlayer() {
-        return mMediaPlayer;
-    }
-
-    @Override
-    public void onPrepared(MediaPlayer mediaPlayer) {
-        startUpdatingCallbackWithPosition();
-        setStatus(PlaybackInfoListener.State.PLAYING);
-    }
-
-    @Override
-    public void openEqualizer(@NonNull final Activity activity) {
-        EqualizerUtils.openEqualizer(activity, mMediaPlayer);
+    private void giveUpAudioFocus() {
+        if (mAudioManager.abandonAudioFocus(mOnAudioFocusChangeListener)
+                == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
+            mCurrentAudioFocusState = AUDIO_NO_FOCUS_NO_DUCK;
+        }
     }
 
     @Override
@@ -410,6 +225,35 @@ public final class MediaPlayerHolder implements PlayerInterface, MediaPlayer.OnC
         }
     }
 
+    private void pauseMediaPlayer() {
+        try {
+            setStatus(PlaybackInfoListener.State.PAUSED);
+            mMediaPlayer.pause();
+            mMusicService.stopForeground(true);
+            mMusicNotificationManager.getNotificationManager().notify(MusicNotificationManager.NOTIFICATION_ID, mMusicNotificationManager.createNotification());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void resumeMediaPlayer() {
+        try {
+            if (!isPlaying()) {
+                mMediaPlayer.start();
+                setStatus(PlaybackInfoListener.State.RESUMED);
+                mMusicService.startForeground(MusicNotificationManager.NOTIFICATION_ID, mMusicNotificationManager.createNotification());
+                mMusicNotificationManager.getNotificationManager().cancel(MusicNotificationManager.NOTIFICATION_ID);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public boolean isMediaPlayer() {
+        return mMediaPlayer != null;
+    }
+
     @Override
     public boolean isPlaying() {
         return isMediaPlayer() && mMediaPlayer.isPlaying();
@@ -425,15 +269,14 @@ public final class MediaPlayerHolder implements PlayerInterface, MediaPlayer.OnC
         }
     }
 
-    @Override
-    public final @PlaybackInfoListener.State
-    int getState() {
-        return mState;
+    public PlaybackInfoListener getmPlaybackInfoListener() {
+        return mPlaybackInfoListener;
     }
 
     @Override
-    public boolean isMediaPlayer() {
-        return mMediaPlayer != null;
+    public void onPrepared(MediaPlayer mediaPlayer) {
+        startUpdatingCallbackWithPosition();
+        setStatus(PlaybackInfoListener.State.PLAYING);
     }
 
     @Override
@@ -447,22 +290,47 @@ public final class MediaPlayerHolder implements PlayerInterface, MediaPlayer.OnC
     }
 
     @Override
+    public void instantReset() {
+        if (isMediaPlayer()) {
+            if (mMediaPlayer.getCurrentPosition() < 5000) {
+                skip(false);
+            } else {
+                resetSong();
+            }
+        }
+    }
+
+    @Override
+    public final AudioType getCurrentSong() {
+        return mSelectedSong;
+    }
+
+    @Override
+    public final String getNavigationArtist() {
+        return mNavigationArtist;
+    }
+
+    @Override
+    public void setNavigationArtist(@NonNull final String navigationArtist) {
+        mNavigationArtist = navigationArtist;
+    }
+
+    @Override
+    public void setCurrentSong(InboxEntity inboxEntityObject, final ChatModel chatModelObject, @NonNull final AudioType song, @NonNull final List<AudioType> songs) {
+        inboxEntity = inboxEntityObject;
+        chatModel = chatModelObject;
+        mSelectedSong = song;
+        mSongs = songs;
+    }
+
+    @Override
     public void skip(final boolean isNext) {
         getSkipSong(isNext);
     }
 
-    private void getSkipSong(final boolean isNext) {
-        final int currentIndex = mSongs.indexOf(mSelectedSong);
-        int index;
-
-        try {
-            index = isNext ? currentIndex + 1 : currentIndex - 1;
-            mSelectedSong = mSongs.get(index);
-        } catch (IndexOutOfBoundsException e) {
-            mSelectedSong = currentIndex != 0 ? mSongs.get(0) : mSongs.get(mSongs.size() - 1);
-            e.printStackTrace();
-        }
-        initMediaPlayer(chatModel, mSelectedSong);
+    @Override
+    public void openEqualizer(@NonNull final Activity activity) {
+        EqualizerUtils.openEqualizer(activity, mMediaPlayer);
     }
 
     @Override
@@ -472,10 +340,137 @@ public final class MediaPlayerHolder implements PlayerInterface, MediaPlayer.OnC
         }
     }
 
+    public void setPlaybackInfoListener(@NonNull final PlaybackInfoListener listener) {
+        mPlaybackInfoListener = listener;
+    }
+
+    @Override
+    public final @PlaybackInfoListener.State
+    int getState() {
+        return mState;
+    }
+
     @Override
     public int getPlayerPosition() {
         return mMediaPlayer.getCurrentPosition();
     }
+
+    @Override
+    public void registerNotificationActionsReceiver(final boolean isReceiver) {
+
+        if (isReceiver) {
+            registerActionsReceiver();
+        } else {
+            unregisterActionsReceiver();
+        }
+    }
+
+    private void registerActionsReceiver() {
+        mNotificationActionsReceiver = new NotificationReceiver();
+        final IntentFilter intentFilter = new IntentFilter();
+
+        intentFilter.addAction(MusicNotificationManager.PREV_ACTION);
+        intentFilter.addAction(MusicNotificationManager.PLAY_PAUSE_ACTION);
+        intentFilter.addAction(MusicNotificationManager.NEXT_ACTION);
+        intentFilter.addAction(MusicNotificationManager.STOP_ACTION);
+        intentFilter.addAction(BluetoothDevice.ACTION_ACL_CONNECTED);
+        intentFilter.addAction(BluetoothDevice.ACTION_ACL_DISCONNECTED);
+        intentFilter.addAction(Intent.ACTION_HEADSET_PLUG);
+        intentFilter.addAction(AudioManager.ACTION_AUDIO_BECOMING_NOISY);
+
+        mMusicService.registerReceiver(mNotificationActionsReceiver, intentFilter);
+    }
+
+    private void unregisterActionsReceiver() {
+        if (mMusicService != null && mNotificationActionsReceiver != null) {
+            try {
+                mMusicService.unregisterReceiver(mNotificationActionsReceiver);
+            } catch (IllegalArgumentException e) {
+                e.printStackTrace();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @Override
+    public final MediaPlayer getMediaPlayer() {
+        return mMediaPlayer;
+    }
+
+    @Override
+    public void onPauseActivity() {
+        stopUpdatingCallbackWithPosition();
+    }
+
+    @Override
+    public void onResumeActivity() {
+        startUpdatingCallbackWithPosition();
+    }
+
+    @Override
+    public InboxEntity getConversation() {
+        return inboxEntity;
+    }
+
+    @Override
+    public void clearNotification() {
+        try {
+            mMusicNotificationManager.getNotificationManager().cancel(101);
+            mNotificationActionsReceiver.clearAbortBroadcast();
+        } catch (Exception e) {
+            e.printStackTrace();
+            // e.printStackTrace();
+        }
+    }
+
+    /**
+     * Syncs the mMediaPlayer position with mPlaybackProgressCallback via recurring task.
+     */
+    private void startUpdatingCallbackWithPosition() {
+        if (mExecutor == null) {
+            mExecutor = Executors.newSingleThreadScheduledExecutor();
+        }
+        if (mSeekBarPositionUpdateTask == null) {
+            mSeekBarPositionUpdateTask = this::updateProgressCallbackTask;
+        }
+
+        mExecutor.scheduleAtFixedRate(
+                mSeekBarPositionUpdateTask,
+                0,
+                1000,
+                TimeUnit.MILLISECONDS
+        );
+    }
+
+    private void updateProgressCallbackTask() {
+        if (isMediaPlayer() && mMediaPlayer.isPlaying()) {
+            int currentPosition = mMediaPlayer.getCurrentPosition();
+            if (mPlaybackInfoListener != null) {
+                mPlaybackInfoListener.onPositionChanged(currentPosition);
+            }
+        }
+    }
+
+    // Reports media playback position to mPlaybackProgressCallback.
+    private void stopUpdatingCallbackWithPosition() {
+
+        try {
+            setStatus(PlaybackInfoListener.State.PAUSED);
+            mMediaPlayer.pause();
+            mMusicService.stopForeground(true);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        if (mExecutor != null) {
+            mExecutor.shutdownNow();
+            mExecutor = null;
+            mSeekBarPositionUpdateTask = null;
+        }
+    }
+
 
     /**
      * Reconfigures the player according to audio focus settings and starts/restarts it. This method

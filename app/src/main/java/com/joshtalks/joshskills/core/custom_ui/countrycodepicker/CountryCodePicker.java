@@ -159,6 +159,16 @@ public class CountryCodePicker extends RelativeLayout {
         init(attrs);
     }
 
+    public static String getRegion(String code) {
+        code = code.replaceAll("/+", "");
+        for (CCPCountry cPCountry : CCPCountry.getLibraryMasterCountriesEnglish()) {
+            if (cPCountry.phoneCode.equalsIgnoreCase(code)) {
+                return cPCountry.nameCode;
+            }
+        }
+        return "";
+    }
+
     private boolean isNumberAutoFormattingEnabled() {
         return numberAutoFormattingEnabled;
     }
@@ -462,14 +472,6 @@ public class CountryCodePicker extends RelativeLayout {
         }
     }
 
-    private void refreshArrowViewVisibility() {
-        if (showArrow) {
-            imageViewArrow.setVisibility(VISIBLE);
-        } else {
-            imageViewArrow.setVisibility(GONE);
-        }
-    }
-
     /**
      * this will read last selected country name code from the shared pref.
      * if that name code is not null, load that country in the CCP
@@ -661,74 +663,6 @@ public class CountryCodePicker extends RelativeLayout {
         } else {
             textView_selectedCountry.setGravity(Gravity.RIGHT);
         }
-    }
-
-    /**
-     * which language to show is decided based on
-     * autoDetectLanguage flag
-     * if autoDetectLanguage is true, then it should check language based on locale, if no language is found based on locale, customDefault language will returned
-     * else autoDetectLanguage is false, then customDefaultLanguage will be returned.
-     *
-     * @return
-     */
-    private void updateLanguageToApply() {
-        //when in edit mode, it will return default language only
-        if (isInEditMode()) {
-            if (customDefaultLanguage != null) {
-                languageToApply = customDefaultLanguage;
-            } else {
-                languageToApply = Language.ENGLISH;
-            }
-        } else {
-            if (isAutoDetectLanguageEnabled()) {
-                Language localeBasedLanguage = getCCPLanguageFromLocale();
-                if (localeBasedLanguage == null) { //if no language is found from locale
-                    if (getCustomDefaultLanguage() != null) { //and custom language is defined
-                        languageToApply = getCustomDefaultLanguage();
-                    } else {
-                        languageToApply = Language.ENGLISH;
-                    }
-                } else {
-                    languageToApply = localeBasedLanguage;
-                }
-            } else {
-                if (getCustomDefaultLanguage() != null) {
-                    languageToApply = customDefaultLanguage;
-                } else {
-                    languageToApply = Language.ENGLISH;  //library default
-                }
-            }
-        }
-    }
-
-    private Language getCCPLanguageFromLocale() {
-        Locale currentLocale = context.getResources().getConfiguration().locale;
-//        Log.d(TAG, "getCCPLanguageFromLocale: current locale language" + currentLocale.getLanguage());
-        for (Language language : Language.values()) {
-            if (language.getCode().equalsIgnoreCase(currentLocale.getLanguage())) {
-
-                if (language.getCountry() == null
-                        || language.getCountry().equalsIgnoreCase(currentLocale.getCountry()))
-                    return language;
-
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    if (language.getScript() == null
-                            || language.getScript().equalsIgnoreCase(currentLocale.getScript()))
-                        return language;
-
-                }
-            }
-        }
-        return null;
-    }
-
-    private CCPCountry getDefaultCountry() {
-        return defaultCCPCountry;
-    }
-
-    private void setDefaultCountry(CCPCountry defaultCCPCountry) {
-        this.defaultCCPCountry = defaultCCPCountry;
-        //        Log.d(TAG, "Setting default country:" + defaultCountry.logString());
     }
 
     public TextView getTextView_selectedCountry() {
@@ -926,17 +860,6 @@ public class CountryCodePicker extends RelativeLayout {
         }
     }
 
-    public Language getLanguageToApply() {
-        if (languageToApply == null) {
-            updateLanguageToApply();
-        }
-        return languageToApply;
-    }
-
-    void setLanguageToApply(Language languageToApply) {
-        this.languageToApply = languageToApply;
-    }
-
     private void updateFormattingTextWatcher() {
         if (editText_registeredCarrierNumber != null && selectedCCPCountry != null) {
             String enteredValue = getEditText_registeredCarrierNumber().getText().toString();
@@ -1030,16 +953,6 @@ public class CountryCodePicker extends RelativeLayout {
         return areaCodeCountryDetectorTextWatcher;
     }
 
-    Language getCustomDefaultLanguage() {
-        return customDefaultLanguage;
-    }
-
-    private void setCustomDefaultLanguage(Language customDefaultLanguage) {
-        this.customDefaultLanguage = customDefaultLanguage;
-        updateLanguageToApply();
-        setSelectedCountry(CCPCountry.getCountryForNameCodeFromLibraryMasterList(context, getLanguageToApply(), selectedCCPCountry.getNameCode()));
-    }
-
     private View getHolderView() {
         return holderView;
     }
@@ -1054,10 +967,6 @@ public class CountryCodePicker extends RelativeLayout {
 
     private void setHolder(RelativeLayout holder) {
         this.holder = holder;
-    }
-
-    boolean isAutoDetectLanguageEnabled() {
-        return autoDetectLanguageEnabled;
     }
 
     boolean isAutoDetectCountryEnabled() {
@@ -1102,26 +1011,6 @@ public class CountryCodePicker extends RelativeLayout {
      */
     public void showCloseIcon(boolean showCloseIcon) {
         this.showCloseIcon = showCloseIcon;
-    }
-
-    EditText getEditText_registeredCarrierNumber() {
-//        Log.d(TAG, "getEditText_registeredCarrierNumber");
-        return editText_registeredCarrierNumber;
-    }
-
-    /**
-     * this will register editText and will apply required text watchers
-     *
-     * @param editText_registeredCarrierNumber
-     */
-    void setEditText_registeredCarrierNumber(EditText editText_registeredCarrierNumber) {
-        this.editText_registeredCarrierNumber = editText_registeredCarrierNumber;
-        if (this.editText_registeredCarrierNumber.getHint() != null) {
-            originalHint = this.editText_registeredCarrierNumber.getHint().toString();
-        }
-        updateValidityTextWatcher();
-        updateFormattingTextWatcher();
-        updateHint();
     }
 
     /**
@@ -1291,6 +1180,50 @@ public class CountryCodePicker extends RelativeLayout {
         return "";
     }
 
+    List<CCPCountry> getCustomMasterCountriesList() {
+        return customMasterCountriesList;
+    }
+
+    /**
+     * @param customMasterCountriesList is list of countries that we need as custom master list
+     */
+    void setCustomMasterCountriesList(List<CCPCountry> customMasterCountriesList) {
+        this.customMasterCountriesList = customMasterCountriesList;
+    }
+
+    /**
+     * @return comma separated custom master countries' name code. i.e "gb,us,nz,in,pk"
+     */
+    String getCustomMasterCountriesParam() {
+        return customMasterCountriesParam;
+    }
+
+    /**
+     * To provide definite set of countries when selection dialog is opened.
+     * Only custom master countries, if defined, will be there is selection dialog to select from.
+     * To set any country in preference, it must be included in custom master countries, if defined
+     * When not defined or null or blank is set, it will use library's default master list
+     * Custom master list will only limit the visibility of irrelevant country from selection dialog. But all other functions like setCountryForCodeName() or setFullNumber() will consider all the countries.
+     *
+     * @param customMasterCountriesParam is country name codes separated by comma. e.g. "us,in,nz"
+     *                                   if null or "" , will remove custom countries and library default will be used.
+     */
+    public void setCustomMasterCountries(String customMasterCountriesParam) {
+        this.customMasterCountriesParam = customMasterCountriesParam;
+    }
+
+    /**
+     * This can be used to remove certain countries from the list by keeping all the others.
+     * This will be ignored if you have specified your own country master list.
+     *
+     * @param excludedCountries is country name codes separated by comma. e.g. "us,in,nz"
+     *                          null or "" means no country is excluded.
+     */
+    public void setExcludedCountries(String excludedCountries) {
+        this.excludedCountriesParam = excludedCountries;
+        refreshCustomMasterList();
+    }
+
     /**
      * this will load preferredCountries based on countryPreference
      */
@@ -1347,48 +1280,174 @@ public class CountryCodePicker extends RelativeLayout {
         }
     }
 
-    List<CCPCountry> getCustomMasterCountriesList() {
-        return customMasterCountriesList;
-    }
-
     /**
-     * @param customMasterCountriesList is list of countries that we need as custom master list
-     */
-    void setCustomMasterCountriesList(List<CCPCountry> customMasterCountriesList) {
-        this.customMasterCountriesList = customMasterCountriesList;
-    }
-
-    /**
-     * @return comma separated custom master countries' name code. i.e "gb,us,nz,in,pk"
-     */
-    String getCustomMasterCountriesParam() {
-        return customMasterCountriesParam;
-    }
-
-    /**
-     * To provide definite set of countries when selection dialog is opened.
-     * Only custom master countries, if defined, will be there is selection dialog to select from.
-     * To set any country in preference, it must be included in custom master countries, if defined
-     * When not defined or null or blank is set, it will use library's default master list
-     * Custom master list will only limit the visibility of irrelevant country from selection dialog. But all other functions like setCountryForCodeName() or setFullNumber() will consider all the countries.
+     * This will match name code of all countries of list against the country's name code.
      *
-     * @param customMasterCountriesParam is country name codes separated by comma. e.g. "us,in,nz"
-     *                                   if null or "" , will remove custom countries and library default will be used.
+     * @param CCPCountry
+     * @param CCPCountryList list of countries against which country will be checked.
+     * @return if country name code is found in list, returns true else return false
      */
-    public void setCustomMasterCountries(String customMasterCountriesParam) {
-        this.customMasterCountriesParam = customMasterCountriesParam;
+    private boolean isAlreadyInList(CCPCountry CCPCountry, List<CCPCountry> CCPCountryList) {
+        if (CCPCountry != null && CCPCountryList != null) {
+            for (CCPCountry iterationCCPCountry : CCPCountryList) {
+                if (iterationCCPCountry.getNameCode().equalsIgnoreCase(CCPCountry.getNameCode())) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public Language getLanguageToApply() {
+        if (languageToApply == null) {
+            updateLanguageToApply();
+        }
+        return languageToApply;
     }
 
     /**
-     * This can be used to remove certain countries from the list by keeping all the others.
-     * This will be ignored if you have specified your own country master list.
-     *
-     * @param excludedCountries is country name codes separated by comma. e.g. "us,in,nz"
-     *                          null or "" means no country is excluded.
+     * @return: Country Code of default country
+     * i.e if default country is IN +91(India)  returns: "91"
+     * if default country is JP +81(Japan) returns: "81"
      */
-    public void setExcludedCountries(String excludedCountries) {
-        this.excludedCountriesParam = excludedCountries;
-        refreshCustomMasterList();
+    public String getDefaultCountryCode() {
+        return defaultCCPCountry.phoneCode;
+    }
+
+    void setLanguageToApply(Language languageToApply) {
+        this.languageToApply = languageToApply;
+    }
+
+    private CCPCountry getDefaultCountry() {
+        return defaultCCPCountry;
+    }
+
+    private void setDefaultCountry(CCPCountry defaultCCPCountry) {
+        this.defaultCCPCountry = defaultCCPCountry;
+        //        Log.d(TAG, "Setting default country:" + defaultCountry.logString());
+    }
+
+    /**
+     * which language to show is decided based on
+     * autoDetectLanguage flag
+     * if autoDetectLanguage is true, then it should check language based on locale, if no language is found based on locale, customDefault language will returned
+     * else autoDetectLanguage is false, then customDefaultLanguage will be returned.
+     *
+     * @return
+     */
+    private void updateLanguageToApply() {
+        //when in edit mode, it will return default language only
+        if (isInEditMode()) {
+            if (customDefaultLanguage != null) {
+                languageToApply = customDefaultLanguage;
+            } else {
+                languageToApply = Language.ENGLISH;
+            }
+        } else {
+            if (isAutoDetectLanguageEnabled()) {
+                Language localeBasedLanguage = getCCPLanguageFromLocale();
+                if (localeBasedLanguage == null) { //if no language is found from locale
+                    if (getCustomDefaultLanguage() != null) { //and custom language is defined
+                        languageToApply = getCustomDefaultLanguage();
+                    } else {
+                        languageToApply = Language.ENGLISH;
+                    }
+                } else {
+                    languageToApply = localeBasedLanguage;
+                }
+            } else {
+                if (getCustomDefaultLanguage() != null) {
+                    languageToApply = customDefaultLanguage;
+                } else {
+                    languageToApply = Language.ENGLISH;  //library default
+                }
+            }
+        }
+    }
+
+    /**
+     * Modifies size of flag in CCP view
+     *
+     * @param flagSize size in pixels
+     */
+    public void setFlagSize(int flagSize) {
+        imageViewFlag.getLayoutParams().height = flagSize;
+        imageViewFlag.requestLayout();
+    }
+
+    boolean isAutoDetectLanguageEnabled() {
+        return autoDetectLanguageEnabled;
+    }
+
+    private void refreshArrowViewVisibility() {
+        if (showArrow) {
+            imageViewArrow.setVisibility(VISIBLE);
+        } else {
+            imageViewArrow.setVisibility(GONE);
+        }
+    }
+
+    private Language getCCPLanguageFromLocale() {
+        Locale currentLocale = context.getResources().getConfiguration().locale;
+//        Log.d(TAG, "getCCPLanguageFromLocale: current locale language" + currentLocale.getLanguage());
+        for (Language language : Language.values()) {
+            if (language.getCode().equalsIgnoreCase(currentLocale.getLanguage())) {
+
+                if (language.getCountry() == null
+                        || language.getCountry().equalsIgnoreCase(currentLocale.getCountry()))
+                    return language;
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    if (language.getScript() == null
+                            || language.getScript().equalsIgnoreCase(currentLocale.getScript()))
+                        return language;
+
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * To change font of ccp views along with style.
+     *
+     * @param typeFace
+     * @param style
+     */
+    public void setTypeFace(Typeface typeFace, int style) {
+        try {
+            textView_selectedCountry.setTypeface(typeFace, style);
+            setDialogTypeFace(typeFace, style);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    Language getCustomDefaultLanguage() {
+        return customDefaultLanguage;
+    }
+
+    /**
+     * To change font of ccp views along with style.
+     *
+     * @param typeFace
+     * @param style
+     */
+    public void setDialogTypeFace(Typeface typeFace, int style) {
+        try {
+            dialogTypeFace = typeFace;
+            if (dialogTypeFace == null) {
+                style = DEFAULT_UNSET;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void setCustomDefaultLanguage(Language customDefaultLanguage) {
+        this.customDefaultLanguage = customDefaultLanguage;
+        updateLanguageToApply();
+        setSelectedCountry(CCPCountry.getCountryForNameCodeFromLibraryMasterList(context, getLanguageToApply(), selectedCCPCountry.getNameCode()));
     }
 
     /**
@@ -1414,24 +1473,6 @@ public class CountryCodePicker extends RelativeLayout {
             relativeClickConsumer.setClickable(true);
             relativeClickConsumer.setEnabled(true);
         }
-    }
-
-    /**
-     * This will match name code of all countries of list against the country's name code.
-     *
-     * @param CCPCountry
-     * @param CCPCountryList list of countries against which country will be checked.
-     * @return if country name code is found in list, returns true else return false
-     */
-    private boolean isAlreadyInList(CCPCountry CCPCountry, List<CCPCountry> CCPCountryList) {
-        if (CCPCountry != null && CCPCountryList != null) {
-            for (CCPCountry iterationCCPCountry : CCPCountryList) {
-                if (iterationCCPCountry.getNameCode().equalsIgnoreCase(CCPCountry.getNameCode())) {
-                    return true;
-                }
-            }
-        }
-        return false;
     }
 
     /**
@@ -1549,15 +1590,6 @@ public class CountryCodePicker extends RelativeLayout {
     }
 
     /**
-     * @return: Country Code of default country
-     * i.e if default country is IN +91(India)  returns: "91"
-     * if default country is JP +81(Japan) returns: "81"
-     */
-    public String getDefaultCountryCode() {
-        return defaultCCPCountry.phoneCode;
-    }
-
-    /**
      * * To get code of default country as Integer.
      *
      * @return integer value of default country code in CCP
@@ -1572,6 +1604,11 @@ public class CountryCodePicker extends RelativeLayout {
             e.printStackTrace();
         }
         return code;
+    }
+
+    EditText getEditText_registeredCarrierNumber() {
+//        Log.d(TAG, "getEditText_registeredCarrierNumber");
+        return editText_registeredCarrierNumber;
     }
 
     /**
@@ -1594,6 +1631,30 @@ public class CountryCodePicker extends RelativeLayout {
      */
     public String getDefaultCountryName() {
         return getDefaultCountry().name;
+    }
+
+    /**
+     * this will register editText and will apply required text watchers
+     *
+     * @param editText_registeredCarrierNumber
+     */
+    void setEditText_registeredCarrierNumber(EditText editText_registeredCarrierNumber) {
+        this.editText_registeredCarrierNumber = editText_registeredCarrierNumber;
+        if (this.editText_registeredCarrierNumber.getHint() != null) {
+            originalHint = this.editText_registeredCarrierNumber.getHint().toString();
+        }
+        updateValidityTextWatcher();
+        updateFormattingTextWatcher();
+        updateHint();
+    }
+
+    /**
+     * Sets failure listener.
+     *
+     * @param failureListener
+     */
+    public void setAutoDetectionFailureListener(FailureListener failureListener) {
+        this.failureListener = failureListener;
     }
 
     /**
@@ -1912,6 +1973,16 @@ public class CountryCodePicker extends RelativeLayout {
     }
 
     /**
+     * If developer wants to change CCP Dialog's Title, Search Hint text or no result ACK,
+     * a custom dialog text provider should be set.
+     *
+     * @param customDialogTextProvider
+     */
+    public void setCustomDialogTextProvider(CustomDialogTextProvider customDialogTextProvider) {
+        this.customDialogTextProvider = customDialogTextProvider;
+    }
+
+    /**
      * If nameCode of country in CCP view is not required use this to show/hide country name code of ccp view.
      *
      * @param showNameCode true will show country name code in ccp view, it will result " (IN) +91 "
@@ -1930,6 +2001,15 @@ public class CountryCodePicker extends RelativeLayout {
     public void showArrow(boolean showArrow) {
         this.showArrow = showArrow;
         refreshArrowViewVisibility();
+    }
+
+    /**
+     * Opens country selection dialog.
+     * By default this is called from ccp click.
+     * Developer can use this to trigger manually.
+     */
+    public void launchCountrySelectionDialog() {
+        launchCountrySelectionDialog(null);
     }
 
     /**
@@ -1969,36 +2049,13 @@ public class CountryCodePicker extends RelativeLayout {
     }
 
     /**
-     * To change font of ccp views along with style.
-     *
-     * @param typeFace
-     * @param style
+     * Manually trigger selection dialog and set
+     * scroll position to specified country.
      */
-    public void setDialogTypeFace(Typeface typeFace, int style) {
-        try {
-            dialogTypeFace = typeFace;
-            if (dialogTypeFace == null) {
-                style = DEFAULT_UNSET;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    public void launchCountrySelectionDialog(final String countryNameCode) {
+        CountryCodeDialog.openCountryCodeDialog(codePicker, countryNameCode);
     }
 
-    /**
-     * To change font of ccp views along with style.
-     *
-     * @param typeFace
-     * @param style
-     */
-    public void setTypeFace(Typeface typeFace, int style) {
-        try {
-            textView_selectedCountry.setTypeface(typeFace, style);
-            setDialogTypeFace(typeFace, style);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
     /**
      * To get call back on country selection a onCountryChangeListener must be registered.
@@ -2007,16 +2064,6 @@ public class CountryCodePicker extends RelativeLayout {
      */
     public void setOnCountryChangeListener(OnCountryChangeListener onCountryChangeListener) {
         this.onCountryChangeListener = onCountryChangeListener;
-    }
-
-    /**
-     * Modifies size of flag in CCP view
-     *
-     * @param flagSize size in pixels
-     */
-    public void setFlagSize(int flagSize) {
-        imageViewFlag.getLayoutParams().height = flagSize;
-        imageViewFlag.requestLayout();
     }
 
     public void showFlag(boolean showFlag) {
@@ -2082,42 +2129,6 @@ public class CountryCodePicker extends RelativeLayout {
     }
 
     /**
-     * Sets failure listener.
-     *
-     * @param failureListener
-     */
-    public void setAutoDetectionFailureListener(FailureListener failureListener) {
-        this.failureListener = failureListener;
-    }
-
-    /**
-     * If developer wants to change CCP Dialog's Title, Search Hint text or no result ACK,
-     * a custom dialog text provider should be set.
-     *
-     * @param customDialogTextProvider
-     */
-    public void setCustomDialogTextProvider(CustomDialogTextProvider customDialogTextProvider) {
-        this.customDialogTextProvider = customDialogTextProvider;
-    }
-
-    /**
-     * Opens country selection dialog.
-     * By default this is called from ccp click.
-     * Developer can use this to trigger manually.
-     */
-    public void launchCountrySelectionDialog() {
-        launchCountrySelectionDialog(null);
-    }
-
-    /**
-     * Manually trigger selection dialog and set
-     * scroll position to specified country.
-     */
-    public void launchCountrySelectionDialog(final String countryNameCode) {
-        CountryCodeDialog.openCountryCodeDialog(codePicker, countryNameCode);
-    }
-
-    /**
      * This function will check the validity of entered number.
      * It will use PhoneNumberUtil to check validity
      *
@@ -2140,12 +2151,14 @@ public class CountryCodePicker extends RelativeLayout {
         }
     }
 
+
     private PhoneNumberUtil getPhoneUtil() {
         if (phoneUtil == null) {
             phoneUtil = PhoneNumberUtil.createInstance(context);
         }
         return phoneUtil;
     }
+
 
     /**
      * loads current country in ccp using locale and telephony manager

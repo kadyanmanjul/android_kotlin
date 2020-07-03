@@ -38,7 +38,11 @@ import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
-import com.mindorks.placeholderview.annotations.*
+import com.mindorks.placeholderview.annotations.Click
+import com.mindorks.placeholderview.annotations.Layout
+import com.mindorks.placeholderview.annotations.Recycle
+import com.mindorks.placeholderview.annotations.Resolve
+import com.mindorks.placeholderview.annotations.View
 import com.tonyodev.fetch2.Download
 import com.tonyodev.fetch2.Error
 import com.tonyodev.fetch2.FetchListener
@@ -348,7 +352,7 @@ class AudioPlayerViewHolder(activityRef: WeakReference<FragmentActivity>, messag
                     duration = Utils.getDurationOfMedia(
                         activityRef.get()!!,
                         message.downloadedLocalPath!!
-                    )?.toInt()?:0
+                    )?.toInt() ?: 0
                 } else if (message.downloadStatus === DOWNLOAD_STATUS.DOWNLOADING) {
                     mediaDownloading()
                     downloadStart(message.url!!)
@@ -501,7 +505,7 @@ class AudioPlayerViewHolder(activityRef: WeakReference<FragmentActivity>, messag
                     Utils.getDurationOfMedia(
                         activityRef.get()!!,
                         message.downloadedLocalPath!!
-                    )?.toInt()?:0,
+                    )?.toInt() ?: 0,
                     0,
                     true
                 )

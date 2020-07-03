@@ -14,7 +14,6 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
 import androidx.annotation.ColorInt;
 import androidx.annotation.DrawableRes;
 import androidx.annotation.IntDef;
@@ -23,10 +22,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.StringRes;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.drawable.DrawableCompat;
-
 import com.google.android.material.snackbar.Snackbar;
 import com.joshtalks.joshskills.R;
-
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
@@ -51,12 +48,6 @@ public class JoshSnackBar {
         drawable = drawable.mutate();
         DrawableCompat.setTint(drawable, color);
         return drawable;
-    }
-
-    private static Drawable makeTransparentDrawable(Context context, int width, int height) {
-        Bitmap.Config conf = Bitmap.Config.ARGB_8888;
-        Bitmap bmp = Bitmap.createBitmap(width, height, conf);
-        return new BitmapDrawable(context.getResources(), bmp);
     }
 
     private Snackbar make() {
@@ -175,6 +166,12 @@ public class JoshSnackBar {
 
 
         return chocolate;
+    }
+
+    private static Drawable makeTransparentDrawable(Context context, int width, int height) {
+        Bitmap.Config conf = Bitmap.Config.ARGB_8888;
+        Bitmap bmp = Bitmap.createBitmap(width, height, conf);
+        return new BitmapDrawable(context.getResources(), bmp);
     }
 
 
@@ -388,6 +385,22 @@ public class JoshSnackBar {
             return make();
         }
 
+        private Snackbar make() {
+            if (view == null)
+                throw new IllegalStateException("ChocoBar Error: You must set an Activity or a View before making a snack");
+
+            if (textResId != 0)
+                text = view.getResources().getText(textResId);
+
+            if (actionTextResId != 0)
+                actionText = view.getResources().getText(actionTextResId);
+
+            if (iconResId != 0)
+                icon = ContextCompat.getDrawable(view.getContext(), iconResId);
+
+            return new JoshSnackBar(this).make();
+        }
+
         public Snackbar green() {
             type = Type.GREEN;
             return make();
@@ -416,22 +429,6 @@ public class JoshSnackBar {
         public Snackbar bad() {
             type = Type.BAD;
             return make();
-        }
-
-        private Snackbar make() {
-            if (view == null)
-                throw new IllegalStateException("ChocoBar Error: You must set an Activity or a View before making a snack");
-
-            if (textResId != 0)
-                text = view.getResources().getText(textResId);
-
-            if (actionTextResId != 0)
-                actionText = view.getResources().getText(actionTextResId);
-
-            if (iconResId != 0)
-                icon = ContextCompat.getDrawable(view.getContext(), iconResId);
-
-            return new JoshSnackBar(this).make();
         }
     }
 

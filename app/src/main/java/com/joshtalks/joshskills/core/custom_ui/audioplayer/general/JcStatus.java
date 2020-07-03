@@ -1,7 +1,6 @@
 package com.joshtalks.joshskills.core.custom_ui.audioplayer.general;
 
 import com.joshtalks.joshskills.core.custom_ui.audioplayer.model.JcAudio;
-
 import javax.annotation.Nullable;
 
 /**

@@ -2,7 +2,6 @@ package com.joshtalks.joshskills.core.custom_ui;
 
 import android.content.Context;
 import android.util.AttributeSet;
-
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatImageView;
 

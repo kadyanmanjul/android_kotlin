@@ -1,6 +1,5 @@
 package com.joshtalks.joshskills.repository.service
 
-import android.net.Uri
 import androidx.lifecycle.MutableLiveData
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.PrefManager
@@ -8,7 +7,12 @@ import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.service.DownloadUtils
 import com.joshtalks.joshskills.messaging.RxBus2
-import com.joshtalks.joshskills.repository.local.entity.*
+import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
+import com.joshtalks.joshskills.repository.local.entity.ChatModel
+import com.joshtalks.joshskills.repository.local.entity.DOWNLOAD_STATUS
+import com.joshtalks.joshskills.repository.local.entity.MESSAGE_DELIVER_STATUS
+import com.joshtalks.joshskills.repository.local.entity.Sender
+import com.joshtalks.joshskills.repository.local.entity.User
 import com.joshtalks.joshskills.repository.local.eventbus.DBInsertion
 import com.joshtalks.joshskills.repository.local.eventbus.MessageCompleteEventBus
 import com.joshtalks.joshskills.repository.server.ChatMessageReceiver
@@ -18,25 +22,23 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-const val HEADER_KEY = "createdmilisecond"
-
 object NetworkRequestHelper {
 
     fun getUpdatedChat(
-        conversation_id: String,
+        conversationId: String,
         queryMap: Map<String, String> = emptyMap()
     ) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 val resp = AppObjectController.chatNetworkService.getUnReceivedMessageAsync(
-                    conversation_id,
+                    conversationId,
                     queryMap
                 )
                 if (resp.chatModelList.isNullOrEmpty()) {
                     RxBus2.publish(MessageCompleteEventBus(false))
                 } else {
                     PrefManager.put(
-                        conversation_id.trim(),
+                        conversationId.trim(),
                         resp.chatModelList.last().messageTimeInMilliSeconds
                     )
                     RxBus2.publish(MessageCompleteEventBus(true))
@@ -107,18 +109,11 @@ object NetworkRequestHelper {
                 RxBus2.publish(DBInsertion("Chat"))
 
                 resp.next?.let {
-                    val uri = Uri.parse(it)
-                    val args = uri.queryParameterNames
                     val arguments = mutableMapOf<String, String>()
-                    PrefManager.getLastSyncTime(conversation_id).let { keys ->
-                        /*for (name in args) {
-                            uri.getQueryParameter(name)?.run {
-                                arguments[name] = this
-                            }
-                        }*/
+                    PrefManager.getLastSyncTime(conversationId).let { keys ->
                         arguments[keys.first] = keys.second
                     }
-                    getUpdatedChat(conversation_id, queryMap = arguments)
+                    getUpdatedChat(conversationId, queryMap = arguments)
                 }
             } catch (ex: Exception) {
                 ex.printStackTrace()
@@ -187,10 +182,10 @@ object NetworkRequestHelper {
                         "ChatId",
                         chatMessageReceiver.id
                     ).push()
+                else -> {
+                    return@launch
+                }
             }
-
         }
     }
-
-
 }

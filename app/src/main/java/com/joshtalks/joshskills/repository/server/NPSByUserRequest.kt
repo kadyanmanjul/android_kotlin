@@ -1,6 +1,7 @@
 package com.joshtalks.joshskills.repository.server
 
 import com.google.gson.annotations.SerializedName
+
 data class NPSByUserRequest(
 
     @SerializedName("instance")

@@ -21,7 +21,11 @@ import com.joshtalks.joshskills.core.custom_ui.audioplayer.general.PlayerUtil
 import com.joshtalks.joshskills.core.custom_ui.custom_textview.AutoLinkMode
 import com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
 import com.joshtalks.joshskills.messaging.RxBus2
-import com.joshtalks.joshskills.repository.local.entity.*
+import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
+import com.joshtalks.joshskills.repository.local.entity.ChatModel
+import com.joshtalks.joshskills.repository.local.entity.MESSAGE_DELIVER_STATUS
+import com.joshtalks.joshskills.repository.local.entity.Question
+import com.joshtalks.joshskills.repository.local.entity.Sender
 import com.joshtalks.joshskills.repository.local.eventbus.GotoChatEventBus
 import java.lang.ref.WeakReference
 

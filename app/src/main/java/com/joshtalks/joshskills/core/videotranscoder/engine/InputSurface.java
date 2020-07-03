@@ -104,6 +104,16 @@ class InputSurface {
     }
 
     /**
+     * Checks for EGL errors.
+     */
+    private void checkEglError(String msg) {
+        int error;
+        if ((error = EGL14.eglGetError()) != EGL14.EGL_SUCCESS) {
+            throw new RuntimeException(msg + ": EGL error: 0x" + Integer.toHexString(error));
+        }
+    }
+
+    /**
      * Discard all resources held by this class, notably the EGL context.  Also releases the
      * Surface that was passed to our constructor.
      */
@@ -174,15 +184,5 @@ class InputSurface {
      */
     public void setPresentationTime(long nsecs) {
         EGLExt.eglPresentationTimeANDROID(mEGLDisplay, mEGLSurface, nsecs);
-    }
-
-    /**
-     * Checks for EGL errors.
-     */
-    private void checkEglError(String msg) {
-        int error;
-        if ((error = EGL14.eglGetError()) != EGL14.EGL_SUCCESS) {
-            throw new RuntimeException(msg + ": EGL error: 0x" + Integer.toHexString(error));
-        }
     }
 }

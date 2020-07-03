@@ -2,7 +2,6 @@ package com.joshtalks.joshskills.core.datetimeutils;
 
 
 import android.content.Context;
-
 import java.util.Date;
 
 /**

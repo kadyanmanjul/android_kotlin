@@ -285,7 +285,9 @@
     <string name="downloaded_syllabus">Syllabus PDF downloaded successfully! </string>
     <string name="download_syllabus">Download Syllabus</string>
     <string name="chech_location">Check for your location</string>
-    <string name="meet_me">Meet me</string>
+    <string name="meet_me">Meet Me!</string>
     <string name="meet_the_students">Meet the Students</string>
+    <string name="hi_i_am">Hi! I am</string>
+    <string name="about_teacher_title">About Teacher</string>
 
 </resources>

@@ -3,7 +3,6 @@ package com.joshtalks.joshskills.core.custom_ui;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
-
 import androidx.viewpager.widget.ViewPager;
 
 public class HeightWrappingViewPager extends ViewPager {

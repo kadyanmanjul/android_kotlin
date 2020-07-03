@@ -17,7 +17,6 @@ import com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.server.course_detail.CardType
 import com.joshtalks.joshskills.repository.server.course_detail.TeacherDetails
-import com.joshtalks.joshskills.ui.view_holders.ROUND_CORNER
 import com.mindorks.placeholderview.annotations.Click
 import com.mindorks.placeholderview.annotations.Layout
 import com.mindorks.placeholderview.annotations.Resolve
@@ -61,7 +60,7 @@ class TeacherDetailsViewHolder(
     private fun setImageView(url: String, imageView: ImageView) {
         val multi = MultiTransformation(
             RoundedCornersTransformation(
-                Utils.dpToPx(ROUND_CORNER),
+                Utils.dpToPx(16),
                 0,
                 RoundedCornersTransformation.CornerType.ALL
             )
@@ -69,7 +68,6 @@ class TeacherDetailsViewHolder(
 
         Glide.with(context)
             .load(url)
-            .centerCrop()
             .override(Target.SIZE_ORIGINAL)
             .optionalTransform(
                 WebpDrawable::class.java,

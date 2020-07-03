@@ -3,9 +3,7 @@ package com.joshtalks.joshskills.core.service.video_download;
 
 import android.content.Context;
 import android.net.Uri;
-
 import androidx.annotation.Nullable;
-
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.RenderersFactory;
 import com.google.android.exoplayer2.offline.Download;
@@ -27,15 +25,13 @@ import com.joshtalks.joshskills.core.AppObjectController;
 import com.joshtalks.joshskills.messaging.RxBus2;
 import com.joshtalks.joshskills.repository.local.entity.ChatModel;
 import com.joshtalks.joshskills.repository.local.eventbus.MediaProgressEventBus;
-
-import org.jetbrains.annotations.NotNull;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArraySet;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Tracks media that has been downloaded.
@@ -60,6 +56,17 @@ public class DownloadTracker {
         downloadIndex = downloadManager.getDownloadIndex();
         downloadManager.addListener(new DownloadManagerListener());
         loadDownloads();
+    }
+
+    private void loadDownloads() {
+        try (DownloadCursor loadedDownloads = downloadIndex.getDownloads()) {
+            while (loadedDownloads.moveToNext()) {
+                Download download = loadedDownloads.getDownload();
+                downloads.put(download.request.uri, download);
+            }
+        } catch (IOException e) {
+            Log.w(TAG, "Failed to query downloads", e);
+        }
     }
 
     public void addListener(Listener listener) {
@@ -91,25 +98,6 @@ public class DownloadTracker {
 
     }
 
-    public void cancelDownload(
-            Uri uri) {
-        Download download = downloads.get(uri);
-        if (download != null) {
-            DownloadService.sendRemoveDownload(context, VideoDownloadService.class, download.request.id, /* foreground= */ true);
-        }
-    }
-
-    private void loadDownloads() {
-        try (DownloadCursor loadedDownloads = downloadIndex.getDownloads()) {
-            while (loadedDownloads.moveToNext()) {
-                Download download = loadedDownloads.getDownload();
-                downloads.put(download.request.uri, download);
-            }
-        } catch (IOException e) {
-            Log.w(TAG, "Failed to query downloads", e);
-        }
-    }
-
     private DownloadHelper getDownloadHelper(Context context,
                                              Uri uri, RenderersFactory renderersFactory) {
         int type = Util.inferContentType(uri, null);
@@ -124,6 +112,14 @@ public class DownloadTracker {
                 return DownloadHelper.forProgressive(context, uri);
             default:
                 throw new IllegalStateException("Unsupported type: " + type);
+        }
+    }
+
+    public void cancelDownload(
+            Uri uri) {
+        Download download = downloads.get(uri);
+        if (download != null) {
+            DownloadService.sendRemoveDownload(context, VideoDownloadService.class, download.request.id, /* foreground= */ true);
         }
     }
 
@@ -228,13 +224,8 @@ public class DownloadTracker {
 
         }
 
-        /**
-         * Returns whether a track selection dialog will have content to display if initialized with the
-         * specified {@link DefaultTrackSelector} in its current state.
-         */
-        public boolean willHaveContent(DefaultTrackSelector trackSelector) {
-            MappedTrackInfo mappedTrackInfo = trackSelector.getCurrentMappedTrackInfo();
-            return mappedTrackInfo != null && willHaveContent(mappedTrackInfo);
+        private void startDownload() {
+            startDownload(buildDownloadRequest());
         }
 
         /**
@@ -248,6 +239,25 @@ public class DownloadTracker {
                 }
             }
             return false;
+        }
+
+        private void startDownload(DownloadRequest downloadRequest) {
+            DownloadService.sendAddDownload(
+                    context, VideoDownloadService.class, downloadRequest, true);
+        }
+
+        private DownloadRequest buildDownloadRequest() {
+            return downloadHelper.getDownloadRequest(Util.getUtf8Bytes(AppObjectController.getGsonMapper().toJson(chatObj)));
+        }
+
+        List<DefaultTrackSelector.SelectionOverride> getOverrides(int pos) {
+            if (pos == 0) {
+                List<DefaultTrackSelector.SelectionOverride> overrideList = new ArrayList<>();
+                overrideList.add(new DefaultTrackSelector.SelectionOverride(0, 0));
+                return overrideList;
+            } else {
+                return Collections.emptyList();
+            }
         }
 
         private boolean showTabForRenderer(MappedTrackInfo mappedTrackInfo, int rendererIndex) {
@@ -270,28 +280,13 @@ public class DownloadTracker {
             }
         }
 
-
-        List<DefaultTrackSelector.SelectionOverride> getOverrides(int pos) {
-            if (pos == 0) {
-                List<DefaultTrackSelector.SelectionOverride> overrideList = new ArrayList<>();
-                overrideList.add(new DefaultTrackSelector.SelectionOverride(0, 0));
-                return overrideList;
-            } else {
-                return Collections.emptyList();
-            }
-        }
-
-        private void startDownload() {
-            startDownload(buildDownloadRequest());
-        }
-
-        private void startDownload(DownloadRequest downloadRequest) {
-            DownloadService.sendAddDownload(
-                    context, VideoDownloadService.class, downloadRequest, true);
-        }
-
-        private DownloadRequest buildDownloadRequest() {
-            return downloadHelper.getDownloadRequest(Util.getUtf8Bytes(AppObjectController.getGsonMapper().toJson(chatObj)));
+        /**
+         * Returns whether a track selection dialog will have content to display if initialized with the
+         * specified {@link DefaultTrackSelector} in its current state.
+         */
+        public boolean willHaveContent(DefaultTrackSelector trackSelector) {
+            MappedTrackInfo mappedTrackInfo = trackSelector.getCurrentMappedTrackInfo();
+            return mappedTrackInfo != null && willHaveContent(mappedTrackInfo);
         }
     }
 }

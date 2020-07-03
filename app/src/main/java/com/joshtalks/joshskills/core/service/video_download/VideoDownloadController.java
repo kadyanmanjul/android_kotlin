@@ -1,9 +1,7 @@
 package com.joshtalks.joshskills.core.service.video_download;
 
 import android.net.Uri;
-
 import androidx.annotation.Nullable;
-
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.RenderersFactory;
@@ -36,7 +34,6 @@ import com.google.android.exoplayer2.util.Log;
 import com.google.android.exoplayer2.util.Util;
 import com.joshtalks.joshskills.R;
 import com.joshtalks.joshskills.core.AppObjectController;
-
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
@@ -73,17 +70,6 @@ public class VideoDownloadController {
             videoDownloadController = new VideoDownloadController();
         }
         return videoDownloadController;
-    }
-
-    protected static CacheDataSourceFactory buildReadOnlyCacheDataSource(
-            DataSource.Factory upstreamFactory, Cache cache) {
-        return new CacheDataSourceFactory(
-                cache,
-                upstreamFactory,
-                new FileDataSourceFactory(),
-                null,
-                CacheDataSource.FLAG_IGNORE_CACHE_ON_ERROR,
-                null);
     }
 
     /**
@@ -141,19 +127,6 @@ public class VideoDownloadController {
         return userAgent;
     }
 
-    private DataSource.Factory buildDataSourceFactory() {
-        DefaultDataSourceFactory upstreamFactory = new DefaultDataSourceFactory(AppObjectController.getJoshApplication(), buildHttpDataSourceFactory());
-        return buildReadOnlyCacheDataSource(upstreamFactory, getDownloadCache());
-    }
-
-    private HttpDataSource.Factory buildHttpDataSourceFactory() {
-        return new DefaultHttpDataSourceFactory(userAgent);
-    }
-
-    private boolean useExtensionRenderers() {
-        return false;
-    }
-
     public RenderersFactory buildRenderersFactory(boolean preferExtensionRenderer) {
         @DefaultRenderersFactory.ExtensionRendererMode
         int extensionRendererMode =
@@ -167,23 +140,13 @@ public class VideoDownloadController {
                 .setExtensionRendererMode(extensionRendererMode);
     }
 
+    private boolean useExtensionRenderers() {
+        return false;
+    }
+
     public DownloadManager getDownloadManager() {
         initDownloadManager();
         return downloadManager;
-    }
-
-    public DownloadTracker getDownloadTracker() {
-        initDownloadManager();
-        return downloadTracker;
-    }
-
-    public synchronized Cache getDownloadCache() {
-        if (downloadCache == null) {
-            File downloadContentDirectory = new File(getDownloadDirectory(), DOWNLOAD_CONTENT_DIRECTORY);
-            downloadCache =
-                    new SimpleCache(downloadContentDirectory, new NoOpCacheEvictor(), getDatabaseProvider());
-        }
-        return downloadCache;
     }
 
     private synchronized void initDownloadManager() {
@@ -209,6 +172,11 @@ public class VideoDownloadController {
         }
     }
 
+    private DataSource.Factory buildDataSourceFactory() {
+        DefaultDataSourceFactory upstreamFactory = new DefaultDataSourceFactory(AppObjectController.getJoshApplication(), buildHttpDataSourceFactory());
+        return buildReadOnlyCacheDataSource(upstreamFactory, getDownloadCache());
+    }
+
     private void upgradeActionFile(
             String fileName, DefaultDownloadIndex downloadIndex, boolean addNewDownloadsAsCompleted) {
         try {
@@ -223,11 +191,28 @@ public class VideoDownloadController {
         }
     }
 
-    private DatabaseProvider getDatabaseProvider() {
-        if (databaseProvider == null) {
-            databaseProvider = new ExoDatabaseProvider(AppObjectController.getJoshApplication());
+    private HttpDataSource.Factory buildHttpDataSourceFactory() {
+        return new DefaultHttpDataSourceFactory(userAgent);
+    }
+
+    protected static CacheDataSourceFactory buildReadOnlyCacheDataSource(
+            DataSource.Factory upstreamFactory, Cache cache) {
+        return new CacheDataSourceFactory(
+                cache,
+                upstreamFactory,
+                new FileDataSourceFactory(),
+                null,
+                CacheDataSource.FLAG_IGNORE_CACHE_ON_ERROR,
+                null);
+    }
+
+    public synchronized Cache getDownloadCache() {
+        if (downloadCache == null) {
+            File downloadContentDirectory = new File(getDownloadDirectory(), DOWNLOAD_CONTENT_DIRECTORY);
+            downloadCache =
+                    new SimpleCache(downloadContentDirectory, new NoOpCacheEvictor(), getDatabaseProvider());
         }
-        return databaseProvider;
+        return downloadCache;
     }
 
     private File getDownloadDirectory() {
@@ -239,6 +224,18 @@ public class VideoDownloadController {
             }
         }
         return downloadDirectory;
+    }
+
+    private DatabaseProvider getDatabaseProvider() {
+        if (databaseProvider == null) {
+            databaseProvider = new ExoDatabaseProvider(AppObjectController.getJoshApplication());
+        }
+        return databaseProvider;
+    }
+
+    public DownloadTracker getDownloadTracker() {
+        initDownloadManager();
+        return downloadTracker;
     }
 
     public MediaSource getMediaSource(String url) {

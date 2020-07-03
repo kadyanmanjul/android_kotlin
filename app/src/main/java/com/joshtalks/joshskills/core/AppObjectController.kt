@@ -151,6 +151,7 @@ internal class AppObjectController {
 
         @JvmStatic
         lateinit var firebaseAnalytics: FirebaseAnalytics
+
         @JvmStatic
         lateinit var freshChat: Freshchat
 

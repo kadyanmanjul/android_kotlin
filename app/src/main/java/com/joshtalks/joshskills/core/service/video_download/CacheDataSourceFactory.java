@@ -1,7 +1,6 @@
 package com.joshtalks.joshskills.core.service.video_download;
 
 import android.content.Context;
-
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.upstream.FileDataSource;
@@ -11,7 +10,6 @@ import com.google.android.exoplayer2.upstream.cache.LeastRecentlyUsedCacheEvicto
 import com.google.android.exoplayer2.upstream.cache.SimpleCache;
 import com.google.android.exoplayer2.util.Util;
 import com.joshtalks.joshskills.R;
-
 import java.io.File;
 
 

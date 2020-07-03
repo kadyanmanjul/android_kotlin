@@ -26,7 +26,6 @@ import android.graphics.Shader;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.OvalShape;
 import android.view.animation.Animation;
-
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.core.view.ViewCompat;
 
@@ -94,6 +93,16 @@ class CircleImageView extends AppCompatImageView {
         mListener = listener;
     }
 
+    /**
+     * Update the background color of the circle image view.
+     */
+    public void setBackgroundColor(int colorRes) {
+        if (getBackground() instanceof ShapeDrawable) {
+            final Resources res = getResources();
+            ((ShapeDrawable) getBackground()).getPaint().setColor(res.getColor(colorRes));
+        }
+    }
+
     @Override
     public void onAnimationStart() {
         super.onAnimationStart();
@@ -107,16 +116,6 @@ class CircleImageView extends AppCompatImageView {
         super.onAnimationEnd();
         if (mListener != null) {
             mListener.onAnimationEnd(getAnimation());
-        }
-    }
-
-    /**
-     * Update the background color of the circle image view.
-     */
-    public void setBackgroundColor(int colorRes) {
-        if (getBackground() instanceof ShapeDrawable) {
-            final Resources res = getResources();
-            ((ShapeDrawable) getBackground()).getPaint().setColor(res.getColor(colorRes));
         }
     }
 

@@ -1,20 +1,16 @@
 package com.joshtalks.joshskills.core;
 
 import android.Manifest;
+
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.telephony.SubscriptionInfo;
 import android.telephony.SubscriptionManager;
-
 import androidx.collection.ArrayMap;
 import androidx.core.app.ActivityCompat;
-
 import com.joshtalks.joshskills.BuildConfig;
 import com.joshtalks.joshskills.R;
-
-import java.util.List;
-
 import github.nisrulz.easydeviceinfo.base.EasyAppMod;
 import github.nisrulz.easydeviceinfo.base.EasyConfigMod;
 import github.nisrulz.easydeviceinfo.base.EasyCpuMod;
@@ -26,6 +22,7 @@ import github.nisrulz.easydeviceinfo.base.EasyNetworkMod;
 import github.nisrulz.easydeviceinfo.base.EasySimMod;
 import github.nisrulz.easydeviceinfo.base.NetworkType;
 import github.nisrulz.easydeviceinfo.common.EasyDeviceInfo;
+import java.util.List;
 
 public class DeviceInfoUtil {
 

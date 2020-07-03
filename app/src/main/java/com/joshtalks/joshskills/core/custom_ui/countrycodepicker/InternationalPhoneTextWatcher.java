@@ -215,11 +215,6 @@ public class InternationalPhoneTextWatcher implements TextWatcher {
         return TextUtils.isEmpty(internationalFormatted) ? "" : internationalFormatted;
     }
 
-    private void stopFormatting() {
-        mStopFormatting = true;
-        mFormatter.clear();
-    }
-
     private boolean hasSeparator(final CharSequence s, final int start, final int count) {
         for (int i = start; i < start + count; i++) {
             char c = s.charAt(i);
@@ -228,5 +223,10 @@ public class InternationalPhoneTextWatcher implements TextWatcher {
             }
         }
         return false;
+    }
+
+    private void stopFormatting() {
+        mStopFormatting = true;
+        mFormatter.clear();
     }
 }

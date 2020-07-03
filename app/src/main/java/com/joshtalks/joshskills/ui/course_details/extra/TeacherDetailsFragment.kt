@@ -9,14 +9,12 @@ import androidx.fragment.app.DialogFragment
 import com.bumptech.glide.Glide
 import com.bumptech.glide.integration.webp.decoder.WebpDrawable
 import com.bumptech.glide.integration.webp.decoder.WebpDrawableTransformation
-import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.repository.server.course_detail.TeacherDetails
-import kotlinx.android.synthetic.main.fragment_teacher_details.background_view
-import kotlinx.android.synthetic.main.fragment_teacher_details.iv_cross
+import kotlinx.android.synthetic.main.fragment_teacher_details.iv_back
 import kotlinx.android.synthetic.main.fragment_teacher_details.iv_profile_pic
 import kotlinx.android.synthetic.main.fragment_teacher_details.teacher_details
 import kotlinx.android.synthetic.main.fragment_teacher_details.teacher_name
@@ -63,12 +61,11 @@ class TeacherDetailsFragment : DialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setupBackground()
         setupProfilePicture()
         teacher_name.text = tgDetails.name
         teacher_details.text =
             HtmlCompat.fromHtml(tgDetails.longDescription, HtmlCompat.FROM_HTML_MODE_LEGACY)
-        iv_cross.setOnClickListener {
+        iv_back.setOnClickListener {
             dismissAllowingStateLoss()
         }
     }
@@ -84,18 +81,6 @@ class TeacherDetailsFragment : DialogFragment() {
                 )
                 .apply(RequestOptions.circleCropTransform())
                 .into(iv_profile_pic)
-        }
-    }
-
-    private fun setupBackground() {
-        tgDetails.bgUrl?.run {
-            Glide.with(requireContext())
-                .load(this)
-                .optionalTransform(
-                    WebpDrawable::class.java,
-                    WebpDrawableTransformation(CenterCrop())
-                )
-                .into(background_view)
         }
     }
 }

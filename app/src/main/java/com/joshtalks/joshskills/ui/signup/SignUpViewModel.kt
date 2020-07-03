@@ -35,7 +35,6 @@ import com.truecaller.android.sdk.TrueProfile
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-
 class SignUpViewModel(application: Application) : AndroidViewModel(application) {
     private val _signUpStatus: MutableLiveData<SignUpStepStatus> = MutableLiveData()
     val signUpStatus: LiveData<SignUpStepStatus> = _signUpStatus
@@ -43,7 +42,7 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
     var resendAttempt: Int = 1
     var incorrectAttempt: Int = 0
     var currentTime: Long = 0
-    var fromVerifictionScreen = MutableLiveData<Boolean>(false)
+    var fromVerificationScreen = MutableLiveData(false)
     val verificationStatus: MutableLiveData<VerificationStatus> = MutableLiveData()
 
     val otpField = ObservableField<String>()
@@ -276,7 +275,7 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
         }
         _signUpStatus.postValue(SignUpStepStatus.SignUpCompleted)
         if (loginViaStatus == LoginViaStatus.SMS_VERIFY)
-            fromVerifictionScreen.postValue(true)
+            fromVerificationScreen.postValue(true)
     }
 
 

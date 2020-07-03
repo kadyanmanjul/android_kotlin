@@ -30,7 +30,7 @@ const val IMAGE_URL = "image_url"
 
 class StartCourseActivity : CoreJoshActivity() {
 
-    val isUserRegistered by lazy { Mentor.getInstance().getId().isNotBlank() }
+    private val isUserRegistered by lazy { Mentor.getInstance().getId().isNotBlank() }
     var courseName: String = EMPTY
     var teacherName: String = EMPTY
     var imageUrl: String = EMPTY

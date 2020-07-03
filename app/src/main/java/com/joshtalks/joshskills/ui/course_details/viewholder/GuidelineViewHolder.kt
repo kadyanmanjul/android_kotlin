@@ -40,7 +40,7 @@ class GuidelineViewHolder(
     fun onResolved() {
         headerTV.text = guidelines.title
         viewPager.adapter =
-            GuidelineAdapter(fragmentManager, guidelines.guidelines.sortedBy { it.category })
+            GuidelineAdapter(fragmentManager, guidelines.guidelines.sortedBy { it.sortOrder })
         wormDotsIndicator.setViewPager(viewPager)
         tabLayout.setupWithViewPager(viewPager)
         viewPager.measure(

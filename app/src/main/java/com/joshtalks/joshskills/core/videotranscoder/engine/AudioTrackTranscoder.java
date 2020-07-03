@@ -3,9 +3,7 @@ package com.joshtalks.joshskills.core.videotranscoder.engine;
 import android.media.MediaCodec;
 import android.media.MediaExtractor;
 import android.media.MediaFormat;
-
 import com.joshtalks.joshskills.core.videotranscoder.compat.MediaCodecBufferCompatWrapper;
-
 import java.io.IOException;
 
 public class AudioTrackTranscoder implements TrackTranscoder {
@@ -98,51 +96,6 @@ public class AudioTrackTranscoder implements TrackTranscoder {
         return busy;
     }
 
-    private int drainExtractor(long timeoutUs) {
-        if (mIsExtractorEOS) return DRAIN_STATE_NONE;
-        int trackIndex = mExtractor.getSampleTrackIndex();
-        if (trackIndex >= 0 && trackIndex != mTrackIndex) {
-            return DRAIN_STATE_NONE;
-        }
-
-        final int result = mDecoder.dequeueInputBuffer(timeoutUs);
-        if (result < 0) return DRAIN_STATE_NONE;
-        if (trackIndex < 0) {
-            mIsExtractorEOS = true;
-            mDecoder.queueInputBuffer(result, 0, 0, 0, MediaCodec.BUFFER_FLAG_END_OF_STREAM);
-            return DRAIN_STATE_NONE;
-        }
-
-        final int sampleSize = mExtractor.readSampleData(mDecoderBuffers.getInputBuffer(result), 0);
-        final boolean isKeyFrame = (mExtractor.getSampleFlags() & MediaExtractor.SAMPLE_FLAG_SYNC) != 0;
-        mDecoder.queueInputBuffer(result, 0, sampleSize, mExtractor.getSampleTime(), isKeyFrame ? MediaCodec.BUFFER_FLAG_SYNC_FRAME : 0);
-        mExtractor.advance();
-        return DRAIN_STATE_CONSUMED;
-    }
-
-    private int drainDecoder(long timeoutUs) {
-        if (mIsDecoderEOS) return DRAIN_STATE_NONE;
-
-        int result = mDecoder.dequeueOutputBuffer(mBufferInfo, timeoutUs);
-        switch (result) {
-            case MediaCodec.INFO_TRY_AGAIN_LATER:
-                return DRAIN_STATE_NONE;
-            case MediaCodec.INFO_OUTPUT_FORMAT_CHANGED:
-                mAudioChannel.setActualDecodedFormat(mDecoder.getOutputFormat());
-            case MediaCodec.INFO_OUTPUT_BUFFERS_CHANGED:
-                return DRAIN_STATE_SHOULD_RETRY_IMMEDIATELY;
-        }
-
-        if ((mBufferInfo.flags & MediaCodec.BUFFER_FLAG_END_OF_STREAM) != 0) {
-            mIsDecoderEOS = true;
-            mAudioChannel.drainDecoderBufferAndQueue(AudioChannel.BUFFER_INDEX_END_OF_STREAM, 0);
-        } else if (mBufferInfo.size > 0) {
-            mAudioChannel.drainDecoderBufferAndQueue(result, mBufferInfo.presentationTimeUs);
-        }
-
-        return DRAIN_STATE_CONSUMED;
-    }
-
     private int drainEncoder(long timeoutUs) {
         if (mIsEncoderEOS) return DRAIN_STATE_NONE;
 
@@ -178,6 +131,51 @@ public class AudioTrackTranscoder implements TrackTranscoder {
         mMuxer.writeSampleData(SAMPLE_TYPE, mEncoderBuffers.getOutputBuffer(result), mBufferInfo);
         mWrittenPresentationTimeUs = mBufferInfo.presentationTimeUs;
         mEncoder.releaseOutputBuffer(result, false);
+        return DRAIN_STATE_CONSUMED;
+    }
+
+    private int drainDecoder(long timeoutUs) {
+        if (mIsDecoderEOS) return DRAIN_STATE_NONE;
+
+        int result = mDecoder.dequeueOutputBuffer(mBufferInfo, timeoutUs);
+        switch (result) {
+            case MediaCodec.INFO_TRY_AGAIN_LATER:
+                return DRAIN_STATE_NONE;
+            case MediaCodec.INFO_OUTPUT_FORMAT_CHANGED:
+                mAudioChannel.setActualDecodedFormat(mDecoder.getOutputFormat());
+            case MediaCodec.INFO_OUTPUT_BUFFERS_CHANGED:
+                return DRAIN_STATE_SHOULD_RETRY_IMMEDIATELY;
+        }
+
+        if ((mBufferInfo.flags & MediaCodec.BUFFER_FLAG_END_OF_STREAM) != 0) {
+            mIsDecoderEOS = true;
+            mAudioChannel.drainDecoderBufferAndQueue(AudioChannel.BUFFER_INDEX_END_OF_STREAM, 0);
+        } else if (mBufferInfo.size > 0) {
+            mAudioChannel.drainDecoderBufferAndQueue(result, mBufferInfo.presentationTimeUs);
+        }
+
+        return DRAIN_STATE_CONSUMED;
+    }
+
+    private int drainExtractor(long timeoutUs) {
+        if (mIsExtractorEOS) return DRAIN_STATE_NONE;
+        int trackIndex = mExtractor.getSampleTrackIndex();
+        if (trackIndex >= 0 && trackIndex != mTrackIndex) {
+            return DRAIN_STATE_NONE;
+        }
+
+        final int result = mDecoder.dequeueInputBuffer(timeoutUs);
+        if (result < 0) return DRAIN_STATE_NONE;
+        if (trackIndex < 0) {
+            mIsExtractorEOS = true;
+            mDecoder.queueInputBuffer(result, 0, 0, 0, MediaCodec.BUFFER_FLAG_END_OF_STREAM);
+            return DRAIN_STATE_NONE;
+        }
+
+        final int sampleSize = mExtractor.readSampleData(mDecoderBuffers.getInputBuffer(result), 0);
+        final boolean isKeyFrame = (mExtractor.getSampleFlags() & MediaExtractor.SAMPLE_FLAG_SYNC) != 0;
+        mDecoder.queueInputBuffer(result, 0, sampleSize, mExtractor.getSampleTime(), isKeyFrame ? MediaCodec.BUFFER_FLAG_SYNC_FRAME : 0);
+        mExtractor.advance();
         return DRAIN_STATE_CONSUMED;
     }
 

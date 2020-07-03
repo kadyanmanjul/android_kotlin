@@ -1,4 +1,4 @@
-package com.joshtalks.joshlibrary.codeinputview;
+package com.joshtalks.codeinputview;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -10,7 +10,11 @@ import android.text.InputFilter;
 import android.text.TextWatcher;
 import android.text.method.TransformationMethod;
 import android.util.AttributeSet;
-import android.view.*;
+import android.view.Gravity;
+import android.view.KeyEvent;
+import android.view.LayoutInflater;
+import android.view.MotionEvent;
+import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -20,7 +24,6 @@ import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import com.joshtalks.joshlibrary.R;
-
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;

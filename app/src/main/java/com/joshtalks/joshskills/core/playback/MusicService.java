@@ -4,7 +4,6 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
-
 import androidx.annotation.NonNull;
 
 public class MusicService extends Service {
@@ -57,7 +56,7 @@ public class MusicService extends Service {
                 mMusicNotificationManager = new MusicNotificationManager(this);
                 mMediaPlayerHolder.registerNotificationActionsReceiver(true);
             }
-        }catch (Exception ex){
+        } catch (Exception ex) {
 
         }
         return mIBinder;

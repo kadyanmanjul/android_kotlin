@@ -109,8 +109,10 @@ class PaymentSummaryActivity : CoreJoshActivity(),
         ) {
             Intent(activity, PaymentSummaryActivity::class.java).apply {
                 putExtra(TEST_ID_PAYMENT, testId)
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             }.run {
                 activity.startActivity(this)
+                activity.overridePendingTransition(R.anim.slide_up_dialog, R.anim.slide_out_top)
             }
         }
 
@@ -228,8 +230,8 @@ class PaymentSummaryActivity : CoreJoshActivity(),
             )
             Glide.with(applicationContext)
                 .load(it.imageUrl)
-                .apply(RequestOptions.bitmapTransform(multi))
                 .override(Target.SIZE_ORIGINAL)
+                .apply(RequestOptions.bitmapTransform(multi))
                 .into(binding.profileImage)
             binding.txtPrice.text =
                 "₹ ${String.format("%.2f", it.amount)}"
@@ -280,7 +282,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
             }
 
             binding.materialButton.setOnSingleClickListener(View.OnClickListener {
-              startPayment()
+                startPayment()
             })
         })
         if (viewModel.hasRegisteredMobileNumber) {

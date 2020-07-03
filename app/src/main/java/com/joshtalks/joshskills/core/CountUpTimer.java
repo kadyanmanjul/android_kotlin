@@ -3,7 +3,6 @@ package com.joshtalks.joshskills.core;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.util.Log;
-
 import java.util.ArrayList;
 
 public class CountUpTimer {
@@ -48,6 +47,16 @@ public class CountUpTimer {
     }
 
     /**
+     * Reset the timer, also clears all laps information. Running status will not affected
+     */
+    public void reset() {
+        startTimestamp = SystemClock.elapsedRealtime();
+        delayTime = 0;
+        lastPauseTimestamp = startTimestamp;
+        lapTimestamps.clear();
+    }
+
+    /**
      * Helper to parse the milliseconds to human-readable time
      *
      * @return the time in format h:mm:ss.SSS, for example 0:28:14.019
@@ -63,13 +72,24 @@ public class CountUpTimer {
     }
 
     /**
-     * Reset the timer, also clears all laps information. Running status will not affected
+     * Create a new lap
      */
-    public void reset() {
-        startTimestamp = SystemClock.elapsedRealtime();
-        delayTime = 0;
-        lastPauseTimestamp = startTimestamp;
-        lapTimestamps.clear();
+    public void lap() {
+        lapTimestamps.add(getTime());
+    }
+
+    /**
+     * Get the current time of this timer
+     *
+     * @return current time of this timer in milliseconds
+     */
+    public int getTime() {
+        if (isRunning) return (int) (SystemClock.elapsedRealtime() - startTimestamp - delayTime);
+        else return (int) (lastPauseTimestamp - startTimestamp - delayTime);
+    }
+
+    public boolean isRunning() {
+        return isRunning;
     }
 
     /**
@@ -96,17 +116,6 @@ public class CountUpTimer {
     }
 
     /**
-     * Create a new lap
-     */
-    public void lap() {
-        lapTimestamps.add(getTime());
-    }
-
-    public boolean isRunning() {
-        return isRunning;
-    }
-
-    /**
      * Toggle the running state of this timer
      *
      * @return is the timer running after toggling?
@@ -118,14 +127,8 @@ public class CountUpTimer {
         return isRunning;
     }
 
-    /**
-     * Get the current time of this timer
-     *
-     * @return current time of this timer in milliseconds
-     */
-    public int getTime() {
-        if (isRunning) return (int) (SystemClock.elapsedRealtime() - startTimestamp - delayTime);
-        else return (int) (lastPauseTimestamp - startTimestamp - delayTime);
+    void stopTicking() {
+        if (tickHandler != null) tickHandler.removeCallbacksAndMessages(null);
     }
 
     /**
@@ -165,20 +168,6 @@ public class CountUpTimer {
         return getHumanFriendlyTime(getTime());
     }
 
-    public CountUpTimer setTickListener(int interval, final TickListener tickListener) {
-        this.interval = interval;
-        this.tickListener = tickListener;
-
-        if (tickListener == null) {
-            stopTicking();
-        } else {
-            startTicking();
-        }
-
-        return this;
-    }
-
-
     void startTicking() {
         if (tickHandler == null) tickHandler = new Handler();
         tickHandler.removeCallbacksAndMessages(null);
@@ -198,10 +187,18 @@ public class CountUpTimer {
         tickHandler.postDelayed(tickSelector, remainingTimeInInterval);
     }
 
-    void stopTicking() {
-        if (tickHandler != null) tickHandler.removeCallbacksAndMessages(null);
-    }
+    public CountUpTimer setTickListener(int interval, final TickListener tickListener) {
+        this.interval = interval;
+        this.tickListener = tickListener;
 
+        if (tickListener == null) {
+            stopTicking();
+        } else {
+            startTicking();
+        }
+
+        return this;
+    }
 
     @Override
     protected void finalize() throws Throwable {

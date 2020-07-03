@@ -4,16 +4,16 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        tools:ignore="MissingPrefix"
         android:layout_marginVertical="@dimen/_20sdp"
-        tools:context=".ui.course_details.CourseDetailsActivity">
+        tools:context=".ui.course_details.CourseDetailsActivity"
+        tools:ignore="MissingPrefix">
 
     <TextView
-            android:layout_marginHorizontal="@dimen/course_padding_dimen"
             android:id="@+id/title"
             fontPath="fonts/Roboto-Bold.ttf"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/course_padding_dimen"
             android:text="@string/meet_the_students"
             android:textColor="@color/black"
             android:textSize="@dimen/font_18"

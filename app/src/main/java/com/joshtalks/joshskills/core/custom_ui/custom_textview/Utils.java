@@ -4,10 +4,6 @@ import android.util.Log;
 
 class Utils {
 
-    private static boolean isValidRegex(String regex) {
-        return regex != null && !regex.isEmpty() && regex.length() > 2;
-    }
-
     static String getRegexByAutoLinkMode(AutoLinkMode anAutoLinkMode, String customRegex) {
         switch (anAutoLinkMode) {
             case MODE_HASHTAG:
@@ -30,6 +26,10 @@ class Utils {
             default:
                 return RegexParser.URL_PATTERN;
         }
+    }
+
+    private static boolean isValidRegex(String regex) {
+        return regex != null && !regex.isEmpty() && regex.length() > 2;
     }
 
 }

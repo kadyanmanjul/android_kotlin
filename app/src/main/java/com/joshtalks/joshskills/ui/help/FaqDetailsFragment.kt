@@ -30,11 +30,11 @@ class FaqDetailsFragment : Fragment() {
             faq = it.getParcelable(FAQ_DETAILS)!!
         }
         viewModel = ViewModelProvider(this).get(HelpViewModel::class.java)
-        appAnalytics=AppAnalytics.create(AnalyticsEvent.FAQ_QUESTION_SCREEN.NAME)
+        appAnalytics = AppAnalytics.create(AnalyticsEvent.FAQ_QUESTION_SCREEN.NAME)
             .addBasicParam()
             .addUserDetails()
-            .addParam(AnalyticsEvent.FAQ_SLECTED.NAME.plus(" id"),faq.id)
-            .addParam(AnalyticsEvent.FAQ_QUESTION_FEEDBACK.NAME,"none")
+            .addParam(AnalyticsEvent.FAQ_SLECTED.NAME.plus(" id"), faq.id)
+            .addParam(AnalyticsEvent.FAQ_QUESTION_FEEDBACK.NAME, "none")
     }
 
     override fun onCreateView(
@@ -66,7 +66,7 @@ class FaqDetailsFragment : Fragment() {
         }
         yes_btn.isEnabled = false
         no_btn.isEnabled = false
-        appAnalytics.addParam(AnalyticsEvent.FAQ_QUESTION_FEEDBACK.NAME,isAnswerHelpful)
+        appAnalytics.addParam(AnalyticsEvent.FAQ_QUESTION_FEEDBACK.NAME, isAnswerHelpful)
         patchRequestForAnswer(isAnswerHelpful)
     }
 

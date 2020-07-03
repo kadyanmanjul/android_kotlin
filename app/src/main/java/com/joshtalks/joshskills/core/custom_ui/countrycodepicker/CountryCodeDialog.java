@@ -251,20 +251,6 @@ class CountryCodeDialog {
         }
     }
 
-    private static void hideKeyboard(Context context) {
-        if (context instanceof Activity) {
-            Activity activity = (Activity) context;
-            InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
-            //Find the currently focused view, so we can grab the correct window token from it.
-            View view = activity.getCurrentFocus();
-            //If no view currently has focus, create a new one, just so we can grab a window token from it
-            if (view == null) {
-                view = new View(activity);
-            }
-            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-        }
-    }
-
     static void setCursorColor(EditText editText, int color) {
         if (sCursorDrawableField == null) {
             return;
@@ -279,12 +265,18 @@ class CountryCodeDialog {
         }
     }
 
-    static void clear() {
-        if (dialog != null) {
-            dialog.dismiss();
+    private static void hideKeyboard(Context context) {
+        if (context instanceof Activity) {
+            Activity activity = (Activity) context;
+            InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
+            //Find the currently focused view, so we can grab the correct window token from it.
+            View view = activity.getCurrentFocus();
+            //If no view currently has focus, create a new one, just so we can grab a window token from it
+            if (view == null) {
+                view = new View(activity);
+            }
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
-        dialog = null;
-        context = null;
     }
 
     private static Drawable getDrawable(Context context, int id) {
@@ -293,5 +285,13 @@ class CountryCodeDialog {
         } else {
             return context.getDrawable(id);
         }
+    }
+
+    static void clear() {
+        if (dialog != null) {
+            dialog.dismiss();
+        }
+        dialog = null;
+        context = null;
     }
 }

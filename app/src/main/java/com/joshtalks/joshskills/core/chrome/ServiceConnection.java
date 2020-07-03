@@ -1,10 +1,8 @@
 package com.joshtalks.joshskills.core.chrome;
 
 import android.content.ComponentName;
-
 import androidx.browser.customtabs.CustomTabsClient;
 import androidx.browser.customtabs.CustomTabsServiceConnection;
-
 import java.lang.ref.WeakReference;
 
 /**

@@ -44,7 +44,7 @@ class AboutJoshViewHolder(
                 LayoutMarginDecoration(
                     Utils.dpToPx(
                         getAppContext(),
-                        16f
+                        12f
                     )
                 )
             )

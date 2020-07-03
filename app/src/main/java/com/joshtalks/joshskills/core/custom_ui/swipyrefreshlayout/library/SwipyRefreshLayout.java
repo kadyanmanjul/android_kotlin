@@ -16,10 +16,8 @@ import android.view.animation.Animation.AnimationListener;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Transformation;
 import android.widget.AbsListView;
-
 import androidx.core.view.MotionEventCompat;
 import androidx.core.view.ViewCompat;
-
 import com.joshtalks.joshskills.R;
 
 /**
@@ -199,10 +197,6 @@ public class SwipyRefreshLayout extends ViewGroup {
         }
 
         @Override
-        public void onAnimationRepeat(Animation animation) {
-        }
-
-        @Override
         public void onAnimationEnd(Animation animation) {
             if (mRefreshing) {
                 // Make sure the progress view is fully visible
@@ -226,6 +220,10 @@ public class SwipyRefreshLayout extends ViewGroup {
                 }
             }
             mCurrentTargetOffsetTop = mCircleView.getTop();
+        }
+
+        @Override
+        public void onAnimationRepeat(Animation animation) {
         }
     };
 
@@ -281,6 +279,15 @@ public class SwipyRefreshLayout extends ViewGroup {
         mSpinnerFinalOffset = DEFAULT_CIRCLE_TARGET * metrics.density;
     }
 
+    private void createProgressView() {
+        mCircleView = new CircleImageView(getContext(), CIRCLE_BG_LIGHT, CIRCLE_DIAMETER / 2);
+        mProgress = new MaterialProgressDrawable(getContext(), this);
+        mProgress.setBackgroundColor(CIRCLE_BG_LIGHT);
+        mCircleView.setImageDrawable(mProgress);
+        mCircleView.setVisibility(View.GONE);
+        addView(mCircleView);
+    }
+
     private void setColorViewAlpha(int targetAlpha) {
         mCircleView.getBackground().setAlpha(targetAlpha);
         mProgress.setAlpha(targetAlpha);
@@ -305,30 +312,6 @@ public class SwipyRefreshLayout extends ViewGroup {
         mCircleView.setImageDrawable(null);
         mProgress.updateSizes(size);
         mCircleView.setImageDrawable(mProgress);
-    }
-
-    protected int getChildDrawingOrder(int childCount, int i) {
-        if (mCircleViewIndex < 0) {
-            return i;
-        } else if (i == childCount - 1) {
-            // Draw the selected child last
-            return mCircleViewIndex;
-        } else if (i >= mCircleViewIndex) {
-            // Move the children after the selected child earlier one
-            return i + 1;
-        } else {
-            // Keep the children before the selected child the same
-            return i;
-        }
-    }
-
-    private void createProgressView() {
-        mCircleView = new CircleImageView(getContext(), CIRCLE_BG_LIGHT, CIRCLE_DIAMETER / 2);
-        mProgress = new MaterialProgressDrawable(getContext(), this);
-        mProgress.setBackgroundColor(CIRCLE_BG_LIGHT);
-        mCircleView.setImageDrawable(mProgress);
-        mCircleView.setVisibility(View.GONE);
-        addView(mCircleView);
     }
 
     /**
@@ -484,6 +467,11 @@ public class SwipyRefreshLayout extends ViewGroup {
         mProgress.setColorSchemeColors(colors);
     }
 
+    @Override
+    public void requestDisallowInterceptTouchEvent(boolean b) {
+        // Nope.
+    }
+
     /**
      * @return Whether the SwipeRefreshWidget is actively showing refresh
      * progress.
@@ -525,28 +513,6 @@ public class SwipyRefreshLayout extends ViewGroup {
         }
     }
 
-    private void ensureTarget() {
-        // Don't bother getting the parent height if the parent hasn't been laid
-        // out yet.
-        if (mTarget == null) {
-            for (int i = 0; i < getChildCount(); i++) {
-                View child = getChildAt(i);
-                if (!child.equals(mCircleView)) {
-                    mTarget = child;
-                    break;
-                }
-            }
-        }
-        if (mTotalDragDistance == -1) {
-            if (getParent() != null && ((View) getParent()).getHeight() > 0) {
-                final DisplayMetrics metrics = getResources().getDisplayMetrics();
-                mTotalDragDistance = (int) Math.min(
-                        ((View) getParent()).getHeight() * MAX_SWIPE_DISTANCE_FACTOR,
-                        REFRESH_TRIGGER_DISTANCE * metrics.density);
-            }
-        }
-    }
-
     /**
      * Set the distance to trigger a sync in dips
      *
@@ -556,125 +522,18 @@ public class SwipyRefreshLayout extends ViewGroup {
         mTotalDragDistance = distance;
     }
 
-    @Override
-    protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
-        final int width = getMeasuredWidth();
-        final int height = getMeasuredHeight();
-        if (getChildCount() == 0) {
-            return;
-        }
-        if (mTarget == null) {
-            ensureTarget();
-        }
-        if (mTarget == null) {
-            return;
-        }
-        final View child = mTarget;
-        final int childLeft = getPaddingLeft();
-        final int childTop = getPaddingTop();
-        final int childWidth = width - getPaddingLeft() - getPaddingRight();
-        final int childHeight = height - getPaddingTop() - getPaddingBottom();
-        child.layout(childLeft, childTop, childLeft + childWidth, childTop + childHeight);
-        int circleWidth = mCircleView.getMeasuredWidth();
-        int circleHeight = mCircleView.getMeasuredHeight();
-        mCircleView.layout((width / 2 - circleWidth / 2), mCurrentTargetOffsetTop,
-                (width / 2 + circleWidth / 2), mCurrentTargetOffsetTop + circleHeight);
-    }
-//    public boolean canChildScrollUp() {
-//        if (android.os.Build.VERSION.SDK_INT < 14) {
-//            if (mTarget instanceof AbsListView) {
-//                final AbsListView absListView = (AbsListView) mTarget;
-//                if (absListView.getLastVisiblePosition() + 1 == absListView.getCount()) {
-//                    int lastIndex = absListView.getLastVisiblePosition() - absListView.getFirstVisiblePosition();
-//
-//                    boolean res = absListView.getChildAt(lastIndex).getBottom() == absListView.getPaddingBottom();
-//
-//                    return res;
-//                }
-//                return true;
-//            } else {
-//                return mTarget.getScrollY() > 0;
-//            }
-//        } else {
-//            return ViewCompat.canScrollVertically(mTarget, 1);
-//        }
-//    }
-
-    @Override
-    public void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        if (mTarget == null) {
-            ensureTarget();
-        }
-        if (mTarget == null) {
-            return;
-        }
-        mTarget.measure(MeasureSpec.makeMeasureSpec(
-                getMeasuredWidth() - getPaddingLeft() - getPaddingRight(),
-                MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(
-                getMeasuredHeight() - getPaddingTop() - getPaddingBottom(), MeasureSpec.EXACTLY));
-        mCircleView.measure(MeasureSpec.makeMeasureSpec(mCircleWidth, MeasureSpec.EXACTLY),
-                MeasureSpec.makeMeasureSpec(mCircleHeight, MeasureSpec.EXACTLY));
-        if (!mUsingCustomStart && !mOriginalOffsetCalculated) {
-            mOriginalOffsetCalculated = true;
-
-            switch (mDirection) {
-                case BOTTOM:
-                    mCurrentTargetOffsetTop = mOriginalOffsetTop = getMeasuredHeight();
-                    break;
-                case TOP:
-                default:
-                    mCurrentTargetOffsetTop = mOriginalOffsetTop = -mCircleView.getMeasuredHeight();
-                    break;
-            }
-        }
-        mCircleViewIndex = -1;
-        // Get the index of the circleview.
-        for (int index = 0; index < getChildCount(); index++) {
-            if (getChildAt(index) == mCircleView) {
-                mCircleViewIndex = index;
-                break;
-            }
-        }
-    }
-
-    /**
-     * @return Whether it is possible for the child view of this layout to
-     * scroll up. Override this if the child view is a custom view.
-     */
-    public boolean canChildScrollUp() {
-        if (android.os.Build.VERSION.SDK_INT < 14) {
-            if (mTarget instanceof AbsListView) {
-                final AbsListView absListView = (AbsListView) mTarget;
-                return absListView.getChildCount() > 0
-                        && (absListView.getFirstVisiblePosition() > 0 || absListView.getChildAt(0)
-                        .getTop() < absListView.getPaddingTop());
-            } else {
-                return mTarget.getScrollY() > 0;
-            }
+    protected int getChildDrawingOrder(int childCount, int i) {
+        if (mCircleViewIndex < 0) {
+            return i;
+        } else if (i == childCount - 1) {
+            // Draw the selected child last
+            return mCircleViewIndex;
+        } else if (i >= mCircleViewIndex) {
+            // Move the children after the selected child earlier one
+            return i + 1;
         } else {
-            return ViewCompat.canScrollVertically(mTarget, -1);
-        }
-    }
-
-    public boolean canChildScrollDown() {
-        if (android.os.Build.VERSION.SDK_INT < 14) {
-            if (mTarget instanceof AbsListView) {
-                final AbsListView absListView = (AbsListView) mTarget;
-                try {
-                    if (absListView.getCount() > 0) {
-                        if (absListView.getLastVisiblePosition() + 1 == absListView.getCount()) {
-                            int lastIndex = absListView.getLastVisiblePosition() - absListView.getFirstVisiblePosition();
-                            return absListView.getChildAt(lastIndex).getBottom() == absListView.getPaddingBottom();
-                        }
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-            return true;
-        } else {
-            return ViewCompat.canScrollVertically(mTarget, 1);
+            // Keep the children before the selected child the same
+            return i;
         }
     }
 
@@ -774,6 +633,131 @@ public class SwipyRefreshLayout extends ViewGroup {
 
         return mIsBeingDragged;
     }
+//    public boolean canChildScrollUp() {
+//        if (android.os.Build.VERSION.SDK_INT < 14) {
+//            if (mTarget instanceof AbsListView) {
+//                final AbsListView absListView = (AbsListView) mTarget;
+//                if (absListView.getLastVisiblePosition() + 1 == absListView.getCount()) {
+//                    int lastIndex = absListView.getLastVisiblePosition() - absListView.getFirstVisiblePosition();
+//
+//                    boolean res = absListView.getChildAt(lastIndex).getBottom() == absListView.getPaddingBottom();
+//
+//                    return res;
+//                }
+//                return true;
+//            } else {
+//                return mTarget.getScrollY() > 0;
+//            }
+//        } else {
+//            return ViewCompat.canScrollVertically(mTarget, 1);
+//        }
+//    }
+
+    @Override
+    protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
+        final int width = getMeasuredWidth();
+        final int height = getMeasuredHeight();
+        if (getChildCount() == 0) {
+            return;
+        }
+        if (mTarget == null) {
+            ensureTarget();
+        }
+        if (mTarget == null) {
+            return;
+        }
+        final View child = mTarget;
+        final int childLeft = getPaddingLeft();
+        final int childTop = getPaddingTop();
+        final int childWidth = width - getPaddingLeft() - getPaddingRight();
+        final int childHeight = height - getPaddingTop() - getPaddingBottom();
+        child.layout(childLeft, childTop, childLeft + childWidth, childTop + childHeight);
+        int circleWidth = mCircleView.getMeasuredWidth();
+        int circleHeight = mCircleView.getMeasuredHeight();
+        mCircleView.layout((width / 2 - circleWidth / 2), mCurrentTargetOffsetTop,
+                (width / 2 + circleWidth / 2), mCurrentTargetOffsetTop + circleHeight);
+    }
+
+    private void ensureTarget() {
+        // Don't bother getting the parent height if the parent hasn't been laid
+        // out yet.
+        if (mTarget == null) {
+            for (int i = 0; i < getChildCount(); i++) {
+                View child = getChildAt(i);
+                if (!child.equals(mCircleView)) {
+                    mTarget = child;
+                    break;
+                }
+            }
+        }
+        if (mTotalDragDistance == -1) {
+            if (getParent() != null && ((View) getParent()).getHeight() > 0) {
+                final DisplayMetrics metrics = getResources().getDisplayMetrics();
+                mTotalDragDistance = (int) Math.min(
+                        ((View) getParent()).getHeight() * MAX_SWIPE_DISTANCE_FACTOR,
+                        REFRESH_TRIGGER_DISTANCE * metrics.density);
+            }
+        }
+    }
+
+    public boolean canChildScrollDown() {
+        if (android.os.Build.VERSION.SDK_INT < 14) {
+            if (mTarget instanceof AbsListView) {
+                final AbsListView absListView = (AbsListView) mTarget;
+                try {
+                    if (absListView.getCount() > 0) {
+                        if (absListView.getLastVisiblePosition() + 1 == absListView.getCount()) {
+                            int lastIndex = absListView.getLastVisiblePosition() - absListView.getFirstVisiblePosition();
+                            return absListView.getChildAt(lastIndex).getBottom() == absListView.getPaddingBottom();
+                        }
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            return true;
+        } else {
+            return ViewCompat.canScrollVertically(mTarget, 1);
+        }
+    }
+
+    /**
+     * @return Whether it is possible for the child view of this layout to
+     * scroll up. Override this if the child view is a custom view.
+     */
+    public boolean canChildScrollUp() {
+        if (android.os.Build.VERSION.SDK_INT < 14) {
+            if (mTarget instanceof AbsListView) {
+                final AbsListView absListView = (AbsListView) mTarget;
+                return absListView.getChildCount() > 0
+                        && (absListView.getFirstVisiblePosition() > 0 || absListView.getChildAt(0)
+                        .getTop() < absListView.getPaddingTop());
+            } else {
+                return mTarget.getScrollY() > 0;
+            }
+        } else {
+            return ViewCompat.canScrollVertically(mTarget, -1);
+        }
+    }
+
+    private void setTargetOffsetTopAndBottom(int offset, boolean requiresUpdate) {
+        mCircleView.bringToFront();
+        mCircleView.offsetTopAndBottom(offset);
+
+//        switch (mDirection) {
+//            case BOTTOM:
+//                mCurrentTargetOffsetTop = getMeasuredHeight() - mCircleView.getMeasuredHeight();
+//                break;
+//            case TOP:
+//            default:
+//                mCurrentTargetOffsetTop  = mCircleView.getTop();
+//                break;
+//        }
+        mCurrentTargetOffsetTop = mCircleView.getTop();
+        if (requiresUpdate && android.os.Build.VERSION.SDK_INT < 11) {
+            invalidate();
+        }
+    }
 
     private float getMotionEventY(MotionEvent ev, int activePointerId) {
         final int index = MotionEventCompat.findPointerIndex(ev, activePointerId);
@@ -783,9 +767,33 @@ public class SwipyRefreshLayout extends ViewGroup {
         return MotionEventCompat.getY(ev, index);
     }
 
-    @Override
-    public void requestDisallowInterceptTouchEvent(boolean b) {
-        // Nope.
+    // only TOP or Bottom
+    private void setRawDirection(SwipyRefreshLayoutDirection direction) {
+        if (mDirection == direction) {
+            return;
+        }
+
+        mDirection = direction;
+        switch (mDirection) {
+            case BOTTOM:
+                mCurrentTargetOffsetTop = mOriginalOffsetTop = getMeasuredHeight();
+                break;
+            case TOP:
+            default:
+                mCurrentTargetOffsetTop = mOriginalOffsetTop = -mCircleView.getMeasuredHeight();
+                break;
+        }
+    }
+
+    private void onSecondaryPointerUp(MotionEvent ev) {
+        final int pointerIndex = MotionEventCompat.getActionIndex(ev);
+        final int pointerId = MotionEventCompat.getPointerId(ev, pointerIndex);
+        if (pointerId == mActivePointerId) {
+            // This was our active pointer going up. Choose a new
+            // active pointer and adjust accordingly.
+            final int newPointerIndex = pointerIndex == 0 ? 1 : 0;
+            mActivePointerId = MotionEventCompat.getPointerId(ev, newPointerIndex);
+        }
     }
 
     private boolean isAnimationRunning(Animation animation) {
@@ -971,6 +979,44 @@ public class SwipyRefreshLayout extends ViewGroup {
         return true;
     }
 
+    @Override
+    public void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        if (mTarget == null) {
+            ensureTarget();
+        }
+        if (mTarget == null) {
+            return;
+        }
+        mTarget.measure(MeasureSpec.makeMeasureSpec(
+                getMeasuredWidth() - getPaddingLeft() - getPaddingRight(),
+                MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(
+                getMeasuredHeight() - getPaddingTop() - getPaddingBottom(), MeasureSpec.EXACTLY));
+        mCircleView.measure(MeasureSpec.makeMeasureSpec(mCircleWidth, MeasureSpec.EXACTLY),
+                MeasureSpec.makeMeasureSpec(mCircleHeight, MeasureSpec.EXACTLY));
+        if (!mUsingCustomStart && !mOriginalOffsetCalculated) {
+            mOriginalOffsetCalculated = true;
+
+            switch (mDirection) {
+                case BOTTOM:
+                    mCurrentTargetOffsetTop = mOriginalOffsetTop = getMeasuredHeight();
+                    break;
+                case TOP:
+                default:
+                    mCurrentTargetOffsetTop = mOriginalOffsetTop = -mCircleView.getMeasuredHeight();
+                    break;
+            }
+        }
+        mCircleViewIndex = -1;
+        // Get the index of the circleview.
+        for (int index = 0; index < getChildCount(); index++) {
+            if (getChildAt(index) == mCircleView) {
+                mCircleViewIndex = index;
+                break;
+            }
+        }
+    }
+
     private void animateOffsetToCorrectPosition(int from, AnimationListener listener) {
         mFrom = from;
         mAnimateToCorrectPosition.reset();
@@ -1031,36 +1077,6 @@ public class SwipyRefreshLayout extends ViewGroup {
         mCircleView.startAnimation(mScaleDownToStartAnimation);
     }
 
-    private void setTargetOffsetTopAndBottom(int offset, boolean requiresUpdate) {
-        mCircleView.bringToFront();
-        mCircleView.offsetTopAndBottom(offset);
-
-//        switch (mDirection) {
-//            case BOTTOM:
-//                mCurrentTargetOffsetTop = getMeasuredHeight() - mCircleView.getMeasuredHeight();
-//                break;
-//            case TOP:
-//            default:
-//                mCurrentTargetOffsetTop  = mCircleView.getTop();
-//                break;
-//        }
-        mCurrentTargetOffsetTop = mCircleView.getTop();
-        if (requiresUpdate && android.os.Build.VERSION.SDK_INT < 11) {
-            invalidate();
-        }
-    }
-
-    private void onSecondaryPointerUp(MotionEvent ev) {
-        final int pointerIndex = MotionEventCompat.getActionIndex(ev);
-        final int pointerId = MotionEventCompat.getPointerId(ev, pointerIndex);
-        if (pointerId == mActivePointerId) {
-            // This was our active pointer going up. Choose a new
-            // active pointer and adjust accordingly.
-            final int newPointerIndex = pointerIndex == 0 ? 1 : 0;
-            mActivePointerId = MotionEventCompat.getPointerId(ev, newPointerIndex);
-        }
-    }
-
     public SwipyRefreshLayoutDirection getDirection() {
         return mBothDirection ? SwipyRefreshLayoutDirection.BOTH : mDirection;
     }
@@ -1073,24 +1089,6 @@ public class SwipyRefreshLayout extends ViewGroup {
             mDirection = direction;
         }
 
-        switch (mDirection) {
-            case BOTTOM:
-                mCurrentTargetOffsetTop = mOriginalOffsetTop = getMeasuredHeight();
-                break;
-            case TOP:
-            default:
-                mCurrentTargetOffsetTop = mOriginalOffsetTop = -mCircleView.getMeasuredHeight();
-                break;
-        }
-    }
-
-    // only TOP or Bottom
-    private void setRawDirection(SwipyRefreshLayoutDirection direction) {
-        if (mDirection == direction) {
-            return;
-        }
-
-        mDirection = direction;
         switch (mDirection) {
             case BOTTOM:
                 mCurrentTargetOffsetTop = mOriginalOffsetTop = getMeasuredHeight();

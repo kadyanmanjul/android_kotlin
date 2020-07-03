@@ -12,4 +12,4 @@ data class RequestCertificateGenerate(
     val name: String,
     @SerializedName("email")
     val email: String
-    )
+)

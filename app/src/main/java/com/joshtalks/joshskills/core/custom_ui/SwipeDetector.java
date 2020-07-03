@@ -75,16 +75,9 @@ public class SwipeDetector {
             return isSwipe(e2.getY(), e1.getY(), velocityY);
         }
 
-        public boolean isUpSwipe(MotionEvent e1, MotionEvent e2, float velocityY) {
-            return isSwipe(e1.getY(), e2.getY(), velocityY);
-        }
-
-        public boolean isLeftSwipe(MotionEvent e1, MotionEvent e2, float velocityX) {
-            return isSwipe(e1.getX(), e2.getX(), velocityX);
-        }
-
-        public boolean isRightSwipe(MotionEvent e1, MotionEvent e2, float velocityX) {
-            return isSwipe(e2.getX(), e1.getX(), velocityX);
+        private boolean isSwipe(float coordinateA, float coordinateB, float velocity) {
+            return isSwipeDistance(coordinateA, coordinateB)
+                    && isSwipeSpeed(velocity);
         }
 
         private boolean isSwipeDistance(float coordinateA, float coordinateB) {
@@ -95,9 +88,16 @@ public class SwipeDetector {
             return Math.abs(velocity) > this.swipe_velocity;
         }
 
-        private boolean isSwipe(float coordinateA, float coordinateB, float velocity) {
-            return isSwipeDistance(coordinateA, coordinateB)
-                    && isSwipeSpeed(velocity);
+        public boolean isUpSwipe(MotionEvent e1, MotionEvent e2, float velocityY) {
+            return isSwipe(e1.getY(), e2.getY(), velocityY);
+        }
+
+        public boolean isLeftSwipe(MotionEvent e1, MotionEvent e2, float velocityX) {
+            return isSwipe(e1.getX(), e2.getX(), velocityX);
+        }
+
+        public boolean isRightSwipe(MotionEvent e1, MotionEvent e2, float velocityX) {
+            return isSwipe(e2.getX(), e1.getX(), velocityX);
         }
     }
 

@@ -74,7 +74,6 @@
                                     android:layout_gravity="top|center"
                                     android:adjustViewBounds="true"
                                     android:scaleType="centerCrop"
-                                    tools:background="@drawable/sample_pic_"
                                     tools:ignore="ContentDescription" />
 
                         </FrameLayout>

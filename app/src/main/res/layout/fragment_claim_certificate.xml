@@ -122,12 +122,12 @@
 
 
                 <androidx.appcompat.widget.AppCompatTextView
-                        android:gravity="center|start"
-                        android:paddingStart="@dimen/_12sdp"
                         android:id="@+id/text_view_email"
                         fontPath="fonts/Roboto-Regular.ttf"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:gravity="center|start"
+                        android:paddingStart="@dimen/_12sdp"
                         android:text="@string/email"
                         android:textColor="@color/font_color"
                         android:textSize="@dimen/_15sdp"
@@ -216,8 +216,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
-                        android:gravity="center"
                         android:layout_marginBottom="@dimen/_84sdp"
+                        android:gravity="center"
                         android:text="@string/header_congratulation"
                         android:textColor="@color/white"
                         android:textSize="@dimen/_15sdp"

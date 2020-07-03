@@ -1,4 +1,4 @@
-package com.joshtalks.joshlibrary.codeinputview;
+package com.joshtalks.codeinputview;
 
 import android.content.Context;
 import android.content.res.Resources;

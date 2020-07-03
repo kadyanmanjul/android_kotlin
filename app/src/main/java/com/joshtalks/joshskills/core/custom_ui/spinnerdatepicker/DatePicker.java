@@ -35,9 +35,7 @@ import android.widget.LinearLayout;
 import android.widget.NumberPicker;
 import android.widget.NumberPicker.OnValueChangeListener;
 import android.widget.TextView;
-
 import com.joshtalks.joshskills.R;
-
 import java.text.DateFormatSymbols;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -169,88 +167,6 @@ public class DatePicker extends FrameLayout {
         root.addView(this);
     }
 
-    void init(int year, int monthOfYear, int dayOfMonth,
-              boolean isDayShown, OnDateChangedListener onDateChangedListener) {
-        mIsDayShown = isDayShown;
-        setDate(year, monthOfYear, dayOfMonth);
-        updateSpinners();
-        mOnDateChangedListener = onDateChangedListener;
-        notifyDateChanged();
-    }
-
-    void updateDate(int year, int month, int dayOfMonth) {
-        if (!isNewDate(year, month, dayOfMonth)) {
-            return;
-        }
-        setDate(year, month, dayOfMonth);
-        updateSpinners();
-        notifyDateChanged();
-    }
-
-    int getYear() {
-        return mCurrentDate.get(Calendar.YEAR);
-    }
-
-    int getMonth() {
-        return mCurrentDate.get(Calendar.MONTH);
-    }
-
-    int getDayOfMonth() {
-        return mCurrentDate.get(Calendar.DAY_OF_MONTH);
-    }
-
-    void setMinDate(long minDate) {
-        mTempDate.setTimeInMillis(minDate);
-        if (mTempDate.get(Calendar.YEAR) == mMinDate.get(Calendar.YEAR)
-                && mTempDate.get(Calendar.DAY_OF_YEAR) == mMinDate.get(Calendar.DAY_OF_YEAR)) {
-            // Same day, no-op.
-            return;
-        }
-        mMinDate.setTimeInMillis(minDate);
-        if (mCurrentDate.before(mMinDate)) {
-            mCurrentDate.setTimeInMillis(mMinDate.getTimeInMillis());
-        }
-        updateSpinners();
-    }
-
-    void setMaxDate(long maxDate) {
-        mTempDate.setTimeInMillis(maxDate);
-        if (mTempDate.get(Calendar.YEAR) == mMaxDate.get(Calendar.YEAR)
-                && mTempDate.get(Calendar.DAY_OF_YEAR) == mMaxDate.get(Calendar.DAY_OF_YEAR)) {
-            // Same day, no-op.
-            return;
-        }
-        mMaxDate.setTimeInMillis(maxDate);
-        if (mCurrentDate.after(mMaxDate)) {
-            mCurrentDate.setTimeInMillis(mMaxDate.getTimeInMillis());
-        }
-        updateSpinners();
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return mIsEnabled;
-    }
-
-    @Override
-    public void setEnabled(boolean enabled) {
-        mDaySpinner.setEnabled(enabled);
-        mMonthSpinner.setEnabled(enabled);
-        mYearSpinner.setEnabled(enabled);
-        mIsEnabled = enabled;
-    }
-
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        setCurrentLocale(newConfig.locale);
-    }
-
-    @Override
-    public boolean dispatchPopulateAccessibilityEvent(AccessibilityEvent event) {
-        onPopulateAccessibilityEvent(event);
-        return true;
-    }
-
     /**
      * Sets the current locale.
      *
@@ -275,92 +191,26 @@ public class DatePicker extends FrameLayout {
         }
     }
 
-    /**
-     * Tests whether the current locale is one where there are no real month names,
-     * such as Chinese, Japanese, or Korean locales.
-     */
-    private boolean usingNumericMonths() {
-        return Character.isDigit(mShortMonths[Calendar.JANUARY].charAt(0));
-    }
-
-    /**
-     * Gets a calendar for locale bootstrapped with the value of a given calendar.
-     *
-     * @param oldCalendar The old calendar.
-     * @param locale      The locale.
-     */
-    private Calendar getCalendarForLocale(Calendar oldCalendar, Locale locale) {
-        if (oldCalendar == null) {
-            return Calendar.getInstance(locale);
-        } else {
-            final long currentTimeMillis = oldCalendar.getTimeInMillis();
-            Calendar newCalendar = Calendar.getInstance(locale);
-            newCalendar.setTimeInMillis(currentTimeMillis);
-            return newCalendar;
-        }
-    }
-
-    /**
-     * Reorders the spinners according to the date format that is
-     * explicitly set by the user and if no such is set fall back
-     * to the current locale's default format.
-     */
-    private void reorderSpinners() {
-        mPickerContainer.removeAllViews();
-        // We use numeric spinners for year and day, but textual months. Ask icu4c what
-        // order the user's locale uses for that combination. http://b/7207103.
-        String pattern = null;
-        if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.JELLY_BEAN_MR2) {
-            pattern = getOrderJellyBeanMr2();
-        } else {
-            pattern = DateFormat.getBestDateTimePattern(Locale.getDefault(), "yyyyMMMdd");
-        }
-        char[] order = ICU.getDateFormatOrder(pattern);
-        final int spinnerCount = order.length;
-        for (int i = 0; i < spinnerCount; i++) {
-            switch (order[i]) {
-                case 'd':
-                    mPickerContainer.addView(mDaySpinner);
-                    setImeOptions(mDaySpinner, spinnerCount, i);
-                    break;
-                case 'M':
-                    mPickerContainer.addView(mMonthSpinner);
-                    setImeOptions(mMonthSpinner, spinnerCount, i);
-                    break;
-                case 'y':
-                    mPickerContainer.addView(mYearSpinner);
-                    setImeOptions(mYearSpinner, spinnerCount, i);
-                    break;
-                default:
-                    throw new IllegalArgumentException(Arrays.toString(order));
+    private void updateInputState() {
+        // Make sure that if the user changes the value and the IME is active
+        // for one of the inputs if this widget, the IME is closed. If the user
+        // changed the value via the IME and there is a next input the IME will
+        // be shown, otherwise the user chose another means of changing the
+        // value and having the IME up makes no sense.
+        InputMethodManager inputMethodManager = (InputMethodManager) getContext().getSystemService(
+                Context.INPUT_METHOD_SERVICE);
+        if (inputMethodManager != null) {
+            if (inputMethodManager.isActive(mYearSpinnerInput)) {
+                mYearSpinnerInput.clearFocus();
+                inputMethodManager.hideSoftInputFromWindow(getWindowToken(), 0);
+            } else if (inputMethodManager.isActive(mMonthSpinnerInput)) {
+                mMonthSpinnerInput.clearFocus();
+                inputMethodManager.hideSoftInputFromWindow(getWindowToken(), 0);
+            } else if (inputMethodManager.isActive(mDaySpinnerInput)) {
+                mDaySpinnerInput.clearFocus();
+                inputMethodManager.hideSoftInputFromWindow(getWindowToken(), 0);
             }
         }
-    }
-
-
-    //see http://androidxref.com/4.1.1/xref/packages/apps/Contacts/src/com/android/contacts/datepicker/DatePicker.java
-    private String getOrderJellyBeanMr2() {
-        java.text.DateFormat format;
-        String order;
-        if (mShortMonths[0].startsWith("1")) {
-            format = DateFormat.getDateFormat(getContext());
-        } else {
-            format = DateFormat.getMediumDateFormat(getContext());
-        }
-
-        if (format instanceof SimpleDateFormat) {
-            order = ((SimpleDateFormat) format).toPattern();
-        } else {
-            // Shouldn't happen, but just in case.
-            order = new String(DateFormat.getDateFormatOrder(getContext()));
-        }
-        return order;
-    }
-
-    private boolean isNewDate(int year, int month, int dayOfMonth) {
-        return (mCurrentDate.get(Calendar.YEAR) != year
-                || mCurrentDate.get(Calendar.MONTH) != month
-                || mCurrentDate.get(Calendar.DAY_OF_MONTH) != dayOfMonth);
     }
 
     private void setDate(int year, int month, int dayOfMonth) {
@@ -423,7 +273,6 @@ public class DatePicker extends FrameLayout {
         }
     }
 
-
     /**
      * Notifies the listener, if such, for a change in the selected date.
      */
@@ -433,6 +282,99 @@ public class DatePicker extends FrameLayout {
             mOnDateChangedListener.onDateChanged(this, getYear(), getMonth(),
                     getDayOfMonth());
         }
+    }
+
+    /**
+     * Reorders the spinners according to the date format that is
+     * explicitly set by the user and if no such is set fall back
+     * to the current locale's default format.
+     */
+    private void reorderSpinners() {
+        mPickerContainer.removeAllViews();
+        // We use numeric spinners for year and day, but textual months. Ask icu4c what
+        // order the user's locale uses for that combination. http://b/7207103.
+        String pattern = null;
+        if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.JELLY_BEAN_MR2) {
+            pattern = getOrderJellyBeanMr2();
+        } else {
+            pattern = DateFormat.getBestDateTimePattern(Locale.getDefault(), "yyyyMMMdd");
+        }
+        char[] order = ICU.getDateFormatOrder(pattern);
+        final int spinnerCount = order.length;
+        for (int i = 0; i < spinnerCount; i++) {
+            switch (order[i]) {
+                case 'd':
+                    mPickerContainer.addView(mDaySpinner);
+                    setImeOptions(mDaySpinner, spinnerCount, i);
+                    break;
+                case 'M':
+                    mPickerContainer.addView(mMonthSpinner);
+                    setImeOptions(mMonthSpinner, spinnerCount, i);
+                    break;
+                case 'y':
+                    mPickerContainer.addView(mYearSpinner);
+                    setImeOptions(mYearSpinner, spinnerCount, i);
+                    break;
+                default:
+                    throw new IllegalArgumentException(Arrays.toString(order));
+            }
+        }
+    }
+
+    //see http://androidxref.com/4.1.1/xref/packages/apps/Contacts/src/com/android/contacts/datepicker/DatePicker.java
+    private String getOrderJellyBeanMr2() {
+        java.text.DateFormat format;
+        String order;
+        if (mShortMonths[0].startsWith("1")) {
+            format = DateFormat.getDateFormat(getContext());
+        } else {
+            format = DateFormat.getMediumDateFormat(getContext());
+        }
+
+        if (format instanceof SimpleDateFormat) {
+            order = ((SimpleDateFormat) format).toPattern();
+        } else {
+            // Shouldn't happen, but just in case.
+            order = new String(DateFormat.getDateFormatOrder(getContext()));
+        }
+        return order;
+    }
+
+    /**
+     * Gets a calendar for locale bootstrapped with the value of a given calendar.
+     *
+     * @param oldCalendar The old calendar.
+     * @param locale      The locale.
+     */
+    private Calendar getCalendarForLocale(Calendar oldCalendar, Locale locale) {
+        if (oldCalendar == null) {
+            return Calendar.getInstance(locale);
+        } else {
+            final long currentTimeMillis = oldCalendar.getTimeInMillis();
+            Calendar newCalendar = Calendar.getInstance(locale);
+            newCalendar.setTimeInMillis(currentTimeMillis);
+            return newCalendar;
+        }
+    }
+
+    /**
+     * Tests whether the current locale is one where there are no real month names,
+     * such as Chinese, Japanese, or Korean locales.
+     */
+    private boolean usingNumericMonths() {
+        return Character.isDigit(mShortMonths[Calendar.JANUARY].charAt(0));
+    }
+
+    int getYear() {
+        return mCurrentDate.get(Calendar.YEAR);
+    }
+
+    int getMonth() {
+        return mCurrentDate.get(Calendar.MONTH);
+    }
+
+    int getDayOfMonth() {
+        return mCurrentDate.get(Calendar.DAY_OF_MONTH);
     }
 
     /**
@@ -453,26 +395,80 @@ public class DatePicker extends FrameLayout {
         input.setImeOptions(imeOptions);
     }
 
-    private void updateInputState() {
-        // Make sure that if the user changes the value and the IME is active
-        // for one of the inputs if this widget, the IME is closed. If the user
-        // changed the value via the IME and there is a next input the IME will
-        // be shown, otherwise the user chose another means of changing the
-        // value and having the IME up makes no sense.
-        InputMethodManager inputMethodManager = (InputMethodManager) getContext().getSystemService(
-                Context.INPUT_METHOD_SERVICE);
-        if (inputMethodManager != null) {
-            if (inputMethodManager.isActive(mYearSpinnerInput)) {
-                mYearSpinnerInput.clearFocus();
-                inputMethodManager.hideSoftInputFromWindow(getWindowToken(), 0);
-            } else if (inputMethodManager.isActive(mMonthSpinnerInput)) {
-                mMonthSpinnerInput.clearFocus();
-                inputMethodManager.hideSoftInputFromWindow(getWindowToken(), 0);
-            } else if (inputMethodManager.isActive(mDaySpinnerInput)) {
-                mDaySpinnerInput.clearFocus();
-                inputMethodManager.hideSoftInputFromWindow(getWindowToken(), 0);
-            }
+    void init(int year, int monthOfYear, int dayOfMonth,
+              boolean isDayShown, OnDateChangedListener onDateChangedListener) {
+        mIsDayShown = isDayShown;
+        setDate(year, monthOfYear, dayOfMonth);
+        updateSpinners();
+        mOnDateChangedListener = onDateChangedListener;
+        notifyDateChanged();
+    }
+
+    void updateDate(int year, int month, int dayOfMonth) {
+        if (!isNewDate(year, month, dayOfMonth)) {
+            return;
         }
+        setDate(year, month, dayOfMonth);
+        updateSpinners();
+        notifyDateChanged();
+    }
+
+    private boolean isNewDate(int year, int month, int dayOfMonth) {
+        return (mCurrentDate.get(Calendar.YEAR) != year
+                || mCurrentDate.get(Calendar.MONTH) != month
+                || mCurrentDate.get(Calendar.DAY_OF_MONTH) != dayOfMonth);
+    }
+
+    void setMinDate(long minDate) {
+        mTempDate.setTimeInMillis(minDate);
+        if (mTempDate.get(Calendar.YEAR) == mMinDate.get(Calendar.YEAR)
+                && mTempDate.get(Calendar.DAY_OF_YEAR) == mMinDate.get(Calendar.DAY_OF_YEAR)) {
+            // Same day, no-op.
+            return;
+        }
+        mMinDate.setTimeInMillis(minDate);
+        if (mCurrentDate.before(mMinDate)) {
+            mCurrentDate.setTimeInMillis(mMinDate.getTimeInMillis());
+        }
+        updateSpinners();
+    }
+
+    void setMaxDate(long maxDate) {
+        mTempDate.setTimeInMillis(maxDate);
+        if (mTempDate.get(Calendar.YEAR) == mMaxDate.get(Calendar.YEAR)
+                && mTempDate.get(Calendar.DAY_OF_YEAR) == mMaxDate.get(Calendar.DAY_OF_YEAR)) {
+            // Same day, no-op.
+            return;
+        }
+        mMaxDate.setTimeInMillis(maxDate);
+        if (mCurrentDate.after(mMaxDate)) {
+            mCurrentDate.setTimeInMillis(mMaxDate.getTimeInMillis());
+        }
+        updateSpinners();
+    }
+
+    @Override
+    public boolean dispatchPopulateAccessibilityEvent(AccessibilityEvent event) {
+        onPopulateAccessibilityEvent(event);
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return mIsEnabled;
+    }
+
+    @Override
+    public void setEnabled(boolean enabled) {
+        mDaySpinner.setEnabled(enabled);
+        mMonthSpinner.setEnabled(enabled);
+        mYearSpinner.setEnabled(enabled);
+        mIsEnabled = enabled;
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        setCurrentLocale(newConfig.locale);
     }
 
     @Override

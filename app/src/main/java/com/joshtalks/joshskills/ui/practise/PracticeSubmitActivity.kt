@@ -771,7 +771,10 @@ class PractiseSubmitActivity : CoreJoshActivity() {
                                 .setImageQuality(ImageQuality.HIGH)
                                 .setScreenOrientation(Options.SCREEN_ORIENTATION_PORTRAIT)
 
-                            JoshCameraActivity.startJoshCameraxActivity(this@PractiseSubmitActivity, options)
+                            JoshCameraActivity.startJoshCameraxActivity(
+                                this@PractiseSubmitActivity,
+                                options
+                            )
                             return
 
                         }

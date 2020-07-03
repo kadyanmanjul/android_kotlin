@@ -8,6 +8,9 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
+import com.github.razir.progressbutton.DrawableButton
+import com.github.razir.progressbutton.hideProgress
+import com.github.razir.progressbutton.showProgress
 import com.google.android.material.textview.MaterialTextView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.EMPTY
@@ -16,6 +19,7 @@ import com.joshtalks.joshskills.core.MAX_YEAR
 import com.joshtalks.joshskills.core.PAYMENT_MOBILE_NUMBER
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.SINGLE_SPACE
+import com.joshtalks.joshskills.core.SignUpStepStatus
 import com.joshtalks.joshskills.core.custom_ui.spinnerdatepicker.DatePickerDialog
 import com.joshtalks.joshskills.core.custom_ui.spinnerdatepicker.SpinnerDatePickerDialogBuilder
 import com.joshtalks.joshskills.core.showToast
@@ -58,6 +62,14 @@ class SignUpProfileFragment : BaseSignUpFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        viewModel.signUpStatus.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
+            when (it) {
+                SignUpStepStatus.ERROR -> {
+                    hideProgress()
+                }
+                else -> return@Observer
+            }
+        })
         initDOBPicker()
         initListener()
         initUI()
@@ -112,16 +124,16 @@ class SignUpProfileFragment : BaseSignUpFragment() {
         }
 
         if (user.phoneNumber.isNotEmpty()) {
-            val word =user.phoneNumber
+            val word = user.phoneNumber
             val length = word.length
-            if(length>10) {
+            if (length > 10) {
                 binding.phoneNumberEt.setText(word.substring(length - 10))
                 binding.etContainer.visibility = View.VISIBLE
                 binding.textViewPhone.visibility = View.VISIBLE
             }
         } else if (PrefManager.getStringValue(PAYMENT_MOBILE_NUMBER).isNotEmpty()) {
-            val mobileNumber= PrefManager.getStringValue(PAYMENT_MOBILE_NUMBER).split(SINGLE_SPACE)
-            if(mobileNumber.isNullOrEmpty().not()){
+            val mobileNumber = PrefManager.getStringValue(PAYMENT_MOBILE_NUMBER).split(SINGLE_SPACE)
+            if (mobileNumber.isNullOrEmpty().not()) {
                 binding.phoneNumberEt.setText(mobileNumber[1])
                 binding.etContainer.visibility = View.VISIBLE
                 binding.textViewPhone.visibility = View.VISIBLE
@@ -224,7 +236,7 @@ class SignUpProfileFragment : BaseSignUpFragment() {
             showToast(getString(R.string.select_gender))
             return
         }
-
+        startProgress()
         val requestMap = mutableMapOf<String, String?>()
         requestMap["first_name"] = binding.nameEditText.text?.toString() ?: EMPTY
         if (binding.emailEditText.text.isNullOrEmpty().not()) {
@@ -234,4 +246,23 @@ class SignUpProfileFragment : BaseSignUpFragment() {
         requestMap["gender"] = gender?.gValue ?: EMPTY
         viewModel.completingProfile(requestMap)
     }
+
+    private fun startProgress() {
+        binding.btnLogin.showProgress {
+            buttonTextRes = R.string.plz_wait
+            progressColors = intArrayOf(ContextCompat.getColor(requireContext(), R.color.white))
+            gravity = DrawableButton.GRAVITY_CENTER
+            progressRadiusRes = R.dimen.dp8
+            progressStrokeRes = R.dimen.dp2
+            textMarginRes = R.dimen.dp8
+        }
+        binding.btnLogin.isEnabled = false
+    }
+
+    private fun hideProgress() {
+        binding.btnLogin.isEnabled = true
+        binding.btnLogin.hideProgress(R.string.register)
+    }
+
+
 }

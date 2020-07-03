@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/_4sdp"
-        xmlns:tools="http://schemas.android.com/tools"
         tools:ignore="MissingPrefix">
 
     <FrameLayout
@@ -22,7 +22,6 @@
                 android:id="@+id/image_circle"
                 android:layout_width="@dimen/_56sdp"
                 android:layout_height="@dimen/_56sdp"
-                android:src="@drawable/sample_pic_"
                 app:civ_border_color="@color/white"
                 app:civ_border_width="@dimen/_2sdp"
                 app:layout_constraintCircleRadius="122dp" />
@@ -30,28 +29,28 @@
     </FrameLayout>
 
     <TextView
-            fontPath="fonts/Roboto-Regular.ttf"
             android:id="@+id/name"
+            fontPath="fonts/Roboto-Regular.ttf"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="@dimen/font_14"
             android:layout_marginTop="@dimen/_3sdp"
             android:textColor="@color/black"
-            tools:text="@string/bilkul_nahi"
+            android:textSize="@dimen/font_14"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/frameLayout" />
+            app:layout_constraintTop_toBottomOf="@+id/frameLayout"
+            tools:text="@string/bilkul_nahi" />
 
     <TextView
-            fontPath="fonts/Roboto-Regular.ttf"
             android:id="@+id/profession"
+            fontPath="fonts/Roboto-Regular.ttf"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/dark_grey"
             android:textSize="@dimen/font_10"
-            app:layout_constraintTop_toBottomOf="@+id/name"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/name"
             tools:text="@string/bilkul_nahi" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

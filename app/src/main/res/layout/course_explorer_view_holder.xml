@@ -32,7 +32,6 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="end|bottom"
                 android:layout_marginEnd="@dimen/_8sdp"
-                android:background="@drawable/button_native_login"
                 android:backgroundTint="@color/button_primary_color"
                 android:gravity="center"
                 android:paddingTop="@dimen/_6sdp"
@@ -40,7 +39,8 @@
                 android:text="@string/show_details"
                 android:textAllCaps="false"
                 android:textColor="@color/white"
-                android:textSize="@dimen/font_11"
+                android:textSize="@dimen/font_13"
+
                 android:visibility="visible" />
 
     </com.google.android.material.card.MaterialCardView>

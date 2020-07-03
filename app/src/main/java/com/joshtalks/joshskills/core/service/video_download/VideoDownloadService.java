@@ -5,7 +5,6 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ext.workmanager.WorkManagerScheduler;
 import com.google.android.exoplayer2.offline.Download;
@@ -25,17 +24,14 @@ import com.joshtalks.joshskills.repository.local.entity.DOWNLOAD_STATUS;
 import com.joshtalks.joshskills.repository.local.eventbus.MediaProgressEventBus;
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity;
 import com.joshtalks.joshskills.ui.chat.ConversationActivity;
-
-import org.jetbrains.annotations.NotNull;
-
+import io.reactivex.schedulers.Schedulers;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
-
-import io.reactivex.schedulers.Schedulers;
+import org.jetbrains.annotations.NotNull;
 import timber.log.Timber;
 
 import static com.joshtalks.joshskills.core.StaticConstantKt.MINIMUM_VIDEO_DOWNLOAD_PROGRESS;
@@ -86,16 +82,16 @@ public class VideoDownloadService extends DownloadService {
     @Override
     protected Notification getForegroundNotification(@NotNull List<Download> downloads) {
         showDownloadProgress(downloads);
-        Intent intent=null;
+        Intent intent = null;
         try {
             intent = new Intent(this, ConversationActivity.class);
             ChatModel chatModel = AppObjectController.getGsonMapperForLocal().fromJson(Util.fromUtf8Bytes(downloads.get(0).request.data), new TypeToken<ChatModel>() {
             }.getType());
             intent.putExtra(FOCUS_ON_CHAT_ID, chatModel);
-            InboxEntity entity=  AppObjectController.getAppDatabase().courseDao().chooseRegisterCourseMinimalRX(chatModel.getConversationId()).subscribeOn(Schedulers.io()).blockingGet();
+            InboxEntity entity = AppObjectController.getAppDatabase().courseDao().chooseRegisterCourseMinimalRX(chatModel.getConversationId()).subscribeOn(Schedulers.io()).blockingGet();
             intent.putExtra(CHAT_ROOM_OBJECT, entity);
         } catch (Exception ex) {
-        //    ex.printStackTrace();
+            //    ex.printStackTrace();
         }
 
         PendingIntent pendingIntent = PendingIntent.getActivity(
@@ -151,6 +147,22 @@ public class VideoDownloadService extends DownloadService {
 
     }
 
+    private void clearNotification(String s) {
+        try {
+            NotificationManager notificationManager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
+            Iterator it = notificationListMap.entrySet().iterator();
+            while (it.hasNext()) {
+                Map.Entry pair = (Map.Entry) it.next();
+                if (s.equalsIgnoreCase(pair.getKey().toString())) {
+                    notificationManager.cancel((int) pair.getValue());
+                    it.remove();
+                }
+            }
+        } catch (Exception e) {
+
+        }
+    }
+
     void showDownloadProgress(List<Download> downloads) {
         try {
             float totalPercentage = 0;
@@ -191,22 +203,6 @@ public class VideoDownloadService extends DownloadService {
             }
         } catch (Exception e) {
             e.printStackTrace();
-        }
-    }
-
-    private void clearNotification(String s) {
-        try {
-            NotificationManager notificationManager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
-            Iterator it = notificationListMap.entrySet().iterator();
-            while (it.hasNext()) {
-                Map.Entry pair = (Map.Entry) it.next();
-                if (s.equalsIgnoreCase(pair.getKey().toString())) {
-                    notificationManager.cancel((int) pair.getValue());
-                    it.remove();
-                }
-            }
-        } catch (Exception e) {
-
         }
     }
 }

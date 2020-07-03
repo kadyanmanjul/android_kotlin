@@ -33,6 +33,7 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
             }
         }
     }
+
     private fun getCourseFromServer() {
         viewModelScope.launch(Dispatchers.IO) {
             try {

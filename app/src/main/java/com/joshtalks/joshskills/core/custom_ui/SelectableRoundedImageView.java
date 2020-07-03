@@ -23,9 +23,7 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
 import android.net.Uri;
 import android.util.AttributeSet;
-
 import androidx.appcompat.widget.AppCompatImageView;
-
 import com.joshtalks.joshskills.R;
 
 
@@ -130,12 +128,6 @@ public class SelectableRoundedImageView extends AppCompatImageView {
     }
 
     @Override
-    protected void drawableStateChanged() {
-        super.drawableStateChanged();
-        invalidate();
-    }
-
-    @Override
     public void setImageResource(int resId) {
         if (mResource != resId) {
             mResource = resId;
@@ -143,24 +135,6 @@ public class SelectableRoundedImageView extends AppCompatImageView {
             super.setImageDrawable(mDrawable);
             updateDrawable();
         }
-    }
-
-    @Override
-    public ScaleType getScaleType() {
-        return mScaleType;
-    }
-
-    @Override
-    public void setScaleType(ScaleType scaleType) {
-        super.setScaleType(scaleType);
-        mScaleType = scaleType;
-        updateDrawable();
-    }
-
-    @Override
-    public void setImageURI(Uri uri) {
-        super.setImageURI(uri);
-        setImageDrawable(getDrawable());
     }
 
     @Override
@@ -178,6 +152,31 @@ public class SelectableRoundedImageView extends AppCompatImageView {
         super.setImageDrawable(mDrawable);
         updateDrawable();
     }
+
+    @Override
+    public void setImageURI(Uri uri) {
+        super.setImageURI(uri);
+        setImageDrawable(getDrawable());
+    }
+
+    @Override
+    public ScaleType getScaleType() {
+        return mScaleType;
+    }
+
+    @Override
+    protected void drawableStateChanged() {
+        super.drawableStateChanged();
+        invalidate();
+    }
+
+    @Override
+    public void setScaleType(ScaleType scaleType) {
+        super.setScaleType(scaleType);
+        mScaleType = scaleType;
+        updateDrawable();
+    }
+
 
     private Drawable resolveResource() {
         Resources rsrc = getResources();

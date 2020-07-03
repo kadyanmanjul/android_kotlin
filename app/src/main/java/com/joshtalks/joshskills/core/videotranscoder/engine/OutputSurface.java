@@ -69,42 +69,6 @@ class OutputSurface implements SurfaceTexture.OnFrameAvailableListener {
     }
 
     /**
-     * Creates an OutputSurface using the current EGL context (rather than establishing a
-     * new one).  Creates a Surface that can be passed to MediaCodec.configure().
-     */
-    public OutputSurface() {
-        setup();
-    }
-
-    /**
-     * Creates instances of TextureRender and SurfaceTexture, and a Surface associated
-     * with the SurfaceTexture.
-     */
-    private void setup() {
-        mTextureRender = new TextureRender();
-        mTextureRender.surfaceCreated();
-        // Even if we don't access the SurfaceTexture after the constructor returns, we
-        // still need to keep a reference to it.  The Surface doesn't retain a reference
-        // at the Java level, so if we don't either then the object can get GCed, which
-        // causes the native finalizer to run.
-        if (VERBOSE) Log.d(TAG, "textureID=" + mTextureRender.getTextureId());
-        mSurfaceTexture = new SurfaceTexture(mTextureRender.getTextureId());
-        // This doesn't work if OutputSurface is created on the thread that CTS started for
-        // these test cases.
-        //
-        // The CTS-created thread has a Looper, and the SurfaceTexture constructor will
-        // create a Handler that uses it.  The "frame available" message is delivered
-        // there, but since we're not a Looper-based thread we'll never see it.  For
-        // this to do anything useful, OutputSurface must be created on a thread without
-        // a Looper, so that SurfaceTexture uses the main application Looper instead.
-        //
-        // Java language note: passing "this" out of a constructor is generally unwise,
-        // but we should be able to get away with it here.
-        mSurfaceTexture.setOnFrameAvailableListener(this);
-        mSurface = new Surface(mSurfaceTexture);
-    }
-
-    /**
      * Prepares EGL.  We want a GLES 2.0 context and a surface that supports pbuffer.
      */
     private void eglSetup(int width, int height) {
@@ -159,6 +123,61 @@ class OutputSurface implements SurfaceTexture.OnFrameAvailableListener {
     }
 
     /**
+     * Creates an OutputSurface using the current EGL context (rather than establishing a
+     * new one).  Creates a Surface that can be passed to MediaCodec.configure().
+     */
+    public OutputSurface() {
+        setup();
+    }
+
+    /**
+     * Creates instances of TextureRender and SurfaceTexture, and a Surface associated
+     * with the SurfaceTexture.
+     */
+    private void setup() {
+        mTextureRender = new TextureRender();
+        mTextureRender.surfaceCreated();
+        // Even if we don't access the SurfaceTexture after the constructor returns, we
+        // still need to keep a reference to it.  The Surface doesn't retain a reference
+        // at the Java level, so if we don't either then the object can get GCed, which
+        // causes the native finalizer to run.
+        if (VERBOSE) Log.d(TAG, "textureID=" + mTextureRender.getTextureId());
+        mSurfaceTexture = new SurfaceTexture(mTextureRender.getTextureId());
+        // This doesn't work if OutputSurface is created on the thread that CTS started for
+        // these test cases.
+        //
+        // The CTS-created thread has a Looper, and the SurfaceTexture constructor will
+        // create a Handler that uses it.  The "frame available" message is delivered
+        // there, but since we're not a Looper-based thread we'll never see it.  For
+        // this to do anything useful, OutputSurface must be created on a thread without
+        // a Looper, so that SurfaceTexture uses the main application Looper instead.
+        //
+        // Java language note: passing "this" out of a constructor is generally unwise,
+        // but we should be able to get away with it here.
+        mSurfaceTexture.setOnFrameAvailableListener(this);
+        mSurface = new Surface(mSurfaceTexture);
+    }
+
+    /**
+     * Makes our EGL context and surface current.
+     */
+    public void makeCurrent() {
+        if (!EGL14.eglMakeCurrent(mEGLDisplay, mEGLSurface, mEGLSurface, mEGLContext)) {
+            throw new RuntimeException("eglMakeCurrent failed");
+        }
+    }
+
+    /**
+     * Checks for EGL errors.
+     */
+    private void checkEglError(String msg) {
+        int error;
+        if ((error = EGL14.eglGetError()) != EGL14.EGL_SUCCESS) {
+            throw new RuntimeException(msg + ": EGL error: 0x" + Integer.toHexString(error));
+        }
+    }
+
+    /**
      * Discard all resources held by this class, notably the EGL context.
      */
     public void release() {
@@ -178,15 +197,6 @@ class OutputSurface implements SurfaceTexture.OnFrameAvailableListener {
         mTextureRender = null;
         mSurface = null;
         mSurfaceTexture = null;
-    }
-
-    /**
-     * Makes our EGL context and surface current.
-     */
-    public void makeCurrent() {
-        if (!EGL14.eglMakeCurrent(mEGLDisplay, mEGLSurface, mEGLSurface, mEGLContext)) {
-            throw new RuntimeException("eglMakeCurrent failed");
-        }
     }
 
     /**
@@ -277,16 +287,6 @@ class OutputSurface implements SurfaceTexture.OnFrameAvailableListener {
             }
             mFrameAvailable = true;
             mFrameSyncObject.notifyAll();
-        }
-    }
-
-    /**
-     * Checks for EGL errors.
-     */
-    private void checkEglError(String msg) {
-        int error;
-        if ((error = EGL14.eglGetError()) != EGL14.EGL_SUCCESS) {
-            throw new RuntimeException(msg + ": EGL error: 0x" + Integer.toHexString(error));
         }
     }
 }

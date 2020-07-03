@@ -50,6 +50,32 @@ class CountryCodeAdapter extends RecyclerView.Adapter<CountryCodeAdapter.Country
         setSearchBar();
     }
 
+    private List<CCPCountry> getFilteredCountries(String query) {
+        List<CCPCountry> tempCCPCountryList = new ArrayList<CCPCountry>();
+        preferredCountriesCount = 0;
+        if (codePicker.preferredCountries != null && codePicker.preferredCountries.size() > 0) {
+            for (CCPCountry CCPCountry : codePicker.preferredCountries) {
+                if (CCPCountry.isEligibleForQuery(query)) {
+                    tempCCPCountryList.add(CCPCountry);
+                    preferredCountriesCount++;
+                }
+            }
+
+            if (tempCCPCountryList.size() > 0) { //means at least one preferred country is added.
+                CCPCountry divider = null;
+                tempCCPCountryList.add(divider);
+                preferredCountriesCount++;
+            }
+        }
+
+        for (CCPCountry CCPCountry : masterCountries) {
+            if (CCPCountry.isEligibleForQuery(query)) {
+                tempCCPCountryList.add(CCPCountry);
+            }
+        }
+        return tempCCPCountryList;
+    }
+
     private void setSearchBar() {
         if (codePicker.isSearchAllowed()) {
             imgClearQuery.setVisibility(View.GONE);
@@ -60,25 +86,12 @@ class CountryCodeAdapter extends RecyclerView.Adapter<CountryCodeAdapter.Country
         }
     }
 
-    private void setQueryClearListener() {
-        imgClearQuery.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                editText_search.setText("");
-            }
-        });
-    }
-
     /**
      * add textChangeListener, to apply new query each time editText get text changed.
      */
     private void setTextWatcher() {
         if (this.editText_search != null) {
             this.editText_search.addTextChangedListener(new TextWatcher() {
-
-                @Override
-                public void afterTextChanged(Editable s) {
-                }
 
                 @Override
                 public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -92,6 +105,10 @@ class CountryCodeAdapter extends RecyclerView.Adapter<CountryCodeAdapter.Country
                     } else {
                         imgClearQuery.setVisibility(View.VISIBLE);
                     }
+                }
+
+                @Override
+                public void afterTextChanged(Editable s) {
                 }
             });
 
@@ -108,6 +125,15 @@ class CountryCodeAdapter extends RecyclerView.Adapter<CountryCodeAdapter.Country
                 }
             });
         }
+    }
+
+    private void setQueryClearListener() {
+        imgClearQuery.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                editText_search.setText("");
+            }
+        });
     }
 
     /**
@@ -133,32 +159,6 @@ class CountryCodeAdapter extends RecyclerView.Adapter<CountryCodeAdapter.Country
             textView_noResult.setVisibility(View.VISIBLE);
         }
         notifyDataSetChanged();
-    }
-
-    private List<CCPCountry> getFilteredCountries(String query) {
-        List<CCPCountry> tempCCPCountryList = new ArrayList<CCPCountry>();
-        preferredCountriesCount = 0;
-        if (codePicker.preferredCountries != null && codePicker.preferredCountries.size() > 0) {
-            for (CCPCountry CCPCountry : codePicker.preferredCountries) {
-                if (CCPCountry.isEligibleForQuery(query)) {
-                    tempCCPCountryList.add(CCPCountry);
-                    preferredCountriesCount++;
-                }
-            }
-
-            if (tempCCPCountryList.size() > 0) { //means at least one preferred country is added.
-                CCPCountry divider = null;
-                tempCCPCountryList.add(divider);
-                preferredCountriesCount++;
-            }
-        }
-
-        for (CCPCountry CCPCountry : masterCountries) {
-            if (CCPCountry.isEligibleForQuery(query)) {
-                tempCCPCountryList.add(CCPCountry);
-            }
-        }
-        return tempCCPCountryList;
     }
 
     @Override

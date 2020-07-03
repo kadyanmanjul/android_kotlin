@@ -103,7 +103,11 @@ class PromotionDialogFragment : DialogFragment() {
 
     fun openPromotion() {
         courseId?.run {
-            CourseDetailsActivity.startCourseDetailsActivity(requireActivity(),this.toInt(),"Promotion")
+            CourseDetailsActivity.startCourseDetailsActivity(
+                requireActivity(),
+                this.toInt(),
+                "Promotion"
+            )
             dismissAllowingStateLoss()
         }
     }

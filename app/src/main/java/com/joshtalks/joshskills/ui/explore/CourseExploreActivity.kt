@@ -8,7 +8,6 @@ import androidx.appcompat.widget.AppCompatTextView
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.afollestad.materialdialogs.MaterialDialog
-import com.crashlytics.android.Crashlytics
 import com.google.android.material.appbar.MaterialToolbar
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
@@ -19,10 +18,8 @@ import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.USER_UNIQUE_ID
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
-import com.joshtalks.joshskills.core.analytics.LogException
 import com.joshtalks.joshskills.core.custom_ui.decorator.LayoutMarginDecoration
 import com.joshtalks.joshskills.core.service.WorkMangerAdmin
-import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.ActivityCourseExploreBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
@@ -34,14 +31,12 @@ import com.joshtalks.joshskills.ui.inbox.PAYMENT_FOR_COURSE_CODE
 import com.joshtalks.joshskills.ui.signup.FLOW_FROM
 import com.joshtalks.joshskills.ui.signup.SignUpActivity
 import com.joshtalks.joshskills.ui.view_holders.CourseExplorerViewHolder
+import com.joshtalks.joshskills.util.showAppropriateMsg
 import com.vanniktech.emoji.Utils
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import retrofit2.HttpException
-import java.net.SocketTimeoutException
-import java.net.UnknownHostException
 import kotlin.collections.set
 
 const val COURSE_EXPLORER_SCREEN_NAME = "Course Explorer"
@@ -150,7 +145,6 @@ class CourseExploreActivity : CoreJoshActivity() {
             .setHasFixedSize(true)
             .setLayoutManager(linearLayoutManager)
         courseExploreBinding.recyclerView.itemAnimator = null
-        // TODO on Scrolled Event
         courseExploreBinding.recyclerView.addItemDecoration(
             LayoutMarginDecoration(
                 Utils.dpToPx(
@@ -206,20 +200,9 @@ class CourseExploreActivity : CoreJoshActivity() {
                 }
 
             } catch (ex: Throwable) {
-                LogException.catchException(ex)
+                ex.showAppropriateMsg()
                 CoroutineScope(Dispatchers.Main).launch {
                     courseExploreBinding.progressBar.visibility = View.GONE
-                }
-                when (ex) {
-                    is HttpException -> {
-                        showToast(getString(R.string.generic_message_for_error))
-                    }
-                    is SocketTimeoutException, is UnknownHostException -> {
-                        showToast(getString(R.string.internet_not_available_msz))
-                    }
-                    else -> {
-                        Crashlytics.logException(ex)
-                    }
                 }
             }
         }

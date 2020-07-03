@@ -4,9 +4,7 @@ package com.joshtalks.joshskills.core.datetimeutils;
 import android.content.Context;
 import android.text.format.DateUtils;
 import android.util.Log;
-
 import com.joshtalks.joshskills.R;
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -60,17 +58,13 @@ public class DateTimeUtils {
     }
 
     /**
-     * Get Date or DateTime formatting pattern
+     * Convert a Java Date object to String
      *
-     * @param dateString Date String
-     * @return Format Pattern
+     * @param date Date Object
+     * @return Date Object string representation
      */
-    private static String getDatePattern(String dateString) {
-        if (isDateTime(dateString)) {
-            return (dateString.contains("/")) ? DateTimeFormat.DATE_TIME_PATTERN_2 : DateTimeFormat.DATE_TIME_PATTERN_1;
-        } else {
-            return (dateString.contains("/")) ? DateTimeFormat.DATE_PATTERN_2 : DateTimeFormat.DATE_PATTERN_1;
-        }
+    public static String formatDate(Date date) {
+        return formatDate(date, Locale.getDefault());
     }
 
     /**
@@ -90,6 +84,131 @@ public class DateTimeUtils {
             Log.d(LOG_TAG, "formatDate >> Formatting using " + iso8601Format.getTimeZone().getDisplayName() + " | " + iso8601Format.getTimeZone().getID());
         }
         return iso8601Format.format(date);
+    }
+
+    /**
+     * Convert a timeStamp into a date considering given timeStamp in milliseconds
+     *
+     * @param timeStamp TimeStamp
+     * @return Date object
+     * @see DateTimeUnits#MILLISECONDS
+     */
+    public static Date formatDate(long timeStamp) {
+        return formatDate(timeStamp, DateTimeUnits.MILLISECONDS);
+    }
+
+    /**
+     * Convert a timeStamp into a date object
+     *
+     * @param timeStamp TimeStamp
+     * @param units     Witch unit is whether seconds or milliseconds
+     * @return Date object
+     * @see DateTimeUnits#SECONDS
+     * @see DateTimeUnits#MILLISECONDS
+     */
+    public static Date formatDate(long timeStamp, DateTimeUnits units) {
+        if (units.equals(DateTimeUnits.SECONDS))
+            return new Date(timeStamp * 1000L);
+        else
+            return new Date(timeStamp);
+    }
+
+    /**
+     * Format date using a given pattern
+     * apply default locale
+     *
+     * @param date    Date Object
+     * @param pattern Pattern
+     * @return Formatted date
+     */
+    public static String formatWithPattern(Date date, String pattern) {
+        return formatWithPattern(date, pattern, Locale.getDefault());
+    }
+
+    /**
+     * Format date using a given pattern
+     * and apply supplied locale
+     *
+     * @param date    Date Object
+     * @param pattern Pattern
+     * @param locale  Locale
+     * @return Formatted date
+     */
+    public static String formatWithPattern(Date date, String pattern, Locale locale) {
+        if (date == null && debug) {
+            Log.e(LOG_TAG, "FormatWithPattern >> Supplied date is null");
+        }
+        SimpleDateFormat iso8601Format = new SimpleDateFormat(pattern, locale);
+        iso8601Format.setTimeZone(TimeZone.getTimeZone(timeZone));
+        return iso8601Format.format(date);
+    }
+
+    /**
+     * Format date using a given pattern
+     * apply default locale
+     *
+     * @param date    Date String
+     * @param pattern Pattern
+     * @return Formatted date
+     */
+    public static String formatWithPattern(String date, String pattern) {
+        return formatWithPattern(date, pattern, Locale.getDefault());
+    }
+
+    /**
+     * Format date using a given pattern
+     * and apply supplied locale
+     *
+     * @param date    Date String
+     * @param pattern Pattern
+     * @param locale  Locale
+     * @return Formatted date
+     */
+    public static String formatWithPattern(String date, String pattern, Locale locale) {
+        return formatWithPattern(formatDate(date), pattern, locale);
+    }
+
+    /**
+     * Get localized date string (Using default locale)
+     *
+     * @param date Date string
+     * @return Formatted localized date string
+     */
+    public static String formatWithStyle(String date, DateTimeStyle style) {
+        return formatWithStyle(date, style, Locale.getDefault());
+    }
+
+    /**
+     * Get localized date string (Using default locale)
+     *
+     * @param date Date string
+     * @return Formatted localized date string
+     */
+    public static String formatWithStyle(String date, DateTimeStyle style, Locale locale) {
+        return formatWithStyle(formatDate(date), style, locale);
+    }
+
+    /**
+     * Get localized date string
+     *
+     * @param date Date string
+     * @return Formatted localized date string
+     */
+    public static String formatWithStyle(Date date, DateTimeStyle style, Locale locale) {
+        if (date == null && debug) {
+            Log.e(LOG_TAG, "FormatWithPattern >> Supplied date is null");
+        }
+        return formatWithPattern(date, getPatternForStyle(style), locale);
+    }
+
+    /**
+     * Convert a date string to Java Date Object
+     *
+     * @param date Date String
+     * @return Java Date Object
+     */
+    public static Date formatDate(String date) {
+        return formatDate(date, Locale.getDefault());
     }
 
     /**
@@ -117,105 +236,27 @@ public class DateTimeUtils {
     }
 
     /**
-     * Convert a Java Date object to String
+     * Get Date or DateTime formatting pattern
      *
-     * @param date Date Object
-     * @return Date Object string representation
+     * @param dateString Date String
+     * @return Format Pattern
      */
-    public static String formatDate(Date date) {
-        return formatDate(date, Locale.getDefault());
-    }
-
-    /**
-     * Convert a date string to Java Date Object
-     *
-     * @param date Date String
-     * @return Java Date Object
-     */
-    public static Date formatDate(String date) {
-        return formatDate(date, Locale.getDefault());
-    }
-
-    /**
-     * Convert a timeStamp into a date object
-     *
-     * @param timeStamp TimeStamp
-     * @param units     Witch unit is whether seconds or milliseconds
-     * @return Date object
-     * @see DateTimeUnits#SECONDS
-     * @see DateTimeUnits#MILLISECONDS
-     */
-    public static Date formatDate(long timeStamp, DateTimeUnits units) {
-        if (units.equals(DateTimeUnits.SECONDS))
-            return new Date(timeStamp * 1000L);
-        else
-            return new Date(timeStamp);
-    }
-
-    /**
-     * Convert a timeStamp into a date considering given timeStamp in milliseconds
-     *
-     * @param timeStamp TimeStamp
-     * @return Date object
-     * @see DateTimeUnits#MILLISECONDS
-     */
-    public static Date formatDate(long timeStamp) {
-        return formatDate(timeStamp, DateTimeUnits.MILLISECONDS);
-    }
-
-    /**
-     * Format date using a given pattern
-     * and apply supplied locale
-     *
-     * @param date    Date Object
-     * @param pattern Pattern
-     * @param locale  Locale
-     * @return Formatted date
-     */
-    public static String formatWithPattern(Date date, String pattern, Locale locale) {
-        if (date == null && debug) {
-            Log.e(LOG_TAG, "FormatWithPattern >> Supplied date is null");
+    private static String getDatePattern(String dateString) {
+        if (isDateTime(dateString)) {
+            return (dateString.contains("/")) ? DateTimeFormat.DATE_TIME_PATTERN_2 : DateTimeFormat.DATE_TIME_PATTERN_1;
+        } else {
+            return (dateString.contains("/")) ? DateTimeFormat.DATE_PATTERN_2 : DateTimeFormat.DATE_PATTERN_1;
         }
-        SimpleDateFormat iso8601Format = new SimpleDateFormat(pattern, locale);
-        iso8601Format.setTimeZone(TimeZone.getTimeZone(timeZone));
-        return iso8601Format.format(date);
     }
 
     /**
-     * Format date using a given pattern
-     * and apply supplied locale
+     * Tell whether or not a given string represent a date time string or a simple date
      *
-     * @param date    Date String
-     * @param pattern Pattern
-     * @param locale  Locale
-     * @return Formatted date
+     * @param dateString Date String
+     * @return True if given string is a date time False otherwise
      */
-    public static String formatWithPattern(String date, String pattern, Locale locale) {
-        return formatWithPattern(formatDate(date), pattern, locale);
-    }
-
-    /**
-     * Format date using a given pattern
-     * apply default locale
-     *
-     * @param date    Date Object
-     * @param pattern Pattern
-     * @return Formatted date
-     */
-    public static String formatWithPattern(Date date, String pattern) {
-        return formatWithPattern(date, pattern, Locale.getDefault());
-    }
-
-    /**
-     * Format date using a given pattern
-     * apply default locale
-     *
-     * @param date    Date String
-     * @param pattern Pattern
-     * @return Formatted date
-     */
-    public static String formatWithPattern(String date, String pattern) {
-        return formatWithPattern(date, pattern, Locale.getDefault());
+    public static boolean isDateTime(String dateString) {
+        return (dateString != null) && (dateString.trim().split(" ").length > 1);
     }
 
     /**
@@ -239,46 +280,23 @@ public class DateTimeUtils {
     }
 
     /**
-     * Get localized date string
+     * Extract time from date without seconds
      *
-     * @param date Date string
-     * @return Formatted localized date string
+     * @param date Date object
+     * @return Time string
      */
-    public static String formatWithStyle(Date date, DateTimeStyle style, Locale locale) {
-        if (date == null && debug) {
-            Log.e(LOG_TAG, "FormatWithPattern >> Supplied date is null");
-        }
-        return formatWithPattern(date, getPatternForStyle(style), locale);
+    public static String formatTime(String date) {
+        return formatTime(date, false);
     }
 
     /**
-     * Get localized date string (Using default locale)
+     * Extract time from date without seconds
      *
-     * @param date Date string
-     * @return Formatted localized date string
+     * @param date Date object
+     * @return Time string
      */
-    public static String formatWithStyle(String date, DateTimeStyle style, Locale locale) {
-        return formatWithStyle(formatDate(date), style, locale);
-    }
-
-    /**
-     * Get localized date string (Using default locale)
-     *
-     * @param date Date string
-     * @return Formatted localized date string
-     */
-    public static String formatWithStyle(Date date, DateTimeStyle style) {
-        return formatWithStyle(date, style, Locale.getDefault());
-    }
-
-    /**
-     * Get localized date string (Using default locale)
-     *
-     * @param date Date string
-     * @return Formatted localized date string
-     */
-    public static String formatWithStyle(String date, DateTimeStyle style) {
-        return formatWithStyle(date, style, Locale.getDefault());
+    public static String formatTime(String date, boolean forceShowHours) {
+        return formatTime(formatDate(date), forceShowHours);
     }
 
     /**
@@ -301,36 +319,6 @@ public class DateTimeUtils {
                 (minutes == 0 ? "00" : minutes < 10 ? "0" + minutes :
                         String.valueOf(minutes)) + ":"
                 + (seconds == 0 ? "00" : seconds < 10 ? "0" + seconds : String.valueOf(seconds));
-    }
-
-    /**
-     * Extract time from date without seconds
-     *
-     * @param date Date object
-     * @return Time string
-     */
-    public static String formatTime(String date, boolean forceShowHours) {
-        return formatTime(formatDate(date), forceShowHours);
-    }
-
-    /**
-     * Extract time from date without seconds
-     *
-     * @param date Date object
-     * @return Time string
-     */
-    public static String formatTime(Date date) {
-        return formatTime(date, false);
-    }
-
-    /**
-     * Extract time from date without seconds
-     *
-     * @param date Date object
-     * @return Time string
-     */
-    public static String formatTime(String date) {
-        return formatTime(date, false);
     }
 
     /**
@@ -378,13 +366,13 @@ public class DateTimeUtils {
     }
 
     /**
-     * Tell whether or not a given string represent a date time string or a simple date
+     * Tell whether or not a given date is yesterday
      *
      * @param dateString Date String
-     * @return True if given string is a date time False otherwise
+     * @return True if the date is yesterday False otherwise
      */
-    public static boolean isDateTime(String dateString) {
-        return (dateString != null) && (dateString.trim().split(" ").length > 1);
+    public static boolean isYesterday(String dateString) {
+        return isYesterday(formatDate(dateString));
     }
 
     /**
@@ -404,13 +392,13 @@ public class DateTimeUtils {
     }
 
     /**
-     * Tell whether or not a given date is yesterday
+     * Tell whether or not a given date is today date
      *
-     * @param dateString Date String
-     * @return True if the date is yesterday False otherwise
+     * @param dateString Date string
+     * @return True if date is today False otherwise
      */
-    public static boolean isYesterday(String dateString) {
-        return isYesterday(formatDate(dateString));
+    public static boolean isToday(String dateString) {
+        return isToday(formatDate(dateString));
     }
 
     /**
@@ -424,13 +412,13 @@ public class DateTimeUtils {
     }
 
     /**
-     * Tell whether or not a given date is today date
+     * Get Previous month from a given date
      *
-     * @param dateString Date string
-     * @return True if date is today False otherwise
+     * @param date Date start
+     * @return Date of the previous month
      */
-    public static boolean isToday(String dateString) {
-        return isToday(formatDate(dateString));
+    public static Date getPreviousMonthDate(String date) {
+        return getPreviousMonthDate(formatDate(date));
     }
 
     /**
@@ -449,11 +437,11 @@ public class DateTimeUtils {
     /**
      * Get Previous month from a given date
      *
-     * @param date Date start
+     * @param date String Date start
      * @return Date of the previous month
      */
-    public static Date getPreviousMonthDate(String date) {
-        return getPreviousMonthDate(formatDate(date));
+    public static Date getNextMonthDate(String date) {
+        return getNextMonthDate(formatDate(date));
     }
 
     /**
@@ -470,13 +458,14 @@ public class DateTimeUtils {
     }
 
     /**
-     * Get Previous month from a given date
+     * Get Previous week date
      *
-     * @param date String Date start
-     * @return Date of the previous month
+     * @param date         Date String
+     * @param dayOfTheWeek Day Of the week
+     * @return Date
      */
-    public static Date getNextMonthDate(String date) {
-        return getNextMonthDate(formatDate(date));
+    public static Date getPreviousWeekDate(String date, int dayOfTheWeek) {
+        return getPreviousWeekDate(formatDate(date), dayOfTheWeek);
     }
 
     /**
@@ -496,14 +485,23 @@ public class DateTimeUtils {
     }
 
     /**
-     * Get Previous week date
+     * Get Next week date
      *
-     * @param date         Date String
-     * @param dayOfTheWeek Day Of the week
+     * @param date Date Object
      * @return Date
      */
-    public static Date getPreviousWeekDate(String date, int dayOfTheWeek) {
-        return getPreviousWeekDate(formatDate(date), dayOfTheWeek);
+    public static Date getNextWeekDate(String date) {
+        return getNextWeekDate(formatDate(date));
+    }
+
+    /**
+     * Get Next week date
+     *
+     * @param date Date Object
+     * @return Date
+     */
+    public static Date getNextWeekDate(Date date) {
+        return getNextWeekDate(date, Calendar.MONDAY);
     }
 
     /**
@@ -525,32 +523,36 @@ public class DateTimeUtils {
     /**
      * Get Next week date
      *
-     * @param date Date Object
-     * @return Date
-     */
-    public static Date getNextWeekDate(Date date) {
-        return getNextWeekDate(date, Calendar.MONDAY);
-    }
-
-    /**
-     * Get Next week date
-     *
-     * @param date Date Object
-     * @return Date
-     */
-    public static Date getNextWeekDate(String date) {
-        return getNextWeekDate(formatDate(date));
-    }
-
-    /**
-     * Get Next week date
-     *
      * @param date         Date Object
      * @param dayOfTheWeek Day Of the week
      * @return Date
      */
     public static Date getNextWeekDate(String date, int dayOfTheWeek) {
         return getNextWeekDate(formatDate(date), dayOfTheWeek);
+    }
+
+    /**
+     * Get difference between two dates
+     *
+     * @param nowDate  Current date
+     * @param oldDate  Date to compare
+     * @param dateDiff Difference Unit
+     * @return Difference
+     */
+    public static int getDateDiff(String nowDate, Date oldDate, DateTimeUnits dateDiff) {
+        return getDateDiff(formatDate(nowDate), oldDate, dateDiff);
+    }
+
+    /**
+     * Get difference between two dates
+     *
+     * @param nowDate  Current date
+     * @param oldDate  Date to compare
+     * @param dateDiff Difference Unit
+     * @return Difference
+     */
+    public static int getDateDiff(Date nowDate, String oldDate, DateTimeUnits dateDiff) {
+        return getDateDiff(nowDate, formatDate(oldDate), dateDiff);
     }
 
     /**
@@ -590,32 +592,19 @@ public class DateTimeUtils {
      * @param dateDiff Difference Unit
      * @return Difference
      */
-    public static int getDateDiff(String nowDate, Date oldDate, DateTimeUnits dateDiff) {
-        return getDateDiff(formatDate(nowDate), oldDate, dateDiff);
-    }
-
-    /**
-     * Get difference between two dates
-     *
-     * @param nowDate  Current date
-     * @param oldDate  Date to compare
-     * @param dateDiff Difference Unit
-     * @return Difference
-     */
-    public static int getDateDiff(Date nowDate, String oldDate, DateTimeUnits dateDiff) {
-        return getDateDiff(nowDate, formatDate(oldDate), dateDiff);
-    }
-
-    /**
-     * Get difference between two dates
-     *
-     * @param nowDate  Current date
-     * @param oldDate  Date to compare
-     * @param dateDiff Difference Unit
-     * @return Difference
-     */
     public static int getDateDiff(String nowDate, String oldDate, DateTimeUnits dateDiff) {
         return getDateDiff(nowDate, formatDate(oldDate), dateDiff);
+    }
+
+    /**
+     * Get time ago of given date
+     *
+     * @param context    Context
+     * @param dateString Representing a date time string
+     * @return Time ago string
+     */
+    public static String getTimeAgo(Context context, String dateString) {
+        return getTimeAgo(context, formatDate(dateString), DateTimeStyle.AGO_FULL_STRING);
     }
 
     /**
@@ -682,14 +671,23 @@ public class DateTimeUtils {
     }
 
     /**
-     * Get time ago of given date
+     * Extract time from date without seconds
      *
-     * @param context    Context
-     * @param dateString Representing a date time string
-     * @return Time ago string
+     * @param date Date object
+     * @return Time string
      */
-    public static String getTimeAgo(Context context, String dateString) {
-        return getTimeAgo(context, formatDate(dateString), DateTimeStyle.AGO_FULL_STRING);
+    public static String formatTime(Date date) {
+        return formatTime(date, false);
+    }
+
+    /**
+     * Get localized date string (Using default locale)
+     *
+     * @param date Date string
+     * @return Formatted localized date string
+     */
+    public static String formatWithStyle(Date date, DateTimeStyle style) {
+        return formatWithStyle(date, style, Locale.getDefault());
     }
 
     /**

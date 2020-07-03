@@ -9,7 +9,6 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
 import android.view.animation.ScaleAnimation;
 import android.widget.LinearLayout;
-
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
 
 public class HidingLinearLayout extends LinearLayout {
@@ -41,16 +40,22 @@ public class HidingLinearLayout extends LinearLayout {
             }
 
             @Override
-            public void onAnimationRepeat(Animation animation) {
+            public void onAnimationEnd(Animation animation) {
+                setVisibility(GONE);
             }
 
             @Override
-            public void onAnimationEnd(Animation animation) {
-                setVisibility(GONE);
+            public void onAnimationRepeat(Animation animation) {
             }
         });
 
         animateWith(animation);
+    }
+
+    private void animateWith(Animation animation) {
+        animation.setDuration(150);
+        animation.setInterpolator(new FastOutSlowInInterpolator());
+        startAnimation(animation);
     }
 
     public void show() {
@@ -64,12 +69,6 @@ public class HidingLinearLayout extends LinearLayout {
         animation.setDuration(100);
 
         animateWith(animation);
-    }
-
-    private void animateWith(Animation animation) {
-        animation.setDuration(150);
-        animation.setInterpolator(new FastOutSlowInInterpolator());
-        startAnimation(animation);
     }
 
     public void disable() {

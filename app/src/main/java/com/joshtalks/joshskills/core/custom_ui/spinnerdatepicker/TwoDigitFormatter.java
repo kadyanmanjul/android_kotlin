@@ -1,7 +1,6 @@
 package com.joshtalks.joshskills.core.custom_ui.spinnerdatepicker;
 
 import android.widget.NumberPicker;
-
 import java.text.DecimalFormatSymbols;
 import java.util.Locale;
 
@@ -25,15 +24,19 @@ public class TwoDigitFormatter implements NumberPicker.Formatter {
         init(locale);
     }
 
+    private void init(Locale locale) {
+        mFmt = createFormatter(locale);
+        mZeroDigit = getZeroDigit(locale);
+    }
+
+    private java.util.Formatter createFormatter(Locale locale) {
+        return new java.util.Formatter(mBuilder, locale);
+    }
+
     private static char getZeroDigit(Locale locale) {
         // The original TwoDigitFormatter directly referenced LocaleData's value. Instead,
         // we need to use the public DecimalFormatSymbols API.
         return DecimalFormatSymbols.getInstance(locale).getZeroDigit();
-    }
-
-    private void init(Locale locale) {
-        mFmt = createFormatter(locale);
-        mZeroDigit = getZeroDigit(locale);
     }
 
     public String format(int value) {
@@ -45,9 +48,5 @@ public class TwoDigitFormatter implements NumberPicker.Formatter {
         mBuilder.delete(0, mBuilder.length());
         mFmt.format("%02d", mArgs);
         return mFmt.toString();
-    }
-
-    private java.util.Formatter createFormatter(Locale locale) {
-        return new java.util.Formatter(mBuilder, locale);
     }
 }

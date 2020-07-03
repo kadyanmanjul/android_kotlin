@@ -1,4 +1,4 @@
-package com.joshtalks.joshlibrary.codeinputview;
+package com.joshtalks.codeinputview;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -16,7 +16,6 @@ import android.widget.LinearLayout;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.joshtalks.joshlibrary.R;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;

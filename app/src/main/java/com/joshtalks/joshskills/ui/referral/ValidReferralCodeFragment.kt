@@ -44,19 +44,20 @@ class ValidReferralCodeFragment : BottomSheetDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.description.text= SpannableStringBuilder(
+        binding.description.text = SpannableStringBuilder(
             getString(
                 R.string.referral_success_info,
                 name
             )
         )
-        binding.offerText.text=offerText
+        binding.offerText.text = offerText
     }
 
-    fun openCourseExplore(){
+    fun openCourseExplore() {
         (requireActivity() as OnBoardActivity).openCourseExplore()
     }
-    fun signUp(){
+
+    fun signUp() {
         (requireActivity() as OnBoardActivity).signUp()
     }
 
@@ -69,7 +70,8 @@ class ValidReferralCodeFragment : BottomSheetDialogFragment() {
                     putString(REFERRER_DETAILS, res.offerText)
                 }
             }
-        private const val REFERRER_NAME="referrer_name"
-        private const val REFERRER_DETAILS="referrer_details"
+
+        private const val REFERRER_NAME = "referrer_name"
+        private const val REFERRER_DETAILS = "referrer_details"
     }
 }
