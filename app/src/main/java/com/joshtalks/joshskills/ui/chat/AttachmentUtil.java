@@ -66,8 +66,8 @@ public class AttachmentUtil {
         }
     }
 
-    static void childAnimate(ViewGroup viewGroup) {
-        LinearLayout subChild = (LinearLayout) viewGroup.getChildAt(0);
+    static void childAnimate(View view) {
+        LinearLayout subChild = (LinearLayout) ((ViewGroup) view).getChildAt(0);
         int startTime = 0;
         for (int i = 0; i < subChild.getChildCount(); i++) {
             animateView(subChild.getChildAt(i), startTime);
