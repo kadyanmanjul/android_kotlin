@@ -228,7 +228,7 @@
                                 app:layout_constraintTop_toBottomOf="@+id/double_line"
                                 tools:text="$ 499" />
 
-                        <TextView
+                        <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
                                 android:id="@+id/tip_used_msg"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
@@ -482,9 +482,8 @@
                         app:layout_constraintWidth_default="percent"
                         app:layout_constraintWidth_percent="0.24">
 
-                    <androidx.appcompat.widget.AppCompatTextView
+                    <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
                             android:id="@+id/text_view_1"
-
                             style="@style/TextStyle.TopBarScroll"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -506,23 +505,27 @@
                         android:paddingTop="@dimen/_6sdp"
                         android:paddingBottom="@dimen/_6sdp"
                         app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toEndOf="@+id/fl_container"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintWidth_default="percent"
                         app:layout_constraintWidth_percent="0.76">
 
-                    <androidx.appcompat.widget.AppCompatTextView
+                    <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
                             android:id="@+id/tv_tip"
                             style="@style/TextStyle.TopBarScroll"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_marginHorizontal="@dimen/_12sdp"
                             android:gravity="start|center"
                             android:text="@string/tip_title"
                             android:textColor="@color/font_color"
                             android:textSize="@dimen/font_13"
                             android:visibility="visible"
                             app:layout_constraintBottom_toTopOf="@+id/tv_tip_off"
-                            app:layout_constraintStart_toStartOf="@+id/tv_tip_off"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintHorizontal_bias="0"
+                            app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent" />
 
                     <androidx.appcompat.widget.AppCompatTextView
@@ -530,13 +533,15 @@
                             style="@style/TextStyle.TopBarScroll"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="@dimen/_12sdp"
+                            android:layout_marginHorizontal="@dimen/_12sdp"
                             android:gravity="start|center"
                             android:text="@string/tip_discount"
                             android:textColor="@color/font_color"
                             android:textSize="@dimen/font_22"
                             android:textStyle="bold"
                             app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintHorizontal_bias="0"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent" />
 
@@ -545,12 +550,15 @@
                             style="@style/TextStyle.TopBarScroll"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_marginHorizontal="@dimen/_12sdp"
                             android:gravity="start|center"
                             android:text="@string/tip_valid"
                             android:textColor="@color/error_color"
                             android:textSize="@dimen/font_13"
                             app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintStart_toStartOf="@+id/tv_tip_off"
+                            app:layout_constraintEnd_toStartOf="@+id/tv_tip_used"
+                            app:layout_constraintHorizontal_bias="0"
+                            app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toBottomOf="@+id/tv_tip_off" />
 
                     <androidx.appcompat.widget.AppCompatTextView
