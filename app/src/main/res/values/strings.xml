@@ -289,5 +289,7 @@
     <string name="meet_the_students">Meet the Students</string>
     <string name="hi_i_am">Hi! I am</string>
     <string name="about_teacher_title">About Teacher</string>
+    <string name="joined">Joined</string>
+    <string name="total_amount">Total Amount</string>
 
 </resources>

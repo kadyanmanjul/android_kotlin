@@ -140,7 +140,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:gravity="start|top"
-                                android:text="Joined"
+                                android:text="@string/joined"
                                 android:textColor="@color/dark_grey"
                                 android:textSize="@dimen/font_14"
                                 app:layout_constraintStart_toStartOf="@+id/enrolled"
@@ -193,7 +193,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginHorizontal="@dimen/_10sdp"
                                 android:paddingVertical="@dimen/_8sdp"
-                                android:text="Total Amount"
+                                android:text="@string/total_amount"
                                 android:textColor="@color/font_color"
                                 android:textSize="@dimen/font_16"
                                 app:layout_constraintStart_toStartOf="parent"
@@ -528,7 +528,7 @@
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent" />
 
-                    <androidx.appcompat.widget.AppCompatTextView
+                    <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
                             android:id="@+id/tv_tip_off"
                             style="@style/TextStyle.TopBarScroll"
                             android:layout_width="wrap_content"
@@ -545,7 +545,7 @@
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent" />
 
-                    <androidx.appcompat.widget.AppCompatTextView
+                    <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
                             android:id="@+id/tv_tip_valid"
                             style="@style/TextStyle.TopBarScroll"
                             android:layout_width="wrap_content"
