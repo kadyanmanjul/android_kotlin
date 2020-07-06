@@ -36,6 +36,7 @@ import com.joshtalks.joshskills.repository.local.model.ACTION_OPEN_URL
 import com.joshtalks.joshskills.repository.local.model.ACTION_UPSELLING_POPUP
 import com.joshtalks.joshskills.repository.local.model.NotificationObject
 import com.joshtalks.joshskills.repository.service.EngagementNetworkHelper
+import com.joshtalks.joshskills.ui.chat.ConversationActivity
 import com.joshtalks.joshskills.ui.chat.UPDATED_CHAT_ROOM_OBJECT
 import com.joshtalks.joshskills.ui.course_details.CourseDetailsActivity
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
@@ -188,7 +189,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                     notificationChannelName = obj.course_name
                     //TODO NOTIFICATION ISSUE
                     val rIntnet =
-                        Intent(applicationContext, InboxActivity::class.java).apply {
+                        Intent(applicationContext, ConversationActivity::class.java).apply {
                             putExtra(UPDATED_CHAT_ROOM_OBJECT, obj)
                             putExtra(HAS_NOTIFICATION, true)
                             flags = Intent.FLAG_ACTIVITY_CLEAR_TOP

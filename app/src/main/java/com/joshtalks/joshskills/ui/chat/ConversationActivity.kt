@@ -217,6 +217,15 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
             }
             inboxEntity = temp
         }
+        if (intent.hasExtra(UPDATED_CHAT_ROOM_OBJECT)) {
+            flowFrom = "Notification"
+            val temp = intent.getParcelableExtra(UPDATED_CHAT_ROOM_OBJECT) as InboxEntity?
+            if (temp == null) {
+                this@ConversationActivity.finish()
+                return
+            }
+            inboxEntity = temp
+        }
         if (intent.hasExtra(HAS_COURSE_REPORT)) {
             openCourseProgressListingScreen()
         }
