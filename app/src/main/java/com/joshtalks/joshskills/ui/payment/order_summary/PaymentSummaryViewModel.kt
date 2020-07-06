@@ -110,7 +110,7 @@ class PaymentSummaryViewModel(application: Application) : AndroidViewModel(appli
                 }
                 val data = mutableMapOf(
                     "encrypted_text" to responsePaymentSummary.value?.encryptedText,
-                    "instance_id" to PrefManager.getStringValue(INSTANCE_ID),
+                    "instance_id" to PrefManager.getStringValue(INSTANCE_ID, true),
                     "mobile" to mobileNumber,
                     "test_id" to mTestId.toString()
                 )
@@ -160,7 +160,7 @@ class PaymentSummaryViewModel(application: Application) : AndroidViewModel(appli
                 viewState?.postValue(ViewState.PROCESSING)
                 val data = CreateOrderResponse(
                     testId,
-                    PrefManager.getStringValue(INSTANCE_ID),
+                    PrefManager.getStringValue(INSTANCE_ID, true),
                     mobileNumber,
                     responsePaymentSummary.value?.encryptedText.toString(),
                     null

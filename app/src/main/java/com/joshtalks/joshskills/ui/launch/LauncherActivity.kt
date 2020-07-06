@@ -100,8 +100,8 @@ class LauncherActivity : CoreJoshActivity(), CustomPermissionDialogInteractionLi
     private fun initInstanceId() {
         val instanceId = AppDirectory.readFromFile(AppDirectory.getInstanceIdKeyFile())
         if (instanceId.isNullOrBlank())
-            writeInstanceIdInFile(PrefManager.getStringValue(INSTANCE_ID))
-        else PrefManager.put(INSTANCE_ID, instanceId)
+            writeInstanceIdInFile(PrefManager.getStringValue(INSTANCE_ID, true))
+        else PrefManager.put(INSTANCE_ID, instanceId, true)
         navigateToNextScreen()
     }
 

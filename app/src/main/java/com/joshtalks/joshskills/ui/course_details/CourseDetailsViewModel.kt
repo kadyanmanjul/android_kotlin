@@ -28,7 +28,7 @@ class CourseDetailsViewModel(application: Application) : AndroidViewModel(applic
                 val requestParams: HashMap<String, String> = HashMap()
                 requestParams["test_id"] = testId
                 requestParams["gaid"] = PrefManager.getStringValue(USER_UNIQUE_ID)
-                requestParams["instance_id"] = PrefManager.getStringValue(INSTANCE_ID)
+                requestParams["instance_id"] = PrefManager.getStringValue(INSTANCE_ID, true)
                 if (Mentor.getInstance().getId().isNotEmpty()) {
                     requestParams["mentor_id"] = Mentor.getInstance().getId()
                 }

@@ -195,14 +195,14 @@ class InstanceIdGenerationWorker(var context: Context, workerParams: WorkerParam
 
     override suspend fun doWork(): Result {
         try {
-            if (PrefManager.hasKey(INSTANCE_ID).not()) {
+            if (PrefManager.hasKey(INSTANCE_ID, true).not()) {
                 val res = AppObjectController.signUpNetworkService.getInstanceIdAsync()
                 if (res.instanceId.isEmpty().not())
-                    PrefManager.put(INSTANCE_ID, res.instanceId)
+                    PrefManager.put(INSTANCE_ID, res.instanceId, true)
                 if (PermissionUtils.isStoragePermissionEnabled(applicationContext)) {
                     val instanceId = AppDirectory.readFromFile(AppDirectory.getInstanceIdKeyFile())
                     if (instanceId.isNullOrBlank().not())
-                        PrefManager.put(INSTANCE_ID, instanceId!!)
+                        PrefManager.put(INSTANCE_ID, instanceId!!, true)
                 }
             }
 

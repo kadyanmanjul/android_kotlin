@@ -64,7 +64,7 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
             try {
                 val reqObj = RequestSocialSignUp.Builder(
                     id = id,
-                    instanceId = PrefManager.getStringValue(INSTANCE_ID)
+                    instanceId = PrefManager.getStringValue(INSTANCE_ID, true)
                 )
                     .name(name)
                     .email(email)
@@ -137,7 +137,7 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
                     profile.payload,
                     profile.signature,
                     profile.signatureAlgorithm,
-                    PrefManager.getStringValue(INSTANCE_ID)
+                    PrefManager.getStringValue(INSTANCE_ID, true)
                 )
                 val response =
                     AppObjectController.signUpNetworkService.verifyViaTrueCaller(
@@ -165,7 +165,7 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val reqObj = RequestUserVerification(
-                    PrefManager.getStringValue(INSTANCE_ID),
+                    PrefManager.getStringValue(INSTANCE_ID, true),
                     countryCode,
                     mNumber
                 )
@@ -192,7 +192,7 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val reqObj = RequestVerifyOTP(
-                    PrefManager.getStringValue(INSTANCE_ID),
+                    PrefManager.getStringValue(INSTANCE_ID, true),
                     countryCode,
                     phoneNumber,
                     otp ?: otpField.get()!!

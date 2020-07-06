@@ -291,7 +291,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
             try {
                 val data = HashMap<String, String>()
                 data["test_id"] = testId
-                data["instance_id"] = PrefManager.getStringValue(INSTANCE_ID)
+                data["instance_id"] = PrefManager.getStringValue(INSTANCE_ID, true)
 
                 if (Mentor.getInstance().getId().isNotEmpty()) {
                     data["mentor_id"] = Mentor.getInstance().getId()
