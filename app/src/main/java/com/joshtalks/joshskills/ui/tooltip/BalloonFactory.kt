@@ -55,60 +55,6 @@ object BalloonFactory {
     }
 
 
-    fun hintOfferFirstTime(
-        baseContext: Context,
-        lifecycleOwner: LifecycleOwner,
-        remainDay: String,
-        onBalloonDismissListener: OnBalloonDismissListener
-    ): Balloon {
-        var userName = "User"
-        try {
-            if (User.getInstance().firstName.isNotEmpty()) {
-                userName = User.getInstance().firstName.capitalize()
-            }
-        } catch (ex: NullPointerException) {
-
-        }
-        val offerPercentage =
-            AppObjectController.getFirebaseRemoteConfig().getString("COURSE_MAX_OFFER_PER")
-
-        val text =
-            baseContext.getString(
-                R.string.find_more_course_hint_ftime,
-                userName,
-                remainDay,
-                offerPercentage
-            )
-        val typefaceSpan = TypefaceUtils.load(baseContext.assets, "fonts/Roboto-Medium.ttf")
-        val textForm: TextForm = TextForm.Builder(baseContext)
-            .setText(text)
-            .setTextColorResource(R.color.white)
-            .setTextSize(12f)
-            .setTextTypeface(typefaceSpan)
-            .build()
-
-        return Balloon.Builder(baseContext)
-            .setTextForm(textForm)
-            .setArrowSize(10)
-            .setWidthRatio(0.85f)
-            .setArrowOrientation(ArrowOrientation.TOP)
-            .setArrowVisible(true)
-            .setHeight(80)
-            .setTextSize(12f)
-            .setArrowPosition(0.5f)
-            .setCornerRadius(8f)
-            // .setAlpha(0.9f)
-            .setSpace(8)
-            .setDismissWhenShowAgain(false)
-            .setOnBalloonDismissListener(onBalloonDismissListener)
-            .setBackgroundColorResource(R.color.gray_53)
-            .setBalloonAnimation(BalloonAnimation.OVERSHOOT)
-            .setLifecycleOwner(lifecycleOwner)
-            .setDismissWhenClicked(false)
-            .setDismissWhenTouchOutside(false)
-            .build()
-    }
-
 
     @SuppressLint("DefaultLocale")
     fun offerIn7Days(
@@ -137,7 +83,7 @@ object BalloonFactory {
         val textForm: TextForm = TextForm.Builder(baseContext)
             .setText(text)
             .setTextColorResource(R.color.white)
-            .setTextSize(14f)
+            .setTextSize(12f)
             .setTextTypeface(typefaceSpan)
             .build()
 
@@ -147,7 +93,7 @@ object BalloonFactory {
             .setWidthRatio(0.85f)
             .setArrowOrientation(ArrowOrientation.TOP)
             .setArrowVisible(true)
-            .setHeight(102)
+            .setHeight(100)
             .setArrowPosition(0.5f)
             .setCornerRadius(8f)
             //.setAlpha(0.9f)

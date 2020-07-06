@@ -31,8 +31,6 @@ import com.joshtalks.joshskills.core.ARG_PLACEHOLDER_URL
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.COURSE_ID
 import com.joshtalks.joshskills.core.CoreJoshActivity
-import com.joshtalks.joshskills.core.FIRST_TIME_OFFER_SHOW
-import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.REFERRAL_EVENT
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
@@ -58,7 +56,6 @@ import com.joshtalks.joshskills.ui.referral.ReferralActivity
 import com.joshtalks.joshskills.ui.tooltip.BalloonFactory
 import com.joshtalks.joshskills.ui.view_holders.InboxViewHolder
 import com.joshtalks.skydoves.balloon.Balloon
-import com.joshtalks.skydoves.balloon.OnBalloonDismissListener
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
@@ -96,8 +93,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
     private var inAppUpdateManager: InAppUpdateManager? = null
     private lateinit var earnIV: AppCompatImageView
     private lateinit var findMoreLayout: FrameLayout
-    private var offerIn7DaysHint: Balloon? = null
-    private var hintFirstTime: Balloon? = null
+    private var offerInHint: Balloon? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         WorkMangerAdmin.requiredTaskInLandingPage()
@@ -426,52 +422,9 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
     }
 
     private fun addCourseExploreView() {
-        hintFirstTime?.dismiss()
-        //  offerIn7DaysHint.dismiss()
         findMoreLayout.visibility = View.VISIBLE
-        if (PrefManager.getBoolValue(FIRST_TIME_OFFER_SHOW).not()) {
-            PrefManager.put(FIRST_TIME_OFFER_SHOW, true)
-            compositeDisposable.add(AppObjectController.appDatabase.courseDao()
-                .isUserInOfferDays()
-                .concatMap {
-                    val (flag, remainDay) = Utils.isUserInDaysOld(it.courseCreatedDate)
-                    initOfferView(remainDay.toString())
-                    return@concatMap Maybe.just(flag)
-                }
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                    { value ->
-                        if (value && isFinishing.not()) {
-
-                            val root = findViewById<View>(R.id.find_more)
-                            hintFirstTime?.showAlignBottom(root)
-                        }
-                    },
-                    { error ->
-                        error.printStackTrace()
-                    }
-                ))
-        } else {
-            attachOfferHintView()
-        }
+        attachOfferHintView()
     }
-
-    private fun initOfferView(remainDay: String) {
-        AppObjectController.uiHandler.post {
-            hintFirstTime = BalloonFactory.hintOfferFirstTime(
-                this,
-                this,
-                remainDay,
-                object : OnBalloonDismissListener {
-                    override fun onBalloonDismiss() {
-                        attachOfferHintView()
-                    }
-                })
-        }
-    }
-
-
     private fun visibleShareEarn() {
         val url = AppObjectController.getFirebaseRemoteConfig().getString("EARN_SHARE_IMAGE_URL")
         var iconUri = Uri.parse(url)
@@ -513,15 +466,15 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
             .into(earnIV)
     }
 
-    fun attachOfferHintView() {
+    private fun attachOfferHintView() {
         compositeDisposable.add(
             AppObjectController.appDatabase
                 .courseDao()
                 .isUserInOfferDays()
                 .concatMap {
                     val (flag, remainDay) = Utils.isUserInDaysOld(it.courseCreatedDate)
-                    if (offerIn7DaysHint == null) {
-                        offerIn7DaysHint =
+                    if (offerInHint == null) {
+                        offerInHint =
                             BalloonFactory.offerIn7Days(this, this, remainDay.toString())
                     }
                     return@concatMap Maybe.just(flag)
@@ -531,7 +484,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
                 .subscribe(
                     { value ->
                         val root = findViewById<View>(R.id.find_more)
-                        offerIn7DaysHint?.run {
+                        offerInHint?.run {
                             if (this.isShowing.not() && isFinishing.not() && value) {
                                 this.showAlignBottom(root)
                                 findViewById<View>(R.id.bottom_line).visibility = View.GONE

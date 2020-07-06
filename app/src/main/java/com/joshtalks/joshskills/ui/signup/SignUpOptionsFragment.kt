@@ -23,6 +23,7 @@ import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.VerificationService
 import com.joshtalks.joshskills.core.VerificationStatus
 import com.joshtalks.joshskills.core.VerificationVia
+import com.joshtalks.joshskills.core.getCountryIsoCode
 import com.joshtalks.joshskills.core.hideKeyboard
 import com.joshtalks.joshskills.core.isValidFullNumber
 import com.joshtalks.joshskills.core.showToast
@@ -38,8 +39,8 @@ class SignUpOptionsFragment : BaseSignUpFragment() {
     private lateinit var viewModel: SignUpViewModel
     private lateinit var binding: FragmentSignUpOptionsBinding
     private var timer: CountDownTimer? = null
-    private var verificationVia: VerificationVia = VerificationVia.FLASH_CALL
-    private var verificationService: VerificationService = VerificationService.TRUECALLER
+    private var verificationVia: VerificationVia = VerificationVia.SMS
+    private var verificationService: VerificationService = VerificationService.SMS_COUNTRY
     private var lastTime = 0
 
     companion object {
@@ -211,7 +212,10 @@ class SignUpOptionsFragment : BaseSignUpFragment() {
     }
 
     private fun evaluateVerificationService() {
-        val defaultRegion: String = PhoneNumberUtils.getDefaultCountryIso(requireContext())
+        val defaultRegion: String = getCountryIsoCode(
+            binding.mobileEt.prefix.plus(binding.mobileEt.text!!.toString()),
+            binding.mobileEt.prefix
+        )
         verificationService = if (defaultRegion == "IN") {
             VerificationService.SMS_COUNTRY
         } else {

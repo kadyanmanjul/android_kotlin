@@ -54,7 +54,9 @@ import com.joshtalks.joshskills.core.datetimeutils.DateTimeStyle
 import com.joshtalks.joshskills.core.datetimeutils.DateTimeUtils
 import com.joshtalks.joshskills.repository.local.model.User
 import com.muddzdev.styleabletoast.StyleableToast
+import com.sinch.verification.PhoneNumberUtils
 import github.nisrulz.easydeviceinfo.base.EasyConfigMod
+import io.michaelrocks.libphonenumber.android.NumberParseException
 import io.michaelrocks.libphonenumber.android.PhoneNumberUtil
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -819,3 +821,24 @@ fun getPhoneNumber() =
         else ->
             EMPTY
     }
+
+fun getCountryIsoCode(number: String, countryRegion: String): String {
+    val validatedNumber = if (number.startsWith("+")) number else "+$number"
+    val phoneNumberUtil: PhoneNumberUtil =
+        PhoneNumberUtil.createInstance(AppObjectController.joshApplication)
+    val phoneNumber = try {
+        phoneNumberUtil.parse(validatedNumber, null)
+    } catch (e: NumberParseException) {
+        null
+    }
+    return if (phoneNumber != null) {
+        phoneNumberUtil.getRegionCodeForCountryCode(phoneNumber.countryCode)
+    } else {
+        try {
+            PhoneNumberUtils.getDefaultCountryIso(AppObjectController.joshApplication)
+        } catch (ex: Exception) {
+            countryRegion
+        }
+    }
+
+}
