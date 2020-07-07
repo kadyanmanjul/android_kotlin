@@ -22,7 +22,7 @@ object BalloonFactory {
         onBalloonClickListener: OnBalloonClickListener,
         onBalloonDismissListener: OnBalloonDismissListener
     ): Balloon {
-        val text = baseContext.getString(R.string.first_time_user_hint)
+        val text = AppObjectController.getFirebaseRemoteConfig().getString("FIRST_TIME_USER_HINT")
         val typefaceSpan = TypefaceUtils.load(baseContext.assets, "fonts/Roboto-Medium.ttf")
         val textForm: TextForm = TextForm.Builder(baseContext)
             .setText(text)
@@ -73,8 +73,9 @@ object BalloonFactory {
             AppObjectController.getFirebaseRemoteConfig().getString("COURSE_MAX_OFFER_PER")
 
         val text =
-            baseContext.getString(
-                R.string.find_more_course_hint_ftime,
+            String.format(
+                AppObjectController.getFirebaseRemoteConfig()
+                    .getString("FIND_MORE_COURSE_HINT_FIRST_TIME"),
                 userName,
                 remainDay,
                 offerPercentage
@@ -118,8 +119,9 @@ object BalloonFactory {
             AppObjectController.getFirebaseRemoteConfig().getString("COURSE_MAX_OFFER_PER")
 
 
-        val text = baseContext.getString(
-            R.string.buy_course_offer_tooltip,
+        val text = String.format(
+            AppObjectController.getFirebaseRemoteConfig()
+                .getString("BUY_COURSE_OFFER_HINT"),
             offerPercentage,
             remainDay
         )
@@ -154,9 +156,12 @@ object BalloonFactory {
         baseContext: Context, lifecycleOwner: LifecycleOwner, value: OnBalloonDismissListener
     ): Balloon {
 
-        val per =
+        val percentage =
             AppObjectController.getFirebaseRemoteConfig().getString("COURSE_COMPLETED_PERCENTAGE")
-        val text = baseContext.getString(R.string.certificate_tooltip_hint, per)
+        val text = String.format(
+            AppObjectController.getFirebaseRemoteConfig().getString("COMPLETION_CERTIFICATE_HINT"),
+            percentage
+        )
         val typefaceSpan = TypefaceUtils.load(baseContext.assets, "fonts/Roboto-Regular.ttf")
         val textForm: TextForm = TextForm.Builder(baseContext)
             .setText(text)
@@ -182,6 +187,5 @@ object BalloonFactory {
             .setOnBalloonDismissListener(value)
             .build()
     }
-
 
 }
