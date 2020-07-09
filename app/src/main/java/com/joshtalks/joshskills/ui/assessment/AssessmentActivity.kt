@@ -10,6 +10,7 @@ import android.view.Window
 import android.view.WindowManager
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.CoreJoshActivity
 import com.joshtalks.joshskills.core.EMPTY
@@ -19,6 +20,7 @@ import com.joshtalks.joshskills.databinding.ActivityAssessmentBinding
 class AssessmentActivity : CoreJoshActivity() {
 
     private lateinit var binding: ActivityAssessmentBinding
+    private val viewModel by lazy { ViewModelProvider(this).get(AssessmentViewModel::class.java) }
     private var assessmentId: Int = 0
     private var flowFrom: String? = null
 
