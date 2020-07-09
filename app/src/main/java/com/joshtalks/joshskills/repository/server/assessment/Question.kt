@@ -33,7 +33,13 @@ data class Question(
     val choices: List<Choice>,
 
     @SerializedName("revise_concept")
-    val reviseConcept: ReviseConcept?
+    val reviseConcept: ReviseConcept?,
+
+    @SerializedName("is_attempted")
+    val isAtempted: Boolean = false,
+
+    @SerializedName("status")
+    val status: QuestionStatus = QuestionStatus.NONE
 
 ) : Parcelable
 
@@ -57,4 +63,19 @@ enum class ChoiceType(val type: String) {
     @SerializedName("FILL_IN_THE_BLANKS_TEXT")
     FILL_IN_THE_BLANKS_TEXT("FILL_IN_THE_BLANKS_TEXT"),
 
+}
+
+enum class QuestionStatus(val status: String) {
+
+    @SerializedName("NONE")
+    NONE("NONE"),
+
+    @SerializedName("WRONG")
+    WRONG("WRONG"),
+
+    @SerializedName("CORRECT")
+    CORRECT("CORRECT"),
+
+    @SerializedName("SKIPPED")
+    SKIPPED("SKIPPED")
 }
