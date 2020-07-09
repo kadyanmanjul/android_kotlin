@@ -24,13 +24,16 @@ data class Assessment(
     val description: String,
 
     @SerializedName("type")
-    val type: AssessmentType,
+    val type: ChoiceType,
 
-    @SerializedName("status")
+    @SerializedName("progress_status")
     val status: AssessmentStatus,
 
     @SerializedName("questions")
-    val questions: List<Question>
+    val questions: List<Question>,
+
+    @SerializedName("intro")
+    val intro: List<AssessmentIntro>
 
 ) : Parcelable
 

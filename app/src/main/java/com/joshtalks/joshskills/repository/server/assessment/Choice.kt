@@ -23,21 +23,26 @@ data class Choice(
     @SerializedName("sort_order")
     val sortOrder: Int,
 
-    @SerializedName("matching_left_text")
-    val matchingLeftText: String?,
-
-    @SerializedName("matching_right_text")
-    val matchingRightText: String?,
-
-    @SerializedName("correct_right_text")
-    val correctRightText: String?,
-
     @SerializedName("answer_order")
     val correctAnswerOrder: Int,
+
+    @SerializedName("card_side")
+    val column: ChoiceColumn,
 
     @SerializedName("selected_order")
     val userSelectedOrder: Int = -1,
 
+    @SerializedName("is_selected_by_user")
     val isSelectedByUser: Boolean = false
 
 ) : Parcelable
+
+enum class ChoiceColumn(val type: String) {
+
+    @SerializedName("LEFT")
+    LEFT("LEFT"),
+
+    @SerializedName("RIGHT")
+    RIGHT("RIGHT")
+
+}

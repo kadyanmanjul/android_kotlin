@@ -36,7 +36,7 @@ data class Question(
     val reviseConcept: ReviseConcept?,
 
     @SerializedName("is_attempted")
-    val isAtempted: Boolean = false,
+    val isAttempted: Boolean = false,
 
     @SerializedName("status")
     val status: QuestionStatus = QuestionStatus.NONE
