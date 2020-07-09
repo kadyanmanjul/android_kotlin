@@ -47,10 +47,14 @@ class AssessmentActivity : CoreJoshActivity() {
             flowFrom = intent.getStringExtra(STARTED_FROM)
         }
         if (assessmentId != 0) {
-            //ToDo Call API here
+            getAssessmentDetails(assessmentId)
         } else {
             finish()
         }
+    }
+
+    private fun getAssessmentDetails(assessmentId: Int) {
+        viewModel.fetchAssessmentDetails(assessmentId)
     }
 
     companion object {

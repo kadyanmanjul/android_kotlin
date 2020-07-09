@@ -79,5 +79,9 @@ interface ChatNetworkService {
     @GET("$DIR/chat/conversation/{id}/")
     suspend fun getCourseProgressDetailsAsync(@Path("id") cId: String): Response<CoursePerformanceResponse>
 
+    @GET("$DIR/assessment/{id}/")
+    suspend fun getAssessmentId(
+        @Path("id") id: Int
+    ): Response<Any>
 
 }
