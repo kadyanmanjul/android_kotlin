@@ -33,6 +33,11 @@ data class Choice(
     val correctRightText: String?,
 
     @SerializedName("answer_order")
-    val answerOrder: Int
+    val correctAnswerOrder: Int,
+
+    @SerializedName("selected_order")
+    val userSelectedOrder: Int = -1,
+
+    val isSelectedByUser: Boolean = false
 
 ) : Parcelable
