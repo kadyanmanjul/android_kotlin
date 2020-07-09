@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.core.ApiCallStatus
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.repository.server.assessment.Assessment
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -14,6 +15,7 @@ import kotlinx.coroutines.launch
 class AssessmentViewModel(application: Application) : AndroidViewModel(application) {
     private val jobs = arrayListOf<Job>()
     val apiCallStatusLiveData: MutableLiveData<ApiCallStatus> = MutableLiveData()
+    val assessmentLiveData: MutableLiveData<Assessment> = MutableLiveData()
 
     fun fetchAssessmentDetails(assessmentId: Int) {
         jobs += viewModelScope.launch(Dispatchers.IO) {
@@ -22,7 +24,8 @@ class AssessmentViewModel(application: Application) : AndroidViewModel(applicati
                     AppObjectController.chatNetworkService.getAssessmentId(assessmentId)
                 if (response.isSuccessful) {
                     apiCallStatusLiveData.postValue(ApiCallStatus.SUCCESS)
-                    // TODO Create livedata object and post value
+                    assessmentLiveData.postValue(response.body())
+                    // TODO Save to DB
                     return@launch
                 }
 

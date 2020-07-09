@@ -6,10 +6,12 @@ import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.os.Build
 import android.os.Bundle
+import android.view.View
 import android.view.Window
 import android.view.WindowManager
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.CoreJoshActivity
@@ -51,10 +53,21 @@ class AssessmentActivity : CoreJoshActivity() {
         } else {
             finish()
         }
+        subscribeLiveData()
     }
 
     private fun getAssessmentDetails(assessmentId: Int) {
         viewModel.fetchAssessmentDetails(assessmentId)
+    }
+
+    private fun subscribeLiveData() {
+        viewModel.apiCallStatusLiveData.observe(this, Observer {
+            binding.progressBar.visibility = View.GONE
+        })
+
+        viewModel.assessmentLiveData.observe(this, Observer { assessment ->
+            // TODO Bind view
+        })
     }
 
     companion object {
