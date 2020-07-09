@@ -107,7 +107,8 @@ abstract class AppDatabase : RoomDatabase() {
                                 MIGRATION_12_13,
                                 MIGRATION_13_14,
                                 MIGRATION_14_16,
-                                MIGRATION_16_17
+                                MIGRATION_16_17,
+                                MIGRATION_17_18
                             )
                             .fallbackToDestructiveMigration()
                             .addCallback(sRoomDatabaseCallback)
@@ -239,6 +240,12 @@ abstract class AppDatabase : RoomDatabase() {
                 } catch (ex: Exception) {
                     ex.printStackTrace()
                 }
+            }
+        }
+
+        private val MIGRATION_17_18: Migration = object : Migration(17, 18) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("ALTER TABLE question_table ADD COLUMN assessment_id INTEGER")
             }
         }
 

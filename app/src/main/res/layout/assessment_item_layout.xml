@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/root_view_fl"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_2sdp"
+        android:layout_marginBottom="@dimen/_2sdp"
+        android:paddingStart="@dimen/_14sdp"
+        android:paddingEnd="@dimen/_14sdp">
+
+<androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/root_sub_view"
+        android:padding="@dimen/_6sdp"
+        android:layout_width="@dimen/_216sdp"
+        android:layout_height="@dimen/_170sdp"
+        android:background="@color/white">
+
+    <androidx.cardview.widget.CardView
+            android:id="@+id/card_top"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_110sdp"
+            android:background="#F1F2F4"
+            android:clickable="true"
+            android:divider="@android:color/transparent"
+            android:elevation="@dimen/_4sdp"
+            android:enabled="true"
+            android:focusable="true"
+            android:foreground="?android:attr/selectableItemBackground"
+            app:cardBackgroundColor="#F1F2F4"
+            app:cardCornerRadius="@dimen/_4sdp"
+            app:cardElevation="0dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_title"
+                fontPath="fonts/Poppins-Bold.ttf"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:autoSizeMaxTextSize="@dimen/font_22"
+                android:gravity="center"
+                android:paddingStart="@dimen/_4sdp"
+                android:paddingEnd="@dimen/_4sdp"
+                android:textColor="@color/button_primary_color"
+                android:textSize="@dimen/font_20"
+                tools:text="@string/practice" />
+    </androidx.cardview.widget.CardView>
+
+    <com.google.android.material.button.MaterialButton
+            android:layout_marginTop="@dimen/_4sdp"
+            android:id="@+id/btn_start"
+            fontPath="fonts/Poppins-Regular.ttf"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/text_90"
+            android:clickable="true"
+            android:focusable="true"
+            android:maxLines="1"
+            android:paddingTop="@dimen/_10sdp"
+            android:paddingBottom="@dimen/_10sdp"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:textSize="@dimen/font_14"
+            app:cornerRadius="@dimen/_16sdp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/card_top"
+            app:layout_constraintWidth_default="percent"
+            app:layout_constraintWidth_percent="0.9"
+            app:rippleColor="@color/white"
+            tools:text="@string/retry_miss_call_verify" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+
+</FrameLayout>

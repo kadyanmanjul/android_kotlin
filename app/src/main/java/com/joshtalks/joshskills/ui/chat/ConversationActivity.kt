@@ -115,6 +115,7 @@ import com.joshtalks.joshskills.ui.view_holders.ImageViewHolder
 import com.joshtalks.joshskills.ui.view_holders.NewMessageViewHolder
 import com.joshtalks.joshskills.ui.view_holders.PdfViewHolder
 import com.joshtalks.joshskills.ui.view_holders.PracticeViewHolder
+import com.joshtalks.joshskills.ui.view_holders.AssessmentViewHolder
 import com.joshtalks.joshskills.ui.view_holders.TextViewHolder
 import com.joshtalks.joshskills.ui.view_holders.TimeViewHolder
 import com.joshtalks.joshskills.ui.view_holders.VideoViewHolder
@@ -1302,10 +1303,7 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
     ): BaseCell? {
         return if (chatModel.type == BASE_MESSAGE_TYPE.Q) {
             return when (chatModel.question?.type) {
-                /* BASE_MESSAGE_TYPE.Q, BASE_MESSAGE_TYPE.A, BASE_MESSAGE_TYPE.AR -> {
-                     getGenericView(chatModel.question?.material_type, chatModel)
-                 }*/
-                BASE_MESSAGE_TYPE.PR -> {
+                BASE_MESSAGE_TYPE.PR, BASE_MESSAGE_TYPE.QUIZ, BASE_MESSAGE_TYPE.TEST -> {
                     getGenericView(chatModel.question?.type, chatModel)
                 }
                 else -> {
@@ -1333,6 +1331,8 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
                 VideoViewHolder(activityRef, chatModel)
             BASE_MESSAGE_TYPE.PR ->
                 PracticeViewHolder(activityRef, chatModel)
+            BASE_MESSAGE_TYPE.QUIZ, BASE_MESSAGE_TYPE.TEST ->
+                AssessmentViewHolder(activityRef, chatModel)
             else -> TextViewHolder(activityRef, chatModel)
         }
     }

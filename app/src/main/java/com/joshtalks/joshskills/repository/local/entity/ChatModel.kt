@@ -205,7 +205,10 @@ data class Question(
     @Expose var uploadFeedbackStatus: Boolean = false,
 
     @ColumnInfo(name = "interval")
-    @Expose var interval: Int = -1
+    @Expose var interval: Int = -1,
+
+    @ColumnInfo(name = "assessment_id")
+    @Expose var assessmentId: Int? = null
 
 ) : Parcelable
 
@@ -648,7 +651,8 @@ enum class OPTION_TYPE(val type: String) {
 }
 
 enum class BASE_MESSAGE_TYPE(val type: String) {
-    A("A"), TX("TX"), VI("VI"), AU("AU"), IM("IM"), Q("Q"), PD("PD"), PR("PR"), AR("AR")
+    A("A"), TX("TX"), VI("VI"), AU("AU"), IM("IM"), Q("Q"), PD("PD"), PR("PR"), AR("AR"),
+    QUIZ("QUIZ"), TEST("TEST")
 
 }
 
