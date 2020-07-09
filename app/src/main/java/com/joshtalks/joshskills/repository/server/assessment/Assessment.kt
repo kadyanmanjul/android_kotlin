@@ -26,6 +26,9 @@ data class Assessment(
     @SerializedName("type")
     val type: AssessmentType,
 
+    @SerializedName("status")
+    val status: AssessmentStatus,
+
     @SerializedName("questions")
     val questions: List<Question>
 
@@ -50,4 +53,16 @@ enum class AssessmentMediaType(val mediaType: String) {
 
     @SerializedName("VIDEO")
     VIDEO("VIDEO")
+}
+
+enum class AssessmentStatus(val status: String) {
+
+    @SerializedName("NOT_STARTED")
+    NOT_STARTED("NOT_STARTED"),
+
+    @SerializedName("STARTED")
+    STARTED("STARTED"),
+
+    @SerializedName("COMPLETED")
+    COMPLETED("COMPLETED")
 }
