@@ -74,11 +74,6 @@
             tools:ignore="AllowBackup,GoogleAppIndexingWarning,UnusedAttribute"
             tools:replace="android:allowBackup,android:supportsRtl">
 
-        <activity
-                android:name=".ui.help.HelpActivity"
-                android:launchMode="singleTask"
-                android:theme="@style/AppNoBarTheme" />
-
         <meta-data
                 android:name="CLEVERTAP_ACCOUNT_ID"
                 android:value="844-6K5-865Z" />
@@ -143,6 +138,11 @@
         <meta-data
                 android:name="CLEVERTAP_BACKGROUND_SYNC"
                 android:value="1" />
+
+        <activity
+                android:name=".ui.help.HelpActivity"
+                android:launchMode="singleTask"
+                android:theme="@style/AppNoBarTheme" />
 
         <activity
                 android:name=".ui.launch.LauncherActivity"
@@ -407,7 +407,11 @@
                     android:name="android.support.PARENT_ACTIVITY"
                     android:value=".ui.explore.CourseExploreActivity" />
         </activity>
+        <activity
+                android:name=".ui.assessment.AssessmentActivity"
+                android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize"
+                android:launchMode="singleTask"
+                android:theme="@style/AppNoBarTheme" />
     </application>
 
 </manifest>
-
