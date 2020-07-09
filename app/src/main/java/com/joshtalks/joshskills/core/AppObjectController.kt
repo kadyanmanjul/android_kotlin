@@ -59,9 +59,6 @@ import com.vanniktech.emoji.EmojiManager
 import com.vanniktech.emoji.google.GoogleEmojiProvider
 import io.branch.referral.Branch
 import io.fabric.sdk.android.Fabric
-import io.github.inflationx.calligraphy3.CalligraphyConfig
-import io.github.inflationx.calligraphy3.CalligraphyInterceptor
-import io.github.inflationx.viewpump.ViewPump
 import jp.wasabeef.glide.transformations.CropTransformation
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation
 import okhttp3.Interceptor
@@ -306,16 +303,7 @@ internal class AppObjectController {
                 )
             )
 
-            ViewPump.init(
-                ViewPump.builder().addInterceptor(
-                    CalligraphyInterceptor(
-                        CalligraphyConfig.Builder()
-                            .setDefaultFontPath("fonts/OpenSans-Regular.ttf")
-                            .setFontAttrId(R.attr.fontPath)
-                            .build()
-                    )
-                ).build()
-            )
+
             InstallReferralUtil.installReferrer(joshApplication)
             return INSTANCE
         }

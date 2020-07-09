@@ -123,5 +123,10 @@
             Aapko apne course se related saari videos aur classes isko click karke milengi
         </value>
     </entry>
+    <entry>
+        <key>IS_NOTIFICATION_CRASH</key>
+        <value>false</value>
+    </entry>
+
 
 </defaultsMap>

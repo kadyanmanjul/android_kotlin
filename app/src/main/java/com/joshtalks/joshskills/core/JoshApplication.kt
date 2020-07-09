@@ -16,8 +16,12 @@ import com.facebook.LoggingBehavior
 import com.facebook.stetho.Stetho
 import com.freshchat.consumer.sdk.Freshchat
 import com.joshtalks.joshskills.BuildConfig
+import com.joshtalks.joshskills.R
 import io.branch.referral.Branch
 import io.branch.referral.BranchApp
+import io.github.inflationx.calligraphy3.CalligraphyConfig
+import io.github.inflationx.calligraphy3.CalligraphyInterceptor
+import io.github.inflationx.viewpump.ViewPump
 import io.github.inflationx.viewpump.ViewPumpContextWrapper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -52,6 +56,16 @@ class JoshApplication : BranchApp(), LifecycleObserver/*, Configuration.Provider
             Timber.plant(Timber.DebugTree())
         }
         AppObjectController.init(this)
+        ViewPump.init(
+            ViewPump.builder().addInterceptor(
+                CalligraphyInterceptor(
+                    CalligraphyConfig.Builder()
+                        .setDefaultFontPath("fonts/OpenSans-Regular.ttf")
+                        .setFontAttrId(R.attr.fontPath)
+                        .build()
+                )
+            ).build()
+        )
         registerBroadcastReceiver()
     }
 

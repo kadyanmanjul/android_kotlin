@@ -182,18 +182,17 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                 notificationChannelId = action ?: ""
                 val obj: InboxEntity? = AppObjectController.appDatabase.courseDao()
                     .chooseRegisterCourseMinimal(actionData!!)
-                obj?.run { WorkMangerAdmin.updatedCourseForConversation(this.conversation_id) }
+                obj?.run {
+                    WorkMangerAdmin.updatedCourseForConversation(this.conversation_id)
+                }
 
                 if (obj != null) {
                     notificationChannelId = obj.conversation_id
                     notificationChannelName = obj.course_name
-                    //TODO NOTIFICATION ISSUE
                     val rIntnet =
-                        Intent(applicationContext, ConversationActivity::class.java).apply {
+                        Intent(applicationContext, isNotificationCrash()).apply {
                             putExtra(UPDATED_CHAT_ROOM_OBJECT, obj)
                             putExtra(HAS_NOTIFICATION, true)
-                            flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
-                            flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
                         }
                     if (ACTION_OPEN_COURSE_REPORT.equals(action, ignoreCase = true)) {
                         rIntnet.putExtra(HAS_COURSE_REPORT, true)
@@ -253,6 +252,16 @@ class FirebaseNotificationService : FirebaseMessagingService() {
             addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
             putExtra(HAS_NOTIFICATION, true)
             putExtra(NOTIFICATION_ID, notificationObject.id)
+        }
+    }
+
+    private fun isNotificationCrash(): Class<*> {
+        val isNotificationCrash =
+            AppObjectController.getFirebaseRemoteConfig().getBoolean("IS_NOTIFICATION_CRASH")
+        return if (isNotificationCrash) {
+            InboxActivity::class.java
+        } else {
+            ConversationActivity::class.java
         }
     }
 }
