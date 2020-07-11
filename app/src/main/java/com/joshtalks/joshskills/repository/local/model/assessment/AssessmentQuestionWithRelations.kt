@@ -2,7 +2,6 @@ package com.joshtalks.joshskills.repository.local.model.assessment
 
 import androidx.room.Embedded
 import androidx.room.Relation
-import com.joshtalks.joshskills.repository.server.assessment.ChoiceResponse
 import com.joshtalks.joshskills.repository.server.assessment.ReviseConcept
 
 
@@ -14,9 +13,9 @@ data class AssessmentQuestionWithRelations(
     @Relation(
         parentColumn = "remoteId",
         entityColumn = "questionId",
-        entity = ChoiceResponse::class
+        entity = Choice::class
     )
-    val choiceList: List<ChoiceResponse>,
+    val choiceList: List<Choice>,
 
     @Relation(
         parentColumn = "remoteId",
