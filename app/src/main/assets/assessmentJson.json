@@ -12,6 +12,11 @@
       "title": "MCQ (Multiple Answer)",
       "description": "Lorem ipsum dolor sit amet, constur adipiscg elit lorem ipsum lorem ipsss",
       "image_url": "https://image.png"
+    },{
+      "type": "MULTI_SELECTION_TEXT",
+      "title": "MCQ (Multiple Answer)",
+      "description": "Lorem ipsum dolor sit amet, constur adipiscg elit lorem ipsum lorem ipsss",
+      "image_url": "https://image.png"
     }
   ],
   "questions": [

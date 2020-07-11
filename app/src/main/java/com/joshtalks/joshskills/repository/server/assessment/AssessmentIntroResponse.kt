@@ -9,7 +9,7 @@ import kotlinx.android.parcel.Parcelize
 data class AssessmentIntroResponse(
 
     @SerializedName("type")
-    val type: AssessmentType,
+    val type: ChoiceType,
 
     @SerializedName("title")
     val title: String,

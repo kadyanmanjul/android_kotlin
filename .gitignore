@@ -74,3 +74,4 @@ fastlane/readme.md
 Fabric.properties
 
 .DS_Store
+/.idea/gradle.xml

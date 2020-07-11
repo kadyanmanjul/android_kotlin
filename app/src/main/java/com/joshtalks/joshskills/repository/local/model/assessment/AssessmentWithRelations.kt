@@ -2,6 +2,7 @@ package com.joshtalks.joshskills.repository.local.model.assessment
 
 import androidx.room.Embedded
 import androidx.room.Relation
+import com.joshtalks.joshskills.repository.server.assessment.AssessmentIntro
 
 data class AssessmentWithRelations(
 
@@ -13,6 +14,13 @@ data class AssessmentWithRelations(
         entityColumn = "assessmentId",
         entity = AssessmentQuestion::class
     )
-    val questionList: List<AssessmentQuestion>
+    val questionList: List<AssessmentQuestionWithRelations>,
+
+    @Relation(
+        parentColumn = "remoteId",
+        entityColumn = "assessmentId",
+        entity = AssessmentIntro::class
+    )
+    val assessmentIntroList: List<AssessmentIntro>
 
 )

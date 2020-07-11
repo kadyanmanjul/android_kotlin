@@ -7,19 +7,16 @@ import androidx.room.Query
 import androidx.room.Transaction
 import com.joshtalks.joshskills.repository.local.model.assessment.Assessment
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestion
-import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionWithRelations
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentWithRelations
 import com.joshtalks.joshskills.repository.local.model.assessment.Choice
+import com.joshtalks.joshskills.repository.server.assessment.AssessmentIntro
+import com.joshtalks.joshskills.repository.server.assessment.ReviseConcept
 
 @Dao
 interface AssessmentDao {
     @Transaction
     @Query("SELECT * FROM assessments WHERE remoteId = :assessmentId")
     fun loadAssesment(assessmentId: Int): AssessmentWithRelations
-
-    @Transaction
-    @Query("SELECT * FROM assessment_questions WHERE remoteId = :questionId")
-    fun loadChoice(questionId: Int): AssessmentQuestionWithRelations
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAssessment(assessment: Assessment)
@@ -29,4 +26,10 @@ interface AssessmentDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAssessmentChoice(choice: Choice)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertReviseConcept(reviseConcept: ReviseConcept)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAssessmentIntro(assessmentIntro: AssessmentIntro)
 }
