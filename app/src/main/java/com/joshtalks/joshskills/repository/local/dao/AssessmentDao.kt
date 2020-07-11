@@ -9,17 +9,12 @@ import com.joshtalks.joshskills.repository.local.model.assessment.Assessment
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestion
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentWithQuestion
 import com.joshtalks.joshskills.repository.local.model.assessment.Choice
-import com.joshtalks.joshskills.repository.local.model.assessment.QuestionWithChoice
 
 @Dao
 interface AssessmentDao {
     @Transaction
     @Query("SELECT * FROM assessments WHERE remoteId = :assessmentId")
     fun loadAssesment(assessmentId: Int): AssessmentWithQuestion
-
-    @Transaction
-    @Query("SELECT * FROM assessment_questions WHERE remoteId = :questionId")
-    fun loadChoice(questionId: Int): QuestionWithChoice
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAssessment(assessment: Assessment)

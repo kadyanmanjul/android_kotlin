@@ -66,8 +66,6 @@ class AssessmentViewModel(application: Application) : AndroidViewModel(applicati
                 }
 
             }
-            val questions = AppObjectController.appDatabase.assessmentDao().loadAssesment(1)
-            val choices = AppObjectController.appDatabase.assessmentDao().loadChoice(1)
         }
     }
 }

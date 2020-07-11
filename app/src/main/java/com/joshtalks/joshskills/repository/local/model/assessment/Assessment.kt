@@ -58,15 +58,6 @@ data class Assessment(
     @SerializedName("progress_status")
     val status: AssessmentStatus
 
-    /*
-    @ColumnInfo
-    @SerializedName("questions")
-    val questions: List<Question>,
-
-    @ColumnInfo
-    @SerializedName("intro")
-    val intro: List<AssessmentIntro>*/
-
 ) : Parcelable {
 
     constructor(assessmentResponse: AssessmentResponse) : this(

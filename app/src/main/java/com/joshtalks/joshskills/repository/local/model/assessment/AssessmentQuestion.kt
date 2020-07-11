@@ -72,14 +72,6 @@ data class AssessmentQuestion(
     @SerializedName("choice_type")
     val choiceType: ChoiceType,
 
-    /*@ColumnInfo
-    @SerializedName("choices")
-    val choices: List<Choice>,
-
-    @ColumnInfo
-    @SerializedName("revise_concept")
-    val reviseConcept: ReviseConcept?,*/
-
     @ColumnInfo
     @SerializedName("is_attempted")
     val isAttempted: Boolean = false,

@@ -46,6 +46,8 @@ import com.joshtalks.joshskills.repository.local.type_converter.TypeConverterAss
 import com.joshtalks.joshskills.repository.local.type_converter.TypeConverterChoiceColumn
 import com.joshtalks.joshskills.repository.local.type_converter.TypeConverterChoiceType
 import com.joshtalks.joshskills.repository.local.type_converter.TypeConverterQuestionStatus
+import com.joshtalks.joshskills.repository.server.assessment.AssessmentIntro
+import com.joshtalks.joshskills.repository.server.assessment.ReviseConcept
 import com.joshtalks.joshskills.repository.server.engage.Graph
 import java.util.*
 
@@ -53,7 +55,7 @@ import java.util.*
 const val DATABASE_NAME = "JoshEnglishDB.db"
 
 @Database(
-    entities = [Course::class, ChatModel::class, Question::class, VideoType::class, AudioType::class, OptionType::class, PdfType::class, ImageType::class, VideoEngage::class, FeedbackEngageModel::class, NPSEventModel::class, Assessment::class, AssessmentQuestion::class, Choice::class],
+    entities = [Course::class, ChatModel::class, Question::class, VideoType::class, AudioType::class, OptionType::class, PdfType::class, ImageType::class, VideoEngage::class, FeedbackEngageModel::class, NPSEventModel::class, Assessment::class, AssessmentQuestion::class, Choice::class, ReviseConcept::class, AssessmentIntro::class],
     version = 18,
     exportSchema = true
 )
