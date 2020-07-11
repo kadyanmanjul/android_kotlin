@@ -1,0 +1,154 @@
+{
+  "id": 1,
+  "heading": "Quiz #1",
+  "title": "(from assessment table)",
+  "image_url": "(from assessment table)",
+  "description": "(from assessment table)",
+  "type": "QUIZ",
+  "progress_status": "NOT_STARTED",
+  "intro": [
+    {
+      "type": "SINGLE_SELECTION_TEXT",
+      "title": "MCQ (Multiple Answer)",
+      "description": "Lorem ipsum dolor sit amet, constur adipiscg elit lorem ipsum lorem ipsss",
+      "image_url": "https://image.png"
+    }
+  ],
+  "questions": [
+    {
+      "id": 1,
+      "text": "xyz",
+      "sort_order": 1,
+      "is_attempted": false,
+      "status": "NONE",
+      "media_url": "https://sss.png",
+      "media_type": "AUDIO",
+      "video_thumbnail_url": null,
+      "choice_type": "SINGLE_SELECTION_TEXT",
+      "choices": [
+        {
+          "id": 1,
+          "text": null,
+          "image_url": null,
+          "is_correct": true,
+          "sort_order": 1,
+          "card_side": "LEFT",
+          "answer_order": 1
+        },
+        {
+          "id": 3,
+          "text": "nullable",
+          "image_url": "https://i.png  nullable",
+          "is_correct": true,
+          "sort_order": 1,
+          "card_side": "LEFT",
+          "answer_order": 1
+        }
+      ],
+      "revise_concept": {
+        "heading": "abc",
+        "title": "xyz",
+        "description": "xyz",
+        "media_url": "https://sss.png",
+        "media_type": "IMAGE",
+        "video_thumbnail_url": null
+      }
+    },
+    {
+      "id": 2,
+      "text": "xyz",
+      "sort_order": 1,
+      "is_attempted": false,
+      "status": "NONE",
+      "media_url": "https://sss.png",
+      "media_type": "AUDIO",
+      "video_thumbnail_url": "https://sss.png nullable",
+      "choice_type": "SINGLE_SELECTION_TEXT",
+      "choices": [
+        {
+          "id": 2,
+          "text": "nullable",
+          "image_url": "https://i.png  nullable",
+          "is_correct": false,
+          "sort_order": 1,
+          "card_side": "LEFT",
+          "answer_order": 1
+        },
+        {
+          "id": 4,
+          "text": "nullable",
+          "image_url": "https://i.png  nullable",
+          "is_correct": false,
+          "sort_order": 1,
+          "card_side": "LEFT",
+          "answer_order": 1
+        },
+        {
+          "id": 5,
+          "text": "nullable",
+          "image_url": "https://i.png  nullable",
+          "is_correct": false,
+          "sort_order": 1,
+          "card_side": "LEFT",
+          "answer_order": 1
+        }
+      ],
+      "revise_concept": {
+        "heading": "abc",
+        "title": "xyz",
+        "description": "xyz",
+        "media_url": "https://sss.png",
+        "media_type": "IMAGE",
+        "video_thumbnail_url": "https://nullable.png nullable"
+      }
+    },
+    {
+      "id": 3,
+      "text": "svsv",
+      "sort_order": 2,
+      "is_attempted": true,
+      "status": "NONE",
+      "media_url": "https://sss.png",
+      "media_type": "IMAGE",
+      "video_thumbnail_url": "https://sss.png nullable",
+      "choice_type": "SINGLE_SELECTION_TEXT",
+      "choices": [
+        {
+          "id": 6,
+          "text": "sfv",
+          "image_url": "https://i.png  nullable",
+          "is_correct": false,
+          "sort_order": 1,
+          "card_side": "LEFT",
+          "answer_order": 1
+        },
+        {
+          "id": 7,
+          "text": "sfv",
+          "image_url": "https://i.png  nullable",
+          "is_correct": false,
+          "sort_order": 1,
+          "card_side": "LEFT",
+          "answer_order": 1
+        },
+        {
+          "id": 8,
+          "text": "sfvsfv",
+          "image_url": "https://i.png  nullable",
+          "is_correct": false,
+          "sort_order": 1,
+          "card_side": "LEFT",
+          "answer_order": 1
+        }
+      ],
+      "revise_concept": {
+        "heading": "abc",
+        "title": "xyz",
+        "description": "xyz",
+        "media_url": "https://sss.png",
+        "media_type": "IMAGE",
+        "video_thumbnail_url": "https://nullable.png nullable"
+      }
+    }
+  ]
+}

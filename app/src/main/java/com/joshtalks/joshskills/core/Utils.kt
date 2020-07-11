@@ -66,10 +66,12 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
+import java.io.InputStream
 import java.io.OutputStream
 import java.net.InetSocketAddress
 import java.net.Socket
 import java.net.URL
+import java.nio.charset.Charset
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 import java.util.*
@@ -840,5 +842,22 @@ fun getCountryIsoCode(number: String, countryRegion: String): String {
             countryRegion
         }
     }
+}
 
+fun loadJSONFromAsset(fileName: String): String? {
+    var json: String? = null
+    json = try {
+        val `is`: InputStream = AppObjectController.joshApplication.assets.open(fileName)
+        val size: Int = `is`.available()
+        val buffer = ByteArray(size)
+        `is`.read(buffer)
+        `is`.close()
+
+        val charset: Charset = Charsets.UTF_8
+        String(buffer, charset)
+    } catch (ex: IOException) {
+        ex.printStackTrace()
+        return null
+    }
+    return json
 }

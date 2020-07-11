@@ -65,7 +65,7 @@ class AssessmentActivity : CoreJoshActivity() {
             binding.progressBar.visibility = View.GONE
         })
 
-        viewModel.assessmentLiveData.observe(this, Observer { assessment ->
+        viewModel.assessmentLiveData.observe(this, Observer { assessmentResponse ->
             // TODO Bind view
         })
     }
