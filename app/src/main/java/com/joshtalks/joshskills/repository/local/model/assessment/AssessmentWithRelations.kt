@@ -3,6 +3,7 @@ package com.joshtalks.joshskills.repository.local.model.assessment
 import androidx.room.Embedded
 import androidx.room.Relation
 import com.joshtalks.joshskills.repository.server.assessment.AssessmentIntro
+import com.joshtalks.joshskills.repository.server.assessment.AssessmentResponse
 
 data class AssessmentWithRelations(
 
@@ -23,4 +24,16 @@ data class AssessmentWithRelations(
     )
     val assessmentIntroList: List<AssessmentIntro>
 
-)
+) {
+
+    constructor(assessmentResponse: AssessmentResponse) : this(
+        assessment = Assessment(assessmentResponse),
+        questionList = assessmentResponse.questions.map {
+            AssessmentQuestionWithRelations(it, assessmentResponse.id)
+        },
+        assessmentIntroList = assessmentResponse.intro.map {
+            AssessmentIntro(it, assessmentResponse.id)
+        }
+    )
+
+}

@@ -55,6 +55,7 @@ data class AssessmentIntro(
     val imageUrl: String
 
 ) : Parcelable {
+
     constructor(
         assessmentIntroResponse: AssessmentIntroResponse,
         assessmentId: Int
@@ -65,4 +66,5 @@ data class AssessmentIntro(
         description = assessmentIntroResponse.description,
         imageUrl = assessmentIntroResponse.imageUrl
     )
+
 }

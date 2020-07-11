@@ -61,6 +61,7 @@ data class ReviseConcept(
     val videoThumbnailUrl: String?
 
 ) : Parcelable {
+
     constructor(reviseConceptResponse: ReviseConceptResponse, questionId: Int) : this(
         questionId = questionId,
         heading = reviseConceptResponse.heading,
@@ -70,4 +71,5 @@ data class ReviseConcept(
         mediaType = reviseConceptResponse.mediaType,
         videoThumbnailUrl = reviseConceptResponse.videoThumbnailUrl
     )
+
 }

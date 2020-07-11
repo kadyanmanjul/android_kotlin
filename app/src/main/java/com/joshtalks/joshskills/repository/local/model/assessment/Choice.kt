@@ -74,6 +74,7 @@ data class Choice(
     val isSelectedByUser: Boolean? = false
 
 ) : Parcelable {
+
     constructor(
         choiceResponse: ChoiceResponse,
         questionId: Int
@@ -89,4 +90,5 @@ data class Choice(
         userSelectedOrder = choiceResponse.userSelectedOrder,
         isSelectedByUser = choiceResponse.isSelectedByUser
     )
+
 }

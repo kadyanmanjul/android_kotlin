@@ -82,6 +82,7 @@ data class AssessmentQuestion(
     val status: QuestionStatus = QuestionStatus.NONE
 
 ) : Parcelable {
+
     constructor(assessmentQuestionResponse: AssessmentQuestionResponse, assessmentId: Int) : this(
         remoteId = assessmentQuestionResponse.id,
         assessmentId = assessmentId,
@@ -94,4 +95,5 @@ data class AssessmentQuestion(
         isAttempted = assessmentQuestionResponse.isAttempted,
         status = assessmentQuestionResponse.status
     )
+
 }

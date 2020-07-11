@@ -8,9 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.core.ApiCallStatus
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.loadJSONFromAsset
-import com.joshtalks.joshskills.repository.local.model.assessment.Assessment
-import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestion
-import com.joshtalks.joshskills.repository.local.model.assessment.Choice
+import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentWithRelations
 import com.joshtalks.joshskills.repository.server.assessment.AssessmentResponse
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import kotlinx.coroutines.CoroutineScope
@@ -31,7 +29,9 @@ class AssessmentViewModel(application: Application) : AndroidViewModel(applicati
                 if (response.isSuccessful) {
                     apiCallStatusLiveData.postValue(ApiCallStatus.SUCCESS)
                     assessmentLiveData.postValue(response.body())
-                    // TODO Save to DB
+                    response.body()?.let {
+                        insertAsssessmentToDb(response.body()!!)
+                    }
                     return@launch
                 }
 
@@ -43,6 +43,11 @@ class AssessmentViewModel(application: Application) : AndroidViewModel(applicati
         }
     }
 
+    suspend fun insertAsssessmentToDb(assessmentResponse: AssessmentResponse) {
+        AppObjectController.appDatabase.assessmentDao()
+            .insertAssessmentFromResponse(assessmentResponse)
+    }
+
     private fun mockData() {
         val assessmentResponse = AppObjectController.gsonMapperForLocal.fromJson(
             loadJSONFromAsset("assessmentJson.json"),
@@ -51,21 +56,8 @@ class AssessmentViewModel(application: Application) : AndroidViewModel(applicati
         Log.d("Assessment123", "AssessmentResponse = $assessmentResponse")
         CoroutineScope(Dispatchers.IO).launch {
             AppObjectController.appDatabase.assessmentDao()
-                .insertAssessment(Assessment(assessmentResponse))
-            assessmentResponse.questions.forEach { questionResponse ->
-                AppObjectController.appDatabase.assessmentDao()
-                    .insertAssessmentQuestion(
-                        AssessmentQuestion(
-                            questionResponse,
-                            assessmentResponse.id
-                        )
-                    )
-                questionResponse.choices.forEach { choiceResponse ->
-                    AppObjectController.appDatabase.assessmentDao()
-                        .insertAssessmentChoice(Choice(choiceResponse, questionResponse.id))
-                }
-
-            }
+                .insertAssessment(AssessmentWithRelations(assessmentResponse))
         }
     }
+
 }

@@ -10,26 +10,64 @@ import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQues
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentWithRelations
 import com.joshtalks.joshskills.repository.local.model.assessment.Choice
 import com.joshtalks.joshskills.repository.server.assessment.AssessmentIntro
+import com.joshtalks.joshskills.repository.server.assessment.AssessmentResponse
 import com.joshtalks.joshskills.repository.server.assessment.ReviseConcept
 
 @Dao
-interface AssessmentDao {
+abstract class AssessmentDao {
     @Transaction
     @Query("SELECT * FROM assessments WHERE remoteId = :assessmentId")
-    fun loadAssesment(assessmentId: Int): AssessmentWithRelations
+    abstract fun loadAssesment(assessmentId: Int): AssessmentWithRelations
+
+    @Transaction
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAssessment(assessmentWithRelations: AssessmentWithRelations) {
+        insertAssessmentWithoutRelation(assessmentWithRelations.assessment)
+        assessmentWithRelations.questionList.forEach {
+            insertAssessmentQuestion(it.question)
+            it.choiceList.forEach { choice->
+                insertAssessmentChoice(choice)
+            }
+            it.reviseConcept?.let { reviseConcept->
+                insertReviseConcept(reviseConcept)
+            }
+        }
+        assessmentWithRelations.assessmentIntroList.forEach { assessmentIntro ->
+            insertAssessmentIntro(assessmentIntro)
+        }
+    }
+    
+    @Transaction
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAssessmentFromResponse(assessmentResponse: AssessmentResponse) {
+        insertAssessmentWithoutRelation(Assessment(assessmentResponse))
+        assessmentResponse.questions.forEach { question->
+            insertAssessmentQuestion(AssessmentQuestion(question,assessmentResponse.id))
+            question.choices.forEach { choice->
+                insertAssessmentChoice(Choice(choice,question.id))
+            }
+            question.reviseConcept?.let { reviseConcept->
+                insertReviseConcept(ReviseConcept(reviseConcept,question.id))
+            }
+        }
+        assessmentResponse.intro.forEach {  }
+        assessmentResponse.intro.forEach { assessmentIntro ->
+            insertAssessmentIntro(AssessmentIntro(assessmentIntro,assessmentResponse.id))
+        }
+    }
+    
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    abstract suspend fun insertAssessmentWithoutRelation(assessment: Assessment)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAssessment(assessment: Assessment)
+    abstract suspend fun insertAssessmentQuestion(assessmentQuestion: AssessmentQuestion)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAssessmentQuestion(assessmentQuestion: AssessmentQuestion)
+    abstract suspend fun insertAssessmentChoice(choice: Choice)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAssessmentChoice(choice: Choice)
+    abstract suspend fun insertReviseConcept(reviseConcept: ReviseConcept)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertReviseConcept(reviseConcept: ReviseConcept)
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAssessmentIntro(assessmentIntro: AssessmentIntro)
+    abstract suspend fun insertAssessmentIntro(assessmentIntro: AssessmentIntro)
 }
