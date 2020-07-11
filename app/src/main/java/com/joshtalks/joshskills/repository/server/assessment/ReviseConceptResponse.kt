@@ -6,10 +6,10 @@ import com.google.gson.annotations.SerializedName
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize
-data class AssessmentIntro(
+data class ReviseConceptResponse(
 
-    @SerializedName("type")
-    val type: AssessmentType,
+    @SerializedName("heading")
+    val heading: String,
 
     @SerializedName("title")
     val title: String,
@@ -17,7 +17,13 @@ data class AssessmentIntro(
     @SerializedName("description")
     val description: String,
 
-    @SerializedName("image_url")
-    val imageUrl: String
+    @SerializedName("media_url")
+    val mediaUrl: String,
+
+    @SerializedName("media_type")
+    val mediaType: AssessmentMediaType,
+
+    @SerializedName("video_thumbnail_url")
+    val videoThumbnailUrl: String?
 
 ) : Parcelable

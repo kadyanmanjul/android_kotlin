@@ -6,7 +6,7 @@ import com.google.gson.annotations.SerializedName
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize
-data class Question(
+data class AssessmentQuestionResponse(
 
     @SerializedName("id")
     val id: Int,
@@ -30,10 +30,10 @@ data class Question(
     val choiceType: ChoiceType,
 
     @SerializedName("choices")
-    val choices: List<Choice>,
+    val choices: List<ChoiceResponse>,
 
     @SerializedName("revise_concept")
-    val reviseConcept: ReviseConcept?,
+    val reviseConcept: ReviseConceptResponse?,
 
     @SerializedName("is_attempted")
     val isAttempted: Boolean = false,

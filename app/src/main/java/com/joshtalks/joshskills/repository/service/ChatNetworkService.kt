@@ -7,7 +7,7 @@ import com.joshtalks.joshskills.repository.server.ChatMessageReceiver
 import com.joshtalks.joshskills.repository.server.CoursePerformanceResponse
 import com.joshtalks.joshskills.repository.server.RequestEngage
 import com.joshtalks.joshskills.repository.server.ResponseChatMessage
-import com.joshtalks.joshskills.repository.server.assessment.Assessment
+import com.joshtalks.joshskills.repository.server.assessment.AssessmentResponse
 import kotlinx.coroutines.Deferred
 import retrofit2.Response
 import retrofit2.http.Body
@@ -83,6 +83,6 @@ interface ChatNetworkService {
     @GET("$DIR/assessment/{id}/")
     suspend fun getAssessmentId(
         @Path("id") id: Int
-    ): Response<Assessment>
+    ): Response<AssessmentResponse>
 
 }

@@ -6,7 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.core.ApiCallStatus
 import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.repository.server.assessment.Assessment
+import com.joshtalks.joshskills.repository.server.assessment.AssessmentResponse
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -15,7 +15,7 @@ import kotlinx.coroutines.launch
 class AssessmentViewModel(application: Application) : AndroidViewModel(application) {
     private val jobs = arrayListOf<Job>()
     val apiCallStatusLiveData: MutableLiveData<ApiCallStatus> = MutableLiveData()
-    val assessmentLiveData: MutableLiveData<Assessment> = MutableLiveData()
+    val assessmentLiveData: MutableLiveData<AssessmentResponse> = MutableLiveData()
 
     fun fetchAssessmentDetails(assessmentId: Int) {
         jobs += viewModelScope.launch(Dispatchers.IO) {

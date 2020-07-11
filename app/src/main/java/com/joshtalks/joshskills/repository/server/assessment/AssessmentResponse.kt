@@ -6,7 +6,7 @@ import com.google.gson.annotations.SerializedName
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize
-data class Assessment(
+data class AssessmentResponse(
 
     @SerializedName("id")
     val id: Int,
@@ -24,16 +24,16 @@ data class Assessment(
     val description: String,
 
     @SerializedName("type")
-    val type: ChoiceType,
+    val type: AssessmentType,
 
     @SerializedName("progress_status")
     val status: AssessmentStatus,
 
     @SerializedName("questions")
-    val questions: List<Question>,
+    val questions: List<AssessmentQuestionResponse>,
 
     @SerializedName("intro")
-    val intro: List<AssessmentIntro>
+    val intro: List<AssessmentIntroResponse>
 
 ) : Parcelable
 
