@@ -12,6 +12,7 @@ import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.repository.local.dao.AssessmentDao
 import com.joshtalks.joshskills.repository.local.entity.AudioType
 import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
 import com.joshtalks.joshskills.repository.local.entity.ChatDao
@@ -36,6 +37,15 @@ import com.joshtalks.joshskills.repository.local.entity.User
 import com.joshtalks.joshskills.repository.local.entity.VideoEngage
 import com.joshtalks.joshskills.repository.local.entity.VideoEngageDao
 import com.joshtalks.joshskills.repository.local.entity.VideoType
+import com.joshtalks.joshskills.repository.local.model.assessment.Assessment
+import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestion
+import com.joshtalks.joshskills.repository.local.model.assessment.Choice
+import com.joshtalks.joshskills.repository.local.type_converter.TypeConverterAssessmentMediaType
+import com.joshtalks.joshskills.repository.local.type_converter.TypeConverterAssessmentStatus
+import com.joshtalks.joshskills.repository.local.type_converter.TypeConverterAssessmentType
+import com.joshtalks.joshskills.repository.local.type_converter.TypeConverterChoiceColumn
+import com.joshtalks.joshskills.repository.local.type_converter.TypeConverterChoiceType
+import com.joshtalks.joshskills.repository.local.type_converter.TypeConverterQuestionStatus
 import com.joshtalks.joshskills.repository.server.engage.Graph
 import java.util.*
 
@@ -43,8 +53,8 @@ import java.util.*
 const val DATABASE_NAME = "JoshEnglishDB.db"
 
 @Database(
-    entities = [Course::class, ChatModel::class, Question::class, VideoType::class, AudioType::class, OptionType::class, PdfType::class, ImageType::class, VideoEngage::class, FeedbackEngageModel::class, NPSEventModel::class],
-    version = 17,
+    entities = [Course::class, ChatModel::class, Question::class, VideoType::class, AudioType::class, OptionType::class, PdfType::class, ImageType::class, VideoEngage::class, FeedbackEngageModel::class, NPSEventModel::class, Assessment::class, AssessmentQuestion::class, Choice::class],
+    version = 18,
     exportSchema = true
 )
 @TypeConverters(
@@ -57,8 +67,13 @@ const val DATABASE_NAME = "JoshEnglishDB.db"
     ExpectedEngageTypeConverter::class,
     ConvectorForEngagement::class,
     ConvectorForGraph::class,
-    ConvectorForNPSEvent::class
-
+    ConvectorForNPSEvent::class,
+    TypeConverterAssessmentStatus::class,
+    TypeConverterChoiceType::class,
+    TypeConverterQuestionStatus::class,
+    TypeConverterChoiceColumn::class,
+    TypeConverterAssessmentType::class,
+    TypeConverterAssessmentMediaType::class
 )
 abstract class AppDatabase : RoomDatabase() {
 
@@ -252,6 +267,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun videoEngageDao(): VideoEngageDao
     abstract fun feedbackEngageModelDao(): FeedbackEngageModelDao
     abstract fun npsEventModelDao(): NPSEventModelDao
+    abstract fun assessmentDao(): AssessmentDao
 
 }
 

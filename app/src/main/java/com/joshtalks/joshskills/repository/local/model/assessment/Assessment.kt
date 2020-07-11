@@ -1,0 +1,81 @@
+package com.joshtalks.joshskills.repository.local.model.assessment
+
+
+import android.os.Parcelable
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.Index
+import androidx.room.PrimaryKey
+import androidx.room.TypeConverters
+import com.google.gson.annotations.SerializedName
+import com.joshtalks.joshskills.repository.local.type_converter.TypeConverterAssessmentStatus
+import com.joshtalks.joshskills.repository.local.type_converter.TypeConverterAssessmentType
+import com.joshtalks.joshskills.repository.server.assessment.AssessmentResponse
+import com.joshtalks.joshskills.repository.server.assessment.AssessmentStatus
+import com.joshtalks.joshskills.repository.server.assessment.AssessmentType
+import kotlinx.android.parcel.Parcelize
+
+@Entity(
+    tableName = "assessments", indices = [
+        Index(value = ["remoteId"], unique = true)
+    ]
+)
+@Parcelize
+data class Assessment(
+
+    @PrimaryKey(autoGenerate = true)
+    @ColumnInfo(name = "localId")
+    @SerializedName("localId")
+    val localId: Int = 0,
+
+    @ColumnInfo(name = "remoteId")
+    @SerializedName("id")
+    var remoteId: Int,
+
+    @ColumnInfo
+    @SerializedName("heading")
+    val heading: String,
+
+    @ColumnInfo
+    @SerializedName("title")
+    val title: String,
+
+    @ColumnInfo
+    @SerializedName("image_url")
+    val imageUrl: String,
+
+    @ColumnInfo
+    @SerializedName("description")
+    val description: String,
+
+    @TypeConverters(TypeConverterAssessmentType::class)
+    @ColumnInfo
+    @SerializedName("type")
+    val type: AssessmentType,
+
+    @TypeConverters(TypeConverterAssessmentStatus::class)
+    @ColumnInfo
+    @SerializedName("progress_status")
+    val status: AssessmentStatus
+
+    /*
+    @ColumnInfo
+    @SerializedName("questions")
+    val questions: List<Question>,
+
+    @ColumnInfo
+    @SerializedName("intro")
+    val intro: List<AssessmentIntro>*/
+
+) : Parcelable {
+
+    constructor(assessmentResponse: AssessmentResponse) : this(
+        remoteId = assessmentResponse.id,
+        heading = assessmentResponse.heading,
+        title = assessmentResponse.title,
+        imageUrl = assessmentResponse.imageUrl,
+        description = assessmentResponse.description,
+        type = assessmentResponse.type,
+        status = assessmentResponse.status
+    )
+}
