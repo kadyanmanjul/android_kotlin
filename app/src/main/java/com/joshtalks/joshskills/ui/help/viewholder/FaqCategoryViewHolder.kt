@@ -82,7 +82,7 @@ class FaqCategoryViewHolder(
     @Click(R.id.root_view)
     fun onClick() {
         if (position != -1)
-            RxBus2.publish(LandingPageCategorySelectEventBus(position, faqCategory.categoryName))
+            RxBus2.publish(LandingPageCategorySelectEventBus(position, faqCategory.id,faqCategory.categoryName))
         else RxBus2.publish(CategorySelectEventBus(listFAQCategory, faqCategory))
     }
 }

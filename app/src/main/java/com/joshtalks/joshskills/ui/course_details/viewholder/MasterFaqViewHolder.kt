@@ -45,7 +45,7 @@ class MasterFaqViewHolder(
     @com.mindorks.placeholderview.annotations.View(R.id.recycler_view)
     lateinit var recyclerView: PlaceHolderView
 
-    var categoryId = 1
+    var categoryId :Int?=null
     private var compositeDisposable = CompositeDisposable()
 
     var typefaceSpan: Typeface? = null
@@ -64,6 +64,9 @@ class MasterFaqViewHolder(
             ResourcesCompat.getFont(AppObjectController.joshApplication, R.font.poppins_medium)
         if (recyclerView.viewAdapter == null || recyclerView.viewAdapter.itemCount == 0) {
             faqData.categoryList.sortedBy { it.sortOrder }.forEach { typeOfHelpModel ->
+                if (categoryId == null) {
+                    categoryId=typeOfHelpModel.id
+                }
                 recyclerView.addView(
                     FaqCategoryViewHolder(
                         faqData.categoryList,
@@ -72,7 +75,7 @@ class MasterFaqViewHolder(
                     )
                 )
             }
-            addExpandableList(faqData.faqList, categoryId)
+            addExpandableList(faqData.faqList, categoryId!!)
         }
     }
 
@@ -101,7 +104,7 @@ class MasterFaqViewHolder(
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
                     logAnalyticsEvent()
-                    highlightAndShowFaq(it.position)
+                    highlightAndShowFaq(it.position,it.categoryId)
                 })
     }
 
@@ -114,11 +117,12 @@ class MasterFaqViewHolder(
     }
 
     private fun highlightAndShowFaq(
-        position: Int
+        position: Int,
+        categoryId: Int
     ) {
-        addExpandableList(faqData.faqList, position)
-        val a = recyclerView.allViewResolvers as List<*>
-        a.forEach {
+        addExpandableList(faqData.faqList, categoryId)
+        val viewHolders = recyclerView.allViewResolvers as List<*>
+        viewHolders.forEach {
             if (it is FaqCategoryViewHolder) {
                 if (it.position == position) {
                     it.cardView.strokeColor = ResourcesCompat.getColor(
