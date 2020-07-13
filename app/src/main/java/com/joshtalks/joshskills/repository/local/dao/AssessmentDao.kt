@@ -15,6 +15,7 @@ import com.joshtalks.joshskills.repository.server.assessment.ReviseConcept
 
 @Dao
 abstract class AssessmentDao {
+
     @Transaction
     @Query("SELECT * FROM assessments WHERE remoteId = :assessmentId")
     abstract fun loadAssesment(assessmentId: Int): AssessmentWithRelations
@@ -23,12 +24,12 @@ abstract class AssessmentDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAssessment(assessmentWithRelations: AssessmentWithRelations) {
         insertAssessmentWithoutRelation(assessmentWithRelations.assessment)
-        assessmentWithRelations.questionList.forEach {
-            insertAssessmentQuestion(it.question)
-            it.choiceList.forEach { choice->
+        assessmentWithRelations.questionList.forEach { questionWithRelations ->
+            insertAssessmentQuestion(questionWithRelations.question)
+            questionWithRelations.choiceList.forEach { choice ->
                 insertAssessmentChoice(choice)
             }
-            it.reviseConcept?.let { reviseConcept->
+            questionWithRelations.reviseConcept?.let { reviseConcept ->
                 insertReviseConcept(reviseConcept)
             }
         }
@@ -36,25 +37,25 @@ abstract class AssessmentDao {
             insertAssessmentIntro(assessmentIntro)
         }
     }
-    
+
     @Transaction
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)     //TODO(13/07/20) - Find a better way to deal with this instead of IGNORE
     suspend fun insertAssessmentFromResponse(assessmentResponse: AssessmentResponse) {
         insertAssessmentWithoutRelation(Assessment(assessmentResponse))
-        assessmentResponse.questions.forEach { question->
-            insertAssessmentQuestion(AssessmentQuestion(question,assessmentResponse.id))
-            question.choices.forEach { choice->
-                insertAssessmentChoice(Choice(choice,question.id))
+        assessmentResponse.questions.forEach { question ->
+            insertAssessmentQuestion(AssessmentQuestion(question, assessmentResponse.id))
+            question.choices.forEach { choice ->
+                insertAssessmentChoice(Choice(choice, question.id))
             }
-            question.reviseConcept?.let { reviseConcept->
-                insertReviseConcept(ReviseConcept(reviseConcept,question.id))
+            question.reviseConcept?.let { reviseConcept ->
+                insertReviseConcept(ReviseConcept(reviseConcept, question.id))
             }
         }
         assessmentResponse.intro.forEach { assessmentIntro ->
-            insertAssessmentIntro(AssessmentIntro(assessmentIntro,assessmentResponse.id))
+            insertAssessmentIntro(AssessmentIntro(assessmentIntro, assessmentResponse.id))
         }
     }
-    
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     abstract suspend fun insertAssessmentWithoutRelation(assessment: Assessment)
 
@@ -69,4 +70,5 @@ abstract class AssessmentDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     abstract suspend fun insertAssessmentIntro(assessmentIntro: AssessmentIntro)
+
 }
