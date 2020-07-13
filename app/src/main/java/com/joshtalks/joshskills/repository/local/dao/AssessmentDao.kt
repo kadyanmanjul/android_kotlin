@@ -50,7 +50,6 @@ abstract class AssessmentDao {
                 insertReviseConcept(ReviseConcept(reviseConcept,question.id))
             }
         }
-        assessmentResponse.intro.forEach {  }
         assessmentResponse.intro.forEach { assessmentIntro ->
             insertAssessmentIntro(AssessmentIntro(assessmentIntro,assessmentResponse.id))
         }
