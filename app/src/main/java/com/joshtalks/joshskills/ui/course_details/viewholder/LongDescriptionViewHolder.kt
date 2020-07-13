@@ -35,7 +35,6 @@ class LongDescriptionViewHolder(
     fun onResolved() {
         title.text = longDescription.title
         description.text = longDescription.description
-        description.text = description.text.toString().plus(longDescription.description)
         description.maxLines =
             MIN_LINES
     }
@@ -49,7 +48,6 @@ class LongDescriptionViewHolder(
             description.maxLines =
                 MIN_LINES
             readMoreTV.text = context.getString(R.string.read_more)
-
         }
     }
 }
