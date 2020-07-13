@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+                android:id="@+id/tv_question"
+                fontPath="fonts/Poppins-Bold.ttf"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:gravity="start"
+                android:text="@string/retry_miss_call_verify"
+                android:textColor="@color/font_color"
+                android:textSize="@dimen/font_18"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="Reviews and rating" />
+
+
+        <androidx.cardview.widget.CardView
+                android:layout_width="0dp"
+                android:layout_height="@dimen/_180sdp"
+                android:layout_marginHorizontal="@dimen/_8sdp"
+                android:layout_marginVertical="@dimen/_8sdp"
+                app:cardCornerRadius="@dimen/_8sdp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tv_question">
+
+            <ViewStub
+                    android:id="@+id/video_view_stub"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout="@layout/mini_player_view"
+                    android:visibility="gone"
+                    tools:visibility="visible" />
+
+
+            <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/image_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:adjustViewBounds="true"
+                    android:background="@drawable/video_placeholder"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:scaleType="centerCrop"
+                    android:visibility="gone"
+                    tools:visibility="visible" />
+
+            <com.joshtalks.joshskills.ui.assessment.view.AudioPlayerView
+                    android:id="@+id/audio_player_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    tools:visibility="visible" />
+
+
+        </androidx.cardview.widget.CardView>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</merge>

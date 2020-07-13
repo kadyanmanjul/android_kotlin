@@ -49,6 +49,7 @@ import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.ProfileResponse
 import com.joshtalks.joshskills.repository.server.SearchLocality
 import com.joshtalks.joshskills.repository.server.UpdateUserLocality
+import com.joshtalks.joshskills.ui.assessment.AssessmentActivity
 import com.joshtalks.joshskills.ui.chat.ConversationActivity
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
 import com.joshtalks.joshskills.ui.referral.ReferralActivity
@@ -277,7 +278,9 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe {
-                openCourseExplorer()
+                //openCourseExplorer()
+                AssessmentActivity.startAssessmentActivity(this, 111)
+
             })
         compositeDisposable.add(RxBus2.listen(NPSEventGenerateEventBus::class.java)
             .subscribeOn(Schedulers.io())

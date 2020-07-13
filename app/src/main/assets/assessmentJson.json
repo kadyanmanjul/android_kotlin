@@ -22,12 +22,12 @@
   "questions": [
     {
       "id": 1,
-      "text": "xyz",
+      "text": "Quick brown fox jump over the lazy dog ",
       "sort_order": 1,
       "is_attempted": false,
       "status": "NONE",
-      "media_url": "https://sss.png",
-      "media_type": "AUDIO",
+      "media_url": "https://s3.ap-south-1.amazonaws.com/www.static.skills.com/misc/Spoken+English+Vedant.jpg",
+      "media_type": "IMAGE",
       "video_thumbnail_url": null,
       "choice_type": "SINGLE_SELECTION_TEXT",
       "choices": [
@@ -65,9 +65,9 @@
       "sort_order": 1,
       "is_attempted": false,
       "status": "NONE",
-      "media_url": "https://sss.png",
-      "media_type": "AUDIO",
-      "video_thumbnail_url": "https://sss.png nullable",
+      "media_url": "https://s3.ap-south-1.amazonaws.com/www.static.skills.com/Course+Trailers/trailer-v1.mp4",
+      "media_type": "VIDEO",
+      "video_thumbnail_url": "https://s3.ap-south-1.amazonaws.com/www.static.skills.com/misc/1489187.jpg",
       "choice_type": "SINGLE_SELECTION_TEXT",
       "choices": [
         {
@@ -113,8 +113,8 @@
       "sort_order": 2,
       "is_attempted": true,
       "status": "NONE",
-      "media_url": "https://sss.png",
-      "media_type": "IMAGE",
+      "media_url": "https://s3.ap-south-1.amazonaws.com/www.static.skills.com/question/audio/Lesson-1_1.mp3",
+      "media_type": "AUDIO",
       "video_thumbnail_url": "https://sss.png nullable",
       "choice_type": "SINGLE_SELECTION_TEXT",
       "choices": [

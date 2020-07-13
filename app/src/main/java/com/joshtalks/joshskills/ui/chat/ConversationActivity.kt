@@ -82,6 +82,7 @@ import com.joshtalks.joshskills.repository.local.entity.ChatModel
 import com.joshtalks.joshskills.repository.local.entity.DOWNLOAD_STATUS
 import com.joshtalks.joshskills.repository.local.entity.MESSAGE_STATUS
 import com.joshtalks.joshskills.repository.local.entity.NPSEventModel
+import com.joshtalks.joshskills.repository.local.eventbus.AssessmentStartEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.AudioPlayEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.DeleteMessageEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.DownloadCompletedEventBus
@@ -101,6 +102,7 @@ import com.joshtalks.joshskills.repository.server.chat_message.TChatMessage
 import com.joshtalks.joshskills.repository.server.chat_message.TImageMessage
 import com.joshtalks.joshskills.repository.server.chat_message.TVideoMessage
 import com.joshtalks.joshskills.repository.server.engage.Graph
+import com.joshtalks.joshskills.ui.assessment.AssessmentActivity
 import com.joshtalks.joshskills.ui.courseprogress.CourseProgressActivity
 import com.joshtalks.joshskills.ui.extra.ImageShowFragment
 import com.joshtalks.joshskills.ui.pdfviewer.PdfViewerActivity
@@ -108,6 +110,7 @@ import com.joshtalks.joshskills.ui.practise.PRACTISE_OBJECT
 import com.joshtalks.joshskills.ui.practise.PractiseSubmitActivity
 import com.joshtalks.joshskills.ui.referral.ReferralActivity
 import com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity
+import com.joshtalks.joshskills.ui.view_holders.AssessmentViewHolder
 import com.joshtalks.joshskills.ui.view_holders.AudioPlayerViewHolder
 import com.joshtalks.joshskills.ui.view_holders.BaseCell
 import com.joshtalks.joshskills.ui.view_holders.BaseChatViewHolder
@@ -115,7 +118,6 @@ import com.joshtalks.joshskills.ui.view_holders.ImageViewHolder
 import com.joshtalks.joshskills.ui.view_holders.NewMessageViewHolder
 import com.joshtalks.joshskills.ui.view_holders.PdfViewHolder
 import com.joshtalks.joshskills.ui.view_holders.PracticeViewHolder
-import com.joshtalks.joshskills.ui.view_holders.AssessmentViewHolder
 import com.joshtalks.joshskills.ui.view_holders.TextViewHolder
 import com.joshtalks.joshskills.ui.view_holders.TimeViewHolder
 import com.joshtalks.joshskills.ui.view_holders.VideoViewHolder
@@ -1205,6 +1207,17 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
                     it.printStackTrace()
                 })
         )
+        compositeDisposable.add(
+            RxBus2.listen(AssessmentStartEventBus::class.java)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({
+                    AssessmentActivity.startAssessmentActivity(this, it.assessmentId)
+                }, {
+                    it.printStackTrace()
+                })
+        )
+
     }
 
     private fun analyticsAudioPlayed(

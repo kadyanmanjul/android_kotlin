@@ -14,10 +14,14 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.CoreJoshActivity
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.STARTED_FROM
+import com.joshtalks.joshskills.core.loadJSONFromAsset
 import com.joshtalks.joshskills.databinding.ActivityAssessmentBinding
+import com.joshtalks.joshskills.repository.server.assessment.AssessmentResponse
+import com.joshtalks.joshskills.ui.assessment.viewholder.AssessmentQuestionAdapter
 
 class AssessmentActivity : CoreJoshActivity() {
 
@@ -48,11 +52,13 @@ class AssessmentActivity : CoreJoshActivity() {
         if (intent.hasExtra(STARTED_FROM)) {
             flowFrom = intent.getStringExtra(STARTED_FROM)
         }
+        test()
+        /*
         if (assessmentId != 0) {
             getAssessmentDetails(assessmentId)
         } else {
             finish()
-        }
+        }*/
         subscribeLiveData()
     }
 
@@ -104,5 +110,13 @@ class AssessmentActivity : CoreJoshActivity() {
                 this.addFlags(flag)
             }
         }
+    }
+
+    fun test() {
+        val assessmentResponse = AppObjectController.gsonMapperForLocal.fromJson(
+            loadJSONFromAsset("assessmentJson.json"),
+            AssessmentResponse::class.java
+        )
+        binding.questionViewPager.adapter = AssessmentQuestionAdapter(assessmentResponse.questions)
     }
 }

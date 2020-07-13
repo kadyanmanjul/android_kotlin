@@ -33,8 +33,8 @@
                     android:gravity="start|center"
                     android:minHeight="?attr/actionBarSize"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:popupTheme="@style/AppTheme.PopupOverlay"
-                    app:theme="@style/Theme.GuidelinesCompat.Light.DarkToolbar">
+                    android:popupTheme="@style/AppTheme.PopupOverlay"
+                    android:theme="@style/Theme.GuidelinesCompat.Light.DarkToolbar">
 
                 <androidx.appcompat.widget.AppCompatImageView
                         android:id="@+id/iv_back"
@@ -83,8 +83,12 @@
                 app:tabTextColor="@color/dark_grey" />
 
         <androidx.viewpager2.widget.ViewPager2
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/_300sdp"
+                android:id="@+id/question_view_pager"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/toolbar" />
 
         <com.pnikosis.materialishprogress.ProgressWheel
@@ -92,6 +96,7 @@
                 android:layout_width="@dimen/_82sdp"
                 android:layout_height="@dimen/_82sdp"
                 android:layout_gravity="center"
+                android:visibility="gone"
                 wheel:layout_constraintBottom_toBottomOf="parent"
                 wheel:layout_constraintEnd_toEndOf="parent"
                 wheel:layout_constraintStart_toStartOf="parent"
