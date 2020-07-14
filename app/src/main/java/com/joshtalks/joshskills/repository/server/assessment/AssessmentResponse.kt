@@ -55,7 +55,11 @@ enum class AssessmentMediaType(val mediaType: String) {
     AUDIO("AUDIO"),
 
     @SerializedName("VIDEO")
-    VIDEO("VIDEO")
+    VIDEO("VIDEO"),
+
+    @SerializedName("NONE")
+    NONE("NONE"),
+
 }
 
 enum class AssessmentStatus(val status: String) {

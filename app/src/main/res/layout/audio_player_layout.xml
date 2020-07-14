@@ -1,89 +1,111 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_margin="@dimen/_8sdp"
+        app:cardBackgroundColor="#E2E4E9"
+        app:cardCornerRadius="@dimen/_6sdp"
+        app:cardElevation="@dimen/_2sdp"
+        app:contentPaddingBottom="@dimen/_12sdp"
+        app:contentPaddingLeft="@dimen/_8sdp"
+        app:contentPaddingRight="@dimen/_8sdp"
+        app:contentPaddingTop="@dimen/_12sdp">
 
-    <FrameLayout
-            android:id="@+id/fl_controller"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
-            android:minWidth="@dimen/_36sdp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="parent">
+    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-        <ProgressBar
-                android:id="@+id/progress_bar"
-                android:layout_width="@dimen/_36sdp"
-                android:layout_height="@dimen/_36sdp"
-                android:layout_gravity="center"
-                android:indeterminate="true"
-                android:indeterminateTint="@color/button_primary_color"
-                android:visibility="invisible"
-                tools:visibility="visible" />
-
-        <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/btnPlay"
+        <FrameLayout
+                android:id="@+id/fl_controller"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:background="@null"
-                android:contentDescription="@string/play_button_description"
-                android:visibility="visible"
-                app:srcCompat="@drawable/ic_play_24dp"
-                app:tint="@color/button_primary_color"
+                android:layout_alignParentStart="true"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:minWidth="@dimen/_36sdp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="parent">
+
+            <ProgressBar
+                    android:id="@+id/progress_bar"
+                    android:layout_width="@dimen/_36sdp"
+                    android:layout_height="@dimen/_36sdp"
+                    android:layout_gravity="center"
+                    android:indeterminate="true"
+                    android:indeterminateTint="@color/button_primary_color"
+                    android:visibility="gone"
+                    tools:visibility="visible" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/btnPlay"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:background="@null"
+                    android:contentDescription="@string/play_button_description"
+                    android:padding="@dimen/_4sdp"
+                    android:visibility="visible"
+                    app:srcCompat="@drawable/ic_play_24dp"
+                    app:tint="@color/button_primary_color"
+                    tools:visibility="visible" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/btnPause"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:background="@null"
+                    android:contentDescription="@string/play_button_description"
+                    android:padding="@dimen/_4sdp"
+                    android:visibility="invisible"
+                    app:srcCompat="@drawable/ic_pause_24dp"
+                    app:tint="@color/button_primary_color"
+                    tools:visibility="visible" />
+        </FrameLayout>
+
+        <SeekBar
+                android:id="@+id/seek_bar"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_alignBaseline="@id/fl_controller"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:layout_toEndOf="@id/fl_controller"
+                android:paddingStart="@dimen/_8sdp"
+                android:paddingEnd="@dimen/_8sdp"
+                android:progressBackgroundTint="@color/dark_grey"
+                android:progressDrawable="@drawable/seek_bar_draw"
+                android:thumb="@drawable/seek_thumb"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/message_time"
+                app:layout_constraintStart_toEndOf="@+id/fl_controller"
+                app:layout_constraintTop_toTopOf="parent"
                 tools:visibility="visible" />
 
-        <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/btnPause"
+
+        <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/message_time"
+                fontPath="fonts/Poppins-Regular.ttf"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:background="@null"
-                android:contentDescription="@string/play_button_description"
-                android:visibility="invisible"
-                app:srcCompat="@drawable/ic_pause_24dp"
-                app:tint="@color/button_primary_color"
-                tools:visibility="visible" />
-    </FrameLayout>
-
-    <SeekBar
-            android:id="@+id/seekBar"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_alignBaseline="@id/fl_controller"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
-            android:layout_toEndOf="@id/fl_controller"
-            android:paddingStart="@dimen/_6sdp"
-            android:paddingEnd="@dimen/_6sdp"
-            android:progressDrawable="@drawable/seek_bar_draw"
-            android:thumb="@drawable/seek_thumb"
-            android:visibility="invisible"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/message_time"
-            app:layout_constraintStart_toEndOf="@+id/fl_controller"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:visibility="visible" />
+                android:gravity="top|center"
+                android:text="123"
+                android:textColor="@color/dark_grey"
+                android:textSize="@dimen/font_13"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:ignore="MissingPrefix"
+                tools:text="00:00" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 
-    <TextView
-            android:id="@+id/message_time"
-            fontPath="fonts/Roboto-Regular.ttf"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:textColor="@color/gray_9E"
-            android:textSize="@dimen/font_11"
-            app:layout_constraintBottom_toBottomOf="@+id/seekBar"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/seekBar"
-            tools:ignore="MissingPrefix"
-            tools:text="dwdwdwd" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.cardview.widget.CardView>
+
 

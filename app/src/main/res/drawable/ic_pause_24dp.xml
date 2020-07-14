@@ -1,6 +1,6 @@
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
-        android:width="@dimen/_28sdp"
-        android:height="@dimen/_28sdp"
+        android:width="@dimen/_20sdp"
+        android:height="@dimen/_20sdp"
         android:tint="#878A91"
         android:viewportWidth="24.0"
         android:viewportHeight="24.0">

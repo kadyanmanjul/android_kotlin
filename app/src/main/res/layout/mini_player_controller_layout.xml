@@ -36,8 +36,8 @@
                     android:layout_gravity="center_vertical"
                     android:layout_weight="0.7"
                     app:buffered_color="@color/white"
-                    app:played_color="@color/error_color"
-                    app:scrubber_color="@color/error_color"
+                    app:played_color="@color/button_primary_color"
+                    app:scrubber_color="@color/button_primary_color"
                     app:unplayed_color="@color/bg_tint" />
 
 

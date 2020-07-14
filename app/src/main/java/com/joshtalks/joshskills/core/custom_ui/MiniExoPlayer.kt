@@ -9,20 +9,17 @@ import android.content.Context
 import android.content.ContextWrapper
 import android.content.pm.ActivityInfo
 import android.graphics.Color
-import android.graphics.SurfaceTexture
 import android.media.AudioManager
 import android.net.Uri
 import android.os.Build
 import android.os.Handler
 import android.util.AttributeSet
+import android.util.Log
 import android.util.Pair
 import android.view.LayoutInflater
-import android.view.MotionEvent
 import android.view.Surface
-import android.view.TextureView
 import android.view.View
 import android.view.ViewGroup
-import android.view.Window
 import android.view.WindowManager
 import android.view.animation.DecelerateInterpolator
 import android.widget.ProgressBar
@@ -73,13 +70,11 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.service.video_download.VideoDownloadController
-import com.joshtalks.joshskills.core.videoplayer.OnSwipeTouchListener
+import com.joshtalks.joshskills.core.videoplayer.VideoPlayerEventListener
 import com.mikhaellopez.circularprogressbar.CircularProgressBar
 import java.util.*
-import java.util.concurrent.TimeUnit
 
-class MiniExoPlayer : PlayerView, LifecycleObserver, PlayerControlView.VisibilityListener,
-    TextureView.SurfaceTextureListener {
+class MiniExoPlayer : PlayerView, LifecycleObserver, PlayerControlView.VisibilityListener {
 
     constructor(context: Context) : super(context)
     constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
@@ -96,17 +91,10 @@ class MiniExoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibilit
     private val timeHandler = Handler()
     private val controllerHandler = Handler()
 
-    private var mGestureType = GestureType.SwipeGesture
     private var am: AudioManager? = null
-    private var mInitialTextureWidth: Int = 0
-    private var mInitialTextureHeight: Int = 0
-    private var mWindow: Window? = null
     private var mControlsDisabled = false
-    private var mDoubleTapSeekDuration: Int = 10000
     private var currentPosition: Long = 0
-    private var mWasPlaying: Boolean = false
-    private var mSurface: Surface? = null
-    private var mSurfaceAvailable: Boolean = false
+    private var mIsPlaying: Boolean = false
     private var currentMappedTrackInfoPosition: Int = 0
     private var activity: Activity? = null
     private var lisOfVideoQualityTrack = mutableListOf<VideoQualityTrack>()
@@ -120,9 +108,6 @@ class MiniExoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibilit
     private lateinit var defaultTimeBar: DefaultTimeBar
     private lateinit var progressBarBottom: ProgressBar
     private lateinit var imgFullScreenEnterExit: AppCompatImageView
-    private lateinit var mPositionTextView: AppCompatTextView
-    private lateinit var viewForward: AppCompatTextView
-    private lateinit var viewBackward: AppCompatTextView
     private lateinit var tvPlayerEndTime: AppCompatTextView
     private lateinit var tvPlayerCurrentTime: AppCompatTextView
     private lateinit var mProgressBar: CircularProgressBar
@@ -149,169 +134,6 @@ class MiniExoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibilit
             playerListener?.onCurrentTimeUpdated(lastPosition)
         }
     }
-
-    private var gestureDetector = object : OnSwipeTouchListener(true) {
-        var diffTime = -1f
-        var finalTime = -1f
-        var startVolume: Int = 0
-        var maxVolume: Int = 0
-        var startBrightness: Int = 0
-        var maxBrightness: Int = 0
-
-        override fun onMove(dir: Direction, diff: Float) {
-            if (mGestureType != GestureType.SwipeGesture)
-                return
-
-            if (dir == Direction.LEFT || dir == Direction.RIGHT) {
-                player?.let { player ->
-                    diffTime = if (player.duration <= 60) {
-                        player.duration.toFloat() * diff / mInitialTextureWidth.toFloat()
-                    } else {
-                        60000.toFloat() * diff / mInitialTextureWidth.toFloat()
-                    }
-                    if (dir == Direction.LEFT) {
-                        diffTime *= -1f
-                    }
-                    finalTime = player.currentPosition + diffTime
-                    if (finalTime < 0) {
-                        finalTime = 0f
-                    } else if (finalTime > player.duration) {
-                        finalTime = player.duration.toFloat()
-                    }
-                    diffTime = finalTime - player.currentPosition
-
-                    val progressText = getUpDurationString(
-                        finalTime.toLong(),
-                        false
-                    ) +
-                            " [" + (if (dir == Direction.LEFT) "-" else "+") +
-                            getUpDurationString(
-                                Math.abs(diffTime).toLong(), false
-                            ) +
-                            "]"
-                    mPositionTextView.text = progressText
-                }
-            } else {
-                finalTime = -1f
-                if (initialX >= mInitialTextureWidth / 2 || mWindow == null) {
-
-                    var diffVolume: Float
-                    var finalVolume: Int
-
-                    diffVolume = maxVolume.toFloat() * diff / (mInitialTextureHeight.toFloat() / 2)
-                    if (dir == Direction.DOWN) {
-                        diffVolume = -diffVolume
-                    }
-                    finalVolume = startVolume + diffVolume.toInt()
-                    if (finalVolume < 0)
-                        finalVolume = 0
-                    else if (finalVolume > maxVolume)
-                        finalVolume = maxVolume
-
-                    val progressText = String.format(
-                        resources.getString(R.string.volume), finalVolume
-                    )
-                    mPositionTextView.text = progressText
-                    am?.setStreamVolume(AudioManager.STREAM_MUSIC, finalVolume, 0)
-                    controllerAutoHideOnDelay()
-                } else if (initialX < mInitialTextureWidth / 2) {
-
-                    var diffBrightness: Float
-                    var finalBrightness: Int
-
-                    diffBrightness =
-                        maxBrightness.toFloat() * diff / (mInitialTextureHeight.toFloat() / 2)
-                    if (dir == Direction.DOWN) {
-                        diffBrightness = -diffBrightness
-                    }
-                    finalBrightness = startBrightness + diffBrightness.toInt()
-                    if (finalBrightness < 0)
-                        finalBrightness = 0
-                    else if (finalBrightness > maxBrightness)
-                        finalBrightness = maxBrightness
-
-                    val progressText = String.format(
-                        resources.getString(R.string.brightness),
-                        finalBrightness
-                    )
-                    mPositionTextView.text = progressText
-
-                    val layout = mWindow?.attributes
-                    layout?.screenBrightness = finalBrightness.toFloat() / 100
-                    mWindow?.attributes = layout
-                    controllerAutoHideOnDelay()
-                }
-            }
-        }
-
-        override fun onClick() {
-            toggleControls()
-        }
-
-        override fun onDoubleTap(event: MotionEvent) {
-            //if (mGestureType == GestureType.DoubleTapGesture) {
-            val seekSec = mDoubleTapSeekDuration / 1000
-            viewForward.text = String.format(
-                resources.getString(R.string.seconds),
-                seekSec
-            )
-            viewBackward.text = String.format(
-                resources.getString(R.string.seconds),
-                seekSec
-            )
-            if (event.x > mInitialTextureWidth / 2) {
-                viewForward.let {
-                    AppAnalytics.create(AnalyticsEvent.VIDEO_ACTION.NAME)
-                        .addParam(AnalyticsEvent.VIDEO_ACTION.NAME, "Double tap to forward").push()
-                    animateViewFade(it, 1)
-                    Handler().postDelayed({
-                        animateViewFade(it, 0)
-                    }, 500)
-                }
-                seekTo(getCurrentPosition() + mDoubleTapSeekDuration)
-            } else {
-                viewBackward.let {
-                    AppAnalytics.create(AnalyticsEvent.VIDEO_ACTION.NAME)
-                        .addParam(AnalyticsEvent.VIDEO_ACTION.NAME, "Double tap to backward").push()
-                    animateViewFade(it, 1)
-                    Handler().postDelayed({
-                        animateViewFade(it, 0)
-                    }, 500)
-                }
-                seekTo(getCurrentPosition() - mDoubleTapSeekDuration)
-            }
-        }
-
-        override fun onAfterMove() {
-            if (finalTime >= 0 && mGestureType == GestureType.SwipeGesture) {
-                currentPosition = finalTime.toLong()
-                resumePlayer()
-            }
-            mPositionTextView.visibility = View.GONE
-        }
-
-        override fun onBeforeMove(dir: Direction) {
-            if (mGestureType != GestureType.SwipeGesture)
-                return
-            if (dir == Direction.LEFT || dir == Direction.RIGHT) {
-                pausePlayer()
-                mPositionTextView.visibility = View.VISIBLE
-            } else {
-                maxBrightness = 100
-                mWindow?.attributes?.let {
-                    startBrightness = (it.screenBrightness * 100).toInt()
-                }
-                maxVolume = am?.getStreamMaxVolume(AudioManager.STREAM_MUSIC) ?: 100
-                startVolume = am?.getStreamVolume(AudioManager.STREAM_MUSIC) ?: 100
-                mPositionTextView.visibility = View.VISIBLE
-            }
-        }
-
-        override fun lastTouchScreen(time: Long) {
-
-        }
-    }
-
 
     init {
         initPlayer()
@@ -361,11 +183,11 @@ class MiniExoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibilit
                     .setUseLazyPreparation(true)
                     .setTrackSelector(trackSelector!!).build()
             } catch (e: Exception) {
-                throw e
+                e.printStackTrace()
             }
             setPlayer(player)
             setupAudioFocus()
-            controllerAutoShow = true
+            controllerAutoShow = false
             controllerHideOnTouch = true
             controllerShowTimeoutMs = 2500
             setControllerVisibilityListener(this)
@@ -374,12 +196,9 @@ class MiniExoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibilit
             initView()
             initListener()
             player?.addListener(PlayerEventListener())
-            resizeMode = AspectRatioFrameLayout.RESIZE_MODE_FIXED_WIDTH
+            resizeMode = AspectRatioFrameLayout.RESIZE_MODE_FILL
             mControlsDisabled = false
             isClickable = true
-            setOnTouchListener(gestureDetector)
-            (videoSurfaceView as TextureView).surfaceTextureListener = this
-            mWindow = context.activity()?.window
         }
     }
 
@@ -391,14 +210,10 @@ class MiniExoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibilit
         defaultTimeBar.callOnClick()
         progressBarBottom = findViewById(R.id.progress_bar_bottom)
         imgFullScreenEnterExit = findViewById(R.id.img_full_screen_enter_exit)
-        mPositionTextView = findViewById(R.id.position_text_view)
-        viewForward = findViewById(R.id.view_forward)
-        viewBackward = findViewById(R.id.view_backward)
         tvPlayerEndTime = findViewById(R.id.tv_player_end_time)
         tvPlayerCurrentTime = findViewById(R.id.tv_player_current_time)
         mProgressBar = findViewById(R.id.progress_bar)
         ivPlayPause = findViewById(R.id.play_pause_btn)
-
     }
 
 
@@ -445,16 +260,51 @@ class MiniExoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibilit
             }
         })
         ivPlayPause.setOnClickListener {
-            playPauseState()
+            if (mIsPlaying) {
+                pausePlayer()
+            } else {
+                resumePlayer()
+            }
         }
+    }
+
+    override fun onDetachedFromWindow() {
+        super.onDetachedFromWindow()
+        Log.e("onDetachedFromWindow", "MiniExoplayer")
+
+        pausePlayer()
 
     }
 
+    private fun hidePlayButton() {
+        ivPlayPause.animate()?.setStartDelay(1000)?.alpha(0f)
+            ?.setListener(object : AnimatorListenerAdapter() {
+                override fun onAnimationEnd(animation: Animator) {
+                    ivPlayPause.visibility = View.GONE
+
+                }
+            })?.setInterpolator(DecelerateInterpolator())?.start()
+    }
+
+    private fun visiblePlayButton() {
+        if (isControllerVisible) {
+            return
+        }
+        ivPlayPause.animate()?.setStartDelay(500)?.alpha(1f)
+            ?.setListener(object : AnimatorListenerAdapter() {
+                override fun onAnimationEnd(animation: Animator) {
+                    ivPlayPause.visibility = View.VISIBLE
+                }
+            })?.setInterpolator(DecelerateInterpolator())?.start()
+    }
+
     private fun playPauseState() {
-        if (mWasPlaying) {
+        if (mIsPlaying) {
             ivPlayPause.setImageResource(R.drawable.ic_pause_notification)
+            hidePlayButton()
         } else {
             ivPlayPause.setImageResource(R.drawable.ic_play_notification)
+            visiblePlayButton()
         }
     }
 
@@ -475,40 +325,15 @@ class MiniExoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibilit
 
     override fun onVisibilityChange(visibility: Int) {
         if (visibility == View.GONE) {
+            if (mIsPlaying.not()) {
+                visiblePlayButton()
+            }
             progressBarBottom.visibility = View.VISIBLE
         } else {
             progressBarBottom.visibility = View.GONE
-        }
-    }
-
-    fun toggleControls() {
-        if (mControlsDisabled)
-            return
-
-        if (isControllerVisible) {
-            val controller = findViewById<View>(R.id.exo_controller)
-            controller.animate().alpha(0f)
-                .setInterpolator(DecelerateInterpolator())
-                .setListener(object : AnimatorListenerAdapter() {
-                    override fun onAnimationEnd(animation: Animator) {
-                        controller.visibility = View.GONE
-                        hideController()
-                    }
-                }).start()
-            progressBarBottom.visibility = View.VISIBLE
-
-
-        } else {
-            val controller = findViewById<View>(R.id.exo_controller)
-            controller.visibility = View.VISIBLE
-            controller?.animate()?.alpha(1f)?.setListener(object : AnimatorListenerAdapter() {
-                override fun onAnimationEnd(animation: Animator) {
-                    controller.visibility = View.VISIBLE
-                    showController()
-                }
-            })
-                ?.setInterpolator(DecelerateInterpolator())?.start()
-            progressBarBottom.visibility = View.GONE
+            if (mIsPlaying) {
+                hidePlayButton()
+            }
         }
     }
 
@@ -524,7 +349,7 @@ class MiniExoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibilit
     }
 
 
-    fun setVideoPlayerEventListener(playerListener: VideoPlayerEventListener?) {
+    fun setVideoPlayerEventListener(playerListener: com.joshtalks.joshskills.core.videoplayer.VideoPlayerEventListener) {
         this.playerListener = playerListener
     }
 
@@ -542,18 +367,6 @@ class MiniExoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibilit
             )
         }
         seekTo(lastPosition)
-    }
-
-
-    fun playVideo() {
-        player?.playWhenReady = true
-        player?.playbackState
-        uri?.let {
-            player!!.prepare(VideoDownloadController.getInstance().getMediaSource(uri), true, false)
-        }
-        seekTo(lastPosition)
-        timeHandler.post(timeRunnable)
-        playPauseState()
     }
 
     private fun playVideoInternal() {
@@ -622,7 +435,7 @@ class MiniExoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibilit
         }
     }
 
-    fun resumePlayer() {
+    private fun resumePlayer() {
         player?.run {
             playWhenReady = true
             playbackState
@@ -636,37 +449,6 @@ class MiniExoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibilit
         return renderersFactory
     }
 
-
-    override fun onSurfaceTextureAvailable(
-        surfaceTexture: SurfaceTexture,
-        width: Int,
-        height: Int
-    ) {
-        mInitialTextureWidth = width
-        mInitialTextureHeight = height
-        mSurfaceAvailable = true
-        mSurface = Surface(surfaceTexture)
-        mSurface?.run {
-            player?.setVideoSurface(mSurface)
-        }
-    }
-
-
-    override fun onSurfaceTextureSizeChanged(
-        surfaceTexture: SurfaceTexture,
-        width: Int,
-        height: Int
-    ) {
-    }
-
-    override fun onSurfaceTextureDestroyed(surfaceTexture: SurfaceTexture): Boolean {
-        mSurfaceAvailable = false
-        mSurface = null
-        return false
-    }
-
-    override fun onSurfaceTextureUpdated(surfaceTexture: SurfaceTexture) {}
-
     fun getCurrentPosition(): Long {
         return player?.currentPosition ?: -1
     }
@@ -679,9 +461,7 @@ class MiniExoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibilit
     private fun controllerAutoHideOnDelay() {
         controllerHandler.removeCallbacksAndMessages(null)
         controllerHandler.postDelayed({
-            if (isControllerVisible) {
-                toggleControls()
-            }
+
         }, 3500)
     }
 
@@ -853,11 +633,6 @@ class MiniExoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibilit
         }
     }
 
-
-    enum class GestureType {
-        NoGesture, SwipeGesture, DoubleTapGesture
-    }
-
     fun stringForTime(timeMs: Int): String {
         if (timeMs <= 0 || timeMs >= 24 * 60 * 60 * 1000) {
             return "00:00"
@@ -1002,21 +777,25 @@ class MiniExoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibilit
             }
 
             playerListener?.onPlayerStateChanged(playWhenReady, playbackState)
-            val state = when (playbackState) {
+            when (playbackState) {
                 ExoPlayer.STATE_BUFFERING -> "buffering"
                 ExoPlayer.STATE_ENDED -> "ended"
-                ExoPlayer.STATE_READY -> "ready"
+                ExoPlayer.STATE_READY -> "Ready"
                 ExoPlayer.STATE_IDLE -> "idle"
                 else -> "unknownState$playbackState"
             }
             if (playbackState == STATE_BUFFERING) {
                 mProgressBar.visibility = View.VISIBLE
+
+            } else {
+                mProgressBar.visibility = View.GONE
             }
+
         }
 
         override fun onIsPlayingChanged(isPlaying: Boolean) {
             super.onIsPlayingChanged(isPlaying)
-            mWasPlaying = isPlaying
+            mIsPlaying = isPlaying
             if (isPlaying) {
                 timeHandler.postDelayed({
                     mProgressBar.visibility = View.GONE
@@ -1027,7 +806,7 @@ class MiniExoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibilit
                     mProgressBar.visibility = View.VISIBLE
                 }
             }
-
+            playPauseState()
         }
     }
 }
@@ -1254,39 +1033,4 @@ class AudioLanguageAdapter(
     interface OnSelectQualityListener {
         fun onSelect(audioLanguageTrack: AudioLanguageTrack)
     }
-}
-
-/******end **/
-
-interface VideoPlayerEventListener {
-    fun onClickFullScreenView(cOrientation: Int)
-    fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int)
-    fun onCurrentTimeUpdated(time: Long)
-    fun onPlayerReleased()
-    fun onPositionDiscontinuity(lastPos: Long, reason: Int = 1)
-    fun onPlayerReady()
-    fun helpAndFeedback()
-
-}
-
-
-fun getUpDurationString(durationMs: Long, negativePrefix: Boolean): String {
-    val hours = TimeUnit.MILLISECONDS.toHours(durationMs)
-    val minutes = TimeUnit.MILLISECONDS.toMinutes(durationMs)
-    val seconds = TimeUnit.MILLISECONDS.toSeconds(durationMs)
-
-    return if (hours > 0) {
-        java.lang.String.format(
-            Locale.getDefault(), "%s%02d:%02d:%02d",
-            if (negativePrefix) "-" else "",
-            hours,
-            minutes - TimeUnit.HOURS.toMinutes(hours),
-            seconds - TimeUnit.MINUTES.toSeconds(minutes)
-        )
-    } else java.lang.String.format(
-        Locale.getDefault(), "%s%02d:%02d",
-        if (negativePrefix) "-" else "",
-        minutes,
-        seconds - TimeUnit.MINUTES.toSeconds(minutes)
-    )
 }

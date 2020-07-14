@@ -79,5 +79,7 @@
     <color name="green">#20BA70</color>
     <color name="transparent">#00000000</color>
     <color name="faq_f1">#F1F7FE</color>
+    <color name="transparent_2">#884b4949</color>
+
 
 </resources>

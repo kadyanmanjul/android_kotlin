@@ -14,10 +14,11 @@
                 fontPath="fonts/Poppins-Bold.ttf"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:gravity="start"
+                android:gravity="start|center"
                 android:text="@string/retry_miss_call_verify"
                 android:textColor="@color/font_color"
-                android:textSize="@dimen/font_18"
+                android:maxLines="6"
+                android:textSize="@dimen/font_17"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
@@ -25,10 +26,10 @@
 
 
         <androidx.cardview.widget.CardView
+                android:id="@+id/card_view"
                 android:layout_width="0dp"
-                android:layout_height="@dimen/_180sdp"
-                android:layout_marginHorizontal="@dimen/_8sdp"
-                android:layout_marginVertical="@dimen/_8sdp"
+                android:layout_height="@dimen/_160sdp"
+                android:layout_marginTop="@dimen/_10sdp"
                 app:cardCornerRadius="@dimen/_8sdp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -38,30 +39,22 @@
                     android:id="@+id/video_view_stub"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout="@layout/mini_player_view"
-                    android:visibility="gone"
-                    tools:visibility="visible" />
+                    android:layout="@layout/mini_player_view" />
 
-
-            <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/image_view"
+            <ViewStub
+                    android:id="@+id/image_view_stub"
+                    android:layout_gravity="center"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_gravity="center"
-                    android:adjustViewBounds="true"
-                    android:background="@drawable/video_placeholder"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:scaleType="centerCrop"
-                    android:visibility="gone"
-                    tools:visibility="visible" />
+                    android:layout="@layout/image_view_stub" />
 
-            <com.joshtalks.joshskills.ui.assessment.view.AudioPlayerView
-                    android:id="@+id/audio_player_view"
+
+            <ViewStub
+                    android:layout_gravity="center"
+                    android:id="@+id/audio_player_stub"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:visibility="gone"
-                    tools:visibility="visible" />
+                    android:layout="@layout/audio_player_stub" />
 
 
         </androidx.cardview.widget.CardView>
