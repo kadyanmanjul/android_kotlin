@@ -3,7 +3,6 @@ package com.joshtalks.joshskills.ui.assessment.viewholder
 
 import android.content.Context
 import android.util.AttributeSet
-import android.util.Log
 import android.view.View
 import android.widget.FrameLayout
 import androidx.appcompat.widget.AppCompatImageView
@@ -21,6 +20,7 @@ import com.joshtalks.joshskills.repository.server.assessment.AssessmentMediaType
 import com.joshtalks.joshskills.repository.server.assessment.AssessmentQuestionResponse
 import com.joshtalks.joshskills.ui.assessment.view.AudioPlayerView
 import com.joshtalks.joshskills.ui.assessment.view.Stub
+import timber.log.Timber
 
 class QuestionView : FrameLayout {
 
@@ -103,10 +103,7 @@ class QuestionView : FrameLayout {
                 AssessmentMediaType.VIDEO -> {
                     miniExoPlayerStub?.run {
                         if (this.resolved().not()) {
-                            this.get()?.let { miniExoPlayer ->
-                                miniExoPlayer.setUrl(it.mediaUrl)
-                                miniExoPlayer.initVideo()
-                            }
+                            this.get()?.setUrl(it.mediaUrl, it.videoThumbnailUrl)
                         }
                     }
                     return@let
@@ -122,7 +119,6 @@ class QuestionView : FrameLayout {
 
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
-        Log.e("onDetachedFromWindow", "QuestionView")
-
+        Timber.tag("onDetachedFromWindow").e("QuestionView")
     }
 }

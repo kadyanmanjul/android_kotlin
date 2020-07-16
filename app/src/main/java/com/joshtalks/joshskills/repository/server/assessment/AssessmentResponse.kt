@@ -46,19 +46,19 @@ enum class AssessmentType(val type: String) {
     TEST("TEST")
 }
 
-enum class AssessmentMediaType(val mediaType: String) {
+enum class AssessmentMediaType(val mediaType: String, val valType: Int) {
 
     @SerializedName("IMAGE")
-    IMAGE("IMAGE"),
+    IMAGE("IMAGE", 0),
 
     @SerializedName("AUDIO")
-    AUDIO("AUDIO"),
+    AUDIO("AUDIO", 1),
 
     @SerializedName("VIDEO")
-    VIDEO("VIDEO"),
+    VIDEO("VIDEO", 2),
 
     @SerializedName("NONE")
-    NONE("NONE"),
+    NONE("NONE", -1),
 
 }
 

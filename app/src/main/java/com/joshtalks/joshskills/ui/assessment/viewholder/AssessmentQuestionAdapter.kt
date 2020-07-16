@@ -15,8 +15,14 @@ class AssessmentQuestionAdapter(private var items: List<AssessmentQuestionRespon
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         val binding = AssessmentListItemBinding.inflate(inflater, parent, false)
-        return ViewHolder(binding).apply {
-            setIsRecyclable(true)
+        return if (viewType == 1) {
+            ViewHolder(binding).apply {
+                setIsRecyclable(false)
+            }
+        } else {
+            ViewHolder(binding).apply {
+                setIsRecyclable(true)
+            }
         }
     }
 
@@ -32,7 +38,7 @@ class AssessmentQuestionAdapter(private var items: List<AssessmentQuestionRespon
     }
 
     override fun getItemViewType(position: Int): Int {
-        return position
+        return items[position].mediaType.valType
     }
 
     override fun getItemId(position: Int): Long {

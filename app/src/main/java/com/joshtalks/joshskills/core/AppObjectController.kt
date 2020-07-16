@@ -68,6 +68,7 @@ import retrofit2.HttpException
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import timber.log.Timber
+import java.io.File
 import java.lang.reflect.Modifier
 import java.lang.reflect.Type
 import java.text.DateFormat
@@ -78,6 +79,7 @@ const val KEY_AUTHORIZATION = "Authorization"
 const val KEY_APP_VERSION_CODE = "app-version-code"
 const val KEY_APP_VERSION_NAME = "app-version-name"
 const val KEY_APP_USER_AGENT = "HTTP_USER_AGENT"
+private const val JOSH_SKILLS_CACHE = "joshskills-cache"
 
 internal class AppObjectController {
 
@@ -299,7 +301,6 @@ internal class AppObjectController {
                 )
             )
 
-
             InstallReferralUtil.installReferrer(joshApplication)
             return INSTANCE
         }
@@ -425,6 +426,19 @@ internal class AppObjectController {
             }
             return fetch as Fetch
         }
+
+        fun createDefaultCacheDir(): String {
+            val cache = File(joshApplication.cacheDir, JOSH_SKILLS_CACHE)
+            if (!cache.exists()) {
+                cache.mkdirs()
+            }
+            return getAppCachePath()
+        }
+
+        fun getAppCachePath(): String {
+            return "${joshApplication.cacheDir}/${JOSH_SKILLS_CACHE}"
+        }
+
     }
 }
 

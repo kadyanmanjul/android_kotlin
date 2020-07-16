@@ -1,8 +1,6 @@
 package com.joshtalks.joshskills.core.custom_ui
 
 
-import android.animation.Animator
-import android.animation.AnimatorListenerAdapter
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
@@ -14,14 +12,12 @@ import android.net.Uri
 import android.os.Build
 import android.os.Handler
 import android.util.AttributeSet
-import android.util.Log
 import android.util.Pair
 import android.view.LayoutInflater
 import android.view.Surface
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
-import android.view.animation.DecelerateInterpolator
 import android.widget.ProgressBar
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
@@ -37,11 +33,17 @@ import com.afollestad.materialdialogs.LayoutMode
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.bottomsheets.BottomSheet
 import com.afollestad.materialdialogs.customview.customView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.integration.webp.decoder.WebpDrawable
+import com.bumptech.glide.integration.webp.decoder.WebpDrawableTransformation
+import com.bumptech.glide.load.resource.bitmap.CircleCrop
+import com.bumptech.glide.request.target.Target
 import com.google.android.exoplayer2.C
 import com.google.android.exoplayer2.DefaultLoadControl
 import com.google.android.exoplayer2.DefaultLoadControl.DEFAULT_VIDEO_BUFFER_SIZE
 import com.google.android.exoplayer2.DefaultRenderersFactory
 import com.google.android.exoplayer2.ExoPlaybackException
+import com.google.android.exoplayer2.ExoPlaybackException.TYPE_SOURCE
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.PlaybackParameters
 import com.google.android.exoplayer2.Player
@@ -111,7 +113,8 @@ class MiniExoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibilit
     private lateinit var tvPlayerEndTime: AppCompatTextView
     private lateinit var tvPlayerCurrentTime: AppCompatTextView
     private lateinit var mProgressBar: CircularProgressBar
-    private lateinit var ivPlayPause: AppCompatImageView
+    private lateinit var placeHolderImageView: AppCompatImageView
+    private var mIsPlayerInit: Boolean = false
 
 
     private val timeRunnable: Runnable = object : Runnable {
@@ -187,9 +190,9 @@ class MiniExoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibilit
             }
             setPlayer(player)
             setupAudioFocus()
-            controllerAutoShow = false
+            controllerAutoShow = true
             controllerHideOnTouch = true
-            controllerShowTimeoutMs = 2500
+            // controllerShowTimeoutMs = 2500
             setControllerVisibilityListener(this)
             setErrorMessageProvider(PlayerErrorMessageProvider())
             requestFocus()
@@ -206,6 +209,7 @@ class MiniExoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibilit
         val mTextureFrame =
             LayoutInflater.from(context).inflate(R.layout.mini_player_media_view, this, false)
         addView(mTextureFrame)
+        placeHolderImageView = findViewById(R.id.exo_artwork)
         defaultTimeBar = findViewById(R.id.exo_progress)
         defaultTimeBar.callOnClick()
         progressBarBottom = findViewById(R.id.progress_bar_bottom)
@@ -213,14 +217,8 @@ class MiniExoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibilit
         tvPlayerEndTime = findViewById(R.id.tv_player_end_time)
         tvPlayerCurrentTime = findViewById(R.id.tv_player_current_time)
         mProgressBar = findViewById(R.id.progress_bar)
-        ivPlayPause = findViewById(R.id.play_pause_btn)
+        findViewById<View>(R.id.exo_buffering).visibility = View.GONE
     }
-
-
-    fun hideFullScreenController() {
-        imgFullScreenEnterExit.visibility = View.GONE
-    }
-
 
     private fun initListener() {
         imgFullScreenEnterExit.setOnClickListener {
@@ -259,53 +257,56 @@ class MiniExoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibilit
             ) {
             }
         })
-        ivPlayPause.setOnClickListener {
+        findViewById<View>(R.id.exo_play).setOnClickListener {
+            if (mIsPlayerInit) {
+                resumePlayer()
+            } else {
+                initVideo()
+            }
+        }
+        findViewById<View>(R.id.exo_pause).setOnClickListener {
+            if (mIsPlaying) {
+                pausePlayer()
+            }
+        }
+
+        findViewById<View>(R.id.img_bwd).setOnClickListener {
+            AppAnalytics.create(AnalyticsEvent.VIDEO_ACTION.NAME)
+                .addParam(AnalyticsEvent.VIDEO_ACTION.NAME, "10 sec forward").push()
+            seekTo(getCurrentPosition() - 10 * 1000)
+        }
+        findViewById<View>(R.id.img_fwd).setOnClickListener {
+            AppAnalytics.create(AnalyticsEvent.VIDEO_ACTION.NAME)
+                .addParam(AnalyticsEvent.VIDEO_ACTION.NAME, "10 sec backward").push()
+            seekTo(getCurrentPosition() + 10 * 1000)
+        }
+        findViewById<View>(R.id.img_fwd).setOnClickListener {
+
+        }
+        findViewById<View>(R.id.img_bwd).setOnClickListener {
+
+        }
+
+        /*ivPlayPause.setOnClickListener {
             if (mIsPlaying) {
                 pausePlayer()
             } else {
-                resumePlayer()
+                if (mIsPlayerInit) {
+                    resumePlayer()
+                } else {
+                    initVideo()
+                }
             }
-        }
+        }*/
     }
 
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
-        Log.e("onDetachedFromWindow", "MiniExoplayer")
-
         pausePlayer()
-
     }
 
-    private fun hidePlayButton() {
-        ivPlayPause.animate()?.setStartDelay(1000)?.alpha(0f)
-            ?.setListener(object : AnimatorListenerAdapter() {
-                override fun onAnimationEnd(animation: Animator) {
-                    ivPlayPause.visibility = View.GONE
-
-                }
-            })?.setInterpolator(DecelerateInterpolator())?.start()
-    }
-
-    private fun visiblePlayButton() {
-        if (isControllerVisible) {
-            return
-        }
-        ivPlayPause.animate()?.setStartDelay(500)?.alpha(1f)
-            ?.setListener(object : AnimatorListenerAdapter() {
-                override fun onAnimationEnd(animation: Animator) {
-                    ivPlayPause.visibility = View.VISIBLE
-                }
-            })?.setInterpolator(DecelerateInterpolator())?.start()
-    }
-
-    private fun playPauseState() {
-        if (mIsPlaying) {
-            ivPlayPause.setImageResource(R.drawable.ic_pause_notification)
-            hidePlayButton()
-        } else {
-            ivPlayPause.setImageResource(R.drawable.ic_play_notification)
-            visiblePlayButton()
-        }
+    fun getCurrentPosition(): Long {
+        return player?.currentPosition ?: -1
     }
 
     private fun setupAudioFocus() {
@@ -326,47 +327,43 @@ class MiniExoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibilit
     override fun onVisibilityChange(visibility: Int) {
         if (visibility == View.GONE) {
             if (mIsPlaying.not()) {
-                visiblePlayButton()
+                //  visiblePlayButton()
             }
             progressBarBottom.visibility = View.VISIBLE
         } else {
             progressBarBottom.visibility = View.GONE
             if (mIsPlaying) {
-                hidePlayButton()
+                //   hidePlayButton()
             }
         }
     }
 
-    private fun animateViewFade(view: View, alpha: Int) {
-        val viewVisibility = if (alpha > 0) View.VISIBLE else View.INVISIBLE
-        view.animate()
-            .alpha(alpha.toFloat())
-            .setListener(object : AnimatorListenerAdapter() {
-                override fun onAnimationEnd(animation: Animator) {
-                    view.visibility = viewVisibility
-                }
-            })
-    }
-
-
-    fun setVideoPlayerEventListener(playerListener: com.joshtalks.joshskills.core.videoplayer.VideoPlayerEventListener) {
-        this.playerListener = playerListener
-    }
-
-    fun setUrl(url: String?) {
+    fun setUrl(url: String?, placeHolderUrl: String? = null) {
         uri = Uri.parse(url)
+        if (placeHolderUrl.isNullOrEmpty().not()) {
+            setPlaceHolder(placeHolderUrl!!)
+        } else {
+
+        }
     }
 
-    fun initVideo() {
-        player?.playWhenReady = false
-        uri?.let {
-            player!!.prepare(
-                VideoDownloadController.getInstance().getMediaSource(uri),
-                false,
-                false
+    private fun setPlaceHolder(url: String) {
+        Glide.with(context)
+            .load(url)
+            .override(Target.SIZE_ORIGINAL)
+            .optionalTransform(
+                WebpDrawable::class.java,
+                WebpDrawableTransformation(CircleCrop())
             )
+            .into(placeHolderImageView)
+    }
+
+    private fun initVideo() {
+        uri?.let {
+            player!!.prepare(VideoDownloadController.getInstance().getMediaSource(uri), true, false)
         }
-        seekTo(lastPosition)
+        player?.playWhenReady = true
+        player?.playbackState
     }
 
     private fun playVideoInternal() {
@@ -380,19 +377,19 @@ class MiniExoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibilit
     }
 
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
-    fun onStartPlayer() {
-        if (player == null) {
-            initPlayer()
-            playVideoInternal()
-        }
-    }
+    /* @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
+     fun onStartPlayer() {
+         if (player == null) {
+             initPlayer()
+             playVideoInternal()
+         }
+     }*/
 
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
-    fun onResumePlayer() {
-        onResume()
-    }
+    /*  @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
+      fun onResumePlayer() {
+          onResume()
+      }*/
 
     @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
     fun onPausePlayer() {
@@ -427,7 +424,7 @@ class MiniExoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibilit
         return player?.isPlaying ?: false
     }
 
-    fun pausePlayer() {
+    private fun pausePlayer() {
         player?.run {
             playWhenReady = false
             playbackState
@@ -439,7 +436,6 @@ class MiniExoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibilit
         player?.run {
             playWhenReady = true
             playbackState
-            seekTo(this@MiniExoPlayer.currentPosition)
         }
     }
 
@@ -449,9 +445,6 @@ class MiniExoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibilit
         return renderersFactory
     }
 
-    fun getCurrentPosition(): Long {
-        return player?.currentPosition ?: -1
-    }
 
     fun seekTo(pos: Long) {
         player?.seekTo(pos)
@@ -461,7 +454,6 @@ class MiniExoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibilit
     private fun controllerAutoHideOnDelay() {
         controllerHandler.removeCallbacksAndMessages(null)
         controllerHandler.postDelayed({
-
         }, 3500)
     }
 
@@ -731,7 +723,6 @@ class MiniExoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibilit
                     videoQualityP = lisOfVideoQualityTrack[0].title
                 }
                 if (lisOfAudioLanguageTrack.isNullOrEmpty()) {
-
                     val mappedTrackInfo: MappingTrackSelector.MappedTrackInfo? =
                         trackSelector?.currentMappedTrackInfo
                     if (mappedTrackInfo != null) {
@@ -758,12 +749,9 @@ class MiniExoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibilit
         override fun onPlayerError(error: ExoPlaybackException) {
             super.onPlayerError(error)
             error.printStackTrace()
-        }
+            if (error.type == TYPE_SOURCE) {
+                mIsPlayerInit = false
 
-        override fun onLoadingChanged(isLoading: Boolean) {
-            super.onLoadingChanged(isLoading)
-            if (isLoading.not()) {
-                //  mProgressBar.visibility = View.GONE
             }
         }
 
@@ -774,6 +762,9 @@ class MiniExoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibilit
 
             if (playbackState == Player.STATE_READY) {
                 playerListener?.onPlayerReady()
+                if (mIsPlayerInit.not()) {
+                    mIsPlayerInit = true
+                }
             }
 
             playerListener?.onPlayerStateChanged(playWhenReady, playbackState)
@@ -806,8 +797,8 @@ class MiniExoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibilit
                     mProgressBar.visibility = View.VISIBLE
                 }
             }
-            playPauseState()
         }
+
     }
 }
 

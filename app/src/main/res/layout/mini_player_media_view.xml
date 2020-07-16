@@ -6,16 +6,17 @@
         android:layout_height="match_parent"
         tools:ignore="MissingDefaultResource">
 
-    <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/play_pause_btn"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="center"
-            android:background="@color/transparent_2"
-            android:scaleType="centerInside"
-            app:srcCompat="@drawable/ic_play_notification"
-            app:tint="@color/white"
-            tools:tint="red" />
+
+    <!-- <androidx.appcompat.widget.AppCompatImageView
+             android:id="@+id/play_pause_btn"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             android:layout_gravity="center"
+             android:background="@color/transparent_2"
+             android:scaleType="centerInside"
+             app:srcCompat="@drawable/ic_play_notification"
+             app:tint="@color/white"
+             tools:tint="red" />-->
 
     <com.mikhaellopez.circularprogressbar.CircularProgressBar
             android:id="@+id/progress_bar"
