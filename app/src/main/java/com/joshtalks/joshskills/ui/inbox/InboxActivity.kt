@@ -350,7 +350,6 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
 
         rxLocation.settings().checkAndHandleResolutionCompletable(locationRequest)
             .subscribeOn(Schedulers.computation())
-            .observeOn(Schedulers.computation())
             .subscribe(object : CompletableObserver {
                 override fun onSubscribe(d: Disposable) {
                 }
@@ -429,6 +428,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         findMoreLayout.visibility = View.VISIBLE
         attachOfferHintView()
     }
+
     private fun visibleShareEarn() {
         val url = AppObjectController.getFirebaseRemoteConfig().getString("EARN_SHARE_IMAGE_URL")
         var iconUri = Uri.parse(url)

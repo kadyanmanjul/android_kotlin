@@ -15,6 +15,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.widget.MarginPageTransformer
 import com.google.android.material.tabs.TabLayoutMediator
+import com.joshtalks.joshcamerax.utils.onPageSelected
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.CoreJoshActivity
@@ -24,6 +25,7 @@ import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.loadJSONFromAsset
 import com.joshtalks.joshskills.databinding.ActivityAssessmentBinding
 import com.joshtalks.joshskills.repository.server.assessment.AssessmentResponse
+import com.joshtalks.joshskills.repository.server.assessment.ChoiceType
 import com.joshtalks.joshskills.ui.assessment.viewholder.AssessmentQuestionAdapter
 
 class AssessmentActivity : CoreJoshActivity() {
@@ -32,6 +34,8 @@ class AssessmentActivity : CoreJoshActivity() {
     private val viewModel by lazy { ViewModelProvider(this).get(AssessmentViewModel::class.java) }
     private var assessmentId: Int = 0
     private var flowFrom: String? = null
+    private val hintOptionsSet = mutableSetOf<ChoiceType>()
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -125,7 +129,6 @@ class AssessmentActivity : CoreJoshActivity() {
         val adapter = AssessmentQuestionAdapter(assessmentResponse.questions)
         binding.questionViewPager.adapter = adapter
         TabLayoutMediator(binding.tabLayout, binding.questionViewPager) { tab, position ->
-            binding.questionViewPager.setCurrentItem(tab.position, true)
         }.attach()
         binding.questionViewPager.setPageTransformer(
             MarginPageTransformer(
@@ -134,7 +137,18 @@ class AssessmentActivity : CoreJoshActivity() {
                     16f
                 )
             )
+
         )
+        binding.questionViewPager.onPageSelected { position ->
+            val type = assessmentResponse.questions[position].choiceType
+            if (hintOptionsSet.contains(type).not()) {
+                assessmentResponse.intro.find { it.type == type }?.run {
+                    IntroQuestionFragment.newInstance(this)
+                        .show(supportFragmentManager, "Question Tip")
+                    hintOptionsSet.add(type)
+                }
+            }
+        }
 
     }
 }

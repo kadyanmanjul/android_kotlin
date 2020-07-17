@@ -260,7 +260,7 @@ dependencies {
     implementation 'androidx.tonyodev.fetch2okhttp:xfetch2okhttp:3.1.4'
 
     implementation 'org.jetbrains.anko:anko:0.10.8'
-    implementation 'com.karumi:dexter:6.2.0'
+    implementation 'com.karumi:dexter:6.2.1'
 
     implementation 'com.wonderkiln:camerakit:0.13.2'
     implementation 'com.camerakit:jpegkit:0.1.0'

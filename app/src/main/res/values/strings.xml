@@ -294,5 +294,6 @@
 
     <string name="start_quiz">Start Quiz</string>
     <string name="conversational_practise">Conversational Practice</string>
+    <string name="tap_to_continue">Tap to continue</string>
 
 </resources>

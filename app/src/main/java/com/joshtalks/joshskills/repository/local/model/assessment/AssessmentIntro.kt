@@ -44,15 +44,15 @@ data class AssessmentIntro(
 
     @ColumnInfo
     @SerializedName("title")
-    val title: String,
+    val title: String?,
 
     @ColumnInfo
     @SerializedName("description")
-    val description: String,
+    val description: String?,
 
     @ColumnInfo
     @SerializedName("image_url")
-    val imageUrl: String
+    val imageUrl: String?
 
 ) : Parcelable {
 

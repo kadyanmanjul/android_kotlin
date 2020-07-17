@@ -11,12 +11,13 @@
       "type": "SINGLE_SELECTION_TEXT",
       "title": "MCQ (Multiple Answer)",
       "description": "Lorem ipsum dolor sit amet, constur adipiscg elit lorem ipsum lorem ipsss",
-      "image_url": "https://image.png"
-    },{
-      "type": "MULTI_SELECTION_TEXT",
+      "image_url": "https://s3.ap-south-1.amazonaws.com/www.static.skills.com/misc/Spoken+English+Vedant.jpg"
+    },
+    {
+      "type": "MULTI_SELECTION_IMAGE",
       "title": "MCQ (Multiple Answer)",
       "description": "Lorem ipsum dolor sit amet, constur adipiscg elit lorem ipsum lorem ipsss",
-      "image_url": "https://image.png"
+      "image_url": "https://s3.ap-south-1.amazonaws.com/www.static.skills.com/misc/1489187.jpg"
     }
   ],
   "questions": [
@@ -164,7 +165,7 @@
       "media_url": "https://s3.ap-south-1.amazonaws.com/www.static.skills.com/Course+Information/Ritesh_Malik_Thumbnail.png",
       "media_type": "IMAGE",
       "video_thumbnail_url": null,
-      "choice_type": "SINGLE_SELECTION_TEXT",
+      "choice_type": "MULTI_SELECTION_IMAGE",
       "choices": [
         {
           "id": 1,
