@@ -363,7 +363,6 @@ internal class AppObjectController {
                     .setImportance(NotificationManagerCompat.IMPORTANCE_MAX)
                 freshChat.setNotificationConfig(notificationConfig)
             } catch (ex: Exception) {
-                ex.printStackTrace()
             }
         }
 
