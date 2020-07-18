@@ -306,7 +306,7 @@ dependencies {
     implementation 'com.github.barteksc:android-pdf-viewer:3.2.0-beta.1'
     implementation 'com.tbuonomo.andrui:viewpagerdotsindicator:4.1.2'
 
-    testImplementation 'junit:junit:4.13'
+    testApi 'junit:junit:4.13'
     androidTestImplementation 'androidx.test:runner:1.2.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
     // fresh chat
