@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+    <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/attempt_status"
+            fontPath="fonts/Roboto-Medium.ttf"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_13sdp"
+            android:layout_marginTop="@dimen/_19sdp"
+            android:background="@drawable/round_rectangle_for_course_expo"
+            android:backgroundTint="@color/button_color"
+            android:paddingHorizontal="@dimen/_10sdp"
+            android:paddingVertical="@dimen/_3sdp"
+            android:textColor="@color/white"
+            android:textSize="@dimen/font_10"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Not Attempted" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/question"
+            fontPath="fonts/Roboto-Medium.ttf"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:layout_marginHorizontal="@dimen/_12sdp"
+            android:layout_marginTop="@dimen/_6sdp"
+            android:gravity="center|start"
+            android:letterSpacing="0.04"
+            android:paddingBottom="@dimen/_4sdp"
+            android:textColor="@color/black"
+            android:textSize="@dimen/font_14"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/attempt_status"
+            tools:text="Lorem ipsum dolor sit amet, constur adipiscg elit lorem ipsum lorem ipsss" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/test_button"
+            fontPath="fonts/Roboto-Bold.ttf"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="@dimen/_8sdp"
+            android:layout_marginStart="@dimen/_13sdp"
+            android:background="@drawable/rectangle_with_blue_bound_stroke"
+            android:paddingHorizontal="@dimen/_16sdp"
+            android:paddingVertical="@dimen/_5sdp"
+            android:textColor="@color/button_color"
+            android:textSize="@dimen/font_16"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/question"
+            tools:text="@string/edit_answer" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

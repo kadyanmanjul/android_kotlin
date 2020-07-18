@@ -32,6 +32,22 @@ data class Assessment(
     @SerializedName("id")
     var remoteId: Int,
 
+    @ColumnInfo(name = "icon_url")
+    @SerializedName("icon_url")
+    var iconUrl: String?,
+
+    @ColumnInfo(name = "text1")
+    @SerializedName("text1")
+    var text1: String?,
+
+    @ColumnInfo(name = "text2")
+    @SerializedName("text2")
+    var text2: String?,
+
+    @ColumnInfo(name = "score_text")
+    @SerializedName("score_text")
+    var scoreText: String?,
+
     @ColumnInfo
     @SerializedName("heading")
     val heading: String,
@@ -67,6 +83,10 @@ data class Assessment(
         imageUrl = assessmentResponse.imageUrl,
         description = assessmentResponse.description,
         type = assessmentResponse.type,
-        status = assessmentResponse.status
+        status = assessmentResponse.status,
+        iconUrl = null,
+        text1 = null,
+        text2 = null,
+        scoreText = null
     )
 }

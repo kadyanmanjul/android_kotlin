@@ -2,6 +2,7 @@ package com.joshtalks.joshskills.repository.service
 
 import com.joshtalks.joshskills.repository.local.entity.Course
 import com.joshtalks.joshskills.repository.local.entity.PracticeEngagement
+import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentWithRelations
 import com.joshtalks.joshskills.repository.server.AmazonPolicyResponse
 import com.joshtalks.joshskills.repository.server.ChatMessageReceiver
 import com.joshtalks.joshskills.repository.server.CoursePerformanceResponse
@@ -84,5 +85,15 @@ interface ChatNetworkService {
     suspend fun getAssessmentId(
         @Path("id") id: Int
     ): Response<AssessmentResponse>
+
+    @POST("$DIR/assessment/answer")
+    suspend fun submitTestAsync(
+        assessmentWithRelations: AssessmentWithRelations
+    )
+
+    @GET("$DIR/assessment/report/{id}/")
+    suspend fun getTestReport(
+        @Path("id") id: Int
+    ) : Response<AssessmentWithRelations>
 
 }
