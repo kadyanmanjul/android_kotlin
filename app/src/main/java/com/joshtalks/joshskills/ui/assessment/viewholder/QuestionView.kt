@@ -16,15 +16,15 @@ import com.bumptech.glide.request.target.Target
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.custom_ui.MiniExoPlayer
 import com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionWithRelations
 import com.joshtalks.joshskills.repository.server.assessment.AssessmentMediaType
-import com.joshtalks.joshskills.repository.server.assessment.AssessmentQuestionResponse
 import com.joshtalks.joshskills.ui.assessment.view.AudioPlayerView
 import com.joshtalks.joshskills.ui.assessment.view.Stub
 import timber.log.Timber
 
 class QuestionView : FrameLayout {
 
-    private var message: AssessmentQuestionResponse? = null
+    private var assessmentQuestion: AssessmentQuestionWithRelations? = null
     private lateinit var questionTV: JoshTextView
     private lateinit var cardView: CardView
     private var miniExoPlayerStub: Stub<MiniExoPlayer>? = null
@@ -59,8 +59,8 @@ class QuestionView : FrameLayout {
     }
 
 
-    fun bind(message: AssessmentQuestionResponse) {
-        this.message = message
+    fun bind(assessmentQuestion: AssessmentQuestionWithRelations) {
+        this.assessmentQuestion = assessmentQuestion
         setUpUI()
     }
 
@@ -68,15 +68,16 @@ class QuestionView : FrameLayout {
     }
 
     private fun setUpUI() {
-        message?.let { it ->
-            questionTV.text = HtmlCompat.fromHtml(it.text, HtmlCompat.FROM_HTML_MODE_LEGACY)
-            when (it.mediaType) {
+        assessmentQuestion?.let { it ->
+            questionTV.text =
+                HtmlCompat.fromHtml(it.question.text, HtmlCompat.FROM_HTML_MODE_LEGACY)
+            when (it.question.mediaType) {
                 AssessmentMediaType.IMAGE -> {
                     imageViewStub?.run {
                         if (this.resolved().not()) {
                             this.get()?.let { imageView ->
                                 Glide.with(context)
-                                    .load(it.mediaUrl)
+                                    .load(it.question.mediaUrl)
                                     .override(Target.SIZE_ORIGINAL)
                                     .optionalTransform(
                                         WebpDrawable::class.java,
@@ -93,7 +94,8 @@ class QuestionView : FrameLayout {
                 AssessmentMediaType.AUDIO -> {
                     audioPlayerStub?.run {
                         if (this.resolved().not()) {
-                            this.get()?.setupAudio(it.id.toString(), it.mediaUrl)
+                            this.get()
+                                ?.setupAudio(it.question.remoteId.toString(), it.question.mediaUrl)
                             cardView.cardElevation = 0F
                             cardView.radius = 0F
                         }
@@ -103,7 +105,7 @@ class QuestionView : FrameLayout {
                 AssessmentMediaType.VIDEO -> {
                     miniExoPlayerStub?.run {
                         if (this.resolved().not()) {
-                            this.get()?.setUrl(it.mediaUrl, it.videoThumbnailUrl)
+                            this.get()?.setUrl(it.question.mediaUrl, it.question.videoThumbnailUrl)
                         }
                     }
                     return@let

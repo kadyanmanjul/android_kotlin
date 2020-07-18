@@ -24,6 +24,7 @@ import com.joshtalks.joshskills.core.STARTED_FROM
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.loadJSONFromAsset
 import com.joshtalks.joshskills.databinding.ActivityAssessmentBinding
+import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentWithRelations
 import com.joshtalks.joshskills.repository.server.assessment.AssessmentResponse
 import com.joshtalks.joshskills.repository.server.assessment.ChoiceType
 import com.joshtalks.joshskills.ui.assessment.viewholder.AssessmentQuestionAdapter
@@ -125,8 +126,15 @@ class AssessmentActivity : CoreJoshActivity() {
             AssessmentResponse::class.java
         )
 
+        val data = AssessmentWithRelations(assessmentResponse)
+
         // binding.questionViewPager.offscreenPageLimit=1
-        val adapter = AssessmentQuestionAdapter(assessmentResponse.questions)
+        val adapter = AssessmentQuestionAdapter(
+            data.assessment.type,
+            data.assessment.status,
+            AssessmentQuestionViewType.CORRECT_ANSWER_VIEW,
+            data.questionList
+        )
         binding.questionViewPager.adapter = adapter
         TabLayoutMediator(binding.tabLayout, binding.questionViewPager) { tab, position ->
         }.attach()

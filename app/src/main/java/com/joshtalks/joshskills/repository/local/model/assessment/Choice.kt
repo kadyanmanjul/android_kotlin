@@ -14,7 +14,7 @@ import com.joshtalks.joshskills.repository.server.assessment.ChoiceResponse
 import kotlinx.android.parcel.Parcelize
 
 @Entity(
-    tableName = "assessment_answer", foreignKeys = [
+    tableName = "assessment_choice", foreignKeys = [
         ForeignKey(
             entity = AssessmentQuestion::class,
             parentColumns = arrayOf("remoteId"),
@@ -71,7 +71,7 @@ data class Choice(
 
     @ColumnInfo
     @SerializedName("is_selected_by_user")
-    val isSelectedByUser: Boolean? = false
+    var isSelectedByUser: Boolean = false
 
 ) : Parcelable {
 

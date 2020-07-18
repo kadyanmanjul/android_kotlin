@@ -1,12 +1,21 @@
 package com.joshtalks.joshskills.ui.assessment.viewholder
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.joshtalks.joshskills.databinding.AssessmentListItemBinding
-import com.joshtalks.joshskills.repository.server.assessment.AssessmentQuestionResponse
+import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionWithRelations
+import com.joshtalks.joshskills.repository.server.assessment.AssessmentStatus
+import com.joshtalks.joshskills.repository.server.assessment.AssessmentType
+import com.joshtalks.joshskills.ui.assessment.AssessmentQuestionViewType
 
-class AssessmentQuestionAdapter(private var items: List<AssessmentQuestionResponse>) :
+class AssessmentQuestionAdapter(
+    private var type: AssessmentType,
+    private var status: AssessmentStatus,
+    private var viewType: AssessmentQuestionViewType,
+    private var questionList: List<AssessmentQuestionWithRelations>
+) :
     RecyclerView.Adapter<AssessmentQuestionAdapter.ViewHolder>() {
     init {
         setHasStableIds(true)
@@ -26,19 +35,20 @@ class AssessmentQuestionAdapter(private var items: List<AssessmentQuestionRespon
         }
     }
 
-    override fun getItemCount(): Int = items.size
+    override fun getItemCount(): Int = questionList.size
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        return holder.bind(items[position])
+        return holder.bind(questionList[position])
     }
 
     override fun onViewRecycled(holder: ViewHolder) {
         super.onViewRecycled(holder)
         holder.binding.questionView.unBind()
+        holder.binding.choiceView.unBind()
     }
 
     override fun getItemViewType(position: Int): Int {
-        return items[position].mediaType.valType
+        return questionList[position].question.mediaType.valType
     }
 
     override fun getItemId(position: Int): Long {
@@ -47,8 +57,9 @@ class AssessmentQuestionAdapter(private var items: List<AssessmentQuestionRespon
 
     inner class ViewHolder(val binding: AssessmentListItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(obj: AssessmentQuestionResponse) {
-            binding.questionView.bind(obj)
+        fun bind(assessmentQuestion: AssessmentQuestionWithRelations) {
+            binding.questionView.bind(assessmentQuestion)
+            binding.choiceView.bind(type, status, viewType, assessmentQuestion)
         }
     }
 

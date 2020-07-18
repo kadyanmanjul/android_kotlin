@@ -259,9 +259,9 @@ abstract class AppDatabase : RoomDatabase() {
                 database.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS `index_assessment_questions_remoteId` ON `assessment_questions` (`remoteId`)")
 
 
-                database.execSQL("CREATE TABLE IF NOT EXISTS `assessment_answer` (`localId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `remoteId` INTEGER NOT NULL, `questionId` INTEGER NOT NULL, `text` TEXT, `imageUrl` TEXT, `isCorrect` INTEGER NOT NULL, `sortOrder` INTEGER NOT NULL, `correctAnswerOrder` INTEGER NOT NULL, `column` TEXT NOT NULL, `userSelectedOrder` INTEGER NOT NULL, `isSelectedByUser` INTEGER, FOREIGN KEY(`questionId`) REFERENCES `assessment_questions`(`remoteId`) ON UPDATE NO ACTION ON DELETE CASCADE )")
-                database.execSQL("CREATE INDEX IF NOT EXISTS `index_assessment_answer_questionId` ON `assessment_answer` (`questionId`)")
-                database.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS `index_assessment_answer_remoteId` ON `assessment_answer` (`remoteId`)")
+                database.execSQL("CREATE TABLE IF NOT EXISTS `assessment_choice` (`localId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `remoteId` INTEGER NOT NULL, `questionId` INTEGER NOT NULL, `text` TEXT, `imageUrl` TEXT, `isCorrect` INTEGER NOT NULL, `sortOrder` INTEGER NOT NULL, `correctAnswerOrder` INTEGER NOT NULL, `column` TEXT NOT NULL, `userSelectedOrder` INTEGER NOT NULL, `isSelectedByUser` INTEGER NOT NULL, FOREIGN KEY(`questionId`) REFERENCES `assessment_questions`(`remoteId`) ON UPDATE NO ACTION ON DELETE CASCADE )")
+                database.execSQL("CREATE INDEX IF NOT EXISTS `index_assessment_answer_questionId` ON `assessment_choice` (`questionId`)")
+                database.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS `index_assessment_answer_remoteId` ON `assessment_choice` (`remoteId`)")
 
 
                 database.execSQL("CREATE TABLE IF NOT EXISTS `assessment_revise_concept` (`localId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `questionId` INTEGER NOT NULL, `heading` TEXT NOT NULL, `title` TEXT NOT NULL, `description` TEXT NOT NULL, `mediaUrl` TEXT NOT NULL, `mediaType` TEXT NOT NULL, `videoThumbnailUrl` TEXT, FOREIGN KEY(`questionId`) REFERENCES `assessment_questions`(`localId`) ON UPDATE NO ACTION ON DELETE CASCADE )")
