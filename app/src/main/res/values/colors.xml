@@ -85,5 +85,6 @@
     <color name="wrong_answer">#9D1515</color>
     <color name="light_red">#FFF2F2</color>
     <color name="transparent_2">#884b4949</color>
+    <color name="red">#9D1515</color>
 
 </resources>

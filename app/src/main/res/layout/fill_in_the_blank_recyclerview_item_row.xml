@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingStart="@dimen/_2sdp"
+            android:paddingTop="@dimen/_4sdp"
+            android:paddingEnd="@dimen/_2sdp">
+
+        <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/item_description"
+                fontPath="fonts/Roboto-Regular.ttf"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/round_rect_default"
+                android:gravity="center"
+                android:paddingStart="@dimen/_8sdp"
+                android:paddingTop="@dimen/_8sdp"
+                android:paddingEnd="@dimen/_8sdp"
+                android:paddingBottom="@dimen/_2sdp"
+                android:textColor="@color/button_primary_color"
+                android:textSize="@dimen/font_15"
+                app:elevation="0dp" />
+
+        <View
+                android:id="@+id/underline"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_1sdp"
+                android:layout_below="@+id/item_description"
+                android:layout_alignLeft="@+id/item_description"
+                android:layout_alignRight="@+id/item_description"
+                android:layout_gravity="center"
+                android:layout_marginVertical="@dimen/_4sdp"
+                android:background="@color/green" />
+
+    </RelativeLayout>
+</layout>

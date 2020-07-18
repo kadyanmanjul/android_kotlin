@@ -15,7 +15,7 @@ data class ChoiceResponse(
     val text: String?,
 
     @SerializedName("image_url")
-    val imageUrl: String,
+    val imageUrl: String?,
 
     @SerializedName("is_correct")
     val isCorrect: Boolean,
@@ -30,7 +30,7 @@ data class ChoiceResponse(
     val column: ChoiceColumn,
 
     @SerializedName("selected_order")
-    val userSelectedOrder: Int = -1,
+    var userSelectedOrder: Int = 100,
 
     @SerializedName("is_selected_by_user")
     var isSelectedByUser: Boolean = false

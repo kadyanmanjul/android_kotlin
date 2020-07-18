@@ -10,6 +10,7 @@ import com.joshtalks.joshskills.repository.server.assessment.AssessmentStatus
 import com.joshtalks.joshskills.repository.server.assessment.AssessmentType
 import com.joshtalks.joshskills.repository.server.assessment.ChoiceType
 import com.joshtalks.joshskills.ui.assessment.AssessmentQuestionViewType
+import com.joshtalks.joshskills.ui.assessment.view.FillInTheBlankChoiceView
 import com.joshtalks.joshskills.ui.assessment.view.MCQChoicesView
 import com.joshtalks.joshskills.ui.assessment.view.Stub
 
@@ -19,6 +20,7 @@ class ChoiceView : FrameLayout {
     private var assessmentStatus: AssessmentStatus? = null
     private var viewType = AssessmentQuestionViewType.CORRECT_ANSWER_VIEW
     private var assessmentQuestion: AssessmentQuestionWithRelations? = null
+    private var fillInTheBlankChoiceStub: Stub<FillInTheBlankChoiceView>? = null
     private var mcqChoicesStub: Stub<MCQChoicesView>? = null
 
     constructor(context: Context) : super(context) {
@@ -40,6 +42,7 @@ class ChoiceView : FrameLayout {
     private fun init() {
         View.inflate(context, R.layout.choice_view, this)
         mcqChoicesStub = Stub(findViewById(R.id.single_selection_text_stub))
+        fillInTheBlankChoiceStub = Stub(findViewById(R.id.fill_in_yhe_blank_stub))
         setUpUI()
     }
 
@@ -81,8 +84,31 @@ class ChoiceView : FrameLayout {
                     return@let
                 }
 
-                ChoiceType.FILL_IN_THE_BLANKS_TEXT -> {
+                ChoiceType.SINGLE_SELECTION_IMAGE -> {
                     null
+                }
+
+                ChoiceType.MULTI_SELECTION_TEXT -> {
+                    null
+                }
+
+                ChoiceType.MULTI_SELECTION_IMAGE -> {
+                    null
+                }
+
+                ChoiceType.FILL_IN_THE_BLANKS_TEXT -> {
+                    fillInTheBlankChoiceStub?.run {
+                        if (this.resolved().not()) {
+                            this.get()
+                                ?.bind(
+                                    assessmentType!!,
+                                    assessmentStatus!!,
+                                    viewType,
+                                    assessmentQuestion
+                                )
+                        }
+                    }
+                    return@let
                 }
 
                 ChoiceType.MATCH_TEXT -> {

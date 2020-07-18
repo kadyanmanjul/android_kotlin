@@ -30,11 +30,11 @@
       "media_url": "https://s3.ap-south-1.amazonaws.com/www.static.skills.com/misc/Spoken+English+Vedant.jpg",
       "media_type": "IMAGE",
       "video_thumbnail_url": null,
-      "choice_type": "SINGLE_SELECTION_TEXT",
+      "choice_type": "FILL_IN_THE_BLANKS_TEXT",
       "choices": [
         {
           "id": 1,
-          "text": null,
+          "text":"Start" ,
           "image_url": null,
           "is_correct": true,
           "sort_order": 1,
@@ -43,7 +43,40 @@
         },
         {
           "id": 3,
+          "text": "nulla h uyg uble",
+          "image_url": "https://i.png  nullable",
+          "is_correct": true,
+          "sort_order": 1,
+          "card_side": "LEFT",
+          "answer_order": 1
+        },{
+          "id": 13,
+          "text": "zdasdfadfv",
+          "image_url": "https://i.png  nullable",
+          "is_correct": true,
+          "sort_order": 1,
+          "card_side": "LEFT",
+          "answer_order": 1
+        },{
+          "id": 14,
+          "text": "am",
+          "image_url": null,
+          "is_correct": true,
+          "sort_order": 1,
+          "card_side": "LEFT",
+          "answer_order": 1
+        },
+        {
+          "id": 15,
           "text": "nullable",
+          "image_url": "https://i.png  nullable",
+          "is_correct": true,
+          "sort_order": 1,
+          "card_side": "LEFT",
+          "answer_order": 1
+        },{
+          "id": 16,
+          "text": "I",
           "image_url": "https://i.png  nullable",
           "is_correct": true,
           "sort_order": 1,
