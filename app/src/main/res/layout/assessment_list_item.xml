@@ -8,16 +8,28 @@
                 type="com.joshtalks.joshskills.repository.server.assessment.AssessmentQuestionResponse" />
     </data>
 
-    <LinearLayout
+    <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal">
+            android:layout_height="match_parent">
 
-        <com.joshtalks.joshskills.ui.assessment.viewholder.QuestionView
-                android:id="@+id/question_view"
+        <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/_500sdp" />
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
 
+            <com.joshtalks.joshskills.ui.assessment.viewholder.QuestionView
+                    android:id="@+id/question_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
 
-    </LinearLayout>
+            <com.joshtalks.joshskills.ui.assessment.viewholder.ChoiceView
+                    android:id="@+id/choice_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_14sdp" />
+
+        </LinearLayout>
+
+    </ScrollView>
+
 </layout>

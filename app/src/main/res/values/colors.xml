@@ -40,8 +40,8 @@
     <color name="color_success">#4CAF50</color>
     <color name="action_color">#4bb543</color>
 
-    <color name="red_color">#E33333</color>
-    <color name="error_color">#E33333</color>
+    <color name="red_color">#D32525</color>
+    <color name="error_color">#D32525</color>
 
 
     <color name="audio_card_color">#F7F7F7</color>
@@ -79,7 +79,11 @@
     <color name="green">#20BA70</color>
     <color name="transparent">#00000000</color>
     <color name="faq_f1">#F1F7FE</color>
+    <color name="artboard_color">#F1F2F4</color>
+    <color name="green_right_answer">#129E88</color>
+    <color name="lighter_green">#ECF8F6</color>
+    <color name="wrong_answer">#9D1515</color>
+    <color name="light_red">#FFF2F2</color>
     <color name="transparent_2">#884b4949</color>
-
 
 </resources>
