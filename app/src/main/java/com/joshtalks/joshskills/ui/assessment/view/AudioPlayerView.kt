@@ -12,21 +12,31 @@ import android.widget.TextView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.core.showToast
 import com.tonyodev.fetch2.Download
 import com.tonyodev.fetch2.Error
+import com.tonyodev.fetch2.Fetch
+import com.tonyodev.fetch2.FetchConfiguration
 import com.tonyodev.fetch2.FetchListener
+import com.tonyodev.fetch2.HttpUrlConnectionDownloader
 import com.tonyodev.fetch2.NetworkType
 import com.tonyodev.fetch2.Priority
 import com.tonyodev.fetch2.Request
 import com.tonyodev.fetch2core.DownloadBlock
+import com.tonyodev.fetch2core.Downloader
 import com.tonyodev.fetch2core.Func
 import dm.audiostreamer.AudioStreamingManager
 import dm.audiostreamer.CurrentSessionCallback
 import dm.audiostreamer.MediaMetaData
 import io.reactivex.disposables.CompositeDisposable
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.io.File
+import kotlin.random.Random
 
 
 class AudioPlayerView : FrameLayout, View.OnClickListener, CurrentSessionCallback {
@@ -44,6 +54,7 @@ class AudioPlayerView : FrameLayout, View.OnClickListener, CurrentSessionCallbac
     private var audioFile: File? = null
     private var mediaDuration: Long? = null
     private var compositeDisposable = CompositeDisposable()
+    private val jobs = arrayListOf<Job>()
 
     private var downloadListener = object : FetchListener {
         override fun onAdded(download: Download) {
@@ -53,9 +64,17 @@ class AudioPlayerView : FrameLayout, View.OnClickListener, CurrentSessionCallbac
         }
 
         override fun onCompleted(download: Download) {
-            audioFile = File(download.file)
-            audioFile?.run {
-                playPause(this)
+            val fileName = Utils.getFileNameFromURL(url)
+            val cacheFile = File(AppObjectController.createDefaultCacheDir(), fileName)
+            cacheFile.createNewFile()
+            if (AppDirectory.copy(download.file, cacheFile.absolutePath)) {
+                audioFile = cacheFile
+                audioFile?.run {
+                    if ((streamingManager != null && streamingManager!!.isPlaying).not()) {
+                        playPause(this)
+                    }
+                    AppDirectory.deleteFile(download.file)
+                }
             }
         }
 
@@ -67,17 +86,16 @@ class AudioPlayerView : FrameLayout, View.OnClickListener, CurrentSessionCallbac
             downloadBlock: DownloadBlock,
             totalBlocks: Int
         ) {
-
         }
 
         override fun onError(download: Download, error: Error, throwable: Throwable?) {
             throwable?.printStackTrace()
+            onDownloadIssue()
             progressWheel.visibility = View.GONE
             showToast(context.getString(R.string.something_went_wrong))
         }
 
         override fun onPaused(download: Download) {
-
         }
 
         override fun onProgress(
@@ -88,15 +106,13 @@ class AudioPlayerView : FrameLayout, View.OnClickListener, CurrentSessionCallbac
         }
 
         override fun onQueued(download: Download, waitingOnNetwork: Boolean) {
-
         }
 
         override fun onRemoved(download: Download) {
-
+            onDownloadIssue()
         }
 
         override fun onResumed(download: Download) {
-
         }
 
         override fun onStarted(
@@ -104,13 +120,15 @@ class AudioPlayerView : FrameLayout, View.OnClickListener, CurrentSessionCallbac
             downloadBlocks: List<DownloadBlock>,
             totalBlocks: Int
         ) {
+            playButton.visibility = View.GONE
         }
+
 
         override fun onWaitingNetwork(download: Download) {
         }
 
-    }
 
+    }
 
     constructor(context: Context) : super(context) {
         init()
@@ -303,19 +321,26 @@ class AudioPlayerView : FrameLayout, View.OnClickListener, CurrentSessionCallbac
 
     private fun downloadAndPlay(url: String) {
         try {
-            val fileName = Utils.getFileNameFromURL(url)
+
+            val fileName = Random(1000).nextInt().toString().plus(Utils.getFileNameFromURL(url))
             val cacheFile = File(AppObjectController.createDefaultCacheDir(), fileName)
             cacheFile.createNewFile()
             val request = Request(url, cacheFile.absolutePath)
+            request.identifier = Random(1000L).nextLong()
             request.priority = Priority.HIGH
-            request.networkType = NetworkType.ALL
             request.tag = id
-            AppObjectController.getFetchObject().addListener(downloadListener)
-            AppObjectController.getFetchObject().enqueue(request, Func {
-            },
-                Func {
+            jobs += CoroutineScope(Dispatchers.IO).launch {
+                AppObjectController.getFetchObject()
+                    .addListener(downloadListener)
+                    .enqueue(request, Func {
+                    },
+                        Func {
+                            it.throwable?.printStackTrace()
+                            onDownloadIssue()
+                        }).awaitFinishOrTimeout(20000)
+            }
 
-                })
+
         } catch (ex: Exception) {
             ex.printStackTrace()
         }
@@ -349,5 +374,23 @@ class AudioPlayerView : FrameLayout, View.OnClickListener, CurrentSessionCallbac
         Timber.tag("onDetachedFromWindow").e("AudioPlayer")
     }
 
+    fun onDownloadIssue() {
+        progressWheel.visibility = View.GONE
+        pausingAudio()
+    }
 
+    fun getLocalFetch(): Fetch {
+        val fetchConfiguration = FetchConfiguration.Builder(AppObjectController.joshApplication)
+            .enableRetryOnNetworkGain(true)
+            .enableLogging(true)
+            .setAutoRetryMaxAttempts(1)
+            .enableFileExistChecks(true)
+            .enableHashCheck(true)
+            .createDownloadFileOnEnqueue(false)
+            .setGlobalNetworkType(NetworkType.ALL)
+            .setHttpDownloader(HttpUrlConnectionDownloader(Downloader.FileDownloaderType.PARALLEL))
+            .build()
+        return Fetch.getInstance(fetchConfiguration)
+
+    }
 }

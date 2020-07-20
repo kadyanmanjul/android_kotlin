@@ -303,6 +303,7 @@
                 android:name="dm.audiostreamer.AudioStreamingService"
                 android:enabled="true"
                 android:exported="true"
+                android:permission="android.permission.BIND_JOB_SERVICE"
                 tools:ignore="ExportedService" />
 
         <service

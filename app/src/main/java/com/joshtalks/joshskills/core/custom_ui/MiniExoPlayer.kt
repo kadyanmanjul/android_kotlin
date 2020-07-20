@@ -47,7 +47,6 @@ import com.google.android.exoplayer2.ExoPlaybackException.TYPE_SOURCE
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.PlaybackParameters
 import com.google.android.exoplayer2.Player
-import com.google.android.exoplayer2.Player.STATE_BUFFERING
 import com.google.android.exoplayer2.Player.STATE_IDLE
 import com.google.android.exoplayer2.RenderersFactory
 import com.google.android.exoplayer2.SimpleExoPlayer
@@ -73,7 +72,6 @@ import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.service.video_download.VideoDownloadController
 import com.joshtalks.joshskills.core.videoplayer.VideoPlayerEventListener
-import com.mikhaellopez.circularprogressbar.CircularProgressBar
 import java.util.*
 
 class MiniExoPlayer : PlayerView, LifecycleObserver, PlayerControlView.VisibilityListener {
@@ -112,7 +110,6 @@ class MiniExoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibilit
     private lateinit var imgFullScreenEnterExit: AppCompatImageView
     private lateinit var tvPlayerEndTime: AppCompatTextView
     private lateinit var tvPlayerCurrentTime: AppCompatTextView
-    private lateinit var mProgressBar: CircularProgressBar
     private lateinit var placeHolderImageView: AppCompatImageView
     private var mIsPlayerInit: Boolean = false
 
@@ -141,8 +138,7 @@ class MiniExoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibilit
     init {
         initPlayer()
         am = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
-
-    }
+       }
 
     private fun initPlayer() {
         activity = context.activity()
@@ -216,7 +212,6 @@ class MiniExoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibilit
         imgFullScreenEnterExit = findViewById(R.id.img_full_screen_enter_exit)
         tvPlayerEndTime = findViewById(R.id.tv_player_end_time)
         tvPlayerCurrentTime = findViewById(R.id.tv_player_current_time)
-        mProgressBar = findViewById(R.id.progress_bar)
         findViewById<View>(R.id.exo_buffering).visibility = View.GONE
     }
 
@@ -265,9 +260,7 @@ class MiniExoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibilit
             }
         }
         findViewById<View>(R.id.exo_pause).setOnClickListener {
-            if (mIsPlaying) {
-                pausePlayer()
-            }
+            pausePlayer()
         }
 
         findViewById<View>(R.id.img_bwd).setOnClickListener {
@@ -280,24 +273,6 @@ class MiniExoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibilit
                 .addParam(AnalyticsEvent.VIDEO_ACTION.NAME, "10 sec backward").push()
             seekTo(getCurrentPosition() + 10 * 1000)
         }
-        findViewById<View>(R.id.img_fwd).setOnClickListener {
-
-        }
-        findViewById<View>(R.id.img_bwd).setOnClickListener {
-
-        }
-
-        /*ivPlayPause.setOnClickListener {
-            if (mIsPlaying) {
-                pausePlayer()
-            } else {
-                if (mIsPlayerInit) {
-                    resumePlayer()
-                } else {
-                    initVideo()
-                }
-            }
-        }*/
     }
 
     override fun onDetachedFromWindow() {
@@ -343,7 +318,6 @@ class MiniExoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibilit
         if (placeHolderUrl.isNullOrEmpty().not()) {
             setPlaceHolder(placeHolderUrl!!)
         } else {
-
         }
     }
 
@@ -775,28 +749,11 @@ class MiniExoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibilit
                 ExoPlayer.STATE_IDLE -> "idle"
                 else -> "unknownState$playbackState"
             }
-            if (playbackState == STATE_BUFFERING) {
-                mProgressBar.visibility = View.VISIBLE
-
-            } else {
-                mProgressBar.visibility = View.GONE
-            }
-
         }
 
         override fun onIsPlayingChanged(isPlaying: Boolean) {
             super.onIsPlayingChanged(isPlaying)
             mIsPlaying = isPlaying
-            if (isPlaying) {
-                timeHandler.postDelayed({
-                    mProgressBar.visibility = View.GONE
-                }, 500)
-
-            } else {
-                if (playbackState == STATE_BUFFERING) {
-                    mProgressBar.visibility = View.VISIBLE
-                }
-            }
         }
 
     }
