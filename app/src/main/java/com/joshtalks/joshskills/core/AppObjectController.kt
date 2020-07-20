@@ -170,6 +170,7 @@ internal class AppObjectController {
             configureCrashlytics()
             initFlurryAnalytics()
             initNewRelic()
+            initialiseFreshchat()
 
             gsonMapper = GsonBuilder()
                 .enableComplexMapKeySerialization()
@@ -452,7 +453,6 @@ internal class AppObjectController {
                     )
                 )
                 InstallReferralUtil.installReferrer(joshApplication)
-                initialiseFreshchat()
             }).start()
         }
 
