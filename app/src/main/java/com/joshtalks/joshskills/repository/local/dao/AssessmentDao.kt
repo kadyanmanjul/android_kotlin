@@ -18,7 +18,7 @@ abstract class AssessmentDao {
 
     @Transaction
     @Query("SELECT * FROM assessments WHERE remoteId = :assessmentId")
-    abstract fun loadAssesment(assessmentId: Int): AssessmentWithRelations
+    abstract fun getAssessmentById(assessmentId: Int): AssessmentWithRelations?
 
     @Transaction
     @Insert(onConflict = OnConflictStrategy.REPLACE)

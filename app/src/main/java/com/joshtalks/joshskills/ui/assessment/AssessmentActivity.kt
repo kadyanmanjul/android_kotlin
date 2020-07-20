@@ -60,13 +60,12 @@ class AssessmentActivity : CoreJoshActivity() {
         if (intent.hasExtra(STARTED_FROM)) {
             flowFrom = intent.getStringExtra(STARTED_FROM)
         }
-        test()
-        /*
+//        test()
         if (assessmentId != 0) {
             getAssessmentDetails(assessmentId)
         } else {
             finish()
-        }*/
+        }
         subscribeLiveData()
     }
 

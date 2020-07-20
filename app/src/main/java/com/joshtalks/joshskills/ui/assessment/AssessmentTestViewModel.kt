@@ -14,7 +14,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
-class AssessmentTestViewModel(application: Application) : AndroidViewModel(application) {
+class AssessmentTestViewModel(application: Application) :
+    AndroidViewModel(application) { // TODO - Remove this Class
     var context: JoshApplication = getApplication()
     val assessmentLiveData: MutableLiveData<AssessmentWithRelations> =
         MutableLiveData()
@@ -22,11 +23,11 @@ class AssessmentTestViewModel(application: Application) : AndroidViewModel(appli
     val choiceListLiveData: MutableLiveData<List<FAQ>> = MutableLiveData()
     private val jobs = arrayListOf<Job>()
 
-    fun getAssessmentFromDao(assesmentid: Int) {
+    fun getAssessmentFromDao(assessmentid: Int) {
         jobs += viewModelScope.launch(Dispatchers.IO) {
             try {
                 val response =
-                    AppObjectController.appDatabase.assessmentDao().loadAssesment(assesmentid)
+                    AppObjectController.appDatabase.assessmentDao().getAssessmentById(assessmentid)
                 assessmentLiveData.postValue(response)
                 return@launch
 

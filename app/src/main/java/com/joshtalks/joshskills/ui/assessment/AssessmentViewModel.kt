@@ -1,7 +1,6 @@
 package com.joshtalks.joshskills.ui.assessment
 
 import android.app.Application
-import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
@@ -19,20 +18,25 @@ import kotlinx.coroutines.launch
 class AssessmentViewModel(application: Application) : AndroidViewModel(application) {
     private val jobs = arrayListOf<Job>()
     val apiCallStatusLiveData: MutableLiveData<ApiCallStatus> = MutableLiveData()
-    val assessmentLiveData: MutableLiveData<AssessmentResponse> = MutableLiveData()
+    val assessmentLiveData: MutableLiveData<AssessmentWithRelations> = MutableLiveData()
 
     fun fetchAssessmentDetails(assessmentId: Int) {
         jobs += viewModelScope.launch(Dispatchers.IO) {
             try {
-                val response =
-                    AppObjectController.chatNetworkService.getAssessmentId(assessmentId)
-                if (response.isSuccessful) {
-                    apiCallStatusLiveData.postValue(ApiCallStatus.SUCCESS)
-                    assessmentLiveData.postValue(response.body())
-                    response.body()?.let {
-                        insertAsssessmentToDb(response.body()!!)
+                val assessmentWithRelations = getAssessmentFromDB(assessmentId)
+
+                if (assessmentWithRelations != null) {
+                    assessmentLiveData.postValue(assessmentWithRelations)
+                } else {
+                    val response = getAssessmentFromServer(assessmentId)
+                    if (response.isSuccessful) {
+                        apiCallStatusLiveData.postValue(ApiCallStatus.SUCCESS)
+                        response.body()?.let {
+                            insertAssessmentToDB(it)
+                            assessmentLiveData.postValue(AssessmentWithRelations(it))
+                        }
+                        return@launch
                     }
-                    return@launch
                 }
 
             } catch (ex: Throwable) {
@@ -43,17 +47,21 @@ class AssessmentViewModel(application: Application) : AndroidViewModel(applicati
         }
     }
 
-    suspend fun insertAsssessmentToDb(assessmentResponse: AssessmentResponse) {
+    private suspend fun insertAssessmentToDB(assessmentResponse: AssessmentResponse) =
         AppObjectController.appDatabase.assessmentDao()
             .insertAssessmentFromResponse(assessmentResponse)
-    }
+
+    private fun getAssessmentFromDB(assessmentId: Int) =
+        AppObjectController.appDatabase.assessmentDao().getAssessmentById(assessmentId)
+
+    private suspend fun getAssessmentFromServer(assessmentId: Int) =
+        AppObjectController.chatNetworkService.getAssessmentId(assessmentId)
 
     private fun mockData() {
         val assessmentResponse = AppObjectController.gsonMapperForLocal.fromJson(
             loadJSONFromAsset("assessmentJson.json"),
             AssessmentResponse::class.java
         )
-        Log.d("Assessment123", "AssessmentResponse = $assessmentResponse")
         CoroutineScope(Dispatchers.IO).launch {
             AppObjectController.appDatabase.assessmentDao()
                 .insertAssessment(AssessmentWithRelations(assessmentResponse))
