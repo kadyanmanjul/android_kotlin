@@ -4,9 +4,9 @@ import android.content.Context
 import android.view.View
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
-import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
 import com.crashlytics.android.Crashlytics
+import com.google.android.material.card.MaterialCardView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.repository.local.model.assessment.Choice
@@ -32,7 +32,7 @@ class MCQChoiceViewHolder(
 ) : ChoiceBaseCell(type, sequenceNumber, choiceData, context) {
 
     @com.mindorks.placeholderview.annotations.View(R.id.choice_container)
-    lateinit var container: CardView
+    lateinit var container: MaterialCardView
 
     @com.mindorks.placeholderview.annotations.View(R.id.choice_textview)
     lateinit var choiceTextView: AppCompatTextView
@@ -68,7 +68,6 @@ class MCQChoiceViewHolder(
 
     @Click(R.id.choice_container)
     fun onClick() {
-        choiceData.isSelectedByUser = true
         onClickListener.onChoiceClick(choiceData)
 
     }
@@ -237,46 +236,75 @@ class MCQChoiceViewHolder(
 
     private fun setUnselectedChoiceView() {
         setTextColor(R.color.light_grey)
-        setDrawableEnd(null)
         setBackgroundColor(R.color.artboard_color)
+        setBorderColor(R.color.artboard_color)
+        if (type == ChoiceType.SINGLE_SELECTION_TEXT || type == ChoiceType.SINGLE_SELECTION_IMAGE) {
+            setDrawableStart(R.drawable.ic_radio_button_unchecked, R.color.light_grey)
+        } else {
+            setDrawableStart(R.drawable.ic_check_box_outline_blank, R.color.light_grey)
+        }
     }
 
     private fun setSelectedChoiceView() {
         setTextColor(R.color.button_color)
-        setDrawableEnd(null)
         setBackgroundColor(R.color.light_blue)
+        setBorderColor(R.color.button_color)
+        if (type == ChoiceType.SINGLE_SELECTION_TEXT || type == ChoiceType.SINGLE_SELECTION_IMAGE) {
+            setDrawableStart(R.drawable.ic_radio_button_checked, R.color.button_color)
+        } else {
+            setDrawableStart(R.drawable.ic_check_box, R.color.button_color)
+        }
     }
 
     private fun setWrongChoiceView() {
-        setTextColor(R.color.white)
-        setDrawableEnd(R.drawable.ic_cross)
-        setBackgroundColor(R.color.error_color)
+        setTextColor(R.color.error_color)
+        setBackgroundColor(R.color.light_red)
+        setBorderColor(R.color.error_color)
+        if (type == ChoiceType.SINGLE_SELECTION_TEXT || type == ChoiceType.SINGLE_SELECTION_IMAGE) {
+            setDrawableStart(R.drawable.ic_radio_button_checked, R.color.error_color)
+        } else {
+            setDrawableStart(R.drawable.ic_check_box, R.color.error_color)
+        }
     }
 
     private fun setCorrectlySelectedChoiceView() {
-        setTextColor(R.color.white)
-        setDrawableEnd(R.drawable.ic_small_tick)
-        setBackgroundColor(R.color.green_right_answer)
+        setTextColor(R.color.green_right_answer)
+        setBackgroundColor(R.color.lighter_green)
+        setBorderColor(R.color.green_right_answer)
+        if (type == ChoiceType.SINGLE_SELECTION_TEXT || type == ChoiceType.SINGLE_SELECTION_IMAGE) {
+            setDrawableStart(R.drawable.ic_radio_button_checked, R.color.green_right_answer)
+        } else {
+            setDrawableStart(R.drawable.ic_check_box, R.color.green_right_answer)
+        }
     }
 
     private fun setCorrectButNotSelectedChoiceView() {
-        setTextColor(R.color.green_right_answer)
-        setDrawableEnd(null)
-        setBackgroundColor(R.color.lighter_green)
+        setTextColor(R.color.white)
+        setBackgroundColor(R.color.green_right_answer)
+        setBorderColor(R.color.green_right_answer)
+        setDrawableStart(R.drawable.ic_tick_small, R.color.white)
     }
 
     private fun setTextColor(colorId: Int) =
         choiceTextView.setTextColor(ContextCompat.getColor(context, colorId))
 
-    private fun setDrawableEnd(drawableId: Int?) =
-        choiceTextView.setCompoundDrawablesWithIntrinsicBounds(
-            null, null, drawableId?.let {
-                ContextCompat.getDrawable(
-                    context,
-                    it
-                )
-            }, null
+    private fun setDrawableStart(drawableId: Int?, tintColorId: Int) {
+        val drawable = drawableId?.let {
+            ContextCompat.getDrawable(
+                context,
+                it
+            )
+        }
+        drawable?.setTint(
+            ContextCompat.getColor(
+                context,
+                tintColorId
+            )
         )
+        choiceTextView.setCompoundDrawablesWithIntrinsicBounds(
+            drawable, null, null, null
+        )
+    }
 
     private fun setBackgroundColor(colorId: Int) = container.setCardBackgroundColor(
         ContextCompat.getColor(
@@ -284,5 +312,12 @@ class MCQChoiceViewHolder(
             colorId
         )
     )
+
+    private fun setBorderColor(colorId: Int) {
+        container.strokeColor = ContextCompat.getColor(
+            context,
+            colorId
+        )
+    }
 
 }

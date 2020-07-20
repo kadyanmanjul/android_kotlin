@@ -9,6 +9,7 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.repository.local.model.assessment.Choice
 import com.joshtalks.joshskills.ui.assessment.viewholder.OnChoiceClickListener
 
@@ -95,7 +96,7 @@ class FillInTheBlankQuestionAdapter(
             this.choice = choice
             val question: TextView = view.findViewById(R.id.item_description)
             val divider: View = view.findViewById(R.id.underline)
-            question.text = "  "
+            question.text = EMPTY
             divider.setBackgroundColor(
                 ContextCompat.getColor(
                     AppObjectController.joshApplication,

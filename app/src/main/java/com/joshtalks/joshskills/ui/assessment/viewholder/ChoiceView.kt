@@ -84,18 +84,6 @@ class ChoiceView : FrameLayout {
                     return@let
                 }
 
-                ChoiceType.SINGLE_SELECTION_IMAGE -> {
-                    null
-                }
-
-                ChoiceType.MULTI_SELECTION_TEXT -> {
-                    null
-                }
-
-                ChoiceType.MULTI_SELECTION_IMAGE -> {
-                    null
-                }
-
                 ChoiceType.FILL_IN_THE_BLANKS_TEXT -> {
                     fillInTheBlankChoiceStub?.run {
                         if (this.resolved().not()) {
