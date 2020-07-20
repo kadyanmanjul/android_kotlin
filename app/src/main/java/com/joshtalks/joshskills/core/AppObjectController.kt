@@ -160,21 +160,17 @@ internal class AppObjectController {
             appDatabase = AppDatabase.getDatabase(context)!!
             com.joshtalks.joshskills.core.ActivityLifecycleCallback.register(joshApplication)
             ActivityLifecycleCallback.register(joshApplication)
-            DateTimeUtils.setTimeZone("UTC")
             firebaseAnalytics = FirebaseAnalytics.getInstance(joshApplication)
             firebaseAnalytics.setAnalyticsCollectionEnabled(true)
             AppEventsLogger.activateApp(joshApplication)
             facebookEventLogger = AppEventsLogger.newLogger(joshApplication)
-            AndroidThreeTen.init(joshApplication)
             Branch.getAutoInstance(joshApplication)
             initFirebaseRemoteConfig()
             WorkMangerAdmin.deviceIdGenerateWorker()
             configureCrashlytics()
             initFlurryAnalytics()
-            initialiseFreshchat()
             initNewRelic()
-            EmojiManager.install(GoogleEmojiProvider())
-            videoDownloadTracker = VideoDownloadController.getInstance().downloadTracker
+
             gsonMapper = GsonBuilder()
                 .enableComplexMapKeySerialization()
                 .setDateFormat("yyyy-MM-dd'T'HH:mm:ss")
@@ -259,49 +255,7 @@ internal class AppObjectController {
             chatNetworkService = retrofit.create(ChatNetworkService::class.java)
             commonNetworkService = retrofit.create(CommonNetworkService::class.java)
 
-
-            val mediaOkhttpBuilder = OkHttpClient().newBuilder()
-            mediaOkhttpBuilder.connectTimeout(45, TimeUnit.SECONDS)
-                .writeTimeout(45, TimeUnit.SECONDS)
-                .readTimeout(45, TimeUnit.SECONDS)
-                .followRedirects(true)
-                .addInterceptor(StatusCodeInterceptor())
-
-            if (BuildConfig.DEBUG) {
-                mediaOkhttpBuilder.addNetworkInterceptor(StethoInterceptor())
-                mediaOkhttpBuilder.addInterceptor(logging)
-            }
-
-            mediaOkhttpBuilder.addInterceptor(object : Interceptor {
-                override fun intercept(chain: Interceptor.Chain): Response {
-                    val original = chain.request()
-                    val newRequest: Request.Builder = original.newBuilder()
-                    newRequest.addHeader("Connection", "close")
-                    return chain.proceed(newRequest.build())
-                }
-            })
-
-            mediaDUNetworkService = Retrofit.Builder()
-                .baseUrl(BuildConfig.BASE_URL)
-                .client(mediaOkhttpBuilder.build())
-                .build().create(MediaDUNetworkService::class.java)
-
-
-
-            multiTransformation = MultiTransformation(
-                CropTransformation(
-                    Utils.dpToPx(IMAGE_SIZE),
-                    Utils.dpToPx(IMAGE_SIZE),
-                    CropTransformation.CropType.CENTER
-                ),
-                RoundedCornersTransformation(
-                    Utils.dpToPx(ROUND_CORNER),
-                    0,
-                    RoundedCornersTransformation.CornerType.ALL
-                )
-            )
-
-            InstallReferralUtil.installReferrer(joshApplication)
+            initObjectInThread()
             return INSTANCE
         }
 
@@ -436,6 +390,70 @@ internal class AppObjectController {
 
         fun getAppCachePath(): String {
             return "${joshApplication.cacheDir}/${JOSH_SKILLS_CACHE}"
+        }
+
+        fun initObjectInThread() {
+            Thread(Runnable {
+                if (BuildConfig.DEBUG) {
+                    FirebaseDatabase.getInstance().setLogLevel(Logger.Level.DEBUG)
+                    FirebaseDatabase.getInstance().setPersistenceEnabled(true)
+                }
+                val mediaOkhttpBuilder = OkHttpClient().newBuilder()
+                mediaOkhttpBuilder.connectTimeout(45, TimeUnit.SECONDS)
+                    .writeTimeout(45, TimeUnit.SECONDS)
+                    .readTimeout(45, TimeUnit.SECONDS)
+                    .followRedirects(true)
+                    .addInterceptor(StatusCodeInterceptor())
+                val logging =
+                    HttpLoggingInterceptor(object : HttpLoggingInterceptor.Logger {
+                        override fun log(message: String) {
+                            Timber.tag("OkHttp").d(message)
+                        }
+
+                    }).apply {
+                        level = HttpLoggingInterceptor.Level.BODY
+
+                    }
+                if (BuildConfig.DEBUG) {
+                    mediaOkhttpBuilder.addNetworkInterceptor(StethoInterceptor())
+                    mediaOkhttpBuilder.addInterceptor(logging)
+                }
+
+                mediaOkhttpBuilder.addInterceptor(object : Interceptor {
+                    override fun intercept(chain: Interceptor.Chain): Response {
+                        val original = chain.request()
+                        val newRequest: Request.Builder = original.newBuilder()
+                        newRequest.addHeader("Connection", "close")
+                        return chain.proceed(newRequest.build())
+                    }
+                })
+
+                mediaDUNetworkService = Retrofit.Builder()
+                    .baseUrl(BuildConfig.BASE_URL)
+                    .client(mediaOkhttpBuilder.build())
+                    .build().create(MediaDUNetworkService::class.java)
+
+
+                DateTimeUtils.setTimeZone("UTC")
+                AndroidThreeTen.init(joshApplication)
+                EmojiManager.install(GoogleEmojiProvider())
+                videoDownloadTracker = VideoDownloadController.getInstance().downloadTracker
+
+                multiTransformation = MultiTransformation(
+                    CropTransformation(
+                        Utils.dpToPx(IMAGE_SIZE),
+                        Utils.dpToPx(IMAGE_SIZE),
+                        CropTransformation.CropType.CENTER
+                    ),
+                    RoundedCornersTransformation(
+                        Utils.dpToPx(ROUND_CORNER),
+                        0,
+                        RoundedCornersTransformation.CornerType.ALL
+                    )
+                )
+                InstallReferralUtil.installReferrer(joshApplication)
+                initialiseFreshchat()
+            }).start()
         }
 
     }

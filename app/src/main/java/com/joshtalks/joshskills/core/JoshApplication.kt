@@ -10,7 +10,7 @@ import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
 import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import androidx.multidex.MultiDex
+import androidx.multidex.MultiDexApplication
 import com.facebook.FacebookSdk
 import com.facebook.LoggingBehavior
 import com.facebook.stetho.Stetho
@@ -18,7 +18,6 @@ import com.freshchat.consumer.sdk.Freshchat
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import io.branch.referral.Branch
-import io.branch.referral.BranchApp
 import io.github.inflationx.calligraphy3.CalligraphyConfig
 import io.github.inflationx.calligraphy3.CalligraphyInterceptor
 import io.github.inflationx.viewpump.ViewPump
@@ -30,7 +29,7 @@ import timber.log.Timber
 
 var TAG = "JoshSkill"
 
-class JoshApplication : BranchApp(), LifecycleObserver/*, Configuration.Provider*/ {
+class JoshApplication : MultiDexApplication(), LifecycleObserver/*, Configuration.Provider*/ {
     companion object {
         @JvmStatic
         var isAppVisible = false
@@ -95,11 +94,10 @@ class JoshApplication : BranchApp(), LifecycleObserver/*, Configuration.Provider
                             PrefManager.put(RESTORE_ID, restoreId)
                             val requestMap = mutableMapOf<String, String?>()
                             requestMap["restore_id"] = restoreId
-                            val responseObj =
-                                AppObjectController.commonNetworkService.postFreshChatRestoreIDAsync(
-                                    PrefManager.getStringValue(USER_UNIQUE_ID),
-                                    requestMap
-                                )
+                            AppObjectController.commonNetworkService.postFreshChatRestoreIDAsync(
+                                PrefManager.getStringValue(USER_UNIQUE_ID),
+                                requestMap
+                            )
                         }
                     } catch (ex: Exception) {
                         ex.printStackTrace()
@@ -131,7 +129,7 @@ class JoshApplication : BranchApp(), LifecycleObserver/*, Configuration.Provider
 
     override fun attachBaseContext(base: Context?) {
         super.attachBaseContext(base)
-        MultiDex.install(this)
+        //   MultiDex.install(this)
         base?.let { ViewPumpContextWrapper.wrap(it) }
     }
 

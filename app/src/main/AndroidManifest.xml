@@ -147,7 +147,6 @@
 
         <activity
                 android:name=".ui.launch.LauncherActivity"
-                android:configChanges="touchscreen|keyboard|keyboardHidden|screenLayout|screenSize"
                 android:launchMode="singleTask"
                 android:screenOrientation="portrait"
                 android:theme="@style/AppNoBarTheme">
