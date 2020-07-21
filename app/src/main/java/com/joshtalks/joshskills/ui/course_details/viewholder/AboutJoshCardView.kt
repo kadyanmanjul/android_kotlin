@@ -45,7 +45,7 @@ class AboutJoshCardView(
     private fun setImageView(url: String) {
         val multi = MultiTransformation(
             RoundedCornersTransformation(
-                Utils.dpToPx(32),
+                Utils.dpToPx(4),
                 0,
                 RoundedCornersTransformation.CornerType.ALL
             )

@@ -17,6 +17,7 @@ import android.view.View
 import android.view.Window
 import android.view.WindowManager
 import android.view.animation.LinearInterpolator
+import android.widget.ImageView
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
@@ -27,8 +28,14 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.transition.Slide
 import androidx.transition.Transition
 import androidx.transition.TransitionManager
+import com.bumptech.glide.Glide
+import com.bumptech.glide.integration.webp.decoder.WebpDrawable
+import com.bumptech.glide.integration.webp.decoder.WebpDrawableTransformation
+import com.bumptech.glide.load.resource.bitmap.CircleCrop
+import com.bumptech.glide.request.target.Target
 import com.google.android.material.appbar.AppBarLayout
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.ApiCallStatus
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.core.EMPTY
@@ -231,6 +238,30 @@ class CourseDetailsActivity : BaseActivity() {
 
         viewModel.apiCallStatusLiveData.observe(this, Observer {
             binding.progressBar.visibility = View.GONE
+            if (it == ApiCallStatus.FAILED) {
+                //  binding.coordinator.removeAllViews()
+                val imageUrl =
+                    AppObjectController.getFirebaseRemoteConfig().getString("ERROR_API_IMAGE_URL")
+                val imageView = ImageView(this).apply {
+                    adjustViewBounds = true
+                    scaleType = ImageView.ScaleType.CENTER
+                    layoutParams = CoordinatorLayout.LayoutParams(
+                        CoordinatorLayout.LayoutParams.MATCH_PARENT,
+                        CoordinatorLayout.LayoutParams.WRAP_CONTENT
+                    ).apply {
+                        gravity = Gravity.CENTER
+                    }
+                }
+
+                binding.coordinator.addView(imageView)
+                Glide.with(this)
+                    .load(imageUrl)
+                    .override(Target.SIZE_ORIGINAL)
+                    .optionalTransform(
+                        WebpDrawable::class.java,
+                        WebpDrawableTransformation(CircleCrop())
+                    ).into(imageView)
+            }
         })
     }
 
@@ -580,7 +611,6 @@ class CourseDetailsActivity : BaseActivity() {
         try {
             this.unregisterReceiver(onDownloadComplete)
         } catch (ex: Exception) {
-            ex.printStackTrace()
         }
         super.onDestroy()
     }

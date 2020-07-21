@@ -56,7 +56,6 @@
                 android:layout_gravity="center"
                 android:padding="@dimen/_12sdp"
                 android:src="@drawable/ic_play_24dp"
-                android:visibility="gone"
                 app:tint="@color/white"
                 tools:visibility="visible" />
     </androidx.cardview.widget.CardView>
