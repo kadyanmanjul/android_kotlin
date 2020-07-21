@@ -6,6 +6,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.integration.webp.decoder.WebpDrawable
 import com.bumptech.glide.integration.webp.decoder.WebpDrawableTransformation
 import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.bumptech.glide.request.RequestListener
@@ -35,6 +36,7 @@ class CourseExplorerViewHolder(private val courseExploreModel: CourseExploreMode
 
         Glide.with(getAppContext())
             .load(courseExploreModel.imageUrl)
+            .diskCacheStrategy(DiskCacheStrategy.ALL)
             .override(Target.SIZE_ORIGINAL)
             .optionalTransform(
                 WebpDrawable::class.java,
@@ -59,7 +61,6 @@ class CourseExplorerViewHolder(private val courseExploreModel: CourseExploreMode
                     isFirstResource: Boolean
                 ): Boolean {
                     buyNow.visibility = android.view.View.VISIBLE
-
                     return false
                 }
 

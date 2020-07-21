@@ -238,7 +238,7 @@ class SignUpActivity : BaseActivity() {
                 if (TrueError.ERROR_TYPE_NETWORK == trueError.errorType) {
                     showToast(application.getString(R.string.internet_not_available_msz))
                 } else {
-                    showToast(application.getString(R.string.something_went_wrong))
+                  //  showToast(application.getString(R.string.something_went_wrong))
                 }
             }
 
@@ -316,6 +316,7 @@ class SignUpActivity : BaseActivity() {
             } catch (e: Exception) {
                 hideProgressBar()
             }
+            return
         }
         fbCallbackManager.onActivityResult(requestCode, resultCode, data)
         if (TruecallerSDK.getInstance().isUsable) {

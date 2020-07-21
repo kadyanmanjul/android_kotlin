@@ -3,7 +3,6 @@ package com.joshtalks.joshskills.core
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
-import com.google.firebase.auth.FirebaseAuth
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.core.service.WorkMangerAdmin
 import com.joshtalks.joshskills.repository.local.AppDatabase
@@ -123,14 +122,12 @@ object PrefManager {
 
     fun logoutUser() {
         prefManagerCommon.edit().clear().apply()
-        FirebaseAuth.getInstance().signOut()
         WorkMangerAdmin.appStartWorker()
     }
 
     fun clearUser() {
         prefManagerCommon.edit().clear().apply()
         AppDatabase.clearDatabase()
-        FirebaseAuth.getInstance().signOut()
         WorkMangerAdmin.appStartWorker()
     }
 

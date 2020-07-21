@@ -30,22 +30,22 @@ class DemoLessonViewHolder(
     @Resolve
     fun onResolved() {
         txtTitle.text = data.title
-        data.thumbnailUrl?.let {
-            setDefaultImageView(imgView, it)
+        data.video?.video_image_url?.run {
+            setDefaultImageView(imgView, this)
         }
     }
 
     @Click(R.id.cardView)
     fun onClick() {
-        if (data.videoUrl.isNullOrEmpty()) {
+        if (data.video == null) {
             showToast(getAppContext().getString(R.string.video_url_not_exist))
             return
         }
         VideoPlayerActivity.startVideoActivity(
             context,
             data.title,
-            data.videoId,
-            data.videoUrl
+            data.video.id,
+            data.video.video_url
         )
     }
 }

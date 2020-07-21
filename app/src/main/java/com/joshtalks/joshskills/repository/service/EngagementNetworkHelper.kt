@@ -26,7 +26,9 @@ object EngagementNetworkHelper {
                     return@launch
                 }
                 videoEngage.gID = PrefManager.getStringValue(USER_UNIQUE_ID)
-                videoEngage.mentorId = Mentor.getInstance().getId()
+                if (Mentor.getInstance().hasId()) {
+                    videoEngage.mentorId = Mentor.getInstance().getId()
+                }
                 AppObjectController.chatNetworkService.engageVideoApiV2(videoEngage)
             } catch (ex: Exception) {
                 AppObjectController.appDatabase.videoEngageDao().insertVideoEngage(videoEngage)

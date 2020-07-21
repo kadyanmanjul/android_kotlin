@@ -29,12 +29,10 @@ import com.mindorks.placeholderview.annotations.Layout
 import com.mindorks.placeholderview.annotations.Resolve
 import com.patloew.rxlocation.RxLocation
 import io.reactivex.CompletableObserver
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import java.util.*
 import java.util.regex.Pattern
 
@@ -151,20 +149,18 @@ class LocationStatViewHolder(
                     compositeDisposable.add(
                         rxLocation.location().updates(locationRequest)
                             .subscribeOn(Schedulers.computation())
+                            .observeOn(AndroidSchedulers.mainThread())
                             .subscribe({ location ->
-                                CoroutineScope(Dispatchers.IO).launch {
-                                    try {
-                                        val request = UpdateUserLocality()
-                                        request.locality =
-                                            SearchLocality(location.latitude, location.longitude)
-                                        getAddressAndSetView(location.latitude, location.longitude)
-                                        progressBar.visibility = View.GONE
-                                    } catch (e: Exception) {
-                                        progressBar.visibility = View.GONE
-                                        e.printStackTrace()
-                                    }
-                                    compositeDisposable.clear()
+                                try {
+                                    val request = UpdateUserLocality()
+                                    request.locality =
+                                        SearchLocality(location.latitude, location.longitude)
+                                    getAddressAndSetView(location.latitude, location.longitude)
+                                } catch (e: Exception) {
+                                    e.printStackTrace()
                                 }
+                                hideProgressBar()
+                                compositeDisposable.clear()
                             }, { ex ->
                                 ex.printStackTrace()
                             })
@@ -172,9 +168,16 @@ class LocationStatViewHolder(
                 }
 
                 override fun onError(e: Throwable) {
-                    //  e.printStackTrace()
+                    e.printStackTrace()
+                    hideProgressBar()
                 }
             })
+    }
+
+    private fun hideProgressBar() {
+        AppObjectController.uiHandler.post {
+            progressBar.visibility = View.GONE
+        }
     }
 
     private fun getAddressAndSetView(latitude: Double, longitude: Double) {
@@ -186,11 +189,11 @@ class LocationStatViewHolder(
             longitude,
             1
         )
-        if (city.isNullOrBlank().not() && city.equals(addresses.get(0).locality))
+        if (city.isNullOrBlank().not() && city.equals(addresses[0].locality))
             return
-        city = addresses.get(0).locality
-        state = addresses.get(0).adminArea
-        CoroutineScope(Dispatchers.Main).launch {
+        city = addresses[0].locality
+        state = addresses[0].adminArea
+        AppObjectController.uiHandler.post {
             stateCityName.text = city.plus(" , ").plus(state)
             showNextImageAndRandomData()
         }

@@ -103,25 +103,33 @@ class CourseOverviewViewHolder(
         if (statsList.isNotEmpty()) {
             statsIcon1.visibility = View.VISIBLE
             statsCaption1.visibility = View.VISIBLE
-            setImage(statsList[0].url, statsIcon1)
+            statsList[0].url?.run {
+                setImage(this, statsIcon1)
+            }
             statsCaption1.text = statsList[0].text
         }
         if (statsList.size > 1) {
             statsIcon2.visibility = View.VISIBLE
             statsCaption2.visibility = View.VISIBLE
-            setImage(statsList[1].url, statsIcon2)
+            statsList[1].url?.run {
+                setImage(this, statsIcon1)
+            }
             statsCaption2.text = statsList[1].text
         }
         if (statsList.size > 2) {
             statsIcon3.visibility = View.VISIBLE
             statsCaption3.visibility = View.VISIBLE
-            setImage(statsList[2].url, statsIcon3)
+            statsList[2].url?.run {
+                setImage(this, statsIcon1)
+            }
             statsCaption3.text = statsList[2].text
         }
         if (statsList.size > 3) {
             statsIcon4.visibility = View.VISIBLE
             statsCaption4.visibility = View.VISIBLE
-            setImage(statsList[3].url, statsIcon4)
+            statsList[3].url?.run {
+                setImage(this, statsIcon1)
+            }
             statsCaption4.text = statsList[3].text
         }
     }

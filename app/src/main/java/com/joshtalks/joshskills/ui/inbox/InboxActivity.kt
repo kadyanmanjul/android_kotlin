@@ -148,8 +148,13 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
             NPSEventModel.getCurrentNPA() != null -> {
                 showNetPromoterScoreDialog()
             }
+
             else -> {
-                locationFetch()
+                viewModel.registerCourseMinimalLiveData.value?.run {
+                    if (this.isNotEmpty()) {
+                        locationFetch()
+                    }
+                }
             }
         }
 

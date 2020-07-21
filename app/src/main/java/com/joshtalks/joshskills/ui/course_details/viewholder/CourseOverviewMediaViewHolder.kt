@@ -25,7 +25,7 @@ import jp.wasabeef.glide.transformations.RoundedCornersTransformation
 
 @Layout(R.layout.course_overview_media_item)
 class CourseOverviewMediaViewHolder(
-    val overviewMedia: OverviewMedia,
+    private val overviewMedia: OverviewMedia,
     private val context: Context = AppObjectController.joshApplication
 ) {
 
@@ -40,11 +40,16 @@ class CourseOverviewMediaViewHolder(
 
     @Resolve
     fun onResolved() {
-        val imageUrl =
-            if (overviewMedia.type == OverviewMediaType.VIDEO) overviewMedia.thumbnailUrl else overviewMedia.url
 
-        imageUrl?.let { setImageView(it, imageView) }
-
+        if (overviewMedia.type == OverviewMediaType.IMAGE) {
+            overviewMedia.url?.run {
+                setImageView(this, imageView)
+            }
+        } else {
+            overviewMedia.video?.video_image_url?.run {
+                setImageView(this, imageView)
+            }
+        }
         if (overviewMedia.type == OverviewMediaType.VIDEO) {
             backgroundFade.visibility = View.VISIBLE
             playIcon.visibility = View.VISIBLE
@@ -59,8 +64,8 @@ class CourseOverviewMediaViewHolder(
         VideoPlayerActivity.startVideoActivity(
             context,
             null,
-            "123",
-            overviewMedia.url
+            overviewMedia.video?.id,
+            overviewMedia.video?.video_url
         )
     }
 
