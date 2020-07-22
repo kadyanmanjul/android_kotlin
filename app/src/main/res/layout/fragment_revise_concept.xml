@@ -39,7 +39,7 @@
 
                 <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/text_message_title"
-                        fontPath="fonts/Roboto-Medium.ttf"
+                        fontPath="fonts/Poppins-Regular.ttf"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:ellipsize="marquee"
@@ -47,7 +47,7 @@
                         android:singleLine="true"
                         android:textColor="@color/black"
                         android:textSize="@dimen/font_18"
-                        tool:text="@string/title" />
+                        tool:text="Revise Concept Fragment" />
 
                 <androidx.appcompat.widget.AppCompatImageView
                         android:id="@+id/iv_back"
@@ -55,6 +55,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="end"
                         android:gravity="center_vertical|end"
+                        android:onClick="@{()->fragment.dismiss()}"
                         android:paddingHorizontal="@dimen/_4sdp"
                         android:paddingVertical="@dimen/_4sdp"
                         android:visibility="visible"
@@ -66,47 +67,88 @@
 
         <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/heading"
-                fontPath="fonts/Roboto-Medium.ttf"
+                fontPath="fonts/Poppins-Regular.ttf"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/_16sdp"
+                android:layout_marginHorizontal="@dimen/_12sdp"
+                android:layout_marginTop="@dimen/_11sdp"
                 android:gravity="start|center"
                 android:textColor="@color/font_color"
                 android:textSize="@dimen/font_20"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/toolbar"
                 tool:text="Heading" />
 
         <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/video"
+                android:id="@+id/thumbnail_image"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/_90sdp"
+                android:layout_height="@dimen/_180sdp"
                 android:layout_marginTop="@dimen/_8sdp"
-                android:src="@drawable/ct_video_1"
+                android:scaleType="centerCrop"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.1"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/heading"
+                tool:src="@drawable/ct_video_1" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/background_fade"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_180sdp"
+                android:layout_marginTop="@dimen/_8sdp"
+                android:background="@color/transparent_black"
+                android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.1"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/heading" />
 
+        <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/play_icon"
+                android:layout_width="@dimen/_60sdp"
+                android:layout_height="@dimen/_60sdp"
+                android:layout_gravity="center"
+                android:clickable="false"
+                android:padding="@dimen/_12sdp"
+                android:src="@drawable/ic_play_24dp"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="@+id/thumbnail_image"
+                app:layout_constraintEnd_toEndOf="@+id/thumbnail_image"
+                app:layout_constraintStart_toStartOf="@+id/thumbnail_image"
+                app:layout_constraintTop_toTopOf="@+id/thumbnail_image"
+                app:tint="@color/white" />
+
+        <androidx.constraintlayout.widget.Group
+                android:id="@+id/video_group"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                app:constraint_referenced_ids="thumbnail_image,background_fade,play_icon"
+                tool:visibility="visible" />
+
         <ScrollView
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_marginVertical="@dimen/_8sdp"
+                app:layout_constraintBottom_toTopOf="@+id/materialButton"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/video"
+                app:layout_constraintTop_toBottomOf="@id/thumbnail_image"
                 app:layout_constraintVertical_bias="0">
 
             <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
                     android:id="@+id/description"
-                    fontPath="fonts/Roboto-Medium.ttf"
+                    fontPath="fonts/Poppins-Regular.ttf"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_8sdp"
+                    android:layout_marginHorizontal="@dimen/_12sdp"
                     android:gravity="start|center"
-                    android:paddingHorizontal="@dimen/_16sdp"
                     android:textColor="@color/dark_grey"
                     android:textSize="@dimen/font_16"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -119,19 +161,19 @@
 
         <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/materialButton"
-                style="@style/TextStyle.TopBarNoScroll"
-                android:layout_width="match_parent"
+                fontPath="fonts/Poppins-Bold.ttf"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginHorizontal="@dimen/_24sdp"
-                android:layout_marginBottom="@dimen/_19sdp"
+                android:layout_marginHorizontal="@dimen/_12sdp"
+                android:layout_marginBottom="@dimen/_10sdp"
                 android:background="@drawable/round_rectangle_for_course_expo"
                 android:backgroundTint="@color/button_color"
                 android:clickable="true"
                 android:focusable="true"
                 android:gravity="center"
                 android:onClick="@{()->fragment.dismiss()}"
-                android:padding="@dimen/_8sdp"
+                android:paddingVertical="@dimen/_10sdp"
                 android:text="@string/back_to_question"
                 android:textColor="@color/white"
                 android:textSize="@dimen/font_14"
@@ -141,4 +183,5 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:rippleColor="@color/white" />
     </androidx.constraintlayout.widget.ConstraintLayout>
+
 </layout>

@@ -48,7 +48,7 @@
 
                 <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/title"
-                        fontPath="fonts/Roboto-Medium.ttf"
+                        ffontPath="fonts/Poppins-Regular.ttf"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:ellipsize="marquee"
@@ -65,19 +65,20 @@
         <com.mindorks.placeholderview.PlaceHolderView
                 android:id="@+id/recycler_view"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/_8sdp"
-                android:layout_marginEnd="@dimen/_8sdp"
+                android:layout_height="0dp"
                 android:background="@android:color/white"
+                android:layout_marginBottom="@dimen/_6sdp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/toolbar"
                 tools:itemCount="3"
+                app:layout_constraintBottom_toTopOf="@+id/materialButton"
+                app:layout_constraintVertical_bias="0"
                 tools:listitem="@layout/test_summary_item_layout" />
 
         <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/materialButton"
-                style="@style/TextStyle.TopBarNoScroll"
+                fontPath="fonts/Poppins-Bold.ttf"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -88,7 +89,8 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:gravity="center"
-                android:padding="@dimen/_8sdp"
+                android:onClick="@{()->handler.dismiss()}"
+                android:padding="@dimen/_10sdp"
                 android:text="@string/done"
                 android:textColor="@color/white"
                 android:textSize="@dimen/font_14"

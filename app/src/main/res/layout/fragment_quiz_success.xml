@@ -13,6 +13,7 @@
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
+            android:background="@color/white"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
@@ -21,7 +22,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/_2sdp"
                 android:layout_marginHorizontal="@dimen/_16sdp"
-                android:layout_marginBottom="@dimen/_64sdp"
+                android:layout_marginBottom="@dimen/_36sdp"
                 android:background="@color/dark_grey"
                 app:layout_constraintBottom_toTopOf="@+id/materialButton"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -39,7 +40,7 @@
 
         <TextView
                 android:id="@+id/textView4"
-                style="@style/TextStyle.TopBarScroll"
+                fontPath="fonts/Poppins-Bold.ttf"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/well_done"
@@ -51,7 +52,7 @@
 
         <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/materialButton"
-                style="@style/TextStyle.TopBarNoScroll"
+                fontPath="fonts/Poppins-Bold.ttf"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -63,7 +64,7 @@
                 android:focusable="true"
                 android:gravity="center"
                 android:onClick="@{()->fragment.backToCourse()}"
-                android:padding="@dimen/_8sdp"
+                android:padding="@dimen/_10sdp"
                 android:text="@string/back_to_course"
                 android:textColor="@color/white"
                 android:textSize="@dimen/font_14"
