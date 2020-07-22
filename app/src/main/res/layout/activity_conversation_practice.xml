@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:wheel="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+                name="handler"
+                type="com.joshtalks.joshskills.ui.conversation_practice.ConversationPracticeActivity" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        <com.pnikosis.materialishprogress.ProgressWheel
+                android:id="@+id/progress_bar"
+                android:layout_width="@dimen/_82sdp"
+                android:layout_height="@dimen/_82sdp"
+                android:layout_gravity="center"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                wheel:matProg_barColor="@color/button_primary_color"
+                wheel:matProg_fillRadius="true"
+                wheel:matProg_linearProgress="false"
+                wheel:matProg_progressIndeterminate="true"
+                wheel:matProg_rimColor="@color/transparent"
+                wheel:matProg_rimWidth="@dimen/_4sdp" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
