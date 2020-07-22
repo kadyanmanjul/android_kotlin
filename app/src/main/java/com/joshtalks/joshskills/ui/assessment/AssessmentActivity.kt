@@ -23,13 +23,21 @@ import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.STARTED_FROM
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.loadJSONFromAsset
+import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.ActivityAssessmentBinding
+import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionWithRelations
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentWithRelations
+import com.joshtalks.joshskills.repository.local.model.assessment.Choice
 import com.joshtalks.joshskills.repository.server.assessment.AssessmentResponse
+import com.joshtalks.joshskills.repository.server.assessment.AssessmentType
 import com.joshtalks.joshskills.repository.server.assessment.ChoiceType
+import com.joshtalks.joshskills.repository.server.assessment.ReviseConcept
+import com.joshtalks.joshskills.ui.assessment.view.FillInTheBlankChoiceView
+import com.joshtalks.joshskills.ui.assessment.viewholder.AssessmentButtonView
 import com.joshtalks.joshskills.ui.assessment.viewholder.AssessmentQuestionAdapter
 
-class AssessmentActivity : CoreJoshActivity() {
+class AssessmentActivity : CoreJoshActivity(), AssessmentButtonView.AssessmentButtonListener,
+    FillInTheBlankChoiceView.FillInTheBlankChoiceClickListener {
 
     private lateinit var binding: ActivityAssessmentBinding
     private val viewModel by lazy { ViewModelProvider(this).get(AssessmentViewModel::class.java) }
@@ -69,6 +77,39 @@ class AssessmentActivity : CoreJoshActivity() {
         subscribeLiveData()
     }
 
+    private fun showTestSummaryFragment(questionId: Int) {
+        supportFragmentManager
+            .beginTransaction()
+            .replace(
+                R.id.container,
+                TestSummaryFragment.newInstance(questionId),
+                "Test Summary"
+            )
+            .commitAllowingStateLoss()
+    }
+
+    private fun showQuizSuccessFragment() {
+        supportFragmentManager
+            .beginTransaction()
+            .replace(
+                R.id.container,
+                QuizSuccessFragment.newInstance(),
+                "Quiz Success"
+            )
+            .commitAllowingStateLoss()
+    }
+
+    private fun showReviseConceptFragment(reviseConcept: ReviseConcept) {
+        supportFragmentManager
+            .beginTransaction()
+            .replace(
+                R.id.container,
+                ReviseConceptFragment.newInstance(reviseConcept),
+                "Revise Concept"
+            )
+            .commitAllowingStateLoss()
+    }
+
     private fun getAssessmentDetails(assessmentId: Int) {
         viewModel.fetchAssessmentDetails(assessmentId)
     }
@@ -78,8 +119,8 @@ class AssessmentActivity : CoreJoshActivity() {
             binding.progressBar.visibility = View.GONE
         })
 
-        viewModel.assessmentLiveData.observe(this, Observer { assessmentResponse ->
-            // TODO Bind view
+        viewModel.assessmentLiveData.observe(this, Observer { assessmentWithRelations ->
+            bindView(assessmentWithRelations)
         })
     }
 
@@ -104,6 +145,11 @@ class AssessmentActivity : CoreJoshActivity() {
             }
         }
 
+        /**
+         *  Use this method for
+         *  Directly Opening Assessment Screen
+         *  from Notification
+         */
         fun getIntent(
             context: Context,
             assessmentId: Int,
@@ -126,17 +172,25 @@ class AssessmentActivity : CoreJoshActivity() {
         )
 
         val data = AssessmentWithRelations(assessmentResponse)
+        bindView(data)
+    }
 
-        // binding.questionViewPager.offscreenPageLimit=1
+    private fun bindView(assessmentWithRelations: AssessmentWithRelations) {
+        setupViewPager(assessmentWithRelations)
+    }
+
+    private fun setupViewPager(assessmentWithRelations: AssessmentWithRelations) {
         val adapter = AssessmentQuestionAdapter(
-            data.assessment.type,
-            data.assessment.status,
+            assessmentWithRelations.assessment.type,
+            assessmentWithRelations.assessment.status,
             AssessmentQuestionViewType.CORRECT_ANSWER_VIEW,
-            data.questionList
+            assessmentWithRelations.questionList, this
         )
         binding.questionViewPager.adapter = adapter
-        TabLayoutMediator(binding.tabLayout, binding.questionViewPager) { tab, position ->
-        }.attach()
+        TabLayoutMediator(
+            binding.tabLayout,
+            binding.questionViewPager
+        ) { tab, position -> /*Do Nothing*/ }.attach()
         binding.questionViewPager.setPageTransformer(
             MarginPageTransformer(
                 Utils.dpToPx(
@@ -144,18 +198,89 @@ class AssessmentActivity : CoreJoshActivity() {
                     16f
                 )
             )
-
         )
         binding.questionViewPager.onPageSelected { position ->
-            val type = assessmentResponse.questions[position].choiceType
+            val type = assessmentWithRelations.questionList[position].question.choiceType
             if (hintOptionsSet.contains(type).not()) {
-                assessmentResponse.intro.find { it.type == type }?.run {
+                assessmentWithRelations.assessmentIntroList.find { it.type == type }?.run {
                     IntroQuestionFragment.newInstance(this)
                         .show(supportFragmentManager, "Question Tip")
                     hintOptionsSet.add(type)
                 }
             }
+            binding.buttonView.bind(
+                assessmentWithRelations.assessment.type,
+                assessmentWithRelations.assessment.status,
+                assessmentWithRelations.questionList[position],
+                this,
+                assessmentWithRelations.questionList.size
+            )
         }
 
+    }
+
+    override fun onChoiceAdded(choice: List<Choice>) {
+        binding.buttonView.onChoiceAdded(choice)
+    }
+
+    private fun showToastForQuestion(assessmentQuestion: AssessmentQuestionWithRelations) {
+        if (evaluateAnswer(assessmentQuestion))
+            showToast("Your answer is Correct")
+        else
+            showToast("Your answer is Wrong")
+    }
+
+    private fun evaluateAnswer(assessmentQuestion: AssessmentQuestionWithRelations?): Boolean {
+        assessmentQuestion?.choiceList?.forEach {
+            when (assessmentQuestion.question.choiceType) {
+                ChoiceType.SINGLE_SELECTION_TEXT,
+                ChoiceType.MULTI_SELECTION_TEXT,
+                ChoiceType.SINGLE_SELECTION_IMAGE,
+                ChoiceType.MULTI_SELECTION_IMAGE -> if (it.isCorrect != it.isSelectedByUser) {
+                    return false
+                }
+                ChoiceType.FILL_IN_THE_BLANKS_TEXT -> if (it.userSelectedOrder != it.correctAnswerOrder)
+                    return false
+                else -> return true
+            }
+        }
+        return true
+    }
+
+    override fun onSubmit(
+        assessmentType: AssessmentType,
+        assessmentQuestion: AssessmentQuestionWithRelations
+    ) {
+        if (assessmentType == AssessmentType.QUIZ) {
+            invalidateQuestionView()
+            showToastForQuestion(assessmentQuestion)
+            assessmentQuestion.question.isAttempted = true
+            viewModel.saveAssessmentQuestion(assessmentQuestion)
+        }
+    }
+
+    private fun invalidateQuestionView() {
+        (binding.questionViewPager.adapter as AssessmentQuestionAdapter).registerSubmitCallback()
+    }
+
+    override fun onNext(isLastQuestion: Boolean, assessmentType: AssessmentType) {
+        moveToNextQuestion(isLastQuestion, assessmentType)
+    }
+
+    private fun moveToNextQuestion(
+        lastQuestion: Boolean,
+        assessmentType: AssessmentType
+    ) {
+        if (!lastQuestion)
+            binding.questionViewPager.currentItem = binding.questionViewPager.currentItem + 1
+        else {
+            if (assessmentType == AssessmentType.QUIZ)
+                showQuizSuccessFragment()
+            else showTestSummaryFragment(assessmentId)
+        }
+    }
+
+    override fun onReviseConcept(reviseConcept: ReviseConcept) {
+        showReviseConceptFragment(reviseConcept)
     }
 }
