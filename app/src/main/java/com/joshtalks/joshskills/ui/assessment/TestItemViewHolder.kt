@@ -36,7 +36,7 @@ class TestItemViewHolder(
 
     @SuppressLint("RestrictedApi")
     private fun initView() {
-        if (status == AssessmentStatus.STARTED) {
+        if (status == AssessmentStatus.STARTED || status == AssessmentStatus.NOT_STARTED) {
             if (question.isAttempted) {
                 attempt_status.text = context.getString(R.string.attempted)
             } else {

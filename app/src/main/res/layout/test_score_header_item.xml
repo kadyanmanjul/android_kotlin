@@ -8,7 +8,7 @@
 
     <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/welcome_msg"
-            fontPath="fonts/Roboto-Medium.ttf"
+            fontPath="fonts/Poppins-Regular.ttf"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/_12sdp"
@@ -21,7 +21,7 @@
 
     <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/score"
-            fontPath="fonts/Roboto-Medium.ttf"
+            fontPath="fonts/Poppins-Regular.ttf"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/_12sdp"
@@ -56,7 +56,7 @@
 
     <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/extra_text"
-            fontPath="fonts/Roboto-Medium.ttf"
+            fontPath="fonts/Poppins-Regular.ttf"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/_12sdp"

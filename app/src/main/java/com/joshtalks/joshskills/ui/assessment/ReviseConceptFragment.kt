@@ -15,19 +15,20 @@ import com.bumptech.glide.request.target.Target
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.databinding.FragmentReviseConceptBinding
-import com.joshtalks.joshskills.repository.server.assessment.AssessmentMediaType
 import com.joshtalks.joshskills.repository.server.assessment.ReviseConcept
 import com.joshtalks.joshskills.repository.server.assessment.ReviseConceptResponse
+import com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity
+
 
 class ReviseConceptFragment : Fragment() {
     private lateinit var binding: FragmentReviseConceptBinding
-    private lateinit var revise_concept: ReviseConceptResponse
+    private lateinit var reviseConceptResponse: ReviseConcept
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         arguments?.let {
-            revise_concept = it.getParcelable(REVISE_CONCEPT_RESPONSE)!!
+            reviseConceptResponse = it.getParcelable(REVISE_CONCEPT_DETAILS)!!
         }
     }
 
@@ -44,14 +45,22 @@ class ReviseConceptFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.textMessageTitle.text = revise_concept.title
-        binding.heading.text = revise_concept.heading
-        binding.description.text = revise_concept.description
-        if (revise_concept.mediaType == AssessmentMediaType.IMAGE)
-            setDefaultImageView(binding.video, revise_concept.mediaUrl)
-        binding.video.setOnClickListener {
-            //TODO play video code
+        binding.textMessageTitle.text = reviseConceptResponse.title
+        binding.heading.text = reviseConceptResponse.heading
+        binding.description.text = reviseConceptResponse.description
+        reviseConceptResponse.videoThumbnailUrl?.let {
+            binding.videoGroup.visibility = View.VISIBLE
+            setDefaultImageView(binding.thumbnailImage, reviseConceptResponse.mediaUrl)
+            binding.thumbnailImage.setOnClickListener {
+                VideoPlayerActivity.startVideoActivity(
+                    requireContext(),
+                    reviseConceptResponse.title,
+                    "123",
+                    reviseConceptResponse.videoThumbnailUrl
+                )
+            }
         }
+
     }
 
     fun setDefaultImageView(iv: ImageView, url: String) {
@@ -65,9 +74,8 @@ class ReviseConceptFragment : Fragment() {
             .into(iv)
     }
 
-
     fun dismiss() {
-        requireActivity().finish()
+        requireActivity().supportFragmentManager.beginTransaction().remove(this).commit()
     }
 
     companion object {

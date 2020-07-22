@@ -7,7 +7,7 @@
 
     <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/welcome_msg"
-            fontPath="fonts/Roboto-Medium.ttf"
+            fontPath="fonts/Poppins-Regular.ttf"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/_12sdp"
@@ -20,7 +20,7 @@
 
     <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/text"
-            fontPath="fonts/Roboto-Medium.ttf"
+            fontPath="fonts/Poppins-Regular.ttf"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/_12sdp"
@@ -32,7 +32,7 @@
 
     <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/total_questions"
-            fontPath="fonts/Roboto-Bold.ttf"
+            fontPath="fonts/Poppins-Bold.ttf"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginVertical="@dimen/_9sdp"
@@ -57,7 +57,7 @@
 
     <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/total_attempted"
-            fontPath="fonts/Roboto-Bold.ttf"
+            fontPath="fonts/Poppins-Bold.ttf"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginVertical="@dimen/_9sdp"

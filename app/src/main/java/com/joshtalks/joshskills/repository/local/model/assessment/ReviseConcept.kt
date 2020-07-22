@@ -15,7 +15,7 @@ import kotlinx.android.parcel.Parcelize
 @Entity(tableName = "assessment_revise_concept", foreignKeys = [
     ForeignKey(
         entity = AssessmentQuestion::class,
-        parentColumns = arrayOf("localId"),
+        parentColumns = arrayOf("remoteId"),
         childColumns = arrayOf("questionId"),
         onDelete = ForeignKey.CASCADE
     )], indices = [

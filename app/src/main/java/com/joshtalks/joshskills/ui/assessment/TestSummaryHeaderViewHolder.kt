@@ -30,9 +30,9 @@ class TestSummaryHeaderViewHolder(
     }
 
     private fun initView() {
-        welcomeMsg.text = "Hello ".plus(User.getInstance().firstName.plus(","))
-        totalQuestions.text = "Total Attempted \n".plus(getTotalQuestions())
-        totalAttempted.text = "Total Attempted \n".plus(getAttemptedQuestions())
+        welcomeMsg.text = context.getString(R.string.hello).plus(User.getInstance().firstName.plus(","))
+        totalQuestions.text = context.getString(R.string.total_question).plus(getTotalQuestions())
+        totalAttempted.text =context.getString(R.string.total_attempted).plus(getAttemptedQuestions())
     }
 
     private fun getTotalQuestions() = assessment.questionList.size

@@ -13,100 +13,117 @@
 
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/root_container"
+    <FrameLayout
+            android:id="@+id/container"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-
-        <com.google.android.material.appbar.AppBarLayout
-                android:id="@+id/toolbar"
+        <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/root_container"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-                app:layout_constraintTop_toTopOf="parent">
+                android:layout_height="match_parent">
 
-            <com.google.android.material.appbar.MaterialToolbar
+
+            <com.google.android.material.appbar.AppBarLayout
+                    android:id="@+id/toolbar"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@color/white"
-                    android:gravity="start"
-                    android:minHeight="?attr/actionBarSize"
-                    android:popupTheme="@style/AppTheme.PopupOverlay"
-                    android:theme="@style/Theme.GuidelinesCompat.Light.DarkToolbar"
-                    app:contentInsetStart="0dp"
+                    android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
                     app:layout_constraintTop_toTopOf="parent">
 
-                <androidx.appcompat.widget.AppCompatImageView
-                        android:id="@+id/iv_back"
-                        android:layout_width="wrap_content"
+                <com.google.android.material.appbar.MaterialToolbar
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/_12sdp"
-                        android:paddingHorizontal="@dimen/_4sdp"
-                        android:paddingVertical="@dimen/_4sdp"
-                        android:visibility="visible"
-                        app:srcCompat="@drawable/ic_arrow_back"
-                        app:tint="@color/black" />
+                        android:background="@color/white"
+                        android:gravity="start"
+                        android:minHeight="?attr/actionBarSize"
+                        android:popupTheme="@style/AppTheme.PopupOverlay"
+                        android:theme="@style/Theme.GuidelinesCompat.Light.DarkToolbar"
+                        app:contentInsetStart="0dp"
+                        app:layout_constraintTop_toTopOf="parent">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                            android:id="@+id/iv_back"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/_12sdp"
+                            android:paddingHorizontal="@dimen/_4sdp"
+                            android:paddingVertical="@dimen/_4sdp"
+                            android:visibility="visible"
+                            app:srcCompat="@drawable/ic_arrow_back"
+                            app:tint="@color/black" />
 
 
-                <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/tv_title"
-                        fontPath="fonts/Roboto-Medium.ttf"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:ellipsize="marquee"
-                        android:gravity="center_vertical|start"
-                        android:paddingHorizontal="@dimen/_4sdp"
-                        android:paddingVertical="@dimen/_5sdp"
-                        android:singleLine="true"
-                        android:textColor="@color/black"
-                        android:textSize="@dimen/font_18"
-                        tools:text="Quiz #1" />
+                    <androidx.appcompat.widget.AppCompatTextView
+                            android:id="@+id/tv_title"
+                            fontPath="fonts/Roboto-Medium.ttf"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:ellipsize="marquee"
+                            android:gravity="center_vertical|start"
+                            android:paddingHorizontal="@dimen/_4sdp"
+                            android:paddingVertical="@dimen/_5sdp"
+                            android:singleLine="true"
+                            android:textColor="@color/black"
+                            android:textSize="@dimen/font_18"
+                            tools:text="Quiz #1" />
 
-            </com.google.android.material.appbar.MaterialToolbar>
+                </com.google.android.material.appbar.MaterialToolbar>
 
-        </com.google.android.material.appbar.AppBarLayout>
+            </com.google.android.material.appbar.AppBarLayout>
 
-        <com.google.android.material.tabs.TabLayout
-                android:id="@+id/tab_layout"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/_4sdp"
-                app:layout_constraintTop_toBottomOf="@+id/toolbar"
-                app:tabBackground="@drawable/selector_tab_indicator"
-                app:tabGravity="fill"
-                app:tabIndicator="@android:color/transparent"
-                app:tabIndicatorAnimationDuration="500"
-                app:tabIndicatorFullWidth="true"
-                app:tabMaxWidth="0dp"
-                app:tabMinWidth="@dimen/_96sdp"
-                app:tabMode="scrollable" />
+            <com.google.android.material.tabs.TabLayout
+                    android:id="@+id/tab_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_4sdp"
+                    app:layout_constraintTop_toBottomOf="@+id/toolbar"
+                    app:tabBackground="@drawable/selector_tab_indicator"
+                    app:tabGravity="fill"
+                    app:tabIndicator="@android:color/transparent"
+                    app:tabIndicatorAnimationDuration="500"
+                    app:tabIndicatorFullWidth="true"
+                    app:tabMaxWidth="0dp"
+                    app:tabMinWidth="@dimen/_96sdp"
+                    app:tabMode="scrollable" />
 
-        <androidx.viewpager2.widget.ViewPager2
-                android:id="@+id/question_view_pager"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:paddingHorizontal="@dimen/_16sdp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tab_layout" />
+            <androidx.viewpager2.widget.ViewPager2
+                    android:id="@+id/question_view_pager"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:paddingHorizontal="@dimen/_16sdp"
+                    app:layout_constraintBottom_toTopOf="@id/button_view"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/tab_layout" />
 
-        <com.pnikosis.materialishprogress.ProgressWheel
-                android:id="@+id/progress_bar"
-                android:layout_width="@dimen/_82sdp"
-                android:layout_height="@dimen/_82sdp"
-                android:layout_gravity="center"
-                android:visibility="gone"
-                wheel:layout_constraintBottom_toBottomOf="parent"
-                wheel:layout_constraintEnd_toEndOf="parent"
-                wheel:layout_constraintStart_toStartOf="parent"
-                wheel:layout_constraintTop_toTopOf="parent"
-                wheel:matProg_barColor="@color/button_primary_color"
-                wheel:matProg_fillRadius="true"
-                wheel:matProg_linearProgress="false"
-                wheel:matProg_progressIndeterminate="true"
-                wheel:matProg_rimWidth="@dimen/_2sdp" />
+            <com.joshtalks.joshskills.ui.assessment.viewholder.AssessmentButtonView
+                    android:id="@+id/button_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/_8sdp"
+                    android:layout_marginTop="@dimen/_14sdp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            <com.pnikosis.materialishprogress.ProgressWheel
+                    android:id="@+id/progress_bar"
+                    android:layout_width="@dimen/_82sdp"
+                    android:layout_height="@dimen/_82sdp"
+                    android:layout_gravity="center"
+                    android:visibility="gone"
+                    wheel:layout_constraintBottom_toBottomOf="parent"
+                    wheel:layout_constraintEnd_toEndOf="parent"
+                    wheel:layout_constraintStart_toStartOf="parent"
+                    wheel:layout_constraintTop_toTopOf="parent"
+                    wheel:matProg_barColor="@color/button_primary_color"
+                    wheel:matProg_fillRadius="true"
+                    wheel:matProg_linearProgress="false"
+                    wheel:matProg_progressIndeterminate="true"
+                    wheel:matProg_rimWidth="@dimen/_2sdp" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </FrameLayout>
 
 </layout>

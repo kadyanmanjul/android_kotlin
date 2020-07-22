@@ -44,6 +44,7 @@ class TestSummaryFragment : Fragment() {
                 false
             )
         binding.lifecycleOwner = this
+        binding.handler = this
         return binding.root
     }
 
@@ -56,26 +57,30 @@ class TestSummaryFragment : Fragment() {
 
     private fun addObservers() {
         viewModel.assessmentLiveData.observe(viewLifecycleOwner, Observer { assessment ->
-            assessment?.let {
-                it.questionList.sortedBy { it.question.sortOrder }.also {
-                    if (assessment.assessment.status == AssessmentStatus.STARTED)
+            if (binding.recyclerView.adapter == null || binding.recyclerView.adapter!!.itemCount == 0) {
+                assessment?.let {
+                    it.questionList.sortedBy { it.question.sortOrder }.also {
+                        if (assessment.assessment.status == AssessmentStatus.STARTED || assessment.assessment.status == AssessmentStatus.NOT_STARTED)
+                            binding.recyclerView.addView(
+                                TestSummaryHeaderViewHolder(
+                                    assessment, requireContext()
+                                )
+                            )
+                        else if (assessment.assessment.status == AssessmentStatus.COMPLETED)
+                            binding.recyclerView.addView(
+                                TestScoreCardViewHolder(
+                                    assessment.assessment, requireContext()
+                                )
+                            )
+                    }.forEach { questionList ->
                         binding.recyclerView.addView(
-                            TestSummaryHeaderViewHolder(
-                                assessment, requireContext()
+                            TestItemViewHolder(
+                                questionList.question,
+                                assessment.assessment.status,
+                                requireContext()
                             )
                         )
-                    else if (assessment.assessment.status == AssessmentStatus.COMPLETED)
-                        binding.recyclerView.addView(
-                            TestScoreCardViewHolder(
-                                assessment.assessment, requireContext()
-                            )
-                        )
-                }.forEach { questionList ->
-                    binding.recyclerView.addView(
-                        TestItemViewHolder(
-                            questionList.question, assessment.assessment.status, requireContext()
-                        )
-                    )
+                    }
                 }
             }
         })
@@ -96,6 +101,11 @@ class TestSummaryFragment : Fragment() {
             )
         )
         binding.recyclerView.addItemDecoration(divider)
+    }
+
+    fun dismiss() {
+        //TODO fire api in case of test summary
+        requireActivity().supportFragmentManager.beginTransaction().remove(this).commit()
     }
 
     companion object {
