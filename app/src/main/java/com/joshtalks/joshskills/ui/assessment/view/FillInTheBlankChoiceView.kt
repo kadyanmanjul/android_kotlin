@@ -25,7 +25,6 @@ import com.joshtalks.joshskills.repository.server.assessment.AssessmentType
 import com.joshtalks.joshskills.ui.assessment.AssessmentQuestionViewType
 import com.joshtalks.joshskills.ui.assessment.FillInTheBlankQuestionAdapter
 import com.joshtalks.joshskills.ui.assessment.viewholder.OnChoiceClickListener
-import org.jetbrains.anko.collections.forEachWithIndex
 
 class FillInTheBlankChoiceView : FrameLayout, OnChoiceClickListener {
 
@@ -33,6 +32,7 @@ class FillInTheBlankChoiceView : FrameLayout, OnChoiceClickListener {
     private var assessmentStatus: AssessmentStatus? = null
     private var viewType = AssessmentQuestionViewType.CORRECT_ANSWER_VIEW
     private var assessmentQuestion: AssessmentQuestionWithRelations? = null
+    private var listener: FillInTheBlankChoiceClickListener? = null
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var totalAnswered: TextView
@@ -40,7 +40,6 @@ class FillInTheBlankChoiceView : FrameLayout, OnChoiceClickListener {
     private var chipChoiceList = mutableListOf<Choice>()
     private var filled = 0
     private var totalOptions = 0
-
 
     constructor(context: Context) : super(context) {
         init()
@@ -69,12 +68,14 @@ class FillInTheBlankChoiceView : FrameLayout, OnChoiceClickListener {
         assessmentType: AssessmentType,
         assessmentStatus: AssessmentStatus,
         viewType: AssessmentQuestionViewType,
-        assessmentQuestion: AssessmentQuestionWithRelations
+        assessmentQuestion: AssessmentQuestionWithRelations,
+        listener: FillInTheBlankChoiceClickListener
     ) {
         this.assessmentType = assessmentType
         this.assessmentStatus = assessmentStatus
         this.viewType = viewType
         this.assessmentQuestion = assessmentQuestion
+        this.listener = listener
         setUpUI()
     }
 
@@ -82,7 +83,6 @@ class FillInTheBlankChoiceView : FrameLayout, OnChoiceClickListener {
         renderView()
         setupPlaceHolderView()
     }
-
 
     private fun renderView() {
         chipChoice.removeAllViews()
@@ -100,6 +100,8 @@ class FillInTheBlankChoiceView : FrameLayout, OnChoiceClickListener {
             chipChoice.check(this)
         }
         totalOptions = assessmentQuestion?.choiceList?.size ?: 0
+        totalAnswered.text = filled.toString().plus("/").plus(totalOptions)
+
     }
 
     private val chipClickListener = OnClickListener { view ->
@@ -113,16 +115,16 @@ class FillInTheBlankChoiceView : FrameLayout, OnChoiceClickListener {
 
             override fun onAnimationEnd(animation: Animation?) {
                 view.visibility = View.GONE
-                chipChoiceList.forEachWithIndex { index, choice ->
+                chipChoiceList.forEach { choice ->
                     if (view.id == choice.remoteId) {
                         if (!choice.isSelectedByUser)
                             filled = filled + 1
                         choice.isSelectedByUser = true
-                        choice.userSelectedOrder = index
+                        choice.userSelectedOrder = filled
                     }
 
                 }
-                sortList()
+                invalidateView(chipChoiceList = chipChoiceList)
             }
 
             override fun onAnimationStart(animation: Animation?) {
@@ -141,7 +143,14 @@ class FillInTheBlankChoiceView : FrameLayout, OnChoiceClickListener {
         recyclerView.layoutManager = layoutManager
         assessmentQuestion?.let { addChoicesListItems(it) }
 
-        recyclerView.adapter = FillInTheBlankQuestionAdapter(chipChoiceList as ArrayList<Choice>, this)
+        recyclerView.adapter =
+            FillInTheBlankQuestionAdapter(
+                assessmentType!!,
+                assessmentStatus!!,
+                assessmentQuestion!!.question.isAttempted,
+                chipChoiceList as ArrayList<Choice>,
+                this
+            )
 
     }
 
@@ -152,24 +161,59 @@ class FillInTheBlankChoiceView : FrameLayout, OnChoiceClickListener {
         }
     }
 
-    private fun sortList() {
+    private fun invalidateView(
+        isDeleted: Boolean = false,
+        fromIndex: Int = 100,
+        chipChoiceList: MutableList<Choice>
+    ) {
+        listener!!.onChoiceAdded(chipChoiceList)
+
         totalAnswered.text = filled.toString().plus("/").plus(totalOptions)
-        chipChoiceList.sortBy { it.userSelectedOrder }
+
+        if (isDeleted)
+            this.chipChoiceList.forEach {
+                it.userSelectedOrder =
+                    if (it.userSelectedOrder > fromIndex) it.userSelectedOrder - 1 else it.userSelectedOrder
+            }
+
+        this.chipChoiceList.sortBy { it.userSelectedOrder }
         recyclerView.adapter?.notifyDataSetChanged()
     }
 
     override fun onChoiceClick(choice: Choice) {
+        var fromIndex = 100
         chipChoice.forEach { view ->
-            chipChoiceList.forEachWithIndex { index, choiceItem ->
+            chipChoiceList.forEachIndexed { index, choiceItem ->
                 if (choice.remoteId == view.id && view.id == choiceItem.remoteId) {
                     if (choiceItem.isSelectedByUser)
                         filled = filled - 1
                     choiceItem.isSelectedByUser = false
+                    fromIndex = choice.userSelectedOrder
                     choiceItem.userSelectedOrder = 100
                     view.visibility = View.VISIBLE
-                    sortList()
                 }
             }
         }
+        invalidateView(true, fromIndex, chipChoiceList)
+    }
+
+    interface FillInTheBlankChoiceClickListener {
+        fun onChoiceAdded(choice: List<Choice>)
+    }
+
+    fun onSubmitCallback() {
+        assessmentQuestion!!.question.isAttempted = true
+        (recyclerView.adapter as FillInTheBlankQuestionAdapter).setIsAttempted()
+        invalidateView(
+            chipChoiceList = chipChoiceList
+        )
+        disableAllButtons()
+    }
+
+    private fun disableAllButtons() {
+        chipChoice.forEach { view ->
+            view.isClickable = false
+        }
     }
 }
+

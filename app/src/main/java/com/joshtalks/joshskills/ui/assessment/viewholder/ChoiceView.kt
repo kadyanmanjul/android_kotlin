@@ -18,6 +18,7 @@ class ChoiceView : FrameLayout {
 
     private var assessmentType: AssessmentType? = null
     private var assessmentStatus: AssessmentStatus? = null
+    private var listener: FillInTheBlankChoiceView.FillInTheBlankChoiceClickListener? = null
     private var viewType = AssessmentQuestionViewType.CORRECT_ANSWER_VIEW
     private var assessmentQuestion: AssessmentQuestionWithRelations? = null
     private var fillInTheBlankChoiceStub: Stub<FillInTheBlankChoiceView>? = null
@@ -50,12 +51,14 @@ class ChoiceView : FrameLayout {
         assessmentType: AssessmentType,
         assessmentStatus: AssessmentStatus,
         viewType: AssessmentQuestionViewType,
-        assessmentQuestion: AssessmentQuestionWithRelations
+        assessmentQuestion: AssessmentQuestionWithRelations,
+        listener: FillInTheBlankChoiceView.FillInTheBlankChoiceClickListener
     ) {
         this.assessmentType = assessmentType
         this.assessmentStatus = assessmentStatus
         this.viewType = viewType
         this.assessmentQuestion = assessmentQuestion
+        this.listener = listener
         setUpUI()
     }
 
@@ -77,7 +80,8 @@ class ChoiceView : FrameLayout {
                                     assessmentType!!,
                                     assessmentStatus!!,
                                     viewType,
-                                    assessmentQuestion
+                                    assessmentQuestion,
+                                    listener!!
                                 )
                         }
                     }
@@ -92,7 +96,8 @@ class ChoiceView : FrameLayout {
                                     assessmentType!!,
                                     assessmentStatus!!,
                                     viewType,
-                                    assessmentQuestion
+                                    assessmentQuestion,
+                                    listener!!
                                 )
                         }
                     }
@@ -106,4 +111,19 @@ class ChoiceView : FrameLayout {
         }
     }
 
+    fun registerSubmitCallback() {
+        fillInTheBlankChoiceStub?.run {
+            if (this.resolved()) {
+                this.get()?.onSubmitCallback()
+
+            }
+        }
+
+        mcqChoicesStub?.run {
+            if (this.resolved()) {
+                this.get()?.onSubmitCallback()
+
+            }
+        }
+    }
 }

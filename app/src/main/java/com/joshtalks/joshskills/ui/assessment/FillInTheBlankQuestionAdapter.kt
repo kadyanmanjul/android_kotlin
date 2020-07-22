@@ -11,11 +11,17 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.repository.local.model.assessment.Choice
+import com.joshtalks.joshskills.repository.server.assessment.AssessmentStatus
+import com.joshtalks.joshskills.repository.server.assessment.AssessmentType
 import com.joshtalks.joshskills.ui.assessment.viewholder.OnChoiceClickListener
 
 class FillInTheBlankQuestionAdapter(
+    private var assessmentType: AssessmentType,
+    private var assessmentStatus: AssessmentStatus,
+    private var isQuestionAttempted: Boolean,
     private val choiceResponse: ArrayList<Choice>,
     private var onClickListener: OnChoiceClickListener
+
 ) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
@@ -26,18 +32,20 @@ class FillInTheBlankQuestionAdapter(
         parent: ViewGroup,
         viewType: Int
     ): RecyclerView.ViewHolder {
-        val view: View
+
         if (viewType == TYPE_FILLED) {
-            view = parent.inflate(R.layout.fill_in_the_blank_recyclerview_item_row, false)
             return ChipAnswerViewHolder(
-                view
+                parent.inflate(R.layout.fill_in_the_blank_recyclerview_item_row, false)
             )
         } else {
-            view = parent.inflate(R.layout.fill_in_the_blank_recyclerview_item_row, false)
             return EmptyViewHolder(
-                view
+                parent.inflate(R.layout.fill_in_the_blank_recyclerview_item_row, false)
             )
         }
+    }
+
+    fun setIsAttempted() {
+        isQuestionAttempted = true
     }
 
     override fun getItemCount() = choiceResponse.size
@@ -46,6 +54,9 @@ class FillInTheBlankQuestionAdapter(
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if (getItemViewType(position) == TYPE_FILLED) {
             (holder as ChipAnswerViewHolder).bindPhoto(
+                assessmentType,
+                assessmentStatus,
+                isQuestionAttempted,
                 choiceResponse.get(position),
                 onClickListener
             )
@@ -66,29 +77,94 @@ class FillInTheBlankQuestionAdapter(
     class ChipAnswerViewHolder(private var view: View) : RecyclerView.ViewHolder(view),
         View.OnClickListener {
 
-        fun bindPhoto(choice: Choice, onClickListener: OnChoiceClickListener) {
+        fun bindPhoto(
+            assessmentType: AssessmentType,
+            assessmentStatus: AssessmentStatus,
+            isQuestionAttempted: Boolean,
+            choice: Choice,
+            onClickListener: OnChoiceClickListener
+        ) {
+            this.assessmentType = assessmentType
+            this.assessmentStatus = assessmentStatus
+            this.isQuestionAttempted = isQuestionAttempted
             this.choice = choice
             this.onClickListener = onClickListener
-            val question: TextView = view.findViewById(R.id.item_description)
+            question = view.findViewById(R.id.item_description)
             question.text = choice.text
-            val divider: View = view.findViewById(R.id.underline)
+            divider = view.findViewById(R.id.underline)
             divider.setBackgroundColor(
                 ContextCompat.getColor(
                     AppObjectController.joshApplication,
                     R.color.button_primary_color
                 )
             )
+            setColor()
             view.setOnClickListener(this)
         }
 
-        private var choice: Choice? = null
+        private lateinit var choice: Choice
+        private lateinit var assessmentType: AssessmentType
+        private lateinit var assessmentStatus: AssessmentStatus
+        private var isQuestionAttempted: Boolean = false
+        private lateinit var question: TextView
+        private lateinit var divider: View
+
         private var onClickListener: OnChoiceClickListener? = null
 
         override fun onClick(view: View) {
-            onClickListener?.onChoiceClick(choice!!)
+            if (!isQuestionAttempted)
+                onClickListener?.onChoiceClick(choice)
+            setColor()
         }
-    }
 
+        private fun setColor() {
+
+            if (((assessmentType == AssessmentType.QUIZ && isQuestionAttempted) || (assessmentType == AssessmentType.TEST && assessmentStatus == AssessmentStatus.COMPLETED))) {
+                if (isQuestionAttempted) {
+                    // For Question Submitted
+
+                    if (choice.isSelectedByUser) {
+                        // For Choice Selected
+
+                        if (choice.userSelectedOrder == choice.correctAnswerOrder) {
+                            // For Choice isCorrectAnswer
+                            setCorrectlySelectedChoiceView()
+                        } else {
+                            // For Choice isNotCorrectAnswer
+                            setWrongChoiceView()
+                        }
+
+                    }
+                }
+            }
+
+        }
+
+        private fun setWrongChoiceView() {
+            setTextColor(R.color.error_color)
+            setBackgroundColor(R.color.error_color)
+        }
+
+        private fun setCorrectlySelectedChoiceView() {
+            setTextColor(R.color.green_right_answer)
+            setBackgroundColor(R.color.green_right_answer)
+        }
+
+        private fun setTextColor(colorId: Int) =
+            question.setTextColor(
+                ContextCompat.getColor(
+                    AppObjectController.joshApplication,
+                    colorId
+                )
+            )
+
+        private fun setBackgroundColor(colorId: Int) = divider.setBackgroundColor(
+            ContextCompat.getColor(
+                AppObjectController.joshApplication,
+                colorId
+            )
+        )
+    }
 
     class EmptyViewHolder(private var view: View) : RecyclerView.ViewHolder(view) {
 

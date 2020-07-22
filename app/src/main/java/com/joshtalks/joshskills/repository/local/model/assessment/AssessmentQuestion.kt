@@ -74,7 +74,7 @@ data class AssessmentQuestion(
 
     @ColumnInfo
     @SerializedName("is_attempted")
-    val isAttempted: Boolean = false,
+    var isAttempted: Boolean = false,
 
     @TypeConverters(TypeConverterQuestionStatus::class)
     @ColumnInfo

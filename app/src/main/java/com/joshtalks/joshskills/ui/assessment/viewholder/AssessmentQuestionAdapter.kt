@@ -1,6 +1,5 @@
 package com.joshtalks.joshskills.ui.assessment.viewholder
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -9,12 +8,14 @@ import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQues
 import com.joshtalks.joshskills.repository.server.assessment.AssessmentStatus
 import com.joshtalks.joshskills.repository.server.assessment.AssessmentType
 import com.joshtalks.joshskills.ui.assessment.AssessmentQuestionViewType
+import com.joshtalks.joshskills.ui.assessment.view.FillInTheBlankChoiceView
 
 class AssessmentQuestionAdapter(
     private var type: AssessmentType,
     private var status: AssessmentStatus,
     private var viewType: AssessmentQuestionViewType,
-    private var questionList: List<AssessmentQuestionWithRelations>
+    private var questionList: List<AssessmentQuestionWithRelations>,
+    private var listener: FillInTheBlankChoiceView.FillInTheBlankChoiceClickListener
 ) :
     RecyclerView.Adapter<AssessmentQuestionAdapter.ViewHolder>() {
     init {
@@ -33,6 +34,12 @@ class AssessmentQuestionAdapter(
                 setIsRecyclable(true)
             }
         }
+    }
+
+    private lateinit var currentBinding: AssessmentListItemBinding
+
+    fun registerSubmitCallback() {
+        currentBinding.choiceView.registerSubmitCallback()
     }
 
     override fun getItemCount(): Int = questionList.size
@@ -58,8 +65,9 @@ class AssessmentQuestionAdapter(
     inner class ViewHolder(val binding: AssessmentListItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(assessmentQuestion: AssessmentQuestionWithRelations) {
+            currentBinding = binding
             binding.questionView.bind(assessmentQuestion)
-            binding.choiceView.bind(type, status, viewType, assessmentQuestion)
+            binding.choiceView.bind(type, status, viewType, assessmentQuestion, listener)
         }
     }
 

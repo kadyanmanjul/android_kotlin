@@ -31,6 +31,7 @@ class MCQChoicesView : FrameLayout, OnChoiceClickListener {
     private var assessmentStatus: AssessmentStatus? = null
     private var viewType = AssessmentQuestionViewType.CORRECT_ANSWER_VIEW
     private var assessmentQuestion: AssessmentQuestionWithRelations? = null
+    private var listener: FillInTheBlankChoiceView.FillInTheBlankChoiceClickListener? = null
     private val compositeDisposable = CompositeDisposable()
 
     private lateinit var choicesPlaceHolderView: PlaceHolderView
@@ -60,12 +61,14 @@ class MCQChoicesView : FrameLayout, OnChoiceClickListener {
         assessmentType: AssessmentType,
         assessmentStatus: AssessmentStatus,
         viewType: AssessmentQuestionViewType,
-        assessmentQuestion: AssessmentQuestionWithRelations
+        assessmentQuestion: AssessmentQuestionWithRelations,
+        listener: FillInTheBlankChoiceView.FillInTheBlankChoiceClickListener
     ) {
         this.assessmentType = assessmentType
         this.assessmentStatus = assessmentStatus
         this.viewType = viewType
         this.assessmentQuestion = assessmentQuestion
+        this.listener = listener
         setUpUI()
     }
 
@@ -155,6 +158,14 @@ class MCQChoicesView : FrameLayout, OnChoiceClickListener {
                     Crashlytics.logException(InvalidClassException("Wrong Choice Type"))
                 }
             }
+
+            listener?.onChoiceAdded(
+                assessmentQuestion!!.choiceList
+            )
         }
+    }
+
+    fun onSubmitCallback() {
+
     }
 }

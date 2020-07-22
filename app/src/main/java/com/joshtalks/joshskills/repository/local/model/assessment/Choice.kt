@@ -67,7 +67,7 @@ data class Choice(
 
     @ColumnInfo
     @SerializedName("selected_order")
-    var userSelectedOrder: Int = -1,
+    var userSelectedOrder: Int = 100,
 
     @ColumnInfo
     @SerializedName("is_selected_by_user")
