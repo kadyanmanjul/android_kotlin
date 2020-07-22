@@ -25,6 +25,8 @@ import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.loadJSONFromAsset
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.ActivityAssessmentBinding
+import com.joshtalks.joshskills.messaging.RxBus2
+import com.joshtalks.joshskills.repository.local.eventbus.TestItemClickedEventBus
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionWithRelations
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentWithRelations
 import com.joshtalks.joshskills.repository.local.model.assessment.Choice
@@ -35,6 +37,9 @@ import com.joshtalks.joshskills.repository.server.assessment.ReviseConcept
 import com.joshtalks.joshskills.ui.assessment.view.FillInTheBlankChoiceView
 import com.joshtalks.joshskills.ui.assessment.viewholder.AssessmentButtonView
 import com.joshtalks.joshskills.ui.assessment.viewholder.AssessmentQuestionAdapter
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
 
 class AssessmentActivity : CoreJoshActivity(), AssessmentButtonView.AssessmentButtonListener,
     FillInTheBlankChoiceView.FillInTheBlankChoiceClickListener {
@@ -44,6 +49,7 @@ class AssessmentActivity : CoreJoshActivity(), AssessmentButtonView.AssessmentBu
     private var assessmentId: Int = 0
     private var flowFrom: String? = null
     private val hintOptionsSet = mutableSetOf<ChoiceType>()
+    private var compositeDisposable = CompositeDisposable()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -75,6 +81,7 @@ class AssessmentActivity : CoreJoshActivity(), AssessmentButtonView.AssessmentBu
             finish()
         }
         subscribeLiveData()
+        addObservers()
     }
 
     private fun showTestSummaryFragment(questionId: Int) {
@@ -122,6 +129,20 @@ class AssessmentActivity : CoreJoshActivity(), AssessmentButtonView.AssessmentBu
         viewModel.assessmentLiveData.observe(this, Observer { assessmentWithRelations ->
             bindView(assessmentWithRelations)
         })
+    }
+
+    private fun addObservers() {
+        compositeDisposable.add(
+            RxBus2.listen(TestItemClickedEventBus::class.java)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe {
+                    moveToQuestion(it.questionId)
+                })
+    }
+
+    private fun moveToQuestion(questionId: Int) {
+        // todo move viewpager to question id
     }
 
     companion object {
@@ -282,5 +303,10 @@ class AssessmentActivity : CoreJoshActivity(), AssessmentButtonView.AssessmentBu
 
     override fun onReviseConcept(reviseConcept: ReviseConcept) {
         showReviseConceptFragment(reviseConcept)
+    }
+
+    fun submitTest() {
+        //  viewModel.postTestData(1)
+        // TODO finish activity
     }
 }

@@ -20,7 +20,7 @@ import com.joshtalks.joshskills.repository.server.assessment.AssessmentStatus
 class TestSummaryFragment : Fragment() {
     private lateinit var binding: FragmentTestSummaryReportBinding
     var assessmentId: Int = -1
-    private lateinit var viewModel: AssessmentTestViewModel
+    private lateinit var viewModel: AssessmentViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,7 +28,7 @@ class TestSummaryFragment : Fragment() {
             assessmentId = it.getInt(ASSESSMENT_ID, -1)
         }
         viewModel = activity?.run {
-            ViewModelProvider(this).get(AssessmentTestViewModel::class.java)
+            ViewModelProvider(requireActivity()).get(AssessmentViewModel::class.java)
         }!!
     }
 
@@ -52,7 +52,7 @@ class TestSummaryFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         initRecyclerView()
         addObservers()
-        viewModel.getAssessmentFromDao(1)
+        viewModel.fetchAssessmentDetails(assessmentId)
     }
 
     private fun addObservers() {
@@ -104,8 +104,7 @@ class TestSummaryFragment : Fragment() {
     }
 
     fun dismiss() {
-        //TODO fire api in case of test summary
-        requireActivity().supportFragmentManager.beginTransaction().remove(this).commit()
+        (requireActivity() as AssessmentActivity).submitTest()
     }
 
     companion object {

@@ -89,11 +89,11 @@ interface ChatNetworkService {
     @POST("$DIR/assessment/answer")
     suspend fun submitTestAsync(
         assessmentWithRelations: AssessmentWithRelations
-    )
+    ): Response<Any>
 
     @GET("$DIR/assessment/report/{id}/")
     suspend fun getTestReport(
         @Path("id") id: Int
-    ) : Response<AssessmentWithRelations>
+    ): Response<AssessmentWithRelations>
 
 }

@@ -5,6 +5,8 @@ import android.content.Context
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.res.ResourcesCompat
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.messaging.RxBus2
+import com.joshtalks.joshskills.repository.local.eventbus.TestItemClickedEventBus
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestion
 import com.joshtalks.joshskills.repository.server.assessment.AssessmentStatus
 import com.joshtalks.joshskills.repository.server.assessment.QuestionStatus
@@ -67,6 +69,6 @@ class TestItemViewHolder(
 
     @Click(R.id.test_button)
     fun onClick() {
-        //TODO call the respective fragment or view pager item
+        RxBus2.publish(TestItemClickedEventBus(question.remoteId))
     }
 }

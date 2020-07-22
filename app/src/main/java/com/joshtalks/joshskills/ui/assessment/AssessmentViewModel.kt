@@ -79,4 +79,20 @@ class AssessmentViewModel(application: Application) : AndroidViewModel(applicati
         }
     }
 
+    fun postTestData(assessmentWithRelations: AssessmentWithRelations) {
+        jobs += viewModelScope.launch(Dispatchers.IO) {
+            try {
+
+                val resp = AppObjectController.chatNetworkService.submitTestAsync(assessmentWithRelations)
+                if (resp.isSuccessful && resp.body() != null) {
+                    apiCallStatusLiveData.postValue(ApiCallStatus.SUCCESS)
+                    return@launch
+                }
+            } catch (ex: Throwable) {
+                ex.showAppropriateMsg()
+                mockData()
+            }
+            apiCallStatusLiveData.postValue(ApiCallStatus.FAILED)
+        }
+    }
 }
