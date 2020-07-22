@@ -64,11 +64,16 @@ class AssessmentButtonView : FrameLayout {
     private fun addListeners() {
         submitBtn.setOnClickListener {
             if (numberOfCorrectAnswers == questionAnswered && assessmentType == AssessmentType.QUIZ) {
-                showNextButtonContainer()
+                showNextButtonContainerAndPublishEvent()
+            } else if (assessmentType == AssessmentType.TEST)
                 listener.onSubmit(
                     assessmentType!!,
                     assessmentQuestion!!
                 )
+            else if (assessmentQuestion!!.question.choiceType != ChoiceType.FILL_IN_THE_BLANKS_TEXT &&
+                questionAnswered >= 1
+            ) {
+                showNextButtonContainerAndPublishEvent()
             }
         }
         reviseBtn.setOnClickListener {
@@ -80,6 +85,14 @@ class AssessmentButtonView : FrameLayout {
                 assessmentType!!
             )
         }
+    }
+
+    private fun showNextButtonContainerAndPublishEvent() {
+        showNextButtonContainer()
+        listener.onSubmit(
+            assessmentType!!,
+            assessmentQuestion!!
+        )
     }
 
     private fun showNextButtonContainer() {
@@ -102,35 +115,43 @@ class AssessmentButtonView : FrameLayout {
                 questionAnswered = questionAnswered + 1
             }
             if (assessmentType == AssessmentType.QUIZ) {
-                if (numberOfCorrectAnswers == questionAnswered) {
-                    submitBtn.isClickable = true
-                    submitBtn.backgroundTintList = ColorStateList.valueOf(
-                        ContextCompat.getColor(
-                            AppObjectController.joshApplication,
-                            R.color.button_primary_color
-                        )
-                    )
+                if (assessmentQuestion!!.question.choiceType == ChoiceType.FILL_IN_THE_BLANKS_TEXT
+                    &&
+                    numberOfCorrectAnswers == questionAnswered
+                ) {
+                    setSubmitBtnColor(true)
+                } else if (assessmentQuestion!!.question.choiceType != ChoiceType.FILL_IN_THE_BLANKS_TEXT
+                    && questionAnswered >= 1
+                ) {
+                    setSubmitBtnColor(true)
+
                 } else {
-                    submitBtn.isClickable = false
-                    submitBtn.backgroundTintList = ColorStateList.valueOf(
-                        ContextCompat.getColor(
-                            AppObjectController.joshApplication,
-                            R.color.light_grey
-                        )
-                    )
+                    setSubmitBtnColor(false)
+
                 }
             } else {
-                submitBtn.isClickable = true
-                submitBtn.backgroundTintList = ColorStateList.valueOf(
-                    ContextCompat.getColor(
-                        AppObjectController.joshApplication,
-                        R.color.button_primary_color
-                    )
-                )
+                setSubmitBtnColor(true)
+
             }
         }
     }
 
+    private fun setSubmitBtnColor(boolean: Boolean) {
+        submitBtn.isClickable = boolean
+        if (boolean)
+            submitBtn.backgroundTintList = ColorStateList.valueOf(
+                ContextCompat.getColor(
+                    AppObjectController.joshApplication,
+                    R.color.button_primary_color
+                )
+            )
+        else submitBtn.backgroundTintList = ColorStateList.valueOf(
+            ContextCompat.getColor(
+                AppObjectController.joshApplication,
+                R.color.light_grey
+            )
+        )
+    }
 
     fun bind(
         assessmentType: AssessmentType,

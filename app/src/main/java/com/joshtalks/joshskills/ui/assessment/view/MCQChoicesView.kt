@@ -146,11 +146,19 @@ class MCQChoicesView : FrameLayout, OnChoiceClickListener {
                     assessmentQuestion?.choiceList?.forEach { it.isSelectedByUser = false }
                     choice.isSelectedByUser = true
                     choicesPlaceHolderView.adapter?.notifyDataSetChanged()
+
+                    listener?.onChoiceAdded(
+                        assessmentQuestion!!.choiceList
+                    )
                 }
 
                 ChoiceType.MULTI_SELECTION_TEXT, ChoiceType.MULTI_SELECTION_IMAGE -> {
                     choice.isSelectedByUser = true
                     choicesPlaceHolderView.adapter?.notifyItemChanged(choice.sortOrder)
+
+                    listener?.onChoiceAdded(
+                        assessmentQuestion!!.choiceList
+                    )
                 }
 
                 else -> {
@@ -158,10 +166,6 @@ class MCQChoicesView : FrameLayout, OnChoiceClickListener {
                     Crashlytics.logException(InvalidClassException("Wrong Choice Type"))
                 }
             }
-
-            listener?.onChoiceAdded(
-                assessmentQuestion!!.choiceList
-            )
         }
     }
 
