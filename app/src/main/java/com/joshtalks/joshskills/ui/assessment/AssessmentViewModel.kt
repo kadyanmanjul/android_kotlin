@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.core.ApiCallStatus
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.loadJSONFromAsset
+import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionWithRelations
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentWithRelations
 import com.joshtalks.joshskills.repository.server.assessment.AssessmentResponse
 import com.joshtalks.joshskills.util.showAppropriateMsg
@@ -65,6 +66,16 @@ class AssessmentViewModel(application: Application) : AndroidViewModel(applicati
         CoroutineScope(Dispatchers.IO).launch {
             AppObjectController.appDatabase.assessmentDao()
                 .insertAssessment(AssessmentWithRelations(assessmentResponse))
+            val assessmentWithRelations = getAssessmentFromDB(1)
+            assessmentLiveData.postValue(assessmentWithRelations)
+
+        }
+    }
+
+    fun saveAssessmentQuestion(assessmentQuestion: AssessmentQuestionWithRelations) {
+        CoroutineScope(Dispatchers.IO).launch {
+            AppObjectController.appDatabase.assessmentDao()
+                .insertAssessmentQuestion(assessmentQuestion)
         }
     }
 
