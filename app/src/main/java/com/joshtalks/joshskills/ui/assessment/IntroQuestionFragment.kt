@@ -11,7 +11,7 @@ import com.bumptech.glide.integration.webp.decoder.WebpDrawableTransformation
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.bumptech.glide.request.target.Target
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.repository.server.assessment.AssessmentIntroResponse
+import com.joshtalks.joshskills.repository.server.assessment.AssessmentIntro
 import kotlinx.android.synthetic.main.intro_question_fragment.image_view
 import kotlinx.android.synthetic.main.intro_question_fragment.root_view
 import kotlinx.android.synthetic.main.intro_question_fragment.tv_description
@@ -22,21 +22,21 @@ const val ASSESSMENT_DETAIL_SOURCE = "teacher_detail_source"
 class IntroQuestionFragment : DialogFragment() {
 
     companion object {
-        fun newInstance(assessmentIntroResponse: AssessmentIntroResponse) =
+        fun newInstance(assessmentIntro: AssessmentIntro) =
             IntroQuestionFragment().apply {
                 arguments = Bundle().apply {
-                    putParcelable(ASSESSMENT_DETAIL_SOURCE, assessmentIntroResponse)
+                    putParcelable(ASSESSMENT_DETAIL_SOURCE, assessmentIntro)
                 }
             }
     }
 
-    private lateinit var assessmentIntroObj: AssessmentIntroResponse
+    private lateinit var assessmentIntroObj: AssessmentIntro
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
             assessmentIntroObj =
-                it.getParcelable<AssessmentIntroResponse>(ASSESSMENT_DETAIL_SOURCE) as AssessmentIntroResponse
+                it.getParcelable<AssessmentIntro>(ASSESSMENT_DETAIL_SOURCE) as AssessmentIntro
         }
         setStyle(STYLE_NO_FRAME, R.style.FullDialogWithAnimationV2)
     }
