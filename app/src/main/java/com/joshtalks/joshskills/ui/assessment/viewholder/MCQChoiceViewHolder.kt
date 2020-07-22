@@ -63,6 +63,12 @@ class MCQChoiceViewHolder(
 
         }
 
+        if (isQuestionAttempted) {
+            container.setRippleColorResource(R.color.transparent)
+        } else {
+            container.setRippleColorResource(R.color.dark_grey)
+        }
+
         setColor()
     }
 
