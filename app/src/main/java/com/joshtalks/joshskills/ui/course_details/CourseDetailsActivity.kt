@@ -239,15 +239,14 @@ class CourseDetailsActivity : BaseActivity() {
         viewModel.apiCallStatusLiveData.observe(this, Observer {
             binding.progressBar.visibility = View.GONE
             if (it == ApiCallStatus.FAILED) {
-                //  binding.coordinator.removeAllViews()
                 val imageUrl =
                     AppObjectController.getFirebaseRemoteConfig().getString("ERROR_API_IMAGE_URL")
                 val imageView = ImageView(this).apply {
                     adjustViewBounds = true
-                    scaleType = ImageView.ScaleType.CENTER
+                    scaleType = ImageView.ScaleType.FIT_CENTER
                     layoutParams = CoordinatorLayout.LayoutParams(
-                        CoordinatorLayout.LayoutParams.MATCH_PARENT,
-                        CoordinatorLayout.LayoutParams.WRAP_CONTENT
+                        CoordinatorLayout.LayoutParams.WRAP_CONTENT,
+                        CoordinatorLayout.LayoutParams.MATCH_PARENT
                     ).apply {
                         gravity = Gravity.CENTER
                     }
