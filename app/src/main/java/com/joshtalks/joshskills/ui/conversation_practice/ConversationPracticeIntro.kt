@@ -12,6 +12,8 @@ import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
 import com.joshtalks.joshskills.R
+import kotlinx.android.synthetic.main.fragment_conversation_practice_ntro.image_view
+
 
 class ConversationPracticeIntro : DialogFragment() {
 
@@ -56,16 +58,59 @@ class ConversationPracticeIntro : DialogFragment() {
     }
 
     private fun setupProfilePicture() {
-        tgDetails.dpUrl.run {
-            Glide.with(requireContext())
-                .load(this)
-                .override(Target.SIZE_ORIGINAL)
-                .optionalTransform(
-                    WebpDrawable::class.java,
-                    WebpDrawableTransformation(CircleCrop())
-                )
-                .apply(RequestOptions.circleCropTransform())
-                .into(iv_profile_pic)
-        }
+        Glide.with(requireContext())
+            .load(this)
+            .override(Target.SIZE_ORIGINAL)
+            .optionalTransform(
+                WebpDrawable::class.java,
+                WebpDrawableTransformation(CircleCrop())
+            )
+            .apply(RequestOptions.circleCropTransform())
+            .into(image_view)
+
     }
 }
+/*
+
+//SparseArray<String> sparseArray = new SparseArray<>();
+class ConversationPracticeTimelineAdapter(private var items: SparseArray<String>) :
+    RecyclerView.Adapter<ConversationPracticeTimelineAdapter.ViewHolder>() {
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        val inflater = LayoutInflater.from(parent.context)
+        val binding = ContentTimelineItemBinding.inflate(inflater, parent, false)
+        return ViewHolder(binding, viewType)
+    }
+
+    override fun getItemViewType(position: Int): Int {
+        return TimelineView.getTimeLineViewType(position, itemCount)
+    }
+
+    override fun getItemCount(): Int = items.size()
+
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) = holder.bind(items.get(position))
+
+    fun addItem(items: List<CourseContentEntity>) {
+        this.items = items
+        notifyDataSetChanged()
+    }
+
+    inner class ViewHolder(val binding: ContentTimelineItemBinding, private val viewType: Int) :
+        RecyclerView.ViewHolder(binding.root) {
+        fun bind(courseContentEntity: CourseContentEntity) {
+            with(binding) {
+                timeline.initLine(viewType)
+                this.textTitle.text = convertCamelCase(courseContentEntity.title!!)
+                this.textTitle.setOnClickListener {
+                    RxBus2.publish(ContentClickEventBus(courseContentEntity))
+                }
+                this.rootView.setOnClickListener {
+                    RxBus2.publish(ContentClickEventBus(courseContentEntity))
+                }
+            }
+        }
+    }
+
+}
+*/
+
