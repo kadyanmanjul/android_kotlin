@@ -112,7 +112,7 @@ class CourseOverviewViewHolder(
             statsIcon2.visibility = View.VISIBLE
             statsCaption2.visibility = View.VISIBLE
             statsList[1].url?.run {
-                setImage(this, statsIcon1)
+                setImage(this, statsIcon2)
             }
             statsCaption2.text = statsList[1].text
         }
@@ -120,7 +120,7 @@ class CourseOverviewViewHolder(
             statsIcon3.visibility = View.VISIBLE
             statsCaption3.visibility = View.VISIBLE
             statsList[2].url?.run {
-                setImage(this, statsIcon1)
+                setImage(this, statsIcon3)
             }
             statsCaption3.text = statsList[2].text
         }
@@ -128,7 +128,7 @@ class CourseOverviewViewHolder(
             statsIcon4.visibility = View.VISIBLE
             statsCaption4.visibility = View.VISIBLE
             statsList[3].url?.run {
-                setImage(this, statsIcon1)
+                setImage(this, statsIcon4)
             }
             statsCaption4.text = statsList[3].text
         }
