@@ -652,7 +652,7 @@ enum class OPTION_TYPE(val type: String) {
 
 enum class BASE_MESSAGE_TYPE(val type: String) {
     A("A"), TX("TX"), VI("VI"), AU("AU"), IM("IM"), Q("Q"), PD("PD"), PR("PR"), AR("AR"),
-    QUIZ("QUIZ"), TEST("TEST")
+    CP("CP"), QUIZ("QUIZ"), TEST("TEST")
 
 }
 
