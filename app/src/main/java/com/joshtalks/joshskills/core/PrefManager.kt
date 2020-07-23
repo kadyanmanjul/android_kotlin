@@ -3,6 +3,7 @@ package com.joshtalks.joshskills.core
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
+import androidx.preference.PreferenceManager
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.core.service.WorkMangerAdmin
 import com.joshtalks.joshskills.repository.local.AppDatabase
@@ -27,18 +28,25 @@ const val FRESH_CHAT_ID_RESTORED = "fresh_chat_id_restored"
 
 object PrefManager {
 
-    private const val PREF_NAME_COMMON = "com.joshtalks.joshskills.JoshSkillsCommonPref"
+    private const val PREF_NAME_COMMON = "JoshSkills"
     private const val PREF_NAME_CONSISTENT = "com.joshtalks.joshskills.JoshSkillsConsistentPref"
 
     @JvmStatic
     private val prefManagerCommon by lazy {
-        this.getPref(AppObjectController.joshApplication, PREF_NAME_COMMON)
+        this.getPref(AppObjectController.joshApplication)
     }
 
     @JvmStatic
     private val prefManagerConsistent: SharedPreferences =
         this.getPref(AppObjectController.joshApplication, PREF_NAME_CONSISTENT)
 
+
+    @SuppressLint("RestrictedApi")
+    private fun getPref(context: Context): SharedPreferences {
+        val sharedPreferences = PreferenceManager(context).sharedPreferences
+        PreferenceManager(context).sharedPreferencesName = PREF_NAME_COMMON
+        return sharedPreferences
+    }
 
     @SuppressLint("RestrictedApi")
     private fun getPref(context: Context, fileName: String): SharedPreferences {
