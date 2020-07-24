@@ -1,28 +1,42 @@
-package com.joshtalks.joshskills.ui.conversation_practice
+package com.joshtalks.joshskills.ui.conversation_practice.extra
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
+import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.integration.webp.decoder.WebpDrawable
 import com.bumptech.glide.integration.webp.decoder.WebpDrawableTransformation
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
+import com.github.vipulasri.timelineview.TimelineView
+import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.custom_ui.decorator.LayoutMarginDecoration
+import com.joshtalks.joshskills.databinding.ConversationPracticeTimelineItemBinding
+import com.joshtalks.joshskills.repository.local.model.PractiseFlowOptionModel
+import com.vanniktech.emoji.Utils
 import kotlinx.android.synthetic.main.fragment_conversation_practice_ntro.image_view
+import kotlinx.android.synthetic.main.fragment_conversation_practice_ntro.recycler_view
+import java.io.IOException
+import java.io.InputStream
+import java.lang.reflect.Type
+import java.nio.charset.Charset
 
 
-class ConversationPracticeIntro : DialogFragment() {
+class ConversationPracticeIntro private constructor() : DialogFragment() {
 
     companion object {
         fun newInstance() =
-            ConversationPracticeIntro().apply {
-                arguments = Bundle().apply {
+            ConversationPracticeIntro()
+                .apply {
+                    arguments = Bundle().apply {
+                    }
                 }
-            }
     }
 
 
@@ -69,16 +83,45 @@ class ConversationPracticeIntro : DialogFragment() {
             .into(image_view)
 
     }
-}
-/*
 
-//SparseArray<String> sparseArray = new SparseArray<>();
-class ConversationPracticeTimelineAdapter(private var items: SparseArray<String>) :
+    fun setupUI() {
+        recycler_view.addItemDecoration(LayoutMarginDecoration(Utils.dpToPx(requireContext(), 4f)))
+        val typeToken: Type = object : TypeToken<List<PractiseFlowOptionModel>>() {}.type
+        val obj = AppObjectController.gsonMapperForLocal.fromJson<List<PractiseFlowOptionModel>>(
+            loadJSONFromAsset("practise_flow_details.json"), typeToken
+        )
+        recycler_view.adapter = ConversationPracticeTimelineAdapter(obj)
+
+    }
+
+    private fun loadJSONFromAsset(fileName: String): String? {
+        var json: String? = null
+        json = try {
+            val `is`: InputStream = AppObjectController.joshApplication.assets.open(fileName)
+            val size: Int = `is`.available()
+            val buffer = ByteArray(size)
+            `is`.read(buffer)
+            `is`.close()
+
+            val charset: Charset = Charsets.UTF_8
+            String(buffer, charset)
+        } catch (ex: IOException) {
+            ex.printStackTrace()
+            return null
+        }
+        return json
+    }
+
+
+}
+
+
+private class ConversationPracticeTimelineAdapter(private var items: List<PractiseFlowOptionModel>) :
     RecyclerView.Adapter<ConversationPracticeTimelineAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
-        val binding = ContentTimelineItemBinding.inflate(inflater, parent, false)
+        val binding = ConversationPracticeTimelineItemBinding.inflate(inflater, parent, false)
         return ViewHolder(binding, viewType)
     }
 
@@ -86,31 +129,24 @@ class ConversationPracticeTimelineAdapter(private var items: SparseArray<String>
         return TimelineView.getTimeLineViewType(position, itemCount)
     }
 
-    override fun getItemCount(): Int = items.size()
+    override fun getItemCount(): Int = items.size
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) = holder.bind(items.get(position))
 
-    fun addItem(items: List<CourseContentEntity>) {
-        this.items = items
-        notifyDataSetChanged()
-    }
-
-    inner class ViewHolder(val binding: ContentTimelineItemBinding, private val viewType: Int) :
+    inner class ViewHolder(
+        val binding: ConversationPracticeTimelineItemBinding,
+        private val viewType: Int
+    ) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(courseContentEntity: CourseContentEntity) {
+        fun bind(practiseFlowOptionModel: PractiseFlowOptionModel) {
             with(binding) {
                 timeline.initLine(viewType)
-                this.textTitle.text = convertCamelCase(courseContentEntity.title!!)
-                this.textTitle.setOnClickListener {
-                    RxBus2.publish(ContentClickEventBus(courseContentEntity))
-                }
-                this.rootView.setOnClickListener {
-                    RxBus2.publish(ContentClickEventBus(courseContentEntity))
-                }
+                textHeader.text = practiseFlowOptionModel.header
+                textSubHeader.text = practiseFlowOptionModel.subHeader
             }
         }
     }
 
 }
-*/
+
 
