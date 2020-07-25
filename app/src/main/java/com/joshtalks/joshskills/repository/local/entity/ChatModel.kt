@@ -152,7 +152,7 @@ data class Question(
 
 
     @ColumnInfo
-    @SerializedName("material_type") var material_type: BASE_MESSAGE_TYPE = BASE_MESSAGE_TYPE.TX,
+    @SerializedName("material_type") var material_type: BASE_MESSAGE_TYPE = BASE_MESSAGE_TYPE.OTHER,
 
     @Ignore
     @SerializedName("options") var optionsList: List<OptionType>? = null,
@@ -172,7 +172,7 @@ data class Question(
     @ColumnInfo(name = "question_type") var questionType: String = "",
 
     @ColumnInfo(name = "type")
-    @SerializedName("type") var type: BASE_MESSAGE_TYPE = BASE_MESSAGE_TYPE.Q,
+    @SerializedName("type") var type: BASE_MESSAGE_TYPE = BASE_MESSAGE_TYPE.OTHER,
 
 
     @Ignore
@@ -652,7 +652,7 @@ enum class OPTION_TYPE(val type: String) {
 
 enum class BASE_MESSAGE_TYPE(val type: String) {
     A("A"), TX("TX"), VI("VI"), AU("AU"), IM("IM"), Q("Q"), PD("PD"), PR("PR"), AR("AR"),
-    CP("CP"), QUIZ("QUIZ"), TEST("TEST")
+    CP("CP"), QUIZ("QUIZ"), TEST("TEST"), OTHER("OTHER")
 
 }
 

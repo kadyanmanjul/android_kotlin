@@ -324,8 +324,11 @@ class MessageTypeConverters {
     }
 
     @TypeConverter
-    fun fromMatType(enumVal: BASE_MESSAGE_TYPE): String? {
-        return AppObjectController.gsonMapper.toJson(enumVal)
+    fun fromMatType(enumVal: BASE_MESSAGE_TYPE?): String? {
+        if (null != enumVal) {
+            return AppObjectController.gsonMapper.toJson(enumVal)
+        }
+        return AppObjectController.gsonMapper.toJson(BASE_MESSAGE_TYPE.OTHER)
     }
 }
 

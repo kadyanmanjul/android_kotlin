@@ -1314,19 +1314,25 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
     private fun getView(
         chatModel: ChatModel
     ): BaseCell? {
-        return if (chatModel.type == BASE_MESSAGE_TYPE.Q) {
-            return when (chatModel.question?.type) {
-                BASE_MESSAGE_TYPE.PR, BASE_MESSAGE_TYPE.QUIZ, BASE_MESSAGE_TYPE.TEST -> {
-                    getGenericView(chatModel.question?.type, chatModel)
-                }
-                else -> {
-                    getGenericView(chatModel.question?.material_type, chatModel)
+        return when (chatModel.type) {
+            BASE_MESSAGE_TYPE.Q -> {
+                return when (chatModel.question?.type) {
+
+                    BASE_MESSAGE_TYPE.PR,
+                    BASE_MESSAGE_TYPE.OTHER,
+                    BASE_MESSAGE_TYPE.QUIZ,
+                    BASE_MESSAGE_TYPE.TEST -> {
+                        getGenericView(chatModel.question?.type, chatModel)
+                    }
+                    else -> {
+                        getGenericView(chatModel.question?.material_type, chatModel)
+                    }
                 }
             }
-        } else {
-            getGenericView(chatModel.type, chatModel)
+            else -> {
+                getGenericView(chatModel.type, chatModel)
+            }
         }
-
     }
 
     private fun getGenericView(
@@ -1344,9 +1350,11 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
                 VideoViewHolder(activityRef, chatModel)
             BASE_MESSAGE_TYPE.PR ->
                 PracticeViewHolder(activityRef, chatModel)
+            BASE_MESSAGE_TYPE.TX ->
+                TextViewHolder(activityRef, chatModel)
             BASE_MESSAGE_TYPE.QUIZ, BASE_MESSAGE_TYPE.TEST ->
                 AssessmentViewHolder(activityRef, chatModel)
-            else -> TextViewHolder(activityRef, chatModel)
+            else -> return null
         }
     }
 
