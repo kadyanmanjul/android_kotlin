@@ -1,7 +1,7 @@
 package com.joshtalks.joshskills.ui.course_details.viewholder
 
 import android.os.Build
-import android.view.View.GONE
+import android.view.View.INVISIBLE
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.cardview.widget.CardView
@@ -27,7 +27,7 @@ class ChildItemExpandableList(val answer: String) {
 
     @Resolve
     fun onResolved() {
-        itemIcon.visibility = GONE
+        itemIcon.visibility = INVISIBLE
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
             mainView.setCardBackgroundColor(
                 AppObjectController.joshApplication.resources.getColor(

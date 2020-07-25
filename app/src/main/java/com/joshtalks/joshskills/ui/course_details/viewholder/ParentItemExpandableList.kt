@@ -2,6 +2,7 @@ package com.joshtalks.joshskills.ui.course_details.viewholder
 
 import android.graphics.drawable.Drawable
 import android.os.Build
+import android.view.View.VISIBLE
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.cardview.widget.CardView
@@ -53,6 +54,7 @@ class ParentItemExpandableList(val question: String) {
 
     @Resolve
     fun onResolved() {
+        itemIcon.visibility = VISIBLE
         itemIcon.setImageDrawable(drawable2)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
             mainView.setCardBackgroundColor(
@@ -66,8 +68,8 @@ class ParentItemExpandableList(val question: String) {
 
     @Expand
     fun onExpand() {
-        logAnalyticsEvent(question)
         itemIcon.setImageDrawable(drawable)
+        logAnalyticsEvent(question)
     }
 
     @Collapse

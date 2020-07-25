@@ -16,4 +16,8 @@ object RxBus2 {
     // Using ofType we filter only events that match that class type
     fun <T> listen(eventType: Class<T>): Observable<T> =
         publisher.ofType(eventType).debounce(500, TimeUnit.MILLISECONDS)
+
+    fun <T> listenWithoutDelay(eventType: Class<T>): Observable<T> =
+        publisher.ofType(eventType)
+
 }

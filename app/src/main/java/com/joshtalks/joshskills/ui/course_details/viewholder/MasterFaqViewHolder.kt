@@ -45,7 +45,7 @@ class MasterFaqViewHolder(
     @com.mindorks.placeholderview.annotations.View(R.id.recycler_view)
     lateinit var recyclerView: PlaceHolderView
 
-    var categoryId :Int?=null
+    var categoryId: Int? = null
     private var compositeDisposable = CompositeDisposable()
 
     var typefaceSpan: Typeface? = null
@@ -65,7 +65,7 @@ class MasterFaqViewHolder(
         if (recyclerView.viewAdapter == null || recyclerView.viewAdapter.itemCount == 0) {
             faqData.categoryList.sortedBy { it.sortOrder }.forEach { typeOfHelpModel ->
                 if (categoryId == null) {
-                    categoryId=typeOfHelpModel.id
+                    categoryId = typeOfHelpModel.id
                 }
                 recyclerView.addView(
                     FaqCategoryViewHolder(
@@ -99,12 +99,12 @@ class MasterFaqViewHolder(
 
     private fun observeBus() {
         compositeDisposable.add(
-            RxBus2.listen(LandingPageCategorySelectEventBus::class.java)
+            RxBus2.listenWithoutDelay(LandingPageCategorySelectEventBus::class.java)
                 .subscribeOn(Schedulers.computation())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
                     logAnalyticsEvent()
-                    highlightAndShowFaq(it.position,it.categoryId)
+                    highlightAndShowFaq(it.position, it.categoryId)
                 })
     }
 
