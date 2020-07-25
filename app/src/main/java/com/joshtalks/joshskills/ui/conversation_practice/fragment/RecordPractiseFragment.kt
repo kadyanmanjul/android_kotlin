@@ -1,7 +1,11 @@
 package com.joshtalks.joshskills.ui.conversation_practice.fragment
 
 import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.repository.server.conversation_practice.ConversationPractiseModel
 
 class RecordPractiseFragment private constructor() : Fragment() {
@@ -12,6 +16,13 @@ class RecordPractiseFragment private constructor() : Fragment() {
             conversationPractiseModel =
                 it.getParcelable<ConversationPractiseModel>(ARG_PRACTISE_OBJ) as ConversationPractiseModel
         }
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        return inflater.inflate(R.layout.fragment_record_practise, container, false)
     }
 
     companion object {

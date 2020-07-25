@@ -25,7 +25,6 @@
                 app:civ_border_color="@color/white"
                 app:civ_border_width="@dimen/_2sdp"
                 app:layout_constraintCircleRadius="122dp" />
-
     </FrameLayout>
 
     <TextView

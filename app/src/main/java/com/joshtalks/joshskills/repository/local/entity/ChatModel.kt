@@ -656,7 +656,6 @@ enum class BASE_MESSAGE_TYPE(val type: String) {
 
 }
 
-
 enum class EXPECTED_ENGAGE_TYPE(val type: String) {
     TX("TX"), VI("VI"), AU("AU"), IM("IM"), DX("DX")
 
