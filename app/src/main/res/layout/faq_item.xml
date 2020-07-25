@@ -27,8 +27,6 @@
             android:layout_marginHorizontal="@dimen/_4sdp"
             android:layout_marginVertical="@dimen/_8sdp"
             android:layout_marginEnd="@dimen/_4sdp"
-            android:ellipsize="end"
-            android:maxLength="100"
             android:paddingHorizontal="@dimen/_6sdp"
             android:textColor="@color/black"
             android:textSize="@dimen/font_14"

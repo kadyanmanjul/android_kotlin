@@ -152,13 +152,13 @@
                         fontPath="fonts/Roboto-Bold.ttf"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginEnd="@dimen/_12sdp"
+                        android:layout_marginEnd="@dimen/_10sdp"
                         android:paddingBottom="@dimen/_2sdp"
                         android:textColor="@color/black"
                         android:textSize="@dimen/font_20"
                         app:layout_constraintBottom_toBottomOf="@+id/btn_start_course"
                         app:layout_constraintEnd_toStartOf="@+id/btn_start_course"
-                        tools:text="$299" />
+                        tools:text="$2999.0" />
 
                 <com.google.android.material.textview.MaterialTextView
                         android:id="@+id/btn_start_course"
@@ -179,7 +179,7 @@
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintWidth_default="percent"
-                        app:layout_constraintWidth_percent="0.75" />
+                        app:layout_constraintWidth_percent="0.7" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -13,7 +13,7 @@ import com.mindorks.placeholderview.annotations.View
 import com.mindorks.placeholderview.annotations.expand.Toggle
 
 @Layout(R.layout.faq_item)
-class ChildItemExpandableList(val answer: String) {
+class ChildItemExpandableList(private val answer: String) {
 
     @View(R.id.question)
     lateinit var itemNameTxt: TextView
@@ -28,6 +28,7 @@ class ChildItemExpandableList(val answer: String) {
     @Resolve
     fun onResolved() {
         itemIcon.visibility = INVISIBLE
+        itemNameTxt.text = answer
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
             mainView.setCardBackgroundColor(
                 AppObjectController.joshApplication.resources.getColor(
@@ -35,6 +36,5 @@ class ChildItemExpandableList(val answer: String) {
                     null
                 )
             )
-        itemNameTxt.text = answer
     }
 }

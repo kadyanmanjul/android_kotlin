@@ -56,6 +56,7 @@ class ParentItemExpandableList(val question: String) {
     fun onResolved() {
         itemIcon.visibility = VISIBLE
         itemIcon.setImageDrawable(drawable2)
+        itemNameTxt.text = question
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
             mainView.setCardBackgroundColor(
                 AppObjectController.joshApplication.resources.getColor(
@@ -63,7 +64,6 @@ class ParentItemExpandableList(val question: String) {
                     null
                 )
             )
-        itemNameTxt.text = question
     }
 
     @Expand
