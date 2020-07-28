@@ -175,7 +175,7 @@ class FillInTheBlankChoiceView : FrameLayout, OnChoiceClickListener {
             )
 
         if (assessmentType == AssessmentType.TEST && assessmentStatus == AssessmentStatus.COMPLETED) {
-           // seeAnswer.visibility = View.VISIBLE
+            // seeAnswer.visibility = View.VISIBLE
             disableAllClicks()
         }
     }
@@ -202,16 +202,13 @@ class FillInTheBlankChoiceView : FrameLayout, OnChoiceClickListener {
         })
 
         view.startAnimation(anim)
-        chipChoiceList.forEach { choice ->
-            if (view.id == choice.remoteId) {
-                if (choice.isSelectedByUser.not())
-                    filled++
-                choice.isSelectedByUser = true
-                choice.userSelectedOrder = filled
-            }
-        }
+        val choice=chipChoiceList.filter{it.remoteId==view.id}.get(0)
+        if (choice.isSelectedByUser.not())
+            filled++
+        choice.isSelectedByUser = true
+        choice.userSelectedOrder = filled
 
-        updateView()
+        updateView(choice = choice)
         publishUpdateButtonViewEvent(filled == totalOptions)
     }
 
@@ -231,7 +228,7 @@ class FillInTheBlankChoiceView : FrameLayout, OnChoiceClickListener {
             disableAllClicks()
 
         } else if (assessmentQuestion.question.isAttempted.not() && assessmentType == AssessmentType.QUIZ) {
-            assessmentQuestion.choiceList.sortedBy { it.sortOrder }.forEach { choice ->
+            assessmentQuestion.choiceList.sortedBy { it.userSelectedOrder }.forEach { choice ->
                 choice.userSelectedOrder = 100
                 chipChoiceList.add(choice)
             }
@@ -253,7 +250,8 @@ class FillInTheBlankChoiceView : FrameLayout, OnChoiceClickListener {
 
     private fun updateView(
         isDeleted: Boolean = false,
-        fromIndex: Int = 100
+        fromIndex: Int = 100,
+        choice: Choice?=null
     ) {
         totalAnswered.text = filled.toString().plus("/").plus(totalOptions)
 
@@ -279,23 +277,24 @@ class FillInTheBlankChoiceView : FrameLayout, OnChoiceClickListener {
 
     override fun onChoiceClick(choice: Choice) {
         if (assessmentQuestion?.question?.choiceType == ChoiceType.FILL_IN_THE_BLANKS_TEXT) {
-            var fromIndex = 100
             choicesChipGroup.forEach { view ->
-                chipChoiceList.forEach { choiceItem ->
-                    if (choice.remoteId == view.id && view.id == choiceItem.remoteId) {
-                        if (choiceItem.isSelectedByUser)
-                            filled = filled - 1
-                        choiceItem.isSelectedByUser = false
-                        fromIndex = choice.userSelectedOrder
-                        choiceItem.userSelectedOrder = 100
-                        view.visibility = View.VISIBLE
-                    }
+                if (choice.remoteId == view.id) {
+                    view.visibility = View.VISIBLE
                 }
             }
-            updateView(true, fromIndex)
+            val choice=chipChoiceList.filter { it.remoteId==choice.remoteId }.get(0)
+            if(choice.isSelectedByUser){
+                filled=filled-1
+            }
+            choice.isSelectedByUser = false
+            val fromIndex = choice.userSelectedOrder
+            choice.userSelectedOrder = 100
+
+            updateView(true, fromIndex,choice)
             publishUpdateButtonViewEvent(false)
         }
     }
+
 
     private fun onSubmit() {
         updateView()

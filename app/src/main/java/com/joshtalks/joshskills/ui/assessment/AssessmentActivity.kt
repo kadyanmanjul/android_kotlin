@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.View.GONE
 import android.view.Window
@@ -77,14 +78,12 @@ class AssessmentActivity : CoreJoshActivity() {
         if (intent.hasExtra(STARTED_FROM)) {
             flowFrom = intent.getStringExtra(STARTED_FROM)
         }
-
+        addObservers()
         if (assessmentId != 0) {
             getAssessmentDetails(assessmentId)
         } else {
             finish()
         }
-
-        addObservers()
     }
 
     private fun showTestSummaryFragment(
@@ -137,6 +136,7 @@ class AssessmentActivity : CoreJoshActivity() {
         })
 
         viewModel.assessmentLiveData.observe(this, Observer { assessmentWithRelations ->
+            assessmentWithRelations.questionList.sortedBy { it.question.sortOrder }
             bindView(assessmentWithRelations)
         })
 
@@ -145,26 +145,6 @@ class AssessmentActivity : CoreJoshActivity() {
                 showTestSummaryFragment(assessmentId, true)
 
         })
-
-        compositeDisposable.add(
-            RxBus2.listen(TestItemClickedEventBus::class.java)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe {
-                    moveToQuestion(it.questionId)
-                })
-
-        compositeDisposable.add(
-            RxBus2.listenWithoutDelay(AssessmentButtonClickEvent::class.java)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe {
-                    handleButtonClicks(
-                        it.assessmentButtonClick,
-                        it.assessmentType
-                    )
-                })
-
     }
 
     private fun handleButtonClicks(
@@ -258,6 +238,11 @@ class AssessmentActivity : CoreJoshActivity() {
                     }
                 }
             } else {
+                viewModel.assessmentLiveData
+                Log.d(
+                    "Manjul",
+                    "onNext() called with: assessmentQuestionWithRelations = ${viewModel.assessmentLiveData.value}"
+                )
                 // Disable ViewPager Scrolling
                 binding.questionViewPager.isUserInputEnabled = false
                 showTestSummaryFragment(assessmentId)
@@ -369,6 +354,38 @@ class AssessmentActivity : CoreJoshActivity() {
     override fun onBackPressed() {
         if (exitActivity())
             super.onBackPressed()
+    }
+
+    private fun subsrcibeRxBus(){
+
+        compositeDisposable.add(
+            RxBus2.listen(TestItemClickedEventBus::class.java)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe {
+                    moveToQuestion(it.questionId)
+                })
+
+        compositeDisposable.add(
+            RxBus2.listenWithoutDelay(AssessmentButtonClickEvent::class.java)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe {
+                    handleButtonClicks(
+                        it.assessmentButtonClick,
+                        it.assessmentType
+                    )
+                })
+    }
+
+    override fun onResume() {
+        super.onResume()
+        subsrcibeRxBus()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        compositeDisposable.clear()
     }
 
     private fun exitActivity(): Boolean {
