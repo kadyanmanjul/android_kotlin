@@ -72,6 +72,8 @@ class AssessmentViewModel(application: Application) : AndroidViewModel(applicati
         }
     }
 
+    fun getAssessmentType() =assessmentLiveData.value?.assessment?.type
+
     private suspend fun insertAssessmentToDB(assessmentResponse: AssessmentResponse) =
         AppObjectController.appDatabase.assessmentDao()
             .insertAssessmentFromResponse(assessmentResponse)
@@ -98,6 +100,7 @@ class AssessmentViewModel(application: Application) : AndroidViewModel(applicati
         CoroutineScope(Dispatchers.IO).launch {
             AppObjectController.appDatabase.assessmentDao()
                 .updateAssessmentStatus(assessmentId, AssessmentStatus.COMPLETED)
+            assessmentStatus.postValue(AssessmentStatus.COMPLETED)
         }
     }
 

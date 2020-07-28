@@ -13,7 +13,8 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:background="@color/white">
 
         <com.google.android.material.appbar.AppBarLayout
                 android:id="@+id/toolbar"
@@ -42,6 +43,7 @@
                         android:gravity="center_vertical|end"
                         android:paddingHorizontal="@dimen/_4sdp"
                         android:paddingVertical="@dimen/_4sdp"
+                        android:onClick="@{()->handler.dismiss()}"
                         android:visibility="visible"
                         app:srcCompat="@drawable/ic_arrow_back"
                         app:tint="@color/black" />

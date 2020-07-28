@@ -8,7 +8,6 @@ import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.view.View.GONE
-import android.view.View.VISIBLE
 import android.view.Window
 import android.view.WindowManager
 import androidx.core.content.ContextCompat
@@ -52,6 +51,8 @@ class AssessmentActivity : CoreJoshActivity() {
     private var assessmentId: Int = 0
     private var flowFrom: String? = null
     private var compositeDisposable = CompositeDisposable()
+    private var isTestFinished = false
+    private var isTestFragmentVisible = false
     //private val hintOptionsSet = mutableSetOf<ChoiceType>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -86,13 +87,18 @@ class AssessmentActivity : CoreJoshActivity() {
         addObservers()
     }
 
-    private fun showTestSummaryFragment(questionId: Int, isTestAlreadyAttempted: Boolean = false) {
+    private fun showTestSummaryFragment(
+        assessmentId: Int,
+        isTestAlreadyAttempted: Boolean = false
+    ) {
+        isTestFinished = true
+        isTestFragmentVisible = true
         binding.buttonView.visibility = GONE
         supportFragmentManager
             .beginTransaction()
             .replace(
                 R.id.container,
-                TestSummaryFragment.newInstance(questionId, isTestAlreadyAttempted),
+                TestSummaryFragment.newInstance(assessmentId, isTestAlreadyAttempted),
                 "Test Summary"
             )
             .commitAllowingStateLoss()
@@ -255,6 +261,7 @@ class AssessmentActivity : CoreJoshActivity() {
                 // Disable ViewPager Scrolling
                 binding.questionViewPager.isUserInputEnabled = false
                 showTestSummaryFragment(assessmentId)
+                binding.buttonView.visibility = GONE
             }
         } else {
             binding.questionViewPager.currentItem = binding.questionViewPager.currentItem + 1
@@ -269,11 +276,10 @@ class AssessmentActivity : CoreJoshActivity() {
 
     private fun moveToQuestion(questionId: Int) {
         // todo move viewpager to question id and remove fragment
+        isTestFragmentVisible = false
         val fragment = supportFragmentManager.findFragmentByTag("Test Summary")
-        if (fragment != null) supportFragmentManager.beginTransaction().remove(fragment)
-            .commit()
-        binding.buttonView.visibility = VISIBLE
-        binding.questionViewPager.setCurrentItem(questionId - 1, true)
+        if (fragment != null) supportFragmentManager.beginTransaction().remove(fragment).commit()
+        binding.questionViewPager.setCurrentItem(questionId - 1, false)
     }
 
     fun submitTest() {
@@ -283,7 +289,7 @@ class AssessmentActivity : CoreJoshActivity() {
             viewModel.postTestData(assessmentId)
             AppObjectController.uiHandler.postDelayed({
                 finish()
-            }, 300)
+            }, 200)
         }
     }
 
@@ -358,6 +364,25 @@ class AssessmentActivity : CoreJoshActivity() {
         isLastQuestion: Boolean
     ) {
         binding.buttonView.bind(assessmentType, assessmentQuestion, isLastQuestion)
+    }
+
+    override fun onBackPressed() {
+        if (exitActivity())
+            super.onBackPressed()
+    }
+
+    private fun exitActivity(): Boolean {
+        if (isTestFinished) {
+            if (isTestFragmentVisible) {
+                return true
+            } else {
+                showTestSummaryFragment(
+                    assessmentId, viewModel.assessmentStatus.value == AssessmentStatus.COMPLETED
+                )
+                return false
+            }
+        }
+        return false
     }
 
     companion object {
