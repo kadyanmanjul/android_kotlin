@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.crashlytics.android.Crashlytics
 import com.joshtalks.joshskills.core.ApiCallStatus
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionWithRelations
@@ -11,11 +12,13 @@ import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentWith
 import com.joshtalks.joshskills.repository.server.assessment.AssessmentResponse
 import com.joshtalks.joshskills.repository.server.assessment.AssessmentStatus
 import com.joshtalks.joshskills.repository.server.assessment.AssessmentType
+import com.joshtalks.joshskills.repository.server.assessment.ChoiceType
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import java.io.InvalidClassException
 
 class AssessmentViewModel(application: Application) : AndroidViewModel(application) {
     private val jobs = arrayListOf<Job>()
@@ -50,10 +53,9 @@ class AssessmentViewModel(application: Application) : AndroidViewModel(applicati
                     if (response.isSuccessful) {
                         apiCallStatusLiveData.postValue(ApiCallStatus.SUCCESS)
                         response.body()?.let {
-                            if(it.status==AssessmentStatus.COMPLETED){
+                            if (it.status == AssessmentStatus.COMPLETED) {
                                 assessmentStatus.postValue(it.status)
-                            }
-                            else {
+                            } else {
                                 insertAssessmentToDB(it)
                                 assessmentWithRelations = getAssessmentFromDB(assessmentId)
                                 assessmentLiveData.postValue(assessmentWithRelations)
@@ -101,6 +103,7 @@ class AssessmentViewModel(application: Application) : AndroidViewModel(applicati
 
     fun postTestData(assessmentId: Int) {
         val assessmentWithRelations = assessmentLiveData.value ?: return
+        updateAllQuestionsAttemptedStatus(assessmentWithRelations)
         updateAssessmentStatus(assessmentId)
         jobs += viewModelScope.launch(Dispatchers.IO) {
             try {
@@ -111,6 +114,42 @@ class AssessmentViewModel(application: Application) : AndroidViewModel(applicati
                 ex.showAppropriateMsg()
             }
             apiCallStatusLiveData.postValue(ApiCallStatus.FAILED)
+        }
+    }
+
+    private fun updateAllQuestionsAttemptedStatus(assessmentWithRelations: AssessmentWithRelations) {
+        CoroutineScope(Dispatchers.IO).launch {
+            assessmentWithRelations.questionList.forEach { questionWithRelations ->
+                when (questionWithRelations.question.choiceType) {
+                    ChoiceType.SINGLE_SELECTION_TEXT,
+                    ChoiceType.MULTI_SELECTION_TEXT,
+                    ChoiceType.SINGLE_SELECTION_IMAGE,
+                    ChoiceType.MULTI_SELECTION_IMAGE -> {
+                        questionWithRelations.question.isAttempted = false
+                        questionWithRelations.choiceList.forEach {
+                            if (it.isSelectedByUser) {
+                                questionWithRelations.question.isAttempted = true
+                                return@forEach
+                            }
+                        }
+                    }
+                    ChoiceType.FILL_IN_THE_BLANKS_TEXT -> {
+                        questionWithRelations.question.isAttempted = true
+                        questionWithRelations.choiceList.forEach {
+                            if (it.isSelectedByUser.not()) {
+                                questionWithRelations.question.isAttempted = false
+                                return@forEach
+                            }
+                        }
+                    }
+
+                    else -> {
+                        Crashlytics.logException(InvalidClassException("Wrong Choice Type ${questionWithRelations.question.choiceType}"))
+                    }
+                }
+                AppObjectController.appDatabase.assessmentDao()
+                    .updateAssessmentQuestionWithoutRelation(questionWithRelations.question)
+            }
         }
     }
 

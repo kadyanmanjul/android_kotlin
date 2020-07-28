@@ -205,19 +205,3 @@ class MCQChoicesView : FrameLayout, OnChoiceClickListener {
 
 
 }
-
-/*
-1. SUBMIT_INACTIVE
-2. SUBMIT_ACTIVE
-3. REVISE_CONCEPT_WITH_NEXT
-4. REVISE_CONCEPT_WITH_FINISH
-5. NEXT
-6. FINISH
-
-Decision Constraints:
-
-1. Assessment Type
-2. isAttempted
-3. isAnswered
-4. CallBack from buttons {SUBMIT,NEXT,REVISE,NONE}
-*/
