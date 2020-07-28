@@ -291,7 +291,7 @@ class CourseExploreActivity : CoreJoshActivity() {
         language_chip_group.removeAllViews()
         languageSet.forEach {
             val chip = LayoutInflater.from(this)
-                .inflate(R.layout.faq_category_item, language_chip_group, false) as Chip
+                .inflate(R.layout.language_filter_item, language_chip_group, false) as Chip
             chip.text = it.capitalize()
             chip.tag = it
             chip.id = languageSet.indexOf(it)
