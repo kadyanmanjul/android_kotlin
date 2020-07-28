@@ -6,10 +6,11 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.core.ApiCallStatus
 import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.loadJSONFromAsset
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionWithRelations
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentWithRelations
 import com.joshtalks.joshskills.repository.server.assessment.AssessmentResponse
+import com.joshtalks.joshskills.repository.server.assessment.AssessmentStatus
+import com.joshtalks.joshskills.repository.server.assessment.AssessmentType
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -20,21 +21,43 @@ class AssessmentViewModel(application: Application) : AndroidViewModel(applicati
     private val jobs = arrayListOf<Job>()
     val apiCallStatusLiveData: MutableLiveData<ApiCallStatus> = MutableLiveData()
     val assessmentLiveData: MutableLiveData<AssessmentWithRelations> = MutableLiveData()
+    val assessmentStatus: MutableLiveData<AssessmentStatus> =
+        MutableLiveData(AssessmentStatus.NOT_STARTED)
 
     fun fetchAssessmentDetails(assessmentId: Int) {
         jobs += viewModelScope.launch(Dispatchers.IO) {
             try {
-                val assessmentWithRelations = getAssessmentFromDB(assessmentId)
+                var assessmentWithRelations = getAssessmentFromDB(assessmentId)
 
                 if (assessmentWithRelations != null) {
-                    assessmentLiveData.postValue(assessmentWithRelations)
+                    if (assessmentWithRelations.assessment.type == AssessmentType.TEST)
+                        when (assessmentWithRelations.assessment.status) {
+                            AssessmentStatus.COMPLETED -> {
+                                assessmentStatus.postValue(assessmentWithRelations.assessment.status)
+                            }
+                            AssessmentStatus.NOT_STARTED, AssessmentStatus.STARTED -> {
+                                assessmentLiveData.postValue(
+                                    assessmentWithRelations
+                                )
+                                assessmentStatus.postValue(assessmentWithRelations.assessment.status)
+                            }
+                        }
+                    else {
+                        assessmentLiveData.postValue(assessmentWithRelations)
+                    }
                 } else {
                     val response = getAssessmentFromServer(assessmentId)
                     if (response.isSuccessful) {
                         apiCallStatusLiveData.postValue(ApiCallStatus.SUCCESS)
                         response.body()?.let {
-                            insertAssessmentToDB(it)
-                            assessmentLiveData.postValue(AssessmentWithRelations(it))
+                            if(it.status==AssessmentStatus.COMPLETED){
+                                assessmentStatus.postValue(it.status)
+                            }
+                            else {
+                                insertAssessmentToDB(it)
+                                assessmentWithRelations = getAssessmentFromDB(assessmentId)
+                                assessmentLiveData.postValue(assessmentWithRelations)
+                            }
                         }
                         return@launch
                     }
@@ -42,7 +65,6 @@ class AssessmentViewModel(application: Application) : AndroidViewModel(applicati
 
             } catch (ex: Throwable) {
                 ex.showAppropriateMsg()
-                mockData()
             }
             apiCallStatusLiveData.postValue(ApiCallStatus.FAILED)
         }
@@ -58,19 +80,8 @@ class AssessmentViewModel(application: Application) : AndroidViewModel(applicati
     private suspend fun getAssessmentFromServer(assessmentId: Int) =
         AppObjectController.chatNetworkService.getAssessmentId(assessmentId)
 
-    private fun mockData() {
-        val assessmentResponse = AppObjectController.gsonMapperForLocal.fromJson(
-            loadJSONFromAsset("assessmentJson.json"),
-            AssessmentResponse::class.java
-        )
-        CoroutineScope(Dispatchers.IO).launch {
-            AppObjectController.appDatabase.assessmentDao()
-                .insertAssessment(AssessmentWithRelations(assessmentResponse))
-            val assessmentWithRelations = getAssessmentFromDB(1)
-            assessmentLiveData.postValue(assessmentWithRelations)
-
-        }
-    }
+    private suspend fun getAssessmentResponse(assessmentWithRelations: AssessmentWithRelations) =
+        AssessmentResponse((assessmentWithRelations))
 
     fun saveAssessmentQuestion(assessmentQuestion: AssessmentQuestionWithRelations) {
         CoroutineScope(Dispatchers.IO).launch {
@@ -79,18 +90,43 @@ class AssessmentViewModel(application: Application) : AndroidViewModel(applicati
         }
     }
 
-    fun postTestData(assessmentWithRelations: AssessmentWithRelations) {
+    fun updateAssessmentStatus(assessmentId: Int) {
+        if (assessmentId == -1)
+            return
+        CoroutineScope(Dispatchers.IO).launch {
+            AppObjectController.appDatabase.assessmentDao()
+                .updateAssessmentStatus(assessmentId, AssessmentStatus.COMPLETED)
+        }
+    }
+
+    fun postTestData(assessmentId: Int) {
+        val assessmentWithRelations = assessmentLiveData.value ?: return
+        updateAssessmentStatus(assessmentId)
         jobs += viewModelScope.launch(Dispatchers.IO) {
             try {
+                val assessmentResponse = getAssessmentResponse(assessmentWithRelations)
+                AppObjectController.chatNetworkService.submitTestAsync(assessmentResponse)
 
-                val resp = AppObjectController.chatNetworkService.submitTestAsync(assessmentWithRelations)
+            } catch (ex: Throwable) {
+                ex.showAppropriateMsg()
+            }
+            apiCallStatusLiveData.postValue(ApiCallStatus.FAILED)
+        }
+    }
+
+    fun getTestReport(assessmentId: Int) {
+
+        jobs += viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val resp =
+                    AppObjectController.chatNetworkService.getTestReport(assessmentId)
                 if (resp.isSuccessful && resp.body() != null) {
                     apiCallStatusLiveData.postValue(ApiCallStatus.SUCCESS)
+                    assessmentLiveData.postValue(AssessmentWithRelations(resp.body()!!))
                     return@launch
                 }
             } catch (ex: Throwable) {
                 ex.showAppropriateMsg()
-                mockData()
             }
             apiCallStatusLiveData.postValue(ApiCallStatus.FAILED)
         }

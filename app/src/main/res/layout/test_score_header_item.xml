@@ -45,7 +45,7 @@
 
     <View
             android:id="@+id/divider"
-            android:layout_width="@dimen/_70sdp"
+            android:layout_width="@dimen/_60sdp"
             android:layout_height="@dimen/_1sdp"
             android:layout_gravity="center"
             android:layout_marginVertical="@dimen/_4sdp"
@@ -54,7 +54,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/score" />
 
-    <androidx.appcompat.widget.AppCompatTextView
+    <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
             android:id="@+id/extra_text"
             fontPath="fonts/Poppins-Regular.ttf"
             android:layout_width="wrap_content"

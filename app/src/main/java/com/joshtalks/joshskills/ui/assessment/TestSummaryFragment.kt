@@ -14,18 +14,22 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.databinding.FragmentTestSummaryReportBinding
+import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentWithRelations
 import com.joshtalks.joshskills.repository.server.assessment.AssessmentStatus
 
 
 class TestSummaryFragment : Fragment() {
     private lateinit var binding: FragmentTestSummaryReportBinding
     var assessmentId: Int = -1
+    var isTestAlreadyAttempted: Boolean = false
     private lateinit var viewModel: AssessmentViewModel
+    private var testData: AssessmentWithRelations? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
             assessmentId = it.getInt(ASSESSMENT_ID, -1)
+            isTestAlreadyAttempted = it.getBoolean(IS_TEST_ATTEMPTED, false)
         }
         viewModel = activity?.run {
             ViewModelProvider(requireActivity()).get(AssessmentViewModel::class.java)
@@ -51,39 +55,55 @@ class TestSummaryFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initRecyclerView()
-        addObservers()
-        viewModel.fetchAssessmentDetails(assessmentId)
+        if (isTestAlreadyAttempted.not()) {
+            viewModel.assessmentLiveData.value?.let {
+                testData = it
+            }
+            if (testData == null) {
+                requireActivity().finish()
+            }
+            initView(testData)
+        } else {
+            viewModel.getTestReport(assessmentId)
+            subscribeObserver()
+        }
     }
 
-    private fun addObservers() {
-        viewModel.assessmentLiveData.observe(viewLifecycleOwner, Observer { assessment ->
-            if (binding.recyclerView.adapter == null || binding.recyclerView.adapter!!.itemCount == 0) {
-                assessment?.let {
-                    it.questionList.sortedBy { it.question.sortOrder }.also {
-                        if (assessment.assessment.status == AssessmentStatus.STARTED || assessment.assessment.status == AssessmentStatus.NOT_STARTED)
-                            binding.recyclerView.addView(
-                                TestSummaryHeaderViewHolder(
-                                    assessment, requireContext()
-                                )
-                            )
-                        else if (assessment.assessment.status == AssessmentStatus.COMPLETED)
-                            binding.recyclerView.addView(
-                                TestScoreCardViewHolder(
-                                    assessment.assessment, requireContext()
-                                )
-                            )
-                    }.forEach { questionList ->
-                        binding.recyclerView.addView(
-                            TestItemViewHolder(
-                                questionList.question,
-                                assessment.assessment.status,
-                                requireContext()
-                            )
+    private fun subscribeObserver() {
+        viewModel.assessmentLiveData.observe(requireActivity(), Observer { assessmentWithRelation ->
+            initView(assessmentWithRelation)
+        })
+    }
+
+    private fun initView(assessmentWithRelation: AssessmentWithRelations?) {
+        if (binding.recyclerView.adapter == null || binding.recyclerView.adapter!!.itemCount == 0) {
+
+            assessmentWithRelation?.let { assessment ->
+                assessment.questionList.sortedBy { it.question.sortOrder }.also {
+
+                    if (assessmentWithRelation.assessment.status==AssessmentStatus.STARTED||assessmentWithRelation.assessment.status==AssessmentStatus.NOT_STARTED)
+                    binding.recyclerView.addView(
+                        TestSummaryHeaderViewHolder(
+                            assessment, requireContext()
                         )
-                    }
+                    )
+                    else binding.recyclerView.addView(
+                        TestScoreCardViewHolder(
+                            assessment.assessment, requireContext()
+                        )
+                    )
+
+                }.forEach { questionList ->
+                    binding.recyclerView.addView(
+                        TestItemViewHolder(
+                            questionList,
+                            assessment.assessment.status,
+                            requireContext()
+                        )
+                    )
                 }
             }
-        })
+        }
     }
 
     private fun initRecyclerView() {
@@ -109,12 +129,14 @@ class TestSummaryFragment : Fragment() {
 
     companion object {
         const val ASSESSMENT_ID = "assessment_id"
+        const val IS_TEST_ATTEMPTED = "is_test_attempted"
 
         @JvmStatic
-        fun newInstance(assessmentId: Int) =
+        fun newInstance(assessmentId: Int, isTestAlreadyAttempted: Boolean = false) =
             TestSummaryFragment().apply {
                 arguments = Bundle().apply {
                     putInt(ASSESSMENT_ID, assessmentId)
+                    putBoolean(IS_TEST_ATTEMPTED, isTestAlreadyAttempted)
                 }
             }
     }

@@ -7,6 +7,8 @@ import android.content.pm.ActivityInfo
 import android.os.Build
 import android.os.Bundle
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.Window
 import android.view.WindowManager
 import androidx.core.content.ContextCompat
@@ -22,35 +24,35 @@ import com.joshtalks.joshskills.core.CoreJoshActivity
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.STARTED_FROM
 import com.joshtalks.joshskills.core.Utils
-import com.joshtalks.joshskills.core.loadJSONFromAsset
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.ActivityAssessmentBinding
 import com.joshtalks.joshskills.messaging.RxBus2
+import com.joshtalks.joshskills.repository.local.eventbus.AssessmentButtonClick
+import com.joshtalks.joshskills.repository.local.eventbus.AssessmentButtonClickEvent
+import com.joshtalks.joshskills.repository.local.eventbus.FillInTheBlankSubmitEvent
+import com.joshtalks.joshskills.repository.local.eventbus.McqSubmitEvent
 import com.joshtalks.joshskills.repository.local.eventbus.TestItemClickedEventBus
+import com.joshtalks.joshskills.repository.local.model.assessment.Assessment
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionWithRelations
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentWithRelations
-import com.joshtalks.joshskills.repository.local.model.assessment.Choice
-import com.joshtalks.joshskills.repository.server.assessment.AssessmentResponse
+import com.joshtalks.joshskills.repository.server.assessment.AssessmentStatus
 import com.joshtalks.joshskills.repository.server.assessment.AssessmentType
 import com.joshtalks.joshskills.repository.server.assessment.ChoiceType
+import com.joshtalks.joshskills.repository.server.assessment.QuestionStatus
 import com.joshtalks.joshskills.repository.server.assessment.ReviseConcept
-import com.joshtalks.joshskills.ui.assessment.view.FillInTheBlankChoiceView
-import com.joshtalks.joshskills.ui.assessment.viewholder.AssessmentButtonView
 import com.joshtalks.joshskills.ui.assessment.viewholder.AssessmentQuestionAdapter
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 
-class AssessmentActivity : CoreJoshActivity(), AssessmentButtonView.AssessmentButtonListener,
-    FillInTheBlankChoiceView.FillInTheBlankChoiceClickListener {
+class AssessmentActivity : CoreJoshActivity() {
 
     private lateinit var binding: ActivityAssessmentBinding
     private val viewModel by lazy { ViewModelProvider(this).get(AssessmentViewModel::class.java) }
     private var assessmentId: Int = 0
     private var flowFrom: String? = null
-    private val hintOptionsSet = mutableSetOf<ChoiceType>()
     private var compositeDisposable = CompositeDisposable()
-
+    //private val hintOptionsSet = mutableSetOf<ChoiceType>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -74,22 +76,23 @@ class AssessmentActivity : CoreJoshActivity(), AssessmentButtonView.AssessmentBu
         if (intent.hasExtra(STARTED_FROM)) {
             flowFrom = intent.getStringExtra(STARTED_FROM)
         }
-//        test()
+
         if (assessmentId != 0) {
             getAssessmentDetails(assessmentId)
         } else {
             finish()
         }
-        subscribeLiveData()
+
         addObservers()
     }
 
-    private fun showTestSummaryFragment(questionId: Int) {
+    private fun showTestSummaryFragment(questionId: Int, isTestAlreadyAttempted: Boolean = false) {
+        binding.buttonView.visibility = GONE
         supportFragmentManager
             .beginTransaction()
             .replace(
                 R.id.container,
-                TestSummaryFragment.newInstance(questionId),
+                TestSummaryFragment.newInstance(questionId, isTestAlreadyAttempted),
                 "Test Summary"
             )
             .commitAllowingStateLoss()
@@ -121,7 +124,8 @@ class AssessmentActivity : CoreJoshActivity(), AssessmentButtonView.AssessmentBu
         viewModel.fetchAssessmentDetails(assessmentId)
     }
 
-    private fun subscribeLiveData() {
+    private fun addObservers() {
+
         viewModel.apiCallStatusLiveData.observe(this, Observer {
             binding.progressBar.visibility = View.GONE
         })
@@ -129,9 +133,13 @@ class AssessmentActivity : CoreJoshActivity(), AssessmentButtonView.AssessmentBu
         viewModel.assessmentLiveData.observe(this, Observer { assessmentWithRelations ->
             bindView(assessmentWithRelations)
         })
-    }
 
-    private fun addObservers() {
+        viewModel.assessmentStatus.observe(this, Observer { status ->
+            if (status == AssessmentStatus.COMPLETED)
+                showTestSummaryFragment(assessmentId, true)
+
+        })
+
         compositeDisposable.add(
             RxBus2.listen(TestItemClickedEventBus::class.java)
                 .subscribeOn(Schedulers.io())
@@ -139,10 +147,211 @@ class AssessmentActivity : CoreJoshActivity(), AssessmentButtonView.AssessmentBu
                 .subscribe {
                     moveToQuestion(it.questionId)
                 })
+
+        compositeDisposable.add(
+            RxBus2.listenWithoutDelay(AssessmentButtonClickEvent::class.java)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe {
+                    handleButtonClicks(
+                        it.assessmentButtonClick,
+                        it.assessmentType
+                    )
+                })
+
+    }
+
+    private fun handleButtonClicks(
+        assessmentButtonClick: AssessmentButtonClick,
+        assessmentType: AssessmentType
+    ) {
+        val assessmentWithRelations = viewModel.assessmentLiveData.value
+        when (assessmentButtonClick) {
+            AssessmentButtonClick.SUBMIT -> {
+                onSubmit(assessmentWithRelations?.questionList?.get(binding.questionViewPager.currentItem)!!)
+            }
+
+            AssessmentButtonClick.NEXT -> {
+                onNext(
+                    assessmentWithRelations!!.questionList.size - 1 == binding.questionViewPager.currentItem,
+                    assessmentType,
+                    assessmentWithRelations.questionList.get(binding.questionViewPager.currentItem),
+                    assessmentWithRelations.assessment
+                )
+            }
+            AssessmentButtonClick.REVISE -> {
+                onReviseConcept(assessmentWithRelations?.questionList?.get(binding.questionViewPager.currentItem)!!.reviseConcept)
+            }
+            AssessmentButtonClick.NONE -> {
+
+            }
+        }
+    }
+
+    private fun onSubmit(assessmentQuestion: AssessmentQuestionWithRelations) {
+        if (assessmentQuestion.question.choiceType == ChoiceType.FILL_IN_THE_BLANKS_TEXT)
+            RxBus2.publish(FillInTheBlankSubmitEvent(assessmentQuestion.question.remoteId))
+        else
+            RxBus2.publish(McqSubmitEvent(assessmentQuestion.question.remoteId))
+        assessmentQuestion.question.isAttempted = true
+        assessmentQuestion.question.status = evaluateQuestionStatus(assessmentQuestion)
+        showToastForQuestion(assessmentQuestion)
+        viewModel.saveAssessmentQuestion(assessmentQuestion)
+    }
+
+    private fun evaluateQuestionStatus(assessmentQuestion: AssessmentQuestionWithRelations): QuestionStatus {
+        var status = QuestionStatus.NONE
+        var isAttempted = false
+        assessmentQuestion.choiceList.forEach {
+            when (assessmentQuestion.question.choiceType) {
+                ChoiceType.SINGLE_SELECTION_TEXT,
+                ChoiceType.MULTI_SELECTION_TEXT,
+                ChoiceType.SINGLE_SELECTION_IMAGE,
+                ChoiceType.MULTI_SELECTION_IMAGE -> {
+                    if (it.isSelectedByUser)
+                        isAttempted = true
+                    if (it.isCorrect != it.isSelectedByUser) {
+                        status = QuestionStatus.WRONG
+                    }
+                }
+                ChoiceType.FILL_IN_THE_BLANKS_TEXT -> {
+                    if (it.userSelectedOrder < 50)
+                        isAttempted = true
+                    if (it.userSelectedOrder != it.correctAnswerOrder)
+                        status = QuestionStatus.WRONG
+                }
+                else -> status = QuestionStatus.SKIPPED
+            }
+        }
+        if (isAttempted.not())
+            return QuestionStatus.SKIPPED
+        return status
+    }
+
+    private fun onNext(
+        isLastQuestion: Boolean,
+        assessmentType: AssessmentType,
+        assessmentQuestionWithRelations: AssessmentQuestionWithRelations,
+        assessment: Assessment
+    ) {
+        if (assessmentType == AssessmentType.QUIZ) {
+            viewModel.saveAssessmentQuestion(assessmentQuestionWithRelations)
+        }
+        if (isLastQuestion) {
+            if (assessmentType == AssessmentType.QUIZ) {
+                when (assessment.status) {
+                    AssessmentStatus.NOT_STARTED,
+                    AssessmentStatus.STARTED -> {
+                        showQuizSuccessFragment()
+                        assessment.status = AssessmentStatus.COMPLETED
+                        viewModel.updateAssessmentStatus(assessmentId)
+                    }
+
+                    AssessmentStatus.COMPLETED -> {
+                        finish()
+                    }
+                }
+            } else {
+                showTestSummaryFragment(assessmentId)
+            }
+        } else {
+            binding.questionViewPager.currentItem = binding.questionViewPager.currentItem + 1
+        }
+    }
+
+    private fun onReviseConcept(reviseConcept: ReviseConcept?) {
+        reviseConcept?.let {
+            showReviseConceptFragment(it)
+        }
     }
 
     private fun moveToQuestion(questionId: Int) {
-        // todo move viewpager to question id
+        // todo move viewpager to question id and remove fragment
+        val fragment = supportFragmentManager.findFragmentByTag("Test Summary")
+        if (fragment != null) supportFragmentManager.beginTransaction().remove(fragment)
+            .commit()
+        binding.buttonView.visibility = VISIBLE
+        binding.questionViewPager.setCurrentItem(questionId - 1, true)
+    }
+
+    fun submitTest() {
+        if (viewModel.assessmentLiveData.value?.assessment?.status == AssessmentStatus.COMPLETED) {
+            finish()
+        } else {
+            viewModel.postTestData(assessmentId)
+            AppObjectController.uiHandler.postDelayed({
+                finish()
+            }, 300)
+        }
+    }
+
+    private fun bindView(assessmentWithRelations: AssessmentWithRelations) {
+        setupViewPager(assessmentWithRelations)
+    }
+
+    private fun setupViewPager(assessmentWithRelations: AssessmentWithRelations) {
+        val adapter = AssessmentQuestionAdapter(
+            assessmentWithRelations.assessment.type,
+            assessmentWithRelations.assessment.status,
+            AssessmentQuestionViewType.CORRECT_ANSWER_VIEW,
+            assessmentWithRelations.questionList
+        )
+        binding.questionViewPager.adapter = adapter
+        TabLayoutMediator(
+            binding.tabLayout,
+            binding.questionViewPager
+        ) { tab, position -> /*Do Nothing*/ }.attach()
+        binding.questionViewPager.setPageTransformer(
+            MarginPageTransformer(
+                Utils.dpToPx(
+                    applicationContext,
+                    16f
+                )
+            )
+        )
+        binding.questionViewPager.offscreenPageLimit = 2
+
+        binding.questionViewPager.onPageSelected { position ->
+
+            setButtonView(
+                assessmentWithRelations.assessment.type,
+                assessmentWithRelations.questionList[position],
+                assessmentWithRelations.questionList.size - 1 == position
+            )
+        }
+
+    }
+
+    private fun showToastForQuestion(assessmentQuestion: AssessmentQuestionWithRelations) {
+        if (evaluateAnswer(assessmentQuestion))
+            showToast("Your answer is Correct")
+        else
+            showToast("Your answer is Wrong")
+    }
+
+    private fun evaluateAnswer(assessmentQuestion: AssessmentQuestionWithRelations?): Boolean {
+        assessmentQuestion?.choiceList?.forEach {
+            when (assessmentQuestion.question.choiceType) {
+                ChoiceType.SINGLE_SELECTION_TEXT,
+                ChoiceType.MULTI_SELECTION_TEXT,
+                ChoiceType.SINGLE_SELECTION_IMAGE,
+                ChoiceType.MULTI_SELECTION_IMAGE -> if (it.isCorrect != it.isSelectedByUser) {
+                    return false
+                }
+                ChoiceType.FILL_IN_THE_BLANKS_TEXT -> if (it.userSelectedOrder != it.correctAnswerOrder)
+                    return false
+                else -> return true
+            }
+        }
+        return true
+    }
+
+    private fun setButtonView(
+        assessmentType: AssessmentType,
+        assessmentQuestion: AssessmentQuestionWithRelations,
+        isLastQuestion: Boolean
+    ) {
+        binding.buttonView.bind(assessmentType, assessmentQuestion, isLastQuestion)
     }
 
     companion object {
@@ -186,127 +395,4 @@ class AssessmentActivity : CoreJoshActivity(), AssessmentButtonView.AssessmentBu
         }
     }
 
-    fun test() {
-        val assessmentResponse = AppObjectController.gsonMapperForLocal.fromJson(
-            loadJSONFromAsset("assessmentJson.json"),
-            AssessmentResponse::class.java
-        )
-
-        val data = AssessmentWithRelations(assessmentResponse)
-        bindView(data)
-    }
-
-    private fun bindView(assessmentWithRelations: AssessmentWithRelations) {
-        setupViewPager(assessmentWithRelations)
-    }
-
-    private fun setupViewPager(assessmentWithRelations: AssessmentWithRelations) {
-        val adapter = AssessmentQuestionAdapter(
-            assessmentWithRelations.assessment.type,
-            assessmentWithRelations.assessment.status,
-            AssessmentQuestionViewType.CORRECT_ANSWER_VIEW,
-            assessmentWithRelations.questionList, this
-        )
-        binding.questionViewPager.adapter = adapter
-        TabLayoutMediator(
-            binding.tabLayout,
-            binding.questionViewPager
-        ) { tab, position -> /*Do Nothing*/ }.attach()
-        binding.questionViewPager.setPageTransformer(
-            MarginPageTransformer(
-                Utils.dpToPx(
-                    applicationContext,
-                    16f
-                )
-            )
-        )
-        binding.questionViewPager.onPageSelected { position ->
-            val type = assessmentWithRelations.questionList[position].question.choiceType
-            if (hintOptionsSet.contains(type).not()) {
-                assessmentWithRelations.assessmentIntroList.find { it.type == type }?.run {
-                    IntroQuestionFragment.newInstance(this)
-                        .show(supportFragmentManager, "Question Tip")
-                    hintOptionsSet.add(type)
-                }
-            }
-            binding.buttonView.bind(
-                assessmentWithRelations.assessment.type,
-                assessmentWithRelations.assessment.status,
-                assessmentWithRelations.questionList[position],
-                this,
-                assessmentWithRelations.questionList.size
-            )
-        }
-
-    }
-
-    override fun onChoiceAdded(choice: List<Choice>) {
-        binding.buttonView.onChoiceAdded(choice)
-    }
-
-    private fun showToastForQuestion(assessmentQuestion: AssessmentQuestionWithRelations) {
-        if (evaluateAnswer(assessmentQuestion))
-            showToast("Your answer is Correct")
-        else
-            showToast("Your answer is Wrong")
-    }
-
-    private fun evaluateAnswer(assessmentQuestion: AssessmentQuestionWithRelations?): Boolean {
-        assessmentQuestion?.choiceList?.forEach {
-            when (assessmentQuestion.question.choiceType) {
-                ChoiceType.SINGLE_SELECTION_TEXT,
-                ChoiceType.MULTI_SELECTION_TEXT,
-                ChoiceType.SINGLE_SELECTION_IMAGE,
-                ChoiceType.MULTI_SELECTION_IMAGE -> if (it.isCorrect != it.isSelectedByUser) {
-                    return false
-                }
-                ChoiceType.FILL_IN_THE_BLANKS_TEXT -> if (it.userSelectedOrder != it.correctAnswerOrder)
-                    return false
-                else -> return true
-            }
-        }
-        return true
-    }
-
-    override fun onSubmit(
-        assessmentType: AssessmentType,
-        assessmentQuestion: AssessmentQuestionWithRelations
-    ) {
-        if (assessmentType == AssessmentType.QUIZ) {
-            invalidateQuestionView()
-            showToastForQuestion(assessmentQuestion)
-            assessmentQuestion.question.isAttempted = true
-            viewModel.saveAssessmentQuestion(assessmentQuestion)
-        }
-    }
-
-    private fun invalidateQuestionView() {
-        (binding.questionViewPager.adapter as AssessmentQuestionAdapter).registerSubmitCallback()
-    }
-
-    override fun onNext(isLastQuestion: Boolean, assessmentType: AssessmentType) {
-        moveToNextQuestion(isLastQuestion, assessmentType)
-    }
-
-    private fun moveToNextQuestion(
-        lastQuestion: Boolean,
-        assessmentType: AssessmentType
-    ) {
-        if (!lastQuestion)
-            binding.questionViewPager.currentItem = binding.questionViewPager.currentItem + 1
-        else {
-            if (assessmentType == AssessmentType.QUIZ)
-                showQuizSuccessFragment()
-            else showTestSummaryFragment(assessmentId)
-        }
-    }
-
-    override fun onReviseConcept(reviseConcept: ReviseConcept) {
-        showReviseConceptFragment(reviseConcept)
-    }
-
-    fun submitTest() {
-        //  viewModel.postTestData(1)
-        // TODO finish activity
-    }
 }

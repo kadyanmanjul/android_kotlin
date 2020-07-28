@@ -12,6 +12,7 @@ import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
 import com.joshtalks.joshskills.repository.local.model.assessment.Assessment
 import com.mindorks.placeholderview.annotations.Layout
 import com.mindorks.placeholderview.annotations.Resolve
@@ -31,7 +32,7 @@ class TestScoreCardViewHolder(
     lateinit var score: AppCompatTextView
 
     @View(R.id.extra_text)
-    lateinit var extraText: AppCompatTextView
+    lateinit var extraText: JoshTextView
 
     @View(R.id.image_view)
     lateinit var imageView: AppCompatImageView

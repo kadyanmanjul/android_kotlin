@@ -312,7 +312,9 @@
     <string name="revise_concept">Revise Concept</string>
     <string name="back_to_summary">Back To Summary</string>
     <string name="hello">"Hello "</string>
-    <string name="total_attempted">"Total Attempted \n"</string>
-    <string name="total_question">"Total Question \n"</string>
+    <string name="total_attempted">Total Attempted \n</string>
+    <string name="total_question">Total Question \n</string>
+    <string name="see_answer">See correct answer</string>
+    <string name="see_your_answer">See your answer</string>
 
 </resources>
