@@ -80,4 +80,5 @@ class CourseExplorerViewHolder(private val courseExploreModel: CourseExploreMode
         WorkMangerAdmin.buyNowImageEventWorker(courseExploreModel.testName)
         RxBus2.publish(courseExploreModel)
     }
+
 }

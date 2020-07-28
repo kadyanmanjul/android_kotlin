@@ -3,12 +3,14 @@ package com.joshtalks.joshskills.ui.explore
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.afollestad.materialdialogs.MaterialDialog
 import com.google.android.material.appbar.MaterialToolbar
+import com.google.android.material.chip.Chip
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.CoreJoshActivity
@@ -30,10 +32,10 @@ import com.joshtalks.joshskills.ui.course_details.CourseDetailsActivity
 import com.joshtalks.joshskills.ui.inbox.PAYMENT_FOR_COURSE_CODE
 import com.joshtalks.joshskills.ui.signup.FLOW_FROM
 import com.joshtalks.joshskills.ui.signup.SignUpActivity
-import com.joshtalks.joshskills.ui.view_holders.CourseExplorerViewHolder
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import com.vanniktech.emoji.Utils
 import io.reactivex.disposables.CompositeDisposable
+import kotlinx.android.synthetic.main.activity_course_explore.language_chip_group
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -44,12 +46,17 @@ const val USER_COURSES = "user_courses"
 const val PREV_ACTIVITY = "previous_activity"
 
 class CourseExploreActivity : CoreJoshActivity() {
+    private lateinit var adapter: CourseExploreAdapter
+    private lateinit var courseList: ArrayList<CourseExploreModel>
+    private lateinit var filteredCourseList: ArrayList<CourseExploreModel>
+    private var selectedLanguage: String? = null
     private var compositeDisposable = CompositeDisposable()
     private lateinit var courseExploreBinding: ActivityCourseExploreBinding
     private lateinit var appAnalytics: AppAnalytics
     private var prevAct: String? = EMPTY
     private var screenEngagementModel: ScreenEngagementModel =
         ScreenEngagementModel(COURSE_EXPLORER_SCREEN_NAME)
+    private lateinit var languageSet: HashSet<String>
 
     companion object {
         fun startCourseExploreActivity(
@@ -77,6 +84,10 @@ class CourseExploreActivity : CoreJoshActivity() {
         courseExploreBinding =
             DataBindingUtil.setContentView(this, R.layout.activity_course_explore)
         courseExploreBinding.lifecycleOwner = this
+
+        languageSet = HashSet()
+        courseList = ArrayList()
+        filteredCourseList = ArrayList()
         initRV()
         initView()
         loadCourses()
@@ -96,6 +107,7 @@ class CourseExploreActivity : CoreJoshActivity() {
     private fun initView() {
         val titleView = findViewById<AppCompatTextView>(R.id.text_message_title)
         titleView.text = getString(R.string.explorer_courses)
+
         findViewById<View>(R.id.iv_back).visibility = View.VISIBLE
         findViewById<View>(R.id.iv_back).setOnClickListener {
             onCancelResult()
@@ -141,9 +153,9 @@ class CourseExploreActivity : CoreJoshActivity() {
     private fun initRV() {
         val linearLayoutManager = LinearLayoutManager(this)
         linearLayoutManager.isSmoothScrollbarEnabled = true
-        courseExploreBinding.recyclerView.builder
+        courseExploreBinding.recyclerView
             .setHasFixedSize(true)
-            .setLayoutManager(linearLayoutManager)
+        courseExploreBinding.recyclerView.layoutManager = linearLayoutManager
         courseExploreBinding.recyclerView.itemAnimator = null
         courseExploreBinding.recyclerView.addItemDecoration(
             LayoutMarginDecoration(
@@ -153,6 +165,9 @@ class CourseExploreActivity : CoreJoshActivity() {
                 )
             )
         )
+
+        adapter = CourseExploreAdapter(this, filteredCourseList)
+        courseExploreBinding.recyclerView.adapter = adapter
     }
 
     private fun loadCourses() {
@@ -190,12 +205,20 @@ class CourseExploreActivity : CoreJoshActivity() {
                                 return@forEach
                             }
                         }
-                        courseExploreBinding.recyclerView.addView(
+                        languageSet.add(courseExploreModel.language ?: "")
+
+
+                        courseList.add(courseExploreModel)
+                        /*courseExploreBinding.recyclerView.addView(
                             CourseExplorerViewHolder(
                                 courseExploreModel
                             )
-                        )
+                        )*/
                     }
+                    renderLanguageChips()
+                    filteredCourseList.clear()
+                    filteredCourseList.addAll(courseList)
+                    adapter.notifyDataSetChanged()
                     courseExploreBinding.progressBar.visibility = View.GONE
                 }
 
@@ -206,6 +229,21 @@ class CourseExploreActivity : CoreJoshActivity() {
                 }
             }
         }
+    }
+
+    fun filterCourses() {
+        filteredCourseList.clear()
+        if ("".equals(selectedLanguage))
+            filteredCourseList.addAll(courseList)
+        else
+            filteredCourseList.addAll(courseList.filter {
+                it.language.equals(
+                    selectedLanguage,
+                    true
+                )
+            })
+        adapter.notifyDataSetChanged()
+        courseExploreBinding.recyclerView.scrollToPosition(0)
     }
 
     override fun onResume() {
@@ -238,6 +276,27 @@ class CourseExploreActivity : CoreJoshActivity() {
                 )
             }
         })
+
+        language_chip_group.setOnCheckedChangeListener { group, checkedId ->
+            if (checkedId == -1)
+                selectedLanguage = ""
+            else
+                selectedLanguage = languageSet.filter { languageSet.indexOf(it) == checkedId }[0]
+            filterCourses()
+        }
+    }
+
+    private fun renderLanguageChips() {
+//        txtCategoryName.text = selectedLanguage ?: ""
+        language_chip_group.removeAllViews()
+        languageSet.forEach {
+            val chip = LayoutInflater.from(this)
+                .inflate(R.layout.faq_category_item, language_chip_group, false) as Chip
+            chip.text = it.capitalize()
+            chip.tag = it
+            chip.id = languageSet.indexOf(it)
+            language_chip_group.addView(chip)
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
