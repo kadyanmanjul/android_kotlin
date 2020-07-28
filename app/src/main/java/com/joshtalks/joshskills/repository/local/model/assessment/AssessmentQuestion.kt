@@ -79,7 +79,7 @@ data class AssessmentQuestion(
     @TypeConverters(TypeConverterQuestionStatus::class)
     @ColumnInfo
     @SerializedName("status")
-    val status: QuestionStatus = QuestionStatus.NONE
+    var status: QuestionStatus = QuestionStatus.NONE
 
 ) : Parcelable {
 

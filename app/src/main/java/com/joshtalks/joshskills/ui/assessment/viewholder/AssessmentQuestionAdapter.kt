@@ -8,14 +8,12 @@ import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQues
 import com.joshtalks.joshskills.repository.server.assessment.AssessmentStatus
 import com.joshtalks.joshskills.repository.server.assessment.AssessmentType
 import com.joshtalks.joshskills.ui.assessment.AssessmentQuestionViewType
-import com.joshtalks.joshskills.ui.assessment.view.FillInTheBlankChoiceView
 
 class AssessmentQuestionAdapter(
     private var type: AssessmentType,
     private var status: AssessmentStatus,
     private var viewType: AssessmentQuestionViewType,
-    private var questionList: List<AssessmentQuestionWithRelations>,
-    private var listener: FillInTheBlankChoiceView.FillInTheBlankChoiceClickListener
+    private var questionList: List<AssessmentQuestionWithRelations>
 ) :
     RecyclerView.Adapter<AssessmentQuestionAdapter.ViewHolder>() {
     init {
@@ -25,22 +23,11 @@ class AssessmentQuestionAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         val binding = AssessmentListItemBinding.inflate(inflater, parent, false)
-        return if (viewType == 1) {
-            ViewHolder(binding).apply {
-                setIsRecyclable(false)
-            }
-        } else {
-            ViewHolder(binding).apply {
-                setIsRecyclable(true)
-            }
+        return ViewHolder(binding).apply {
+            setIsRecyclable(false)
         }
     }
 
-    private lateinit var currentBinding: AssessmentListItemBinding
-
-    fun registerSubmitCallback() {
-        currentBinding.choiceView.registerSubmitCallback()
-    }
 
     override fun getItemCount(): Int = questionList.size
 
@@ -55,7 +42,7 @@ class AssessmentQuestionAdapter(
     }
 
     override fun getItemViewType(position: Int): Int {
-        return questionList[position].question.mediaType.valType
+        return questionList[position].question.mediaType.intValue
     }
 
     override fun getItemId(position: Int): Long {
@@ -65,9 +52,8 @@ class AssessmentQuestionAdapter(
     inner class ViewHolder(val binding: AssessmentListItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(assessmentQuestion: AssessmentQuestionWithRelations) {
-            currentBinding = binding
             binding.questionView.bind(assessmentQuestion)
-            binding.choiceView.bind(type, status, viewType, assessmentQuestion, listener)
+            binding.choiceView.bind(type, status, viewType, assessmentQuestion)
         }
     }
 

@@ -13,6 +13,7 @@ import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentWith
 import com.joshtalks.joshskills.repository.local.model.assessment.Choice
 import com.joshtalks.joshskills.repository.server.assessment.AssessmentIntro
 import com.joshtalks.joshskills.repository.server.assessment.AssessmentResponse
+import com.joshtalks.joshskills.repository.server.assessment.AssessmentStatus
 import com.joshtalks.joshskills.repository.server.assessment.ReviseConcept
 
 @Dao
@@ -35,7 +36,7 @@ abstract class AssessmentDao {
                 insertReviseConcept(reviseConcept)
             }
         }
-        assessmentWithRelations.assessmentIntroList.forEach { assessmentIntro ->
+        assessmentWithRelations.assessmentIntroList?.forEach { assessmentIntro ->
             insertAssessmentIntro(assessmentIntro)
         }
     }
@@ -70,10 +71,13 @@ abstract class AssessmentDao {
                 insertReviseConcept(ReviseConcept(reviseConcept, question.id))
             }
         }
-        assessmentResponse.intro.forEach { assessmentIntro ->
+        assessmentResponse.intro?.forEach { assessmentIntro ->
             insertAssessmentIntro(AssessmentIntro(assessmentIntro, assessmentResponse.id))
         }
     }
+
+    @Query(value = "UPDATE assessments SET status = :status where remoteId= :assessmentId ")
+    abstract suspend fun updateAssessmentStatus(assessmentId: Int, status: AssessmentStatus)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     abstract suspend fun insertAssessmentWithoutRelation(assessment: Assessment)

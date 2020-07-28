@@ -3,6 +3,7 @@ package com.joshtalks.joshskills.repository.server.assessment
 
 import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
+import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentWithRelations
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize
@@ -15,13 +16,25 @@ data class AssessmentResponse(
     val heading: String,
 
     @SerializedName("title")
-    val title: String,
+    val title: String?,
+
+    @SerializedName("icon_url")
+    val iconUrl: String?,
+
+    @SerializedName("text1")
+    val text1: String?,
+
+    @SerializedName("text2")
+    val text2: String?,
+
+    @SerializedName("score_text")
+    val scoreText: String?,
 
     @SerializedName("image_url")
-    val imageUrl: String,
+    val imageUrl: String?,
 
     @SerializedName("description")
-    val description: String,
+    val description: String?,
 
     @SerializedName("type")
     val type: AssessmentType,
@@ -33,9 +46,32 @@ data class AssessmentResponse(
     val questions: List<AssessmentQuestionResponse>,
 
     @SerializedName("intro")
-    val intro: List<AssessmentIntroResponse>
+    val intro: List<AssessmentIntroResponse>?  // TODO(27/07/2020) - Make this nullable
 
-) : Parcelable
+) : Parcelable {
+
+    constructor(assessmentWithRelations: AssessmentWithRelations) : this(
+        id = assessmentWithRelations.assessment.remoteId,
+        heading = assessmentWithRelations.assessment.heading,
+        title = assessmentWithRelations.assessment.title,
+        imageUrl = assessmentWithRelations.assessment.imageUrl,
+        description = assessmentWithRelations.assessment.description,
+        type = assessmentWithRelations.assessment.type,
+        status = assessmentWithRelations.assessment.status,
+        questions = assessmentWithRelations.questionList.map {
+            AssessmentQuestionResponse(it.question, it.reviseConcept, it.choiceList)
+        },
+        intro = assessmentWithRelations.assessmentIntroList?.map {
+            AssessmentIntroResponse(it)
+        },
+        iconUrl = null,
+        text1 = null,
+        text2 = null,
+        scoreText = null
+    )
+
+}
+
 
 enum class AssessmentType(val type: String) {
 
@@ -46,7 +82,7 @@ enum class AssessmentType(val type: String) {
     TEST("TEST")
 }
 
-enum class AssessmentMediaType(val mediaType: String, val valType: Int) {
+enum class AssessmentMediaType(val mediaType: String, val intValue: Int) {
 
     @SerializedName("IMAGE")
     IMAGE("IMAGE", 0),

@@ -54,15 +54,15 @@ data class Assessment(
 
     @ColumnInfo
     @SerializedName("title")
-    val title: String,
+    val title: String?,
 
     @ColumnInfo
     @SerializedName("image_url")
-    val imageUrl: String,
+    val imageUrl: String?,
 
     @ColumnInfo
     @SerializedName("description")
-    val description: String,
+    val description: String?,
 
     @TypeConverters(TypeConverterAssessmentType::class)
     @ColumnInfo
@@ -72,7 +72,7 @@ data class Assessment(
     @TypeConverters(TypeConverterAssessmentStatus::class)
     @ColumnInfo
     @SerializedName("progress_status")
-    val status: AssessmentStatus
+    var status: AssessmentStatus
 
 ) : Parcelable {
 
@@ -84,9 +84,9 @@ data class Assessment(
         description = assessmentResponse.description,
         type = assessmentResponse.type,
         status = assessmentResponse.status,
-        iconUrl = null,
-        text1 = null,
-        text2 = null,
-        scoreText = null
+        iconUrl = assessmentResponse.iconUrl,
+        text1 = assessmentResponse.text1,
+        text2 = assessmentResponse.text2,
+        scoreText = assessmentResponse.scoreText
     )
 }

@@ -3,6 +3,8 @@ package com.joshtalks.joshskills.repository.server.assessment
 
 import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
+import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestion
+import com.joshtalks.joshskills.repository.local.model.assessment.Choice
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize
@@ -41,7 +43,25 @@ data class AssessmentQuestionResponse(
     @SerializedName("status")
     val status: QuestionStatus = QuestionStatus.NONE
 
-) : Parcelable
+) : Parcelable {
+
+    constructor(assessmentQuestion: AssessmentQuestion,reviseConcept: ReviseConcept?,choices: List<Choice>) : this(
+        id = assessmentQuestion.remoteId,
+        text = assessmentQuestion.text,
+        sortOrder = assessmentQuestion.sortOrder,
+        mediaUrl = assessmentQuestion.mediaUrl,
+        mediaType = assessmentQuestion.mediaType,
+        videoThumbnailUrl = assessmentQuestion.videoThumbnailUrl,
+        choiceType = assessmentQuestion.choiceType,
+        choices = choices.map {
+            ChoiceResponse(it)
+        },
+        reviseConcept = reviseConcept?.let { ReviseConceptResponse(it) },
+        isAttempted = assessmentQuestion.isAttempted,
+        status = assessmentQuestion.status
+    )
+
+}
 
 enum class ChoiceType(val type: String) {
 

@@ -22,7 +22,7 @@ data class AssessmentWithRelations(
         entityColumn = "assessmentId",
         entity = AssessmentIntro::class
     )
-    val assessmentIntroList: List<AssessmentIntro>
+    val assessmentIntroList: List<AssessmentIntro>?
 
 ) {
 
@@ -31,7 +31,7 @@ data class AssessmentWithRelations(
         questionList = assessmentResponse.questions.map {
             AssessmentQuestionWithRelations(it, assessmentResponse.id)
         },
-        assessmentIntroList = assessmentResponse.intro.map {
+        assessmentIntroList = assessmentResponse.intro?.map {
             AssessmentIntro(it, assessmentResponse.id)
         }
     )
