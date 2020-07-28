@@ -13,7 +13,8 @@
         app:contentPaddingLeft="@dimen/_14sdp"
         app:contentPaddingRight="@dimen/_14sdp"
         app:contentPaddingTop="@dimen/_10sdp"
-        app:rippleColor="@color/dark_grey">
+        app:rippleColor="@color/dark_grey"
+        app:strokeWidth="1dp">
 
     <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/choice_textview"
