@@ -252,6 +252,8 @@ class AssessmentActivity : CoreJoshActivity() {
                     }
                 }
             } else {
+                // Disable ViewPager Scrolling
+                binding.questionViewPager.isUserInputEnabled = false
                 showTestSummaryFragment(assessmentId)
             }
         } else {
@@ -309,7 +311,11 @@ class AssessmentActivity : CoreJoshActivity() {
                 )
             )
         )
-        binding.questionViewPager.offscreenPageLimit = 2
+        binding.questionViewPager.offscreenPageLimit = 1
+
+        // Enable/Disable Scrolling
+        binding.questionViewPager.isUserInputEnabled =
+            (assessmentWithRelations.assessment.type == AssessmentType.QUIZ || assessmentWithRelations.assessment.status == AssessmentStatus.COMPLETED).not()
 
         binding.questionViewPager.onPageSelected { position ->
 
