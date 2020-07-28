@@ -87,4 +87,9 @@
     <color name="transparent_2">#884b4949</color>
     <color name="red">#9D1515</color>
 
+    <color name="text_f1f2">#F1F2F4</color>
+    <color name="sent_bg_7a">#7AF3E0</color>
+    <color name="received_bg_BC">#BCDCFD</color>
+    <color name="recording_9D">#9D1515</color>
+
 </resources>

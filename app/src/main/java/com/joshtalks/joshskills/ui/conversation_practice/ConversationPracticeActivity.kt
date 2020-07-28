@@ -3,6 +3,7 @@ package com.joshtalks.joshskills.ui.conversation_practice
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -19,17 +20,26 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 
+const val PRACTISE_ID = "practise_id"
+
 class ConversationPracticeActivity : CoreJoshActivity() {
 
     private val compositeDisposable = CompositeDisposable()
+    private val mFragmentNames = arrayOf("Listen", "Quiz", "Practice", "Record")
 
     private val viewModel: ConversationPracticeViewModel by lazy {
         ViewModelProvider(this).get(ConversationPracticeViewModel::class.java)
     }
 
     companion object {
-        fun startConversationPracticeActivity(activity: Activity, requestCode: Int) {
-            val intent = Intent(activity, ConversationPracticeActivity::class.java)
+        fun startConversationPracticeActivity(
+            activity: Activity,
+            requestCode: Int,
+            practiseId: String
+        ) {
+            val intent = Intent(activity, ConversationPracticeActivity::class.java).apply {
+                putExtra(PRACTISE_ID, practiseId)
+            }
             activity.startActivityForResult(intent, requestCode)
         }
     }
@@ -40,34 +50,36 @@ class ConversationPracticeActivity : CoreJoshActivity() {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_conversation_practice)
         addObserver()
+        intent?.getStringExtra(PRACTISE_ID)?.run {
+            viewModel.fetchConversationPractice(this)
+        }
     }
 
     private fun addObserver() {
         viewModel.apiCallStatusLiveData.observe(this, Observer {
-
+            binding.progressBar.visibility = View.GONE
         })
+        viewModel.conversationPracticeLiveData.observe(this, Observer { it ->
+            it?.let { obj ->
+                openIntroScreen(obj)
 
+                obj.listen.filter { it.name == obj.characterNameA }.listIterator().forEach {
+                    it.viewType = 0
+                }
+
+                binding.viewPager.adapter =
+                    PractiseViewPagerAdapter(this@ConversationPracticeActivity, obj)
+                TabLayoutMediator(binding.tabLayout, binding.viewPager,
+                    TabLayoutMediator.TabConfigurationStrategy { tab, position ->
+                        tab.text = mFragmentNames[position]
+                    }
+                ).attach()
+            }
+        })
     }
 
-    private fun initView() {
-        /*val assessmentResponse = AppObjectController.gsonMapperForLocal.fromJson(
-            loadJSONFromAsset("assessmentJson.json"),
-            AssessmentResponse::class.java
-        )
-*/
-        var pq: ConversationPractiseModel? = null
-        // binding.questionViewPager.offscreenPageLimit=1
-        binding.viewPager.adapter =
-            PractiseViewPagerAdapter(
-                this, pq!!
-            )
-        TabLayoutMediator(binding.tabLayout, binding.viewPager,
-            TabLayoutMediator.TabConfigurationStrategy { tab, position -> }
-        ).attach()
-    }
-
-    private fun openIntroScreen() {
-        ConversationPracticeIntro.newInstance()
+    private fun openIntroScreen(conversationPractiseModel: ConversationPractiseModel) {
+        ConversationPracticeIntro.newInstance(conversationPractiseModel)
             .show(supportFragmentManager, "Conversation Practice Intro")
     }
 
@@ -83,8 +95,6 @@ class ConversationPracticeActivity : CoreJoshActivity() {
                     it.printStackTrace()
                 })
         )
-
-
     }
 
     override fun onResume() {
@@ -96,5 +106,6 @@ class ConversationPracticeActivity : CoreJoshActivity() {
         super.onStop()
         compositeDisposable.clear()
     }
+
 }
 

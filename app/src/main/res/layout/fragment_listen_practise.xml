@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:card_view="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:paddingTop="@dimen/_12sdp">
+
 
     <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/image_view"
             android:layout_width="0dp"
-            android:layout_height="@dimen/_96sdp"
+            android:layout_height="@dimen/_72sdp"
             android:layout_gravity="top|center"
-            android:adjustViewBounds="true"
-            android:scaleType="centerCrop"
-            app:layout_constraintHeight_default="percent"
-            app:layout_constraintHeight_percent="0.2"
+            android:layout_marginStart="@dimen/_12sdp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintWidth_default="percent"
@@ -26,10 +26,12 @@
             fontPath="fonts/Poppins-Bold.ttf"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/_8sdp"
+            android:layout_marginStart="@dimen/_8sdp"
+            android:layout_marginTop="@dimen/_4sdp"
+            android:layout_marginEnd="@dimen/_16sdp"
             android:gravity="start"
             android:textColor="@color/font_color"
-            android:textSize="@dimen/font_15"
+            android:textSize="@dimen/font_16"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/image_view"
             app:layout_constraintTop_toTopOf="@+id/image_view"
@@ -41,10 +43,10 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginTop="@dimen/_4sdp"
+            android:maxLines="3"
             android:gravity="start"
             android:textColor="@color/dark_grey"
-            android:textSize="@dimen/font_13"
+            android:textSize="@dimen/font_14"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@+id/title_tv"
             app:layout_constraintTop_toBottomOf="@+id/title_tv"
@@ -60,21 +62,43 @@
             app:constraint_referenced_ids="image_view,title_tv,sub_title_tv" />
 
     <androidx.recyclerview.widget.RecyclerView
+            android:layout_marginHorizontal="@dimen/_16sdp"
             android:id="@+id/recycler_view"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            app:layout_constraintBottom_toTopOf="@+id/button2"
+            android:layout_marginTop="@dimen/_8sdp"
+            android:clipToPadding="false"
+            android:nestedScrollingEnabled="true"
+            app:layout_constraintBottom_toTopOf="@+id/audio_container"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/barrier" />
 
-    <Button
-            android:id="@+id/button2"
-            android:layout_width="@dimen/_120sdp"
-            android:layout_height="@dimen/_80sdp"
-            android:text="@string/continue_label"
+
+    <androidx.cardview.widget.CardView
+            android:id="@+id/audio_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clipChildren="false"
+            android:clipToPadding="false"
+            android:divider="@android:color/transparent"
+            android:dividerHeight="0.0px"
+            android:elevation="@dimen/_8sdp"
+            app:contentPaddingBottom="@dimen/_8sdp"
+            app:contentPaddingLeft="@dimen/_10sdp"
+            app:contentPaddingRight="@dimen/_10sdp"
+            app:contentPaddingTop="@dimen/_8sdp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            card_view:cardElevation="@dimen/_8sdp"
+            card_view:cardPreventCornerOverlap="false">
+
+        <com.joshtalks.joshskills.core.custom_ui.exo_audio_player.ExoAudioPlayerView
+                android:id="@+id/audio_player"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center" />
+    </androidx.cardview.widget.CardView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

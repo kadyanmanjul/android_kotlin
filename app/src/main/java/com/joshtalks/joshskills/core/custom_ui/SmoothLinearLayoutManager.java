@@ -50,7 +50,7 @@ public class SmoothLinearLayoutManager extends LinearLayoutManager {
 
         @Override
         protected int getVerticalSnapPreference() {
-            return SNAP_TO_END;
+            return SNAP_TO_START;
         }
     }
 }

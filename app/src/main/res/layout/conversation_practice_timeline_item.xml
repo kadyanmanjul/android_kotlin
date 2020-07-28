@@ -19,16 +19,16 @@
                 android:id="@+id/timeline"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:backgroundTint="@color/red"
-                app:endLineColor="#9098B1"
+                app:endLineColor="#BABFCF"
                 app:lineStyle="normal"
-                app:lineWidth="@dimen/_1sdp"
                 app:marker="@drawable/ic_marker_v"
-                app:markerInCenter="true"
+                app:lineWidth="@dimen/_1sdp"
+                app:markerInCenter="false"
                 app:markerSize="@dimen/_12sdp"
-                app:startLineColor="#9098B1" />
+                app:startLineColor="#BABFCF" />
 
         <LinearLayout
+                android:layout_gravity="top"
                 android:id="@+id/root_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -36,12 +36,14 @@
                 android:orientation="vertical">
 
             <androidx.appcompat.widget.AppCompatTextView
+                    android:layout_gravity="top|start|center"
                     android:id="@+id/text_header"
+                    android:layout_marginTop="@dimen/_minus1sdp"
                     fontPath="fonts/Poppins-Bold.ttf"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="@color/gray_48"
-                    android:textSize="@dimen/font_14"
+                    android:textSize="@dimen/font_13"
                     tools:text="@string/retry_miss_call_verify" />
 
             <androidx.appcompat.widget.AppCompatTextView
@@ -50,7 +52,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="#9098B1"
-                    android:textSize="@dimen/font_11_5"
+                    android:textSize="@dimen/font_11"
                     tools:text="@string/retry_miss_call_verify" />
 
         </LinearLayout>

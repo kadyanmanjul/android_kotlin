@@ -17,7 +17,7 @@ import androidx.fragment.app.FragmentActivity
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.Utils
-import com.joshtalks.joshskills.core.custom_ui.audioplayer.general.PlayerUtil
+import com.joshtalks.joshskills.core.custom_ui.PlayerUtil
 import com.joshtalks.joshskills.core.custom_ui.custom_textview.AutoLinkMode
 import com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
 import com.joshtalks.joshskills.messaging.RxBus2

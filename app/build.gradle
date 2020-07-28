@@ -211,7 +211,6 @@ dependencies {
     implementation 'com.google.firebase:firebase-messaging:20.2.3'
     implementation 'com.google.firebase:firebase-perf:19.0.7'
     implementation 'com.google.firebase:firebase-config:19.2.0'
-   // implementation 'com.google.firebase:firebase-database-ktx:19.3.1'
     implementation 'com.google.firebase:firebase-dynamic-links-ktx:19.1.0'
     implementation 'com.google.firebase:firebase-auth:19.3.2'
 
@@ -253,7 +252,6 @@ dependencies {
     implementation 'com.mindorks.android:placeholderview:1.0.3'
     kapt 'com.mindorks.android:placeholderview-compiler:1.0.3'
 
-    //implementation 'com.isseiaoki:simplecropview:1.1.8'
     implementation 'id.zelory:compressor:2.1.0'
 
     implementation 'androidx.tonyodev.fetch2:xfetch2:3.1.4'
@@ -289,6 +287,7 @@ dependencies {
     implementation 'com.razorpay:checkout:1.5.13'
     implementation 'com.github.dibakarece:DMAudioStreamer:v1.0.5'
     implementation 'com.github.nisrulz:easydeviceinfo-base:2.4.1'
+    implementation 'me.samlss:lighter:1.0.3'
     implementation 'com.jakewharton.timber:timber:4.7.1'
     implementation 'com.github.vipulasri:timelineview:1.1.4'
     implementation 'com.afollestad.material-dialogs:bottomsheets:3.2.1'

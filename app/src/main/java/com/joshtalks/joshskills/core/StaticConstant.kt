@@ -26,6 +26,9 @@ const val COURSE_ID = "course_ID"
 const val MIN_LINES = 4
 const val RC_HINT = 2
 const val MAX_YEAR = 6
+const val ALPHA_MAX = 1F
+const val ALPHA_MIN = 0.25F
+
 
 val IMAGE_REGEX = Regex(pattern = IMAGE_PATTERN)
 
@@ -56,6 +59,11 @@ enum class VerificationVia {
 enum class VerificationStatus {
     INITIATED, SUCCESS, FAILED, USER_DENY, TIMEOUT
 
+}
+
+
+enum class PractiseUser {
+    FIRST, SECOND
 }
 
 

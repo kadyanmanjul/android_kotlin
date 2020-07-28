@@ -291,6 +291,9 @@
     <string name="about_teacher_title">About Teacher</string>
     <string name="joined">Joined</string>
     <string name="total_amount">Total Amount</string>
+    <string name="choose_character"> First Choose Your Character</string>
+    <string name="conversation_practice">Conversation Practice</string>
+    <string name="select_your_character">Select your character first</string>
     <string name="usb_connected_message">Your device is connected to PC. Please disconnect the USB data connection to play the videos</string>
     <string name="usb_disconnect_title">Disconnect USB</string>
     <string name="ok_got_it_lbl">OK, GOT IT</string>

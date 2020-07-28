@@ -12,6 +12,7 @@ import com.joshtalks.joshskills.repository.server.NPSByUserRequest
 import com.joshtalks.joshskills.repository.server.RequestCertificateGenerate
 import com.joshtalks.joshskills.repository.server.RequestComplaint
 import com.joshtalks.joshskills.repository.server.SuccessResponse
+import com.joshtalks.joshskills.repository.server.conversation_practice.ConversationPractiseModel
 import com.joshtalks.joshskills.repository.server.course_detail.CourseDetailsResponseV2
 import com.joshtalks.joshskills.repository.server.feedback.FeedbackStatusResponse
 import com.joshtalks.joshskills.repository.server.feedback.RatingDetails
@@ -95,4 +96,12 @@ interface CommonNetworkService {
     suspend fun getCourseDetails(
         @QueryMap params: Map<String, String>
     ): Response<CourseDetailsResponseV2>
+
+
+    @GET("$DIR/conversation-practice/{id}/")
+    suspend fun getConversationPractise(
+        @Path("id") id: String
+    ): Response<ConversationPractiseModel>
+
+
 }

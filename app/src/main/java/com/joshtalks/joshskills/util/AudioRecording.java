@@ -19,17 +19,19 @@ public class AudioRecording {
         recorder.setAudioEncoder(MediaRecorder.AudioEncoder.HE_AAC);
         recorder.setOutputFile(recordFile.getAbsolutePath());
         MediaRecorder.OnErrorListener errorListener = new MediaRecorder.OnErrorListener() {
-            public void onError(MediaRecorder arg0, int arg1, int arg2) {
-                LogException.INSTANCE.catchError(ErrorTag.AUDIO_RECORDER, arg1 + " , " + arg2);
+            public void onError(MediaRecorder arg0, int what, int extra) {
+                arg0.release();
+                LogException.INSTANCE.catchError(ErrorTag.AUDIO_RECORDER, what + " , " + extra);
             }
         };
         recorder.setOnErrorListener(errorListener);
         try {
             recorder.prepare();
-            Thread.sleep(250);
+            Thread.sleep(500);
             recorder.start();
         } catch (Exception e) {
-            LogException.INSTANCE.catchException(e);
+            e.printStackTrace();
+            //LogException.INSTANCE.catchException(e);
         }
     }
 
@@ -37,7 +39,7 @@ public class AudioRecording {
         try {
             recorder.release();
         } catch (Exception e) {
-            LogException.INSTANCE.catchException(e);
+            e.printStackTrace();
         }
         recorder = null;
     }

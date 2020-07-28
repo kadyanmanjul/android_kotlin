@@ -9,17 +9,17 @@ import com.joshtalks.joshskills.ui.conversation_practice.fragment.QuizPractiseFr
 import com.joshtalks.joshskills.ui.conversation_practice.fragment.RecordPractiseFragment
 import com.joshtalks.joshskills.ui.conversation_practice.fragment.SelfPractiseFragment
 
+const val ARG_PRACTISE_OBJ = "practise-obj"
 
 class PractiseViewPagerAdapter(
     fragmentActivity: FragmentActivity,
     private val conversationPractiseModel: ConversationPractiseModel
 ) :
     FragmentStateAdapter(fragmentActivity) {
-    private val mFragmentNames = arrayOf("First Tab", "SecondTab", "third", "fourth")
 
 
     override fun getItemCount(): Int {
-        return mFragmentNames.size
+        return 4
     }
 
     override fun createFragment(position: Int): Fragment {
@@ -34,7 +34,7 @@ class PractiseViewPagerAdapter(
                 RecordPractiseFragment.newInstance(conversationPractiseModel)
             }
             else -> {
-                ListenPractiseFragment.newInstance(conversationPractiseModel.listen)
+                ListenPractiseFragment.newInstance(conversationPractiseModel)
             }
         }
     }

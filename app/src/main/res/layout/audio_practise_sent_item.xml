@@ -13,9 +13,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-
-            android:paddingStart="@dimen/_32sdp"
-            android:paddingEnd="@dimen/_16sdp">
+            android:paddingStart="@dimen/_48sdp">
 
         <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/name"
@@ -25,7 +23,7 @@
                 android:layout_gravity="center"
                 android:gravity="end"
                 android:textColor="#9098B1"
-                android:textSize="@dimen/font_16"
+                android:textSize="@dimen/font_13"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
@@ -33,12 +31,12 @@
                 tools:text="with Ankur Warikoo" />
 
         <FrameLayout
+                android:id="@+id/tv_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_4sdp"
                 android:background="@drawable/sent_drawable"
-                android:paddingHorizontal="@dimen/_16sdp"
-                android:paddingVertical="@dimen/_16sdp"
+                android:paddingHorizontal="@dimen/_12sdp"
+                android:paddingVertical="@dimen/_12sdp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/name">
@@ -50,6 +48,8 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="start|top"
                     android:gravity="start|top"
+                    android:letterSpacing="0.04"
+                    android:lineSpacingExtra="@dimen/_2sdp"
                     android:textColor="@color/black"
                     android:textSize="@dimen/font_14"
                     tools:ignore="MissingPrefix"

@@ -1,10 +1,5 @@
-package com.joshtalks.joshskills.core.custom_ui.audioplayer.general
+package com.joshtalks.joshskills.core.custom_ui
 
-/**
- * @author Jean Carlos (Github: @jeancsanchez)
- * @date 02/06/18.
- * Jesus loves you.
- */
 object PlayerUtil {
 
     /**

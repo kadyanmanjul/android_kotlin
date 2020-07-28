@@ -16,10 +16,10 @@ import com.github.vipulasri.timelineview.TimelineView
 import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.custom_ui.decorator.LayoutMarginDecoration
 import com.joshtalks.joshskills.databinding.ConversationPracticeTimelineItemBinding
 import com.joshtalks.joshskills.repository.local.model.PractiseFlowOptionModel
-import com.vanniktech.emoji.Utils
+import com.joshtalks.joshskills.repository.server.conversation_practice.ConversationPractiseModel
+import com.joshtalks.joshskills.ui.conversation_practice.adapter.ARG_PRACTISE_OBJ
 import kotlinx.android.synthetic.main.fragment_conversation_practice_ntro.image_view
 import kotlinx.android.synthetic.main.fragment_conversation_practice_ntro.recycler_view
 import java.io.IOException
@@ -31,18 +31,23 @@ import java.nio.charset.Charset
 class ConversationPracticeIntro private constructor() : DialogFragment() {
 
     companion object {
-        fun newInstance() =
-            ConversationPracticeIntro()
-                .apply {
-                    arguments = Bundle().apply {
-                    }
+        @JvmStatic
+        fun newInstance(conversationPractiseModel: ConversationPractiseModel) =
+            ConversationPracticeIntro().apply {
+                arguments = Bundle().apply {
+                    putParcelable(ARG_PRACTISE_OBJ, conversationPractiseModel)
                 }
+            }
     }
+
+    private lateinit var conversationPractiseModel: ConversationPractiseModel
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
+            conversationPractiseModel =
+                it.getParcelable<ConversationPractiseModel>(ARG_PRACTISE_OBJ) as ConversationPractiseModel
         }
         setStyle(STYLE_NO_FRAME, R.style.FullDialogWithAnimationV2)
     }
@@ -68,6 +73,7 @@ class ConversationPracticeIntro private constructor() : DialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupProfilePicture()
+        setupUI()
 
     }
 
@@ -84,11 +90,10 @@ class ConversationPracticeIntro private constructor() : DialogFragment() {
 
     }
 
-    fun setupUI() {
-        recycler_view.addItemDecoration(LayoutMarginDecoration(Utils.dpToPx(requireContext(), 4f)))
+    private fun setupUI() {
         val typeToken: Type = object : TypeToken<List<PractiseFlowOptionModel>>() {}.type
         val obj = AppObjectController.gsonMapperForLocal.fromJson<List<PractiseFlowOptionModel>>(
-            loadJSONFromAsset("practise_flow_details.json"), typeToken
+            loadJSONFromAsset("pratise_flow_details.json"), typeToken
         )
         recycler_view.adapter = ConversationPracticeTimelineAdapter(obj)
 
@@ -131,7 +136,8 @@ private class ConversationPracticeTimelineAdapter(private var items: List<Practi
 
     override fun getItemCount(): Int = items.size
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) = holder.bind(items.get(position))
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) =
+        holder.bind(items.get(position))
 
     inner class ViewHolder(
         val binding: ConversationPracticeTimelineItemBinding,

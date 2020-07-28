@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:card_view="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools">
 
     <data>
@@ -12,159 +13,180 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:paddingTop="@dimen/_8sdp">
 
-
-        <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/title_tv"
-                fontPath="fonts/Poppins-Regular.ttf"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/_8sdp"
-                android:gravity="start"
-                android:textColor="#596273"
-                android:textSize="@dimen/font_16"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:text="Personal Development Course" />
-
-        <androidx.constraintlayout.widget.Barrier
-                android:id="@+id/barrier_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:barrierDirection="bottom"
-                app:constraint_referenced_ids="title_tv" />
-
-
-        <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/iv_first_user"
-                android:layout_width="@dimen/_48sdp"
-                android:layout_height="@dimen/_48sdp"
-                android:layout_marginTop="@dimen/_8sdp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:gravity="center_vertical|start"
-                android:src="@color/checkmark_blue"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/barrier_tv"
-                tools:visibility="visible" />
-
-        <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/iv_tick_first_user"
-                android:layout_width="@dimen/_18sdp"
-                android:layout_height="@dimen/_18sdp"
-                android:background="@drawable/circle"
-                android:gravity="center_vertical|start"
-                android:padding="@dimen/_4sdp"
-                android:src="@drawable/ic_check"
-                android:tint="@color/button_primary_color"
-                android:visibility="gone"
-                app:layout_constraintBottom_toBottomOf="@+id/iv_first_user"
-                app:layout_constraintEnd_toEndOf="@+id/iv_first_user"
-                app:layout_constraintStart_toEndOf="@+id/iv_first_user"
-                app:layout_constraintTop_toBottomOf="@+id/iv_first_user"
-                tools:visibility="visible" />
-
-
-        <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/tv_first_user"
-                fontPath="fonts/Poppins-Bold.ttf"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/_8sdp"
-                android:ellipsize="marquee"
-                android:gravity="start"
-                android:maxLength="16"
-                android:textColor="#172344"
-                android:textSize="@dimen/font_13"
-                app:layout_constraintBottom_toBottomOf="@+id/iv_first_user"
-                app:layout_constraintStart_toEndOf="@+id/iv_first_user"
-                app:layout_constraintTop_toTopOf="@+id/iv_first_user"
-                tools:text="Raju" />
-
-
-        <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/iv_second_user"
-                android:layout_width="@dimen/_48sdp"
-                android:layout_height="@dimen/_48sdp"
-                android:layout_marginHorizontal="@dimen/_8sdp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:gravity="center_vertical|start"
-                android:src="@color/checkmark_blue"
-                app:layout_constraintBottom_toBottomOf="@+id/iv_first_user"
-                app:layout_constraintEnd_toStartOf="@+id/tv_second_user"
-                app:layout_constraintTop_toTopOf="@+id/iv_first_user"
-                tools:visibility="visible" />
-
-        <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/iv_tick_second_user"
-                android:layout_width="@dimen/_18sdp"
-                android:layout_height="@dimen/_18sdp"
-                android:background="@drawable/circle"
-                android:backgroundTint="@color/button_primary_color"
-                android:gravity="center_vertical|start"
-                android:padding="@dimen/_4sdp"
-                android:src="@drawable/ic_check"
-                android:tint="@color/white"
-                android:visibility="gone"
-                app:layout_constraintBottom_toBottomOf="@+id/iv_second_user"
-                app:layout_constraintEnd_toEndOf="@+id/iv_second_user"
-                app:layout_constraintStart_toEndOf="@+id/iv_second_user"
-                app:layout_constraintTop_toBottomOf="@+id/iv_second_user"
-                tools:visibility="visible" />
-
-
-        <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/tv_second_user"
-                fontPath="fonts/Poppins-Bold.ttf"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/_8sdp"
-                android:ellipsize="marquee"
-                android:gravity="end"
-                android:maxLength="16"
-                android:textColor="#172344"
-                android:textSize="@dimen/font_13"
-                app:layout_constraintBottom_toBottomOf="@+id/iv_first_user"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/iv_first_user"
-                tools:text="Shyam" />
-
-
-        <androidx.constraintlayout.widget.Barrier
-                android:id="@+id/barrier_2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:barrierDirection="bottom"
-                app:constraint_referenced_ids="iv_tick_first_user" />
-
-        <view
-                android:id="@+id/divider"
+        <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/_1sdp"
-                android:layout_marginTop="@dimen/_8sdp"
-                android:background="#E2E4E9"
-                app:layout_constraintTop_toBottomOf="@+id/barrier_2" />
-
-
-        <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recycler_view"
-                android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:layout_marginTop="@dimen/_8sdp"
-                app:layout_constraintBottom_toTopOf="@+id/button2"
+                android:layout_marginHorizontal="@dimen/_16sdp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintBottom_toTopOf="@+id/audio_container"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/divider" />
+                app:layout_constraintTop_toTopOf="parent">
 
-        <Button
-                android:id="@+id/button2"
-                android:layout_width="@dimen/_120sdp"
-                android:layout_height="@dimen/_80sdp"
-                android:text="@string/continue_label"
+            <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/title_tv"
+                    fontPath="fonts/Poppins-Regular.ttf"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="start"
+                    android:text="@string/choose_character"
+                    android:textColor="#596273"
+                    android:textSize="@dimen/font_14"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="Personal Development Course" />
+
+            <androidx.constraintlayout.widget.Barrier
+                    android:id="@+id/barrier_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:barrierDirection="bottom"
+                    app:constraint_referenced_ids="title_tv" />
+
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/iv_first_user"
+                    android:layout_width="@dimen/_48sdp"
+                    android:layout_height="@dimen/_48sdp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:gravity="center_vertical|start"
+                    android:onClick="@{()->handler.practiseWithFirstUser()}"
+                    android:src="@color/checkmark_blue"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/barrier_tv"
+                    tools:visibility="visible" />
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/iv_tick_first_user"
+                    android:layout_width="@dimen/_18sdp"
+                    android:layout_height="@dimen/_18sdp"
+                    android:background="@drawable/circle"
+                    android:backgroundTint="@color/button_primary_color"
+                    android:gravity="center_vertical|start"
+                    android:padding="@dimen/_4sdp"
+                    android:src="@drawable/ic_check"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="@+id/iv_first_user"
+                    app:layout_constraintEnd_toEndOf="@+id/iv_first_user"
+                    tools:visibility="visible" />
+
+
+            <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tv_first_user"
+                    fontPath="fonts/Poppins-Bold.ttf"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/_8sdp"
+                    android:ellipsize="marquee"
+                    android:gravity="start"
+                    android:maxLength="16"
+                    android:textColor="#172344"
+                    android:textSize="@dimen/font_13"
+                    app:layout_constraintBottom_toBottomOf="@+id/iv_first_user"
+                    app:layout_constraintStart_toEndOf="@+id/iv_first_user"
+                    app:layout_constraintTop_toTopOf="@+id/iv_first_user"
+                    tools:text="Raju" />
+
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/iv_second_user"
+                    android:layout_width="@dimen/_48sdp"
+                    android:layout_height="@dimen/_48sdp"
+                    android:layout_marginHorizontal="@dimen/_8sdp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:gravity="center_vertical|start"
+                    android:onClick="@{()->handler.practiseWithSecondUser()}"
+                    android:src="@color/checkmark_blue"
+                    app:layout_constraintBottom_toBottomOf="@+id/iv_first_user"
+                    app:layout_constraintEnd_toStartOf="@+id/tv_second_user"
+                    app:layout_constraintTop_toTopOf="@+id/iv_first_user"
+                    tools:visibility="visible" />
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/iv_tick_second_user"
+                    android:layout_width="@dimen/_18sdp"
+                    android:layout_height="@dimen/_18sdp"
+                    android:background="@drawable/circle"
+                    android:backgroundTint="@color/button_primary_color"
+                    android:gravity="center_vertical|start"
+                    android:padding="@dimen/_4sdp"
+                    android:src="@drawable/ic_check"
+                    android:tint="@color/white"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="@+id/iv_second_user"
+                    app:layout_constraintEnd_toEndOf="@+id/iv_second_user"
+                    tools:visibility="visible" />
+
+
+            <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tv_second_user"
+                    fontPath="fonts/Poppins-Bold.ttf"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="marquee"
+                    android:gravity="end"
+                    android:maxLength="16"
+                    android:textColor="#172344"
+                    android:textSize="@dimen/font_13"
+                    app:layout_constraintBottom_toBottomOf="@+id/iv_first_user"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/iv_first_user"
+                    tools:text="Shyam" />
+
+
+            <androidx.constraintlayout.widget.Barrier
+                    android:id="@+id/barrier_2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:barrierDirection="bottom"
+                    app:constraint_referenced_ids="iv_tick_first_user" />
+
+            <View
+                    android:id="@+id/divider"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_1sdp"
+                    android:layout_marginTop="@dimen/_8sdp"
+                    android:background="#E2E4E9"
+                    app:layout_constraintTop_toBottomOf="@+id/barrier_2" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recycler_view"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_marginTop="@dimen/_8sdp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/divider" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.cardview.widget.CardView
+                android:id="@+id/audio_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clipChildren="false"
+                android:clipToPadding="false"
+                android:divider="@android:color/transparent"
+                android:dividerHeight="0.0px"
+                android:elevation="@dimen/_8sdp"
+                app:contentPadding="@dimen/_10sdp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
+                app:layout_constraintStart_toStartOf="parent"
+                card_view:cardElevation="@dimen/_8sdp"
+                card_view:cardPreventCornerOverlap="false">
+
+            <com.joshtalks.joshskills.core.custom_ui.exo_audio_player.ExoAudioPlayerView
+                    android:id="@+id/audio_player"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center" />
+        </androidx.cardview.widget.CardView>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

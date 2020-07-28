@@ -40,6 +40,7 @@ import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.AlphaAnimation
 import android.view.animation.Animation
 import android.view.inputmethod.InputMethodManager
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.content.res.AppCompatResources
@@ -48,6 +49,13 @@ import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.RoundedBitmapDrawable
 import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory
 import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat
+import com.bumptech.glide.Glide
+import com.bumptech.glide.integration.webp.decoder.WebpDrawable
+import com.bumptech.glide.integration.webp.decoder.WebpDrawableTransformation
+import com.bumptech.glide.load.MultiTransformation
+import com.bumptech.glide.load.resource.bitmap.CircleCrop
+import com.bumptech.glide.request.RequestOptions
+import com.bumptech.glide.request.target.Target
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.custom_ui.CustomTabHelper
 import com.joshtalks.joshskills.core.datetimeutils.DateTimeStyle
@@ -61,6 +69,7 @@ import io.michaelrocks.libphonenumber.android.PhoneNumberUtil
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import jp.wasabeef.glide.transformations.RoundedCornersTransformation
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.File
@@ -772,10 +781,11 @@ fun getUserNameInShort(name: String = User.getInstance().firstName.trim().toUppe
             val nameSplit = name.split(" ")
             nameSplit[0][0].plus(nameSplit[1][0].toString())
         }
-        name.substring(0, 2)
-    } catch (e: IndexOutOfBoundsException) {
-        name.substring(0, name.length)
     }
+    name.substring(0, 2)
+} catch (e: IndexOutOfBoundsException) {
+    name.substring(0, name.length)
+}
 }
 
 fun hideKeyboard(activity: Activity, view: View) {
@@ -864,4 +874,32 @@ fun loadJSONFromAsset(fileName: String): String? {
         return null
     }
     return json
+}
+
+fun ImageView.setImage(url: String, context: Context = AppObjectController.joshApplication) {
+    Glide.with(context)
+        .load(url)
+        .override(Target.SIZE_ORIGINAL)
+        .optionalTransform(
+            WebpDrawable::class.java,
+            WebpDrawableTransformation(CircleCrop())
+        )
+        .into(this)
+}
+
+fun ImageView.setRoundImage(
+    url: String,
+    context: Context = AppObjectController.joshApplication
+) {
+
+    val multi = MultiTransformation(RoundedCornersTransformation(Utils.dpToPx(16), 0))
+    Glide.with(context)
+        .load(url)
+        .override(Target.SIZE_ORIGINAL)
+        .optionalTransform(
+            WebpDrawable::class.java,
+            WebpDrawableTransformation(CircleCrop())
+        )
+        .apply(RequestOptions.bitmapTransform(multi))
+        .into(this)
 }

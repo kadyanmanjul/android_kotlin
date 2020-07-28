@@ -7,13 +7,13 @@ import kotlinx.android.parcel.Parcelize
 
 @Parcelize
 data class ConversationPractiseModel(
-    @SerializedName("character_name_a") val characterNameA: String,
-    @SerializedName("character_name_b") val characterNameB: String,
-    @SerializedName("character_url_a") val characterUrlA: String,
-    @SerializedName("character_url_b") val characterUrlB: String,
-    @SerializedName("Id") val id: Int,
-    @SerializedName("sub_title") val subTitle: String,
+    @SerializedName("id") val id: Int,
     @SerializedName("title") val title: String,
+    @SerializedName("sub_title") val subTitle: String,
+    @SerializedName("person_a") val characterNameA: String,
+    @SerializedName("person_b") val characterNameB: String,
+    @SerializedName("person_a_url") val characterUrlA: String,
+    @SerializedName("person_b_url") val characterUrlB: String,
     @SerializedName("listen") val listen: List<ListenModel>,
     @SerializedName("quiz") val quizModel: List<QuizModel>
 
@@ -22,10 +22,13 @@ data class ConversationPractiseModel(
 @Parcelize
 data class ListenModel(
     @SerializedName("id") val id: Int,
+    @SerializedName("text") val text: String,
+    @SerializedName("sort_order") val sortOrder: Int,
     @SerializedName("name") val name: String,
     @SerializedName("audio_url") val audioUrl: String,
-    @SerializedName("text") val text: String,
-    @SerializedName("sort_order") val sortOrder: Int
+    @SerializedName("duration") val duration: Long,
+    val disable: Boolean = false,
+    var viewType: Int = 0
 ) : Parcelable
 
 @Parcelize

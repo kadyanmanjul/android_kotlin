@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/linearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/grey_rounded_bg"
+        android:orientation="horizontal"
+        android:paddingHorizontal="@dimen/_8sdp"
+        android:paddingVertical="@dimen/_12sdp">
+
+    <FrameLayout
+            android:id="@+id/play_pause_control"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+                android:id="@+id/exo_play"
+                android:layout_width="@dimen/_24sdp"
+                android:layout_height="@dimen/_24sdp"
+                android:layout_gravity="center"
+                android:padding="@dimen/_4sdp"
+                android:src="@drawable/ic_play_24dp"
+                android:tint="@color/button_primary_color" />
+
+        <ImageView
+                android:id="@+id/exo_pause"
+                android:layout_width="@dimen/_24sdp"
+                android:layout_height="@dimen/_24sdp"
+                android:layout_gravity="center"
+                android:padding="@dimen/_4sdp"
+                android:src="@drawable/ic_pause_24dp"
+                android:tint="@color/button_primary_color"
+                android:visibility="gone"
+                tools:visibility="visible" />
+    </FrameLayout>
+
+    <com.google.android.exoplayer2.ui.DefaultTimeBar
+            android:id="@+id/exo_progress"
+            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_8sdp"
+            android:progress="50"
+            android:progressDrawable="@drawable/seek_bar_draw"
+            app:bar_height="@dimen/_1sdp"
+            app:buffered_color="@android:color/white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/barrier"
+            app:layout_constraintStart_toEndOf="@+id/play_pause_control"
+            app:layout_constraintTop_toTopOf="parent"
+            app:played_color="@color/button_primary_color"
+            app:scrubber_color="@color/button_primary_color"
+            app:scrubber_drawable="@drawable/seek_thumb"
+            app:unplayed_color="@color/text_90" />
+
+    <androidx.constraintlayout.widget.Barrier
+            android:id="@+id/barrier"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/_10sdp"
+            app:barrierDirection="left"
+            app:constraint_referenced_ids="exo_duration,exo_position" />
+
+    <TextView
+            android:id="@+id/exo_position"
+            fontPath="fonts/Poppins-Regular.ttf"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="right"
+            android:textColor="@color/text_90"
+            android:textSize="@dimen/_12sdp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="MissingPrefix"
+            tools:text="10:15" />
+
+    <TextView
+            android:id="@+id/exo_duration"
+            fontPath="fonts/Poppins-Regular.ttf"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="right"
+            android:textColor="@color/text_90"
+            android:textSize="@dimen/_12sdp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="MissingPrefix"
+            tools:text="10:15" />
+</androidx.constraintlayout.widget.ConstraintLayout>

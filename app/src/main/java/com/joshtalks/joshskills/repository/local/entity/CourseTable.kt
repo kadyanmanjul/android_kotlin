@@ -26,7 +26,8 @@ data class Course(
     @SerializedName("is_deleted") val is_deleted: Boolean,
 
     @ColumnInfo(name = "course_name")
-    @SerializedName("name") val courseName: String,
+    @SerializedName("name")
+    val courseName: String,
 
     @ColumnInfo(name = "teacher_id")
     @SerializedName("teacher") val teacherId: String,

@@ -12,155 +12,185 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:paddingTop="@dimen/_8sdp">
 
-
-        <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/title_tv"
-                fontPath="fonts/Poppins-Regular.ttf"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/_8sdp"
-                android:gravity="start"
-                android:textColor="#596273"
-                android:textSize="@dimen/font_16"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:text="Personal Development Course" />
-
-        <androidx.constraintlayout.widget.Barrier
-                android:id="@+id/barrier_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:barrierDirection="bottom"
-                app:constraint_referenced_ids="title_tv" />
-
-
-        <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/iv_first_user"
-                android:layout_width="@dimen/_48sdp"
-                android:layout_height="@dimen/_48sdp"
-                android:layout_marginTop="@dimen/_8sdp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:gravity="center_vertical|start"
-                android:src="@color/checkmark_blue"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/barrier_tv"
-                tools:visibility="visible" />
-
-        <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/iv_tick_first_user"
-                android:layout_width="@dimen/_18sdp"
-                android:layout_height="@dimen/_18sdp"
-                android:background="@drawable/circle"
-                android:backgroundTint="@color/button_primary_color"
-                android:gravity="center_vertical|start"
-                android:padding="@dimen/_4sdp"
-                android:src="@drawable/ic_check"
-                android:translationX="@dimen/_4sdp"
-                android:visibility="gone"
-                app:layout_constraintBottom_toBottomOf="@+id/iv_first_user"
-                app:layout_constraintEnd_toEndOf="@+id/iv_first_user"
-                tools:visibility="visible" />
-
-
-        <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/tv_first_user"
-                fontPath="fonts/Poppins-Bold.ttf"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/_8sdp"
-                android:ellipsize="marquee"
-                android:gravity="start"
-                android:maxLength="16"
-                android:textColor="#172344"
-                android:textSize="@dimen/font_13"
-                app:layout_constraintBottom_toBottomOf="@+id/iv_first_user"
-                app:layout_constraintStart_toEndOf="@+id/iv_first_user"
-                app:layout_constraintTop_toTopOf="@+id/iv_first_user"
-                tools:text="Raju" />
-
-
-        <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/iv_second_user"
-                android:layout_width="@dimen/_48sdp"
-                android:layout_height="@dimen/_48sdp"
-                android:layout_marginHorizontal="@dimen/_8sdp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:gravity="center_vertical|start"
-                android:src="@color/checkmark_blue"
-                app:layout_constraintBottom_toBottomOf="@+id/iv_first_user"
-                app:layout_constraintEnd_toStartOf="@+id/tv_second_user"
-                app:layout_constraintTop_toTopOf="@+id/iv_first_user"
-                tools:visibility="visible" />
-
-        <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/iv_tick_second_user"
-                android:layout_width="@dimen/_18sdp"
-                android:layout_height="@dimen/_18sdp"
-                android:background="@drawable/circle"
-                android:backgroundTint="@color/button_primary_color"
-                android:gravity="center_vertical|start"
-                android:padding="@dimen/_4sdp"
-                android:src="@drawable/ic_check"
-                android:translationX="@dimen/_4sdp"
-                android:visibility="gone"
-                app:layout_constraintBottom_toBottomOf="@+id/iv_second_user"
-                app:layout_constraintEnd_toEndOf="@+id/iv_second_user"
-                tools:visibility="visible" />
-
-        <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/tv_second_user"
-                fontPath="fonts/Poppins-Bold.ttf"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/_8sdp"
-                android:ellipsize="marquee"
-                android:gravity="end"
-                android:maxLength="16"
-                android:textColor="#172344"
-                android:textSize="@dimen/font_13"
-                app:layout_constraintBottom_toBottomOf="@+id/iv_first_user"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/iv_first_user"
-                tools:text="Shyam" />
-
-
-        <androidx.constraintlayout.widget.Barrier
-                android:id="@+id/barrier_2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:barrierDirection="bottom"
-                app:constraint_referenced_ids="iv_tick_first_user" />
-
-        <view
-                android:id="@+id/divider"
+        <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/constraintLayout"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/_1sdp"
-                android:layout_marginTop="@dimen/_8sdp"
-                android:background="#E2E4E9"
-                app:layout_constraintTop_toBottomOf="@+id/barrier_2" />
-
-
-        <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recycler_view"
-                android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:layout_marginTop="@dimen/_8sdp"
-                app:layout_constraintBottom_toTopOf="@+id/button2"
+                android:layout_marginHorizontal="@dimen/_16sdp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintBottom_toTopOf="@+id/btn_record"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/divider" />
+                app:layout_constraintTop_toTopOf="parent">
 
-        <Button
-                android:id="@+id/button2"
-                android:layout_width="@dimen/_120sdp"
-                android:layout_height="@dimen/_80sdp"
-                android:text="@string/continue_label"
+            <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/title_tv"
+                    fontPath="fonts/Poppins-Regular.ttf"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="start"
+                    android:text="@string/choose_character"
+                    android:textColor="#596273"
+                    android:textSize="@dimen/font_14"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="Personal Development Course" />
+
+            <androidx.constraintlayout.widget.Barrier
+                    android:id="@+id/barrier_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:barrierDirection="bottom"
+                    app:constraint_referenced_ids="title_tv" />
+
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/iv_first_user"
+                    android:layout_width="@dimen/_48sdp"
+                    android:layout_height="@dimen/_48sdp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:gravity="center_vertical|start"
+                    android:onClick="@{()->handler.practiseWithFirstUser()}"
+                    android:src="@color/checkmark_blue"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/barrier_tv"
+                    tools:visibility="visible" />
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/iv_tick_first_user"
+                    android:layout_width="@dimen/_18sdp"
+                    android:layout_height="@dimen/_18sdp"
+                    android:background="@drawable/circle"
+                    android:backgroundTint="@color/button_primary_color"
+                    android:gravity="center_vertical|start"
+                    android:padding="@dimen/_4sdp"
+                    android:src="@drawable/ic_check"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="@+id/iv_first_user"
+                    app:layout_constraintEnd_toEndOf="@+id/iv_first_user"
+                    tools:visibility="visible" />
+
+
+            <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tv_first_user"
+                    fontPath="fonts/Poppins-Bold.ttf"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/_8sdp"
+                    android:ellipsize="marquee"
+                    android:gravity="start"
+                    android:maxLength="16"
+                    android:textColor="#172344"
+                    android:textSize="@dimen/font_13"
+                    app:layout_constraintBottom_toBottomOf="@+id/iv_first_user"
+                    app:layout_constraintStart_toEndOf="@+id/iv_first_user"
+                    app:layout_constraintTop_toTopOf="@+id/iv_first_user"
+                    tools:text="Raju" />
+
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/iv_second_user"
+                    android:layout_width="@dimen/_48sdp"
+                    android:layout_height="@dimen/_48sdp"
+                    android:layout_marginHorizontal="@dimen/_8sdp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:gravity="center_vertical|start"
+                    android:onClick="@{()->handler.practiseWithSecondUser()}"
+                    android:src="@color/checkmark_blue"
+                    app:layout_constraintBottom_toBottomOf="@+id/iv_first_user"
+                    app:layout_constraintEnd_toStartOf="@+id/tv_second_user"
+                    app:layout_constraintTop_toTopOf="@+id/iv_first_user"
+                    tools:visibility="visible" />
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/iv_tick_second_user"
+                    android:layout_width="@dimen/_18sdp"
+                    android:layout_height="@dimen/_18sdp"
+                    android:background="@drawable/circle"
+                    android:backgroundTint="@color/button_primary_color"
+                    android:gravity="center_vertical|start"
+                    android:padding="@dimen/_4sdp"
+                    android:src="@drawable/ic_check"
+                    android:tint="@color/white"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="@+id/iv_second_user"
+                    app:layout_constraintEnd_toEndOf="@+id/iv_second_user"
+                    tools:visibility="visible" />
+
+
+            <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tv_second_user"
+                    fontPath="fonts/Poppins-Bold.ttf"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="marquee"
+                    android:gravity="end"
+                    android:maxLength="16"
+                    android:textColor="#172344"
+                    android:textSize="@dimen/font_13"
+                    app:layout_constraintBottom_toBottomOf="@+id/iv_first_user"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/iv_first_user"
+                    tools:text="Shyam" />
+
+
+            <androidx.constraintlayout.widget.Barrier
+                    android:id="@+id/barrier_2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:barrierDirection="bottom"
+                    app:constraint_referenced_ids="iv_tick_first_user" />
+
+            <View
+                    android:id="@+id/divider"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_1sdp"
+                    android:layout_marginTop="@dimen/_8sdp"
+                    android:background="#E2E4E9"
+                    app:layout_constraintTop_toBottomOf="@+id/barrier_2" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recycler_view"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_marginTop="@dimen/_8sdp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/divider" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_record"
+                style="@style/Widget.MaterialComponents.Button"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginBottom="@dimen/_4sdp"
+                android:backgroundTint="@color/button_primary_color"
+                android:elevation="@dimen/_4sdp"
+                android:gravity="center"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                android:onClick="@{()->handler.requestForRecording()}"
+                android:paddingTop="@dimen/_6sdp"
+                android:paddingBottom="@dimen/_6sdp"
+                android:text=""
+                android:translationZ="@dimen/_1sdp"
+                app:cornerRadius="@dimen/_36sdp"
+                app:icon="@drawable/recv_ic_mic_white"
+                app:iconGravity="textEnd"
+                app:iconSize="@dimen/_24sdp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
-
+                app:layout_constraintEnd_toEndOf="@+id/constraintLayout"
+                app:layout_constraintStart_toStartOf="@+id/constraintLayout"
+                app:rippleColor="@color/white" />
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+
 </layout>
