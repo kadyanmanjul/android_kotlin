@@ -13,12 +13,12 @@ import com.joshtalks.joshskills.ui.assessment.AssessmentQuestionViewType
 import com.joshtalks.joshskills.ui.assessment.view.FillInTheBlankChoiceView
 import com.joshtalks.joshskills.ui.assessment.view.MCQChoicesView
 import com.joshtalks.joshskills.ui.assessment.view.Stub
+import timber.log.Timber
 
 class ChoiceView : FrameLayout {
 
     private var assessmentType: AssessmentType? = null
     private var assessmentStatus: AssessmentStatus? = null
-    private var listener: FillInTheBlankChoiceView.FillInTheBlankChoiceClickListener? = null
     private var viewType = AssessmentQuestionViewType.CORRECT_ANSWER_VIEW
     private var assessmentQuestion: AssessmentQuestionWithRelations? = null
     private var fillInTheBlankChoiceStub: Stub<FillInTheBlankChoiceView>? = null
@@ -43,22 +43,20 @@ class ChoiceView : FrameLayout {
     private fun init() {
         View.inflate(context, R.layout.choice_view, this)
         mcqChoicesStub = Stub(findViewById(R.id.single_selection_text_stub))
-        fillInTheBlankChoiceStub = Stub(findViewById(R.id.fill_in_yhe_blank_stub))
-        setUpUI()
+        fillInTheBlankChoiceStub = Stub(findViewById(R.id.fill_in_the_blank_stub))
+        // setUpUI()
     }
 
     fun bind(
         assessmentType: AssessmentType,
         assessmentStatus: AssessmentStatus,
         viewType: AssessmentQuestionViewType,
-        assessmentQuestion: AssessmentQuestionWithRelations,
-        listener: FillInTheBlankChoiceView.FillInTheBlankChoiceClickListener
+        assessmentQuestion: AssessmentQuestionWithRelations
     ) {
         this.assessmentType = assessmentType
         this.assessmentStatus = assessmentStatus
         this.viewType = viewType
         this.assessmentQuestion = assessmentQuestion
-        this.listener = listener
         setUpUI()
     }
 
@@ -80,8 +78,7 @@ class ChoiceView : FrameLayout {
                                     assessmentType!!,
                                     assessmentStatus!!,
                                     viewType,
-                                    assessmentQuestion,
-                                    listener!!
+                                    assessmentQuestion
                                 )
                         }
                     }
@@ -96,8 +93,7 @@ class ChoiceView : FrameLayout {
                                     assessmentType!!,
                                     assessmentStatus!!,
                                     viewType,
-                                    assessmentQuestion,
-                                    listener!!
+                                    assessmentQuestion
                                 )
                         }
                     }
@@ -111,19 +107,13 @@ class ChoiceView : FrameLayout {
         }
     }
 
-    fun registerSubmitCallback() {
-        fillInTheBlankChoiceStub?.run {
-            if (this.resolved()) {
-                this.get()?.onSubmitCallback()
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+        Timber.tag("onAttachedToWindow").e("AudioPlayer")
+    }
 
-            }
-        }
-
-        mcqChoicesStub?.run {
-            if (this.resolved()) {
-                this.get()?.onSubmitCallback()
-
-            }
-        }
+    override fun onDetachedFromWindow() {
+        super.onDetachedFromWindow()
+        Timber.tag("onDetachedFromWindow").e("AudioPlayer")
     }
 }

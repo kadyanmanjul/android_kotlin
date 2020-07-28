@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestion
 import com.joshtalks.joshskills.repository.local.model.assessment.Choice
 import com.joshtalks.joshskills.repository.server.assessment.AssessmentStatus
 import com.joshtalks.joshskills.repository.server.assessment.AssessmentType
@@ -18,9 +19,9 @@ import com.joshtalks.joshskills.ui.assessment.viewholder.OnChoiceClickListener
 class FillInTheBlankQuestionAdapter(
     private var assessmentType: AssessmentType,
     private var assessmentStatus: AssessmentStatus,
-    private var isQuestionAttempted: Boolean,
+    private var question: AssessmentQuestion,
     private val choiceResponse: ArrayList<Choice>,
-    private var onClickListener: OnChoiceClickListener
+    private var onChoiceClickListener: OnChoiceClickListener
 
 ) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -36,16 +37,16 @@ class FillInTheBlankQuestionAdapter(
         if (viewType == TYPE_FILLED) {
             return ChipAnswerViewHolder(
                 parent.inflate(R.layout.fill_in_the_blank_recyclerview_item_row, false)
-            )
+            ).apply {
+                setIsRecyclable(false)
+            }
         } else {
             return EmptyViewHolder(
                 parent.inflate(R.layout.fill_in_the_blank_recyclerview_item_row, false)
-            )
+            ).apply {
+                setIsRecyclable(false)
+            }
         }
-    }
-
-    fun setIsAttempted() {
-        isQuestionAttempted = true
     }
 
     override fun getItemCount() = choiceResponse.size
@@ -53,12 +54,12 @@ class FillInTheBlankQuestionAdapter(
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if (getItemViewType(position) == TYPE_FILLED) {
-            (holder as ChipAnswerViewHolder).bindPhoto(
+            (holder as ChipAnswerViewHolder).bindView(
                 assessmentType,
                 assessmentStatus,
-                isQuestionAttempted,
+                question,
                 choiceResponse.get(position),
-                onClickListener
+                onChoiceClickListener
             )
         } else {
             (holder as EmptyViewHolder).bindPhoto(choiceResponse.get(position))
@@ -77,20 +78,20 @@ class FillInTheBlankQuestionAdapter(
     class ChipAnswerViewHolder(private var view: View) : RecyclerView.ViewHolder(view),
         View.OnClickListener {
 
-        fun bindPhoto(
+        fun bindView(
             assessmentType: AssessmentType,
             assessmentStatus: AssessmentStatus,
-            isQuestionAttempted: Boolean,
+            question: AssessmentQuestion,
             choice: Choice,
             onClickListener: OnChoiceClickListener
         ) {
             this.assessmentType = assessmentType
             this.assessmentStatus = assessmentStatus
-            this.isQuestionAttempted = isQuestionAttempted
+            this.question = question
             this.choice = choice
             this.onClickListener = onClickListener
-            question = view.findViewById(R.id.item_description)
-            question.text = choice.text
+            questionText = view.findViewById(R.id.item_description)
+            questionText.text = choice.text
             divider = view.findViewById(R.id.underline)
             divider.setBackgroundColor(
                 ContextCompat.getColor(
@@ -105,37 +106,43 @@ class FillInTheBlankQuestionAdapter(
         private lateinit var choice: Choice
         private lateinit var assessmentType: AssessmentType
         private lateinit var assessmentStatus: AssessmentStatus
-        private var isQuestionAttempted: Boolean = false
-        private lateinit var question: TextView
+        private lateinit var question: AssessmentQuestion
+        private lateinit var questionText: TextView
         private lateinit var divider: View
 
         private var onClickListener: OnChoiceClickListener? = null
 
         override fun onClick(view: View) {
-            if (!isQuestionAttempted)
+            if (question.isAttempted.not() && (assessmentStatus == AssessmentStatus.STARTED || assessmentStatus == AssessmentStatus.NOT_STARTED)) {
                 onClickListener?.onChoiceClick(choice)
-            setColor()
+            } else setColor()
         }
 
         private fun setColor() {
 
-            if (((assessmentType == AssessmentType.QUIZ && isQuestionAttempted) || (assessmentType == AssessmentType.TEST && assessmentStatus == AssessmentStatus.COMPLETED))) {
-                if (isQuestionAttempted) {
+            if (((assessmentType == AssessmentType.QUIZ && question.isAttempted))) {
+                if (question.isAttempted) {
                     // For Question Submitted
 
-                    if (choice.isSelectedByUser) {
-                        // For Choice Selected
-
-                        if (choice.userSelectedOrder == choice.correctAnswerOrder) {
-                            // For Choice isCorrectAnswer
-                            setCorrectlySelectedChoiceView()
-                        } else {
-                            // For Choice isNotCorrectAnswer
-                            setWrongChoiceView()
-                        }
-
+                    if (choice.userSelectedOrder == choice.correctAnswerOrder) {
+                        // For Choice isCorrectAnswer
+                        setCorrectlySelectedChoiceView()
+                    } else {
+                        // For Choice isNotCorrectAnswer
+                        setWrongChoiceView()
                     }
+
                 }
+            } else if (assessmentType == AssessmentType.TEST && assessmentStatus == AssessmentStatus.COMPLETED) {
+
+                if (choice.userSelectedOrder == choice.correctAnswerOrder) {
+                    // For Choice isCorrectAnswer
+                    setCorrectlySelectedChoiceView()
+                } else {
+                    // For Choice isNotCorrectAnswer
+                    setWrongChoiceView()
+                }
+
             }
 
         }
@@ -151,7 +158,7 @@ class FillInTheBlankQuestionAdapter(
         }
 
         private fun setTextColor(colorId: Int) =
-            question.setTextColor(
+            questionText.setTextColor(
                 ContextCompat.getColor(
                     AppObjectController.joshApplication,
                     colorId

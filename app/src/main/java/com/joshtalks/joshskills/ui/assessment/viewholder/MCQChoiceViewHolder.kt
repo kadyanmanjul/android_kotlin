@@ -9,6 +9,7 @@ import com.crashlytics.android.Crashlytics
 import com.google.android.material.card.MaterialCardView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestion
 import com.joshtalks.joshskills.repository.local.model.assessment.Choice
 import com.joshtalks.joshskills.repository.server.assessment.AssessmentStatus
 import com.joshtalks.joshskills.repository.server.assessment.AssessmentType
@@ -26,7 +27,7 @@ class MCQChoiceViewHolder(
     override var choiceData: Choice,
     private var assessmentType: AssessmentType,
     private var assessmentStatus: AssessmentStatus,
-    private var isQuestionAttempted: Boolean,
+    private var assessmentQuestion: AssessmentQuestion,
     private var onClickListener: OnChoiceClickListener,
     override val context: Context = AppObjectController.joshApplication
 ) : ChoiceBaseCell(type, sequenceNumber, choiceData, context) {
@@ -63,7 +64,7 @@ class MCQChoiceViewHolder(
 
         }
 
-        if (isQuestionAttempted) {
+        if (assessmentQuestion.isAttempted) {
             container.setRippleColorResource(R.color.transparent)
         } else {
             container.setRippleColorResource(R.color.dark_grey)
@@ -86,7 +87,7 @@ class MCQChoiceViewHolder(
             if (assessmentStatus == AssessmentStatus.NOT_STARTED || assessmentStatus == AssessmentStatus.STARTED) {
                 // For AssessmentStatus.STARTED OR AssessmentStatus.NOT_STARTED
 
-                if (isQuestionAttempted) {
+                if (assessmentQuestion.isAttempted) {
                     // For Question Submitted
 
                     if (choiceData.isSelectedByUser) {
@@ -130,7 +131,7 @@ class MCQChoiceViewHolder(
             } else {
                 // For AssessmentStatus.COMPLETED
 
-                if (isQuestionAttempted) {
+                if (assessmentQuestion.isAttempted) {
                     // For Question Submitted
 
                     if (choiceData.isSelectedByUser) {
@@ -193,7 +194,7 @@ class MCQChoiceViewHolder(
             } else {
                 // For AssessmentStatus.COMPLETED
 
-                if (isQuestionAttempted) {
+                if (assessmentQuestion.isAttempted) {
                     // For Question Submitted
 
                     if (choiceData.isSelectedByUser) {
