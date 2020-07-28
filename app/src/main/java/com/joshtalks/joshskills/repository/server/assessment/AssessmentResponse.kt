@@ -54,6 +54,10 @@ data class AssessmentResponse(
         id = assessmentWithRelations.assessment.remoteId,
         heading = assessmentWithRelations.assessment.heading,
         title = assessmentWithRelations.assessment.title,
+        iconUrl = assessmentWithRelations.assessment.iconUrl,
+        text1 = assessmentWithRelations.assessment.text1,
+        text2 = assessmentWithRelations.assessment.text2,
+        scoreText = assessmentWithRelations.assessment.scoreText,
         imageUrl = assessmentWithRelations.assessment.imageUrl,
         description = assessmentWithRelations.assessment.description,
         type = assessmentWithRelations.assessment.type,
@@ -63,11 +67,7 @@ data class AssessmentResponse(
         },
         intro = assessmentWithRelations.assessmentIntroList?.map {
             AssessmentIntroResponse(it)
-        },
-        iconUrl = null,
-        text1 = null,
-        text2 = null,
-        scoreText = null
+        }
     )
 
 }

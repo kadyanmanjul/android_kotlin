@@ -37,14 +37,16 @@ data class ChoiceResponse(
     var isSelectedByUser: Boolean = false
 
 ) : Parcelable {
-    constructor(choice: Choice):this(
-        id=choice.remoteId,
-        text=choice.text,
-        imageUrl=choice.imageUrl,
-        isCorrect=choice.isCorrect,
-        sortOrder=choice.sortOrder,
-        correctAnswerOrder=choice.correctAnswerOrder,
-        column=choice.column
+    constructor(choice: Choice) : this(
+        id = choice.remoteId,
+        text = choice.text,
+        imageUrl = choice.imageUrl,
+        isCorrect = choice.isCorrect,
+        sortOrder = choice.sortOrder,
+        correctAnswerOrder = choice.correctAnswerOrder,
+        column = choice.column,
+        userSelectedOrder = choice.userSelectedOrder,
+        isSelectedByUser = choice.isSelectedByUser
     )
 }
 

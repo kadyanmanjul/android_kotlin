@@ -45,7 +45,11 @@ data class AssessmentQuestionResponse(
 
 ) : Parcelable {
 
-    constructor(assessmentQuestion: AssessmentQuestion,reviseConcept: ReviseConcept?,choices: List<Choice>) : this(
+    constructor(
+        assessmentQuestion: AssessmentQuestion,
+        reviseConcept: ReviseConcept?,
+        choices: List<Choice>
+    ) : this(
         id = assessmentQuestion.remoteId,
         text = assessmentQuestion.text,
         sortOrder = assessmentQuestion.sortOrder,

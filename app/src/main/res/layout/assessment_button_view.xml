@@ -70,7 +70,6 @@
                 fontPath="fonts/Poppins-Bold.ttf"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/_4sdp"
                 android:background="@drawable/rectangle_with_blue_bound_stroke"
                 android:backgroundTint="@color/button_color"
                 android:gravity="center"

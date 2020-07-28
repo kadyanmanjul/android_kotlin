@@ -82,7 +82,7 @@ class AssessmentViewModel(application: Application) : AndroidViewModel(applicati
     private suspend fun getAssessmentFromServer(assessmentId: Int) =
         AppObjectController.chatNetworkService.getAssessmentId(assessmentId)
 
-    private suspend fun getAssessmentResponse(assessmentWithRelations: AssessmentWithRelations) =
+    private fun getAssessmentResponse(assessmentWithRelations: AssessmentWithRelations) =
         AssessmentResponse((assessmentWithRelations))
 
     fun saveAssessmentQuestion(assessmentQuestion: AssessmentQuestionWithRelations) {
