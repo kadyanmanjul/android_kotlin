@@ -17,14 +17,24 @@ import com.google.android.flexbox.FlexboxLayoutManager
 import com.google.android.flexbox.JustifyContent
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
+import com.google.android.material.textview.MaterialTextView
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.messaging.RxBus2
+import com.joshtalks.joshskills.repository.local.eventbus.AssessmentButtonStateEvent
+import com.joshtalks.joshskills.repository.local.eventbus.FillInTheBlankSubmitEvent
+import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestion
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionWithRelations
 import com.joshtalks.joshskills.repository.local.model.assessment.Choice
 import com.joshtalks.joshskills.repository.server.assessment.AssessmentStatus
 import com.joshtalks.joshskills.repository.server.assessment.AssessmentType
+import com.joshtalks.joshskills.repository.server.assessment.ChoiceType
 import com.joshtalks.joshskills.ui.assessment.AssessmentQuestionViewType
 import com.joshtalks.joshskills.ui.assessment.FillInTheBlankQuestionAdapter
 import com.joshtalks.joshskills.ui.assessment.viewholder.OnChoiceClickListener
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
+import timber.log.Timber
 
 class FillInTheBlankChoiceView : FrameLayout, OnChoiceClickListener {
 
@@ -32,14 +42,18 @@ class FillInTheBlankChoiceView : FrameLayout, OnChoiceClickListener {
     private var assessmentStatus: AssessmentStatus? = null
     private var viewType = AssessmentQuestionViewType.CORRECT_ANSWER_VIEW
     private var assessmentQuestion: AssessmentQuestionWithRelations? = null
-    private var listener: FillInTheBlankChoiceClickListener? = null
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var totalAnswered: TextView
-    private lateinit var chipChoice: ChipGroup
+    private lateinit var seeAnswer: MaterialTextView
+    private lateinit var choicesChipGroup: ChipGroup
     private var chipChoiceList = mutableListOf<Choice>()
+    private var correctChoiceOrder = mutableListOf<Choice>()
     private var filled = 0
     private var totalOptions = 0
+    private var compositeDisposable = CompositeDisposable()
+    private var correctAnswerVisible = false
+
 
     constructor(context: Context) : super(context) {
         init()
@@ -61,48 +75,114 @@ class FillInTheBlankChoiceView : FrameLayout, OnChoiceClickListener {
         View.inflate(context, R.layout.fill_in_the_blank_choice_view, this)
         recyclerView = findViewById(R.id.recycler_view)
         totalAnswered = findViewById(R.id.total_answered)
-        chipChoice = findViewById(R.id.chip_choice)
+        choicesChipGroup = findViewById(R.id.chip_choice)
+        seeAnswer = findViewById(R.id.see_answer)
+        addObservers()
+
+    }
+
+    private fun addObservers() {
+        compositeDisposable.add(
+            RxBus2.listenWithoutDelay(FillInTheBlankSubmitEvent::class.java)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe {
+                    onSubmit()
+
+                })
+
+        seeAnswer.setOnClickListener {
+            toogleViews()
+        }
+    }
+
+    private fun toogleViews() {
+        if (correctAnswerVisible) {
+            sortChoiceViaUserOrder()
+        } else {
+            sortChoiceViaCorrectOrder()
+        }
+        correctAnswerVisible = correctAnswerVisible.not()
+        recyclerView.adapter?.notifyDataSetChanged()
+    }
+
+    private fun sortChoiceViaCorrectOrder() {
+        chipChoiceList.clear()
+        correctChoiceOrder.forEach { choice ->
+            chipChoiceList.add(choice)
+        }
+        seeAnswer.text = context.getString(R.string.see_your_answer)
+    }
+
+    private fun sortChoiceViaUserOrder() {
+        chipChoiceList.clear()
+        assessmentQuestion?.choiceList?.sortedBy { it.userSelectedOrder }?.forEach { choice ->
+            chipChoiceList.add(choice)
+        }
+
+        seeAnswer.text = context.getString(R.string.see_answer)
     }
 
     fun bind(
         assessmentType: AssessmentType,
         assessmentStatus: AssessmentStatus,
         viewType: AssessmentQuestionViewType,
-        assessmentQuestion: AssessmentQuestionWithRelations,
-        listener: FillInTheBlankChoiceClickListener
+        assessmentQuestion: AssessmentQuestionWithRelations
     ) {
         this.assessmentType = assessmentType
         this.assessmentStatus = assessmentStatus
         this.viewType = viewType
         this.assessmentQuestion = assessmentQuestion
-        this.listener = listener
         setUpUI()
     }
 
     private fun setUpUI() {
-        renderView()
-        setupPlaceHolderView()
-    }
+        choicesChipGroup.removeAllViews()
 
-    private fun renderView() {
-        chipChoice.removeAllViews()
-        val choice: List<Choice>? = assessmentQuestion?.choiceList
-        choice?.sortedBy { it.sortOrder }?.forEach {
+        assessmentQuestion?.choiceList?.sortedBy { it.sortOrder }?.forEach {
+
             val chip = LayoutInflater.from(context)
                 .inflate(R.layout.choice_fib_item, null, false) as Chip
             chip.text = it.text
             chip.tag = it.remoteId
             chip.id = it.remoteId
             chip.setOnClickListener(chipClickListener)
-            chipChoice.addView(chip)
+            choicesChipGroup.addView(chip)
+
+            assessmentQuestion?.question?.let { question ->
+                if (showPrefilledData(question))
+                    chip.visibility = View.GONE
+            }
         }
-        chipChoice.id.run {
-            chipChoice.check(this)
-        }
+        assessmentQuestion?.let { addChoicesListItems(it) }
+
         totalOptions = assessmentQuestion?.choiceList?.size ?: 0
         totalAnswered.text = filled.toString().plus("/").plus(totalOptions)
 
+        val layoutManager = FlexboxLayoutManager(context)
+        layoutManager.flexDirection = FlexDirection.ROW
+        layoutManager.justifyContent = JustifyContent.CENTER
+        layoutManager.flexWrap = FlexWrap.WRAP
+
+        recyclerView.layoutManager = layoutManager
+        recyclerView.adapter =
+            FillInTheBlankQuestionAdapter(
+                assessmentType!!,
+                assessmentStatus!!,
+                assessmentQuestion!!.question,
+                chipChoiceList as ArrayList<Choice>,
+                this
+            )
+
+        if (assessmentType == AssessmentType.TEST && assessmentStatus == AssessmentStatus.COMPLETED) {
+           // seeAnswer.visibility = View.VISIBLE
+            disableAllClicks()
+        }
     }
+
+    private fun showPrefilledData(question: AssessmentQuestion) =
+        question.isAttempted || assessmentStatus == AssessmentStatus.COMPLETED
+
 
     private val chipClickListener = OnClickListener { view ->
 
@@ -115,16 +195,6 @@ class FillInTheBlankChoiceView : FrameLayout, OnChoiceClickListener {
 
             override fun onAnimationEnd(animation: Animation?) {
                 view.visibility = View.GONE
-                chipChoiceList.forEach { choice ->
-                    if (view.id == choice.remoteId) {
-                        if (!choice.isSelectedByUser)
-                            filled = filled + 1
-                        choice.isSelectedByUser = true
-                        choice.userSelectedOrder = filled
-                    }
-
-                }
-                invalidateView(chipChoiceList = chipChoiceList)
             }
 
             override fun onAnimationStart(animation: Animation?) {
@@ -132,42 +202,59 @@ class FillInTheBlankChoiceView : FrameLayout, OnChoiceClickListener {
         })
 
         view.startAnimation(anim)
+        chipChoiceList.forEach { choice ->
+            if (view.id == choice.remoteId) {
+                if (choice.isSelectedByUser.not())
+                    filled++
+                choice.isSelectedByUser = true
+                choice.userSelectedOrder = filled
+            }
+        }
+
+        updateView()
+        publishUpdateButtonViewEvent(filled == totalOptions)
     }
 
-    private fun setupPlaceHolderView() {
-        val layoutManager = FlexboxLayoutManager(context)
-        layoutManager.flexDirection = FlexDirection.ROW
-        layoutManager.justifyContent = JustifyContent.CENTER
-        layoutManager.flexWrap = FlexWrap.WRAP
-
-        recyclerView.layoutManager = layoutManager
-        assessmentQuestion?.let { addChoicesListItems(it) }
-
-        recyclerView.adapter =
-            FillInTheBlankQuestionAdapter(
-                assessmentType!!,
-                assessmentStatus!!,
-                assessmentQuestion!!.question.isAttempted,
-                chipChoiceList as ArrayList<Choice>,
-                this
-            )
-
-    }
 
     private fun addChoicesListItems(assessmentQuestion: AssessmentQuestionWithRelations) {
-        assessmentQuestion.choiceList.sortedBy { it.sortOrder }.forEach { choice ->
-            choice.userSelectedOrder = 100
-            chipChoiceList.add(choice)
+        assessmentQuestion.choiceList.sortedBy { it.correctAnswerOrder }.forEach { choice ->
+            choice.userSelectedOrder = choice.correctAnswerOrder
+            correctChoiceOrder.add(choice)
+        }
+
+        if (assessmentQuestion.question.isAttempted && assessmentType == AssessmentType.QUIZ) {
+
+            assessmentQuestion.choiceList.sortedBy { it.userSelectedOrder }.forEach { choice ->
+                chipChoiceList.add(choice)
+            }
+            filled = chipChoiceList.size
+            disableAllClicks()
+
+        } else if (assessmentQuestion.question.isAttempted.not() && assessmentType == AssessmentType.QUIZ) {
+            assessmentQuestion.choiceList.sortedBy { it.sortOrder }.forEach { choice ->
+                choice.userSelectedOrder = 100
+                chipChoiceList.add(choice)
+            }
+        } else if (assessmentType == AssessmentType.TEST && assessmentStatus == AssessmentStatus.COMPLETED) {
+            assessmentQuestion.choiceList.sortedBy { it.userSelectedOrder }.forEach { choice ->
+                chipChoiceList.add(choice)
+            }
+            filled = chipChoiceList.size
+            disableAllClicks()
+        } else
+            assessmentQuestion.choiceList.sortedBy { it.correctAnswerOrder }.forEach { choice ->
+                chipChoiceList.add(choice)
+            }
+        if (assessmentQuestion.question.isAttempted || assessmentStatus == AssessmentStatus.COMPLETED) {
+            filled = chipChoiceList.size
+            disableAllClicks()
         }
     }
 
-    private fun invalidateView(
+    private fun updateView(
         isDeleted: Boolean = false,
-        fromIndex: Int = 100,
-        chipChoiceList: MutableList<Choice>
+        fromIndex: Int = 100
     ) {
-        listener!!.onChoiceAdded(chipChoiceList)
-
         totalAnswered.text = filled.toString().plus("/").plus(totalOptions)
 
         if (isDeleted)
@@ -180,40 +267,55 @@ class FillInTheBlankChoiceView : FrameLayout, OnChoiceClickListener {
         recyclerView.adapter?.notifyDataSetChanged()
     }
 
+    private fun publishUpdateButtonViewEvent(isAnswered: Boolean) {
+        RxBus2.publish(
+            AssessmentButtonStateEvent(
+                assessmentType!!,
+                assessmentQuestion?.question?.isAttempted!!,
+                isAnswered
+            )
+        )
+    }
+
     override fun onChoiceClick(choice: Choice) {
-        var fromIndex = 100
-        chipChoice.forEach { view ->
-            chipChoiceList.forEachIndexed { index, choiceItem ->
-                if (choice.remoteId == view.id && view.id == choiceItem.remoteId) {
-                    if (choiceItem.isSelectedByUser)
-                        filled = filled - 1
-                    choiceItem.isSelectedByUser = false
-                    fromIndex = choice.userSelectedOrder
-                    choiceItem.userSelectedOrder = 100
-                    view.visibility = View.VISIBLE
+        if (assessmentQuestion?.question?.choiceType == ChoiceType.FILL_IN_THE_BLANKS_TEXT) {
+            var fromIndex = 100
+            choicesChipGroup.forEach { view ->
+                chipChoiceList.forEach { choiceItem ->
+                    if (choice.remoteId == view.id && view.id == choiceItem.remoteId) {
+                        if (choiceItem.isSelectedByUser)
+                            filled = filled - 1
+                        choiceItem.isSelectedByUser = false
+                        fromIndex = choice.userSelectedOrder
+                        choiceItem.userSelectedOrder = 100
+                        view.visibility = View.VISIBLE
+                    }
                 }
             }
+            updateView(true, fromIndex)
+            publishUpdateButtonViewEvent(false)
         }
-        invalidateView(true, fromIndex, chipChoiceList)
     }
 
-    interface FillInTheBlankChoiceClickListener {
-        fun onChoiceAdded(choice: List<Choice>)
+    private fun onSubmit() {
+        updateView()
+        disableAllClicks()
     }
 
-    fun onSubmitCallback() {
-        assessmentQuestion!!.question.isAttempted = true
-        (recyclerView.adapter as FillInTheBlankQuestionAdapter).setIsAttempted()
-        invalidateView(
-            chipChoiceList = chipChoiceList
-        )
-        disableAllButtons()
-    }
-
-    private fun disableAllButtons() {
-        chipChoice.forEach { view ->
+    private fun disableAllClicks() {
+        choicesChipGroup.forEach { view ->
             view.isClickable = false
         }
     }
-}
 
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+        Timber.tag("onAttachedToWindow").e("FillInTheBlankChoiceView")
+    }
+
+    override fun onDetachedFromWindow() {
+        super.onDetachedFromWindow()
+        compositeDisposable.clear()
+        Timber.tag("onDetachedFromWindow").e("FillInTheBlankChoiceView")
+    }
+}
