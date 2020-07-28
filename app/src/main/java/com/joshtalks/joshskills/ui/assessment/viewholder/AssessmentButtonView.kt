@@ -11,29 +11,31 @@ import androidx.core.content.ContextCompat
 import com.google.android.material.textview.MaterialTextView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.messaging.RxBus2
+import com.joshtalks.joshskills.repository.local.eventbus.AssessmentButtonClick
+import com.joshtalks.joshskills.repository.local.eventbus.AssessmentButtonClickEvent
+import com.joshtalks.joshskills.repository.local.eventbus.AssessmentButtonStateEvent
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionWithRelations
-import com.joshtalks.joshskills.repository.local.model.assessment.Choice
-import com.joshtalks.joshskills.repository.server.assessment.AssessmentStatus
 import com.joshtalks.joshskills.repository.server.assessment.AssessmentType
 import com.joshtalks.joshskills.repository.server.assessment.ChoiceType
-import com.joshtalks.joshskills.repository.server.assessment.ReviseConcept
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
 
 class AssessmentButtonView : FrameLayout {
 
     private var assessmentType: AssessmentType? = null
-    private var assessmentStatus: AssessmentStatus? = null
     private var assessmentQuestion: AssessmentQuestionWithRelations? = null
-    private var totalQuestions: Int? = null
-    private var numberOfCorrectAnswers: Int = 0
-    private var questionAnswered: Int = 0
+    private var isLastQuestion = false
 
     private lateinit var submitBtn: MaterialTextView
     private lateinit var reviseBtn: MaterialTextView
     private lateinit var nextBtn: MaterialTextView
     private lateinit var submitContainer: ConstraintLayout
     private lateinit var reviseConceptContainer: ConstraintLayout
-    private lateinit var listener: AssessmentButtonListener
+    private var compositeDisposable = CompositeDisposable()
+
 
     constructor(context: Context) : super(context) {
         init()
@@ -63,36 +65,65 @@ class AssessmentButtonView : FrameLayout {
 
     private fun addListeners() {
         submitBtn.setOnClickListener {
-            if (numberOfCorrectAnswers == questionAnswered && assessmentType == AssessmentType.QUIZ) {
-                showNextButtonContainerAndPublishEvent()
-            } else if (assessmentType == AssessmentType.TEST)
-                listener.onSubmit(
-                    assessmentType!!,
-                    assessmentQuestion!!
+            assessmentQuestion?.question?.isAttempted = true
+            if (assessmentType == AssessmentType.TEST) {
+                RxBus2.publish(
+                    AssessmentButtonClickEvent(
+                        AssessmentType.TEST,
+                        assessmentQuestion?.question?.isAttempted!!,
+                        true,
+                        AssessmentButtonClick.SUBMIT
+                    )
                 )
-            else if (assessmentQuestion!!.question.choiceType != ChoiceType.FILL_IN_THE_BLANKS_TEXT &&
-                questionAnswered >= 1
-            ) {
-                showNextButtonContainerAndPublishEvent()
+            } else {
+                showNextButtonContainer()
+                assessmentQuestion?.let { question ->
+                    RxBus2.publish(
+                        AssessmentButtonClickEvent(
+                            AssessmentType.QUIZ,
+                            assessmentQuestion?.question?.isAttempted!!,
+                            true,
+                            AssessmentButtonClick.SUBMIT
+                        )
+                    )
+                }
             }
         }
+
         reviseBtn.setOnClickListener {
-            assessmentQuestion!!.reviseConcept?.let { it1 -> listener.onReviseConcept(it1) }
+            assessmentQuestion?.reviseConcept?.let { reviseConcept ->
+                RxBus2.publish(
+                    AssessmentButtonClickEvent(
+                        AssessmentType.QUIZ,
+                        assessmentQuestion?.question?.isAttempted!!,
+                        true,
+                        AssessmentButtonClick.REVISE
+                    )
+                )
+            }
         }
+
         nextBtn.setOnClickListener {
-            listener.onNext(
-                assessmentQuestion!!.question.sortOrder == totalQuestions,
-                assessmentType!!
+            RxBus2.publish(
+                AssessmentButtonClickEvent(
+                    assessmentType!!,
+                    assessmentQuestion?.question?.isAttempted!!,
+                    true,
+                    AssessmentButtonClick.NEXT
+                )
             )
         }
-    }
 
-    private fun showNextButtonContainerAndPublishEvent() {
-        showNextButtonContainer()
-        listener.onSubmit(
-            assessmentType!!,
-            assessmentQuestion!!
-        )
+        compositeDisposable.add(
+            RxBus2.listenWithoutDelay(AssessmentButtonStateEvent::class.java)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe {
+                    setColor(
+                        it.assessmentType, it.isAnswered
+                    )
+                })
+
     }
 
     private fun showNextButtonContainer() {
@@ -108,89 +139,86 @@ class AssessmentButtonView : FrameLayout {
         reviseConceptContainer.visibility = View.GONE
     }
 
-    private fun alterViews(choiceList: List<Choice>) {
-        questionAnswered = 0
-        choiceList.forEach { choice ->
-            if (choice.isSelectedByUser) {
-                questionAnswered = questionAnswered + 1
-            }
-            if (assessmentType == AssessmentType.QUIZ) {
-                if (assessmentQuestion!!.question.choiceType == ChoiceType.FILL_IN_THE_BLANKS_TEXT
-                    &&
-                    numberOfCorrectAnswers == questionAnswered
-                ) {
-                    setSubmitBtnColor(true)
-                } else if (assessmentQuestion!!.question.choiceType != ChoiceType.FILL_IN_THE_BLANKS_TEXT
-                    && questionAnswered >= 1
-                ) {
-                    setSubmitBtnColor(true)
-
-                } else {
-                    setSubmitBtnColor(false)
-
-                }
-            } else {
-                setSubmitBtnColor(true)
-
-            }
+    private fun setColor(
+        assessmentType: AssessmentType,
+        isAnswered: Boolean
+    ) {
+        if (assessmentType == AssessmentType.TEST) {
+            setSubmitBtnActive(true)
+        } else {
+            setSubmitBtnActive(isAnswered)
         }
     }
 
-    private fun setSubmitBtnColor(boolean: Boolean) {
-        submitBtn.isClickable = boolean
-        if (boolean)
-            submitBtn.backgroundTintList = ColorStateList.valueOf(
-                ContextCompat.getColor(
-                    AppObjectController.joshApplication,
-                    R.color.button_primary_color
-                )
-            )
-        else submitBtn.backgroundTintList = ColorStateList.valueOf(
+    private fun setSubmitBtnActive(isActive: Boolean) {
+        submitBtn.isClickable = isActive
+        val btnColor = if (isActive) R.color.button_color else R.color.light_grey
+        submitBtn.backgroundTintList = ColorStateList.valueOf(
             ContextCompat.getColor(
                 AppObjectController.joshApplication,
-                R.color.light_grey
+                btnColor
             )
         )
     }
 
     fun bind(
         assessmentType: AssessmentType,
-        assessmentStatus: AssessmentStatus,
         assessmentQuestion: AssessmentQuestionWithRelations,
-        listener: AssessmentButtonListener,
-        totalQuestions: Int
+        isLastQuestion: Boolean
     ) {
         this.assessmentType = assessmentType
-        this.assessmentStatus = assessmentStatus
         this.assessmentQuestion = assessmentQuestion
-        this.listener = listener
-        this.totalQuestions = totalQuestions
-        setUpUI()
+        this.isLastQuestion = isLastQuestion
+        setUpUI(isLastQuestion)
     }
 
-    private fun setUpUI() {
-        if (assessmentQuestion!!.question.sortOrder == totalQuestions)
-            nextBtn.text = context.getString(R.string.finish)
-        else nextBtn.text = context.getString(R.string.next)
-        if (assessmentQuestion!!.question.choiceType != ChoiceType.FILL_IN_THE_BLANKS_TEXT)
-            assessmentQuestion!!.choiceList.forEach {
-                if (it.isCorrect)
-                    numberOfCorrectAnswers = numberOfCorrectAnswers + 1
-            }
-        else numberOfCorrectAnswers = assessmentQuestion!!.choiceList.size
+    private fun setUpUI(isLastQuestion: Boolean) {
+        nextBtn.text =
+            if (isLastQuestion) context.getString(R.string.finish)
+            else context.getString(R.string.next)
 
         if (assessmentType == AssessmentType.TEST) {
             showNextButtonContainer()
         } else {
-            assessmentQuestion?.let { it ->
-                if (it.question.isAttempted) {
-                    showNextButtonContainer()
-                } else {
-                    showSubmitButtonContainer()
-                }
+            if (assessmentQuestion?.question?.isAttempted != false) {
+                showNextButtonContainer()
+            } else {
+                showSubmitButtonContainer()
             }
         }
-        alterViews(assessmentQuestion!!.choiceList)
+        setColor(assessmentType!!, isAnswereCorrect())
+    }
+
+    private fun isAnswereCorrect(): Boolean {
+        when (assessmentQuestion?.question?.choiceType) {
+
+            ChoiceType.SINGLE_SELECTION_TEXT,
+            ChoiceType.SINGLE_SELECTION_IMAGE,
+            ChoiceType.MULTI_SELECTION_TEXT,
+            ChoiceType.MULTI_SELECTION_IMAGE -> {
+                assessmentQuestion?.choiceList?.forEach {
+                    if (it.isSelectedByUser) {
+                        return true
+                    }
+                }
+            }
+
+            ChoiceType.FILL_IN_THE_BLANKS_TEXT -> {
+                var numberOfChoicesSelected = 0
+                assessmentQuestion?.choiceList?.forEach {
+                    if (it.isSelectedByUser) {
+                        numberOfChoicesSelected++
+                    }
+                }
+                if (numberOfChoicesSelected == assessmentQuestion?.choiceList?.size) {
+                    return true
+                }
+            }
+
+            else ->
+                return false
+        }
+        return false
     }
 
     override fun onDetachedFromWindow() {
@@ -198,17 +226,4 @@ class AssessmentButtonView : FrameLayout {
         Timber.tag("onDetachedFromWindow").e("ButtonView")
     }
 
-    interface AssessmentButtonListener {
-        fun onSubmit(
-            assessmentType: AssessmentType,
-            assessmentQuestion: AssessmentQuestionWithRelations
-        )
-
-        fun onNext(isLastQuestion: Boolean, assessmentType: AssessmentType)
-        fun onReviseConcept(reviseConcept: ReviseConcept)
-    }
-
-    fun onChoiceAdded(choice: List<Choice>) {
-        alterViews(choice)
-    }
 }
