@@ -39,7 +39,7 @@
 
                 <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/text_message_title"
-                        fontPath="fonts/Poppins-Regular.ttf"
+                        fontPath="fonts/Poppins-Bold.ttf"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:ellipsize="marquee"
@@ -67,7 +67,7 @@
 
         <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/heading"
-                fontPath="fonts/Poppins-Regular.ttf"
+                fontPath="fonts/Poppins-Bold.ttf"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/_12sdp"
