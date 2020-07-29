@@ -274,7 +274,7 @@ class CourseExploreActivity : CoreJoshActivity() {
 
         language_chip_group.setOnCheckedChangeListener { group, checkedId ->
             if (checkedId == -1)
-                selectedLanguage = ""
+                selectedLanguage = EMPTY
             else
                 selectedLanguage = languageList.filter { languageList.indexOf(it) == checkedId }[0]
             filterCourses()
