@@ -56,7 +56,7 @@ class CourseExploreActivity : CoreJoshActivity() {
     private var prevAct: String? = EMPTY
     private var screenEngagementModel: ScreenEngagementModel =
         ScreenEngagementModel(COURSE_EXPLORER_SCREEN_NAME)
-    private lateinit var languageSet: HashSet<String>
+    private lateinit var languageList: MutableList<String>
 
     companion object {
         fun startCourseExploreActivity(
@@ -85,7 +85,7 @@ class CourseExploreActivity : CoreJoshActivity() {
             DataBindingUtil.setContentView(this, R.layout.activity_course_explore)
         courseExploreBinding.lifecycleOwner = this
 
-        languageSet = HashSet()
+        languageList = ArrayList()
         courseList = ArrayList()
         filteredCourseList = ArrayList()
         initRV()
@@ -197,6 +197,7 @@ class CourseExploreActivity : CoreJoshActivity() {
                         prevAct = intent.getStringExtra(PREV_ACTIVITY)
                     }
                     courseExploreBinding.recyclerView.removeAllViews()
+                    val languageSet: HashSet<String> = HashSet()
                     response.forEach { courseExploreModel ->
                         list?.let { it ->
                             val entity: InboxEntity? =
@@ -207,13 +208,17 @@ class CourseExploreActivity : CoreJoshActivity() {
                         }
                         languageSet.add(courseExploreModel.language?.capitalize() ?: "")
 
-
                         courseList.add(courseExploreModel)
                         /*courseExploreBinding.recyclerView.addView(
                             CourseExplorerViewHolder(
                                 courseExploreModel
                             )
                         )*/
+                    }
+                    languageList = languageSet.toMutableList()
+                    if (languageList.contains("Hindi")) {
+                        languageList.remove("Hindi")
+                        languageList.add(0, "Hindi")
                     }
                     renderLanguageChips()
                     filteredCourseList.clear()
@@ -281,7 +286,7 @@ class CourseExploreActivity : CoreJoshActivity() {
             if (checkedId == -1)
                 selectedLanguage = ""
             else
-                selectedLanguage = languageSet.filter { languageSet.indexOf(it) == checkedId }[0]
+                selectedLanguage = languageList.filter { languageList.indexOf(it) == checkedId }[0]
             filterCourses()
         }
     }
@@ -289,12 +294,12 @@ class CourseExploreActivity : CoreJoshActivity() {
     private fun renderLanguageChips() {
 //        txtCategoryName.text = selectedLanguage ?: ""
         language_chip_group.removeAllViews()
-        languageSet.forEach {
+        languageList.forEach {
             val chip = LayoutInflater.from(this)
                 .inflate(R.layout.language_filter_item, language_chip_group, false) as Chip
             chip.text = it.capitalize()
             chip.tag = it
-            chip.id = languageSet.indexOf(it)
+            chip.id = languageList.indexOf(it)
             language_chip_group.addView(chip)
         }
     }
