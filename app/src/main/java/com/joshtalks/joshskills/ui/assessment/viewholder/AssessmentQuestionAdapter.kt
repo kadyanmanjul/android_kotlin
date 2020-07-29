@@ -14,8 +14,8 @@ class AssessmentQuestionAdapter(
     private var status: AssessmentStatus,
     private var viewType: AssessmentQuestionViewType,
     private var questionList: List<AssessmentQuestionWithRelations>
-) :
-    RecyclerView.Adapter<AssessmentQuestionAdapter.ViewHolder>() {
+) : RecyclerView.Adapter<AssessmentQuestionAdapter.ViewHolder>() {
+
     init {
         setHasStableIds(true)
     }
@@ -32,7 +32,7 @@ class AssessmentQuestionAdapter(
     override fun getItemCount(): Int = questionList.size
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        return holder.bind(questionList[position])
+        return holder.bind(questionList.sortedBy { it.question.sortOrder }[position])
     }
 
     override fun onViewRecycled(holder: ViewHolder) {
@@ -42,7 +42,7 @@ class AssessmentQuestionAdapter(
     }
 
     override fun getItemViewType(position: Int): Int {
-        return questionList[position].question.mediaType.intValue
+        return questionList.sortedBy { it.question.sortOrder }[position].question.mediaType.intValue
     }
 
     override fun getItemId(position: Int): Long {
