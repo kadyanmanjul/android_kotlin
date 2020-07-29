@@ -205,7 +205,7 @@ class CourseExploreActivity : CoreJoshActivity() {
                                 return@forEach
                             }
                         }
-                        languageSet.add(courseExploreModel.language ?: "")
+                        languageSet.add(courseExploreModel.language?.capitalize() ?: "")
 
 
                         courseList.add(courseExploreModel)
