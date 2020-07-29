@@ -208,7 +208,11 @@ data class Question(
     @Expose var interval: Int = -1,
 
     @ColumnInfo(name = "assessment_id")
-    @Expose var assessmentId: Int? = null
+    @Expose var assessmentId: Int? = null,
+
+    @ColumnInfo(name = "conversation_practice_id")
+    @SerializedName("conversation_practice_id") var conversationPracticeId: String? = null
+
 
 ) : Parcelable
 

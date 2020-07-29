@@ -13,6 +13,7 @@ import com.joshtalks.joshskills.core.custom_ui.exo_audio_player.AudioModel
 import com.joshtalks.joshskills.core.custom_ui.exo_audio_player.AudioPlayerEventListener
 import com.joshtalks.joshskills.core.setRoundImage
 import com.joshtalks.joshskills.repository.server.conversation_practice.ConversationPractiseModel
+import com.joshtalks.joshskills.ui.conversation_practice.IMAGE_URL
 import com.joshtalks.joshskills.ui.conversation_practice.adapter.ARG_PRACTISE_OBJ
 import com.joshtalks.joshskills.ui.conversation_practice.adapter.AudioPractiseAdapter
 import com.vanniktech.emoji.Utils
@@ -51,8 +52,11 @@ class ListenPractiseFragment private constructor() : Fragment(), AudioPlayerEven
     private fun initView() {
         title_tv.text = conversationPractiseModel.title
         sub_title_tv.text = conversationPractiseModel.subTitle
-        image_view.setRoundImage("https://png.pngtree.com/png-clipart/20190924/original/pngtree-user-vector-avatar-png-image_4830521.jpg")
-
+        requireActivity().intent?.getStringExtra(IMAGE_URL)?.run {
+            if (this.isNotEmpty()) {
+                image_view.setRoundImage(this)
+            }
+        }
     }
 
     private fun initRV() {
@@ -65,7 +69,7 @@ class ListenPractiseFragment private constructor() : Fragment(), AudioPlayerEven
     private fun initAudioPlayer() {
         val list: LinkedList<AudioModel> = LinkedList()
         conversationPractiseModel.listen.forEach {
-            list.add(AudioModel(it.audioUrl, it.id.toString(), it.duration))
+            list.add(AudioModel(it.audio.audio_url, it.id.toString(), it.audio.duration))
         }
         audio_player.addAudios(list)
         audio_player.setAudioPlayerEventListener(this)

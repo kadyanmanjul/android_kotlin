@@ -21,6 +21,7 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 
 const val PRACTISE_ID = "practise_id"
+const val IMAGE_URL = "image_url"
 
 class ConversationPracticeActivity : CoreJoshActivity() {
 
@@ -35,10 +36,12 @@ class ConversationPracticeActivity : CoreJoshActivity() {
         fun startConversationPracticeActivity(
             activity: Activity,
             requestCode: Int,
-            practiseId: String
+            practiseId: String,
+            imageUrl: String? = null
         ) {
             val intent = Intent(activity, ConversationPracticeActivity::class.java).apply {
                 putExtra(PRACTISE_ID, practiseId)
+                putExtra(IMAGE_URL, imageUrl)
             }
             activity.startActivityForResult(intent, requestCode)
         }
@@ -79,6 +82,7 @@ class ConversationPracticeActivity : CoreJoshActivity() {
     }
 
     private fun openIntroScreen(conversationPractiseModel: ConversationPractiseModel) {
+
         ConversationPracticeIntro.newInstance(conversationPractiseModel)
             .show(supportFragmentManager, "Conversation Practice Intro")
     }
@@ -107,5 +111,9 @@ class ConversationPracticeActivity : CoreJoshActivity() {
         compositeDisposable.clear()
     }
 
+    override fun onBackPressed() {
+        super.onBackPressed()
+        this.finish()
+    }
 }
 

@@ -279,7 +279,12 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 // openCourseExplorer()
-                ConversationPracticeActivity.startConversationPracticeActivity(this, 10001, "111")
+                ConversationPracticeActivity.startConversationPracticeActivity(
+                    this,
+                    10001,
+                    "1",
+                    "https://png.pngtree.com/png-clipart/20190924/original/pngtree-user-vector-avatar-png-image_4830521.jpg"
+                )
 
             })
         compositeDisposable.add(RxBus2.listen(NPSEventGenerateEventBus::class.java)

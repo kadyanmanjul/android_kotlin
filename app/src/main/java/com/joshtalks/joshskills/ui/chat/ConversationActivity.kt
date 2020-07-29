@@ -84,6 +84,7 @@ import com.joshtalks.joshskills.repository.local.entity.MESSAGE_STATUS
 import com.joshtalks.joshskills.repository.local.entity.NPSEventModel
 import com.joshtalks.joshskills.repository.local.eventbus.AssessmentStartEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.AudioPlayEventBus
+import com.joshtalks.joshskills.repository.local.eventbus.ConversationPractiseEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.DeleteMessageEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.DownloadCompletedEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.DownloadMediaEventBus
@@ -103,6 +104,7 @@ import com.joshtalks.joshskills.repository.server.chat_message.TImageMessage
 import com.joshtalks.joshskills.repository.server.chat_message.TVideoMessage
 import com.joshtalks.joshskills.repository.server.engage.Graph
 import com.joshtalks.joshskills.ui.assessment.AssessmentActivity
+import com.joshtalks.joshskills.ui.conversation_practice.ConversationPracticeActivity
 import com.joshtalks.joshskills.ui.courseprogress.CourseProgressActivity
 import com.joshtalks.joshskills.ui.extra.ImageShowFragment
 import com.joshtalks.joshskills.ui.pdfviewer.PdfViewerActivity
@@ -114,6 +116,7 @@ import com.joshtalks.joshskills.ui.view_holders.AssessmentViewHolder
 import com.joshtalks.joshskills.ui.view_holders.AudioPlayerViewHolder
 import com.joshtalks.joshskills.ui.view_holders.BaseCell
 import com.joshtalks.joshskills.ui.view_holders.BaseChatViewHolder
+import com.joshtalks.joshskills.ui.view_holders.ConversationPractiseViewHolder
 import com.joshtalks.joshskills.ui.view_holders.ImageViewHolder
 import com.joshtalks.joshskills.ui.view_holders.NewMessageViewHolder
 import com.joshtalks.joshskills.ui.view_holders.PdfViewHolder
@@ -153,6 +156,7 @@ const val VISIBILE_ITEM_PERCENT = 75
 const val PRACTISE_SUBMIT_REQUEST_CODE = 1100
 const val COURSE_PROGRESS_REQUEST_CODE = 1101
 const val VIDEO_OPEN_REQUEST_CODE = 1102
+const val CONVERSATION_PRACTISE_REQUEST_CODE = 1105
 
 const val PRACTISE_UPDATE_MESSAGE_KEY = "practise_update_message_id"
 const val FOCUS_ON_CHAT_ID = "focus_on_chat_id"
@@ -1207,12 +1211,29 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
                     it.printStackTrace()
                 })
         )
+
         compositeDisposable.add(
             RxBus2.listen(AssessmentStartEventBus::class.java)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
                     AssessmentActivity.startAssessmentActivity(this, it.assessmentId)
+                }, {
+                    it.printStackTrace()
+                })
+        )
+
+        compositeDisposable.add(
+            RxBus2.listen(ConversationPractiseEventBus::class.java)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({
+                    ConversationPracticeActivity.startConversationPracticeActivity(
+                        this,
+                        CONVERSATION_PRACTISE_REQUEST_CODE,
+                        it.id,
+                        it.pImage
+                    )
                 }, {
                     it.printStackTrace()
                 })
@@ -1321,7 +1342,8 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
                     BASE_MESSAGE_TYPE.PR,
                     BASE_MESSAGE_TYPE.OTHER,
                     BASE_MESSAGE_TYPE.QUIZ,
-                    BASE_MESSAGE_TYPE.TEST -> {
+                    BASE_MESSAGE_TYPE.TEST,
+                    BASE_MESSAGE_TYPE.CP -> {
                         getGenericView(chatModel.question?.type, chatModel)
                     }
                     else -> {
@@ -1354,6 +1376,8 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
                 TextViewHolder(activityRef, chatModel)
             BASE_MESSAGE_TYPE.QUIZ, BASE_MESSAGE_TYPE.TEST ->
                 AssessmentViewHolder(activityRef, chatModel)
+            BASE_MESSAGE_TYPE.CP ->
+                ConversationPractiseViewHolder(activityRef, chatModel)
             else -> return null
         }
     }

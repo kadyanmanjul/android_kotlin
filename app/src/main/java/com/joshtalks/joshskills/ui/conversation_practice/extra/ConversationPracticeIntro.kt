@@ -6,22 +6,21 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
-import com.bumptech.glide.integration.webp.decoder.WebpDrawable
-import com.bumptech.glide.integration.webp.decoder.WebpDrawableTransformation
-import com.bumptech.glide.load.resource.bitmap.CircleCrop
-import com.bumptech.glide.request.RequestOptions
-import com.bumptech.glide.request.target.Target
 import com.github.vipulasri.timelineview.TimelineView
 import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.setImage
 import com.joshtalks.joshskills.databinding.ConversationPracticeTimelineItemBinding
 import com.joshtalks.joshskills.repository.local.model.PractiseFlowOptionModel
 import com.joshtalks.joshskills.repository.server.conversation_practice.ConversationPractiseModel
+import com.joshtalks.joshskills.ui.conversation_practice.IMAGE_URL
 import com.joshtalks.joshskills.ui.conversation_practice.adapter.ARG_PRACTISE_OBJ
+import kotlinx.android.synthetic.main.fragment_conversation_practice_ntro.continue_btn
 import kotlinx.android.synthetic.main.fragment_conversation_practice_ntro.image_view
 import kotlinx.android.synthetic.main.fragment_conversation_practice_ntro.recycler_view
+import kotlinx.android.synthetic.main.fragment_conversation_practice_ntro.text_header
+import kotlinx.android.synthetic.main.fragment_conversation_practice_ntro.text_sub_header
 import java.io.IOException
 import java.io.InputStream
 import java.lang.reflect.Type
@@ -32,7 +31,9 @@ class ConversationPracticeIntro private constructor() : DialogFragment() {
 
     companion object {
         @JvmStatic
-        fun newInstance(conversationPractiseModel: ConversationPractiseModel) =
+        fun newInstance(
+            conversationPractiseModel: ConversationPractiseModel
+        ) =
             ConversationPracticeIntro().apply {
                 arguments = Bundle().apply {
                     putParcelable(ARG_PRACTISE_OBJ, conversationPractiseModel)
@@ -72,31 +73,29 @@ class ConversationPracticeIntro private constructor() : DialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setupProfilePicture()
         setupUI()
-
-    }
-
-    private fun setupProfilePicture() {
-        Glide.with(requireContext())
-            .load(this)
-            .override(Target.SIZE_ORIGINAL)
-            .optionalTransform(
-                WebpDrawable::class.java,
-                WebpDrawableTransformation(CircleCrop())
-            )
-            .apply(RequestOptions.circleCropTransform())
-            .into(image_view)
-
     }
 
     private fun setupUI() {
+        requireActivity().intent?.getStringExtra(IMAGE_URL)?.run {
+            if (this.isNotEmpty()) {
+                image_view.visibility = View.VISIBLE
+                image_view.setImage(this)
+            }
+        }
+
+        text_header.text = conversationPractiseModel.title
+        text_sub_header.text = conversationPractiseModel.title
+
         val typeToken: Type = object : TypeToken<List<PractiseFlowOptionModel>>() {}.type
         val obj = AppObjectController.gsonMapperForLocal.fromJson<List<PractiseFlowOptionModel>>(
             loadJSONFromAsset("pratise_flow_details.json"), typeToken
         )
         recycler_view.adapter = ConversationPracticeTimelineAdapter(obj)
 
+        continue_btn.setOnClickListener {
+            dismissAllowingStateLoss()
+        }
     }
 
     private fun loadJSONFromAsset(fileName: String): String? {

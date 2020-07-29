@@ -80,7 +80,7 @@ class SelfPractiseFragment private constructor() : Fragment(), AudioPlayerEventL
     private fun initAudioPlayer() {
         val list: LinkedList<AudioModel> = LinkedList()
         conversationPractiseModel.listen.forEach {
-            list.add(AudioModel(it.audioUrl, it.id.toString(), it.duration))
+            list.add(AudioModel(it.audio.audio_url, it.id.toString(), it.audio.duration))
         }
         audio_player.addAudios(list)
         audio_player.setAudioPlayerEventListener(this)

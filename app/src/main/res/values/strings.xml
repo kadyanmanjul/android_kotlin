@@ -298,6 +298,8 @@
     <string name="usb_disconnect_title">Disconnect USB</string>
     <string name="ok_got_it_lbl">OK, GOT IT</string>
     <string name="selection_arrow">selection_arrow</string>
+    <string name="start_practise">Start Practice </string>
+    <string name="practise_intro_sub">How to complete this practice?</string>
 
     <string name="start_quiz">Start Quiz</string>
     <string name="conversational_practise">Conversational Practice</string>

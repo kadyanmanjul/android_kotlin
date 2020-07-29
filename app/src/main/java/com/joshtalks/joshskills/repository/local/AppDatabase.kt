@@ -249,6 +249,7 @@ abstract class AppDatabase : RoomDatabase() {
 
         private val MIGRATION_17_18: Migration = object : Migration(17, 18) {
             override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("ALTER TABLE question_table ADD COLUMN conversation_practice_id TEXT ")
                 database.execSQL("ALTER TABLE question_table ADD COLUMN assessment_id INTEGER")
 
                 database.execSQL("CREATE TABLE IF NOT EXISTS assessments (`localId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `remoteId` INTEGER NOT NULL, `heading` TEXT NOT NULL, `title` TEXT NOT NULL, `imageUrl` TEXT NOT NULL, `description` TEXT NOT NULL, `type` TEXT NOT NULL, `status` TEXT NOT NULL)")
@@ -273,8 +274,6 @@ abstract class AppDatabase : RoomDatabase() {
                 database.execSQL("CREATE INDEX IF NOT EXISTS `index_assessment_intro_assessmentId` ON `assessment_intro` (`assessmentId`)")
                 database.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS `index_assessment_intro_localId` ON `assessment_intro` (`localId`)")
                 database.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS `index_assessment_intro_type` ON `assessment_intro` (`type`)")
-
-
             }
         }
 
