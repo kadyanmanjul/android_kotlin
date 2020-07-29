@@ -6,7 +6,6 @@ import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.view.View.GONE
 import android.view.Window
@@ -240,10 +239,6 @@ class AssessmentActivity : CoreJoshActivity() {
                 }
             } else {
                 viewModel.assessmentLiveData
-                Log.d(
-                    "Manjul",
-                    "onNext() called with: assessmentQuestionWithRelations = ${viewModel.assessmentLiveData.value}"
-                )
                 // Disable ViewPager Scrolling
                 binding.questionViewPager.isUserInputEnabled = false
                 showTestSummaryFragment(assessmentId)
@@ -261,7 +256,6 @@ class AssessmentActivity : CoreJoshActivity() {
     }
 
     private fun moveToQuestion(questionId: Int) {
-        // todo move viewpager to question id and remove fragment
         isTestFragmentVisible = false
         val fragment = supportFragmentManager.findFragmentByTag("Test Summary")
         if (fragment != null) supportFragmentManager.beginTransaction().remove(fragment).commit()
