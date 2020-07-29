@@ -64,12 +64,18 @@ class TestSummaryFragment : Fragment() {
             }
             initView(testData)
         } else {
+            binding.progressBar.visibility = View.VISIBLE
             viewModel.getTestReport(assessmentId)
             subscribeObserver()
         }
     }
 
     private fun subscribeObserver() {
+
+        viewModel.apiCallStatusLiveData.observe(requireActivity(), Observer {
+            binding.progressBar.visibility = View.GONE
+        })
+
         viewModel.assessmentLiveData.observe(requireActivity(), Observer { assessmentWithRelation ->
             initView(assessmentWithRelation)
         })

@@ -202,7 +202,7 @@ class FillInTheBlankChoiceView : FrameLayout, OnChoiceClickListener {
         })
 
         view.startAnimation(anim)
-        val choice=chipChoiceList.filter{it.remoteId==view.id}.get(0)
+        val choice = chipChoiceList.filter { it.remoteId == view.id }.get(0)
         if (choice.isSelectedByUser.not())
             filled++
         choice.isSelectedByUser = true
@@ -220,38 +220,41 @@ class FillInTheBlankChoiceView : FrameLayout, OnChoiceClickListener {
         }
 
         if (assessmentQuestion.question.isAttempted && assessmentType == AssessmentType.QUIZ) {
-
-            assessmentQuestion.choiceList.sortedBy { it.userSelectedOrder }.forEach { choice ->
-                chipChoiceList.add(choice)
-            }
-            filled = chipChoiceList.size
-            disableAllClicks()
+            addViaUserSelectedOrder(assessmentQuestion)
 
         } else if (assessmentQuestion.question.isAttempted.not() && assessmentType == AssessmentType.QUIZ) {
-            assessmentQuestion.choiceList.sortedBy { it.userSelectedOrder }.forEach { choice ->
-                choice.userSelectedOrder = 100
-                chipChoiceList.add(choice)
-            }
+            addViaSortOrder(assessmentQuestion)
+
         } else if (assessmentType == AssessmentType.TEST && assessmentStatus == AssessmentStatus.COMPLETED) {
-            assessmentQuestion.choiceList.sortedBy { it.userSelectedOrder }.forEach { choice ->
-                chipChoiceList.add(choice)
-            }
-            filled = chipChoiceList.size
-            disableAllClicks()
-        } else
-            assessmentQuestion.choiceList.sortedBy { it.correctAnswerOrder }.forEach { choice ->
-                chipChoiceList.add(choice)
-            }
+            addViaUserSelectedOrder(assessmentQuestion)
+        } else {
+            addViaSortOrder(assessmentQuestion)
+        }
         if (assessmentQuestion.question.isAttempted || assessmentStatus == AssessmentStatus.COMPLETED) {
             filled = chipChoiceList.size
             disableAllClicks()
         }
     }
 
+    private fun addViaSortOrder(assessmentQuestion: AssessmentQuestionWithRelations) {
+        assessmentQuestion.choiceList.sortedBy { it.sortOrder }.forEach { choice ->
+            choice.userSelectedOrder = 100
+            chipChoiceList.add(choice)
+        }
+    }
+
+    private fun addViaUserSelectedOrder(assessmentQuestion: AssessmentQuestionWithRelations) {
+        assessmentQuestion.choiceList.sortedBy { it.userSelectedOrder }.forEach { choice ->
+            chipChoiceList.add(choice)
+        }
+        filled = chipChoiceList.size
+        disableAllClicks()
+    }
+
     private fun updateView(
         isDeleted: Boolean = false,
         fromIndex: Int = 100,
-        choice: Choice?=null
+        choice: Choice? = null
     ) {
         totalAnswered.text = filled.toString().plus("/").plus(totalOptions)
 
@@ -282,15 +285,15 @@ class FillInTheBlankChoiceView : FrameLayout, OnChoiceClickListener {
                     view.visibility = View.VISIBLE
                 }
             }
-            val choice=chipChoiceList.filter { it.remoteId==choice.remoteId }.get(0)
-            if(choice.isSelectedByUser){
-                filled=filled-1
+            val choice = chipChoiceList.filter { it.remoteId == choice.remoteId }.get(0)
+            if (choice.isSelectedByUser) {
+                filled = filled - 1
             }
             choice.isSelectedByUser = false
             val fromIndex = choice.userSelectedOrder
             choice.userSelectedOrder = 100
 
-            updateView(true, fromIndex,choice)
+            updateView(true, fromIndex, choice)
             publishUpdateButtonViewEvent(false)
         }
     }
