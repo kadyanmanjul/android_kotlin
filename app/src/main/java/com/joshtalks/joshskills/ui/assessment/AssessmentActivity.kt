@@ -141,8 +141,9 @@ class AssessmentActivity : CoreJoshActivity() {
         })
 
         viewModel.assessmentStatus.observe(this, Observer { status ->
-            if (status == AssessmentStatus.COMPLETED)
+            if (status == AssessmentStatus.COMPLETED && viewModel.getAssessmentType() == AssessmentType.TEST) {
                 showTestSummaryFragment(assessmentId, true)
+            }
 
         })
     }
@@ -356,7 +357,7 @@ class AssessmentActivity : CoreJoshActivity() {
             super.onBackPressed()
     }
 
-    private fun subsrcibeRxBus(){
+    private fun subsrcibeRxBus() {
 
         compositeDisposable.add(
             RxBus2.listen(TestItemClickedEventBus::class.java)
@@ -399,7 +400,7 @@ class AssessmentActivity : CoreJoshActivity() {
                 return false
             }
         }
-        return false
+        return true
     }
 
     companion object {
