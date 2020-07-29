@@ -10,6 +10,7 @@ import android.view.View
 import android.view.View.GONE
 import android.view.Window
 import android.view.WindowManager
+import android.widget.LinearLayout
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
@@ -297,6 +298,10 @@ class AssessmentActivity : CoreJoshActivity() {
                 )
             )
         )
+        val tabStrip: LinearLayout = binding.tabLayout.getChildAt(0) as LinearLayout
+        for (i in 0 until tabStrip.childCount) {
+            tabStrip.getChildAt(i).setOnTouchListener { v, event -> true }
+        }
         binding.questionViewPager.offscreenPageLimit = 1
 
         // Enable/Disable Scrolling
