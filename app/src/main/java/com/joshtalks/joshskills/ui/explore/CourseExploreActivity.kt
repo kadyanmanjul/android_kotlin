@@ -21,7 +21,6 @@ import com.joshtalks.joshskills.core.USER_UNIQUE_ID
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.custom_ui.decorator.LayoutMarginDecoration
-import com.joshtalks.joshskills.core.service.WorkMangerAdmin
 import com.joshtalks.joshskills.databinding.ActivityCourseExploreBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
@@ -314,7 +313,6 @@ class CourseExploreActivity : CoreJoshActivity() {
 
     override fun onStop() {
         screenEngagementModel.endTime = System.currentTimeMillis()
-        WorkMangerAdmin.screenAnalyticsWorker(screenEngagementModel)
         appAnalytics.push()
         super.onStop()
     }

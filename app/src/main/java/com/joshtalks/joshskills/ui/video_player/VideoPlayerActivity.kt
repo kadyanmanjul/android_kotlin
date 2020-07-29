@@ -142,8 +142,10 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener {
             videoId = intent.getStringExtra(VIDEO_ID)
         }
 
-        binding.videoPlayer.setUrl(videoUrl)
-        binding.videoPlayer.playVideo()
+        videoUrl?.run {
+            binding.videoPlayer.setUrl(this)
+            binding.videoPlayer.playVideo()
+        }
 
 
         chatObject?.let {

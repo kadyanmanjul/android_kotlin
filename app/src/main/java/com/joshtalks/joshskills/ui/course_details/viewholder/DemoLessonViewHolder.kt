@@ -6,9 +6,10 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
 import com.joshtalks.joshskills.core.showToast
+import com.joshtalks.joshskills.messaging.RxBus2
+import com.joshtalks.joshskills.repository.local.eventbus.VideoShowEvent
 import com.joshtalks.joshskills.repository.server.course_detail.CardType
 import com.joshtalks.joshskills.repository.server.course_detail.DemoLesson
-import com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity
 import com.mindorks.placeholderview.annotations.Click
 import com.mindorks.placeholderview.annotations.Layout
 import com.mindorks.placeholderview.annotations.Resolve
@@ -20,6 +21,7 @@ class DemoLessonViewHolder(
     val data: DemoLesson,
     private val context: Context = AppObjectController.joshApplication
 ) : CourseDetailsBaseCell(type, sequenceNumber) {
+
 
     @com.mindorks.placeholderview.annotations.View(R.id.txt_title)
     lateinit var txtTitle: JoshTextView
@@ -41,11 +43,13 @@ class DemoLessonViewHolder(
             showToast(getAppContext().getString(R.string.video_url_not_exist))
             return
         }
-        VideoPlayerActivity.startVideoActivity(
-            context,
-            data.title,
-            data.video.id,
-            data.video.video_url
+
+        RxBus2.publish(
+            VideoShowEvent(
+                data.title,
+                data.video.id,
+                data.video.video_url
+            )
         )
     }
 }

@@ -52,6 +52,7 @@ import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.DownloadSyllabusEvent
 import com.joshtalks.joshskills.repository.local.eventbus.GotoCourseCard
 import com.joshtalks.joshskills.repository.local.eventbus.ImageShowEvent
+import com.joshtalks.joshskills.repository.local.eventbus.VideoShowEvent
 import com.joshtalks.joshskills.repository.server.course_detail.AboutJosh
 import com.joshtalks.joshskills.repository.server.course_detail.Card
 import com.joshtalks.joshskills.repository.server.course_detail.CardType
@@ -82,6 +83,7 @@ import com.joshtalks.joshskills.ui.course_details.viewholder.SyllabusViewHolder
 import com.joshtalks.joshskills.ui.course_details.viewholder.TeacherDetailsViewHolder
 import com.joshtalks.joshskills.ui.extra.ImageShowFragment
 import com.joshtalks.joshskills.ui.payment.order_summary.PaymentSummaryActivity
+import com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity
 import com.joshtalks.joshskills.util.DividerItemDecoration
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
@@ -522,11 +524,32 @@ class CourseDetailsActivity : BaseActivity() {
                         it.printStackTrace()
                     })
         )
+        compositeDisposable.add(
+            RxBus2.listen(VideoShowEvent::class.java)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({
+                    appAnalytics.addParam(AnalyticsEvent.DEMO_VIDEO_PLAYED.NAME, "Clicked")
+                    //demo_video_played
+                    VideoPlayerActivity.startVideoActivity(
+                        this,
+                        it.videoTitle,
+                        it.videoId,
+                        it.videoUrl
+                    )
+                }, {
+                    it.printStackTrace()
+                })
+        )
     }
 
     fun buyCourse() {
         PaymentSummaryActivity.startPaymentSummaryActivity(this, testId.toString())
-        appAnalytics.addParam(AnalyticsEvent.START_COURSE_NOW.NAME, "Clicked")
+        AppAnalytics.create(AnalyticsEvent.START_COURSE_NOW.NAME)
+            .addBasicParam()
+            .addUserDetails()
+            .addParam(VERSION, PrefManager.getStringValue(VERSION))
+            .push()
     }
 
     private fun logMeetMeAnalyticEvent() {

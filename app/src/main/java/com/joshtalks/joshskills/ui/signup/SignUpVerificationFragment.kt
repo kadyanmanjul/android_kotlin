@@ -84,7 +84,7 @@ class SignUpVerificationFragment : Fragment() {
             R.string.otp_received_message,
             viewModel.countryCode + " " + viewModel.phoneNumber
         )
-        viewModel.signUpStatus.observe(requireActivity(), Observer {
+        viewModel.signUpStatus.observe(viewLifecycleOwner, Observer {
             it?.run {
                 if (this == SignUpStepStatus.ReGeneratedOTP || this == SignUpStepStatus.WRONG_OTP) {
                     binding.otpView2.otp = EMPTY
@@ -98,7 +98,7 @@ class SignUpVerificationFragment : Fragment() {
             }
             hideProgress()
         })
-        viewModel.verificationStatus.observe(requireActivity(), Observer {
+        viewModel.verificationStatus.observe(viewLifecycleOwner, Observer {
             it.run {
                 when {
                     this == VerificationStatus.INITIATED -> {

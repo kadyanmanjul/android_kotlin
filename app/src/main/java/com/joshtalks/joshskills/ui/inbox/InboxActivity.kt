@@ -31,7 +31,6 @@ import com.joshtalks.joshskills.core.ARG_PLACEHOLDER_URL
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.COURSE_ID
 import com.joshtalks.joshskills.core.CoreJoshActivity
-import com.joshtalks.joshskills.core.REFERRAL_EVENT
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
@@ -113,7 +112,6 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         titleView.text = getString(R.string.inbox_header)
         earnIV = findViewById(R.id.iv_earn)
         earnIV.setOnClickListener {
-            WorkMangerAdmin.referralEventTracker(REFERRAL_EVENT.CLICK_ON_REFERRAL)
             AppAnalytics
                 .create(AnalyticsEvent.REFER_BUTTON_CLICKED.NAME)
                 .addBasicParam()
@@ -157,7 +155,6 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
                 }
             }
         }
-
     }
 
 
@@ -299,7 +296,6 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         viewModel.registerCourseNetworkLiveData.value?.let {
             registerCourses.addAll(it)
         }
-        WorkMangerAdmin.fineMoreEventWorker()
         CourseExploreActivity.startCourseExploreActivity(
             this,
             COURSE_EXPLORER_CODE,

@@ -79,12 +79,15 @@ class FaqFragment : Fragment() {
         })
 
         chipGroupCategory.setOnCheckedChangeListener { group, checkedId ->
-            selectedCategory = categoryList.filter { it.id == checkedId }[0]
-            logCategorySelectedEvent()
-            txtCategoryName.text = selectedCategory?.categoryName
-            faqAdapter.updateList(viewModel.faqListLiveData.value?.filter {
-                it.categoryId == selectedCategory?.id
-            } ?: emptyList())
+            try {
+                selectedCategory = categoryList.filter { it.id == checkedId }[0]
+                logCategorySelectedEvent()
+                txtCategoryName.text = selectedCategory?.categoryName
+                faqAdapter.updateList(viewModel.faqListLiveData.value?.filter {
+                    it.categoryId == selectedCategory?.id
+                } ?: emptyList())
+            } catch (ex: Exception) {
+            }
         }
     }
 

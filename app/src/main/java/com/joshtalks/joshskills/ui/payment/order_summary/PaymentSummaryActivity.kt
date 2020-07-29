@@ -49,7 +49,6 @@ import com.joshtalks.joshskills.core.analytics.BranchIOAnalytics
 import com.joshtalks.joshskills.core.analytics.LogException
 import com.joshtalks.joshskills.core.getPhoneNumber
 import com.joshtalks.joshskills.core.isValidFullNumber
-import com.joshtalks.joshskills.core.service.WorkMangerAdmin
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.ActivityPaymentSummaryBinding
 import com.joshtalks.joshskills.repository.local.entity.NPSEvent
@@ -540,12 +539,6 @@ class PaymentSummaryActivity : CoreJoshActivity(),
     }
 
     private fun addECommerceEvent(razorpayPaymentId: String) {
-        WorkMangerAdmin.newCourseScreenEventWorker(
-            viewModel.getCourseName(),
-            testId,
-            buyCourse = true
-        )
-
         AppObjectController.firebaseAnalytics.resetAnalyticsData()
         val bundle = Bundle()
         bundle.putString(FirebaseAnalytics.Param.ITEM_ID, testId)

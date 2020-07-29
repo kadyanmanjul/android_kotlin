@@ -8,11 +8,6 @@ import androidx.work.workDataOf
 import com.google.android.gms.ads.MobileAds
 import com.google.android.gms.ads.identifier.AdvertisingIdClient
 import com.google.android.gms.tasks.OnCompleteListener
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
 import com.google.firebase.iid.FirebaseInstanceId
 import com.joshtalks.joshskills.core.API_TOKEN
 import com.joshtalks.joshskills.core.AppObjectController
@@ -25,7 +20,6 @@ import com.joshtalks.joshskills.core.LOGIN_ON
 import com.joshtalks.joshskills.core.PermissionUtils
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.RATING_DETAILS_KEY
-import com.joshtalks.joshskills.core.REFERRAL_EVENT
 import com.joshtalks.joshskills.core.RESTORE_ID
 import com.joshtalks.joshskills.core.SERVER_GID_ID
 import com.joshtalks.joshskills.core.USER_UNIQUE_ID
@@ -39,15 +33,12 @@ import com.joshtalks.joshskills.repository.local.DatabaseUtils
 import com.joshtalks.joshskills.repository.local.entity.NPSEvent
 import com.joshtalks.joshskills.repository.local.entity.NPSEventModel
 import com.joshtalks.joshskills.repository.local.eventbus.NPSEventGenerateEventBus
-import com.joshtalks.joshskills.repository.local.model.CourseDetailModel
-import com.joshtalks.joshskills.repository.local.model.CourseTrackModel
 import com.joshtalks.joshskills.repository.local.model.DeviceDetailsResponse
 import com.joshtalks.joshskills.repository.local.model.FCMResponse
 import com.joshtalks.joshskills.repository.local.model.GaIDMentorModel
 import com.joshtalks.joshskills.repository.local.model.InstallReferrerModel
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.RequestRegisterGId
-import com.joshtalks.joshskills.repository.local.model.ScreenEngagementModel
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.MessageStatusRequest
 import com.joshtalks.joshskills.repository.server.UpdateDeviceRequest
@@ -110,84 +101,6 @@ class JoshTalksInstallWorker(context: Context, workerParams: WorkerParameters) :
         }
         return Result.success()
     }
-}
-
-const val FIND_MORE_FIREBASE_DATABASE = "find_more_event"
-
-class FindMoreEventWorker(context: Context, workerParams: WorkerParameters) :
-    Worker(context, workerParams) {
-
-    override fun doWork(): Result {
-        try {
-            val database = FirebaseDatabase.getInstance()
-            val myRef = database.getReference(FIND_MORE_FIREBASE_DATABASE)
-            myRef.child(System.currentTimeMillis().toString())
-                .setValue(Mentor.getInstance().getId())
-        } catch (ex: Throwable) {
-            LogException.catchException(ex)
-        }
-        return Result.success()
-    }
-
-}
-
-
-const val BUY_NOW_FIREBASE_DATABASE = "buy_now_event"
-
-class BuyNowEventWorker(context: Context, private val workerParams: WorkerParameters) :
-    Worker(context, workerParams) {
-
-    override fun doWork(): Result {
-        try {
-            val courseName = workerParams.inputData.getString("course_name")
-            val database = FirebaseDatabase.getInstance()
-            val myRef = database.getReference(BUY_NOW_FIREBASE_DATABASE)
-            myRef.child(courseName + "_" + System.currentTimeMillis().toString())
-                .setValue(Mentor.getInstance().getId())
-        } catch (ex: Throwable) {
-            LogException.catchException(ex)
-        }
-        return Result.success()
-    }
-
-}
-
-const val BUY_IMAGE_NOW_FIREBASE_DATABASE = "course_image_select_event"
-
-class BuyNowImageEventWorker(context: Context, private val workerParams: WorkerParameters) :
-    Worker(context, workerParams) {
-
-    override fun doWork(): Result {
-        val courseName = workerParams.inputData.getString("course_name")
-        val database = FirebaseDatabase.getInstance()
-        val myRef = database.getReference(BUY_IMAGE_NOW_FIREBASE_DATABASE)
-        myRef.child(courseName + "_" + Date().time.toString())
-            .setValue(Mentor.getInstance().getId())
-        return Result.success()
-    }
-
-}
-
-
-const val SCREEN_ENGAGEMENT_OBJECT = "screen_engagement"
-const val SCREEN_ENGAGEMENT_FIREBASE_DATABASE = "screen_engagement"
-
-class ScreenEngagementWorker(context: Context, private val workerParams: WorkerParameters) :
-    Worker(context, workerParams) {
-
-    override fun doWork(): Result {
-        val obj = AppObjectController.gsonMapperForLocal.fromJson(
-            workerParams.inputData.getString(SCREEN_ENGAGEMENT_OBJECT),
-            ScreenEngagementModel::class.java
-        )
-        val database = FirebaseDatabase.getInstance()
-        val ref: DatabaseReference = database.getReference(SCREEN_ENGAGEMENT_FIREBASE_DATABASE)
-        val postsRef: DatabaseReference = ref.child(Mentor.getInstance().getId())
-        obj.totalSpendTime = obj.endTime - obj.startTime
-        postsRef.push().setValue(obj)
-        return Result.success()
-    }
-
 }
 
 class InstanceIdGenerationWorker(var context: Context, workerParams: WorkerParameters) :
@@ -299,100 +212,6 @@ class ReferralCodeRefreshWorker(context: Context, workerParams: WorkerParameters
 
 }
 
-
-const val REFERRAL_EVENT_OBJECT = "referral_event_object"
-
-class ReferralEventWorker(context: Context, private val workerParams: WorkerParameters) :
-    CoroutineWorker(context, workerParams) {
-    override suspend fun doWork(): Result {
-        val obj = AppObjectController.gsonMapperForLocal.fromJson(
-            workerParams.inputData.getString(REFERRAL_EVENT_OBJECT),
-            REFERRAL_EVENT::class.java
-        )
-        val database = FirebaseDatabase.getInstance()
-        val myRef = database.getReference("REFERRAL_EVENT")
-        myRef.child(obj.type).child(Date().time.toString())
-            .setValue(Mentor.getInstance().getId())
-        return Result.success()
-    }
-
-}
-
-
-const val NEW_COURSE_SCREEN_FIREBASE_DATABASE = "new_course_screen_event"
-
-class NewCourseScreenEventWorker(context: Context, private val workerParams: WorkerParameters) :
-    CoroutineWorker(context, workerParams) {
-
-    override suspend fun doWork(): Result {
-
-        val database = FirebaseDatabase.getInstance()
-        val myRef = database.getReference(NEW_COURSE_SCREEN_FIREBASE_DATABASE)
-
-        val courseName = workerParams.inputData.getString("course_name")
-        val courseID = workerParams.inputData.getString("course_id")
-        val isBuy = workerParams.inputData.getBoolean("buy_course", false)
-        val uniqueId = PrefManager.getStringValue(USER_UNIQUE_ID)
-        val buyInitialize = workerParams.inputData.getBoolean("buy_initialize", false)
-
-        val key: DatabaseReference = if (myRef.child(uniqueId).key == null) {
-            myRef.child(uniqueId).push()
-        } else {
-            myRef.child(uniqueId)
-        }
-
-        key.addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                try {
-                    val courseTrackModel: CourseTrackModel? = if (dataSnapshot.value != null) {
-                        dataSnapshot.getValue(CourseTrackModel::class.java)
-                    } else {
-                        CourseTrackModel(uniqueId = uniqueId)
-                    }
-                    courseTrackModel?.mentorId = Mentor.getInstance().getId()
-                    courseTrackModel?.mobileNumber = User.getInstance().phoneNumber
-
-                    when {
-                        isBuy -> {
-                            courseTrackModel?.courseBuy?.add(
-                                CourseDetailModel(
-                                    courseName = courseName ?: EMPTY, courseId = courseID ?: EMPTY
-                                )
-                            )
-                        }
-                        buyInitialize -> {
-                            courseTrackModel?.courseBuyInitialize?.add(
-                                CourseDetailModel(
-                                    courseName = courseName ?: EMPTY, courseId = courseID ?: EMPTY
-                                )
-                            )
-                        }
-                        else -> {
-                            courseTrackModel?.courseWatch?.add(
-                                CourseDetailModel(
-                                    courseName = courseName ?: EMPTY, courseId = courseID ?: EMPTY
-                                )
-                            )
-                        }
-                    }
-
-                    key.setValue(courseTrackModel).addOnFailureListener {
-                        it.printStackTrace()
-                    }
-                } catch (ex: Throwable) {
-                    LogException.catchException(ex)
-                }
-            }
-
-            override fun onCancelled(databaseError: DatabaseError) {
-                databaseError.toException().printStackTrace()
-            }
-        })
-
-        return Result.success()
-    }
-
-}
 
 class RegisterUserGId(context: Context, private val workerParams: WorkerParameters) :
     CoroutineWorker(context, workerParams) {

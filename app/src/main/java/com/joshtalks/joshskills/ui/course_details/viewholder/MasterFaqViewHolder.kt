@@ -102,10 +102,13 @@ class MasterFaqViewHolder(
             RxBus2.listenWithoutDelay(LandingPageCategorySelectEventBus::class.java)
                 .subscribeOn(Schedulers.computation())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe {
+                .subscribe({
                     logAnalyticsEvent()
                     highlightAndShowFaq(it.position, it.categoryId)
+                }, {
+                    it.printStackTrace()
                 })
+        )
     }
 
     private fun logAnalyticsEvent() {

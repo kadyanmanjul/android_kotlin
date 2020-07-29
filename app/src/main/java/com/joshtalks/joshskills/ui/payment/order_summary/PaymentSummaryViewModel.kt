@@ -15,7 +15,6 @@ import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.BranchIOAnalytics
-import com.joshtalks.joshskills.core.service.WorkMangerAdmin
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.CreateOrderResponse
@@ -97,11 +96,6 @@ class PaymentSummaryViewModel(application: Application) : AndroidViewModel(appli
     }
 
     fun getOrderDetails(testId: String?, mobileNumber: String) {
-        WorkMangerAdmin.newCourseScreenEventWorker(
-            responsePaymentSummary.value?.courseName,
-            testId,
-            buyInitialize = true
-        )
         viewState?.postValue(ViewState.PROCESSING)
         viewModelScope.launch(Dispatchers.IO) {
             try {

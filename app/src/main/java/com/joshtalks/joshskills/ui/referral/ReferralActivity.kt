@@ -33,10 +33,8 @@ import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.core.REFERRAL_EVENT
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
-import com.joshtalks.joshskills.core.service.WorkMangerAdmin
 import com.joshtalks.joshskills.databinding.ActivityReferralBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.ui.inbox.InboxActivity
@@ -236,7 +234,6 @@ class ReferralActivity : BaseActivity() {
     }
 
     fun inviteFriends(packageString: String? = null) {
-        WorkMangerAdmin.referralEventTracker(REFERRAL_EVENT.CLICK_ON_SHARE)
         var referralText = VIDEO_URL.plus("\n").plus(
             AppObjectController.getFirebaseRemoteConfig().getString(REFERRAL_SHARE_TEXT_KEY)
         )
@@ -304,9 +301,6 @@ class ReferralActivity : BaseActivity() {
         StyleableToast.Builder(this@ReferralActivity).gravity(Gravity.CENTER)
             .text(getString(R.string.copy_code)).cornerRadius(16).length(Toast.LENGTH_LONG)
             .solidBackground().show()
-        AppObjectController.uiHandler.postDelayed({
-            WorkMangerAdmin.referralEventTracker(REFERRAL_EVENT.LONG_PRESS_CODE)
-        }, 1200)
         AppAnalytics
             .create(AnalyticsEvent.REFERRAL_SCREEN_ACTION.NAME)
             .addParam(AnalyticsEvent.ACTION.NAME, AnalyticsEvent.CODE_COPIED.NAME)

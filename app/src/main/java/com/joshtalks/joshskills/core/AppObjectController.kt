@@ -18,8 +18,6 @@ import com.freshchat.consumer.sdk.Freshchat
 import com.freshchat.consumer.sdk.FreshchatConfig
 import com.freshchat.consumer.sdk.FreshchatNotificationConfig
 import com.google.firebase.analytics.FirebaseAnalytics
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.Logger
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
 import com.google.gson.Gson
@@ -167,8 +165,6 @@ internal class AppObjectController {
             facebookEventLogger = AppEventsLogger.newLogger(joshApplication)
             AndroidThreeTen.init(joshApplication)
             Branch.getAutoInstance(joshApplication)
-            FirebaseDatabase.getInstance().setLogLevel(Logger.Level.DEBUG)
-            FirebaseDatabase.getInstance().setPersistenceEnabled(true)
             initFirebaseRemoteConfig()
             WorkMangerAdmin.deviceIdGenerateWorker()
             configureCrashlytics()
