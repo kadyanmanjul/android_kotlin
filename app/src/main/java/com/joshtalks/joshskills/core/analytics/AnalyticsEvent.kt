@@ -348,5 +348,7 @@ enum class AnalyticsEvent(val NAME: String) {
     QNA_CLICKED("qna_clicked v3"),
     QNA_CARD_CLICKED("qna_card_clicked v3"),
     QNA_QUESTION_CLICKED("qna_question_clicked v3"),
-    LANDING_SCREEN("landing screen v3")
+    LANDING_SCREEN("landing screen v3"),
+    DEMO_VIDEO_PLAYED("demo video played V3")
+
 }
