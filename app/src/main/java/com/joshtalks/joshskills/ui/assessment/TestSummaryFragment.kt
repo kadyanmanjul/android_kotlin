@@ -13,6 +13,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.databinding.FragmentTestSummaryReportBinding
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentWithRelations
 import com.joshtalks.joshskills.repository.server.assessment.AssessmentStatus
@@ -55,7 +56,13 @@ class TestSummaryFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initRecyclerView()
-        if (isTestAlreadyAttempted.not()) {
+        subscribeObserver()
+        if (isTestAlreadyAttempted) {
+            binding.progressBar.visibility = View.VISIBLE
+            AppObjectController.uiHandler.postDelayed({
+                viewModel.getTestReport(assessmentId)
+            }, 3000)
+        } else {
             viewModel.assessmentLiveData.value?.let {
                 testData = it
             }
@@ -63,18 +70,10 @@ class TestSummaryFragment : Fragment() {
                 requireActivity().finish()
             }
             initView(testData)
-        } else {
-            binding.progressBar.visibility = View.VISIBLE
-            viewModel.getTestReport(assessmentId)
-            subscribeObserver()
         }
     }
 
     private fun subscribeObserver() {
-
-        viewModel.apiCallStatusLiveData.observe(requireActivity(), Observer {
-            binding.progressBar.visibility = View.GONE
-        })
 
         viewModel.assessmentLiveData.observe(requireActivity(), Observer { assessmentWithRelation ->
             initView(assessmentWithRelation)
@@ -82,32 +81,31 @@ class TestSummaryFragment : Fragment() {
     }
 
     private fun initView(assessmentWithRelation: AssessmentWithRelations?) {
-        if (binding.recyclerView.adapter == null || binding.recyclerView.adapter!!.itemCount == 0) {
 
-            assessmentWithRelation?.let { assessment ->
-                assessment.questionList.sortedBy { it.question.sortOrder }.also {
+        binding.progressBar.visibility = View.GONE
+        binding.recyclerView.removeAllViews()
 
-                    if (assessmentWithRelation.assessment.status==AssessmentStatus.STARTED||assessmentWithRelation.assessment.status==AssessmentStatus.NOT_STARTED)
+        assessmentWithRelation?.let { assessment ->
+            assessment.questionList.sortedBy { it.question.sortOrder }.also {
+
+                if (assessmentWithRelation.assessment.status == AssessmentStatus.STARTED || assessmentWithRelation.assessment.status == AssessmentStatus.NOT_STARTED)
                     binding.recyclerView.addView(
                         TestSummaryHeaderViewHolder(
-                            assessment, requireContext()
+                            assessment
                         )
                     )
-                    else binding.recyclerView.addView(
-                        TestScoreCardViewHolder(
-                            assessment.assessment, requireContext()
-                        )
+                else binding.recyclerView.addView(
+                    TestScoreCardViewHolder(
+                        assessment.assessment
                     )
+                )
 
-                }.forEach { questionList ->
-                    binding.recyclerView.addView(
-                        TestItemViewHolder(
-                            questionList,
-                            assessment.assessment.status,
-                            requireContext()
-                        )
-                    )
-                }
+            }.forEach { questionList ->
+                binding.recyclerView.addView(
+                    TestItemViewHolder(
+                        questionList,
+                        assessment.assessment.status)
+                )
             }
         }
     }

@@ -19,7 +19,6 @@ import androidx.viewpager2.widget.MarginPageTransformer
 import com.google.android.material.tabs.TabLayoutMediator
 import com.joshtalks.joshcamerax.utils.onPageSelected
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.CoreJoshActivity
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.STARTED_FROM
@@ -44,6 +43,9 @@ import com.joshtalks.joshskills.ui.assessment.viewholder.AssessmentQuestionAdapt
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class AssessmentActivity : CoreJoshActivity() {
 
@@ -54,6 +56,7 @@ class AssessmentActivity : CoreJoshActivity() {
     private var compositeDisposable = CompositeDisposable()
     private var isTestFinished = false
     private var isTestFragmentVisible = false
+    private var isViewBinded = false
     //private val hintOptionsSet = mutableSetOf<ChoiceType>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -136,12 +139,20 @@ class AssessmentActivity : CoreJoshActivity() {
         })
 
         viewModel.assessmentLiveData.observe(this, Observer { assessmentWithRelations ->
-            assessmentWithRelations.questionList.sortedBy { it.question.sortOrder }
-            bindView(assessmentWithRelations)
+            if (isViewBinded.not()) {
+                isViewBinded = true
+                assessmentWithRelations.questionList.sortedBy { it.question.sortOrder }
+                bindView(assessmentWithRelations)
+
+            }
         })
 
+
         viewModel.assessmentStatus.observe(this, Observer { status ->
-            if (status == AssessmentStatus.COMPLETED && viewModel.getAssessmentType() == AssessmentType.TEST) {
+            if ((status == AssessmentStatus.COMPLETED) && (viewModel.getAssessmentType() == null || viewModel.getAssessmentType() == AssessmentType.TEST)) {
+                val fragment = supportFragmentManager.findFragmentByTag("Test Summary")
+                if (fragment != null) supportFragmentManager.beginTransaction().remove(fragment)
+                    .commit()
                 showTestSummaryFragment(assessmentId, true)
             }
 
@@ -231,7 +242,9 @@ class AssessmentActivity : CoreJoshActivity() {
                     AssessmentStatus.STARTED -> {
                         showQuizSuccessFragment()
                         assessment.status = AssessmentStatus.COMPLETED
-                        viewModel.updateAssessmentStatus(assessmentId)
+                        CoroutineScope(Dispatchers.IO).launch {
+                            viewModel.updateAssessmentStatus(assessmentId)
+                        }
                     }
 
                     AssessmentStatus.COMPLETED -> {
@@ -239,7 +252,6 @@ class AssessmentActivity : CoreJoshActivity() {
                     }
                 }
             } else {
-                viewModel.assessmentLiveData
                 // Disable ViewPager Scrolling
                 binding.questionViewPager.isUserInputEnabled = false
                 showTestSummaryFragment(assessmentId)
@@ -268,9 +280,6 @@ class AssessmentActivity : CoreJoshActivity() {
             finish()
         } else {
             viewModel.postTestData(assessmentId)
-            AppObjectController.uiHandler.postDelayed({
-                finish()
-            }, 200)
         }
     }
 
@@ -303,7 +312,6 @@ class AssessmentActivity : CoreJoshActivity() {
             tabStrip.getChildAt(i).setOnTouchListener { v, event -> true }
         }
         binding.questionViewPager.offscreenPageLimit = 1
-        //binding.questionViewPager.offscreenPageLimit = 1
 
         // Enable/Disable Scrolling
         binding.questionViewPager.isUserInputEnabled =
@@ -395,7 +403,7 @@ class AssessmentActivity : CoreJoshActivity() {
                 return true
             } else {
                 showTestSummaryFragment(
-                    assessmentId, viewModel.assessmentStatus.value == AssessmentStatus.COMPLETED
+                    assessmentId, false
                 )
                 return false
             }
