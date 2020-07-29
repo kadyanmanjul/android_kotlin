@@ -1,6 +1,5 @@
 package com.joshtalks.joshskills.ui.assessment
 
-import android.content.Context
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
 import com.bumptech.glide.Glide
@@ -11,6 +10,7 @@ import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
 import com.joshtalks.joshskills.repository.local.model.assessment.Assessment
@@ -21,9 +21,7 @@ import jp.wasabeef.glide.transformations.RoundedCornersTransformation
 
 @Layout(R.layout.test_score_header_item)
 class TestScoreCardViewHolder(
-    var assessment: Assessment,
-    val context: Context
-) {
+    var assessment: Assessment) {
 
     @View(R.id.welcome_msg)
     lateinit var welcomeMsg: AppCompatTextView
@@ -59,7 +57,7 @@ class TestScoreCardViewHolder(
                 RoundedCornersTransformation.CornerType.ALL
             )
         )
-        Glide.with(context)
+        Glide.with(AppObjectController.joshApplication)
             .load(url)
             .override(Target.SIZE_ORIGINAL)
             .optionalTransform(

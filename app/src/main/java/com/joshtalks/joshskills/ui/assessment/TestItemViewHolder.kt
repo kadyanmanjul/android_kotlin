@@ -1,10 +1,10 @@
 package com.joshtalks.joshskills.ui.assessment
 
 import android.annotation.SuppressLint
-import android.content.Context
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.res.ResourcesCompat
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.TestItemClickedEventBus
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionWithRelations
@@ -19,8 +19,7 @@ import com.mindorks.placeholderview.annotations.View
 @Layout(R.layout.test_summary_item_layout)
 class TestItemViewHolder(
     var questionWithRelations: AssessmentQuestionWithRelations,
-    var status: AssessmentStatus,
-    val context: Context
+    var status: AssessmentStatus
 ) {
 
     @View(R.id.attempt_status)
@@ -41,38 +40,55 @@ class TestItemViewHolder(
     private fun initView() {
         if (status == AssessmentStatus.STARTED || status == AssessmentStatus.NOT_STARTED) {
             if (isQuestionAttempted(questionWithRelations)) {
-                attempt_status.text = context.getString(R.string.attempted)
+                attempt_status.text =
+                    AppObjectController.joshApplication.getString(R.string.attempted)
             } else {
-                attempt_status.text = context.getString(R.string.not_attempted)
+                attempt_status.text =
+                    AppObjectController.joshApplication.getString(R.string.not_attempted)
                 attempt_status.supportBackgroundTintList =
-                    ResourcesCompat.getColorStateList(context.resources, R.color.dark_grey, null)
+                    ResourcesCompat.getColorStateList(
+                        AppObjectController.joshApplication.resources,
+                        R.color.dark_grey,
+                        null
+                    )
             }
-            testButton.text = context.getString(R.string.edit_answer)
+            testButton.text = AppObjectController.joshApplication.getString(R.string.edit_answer)
         } else {
 
             when (questionWithRelations.question.status) {
                 QuestionStatus.CORRECT -> {
-                    attempt_status.text = context.getString(R.string.right)
-                    attempt_status.supportBackgroundTintList =
-                        ResourcesCompat.getColorStateList(context.resources, R.color.green, null)
-                }
-                QuestionStatus.WRONG -> {
-                    attempt_status.text = context.getString(R.string.wrong)
-                    attempt_status.supportBackgroundTintList =
-                        ResourcesCompat.getColorStateList(context.resources, R.color.red, null)
-                }
-                QuestionStatus.SKIPPED, QuestionStatus.NONE -> {
-                    attempt_status.text = context.getString(R.string.not_attempted)
+                    attempt_status.text =
+                        AppObjectController.joshApplication.getString(R.string.right)
                     attempt_status.supportBackgroundTintList =
                         ResourcesCompat.getColorStateList(
-                            context.resources,
+                            AppObjectController.joshApplication.resources,
+                            R.color.green,
+                            null
+                        )
+                }
+                QuestionStatus.WRONG -> {
+                    attempt_status.text =
+                        AppObjectController.joshApplication.getString(R.string.wrong)
+                    attempt_status.supportBackgroundTintList =
+                        ResourcesCompat.getColorStateList(
+                            AppObjectController.joshApplication.resources,
+                            R.color.red,
+                            null
+                        )
+                }
+                QuestionStatus.SKIPPED, QuestionStatus.NONE -> {
+                    attempt_status.text =
+                        AppObjectController.joshApplication.getString(R.string.not_attempted)
+                    attempt_status.supportBackgroundTintList =
+                        ResourcesCompat.getColorStateList(
+                            AppObjectController.joshApplication.resources,
                             R.color.dark_grey,
                             null
                         )
                 }
 
             }
-            testButton.text = context.getString(R.string.view_answer)
+            testButton.text = AppObjectController.joshApplication.getString(R.string.view_answer)
         }
         questionText.text = questionWithRelations.question.text
     }

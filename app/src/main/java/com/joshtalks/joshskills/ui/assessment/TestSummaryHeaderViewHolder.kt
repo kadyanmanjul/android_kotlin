@@ -1,8 +1,8 @@
 package com.joshtalks.joshskills.ui.assessment
 
-import android.content.Context
 import androidx.appcompat.widget.AppCompatTextView
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionWithRelations
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentWithRelations
@@ -13,8 +13,7 @@ import com.mindorks.placeholderview.annotations.View
 
 @Layout(R.layout.test_summay_header_item)
 class TestSummaryHeaderViewHolder(
-    var assessment: AssessmentWithRelations,
-    val context: Context
+    var assessment: AssessmentWithRelations
 ) {
 
     @View(R.id.welcome_msg)
@@ -33,10 +32,13 @@ class TestSummaryHeaderViewHolder(
 
     private fun initView() {
         welcomeMsg.text =
-            context.getString(R.string.hello).plus(User.getInstance().firstName.plus(","))
-        totalQuestions.text = context.getString(R.string.total_question).plus(getTotalQuestions())
+            AppObjectController.joshApplication.getString(R.string.hello)
+                .plus(User.getInstance().firstName.plus(","))
+        totalQuestions.text = AppObjectController.joshApplication.getString(R.string.total_question)
+            .plus(getTotalQuestions())
         totalAttempted.text =
-            context.getString(R.string.total_attempted).plus(getAttemptedQuestions())
+            AppObjectController.joshApplication.getString(R.string.total_attempted)
+                .plus(getAttemptedQuestions())
     }
 
     private fun getTotalQuestions() = assessment.questionList.size
