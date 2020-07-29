@@ -47,16 +47,16 @@ const val PREV_ACTIVITY = "previous_activity"
 
 class CourseExploreActivity : CoreJoshActivity() {
     private lateinit var adapter: CourseExploreAdapter
-    private lateinit var courseList: ArrayList<CourseExploreModel>
-    private lateinit var filteredCourseList: ArrayList<CourseExploreModel>
-    private var selectedLanguage: String? = null
+    private val courseList: ArrayList<CourseExploreModel> = ArrayList()
+    private val filteredCourseList: ArrayList<CourseExploreModel> = ArrayList()
+    private var selectedLanguage: String = EMPTY
     private var compositeDisposable = CompositeDisposable()
     private lateinit var courseExploreBinding: ActivityCourseExploreBinding
     private lateinit var appAnalytics: AppAnalytics
     private var prevAct: String? = EMPTY
     private var screenEngagementModel: ScreenEngagementModel =
         ScreenEngagementModel(COURSE_EXPLORER_SCREEN_NAME)
-    private lateinit var languageList: MutableList<String>
+    private var languageList: MutableList<String> = ArrayList()
 
     companion object {
         fun startCourseExploreActivity(
@@ -85,9 +85,6 @@ class CourseExploreActivity : CoreJoshActivity() {
             DataBindingUtil.setContentView(this, R.layout.activity_course_explore)
         courseExploreBinding.lifecycleOwner = this
 
-        languageList = ArrayList()
-        courseList = ArrayList()
-        filteredCourseList = ArrayList()
         initRV()
         initView()
         loadCourses()
@@ -107,7 +104,6 @@ class CourseExploreActivity : CoreJoshActivity() {
     private fun initView() {
         val titleView = findViewById<AppCompatTextView>(R.id.text_message_title)
         titleView.text = getString(R.string.explorer_courses)
-
         findViewById<View>(R.id.iv_back).visibility = View.VISIBLE
         findViewById<View>(R.id.iv_back).setOnClickListener {
             onCancelResult()
@@ -139,7 +135,6 @@ class CourseExploreActivity : CoreJoshActivity() {
                         }
                     }
                     negativeButton(R.string.cancel) {
-
                         AppAnalytics.create(AnalyticsEvent.LOGOUT_CLICKED.NAME)
                             .addUserDetails()
                             .addParam(AnalyticsEvent.USER_LOGGED_OUT.NAME, false).push()
@@ -206,15 +201,10 @@ class CourseExploreActivity : CoreJoshActivity() {
                                 return@forEach
                             }
                         }
-                        languageSet.add(courseExploreModel.language?.capitalize() ?: "")
-
+                        courseExploreModel.language?.let { languageSet.add(it.capitalize()) }
                         courseList.add(courseExploreModel)
-                        /*courseExploreBinding.recyclerView.addView(
-                            CourseExplorerViewHolder(
-                                courseExploreModel
-                            )
-                        )*/
                     }
+
                     languageList = languageSet.toMutableList()
                     if (languageList.contains("Hindi")) {
                         languageList.remove("Hindi")
@@ -238,7 +228,7 @@ class CourseExploreActivity : CoreJoshActivity() {
 
     fun filterCourses() {
         filteredCourseList.clear()
-        if ("".equals(selectedLanguage))
+        if (selectedLanguage.isBlank())
             filteredCourseList.addAll(courseList)
         else
             filteredCourseList.addAll(courseList.filter {
@@ -292,7 +282,6 @@ class CourseExploreActivity : CoreJoshActivity() {
     }
 
     private fun renderLanguageChips() {
-//        txtCategoryName.text = selectedLanguage ?: ""
         language_chip_group.removeAllViews()
         languageList.forEach {
             val chip = LayoutInflater.from(this)
