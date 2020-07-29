@@ -303,6 +303,7 @@ class AssessmentActivity : CoreJoshActivity() {
             tabStrip.getChildAt(i).setOnTouchListener { v, event -> true }
         }
         binding.questionViewPager.offscreenPageLimit = 1
+        //binding.questionViewPager.offscreenPageLimit = 1
 
         // Enable/Disable Scrolling
         binding.questionViewPager.isUserInputEnabled =

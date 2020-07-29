@@ -1,38 +1,26 @@
 package com.joshtalks.joshskills.core.custom_ui
 
 
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
 import android.content.pm.ActivityInfo
-import android.graphics.Color
 import android.media.AudioManager
 import android.net.Uri
-import android.os.Build
 import android.os.Handler
 import android.util.AttributeSet
 import android.util.Pair
 import android.view.LayoutInflater
 import android.view.Surface
 import android.view.View
-import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.ProgressBar
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
-import androidx.core.content.ContextCompat
-import androidx.core.text.HtmlCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.OnLifecycleEvent
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.afollestad.materialdialogs.LayoutMode
-import com.afollestad.materialdialogs.MaterialDialog
-import com.afollestad.materialdialogs.bottomsheets.BottomSheet
-import com.afollestad.materialdialogs.customview.customView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.integration.webp.decoder.WebpDrawable
 import com.bumptech.glide.integration.webp.decoder.WebpDrawableTransformation
@@ -45,19 +33,15 @@ import com.google.android.exoplayer2.DefaultRenderersFactory
 import com.google.android.exoplayer2.ExoPlaybackException
 import com.google.android.exoplayer2.ExoPlaybackException.TYPE_SOURCE
 import com.google.android.exoplayer2.ExoPlayer
-import com.google.android.exoplayer2.PlaybackParameters
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.Player.STATE_IDLE
 import com.google.android.exoplayer2.RenderersFactory
 import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.audio.AudioAttributes
-import com.google.android.exoplayer2.source.TrackGroupArray
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector.ParametersBuilder
-import com.google.android.exoplayer2.trackselection.MappingTrackSelector
 import com.google.android.exoplayer2.trackselection.TrackSelection
-import com.google.android.exoplayer2.trackselection.TrackSelectionArray
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout
 import com.google.android.exoplayer2.ui.DefaultTimeBar
 import com.google.android.exoplayer2.ui.PlayerControlView
@@ -66,13 +50,14 @@ import com.google.android.exoplayer2.ui.TimeBar
 import com.google.android.exoplayer2.ui.TimeBar.OnScrubListener
 import com.google.android.exoplayer2.upstream.DefaultAllocator
 import com.google.android.exoplayer2.util.ErrorMessageProvider
-import com.google.android.material.textview.MaterialTextView
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.service.video_download.VideoDownloadController
 import com.joshtalks.joshskills.core.videoplayer.VideoPlayerEventListener
 import java.util.*
+import kotlin.collections.HashMap
 
 class MiniExoPlayer : PlayerView, LifecycleObserver, PlayerControlView.VisibilityListener {
 
@@ -84,27 +69,24 @@ class MiniExoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibilit
         defStyleAttr
     )
 
+    companion object {
+        @JvmStatic
+        var duration: HashMap<String, Long> = HashMap()
+    }
+
     private var uri: Uri? = null
     private var lastPosition: Long = 0
     private var player: SimpleExoPlayer? = null
     private var trackSelector: DefaultTrackSelector? = null
     private val timeHandler = Handler()
     private val controllerHandler = Handler()
-
+    private var tag: String = EMPTY
     private var am: AudioManager? = null
     private var mControlsDisabled = false
     private var currentPosition: Long = 0
     private var mIsPlaying: Boolean = false
-    private var currentMappedTrackInfoPosition: Int = 0
     private var activity: Activity? = null
-    private var lisOfVideoQualityTrack = mutableListOf<VideoQualityTrack>()
-    private var videoQualityP: String = ""
-    private var playbackSpeed: Float = 1F
-    private var playbackSpeedTitle: String = "Normal"
-    private var audioLanguage: String = ""
-    private var lisOfAudioLanguageTrack = mutableListOf<AudioLanguageTrack>()
     private var playerListener: VideoPlayerEventListener? = null
-
     private lateinit var defaultTimeBar: DefaultTimeBar
     private lateinit var progressBarBottom: ProgressBar
     private lateinit var imgFullScreenEnterExit: AppCompatImageView
@@ -132,13 +114,14 @@ class MiniExoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibilit
             progressBarBottom.progress = currentPosition.toInt()
             defaultTimeBar.setPosition(currentPosition)
             playerListener?.onCurrentTimeUpdated(lastPosition)
+            duration[tag] = lastPosition
         }
     }
 
     init {
         initPlayer()
         am = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
-       }
+    }
 
     private fun initPlayer() {
         activity = context.activity()
@@ -188,7 +171,6 @@ class MiniExoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibilit
             setupAudioFocus()
             controllerAutoShow = true
             controllerHideOnTouch = true
-            // controllerShowTimeoutMs = 2500
             setControllerVisibilityListener(this)
             setErrorMessageProvider(PlayerErrorMessageProvider())
             requestFocus()
@@ -198,6 +180,7 @@ class MiniExoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibilit
             resizeMode = AspectRatioFrameLayout.RESIZE_MODE_FILL
             mControlsDisabled = false
             isClickable = true
+            setKeepContentOnPlayerReset(true)
         }
     }
 
@@ -213,7 +196,10 @@ class MiniExoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibilit
         tvPlayerEndTime = findViewById(R.id.tv_player_end_time)
         tvPlayerCurrentTime = findViewById(R.id.tv_player_current_time)
         findViewById<View>(R.id.exo_buffering).visibility = View.GONE
+
+
     }
+
 
     private fun initListener() {
         imgFullScreenEnterExit.setOnClickListener {
@@ -317,7 +303,9 @@ class MiniExoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibilit
         uri = Uri.parse(url)
         if (placeHolderUrl.isNullOrEmpty().not()) {
             setPlaceHolder(placeHolderUrl!!)
-        } else {
+        }
+        url?.let {
+            this.tag = it
         }
     }
 
@@ -334,36 +322,16 @@ class MiniExoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibilit
 
     private fun initVideo() {
         uri?.let {
-            player!!.prepare(VideoDownloadController.getInstance().getMediaSource(uri), true, false)
+            player!!.prepare(VideoDownloadController.getInstance().getMediaSource(uri))
         }
         player?.playWhenReady = true
         player?.playbackState
-    }
-
-    private fun playVideoInternal() {
-        player?.playWhenReady = true
-        player?.playbackState
-        uri?.let {
-            player!!.prepare(VideoDownloadController.getInstance().getMediaSource(uri), true, false)
+        duration[tag]?.run {
+            lastPosition = this
+            seekTo(lastPosition)
         }
-        seekTo(lastPosition)
         timeHandler.post(timeRunnable)
     }
-
-
-    /* @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
-     fun onStartPlayer() {
-         if (player == null) {
-             initPlayer()
-             playVideoInternal()
-         }
-     }*/
-
-
-    /*  @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
-      fun onResumePlayer() {
-          onResume()
-      }*/
 
     @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
     fun onPausePlayer() {
@@ -388,6 +356,7 @@ class MiniExoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibilit
 
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
     fun onDestroy() {
+        duration.clear()
         activity?.let {
             (it as LifecycleOwner).lifecycle.removeObserver(this)
         }
@@ -401,7 +370,6 @@ class MiniExoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibilit
     private fun pausePlayer() {
         player?.run {
             playWhenReady = false
-            playbackState
             this@MiniExoPlayer.currentPosition = currentPosition
         }
     }
@@ -432,172 +400,7 @@ class MiniExoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibilit
     }
 
 
-    fun openVideoPlayerOptions() {
-        val optionOfVideoPlayer = arrayListOf<VideoPlayerOption>()
-        optionOfVideoPlayer.add(VideoPlayerOption.Quality(extraInfo = videoQualityP))
-        optionOfVideoPlayer.add(VideoPlayerOption.AudioLanguage(extraInfo = audioLanguage))
-        optionOfVideoPlayer.add(VideoPlayerOption.PlaybackSpeed(extraInfo = playbackSpeedTitle))
-        optionOfVideoPlayer.add(VideoPlayerOption.Help(extraInfo = ""))
 
-        activity?.run {
-            val bottomSheet = BottomSheet(LayoutMode.WRAP_CONTENT)
-            val view =
-                LayoutInflater.from(context)
-                    .inflate(R.layout.base_recycler_view_layout, this@MiniExoPlayer, false)
-            val dialog = MaterialDialog(this, bottomSheet).show {
-                customView(view = view)
-                setFinishOnTouchOutside(true)
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
-                    setShowWhenLocked(true)
-                }
-            }
-            val recyclerView: RecyclerView = view.findViewById(R.id.recycler_view)
-            val layoutManager = LinearLayoutManager(context)
-            recyclerView.layoutManager = layoutManager
-            recyclerView.setHasFixedSize(false)
-            recyclerView.adapter = VideoOptionAdapter(optionOfVideoPlayer,
-                object : VideoOptionAdapter.OnVideoOptionListener {
-                    override fun onSelect(videoPlayerOption: VideoPlayerOption) {
-                        bottomSheet.onDismiss()
-                        dialog.dismiss()
-                        when (videoPlayerOption) {
-                            is VideoPlayerOption.Quality -> {
-                                AppAnalytics.create(AnalyticsEvent.VIDEO_MORE_ACTIONS.NAME)
-                                    .addParam(
-                                        AnalyticsEvent.VIDEO_ACTION.NAME,
-                                        "Change Video Quality"
-                                    ).push()
-                                openVideoTrackBottomBar()
-                            }
-                            is VideoPlayerOption.AudioLanguage -> {
-                                AppAnalytics.create(AnalyticsEvent.VIDEO_MORE_ACTIONS.NAME)
-                                    .addParam(AnalyticsEvent.VIDEO_ACTION.NAME, "Change language")
-                                    .push()
-                                openAudioLanguageTrackOption()
-                            }
-                            is VideoPlayerOption.PlaybackSpeed -> {
-                                openPlaybackSpeedOption()
-                            }
-                            is VideoPlayerOption.Help -> {
-                                AppAnalytics.create(AnalyticsEvent.VIDEO_MORE_ACTIONS.NAME)
-                                    .addParam(AnalyticsEvent.VIDEO_ACTION.NAME, "Help clicked")
-                                    .push()
-                                playerListener?.helpAndFeedback()
-                            }
-                        }
-                    }
-                })
-        }
-    }
-
-
-    fun openVideoTrackBottomBar() {
-        activity?.run {
-            val bottomSheet = BottomSheet(LayoutMode.WRAP_CONTENT)
-            val view =
-                LayoutInflater.from(context)
-                    .inflate(R.layout.base_recycler_view_layout, null, false)
-            val dialog = MaterialDialog(this, bottomSheet).show {
-                customView(view = view)
-                setFinishOnTouchOutside(true)
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
-                    setShowWhenLocked(true)
-                }
-            }
-            val recyclerView: RecyclerView = view.findViewById(R.id.recycler_view)
-            val layoutManager = LinearLayoutManager(context)
-            recyclerView.layoutManager = layoutManager
-            recyclerView.setHasFixedSize(false)
-            recyclerView.adapter = VideoTrackAdapter(lisOfVideoQualityTrack,
-                object : VideoTrackAdapter.OnSelectQualityListener {
-                    override fun onSelect(videoQualityTrack: VideoQualityTrack) {
-                        bottomSheet.onDismiss()
-                        dialog.dismiss()
-                        onSelectTrack(videoQualityTrack)
-                    }
-                })
-        }
-    }
-
-    fun openAudioLanguageTrackOption() {
-        activity?.run {
-            val bottomSheet = BottomSheet(LayoutMode.WRAP_CONTENT)
-            val view =
-                LayoutInflater.from(context)
-                    .inflate(R.layout.base_recycler_view_layout, null, false)
-            val dialog = MaterialDialog(this, bottomSheet).show {
-                customView(view = view)
-                setFinishOnTouchOutside(true)
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
-                    setShowWhenLocked(true)
-                }
-            }
-            val recyclerView: RecyclerView = view.findViewById(R.id.recycler_view)
-            val layoutManager = LinearLayoutManager(context)
-            recyclerView.layoutManager = layoutManager
-            recyclerView.setHasFixedSize(false)
-            recyclerView.adapter = AudioLanguageAdapter(lisOfAudioLanguageTrack,
-                object : AudioLanguageAdapter.OnSelectQualityListener {
-                    override fun onSelect(audioLanguageTrack: AudioLanguageTrack) {
-                        bottomSheet.onDismiss()
-                        dialog.dismiss()
-                        onSelectAudioTrack(audioLanguageTrack)
-                    }
-                })
-
-        }
-    }
-
-
-    @SuppressLint("InflateParams")
-    fun openPlaybackSpeedOption() {
-        val optionOfSpeedLayer = arrayListOf<PlaybackSpeed>()
-        optionOfSpeedLayer.add(PlaybackSpeed(1, 0.25F, "0.25x", false))
-        optionOfSpeedLayer.add(PlaybackSpeed(2, 0.50F, "0.55x", false))
-        optionOfSpeedLayer.add(PlaybackSpeed(3, 0.75F, "0.75x", false))
-        optionOfSpeedLayer.add(PlaybackSpeed(4, 1F, "Normal", false))
-        optionOfSpeedLayer.add(PlaybackSpeed(5, 1.25F, "1.25x", false))
-        optionOfSpeedLayer.add(PlaybackSpeed(6, 1.5F, "1.50x", false))
-        optionOfSpeedLayer.add(PlaybackSpeed(7, 1.75F, "1.75x", false))
-        optionOfSpeedLayer.add(PlaybackSpeed(8, 2.0F, "2x", false))
-        optionOfSpeedLayer.map { t ->
-            if (t.speed == playbackSpeed) {
-                t.isSelected = true
-            }
-        }
-
-        activity?.run {
-            val bottomSheet = BottomSheet(LayoutMode.WRAP_CONTENT)
-            val view =
-                LayoutInflater.from(context)
-                    .inflate(R.layout.base_recycler_view_layout, null, false)
-            val dialog = MaterialDialog(this, bottomSheet).show {
-                customView(view = view)
-                setFinishOnTouchOutside(true)
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
-                    setShowWhenLocked(true)
-                }
-            }
-            val recyclerView: RecyclerView = view.findViewById(R.id.recycler_view)
-            val layoutManager = LinearLayoutManager(context)
-            recyclerView.layoutManager = layoutManager
-            recyclerView.setHasFixedSize(false)
-            recyclerView.adapter = PlaybackSpeedAdapter(
-                optionOfSpeedLayer,
-                object : PlaybackSpeedAdapter.OnPlaybackSpeedListener {
-                    override fun onSelect(playbackSpeed: PlaybackSpeed) {
-                        AppAnalytics.create(AnalyticsEvent.VIDEO_MORE_ACTIONS.NAME)
-                            .addParam(
-                                AnalyticsEvent.VIDEO_ACTION.NAME,
-                                "PlayBackSpeed ${playbackSpeed.speed}"
-                            ).push()
-                        bottomSheet.onDismiss()
-                        dialog.dismiss()
-                        onChangePlaybackSpeed(playbackSpeed)
-                    }
-                })
-        }
-    }
 
     fun stringForTime(timeMs: Int): String {
         if (timeMs <= 0 || timeMs >= 24 * 60 * 60 * 1000) {
@@ -618,36 +421,6 @@ class MiniExoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibilit
     }
 
 
-    fun onSelectTrack(videoQualityTrack: VideoQualityTrack) {
-        val parametersBuilder = trackSelector?.buildUponParameters()
-        // parametersBuilder?.setRendererDisabled(0, false)
-        val trackGroups = trackSelector!!.currentMappedTrackInfo!!.getTrackGroups(0)
-        val selectionOverride: DefaultTrackSelector.SelectionOverride =
-            DefaultTrackSelector.SelectionOverride(0, videoQualityTrack.id)
-        parametersBuilder?.setSelectionOverride(0, trackGroups, selectionOverride)
-        trackSelector!!.parameters = parametersBuilder!!.build()
-        videoQualityP = videoQualityTrack.title
-    }
-
-    private fun onSelectAudioTrack(audioLanguageTrack: AudioLanguageTrack) {
-        try {
-            val parametersBuilder = trackSelector?.buildUponParameters()
-            parametersBuilder?.setPreferredTextLanguage(audioLanguageTrack.id)
-            parametersBuilder?.setPreferredAudioLanguage(audioLanguageTrack.id)
-            trackSelector!!.parameters = parametersBuilder!!.build()
-            audioLanguage = audioLanguageTrack.id
-        } catch (ex: java.lang.Exception) {
-            ex.printStackTrace()
-        }
-    }
-
-    fun onChangePlaybackSpeed(playbackSpeed: PlaybackSpeed) {
-        this.playbackSpeed = playbackSpeed.speed
-        this.playbackSpeedTitle = playbackSpeed.title
-        val param = PlaybackParameters(this.playbackSpeed)
-        player?.setPlaybackParameters(param)
-    }
-
 
     private inner class PlayerErrorMessageProvider :
         ErrorMessageProvider<ExoPlaybackException> {
@@ -660,65 +433,6 @@ class MiniExoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibilit
     private inner class PlayerEventListener : Player.EventListener {
         var playWhenReady = false
         var playbackState: Int = STATE_IDLE
-
-        override fun onTracksChanged(
-            trackGroups: TrackGroupArray,
-            trackSelections: TrackSelectionArray
-        ) {
-            super.onTracksChanged(trackGroups, trackSelections)
-            try {
-                audioLanguage = trackSelections[1]?.selectedFormat?.language ?: ""
-                val oldTrack = currentMappedTrackInfoPosition
-                //trackSelections[0]?.selectedFormat.width
-                currentMappedTrackInfoPosition =
-                    trackSelections.get(0)?.getIndexInTrackGroup(0) ?: 0
-                if (lisOfVideoQualityTrack.isNullOrEmpty() || oldTrack != currentMappedTrackInfoPosition) {
-                    lisOfVideoQualityTrack.clear()
-                    val mappedTrackInfo: MappingTrackSelector.MappedTrackInfo? =
-                        trackSelector?.currentMappedTrackInfo
-
-                    if (mappedTrackInfo != null) {
-                        val trackGroups =
-                            trackSelector!!.currentMappedTrackInfo!!.getTrackGroups(0)[0] //render index important
-                        for (x in 0 until trackGroups.length) {
-                            val currentQuality = "" + trackGroups.getFormat(x).height + "p"
-                            lisOfVideoQualityTrack.add(
-                                VideoQualityTrack(
-                                    x,
-                                    trackGroups.getFormat(x).height,
-                                    currentQuality, currentMappedTrackInfoPosition == x
-                                )
-                            )
-                        }
-                    }
-                    lisOfVideoQualityTrack.sortBy { it.quality }
-                }
-                if (videoQualityP.isEmpty()) {
-                    videoQualityP = lisOfVideoQualityTrack[0].title
-                }
-                if (lisOfAudioLanguageTrack.isNullOrEmpty()) {
-                    val mappedTrackInfo: MappingTrackSelector.MappedTrackInfo? =
-                        trackSelector?.currentMappedTrackInfo
-                    if (mappedTrackInfo != null) {
-                        val infoArray = trackSelector!!.currentMappedTrackInfo!!.getTrackGroups(1)
-                        for (x in 0 until infoArray.length) {
-                            val language = infoArray.get(x).getFormat(0).language
-                            lisOfAudioLanguageTrack.add(
-                                AudioLanguageTrack(
-                                    language ?: "",
-                                    language ?: "",
-                                    currentMappedTrackInfoPosition == x
-                                )
-                            )
-                        }
-                    }
-                }
-
-            } catch (ex: Exception) {
-                ex.printStackTrace()
-            }
-
-        }
 
         override fun onPlayerError(error: ExoPlaybackException) {
             super.onPlayerError(error)
@@ -740,6 +454,11 @@ class MiniExoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibilit
                     mIsPlayerInit = true
                 }
             }
+            if (playbackState == Player.STATE_ENDED) {
+                player?.playWhenReady = false
+                player?.seekTo(0, 0)
+            }
+
 
             playerListener?.onPlayerStateChanged(playWhenReady, playbackState)
             when (playbackState) {
@@ -756,229 +475,5 @@ class MiniExoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibilit
             mIsPlaying = isPlaying
         }
 
-    }
-}
-
-
-sealed class VideoPlayerOption(
-    val order: Int,
-    val rId: Int,
-    val name: String,
-    val extraInfo: String?
-) {
-    class Quality(
-        order: Int = 1,
-        rId: Int = R.drawable.ic_baseline_settings,
-        name: String = "Quality &nbsp; &#8226; &nbsp;  ",
-        extraInfo: String? = null
-    ) : VideoPlayerOption(order, rId, name, extraInfo)
-
-    class AudioLanguage(
-        order: Int = 2,
-        rId: Int = R.drawable.ic_baseline_language,
-        name: String = "Language &nbsp; &#8226; &nbsp; ",
-        extraInfo: String? = null
-    ) : VideoPlayerOption(order, rId, name, extraInfo)
-
-    class PlaybackSpeed(
-        order: Int = 3,
-        rId: Int = R.drawable.ic_baseline_playback,
-        name: String = "Playback speed &nbsp; &#8226; &nbsp; ",
-        extraInfo: String? = null
-    ) : VideoPlayerOption(order, rId, name, extraInfo)
-
-    class Help(
-        order: Int = 4,
-        rId: Int = R.drawable.ic_help_player,
-        name: String = "Help & feedback",
-        extraInfo: String? = null
-    ) : VideoPlayerOption(order, rId, name, extraInfo)
-}
-
-
-/** Video Video Option adapter*/
-
-class VideoOptionAdapter(
-    private var items: List<VideoPlayerOption>,
-    private var onVideoOptionListener: OnVideoOptionListener
-) :
-    RecyclerView.Adapter<VideoOptionAdapter.ViewHolder>() {
-
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.base_video_item_layout, parent, false)
-        return ViewHolder(view)
-    }
-
-    override fun getItemCount(): Int = items.size
-
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.labelTextView.text = HtmlCompat.fromHtml(
-            items[position].name.plus(items[position].extraInfo),
-            HtmlCompat.FROM_HTML_MODE_LEGACY
-        )
-        holder.labelTextView.setCompoundDrawablesWithIntrinsicBounds(items[position].rId, 0, 0, 0)
-        holder.labelTextView.compoundDrawables[0]?.setTint(
-            ContextCompat.getColor(
-                holder.itemView.context,
-                R.color.gray_9E
-            )
-        )
-
-        holder.itemView.setOnClickListener {
-            onVideoOptionListener.onSelect(items[position])
-        }
-    }
-
-    inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        var labelTextView: MaterialTextView = view.findViewById(R.id.text_view)
-    }
-
-    interface OnVideoOptionListener {
-        fun onSelect(videoPlayerOption: VideoPlayerOption)
-    }
-}
-
-/**end **/
-
-
-/** Video Playback speed  adapter*/
-
-data class PlaybackSpeed(val id: Int, val speed: Float, val title: String, var isSelected: Boolean)
-
-class PlaybackSpeedAdapter(
-    private var items: List<PlaybackSpeed>,
-    private var onPlaybackSpeedListener: OnPlaybackSpeedListener
-) :
-    RecyclerView.Adapter<PlaybackSpeedAdapter.ViewHolder>() {
-    private var selectedPos: Int = items.indexOfLast { it.isSelected }
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.base_video_item_layout, parent, false)
-        return ViewHolder(view)
-    }
-
-    override fun getItemCount(): Int = items.size
-
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.labelTextView.text = items[position].title
-        holder.labelTextView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_check, 0, 0, 0)
-        if (selectedPos == position) {
-            holder.labelTextView.compoundDrawables[0]?.setTint(
-                ContextCompat.getColor(
-                    holder.itemView.context,
-                    R.color.gray_79
-                )
-            )
-        }
-        holder.itemView.setOnClickListener {
-            onPlaybackSpeedListener.onSelect(items[position])
-        }
-    }
-
-    inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        var labelTextView: MaterialTextView = view.findViewById(R.id.text_view)
-    }
-
-    interface OnPlaybackSpeedListener {
-        fun onSelect(playbackSpeed: PlaybackSpeed)
-    }
-}
-
-/**end **/
-
-
-/** Video VideoQualityTrack adapter*/
-
-data class VideoQualityTrack(
-    val id: Int,
-    val quality: Int,
-    val title: String,
-    val isSelected: Boolean
-)
-
-class VideoTrackAdapter(
-    private var items: List<VideoQualityTrack> = emptyList(),
-    private var onSelectQualityListener: OnSelectQualityListener
-) :
-    RecyclerView.Adapter<VideoTrackAdapter.ViewHolder>() {
-
-    private var selectedPos: Int = items.indexOfLast { it.isSelected }
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.base_video_item_layout, parent, false)
-        return ViewHolder(view)
-    }
-
-    override fun getItemCount(): Int = items.size
-
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.labelTextView.text = items[position].title
-        holder.itemView.setOnClickListener {
-            onSelectQualityListener.onSelect(items[position])
-        }
-        holder.labelTextView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_check, 0, 0, 0)
-        if (selectedPos == position) {
-            holder.labelTextView.compoundDrawables[0]?.setTint(
-                ContextCompat.getColor(
-                    holder.itemView.context,
-                    R.color.gray_79
-                )
-            )
-        }
-    }
-
-    inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        var labelTextView: MaterialTextView = view.findViewById(R.id.text_view)
-    }
-
-    interface OnSelectQualityListener {
-        fun onSelect(videoQualityTrack: VideoQualityTrack)
-    }
-}
-/*end **/
-
-
-/* start audio **/
-
-
-
-data class AudioLanguageTrack(val id: String, val title: String, val isSelected: Boolean)
-class AudioLanguageAdapter(
-    private var items: List<AudioLanguageTrack> = emptyList(),
-    private var onSelectQualityListener: OnSelectQualityListener
-) :
-    RecyclerView.Adapter<AudioLanguageAdapter.ViewHolder>() {
-
-    private var selectedPos: Int = items.indexOfLast { it.isSelected }
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.base_video_item_layout, parent, false)
-        return ViewHolder(view)
-    }
-
-    override fun getItemCount(): Int = items.size
-
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.labelTextView.text = items[position].title
-        holder.itemView.setOnClickListener {
-            onSelectQualityListener.onSelect(items[position])
-        }
-        holder.labelTextView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_check, 0, 0, 0)
-        if (selectedPos == position) {
-            holder.labelTextView.compoundDrawables[0]?.setTint(Color.BLUE)
-        }
-    }
-
-    inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        var labelTextView: MaterialTextView = view.findViewById(R.id.text_view)
-    }
-
-    interface OnSelectQualityListener {
-        fun onSelect(audioLanguageTrack: AudioLanguageTrack)
     }
 }

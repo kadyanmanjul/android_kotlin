@@ -21,8 +21,9 @@ import com.google.android.exoplayer2.source.hls.HlsMediaSource;
 import com.google.android.exoplayer2.source.smoothstreaming.SsMediaSource;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
+import com.google.android.exoplayer2.upstream.DefaultHttpDataSource;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
-import com.google.android.exoplayer2.upstream.FileDataSourceFactory;
+import com.google.android.exoplayer2.upstream.FileDataSource;
 import com.google.android.exoplayer2.upstream.HttpDataSource;
 import com.google.android.exoplayer2.upstream.cache.Cache;
 import com.google.android.exoplayer2.upstream.cache.CacheDataSource;
@@ -191,19 +192,20 @@ public class VideoDownloadController {
         }
     }
 
-    private HttpDataSource.Factory buildHttpDataSourceFactory() {
-        return new DefaultHttpDataSourceFactory(userAgent);
-    }
-
     protected static CacheDataSourceFactory buildReadOnlyCacheDataSource(
             DataSource.Factory upstreamFactory, Cache cache) {
         return new CacheDataSourceFactory(
                 cache,
                 upstreamFactory,
-                new FileDataSourceFactory(),
+                new FileDataSource.Factory(),
                 null,
                 CacheDataSource.FLAG_IGNORE_CACHE_ON_ERROR,
                 null);
+    }
+
+    private HttpDataSource.Factory buildHttpDataSourceFactory() {
+        return new DefaultHttpDataSourceFactory(userAgent, DefaultHttpDataSource.DEFAULT_CONNECT_TIMEOUT_MILLIS,
+                DefaultHttpDataSource.DEFAULT_READ_TIMEOUT_MILLIS, true);
     }
 
     public synchronized Cache getDownloadCache() {
