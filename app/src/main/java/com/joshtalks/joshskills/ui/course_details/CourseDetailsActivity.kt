@@ -544,14 +544,9 @@ class CourseDetailsActivity : BaseActivity() {
     }
 
     fun buyCourse() {
-        PaymentSummaryActivity.startPaymentSummaryActivity(this, testId.toString())
-        AppAnalytics.create(AnalyticsEvent.START_COURSE_NOW.NAME)
-            .addBasicParam()
-            .addUserDetails()
-            .addParam(VERSION, PrefManager.getStringValue(VERSION))
-            .push()
-        appAnalytics.addParam(AnalyticsEvent.START_COURSE_NOW.NAME, "Clicked")
         logStartCourseAnalyticEvent()
+        PaymentSummaryActivity.startPaymentSummaryActivity(this, testId.toString())
+        appAnalytics.addParam(AnalyticsEvent.START_COURSE_NOW.NAME, "Clicked")
     }
 
     private fun logStartCourseAnalyticEvent() {
