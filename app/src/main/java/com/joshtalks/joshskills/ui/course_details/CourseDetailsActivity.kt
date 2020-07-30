@@ -480,7 +480,7 @@ class CourseDetailsActivity : BaseActivity() {
         })
 
         compositeDisposable.add(RxBus2.listen(TeacherDetails::class.java).subscribe {
-            logMeetMeAnalyticEvent()
+            logMeetMeAnalyticEvent(it.name)
             TeacherDetailsFragment.newInstance(it).show(supportFragmentManager, "Teacher Details")
         })
         compositeDisposable.add(
@@ -527,13 +527,23 @@ class CourseDetailsActivity : BaseActivity() {
     fun buyCourse() {
         PaymentSummaryActivity.startPaymentSummaryActivity(this, testId.toString())
         appAnalytics.addParam(AnalyticsEvent.START_COURSE_NOW.NAME, "Clicked")
+        logStartCourseAnalyticEvent()
     }
 
-    private fun logMeetMeAnalyticEvent() {
+    private fun logStartCourseAnalyticEvent() {
+        AppAnalytics.create(AnalyticsEvent.START_COURSE_NOW.NAME)
+            .addBasicParam()
+            .addUserDetails()
+            .addParam(VERSION, PrefManager.getStringValue(VERSION))
+            .addParam(AnalyticsEvent.TEST_ID_PARAM.NAME, testId).push()
+    }
+
+    private fun logMeetMeAnalyticEvent(name: String) {
         AppAnalytics.create(AnalyticsEvent.MEET_ME_CLICKED.NAME)
             .addBasicParam()
             .addUserDetails()
             .addParam(VERSION, PrefManager.getStringValue(VERSION))
+            .addParam("Name", name)
             .addParam(AnalyticsEvent.TEST_ID_PARAM.NAME, testId).push()
     }
 
