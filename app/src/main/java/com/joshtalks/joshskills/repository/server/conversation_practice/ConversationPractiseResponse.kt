@@ -47,5 +47,9 @@ data class AnswersModel(
     @SerializedName("id") val id: Int,
     @SerializedName("text") val text: String,
     @SerializedName("sort_order") val sortOrder: Int,
-    @SerializedName("is_correct") val isCorrect: Boolean
+    @SerializedName("is_correct") val isCorrect: Boolean,
+    var isSelectedByUser: Boolean = false,
+    var isEvaluate: Boolean = false
+
+
 ) : Parcelable

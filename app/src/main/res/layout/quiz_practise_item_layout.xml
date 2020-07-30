@@ -1,16 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
         <variable
-                name="handler"
-                type="com.joshtalks.joshskills.repository.local.minimalentity.CourseContentEntity" />
+                name="quizModel"
+                type="com.joshtalks.joshskills.repository.server.conversation_practice.QuizModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
+
+        <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/title_tv"
+                fontPath="fonts/Poppins-Bold.ttf"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:gravity="start"
+                android:text="@{quizModel.text}"
+                android:textColor="#596273"
+                android:textSize="@dimen/font_18"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="Personal Development Course" />
+
+        <com.mindorks.placeholderview.PlaceHolderView
+                android:id="@+id/rv_choice"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginTop="@dimen/_8sdp"
+                android:background="@android:color/white"
+                app:layout_constraintTop_toBottomOf="@+id/title_tv" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

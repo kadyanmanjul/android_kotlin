@@ -91,5 +91,10 @@
     <color name="sent_bg_7a">#7AF3E0</color>
     <color name="received_bg_BC">#BCDCFD</color>
     <color name="recording_9D">#9D1515</color>
+    <color name="artboard_color">#F1F2F4</color>
+    <color name="light_red">#FFF2F2</color>
+    <color name="green_right_answer">#129E88</color>
+    <color name="lighter_green">#ECF8F6</color>
+
 
 </resources>
