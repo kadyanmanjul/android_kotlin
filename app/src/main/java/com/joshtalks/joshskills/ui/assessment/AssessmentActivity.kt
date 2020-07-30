@@ -284,6 +284,7 @@ class AssessmentActivity : CoreJoshActivity() {
     }
 
     private fun bindView(assessmentWithRelations: AssessmentWithRelations) {
+        binding.tvTitle.text = assessmentWithRelations.assessment.title
         setupViewPager(assessmentWithRelations)
     }
 
@@ -311,7 +312,6 @@ class AssessmentActivity : CoreJoshActivity() {
         for (i in 0 until tabStrip.childCount) {
             tabStrip.getChildAt(i).setOnTouchListener { v, event -> true }
         }
-        binding.questionViewPager.offscreenPageLimit = 1
 
         // Enable/Disable Scrolling
         binding.questionViewPager.isUserInputEnabled =
