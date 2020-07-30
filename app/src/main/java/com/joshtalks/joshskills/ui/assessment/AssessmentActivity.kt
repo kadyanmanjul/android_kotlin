@@ -271,7 +271,15 @@ class AssessmentActivity : CoreJoshActivity() {
         isTestFragmentVisible = false
         val fragment = supportFragmentManager.findFragmentByTag("Test Summary")
         if (fragment != null) supportFragmentManager.beginTransaction().remove(fragment).commit()
-        binding.questionViewPager.setCurrentItem(questionId - 1, false)
+        var position = 0
+        viewModel.assessmentLiveData.value?.questionList?.sortedBy { it.question.sortOrder }
+            ?.forEachIndexed { index, assessmentQuestionWithRelations ->
+                if (assessmentQuestionWithRelations.question.remoteId == questionId) {
+                    position = index
+                    return@forEachIndexed
+                }
+            }
+        binding.questionViewPager.setCurrentItem(position, false)
     }
 
     fun submitTest() {
@@ -289,8 +297,7 @@ class AssessmentActivity : CoreJoshActivity() {
 
     private fun setupViewPager(assessmentWithRelations: AssessmentWithRelations) {
         val adapter = AssessmentQuestionAdapter(
-            assessmentWithRelations.assessment.type,
-            assessmentWithRelations.assessment.status,
+            assessmentWithRelations.assessment,
             AssessmentQuestionViewType.CORRECT_ANSWER_VIEW,
             assessmentWithRelations.questionList
         )
@@ -364,10 +371,10 @@ class AssessmentActivity : CoreJoshActivity() {
             super.onBackPressed()
     }
 
-    private fun subsrcibeRxBus() {
+    private fun subscribeRxBus() {
 
         compositeDisposable.add(
-            RxBus2.listen(TestItemClickedEventBus::class.java)
+            RxBus2.listenWithoutDelay(TestItemClickedEventBus::class.java)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
@@ -389,7 +396,7 @@ class AssessmentActivity : CoreJoshActivity() {
 
     override fun onResume() {
         super.onResume()
-        subsrcibeRxBus()
+        subscribeRxBus()
     }
 
     override fun onPause() {

@@ -127,6 +127,8 @@ class TestItemViewHolder(
 
     @Click(R.id.test_button)
     fun onClick() {
-        RxBus2.publish(TestItemClickedEventBus(questionWithRelations.question.sortOrder))
+        RxBus2.publish(
+            TestItemClickedEventBus(questionWithRelations.question.remoteId)
+        )
     }
 }

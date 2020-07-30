@@ -115,11 +115,15 @@ class AssessmentViewModel(application: Application) : AndroidViewModel(applicati
     }
 
     suspend fun updateAssessmentStatus(assessmentId: Int) {
-        if (assessmentId == -1)
+        if (assessmentId == -1) {
             return
+        }
         AppObjectController.appDatabase.assessmentDao()
             .updateAssessmentStatus(assessmentId, AssessmentStatus.COMPLETED)
         assessmentStatus.postValue(AssessmentStatus.COMPLETED)
+        assessmentLiveData.postValue(assessmentLiveData.value?.apply {
+            this.assessment.status = AssessmentStatus.COMPLETED
+        })
 
     }
 

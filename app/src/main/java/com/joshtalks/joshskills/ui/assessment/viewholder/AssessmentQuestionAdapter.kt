@@ -4,14 +4,12 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.joshtalks.joshskills.databinding.AssessmentListItemBinding
+import com.joshtalks.joshskills.repository.local.model.assessment.Assessment
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionWithRelations
-import com.joshtalks.joshskills.repository.server.assessment.AssessmentStatus
-import com.joshtalks.joshskills.repository.server.assessment.AssessmentType
 import com.joshtalks.joshskills.ui.assessment.AssessmentQuestionViewType
 
 class AssessmentQuestionAdapter(
-    private var type: AssessmentType,
-    private var status: AssessmentStatus,
+    private var assessment: Assessment,
     private var viewType: AssessmentQuestionViewType,
     private var questionList: List<AssessmentQuestionWithRelations>
 ) : RecyclerView.Adapter<AssessmentQuestionAdapter.ViewHolder>() {
@@ -53,7 +51,12 @@ class AssessmentQuestionAdapter(
         RecyclerView.ViewHolder(binding.root) {
         fun bind(assessmentQuestion: AssessmentQuestionWithRelations) {
             binding.questionView.bind(assessmentQuestion)
-            binding.choiceView.bind(type, status, viewType, assessmentQuestion)
+            binding.choiceView.bind(
+                assessment.type,
+                assessment.status,
+                viewType,
+                assessmentQuestion
+            )
         }
     }
 
