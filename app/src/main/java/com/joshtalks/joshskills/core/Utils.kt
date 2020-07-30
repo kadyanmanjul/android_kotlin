@@ -761,11 +761,11 @@ fun showToast(message: String, length: Int = Toast.LENGTH_SHORT) {
 }
 
 fun getUserNameInShort(name: String = User.getInstance().firstName.trim().toUpperCase()): String {
-    if (name.contains(" ")) {
-        val nameSplit = name.split(" ")
-        nameSplit[0][0].plus(nameSplit[1][0].toString())
-    }
     return try {
+        if (name.contains(" ")) {
+            val nameSplit = name.split(" ")
+            nameSplit[0][0].plus(nameSplit[1][0].toString())
+        }
         name.substring(0, 2)
     } catch (e: IndexOutOfBoundsException) {
         name.substring(0, name.length)

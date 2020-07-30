@@ -155,7 +155,7 @@ class CourseExploreActivity : CoreJoshActivity() {
             LayoutMarginDecoration(
                 Utils.dpToPx(
                     this,
-                    4f
+                    6f
                 )
             )
         )

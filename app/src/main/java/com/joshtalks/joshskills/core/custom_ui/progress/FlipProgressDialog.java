@@ -16,6 +16,8 @@ import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.ImageView;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import com.joshtalks.joshskills.R;
 import java.util.ArrayList;
 import java.util.List;
@@ -236,6 +238,17 @@ public class FlipProgressDialog extends DialogFragment {
             windowParams.flags |= WindowManager.LayoutParams.FLAG_DIM_BEHIND;
             window.setAttributes(windowParams);
         } catch (Exception e) {
+        }
+    }
+
+    @Override
+    public void show(FragmentManager manager, String tag) {
+        try {
+            FragmentTransaction ft = manager.beginTransaction();
+            ft.add(this, tag);
+            ft.commit();
+        } catch (IllegalStateException e) {
+            e.printStackTrace();
         }
     }
 }
