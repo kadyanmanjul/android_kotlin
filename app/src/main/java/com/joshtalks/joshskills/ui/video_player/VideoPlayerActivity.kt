@@ -1,8 +1,10 @@
 package com.joshtalks.joshskills.ui.video_player
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.content.pm.ActivityInfo
 import android.net.Uri
 import android.os.Bundle
@@ -16,6 +18,8 @@ import com.joshtalks.joshskills.core.CountUpTimer
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
+import com.joshtalks.joshskills.core.analytics.UsbEventReceiver
+import com.joshtalks.joshskills.core.interfaces.UsbEventListener
 import com.joshtalks.joshskills.core.service.WorkMangerAdmin
 import com.joshtalks.joshskills.core.service.video_download.VideoDownloadController
 import com.joshtalks.joshskills.core.videoplayer.VideoPlayerEventListener
@@ -31,7 +35,7 @@ import com.joshtalks.joshskills.ui.pdfviewer.COURSE_NAME
 const val VIDEO_OBJECT = "video_"
 const val VIDEO_WATCH_TIME = "video_watch_time"
 
-class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener {
+class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventListener {
 
     companion object {
         fun startConversionActivity(
@@ -80,6 +84,8 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener {
 
     }
 
+    private lateinit var usbEventReceiver: UsbEventReceiver
+    private var usbConnected: Boolean = false
     private var countUpTimer = CountUpTimer(true)
 
     init {
@@ -199,6 +205,7 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener {
             }
         } catch (ex: Exception) {
         }
+        unregisterReceiver(usbEventReceiver)
     }
 
 
@@ -210,8 +217,13 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener {
 
     override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
         if (playWhenReady) {
-            appAnalytics.addParam(AnalyticsEvent.VIDEO_PLAY.NAME, true)
-            countUpTimer.resume()
+            if (usbConnected) {
+                binding.videoPlayer.pausePlayer()
+                showUsbConnectedMsg()
+            } else {
+                appAnalytics.addParam(AnalyticsEvent.VIDEO_PLAY.NAME, true)
+                countUpTimer.resume()
+            }
         } else {
             countUpTimer.pause()
             appAnalytics.addParam(AnalyticsEvent.VIDEO_PAUSE.NAME, true)
@@ -220,6 +232,15 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener {
         if (playbackState == Player.STATE_ENDED) {
             onBackPressed()
         }
+    }
+
+    private fun showUsbConnectedMsg() {
+        AlertDialog.Builder(this)
+            .setTitle(getString(R.string.usb_disconnect_title))
+            .setMessage(getString(R.string.usb_connected_message))
+            .setPositiveButton(
+                getString(R.string.ok_got_it_lbl)
+            ) { dialog, _ -> dialog.dismiss() }.show()
     }
 
     override fun onPlayerReady() {
@@ -268,4 +289,27 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener {
         setResult(Activity.RESULT_OK, resultIntent)
     }
 
+
+    private fun setBroadcastReceivers() {
+        usbEventReceiver = UsbEventReceiver()
+        usbEventReceiver.listener = this
+        val filter = IntentFilter()
+        filter.addAction("android.hardware.usb.action.USB_STATE")
+        registerReceiver(usbEventReceiver, filter)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        setBroadcastReceivers()
+    }
+
+    override fun onUsbConnect() {
+        showUsbConnectedMsg()
+        binding.videoPlayer.pausePlayer()
+        usbConnected = true
+    }
+
+    override fun onUsbDisconnect() {
+        usbConnected = false
+    }
 }

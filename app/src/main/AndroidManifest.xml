@@ -315,6 +315,7 @@
         <service android:name=".core.custom_ui.audioplayer.service.JcPlayerService" />
 -->
 
+
         <receiver
                 android:name=".core.chrome.BrowserActionsReceiver"
                 android:exported="true"
