@@ -70,7 +70,8 @@ class AssessmentButtonView : FrameLayout {
                 RxBus2.publish(
                     AssessmentButtonClickEvent(
                         AssessmentType.TEST,
-                        assessmentQuestion?.question?.isAttempted!!,
+                        assessmentQuestion!!.question.remoteId,
+                        assessmentQuestion!!.question.isAttempted,
                         true,
                         AssessmentButtonClick.SUBMIT
                     )
@@ -81,7 +82,8 @@ class AssessmentButtonView : FrameLayout {
                     RxBus2.publish(
                         AssessmentButtonClickEvent(
                             AssessmentType.QUIZ,
-                            assessmentQuestion?.question?.isAttempted!!,
+                            assessmentQuestion!!.question.remoteId,
+                            assessmentQuestion!!.question.isAttempted,
                             true,
                             AssessmentButtonClick.SUBMIT
                         )
@@ -95,7 +97,8 @@ class AssessmentButtonView : FrameLayout {
                 RxBus2.publish(
                     AssessmentButtonClickEvent(
                         AssessmentType.QUIZ,
-                        assessmentQuestion?.question?.isAttempted!!,
+                        assessmentQuestion!!.question.remoteId,
+                        assessmentQuestion!!.question.isAttempted,
                         true,
                         AssessmentButtonClick.REVISE
                     )
@@ -107,7 +110,8 @@ class AssessmentButtonView : FrameLayout {
             RxBus2.publish(
                 AssessmentButtonClickEvent(
                     assessmentType!!,
-                    assessmentQuestion?.question?.isAttempted!!,
+                    assessmentQuestion!!.question.remoteId,
+                    assessmentQuestion!!.question.isAttempted,
                     true,
                     AssessmentButtonClick.NEXT
                 )

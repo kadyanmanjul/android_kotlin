@@ -161,27 +161,29 @@ class AssessmentActivity : CoreJoshActivity() {
 
     private fun handleButtonClicks(
         assessmentButtonClick: AssessmentButtonClick,
-        assessmentType: AssessmentType
+        assessmentType: AssessmentType,
+        questionId: Int
     ) {
-        val assessmentWithRelations = viewModel.assessmentLiveData.value
-        when (assessmentButtonClick) {
-            AssessmentButtonClick.SUBMIT -> {
-                onSubmit(assessmentWithRelations?.questionList?.get(binding.questionViewPager.currentItem)!!)
-            }
+        viewModel.assessmentLiveData.value?.let { assessmentWithRelations ->
+            when (assessmentButtonClick) {
+                AssessmentButtonClick.SUBMIT -> {
+                    onSubmit(assessmentWithRelations.questionList.filter { it.question.remoteId == questionId }[0])
+                }
 
-            AssessmentButtonClick.NEXT -> {
-                onNext(
-                    assessmentWithRelations!!.questionList.size - 1 == binding.questionViewPager.currentItem,
-                    assessmentType,
-                    assessmentWithRelations.questionList.get(binding.questionViewPager.currentItem),
-                    assessmentWithRelations.assessment
-                )
-            }
-            AssessmentButtonClick.REVISE -> {
-                onReviseConcept(assessmentWithRelations?.questionList?.get(binding.questionViewPager.currentItem)!!.reviseConcept)
-            }
-            AssessmentButtonClick.NONE -> {
+                AssessmentButtonClick.NEXT -> {
+                    onNext(
+                        assessmentWithRelations.questionList.size - 1 == binding.questionViewPager.currentItem,
+                        assessmentType,
+                        assessmentWithRelations.questionList.filter { it.question.remoteId == questionId }[0],
+                        assessmentWithRelations.assessment
+                    )
+                }
+                AssessmentButtonClick.REVISE -> {
+                    onReviseConcept(assessmentWithRelations.questionList.filter { it.question.remoteId == questionId }[0].reviseConcept)
+                }
+                AssessmentButtonClick.NONE -> {
 
+                }
             }
         }
     }
@@ -232,9 +234,6 @@ class AssessmentActivity : CoreJoshActivity() {
         assessmentQuestionWithRelations: AssessmentQuestionWithRelations,
         assessment: Assessment
     ) {
-        if (assessmentType == AssessmentType.QUIZ) {
-            viewModel.saveAssessmentQuestion(assessmentQuestionWithRelations)
-        }
         if (isLastQuestion) {
             if (assessmentType == AssessmentType.QUIZ) {
                 when (assessment.status) {
@@ -321,7 +320,7 @@ class AssessmentActivity : CoreJoshActivity() {
 
             setButtonView(
                 assessmentWithRelations.assessment.type,
-                assessmentWithRelations.questionList[position],
+                assessmentWithRelations.questionList.sortedBy { it.question.sortOrder }[position],
                 assessmentWithRelations.questionList.size - 1 == position
             )
         }
@@ -382,7 +381,8 @@ class AssessmentActivity : CoreJoshActivity() {
                 .subscribe {
                     handleButtonClicks(
                         it.assessmentButtonClick,
-                        it.assessmentType
+                        it.assessmentType,
+                        it.questionId
                     )
                 })
     }
