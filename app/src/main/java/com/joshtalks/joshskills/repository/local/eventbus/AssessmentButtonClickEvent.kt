@@ -11,5 +11,5 @@ data class AssessmentButtonClickEvent(
 )
 
 enum class AssessmentButtonClick {
-    SUBMIT, NEXT, REVISE, NONE
+    SUBMIT, NEXT, REVISE, NONE, BACK_TO_SUMMARY
 }

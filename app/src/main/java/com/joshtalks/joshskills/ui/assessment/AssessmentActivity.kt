@@ -8,6 +8,7 @@ import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.Window
 import android.view.WindowManager
 import android.widget.LinearLayout
@@ -183,6 +184,10 @@ class AssessmentActivity : CoreJoshActivity() {
                 }
                 AssessmentButtonClick.NONE -> {
 
+                }
+                AssessmentButtonClick.BACK_TO_SUMMARY -> {
+                    binding.buttonView.visibility = GONE
+                    onBackPressed()
                 }
             }
         }
@@ -379,6 +384,7 @@ class AssessmentActivity : CoreJoshActivity() {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
                     moveToQuestion(it.questionId)
+                    binding.buttonView.visibility = VISIBLE
                 })
 
         compositeDisposable.add(

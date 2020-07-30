@@ -15,6 +15,7 @@ import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.AssessmentButtonClick
 import com.joshtalks.joshskills.repository.local.eventbus.AssessmentButtonClickEvent
 import com.joshtalks.joshskills.repository.local.eventbus.AssessmentButtonStateEvent
+import com.joshtalks.joshskills.repository.local.eventbus.TestItemClickedEventBus
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionWithRelations
 import com.joshtalks.joshskills.repository.server.assessment.AssessmentType
 import com.joshtalks.joshskills.repository.server.assessment.ChoiceType
@@ -34,6 +35,8 @@ class AssessmentButtonView : FrameLayout {
     private lateinit var nextBtn: MaterialTextView
     private lateinit var submitContainer: ConstraintLayout
     private lateinit var reviseConceptContainer: ConstraintLayout
+    private lateinit var backBtn: MaterialTextView
+    private lateinit var backBtnContainer: ConstraintLayout
     private var compositeDisposable = CompositeDisposable()
 
 
@@ -60,6 +63,8 @@ class AssessmentButtonView : FrameLayout {
         nextBtn = findViewById(R.id.next_btn)
         submitContainer = findViewById(R.id.submit_btn_container)
         reviseConceptContainer = findViewById(R.id.revise_btn_container)
+        backBtn = findViewById(R.id.back_button)
+        backBtnContainer = findViewById(R.id.back_button_container)
         addListeners()
     }
 
@@ -128,6 +133,28 @@ class AssessmentButtonView : FrameLayout {
                     )
                 })
 
+        compositeDisposable.add(
+            RxBus2.listenWithoutDelay(TestItemClickedEventBus::class.java)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe {
+                    backBtnContainer.visibility = View.VISIBLE
+                    submitContainer.visibility = View.GONE
+                    reviseConceptContainer.visibility = View.GONE
+                })
+
+        backBtn.setOnClickListener {
+            RxBus2.publish(
+                AssessmentButtonClickEvent(
+                    assessmentType!!,
+                    assessmentQuestion!!.question.remoteId,
+                    assessmentQuestion!!.question.isAttempted,
+                    true,
+                    AssessmentButtonClick.BACK_TO_SUMMARY
+                )
+            )
+        }
+
     }
 
     private fun showNextButtonContainer() {
@@ -178,8 +205,11 @@ class AssessmentButtonView : FrameLayout {
 
     private fun setUpUI(isLastQuestion: Boolean) {
         nextBtn.text =
-            if (isLastQuestion) context.getString(R.string.finish)
-            else context.getString(R.string.next)
+            if (isLastQuestion) {
+                context.getString(R.string.finish)
+            } else {
+                context.getString(R.string.next)
+            }
 
         if (assessmentType == AssessmentType.TEST) {
             showNextButtonContainer()

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:wheel="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools">
+        xmlns:tools="http://schemas.android.com/tools"
+        xmlns:wheel="http://schemas.android.com/apk/res-auto">
 
     <data>
 
@@ -42,9 +42,9 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="start"
                         android:gravity="center_vertical|end"
+                        android:onClick="@{()->handler.dismiss()}"
                         android:paddingHorizontal="@dimen/_4sdp"
                         android:paddingVertical="@dimen/_4sdp"
-                        android:onClick="@{()->handler.dismiss()}"
                         android:visibility="visible"
                         app:srcCompat="@drawable/ic_arrow_back"
                         app:tint="@color/black" />
@@ -82,12 +82,12 @@
         <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/materialButton"
                 fontPath="fonts/Poppins-Bold.ttf"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginHorizontal="@dimen/_8sdp"
                 android:layout_marginBottom="@dimen/_10sdp"
-                android:background="@drawable/round_rectangle_for_course_expo"
+                android:background="@drawable/rectangle_with_blue_bound_stroke"
                 android:backgroundTint="@color/button_color"
                 android:clickable="true"
                 android:focusable="true"
@@ -95,9 +95,9 @@
                 android:onClick="@{()->handler.dismiss()}"
                 android:padding="@dimen/_10sdp"
                 android:text="@string/done"
+                android:textAllCaps="false"
                 android:textColor="@color/white"
-                android:textSize="@dimen/font_14"
-                app:cornerRadius="@dimen/_28sdp"
+                android:textSize="@dimen/font_16"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
