@@ -228,7 +228,9 @@ class FillInTheBlankChoiceView : FrameLayout, OnChoiceClickListener {
         } else if (assessmentType == AssessmentType.TEST && assessmentStatus == AssessmentStatus.COMPLETED) {
             addViaUserSelectedOrder(assessmentQuestion)
         } else {
-            addViaSortOrder(assessmentQuestion)
+            if (filled==0)
+                addViaSortOrder(assessmentQuestion)
+            else addViaUserSelectedOrder(assessmentQuestion)
         }
         if (assessmentQuestion.question.isAttempted || assessmentStatus == AssessmentStatus.COMPLETED) {
             filled = chipChoiceList.size
@@ -312,12 +314,22 @@ class FillInTheBlankChoiceView : FrameLayout, OnChoiceClickListener {
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
+        filled = assessmentQuestion?.choiceList?.filter { it.isSelectedByUser == true }?.size ?: 0
         Timber.tag("onAttachedToWindow").e("FillInTheBlankChoiceView")
     }
 
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
+        saveOrder()
         compositeDisposable.clear()
         Timber.tag("onDetachedFromWindow").e("FillInTheBlankChoiceView")
+    }
+
+    private fun saveOrder() {
+        chipChoiceList.forEach { choice ->
+            val qChoice =
+                assessmentQuestion?.choiceList?.filter { it.remoteId == choice.remoteId }?.get(0)
+            qChoice?.userSelectedOrder = choice.userSelectedOrder
+        }
     }
 }
