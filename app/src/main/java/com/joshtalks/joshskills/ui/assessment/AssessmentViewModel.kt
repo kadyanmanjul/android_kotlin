@@ -101,11 +101,8 @@ class AssessmentViewModel(application: Application) : AndroidViewModel(applicati
             updateAssessmentStatus(assessmentId)
             jobs += viewModelScope.launch(Dispatchers.IO) {
                 try {
-                    val assessmentWithRelations = getAssessmentFromDB(assessmentId)
-                    assessmentWithRelations?.let {
-                        val assessmentResponse = getAssessmentResponse(assessmentWithRelations)
-                        AppObjectController.chatNetworkService.submitTestAsync(assessmentResponse)
-                    }
+                    val assessmentResponse = getAssessmentResponse(assessmentWithRelations)
+                    AppObjectController.chatNetworkService.submitTestAsync(assessmentResponse)
 
                 } catch (ex: Throwable) {
                     ex.showAppropriateMsg()
