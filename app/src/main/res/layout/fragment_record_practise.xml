@@ -60,7 +60,7 @@
                     app:layout_constraintTop_toBottomOf="@+id/barrier_tv"
                     tools:visibility="visible" />
 
-            <de.hdodenhof.circleimageview.CircleImageView
+            <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/iv_tick_first_user"
                     android:layout_width="@dimen/_18sdp"
                     android:layout_height="@dimen/_18sdp"
@@ -68,6 +68,7 @@
                     android:backgroundTint="@color/button_primary_color"
                     android:gravity="center_vertical|start"
                     android:padding="@dimen/_4sdp"
+                    app:tint="@color/white"
                     android:src="@drawable/ic_check"
                     android:visibility="gone"
                     app:layout_constraintBottom_toBottomOf="@+id/iv_first_user"
@@ -106,7 +107,7 @@
                     app:layout_constraintTop_toTopOf="@+id/iv_first_user"
                     tools:visibility="visible" />
 
-            <de.hdodenhof.circleimageview.CircleImageView
+            <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/iv_tick_second_user"
                     android:layout_width="@dimen/_18sdp"
                     android:layout_height="@dimen/_18sdp"

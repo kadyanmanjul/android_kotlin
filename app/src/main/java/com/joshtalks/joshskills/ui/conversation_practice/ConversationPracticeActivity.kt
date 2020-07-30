@@ -7,12 +7,14 @@ import android.view.View
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.CoreJoshActivity
+import com.joshtalks.joshskills.core.ViewTypeForPractiseUser
 import com.joshtalks.joshskills.databinding.ActivityConversationPracticeBinding
 import com.joshtalks.joshskills.messaging.RxBus2
-import com.joshtalks.joshskills.repository.local.eventbus.OpenClickProgressEventBus
+import com.joshtalks.joshskills.repository.local.eventbus.ViewPagerDisableEventBus
 import com.joshtalks.joshskills.repository.server.conversation_practice.ConversationPractiseModel
 import com.joshtalks.joshskills.ui.conversation_practice.adapter.PractiseViewPagerAdapter
 import com.joshtalks.joshskills.ui.conversation_practice.extra.ConversationPracticeIntro
@@ -58,31 +60,51 @@ class ConversationPracticeActivity : CoreJoshActivity() {
         }
     }
 
+    private fun initView() {
+        TabLayoutMediator(binding.tabLayout, binding.viewPager,
+            TabLayoutMediator.TabConfigurationStrategy { tab, position ->
+                tab.text = mFragmentNames[position]
+            }
+        ).attach()
+
+        binding.tabLayout.addOnTabSelectedListener(object :
+            TabLayout.OnTabSelectedListener {
+            override fun onTabReselected(tab: TabLayout.Tab?) {
+
+            }
+
+            override fun onTabUnselected(tab: TabLayout.Tab?) {
+            }
+
+            override fun onTabSelected(tab: TabLayout.Tab) {
+                /* if (binding.viewPager.isUserInputEnabled) {
+                     binding.viewPager.currentItem = tab.position
+                 }*/
+            }
+
+        })
+    }
+
     private fun addObserver() {
         viewModel.apiCallStatusLiveData.observe(this, Observer {
             binding.progressBar.visibility = View.GONE
         })
         viewModel.conversationPracticeLiveData.observe(this, Observer { it ->
             it?.let { obj ->
-                openIntroScreen(obj)
-
-                obj.listen.filter { it.name == obj.characterNameA }.listIterator().forEach {
-                    it.viewType = 0
-                }
+                //openIntroScreen(obj)
+                obj.listen.sortedBy { it.sortOrder }.filter { it.name == obj.characterNameB }
+                    .listIterator().forEach {
+                        it.viewType = ViewTypeForPractiseUser.SECOND.type
+                    }
 
                 binding.viewPager.adapter =
                     PractiseViewPagerAdapter(this@ConversationPracticeActivity, obj)
-                TabLayoutMediator(binding.tabLayout, binding.viewPager,
-                    TabLayoutMediator.TabConfigurationStrategy { tab, position ->
-                        tab.text = mFragmentNames[position]
-                    }
-                ).attach()
+                initView()
             }
         })
     }
 
     private fun openIntroScreen(conversationPractiseModel: ConversationPractiseModel) {
-
         ConversationPracticeIntro.newInstance(conversationPractiseModel)
             .show(supportFragmentManager, "Conversation Practice Intro")
     }
@@ -90,10 +112,11 @@ class ConversationPracticeActivity : CoreJoshActivity() {
 
     private fun subscribeBus() {
         compositeDisposable.add(
-            RxBus2.listen(OpenClickProgressEventBus::class.java)
+            RxBus2.listen(ViewPagerDisableEventBus::class.java)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
+                    binding.viewPager.isUserInputEnabled = it.flag
 
                 }, {
                     it.printStackTrace()

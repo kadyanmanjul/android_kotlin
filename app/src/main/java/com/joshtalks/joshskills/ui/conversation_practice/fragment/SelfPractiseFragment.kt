@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -11,15 +12,20 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.ALPHA_MAX
 import com.joshtalks.joshskills.core.ALPHA_MIN
 import com.joshtalks.joshskills.core.PractiseUser
+import com.joshtalks.joshskills.core.ViewTypeForPractiseUser
 import com.joshtalks.joshskills.core.custom_ui.SmoothLinearLayoutManager
 import com.joshtalks.joshskills.core.custom_ui.exo_audio_player.AudioModel
 import com.joshtalks.joshskills.core.custom_ui.exo_audio_player.AudioPlayerEventListener
 import com.joshtalks.joshskills.core.setImage
+import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.SelfPractiseLayoutBinding
+import com.joshtalks.joshskills.messaging.RxBus2
+import com.joshtalks.joshskills.repository.local.eventbus.ViewPagerDisableEventBus
 import com.joshtalks.joshskills.repository.server.conversation_practice.ConversationPractiseModel
 import com.joshtalks.joshskills.ui.conversation_practice.ConversationPracticeViewModel
 import com.joshtalks.joshskills.ui.conversation_practice.adapter.AudioPractiseAdapter
 import kotlinx.android.synthetic.main.fragment_listen_practise.audio_player
+import kotlinx.android.synthetic.main.fragment_listen_practise.recycler_view
 import java.util.*
 
 class SelfPractiseFragment private constructor() : Fragment(), AudioPlayerEventListener {
@@ -65,7 +71,7 @@ class SelfPractiseFragment private constructor() : Fragment(), AudioPlayerEventL
         binding.recyclerView.layoutManager = SmoothLinearLayoutManager(context)
         binding.recyclerView.setHasFixedSize(false)
         audioPractiseAdapter =
-            AudioPractiseAdapter(conversationPractiseModel.listen.toMutableList())
+            AudioPractiseAdapter(ArrayList(conversationPractiseModel.listen.toMutableList()))
         binding.recyclerView.adapter = audioPractiseAdapter
     }
 
@@ -74,53 +80,107 @@ class SelfPractiseFragment private constructor() : Fragment(), AudioPlayerEventL
         binding.ivSecondUser.setImage(conversationPractiseModel.characterUrlB)
         binding.tvFirstUser.text = conversationPractiseModel.characterNameA
         binding.tvSecondUser.text = conversationPractiseModel.characterNameB
-
+        audio_player.setAudioPlayerEventListener(this)
     }
 
-    private fun initAudioPlayer() {
+    private fun initAudioPlayer(practiseWho: PractiseUser?) {
         val list: LinkedList<AudioModel> = LinkedList()
-        conversationPractiseModel.listen.forEach {
-            list.add(AudioModel(it.audio.audio_url, it.id.toString(), it.audio.duration))
+
+        practiseWho?.run {
+            when (this) {
+                PractiseUser.FIRST -> {
+                    conversationPractiseModel.listen.filter { it.name == conversationPractiseModel.characterNameA }
+                        .forEach {
+                            list.add(
+                                AudioModel(
+                                    it.audio.audio_url,
+                                    it.id.toString(),
+                                    it.audio.duration
+                                )
+                            )
+                        }
+                }
+                PractiseUser.SECOND -> {
+                    conversationPractiseModel.listen.filter { it.name == conversationPractiseModel.characterNameB }
+                        .forEach {
+                            list.add(
+                                AudioModel(
+                                    it.audio.audio_url,
+                                    it.id.toString(),
+                                    it.audio.duration
+                                )
+                            )
+                        }
+                }
+            }
         }
         audio_player.addAudios(list)
-        audio_player.setAudioPlayerEventListener(this)
     }
 
 
     fun practiseWithFirstUser() {
-        if (viewModel.practiseWho != null) {
-            viewModel.isPractise = false
-        }
-
         if (viewModel.isPractise) {
             viewModel.practiseWho = null
             viewModel.isPractise = false
-            binding.ivSecondUser.alpha = ALPHA_MIN
+            binding.ivTickFirstUser.visibility = View.GONE
+            enableView(binding.ivSecondUser)
+            initAudioPlayer(null)
+            disableViewTypeInAdapter(null)
         } else {
-            viewModel.practiseWho = PractiseUser.SECOND
+            viewModel.practiseWho = PractiseUser.FIRST
             viewModel.isPractise = true
             binding.ivTickFirstUser.visibility = View.VISIBLE
-            binding.ivSecondUser.alpha = ALPHA_MAX
+            disableView(binding.ivSecondUser)
+            initAudioPlayer(PractiseUser.FIRST)
+            disableViewTypeInAdapter(ViewTypeForPractiseUser.FIRST.type)
         }
     }
 
     fun practiseWithSecondUser() {
-        if (viewModel.practiseWho != null) {
-            viewModel.isPractise = false
-        }
-
         if (viewModel.isPractise) {
             viewModel.practiseWho = null
             viewModel.isPractise = false
-            binding.ivFirstUser.alpha = ALPHA_MIN
+            binding.ivTickSecondUser.visibility = View.GONE
+            enableView(binding.ivFirstUser)
+            initAudioPlayer(null)
+            disableViewTypeInAdapter(null)
         } else {
             viewModel.practiseWho = PractiseUser.SECOND
             viewModel.isPractise = true
             binding.ivTickSecondUser.visibility = View.VISIBLE
-            binding.ivFirstUser.alpha = ALPHA_MAX
+            disableView(binding.ivFirstUser)
+            initAudioPlayer(PractiseUser.SECOND)
+            disableViewTypeInAdapter(ViewTypeForPractiseUser.SECOND.type)
         }
-        audioPractiseAdapter?.filter?.filter("")
     }
+
+    private fun disableViewTypeInAdapter(viewType: Int?) {
+        audioPractiseAdapter?.filter?.filter(viewType?.toString() ?: "")
+
+    }
+
+    override fun onPlayerPause() {
+        RxBus2.publish(ViewPagerDisableEventBus(false))
+
+    }
+
+    override fun onPlayerResume() {
+        RxBus2.publish(ViewPagerDisableEventBus(true))
+    }
+
+
+    private fun enableView(view: View) {
+        view.isClickable = true
+        view.isEnabled = true
+        view.alpha = ALPHA_MAX
+    }
+
+    private fun disableView(view: View) {
+        view.isClickable = false
+        view.isEnabled = false
+        view.alpha = ALPHA_MIN
+    }
+
 
     companion object {
         private const val ARG_PRACTISE_OBJ = "practise-obj"
@@ -134,20 +194,18 @@ class SelfPractiseFragment private constructor() : Fragment(), AudioPlayerEventL
             }
     }
 
-    override fun onPlayerPause() {
-
-    }
-
-    override fun onPlayerResume() {
-
-    }
-
     override fun onCurrentTimeUpdated(lastPosition: Long) {
 
     }
 
     override fun onTrackChange(tag: String?) {
-
+        if (tag.isNullOrEmpty().not()) {
+            audioPractiseAdapter?.items?.indexOfFirst { it.id == tag?.toInt() }?.run {
+                if (this > -1) {
+                    recycler_view.smoothScrollToPosition(this)
+                }
+            }
+        }
     }
 
     override fun onPositionDiscontinuity(lastPos: Long, reason: Int) {
@@ -156,6 +214,10 @@ class SelfPractiseFragment private constructor() : Fragment(), AudioPlayerEventL
 
     override fun onPlayerReleased() {
 
+    }
+
+    override fun onPlayerEmptyTrack() {
+        showToast(getString(R.string.select_partner), Toast.LENGTH_LONG)
     }
 
 }

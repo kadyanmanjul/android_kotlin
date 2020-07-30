@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.ContextWrapper
 import android.net.Uri
 import android.util.AttributeSet
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.FrameLayout
@@ -30,6 +29,7 @@ import com.google.android.exoplayer2.upstream.DataSource
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.google.android.exoplayer2.util.Util
 import com.joshtalks.joshskills.R
+import timber.log.Timber
 import java.util.*
 
 class ExoAudioPlayerView : FrameLayout, LifecycleObserver {
@@ -67,7 +67,7 @@ class ExoAudioPlayerView : FrameLayout, LifecycleObserver {
         }
 
         override fun onLoadingChanged(isLoading: Boolean) {
-            Log.e("audioo", "onLoadingChanged")
+            Timber.tag(tag).e("onLoadingChanged")
         }
 
         override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
@@ -75,14 +75,17 @@ class ExoAudioPlayerView : FrameLayout, LifecycleObserver {
             if (playbackState == Player.STATE_ENDED) {
                 player?.playWhenReady = false
                 player?.seekTo(0, 0)
-
             }
-            Log.e("audioo", "onPlayerStateChanged" + playWhenReady + " " + playbackState)
+            if (audioModels.isNullOrEmpty() && playWhenReady && playbackState == Player.STATE_ENDED) {
+                playerListener?.onPlayerEmptyTrack()
+            }
+
+            Timber.tag(tag).e("onPlayerStateChanged" + playWhenReady + " " + playbackState)
 
         }
 
         override fun onPlaybackSuppressionReasonChanged(playbackSuppressionReason: Int) {
-            Log.e("audioo", "onPlaybackSuppressionReasonChanged")
+            Timber.tag(tag).e("onPlaybackSuppressionReasonChanged")
 
         }
 
@@ -96,16 +99,14 @@ class ExoAudioPlayerView : FrameLayout, LifecycleObserver {
                 durationTv.visibility = View.VISIBLE
                 positionTv.visibility = View.GONE
             }
-            Log.e("audioo", "onIsPlayingChanged")
-
+            Timber.tag(tag).e("onIsPlayingChanged")
         }
 
         override fun onRepeatModeChanged(repeatMode: Int) {}
         override fun onShuffleModeEnabledChanged(shuffleModeEnabled: Boolean) {}
         override fun onPlayerError(error: ExoPlaybackException) {
-            println("$tag onPlayerError ${error.localizedMessage}")
             error.printStackTrace()
-            Log.e("audioo", "onPlayerError  ${error.localizedMessage}")
+            Timber.tag(tag).e("onPlayerError  ${error.localizedMessage}")
 
         }
 
@@ -149,6 +150,9 @@ class ExoAudioPlayerView : FrameLayout, LifecycleObserver {
     fun addAudios(sourceList: LinkedList<AudioModel>) {
         audioModels.clear()
         audioModels.addAll(sourceList)
+        if (audioModels.isEmpty()) {
+            player?.seekTo(0, 0)
+        }
         createDataSources()
     }
 
@@ -249,7 +253,7 @@ class ExoAudioPlayerView : FrameLayout, LifecycleObserver {
     }
 
 
-    fun isPlaying(): Boolean {
+    private fun isPlaying(): Boolean {
         return player?.isPlaying ?: false
     }
 
@@ -262,7 +266,6 @@ class ExoAudioPlayerView : FrameLayout, LifecycleObserver {
 
     private fun resumePlayer() {
         player?.run {
-            //playWhenReady = true
             durationTv.text = stringForTime(currentPosition.toInt())
             seekTo(currentPosition)
         }
@@ -273,6 +276,6 @@ class ExoAudioPlayerView : FrameLayout, LifecycleObserver {
         if (isPlaying()) {
             pausePlayer()
         }
-        Log.e("audioo", "onDetachedFromWindow")
+        Timber.tag(tag).e("onDetachedFromWindow")
     }
 }

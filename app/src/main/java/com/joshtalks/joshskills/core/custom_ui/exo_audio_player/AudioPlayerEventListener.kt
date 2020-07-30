@@ -7,4 +7,5 @@ interface AudioPlayerEventListener {
     fun onTrackChange(tag: String?)
     fun onPositionDiscontinuity(lastPos: Long, reason: Int = 1)
     fun onPlayerReleased()
+    fun onPlayerEmptyTrack()
 }

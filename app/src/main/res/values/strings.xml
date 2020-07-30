@@ -300,6 +300,7 @@
     <string name="selection_arrow">selection_arrow</string>
     <string name="start_practise">Start Practice </string>
     <string name="practise_intro_sub">How to complete this practice?</string>
+    <string name="select_partner">Select your partner first</string>
 
     <string name="start_quiz">Start Quiz</string>
     <string name="conversational_practise">Conversational Practice</string>

@@ -66,4 +66,9 @@ enum class PractiseUser {
     FIRST, SECOND
 }
 
+enum class ViewTypeForPractiseUser(val type: Int) {
+    FIRST(0), SECOND(1)
+}
+
+
 

@@ -10,6 +10,7 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.ALPHA_MAX
 import com.joshtalks.joshskills.core.ALPHA_MIN
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.ViewTypeForPractiseUser
 import com.joshtalks.joshskills.databinding.AudioPractiseReceivedItemBinding
 import com.joshtalks.joshskills.databinding.AudioPractiseSentItemBinding
 import com.joshtalks.joshskills.repository.server.conversation_practice.ListenModel
@@ -23,12 +24,9 @@ class AudioPractiseAdapter(var items: MutableList<ListenModel>) :
     private var receiveBG =
         ContextCompat.getColorStateList(AppObjectController.joshApplication, R.color.received_bg_BC)
 
-    private val originalList = ArrayList(items)
-
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
-        return if (viewType == 0) {
+        return if (viewType == ViewTypeForPractiseUser.FIRST.type) {
             val binding = AudioPractiseReceivedItemBinding.inflate(inflater, parent, false)
             ViewHolderReceived(binding)
         } else {
@@ -39,6 +37,10 @@ class AudioPractiseAdapter(var items: MutableList<ListenModel>) :
 
     override fun getItemViewType(position: Int): Int {
         return items[position].viewType
+    }
+
+    override fun getItemId(position: Int): Long {
+        return items[position].id.toLong()
     }
 
     override fun getItemCount(): Int = items.size
@@ -103,12 +105,15 @@ class AudioPractiseAdapter(var items: MutableList<ListenModel>) :
     private val filter: Filter = object : Filter() {
         val filterResults = FilterResults()
         override fun performFiltering(constraint: CharSequence): FilterResults {
-            items.clear()
             if (constraint.isBlank()) {
-                items.addAll(originalList)
+                items.listIterator().forEach { it.disable = false }
             } else {
-                val searchResults = originalList
-                items.addAll(searchResults)
+                val number = Integer.parseInt(constraint.toString())
+                items.listIterator().forEach {
+                    if (it.viewType == number) {
+                        it.disable = true
+                    }
+                }
             }
             return filterResults.also {
                 it.values = items
