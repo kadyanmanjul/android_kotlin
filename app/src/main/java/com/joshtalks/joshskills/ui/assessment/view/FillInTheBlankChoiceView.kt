@@ -23,7 +23,6 @@ import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.AssessmentButtonStateEvent
 import com.joshtalks.joshskills.repository.local.eventbus.FillInTheBlankSubmitEvent
 import com.joshtalks.joshskills.repository.local.model.assessment.Assessment
-import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestion
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionWithRelations
 import com.joshtalks.joshskills.repository.local.model.assessment.Choice
 import com.joshtalks.joshskills.repository.server.assessment.AssessmentStatus
@@ -118,9 +117,11 @@ class FillInTheBlankChoiceView : FrameLayout, OnChoiceClickListener {
     private fun sortChoiceViaUserOrder() {
         chipChoiceList.clear()
         assessmentQuestion?.choiceList?.sortedBy { it.userSelectedOrder }?.forEach { choice ->
-            choice.userSelectedOrder = selectedOrder.get(choice.remoteId) ?: choice.userSelectedOrder
+            choice.userSelectedOrder =
+                selectedOrder.get(choice.remoteId) ?: choice.userSelectedOrder
             chipChoiceList.add(choice)
         }
+        chipChoiceList.clear()
         assessmentQuestion?.choiceList?.sortedBy { it.userSelectedOrder }?.forEach { choice ->
             chipChoiceList.add(choice)
         }
@@ -140,7 +141,12 @@ class FillInTheBlankChoiceView : FrameLayout, OnChoiceClickListener {
     }
 
     private fun setUpUI() {
+
+        filled = assessmentQuestion?.choiceList?.filter { it.isSelectedByUser == true }?.size ?: 0
         choicesChipGroup.removeAllViews()
+        chipChoiceList.clear()
+
+        assessmentQuestion?.let { addChoicesListItems(it) }
 
         assessmentQuestion?.choiceList?.sortedBy { it.sortOrder }?.forEach {
 
@@ -151,13 +157,10 @@ class FillInTheBlankChoiceView : FrameLayout, OnChoiceClickListener {
             chip.id = it.remoteId
             chip.setOnClickListener(chipClickListener)
             choicesChipGroup.addView(chip)
-
-            assessmentQuestion?.question?.let { question ->
-                if (showPrefilledData(question))
-                    chip.visibility = View.GONE
+            if (it.isSelectedByUser) {
+                chip.visibility = View.GONE
             }
         }
-        assessmentQuestion?.let { addChoicesListItems(it) }
 
         totalOptions = assessmentQuestion?.choiceList?.size ?: 0
         totalAnswered.text = filled.toString().plus("/").plus(totalOptions)
@@ -176,15 +179,11 @@ class FillInTheBlankChoiceView : FrameLayout, OnChoiceClickListener {
                 this
             )
 
-        if (assessment!!.status == AssessmentStatus.COMPLETED) {
-            // seeAnswer.visibility = View.VISIBLE
+        if ((assessment!!.status == AssessmentStatus.COMPLETED) || (assessmentQuestion!!.question.isAttempted && assessment!!.type == AssessmentType.QUIZ)) {
+            seeAnswer.visibility = View.VISIBLE
             disableAllClicks()
         }
     }
-
-    private fun showPrefilledData(question: AssessmentQuestion) =
-        question.isAttempted || assessment!!.status == AssessmentStatus.COMPLETED
-
 
     private val chipClickListener = OnClickListener { view ->
 
@@ -209,8 +208,13 @@ class FillInTheBlankChoiceView : FrameLayout, OnChoiceClickListener {
             filled++
         choice.isSelectedByUser = true
         choice.userSelectedOrder = filled
+        assessmentQuestion!!.choiceList.filter { it.remoteId == choice.remoteId }
+            .map { qChoice ->
+                qChoice.isSelectedByUser = true
+                qChoice.userSelectedOrder = filled
+            }
 
-        updateView(choice = choice)
+        updateView()
         publishUpdateButtonViewEvent(filled == totalOptions)
     }
 
@@ -256,8 +260,7 @@ class FillInTheBlankChoiceView : FrameLayout, OnChoiceClickListener {
 
     private fun updateView(
         isDeleted: Boolean = false,
-        fromIndex: Int = 100,
-        choice: Choice? = null
+        fromIndex: Int = 100
     ) {
         totalAnswered.text = filled.toString().plus("/").plus(totalOptions)
 
@@ -294,9 +297,14 @@ class FillInTheBlankChoiceView : FrameLayout, OnChoiceClickListener {
             }
             choice.isSelectedByUser = false
             val fromIndex = choice.userSelectedOrder
+            assessmentQuestion!!.choiceList.filter { it.remoteId == choice.remoteId }
+                .map { qChoice ->
+                    qChoice.isSelectedByUser = false
+                    qChoice.userSelectedOrder = 100
+                }
             choice.userSelectedOrder = 100
 
-            updateView(true, fromIndex, choice)
+            updateView(true, fromIndex)
             publishUpdateButtonViewEvent(false)
         }
     }
@@ -315,28 +323,12 @@ class FillInTheBlankChoiceView : FrameLayout, OnChoiceClickListener {
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
-        filled = assessmentQuestion?.choiceList?.filter { it.isSelectedByUser == true }?.size ?: 0
-        assessmentQuestion?.let {
-            if (it.question.isAttempted && assessment!!.status == AssessmentStatus.COMPLETED)
-                it.choiceList.forEach { choice ->
-                    selectedOrder.put(choice.remoteId, choice.userSelectedOrder)
-                }
-        }
         Timber.tag("onAttachedToWindow").e("FillInTheBlankChoiceView")
     }
 
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
-        saveOrder()
         compositeDisposable.clear()
         Timber.tag("onDetachedFromWindow").e("FillInTheBlankChoiceView")
-    }
-
-    private fun saveOrder() {
-        chipChoiceList.forEach { choice ->
-            val qChoice =
-                assessmentQuestion?.choiceList?.filter { it.remoteId == choice.remoteId }?.get(0)
-            qChoice?.userSelectedOrder = choice.userSelectedOrder
-        }
     }
 }
