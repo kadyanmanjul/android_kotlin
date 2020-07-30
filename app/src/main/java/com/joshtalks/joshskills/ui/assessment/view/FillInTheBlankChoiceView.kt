@@ -48,7 +48,7 @@ class FillInTheBlankChoiceView : FrameLayout, OnChoiceClickListener {
     private lateinit var seeAnswer: MaterialTextView
     private lateinit var choicesChipGroup: ChipGroup
     private var chipChoiceList = mutableListOf<Choice>()
-    private var correctChoiceOrder = mutableListOf<Choice>()
+    private var selectedOrder = mutableMapOf<Int, Int>()
     private var filled = 0
     private var totalOptions = 0
     private var compositeDisposable = CompositeDisposable()
@@ -108,7 +108,8 @@ class FillInTheBlankChoiceView : FrameLayout, OnChoiceClickListener {
 
     private fun sortChoiceViaCorrectOrder() {
         chipChoiceList.clear()
-        correctChoiceOrder.forEach { choice ->
+        assessmentQuestion?.choiceList?.sortedBy { it.correctAnswerOrder }?.forEach { choice ->
+            choice.userSelectedOrder = choice.correctAnswerOrder
             chipChoiceList.add(choice)
         }
         seeAnswer.text = context.getString(R.string.see_your_answer)
@@ -116,6 +117,10 @@ class FillInTheBlankChoiceView : FrameLayout, OnChoiceClickListener {
 
     private fun sortChoiceViaUserOrder() {
         chipChoiceList.clear()
+        chipChoiceList.forEach { choice ->
+            choice.userSelectedOrder =
+                selectedOrder.get(choice.remoteId) ?: choice.userSelectedOrder
+        }
         assessmentQuestion?.choiceList?.sortedBy { it.userSelectedOrder }?.forEach { choice ->
             chipChoiceList.add(choice)
         }
@@ -174,8 +179,8 @@ class FillInTheBlankChoiceView : FrameLayout, OnChoiceClickListener {
                 this
             )
 
-        if (assessmentType == AssessmentType.TEST && assessmentStatus == AssessmentStatus.COMPLETED) {
-            // seeAnswer.visibility = View.VISIBLE
+        if (assessmentStatus == AssessmentStatus.COMPLETED) {
+            seeAnswer.visibility = View.VISIBLE
             disableAllClicks()
         }
     }
@@ -214,10 +219,6 @@ class FillInTheBlankChoiceView : FrameLayout, OnChoiceClickListener {
 
 
     private fun addChoicesListItems(assessmentQuestion: AssessmentQuestionWithRelations) {
-        assessmentQuestion.choiceList.sortedBy { it.correctAnswerOrder }.forEach { choice ->
-            choice.userSelectedOrder = choice.correctAnswerOrder
-            correctChoiceOrder.add(choice)
-        }
 
         if (assessmentQuestion.question.isAttempted && assessmentType == AssessmentType.QUIZ) {
             addViaUserSelectedOrder(assessmentQuestion)
@@ -228,13 +229,16 @@ class FillInTheBlankChoiceView : FrameLayout, OnChoiceClickListener {
         } else if (assessmentType == AssessmentType.TEST && assessmentStatus == AssessmentStatus.COMPLETED) {
             addViaUserSelectedOrder(assessmentQuestion)
         } else {
-            if (filled==0)
+            if (filled == 0)
                 addViaSortOrder(assessmentQuestion)
             else addViaUserSelectedOrder(assessmentQuestion)
         }
         if (assessmentQuestion.question.isAttempted || assessmentStatus == AssessmentStatus.COMPLETED) {
             filled = chipChoiceList.size
             disableAllClicks()
+            assessmentQuestion.choiceList.forEach { choice ->
+                selectedOrder.put(choice.remoteId, choice.userSelectedOrder)
+            }
         }
     }
 
@@ -315,6 +319,12 @@ class FillInTheBlankChoiceView : FrameLayout, OnChoiceClickListener {
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
         filled = assessmentQuestion?.choiceList?.filter { it.isSelectedByUser == true }?.size ?: 0
+        assessmentQuestion?.let {
+            if (it.question.isAttempted && assessmentStatus == AssessmentStatus.COMPLETED)
+                it.choiceList.forEach { choice ->
+                    selectedOrder.put(choice.remoteId, choice.userSelectedOrder)
+                }
+        }
         Timber.tag("onAttachedToWindow").e("FillInTheBlankChoiceView")
     }
 
