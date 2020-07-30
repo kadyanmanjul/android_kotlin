@@ -103,7 +103,7 @@
                 android:layout_height="0dp"
                 app:barrierDirection="bottom"
                 app:constraint_referenced_ids="iv_profile_pic,teacher_name" />
-        
+
         <ScrollView
                 android:layout_width="0dp"
                 android:layout_height="0dp"
@@ -122,8 +122,8 @@
                     fontPath="fonts/Poppins-Regular.ttf"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="start"
-                    android:gravity="center_vertical|start"
+                    android:layout_gravity="start|top"
+                    android:gravity="top|start"
                     android:letterSpacing="0.03"
                     android:lineSpacingExtra="@dimen/_2sdp"
                     android:textColor="@color/gray_48"

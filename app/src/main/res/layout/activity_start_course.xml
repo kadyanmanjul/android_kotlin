@@ -136,7 +136,7 @@
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="@+id/author_layout"
                 app:layout_constraintTop_toTopOf="@+id/author_layout"
-                tools:src="@drawable/sample_circle_dp" />
+                 />
 
         <TextView
                 android:id="@+id/tutor_line"

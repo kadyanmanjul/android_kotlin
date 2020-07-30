@@ -75,7 +75,6 @@
                                     android:layout_gravity="top|center"
                                     android:adjustViewBounds="true"
                                     android:scaleType="fitXY"
-                                    tools:background="@drawable/app_bg"
                                     tools:ignore="ContentDescription" />
 
                         </androidx.cardview.widget.CardView>
