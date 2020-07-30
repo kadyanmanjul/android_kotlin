@@ -9,6 +9,7 @@ import com.crashlytics.android.Crashlytics
 import com.google.android.material.card.MaterialCardView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.repository.local.model.assessment.Assessment
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestion
 import com.joshtalks.joshskills.repository.local.model.assessment.Choice
 import com.joshtalks.joshskills.repository.server.assessment.AssessmentStatus
@@ -25,8 +26,7 @@ class MCQChoiceViewHolder(
     override val type: ChoiceType,
     override val sequenceNumber: Int,
     override var choiceData: Choice,
-    private var assessmentType: AssessmentType,
-    private var assessmentStatus: AssessmentStatus,
+    private var assessment: Assessment,
     private var assessmentQuestion: AssessmentQuestion,
     private var onClickListener: OnChoiceClickListener,
     override val context: Context = AppObjectController.joshApplication
@@ -81,10 +81,10 @@ class MCQChoiceViewHolder(
 
     private fun setColor() {
 
-        if (assessmentType == AssessmentType.QUIZ) {
+        if (assessment.type == AssessmentType.QUIZ) {
             // For AssessmentType.QUIZ
 
-            if (assessmentStatus == AssessmentStatus.NOT_STARTED || assessmentStatus == AssessmentStatus.STARTED) {
+            if (assessment.status == AssessmentStatus.NOT_STARTED || assessment.status == AssessmentStatus.STARTED) {
                 // For AssessmentStatus.STARTED OR AssessmentStatus.NOT_STARTED
 
                 if (assessmentQuestion.isAttempted) {
@@ -177,7 +177,7 @@ class MCQChoiceViewHolder(
         } else {
             // For AssessmentType.TEST
 
-            if (assessmentStatus == AssessmentStatus.NOT_STARTED || assessmentStatus == AssessmentStatus.STARTED) {
+            if (assessment.status == AssessmentStatus.NOT_STARTED || assessment.status == AssessmentStatus.STARTED) {
                 // For AssessmentStatus.STARTED OR AssessmentStatus.NOT_STARTED
 
 

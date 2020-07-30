@@ -13,10 +13,9 @@ import com.joshtalks.joshskills.core.custom_ui.SmoothLinearLayoutManager
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.AssessmentButtonStateEvent
 import com.joshtalks.joshskills.repository.local.eventbus.McqSubmitEvent
+import com.joshtalks.joshskills.repository.local.model.assessment.Assessment
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionWithRelations
 import com.joshtalks.joshskills.repository.local.model.assessment.Choice
-import com.joshtalks.joshskills.repository.server.assessment.AssessmentStatus
-import com.joshtalks.joshskills.repository.server.assessment.AssessmentType
 import com.joshtalks.joshskills.repository.server.assessment.ChoiceType
 import com.joshtalks.joshskills.ui.assessment.AssessmentQuestionViewType
 import com.joshtalks.joshskills.ui.assessment.viewholder.MCQChoiceViewHolder
@@ -32,8 +31,7 @@ import java.io.InvalidClassException
 
 class MCQChoicesView : FrameLayout, OnChoiceClickListener {
 
-    private var assessmentType: AssessmentType? = null
-    private var assessmentStatus: AssessmentStatus? = null
+    private var assessment: Assessment? = null
     private var viewType = AssessmentQuestionViewType.CORRECT_ANSWER_VIEW
     private var assessmentQuestion: AssessmentQuestionWithRelations? = null
     private val compositeDisposable = CompositeDisposable()
@@ -74,13 +72,11 @@ class MCQChoicesView : FrameLayout, OnChoiceClickListener {
     }
 
     fun bind(
-        assessmentType: AssessmentType,
-        assessmentStatus: AssessmentStatus,
+        assessment: Assessment,
         viewType: AssessmentQuestionViewType,
         assessmentQuestion: AssessmentQuestionWithRelations
     ) {
-        this.assessmentType = assessmentType
-        this.assessmentStatus = assessmentStatus
+        this.assessment = assessment
         this.viewType = viewType
         this.assessmentQuestion = assessmentQuestion
         setUpUI()
@@ -127,8 +123,7 @@ class MCQChoicesView : FrameLayout, OnChoiceClickListener {
                         assessmentQuestion.question.choiceType,
                         choice.sortOrder,
                         choice,
-                        assessmentType!!,
-                        assessmentStatus!!,
+                        assessment!!,
                         assessmentQuestion.question,
                         this,
                         context
@@ -165,7 +160,7 @@ class MCQChoicesView : FrameLayout, OnChoiceClickListener {
 
                     RxBus2.publish(
                         AssessmentButtonStateEvent(
-                            assessmentType!!,
+                            assessment!!.type,
                             assessmentQuestion?.question?.isAttempted!!,
                             true
                         )
@@ -187,7 +182,7 @@ class MCQChoicesView : FrameLayout, OnChoiceClickListener {
 
                     RxBus2.publish(
                         AssessmentButtonStateEvent(
-                            assessmentType!!,
+                            assessment!!.type,
                             assessmentQuestion?.question?.isAttempted!!,
                             isAnswered
                         )

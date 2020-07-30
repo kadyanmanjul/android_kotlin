@@ -22,6 +22,7 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.AssessmentButtonStateEvent
 import com.joshtalks.joshskills.repository.local.eventbus.FillInTheBlankSubmitEvent
+import com.joshtalks.joshskills.repository.local.model.assessment.Assessment
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestion
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionWithRelations
 import com.joshtalks.joshskills.repository.local.model.assessment.Choice
@@ -38,8 +39,7 @@ import timber.log.Timber
 
 class FillInTheBlankChoiceView : FrameLayout, OnChoiceClickListener {
 
-    private var assessmentType: AssessmentType? = null
-    private var assessmentStatus: AssessmentStatus? = null
+    private var assessment: Assessment? = null
     private var viewType = AssessmentQuestionViewType.CORRECT_ANSWER_VIEW
     private var assessmentQuestion: AssessmentQuestionWithRelations? = null
 
@@ -129,13 +129,11 @@ class FillInTheBlankChoiceView : FrameLayout, OnChoiceClickListener {
     }
 
     fun bind(
-        assessmentType: AssessmentType,
-        assessmentStatus: AssessmentStatus,
+        assessment: Assessment,
         viewType: AssessmentQuestionViewType,
         assessmentQuestion: AssessmentQuestionWithRelations
     ) {
-        this.assessmentType = assessmentType
-        this.assessmentStatus = assessmentStatus
+        this.assessment = assessment
         this.viewType = viewType
         this.assessmentQuestion = assessmentQuestion
         setUpUI()
@@ -172,21 +170,20 @@ class FillInTheBlankChoiceView : FrameLayout, OnChoiceClickListener {
         recyclerView.layoutManager = layoutManager
         recyclerView.adapter =
             FillInTheBlankQuestionAdapter(
-                assessmentType!!,
-                assessmentStatus!!,
+                assessment!!,
                 assessmentQuestion!!.question,
                 chipChoiceList as ArrayList<Choice>,
                 this
             )
 
-        if (assessmentStatus == AssessmentStatus.COMPLETED) {
-           // seeAnswer.visibility = View.VISIBLE
+        if (assessment!!.status == AssessmentStatus.COMPLETED) {
+            // seeAnswer.visibility = View.VISIBLE
             disableAllClicks()
         }
     }
 
     private fun showPrefilledData(question: AssessmentQuestion) =
-        question.isAttempted || assessmentStatus == AssessmentStatus.COMPLETED
+        question.isAttempted || assessment!!.status == AssessmentStatus.COMPLETED
 
 
     private val chipClickListener = OnClickListener { view ->
@@ -207,7 +204,7 @@ class FillInTheBlankChoiceView : FrameLayout, OnChoiceClickListener {
         })
 
         view.startAnimation(anim)
-        val choice = chipChoiceList.filter { it.remoteId == view.id }.get(0)
+        val choice = chipChoiceList.filter { it.remoteId == view.id }[0]
         if (choice.isSelectedByUser.not())
             filled++
         choice.isSelectedByUser = true
@@ -220,20 +217,20 @@ class FillInTheBlankChoiceView : FrameLayout, OnChoiceClickListener {
 
     private fun addChoicesListItems(assessmentQuestion: AssessmentQuestionWithRelations) {
 
-        if (assessmentQuestion.question.isAttempted && assessmentType == AssessmentType.QUIZ) {
+        if (assessmentQuestion.question.isAttempted && assessment!!.type == AssessmentType.QUIZ) {
             addViaUserSelectedOrder(assessmentQuestion)
 
-        } else if (assessmentQuestion.question.isAttempted.not() && assessmentType == AssessmentType.QUIZ) {
+        } else if (assessmentQuestion.question.isAttempted.not() && assessment!!.type == AssessmentType.QUIZ) {
             addViaSortOrder(assessmentQuestion)
 
-        } else if (assessmentType == AssessmentType.TEST && assessmentStatus == AssessmentStatus.COMPLETED) {
+        } else if (assessment!!.type == AssessmentType.TEST && assessment!!.status == AssessmentStatus.COMPLETED) {
             addViaUserSelectedOrder(assessmentQuestion)
         } else {
             if (filled == 0)
                 addViaSortOrder(assessmentQuestion)
             else addViaUserSelectedOrder(assessmentQuestion)
         }
-        if (assessmentQuestion.question.isAttempted || assessmentStatus == AssessmentStatus.COMPLETED) {
+        if (assessmentQuestion.question.isAttempted || assessment!!.status == AssessmentStatus.COMPLETED) {
             filled = chipChoiceList.size
             disableAllClicks()
             assessmentQuestion.choiceList.forEach { choice ->
@@ -277,7 +274,7 @@ class FillInTheBlankChoiceView : FrameLayout, OnChoiceClickListener {
     private fun publishUpdateButtonViewEvent(isAnswered: Boolean) {
         RxBus2.publish(
             AssessmentButtonStateEvent(
-                assessmentType!!,
+                assessment!!.type,
                 assessmentQuestion?.question?.isAttempted!!,
                 isAnswered
             )
@@ -293,7 +290,7 @@ class FillInTheBlankChoiceView : FrameLayout, OnChoiceClickListener {
             }
             val choice = chipChoiceList.filter { it.remoteId == choice.remoteId }.get(0)
             if (choice.isSelectedByUser) {
-                filled = filled - 1
+                filled -= 1
             }
             choice.isSelectedByUser = false
             val fromIndex = choice.userSelectedOrder
@@ -320,7 +317,7 @@ class FillInTheBlankChoiceView : FrameLayout, OnChoiceClickListener {
         super.onAttachedToWindow()
         filled = assessmentQuestion?.choiceList?.filter { it.isSelectedByUser == true }?.size ?: 0
         assessmentQuestion?.let {
-            if (it.question.isAttempted && assessmentStatus == AssessmentStatus.COMPLETED)
+            if (it.question.isAttempted && assessment!!.status == AssessmentStatus.COMPLETED)
                 it.choiceList.forEach { choice ->
                     selectedOrder.put(choice.remoteId, choice.userSelectedOrder)
                 }

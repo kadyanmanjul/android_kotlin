@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.repository.local.model.assessment.Assessment
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestion
 import com.joshtalks.joshskills.repository.local.model.assessment.Choice
 import com.joshtalks.joshskills.repository.server.assessment.AssessmentStatus
@@ -17,14 +18,11 @@ import com.joshtalks.joshskills.repository.server.assessment.AssessmentType
 import com.joshtalks.joshskills.ui.assessment.viewholder.OnChoiceClickListener
 
 class FillInTheBlankQuestionAdapter(
-    private var assessmentType: AssessmentType,
-    private var assessmentStatus: AssessmentStatus,
+    private var assessment: Assessment,
     private var question: AssessmentQuestion,
     private val choiceResponse: ArrayList<Choice>,
     private var onChoiceClickListener: OnChoiceClickListener
-
-) :
-    RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private val TYPE_EMPTY = 1
     private val TYPE_FILLED = 2
@@ -55,8 +53,7 @@ class FillInTheBlankQuestionAdapter(
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if (getItemViewType(position) == TYPE_FILLED) {
             (holder as ChipAnswerViewHolder).bindView(
-                assessmentType,
-                assessmentStatus,
+                assessment,
                 question,
                 choiceResponse.get(position),
                 onChoiceClickListener
@@ -69,7 +66,6 @@ class FillInTheBlankQuestionAdapter(
     override fun getItemViewType(position: Int): Int {
         if (choiceResponse.get(position).isSelectedByUser) {
             return TYPE_FILLED
-
         } else {
             return TYPE_EMPTY
         }
@@ -78,15 +74,20 @@ class FillInTheBlankQuestionAdapter(
     class ChipAnswerViewHolder(private var view: View) : RecyclerView.ViewHolder(view),
         View.OnClickListener {
 
+        private lateinit var choice: Choice
+        private lateinit var assessment: Assessment
+        private lateinit var question: AssessmentQuestion
+        private lateinit var questionText: TextView
+        private lateinit var divider: View
+        private var onClickListener: OnChoiceClickListener? = null
+
         fun bindView(
-            assessmentType: AssessmentType,
-            assessmentStatus: AssessmentStatus,
+            assessment: Assessment,
             question: AssessmentQuestion,
             choice: Choice,
             onClickListener: OnChoiceClickListener
         ) {
-            this.assessmentType = assessmentType
-            this.assessmentStatus = assessmentStatus
+            this.assessment = assessment
             this.question = question
             this.choice = choice
             this.onClickListener = onClickListener
@@ -103,24 +104,15 @@ class FillInTheBlankQuestionAdapter(
             view.setOnClickListener(this)
         }
 
-        private lateinit var choice: Choice
-        private lateinit var assessmentType: AssessmentType
-        private lateinit var assessmentStatus: AssessmentStatus
-        private lateinit var question: AssessmentQuestion
-        private lateinit var questionText: TextView
-        private lateinit var divider: View
-
-        private var onClickListener: OnChoiceClickListener? = null
-
         override fun onClick(view: View) {
-            if (question.isAttempted.not() && (assessmentStatus == AssessmentStatus.STARTED || assessmentStatus == AssessmentStatus.NOT_STARTED)) {
+            if (question.isAttempted.not() && (assessment.status == AssessmentStatus.STARTED || assessment.status == AssessmentStatus.NOT_STARTED)) {
                 onClickListener?.onChoiceClick(choice)
             } else setColor()
         }
 
         private fun setColor() {
 
-            if (((assessmentType == AssessmentType.QUIZ && question.isAttempted))) {
+            if ((assessment.type == AssessmentType.QUIZ && question.isAttempted)) {
                 if (question.isAttempted) {
                     // For Question Submitted
 
@@ -133,7 +125,7 @@ class FillInTheBlankQuestionAdapter(
                     }
 
                 }
-            } else if (assessmentType == AssessmentType.TEST && assessmentStatus == AssessmentStatus.COMPLETED) {
+            } else if (assessment.type == AssessmentType.TEST && assessment.status == AssessmentStatus.COMPLETED) {
 
                 if (choice.userSelectedOrder == choice.correctAnswerOrder) {
                     // For Choice isCorrectAnswer

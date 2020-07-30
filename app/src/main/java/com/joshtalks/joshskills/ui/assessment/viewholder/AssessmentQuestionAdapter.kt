@@ -52,8 +52,7 @@ class AssessmentQuestionAdapter(
         fun bind(assessmentQuestion: AssessmentQuestionWithRelations) {
             binding.questionView.bind(assessmentQuestion)
             binding.choiceView.bind(
-                assessment.type,
-                assessment.status,
+                assessment,
                 viewType,
                 assessmentQuestion
             )

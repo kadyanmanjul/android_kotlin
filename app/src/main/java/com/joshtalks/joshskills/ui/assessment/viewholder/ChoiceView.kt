@@ -5,9 +5,8 @@ import android.util.AttributeSet
 import android.view.View
 import android.widget.FrameLayout
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.repository.local.model.assessment.Assessment
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionWithRelations
-import com.joshtalks.joshskills.repository.server.assessment.AssessmentStatus
-import com.joshtalks.joshskills.repository.server.assessment.AssessmentType
 import com.joshtalks.joshskills.repository.server.assessment.ChoiceType
 import com.joshtalks.joshskills.ui.assessment.AssessmentQuestionViewType
 import com.joshtalks.joshskills.ui.assessment.view.FillInTheBlankChoiceView
@@ -17,8 +16,7 @@ import timber.log.Timber
 
 class ChoiceView : FrameLayout {
 
-    private var assessmentType: AssessmentType? = null
-    private var assessmentStatus: AssessmentStatus? = null
+    private var assessment: Assessment? = null
     private var viewType = AssessmentQuestionViewType.CORRECT_ANSWER_VIEW
     private var assessmentQuestion: AssessmentQuestionWithRelations? = null
     private var fillInTheBlankChoiceStub: Stub<FillInTheBlankChoiceView>? = null
@@ -44,17 +42,14 @@ class ChoiceView : FrameLayout {
         View.inflate(context, R.layout.choice_view, this)
         mcqChoicesStub = Stub(findViewById(R.id.single_selection_text_stub))
         fillInTheBlankChoiceStub = Stub(findViewById(R.id.fill_in_the_blank_stub))
-        // setUpUI()
     }
 
     fun bind(
-        assessmentType: AssessmentType,
-        assessmentStatus: AssessmentStatus,
+        assessment: Assessment,
         viewType: AssessmentQuestionViewType,
         assessmentQuestion: AssessmentQuestionWithRelations
     ) {
-        this.assessmentType = assessmentType
-        this.assessmentStatus = assessmentStatus
+        this.assessment = assessment
         this.viewType = viewType
         this.assessmentQuestion = assessmentQuestion
         setUpUI()
@@ -75,8 +70,7 @@ class ChoiceView : FrameLayout {
                         if (this.resolved().not()) {
                             this.get()
                                 ?.bind(
-                                    assessmentType!!,
-                                    assessmentStatus!!,
+                                    assessment!!,
                                     viewType,
                                     assessmentQuestion
                                 )
@@ -90,8 +84,7 @@ class ChoiceView : FrameLayout {
                         if (this.resolved().not()) {
                             this.get()
                                 ?.bind(
-                                    assessmentType!!,
-                                    assessmentStatus!!,
+                                    assessment!!,
                                     viewType,
                                     assessmentQuestion
                                 )

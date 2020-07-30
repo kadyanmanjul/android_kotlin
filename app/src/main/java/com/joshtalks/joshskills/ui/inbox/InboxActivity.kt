@@ -279,7 +279,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 //openCourseExplorer()
-                AssessmentActivity.startAssessmentActivity(this, 5)
+                AssessmentActivity.startAssessmentActivity(this, 3)
             })
         compositeDisposable.add(RxBus2.listen(NPSEventGenerateEventBus::class.java)
             .subscribeOn(Schedulers.io())
