@@ -100,28 +100,34 @@
         <androidx.constraintlayout.widget.Barrier
                 android:id="@+id/barrier"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="0dp"
                 app:barrierDirection="bottom"
                 app:constraint_referenced_ids="iv_profile_pic,teacher_name" />
 
-
-        <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
-                android:id="@+id/teacher_details"
-                fontPath="fonts/Poppins-Regular.ttf"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="start"
+        <ScrollView
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_marginHorizontal="@dimen/_16sdp"
                 android:layout_marginVertical="@dimen/_16sdp"
-                android:layout_marginEnd="@dimen/_16sdp"
                 android:gravity="center_vertical|start"
-                android:letterSpacing="0.03"
-                android:lineSpacingExtra="@dimen/_1sdp"
+                android:isScrollContainer="false"
                 android:scrollbars="vertical"
-                android:textColor="@color/gray_48"
-                android:textSize="@dimen/font_14"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="@+id/iv_profile_pic"
-                app:layout_constraintTop_toBottomOf="@+id/barrier" />
+                app:layout_constraintTop_toBottomOf="@+id/barrier"
+                app:layout_constraintVertical_bias="0">
+
+            <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+                    android:id="@+id/teacher_details"
+                    fontPath="fonts/Poppins-Regular.ttf"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/gray_48"
+                    android:textSize="@dimen/font_14" />
+
+        </ScrollView>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
 
