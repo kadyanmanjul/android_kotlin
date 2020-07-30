@@ -3,7 +3,6 @@ package com.joshtalks.joshskills.repository.server.assessment
 
 import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
-import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentWithRelations
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize
@@ -48,30 +47,7 @@ data class AssessmentResponse(
     @SerializedName("intro")
     val intro: List<AssessmentIntroResponse>?  // TODO(27/07/2020) - Make this nullable
 
-) : Parcelable {
-
-    constructor(assessmentWithRelations: AssessmentWithRelations) : this(
-        id = assessmentWithRelations.assessment.remoteId,
-        heading = assessmentWithRelations.assessment.heading,
-        title = assessmentWithRelations.assessment.title,
-        iconUrl = assessmentWithRelations.assessment.iconUrl,
-        text1 = assessmentWithRelations.assessment.text1,
-        text2 = assessmentWithRelations.assessment.text2,
-        scoreText = assessmentWithRelations.assessment.scoreText,
-        imageUrl = assessmentWithRelations.assessment.imageUrl,
-        description = assessmentWithRelations.assessment.description,
-        type = assessmentWithRelations.assessment.type,
-        status = assessmentWithRelations.assessment.status,
-        questions = assessmentWithRelations.questionList.map {
-            AssessmentQuestionResponse(it.question, it.reviseConcept, it.choiceList)
-        },
-        intro = assessmentWithRelations.assessmentIntroList?.map {
-            AssessmentIntroResponse(it)
-        }
-    )
-
-}
-
+) : Parcelable
 
 enum class AssessmentType(val type: String) {
 

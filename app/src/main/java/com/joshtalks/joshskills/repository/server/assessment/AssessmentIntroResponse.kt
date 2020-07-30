@@ -21,11 +21,4 @@ data class AssessmentIntroResponse(
     @SerializedName("image_url")
     val imageUrl: String? = EMPTY
 
-) : Parcelable {
-    constructor(assessmentIntro: AssessmentIntro) : this(
-        type = assessmentIntro.type,
-        title = assessmentIntro.title,
-        description = assessmentIntro.description,
-        imageUrl = assessmentIntro.imageUrl
-    )
-}
+) : Parcelable

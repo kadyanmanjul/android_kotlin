@@ -3,7 +3,6 @@ package com.joshtalks.joshskills.repository.server.assessment
 
 import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
-import com.joshtalks.joshskills.repository.local.model.assessment.Choice
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize
@@ -36,19 +35,7 @@ data class ChoiceResponse(
     @SerializedName("is_selected_by_user")
     var isSelectedByUser: Boolean = false
 
-) : Parcelable {
-    constructor(choice: Choice) : this(
-        id = choice.remoteId,
-        text = choice.text,
-        imageUrl = choice.imageUrl,
-        isCorrect = choice.isCorrect,
-        sortOrder = choice.sortOrder,
-        correctAnswerOrder = choice.correctAnswerOrder,
-        column = choice.column,
-        userSelectedOrder = choice.userSelectedOrder,
-        isSelectedByUser = choice.isSelectedByUser
-    )
-}
+) : Parcelable
 
 enum class ChoiceColumn(val type: String) {
 

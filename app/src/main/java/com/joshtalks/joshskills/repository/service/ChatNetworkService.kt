@@ -7,6 +7,7 @@ import com.joshtalks.joshskills.repository.server.ChatMessageReceiver
 import com.joshtalks.joshskills.repository.server.CoursePerformanceResponse
 import com.joshtalks.joshskills.repository.server.RequestEngage
 import com.joshtalks.joshskills.repository.server.ResponseChatMessage
+import com.joshtalks.joshskills.repository.server.assessment.AssessmentRequest
 import com.joshtalks.joshskills.repository.server.assessment.AssessmentResponse
 import kotlinx.coroutines.Deferred
 import retrofit2.Response
@@ -87,7 +88,7 @@ interface ChatNetworkService {
 
     @POST("$DIR/assessment/response/")
     suspend fun submitTestAsync(
-        @Body assessmentResponse: AssessmentResponse
+        @Body assessmentRequest: AssessmentRequest
     )
 
     @GET("$DIR/assessment/report/{id}/")

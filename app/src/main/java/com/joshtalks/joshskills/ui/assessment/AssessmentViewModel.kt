@@ -9,6 +9,7 @@ import com.joshtalks.joshskills.core.ApiCallStatus
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionWithRelations
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentWithRelations
+import com.joshtalks.joshskills.repository.server.assessment.AssessmentRequest
 import com.joshtalks.joshskills.repository.server.assessment.AssessmentResponse
 import com.joshtalks.joshskills.repository.server.assessment.AssessmentStatus
 import com.joshtalks.joshskills.repository.server.assessment.AssessmentType
@@ -85,7 +86,8 @@ class AssessmentViewModel(application: Application) : AndroidViewModel(applicati
         AppObjectController.chatNetworkService.getAssessmentId(assessmentId)
 
     private fun getAssessmentResponse(assessmentWithRelations: AssessmentWithRelations) =
-        AssessmentResponse((assessmentWithRelations))
+        AssessmentRequest((assessmentWithRelations))
+
 
     fun saveAssessmentQuestion(assessmentQuestion: AssessmentQuestionWithRelations) {
         CoroutineScope(Dispatchers.IO).launch {
@@ -101,8 +103,8 @@ class AssessmentViewModel(application: Application) : AndroidViewModel(applicati
             updateAssessmentStatus(assessmentId)
             jobs += viewModelScope.launch(Dispatchers.IO) {
                 try {
-                    val assessmentResponse = getAssessmentResponse(assessmentWithRelations)
-                    AppObjectController.chatNetworkService.submitTestAsync(assessmentResponse)
+                    val assessmentRequest = getAssessmentResponse(assessmentWithRelations)
+                    AppObjectController.chatNetworkService.submitTestAsync(assessmentRequest)
 
                 } catch (ex: Throwable) {
                     ex.showAppropriateMsg()

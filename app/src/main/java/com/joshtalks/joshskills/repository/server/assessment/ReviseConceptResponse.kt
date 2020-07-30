@@ -26,13 +26,5 @@ data class ReviseConceptResponse(
     @SerializedName("video_thumbnail_url")
     val videoThumbnailUrl: String?
 
-) : Parcelable {
-    constructor(reviseConcept: ReviseConcept) : this(
-        heading = reviseConcept.heading,
-        title = reviseConcept.title,
-        description = reviseConcept.description,
-        mediaUrl = reviseConcept.mediaUrl,
-        mediaType = reviseConcept.mediaType,
-        videoThumbnailUrl = reviseConcept.videoThumbnailUrl
-    )
-}
+) : Parcelable
+
