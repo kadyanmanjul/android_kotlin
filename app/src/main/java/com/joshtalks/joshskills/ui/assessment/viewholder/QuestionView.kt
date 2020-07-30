@@ -111,6 +111,7 @@ class QuestionView : FrameLayout {
                     return@let
                 }
                 else -> {
+                    cardView.visibility= View.GONE
                     return@let
                 }
 

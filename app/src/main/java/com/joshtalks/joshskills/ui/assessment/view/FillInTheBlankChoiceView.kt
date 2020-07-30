@@ -117,9 +117,9 @@ class FillInTheBlankChoiceView : FrameLayout, OnChoiceClickListener {
 
     private fun sortChoiceViaUserOrder() {
         chipChoiceList.clear()
-        chipChoiceList.forEach { choice ->
-            choice.userSelectedOrder =
-                selectedOrder.get(choice.remoteId) ?: choice.userSelectedOrder
+        assessmentQuestion?.choiceList?.sortedBy { it.userSelectedOrder }?.forEach { choice ->
+            choice.userSelectedOrder = selectedOrder.get(choice.remoteId) ?: choice.userSelectedOrder
+            chipChoiceList.add(choice)
         }
         assessmentQuestion?.choiceList?.sortedBy { it.userSelectedOrder }?.forEach { choice ->
             chipChoiceList.add(choice)
@@ -180,7 +180,7 @@ class FillInTheBlankChoiceView : FrameLayout, OnChoiceClickListener {
             )
 
         if (assessmentStatus == AssessmentStatus.COMPLETED) {
-            seeAnswer.visibility = View.VISIBLE
+           // seeAnswer.visibility = View.VISIBLE
             disableAllClicks()
         }
     }
