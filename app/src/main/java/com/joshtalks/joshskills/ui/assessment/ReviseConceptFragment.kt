@@ -55,8 +55,8 @@ class ReviseConceptFragment : Fragment() {
                 VideoPlayerActivity.startVideoActivity(
                     requireContext(),
                     reviseConceptResponse.title,
-                    "123",
-                    reviseConceptResponse.videoThumbnailUrl
+                    null,
+                    reviseConceptResponse.mediaUrl
                 )
             }
         }
