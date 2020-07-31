@@ -40,7 +40,6 @@
             android:id="@+id/choice_imgview"
             android:layout_width="match_parent"
             android:layout_height="@dimen/_100sdp"
-            android:visibility="gone"
-            app:srcCompat="@drawable/app_bg" />
+            android:visibility="gone" />
 
 </com.google.android.material.card.MaterialCardView>

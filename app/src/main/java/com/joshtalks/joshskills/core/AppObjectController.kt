@@ -170,7 +170,6 @@ internal class AppObjectController {
             configureCrashlytics()
             initFlurryAnalytics()
             initNewRelic()
-            initialiseFreshchat()
 
             gsonMapper = GsonBuilder()
                 .enableComplexMapKeySerialization()
@@ -304,7 +303,7 @@ internal class AppObjectController {
                 .build(joshApplication, BuildConfig.FLURRY_API_KEY)
         }
 
-        private fun initialiseFreshchat() {
+        fun initialiseFreshchat() {
             try {
                 val config =
                     FreshchatConfig(BuildConfig.FRESH_CHAT_APP_ID, BuildConfig.FRESH_CHAT_APP_KEY)
@@ -395,10 +394,6 @@ internal class AppObjectController {
 
         fun initObjectInThread() {
             Thread(Runnable {
-                if (BuildConfig.DEBUG) {
-                    FirebaseDatabase.getInstance().setLogLevel(Logger.Level.DEBUG)
-                    FirebaseDatabase.getInstance().setPersistenceEnabled(true)
-                }
                 val mediaOkhttpBuilder = OkHttpClient().newBuilder()
                 mediaOkhttpBuilder.connectTimeout(45, TimeUnit.SECONDS)
                     .writeTimeout(45, TimeUnit.SECONDS)
