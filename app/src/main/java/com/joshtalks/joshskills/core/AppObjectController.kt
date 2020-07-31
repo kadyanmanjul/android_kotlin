@@ -150,7 +150,8 @@ internal class AppObjectController {
         lateinit var firebaseAnalytics: FirebaseAnalytics
 
         @JvmStatic
-        lateinit var freshChat: Freshchat
+        var freshChat: Freshchat? = null
+
 
         @JvmStatic
         var currentPlayingAudioObject: ChatModel? = null
@@ -312,25 +313,25 @@ internal class AppObjectController {
                 config.isResponseExpectationEnabled = true
                 config.domain = "https://msdk.in.freshchat.com"
                 freshChat = Freshchat.getInstance(joshApplication)
-                freshChat.init(config)
+                freshChat?.init(config)
                 val notificationConfig = FreshchatNotificationConfig()
                     .setImportance(NotificationManagerCompat.IMPORTANCE_MAX)
-                freshChat.setNotificationConfig(notificationConfig)
+                freshChat?.setNotificationConfig(notificationConfig)
             } catch (ex: Exception) {
             }
         }
 
         fun restoreUser(restoreId: String?) {
             if (restoreId.isNullOrBlank()) {
-                freshChat.identifyUser(PrefManager.getStringValue(USER_UNIQUE_ID), null)
+                freshChat?.identifyUser(PrefManager.getStringValue(USER_UNIQUE_ID), null)
             } else if (PrefManager.getBoolValue(FRESH_CHAT_ID_RESTORED).not()) {
                 PrefManager.put(FRESH_CHAT_ID_RESTORED, true)
-                freshChat.identifyUser(PrefManager.getStringValue(USER_UNIQUE_ID), restoreId)
+                freshChat?.identifyUser(PrefManager.getStringValue(USER_UNIQUE_ID), restoreId)
             }
         }
 
         fun getUnreadFreshchatMessages() {
-            freshChat.getUnreadCountAsync { _, unreadCount ->
+            freshChat?.getUnreadCountAsync { _, unreadCount ->
                 PrefManager.put(FRESH_CHAT_UNREAD_MESSAGES, unreadCount)
             }
         }

@@ -8,7 +8,6 @@ import com.clevertap.android.sdk.CleverTapAPI;
 import com.flurry.android.Constants;
 import com.flurry.android.FlurryAgent;
 import com.freshchat.consumer.sdk.FreshchatUser;
-import com.freshchat.consumer.sdk.exception.MethodNotAllowedException;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.joshtalks.joshskills.BuildConfig;
 import com.joshtalks.joshskills.core.AppObjectController;
@@ -59,20 +58,20 @@ public class AppAnalytics {
     }
 
     private static void updateFreshchatSdkUser() {
-        FreshchatUser freshchatUser = AppObjectController.getFreshChat().getUser();
-        freshchatUser.setFirstName(User.getInstance().getFirstName());
-        freshchatUser.setEmail(User.getInstance().getEmail());
-        String mobileNumber = getPhoneNumber();
-        if (!mobileNumber.isEmpty()) {
-            int length = mobileNumber.length();
-            if (length > 10) {
-                freshchatUser.setPhone(mobileNumber.substring(0, length - 10), mobileNumber.substring(length - 10));
-            }
-        } else freshchatUser.setPhone("+91", "9999999999");
-
         try {
+            FreshchatUser freshchatUser = AppObjectController.getFreshChat().getUser();
+            freshchatUser.setFirstName(User.getInstance().getFirstName());
+            freshchatUser.setEmail(User.getInstance().getEmail());
+            String mobileNumber = getPhoneNumber();
+            if (!mobileNumber.isEmpty()) {
+                int length = mobileNumber.length();
+                if (length > 10) {
+                    freshchatUser.setPhone(mobileNumber.substring(0, length - 10), mobileNumber.substring(length - 10));
+                }
+            } else freshchatUser.setPhone("+91", "9999999999");
+
             AppObjectController.getFreshChat().setUser(freshchatUser);
-        } catch (MethodNotAllowedException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

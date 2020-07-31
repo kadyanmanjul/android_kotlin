@@ -66,7 +66,9 @@ class FirebaseNotificationService : FirebaseMessagingService() {
     override fun onNewToken(token: String) {
         super.onNewToken(token)
         PrefManager.put(FCM_TOKEN, token)
-        AppObjectController.freshChat.setPushRegistrationToken(token)
+        if (AppObjectController.freshChat != null) {
+            AppObjectController.freshChat?.setPushRegistrationToken(token)
+        }
     }
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {

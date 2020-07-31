@@ -89,8 +89,8 @@ class JoshApplication : MultiDexApplication(), LifecycleObserver/*, Configuratio
             ) {
                 CoroutineScope(Dispatchers.IO).launch {
                     try {
-                        val restoreId = AppObjectController.freshChat.user.restoreId
-                        if (restoreId.isNullOrBlank().not()) {
+                        val restoreId = AppObjectController.freshChat?.user?.restoreId ?: EMPTY
+                        if (restoreId.isBlank().not()) {
                             PrefManager.put(RESTORE_ID, restoreId)
                             val requestMap = mutableMapOf<String, String?>()
                             requestMap["restore_id"] = restoreId
