@@ -93,7 +93,7 @@
             android:background="@color/white"
             android:elevation="@dimen/_4sdp"
             android:paddingVertical="@dimen/_10sdp"
-            android:visibility="visible">
+            android:visibility="gone">
 
         <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/back_button"
