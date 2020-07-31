@@ -13,7 +13,11 @@ import com.mindorks.placeholderview.annotations.Layout
 import com.mindorks.placeholderview.annotations.Resolve
 
 @Layout(R.layout.quiz_practise_option_view)
-class QuizPractiseOptionView(var answersModel: AnswersModel, var listener: OnChoiceClickListener) {
+class QuizPractiseOptionView(
+    var postion: Int,
+    var answerModel: AnswersModel,
+    var listener: OnChoiceClickListener
+) {
 
     val context: Context = AppObjectController.joshApplication
 
@@ -26,17 +30,17 @@ class QuizPractiseOptionView(var answersModel: AnswersModel, var listener: OnCho
 
     @Resolve
     fun onResolved() {
-        choiceTextView.text = answersModel.text
+        choiceTextView.text = answerModel.text
 
-        if (answersModel.isSelectedByUser) {
+        if (answerModel.isSelectedByUser) {
             container.setRippleColorResource(R.color.transparent)
         } else {
             container.setRippleColorResource(R.color.dark_grey)
         }
-        if (answersModel.isSelectedByUser) {
+        if (answerModel.isSelectedByUser) {
             // For Choice Selected
-            if (answersModel.isEvaluate) {
-                if (answersModel.isCorrect) {
+            if (answerModel.isEvaluate) {
+                if (answerModel.isCorrect) {
                     // For Choice isCorrectAnswer
                     setCorrectlySelectedChoiceView()
                 } else {
@@ -48,9 +52,9 @@ class QuizPractiseOptionView(var answersModel: AnswersModel, var listener: OnCho
             }
 
         } else {
-            if (answersModel.isEvaluate) {
+            if (answerModel.isEvaluate) {
                 // For Choice Not Selected
-                if (answersModel.isCorrect) {
+                if (answerModel.isCorrect) {
                     // For Choice isCorrectAnswer
                     setCorrectButNotSelectedChoiceView()
                 } else {
@@ -61,8 +65,6 @@ class QuizPractiseOptionView(var answersModel: AnswersModel, var listener: OnCho
                 setUnselectedChoiceView()
             }
         }
-
-
     }
 
     private fun setBackgroundColor(colorId: Int) = container.setCardBackgroundColor(
@@ -81,7 +83,10 @@ class QuizPractiseOptionView(var answersModel: AnswersModel, var listener: OnCho
 
     @Click(R.id.choice_container)
     fun onClick() {
-        listener.onChoiceClick(answersModel)
+        if (answerModel.isEvaluate) {
+            return
+        }
+        listener.onChoiceClick(postion, answerModel)
     }
 
 

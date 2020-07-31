@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+                name="handler"
+                type="com.joshtalks.joshskills.ui.signup.VerificationTimeoutBottomSheet" />
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/parent_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:background="@color/white">
+
+
+        <ImageButton
+                android:id="@+id/imageButton2"
+                android:layout_width="@dimen/_20sdp"
+                android:layout_height="@dimen/_20sdp"
+                android:layout_marginTop="@dimen/_16sdp"
+                android:layout_marginEnd="@dimen/_16sdp"
+                android:background="@drawable/ic_cross"
+                android:backgroundTint="@color/black"
+                android:contentDescription="@string/cancel_button"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/text_view_1"
+                fontPath="fonts/Roboto-Regular.ttf"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_36sdp"
+                android:text="@string/verification_failed"
+                android:textColor="@color/black"
+                android:textSize="@dimen/font_18"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_no"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                fontPath="fonts/Roboto-Medium.ttf"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_24sdp"
+                android:gravity="center"
+                android:paddingTop="@dimen/_10sdp"
+                android:paddingBottom="@dimen/_10sdp"
+                android:text="@string/no"
+                android:textAllCaps="false"
+                android:textColor="@color/button_primary_color"
+                android:textSize="@dimen/font_14"
+                app:cornerRadius="@dimen/_16sdp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.15"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/text_view_1"
+                app:layout_constraintWidth_default="percent"
+                app:layout_constraintWidth_percent="0.35"
+                app:rippleColor="@color/button_primary_color"
+                app:strokeColor="@color/button_primary_color" />
+
+
+        <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_yes"
+                style="@style/Widget.MaterialComponents.Button"
+                fontPath="fonts/Roboto-Medium.ttf"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/text_color_10"
+                android:clickable="true"
+                android:focusable="true"
+                android:maxLines="1"
+                android:paddingTop="@dimen/_10sdp"
+                android:paddingBottom="@dimen/_10sdp"
+                android:text="@string/yes"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:textSize="@dimen/font_14"
+                app:cornerRadius="@dimen/_16sdp"
+                app:layout_constraintBottom_toBottomOf="@+id/btn_no"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.85"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/btn_no"
+                app:layout_constraintWidth_default="percent"
+                app:layout_constraintWidth_percent="0.35"
+                app:rippleColor="@color/white" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

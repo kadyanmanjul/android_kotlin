@@ -38,7 +38,9 @@ data class QuizModel(
     @SerializedName("text") val text: String,
     @SerializedName("sort_order") val sortOrder: Int,
     @SerializedName("media_url") val mediaUrl: String,
-    @SerializedName("answers") val answersModel: List<AnswersModel>
+    @SerializedName("answers") val answersModel: List<AnswersModel>,
+    var isAttempted: Boolean = false
+
 
 ) : Parcelable
 

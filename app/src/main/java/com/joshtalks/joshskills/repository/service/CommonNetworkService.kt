@@ -13,6 +13,7 @@ import com.joshtalks.joshskills.repository.server.RequestCertificateGenerate
 import com.joshtalks.joshskills.repository.server.RequestComplaint
 import com.joshtalks.joshskills.repository.server.SuccessResponse
 import com.joshtalks.joshskills.repository.server.conversation_practice.ConversationPractiseModel
+import com.joshtalks.joshskills.repository.server.conversation_practice.SubmitConversationPractiseRequest
 import com.joshtalks.joshskills.repository.server.course_detail.CourseDetailsResponseV2
 import com.joshtalks.joshskills.repository.server.feedback.FeedbackStatusResponse
 import com.joshtalks.joshskills.repository.server.feedback.RatingDetails
@@ -102,6 +103,11 @@ interface CommonNetworkService {
     suspend fun getConversationPractise(
         @Path("id") id: String
     ): Response<ConversationPractiseModel>
+
+    @POST("$DIR/conversation-practice/submit/")
+    suspend fun submitConversationPractice(
+        @Body request: SubmitConversationPractiseRequest
+    ): Response<Any>
 
 
 }

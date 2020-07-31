@@ -20,6 +20,7 @@
         <androidx.viewpager2.widget.ViewPager2
                 android:id="@+id/viewPager"
                 android:layout_width="0dp"
+                android:paddingHorizontal="@dimen/_12sdp"
                 android:layout_height="0dp"
                 android:layout_marginTop="@dimen/_8sdp"
                 app:layout_constraintBottom_toTopOf="@+id/audio_container"
@@ -29,17 +30,30 @@
 
         <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/question_number_tv"
+                fontPath="fonts/Poppins-Bold.ttf"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="1/"
+                android:textColor="#596273"
+                android:textSize="@dimen/font_18"
+                app:layout_constraintEnd_toStartOf="@+id/total_question_tv"
+                app:layout_constraintTop_toTopOf="@+id/total_question_tv" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/total_question_tv"
                 fontPath="fonts/Poppins-Regular.ttf"
+                android:layout_marginVertical="@dimen/_10sdp"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/_24sdp"
-                android:layout_marginVertical="@dimen/_16sdp"
-                android:gravity="start"
+                android:gravity="center"
                 android:textColor="#596273"
                 android:textSize="@dimen/font_18"
-                app:layout_constraintBottom_toBottomOf="@+id/recycler_view"
+                app:layout_constraintBottom_toBottomOf="@+id/viewPager"
                 app:layout_constraintEnd_toEndOf="parent"
-                tools:text="@string/about_teacher_title" />
+                tools:text="4" />
+
 
         <androidx.cardview.widget.CardView
                 android:id="@+id/audio_container"
@@ -70,10 +84,12 @@
                     android:insetTop="0dp"
                     android:insetBottom="0dp"
                     android:onClick="@{()->handler.submit()}"
-                    android:paddingTop="@dimen/_10sdp"
-                    android:paddingBottom="@dimen/_10sdp"
+                    android:paddingTop="@dimen/_8sdp"
+                    android:paddingBottom="@dimen/_8sdp"
                     android:text="@string/next"
+                    android:textColor="@color/white"
                     android:textAllCaps="false"
+                    android:textSize="@dimen/_15sdp"
                     android:translationZ="@dimen/_1sdp"
                     app:cornerRadius="@dimen/_36sdp"
                     app:layout_constraintBottom_toBottomOf="parent"

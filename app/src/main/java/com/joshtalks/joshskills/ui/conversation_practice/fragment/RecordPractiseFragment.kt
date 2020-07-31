@@ -8,6 +8,10 @@ import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import com.afollestad.materialdialogs.LayoutMode
+import com.afollestad.materialdialogs.MaterialDialog
+import com.afollestad.materialdialogs.bottomsheets.BottomSheet
+import com.afollestad.materialdialogs.customview.customView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.ALPHA_MAX
 import com.joshtalks.joshskills.core.ALPHA_MIN
@@ -188,6 +192,17 @@ class RecordPractiseFragment private constructor() : Fragment() {
             viewModel.isRecordingRunning = true
         }
     }
+
+    fun abcd() {
+        val bottomSheet = BottomSheet(LayoutMode.WRAP_CONTENT)
+        val view =
+            LayoutInflater.from(requireContext())
+                .inflate(R.layout.conversation_submit_dialog, null, false)
+        val dialog = MaterialDialog(requireActivity(), bottomSheet).show {
+            customView(view = view)
+        }
+    }
+
 
     companion object {
 

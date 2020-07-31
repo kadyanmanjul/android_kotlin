@@ -66,6 +66,7 @@ class QuizPractiseFragment private constructor() : Fragment(), OnChoiceClickList
         binding.viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
+                binding.questionNumberTv.text = (position + 1).toString().plus("/")
                 binding.btnSubmit.isEnabled = false
                 binding.btnSubmit.isClickable = false
                 binding.btnSubmit.backgroundTintList = ContextCompat.getColorStateList(
@@ -74,9 +75,9 @@ class QuizPractiseFragment private constructor() : Fragment(), OnChoiceClickList
                 )
                 binding.btnSubmit.text = getString(R.string.submit)
                 isEvaluate = false
-
             }
         })
+        binding.totalQuestionTv.text = quizModelList.size.toString()
     }
 
     fun submit() {
@@ -94,8 +95,8 @@ class QuizPractiseFragment private constructor() : Fragment(), OnChoiceClickList
             }
             quizModel.answersModel.listIterator().forEach { it.isEvaluate = true }
             binding.viewPager.adapter?.notifyItemChanged(cItem)
-            binding.btnSubmit.text = getString(R.string.next)
             isEvaluate = true
+            btnTextSetup()
         }
     }
 
@@ -106,6 +107,10 @@ class QuizPractiseFragment private constructor() : Fragment(), OnChoiceClickList
             AppObjectController.joshApplication,
             R.color.button_primary_color
         )
+        btnTextSetup()
+    }
+
+    private fun btnTextSetup() {
         if (binding.viewPager.currentItem == (quizModelList.size - 1)) {
             binding.btnSubmit.text = getString(R.string.finish)
         } else {

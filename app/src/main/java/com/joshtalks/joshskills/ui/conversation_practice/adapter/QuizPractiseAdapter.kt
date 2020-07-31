@@ -41,21 +41,28 @@ class QuizPractiseAdapter(
 
     inner class ViewHolder(val binding: QuizPractiseItemLayoutBinding) :
         RecyclerView.ViewHolder(binding.root), OnChoiceClickListener {
+        init {
+            binding.rvChoice.builder.setItemViewCacheSize(1).setHasFixedSize(true)
+        }
+
         fun bind(quizModel: QuizModel) {
             binding.quizModel = quizModel
             if (binding.rvChoice.viewAdapter == null || binding.rvChoice.viewAdapter.itemCount == 0) {
-                quizModel.answersModel.sortedBy { it.sortOrder }.forEach {
-                    binding.rvChoice.addView(QuizPractiseOptionView(it, this))
-                }
+                quizModel.answersModel.sortedBy { it.sortOrder }
+                    .forEachIndexed { index, answersModel ->
+                        binding.rvChoice.addView(QuizPractiseOptionView(index, answersModel, this))
+
+                    }
             }
+            binding.rvChoice.refresh()
 
             Log.e("dobaraaaya", "dobara aaya")
         }
 
-        override fun onChoiceClick(answersModel: AnswersModel) {
+        override fun onChoiceClick(position: Int, answersModel: AnswersModel) {
             items[bindingAdapterPosition].answersModel.forEach { it.isSelectedByUser = false }
             answersModel.isSelectedByUser = true
-            binding.rvChoice.refresh()
+            binding.rvChoice.refreshView(position)
             listener?.onChoiceSelectListener()
         }
     }
@@ -63,7 +70,7 @@ class QuizPractiseAdapter(
 }
 
 interface OnChoiceClickListener {
-    fun onChoiceClick(answersModel: AnswersModel)
+    fun onChoiceClick(position: Int, answersModel: AnswersModel)
 }
 
 interface OnChoiceClickListener2 {
