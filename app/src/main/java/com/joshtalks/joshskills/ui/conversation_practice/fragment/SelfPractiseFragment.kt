@@ -1,6 +1,7 @@
 package com.joshtalks.joshskills.ui.conversation_practice.fragment
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -33,6 +34,7 @@ class SelfPractiseFragment private constructor() : Fragment(), AudioPlayerEventL
     private lateinit var binding: SelfPractiseLayoutBinding
     private var audioPractiseAdapter: AudioPractiseAdapter? = null
     private lateinit var viewModel: ConversationPracticeViewModel
+    private val audioList: LinkedList<AudioModel> = LinkedList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -65,6 +67,20 @@ class SelfPractiseFragment private constructor() : Fragment(), AudioPlayerEventL
         super.onViewCreated(view, savedInstanceState)
         initView()
         initRV()
+        initAudioList()
+    }
+
+    private fun initAudioList() {
+        conversationPractiseModel.listen.forEach {
+            audioList.add(
+                AudioModel(
+                    it.audio.audio_url,
+                    it.id.toString(),
+                    it.audio.duration,
+                    subTag = it.name
+                )
+            )
+        }
     }
 
     private fun initRV() {
@@ -84,37 +100,27 @@ class SelfPractiseFragment private constructor() : Fragment(), AudioPlayerEventL
     }
 
     private fun initAudioPlayer(practiseWho: PractiseUser?) {
-        val list: LinkedList<AudioModel> = LinkedList()
-
         practiseWho?.run {
             when (this) {
                 PractiseUser.FIRST -> {
-                    conversationPractiseModel.listen.filter { it.name == conversationPractiseModel.characterNameA }
-                        .forEach {
-                            list.add(
-                                AudioModel(
-                                    it.audio.audio_url,
-                                    it.id.toString(),
-                                    it.audio.duration
-                                )
-                            )
-                        }
+                    audioList.listIterator().forEach {
+                        it.isSilent = !it.subTag.equals(
+                            conversationPractiseModel.characterNameA,
+                            ignoreCase = true
+                        )
+                    }
                 }
                 PractiseUser.SECOND -> {
-                    conversationPractiseModel.listen.filter { it.name == conversationPractiseModel.characterNameB }
-                        .forEach {
-                            list.add(
-                                AudioModel(
-                                    it.audio.audio_url,
-                                    it.id.toString(),
-                                    it.audio.duration
-                                )
-                            )
-                        }
+                    audioList.listIterator().forEach {
+                        it.isSilent = !it.subTag.equals(
+                            conversationPractiseModel.characterNameB,
+                            ignoreCase = true
+                        )
+                    }
                 }
             }
         }
-        audio_player.addAudios(list)
+        audio_player.addAudios(audioList)
     }
 
 
@@ -199,6 +205,7 @@ class SelfPractiseFragment private constructor() : Fragment(), AudioPlayerEventL
     }
 
     override fun onTrackChange(tag: String?) {
+        Log.e("audiotag", tag)
         if (tag.isNullOrEmpty().not()) {
             audioPractiseAdapter?.items?.indexOfFirst { it.id == tag?.toInt() }?.run {
                 if (this > -1) {

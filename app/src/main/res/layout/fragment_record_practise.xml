@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:card_view="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools">
 
     <data>
@@ -21,7 +22,7 @@
                 android:layout_height="0dp"
                 android:layout_marginHorizontal="@dimen/_16sdp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintBottom_toTopOf="@+id/btn_record"
+                app:layout_constraintBottom_toTopOf="@+id/record_container"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
@@ -33,12 +34,12 @@
                     android:layout_height="wrap_content"
                     android:gravity="start"
                     android:text="@string/choose_character"
-                    android:textColor="#596273"
+                    android:textColor="@color/black"
                     android:textSize="@dimen/font_14"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    tools:text="Personal Development Course" />
+                    tools:text="@string/about_teacher_title" />
 
             <androidx.constraintlayout.widget.Barrier
                     android:id="@+id/barrier_tv"
@@ -68,25 +69,25 @@
                     android:backgroundTint="@color/button_primary_color"
                     android:gravity="center_vertical|start"
                     android:padding="@dimen/_4sdp"
-                    app:tint="@color/white"
                     android:src="@drawable/ic_check"
                     android:visibility="gone"
                     app:layout_constraintBottom_toBottomOf="@+id/iv_first_user"
                     app:layout_constraintEnd_toEndOf="@+id/iv_first_user"
+                    app:tint="@color/white"
                     tools:visibility="visible" />
 
 
             <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/tv_first_user"
-                    fontPath="fonts/Poppins-Bold.ttf"
+                    fontPath="fonts/Poppins-Medium.ttf"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="@dimen/_8sdp"
                     android:ellipsize="marquee"
                     android:gravity="start"
                     android:maxLength="16"
-                    android:textColor="#172344"
-                    android:textSize="@dimen/font_13"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/font_12"
                     app:layout_constraintBottom_toBottomOf="@+id/iv_first_user"
                     app:layout_constraintStart_toEndOf="@+id/iv_first_user"
                     app:layout_constraintTop_toTopOf="@+id/iv_first_user"
@@ -125,14 +126,14 @@
 
             <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/tv_second_user"
-                    fontPath="fonts/Poppins-Bold.ttf"
+                    fontPath="fonts/Poppins-Medium.ttf"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:ellipsize="marquee"
                     android:gravity="end"
                     android:maxLength="16"
-                    android:textColor="#172344"
-                    android:textSize="@dimen/font_13"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/font_12"
                     app:layout_constraintBottom_toBottomOf="@+id/iv_first_user"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@+id/iv_first_user"
@@ -158,7 +159,7 @@
                     android:id="@+id/recycler_view"
                     android:layout_width="0dp"
                     android:layout_height="0dp"
-                    android:layout_marginTop="@dimen/_8sdp"
+                    android:paddingVertical="@dimen/_16sdp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -166,31 +167,46 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_record"
-                style="@style/Widget.MaterialComponents.Button"
-                android:layout_width="0dp"
+
+        <androidx.cardview.widget.CardView
+
+                android:id="@+id/record_container"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginBottom="@dimen/_4sdp"
-                android:backgroundTint="@color/button_primary_color"
-                android:elevation="@dimen/_4sdp"
-                android:gravity="center"
-                android:insetTop="0dp"
-                android:insetBottom="0dp"
-                android:onClick="@{()->handler.requestForRecording()}"
-                android:paddingTop="@dimen/_6sdp"
-                android:paddingBottom="@dimen/_6sdp"
-                android:text=""
-                android:translationZ="@dimen/_1sdp"
-                app:cornerRadius="@dimen/_36sdp"
-                app:icon="@drawable/recv_ic_mic_white"
-                app:iconGravity="textEnd"
-                app:iconSize="@dimen/_24sdp"
+                android:clipChildren="false"
+                android:clipToPadding="false"
+                android:divider="@android:color/transparent"
+                android:dividerHeight="0.0px"
+                android:elevation="@dimen/_8sdp"
+                app:contentPadding="@dimen/_10sdp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="@+id/constraintLayout"
-                app:layout_constraintStart_toStartOf="@+id/constraintLayout"
-                app:rippleColor="@color/white" />
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                card_view:cardElevation="@dimen/_8sdp"
+                card_view:cardPreventCornerOverlap="false">
+
+            <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_record"
+                    style="@style/Widget.MaterialComponents.Button"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginHorizontal="@dimen/_8sdp"
+                    android:backgroundTint="@color/button_primary_color"
+                    android:gravity="center"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
+                    android:onClick="@{()->handler.requestForRecording()}"
+                    android:paddingTop="@dimen/_6sdp"
+                    android:paddingBottom="@dimen/_6sdp"
+                    android:text=""
+                    android:translationZ="@dimen/_1sdp"
+                    app:cornerRadius="@dimen/_36sdp"
+                    app:icon="@drawable/recv_ic_mic_white"
+                    app:iconGravity="textEnd"
+                    app:iconSize="@dimen/_24sdp"
+                    app:rippleColor="@color/white" />
+        </androidx.cardview.widget.CardView>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 

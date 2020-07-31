@@ -24,11 +24,11 @@
                 app:marker="@drawable/ic_marker_v2"
                 app:lineWidth="@dimen/_1sdp"
                 app:markerInCenter="false"
-                app:markerSize="@dimen/_12sdp"
+                app:markerSize="@dimen/_10sdp"
                 app:startLineColor="#BABFCF" />
 
         <LinearLayout
-                android:paddingBottom="@dimen/_4sdp"
+                android:paddingBottom="@dimen/_2sdp"
                 android:layout_gravity="top"
                 android:id="@+id/root_view"
                 android:layout_width="match_parent"
@@ -40,7 +40,7 @@
                     android:layout_gravity="top|start|center"
                     android:id="@+id/text_header"
                     android:layout_marginTop="@dimen/_minus1sdp"
-                    fontPath="fonts/Poppins-Bold.ttf"
+                    fontPath="fonts/Poppins-Medium.ttf"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="@color/gray_48"
@@ -52,11 +52,9 @@
                     fontPath="fonts/Poppins-Regular.ttf"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="#9098B1"
-                    android:layout_marginTop="@dimen/_1sdp"
+                    android:textColor="@color/text_90"
                     android:textSize="@dimen/font_12"
                     tools:text="@string/retry_miss_call_verify" />
-
         </LinearLayout>
     </LinearLayout>
 </layout>

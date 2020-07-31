@@ -91,7 +91,7 @@ class ConversationPracticeActivity : CoreJoshActivity() {
         })
         viewModel.conversationPracticeLiveData.observe(this, Observer { it ->
             it?.let { obj ->
-                //openIntroScreen(obj)
+                openIntroScreen(obj)
                 obj.listen.sortedBy { it.sortOrder }.filter { it.name == obj.characterNameB }
                     .listIterator().forEach {
                         it.viewType = ViewTypeForPractiseUser.SECOND.type
@@ -135,8 +135,8 @@ class ConversationPracticeActivity : CoreJoshActivity() {
     }
 
     override fun onBackPressed() {
-        super.onBackPressed()
         this.finish()
+        super.onBackPressed()
     }
 }
 

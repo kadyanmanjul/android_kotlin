@@ -10,6 +10,7 @@ import com.github.vipulasri.timelineview.TimelineView
 import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.loadJSONFromAsset
 import com.joshtalks.joshskills.core.setImage
 import com.joshtalks.joshskills.databinding.ConversationPracticeTimelineItemBinding
 import com.joshtalks.joshskills.repository.local.model.PractiseFlowOptionModel
@@ -21,10 +22,7 @@ import kotlinx.android.synthetic.main.fragment_conversation_practice_ntro.image_
 import kotlinx.android.synthetic.main.fragment_conversation_practice_ntro.recycler_view
 import kotlinx.android.synthetic.main.fragment_conversation_practice_ntro.text_header
 import kotlinx.android.synthetic.main.fragment_conversation_practice_ntro.text_sub_header
-import java.io.IOException
-import java.io.InputStream
 import java.lang.reflect.Type
-import java.nio.charset.Charset
 
 
 class ConversationPracticeIntro private constructor() : DialogFragment() {
@@ -97,26 +95,6 @@ class ConversationPracticeIntro private constructor() : DialogFragment() {
             dismissAllowingStateLoss()
         }
     }
-
-    private fun loadJSONFromAsset(fileName: String): String? {
-        var json: String? = null
-        json = try {
-            val `is`: InputStream = AppObjectController.joshApplication.assets.open(fileName)
-            val size: Int = `is`.available()
-            val buffer = ByteArray(size)
-            `is`.read(buffer)
-            `is`.close()
-
-            val charset: Charset = Charsets.UTF_8
-            String(buffer, charset)
-        } catch (ex: IOException) {
-            ex.printStackTrace()
-            return null
-        }
-        return json
-    }
-
-
 }
 
 

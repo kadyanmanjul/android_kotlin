@@ -22,6 +22,7 @@ import com.google.android.exoplayer2.source.ClippingMediaSource
 import com.google.android.exoplayer2.source.ConcatenatingMediaSource
 import com.google.android.exoplayer2.source.MediaSource
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
+import com.google.android.exoplayer2.source.SilenceMediaSource
 import com.google.android.exoplayer2.source.TrackGroupArray
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray
 import com.google.android.exoplayer2.ui.PlayerControlView
@@ -200,9 +201,15 @@ class ExoAudioPlayerView : FrameLayout, LifecycleObserver {
             if (audioModel.tag != null) {
                 factory.setTag(audioModel.tag)
             }
-            val audioSource: MediaSource = factory.createMediaSource(Uri.parse(audioModel.audioUrl))
-            val clip = ClippingMediaSource(audioSource, audioModel.duration * 1000L)
-            concatenatingMediaSource.addMediaSource(clip)
+            if (audioModel.isSilent) {
+                val silentMedia = SilenceMediaSource(audioModel.duration * 1000L)
+                concatenatingMediaSource.addMediaSource(silentMedia)
+            } else {
+                val audioSource: MediaSource =
+                    factory.createMediaSource(Uri.parse(audioModel.audioUrl))
+                val clip = ClippingMediaSource(audioSource, audioModel.duration * 1000L)
+                concatenatingMediaSource.addMediaSource(clip)
+            }
             lastTime += audioModel.duration * 1000L
             totalTime += audioModel.duration
         }
@@ -210,6 +217,7 @@ class ExoAudioPlayerView : FrameLayout, LifecycleObserver {
         player!!.playWhenReady = false
         durationTv.text = stringForTime(totalTime.toInt())
         positionTv.text = stringForTime(totalTime.toInt())
+
     }
 
 

@@ -44,17 +44,18 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:srcCompat="@drawable/ic_arrow_back"
-                    app:tint="@color/gray_3B" />
+                    app:tint="@color/black" />
 
             <androidx.appcompat.widget.AppCompatTextView
+                    fontPath="fonts/Poppins-Medium.ttf"
                     android:id="@+id/text_message_title"
-                    fontPath="fonts/Roboto-Medium.ttf"
+                    android:layout_marginStart="@dimen/_4sdp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:autoSizeMaxTextSize="@dimen/font_18"
                     android:gravity="start"
                     android:text="@string/conversation_practice"
-                    android:textColor="@color/gray_3B"
+                    android:textColor="@color/black"
                     android:textSize="@dimen/font_20"
                     app:layout_constraintBottom_toBottomOf="@+id/iv_back"
                     app:layout_constraintStart_toEndOf="@+id/iv_back"
@@ -87,8 +88,6 @@
                     app:tabSelectedTextColor="@color/button_primary_color"
                     app:tabTextAppearance="@style/TabLayoutStyle"
                     app:tabTextColor="@color/dark_grey" />
-
-
         </androidx.constraintlayout.widget.ConstraintLayout>
 
 
