@@ -182,7 +182,7 @@ class CourseExploreActivity : CoreJoshActivity() {
                     data["is_default"] = "true"
                 }
                 val response: List<CourseExploreModel> =
-                    AppObjectController.signUpNetworkService.explorerCourse(data)
+                    AppObjectController.signUpNetworkService.exploreCourses(data)
                 CoroutineScope(Dispatchers.Main).launch {
                     var list: ArrayList<InboxEntity>? = null
                     if (intent.hasExtra(USER_COURSES)) {

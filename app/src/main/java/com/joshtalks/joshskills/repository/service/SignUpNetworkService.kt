@@ -6,7 +6,6 @@ import com.joshtalks.joshskills.repository.local.model.InstallReferrerModel
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.CouponCodeResponse
-import com.joshtalks.joshskills.repository.server.CourseDetailsModel
 import com.joshtalks.joshskills.repository.server.CourseExploreModel
 import com.joshtalks.joshskills.repository.server.CreateOrderResponse
 import com.joshtalks.joshskills.repository.server.InstanceIdResponse
@@ -18,10 +17,7 @@ import com.joshtalks.joshskills.repository.server.ReferralCouponDetailResponse
 import com.joshtalks.joshskills.repository.server.RequestVerifyOTP
 import com.joshtalks.joshskills.repository.server.TrueCallerLoginRequest
 import com.joshtalks.joshskills.repository.server.UpdateDeviceRequest
-import com.joshtalks.joshskills.repository.server.UpdateProfileResponse
 import com.joshtalks.joshskills.repository.server.UpdateUserLocality
-import com.joshtalks.joshskills.repository.server.UpdateUserPersonal
-import com.joshtalks.joshskills.repository.server.course_detail.CourseDetailsResponse
 import com.joshtalks.joshskills.repository.server.signup.LoginResponse
 import com.joshtalks.joshskills.repository.server.signup.RequestSocialSignUp
 import com.joshtalks.joshskills.repository.server.signup.RequestUserVerification
@@ -75,20 +71,11 @@ interface SignUpNetworkService {
         @FieldMap params: Map<String, String?>
     ): Response<User>
 
-
     @PATCH("$DIR/mentor/{id}/")
     fun updateUserAddressAsync(
         @Path("id") id: String,
         @Body params: UpdateUserLocality
     ): Deferred<ProfileResponse>
-
-
-    @PATCH("$DIR/user/{id}/")
-    fun updateUserAsync(
-        @Path("id") id: String,
-        @Body obj: UpdateUserPersonal
-    ): Deferred<UpdateProfileResponse>
-
 
     @PATCH("$DIR/mentor/{id}/last_login/")
     suspend fun userActive(@Path("id") id: String, @Body obj: Any)
@@ -106,7 +93,6 @@ interface SignUpNetworkService {
         @Body obj: UpdateDeviceRequest
     ): DeviceDetailsResponse
 
-
     @PATCH("$DIR/mentor/fcm/{id}/")
     fun updateFCMToken(@Path("id") id: Int, @Body fcmResponse: FCMResponse): Deferred<Any>
 
@@ -114,10 +100,8 @@ interface SignUpNetworkService {
     @POST("$DIR/mentor/fcm/")
     fun uploadFCMToken(@FieldMap params: Map<String, String>): Deferred<FCMResponse>
 
-
     @POST("$DIR/mentor/install_source")
     suspend fun getInstallReferrerAsync(@Body installReferrerModel: InstallReferrerModel)
-
 
     @GET("$DIR/payment/create_order")
     fun getPaymentDetails(@QueryMap params: Map<String, String>): Deferred<Response<PaymentDetailsResponse>>
@@ -125,17 +109,8 @@ interface SignUpNetworkService {
     @POST("$DIR/payment/create_order_v2")
     fun createPaymentOrder(@Body params: Map<String, String?>): Deferred<Response<OrderDetailResponse>>
 
-
     @GET("$DIR/course/test/")
-    suspend fun explorerCourse(@QueryMap params: Map<String, String> = mapOf("is_default" to "true")): List<CourseExploreModel>
-
-    @GET("$DIR/course/test_images/")
-    fun explorerCourseDetails(@QueryMap params: Map<String, String>): Deferred<List<CourseDetailsModel>>
-
-
-    @GET("$DIR/course/test_details/")
-    fun explorerCourseDetailsApiV2Async(@QueryMap params: Map<String, String> = mapOf("is_default" to "true")): Deferred<List<CourseDetailsResponse>>
-
+    suspend fun exploreCourses(@QueryMap params: Map<String, String> = mapOf("is_default" to "true")): List<CourseExploreModel>
 
     @GET("$DIR/payment/coupon/")
     fun validateOrGetAndReferralOrCouponAsync(@QueryMap params: Map<String, String>): Deferred<List<CouponCodeResponse>>
