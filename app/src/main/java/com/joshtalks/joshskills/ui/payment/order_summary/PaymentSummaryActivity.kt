@@ -81,6 +81,7 @@ const val TRANSACTION_ID = "TRANSACTION_ID"
 
 class PaymentSummaryActivity : CoreJoshActivity(),
     PaymentResultListener {
+    private var prefix: String = EMPTY
     private lateinit var binding: ActivityPaymentSummaryBinding
     private var testId: String = EMPTY
     private val uiHandler = Handler(Looper.getMainLooper())
@@ -362,11 +363,11 @@ class PaymentSummaryActivity : CoreJoshActivity(),
         binding.countryCodePicker.setAutoDetectedCountry(true)
         binding.countryCodePicker.setDetectCountryWithAreaCode(true)
         binding.countryCodePicker.setOnCountryChangeListener {
-            binding.mobileEt.prefix =
+            prefix =
                 binding.countryCodePicker.selectedCountryCodeWithPlus
         }
         val defaultRegion: String = PhoneNumberUtils.getDefaultCountryIso(this)
-        binding.mobileEt.prefix = binding.countryCodePicker.getCountryCodeByName(defaultRegion)
+        prefix = binding.countryCodePicker.getCountryCodeByName(defaultRegion)
         binding.mobileEt.setOnFocusChangeListener { v, hasFocus ->
             if (hasFocus)
                 requestHint()
@@ -431,7 +432,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                 data?.getParcelableExtra(Credential.EXTRA_KEY)
             binding.mobileEt.setText(
                 credential?.id?.replaceFirst(
-                    binding.mobileEt.prefix,
+                    prefix,
                     EMPTY
                 )
             )
@@ -463,7 +464,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                         return
                     }
                     isValidFullNumber(
-                        binding.mobileEt.prefix,
+                        prefix,
                         binding.mobileEt.text.toString()
                     ).not() -> {
                         showToast(getString(R.string.please_enter_valid_number))
@@ -473,7 +474,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                         viewModel.createFreeOrder(testId, binding.mobileEt.text.toString())
                         return
                     }
-                    binding.mobileEt.prefix.equals("+91") && viewModel.getCourseDiscountedAmount() >= 1 ->
+                    prefix.equals("+91") && viewModel.getCourseDiscountedAmount() >= 1 ->
                         viewModel.getOrderDetails(testId, binding.mobileEt.text.toString())
                     else ->
                         uiHandler.post {
@@ -516,7 +517,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
         if (PrefManager.getStringValue(PAYMENT_MOBILE_NUMBER).isBlank())
             PrefManager.put(
                 PAYMENT_MOBILE_NUMBER,
-                binding.mobileEt.prefix.plus(SINGLE_SPACE).plus(binding.mobileEt.text)
+                prefix.plus(SINGLE_SPACE).plus(binding.mobileEt.text)
             )
         if (isEcommereceEventFire && (viewModel.mPaymentDetailsResponse.value?.amount!! > 0) && razorpayPaymentId.isNotEmpty() && testId.isNotEmpty()) {
             isEcommereceEventFire = false

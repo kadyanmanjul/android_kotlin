@@ -36,6 +36,7 @@ import java.util.concurrent.TimeUnit
 
 class SignUpOptionsFragment : BaseSignUpFragment() {
 
+    private var prefix: String = EMPTY
     private lateinit var viewModel: SignUpViewModel
     private lateinit var binding: FragmentSignUpOptionsBinding
     private var timer: CountDownTimer? = null
@@ -74,7 +75,7 @@ class SignUpOptionsFragment : BaseSignUpFragment() {
         binding.countryCodePicker.setAutoDetectedCountry(true)
         binding.countryCodePicker.setDetectCountryWithAreaCode(true)
         binding.countryCodePicker.setOnCountryChangeListener {
-            binding.mobileEt.prefix = binding.countryCodePicker.selectedCountryCodeWithPlus
+            prefix = binding.countryCodePicker.selectedCountryCodeWithPlus
             setupVerificationSystem(binding.countryCodePicker.selectedCountryNameCode)
         }
         val supportedCountryList =
@@ -83,7 +84,7 @@ class SignUpOptionsFragment : BaseSignUpFragment() {
             binding.countryCodePicker.setCustomMasterCountries(supportedCountryList)
         }
         val defaultRegion: String = PhoneNumberUtils.getDefaultCountryIso(requireContext())
-        binding.mobileEt.prefix = binding.countryCodePicker.getCountryCodeByName(defaultRegion)
+        prefix = binding.countryCodePicker.getCountryCodeByName(defaultRegion)
         bindProgressButton(binding.btnLogin)
         viewModel.verificationStatus.observe(viewLifecycleOwner, Observer {
             it.run {
@@ -182,7 +183,7 @@ class SignUpOptionsFragment : BaseSignUpFragment() {
 
     fun loginViaPhoneNumber() {
         if (binding.mobileEt.text.isNullOrEmpty() || isValidFullNumber(
-                binding.mobileEt.prefix,
+                prefix,
                 binding.mobileEt.text.toString()
             ).not()
         ) {
@@ -213,8 +214,8 @@ class SignUpOptionsFragment : BaseSignUpFragment() {
 
     private fun evaluateVerificationService() {
         val defaultRegion: String = getCountryIsoCode(
-            binding.mobileEt.prefix.plus(binding.mobileEt.text!!.toString()),
-            binding.mobileEt.prefix
+            prefix.plus(binding.mobileEt.text!!.toString()),
+            prefix
         )
         verificationService = if (defaultRegion == "IN") {
             VerificationService.SMS_COUNTRY
@@ -227,7 +228,7 @@ class SignUpOptionsFragment : BaseSignUpFragment() {
 
     private fun callVerificationService() {
         (requireActivity() as SignUpActivity).createVerification(
-            binding.mobileEt.prefix,
+            prefix,
             binding.mobileEt.text!!.toString(),
             service = verificationService,
             verificationVia = verificationVia
@@ -306,7 +307,7 @@ class SignUpOptionsFragment : BaseSignUpFragment() {
         RxBus2.publish(
             LoginViaEventBus(
                 LoginViaStatus.NUMBER_VERIFY,
-                binding.mobileEt.prefix,
+                prefix,
                 binding.mobileEt.text!!.toString()
             )
         )

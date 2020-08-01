@@ -30,6 +30,7 @@ import java.util.*
 
 class SignUpProfileFragment : BaseSignUpFragment() {
 
+    private var prefix: String = EMPTY
     private val DATE_FORMATTER = SimpleDateFormat("yyyy-MM-dd")
     private val DATE_FORMATTER_2 = SimpleDateFormat("dd - MMM - yyyy")
     private lateinit var viewModel: SignUpViewModel
@@ -152,9 +153,9 @@ class SignUpProfileFragment : BaseSignUpFragment() {
     private fun initCountryCodePicker() {
         binding.countryCodePicker.setAutoDetectedCountry(true)
         binding.countryCodePicker.setDetectCountryWithAreaCode(true)
-        binding.phoneNumberEt.prefix = binding.countryCodePicker.defaultCountryCodeWithPlus
+        prefix = binding.countryCodePicker.defaultCountryCodeWithPlus
         binding.countryCodePicker.setOnCountryChangeListener {
-            binding.phoneNumberEt.prefix = binding.countryCodePicker.selectedCountryCodeWithPlus
+            prefix = binding.countryCodePicker.selectedCountryCodeWithPlus
         }
 
     }

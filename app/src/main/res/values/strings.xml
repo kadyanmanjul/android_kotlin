@@ -294,6 +294,7 @@
     <string name="usb_connected_message">Your device is connected to PC. Please disconnect the USB data connection to play the videos</string>
     <string name="usb_disconnect_title">Disconnect USB</string>
     <string name="ok_got_it_lbl">OK, GOT IT</string>
+    <string name="selection_arrow">selection_arrow</string>
 
     <string name="start_quiz">Start Quiz</string>
     <string name="conversational_practise">Conversational Practice</string>

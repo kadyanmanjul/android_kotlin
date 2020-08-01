@@ -136,11 +136,10 @@
 
                     <com.joshtalks.joshskills.core.custom_ui.countrycodepicker.CountryCodePicker
                             android:id="@+id/country_code_picker"
-                            android:layout_width="0dp"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:gravity="center"
                             android:padding="@dimen/_2sdp"
-                            android:visibility="gone"
                             app:ccpDialog_allowSearch="true"
                             app:ccpDialog_backgroundColor="@color/wh_f4"
                             app:ccpDialog_fastScroller_bubbleColor="@color/checkmark_blue"
@@ -150,7 +149,6 @@
                             app:ccpDialog_searchEditTextTint="@color/emoji_bg_color"
                             app:ccpDialog_showCloseIcon="true"
                             app:ccpDialog_showFastScroller="true"
-                            app:ccpDialog_showFlag="true"
                             app:ccpDialog_showPhoneCode="true"
                             app:ccpDialog_showTitle="false"
                             app:ccpDialog_textColor="@color/font_color"
@@ -167,30 +165,25 @@
                             app:ccp_defaultLanguage="ENGLISH"
                             app:ccp_defaultNameCode="IN"
                             app:ccp_defaultPhoneCode="91"
-                            app:ccp_flagBorderColor="@color/transparent"
                             app:ccp_hintExampleNumber="false"
                             app:ccp_rememberLastSelection="true"
-                            app:ccp_showArrow="true"
-                            app:ccp_showFlag="true"
-                            app:ccp_showFullName="true"
-                            app:ccp_showNameCode="true"
+                            app:ccp_showArrow="false"
+                            app:ccp_showFullName="false"
+                            app:ccp_showNameCode="false"
                             app:ccp_showPhoneCode="true"
                             app:ccp_textGravity="CENTER"
                             app:ccp_textSize="@dimen/font_16"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent"
-                            app:layout_constraintWidth_default="percent"
-                            app:layout_constraintWidth_percent="0.12" />
+                            app:layout_constraintTop_toTopOf="parent" />
 
-                    <com.joshtalks.joshskills.core.custom_ui.PrefixEditText
+                    <androidx.appcompat.widget.AppCompatEditText
                             android:id="@+id/phone_number_et"
                             fontPath="fonts/Roboto-Regular.ttf"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:background="@null"
-                            android:editable="false"
                             android:enabled="false"
                             android:focusable="false"
                             android:gravity="start|center"
@@ -206,11 +199,9 @@
                             android:textSize="@dimen/font_15"
                             app:backgroundTint="@color/white"
                             app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintEnd_toStartOf="@+id/iv_clear_number"
                             app:layout_constraintStart_toEndOf="@+id/country_code_picker"
                             app:layout_constraintTop_toTopOf="parent"
-                            app:layout_constraintWidth_default="percent"
-                            app:layout_constraintWidth_percent="0.8" />
+                            app:layout_constraintEnd_toStartOf="@id/iv_tick" />
 
                     <androidx.appcompat.widget.AppCompatImageView
                             android:id="@+id/iv_tick"
