@@ -34,8 +34,17 @@ data class RequestRegisterGAId(
 )
 
 enum class ExploreType(value: String) {
+
+    @SerializedName("NORMAL")
     NORMAL("NORMAL"),
+
+    @SerializedName("FFCOURSE")
     FFCOURSE("FFCOURSE"),
+
+    @SerializedName("FREETRIAL")
     FREETRIAL("FREETRIAL"),
+
+    @SerializedName("SUBSCRIPTION")
     SUBSCRIPTION("SUBSCRIPTION")
+
 }
