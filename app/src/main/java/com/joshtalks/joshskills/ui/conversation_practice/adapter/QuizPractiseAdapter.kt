@@ -1,6 +1,5 @@
 package com.joshtalks.joshskills.ui.conversation_practice.adapter
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -55,14 +54,12 @@ class QuizPractiseAdapter(
                     }
             }
             binding.rvChoice.refresh()
-
-            Log.e("dobaraaaya", "dobara aaya")
         }
 
         override fun onChoiceClick(position: Int, answersModel: AnswersModel) {
             items[bindingAdapterPosition].answersModel.forEach { it.isSelectedByUser = false }
             answersModel.isSelectedByUser = true
-            binding.rvChoice.refreshView(position)
+            binding.rvChoice.refresh()
             listener?.onChoiceSelectListener()
         }
     }
