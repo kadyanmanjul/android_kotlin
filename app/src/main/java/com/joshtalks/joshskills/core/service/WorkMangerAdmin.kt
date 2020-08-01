@@ -114,7 +114,7 @@ object WorkMangerAdmin {
             return
         }
         val data = workDataOf("test_id" to testId)
-        val workRequest = OneTimeWorkRequestBuilder<RegisterUserGId>()
+        val workRequest = OneTimeWorkRequestBuilder<RegisterUserGAId>()
             .setInputData(data)
             .build()
         WorkManager.getInstance(AppObjectController.joshApplication).enqueue(workRequest)

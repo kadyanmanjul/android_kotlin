@@ -38,7 +38,7 @@ import com.joshtalks.joshskills.repository.local.model.FCMResponse
 import com.joshtalks.joshskills.repository.local.model.GaIDMentorModel
 import com.joshtalks.joshskills.repository.local.model.InstallReferrerModel
 import com.joshtalks.joshskills.repository.local.model.Mentor
-import com.joshtalks.joshskills.repository.local.model.RequestRegisterGId
+import com.joshtalks.joshskills.repository.local.model.RequestRegisterGAId
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.MessageStatusRequest
 import com.joshtalks.joshskills.repository.server.UpdateDeviceRequest
@@ -212,21 +212,20 @@ class ReferralCodeRefreshWorker(context: Context, workerParams: WorkerParameters
 
 }
 
-
-class RegisterUserGId(context: Context, private val workerParams: WorkerParameters) :
+class RegisterUserGAId(context: Context, private val workerParams: WorkerParameters) :
     CoroutineWorker(context, workerParams) {
     override suspend fun doWork(): Result {
         try {
-            val requestRegisterGId = RequestRegisterGId()
-            requestRegisterGId.gaid = PrefManager.getStringValue(USER_UNIQUE_ID)
-            requestRegisterGId.installOn =
+            val requestRegisterGAId = RequestRegisterGAId()
+            requestRegisterGAId.gaid = PrefManager.getStringValue(USER_UNIQUE_ID)
+            requestRegisterGAId.installOn =
                 InstallReferrerModel.getPrefObject()?.installOn ?: Date().time
-            requestRegisterGId.test =
+            requestRegisterGAId.test =
                 workerParams.inputData.getString("test_id")?.split("_")?.get(1)?.toInt() ?: 0
-            requestRegisterGId.utmMedium = InstallReferrerModel.getPrefObject()?.utmMedium ?: EMPTY
-            requestRegisterGId.utmSource = InstallReferrerModel.getPrefObject()?.utmSource ?: EMPTY
+            requestRegisterGAId.utmMedium = InstallReferrerModel.getPrefObject()?.utmMedium ?: EMPTY
+            requestRegisterGAId.utmSource = InstallReferrerModel.getPrefObject()?.utmSource ?: EMPTY
             val resp =
-                AppObjectController.commonNetworkService.registerGAIdAsync(requestRegisterGId)
+                AppObjectController.commonNetworkService.registerGAIdAsync(requestRegisterGAId)
                     .await()
             PrefManager.put(SERVER_GID_ID, resp.id)
             PrefManager.put(GID_SET_FOR_USER, true)
@@ -568,7 +567,7 @@ class MergeMentorWithGAIDWorker(context: Context, workerParams: WorkerParameters
                 return Result.success()
             }
             val data = mapOf("mentor" to Mentor.getInstance().getId())
-            AppObjectController.chatNetworkService.mergeMentorWithGId(id.toString(), data)
+            AppObjectController.chatNetworkService.mergeMentorWithGAId(id.toString(), data)
             PrefManager.removeKey(SERVER_GID_ID)
         } catch (ex: Throwable) {
             LogException.catchException(ex)
@@ -582,4 +581,3 @@ fun getGoogleAdId(context: Context): String {
     val adInfo = AdvertisingIdClient.getAdvertisingIdInfo(context)
     return adInfo.id
 }
-

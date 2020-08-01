@@ -76,7 +76,7 @@ interface ChatNetworkService {
 
     @FormUrlEncoded
     @PATCH("$DIR/mentor/gaid/{id}/")
-    suspend fun mergeMentorWithGId(@Path("id") id: String, @FieldMap params: Map<String, String>)
+    suspend fun mergeMentorWithGAId(@Path("id") id: String, @FieldMap params: Map<String, String>)
 
     @GET("$DIR/chat/conversation/{id}/")
     suspend fun getCourseProgressDetailsAsync(@Path("id") cId: String): Response<CoursePerformanceResponse>

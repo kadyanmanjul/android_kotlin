@@ -5,7 +5,7 @@ import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 import com.joshtalks.joshskills.core.EMPTY
 
-data class RequestRegisterGId(
+data class RequestRegisterGAId(
     @SerializedName("gaid")
     var gaid: String = EMPTY,
     @SerializedName("install_on")

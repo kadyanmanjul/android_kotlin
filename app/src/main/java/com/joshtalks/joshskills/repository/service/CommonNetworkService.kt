@@ -1,7 +1,7 @@
 package com.joshtalks.joshskills.repository.service
 
 import com.joshtalks.joshskills.repository.local.model.GaIDMentorModel
-import com.joshtalks.joshskills.repository.local.model.RequestRegisterGId
+import com.joshtalks.joshskills.repository.local.model.RequestRegisterGAId
 import com.joshtalks.joshskills.repository.local.model.nps.NPSQuestionModel
 import com.joshtalks.joshskills.repository.server.CertificateDetail
 import com.joshtalks.joshskills.repository.server.ComplaintResponse
@@ -42,7 +42,7 @@ interface CommonNetworkService {
     suspend fun submitComplaint(@Body requestComplaint: RequestComplaint): ComplaintResponse
 
     @POST("$DIR/mentor/gaid/")
-    fun registerGAIdAsync(@Body requestRegisterGId: RequestRegisterGId): Deferred<RequestRegisterGId>
+    fun registerGAIdAsync(@Body requestRegisterGAId: RequestRegisterGAId): Deferred<RequestRegisterGAId>
 
     @GET("$DIR/mentor/restore_id/{id}/")
     suspend fun getFreshChatRestoreIdAsync(@Path("id") id: String): FreshChatRestoreIDResponse
