@@ -13,6 +13,7 @@ import com.joshtalks.joshskills.core.API_TOKEN
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.COUNTRY_ISO
 import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.EXPLORE_TYPE
 import com.joshtalks.joshskills.core.GID_SET_FOR_USER
 import com.joshtalks.joshskills.core.INSTANCE_ID
 import com.joshtalks.joshskills.core.InstallReferralUtil
@@ -34,6 +35,7 @@ import com.joshtalks.joshskills.repository.local.entity.NPSEvent
 import com.joshtalks.joshskills.repository.local.entity.NPSEventModel
 import com.joshtalks.joshskills.repository.local.eventbus.NPSEventGenerateEventBus
 import com.joshtalks.joshskills.repository.local.model.DeviceDetailsResponse
+import com.joshtalks.joshskills.repository.local.model.ExploreType
 import com.joshtalks.joshskills.repository.local.model.FCMResponse
 import com.joshtalks.joshskills.repository.local.model.GaIDMentorModel
 import com.joshtalks.joshskills.repository.local.model.InstallReferrerModel
@@ -224,6 +226,10 @@ class RegisterUserGAId(context: Context, private val workerParams: WorkerParamet
                 workerParams.inputData.getString("test_id")?.split("_")?.get(1)?.toInt() ?: 0
             requestRegisterGAId.utmMedium = InstallReferrerModel.getPrefObject()?.utmMedium ?: EMPTY
             requestRegisterGAId.utmSource = InstallReferrerModel.getPrefObject()?.utmSource ?: EMPTY
+            val exploreType = PrefManager.getStringValue(EXPLORE_TYPE)
+            requestRegisterGAId.exploreType = if (exploreType.isNotBlank()) {
+                ExploreType.valueOf(exploreType)
+            } else ExploreType.NORMAL
             val resp =
                 AppObjectController.commonNetworkService.registerGAIdAsync(requestRegisterGAId)
                     .await()
