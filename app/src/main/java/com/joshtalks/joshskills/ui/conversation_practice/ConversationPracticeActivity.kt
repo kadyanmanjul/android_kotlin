@@ -116,9 +116,6 @@ class ConversationPracticeActivity : CoreJoshActivity() {
                 initView()
             }
         })
-        viewModel.successApiLiveData.observe(this, Observer {
-            onBackPressed()
-        })
     }
 
     private fun openIntroScreen(conversationPractiseModel: ConversationPractiseModel) {
@@ -149,6 +146,8 @@ class ConversationPracticeActivity : CoreJoshActivity() {
                     it.printStackTrace()
                 })
         )
+
+
     }
 
     override fun onResume() {

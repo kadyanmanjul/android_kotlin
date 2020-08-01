@@ -47,7 +47,6 @@ class ConversationPracticeViewModel(application: Application) : AndroidViewModel
     val conversationPracticeLiveData: LiveData<ConversationPractiseModel> =
         _conversationPracticeLiveData
     val apiCallStatusLiveData: MutableLiveData<ApiCallStatus> = MutableLiveData()
-    val successApiLiveData: MutableLiveData<Boolean> = MutableLiveData()
 
 
     fun initRecorder(): Boolean {
@@ -129,7 +128,6 @@ class ConversationPracticeViewModel(application: Application) : AndroidViewModel
                     )
                 if (response.isSuccessful) {
                     apiCallStatusLiveData.postValue(ApiCallStatus.SUCCESS)
-                    successApiLiveData.postValue(true)
                     return@launch
                 }
 
