@@ -333,5 +333,6 @@
 
     <string name="unlock_class_text">Unlock Next Class     </string>
     <string name="loading_new_classess">Loading new classes...</string>
+    <string name="start_now">Start Now</string>
 
 </resources>
