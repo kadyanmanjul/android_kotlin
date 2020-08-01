@@ -19,5 +19,14 @@ data class RequestRegisterGAId(
     @SerializedName("utm_source")
     var utmSource: String = EMPTY,
     @Expose(serialize = false, deserialize = true)
-    var id: Int = 0
+    var id: Int = 0,
+    @SerializedName("explore_type")
+    var exploreType: ExploreType = ExploreType.NORMAL
 )
+
+enum class ExploreType(value: String) {
+    NORMAL("NORMAL"),
+    FFCOURSE("FFCOURSE"),
+    FREETRIAL("FREETRIAL"),
+    SUBSCRIPTION("SUBSCRIPTION")
+}
