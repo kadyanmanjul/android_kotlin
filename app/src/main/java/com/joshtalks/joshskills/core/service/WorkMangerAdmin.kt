@@ -109,7 +109,7 @@ object WorkMangerAdmin {
 
 
 
-    fun registerUserGIDWithTestId(testId: String) {
+    fun registerUserGAIDWithTestId(testId: String) {
         if (testId.isEmpty() || PrefManager.getBoolValue(GID_SET_FOR_USER)) {
             return
         }

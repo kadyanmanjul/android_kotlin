@@ -7,6 +7,7 @@ import android.telephony.TelephonyManager
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.CoreJoshActivity
+import com.joshtalks.joshskills.core.EXPLORE_TYPE
 import com.joshtalks.joshskills.core.INSTANCE_ID
 import com.joshtalks.joshskills.core.PermissionUtils
 import com.joshtalks.joshskills.core.PrefManager
@@ -16,6 +17,7 @@ import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.LogException
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.core.service.WorkMangerAdmin
+import com.joshtalks.joshskills.repository.local.model.ExploreType
 import com.joshtalks.joshskills.ui.course_details.CourseDetailsActivity
 import com.joshtalks.joshskills.ui.extra.CustomPermissionDialogInteractionListener
 import com.karumi.dexter.MultiplePermissionsReport
@@ -25,6 +27,7 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import io.branch.referral.Branch
 import io.branch.referral.Defines
 import org.json.JSONObject
+import timber.log.Timber
 
 
 class LauncherActivity : CoreJoshActivity(), CustomPermissionDialogInteractionListener {
@@ -43,10 +46,16 @@ class LauncherActivity : CoreJoshActivity(), CustomPermissionDialogInteractionLi
             try {
                 val jsonParams = referringParams ?: (Branch.getInstance().firstReferringParams
                     ?: Branch.getInstance().latestReferringParams)
+                Timber.tag("BranchDeepLinkParams : ")
+                    .d("referringParams = $referringParams, error = $error")
                 if (error == null && jsonParams?.has(Defines.Jsonkey.AndroidDeepLinkPath.key) == true) {
                     AppObjectController.uiHandler.removeCallbacksAndMessages(null)
                     val testId = jsonParams.getString(Defines.Jsonkey.AndroidDeepLinkPath.key)
-                    WorkMangerAdmin.registerUserGIDWithTestId(testId)
+                    val exploreType = if (jsonParams.has(Defines.Jsonkey.ContentType.key)) {
+                        jsonParams.getString(Defines.Jsonkey.ContentType.key)
+                    } else ExploreType.NORMAL.name
+                    PrefManager.put(EXPLORE_TYPE, exploreType)
+                    WorkMangerAdmin.registerUserGAIDWithTestId(testId)
                     val referralCode = parseReferralCode(jsonParams)
                     referralCode?.let {
                         logInstallByReferralEvent(testId, it)
@@ -139,7 +148,7 @@ class LauncherActivity : CoreJoshActivity(), CustomPermissionDialogInteractionLi
         }, 2500)
     }
 
-    fun navigateToPaymentScreen(testId: String) {
+    private fun navigateToPaymentScreen(testId: String) {
         CourseDetailsActivity.startCourseDetailsActivity(
             this,
             testId.split("_")[1].toInt(),

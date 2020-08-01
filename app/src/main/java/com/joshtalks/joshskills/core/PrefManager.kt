@@ -25,6 +25,7 @@ const val REFERRED_REFERRAL_CODE = "referred_referral_code"
 const val RESTORE_ID = "restore_id"
 const val FRESH_CHAT_UNREAD_MESSAGES = "fresh_chat_unread_messages"
 const val FRESH_CHAT_ID_RESTORED = "fresh_chat_id_restored"
+const val EXPLORE_TYPE = "joshskills_explore_type"
 
 object PrefManager {
 
