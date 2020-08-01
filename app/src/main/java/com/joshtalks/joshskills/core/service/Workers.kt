@@ -226,7 +226,7 @@ class RegisterUserGAId(context: Context, private val workerParams: WorkerParamet
                 workerParams.inputData.getString("test_id")?.split("_")?.get(1)?.toInt() ?: 0
             requestRegisterGAId.utmMedium = InstallReferrerModel.getPrefObject()?.utmMedium ?: EMPTY
             requestRegisterGAId.utmSource = InstallReferrerModel.getPrefObject()?.utmSource ?: EMPTY
-            val exploreType = PrefManager.getStringValue(EXPLORE_TYPE)
+            val exploreType = PrefManager.getStringValue(EXPLORE_TYPE, true)
             requestRegisterGAId.exploreType = if (exploreType.isNotBlank()) {
                 ExploreType.valueOf(exploreType)
             } else ExploreType.NORMAL
