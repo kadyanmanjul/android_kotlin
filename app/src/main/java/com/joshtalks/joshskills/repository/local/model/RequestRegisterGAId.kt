@@ -29,11 +29,11 @@ data class RequestRegisterGAId(
     var id: Int = 0,
 
     @SerializedName("explore_type")
-    var exploreType: ExploreType = ExploreType.NORMAL
+    var exploreCardType: ExploreCardType = ExploreCardType.NORMAL
 
 )
 
-enum class ExploreType(value: String) {
+enum class ExploreCardType(value: String) {
 
     @SerializedName("NORMAL")
     NORMAL("NORMAL"),

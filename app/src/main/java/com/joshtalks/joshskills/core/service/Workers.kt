@@ -35,7 +35,7 @@ import com.joshtalks.joshskills.repository.local.entity.NPSEvent
 import com.joshtalks.joshskills.repository.local.entity.NPSEventModel
 import com.joshtalks.joshskills.repository.local.eventbus.NPSEventGenerateEventBus
 import com.joshtalks.joshskills.repository.local.model.DeviceDetailsResponse
-import com.joshtalks.joshskills.repository.local.model.ExploreType
+import com.joshtalks.joshskills.repository.local.model.ExploreCardType
 import com.joshtalks.joshskills.repository.local.model.FCMResponse
 import com.joshtalks.joshskills.repository.local.model.GaIDMentorModel
 import com.joshtalks.joshskills.repository.local.model.InstallReferrerModel
@@ -227,9 +227,9 @@ class RegisterUserGAId(context: Context, private val workerParams: WorkerParamet
             requestRegisterGAId.utmMedium = InstallReferrerModel.getPrefObject()?.utmMedium ?: EMPTY
             requestRegisterGAId.utmSource = InstallReferrerModel.getPrefObject()?.utmSource ?: EMPTY
             val exploreType = PrefManager.getStringValue(EXPLORE_TYPE, true)
-            requestRegisterGAId.exploreType = if (exploreType.isNotBlank()) {
-                ExploreType.valueOf(exploreType)
-            } else ExploreType.NORMAL
+            requestRegisterGAId.exploreCardType = if (exploreType.isNotBlank()) {
+                ExploreCardType.valueOf(exploreType)
+            } else ExploreCardType.NORMAL
             val resp =
                 AppObjectController.commonNetworkService.registerGAIdAsync(requestRegisterGAId)
                     .await()

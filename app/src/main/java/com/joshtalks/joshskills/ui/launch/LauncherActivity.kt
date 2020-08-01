@@ -17,7 +17,7 @@ import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.LogException
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.core.service.WorkMangerAdmin
-import com.joshtalks.joshskills.repository.local.model.ExploreType
+import com.joshtalks.joshskills.repository.local.model.ExploreCardType
 import com.joshtalks.joshskills.ui.course_details.CourseDetailsActivity
 import com.joshtalks.joshskills.ui.extra.CustomPermissionDialogInteractionListener
 import com.karumi.dexter.MultiplePermissionsReport
@@ -53,7 +53,7 @@ class LauncherActivity : CoreJoshActivity(), CustomPermissionDialogInteractionLi
                     val testId = jsonParams.getString(Defines.Jsonkey.AndroidDeepLinkPath.key)
                     val exploreType = if (jsonParams.has(Defines.Jsonkey.ContentType.key)) {
                         jsonParams.getString(Defines.Jsonkey.ContentType.key)
-                    } else ExploreType.NORMAL.name
+                    } else ExploreCardType.NORMAL.name
                     PrefManager.put(EXPLORE_TYPE, exploreType, true)
                     WorkMangerAdmin.registerUserGAIDWithTestId(testId)
                     val referralCode = parseReferralCode(jsonParams)
