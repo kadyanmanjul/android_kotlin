@@ -29,9 +29,7 @@ class ConversationPracticeIntro private constructor() : DialogFragment() {
 
     companion object {
         @JvmStatic
-        fun newInstance(
-            conversationPractiseModel: ConversationPractiseModel
-        ) =
+        fun newInstance(conversationPractiseModel: ConversationPractiseModel) =
             ConversationPracticeIntro().apply {
                 arguments = Bundle().apply {
                     putParcelable(ARG_PRACTISE_OBJ, conversationPractiseModel)
@@ -87,10 +85,9 @@ class ConversationPracticeIntro private constructor() : DialogFragment() {
 
         val typeToken: Type = object : TypeToken<List<PractiseFlowOptionModel>>() {}.type
         val obj = AppObjectController.gsonMapperForLocal.fromJson<List<PractiseFlowOptionModel>>(
-            loadJSONFromAsset("pratise_flow_details.json"), typeToken
+            loadJSONFromAsset("practise_flow_details.json"), typeToken
         )
         recycler_view.adapter = ConversationPracticeTimelineAdapter(obj)
-
         continue_btn.setOnClickListener {
             dismissAllowingStateLoss()
         }

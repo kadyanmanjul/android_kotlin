@@ -40,18 +40,15 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import kotlinx.android.synthetic.main.fragment_listen_practise.audio_player
 import java.util.*
 
-
 class RecordPractiseFragment private constructor() : Fragment() {
     private lateinit var conversationPractiseModel: ConversationPractiseModel
     private lateinit var binding: FragmentRecordPractiseBinding
     private var audioPractiseAdapter: AudioPractiseAdapter? = null
     private val audioList: LinkedList<AudioModel> = LinkedList()
 
-
     private val viewModel: ConversationPracticeViewModel by lazy {
         ViewModelProvider(requireActivity()).get(ConversationPracticeViewModel::class.java)
     }
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -159,7 +156,6 @@ class RecordPractiseFragment private constructor() : Fragment() {
                             conversationPractiseModel.characterNameA,
                             ignoreCase = true
                         )
-
                     }
                 }
                 PractiseUser.SECOND -> {
@@ -265,7 +261,6 @@ class RecordPractiseFragment private constructor() : Fragment() {
                     viewModel.isRecordingRunning = true
                     binding.audioPlayer.onPlay()
                 }
-
                 override fun onException(e: Exception?) {
                 }
             })

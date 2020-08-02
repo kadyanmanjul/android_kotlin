@@ -54,7 +54,7 @@ dependencies {
     annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
 
     //Permission
-    implementation 'com.karumi:dexter:6.2.0'
+    implementation 'com.karumi:dexter:6.2.1'
 //    implementation 'com.github.MasayukiSuda:Mp4Composer-android:v0.3.2'
     //implementation project(path: ':mp4compose')
 
