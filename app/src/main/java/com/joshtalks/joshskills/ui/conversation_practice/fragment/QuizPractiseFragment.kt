@@ -13,6 +13,8 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.FragmentQuizPractiseBinding
+import com.joshtalks.joshskills.messaging.RxBus2
+import com.joshtalks.joshskills.repository.local.eventbus.VPPageChangeEventBus
 import com.joshtalks.joshskills.repository.server.conversation_practice.QuizModel
 import com.joshtalks.joshskills.ui.conversation_practice.adapter.OnChoiceClickListener2
 import com.joshtalks.joshskills.ui.conversation_practice.adapter.QuizPractiseAdapter
@@ -114,7 +116,7 @@ class QuizPractiseFragment private constructor() : Fragment(), OnChoiceClickList
     private fun btnTextSetup() {
         if (binding.viewPager.currentItem == (quizModelList.size - 1)) {
             binding.btnSubmit.text = getString(R.string.finish)
-
+            RxBus2.publish(VPPageChangeEventBus())
         } else {
             binding.btnSubmit.text = getString(R.string.submit)
         }

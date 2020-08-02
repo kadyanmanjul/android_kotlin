@@ -8,7 +8,6 @@ import android.view.WindowManager
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.ApiCallStatus
@@ -18,6 +17,7 @@ import com.joshtalks.joshskills.core.custom_ui.FullScreenProgressDialog
 import com.joshtalks.joshskills.databinding.ActivityConversationPracticeBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.ConversationPractiseSubmitEventBus
+import com.joshtalks.joshskills.repository.local.eventbus.VPPageChangeEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.ViewPagerDisableEventBus
 import com.joshtalks.joshskills.repository.server.conversation_practice.ConversationPractiseModel
 import com.joshtalks.joshskills.ui.conversation_practice.adapter.PractiseViewPagerAdapter
@@ -32,30 +32,14 @@ const val IMAGE_URL = "image_url"
 class ConversationPracticeActivity : CoreJoshActivity() {
 
     private val compositeDisposable = CompositeDisposable()
-    private val mFragmentNames = arrayOf("Listen", "Quiz", "Practice", "Record")
-    lateinit var practiseId: String
-
+    private val tabName = arrayOf("Listen", "Quiz", "Practice", "Record")
+    private lateinit var practiseId: String
+    private lateinit var binding: ActivityConversationPracticeBinding
 
     private val viewModel: ConversationPracticeViewModel by lazy {
         ViewModelProvider(this).get(ConversationPracticeViewModel::class.java)
     }
 
-    companion object {
-        fun startConversationPracticeActivity(
-            activity: Activity,
-            requestCode: Int,
-            practiseId: String,
-            imageUrl: String? = null
-        ) {
-            val intent = Intent(activity, ConversationPracticeActivity::class.java).apply {
-                putExtra(PRACTISE_ID, practiseId)
-                putExtra(IMAGE_URL, imageUrl)
-            }
-            activity.startActivityForResult(intent, requestCode)
-        }
-    }
-
-    private lateinit var binding: ActivityConversationPracticeBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
@@ -66,31 +50,6 @@ class ConversationPracticeActivity : CoreJoshActivity() {
             practiseId = this
             viewModel.fetchConversationPractice(this)
         }
-    }
-
-    private fun initView() {
-        TabLayoutMediator(binding.tabLayout, binding.viewPager,
-            TabLayoutMediator.TabConfigurationStrategy { tab, position ->
-                tab.text = mFragmentNames[position]
-            }
-        ).attach()
-
-        binding.tabLayout.addOnTabSelectedListener(object :
-            TabLayout.OnTabSelectedListener {
-            override fun onTabReselected(tab: TabLayout.Tab?) {
-
-            }
-
-            override fun onTabUnselected(tab: TabLayout.Tab?) {
-            }
-
-            override fun onTabSelected(tab: TabLayout.Tab) {
-                /* if (binding.viewPager.isUserInputEnabled) {
-                     binding.viewPager.currentItem = tab.position
-                 }*/
-            }
-
-        })
     }
 
     private fun addObserver() {
@@ -110,12 +69,22 @@ class ConversationPracticeActivity : CoreJoshActivity() {
                     .listIterator().forEach {
                         it.viewType = ViewTypeForPractiseUser.SECOND.type
                     }
-
                 binding.viewPager.adapter =
                     PractiseViewPagerAdapter(this@ConversationPracticeActivity, obj)
-                initView()
+                initViewPagerTab()
             }
         })
+        viewModel.successApiLiveData.observe(this, Observer {
+            onBackPressed()
+        })
+    }
+
+    private fun initViewPagerTab() {
+        TabLayoutMediator(binding.tabLayout, binding.viewPager,
+            TabLayoutMediator.TabConfigurationStrategy { tab, position ->
+                tab.text = tabName[position]
+            }
+        ).attach()
     }
 
     private fun openIntroScreen(conversationPractiseModel: ConversationPractiseModel) {
@@ -146,6 +115,16 @@ class ConversationPracticeActivity : CoreJoshActivity() {
                     it.printStackTrace()
                 })
         )
+        compositeDisposable.add(
+            RxBus2.listen(VPPageChangeEventBus::class.java)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({
+                    binding.viewPager.currentItem = binding.viewPager.currentItem + 1
+                }, {
+                    it.printStackTrace()
+                })
+        )
 
 
     }
@@ -168,6 +147,21 @@ class ConversationPracticeActivity : CoreJoshActivity() {
     override fun onBackPressed() {
         this.finish()
         super.onBackPressed()
+    }
+
+    companion object {
+        fun startConversationPracticeActivity(
+            activity: Activity,
+            requestCode: Int,
+            practiseId: String,
+            imageUrl: String? = null
+        ) {
+            val intent = Intent(activity, ConversationPracticeActivity::class.java).apply {
+                putExtra(PRACTISE_ID, practiseId)
+                putExtra(IMAGE_URL, imageUrl)
+            }
+            activity.startActivityForResult(intent, requestCode)
+        }
     }
 }
 
