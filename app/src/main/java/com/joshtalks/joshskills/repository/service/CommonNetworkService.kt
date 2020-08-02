@@ -107,7 +107,7 @@ interface CommonNetworkService {
     @POST("$DIR/conversation-practice/submit/")
     suspend fun submitConversationPractice(
         @Body request: SubmitConversationPractiseRequest
-    ): Response<Any>
+    ): Response<SuccessResponse>
 
 
 }

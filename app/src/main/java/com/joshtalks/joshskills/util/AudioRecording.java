@@ -18,11 +18,9 @@ public class AudioRecording {
         recorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
         recorder.setAudioEncoder(MediaRecorder.AudioEncoder.HE_AAC);
         recorder.setOutputFile(recordFile.getAbsolutePath());
-        MediaRecorder.OnErrorListener errorListener = new MediaRecorder.OnErrorListener() {
-            public void onError(MediaRecorder arg0, int what, int extra) {
-                arg0.release();
-                LogException.INSTANCE.catchError(ErrorTag.AUDIO_RECORDER, what + " , " + extra);
-            }
+        MediaRecorder.OnErrorListener errorListener = (arg0, what, extra) -> {
+            arg0.release();
+            LogException.INSTANCE.catchError(ErrorTag.AUDIO_RECORDER, what + " , " + extra);
         };
         recorder.setOnErrorListener(errorListener);
         try {
@@ -32,11 +30,14 @@ public class AudioRecording {
         } catch (Exception e) {
             e.printStackTrace();
             //LogException.INSTANCE.catchException(e);
+
         }
     }
 
     public void stopPlaying() {
         try {
+            recorder.stop();
+            recorder.reset();
             recorder.release();
         } catch (Exception e) {
             e.printStackTrace();

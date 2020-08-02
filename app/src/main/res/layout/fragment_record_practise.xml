@@ -206,7 +206,16 @@
                     app:iconGravity="textEnd"
                     app:iconSize="@dimen/_24sdp"
                     app:rippleColor="@color/white" />
+
+            <com.joshtalks.joshskills.core.custom_ui.exo_audio_player.ExoAudioPlayerView
+                    android:id="@+id/audio_player"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:visibility="gone" />
+
         </androidx.cardview.widget.CardView>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 

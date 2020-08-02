@@ -7,16 +7,17 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.core.ApiCallStatus
 import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.JoshApplication
 import com.joshtalks.joshskills.core.PractiseUser
 import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.custom_ui.recorder.AudioRecorder
+import com.joshtalks.joshskills.core.custom_ui.recorder.AudioRecorderBuilder
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.repository.server.AmazonPolicyResponse
 import com.joshtalks.joshskills.repository.server.conversation_practice.Answer
 import com.joshtalks.joshskills.repository.server.conversation_practice.ConversationPractiseModel
 import com.joshtalks.joshskills.repository.server.conversation_practice.Quiz
 import com.joshtalks.joshskills.repository.server.conversation_practice.SubmitConversationPractiseRequest
-import com.joshtalks.joshskills.util.AudioRecording
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -31,9 +32,13 @@ import java.io.File
 class ConversationPracticeViewModel(application: Application) : AndroidViewModel(application) {
 
     var isPractise = false
+    var isPlayerInit = false
+
     var practiseWho: PractiseUser? = null
     var recordFile: File? = null
     var isRecordingRunning = false
+    private var mAudioRecorder: AudioRecorder? = null
+    var context: JoshApplication = getApplication()
 
 
     private val jobs = arrayListOf<Job>()
@@ -41,21 +46,30 @@ class ConversationPracticeViewModel(application: Application) : AndroidViewModel
         MutableLiveData()
     val conversationPracticeLiveData: LiveData<ConversationPractiseModel> =
         _conversationPracticeLiveData
-
-
     val apiCallStatusLiveData: MutableLiveData<ApiCallStatus> = MutableLiveData()
+    val successApiLiveData: MutableLiveData<Boolean> = MutableLiveData()
 
-    fun startRecord(): Boolean {
+
+    fun initRecorder(): Boolean {
         AppDirectory.tempRecordingFile().let {
+            mAudioRecorder = AudioRecorderBuilder.with(context)
+                .fileName(it.absolutePath)
+                .config(AudioRecorder.MediaRecorderConfig.DEFAULT)
+                .loggable()
+                .build()
             recordFile = it
-            AudioRecording.audioRecording.startPlayer(recordFile)
+            isPlayerInit = true
             return@let true
         }
         return false
     }
 
-    fun stopRecording() {
-        AudioRecording.audioRecording.stopPlaying()
+    fun startRecording(listener: AudioRecorder.OnStartListener?) {
+        mAudioRecorder?.start(listener)
+    }
+
+    fun stopRecording(listener: AudioRecorder.OnPauseListener?) {
+        mAudioRecorder?.pause(listener)
         isRecordingRunning = false
     }
 
@@ -80,8 +94,9 @@ class ConversationPracticeViewModel(application: Application) : AndroidViewModel
 
     fun submitPractise(practiseId: String) {
         jobs += viewModelScope.launch(Dispatchers.IO) {
-            var answerUrl: String = EMPTY
+            val answerUrl: String
             try {
+                apiCallStatusLiveData.postValue(ApiCallStatus.START)
                 val obj = mapOf("media_path" to recordFile?.name!!)
                 val responseObj =
                     AppObjectController.chatNetworkService.requestUploadMediaAsync(obj).await()
@@ -102,8 +117,8 @@ class ConversationPracticeViewModel(application: Application) : AndroidViewModel
                     }
                 }
 
-                val title = ""
-                val text = ""
+                val title = "abcde"
+                val text = "hello worlds"
 
                 val conversationPractiseRequest =
                     SubmitConversationPractiseRequest(practiseId, answerUrl, title, text, list)
@@ -114,6 +129,7 @@ class ConversationPracticeViewModel(application: Application) : AndroidViewModel
                     )
                 if (response.isSuccessful) {
                     apiCallStatusLiveData.postValue(ApiCallStatus.SUCCESS)
+                    successApiLiveData.postValue(true)
                     return@launch
                 }
 
@@ -154,5 +170,8 @@ class ConversationPracticeViewModel(application: Application) : AndroidViewModel
     override fun onCleared() {
         super.onCleared()
         jobs.forEach { it.cancel() }
+        mAudioRecorder?.isRecording?.run {
+            mAudioRecorder?.cancel()
+        }
     }
 }

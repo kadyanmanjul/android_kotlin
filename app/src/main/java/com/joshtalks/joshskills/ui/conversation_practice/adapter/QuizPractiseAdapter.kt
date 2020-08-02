@@ -57,10 +57,11 @@ class QuizPractiseAdapter(
         }
 
         override fun onChoiceClick(position: Int, answersModel: AnswersModel) {
-            items[bindingAdapterPosition].answersModel.forEach { it.isSelectedByUser = false }
+            items[bindingAdapterPosition].answersModel.listIterator()
+                .forEach { it.isSelectedByUser = false }
             answersModel.isSelectedByUser = true
-            binding.rvChoice.refresh()
             listener?.onChoiceSelectListener()
+            binding.rvChoice.refresh()
         }
     }
 

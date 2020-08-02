@@ -22,7 +22,6 @@
             android:padding="@dimen/_4sdp">
 
         <androidx.cardview.widget.CardView
-                android:id="@+id/card_top"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/_110sdp"
                 android:background="#F1F2F4"

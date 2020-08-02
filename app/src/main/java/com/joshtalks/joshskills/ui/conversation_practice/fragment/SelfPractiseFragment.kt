@@ -97,6 +97,7 @@ class SelfPractiseFragment private constructor() : Fragment(), AudioPlayerEventL
         binding.tvFirstUser.text = conversationPractiseModel.characterNameA
         binding.tvSecondUser.text = conversationPractiseModel.characterNameB
         audio_player.setAudioPlayerEventListener(this)
+        audio_player.addAudios(LinkedList())
     }
 
     private fun initAudioPlayer(practiseWho: PractiseUser?) {
@@ -104,15 +105,16 @@ class SelfPractiseFragment private constructor() : Fragment(), AudioPlayerEventL
             when (this) {
                 PractiseUser.FIRST -> {
                     audioList.listIterator().forEach {
-                        it.isSilent = !it.subTag.equals(
+                        it.isSilent = it.subTag.equals(
                             conversationPractiseModel.characterNameA,
                             ignoreCase = true
                         )
+
                     }
                 }
                 PractiseUser.SECOND -> {
                     audioList.listIterator().forEach {
-                        it.isSilent = !it.subTag.equals(
+                        it.isSilent = it.subTag.equals(
                             conversationPractiseModel.characterNameB,
                             ignoreCase = true
                         )

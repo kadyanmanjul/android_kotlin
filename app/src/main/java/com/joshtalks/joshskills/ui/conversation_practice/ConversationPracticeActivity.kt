@@ -4,16 +4,20 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.view.WindowManager
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.ApiCallStatus
 import com.joshtalks.joshskills.core.CoreJoshActivity
 import com.joshtalks.joshskills.core.ViewTypeForPractiseUser
+import com.joshtalks.joshskills.core.custom_ui.FullScreenProgressDialog
 import com.joshtalks.joshskills.databinding.ActivityConversationPracticeBinding
 import com.joshtalks.joshskills.messaging.RxBus2
+import com.joshtalks.joshskills.repository.local.eventbus.ConversationPractiseSubmitEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.ViewPagerDisableEventBus
 import com.joshtalks.joshskills.repository.server.conversation_practice.ConversationPractiseModel
 import com.joshtalks.joshskills.ui.conversation_practice.adapter.PractiseViewPagerAdapter
@@ -29,6 +33,8 @@ class ConversationPracticeActivity : CoreJoshActivity() {
 
     private val compositeDisposable = CompositeDisposable()
     private val mFragmentNames = arrayOf("Listen", "Quiz", "Practice", "Record")
+    lateinit var practiseId: String
+
 
     private val viewModel: ConversationPracticeViewModel by lazy {
         ViewModelProvider(this).get(ConversationPracticeViewModel::class.java)
@@ -52,10 +58,12 @@ class ConversationPracticeActivity : CoreJoshActivity() {
     private lateinit var binding: ActivityConversationPracticeBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_conversation_practice)
         addObserver()
         intent?.getStringExtra(PRACTISE_ID)?.run {
+            practiseId = this
             viewModel.fetchConversationPractice(this)
         }
     }
@@ -87,7 +95,13 @@ class ConversationPracticeActivity : CoreJoshActivity() {
 
     private fun addObserver() {
         viewModel.apiCallStatusLiveData.observe(this, Observer {
-            binding.progressBar.visibility = View.GONE
+            if (ApiCallStatus.START == it) {
+                FullScreenProgressDialog.showProgressBar(this)
+            } else {
+                FullScreenProgressDialog.hideProgressBar(this)
+                binding.progressBar.visibility = View.GONE
+            }
+
         })
         viewModel.conversationPracticeLiveData.observe(this, Observer { it ->
             it?.let { obj ->
@@ -101,6 +115,9 @@ class ConversationPracticeActivity : CoreJoshActivity() {
                     PractiseViewPagerAdapter(this@ConversationPracticeActivity, obj)
                 initView()
             }
+        })
+        viewModel.successApiLiveData.observe(this, Observer {
+            onBackPressed()
         })
     }
 
@@ -116,8 +133,18 @@ class ConversationPracticeActivity : CoreJoshActivity() {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
-                    binding.viewPager.isUserInputEnabled = it.flag
+                    binding.viewPager.isUserInputEnabled = it.flag.not()
 
+                }, {
+                    it.printStackTrace()
+                })
+        )
+        compositeDisposable.add(
+            RxBus2.listen(ConversationPractiseSubmitEventBus::class.java)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({
+                    viewModel.submitPractise(practiseId)
                 }, {
                     it.printStackTrace()
                 })
@@ -129,9 +156,14 @@ class ConversationPracticeActivity : CoreJoshActivity() {
         subscribeBus()
     }
 
-    override fun onStop() {
-        super.onStop()
+    override fun onPause() {
+        super.onPause()
         compositeDisposable.clear()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
     }
 
     override fun onBackPressed() {

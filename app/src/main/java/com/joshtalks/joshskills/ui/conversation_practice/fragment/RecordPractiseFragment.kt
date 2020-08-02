@@ -20,9 +20,15 @@ import com.joshtalks.joshskills.core.PermissionUtils
 import com.joshtalks.joshskills.core.PractiseUser
 import com.joshtalks.joshskills.core.ViewTypeForPractiseUser
 import com.joshtalks.joshskills.core.custom_ui.SmoothLinearLayoutManager
+import com.joshtalks.joshskills.core.custom_ui.exo_audio_player.AudioModel
+import com.joshtalks.joshskills.core.custom_ui.recorder.AudioRecorder
+import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.core.setImage
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.FragmentRecordPractiseBinding
+import com.joshtalks.joshskills.messaging.RxBus2
+import com.joshtalks.joshskills.repository.local.eventbus.ConversationPractiseSubmitEventBus
+import com.joshtalks.joshskills.repository.local.eventbus.ViewPagerDisableEventBus
 import com.joshtalks.joshskills.repository.server.conversation_practice.ConversationPractiseModel
 import com.joshtalks.joshskills.ui.conversation_practice.ConversationPracticeViewModel
 import com.joshtalks.joshskills.ui.conversation_practice.adapter.ARG_PRACTISE_OBJ
@@ -31,15 +37,19 @@ import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
+import kotlinx.android.synthetic.main.fragment_listen_practise.audio_player
 import java.util.*
+
 
 class RecordPractiseFragment private constructor() : Fragment() {
     private lateinit var conversationPractiseModel: ConversationPractiseModel
     private lateinit var binding: FragmentRecordPractiseBinding
     private var audioPractiseAdapter: AudioPractiseAdapter? = null
+    private val audioList: LinkedList<AudioModel> = LinkedList()
+
 
     private val viewModel: ConversationPracticeViewModel by lazy {
-        ViewModelProvider(this).get(ConversationPracticeViewModel::class.java)
+        ViewModelProvider(requireActivity()).get(ConversationPracticeViewModel::class.java)
     }
 
 
@@ -49,6 +59,8 @@ class RecordPractiseFragment private constructor() : Fragment() {
             conversationPractiseModel =
                 it.getParcelable<ConversationPractiseModel>(ARG_PRACTISE_OBJ) as ConversationPractiseModel
         }
+        retainInstance = true
+
     }
 
     override fun onCreateView(
@@ -67,15 +79,32 @@ class RecordPractiseFragment private constructor() : Fragment() {
         return binding.root
     }
 
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initRV()
         initView()
+        initAudioList()
     }
+
+    private fun initAudioList() {
+        conversationPractiseModel.listen.forEach {
+            audioList.add(
+                AudioModel(
+                    it.audio.audio_url,
+                    it.id.toString(),
+                    it.audio.duration,
+                    subTag = it.name
+                )
+            )
+        }
+    }
+
 
     fun requestForRecording() {
         if (PermissionUtils.isAudioAndStoragePermissionEnable(requireActivity()).not()) {
-            PermissionUtils.audioRecordStorageReadAndWritePermission(requireActivity(),
+            PermissionUtils.audioRecordStorageReadAndWritePermission(
+                requireActivity(),
                 object : MultiplePermissionsListener {
                     override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
                         report?.areAllPermissionsGranted()?.let { flag ->
@@ -121,6 +150,31 @@ class RecordPractiseFragment private constructor() : Fragment() {
         binding.tvSecondUser.text = conversationPractiseModel.characterNameB
     }
 
+    private fun initAudioPlayer(practiseWho: PractiseUser?) {
+        practiseWho?.run {
+            when (this) {
+                PractiseUser.FIRST -> {
+                    audioList.listIterator().forEach {
+                        it.isSilent = it.subTag.equals(
+                            conversationPractiseModel.characterNameA,
+                            ignoreCase = true
+                        )
+
+                    }
+                }
+                PractiseUser.SECOND -> {
+                    audioList.listIterator().forEach {
+                        it.isSilent = it.subTag.equals(
+                            conversationPractiseModel.characterNameB,
+                            ignoreCase = true
+                        )
+                    }
+                }
+            }
+        }
+        audio_player.addAudios(audioList)
+    }
+
     fun practiseWithFirstUser() {
         if (viewModel.isPractise) {
             viewModel.practiseWho = null
@@ -134,6 +188,7 @@ class RecordPractiseFragment private constructor() : Fragment() {
             binding.ivTickFirstUser.visibility = View.VISIBLE
             disableView(binding.ivSecondUser)
             disableViewTypeInAdapter(ViewTypeForPractiseUser.FIRST.type)
+            initAudioPlayer(PractiseUser.FIRST)
         }
     }
 
@@ -150,6 +205,7 @@ class RecordPractiseFragment private constructor() : Fragment() {
             binding.ivTickSecondUser.visibility = View.VISIBLE
             disableView(binding.ivFirstUser)
             disableViewTypeInAdapter(ViewTypeForPractiseUser.SECOND.type)
+            initAudioPlayer(PractiseUser.SECOND)
         }
     }
 
@@ -175,34 +231,86 @@ class RecordPractiseFragment private constructor() : Fragment() {
             showToast(getString(R.string.select_your_character))
             return
         }
+        if (viewModel.isPlayerInit.not()) {
+            viewModel.initRecorder()
+        }
 
         if (viewModel.isRecordingRunning) {
+            binding.audioPlayer.onPause()
             binding.btnRecord.backgroundTintList = ContextCompat.getColorStateList(
                 AppObjectController.joshApplication,
                 R.color.button_primary_color
             )
-            viewModel.stopRecording()
             viewModel.isRecordingRunning = false
+            viewModel.stopRecording(object : AudioRecorder.OnPauseListener {
+                override fun onPaused(activeRecordFileName: String?) {
+                    completePractise()
+                    resetAllState()
+                    binding.audioPlayer.onPause()
+                }
+
+                override fun onException(e: Exception?) {
+                    resetAllState()
+                }
+            })
         } else {
             binding.btnRecord.backgroundTintList = ContextCompat.getColorStateList(
                 AppObjectController.joshApplication,
                 R.color.recording_9D
             )
-            viewModel.startRecord()
-            viewModel.isRecordingRunning = true
+            viewModel.startRecording(object : AudioRecorder.OnStartListener {
+
+                override fun onStarted() {
+                    RxBus2.publish(ViewPagerDisableEventBus(true))
+                    viewModel.isRecordingRunning = true
+                    binding.audioPlayer.onPlay()
+                }
+
+                override fun onException(e: Exception?) {
+                }
+            })
         }
     }
 
-    fun abcd() {
+
+    private fun resetAllState() {
+        RxBus2.publish(ViewPagerDisableEventBus(false))
+        binding.ivTickFirstUser.visibility = View.GONE
+        binding.ivTickSecondUser.visibility = View.GONE
+        enableView(binding.ivFirstUser)
+        enableView(binding.ivSecondUser)
+        disableViewTypeInAdapter(null)
+        viewModel.practiseWho = null
+        viewModel.isPractise = false
+    }
+
+    private fun completePractise() {
         val bottomSheet = BottomSheet(LayoutMode.WRAP_CONTENT)
-        val view =
-            LayoutInflater.from(requireContext())
-                .inflate(R.layout.conversation_submit_dialog, null, false)
+        val view = LayoutInflater.from(requireContext())
+            .inflate(R.layout.conversation_submit_dialog, null, false)
         val dialog = MaterialDialog(requireActivity(), bottomSheet).show {
             customView(view = view)
         }
+
+        view.findViewById<View>(R.id.iv_cancel).setOnClickListener {
+            AppDirectory.deleteRecordingFile()
+            dialog.cancel()
+        }
+        view.findViewById<View>(R.id.btn_no).setOnClickListener {
+            AppDirectory.deleteRecordingFile()
+            dialog.cancel()
+        }
+        view.findViewById<View>(R.id.btn_yes).setOnClickListener {
+            RxBus2.publish(ConversationPractiseSubmitEventBus())
+            dialog.cancel()
+        }
     }
 
+    override fun onPause() {
+        super.onPause()
+        viewModel.stopRecording(null)
+        RxBus2.publish(ViewPagerDisableEventBus(false))
+    }
 
     companion object {
 

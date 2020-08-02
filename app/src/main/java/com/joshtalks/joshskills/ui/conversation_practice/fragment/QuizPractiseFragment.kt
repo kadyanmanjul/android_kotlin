@@ -59,10 +59,9 @@ class QuizPractiseFragment private constructor() : Fragment(), OnChoiceClickList
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.viewPager.adapter = QuizPractiseAdapter(quizModelList, this)
         binding.viewPager.orientation = ORIENTATION_VERTICAL
-        binding.viewPager.isUserInputEnabled = false
-        binding.viewPager.offscreenPageLimit = 4
+        binding.viewPager.offscreenPageLimit = 5
+        binding.viewPager.adapter = QuizPractiseAdapter(quizModelList, this)
         binding.viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
@@ -86,15 +85,17 @@ class QuizPractiseFragment private constructor() : Fragment(), OnChoiceClickList
         } else {
             val cItem = binding.viewPager.currentItem
             val quizModel = quizModelList[cItem]
-
+            quizModel.isAttempted = true
             val resp = quizModel.answersModel.find { it.isCorrect && it.isSelectedByUser }
             if (resp != null) {
                 showToast("Sahi hai")
             } else {
                 showToast("Galat hai")
             }
-            quizModel.answersModel.listIterator().forEach { it.isEvaluate = true }
-            binding.viewPager.adapter?.notifyItemChanged(cItem)
+            quizModel.answersModel.listIterator().forEach {
+                it.isEvaluate = true
+            }
+            binding.viewPager.adapter?.notifyDataSetChanged()
             isEvaluate = true
             btnTextSetup()
         }
@@ -113,6 +114,7 @@ class QuizPractiseFragment private constructor() : Fragment(), OnChoiceClickList
     private fun btnTextSetup() {
         if (binding.viewPager.currentItem == (quizModelList.size - 1)) {
             binding.btnSubmit.text = getString(R.string.finish)
+
         } else {
             binding.btnSubmit.text = getString(R.string.submit)
         }

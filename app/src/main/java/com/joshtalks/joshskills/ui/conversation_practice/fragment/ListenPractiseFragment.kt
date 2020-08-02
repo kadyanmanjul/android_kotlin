@@ -119,6 +119,11 @@ class ListenPractiseFragment private constructor() : Fragment(), AudioPlayerEven
 
     }
 
+    override fun onPause() {
+        super.onPause()
+        RxBus2.publish(ViewPagerDisableEventBus(false))
+    }
+
     companion object {
         @JvmStatic
         fun newInstance(conversationPractiseModel: ConversationPractiseModel) =

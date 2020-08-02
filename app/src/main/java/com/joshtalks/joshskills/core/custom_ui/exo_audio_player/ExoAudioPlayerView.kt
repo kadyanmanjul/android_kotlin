@@ -54,6 +54,7 @@ class ExoAudioPlayerView : FrameLayout, LifecycleObserver {
     private var totalTime: Long = 0
     private var activity: Activity? = null
     private var lastPosition: Long = 0
+    private var extraMuteTime = 2 * 1000
 
     private val playerEventListener: Player.EventListener = object : Player.EventListener {
         override fun onTimelineChanged(timeline: Timeline, reason: Int) {
@@ -165,6 +166,16 @@ class ExoAudioPlayerView : FrameLayout, LifecycleObserver {
         player?.seekTo(pos)
     }
 
+    fun onPlay() {
+        player?.playWhenReady = true
+    }
+
+    fun onPause() {
+        player?.playWhenReady = false
+        player?.seekTo(0, 0)
+
+    }
+
 
     private fun initListener() {
         player!!.addListener(playerEventListener)
@@ -202,7 +213,7 @@ class ExoAudioPlayerView : FrameLayout, LifecycleObserver {
                 factory.setTag(audioModel.tag)
             }
             if (audioModel.isSilent) {
-                val silentMedia = SilenceMediaSource(audioModel.duration * 1000L)
+                val silentMedia = SilenceMediaSource(audioModel.duration * 1000L + extraMuteTime)
                 concatenatingMediaSource.addMediaSource(silentMedia)
             } else {
                 val audioSource: MediaSource =

@@ -10,7 +10,7 @@ enum class SignUpStepStatus {
 }
 
 enum class ApiCallStatus {
-    SUCCESS, FAILED, RETRY
+    START, SUCCESS, FAILED, RETRY
 }
 
 const val TIMEOUT_TIME = 60_000L
@@ -27,7 +27,7 @@ const val MIN_LINES = 4
 const val RC_HINT = 2
 const val MAX_YEAR = 6
 const val ALPHA_MAX = 1F
-const val ALPHA_MIN = 0.25F
+const val ALPHA_MIN = 0.45F
 
 
 val IMAGE_REGEX = Regex(pattern = IMAGE_PATTERN)

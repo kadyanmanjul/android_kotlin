@@ -352,6 +352,16 @@ object AppDirectory {
         return File.createTempFile("record", ".amr", outputDir)
     }
 
+    fun deleteRecordingFile() {
+        try {
+            File.createTempFile("record", ".amr", AppObjectController.joshApplication.cacheDir)
+                .delete()
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+        }
+    }
+
+
     fun tempImageFile(): File {
         val outputDir =
             AppObjectController.joshApplication.cacheDir // context being the Activity pointer
