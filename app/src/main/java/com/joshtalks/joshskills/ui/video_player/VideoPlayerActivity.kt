@@ -8,6 +8,8 @@ import android.content.IntentFilter
 import android.content.pm.ActivityInfo
 import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
+import android.view.View
 import android.view.WindowManager
 import androidx.databinding.DataBindingUtil
 import com.google.android.exoplayer2.Player
@@ -15,6 +17,8 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.core.CountUpTimer
+import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
@@ -24,16 +28,30 @@ import com.joshtalks.joshskills.core.service.WorkMangerAdmin
 import com.joshtalks.joshskills.core.service.video_download.VideoDownloadController
 import com.joshtalks.joshskills.core.videoplayer.VideoPlayerEventListener
 import com.joshtalks.joshskills.databinding.ActivityVideoPlayer1Binding
+import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
 import com.joshtalks.joshskills.repository.local.entity.NPSEvent
 import com.joshtalks.joshskills.repository.local.entity.VideoEngage
+import com.joshtalks.joshskills.repository.local.entity.VideoType
 import com.joshtalks.joshskills.repository.server.engage.Graph
 import com.joshtalks.joshskills.repository.service.EngagementNetworkHelper
+import com.joshtalks.joshskills.repository.service.NetworkRequestHelper
+import com.joshtalks.joshskills.repository.service.NetworkRequestHelper.isVideoPresentInUpdatedChat
 import com.joshtalks.joshskills.ui.chat.VIDEO_OPEN_REQUEST_CODE
 import com.joshtalks.joshskills.ui.pdfviewer.COURSE_NAME
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+
 
 const val VIDEO_OBJECT = "video_"
 const val VIDEO_WATCH_TIME = "video_watch_time"
+const val IS_BATCH_CHANGED = "is_batch_changed"
+const val NEXT_VIDEO_AVAILABLE = "next_video_available"
+const val LAST_VIDEO_INTERVAL = "last_video_interval"
+const val TAG = "video_watch_time"
+const val DURATION = "duration"
+const val CONVERSATION_ID = "conversation_id"
 
 class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventListener {
 
@@ -41,12 +59,16 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
         fun startConversionActivity(
             activity: Activity,
             chatModel: ChatModel,
-            videoTitle: String
+            videoTitle: String,
+            duration: Int? = 0,
+            conversationId: String? = EMPTY
         ) {
             val intent = Intent(activity, VideoPlayerActivity::class.java)
             intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
             intent.putExtra(VIDEO_OBJECT, chatModel)
             intent.putExtra(COURSE_NAME, videoTitle)
+            intent.putExtra(DURATION, duration)
+            intent.putExtra(CONVERSATION_ID, conversationId)
             activity.startActivityForResult(intent, VIDEO_OPEN_REQUEST_CODE)
         }
 
@@ -98,7 +120,18 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
     private var graph: Graph? = null
     private var videoId: String? = null
     private var videoUrl: String? = null
+    private var conversationId: String = EMPTY
     private lateinit var appAnalytics: AppAnalytics
+    private var videoDuration: Long? = 0
+    private var courseDuration: Int = 0
+    private var nextButtonVisible = false
+    private var backPressed = false
+    private var searchingNextUrl = false
+    private var isBatchChanged = false
+    private val handler = Handler()
+    private var videoList: List<VideoType> = emptyList()
+    private var maxInterval: Int = -1
+    private var interval = -1
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -140,9 +173,20 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
             } else {
                 videoUrl = chatObject?.question?.videoList?.getOrNull(0)?.video_url
             }
+            CoroutineScope(Dispatchers.IO).launch {
+                maxInterval =
+                    AppObjectController.appDatabase.chatDao().getMaxIntervalForVideo(conversationId)
+            }
+            interval = chatObject!!.question?.interval ?: -1
         }
         if (intent.hasExtra(VIDEO_URL)) {
             videoUrl = intent.getStringExtra(VIDEO_URL)
+        }
+        if (intent.hasExtra(DURATION)) {
+            courseDuration = intent.getIntExtra(DURATION, 0)
+        }
+        if (intent.hasExtra(CONVERSATION_ID)) {
+            conversationId = intent.getStringExtra(CONVERSATION_ID) ?: EMPTY
         }
         if (intent.hasExtra(VIDEO_ID)) {
             videoId = intent.getStringExtra(VIDEO_ID)
@@ -151,11 +195,11 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
         videoUrl?.run {
             binding.videoPlayer.setUrl(this)
             binding.videoPlayer.playVideo()
+            binding.videoPlayer.getCurrentPosition()
         }
 
-
         chatObject?.let {
-            appAnalytics.addParam(AnalyticsEvent.VIDEO_ID.NAME, it.chatId)
+            appAnalytics.addParam(AnalyticsEvent.VIDEO_ID.NAME, videoId)
             appAnalytics.addParam(
                 AnalyticsEvent.VIDEO_DURATION.NAME,
                 it.mediaDuration?.toString() ?: ""
@@ -168,8 +212,14 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
             binding.textMessageTitle.text.toString()
         )
 
-    }
+        binding.progressHorizontal.setOnClickListener {
+            playNextVideo()
+        }
 
+        binding.close.setOnClickListener {
+            this.onBackPressed()
+        }
+    }
 
     private fun setToolbar() {
         setSupportActionBar(binding.toolbar)
@@ -191,35 +241,26 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
 
     override fun onStop() {
         super.onStop()
-        try {
-            appAnalytics.push()
-            onPlayerReleased()
-            videoId?.run {
-                EngagementNetworkHelper.engageVideoApi(
-                    VideoEngage(
-                        videoViewGraphList.toList(),
-                        this.toInt(),
-                        countUpTimer.time.toLong()
-                    )
-                )
-            }
-        } catch (ex: Exception) {
-        }
-        unregisterReceiver(usbEventReceiver)
+        pushAnalyticsEvents(true)
     }
 
 
     override fun onBackPressed() {
+        backPressed = true
         window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         setResult()
         this@VideoPlayerActivity.finish()
     }
 
-    override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
+    override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int, duration: Long?) {
+        duration?.let {
+            this.videoDuration = it
+        }
         if (playWhenReady) {
             if (usbConnected) {
                 binding.videoPlayer.pausePlayer()
                 showUsbConnectedMsg()
+                countUpTimer.pause()
             } else {
                 appAnalytics.addParam(AnalyticsEvent.VIDEO_PLAY.NAME, true)
                 countUpTimer.resume()
@@ -230,7 +271,9 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
 
         }
         if (playbackState == Player.STATE_ENDED) {
-            onBackPressed()
+            if (nextButtonVisible.not()) {
+                onBackPressed()
+            }
         }
     }
 
@@ -261,8 +304,159 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
 
 
     override fun onCurrentTimeUpdated(time: Long) {
+
+        if (searchingNextUrl.not() && (videoDuration?.minus(time))!! < 6000 && chatObject != null) {
+            getNextClassUrl()
+        }
+
         graph?.endTime = time
     }
+
+
+    private fun getNextClassUrl() {
+        searchingNextUrl = true
+        CoroutineScope(Dispatchers.IO).launch {
+            videoList = emptyList()
+
+            val inboxActivity = AppObjectController.appDatabase.courseDao()
+                .chooseRegisterCourseMinimal(conversationId)
+            while (maxInterval > interval) {
+                interval++
+                val question = AppObjectController.appDatabase.chatDao()
+                    .getQuestionForNextInterval(
+                        inboxActivity?.courseId!!, interval
+                    )
+
+                if (question != null) {
+                    chatObject!!.question = question
+                    if (question.material_type == BASE_MESSAGE_TYPE.VI && question.type == BASE_MESSAGE_TYPE.Q) {
+                        val videoType = AppObjectController.appDatabase.chatDao()
+                            .getVideosOfQuestion(questionId = question.questionId)
+                        videoList = videoType
+                        break
+                    }
+                }
+            }
+            if (videoList.isNullOrEmpty().not()) {
+                chatObject?.question?.videoList = videoList
+                videoList[0].let { videoType ->
+                    setVideoObject(videoType)
+                }
+            } else {
+                if (interval < courseDuration) {
+                    val response =
+                        AppObjectController.chatNetworkService.changeBatchRequest(conversationId)
+                    val arguments = mutableMapOf<String, String>()
+                    val (key, value) = PrefManager.getLastSyncTime(conversationId)
+                    arguments[key] = value
+                    val videoType = isVideoPresentInUpdatedChat(conversationId, arguments)
+                    if (response.isSuccessful && videoType != null) {
+                        isBatchChanged = true
+                        setVideoObject(videoType)
+                    }
+                }
+            }
+        }
+    }
+
+    fun setVideoObject(videoType: VideoType) {
+        videoType.video_url?.run {
+            videoId = videoType.id
+            videoUrl = videoType.video_url
+            initiatePlaySequence()
+        }
+    }
+
+    private fun initiatePlaySequence() {
+        CoroutineScope(Dispatchers.Main).launch {
+            binding.frameProgress.visibility = View.VISIBLE
+            nextButtonVisible = true
+            startProgress()
+        }
+        updateChat()
+    }
+
+    private fun startProgress() {
+        Thread(Runnable {
+            binding.progressHorizontal.progress = 0
+            while (binding.progressHorizontal.progress < 100) {
+                handler.post(Runnable {
+                    binding.progressHorizontal.progress += 1
+                })
+                try {
+                    // Sleep for 100 milliseconds.
+                    Thread.sleep(100)
+                } catch (e: InterruptedException) {
+                    e.printStackTrace()
+                }
+            }
+            this@VideoPlayerActivity.runOnUiThread {
+                if (nextButtonVisible && backPressed.not()) {
+                    playNextVideo()
+                }
+            }
+        }).start()
+    }
+
+    private fun playNextVideo() {
+
+        videoUrl?.run {
+            binding.frameProgress.visibility = View.GONE
+            binding.videoPlayer.playNextVideo(videoUrl)
+            nextButtonVisible = false
+            searchingNextUrl = false
+            pushPreviousAnalyticsEvents()
+        }
+    }
+
+    private fun pushPreviousAnalyticsEvents() {
+        pushAnalyticsEvents(false)
+        countUpTimer.reset()
+        appAnalytics.addParam(AnalyticsEvent.VIDEO_ID.NAME, videoId)
+        videoViewGraphList.clear()
+
+        if (graph != null) {
+            graph = null
+        }
+        graph = Graph(binding.videoPlayer.player!!.currentPosition)
+
+    }
+
+    private fun pushAnalyticsEvents(flowFromOnStop: Boolean) {
+        try {
+            appAnalytics.push()
+            onPlayerReleased()
+            if (flowFromOnStop) {
+                graph?.endTime = binding.videoPlayer.player!!.currentPosition
+                graph?.let {
+                    videoViewGraphList.add(it)
+                }
+                graph = null
+            }
+
+            videoId?.run {
+                EngagementNetworkHelper.engageVideoApi(
+                    VideoEngage(
+                        videoViewGraphList.toList(),
+                        this.toInt(),
+                        countUpTimer.time.toLong()
+                    )
+                )
+            }
+        } catch (ex: Exception) {
+        }
+    }
+
+    fun updateChat() {
+        val arguments = mutableMapOf<String, String>()
+        val (key, value) = PrefManager.getLastSyncTime(conversationId)
+        arguments[key] = value
+        NetworkRequestHelper.getUpdatedChat(
+            conversationId,
+            queryMap = arguments
+        )
+    }
+
 
     override fun onPlayerReleased() {
         graph?.endTime = binding.videoPlayer.player!!.currentPosition
@@ -285,6 +479,9 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
         chatObject?.run {
             resultIntent.putExtra(VIDEO_OBJECT, this)
             resultIntent.putExtra(VIDEO_WATCH_TIME, countUpTimer.time)
+            resultIntent.putExtra(IS_BATCH_CHANGED, isBatchChanged)
+            resultIntent.putExtra(LAST_VIDEO_INTERVAL, interval)
+            resultIntent.putExtra(NEXT_VIDEO_AVAILABLE, nextButtonVisible)
         }
         setResult(Activity.RESULT_OK, resultIntent)
     }
