@@ -51,10 +51,6 @@ class LauncherActivity : CoreJoshActivity(), CustomPermissionDialogInteractionLi
                 if (error == null && jsonParams?.has(Defines.Jsonkey.AndroidDeepLinkPath.key) == true) {
                     AppObjectController.uiHandler.removeCallbacksAndMessages(null)
                     val testId = jsonParams.getString(Defines.Jsonkey.AndroidDeepLinkPath.key)
-                    val exploreType = if (jsonParams.has(Defines.Jsonkey.ContentType.key)) {
-                        jsonParams.getString(Defines.Jsonkey.ContentType.key)
-                    } else ExploreCardType.NORMAL.name
-                    PrefManager.put(EXPLORE_TYPE, exploreType, true)
                     WorkMangerAdmin.registerUserGAIDWithTestId(testId)
                     val referralCode = parseReferralCode(jsonParams)
                     referralCode?.let {
@@ -62,6 +58,12 @@ class LauncherActivity : CoreJoshActivity(), CustomPermissionDialogInteractionLi
                     }
                     navigateToPaymentScreen(testId)
                     this@LauncherActivity.finish()
+                }
+                if (error == null) {
+                    val exploreType = if (jsonParams.has(Defines.Jsonkey.ContentType.key)) {
+                        jsonParams.getString(Defines.Jsonkey.ContentType.key)
+                    } else ExploreCardType.NORMAL.name
+                    PrefManager.put(EXPLORE_TYPE, exploreType, true)
                 }
             } catch (ex: Throwable) {
                 LogException.catchException(ex)
