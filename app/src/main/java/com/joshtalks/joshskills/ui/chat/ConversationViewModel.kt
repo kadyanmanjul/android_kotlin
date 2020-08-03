@@ -355,26 +355,24 @@ class ConversationViewModel(application: Application) :
         )
     }
 
-    suspend fun updateBachChangeRequest() {
+    suspend fun updateBatchChangeRequest() {
 
         val response =
             AppObjectController.chatNetworkService.changeBatchRequest(inboxEntity.conversation_id)
         if (response.isSuccessful) {
-            deleteChatModel(BASE_MESSAGE_TYPE.UNLOCK)
+            deleteChatModelOfType(BASE_MESSAGE_TYPE.UNLOCK)
             refreshChatOnManual()
         }
     }
 
-    suspend fun deleteChatModel(type: BASE_MESSAGE_TYPE){
-
+    suspend fun deleteChatModelOfType(type: BASE_MESSAGE_TYPE){
         AppObjectController.appDatabase.chatDao()
             .deleteSpecificTypeChatModel(inboxEntity.conversation_id,type)
-
     }
 
-    suspend fun insertUnlockClassToDb(unlockChatModel: ChatModel) {
+    suspend fun insertUnlockClassToDatabase(unlockChatModel: ChatModel) {
 
-        deleteChatModel(BASE_MESSAGE_TYPE.UNLOCK)
+        deleteChatModelOfType(BASE_MESSAGE_TYPE.UNLOCK)
 
         val chatObj =
             AppObjectController.appDatabase.chatDao()

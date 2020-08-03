@@ -968,8 +968,7 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
                         this,
                         it.chatModel,
                         inboxEntity.course_name,
-                        inboxEntity.duration,
-                        inboxEntity.conversation_id
+                        inboxEntity.duration
                     )
                 }, {
                     it.printStackTrace()
@@ -1245,7 +1244,7 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
                     CoroutineScope(Dispatchers.Main).launch {
                         unlockViewHolder = null
                         conversationBinding.chatRv.removeView(it.viewHolder)
-                        conversationViewModel.updateBachChangeRequest()
+                        conversationViewModel.updateBatchChangeRequest()
                         conversationBinding.refreshLayout.isRefreshing = true
                         scrollToEnd()
                     }
@@ -1481,38 +1480,14 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
                     )
                 ) {
                     CoroutineScope(Dispatchers.Main).launch {
-                        conversationViewModel.deleteChatModel(BASE_MESSAGE_TYPE.UNLOCK)
+                        conversationViewModel.deleteChatModelOfType(BASE_MESSAGE_TYPE.UNLOCK)
                         if (unlockViewHolder != null) {
                             conversationBinding.chatRv.removeView(unlockViewHolder)
                         }
                         fetchMessage()
                     }
                 } else {
-                    val interval = data.getIntExtra(LAST_VIDEO_INTERVAL, -1)
-                    val isNextVideoAvailable = data.getBooleanExtra(NEXT_VIDEO_AVAILABLE, false)
-                    CoroutineScope(Dispatchers.IO).launch {
-                        var maxInterval =
-                            AppObjectController.appDatabase.chatDao()
-                                .getMaxIntervalForVideo(inboxEntity.conversation_id)
-                        if (maxInterval == interval && isNextVideoAvailable.not()) {
-                            val tUnlockClassMessage =
-                                TUnlockClassMessage("Unlock Class Demo For now")
-                            val cell = MessageBuilderFactory.getMessage(
-                                activityRef,
-                                BASE_MESSAGE_TYPE.UNLOCK,
-                                tUnlockClassMessage
-                            )
-                            if (unlockViewHolder != null) {
-                                conversationBinding.chatRv.removeView(unlockViewHolder)
-                            }
-                            conversationViewModel.insertUnlockClassToDb(cell.message)
-                            CoroutineScope(Dispatchers.Main).launch {
-                                conversationBinding.chatRv.addView(cell)
-                                unlockViewHolder = cell as UnlockNextClassViewHolder
-                                refreshViewAtPos(cell.message)
-                            }
-                        }
-                    }
+                    addUnlockNextClassCard(data)
                 }
             }
 
@@ -1521,6 +1496,35 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
             ex.printStackTrace()
         }
         super.onActivityResult(requestCode, resultCode, data)
+    }
+
+    private fun addUnlockNextClassCard(data: Intent) {
+
+        val interval = data.getIntExtra(LAST_VIDEO_INTERVAL, -1)
+        val isNextVideoAvailable = data.getBooleanExtra(NEXT_VIDEO_AVAILABLE, false)
+        CoroutineScope(Dispatchers.IO).launch {
+            val maxInterval =
+                AppObjectController.appDatabase.chatDao()
+                    .getMaxIntervalForVideo(inboxEntity.conversation_id)
+            if (maxInterval == interval && isNextVideoAvailable.not()) {
+                val tUnlockClassMessage =
+                    TUnlockClassMessage("Unlock Class Demo For now")
+                val cell = MessageBuilderFactory.getMessage(
+                    activityRef,
+                    BASE_MESSAGE_TYPE.UNLOCK,
+                    tUnlockClassMessage
+                )
+                if (unlockViewHolder != null) {
+                    conversationBinding.chatRv.removeView(unlockViewHolder)
+                }
+                conversationViewModel.insertUnlockClassToDatabase(cell.message)
+                CoroutineScope(Dispatchers.Main).launch {
+                    conversationBinding.chatRv.addView(cell)
+                    unlockViewHolder = cell as UnlockNextClassViewHolder
+                    refreshViewAtPos(cell.message)
+                }
+            }
+        }
     }
 
     fun uploadImageByCameraOrGallery() {
