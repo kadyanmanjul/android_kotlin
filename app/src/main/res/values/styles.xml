@@ -74,7 +74,7 @@
 
     <style name="BottomProgressBar" parent="@style/Widget.AppCompat.ProgressBar.Horizontal">
         <item name="android:progressBackgroundTint">@color/pdf_bg_color</item>
-        <item name="android:progressTint">@color/error_color</item>
+        <item name="android:progressTint">@color/colorPrimary</item>
     </style>
 
     <style name="AppBottomSheetDialogTheme" parent="Theme.Design.Light.BottomSheetDialog">
