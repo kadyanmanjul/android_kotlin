@@ -7,12 +7,20 @@ import android.os.Build
 import android.os.Bundle
 import android.view.Window
 import android.view.WindowManager
+import androidx.databinding.DataBindingUtil
+import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.STARTED_FROM
+import com.joshtalks.joshskills.databinding.ActivityStartSubscriptionBinding
 import com.joshtalks.joshskills.repository.local.model.ExploreCardType
 
 class StartSubscriptionActivity : BaseActivity() {
+
+    private lateinit var binding: ActivityStartSubscriptionBinding
+    private var testId: Int = 0
+    private var exploreCardType = ExploreCardType.NORMAL
+    private var startedFrom: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -28,6 +36,19 @@ class StartSubscriptionActivity : BaseActivity() {
             ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         }
         super.onCreate(savedInstanceState)
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_start_subscription)
+        binding.lifecycleOwner = this
+        binding.handler = this
+
+        testId = intent.getIntExtra(KEY_TEST_ID, 0)
+        exploreCardType = ExploreCardType.valueOf(intent.getStringExtra(KEY_EXPLORE_CARD_TYPE)!!)
+        if (intent.hasExtra(STARTED_FROM)) {
+            startedFrom = intent.getStringExtra(STARTED_FROM)
+        }
+
+        if (testId == 0) {
+            finish()
+        }
 
     }
 
