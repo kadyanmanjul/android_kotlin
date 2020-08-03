@@ -23,8 +23,7 @@ import com.joshtalks.joshskills.repository.server.CourseExploreModel
 class CourseExploreAdapter(
     var context: Context,
     var courseList: ArrayList<CourseExploreModel>
-) :
-    RecyclerView.Adapter<CourseExploreAdapter.CourseExploreViewHolder>() {
+) : RecyclerView.Adapter<CourseExploreAdapter.CourseExploreViewHolder>() {
 
     //Will be true if user has applied filter. We will show language tags between course list on its basis.
     var isFilterEnabled: Boolean = false
@@ -48,6 +47,7 @@ class CourseExploreAdapter(
 
     override fun onBindViewHolder(holder: CourseExploreViewHolder, position: Int) {
         val courseExploreModel = courseList.get(position)
+
         if (isFilterEnabled && position != 0 && !courseExploreModel.language.equals(
                 courseList.get(position - 1).language, true
             )
@@ -56,15 +56,21 @@ class CourseExploreAdapter(
         } else
             holder.languageTag.visibility = GONE
 
-        holder.buyNow.text =
-            AppObjectController.getFirebaseRemoteConfig().getString("show_details_label")
+        if (courseExploreModel.isClickable) {
+            holder.buyNow.visibility = View.VISIBLE
+            holder.buyNow.text =
+                AppObjectController.getFirebaseRemoteConfig().getString("show_details_label")
 
-        holder.buyNow.setOnClickListener {
-            RxBus2.publish(courseExploreModel)
-        }
+            holder.buyNow.setOnClickListener {
+                RxBus2.publish(courseExploreModel)
+            }
 
-        holder.imageView.setOnClickListener {
-            RxBus2.publish(courseExploreModel)
+            holder.imageView.setOnClickListener {
+                RxBus2.publish(courseExploreModel)
+            }
+
+        } else {
+            holder.buyNow.visibility = View.GONE
         }
         try {
             Glide.with(context)

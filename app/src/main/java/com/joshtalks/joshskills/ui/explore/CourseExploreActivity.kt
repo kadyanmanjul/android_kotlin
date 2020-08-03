@@ -5,11 +5,19 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
+import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.afollestad.materialdialogs.MaterialDialog
+import com.bumptech.glide.Glide
+import com.bumptech.glide.integration.webp.decoder.WebpDrawable
+import com.bumptech.glide.integration.webp.decoder.WebpDrawableTransformation
+import com.bumptech.glide.load.resource.bitmap.CircleCrop
+import com.bumptech.glide.request.target.Target
+import com.crashlytics.android.Crashlytics
 import com.google.android.material.appbar.MaterialToolbar
+import com.google.android.material.button.MaterialButton
 import com.google.android.material.chip.Chip
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
@@ -24,6 +32,7 @@ import com.joshtalks.joshskills.core.custom_ui.decorator.LayoutMarginDecoration
 import com.joshtalks.joshskills.databinding.ActivityCourseExploreBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
+import com.joshtalks.joshskills.repository.local.model.ExploreCardType
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.ScreenEngagementModel
 import com.joshtalks.joshskills.repository.server.CourseExploreModel
@@ -194,11 +203,51 @@ class CourseExploreActivity : CoreJoshActivity() {
                     courseExploreBinding.recyclerView.removeAllViews()
                     val languageSet: HashSet<String> = HashSet()
                     response.forEach { courseExploreModel ->
-                        list?.let { it ->
+                        list?.let { inboxEntityList ->
                             val entity: InboxEntity? =
-                                it.find { it.courseId == courseExploreModel.course.toString() }
+                                inboxEntityList.find { it.courseId == courseExploreModel.course.toString() }
                             if (entity != null) {
                                 return@forEach
+                            }
+                        }
+                        if (courseExploreModel.cardType == ExploreCardType.NORMAL) {
+                            courseExploreModel.language?.let { languageSet.add(it.capitalize()) }
+                            courseList.add(courseExploreModel)
+                        } else {
+                            val headerImage = findViewById<AppCompatImageView>(R.id.image_view)
+                            val headerBuyNowBtn = findViewById<MaterialButton>(R.id.buy_now_button)
+                            val headerContainer = findViewById<View>(R.id.courseListHeader)
+
+                            headerContainer.visibility = View.VISIBLE
+                            try {
+                                Glide.with(this@CourseExploreActivity)
+                                    .load(courseExploreModel.imageUrl)
+                                    .override(Target.SIZE_ORIGINAL)
+                                    .optionalTransform(
+                                        WebpDrawable::class.java,
+                                        WebpDrawableTransformation(CircleCrop())
+                                    )
+                                    .into(headerImage)
+                            } catch (ex: Exception) {
+                                Crashlytics.logException(ex)
+                            }
+                            if (courseExploreModel.isClickable) {
+                                headerBuyNowBtn.visibility = View.VISIBLE
+                                headerBuyNowBtn.text =
+                                    AppObjectController.getFirebaseRemoteConfig()
+                                        .getString("show_details_label")
+
+                                headerBuyNowBtn.setOnClickListener {
+                                    RxBus2.publish(courseExploreModel)
+                                }
+
+                                headerImage.setOnClickListener {
+                                    RxBus2.publish(courseExploreModel)
+                                }
+                            } else {
+                                headerBuyNowBtn.visibility = View.GONE
+                                headerImage.isClickable = false
+                                headerImage.isFocusable = false
                             }
                         }
                         courseExploreModel.language?.let {
@@ -242,7 +291,7 @@ class CourseExploreActivity : CoreJoshActivity() {
         }
     }
 
-    fun filterCourses() {
+    private fun filterCourses() {
         filteredCourseList.clear()
         if (selectedLanguage.isBlank()) {
             filteredCourseList.addAll(courseList)
@@ -281,12 +330,24 @@ class CourseExploreActivity : CoreJoshActivity() {
                 .addParam(AnalyticsEvent.COURSE_NAME.NAME, it.courseName)
                 .addParam(AnalyticsEvent.COURSE_PRICE.NAME, it.amount)
                 .push()
-            it.id?.let {
-                CourseDetailsActivity.startCourseDetailsActivity(
-                    this,
-                    it,
-                    this@CourseExploreActivity.javaClass.simpleName
-                )
+
+            when (it.cardType) {
+
+                ExploreCardType.NORMAL -> {
+                    it.id?.let {
+                        CourseDetailsActivity.startCourseDetailsActivity(
+                            this,
+                            it,
+                            this@CourseExploreActivity.javaClass.simpleName
+                        )
+                    }
+                }
+
+                ExploreCardType.FFCOURSE,
+                ExploreCardType.FREETRIAL,
+                ExploreCardType.SUBSCRIPTION -> {
+                    // TODO - Show StartSubscription Screen
+                }
             }
         })
 
