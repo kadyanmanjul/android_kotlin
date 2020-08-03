@@ -265,7 +265,10 @@ data class VideoType(
     @SerializedName("bit_rate") var bit_rate: Int = 0,
 
     @ColumnInfo
-    @SerializedName("is_deleted") var is_deleted: Boolean = false
+    @SerializedName("is_deleted") var is_deleted: Boolean = false,
+
+    @ColumnInfo
+    @SerializedName("interval") var interval: Int = -1
 
 ) : DataBaseClass(), Parcelable
 
@@ -585,6 +588,27 @@ interface ChatDao {
     @Query(value = "SELECT * FROM chat_table where conversation_id= :conversationId ORDER BY ID DESC LIMIT 1")
     suspend fun getLastOneChat(conversationId: String): ChatModel?
 
+     suspend fun getMaxIntervalForVideo(conversationId: String): Int {
+
+        val chatModel: ChatModel? = getLastQuestionInterval(conversationId)
+        if (chatModel?.type == BASE_MESSAGE_TYPE.Q) {
+            val question: Question? = getQuestion(chatModel.chatId)
+            if (question != null) {
+                return question.interval
+            }
+        }
+        return -1
+    }
+
+    @Query("SELECT * FROM question_table WHERE course_id= :course_id AND interval=:interval")
+    suspend fun getQuestionForNextInterval(course_id: String, interval: Int): Question?
+
+    @Query(value = "SELECT * FROM chat_table where question_id IS NOT NULL AND conversation_id= :conversationId ORDER BY created DESC LIMIT 1; ")
+    suspend fun getLastQuestionInterval(conversationId: String): ChatModel?
+
+    @Query(value = "DELETE FROM chat_table where conversation_id= :conversationId AND type=:type")
+    suspend fun deleteSpecificTypeChatModel(conversationId: String, type: BASE_MESSAGE_TYPE)
+
     @Query(value = "UPDATE chat_table  SET is_seen = 1 where conversation_id= :conversationId")
     suspend fun readAllChatBYUser(conversationId: String)
 
@@ -659,9 +683,10 @@ enum class OPTION_TYPE(val type: String) {
 
 enum class BASE_MESSAGE_TYPE(val type: String) {
     A("A"), TX("TX"), VI("VI"), AU("AU"), IM("IM"), Q("Q"), PD("PD"), PR("PR"), AR("AR"),
-    CP("CP"), QUIZ("QUIZ"), TEST("TEST"), OTHER("OTHER")
+    CP("CP"), QUIZ("QUIZ"), TEST("TEST"), OTHER("OTHER"), UNLOCK("UN")
 
 }
+
 
 enum class EXPECTED_ENGAGE_TYPE(val type: String) {
     TX("TX"), VI("VI"), AU("AU"), IM("IM"), DX("DX")
