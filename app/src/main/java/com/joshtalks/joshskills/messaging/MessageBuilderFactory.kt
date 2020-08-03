@@ -14,11 +14,13 @@ import com.joshtalks.joshskills.repository.server.chat_message.BaseChatMessage
 import com.joshtalks.joshskills.repository.server.chat_message.TAudioMessage
 import com.joshtalks.joshskills.repository.server.chat_message.TChatMessage
 import com.joshtalks.joshskills.repository.server.chat_message.TImageMessage
+import com.joshtalks.joshskills.repository.server.chat_message.TUnlockClassMessage
 import com.joshtalks.joshskills.repository.server.chat_message.TVideoMessage
 import com.joshtalks.joshskills.ui.view_holders.AudioPlayerViewHolder
 import com.joshtalks.joshskills.ui.view_holders.BaseChatViewHolder
 import com.joshtalks.joshskills.ui.view_holders.ImageViewHolder
 import com.joshtalks.joshskills.ui.view_holders.TextViewHolder
+import com.joshtalks.joshskills.ui.view_holders.UnlockNextClassViewHolder
 import com.joshtalks.joshskills.ui.view_holders.VideoViewHolder
 import com.joshtalks.joshskills.util.RandomString
 import java.lang.ref.WeakReference
@@ -46,9 +48,24 @@ object MessageBuilderFactory {
             BASE_MESSAGE_TYPE.AU -> {
                 return AudioPlayerViewHolder(activityRef, getAudioChatModel(message))
             }
+            BASE_MESSAGE_TYPE.UNLOCK -> {
+                return UnlockNextClassViewHolder(activityRef, getUnlockChatModel(message))
+            }//add new
             else -> return TextViewHolder(activityRef, ChatModel())
         }
 
+    }
+
+    private fun getUnlockChatModel(message: BaseChatMessage): ChatModel {
+        val model = ChatModel()
+        model.text = (message as TUnlockClassMessage).text
+        model.type = BASE_MESSAGE_TYPE.UNLOCK
+        model.created = Date(System.currentTimeMillis())
+        model.messageDeliverStatus = MESSAGE_DELIVER_STATUS.SENT
+        model.chatLocalId = RandomString().nextString()
+        model.isSync = false
+        model.sender = Sender(Mentor.getInstance().getId(), User(), "")
+        return model
     }
 
     private fun getTextChatModel(message: BaseChatMessage): ChatModel {

@@ -169,6 +169,10 @@ class InboxViewHolder(
                 tvLastReceivedMessage.text = "Pdf"
 
             }
+            BASE_MESSAGE_TYPE.UNLOCK == baseMessageType -> {
+                tvLastReceivedMessage.text = "You can unlock your next class"
+
+            }
         }
 
         if (this.inboxEntity.message_deliver_status != null) {

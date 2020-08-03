@@ -699,8 +699,9 @@ class BitVideoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibili
         return player?.currentPosition ?: -1
     }
 
-    fun seekTo(pos: Long) {
+    fun seekTo(pos: Long,isControllerDisable:Boolean=false) {
         player?.seekTo(pos)
+        if(isControllerDisable.not())
         controllerAutoHideOnDelay()
     }
 
@@ -935,6 +936,15 @@ class BitVideoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibili
         player?.setPlaybackParameters(param)
     }
 
+    fun playNextVideo(s: String?) {
+        setUrl(s)
+        playVideo()
+        seekTo(0,true)
+        getCurrentPosition()
+        timeHandler.post(timeRunnable)
+        hideController()
+    }
+
 
     private inner class PlayerErrorMessageProvider :
         ErrorMessageProvider<ExoPlaybackException> {
@@ -1028,8 +1038,8 @@ class BitVideoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibili
             if (playbackState == Player.STATE_READY) {
                 playerListener?.onPlayerReady()
             }
-
-            playerListener?.onPlayerStateChanged(playWhenReady, playbackState)
+            val duration = player?.duration ?: 0
+            playerListener?.onPlayerStateChanged(playWhenReady, playbackState, duration)
             val state = when (playbackState) {
                 ExoPlayer.STATE_BUFFERING -> "buffering"
                 ExoPlayer.STATE_ENDED -> "ended"
@@ -1288,7 +1298,7 @@ class AudioLanguageAdapter(
 
 interface VideoPlayerEventListener {
     fun onClickFullScreenView(cOrientation: Int)
-    fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int)
+    fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int, duration: Long? = 0)
     fun onCurrentTimeUpdated(time: Long)
     fun onPlayerReleased()
     fun onPositionDiscontinuity(lastPos: Long, reason: Int = 1)

@@ -355,35 +355,39 @@ class ConversationViewModel(application: Application) :
         )
     }
 
+    suspend fun updateBachChangeRequest() {
 
-    /*private fun deleteMessageAndMedia() {
-        viewModelScope.launch(Dispatchers.IO) {
-            val data = mapOf("is_deleted" to "true")
-
-            val listIds: MutableList<String> = mutableListOf()
-            val chatReturn: List<ChatModel> = appDatabase.chatDao().getUnsyncDeletesMessage()
-            if (chatReturn.isNotEmpty()) {
-                chatReturn.forEach { chatModel ->
-                    try {
-                        chatModel.downloadedLocalPath?.let {
-                            File(it).deleteOnExit()
-                        }
-                    } catch (ex: Exception) {
-
-                    }
-
-                    try {
-                        AppObjectController.chatNetworkService.deleteMessage(
-                            chatModel.chatId,
-                            data
-                        )
-                        listIds.add(chatModel.chatId)
-                    } catch (ex: Exception) {
-
-                    }
-                }
-                appDatabase.chatDao().deleteUserMessages(listIds)
-            }
+        val response =
+            AppObjectController.chatNetworkService.changeBatchRequest(inboxEntity.conversation_id)
+        if (response.isSuccessful) {
+            deleteChatModel(BASE_MESSAGE_TYPE.UNLOCK)
+            refreshChatOnManual()
         }
-    }*/
+    }
+
+    suspend fun deleteChatModel(type: BASE_MESSAGE_TYPE){
+
+        AppObjectController.appDatabase.chatDao()
+            .deleteSpecificTypeChatModel(inboxEntity.conversation_id,type)
+
+    }
+
+    suspend fun insertUnlockClassToDb(unlockChatModel: ChatModel) {
+
+        deleteChatModel(BASE_MESSAGE_TYPE.UNLOCK)
+
+        val chatObj =
+            AppObjectController.appDatabase.chatDao()
+                .getNullableChatObject(unlockChatModel.chatId)
+        if (chatObj == null) {
+            AppObjectController.appDatabase.chatDao().insertAMessage(unlockChatModel)
+        } else {
+            chatObj.chatId = unlockChatModel.chatLocalId.toString()
+            chatObj.conversationId = inboxEntity.conversation_id
+            chatObj.created = unlockChatModel.created
+            chatObj.type = unlockChatModel.type
+            AppObjectController.appDatabase.chatDao().updateChatMessage(chatObj)
+        }
+    }
+
 }
