@@ -28,7 +28,8 @@
                     android:layout_marginTop="?attr/actionBarSize"
                     android:layout_marginEnd="@dimen/_8sdp"
                     android:overScrollMode="never"
-                    android:padding="@dimen/_8sdp"
+                    android:paddingStart="@dimen/_8sdp"
+                    android:paddingEnd="@dimen/_8sdp"
                     android:scrollbars="none"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent">

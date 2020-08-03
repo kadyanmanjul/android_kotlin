@@ -3,7 +3,10 @@ package com.joshtalks.joshskills.ui.explore
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -17,12 +20,19 @@ import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.server.CourseExploreModel
 
-class CourseExploreAdapter(var context: Context, var courseList: ArrayList<CourseExploreModel>) :
+class CourseExploreAdapter(
+    var context: Context,
+    var courseList: ArrayList<CourseExploreModel>
+) :
     RecyclerView.Adapter<CourseExploreAdapter.CourseExploreViewHolder>() {
+
+    //Will be true if user has applied filter. We will show language tags between course list on its basis.
+    var isFilterEnabled: Boolean = false
 
     class CourseExploreViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         var imageView: AppCompatImageView = itemView.findViewById(R.id.image_view)
         var buyNow: MaterialButton = itemView.findViewById(R.id.buy_now_button)
+        var languageTag: TextView = itemView.findViewById(R.id.language_tag)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CourseExploreViewHolder {
@@ -36,9 +46,17 @@ class CourseExploreAdapter(var context: Context, var courseList: ArrayList<Cours
         return courseList.size
     }
 
-
     override fun onBindViewHolder(holder: CourseExploreViewHolder, position: Int) {
         val courseExploreModel = courseList.get(position)
+        if (isFilterEnabled && position != 0 && !courseExploreModel.language.equals(
+                courseList.get(position - 1).language, true
+            )
+        ) {
+            holder.languageTag.visibility = VISIBLE
+            holder.languageTag.text = courseExploreModel.language?.capitalize()
+        } else
+            holder.languageTag.visibility = GONE
+
         holder.buyNow.text =
             AppObjectController.getFirebaseRemoteConfig().getString("show_details_label")
 

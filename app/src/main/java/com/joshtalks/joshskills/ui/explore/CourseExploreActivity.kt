@@ -45,6 +45,7 @@ const val USER_COURSES = "user_courses"
 const val PREV_ACTIVITY = "previous_activity"
 
 class CourseExploreActivity : CoreJoshActivity() {
+    private val languageMap: HashMap<String, ArrayList<CourseExploreModel>> = HashMap()
     private lateinit var adapter: CourseExploreAdapter
     private val courseList: ArrayList<CourseExploreModel> = ArrayList()
     private val filteredCourseList: ArrayList<CourseExploreModel> = ArrayList()
@@ -200,7 +201,23 @@ class CourseExploreActivity : CoreJoshActivity() {
                                 return@forEach
                             }
                         }
-                        courseExploreModel.language?.let { languageSet.add(it.capitalize()) }
+                        courseExploreModel.language?.let {
+                            //Creating language set for filter option chips
+                            languageSet.add(it.capitalize())
+
+                            //manage map to at the time of filtering.
+                            val courses: ArrayList<CourseExploreModel>? =
+                                languageMap.get(it.capitalize())
+                            if (courses != null) {
+                                //Map already has key with course of this language. so add course to same list.
+                                courses.add(courseExploreModel)
+                            } else {
+                                //This is the first course with this language so add new key to map.
+                                val newLanguageCourse: ArrayList<CourseExploreModel> = ArrayList()
+                                newLanguageCourse.add(courseExploreModel)
+                                languageMap.put(it.capitalize(), newLanguageCourse)
+                            }
+                        }
                         courseList.add(courseExploreModel)
                     }
 
@@ -227,15 +244,19 @@ class CourseExploreActivity : CoreJoshActivity() {
 
     fun filterCourses() {
         filteredCourseList.clear()
-        if (selectedLanguage.isBlank())
+        if (selectedLanguage.isBlank()) {
             filteredCourseList.addAll(courseList)
-        else
-            filteredCourseList.addAll(courseList.filter {
-                it.language.equals(
-                    selectedLanguage,
-                    true
-                )
-            })
+            adapter.isFilterEnabled = false
+        } else {
+            adapter.isFilterEnabled = true
+            languageMap.get(selectedLanguage)?.let { filteredCourseList.addAll(it) }
+            languageMap.keys.forEach {
+                if (!it.equals(selectedLanguage, true)) {
+                    languageMap.get(it)?.let { filteredCourseList.addAll(it) }
+                }
+            }
+        }
+
         adapter.notifyDataSetChanged()
         courseExploreBinding.recyclerView.scrollToPosition(0)
     }
