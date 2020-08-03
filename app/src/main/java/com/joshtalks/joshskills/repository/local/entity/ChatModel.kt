@@ -211,7 +211,10 @@ data class Question(
     @Expose var assessmentId: Int? = null,
 
     @ColumnInfo(name = "conversation_practice_id")
-    @SerializedName("conversation_practice_id") var conversationPracticeId: String? = null
+    @SerializedName("conversation_practice_id") var conversationPracticeId: String? = null,
+
+    @ColumnInfo(name = "temp_type")
+    @Expose var tempType: BASE_MESSAGE_TYPE? = type
 
 
 ) : Parcelable

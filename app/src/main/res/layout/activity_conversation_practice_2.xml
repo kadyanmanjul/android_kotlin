@@ -38,8 +38,8 @@
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:clickable="true"
                     android:focusable="true"
-                    android:gravity="center_vertical|start"
                     android:onClick="@{()->handler.onBackPressed()}"
+                    android:gravity="center_vertical|start"
                     android:padding="@dimen/_4sdp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
@@ -47,11 +47,11 @@
                     app:tint="@color/black" />
 
             <androidx.appcompat.widget.AppCompatTextView
-                    fontPath="fonts/Poppins-Medium.ttf"
                     android:id="@+id/text_message_title"
-                    android:layout_marginStart="@dimen/_4sdp"
+                    fontPath="fonts/Poppins-Medium.ttf"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_4sdp"
                     android:autoSizeMaxTextSize="@dimen/font_18"
                     android:gravity="start"
                     android:text="@string/conversation_practice"
@@ -63,11 +63,13 @@
                     tools:targetApi="o" />
 
             <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/history_iv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="@dimen/_8sdp"
                     android:src="@drawable/ic_headphone_icon"
                     android:visibility="invisible"
+                    android:onClick="@{()->handler.openSubmittedPractise()}"
                     app:layout_constraintBottom_toBottomOf="@+id/iv_back"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@+id/iv_back" />

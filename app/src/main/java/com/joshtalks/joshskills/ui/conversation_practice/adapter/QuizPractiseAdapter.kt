@@ -14,6 +14,10 @@ class QuizPractiseAdapter(
 ) :
     RecyclerView.Adapter<QuizPractiseAdapter.ViewHolder>() {
 
+    init {
+        setHasStableIds(true)
+    }
+
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
@@ -23,7 +27,9 @@ class QuizPractiseAdapter(
             parent,
             false
         )
-        return ViewHolder(binding)
+        return ViewHolder(binding).apply {
+            setIsRecyclable(false)
+        }
     }
 
 
@@ -41,16 +47,16 @@ class QuizPractiseAdapter(
     inner class ViewHolder(val binding: QuizPractiseItemLayoutBinding) :
         RecyclerView.ViewHolder(binding.root), OnChoiceClickListener {
         init {
-            binding.rvChoice.builder.setItemViewCacheSize(1).setHasFixedSize(true)
+            binding.rvChoice.builder.setHasFixedSize(true)
         }
 
         fun bind(quizModel: QuizModel) {
             binding.quizModel = quizModel
+            binding.rvChoice.removeAllViews()
             if (binding.rvChoice.viewAdapter == null || binding.rvChoice.viewAdapter.itemCount == 0) {
                 quizModel.answersModel.sortedBy { it.sortOrder }
                     .forEachIndexed { index, answersModel ->
                         binding.rvChoice.addView(QuizPractiseOptionView(index, answersModel, this))
-
                     }
             }
             binding.rvChoice.refresh()

@@ -37,7 +37,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_36sdp"
-                android:text="@string/verification_failed"
+                android:text="@string/submit_record_msz"
                 android:textColor="@color/black"
                 android:textSize="@dimen/font_18"
                 app:layout_constraintEnd_toEndOf="parent"

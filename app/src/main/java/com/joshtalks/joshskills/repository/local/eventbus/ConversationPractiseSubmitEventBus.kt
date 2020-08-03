@@ -1,3 +1,3 @@
 package com.joshtalks.joshskills.repository.local.eventbus
 
-class ConversationPractiseSubmitEventBus
+class ConversationPractiseSubmitEventBus(val text: String)

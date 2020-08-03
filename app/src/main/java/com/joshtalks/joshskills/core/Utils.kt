@@ -90,7 +90,6 @@ import kotlin.math.pow
 
 
 private val CHAT_TIME_FORMATTER = SimpleDateFormat("hh:mm aa")
-private val DD_MM_YYYY = SimpleDateFormat("DD/MM/yyyy")
 private val DD_MMM = SimpleDateFormat("dd-MMM hh:mm aa")
 private val MMM_DD_YYYY = SimpleDateFormat("MMM DD, yyyy")
 

@@ -16,6 +16,7 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.ALPHA_MAX
 import com.joshtalks.joshskills.core.ALPHA_MIN
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.PermissionUtils
 import com.joshtalks.joshskills.core.PractiseUser
 import com.joshtalks.joshskills.core.ViewTypeForPractiseUser
@@ -246,6 +247,7 @@ class RecordPractiseFragment private constructor() : Fragment() {
                 }
 
                 override fun onException(e: Exception?) {
+                    viewModel.practiseWho = null
                     resetAllState()
                 }
             })
@@ -261,6 +263,7 @@ class RecordPractiseFragment private constructor() : Fragment() {
                     viewModel.isRecordingRunning = true
                     binding.audioPlayer.onPlay()
                 }
+
                 override fun onException(e: Exception?) {
                 }
             })
@@ -275,7 +278,6 @@ class RecordPractiseFragment private constructor() : Fragment() {
         enableView(binding.ivFirstUser)
         enableView(binding.ivSecondUser)
         disableViewTypeInAdapter(null)
-        viewModel.practiseWho = null
         viewModel.isPractise = false
     }
 
@@ -289,16 +291,29 @@ class RecordPractiseFragment private constructor() : Fragment() {
 
         view.findViewById<View>(R.id.iv_cancel).setOnClickListener {
             AppDirectory.deleteRecordingFile()
+            viewModel.practiseWho = null
             dialog.cancel()
         }
         view.findViewById<View>(R.id.btn_no).setOnClickListener {
             AppDirectory.deleteRecordingFile()
+            viewModel.practiseWho = null
             dialog.cancel()
         }
         view.findViewById<View>(R.id.btn_yes).setOnClickListener {
-            RxBus2.publish(ConversationPractiseSubmitEventBus())
+            RxBus2.publish(ConversationPractiseSubmitEventBus(getTextWithTalk() ?: EMPTY))
             dialog.cancel()
         }
+    }
+
+    private fun getTextWithTalk(): String? {
+        return viewModel.practiseWho?.let {
+            if (it == PractiseUser.FIRST) {
+                "Talk With ".plus(conversationPractiseModel.characterNameA)
+            } else {
+                "Talk With ".plus(conversationPractiseModel.characterNameB)
+            }
+        }
+
     }
 
     override fun onPause() {

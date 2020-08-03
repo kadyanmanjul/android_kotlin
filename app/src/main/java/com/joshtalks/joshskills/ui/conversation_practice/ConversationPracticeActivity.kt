@@ -3,18 +3,20 @@ package com.joshtalks.joshskills.ui.conversation_practice
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.WindowManager
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayoutMediator
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.ApiCallStatus
 import com.joshtalks.joshskills.core.CoreJoshActivity
 import com.joshtalks.joshskills.core.ViewTypeForPractiseUser
 import com.joshtalks.joshskills.core.custom_ui.FullScreenProgressDialog
-import com.joshtalks.joshskills.databinding.ActivityConversationPracticeBinding
+import com.joshtalks.joshskills.databinding.ActivityConversationPractice2Binding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.ConversationPractiseSubmitEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.VPPageChangeEventBus
@@ -22,6 +24,7 @@ import com.joshtalks.joshskills.repository.local.eventbus.ViewPagerDisableEventB
 import com.joshtalks.joshskills.repository.server.conversation_practice.ConversationPractiseModel
 import com.joshtalks.joshskills.ui.conversation_practice.adapter.PractiseViewPagerAdapter
 import com.joshtalks.joshskills.ui.conversation_practice.extra.ConversationPracticeIntro
+import com.joshtalks.joshskills.ui.conversation_practice.history.SubmittedPractiseActivity
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -34,7 +37,7 @@ class ConversationPracticeActivity : CoreJoshActivity() {
     private val compositeDisposable = CompositeDisposable()
     private val tabName = arrayOf("Listen", "Quiz", "Practice", "Record")
     private lateinit var practiseId: String
-    private lateinit var binding: ActivityConversationPracticeBinding
+    private lateinit var binding: ActivityConversationPractice2Binding
 
     private val viewModel: ConversationPracticeViewModel by lazy {
         ViewModelProvider(this).get(ConversationPracticeViewModel::class.java)
@@ -44,7 +47,10 @@ class ConversationPracticeActivity : CoreJoshActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         super.onCreate(savedInstanceState)
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_conversation_practice)
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_conversation_practice_2)
+        binding.lifecycleOwner = this
+        binding.handler = this
+
         addObserver()
         intent?.getStringExtra(PRACTISE_ID)?.run {
             practiseId = this
@@ -75,7 +81,8 @@ class ConversationPracticeActivity : CoreJoshActivity() {
             }
         })
         viewModel.successApiLiveData.observe(this, Observer {
-            onBackPressed()
+            SubmittedPractiseActivity.startSubmittedPractiseActivity(this, practiseId)
+            this.finish()
         })
     }
 
@@ -83,8 +90,20 @@ class ConversationPracticeActivity : CoreJoshActivity() {
         TabLayoutMediator(binding.tabLayout, binding.viewPager,
             TabLayoutMediator.TabConfigurationStrategy { tab, position ->
                 tab.text = tabName[position]
+
             }
         ).attach()
+        binding.viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                super.onPageSelected(position)
+                Log.e("postion", "postion  " + position)
+                if (position == 3) {
+                    binding.historyIv.visibility = View.VISIBLE
+                } else {
+                    binding.historyIv.visibility = View.INVISIBLE
+                }
+            }
+        })
     }
 
     private fun openIntroScreen(conversationPractiseModel: ConversationPractiseModel) {
@@ -110,7 +129,7 @@ class ConversationPracticeActivity : CoreJoshActivity() {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
-                    viewModel.submitPractise(practiseId)
+                    viewModel.submitPractise(practiseId, it.text)
                 }, {
                     it.printStackTrace()
                 })
@@ -125,8 +144,10 @@ class ConversationPracticeActivity : CoreJoshActivity() {
                     it.printStackTrace()
                 })
         )
+    }
 
-
+    fun openSubmittedPractise() {
+        SubmittedPractiseActivity.startSubmittedPractiseActivity(this, practiseId)
     }
 
     override fun onResume() {

@@ -81,7 +81,7 @@ class ConversationPracticeIntro private constructor() : DialogFragment() {
         }
 
         text_header.text = conversationPractiseModel.title
-        text_sub_header.text = conversationPractiseModel.title
+        text_sub_header.text = conversationPractiseModel.subTitle
 
         val typeToken: Type = object : TypeToken<List<PractiseFlowOptionModel>>() {}.type
         val obj = AppObjectController.gsonMapperForLocal.fromJson<List<PractiseFlowOptionModel>>(

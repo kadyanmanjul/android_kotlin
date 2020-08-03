@@ -28,6 +28,7 @@ class QuizPractiseFragment private constructor() : Fragment(), OnChoiceClickList
         super.onCreate(savedInstanceState)
         arguments?.let {
             quizModelList = it.getParcelableArrayList(ARG_QUIZ_LIST) ?: emptyList()
+            quizModelList = quizModelList.sortedBy { it.sortOrder }
         }
     }
 
@@ -62,7 +63,7 @@ class QuizPractiseFragment private constructor() : Fragment(), OnChoiceClickList
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.viewPager.orientation = ORIENTATION_VERTICAL
-        binding.viewPager.offscreenPageLimit = 5
+        binding.viewPager.isUserInputEnabled = false
         binding.viewPager.adapter = QuizPractiseAdapter(quizModelList, this)
         binding.viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
@@ -83,6 +84,9 @@ class QuizPractiseFragment private constructor() : Fragment(), OnChoiceClickList
 
     fun submit() {
         if (isEvaluate) {
+            if (binding.viewPager.currentItem == (quizModelList.size - 1)) {
+                RxBus2.publish(VPPageChangeEventBus())
+            }
             binding.viewPager.currentItem = binding.viewPager.currentItem + 1
         } else {
             val cItem = binding.viewPager.currentItem
@@ -110,15 +114,13 @@ class QuizPractiseFragment private constructor() : Fragment(), OnChoiceClickList
             AppObjectController.joshApplication,
             R.color.button_primary_color
         )
-        btnTextSetup()
     }
 
     private fun btnTextSetup() {
         if (binding.viewPager.currentItem == (quizModelList.size - 1)) {
             binding.btnSubmit.text = getString(R.string.finish)
-            RxBus2.publish(VPPageChangeEventBus())
         } else {
-            binding.btnSubmit.text = getString(R.string.submit)
+            binding.btnSubmit.text = getString(R.string.next)
         }
     }
 

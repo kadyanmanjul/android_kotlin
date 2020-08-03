@@ -8,10 +8,12 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.repository.server.conversation_practice.AnswersModel
 import com.joshtalks.joshskills.ui.conversation_practice.adapter.OnChoiceClickListener
+import com.mindorks.placeholderview.annotations.Animate
 import com.mindorks.placeholderview.annotations.Click
 import com.mindorks.placeholderview.annotations.Layout
 import com.mindorks.placeholderview.annotations.Resolve
 
+@Animate(Animate.CARD_BOTTOM_IN_ASC, duration = 1000)
 @Layout(R.layout.quiz_practise_option_view)
 class QuizPractiseOptionView(
     var postion: Int,
@@ -32,11 +34,6 @@ class QuizPractiseOptionView(
     fun onResolved() {
         choiceTextView.text = answerModel.text
 
-        if (answerModel.isSelectedByUser) {
-            container.setRippleColorResource(R.color.transparent)
-        } else {
-            container.setRippleColorResource(R.color.dark_grey)
-        }
         if (answerModel.isSelectedByUser) {
             // For Choice Selected
             if (answerModel.isEvaluate) {
@@ -64,6 +61,11 @@ class QuizPractiseOptionView(
             } else {
                 setUnselectedChoiceView()
             }
+        }
+        if (answerModel.isSelectedByUser) {
+            container.setRippleColorResource(R.color.transparent)
+        } else {
+            container.setRippleColorResource(R.color.dark_grey)
         }
     }
 
@@ -124,7 +126,7 @@ class QuizPractiseOptionView(
         setTextColor(R.color.white)
         setBackgroundColor(R.color.green_right_answer)
         setBorderColor(R.color.green_right_answer)
-        setDrawableStart(R.drawable.ic_tick_small, R.color.white)
+        setDrawableStart(R.drawable.ic_tick_smallest, R.color.white)
     }
 
     private fun setTextColor(colorId: Int) =

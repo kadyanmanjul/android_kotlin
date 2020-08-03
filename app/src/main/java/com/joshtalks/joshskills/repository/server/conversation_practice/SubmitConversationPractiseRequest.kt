@@ -1,11 +1,11 @@
 package com.joshtalks.joshskills.repository.server.conversation_practice
 
-
 import com.google.gson.annotations.SerializedName
 
 data class SubmitConversationPractiseRequest(
     @SerializedName("conversation_practice_id") val conversationPracticeId: String,
     @SerializedName("answer_audio_url") val answerAudioUrl: String,
+    @SerializedName("duration") val audioDuration: Int,
     @SerializedName("title") val title: String,
     @SerializedName("text") val text: String,
     @SerializedName("quiz") val quiz: List<Quiz>?

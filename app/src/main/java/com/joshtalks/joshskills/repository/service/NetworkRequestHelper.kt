@@ -64,6 +64,7 @@ object NetworkRequestHelper {
                     }
                     chatModel.question?.let { question ->
                         question.chatId = chatModel.chatId
+                        question.tempType = question.type
                         AppObjectController.appDatabase.chatDao().insertChatQuestion(question)
                         question.audioList?.let {
                             it.listIterator().forEach { audioType ->

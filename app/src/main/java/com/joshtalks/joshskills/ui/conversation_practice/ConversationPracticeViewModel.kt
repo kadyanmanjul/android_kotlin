@@ -7,6 +7,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.core.ApiCallStatus
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.JoshApplication
 import com.joshtalks.joshskills.core.PractiseUser
 import com.joshtalks.joshskills.core.Utils
@@ -18,6 +19,7 @@ import com.joshtalks.joshskills.repository.server.conversation_practice.Answer
 import com.joshtalks.joshskills.repository.server.conversation_practice.ConversationPractiseModel
 import com.joshtalks.joshskills.repository.server.conversation_practice.Quiz
 import com.joshtalks.joshskills.repository.server.conversation_practice.SubmitConversationPractiseRequest
+import com.joshtalks.joshskills.repository.server.conversation_practice.SubmittedConversationPractiseModel
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -47,6 +49,9 @@ class ConversationPracticeViewModel(application: Application) : AndroidViewModel
     val conversationPracticeLiveData: LiveData<ConversationPractiseModel> =
         _conversationPracticeLiveData
     val apiCallStatusLiveData: MutableLiveData<ApiCallStatus> = MutableLiveData()
+    val successApiLiveData: MutableLiveData<Boolean> = MutableLiveData()
+    val submittedPracticeLiveData: MutableLiveData<List<SubmittedConversationPractiseModel>> =
+        MutableLiveData()
 
 
     fun initRecorder(): Boolean {
@@ -91,7 +96,7 @@ class ConversationPracticeViewModel(application: Application) : AndroidViewModel
     }
 
 
-    fun submitPractise(practiseId: String) {
+    fun submitPractise(practiseId: String, text: String) {
         jobs += viewModelScope.launch(Dispatchers.IO) {
             val answerUrl: String
             try {
@@ -107,7 +112,13 @@ class ConversationPracticeViewModel(application: Application) : AndroidViewModel
                     apiCallStatusLiveData.postValue(ApiCallStatus.FAILED)
                     return@launch
                 }
+                var title = EMPTY
+                val duration =
+                    Utils.getDurationOfMedia(context, recordFile?.absolutePath)?.toInt() ?: 0
+
+
                 val list = conversationPracticeLiveData.value?.run {
+                    title = this.title
                     quizModel.map {
                         Quiz(id = it.id,
                             isAttempted = it.isAttempted,
@@ -116,11 +127,15 @@ class ConversationPracticeViewModel(application: Application) : AndroidViewModel
                     }
                 }
 
-                val title = "abcde"
-                val text = "hello worlds"
-
                 val conversationPractiseRequest =
-                    SubmitConversationPractiseRequest(practiseId, answerUrl, title, text, list)
+                    SubmitConversationPractiseRequest(
+                        practiseId,
+                        answerUrl,
+                        duration,
+                        title,
+                        text,
+                        list
+                    )
 
                 val response =
                     AppObjectController.commonNetworkService.submitConversationPractice(
@@ -128,6 +143,7 @@ class ConversationPracticeViewModel(application: Application) : AndroidViewModel
                     )
                 if (response.isSuccessful) {
                     apiCallStatusLiveData.postValue(ApiCallStatus.SUCCESS)
+                    successApiLiveData.postValue(true)
                     return@launch
                 }
 
@@ -162,6 +178,26 @@ class ConversationPracticeViewModel(application: Application) : AndroidViewModel
             ).execute()
             return@async responseUpload.code()
         }.await()
+    }
+
+    fun fetchAllSubmittedConversation(practiseId: String) {
+        jobs += viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val response =
+                    AppObjectController.commonNetworkService.getSubmittedConversationPractise(
+                        practiseId
+                    )
+                if (response.isSuccessful) {
+                    apiCallStatusLiveData.postValue(ApiCallStatus.SUCCESS)
+                    submittedPracticeLiveData.postValue(response.body())
+                    return@launch
+                }
+
+            } catch (ex: Throwable) {
+                ex.showAppropriateMsg()
+            }
+            apiCallStatusLiveData.postValue(ApiCallStatus.FAILED)
+        }
     }
 
 
