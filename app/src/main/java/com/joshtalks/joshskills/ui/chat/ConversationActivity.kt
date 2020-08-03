@@ -218,6 +218,7 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
     private var internetAvailableFlag: Boolean = true
     private var flowFrom: String? = EMPTY
     private var unlockViewHolder: UnlockNextClassViewHolder? = null
+    private var lastVideoStartingDate: Date? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -964,6 +965,7 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
+                    lastVideoStartingDate = Date(System.currentTimeMillis())
                     VideoPlayerActivity.startConversionActivity(
                         this,
                         it.chatModel,
@@ -1484,7 +1486,7 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
                         if (unlockViewHolder != null) {
                             conversationBinding.chatRv.removeView(unlockViewHolder)
                         }
-                        fetchMessage()
+                        fetchNewUnlockClasses()
                     }
                 } else {
                     addUnlockNextClassCard(data)
@@ -1496,6 +1498,14 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
             ex.printStackTrace()
         }
         super.onActivityResult(requestCode, resultCode, data)
+    }
+
+    private fun fetchNewUnlockClasses() {
+        lastVideoStartingDate?.let {
+            initProgressDialog()
+            conversationViewModel.getUserRecentChats()
+            onlyChatView()
+        }
     }
 
     private fun addUnlockNextClassCard(data: Intent) {

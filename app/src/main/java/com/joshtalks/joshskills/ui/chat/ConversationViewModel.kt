@@ -58,6 +58,7 @@ class ConversationViewModel(application: Application) :
     val refreshViewLiveData: MutableLiveData<ChatModel> = MutableLiveData()
     private var lastMessageTime: Date? = null
     private var broadCastForNetwork = CheckConnectivity()
+    private val TAG = "ConversationViewModel"
 
     init {
         addObserver()
@@ -106,7 +107,7 @@ class ConversationViewModel(application: Application) :
     }
 
 
-    private fun getUserRecentChats() = viewModelScope.launch(Dispatchers.IO) {
+    fun getUserRecentChats() = viewModelScope.launch(Dispatchers.IO) {
 
         val chatReturn: MutableList<ChatModel> = mutableListOf()
 
@@ -154,8 +155,6 @@ class ConversationViewModel(application: Application) :
         lastMessageTime = chatReturn.last().created
         chatObservableLiveData.postValue(chatReturn)
         updateAllMessageReadByUser()
-
-
     }
 
     private fun updateAllMessageReadByUser() {
@@ -309,6 +308,64 @@ class ConversationViewModel(application: Application) :
         refreshChatEverySomeTime()
     }
 
+    fun getAllUnlockedMessage(date: Date) {
+        viewModelScope.launch(Dispatchers.IO) {
+
+            getUserUnlockClass(date)
+
+        }
+    }
+
+    private fun getUserUnlockClass(date: Date) = viewModelScope.launch(Dispatchers.IO) {
+
+        val chatReturn: MutableList<ChatModel> = mutableListOf()
+
+        val listOfChat: List<ChatModel> = if (date != null) {
+            appDatabase.chatDao().getRecentChatAfterTime(inboxEntity.conversation_id, date)
+        } else {
+            return@launch
+        }
+        if (listOfChat.isNotEmpty()) {
+            lastChatTime = listOfChat.last().created
+        }
+        listOfChat.forEachWithIndex { _, chat ->
+            val question: Question? = appDatabase.chatDao().getQuestion(chat.chatId)
+            question?.run {
+                when (this.material_type) {
+                    BASE_MESSAGE_TYPE.IM -> question.imageList =
+                        appDatabase.chatDao()
+                            .getImagesOfQuestion(questionId = question.questionId)
+                    BASE_MESSAGE_TYPE.VI -> question.videoList =
+                        appDatabase.chatDao()
+                            .getVideosOfQuestion(questionId = question.questionId)
+                    BASE_MESSAGE_TYPE.AU -> question.audioList =
+                        appDatabase.chatDao()
+                            .getAudiosOfQuestion(questionId = question.questionId)
+                    BASE_MESSAGE_TYPE.PD -> question.pdfList =
+                        appDatabase.chatDao()
+                            .getPdfOfQuestion(questionId = question.questionId)
+                }
+                chat.question = question
+                if (this.parent_id.isNullOrEmpty().not()) {
+                    chat.parentQuestionObject =
+                        appDatabase.chatDao().getQuestionOnId(this.parent_id!!)
+                }
+            }
+
+            if (chat.type == BASE_MESSAGE_TYPE.Q && question == null) {
+                return@forEachWithIndex
+            }
+
+            chatReturn.add(chat)
+        }
+        if (chatReturn.isNullOrEmpty()) {
+            return@launch
+        }
+        lastMessageTime = chatReturn.last().created
+        chatObservableLiveData.postValue(chatReturn)
+        updateAllMessageReadByUser()
+    }
+
 
     private fun refreshChatEverySomeTime() {
         compositeDisposable.add(
@@ -365,9 +422,9 @@ class ConversationViewModel(application: Application) :
         }
     }
 
-    suspend fun deleteChatModelOfType(type: BASE_MESSAGE_TYPE){
+    suspend fun deleteChatModelOfType(type: BASE_MESSAGE_TYPE) {
         AppObjectController.appDatabase.chatDao()
-            .deleteSpecificTypeChatModel(inboxEntity.conversation_id,type)
+            .deleteSpecificTypeChatModel(inboxEntity.conversation_id, type)
     }
 
     suspend fun insertUnlockClassToDatabase(unlockChatModel: ChatModel) {

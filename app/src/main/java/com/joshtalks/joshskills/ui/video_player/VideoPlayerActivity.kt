@@ -36,7 +36,6 @@ import com.joshtalks.joshskills.repository.local.entity.VideoType
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.server.engage.Graph
 import com.joshtalks.joshskills.repository.service.EngagementNetworkHelper
-import com.joshtalks.joshskills.repository.service.NetworkRequestHelper
 import com.joshtalks.joshskills.repository.service.NetworkRequestHelper.isVideoPresentInUpdatedChat
 import com.joshtalks.joshskills.ui.chat.VIDEO_OPEN_REQUEST_CODE
 import com.joshtalks.joshskills.ui.pdfviewer.COURSE_NAME
@@ -374,7 +373,6 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
             nextButtonVisible = true
             startProgress()
         }
-        updateChat()
     }
 
     private fun startProgress() {
@@ -408,16 +406,6 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
             searchingNextUrl = false
             pushPreviousAnalyticsEvents()
         }
-    }
-
-    fun updateChat() {
-        val arguments = mutableMapOf<String, String>()
-        val (key, value) = PrefManager.getLastSyncTime(chatObject?.conversationId!!)
-        arguments[key] = value
-        NetworkRequestHelper.getUpdatedChat(
-            chatObject?.conversationId!!,
-            queryMap = arguments
-        )
     }
 
     private fun pushPreviousAnalyticsEvents() {

@@ -135,14 +135,6 @@ object NetworkRequestHelper {
                     conversationId,
                     queryMap
                 )
-                if (resp.chatModelList.isNullOrEmpty()) {
-                } else {
-                    PrefManager.put(
-                        conversationId.trim(),
-                        resp.chatModelList.last().messageTimeInMilliSeconds
-                    )
-                }
-
 
                 for (chatModel in resp.chatModelList) {
                     val chatObj =
@@ -207,14 +199,13 @@ object NetworkRequestHelper {
                         }
                     }
                 }
-                RxBus2.publish(DBInsertion("Chat"))
 
                 resp.next?.let {
                     val arguments = mutableMapOf<String, String>()
                     PrefManager.getLastSyncTime(conversationId).let { keys ->
                         arguments[keys.first] = keys.second
                     }
-                    getUpdatedChat(conversationId, queryMap = arguments)
+                    isVideoPresentInUpdatedChat(conversationId, queryMap = arguments)
                 }
             } catch (ex: Exception) {
                 ex.printStackTrace()
