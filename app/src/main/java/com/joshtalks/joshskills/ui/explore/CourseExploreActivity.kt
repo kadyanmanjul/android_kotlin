@@ -40,6 +40,7 @@ import com.joshtalks.joshskills.ui.course_details.CourseDetailsActivity
 import com.joshtalks.joshskills.ui.inbox.PAYMENT_FOR_COURSE_CODE
 import com.joshtalks.joshskills.ui.signup.FLOW_FROM
 import com.joshtalks.joshskills.ui.signup.SignUpActivity
+import com.joshtalks.joshskills.ui.start_subscription.StartSubscriptionActivity
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import com.vanniktech.emoji.Utils
 import io.reactivex.disposables.CompositeDisposable
@@ -320,36 +321,44 @@ class CourseExploreActivity : CoreJoshActivity() {
     }
 
     private fun addObserver() {
-        compositeDisposable.add(RxBus2.listen(CourseExploreModel::class.java).subscribe {
-            val extras: HashMap<String, String> = HashMap()
-            extras["test_id"] = it.id?.toString() ?: EMPTY
-            extras["course_name"] = it.courseName
-            AppAnalytics.create(AnalyticsEvent.COURSE_THUMBNAIL_CLICKED.NAME)
-                .addBasicParam()
-                .addUserDetails()
-                .addParam(AnalyticsEvent.COURSE_NAME.NAME, it.courseName)
-                .addParam(AnalyticsEvent.COURSE_PRICE.NAME, it.amount)
-                .push()
+        compositeDisposable.add(
+            RxBus2.listen(CourseExploreModel::class.java).subscribe { courseExploreModel ->
+                val extras: HashMap<String, String> = HashMap()
+                extras["test_id"] = courseExploreModel.id?.toString() ?: EMPTY
+                extras["course_name"] = courseExploreModel.courseName
+                AppAnalytics.create(AnalyticsEvent.COURSE_THUMBNAIL_CLICKED.NAME)
+                    .addBasicParam()
+                    .addUserDetails()
+                    .addParam(AnalyticsEvent.COURSE_NAME.NAME, courseExploreModel.courseName)
+                    .addParam(AnalyticsEvent.COURSE_PRICE.NAME, courseExploreModel.amount)
+                    .push()
 
-            when (it.cardType) {
+                when (courseExploreModel.cardType) {
 
-                ExploreCardType.NORMAL -> {
-                    it.id?.let {
-                        CourseDetailsActivity.startCourseDetailsActivity(
-                            this,
-                            it,
-                            this@CourseExploreActivity.javaClass.simpleName
-                        )
+                    ExploreCardType.NORMAL -> {
+                        courseExploreModel.id?.let { testId ->
+                            CourseDetailsActivity.startCourseDetailsActivity(
+                                this,
+                                testId,
+                                this@CourseExploreActivity.javaClass.simpleName
+                            )
+                        }
+                    }
+
+                    ExploreCardType.FFCOURSE,
+                    ExploreCardType.FREETRIAL,
+                    ExploreCardType.SUBSCRIPTION -> {
+                        courseExploreModel.id?.let { testId ->
+                            StartSubscriptionActivity.startActivity(
+                                this,
+                                testId,
+                                courseExploreModel.cardType,
+                                this::class.simpleName!!
+                            )
+                        }
                     }
                 }
-
-                ExploreCardType.FFCOURSE,
-                ExploreCardType.FREETRIAL,
-                ExploreCardType.SUBSCRIPTION -> {
-                    // TODO - Show StartSubscription Screen
-                }
-            }
-        })
+            })
 
         language_chip_group.setOnCheckedChangeListener { group, checkedId ->
             if (checkedId == -1) {
