@@ -96,11 +96,13 @@ import com.joshtalks.joshskills.repository.local.eventbus.PdfOpenEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.PlayVideoEvent
 import com.joshtalks.joshskills.repository.local.eventbus.PractiseSubmitEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.SeekBarProgressEventBus
+import com.joshtalks.joshskills.repository.local.eventbus.UnlockNextClassEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.VideoDownloadedBus
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.server.chat_message.TAudioMessage
 import com.joshtalks.joshskills.repository.server.chat_message.TChatMessage
 import com.joshtalks.joshskills.repository.server.chat_message.TImageMessage
+import com.joshtalks.joshskills.repository.server.chat_message.TUnlockClassMessage
 import com.joshtalks.joshskills.repository.server.chat_message.TVideoMessage
 import com.joshtalks.joshskills.repository.server.engage.Graph
 import com.joshtalks.joshskills.ui.assessment.AssessmentActivity
@@ -111,6 +113,9 @@ import com.joshtalks.joshskills.ui.pdfviewer.PdfViewerActivity
 import com.joshtalks.joshskills.ui.practise.PRACTISE_OBJECT
 import com.joshtalks.joshskills.ui.practise.PractiseSubmitActivity
 import com.joshtalks.joshskills.ui.referral.ReferralActivity
+import com.joshtalks.joshskills.ui.video_player.IS_BATCH_CHANGED
+import com.joshtalks.joshskills.ui.video_player.LAST_VIDEO_INTERVAL
+import com.joshtalks.joshskills.ui.video_player.NEXT_VIDEO_AVAILABLE
 import com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity
 import com.joshtalks.joshskills.ui.view_holders.AssessmentViewHolder
 import com.joshtalks.joshskills.ui.view_holders.AudioPlayerViewHolder
@@ -123,6 +128,7 @@ import com.joshtalks.joshskills.ui.view_holders.PdfViewHolder
 import com.joshtalks.joshskills.ui.view_holders.PracticeViewHolder
 import com.joshtalks.joshskills.ui.view_holders.TextViewHolder
 import com.joshtalks.joshskills.ui.view_holders.TimeViewHolder
+import com.joshtalks.joshskills.ui.view_holders.UnlockNextClassViewHolder
 import com.joshtalks.joshskills.ui.view_holders.VideoViewHolder
 import com.joshtalks.recordview.CustomImageButton.FIRST_STATE
 import com.joshtalks.recordview.CustomImageButton.SECOND_STATE
@@ -211,6 +217,7 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
     private var chatModelLast: ChatModel? = null
     private var internetAvailableFlag: Boolean = true
     private var flowFrom: String? = EMPTY
+    private var unlockViewHolder: UnlockNextClassViewHolder? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -906,6 +913,9 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
     private fun liveDataObservable() {
         conversationViewModel.chatObservableLiveData.observe(this, Observer { listChat ->
             try {
+                if (unlockViewHolder != null) {
+                    conversationBinding.chatRv.removeView(unlockViewHolder)
+                }
                 chatModelLast = listChat.find { it.isSeen.not() }
                 conversationList.addAll(listChat)
                 val temp = listChat.groupBy { it.created }
@@ -956,7 +966,10 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
                 .subscribe({
                     VideoPlayerActivity.startConversionActivity(
                         this,
-                        it.chatModel, inboxEntity.course_name
+                        it.chatModel,
+                        inboxEntity.course_name,
+                        inboxEntity.duration,
+                        inboxEntity.conversation_id
                     )
                 }, {
                     it.printStackTrace()
@@ -1223,6 +1236,25 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
                 })
         )
 
+
+        compositeDisposable.add(
+            RxBus2.listen(UnlockNextClassEventBus::class.java)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({
+                    CoroutineScope(Dispatchers.Main).launch {
+                        unlockViewHolder = null
+                        conversationBinding.chatRv.removeView(it.viewHolder)
+                        conversationViewModel.updateBachChangeRequest()
+                        conversationBinding.refreshLayout.isRefreshing = true
+                        scrollToEnd()
+                    }
+
+                }, {
+                    it.printStackTrace()
+                })
+        )
+
         compositeDisposable.add(
             RxBus2.listen(ConversationPractiseEventBus::class.java)
                 .subscribeOn(Schedulers.io())
@@ -1377,6 +1409,10 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
                 AssessmentViewHolder(activityRef, chatModel)
             BASE_MESSAGE_TYPE.CP ->
                 ConversationPractiseViewHolder(activityRef, chatModel)
+            BASE_MESSAGE_TYPE.UNLOCK -> {
+                unlockViewHolder = UnlockNextClassViewHolder(activityRef, chatModel)
+                unlockViewHolder
+            }
             else -> return null
         }
     }
@@ -1435,8 +1471,50 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
                 } else if (data.hasExtra(FOCUS_ON_CHAT_ID)) {
                     scrollToPosition(data.getStringExtra(FOCUS_ON_CHAT_ID)!!)
                 }
+            } else if (requestCode == VIDEO_OPEN_REQUEST_CODE && data != null && data.hasExtra(
+                    IS_BATCH_CHANGED
+                )
+            ) {
+                if (data.getBooleanExtra(
+                        IS_BATCH_CHANGED,
+                        false
+                    )
+                ) {
+                    CoroutineScope(Dispatchers.Main).launch {
+                        conversationViewModel.deleteChatModel(BASE_MESSAGE_TYPE.UNLOCK)
+                        if (unlockViewHolder != null) {
+                            conversationBinding.chatRv.removeView(unlockViewHolder)
+                        }
+                        fetchMessage()
+                    }
+                } else {
+                    val interval = data.getIntExtra(LAST_VIDEO_INTERVAL, -1)
+                    val isNextVideoAvailable = data.getBooleanExtra(NEXT_VIDEO_AVAILABLE, false)
+                    CoroutineScope(Dispatchers.IO).launch {
+                        var maxInterval =
+                            AppObjectController.appDatabase.chatDao()
+                                .getMaxIntervalForVideo(inboxEntity.conversation_id)
+                        if (maxInterval == interval && isNextVideoAvailable.not()) {
+                            val tUnlockClassMessage =
+                                TUnlockClassMessage("Unlock Class Demo For now")
+                            val cell = MessageBuilderFactory.getMessage(
+                                activityRef,
+                                BASE_MESSAGE_TYPE.UNLOCK,
+                                tUnlockClassMessage
+                            )
+                            if (unlockViewHolder != null) {
+                                conversationBinding.chatRv.removeView(unlockViewHolder)
+                            }
+                            conversationViewModel.insertUnlockClassToDb(cell.message)
+                            CoroutineScope(Dispatchers.Main).launch {
+                                conversationBinding.chatRv.addView(cell)
+                                unlockViewHolder = cell as UnlockNextClassViewHolder
+                                refreshViewAtPos(cell.message)
+                            }
+                        }
+                    }
+                }
             }
-
 
         } catch (ex: Exception) {
             Crashlytics.logException(ex)
