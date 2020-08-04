@@ -32,6 +32,7 @@ import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.COURSE_ID
 import com.joshtalks.joshskills.core.CoreJoshActivity
 import com.joshtalks.joshskills.core.EXPLORE_TYPE
+import com.joshtalks.joshskills.core.IS_SUBSCRIPTION_ENDED
 import com.joshtalks.joshskills.core.IS_TRIAL_ENDED
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.Utils
@@ -90,6 +91,8 @@ const val COURSE_EXPLORER_WITHOUT_CODE = 2003
 const val PAYMENT_FOR_COURSE_CODE = 2004
 const val REQ_CODE_VERSION_UPDATE = 530
 const val USER_DETAILS_CODE = 1001
+const val TRIAL_COURSE_ID = "76"
+const val SUBSCRIPTION_COURSE_ID = "60"
 
 
 class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.InAppUpdateHandler {
@@ -255,6 +258,8 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
             } else {
                 addCourseInRecyclerView(it)
                 setTrialEndParam(it)
+                setSubscriptionEndParam(it)
+                updateExploreTypeParam(it)
             }
         })
         viewModel.registerCourseMinimalLiveData.observe(this, Observer {
@@ -529,13 +534,45 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
     }
 
     private fun setTrialEndParam(coursesList: List<InboxEntity>) {
-        val firstPurchasedCourse =
-            coursesList.sortedByDescending { it.created }[0]
+        val trialCourse =
+            coursesList.filter { it.courseId == TRIAL_COURSE_ID }.getOrNull(0)
         val expiryTimeInMs =
-            firstPurchasedCourse.created?.plus(firstPurchasedCourse.duration!! * 24 * 60 * 60 * 1000)
+            trialCourse?.created?.plus(
+                (trialCourse.duration ?: 7)
+                    .times(24)
+                    .times(60)
+                    .times(60)
+                    .times(1000)
+            )
         val currentTimeInMs = Calendar.getInstance().timeInMillis
         if (currentTimeInMs <= expiryTimeInMs!!) {
             PrefManager.put(IS_TRIAL_ENDED, true)
+        }
+    }
+
+    private fun setSubscriptionEndParam(coursesList: List<InboxEntity>) {
+        val trialCourse =
+            coursesList.filter { it.courseId == SUBSCRIPTION_COURSE_ID }.getOrNull(0)
+        val expiryTimeInMs =
+            trialCourse?.created?.plus(
+                (trialCourse.duration ?: 7)
+                    .times(24)
+                    .times(60)
+                    .times(60)
+                    .times(1000)
+            )
+        val currentTimeInMs = Calendar.getInstance().timeInMillis
+        if (currentTimeInMs <= expiryTimeInMs!!) {
+            PrefManager.put(IS_SUBSCRIPTION_ENDED, true)
+        }
+    }
+
+    private fun updateExploreTypeParam(coursesList: List<InboxEntity>) {
+        val subscriptionCourse =
+            coursesList.filter { it.courseId == SUBSCRIPTION_COURSE_ID }.getOrNull(0)
+
+        subscriptionCourse?.let {
+            PrefManager.put(EXPLORE_TYPE, ExploreCardType.SUBSCRIPTION.name)
         }
     }
 

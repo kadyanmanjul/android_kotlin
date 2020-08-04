@@ -335,7 +335,8 @@ class CourseExploreActivity : CoreJoshActivity() {
 
                 when (courseExploreModel.cardType) {
 
-                    ExploreCardType.NORMAL -> {
+                    ExploreCardType.NORMAL,
+                    ExploreCardType.SUBSCRIPTION -> {
                         courseExploreModel.id?.let { testId ->
                             CourseDetailsActivity.startCourseDetailsActivity(
                                 this,
@@ -346,8 +347,7 @@ class CourseExploreActivity : CoreJoshActivity() {
                     }
 
                     ExploreCardType.FFCOURSE,
-                    ExploreCardType.FREETRIAL,
-                    ExploreCardType.SUBSCRIPTION -> {
+                    ExploreCardType.FREETRIAL -> {
                         courseExploreModel.id?.let { testId ->
                             StartSubscriptionActivity.startActivity(
                                 this,
