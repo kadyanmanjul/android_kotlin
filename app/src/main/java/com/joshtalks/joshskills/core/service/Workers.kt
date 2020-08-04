@@ -223,7 +223,7 @@ class RegisterUserGAId(context: Context, private val workerParams: WorkerParamet
             requestRegisterGAId.installOn =
                 InstallReferrerModel.getPrefObject()?.installOn ?: Date().time
             requestRegisterGAId.test =
-                workerParams.inputData.getString("test_id")?.split("_")?.get(1)?.toInt() ?: 0
+                workerParams.inputData.getString("test_id")?.split("_")?.get(1)?.toInt()
             requestRegisterGAId.utmMedium = InstallReferrerModel.getPrefObject()?.utmMedium ?: EMPTY
             requestRegisterGAId.utmSource = InstallReferrerModel.getPrefObject()?.utmSource ?: EMPTY
             val exploreType = PrefManager.getStringValue(EXPLORE_TYPE, true)
