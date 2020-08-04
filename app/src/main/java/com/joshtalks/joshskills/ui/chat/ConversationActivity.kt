@@ -55,7 +55,9 @@ import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.CERTIFICATE_GENERATE
 import com.joshtalks.joshskills.core.CoreJoshActivity
 import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.EXPLORE_TYPE
 import com.joshtalks.joshskills.core.IMAGE_REGEX
+import com.joshtalks.joshskills.core.IS_TRIAL_ENDED
 import com.joshtalks.joshskills.core.MESSAGE_CHAT_SIZE_LIMIT
 import com.joshtalks.joshskills.core.PermissionUtils
 import com.joshtalks.joshskills.core.PrefManager
@@ -100,6 +102,7 @@ import com.joshtalks.joshskills.repository.local.eventbus.SeekBarProgressEventBu
 import com.joshtalks.joshskills.repository.local.eventbus.UnlockNextClassEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.VideoDownloadedBus
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
+import com.joshtalks.joshskills.repository.local.model.ExploreCardType
 import com.joshtalks.joshskills.repository.server.chat_message.TAudioMessage
 import com.joshtalks.joshskills.repository.server.chat_message.TChatMessage
 import com.joshtalks.joshskills.repository.server.chat_message.TImageMessage
@@ -117,6 +120,7 @@ import com.joshtalks.joshskills.ui.referral.ReferralActivity
 import com.joshtalks.joshskills.ui.video_player.IS_BATCH_CHANGED
 import com.joshtalks.joshskills.ui.video_player.LAST_VIDEO_INTERVAL
 import com.joshtalks.joshskills.ui.video_player.NEXT_VIDEO_AVAILABLE
+import com.joshtalks.joshskills.ui.subscription.TrialEndBottomSheetFragment
 import com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity
 import com.joshtalks.joshskills.ui.view_holders.AssessmentViewHolder
 import com.joshtalks.joshskills.ui.view_holders.AudioPlayerViewHolder
@@ -224,35 +228,41 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (intent.hasExtra(CHAT_ROOM_OBJECT)) {
-            flowFrom = "Inbox journey"
-            val temp = intent.getParcelableExtra(CHAT_ROOM_OBJECT) as InboxEntity?
-            if (temp == null) {
-                this@ConversationActivity.finish()
-                return
+        val isTrialEnded = PrefManager.getBoolValue(IS_TRIAL_ENDED)
+        val exploreType = PrefManager.getStringValue(EXPLORE_TYPE, true)
+        if (isTrialEnded && exploreType == ExploreCardType.FREETRIAL.name) {
+            showTrialEndFragment()
+        } else {
+            if (intent.hasExtra(CHAT_ROOM_OBJECT)) {
+                flowFrom = "Inbox journey"
+                val temp = intent.getParcelableExtra(CHAT_ROOM_OBJECT) as InboxEntity?
+                if (temp == null) {
+                    this@ConversationActivity.finish()
+                    return
+                }
+                inboxEntity = temp
             }
-            inboxEntity = temp
-        }
-        if (intent.hasExtra(UPDATED_CHAT_ROOM_OBJECT)) {
-            flowFrom = "Notification"
-            val temp = intent.getParcelableExtra(UPDATED_CHAT_ROOM_OBJECT) as InboxEntity?
-            if (temp == null) {
-                this@ConversationActivity.finish()
-                return
+            if (intent.hasExtra(UPDATED_CHAT_ROOM_OBJECT)) {
+                flowFrom = "Notification"
+                val temp = intent.getParcelableExtra(UPDATED_CHAT_ROOM_OBJECT) as InboxEntity?
+                if (temp == null) {
+                    this@ConversationActivity.finish()
+                    return
+                }
+                inboxEntity = temp
             }
-            inboxEntity = temp
-        }
-        if (intent.hasExtra(HAS_COURSE_REPORT)) {
-            openCourseProgressListingScreen()
-        }
+            if (intent.hasExtra(HAS_COURSE_REPORT)) {
+                openCourseProgressListingScreen()
+            }
 
-        conversationBinding =
-            DataBindingUtil.setContentView(this, R.layout.activity_conversation)
+            conversationBinding =
+                DataBindingUtil.setContentView(this, R.layout.activity_conversation)
 
-        conversationBinding.viewmodel = initViewModel()
-        conversationBinding.handler = this
-        activityRef = WeakReference(this)
-        init()
+            conversationBinding.viewmodel = initViewModel()
+            conversationBinding.handler = this
+            activityRef = WeakReference(this)
+            init()
+        }
     }
 
     override fun onNewIntent(mIntent: Intent) {
@@ -833,7 +843,7 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
                 .addParam(
                     AnalyticsEvent.CHAT_LENGTH.NAME,
                     conversationBinding.chatEdit.text.toString().length
-                ).push()
+                )
             val tChatMessage =
                 TChatMessage(conversationBinding.chatEdit.text.toString())
             val cell = MessageBuilderFactory.getMessage(
@@ -1950,6 +1960,18 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
     }
 
     override fun playPrevious(indexP: Int, currentAudio: MediaMetaData?) {
+    }
+
+    private fun showTrialEndFragment() {
+        supportFragmentManager
+            .beginTransaction()
+            .replace(
+                R.id.root_view,
+                TrialEndBottomSheetFragment.newInstance(),
+                "Trial Ended"
+            )
+            .commitAllowingStateLoss()
+
     }
 
 }

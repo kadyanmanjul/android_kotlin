@@ -32,7 +32,6 @@ import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.COURSE_ID
 import com.joshtalks.joshskills.core.CoreJoshActivity
 import com.joshtalks.joshskills.core.EXPLORE_TYPE
-import com.joshtalks.joshskills.core.IS_SUBSCRIPTION_ENDED
 import com.joshtalks.joshskills.core.IS_TRIAL_ENDED
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.Utils
@@ -258,7 +257,6 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
             } else {
                 addCourseInRecyclerView(it)
                 setTrialEndParam(it)
-                setSubscriptionEndParam(it)
                 updateExploreTypeParam(it)
             }
         })
@@ -550,27 +548,9 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         }
     }
 
-    private fun setSubscriptionEndParam(coursesList: List<InboxEntity>) {
-        val trialCourse =
-            coursesList.filter { it.courseId == SUBSCRIPTION_COURSE_ID }.getOrNull(0)
-        val expiryTimeInMs =
-            trialCourse?.created?.plus(
-                (trialCourse.duration ?: 7)
-                    .times(24)
-                    .times(60)
-                    .times(60)
-                    .times(1000)
-            )
-        val currentTimeInMs = Calendar.getInstance().timeInMillis
-        if (currentTimeInMs <= expiryTimeInMs!!) {
-            PrefManager.put(IS_SUBSCRIPTION_ENDED, true)
-        }
-    }
-
     private fun updateExploreTypeParam(coursesList: List<InboxEntity>) {
         val subscriptionCourse =
             coursesList.filter { it.courseId == SUBSCRIPTION_COURSE_ID }.getOrNull(0)
-
         subscriptionCourse?.let {
             PrefManager.put(EXPLORE_TYPE, ExploreCardType.SUBSCRIPTION.name)
         }

@@ -27,7 +27,6 @@ const val FRESH_CHAT_UNREAD_MESSAGES = "fresh_chat_unread_messages"
 const val FRESH_CHAT_ID_RESTORED = "fresh_chat_id_restored"
 const val EXPLORE_TYPE = "joshskills_explore_type"
 const val IS_TRIAL_ENDED = "joshskills_is_trial_ended"
-const val IS_SUBSCRIPTION_ENDED = "joshskills_is_subscription_ended"
 
 object PrefManager {
 
