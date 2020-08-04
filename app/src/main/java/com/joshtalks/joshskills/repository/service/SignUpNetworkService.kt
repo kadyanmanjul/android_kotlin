@@ -25,7 +25,6 @@ import kotlinx.coroutines.Deferred
 import okhttp3.MultipartBody
 import retrofit2.Response
 import retrofit2.http.Body
-import retrofit2.http.Field
 import retrofit2.http.FieldMap
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
@@ -34,6 +33,7 @@ import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.Part
 import retrofit2.http.Path
+import retrofit2.http.Query
 import retrofit2.http.QueryMap
 
 const val DIR = "api/skill/v1"
@@ -125,9 +125,8 @@ interface SignUpNetworkService {
     @POST("$DIR/payment/create_free_order/")
     suspend fun createFreeOrder(@Body params: CreateOrderResponse): Response<Any>
 
-    @FormUrlEncoded
     @GET("$DIR/course/explore_type_test/")
     suspend fun getSubscriptionTestDetails(
-        @Field("gaid") gaid: String
+        @Query("gaid") gaid: String
     ): Response<CourseExploreModel>
 }
