@@ -268,7 +268,7 @@
                 android:windowSoftInputMode="stateAlwaysHidden" />
 
         <activity
-                android:name=".ui.start_subscription.StartSubscriptionActivity"
+                android:name=".ui.subscription.StartSubscriptionActivity"
                 android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize"
                 android:launchMode="singleTask"
                 android:theme="@style/AppNoBarTheme"

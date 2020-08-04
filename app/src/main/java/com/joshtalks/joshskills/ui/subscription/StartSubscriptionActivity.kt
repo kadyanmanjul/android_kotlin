@@ -1,4 +1,4 @@
-package com.joshtalks.joshskills.ui.start_subscription
+package com.joshtalks.joshskills.ui.subscription
 
 import android.app.Activity
 import android.content.Intent
