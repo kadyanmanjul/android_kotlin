@@ -163,7 +163,7 @@ import kotlin.concurrent.scheduleAtFixedRate
 const val CHAT_ROOM_OBJECT = "chat_room"
 const val UPDATED_CHAT_ROOM_OBJECT = "updated_chat_room"
 const val IMAGE_SELECT_REQUEST_CODE = 1077
-const val VISIBILE_ITEM_PERCENT = 75
+const val VISIBLE_ITEM_PERCENT = 75
 const val PRACTISE_SUBMIT_REQUEST_CODE = 1100
 const val COURSE_PROGRESS_REQUEST_CODE = 1101
 const val VIDEO_OPEN_REQUEST_CODE = 1102
@@ -1868,7 +1868,7 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
                     }
 
 
-                    if (percentFirst > VISIBILE_ITEM_PERCENT) {
+                    if (percentFirst > VISIBLE_ITEM_PERCENT) {
                         val chatModel =
                             (conversationBinding.chatRv.getViewResolverAtPosition(
                                 lastPosition
