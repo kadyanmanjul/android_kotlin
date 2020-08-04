@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#0381BD</color>
-    <color name="colorPrimaryDark">#036A9B</color>
-    <color name="colorAccent">#0381BD</color>
-    <color name="status_bar_color">#035D88</color>
+    <color name="colorPrimary">#107BE5</color>
+    <color name="colorPrimaryDark">#107BE5</color>
+    <color name="colorAccent">#107BE5</color>
+    <color name="status_bar_color">#107BE5</color>
     <color name="font_color">#373737</color>
     <color name="button_primary_color">#107BE5</color>
 
