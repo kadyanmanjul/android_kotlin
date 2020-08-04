@@ -121,4 +121,27 @@ object EngagementNetworkHelper {
             }
         }
     }
+
+    fun seenNotificationAndDismissed(notificationId: String?) {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                if (notificationId.isNullOrEmpty()) {
+                    return@launch
+                }
+                AppAnalytics
+                    .create(AnalyticsEvent.NOTIFICATION_SEEN.NAME)
+                    .addParam("id", notificationId)
+                    .addParam("mentorId", Mentor.getInstance().getId())
+                    .addUserDetails()
+                    .push()
+                val data = mapOf("is_clicked" to "false")
+                AppObjectController.chatNetworkService.engageNotificationAsync(
+                    notificationId,
+                    data
+                )
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+            }
+        }
+    }
 }

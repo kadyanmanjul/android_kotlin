@@ -138,9 +138,9 @@ abstract class BaseActivity : AppCompatActivity() {
 
     protected fun processIntent(mIntent: Intent?) {
         try {
-            if (!(mIntent == null || !mIntent.hasExtra(HAS_NOTIFICATION) || !mIntent.hasExtra(
+            if (mIntent != null && mIntent.hasExtra(HAS_NOTIFICATION) && mIntent.hasExtra(
                     NOTIFICATION_ID
-                ) || !mIntent.getStringExtra(NOTIFICATION_ID).isNullOrEmpty().not())
+                ) && mIntent.getStringExtra(NOTIFICATION_ID).isNullOrEmpty().not()
             ) {
                 EngagementNetworkHelper.clickNotification(
                     mIntent.getStringExtra(

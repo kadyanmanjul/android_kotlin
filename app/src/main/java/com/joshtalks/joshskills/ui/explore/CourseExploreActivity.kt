@@ -250,11 +250,9 @@ class CourseExploreActivity : CoreJoshActivity() {
         } else {
             adapter.isFilterEnabled = true
             languageMap.get(selectedLanguage)?.let { filteredCourseList.addAll(it) }
-            languageMap.keys.forEach {
-                if (!it.equals(selectedLanguage, true)) {
-                    languageMap.get(it)?.let { filteredCourseList.addAll(it) }
-                }
-            }
+            if (!selectedLanguage.equals("Hindi", true))
+                languageMap.get("Hindi")
+                    ?.let { filteredCourseList.addAll(it) }
         }
 
         adapter.notifyDataSetChanged()

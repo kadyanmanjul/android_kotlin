@@ -352,6 +352,10 @@
             </intent-filter>
         </receiver>
 
+        <receiver
+                android:name=".core.analytics.DismissNotifEventReceiver"
+                android:exported="false" />
+
         <provider
                 android:name=".repository.service.GenericFileProvider"
                 android:authorities="com.joshtalks.joshskills.provider"

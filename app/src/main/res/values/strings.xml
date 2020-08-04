@@ -320,5 +320,6 @@
     <string name="total_question">Total Question \n</string>
     <string name="see_answer">See correct answer</string>
     <string name="see_your_answer">See your answer</string>
+    <string name="courses_in_other_languages">Courses in other languages:</string>
 
 </resources>

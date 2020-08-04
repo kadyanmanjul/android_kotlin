@@ -24,6 +24,7 @@ import com.joshtalks.joshskills.core.ARG_PLACEHOLDER_URL
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.COURSE_ID
 import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.analytics.DismissNotifEventReceiver
 import com.joshtalks.joshskills.core.service.WorkMangerAdmin
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.local.model.ACTION_OPEN_CONVERSATION
@@ -98,6 +99,8 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                 notificationObject.action,
                 notificationObject.actionData
             )
+
+            intent.putExtra(NOTIFICATION_ID, notificationObject.id)
             val uniqueInt = (System.currentTimeMillis() and 0xfffffff).toInt()
             val defaultSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
             val pendingIntent = PendingIntent.getActivity(
@@ -134,6 +137,17 @@ class FirebaseNotificationService : FirebaseMessagingService() {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                 notificationBuilder.priority = NotificationManager.IMPORTANCE_HIGH
             }
+
+            val dismissIntent =
+                Intent(applicationContext, DismissNotifEventReceiver::class.java).apply {
+                    putExtra(NOTIFICATION_ID, notificationObject.id)
+                    putExtra(HAS_NOTIFICATION, true)
+
+                }
+            val dismissPendingIntent: PendingIntent =
+                PendingIntent.getBroadcast(applicationContext, uniqueInt, dismissIntent, 0)
+
+            notificationBuilder.setDeleteIntent(dismissPendingIntent)
 
             val notificationManager =
                 getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager

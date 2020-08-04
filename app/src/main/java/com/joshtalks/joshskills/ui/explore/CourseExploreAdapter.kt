@@ -53,7 +53,6 @@ class CourseExploreAdapter(
             )
         ) {
             holder.languageTag.visibility = VISIBLE
-            holder.languageTag.text = courseExploreModel.language?.capitalize()
         } else
             holder.languageTag.visibility = GONE
 
