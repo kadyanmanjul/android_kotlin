@@ -14,10 +14,9 @@
             android:background="@color/gray_e6"
             android:orientation="horizontal" />
 
-
     <com.google.android.material.textview.MaterialTextView
             android:id="@+id/find_more"
-            fontPath="fonts/OpenSans-SemiBold.ttf"
+            fontPath="fonts/Poppins-Regular.ttf"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -31,9 +30,8 @@
             android:text="@string/find_more_courses"
             android:textAllCaps="false"
             android:textColor="@color/white"
-            android:textSize="@dimen/font_15"
+            android:textSize="@dimen/font_16"
             app:rippleColor="@color/white" />
-
 
     <View
             android:id="@+id/bottom_line"
@@ -42,4 +40,5 @@
             android:layout_gravity="bottom"
             android:background="@color/gray_e6"
             android:orientation="horizontal" />
+
 </FrameLayout>

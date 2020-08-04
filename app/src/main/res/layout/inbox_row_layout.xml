@@ -32,11 +32,12 @@
                 android:layout_width="@dimen/_48sdp"
                 android:layout_height="@dimen/_48sdp"
                 android:layout_marginEnd="@dimen/_10sdp"
-                android:layout_marginBottom="@dimen/_10sdp" />
+                android:layout_marginBottom="@dimen/_10sdp"
+                tools:src="@color/button_color" />
 
         <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tv_name"
-                fontPath="fonts/OpenSans-SemiBold.ttf"
+                fontPath="fonts/Poppins-SemiBold.ttf"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_5sdp"
@@ -47,10 +48,10 @@
                 android:maxLines="1"
                 android:paddingEnd="@dimen/_10sdp"
                 android:text=""
-                android:textColor="@color/font_color"
-                android:textSize="@dimen/font_18"
-                tools:ignore="MissingPrefix" />
-
+                android:textColor="@color/black"
+                android:textSize="@dimen/font_16"
+                tools:ignore="MissingPrefix"
+                tools:text="Course Name" />
 
         <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/tv_last_message_status"
@@ -62,10 +63,9 @@
                 android:layout_toEndOf="@id/profile_image"
                 android:gravity="start" />
 
-
         <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tv_last_message"
-                fontPath="fonts/OpenSans-Regular.ttf"
+                fontPath="fonts/Poppins-Regular.ttf"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/tv_name"
@@ -76,9 +76,10 @@
                 android:gravity="start"
                 android:maxLines="1"
                 android:text=""
-                android:textColor="@color/gray_79"
+                android:textColor="@color/dark_grey"
                 android:textSize="@dimen/font_14"
-                tools:ignore="MissingPrefix" />
+                tools:ignore="MissingPrefix"
+                tools:text="Click to start the course" />
 
         <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tv_last_message_time"
@@ -109,6 +110,6 @@
                 android:background="@color/gray_e6"
                 android:orientation="horizontal" />
 
-
     </RelativeLayout>
+
 </androidx.cardview.widget.CardView>
