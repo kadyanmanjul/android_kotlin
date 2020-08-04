@@ -108,12 +108,17 @@ object WorkMangerAdmin {
     }
 
 
-
-    fun registerUserGAIDWithTestId(testId: String) {
-        if (testId.isEmpty() || PrefManager.getBoolValue(GID_SET_FOR_USER)) {
+    fun registerUserGAIDWithTestId(testId: String?, exploreType: String? = null) {
+        if (PrefManager.getBoolValue(GID_SET_FOR_USER) ||
+            (testId.isNullOrBlank() && exploreType.isNullOrBlank())
+        ) {
             return
         }
-        val data = workDataOf("test_id" to testId)
+
+        val data =
+            if (testId.isNullOrEmpty()) workDataOf("explore_type" to exploreType)
+            else workDataOf("test_id" to testId)
+
         val workRequest = OneTimeWorkRequestBuilder<RegisterUserGAId>()
             .setInputData(data)
             .build()

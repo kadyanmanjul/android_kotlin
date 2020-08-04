@@ -54,16 +54,22 @@ class LauncherActivity : CoreJoshActivity(), CustomPermissionDialogInteractionLi
                     WorkMangerAdmin.registerUserGAIDWithTestId(testId)
                     val referralCode = parseReferralCode(jsonParams)
                     referralCode?.let {
-                        logInstallByReferralEvent(testId, it)
+                        logInstallByReferralEvent(testId, null, it)
                     }
-                    navigateToPaymentScreen(testId)
+                    navigateToCourseDetailsScreen(testId)
                     this@LauncherActivity.finish()
                 }
-                if (error == null) {
+                if (error == null && jsonParams?.has(Defines.Jsonkey.ContentType.key) == true) {
                     val exploreType = if (jsonParams.has(Defines.Jsonkey.ContentType.key)) {
                         jsonParams.getString(Defines.Jsonkey.ContentType.key)
                     } else ExploreCardType.NORMAL.name
                     PrefManager.put(EXPLORE_TYPE, exploreType, true)
+                    AppObjectController.uiHandler.removeCallbacksAndMessages(null)
+                    WorkMangerAdmin.registerUserGAIDWithTestId(null, exploreType)
+                    val referralCode = parseReferralCode(jsonParams)
+                    referralCode?.let {
+                        logInstallByReferralEvent(null, exploreType, it)
+                    }
                 }
             } catch (ex: Throwable) {
                 LogException.catchException(ex)
@@ -150,7 +156,7 @@ class LauncherActivity : CoreJoshActivity(), CustomPermissionDialogInteractionLi
         }, 2500)
     }
 
-    private fun navigateToPaymentScreen(testId: String) {
+    private fun navigateToCourseDetailsScreen(testId: String) {
         CourseDetailsActivity.startCourseDetailsActivity(
             this,
             testId.split("_")[1].toInt(),
@@ -159,16 +165,20 @@ class LauncherActivity : CoreJoshActivity(), CustomPermissionDialogInteractionLi
         )
     }
 
-    private fun logInstallByReferralEvent(testId: String, referralCode: String) =
-        AppAnalytics.create(AnalyticsEvent.APP_INSTALL_BY_REFERRAL.NAME)
-            .addBasicParam()
-            .addUserDetails()
-            .addParam(AnalyticsEvent.TEST_ID_PARAM.NAME, testId)
-            .addParam(
-                AnalyticsEvent.REFERRAL_CODE.NAME,
-                referralCode
-            )
-            .push()
+    private fun logInstallByReferralEvent(
+        testId: String?,
+        exploreType: String?,
+        referralCode: String
+    ) = AppAnalytics.create(AnalyticsEvent.APP_INSTALL_BY_REFERRAL.NAME)
+        .addBasicParam()
+        .addUserDetails()
+        .addParam(AnalyticsEvent.TEST_ID_PARAM.NAME, testId)
+        .addParam(AnalyticsEvent.EXPLORE_TYPE.NAME, exploreType)
+        .addParam(
+            AnalyticsEvent.REFERRAL_CODE.NAME,
+            referralCode
+        )
+        .push()
 
     private fun logAppLaunchEvent(networkOperatorName: String) =
         AppAnalytics.create(AnalyticsEvent.APP_LAUNCHED.NAME)
