@@ -12,12 +12,8 @@
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-        <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="#000000">
+            android:layout_height="match_parent"
+            android:background="#000000">
 
             <com.joshtalks.joshskills.core.videoplayer.BitVideoPlayer
                     android:id="@+id/video_player"
@@ -103,76 +99,69 @@
                             android:visibility="visible" />
                 </RelativeLayout>
             </com.google.android.material.appbar.MaterialToolbar>
-        </FrameLayout>
 
-        <FrameLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/frame_progress"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginEnd="@dimen/_13sdp"
-                android:layout_marginBottom="@dimen/_64sdp"
                 android:visibility="gone"
                 tool:visibility="visible">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+            <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/close"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginTop="@dimen/_44sdp"
+                    android:layout_marginEnd="@dimen/_14sdp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center_vertical|start"
+                    android:paddingTop="@dimen/_6sdp"
+                    android:paddingBottom="@dimen/_6sdp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/ic_cross" />
 
-                <androidx.appcompat.widget.AppCompatImageView
-                        android:id="@+id/close"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentStart="true"
-                        android:layout_centerVertical="true"
-                        android:layout_marginTop="@dimen/_44sdp"
-                        android:background="?attr/selectableItemBackgroundBorderless"
-                        android:clickable="true"
-                        android:focusable="true"
-                        android:gravity="center_vertical|start"
-                        android:paddingTop="@dimen/_6sdp"
-                        android:paddingBottom="@dimen/_6sdp"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:srcCompat="@drawable/ic_cross" />
+            <ProgressBar
+                    android:id="@+id/progress_horizontal"
+                    style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                    android:layout_width="@dimen/_110sdp"
+                    android:layout_height="@dimen/_34sdp"
+                    android:layout_gravity="bottom|end"
+                    android:layout_marginEnd="@dimen/_14sdp"
+                    android:layout_marginBottom="@dimen/_64sdp"
+                    android:backgroundTint="@color/light_grey"
+                    android:progressDrawable="@drawable/next_video_progress_drawable"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintRight_toRightOf="parent" />
 
-                <ProgressBar
-                        android:id="@+id/progress_horizontal"
-                        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-                        android:layout_width="@dimen/_110sdp"
-                        android:layout_height="@dimen/_34sdp"
-                        android:layout_gravity="bottom|end"
-                        android:backgroundTint="@color/light_grey"
-                        android:progressDrawable="@drawable/next_video_progress_drawable"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintRight_toRightOf="parent" />
+            <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/text_class"
+                    fontPath="fonts/Poppins-Bold.ttf"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginEnd="@dimen/_4sdp"
+                    android:drawableStart="@drawable/ic_play_12px"
+                    android:drawablePadding="@dimen/_8sdp"
+                    android:drawableTint="@color/white"
+                    android:gravity="center"
+                    android:scaleWidth="20%"
+                    android:scaleHeight="20%"
+                    android:singleLine="true"
+                    android:text="Next Class"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/font_14"
+                    app:layout_constraintBottom_toBottomOf="@id/progress_horizontal"
+                    app:layout_constraintLeft_toLeftOf="@id/progress_horizontal"
+                    app:layout_constraintRight_toRightOf="@id/progress_horizontal"
+                    app:layout_constraintTop_toTopOf="@id/progress_horizontal"
+                    app:layout_constraintWidth_default="percent"
+                    app:layout_constraintWidth_percent="0.65" />
 
-                <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/text_class"
-                        fontPath="fonts/Poppins-Bold.ttf"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:layout_marginEnd="@dimen/_4sdp"
-                        android:drawableStart="@drawable/ic_play_12px"
-                        android:drawablePadding="@dimen/_8sdp"
-                        android:drawableTint="@color/white"
-                        android:gravity="center"
-                        android:scaleWidth="20%"
-                        android:scaleHeight="20%"
-                        android:singleLine="true"
-                        android:text="Next Class"
-                        android:textColor="@color/white"
-                        android:textSize="@dimen/font_14"
-                        app:layout_constraintBottom_toBottomOf="@id/progress_horizontal"
-                        app:layout_constraintLeft_toLeftOf="@id/progress_horizontal"
-                        app:layout_constraintRight_toRightOf="@id/progress_horizontal"
-                        app:layout_constraintTop_toTopOf="@id/progress_horizontal"
-                        app:layout_constraintWidth_default="percent"
-                        app:layout_constraintWidth_percent="0.65" />
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
-        </FrameLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
-
-
 </layout>
