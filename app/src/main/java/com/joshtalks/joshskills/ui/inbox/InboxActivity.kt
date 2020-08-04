@@ -31,6 +31,8 @@ import com.joshtalks.joshskills.core.ARG_PLACEHOLDER_URL
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.COURSE_ID
 import com.joshtalks.joshskills.core.CoreJoshActivity
+import com.joshtalks.joshskills.core.EXPLORE_TYPE
+import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
@@ -45,6 +47,7 @@ import com.joshtalks.joshskills.repository.local.eventbus.NPSEventGenerateEventB
 import com.joshtalks.joshskills.repository.local.eventbus.OpenCourseEventBus
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.local.model.ACTION_UPSELLING_POPUP
+import com.joshtalks.joshskills.repository.local.model.ExploreCardType
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.ProfileResponse
 import com.joshtalks.joshskills.repository.server.SearchLocality
@@ -53,6 +56,7 @@ import com.joshtalks.joshskills.ui.chat.ConversationActivity
 import com.joshtalks.joshskills.ui.conversation_practice.ConversationPracticeActivity
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
 import com.joshtalks.joshskills.ui.referral.ReferralActivity
+import com.joshtalks.joshskills.ui.subscription.StartSubscriptionActivity
 import com.joshtalks.joshskills.ui.tooltip.BalloonFactory
 import com.joshtalks.joshskills.ui.view_holders.InboxViewHolder
 import com.joshtalks.skydoves.balloon.Balloon
@@ -70,6 +74,8 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_inbox.progress_bar
 import kotlinx.android.synthetic.main.activity_inbox.recycler_view_inbox
+import kotlinx.android.synthetic.main.activity_inbox.subscriptionTipContainer
+import kotlinx.android.synthetic.main.activity_inbox.txtConvert
 import kotlinx.android.synthetic.main.find_more_layout.find_more
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -106,6 +112,14 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         checkAppUpdate()
         workInBackground()
         handelIntentAction()
+        bindSubscriptionTipView()
+    }
+
+    private fun bindSubscriptionTipView() {
+        val exploreType = PrefManager.getStringValue(EXPLORE_TYPE, true)
+        if (exploreType.isNotBlank() && ExploreCardType.valueOf(exploreType) == ExploreCardType.FREETRIAL) {
+            subscriptionTipContainer.visibility = View.VISIBLE
+        }
     }
 
     private fun setToolbar() {
@@ -243,6 +257,16 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         viewModel.registerCourseMinimalLiveData.observe(this, Observer {
             addCourseInRecyclerView(it)
         })
+
+        txtConvert.setOnClickListener {
+            StartSubscriptionActivity.startActivity(
+                this,
+                0,
+                ExploreCardType.SUBSCRIPTION,
+                this::class.simpleName!!
+            )
+        }
+
     }
 
     private fun addCourseInRecyclerView(items: List<InboxEntity>?) {
