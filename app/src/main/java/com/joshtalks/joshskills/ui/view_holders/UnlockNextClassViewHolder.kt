@@ -2,11 +2,11 @@ package com.joshtalks.joshskills.ui.view_holders
 
 import android.view.View.GONE
 import android.widget.FrameLayout
-import androidx.appcompat.widget.AppCompatTextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.FragmentActivity
 import com.google.android.material.button.MaterialButton
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
 import com.joshtalks.joshskills.repository.local.eventbus.UnlockNextClassEventBus
@@ -23,10 +23,6 @@ class UnlockNextClassViewHolder(activityRef: WeakReference<FragmentActivity>, me
 
     @View(R.id.btn_start)
     lateinit var btnStart: MaterialButton
-
-    @View(R.id.tv_title)
-    lateinit var title: AppCompatTextView
-
 
     @View(R.id.root_view_fl)
     lateinit var rootView: FrameLayout
@@ -46,9 +42,7 @@ class UnlockNextClassViewHolder(activityRef: WeakReference<FragmentActivity>, me
         }
 
         message.question?.let { question ->
-
-            title.text = "#Unlock Next Class"
-            btnStart.text = "Unlock Next class"
+            btnStart.text = AppObjectController.joshApplication.getString(R.string.unlock_class_text)
         }
     }
 

@@ -331,4 +331,6 @@
     <string name="courses_in_other_languages">Courses in other languages:</string>
     <string name="select_character">Select a character to start.</string>
 
+    <string name="unlock_class_text">#Unlock Next Class</string>
+
 </resources>

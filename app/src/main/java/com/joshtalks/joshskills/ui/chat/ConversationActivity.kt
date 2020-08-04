@@ -1500,9 +1500,20 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
         super.onActivityResult(requestCode, resultCode, data)
     }
 
-    private fun fetchNewUnlockClasses() {
+    suspend fun fetchNewUnlockClasses() {
         lastVideoStartingDate?.let {
             initProgressDialog()
+            val tUnlockClassMessage =
+                TUnlockClassMessage("Unlock Class Demo For now")
+            val cell = MessageBuilderFactory.getMessage(
+                activityRef,
+                BASE_MESSAGE_TYPE.UNLOCK,
+                tUnlockClassMessage
+            )
+            if (unlockViewHolder != null) {
+                conversationBinding.chatRv.removeView(unlockViewHolder)
+            }
+            conversationViewModel.insertUnlockClassToDatabase(cell.message)
             conversationViewModel.getUserRecentChats()
             onlyChatView()
         }
