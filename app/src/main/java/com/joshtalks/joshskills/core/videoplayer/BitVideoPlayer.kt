@@ -942,6 +942,12 @@ class BitVideoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibili
         seekTo(0,true)
         getCurrentPosition()
         timeHandler.post(timeRunnable)
+        mControlsDisabled=false
+        showController()
+    }
+
+    fun hideButtons() {
+        mControlsDisabled=true
         hideController()
     }
 

@@ -265,8 +265,12 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
             appAnalytics.addParam(AnalyticsEvent.VIDEO_PAUSE.NAME, true)
 
         }
-        if (playbackState == Player.STATE_ENDED && nextButtonVisible.not()) {
-            onBackPressed()
+        if (playbackState == Player.STATE_ENDED) {
+            if (nextButtonVisible.not()) {
+                onBackPressed()
+            } else {
+                binding.videoPlayer.hideButtons()
+            }
         }
     }
 
@@ -298,7 +302,9 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
 
     override fun onCurrentTimeUpdated(time: Long) {
 
-        if (searchingNextUrl.not() && (videoDuration?.minus(time))!! < 6000 && chatObject?.conversationId.isNullOrBlank().not()) {
+        if (searchingNextUrl.not() && (videoDuration?.minus(time))!! < 6000 && chatObject?.conversationId.isNullOrBlank()
+                .not()
+        ) {
             getNextClassUrl()
         }
 
@@ -329,7 +335,8 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
                     val arguments = mutableMapOf<String, String>()
                     val (key, value) = PrefManager.getLastSyncTime(chatObject?.conversationId!!)
                     arguments[key] = value
-                    val videoType = isVideoPresentInUpdatedChat(chatObject?.conversationId!!, arguments)
+                    val videoType =
+                        isVideoPresentInUpdatedChat(chatObject?.conversationId!!, arguments)
                     if (response.isSuccessful && videoType != null) {
                         isBatchChanged = true
                         setVideoObject(videoType)
@@ -370,6 +377,8 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
     private fun initiatePlaySequence() {
         CoroutineScope(Dispatchers.Main).launch {
             binding.frameProgress.visibility = View.VISIBLE
+            binding.toolbar.visibility = View.GONE
+            binding.videoPlayer.hideButtons()
             nextButtonVisible = true
             startProgress()
         }
@@ -401,6 +410,7 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
 
         videoUrl?.run {
             binding.frameProgress.visibility = View.GONE
+            binding.toolbar.visibility = View.VISIBLE
             binding.videoPlayer.playNextVideo(videoUrl)
             nextButtonVisible = false
             searchingNextUrl = false
