@@ -25,7 +25,20 @@
                 app:layout_constraintHeight_percent="0.4"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                tools:src="@color/black" />
+                app:srcCompat="@drawable/feedback_rectangle" />
+
+        <ImageButton
+                android:id="@+id/btnClose"
+                android:layout_width="@dimen/_20sdp"
+                android:layout_height="@dimen/_20sdp"
+                android:layout_marginTop="@dimen/_16sdp"
+                android:layout_marginEnd="@dimen/_16sdp"
+                android:background="@drawable/ic_cross"
+                android:backgroundTint="@color/white"
+                android:contentDescription="@string/cancel_button"
+                android:onClick="@{()->handler.cancel()}"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
         <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
                 android:id="@+id/txtHeading"
@@ -182,6 +195,7 @@
                 android:text="@string/already_a_subscriber"
                 android:textColor="@color/dark_grey"
                 android:textSize="@dimen/font_16"
+                android:visibility="invisible"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

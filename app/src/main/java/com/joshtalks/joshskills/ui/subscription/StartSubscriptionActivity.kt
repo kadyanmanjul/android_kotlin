@@ -114,6 +114,10 @@ class StartSubscriptionActivity : BaseActivity() {
         viewModel.fetchSubscriptionDetails()
     }
 
+    fun cancel() {
+        finish()
+    }
+
     companion object {
         private const val KEY_TEST_ID = "test-id"
         private const val KEY_EXPLORE_CARD_TYPE = "explore-card-type"
