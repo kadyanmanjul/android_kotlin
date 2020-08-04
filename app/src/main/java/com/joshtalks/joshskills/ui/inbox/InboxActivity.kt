@@ -32,6 +32,7 @@ import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.COURSE_ID
 import com.joshtalks.joshskills.core.CoreJoshActivity
 import com.joshtalks.joshskills.core.EXPLORE_TYPE
+import com.joshtalks.joshskills.core.IS_TRIAL_ENDED
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
@@ -55,8 +56,8 @@ import com.joshtalks.joshskills.repository.server.UpdateUserLocality
 import com.joshtalks.joshskills.ui.chat.ConversationActivity
 import com.joshtalks.joshskills.ui.conversation_practice.ConversationPracticeActivity
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
+import com.joshtalks.joshskills.ui.payment.order_summary.PaymentSummaryActivity
 import com.joshtalks.joshskills.ui.referral.ReferralActivity
-import com.joshtalks.joshskills.ui.subscription.StartSubscriptionActivity
 import com.joshtalks.joshskills.ui.tooltip.BalloonFactory
 import com.joshtalks.joshskills.ui.view_holders.InboxViewHolder
 import com.joshtalks.skydoves.balloon.Balloon
@@ -81,6 +82,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.jetbrains.anko.collections.forEachWithIndex
+import java.util.*
 
 const val REGISTER_INFO_CODE = 2001
 const val COURSE_EXPLORER_CODE = 2002
@@ -252,6 +254,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
                 openCourseExplorer()
             } else {
                 addCourseInRecyclerView(it)
+                setTrialEndParam(it)
             }
         })
         viewModel.registerCourseMinimalLiveData.observe(this, Observer {
@@ -259,12 +262,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         })
 
         txtConvert.setOnClickListener {
-            StartSubscriptionActivity.startActivity(
-                this,
-                0,
-                ExploreCardType.SUBSCRIPTION,
-                this::class.simpleName!!
-            )
+            PaymentSummaryActivity.startPaymentSummaryActivity(this, "122")
         }
 
     }
@@ -529,4 +527,16 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
                     }
                 ))
     }
+
+    private fun setTrialEndParam(coursesList: List<InboxEntity>) {
+        val firstPurchasedCourse =
+            coursesList.sortedByDescending { it.created }[0]
+        val expiryTimeInMs =
+            firstPurchasedCourse.created?.plus(firstPurchasedCourse.duration!! * 24 * 60 * 60 * 1000)
+        val currentTimeInMs = Calendar.getInstance().timeInMillis
+        if (currentTimeInMs <= expiryTimeInMs!!) {
+            PrefManager.put(IS_TRIAL_ENDED, true)
+        }
+    }
+
 }
