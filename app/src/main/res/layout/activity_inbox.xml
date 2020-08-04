@@ -32,6 +32,47 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
+            <androidx.cardview.widget.CardView
+                    android:id="@+id/subscriptionTipContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/_12sdp"
+                    android:layout_marginTop="@dimen/_12sdp"
+                    android:layout_marginBottom="@dimen/_4sdp"
+                    app:cardBackgroundColor="#DCDCDC"
+                    app:cardCornerRadius="@dimen/_20sdp"
+                    app:cardElevation="0dp"
+                    app:contentPaddingBottom="@dimen/_6sdp"
+                    app:contentPaddingLeft="@dimen/_12sdp"
+                    app:contentPaddingRight="@dimen/_12sdp"
+                    app:contentPaddingTop="@dimen/_6sdp">
+
+                <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/txtSubscriptionTip"
+                        fontPath="fonts/Poppins-Regular.ttf"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="start"
+                        android:text="@string/enjoy_free_trial"
+                        android:textAllCaps="false"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/font_13"
+                        app:rippleColor="@color/white" />
+
+                <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/txtConvert"
+                        fontPath="fonts/Poppins-SemiBold.ttf"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="end"
+                        android:text="@string/convert"
+                        android:textAllCaps="false"
+                        android:textColor="@color/button_color"
+                        android:textSize="@dimen/font_13"
+                        app:rippleColor="@color/white" />
+
+            </androidx.cardview.widget.CardView>
+
             <com.mindorks.placeholderview.PlaceHolderView
                     android:id="@+id/recycler_view_inbox"
                     android:layout_width="match_parent"
