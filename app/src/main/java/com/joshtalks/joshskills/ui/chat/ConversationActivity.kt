@@ -14,6 +14,7 @@ import android.provider.Settings
 import android.support.v4.media.session.PlaybackStateCompat
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.Gravity
 import android.view.MotionEvent
 import android.view.View
@@ -966,6 +967,7 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
                     lastVideoStartingDate = Date(System.currentTimeMillis())
+                    conversationViewModel.setMRefreshControl(false)
                     VideoPlayerActivity.startConversionActivity(
                         this,
                         it.chatModel,
@@ -1486,11 +1488,19 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
                         if (unlockViewHolder != null) {
                             conversationBinding.chatRv.removeView(unlockViewHolder)
                         }
-                        fetchNewUnlockClasses()
+                        fetchNewUnlockClasses(data)
                     }
                 } else {
                     addUnlockNextClassCard(data)
                 }
+                uiHandler.postDelayed({
+                    try {
+                        conversationViewModel.setMRefreshControl(true)
+                    } catch (ex: Exception) {
+                        Crashlytics.logException(ex)
+                        ex.printStackTrace()
+                    }
+                }, 1000)
             }
 
         } catch (ex: Exception) {
@@ -1500,8 +1510,8 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
         super.onActivityResult(requestCode, resultCode, data)
     }
 
-    suspend fun fetchNewUnlockClasses() {
-        lastVideoStartingDate?.let {
+    private suspend fun fetchNewUnlockClasses(data: Intent) {
+        lastVideoStartingDate?.let { date ->
             initProgressDialog()
             val tUnlockClassMessage =
                 TUnlockClassMessage("Unlock Class Demo For now")
@@ -1513,9 +1523,18 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
             if (unlockViewHolder != null) {
                 conversationBinding.chatRv.removeView(unlockViewHolder)
             }
-            conversationViewModel.insertUnlockClassToDatabase(cell.message)
-            conversationViewModel.getUserRecentChats()
-            onlyChatView()
+            val interval = data.getIntExtra(LAST_VIDEO_INTERVAL, -1)
+            val isNextVideoAvailable = data.getBooleanExtra(NEXT_VIDEO_AVAILABLE, false)
+            CoroutineScope(Dispatchers.IO).launch {
+                val maxInterval =
+                    AppObjectController.appDatabase.chatDao()
+                        .getMaxIntervalForVideo(inboxEntity.conversation_id)
+
+                if (maxInterval == interval && isNextVideoAvailable.not() && interval < (inboxEntity.duration!!.minus(1))) {
+                    conversationViewModel.insertUnlockClassToDatabase(cell.message)
+                }
+                conversationViewModel.getAllUnlockedMessage(date)
+            }
         }
     }
 
@@ -1527,7 +1546,7 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
             val maxInterval =
                 AppObjectController.appDatabase.chatDao()
                     .getMaxIntervalForVideo(inboxEntity.conversation_id)
-            if (maxInterval == interval && isNextVideoAvailable.not()) {
+            if (maxInterval == interval && isNextVideoAvailable.not() && interval < (inboxEntity.duration!!.minus(1))) {
                 val tUnlockClassMessage =
                     TUnlockClassMessage("Unlock Class Demo For now")
                 val cell = MessageBuilderFactory.getMessage(

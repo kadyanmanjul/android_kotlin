@@ -170,12 +170,6 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
                 videoUrl = chatObject?.question?.videoList?.getOrNull(0)?.video_url
             }
 
-            chatObject?.conversationId?.let {
-                CoroutineScope(Dispatchers.IO).launch {
-                    maxInterval =
-                        AppObjectController.appDatabase.chatDao().getMaxIntervalForVideo(it)
-                }
-            }
             interval = chatObject!!.question?.interval ?: -1
         }
         if (intent.hasExtra(VIDEO_URL)) {
@@ -270,6 +264,7 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
                 onBackPressed()
             } else {
                 binding.videoPlayer.hideButtons()
+                binding.imageBlack.visibility = View.VISIBLE
             }
         }
     }
@@ -315,6 +310,11 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
     private fun getNextClassUrl() {
         searchingNextUrl = true
         CoroutineScope(Dispatchers.IO).launch {
+
+            chatObject?.conversationId?.let {
+                maxInterval =
+                    AppObjectController.appDatabase.chatDao().getMaxIntervalForVideo(it)
+            }
             videoList = emptyList()
 
             val inboxActivity = AppObjectController.appDatabase.courseDao()
@@ -335,12 +335,15 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
                     val arguments = mutableMapOf<String, String>()
                     val (key, value) = PrefManager.getLastSyncTime(chatObject?.conversationId!!)
                     arguments[key] = value
-                    val videoType =
-                        isVideoPresentInUpdatedChat(chatObject?.conversationId!!, arguments)
-                    if (response.isSuccessful && videoType != null) {
+                    if (response.isSuccessful) {
                         isBatchChanged = true
-                        setVideoObject(videoType)
-                        initiatePlaySequence()
+                        val videoType =
+                            isVideoPresentInUpdatedChat(chatObject?.conversationId!!, arguments)
+                        videoType?.let {
+                            interval = it.interval
+                            setVideoObject(videoType)
+                            initiatePlaySequence()
+                        }
                     }
                 }
             }
@@ -411,6 +414,7 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
         videoUrl?.run {
             binding.frameProgress.visibility = View.GONE
             binding.toolbar.visibility = View.VISIBLE
+            binding.imageBlack.visibility = View.GONE
             binding.videoPlayer.playNextVideo(videoUrl)
             nextButtonVisible = false
             searchingNextUrl = false

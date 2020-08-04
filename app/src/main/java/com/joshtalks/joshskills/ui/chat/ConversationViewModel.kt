@@ -58,7 +58,7 @@ class ConversationViewModel(application: Application) :
     val refreshViewLiveData: MutableLiveData<ChatModel> = MutableLiveData()
     private var lastMessageTime: Date? = null
     private var broadCastForNetwork = CheckConnectivity()
-    private val TAG = "ConversationViewModel"
+    private var mRefreshControl = true
 
     init {
         addObserver()
@@ -310,9 +310,7 @@ class ConversationViewModel(application: Application) :
 
     fun getAllUnlockedMessage(date: Date) {
         viewModelScope.launch(Dispatchers.IO) {
-
             getUserUnlockClass(date)
-
         }
     }
 
@@ -359,15 +357,23 @@ class ConversationViewModel(application: Application) :
             chatReturn.add(chat)
         }
         if (chatReturn.isNullOrEmpty()) {
+            RxBus2.publish(MessageCompleteEventBus(false))
             return@launch
         }
         lastMessageTime = chatReturn.last().created
         chatObservableLiveData.postValue(chatReturn)
         updateAllMessageReadByUser()
+        RxBus2.publish(MessageCompleteEventBus(false))
     }
 
+    fun setMRefreshControl(control: Boolean) {
+        mRefreshControl = control
+    }
 
     private fun refreshChatEverySomeTime() {
+        if (mRefreshControl.not()) {
+            return
+        }
         compositeDisposable.add(
             Observable.interval(1, 1, TimeUnit.MINUTES)
                 .subscribeOn(Schedulers.computation())

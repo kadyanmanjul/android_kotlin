@@ -332,5 +332,6 @@
     <string name="select_character">Select a character to start.</string>
 
     <string name="unlock_class_text">Unlock Next Class     </string>
+    <string name="loading_new_classess">Loading new classes...</string>
 
 </resources>
