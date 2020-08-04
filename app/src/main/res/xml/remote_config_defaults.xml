@@ -127,6 +127,17 @@
         <key>IS_NOTIFICATION_CRASH</key>
         <value>false</value>
     </entry>
-
+    <entry>
+        <key>start_7_day_trial</key>
+        <value>Start 7-Day Free Trial</value>
+    </entry>
+    <entry>
+        <key>start_free_course</key>
+        <value>Start Free Course Now</value>
+    </entry>
+    <entry>
+        <key>start_subscription</key>
+        <value>Start 1-Year Subscription</value>
+    </entry>
 
 </defaultsMap>

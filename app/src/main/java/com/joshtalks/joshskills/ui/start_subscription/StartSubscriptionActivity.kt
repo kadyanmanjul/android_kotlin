@@ -9,11 +9,13 @@ import android.view.Window
 import android.view.WindowManager
 import androidx.databinding.DataBindingUtil
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.STARTED_FROM
 import com.joshtalks.joshskills.databinding.ActivityStartSubscriptionBinding
 import com.joshtalks.joshskills.repository.local.model.ExploreCardType
+import timber.log.Timber
 
 class StartSubscriptionActivity : BaseActivity() {
 
@@ -48,6 +50,29 @@ class StartSubscriptionActivity : BaseActivity() {
 
         if (testId == 0) {
             finish()
+        }
+
+        when (exploreCardType) {
+
+            ExploreCardType.NORMAL -> {
+                Timber.tag("")
+            }
+
+            ExploreCardType.FREETRIAL -> {
+                binding.startBtn.text =
+                    AppObjectController.getFirebaseRemoteConfig().getString("start_7_day_trial")
+            }
+
+            ExploreCardType.SUBSCRIPTION -> {
+                binding.startBtn.text =
+                    AppObjectController.getFirebaseRemoteConfig().getString("start_subscription")
+            }
+
+            ExploreCardType.FFCOURSE -> {
+                binding.startBtn.text =
+                    AppObjectController.getFirebaseRemoteConfig().getString("start_free_course")
+            }
+
         }
 
     }
