@@ -238,14 +238,12 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                 return Intent(applicationContext, InboxActivity::class.java).apply {
                     addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
                     putExtra(HAS_NOTIFICATION, true)
-                    putExtra(NOTIFICATION_ID, notificationObject.id)
                 }
             } else if (ACTION_UPSELLING_POPUP.equals(action, ignoreCase = true)) {
                 notificationChannelId = ACTION_UPSELLING_POPUP
                 return Intent(applicationContext, InboxActivity::class.java).apply {
                     addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
                     putExtra(HAS_NOTIFICATION, true)
-                    putExtra(NOTIFICATION_ID, notificationObject.id)
                     putExtra(COURSE_ID, actionData)
                     putExtra(ACTION_TYPE, action)
                     putExtra(ARG_PLACEHOLDER_URL, notificationObject.bigPicture)
@@ -265,7 +263,6 @@ class FirebaseNotificationService : FirebaseMessagingService() {
         return Intent(applicationContext, LauncherActivity::class.java).apply {
             addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
             putExtra(HAS_NOTIFICATION, true)
-            putExtra(NOTIFICATION_ID, notificationObject.id)
         }
     }
 
