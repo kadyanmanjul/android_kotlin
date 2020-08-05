@@ -78,6 +78,7 @@ import kotlinx.android.synthetic.main.activity_inbox.progress_bar
 import kotlinx.android.synthetic.main.activity_inbox.recycler_view_inbox
 import kotlinx.android.synthetic.main.activity_inbox.subscriptionTipContainer
 import kotlinx.android.synthetic.main.activity_inbox.txtConvert
+import kotlinx.android.synthetic.main.activity_inbox.txtSubscriptionTip
 import kotlinx.android.synthetic.main.find_more_layout.find_more
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -117,14 +118,23 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         checkAppUpdate()
         workInBackground()
         handelIntentAction()
-        bindSubscriptionTipView()
+        updateSubscriptionTipView()
     }
 
-    private fun bindSubscriptionTipView() {
+    private fun updateSubscriptionTipView() {
         val exploreType = PrefManager.getStringValue(EXPLORE_TYPE, true)
         if (exploreType.isNotBlank() && ExploreCardType.valueOf(exploreType) == ExploreCardType.FREETRIAL) {
             subscriptionTipContainer.visibility = View.VISIBLE
         }
+
+        val remainingTrialDays = PrefManager.getIntValue(REMAINING_TRIAL_DAYS, true)
+        when {
+            remainingTrialDays < 0 -> txtSubscriptionTip.text = getString(R.string.free_trial_ended)
+            remainingTrialDays == 0 -> txtSubscriptionTip.text =
+                getString(R.string.free_trial_last_day)
+            remainingTrialDays > 0 -> txtSubscriptionTip.text = getString(R.string.free_trial_enjoy)
+        }
+
     }
 
     private fun setToolbar() {
@@ -518,11 +528,14 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                     { value ->
-                        val root = findViewById<View>(R.id.find_more)
-                        offerInHint?.run {
-                            if (this.isShowing.not() && isFinishing.not() && value) {
-                                this.showAlignBottom(root)
-                                findViewById<View>(R.id.bottom_line).visibility = View.GONE
+                        val exploreType = PrefManager.getStringValue(EXPLORE_TYPE, true)
+                        if (exploreType.isBlank() || exploreType.contentEquals(ExploreCardType.NORMAL.name)) {
+                            val root = findViewById<View>(R.id.find_more)
+                            offerInHint?.run {
+                                if (this.isShowing.not() && isFinishing.not() && value) {
+                                    this.showAlignBottom(root)
+                                    findViewById<View>(R.id.bottom_line).visibility = View.GONE
+                                }
                             }
                         }
                     },
@@ -556,16 +569,21 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
                     .div(60L)
                     .div(24L)
 
-            PrefManager.put(REMAINING_TRIAL_DAYS, remainingTrialDays)
+            PrefManager.put(REMAINING_TRIAL_DAYS, remainingTrialDays.toInt(), true)
+            updateSubscriptionTipView()
         }
 
     }
 
     private fun updateExploreTypeParam(coursesList: List<InboxEntity>) {
+        val trialCourse =
+            coursesList.filter { it.courseId == TRIAL_COURSE_ID }.getOrNull(0)
         val subscriptionCourse =
             coursesList.filter { it.courseId == SUBSCRIPTION_COURSE_ID }.getOrNull(0)
-        subscriptionCourse?.let {
-            PrefManager.put(EXPLORE_TYPE, ExploreCardType.SUBSCRIPTION.name)
+        if (subscriptionCourse != null) {
+            PrefManager.put(EXPLORE_TYPE, ExploreCardType.SUBSCRIPTION.name, true)
+        } else if (trialCourse != null) {
+            PrefManager.put(EXPLORE_TYPE, ExploreCardType.FREETRIAL.name, true)
         }
     }
 

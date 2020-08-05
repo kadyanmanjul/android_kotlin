@@ -1757,7 +1757,7 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
 
     override fun onResume() {
         super.onResume()
-        val isTrialEnded = PrefManager.getBoolValue(IS_TRIAL_ENDED)
+        val isTrialEnded = PrefManager.getBoolValue(IS_TRIAL_ENDED, true)
         val exploreType = PrefManager.getStringValue(EXPLORE_TYPE, true)
         if (isTrialEnded && exploreType == ExploreCardType.FREETRIAL.name) {
             showTrialEndFragment()

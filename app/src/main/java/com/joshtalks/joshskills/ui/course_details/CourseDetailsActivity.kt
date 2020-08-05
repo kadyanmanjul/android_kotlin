@@ -39,6 +39,7 @@ import com.joshtalks.joshskills.core.ApiCallStatus
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.EXPLORE_TYPE
 import com.joshtalks.joshskills.core.PermissionUtils
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.STARTED_FROM
@@ -53,6 +54,7 @@ import com.joshtalks.joshskills.repository.local.eventbus.DownloadSyllabusEvent
 import com.joshtalks.joshskills.repository.local.eventbus.GotoCourseCard
 import com.joshtalks.joshskills.repository.local.eventbus.ImageShowEvent
 import com.joshtalks.joshskills.repository.local.eventbus.VideoShowEvent
+import com.joshtalks.joshskills.repository.local.model.ExploreCardType
 import com.joshtalks.joshskills.repository.server.course_detail.AboutJosh
 import com.joshtalks.joshskills.repository.server.course_detail.Card
 import com.joshtalks.joshskills.repository.server.course_detail.CardType
@@ -236,6 +238,9 @@ class CourseDetailsActivity : BaseActivity() {
                     )
                 )
             }
+
+            updateButtonText(data.paymentData.discountedAmount.substring(1).toDouble())
+
         })
 
         viewModel.apiCallStatusLiveData.observe(this, Observer {
@@ -688,6 +693,27 @@ class CourseDetailsActivity : BaseActivity() {
                 putExtra(STARTED_FROM, startedFrom)
             flags.forEach { flag ->
                 this.addFlags(flag)
+            }
+        }
+    }
+
+    private fun updateButtonText(discountedPrice: Double) {
+
+        if (discountedPrice == 0.0) {
+            binding.btnStartCourse.text = getString(R.string.start_free_course)
+            binding.btnStartCourse.textSize = 16f
+        }
+
+        val exploreTypeStr = PrefManager.getStringValue(EXPLORE_TYPE, true)
+        if (exploreTypeStr.isNotBlank()) {
+            when (ExploreCardType.valueOf(exploreTypeStr)) {
+                ExploreCardType.FREETRIAL,
+                ExploreCardType.SUBSCRIPTION -> {
+                    if (discountedPrice > 0) {
+                        binding.btnStartCourse.text = getString(R.string.get_one_year_pass)
+                        binding.btnStartCourse.textSize = 16f
+                    }
+                }
             }
         }
     }

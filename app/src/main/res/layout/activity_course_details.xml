@@ -150,14 +150,14 @@
                 <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
                         android:id="@+id/txt_discounted_price"
                         fontPath="fonts/Roboto-Bold.ttf"
-                        android:layout_width="0dp"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="@dimen/_10sdp"
                         android:paddingBottom="@dimen/_2sdp"
                         android:textColor="@color/black"
                         android:textSize="@dimen/font_20"
                         app:layout_constraintBottom_toBottomOf="@+id/btn_start_course"
-                        app:layout_constraintEnd_toStartOf="@+id/btn_start_course"
+                        app:layout_constraintStart_toStartOf="parent"
                         tools:text="$2999.0" />
 
                 <com.google.android.material.textview.MaterialTextView
@@ -177,9 +177,11 @@
                         app:cornerRadius="@dimen/_32sdp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="1"
+                        app:layout_constraintStart_toEndOf="@+id/txt_discounted_price"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintWidth_default="percent"
-                        app:layout_constraintWidth_percent="0.7" />
+                        app:layout_constraintWidth_percent="0.75" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 

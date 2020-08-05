@@ -347,5 +347,9 @@
     <string name="convert">Convert</string>
     <string name="trial_ended">Your 7 day trial has ended!\nKya aapko mazaa aaya?\nAccess all your courses now.</string>
     <string name="unlock_all_courses">Unlock All Courses</string>
+    <string name="get_one_year_pass">Get All Course Access Pass</string>
+    <string name="free_trial_ended">Free trial has ended</string>
+    <string name="free_trial_last_day">Last day for free subsciption</string>
+    <string name="free_trial_enjoy">Enjoy Your Free Trial!</string>
 
 </resources>
