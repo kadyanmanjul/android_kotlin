@@ -19,24 +19,13 @@
             tools:background="@color/white">
 
 
-        <ImageButton
-                android:id="@+id/iv_cancel"
-                android:layout_width="@dimen/_20sdp"
-                android:layout_height="@dimen/_20sdp"
-                android:layout_marginTop="@dimen/_16sdp"
-                android:layout_marginEnd="@dimen/_16sdp"
-                android:background="@drawable/ic_cross"
-                android:backgroundTint="@color/black"
-                android:contentDescription="@string/cancel_button"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
 
         <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/text_view_1"
                 fontPath="fonts/Roboto-Regular.ttf"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_36sdp"
+                android:layout_marginTop="@dimen/_24sdp"
                 android:text="@string/submit_record_msz"
                 android:textColor="@color/black"
                 android:textSize="@dimen/font_18"
@@ -50,7 +39,7 @@
                 fontPath="fonts/Roboto-Medium.ttf"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_24sdp"
+                android:layout_marginTop="@dimen/_32sdp"
                 android:gravity="center"
                 android:paddingTop="@dimen/_10sdp"
                 android:paddingBottom="@dimen/_10sdp"

@@ -12,6 +12,7 @@ import com.joshtalks.joshskills.core.custom_ui.decorator.LayoutMarginDecoration
 import com.joshtalks.joshskills.core.custom_ui.exo_audio_player.AudioModel
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.RequestAudioPlayEventBus
+import com.joshtalks.joshskills.repository.server.conversation_practice.SubmittedConversationPractiseModel
 import com.joshtalks.joshskills.ui.conversation_practice.ConversationPracticeViewModel
 import com.joshtalks.joshskills.ui.conversation_practice.PRACTISE_ID
 import com.vanniktech.emoji.Utils
@@ -32,6 +33,7 @@ class SubmittedPractiseActivity : CoreJoshActivity() {
         ViewModelProvider(this).get(ConversationPracticeViewModel::class.java)
     }
     private val compositeDisposable = CompositeDisposable()
+    private val list: ArrayList<SubmittedConversationPractiseModel> = arrayListOf()
 
 
     companion object {
@@ -70,7 +72,10 @@ class SubmittedPractiseActivity : CoreJoshActivity() {
 
     private fun addObserver() {
         viewModel.submittedPracticeLiveData.observe(this, Observer {
-            it.forEachIndexed { index, obj ->
+            if (list.isEmpty()) {
+                list.addAll(it)
+            }
+            list.forEachIndexed { index, obj ->
                 recycler_view.addView(
                     SubmittedPractiseItemHolder(
                         index,
@@ -87,6 +92,12 @@ class SubmittedPractiseActivity : CoreJoshActivity() {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
+                    if (cPosition >= 0) {
+                        list[cPosition].isPlaying = false
+                    }
+                    cPosition = it.position
+                    list[cPosition].isPlaying = true
+                    recycler_view.refresh()
                     playAudioPlayer(it.url, it.duration)
                 }, {
                     it.printStackTrace()

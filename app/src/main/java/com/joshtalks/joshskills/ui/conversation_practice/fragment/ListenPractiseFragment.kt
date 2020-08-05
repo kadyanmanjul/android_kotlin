@@ -1,10 +1,10 @@
 package com.joshtalks.joshskills.ui.conversation_practice.fragment
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.OvershootInterpolator
 import androidx.fragment.app.Fragment
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.custom_ui.SmoothLinearLayoutManager
@@ -15,12 +15,16 @@ import com.joshtalks.joshskills.core.setRoundImage
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.ViewPagerDisableEventBus
 import com.joshtalks.joshskills.repository.server.conversation_practice.ConversationPractiseModel
+import com.joshtalks.joshskills.repository.server.conversation_practice.ListenModel
 import com.joshtalks.joshskills.ui.conversation_practice.IMAGE_URL
 import com.joshtalks.joshskills.ui.conversation_practice.adapter.ARG_PRACTISE_OBJ
 import com.joshtalks.joshskills.ui.conversation_practice.adapter.AudioPractiseAdapter
 import com.vanniktech.emoji.Utils
+import jp.wasabeef.recyclerview.animators.SlideInUpAnimator
+import kotlinx.android.synthetic.main.fragment_listen_practise.audio_container
 import kotlinx.android.synthetic.main.fragment_listen_practise.audio_player
 import kotlinx.android.synthetic.main.fragment_listen_practise.image_view
+import kotlinx.android.synthetic.main.fragment_listen_practise.placeholder_bg
 import kotlinx.android.synthetic.main.fragment_listen_practise.recycler_view
 import kotlinx.android.synthetic.main.fragment_listen_practise.sub_title_tv
 import kotlinx.android.synthetic.main.fragment_listen_practise.title_tv
@@ -30,12 +34,14 @@ class ListenPractiseFragment private constructor() : Fragment(), AudioPlayerEven
 
     private lateinit var conversationPractiseModel: ConversationPractiseModel
     private var audioPractiseAdapter: AudioPractiseAdapter? = null
+    private val listenModelList: ArrayList<ListenModel> = arrayListOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
             conversationPractiseModel =
                 it.getParcelable<ConversationPractiseModel>(ARG_PRACTISE_OBJ) as ConversationPractiseModel
+            listenModelList.addAll(ArrayList(conversationPractiseModel.listen.sortedBy { it.sortOrder }))
         }
     }
 
@@ -50,7 +56,6 @@ class ListenPractiseFragment private constructor() : Fragment(), AudioPlayerEven
         super.onViewCreated(view, savedInstanceState)
         initView()
         initRV()
-        initAudioPlayer()
     }
 
     private fun initView() {
@@ -61,21 +66,31 @@ class ListenPractiseFragment private constructor() : Fragment(), AudioPlayerEven
                 image_view.setRoundImage(this)
             }
         }
+        placeholder_bg.setOnClickListener {
+            placeholder_bg.visibility = View.GONE
+            audio_container.visibility = View.VISIBLE
+            placeholder_bg.setImageResource(0)
+            initAudioPlayer()
+        }
     }
 
     private fun initRV() {
+        recycler_view.itemAnimator?.apply {
+            addDuration = 2000
+            changeDuration = 2000
+        }
+        recycler_view.itemAnimator = SlideInUpAnimator(OvershootInterpolator(2f))
         recycler_view.layoutManager = SmoothLinearLayoutManager(context)
         recycler_view.addItemDecoration(LayoutMarginDecoration(Utils.dpToPx(requireContext(), 6f)))
-        audioPractiseAdapter =
-            AudioPractiseAdapter(ArrayList(conversationPractiseModel.listen.toMutableList())).apply {
-                setHasStableIds(true)
-            }
+        audioPractiseAdapter = AudioPractiseAdapter(arrayListOf()).apply {
+            setHasStableIds(true)
+        }
         recycler_view.adapter = audioPractiseAdapter
     }
 
     private fun initAudioPlayer() {
         val list: LinkedList<AudioModel> = LinkedList()
-        conversationPractiseModel.listen.forEach {
+        listenModelList.forEach {
             list.add(AudioModel(it.audio.audio_url, it.id.toString(), it.audio.duration))
         }
         audio_player.addAudios(list)
@@ -84,7 +99,6 @@ class ListenPractiseFragment private constructor() : Fragment(), AudioPlayerEven
 
     override fun onPlayerPause() {
         RxBus2.publish(ViewPagerDisableEventBus(false))
-
     }
 
     override fun onPlayerResume() {
@@ -92,15 +106,30 @@ class ListenPractiseFragment private constructor() : Fragment(), AudioPlayerEven
     }
 
     override fun onCurrentTimeUpdated(lastPosition: Long) {
-        Log.e("audioo", "onCurrentTimeUpdated    " + lastPosition)
-
     }
 
     override fun onTrackChange(tag: String?) {
-        Log.e("audioo", "onTrackChange " + tag)
         if (tag.isNullOrEmpty().not()) {
-            audioPractiseAdapter?.items?.indexOfFirst { it.id == tag?.toInt() }?.run {
-                if (this > -1) {
+            listenModelList.indexOfFirst { it.id == tag?.toInt() }.run {
+                val totalItemInAdapter = audioPractiseAdapter?.items?.size ?: 0
+                if (this == -1) {
+                    return@run
+                }
+
+                if (this >= totalItemInAdapter) {
+                    val startPos = totalItemInAdapter
+                    val endPos = this
+                    if (startPos == endPos) {
+                        audioPractiseAdapter?.addItem(listenModelList[startPos])
+                        audioPractiseAdapter?.notifyItemInserted(startPos + 1)
+                        recycler_view.smoothScrollToPosition(startPos + 1)
+                    } else {
+                        val items = listenModelList.subList(startPos, endPos)
+                        audioPractiseAdapter?.addItems(items)
+                        audioPractiseAdapter?.notifyItemRangeInserted(startPos, items.size)
+                        recycler_view.smoothScrollToPosition(startPos + items.size)
+                    }
+                } else {
                     recycler_view.smoothScrollToPosition(this)
                 }
             }
@@ -108,8 +137,6 @@ class ListenPractiseFragment private constructor() : Fragment(), AudioPlayerEven
     }
 
     override fun onPositionDiscontinuity(lastPos: Long, reason: Int) {
-        Log.e("audioo", "onPositionDiscontinuity    " + lastPos)
-
     }
 
     override fun onPlayerReleased() {

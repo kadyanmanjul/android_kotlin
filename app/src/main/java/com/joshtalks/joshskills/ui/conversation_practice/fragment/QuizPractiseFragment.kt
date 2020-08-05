@@ -89,15 +89,17 @@ class QuizPractiseFragment private constructor() : Fragment(), OnChoiceClickList
             }
             binding.viewPager.currentItem = binding.viewPager.currentItem + 1
         } else {
-            val cItem = binding.viewPager.currentItem
-            val quizModel = quizModelList[cItem]
-            quizModel.isAttempted = true
+            val quizModel = quizModelList[binding.viewPager.currentItem].apply {
+                isAttempted = true
+            }
+            //quizModel.isAttempted = true
             val resp = quizModel.answersModel.find { it.isCorrect && it.isSelectedByUser }
             if (resp != null) {
-                showToast("Sahi hai")
+                showToast("Your answer is Correct")
             } else {
-                showToast("Galat hai")
+                showToast("Your answer is Wrong")
             }
+
             quizModel.answersModel.listIterator().forEach {
                 it.isEvaluate = true
             }

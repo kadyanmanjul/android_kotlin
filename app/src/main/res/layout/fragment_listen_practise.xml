@@ -74,6 +74,7 @@
             app:layout_constraintTop_toBottomOf="@+id/barrier" />
 
     <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/placeholder_bg"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:adjustViewBounds="true"
@@ -93,6 +94,7 @@
             android:divider="@android:color/transparent"
             android:dividerHeight="0.0px"
             android:elevation="@dimen/_8sdp"
+            android:visibility="invisible"
             app:contentPaddingBottom="@dimen/_8sdp"
             app:contentPaddingLeft="@dimen/_10sdp"
             app:contentPaddingRight="@dimen/_10sdp"
@@ -101,7 +103,8 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             card_view:cardElevation="@dimen/_8sdp"
-            card_view:cardPreventCornerOverlap="false">
+            card_view:cardPreventCornerOverlap="false"
+            tools:visibility="visible">
 
         <com.joshtalks.joshskills.core.custom_ui.exo_audio_player.ExoAudioPlayerView
                 android:id="@+id/audio_player"

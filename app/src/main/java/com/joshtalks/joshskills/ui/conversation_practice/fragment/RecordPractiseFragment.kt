@@ -287,13 +287,9 @@ class RecordPractiseFragment private constructor() : Fragment() {
             .inflate(R.layout.conversation_submit_dialog, null, false)
         val dialog = MaterialDialog(requireActivity(), bottomSheet).show {
             customView(view = view)
+            cancelOnTouchOutside(false)
         }
 
-        view.findViewById<View>(R.id.iv_cancel).setOnClickListener {
-            AppDirectory.deleteRecordingFile()
-            viewModel.practiseWho = null
-            dialog.cancel()
-        }
         view.findViewById<View>(R.id.btn_no).setOnClickListener {
             AppDirectory.deleteRecordingFile()
             viewModel.practiseWho = null

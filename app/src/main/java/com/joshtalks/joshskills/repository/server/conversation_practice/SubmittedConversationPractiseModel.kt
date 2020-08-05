@@ -10,6 +10,6 @@ class SubmittedConversationPractiseModel(
     @SerializedName("text") val text: String,
     @SerializedName("title") val title: String,
     @SerializedName("duration") val duration: Int,
-    val isPlaying: Boolean = false
+    var isPlaying: Boolean = false
 
 )

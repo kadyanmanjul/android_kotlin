@@ -29,7 +29,9 @@ data class ListenModel(
     @SerializedName("duration") val duration: Long,
     @SerializedName("audio") val audio: AudioType,
     var disable: Boolean = false,
-    var viewType: Int = 0
+    var viewType: Int = 0,
+    var isVisible: Boolean = false
+
 ) : Parcelable
 
 @Parcelize

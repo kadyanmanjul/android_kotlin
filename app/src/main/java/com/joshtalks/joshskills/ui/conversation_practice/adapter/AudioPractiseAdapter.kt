@@ -1,6 +1,7 @@
 package com.joshtalks.joshskills.ui.conversation_practice.adapter
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.widget.Filter
 import android.widget.Filterable
@@ -23,6 +24,15 @@ class AudioPractiseAdapter(var items: MutableList<ListenModel>) :
         ContextCompat.getColorStateList(AppObjectController.joshApplication, R.color.sent_bg_7a)
     private var receiveBG =
         ContextCompat.getColorStateList(AppObjectController.joshApplication, R.color.received_bg_BC)
+
+
+    fun addItem(list: ListenModel) {
+        items.add(list)
+    }
+
+    fun addItems(list: List<ListenModel>) {
+        items.addAll(list)
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val inflater = LayoutInflater.from(parent.context)
@@ -49,13 +59,14 @@ class AudioPractiseAdapter(var items: MutableList<ListenModel>) :
         if (holder is ViewHolderSent) {
             (holder).also {
                 it.bind(items[position])
+                it.binding.rootView.visibility = View.VISIBLE
             }
         } else if (holder is ViewHolderReceived) {
             (holder).also {
                 it.bind(items[position])
+                it.binding.rootView.visibility = View.VISIBLE
             }
         }
-
     }
 
     inner class ViewHolderSent(

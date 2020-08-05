@@ -16,7 +16,7 @@
             android:layout_height="match_parent">
 
         <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/appCompatImageView"
+                android:id="@+id/image_view"
                 android:layout_width="@dimen/_36sdp"
                 android:layout_height="@dimen/_36sdp"
                 android:adjustViewBounds="true"
@@ -36,8 +36,8 @@
                 android:textColor="@color/black"
                 android:textSize="@dimen/font_15"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/appCompatImageView"
-                app:layout_constraintTop_toTopOf="@+id/appCompatImageView"
+                app:layout_constraintStart_toEndOf="@+id/image_view"
+                app:layout_constraintTop_toTopOf="@+id/image_view"
                 tools:ignore="MissingPrefix"
                 tools:text="with Ankur Warikoo" />
 
@@ -82,9 +82,9 @@
                 android:focusable="true"
                 android:padding="@dimen/_4sdp"
                 android:src="@drawable/ic_share"
-                app:layout_constraintBottom_toBottomOf="@+id/appCompatImageView"
+                app:layout_constraintBottom_toBottomOf="@+id/image_view"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/appCompatImageView" />
+                app:layout_constraintTop_toTopOf="@+id/image_view" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
