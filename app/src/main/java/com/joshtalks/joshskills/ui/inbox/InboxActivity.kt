@@ -34,6 +34,7 @@ import com.joshtalks.joshskills.core.CoreJoshActivity
 import com.joshtalks.joshskills.core.EXPLORE_TYPE
 import com.joshtalks.joshskills.core.IS_TRIAL_ENDED
 import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.REMAINING_TRIAL_DAYS
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
@@ -535,17 +536,29 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         val trialCourse =
             coursesList.filter { it.courseId == TRIAL_COURSE_ID }.getOrNull(0)
         val expiryTimeInMs =
-            trialCourse?.created?.plus(
+            trialCourse?.courseCreatedDate?.time?.plus(
                 (trialCourse.duration ?: 7)
-                    .times(24)
-                    .times(60)
-                    .times(60)
-                    .times(1000)
+                    .times(24L)
+                    .times(60L)
+                    .times(60L)
+                    .times(1000L)
             )
         val currentTimeInMs = Calendar.getInstance().timeInMillis
-        if (currentTimeInMs <= expiryTimeInMs!!) {
-            PrefManager.put(IS_TRIAL_ENDED, true)
+
+        expiryTimeInMs?.let {
+            if (it <= currentTimeInMs) {
+                PrefManager.put(IS_TRIAL_ENDED, true)
+            }
+            val remainingTrialDays =
+                (it.minus(currentTimeInMs))
+                    .div(1000L)
+                    .div(60L)
+                    .div(60L)
+                    .div(24L)
+
+            PrefManager.put(REMAINING_TRIAL_DAYS, remainingTrialDays)
         }
+
     }
 
     private fun updateExploreTypeParam(coursesList: List<InboxEntity>) {

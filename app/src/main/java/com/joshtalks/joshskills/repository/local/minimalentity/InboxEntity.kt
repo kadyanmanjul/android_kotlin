@@ -1,10 +1,12 @@
 package com.joshtalks.joshskills.repository.local.minimalentity
 
 import android.os.Parcelable
+import androidx.room.ColumnInfo
 import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
 import com.joshtalks.joshskills.repository.local.entity.MESSAGE_DELIVER_STATUS
 import com.joshtalks.joshskills.repository.local.entity.User
 import kotlinx.android.parcel.Parcelize
+import java.util.*
 
 @Parcelize
 data class InboxEntity constructor(
@@ -17,7 +19,8 @@ data class InboxEntity constructor(
     val teacher_id: String? = "",
     var chat_id: String? = "",
     var created: Long? = 0,
-    var courseCreatedDate: Long? = 0,
+    @ColumnInfo(name = "course_created_date")
+    var courseCreatedDate: Date? = null,
     var isSeen: Boolean? = false,
     var text: String? = "",
     var type: BASE_MESSAGE_TYPE? = BASE_MESSAGE_TYPE.TX,
