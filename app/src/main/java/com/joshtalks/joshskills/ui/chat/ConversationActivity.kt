@@ -82,6 +82,7 @@ import com.joshtalks.joshskills.repository.local.entity.ChatModel
 import com.joshtalks.joshskills.repository.local.entity.DOWNLOAD_STATUS
 import com.joshtalks.joshskills.repository.local.entity.MESSAGE_STATUS
 import com.joshtalks.joshskills.repository.local.entity.NPSEventModel
+import com.joshtalks.joshskills.repository.local.entity.Question
 import com.joshtalks.joshskills.repository.local.eventbus.AssessmentStartEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.AudioPlayEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.ConversationPractiseEventBus
@@ -1538,8 +1539,7 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
                 val maxInterval =
                     AppObjectController.appDatabase.chatDao()
                         .getMaxIntervalForVideo(inboxEntity.conversation_id)
-
-                if (maxInterval == interval && isNextVideoAvailable.not() && interval < (inboxEntity.duration!!.minus(1))) {
+                if (maxInterval == interval && isNextVideoAvailable.not() && interval < inboxEntity.duration!!) {
                     conversationViewModel.insertUnlockClassToDatabase(cell.message)
                 }
                 conversationViewModel.getAllUnlockedMessage(date)
@@ -1555,7 +1555,7 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
             val maxInterval =
                 AppObjectController.appDatabase.chatDao()
                     .getMaxIntervalForVideo(inboxEntity.conversation_id)
-            if (maxInterval == interval && isNextVideoAvailable.not() && interval < (inboxEntity.duration!!.minus(1))) {
+            if (checkInDbForLastVideo(maxInterval, interval)) {
                 val tUnlockClassMessage =
                     TUnlockClassMessage("Unlock Class Demo For now")
                 val cell = MessageBuilderFactory.getMessage(
@@ -1574,6 +1574,34 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
                 }
             }
         }
+    }
+
+    suspend fun checkInDbForLastVideo(maxInterval: Int, interval1: Int): Boolean {
+        var interval = interval1
+        if (interval == inboxEntity.duration!!) {
+            return false
+        }
+        if (maxInterval == inboxEntity.duration!!) {
+            return false
+        }
+        while (maxInterval > interval) {
+            interval++
+            val question: Question? = AppObjectController.appDatabase.chatDao()
+                .getQuestionForNextInterval(
+                    inboxEntity.courseId!!, interval
+                )
+
+            if (question != null && question.material_type == BASE_MESSAGE_TYPE.VI && question.type == BASE_MESSAGE_TYPE.Q) {
+                val videoList = AppObjectController.appDatabase.chatDao()
+                    .getVideosOfQuestion(questionId = question.questionId)
+                if (videoList.isNullOrEmpty().not()) {
+                    return false
+                }
+                break
+            }
+
+        }
+        return true
     }
 
     fun uploadImageByCameraOrGallery() {
