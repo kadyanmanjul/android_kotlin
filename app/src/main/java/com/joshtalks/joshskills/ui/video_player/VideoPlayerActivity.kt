@@ -319,8 +319,9 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
 
             val inboxActivity = AppObjectController.appDatabase.courseDao()
                 .chooseRegisterCourseMinimal(chatObject?.conversationId!!)
-
-            checkInDbForNextVideo(inboxActivity)
+            if(isBatchChanged.not()) {
+                checkInDbForNextVideo(inboxActivity)
+            }
 
             if (videoList.isNullOrEmpty().not()) {
                 chatObject?.question?.videoList = videoList
@@ -351,6 +352,9 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
     }
 
     suspend fun checkInDbForNextVideo(inboxActivity: InboxEntity?) {
+        if(maxInterval==courseDuration) {
+            return
+        }
         while (maxInterval > interval) {
             interval++
             val question: Question? = AppObjectController.appDatabase.chatDao()

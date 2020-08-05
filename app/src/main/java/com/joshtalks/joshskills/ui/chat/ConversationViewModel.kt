@@ -371,15 +371,12 @@ class ConversationViewModel(application: Application) :
     }
 
     private fun refreshChatEverySomeTime() {
-        if (mRefreshControl.not()) {
-            return
-        }
         compositeDisposable.add(
             Observable.interval(1, 1, TimeUnit.MINUTES)
                 .subscribeOn(Schedulers.computation())
                 .timeInterval()
                 .subscribe({
-                    if (Utils.isInternetAvailable()) {
+                    if (Utils.isInternetAvailable() && mRefreshControl) {
                         val arguments = mutableMapOf<String, String>()
                         val (key, value) = PrefManager.getLastSyncTime(inboxEntity.conversation_id)
                         arguments[key] = value

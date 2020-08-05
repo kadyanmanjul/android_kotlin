@@ -14,7 +14,6 @@ import android.provider.Settings
 import android.support.v4.media.session.PlaybackStateCompat
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.Gravity
 import android.view.MotionEvent
 import android.view.View
@@ -1500,7 +1499,7 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
                         Crashlytics.logException(ex)
                         ex.printStackTrace()
                     }
-                }, 1000)
+                }, 5000)
             }
 
         } catch (ex: Exception) {

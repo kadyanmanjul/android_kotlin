@@ -135,6 +135,13 @@ object NetworkRequestHelper {
                     conversationId,
                     queryMap
                 )
+                if (resp.chatModelList.isNullOrEmpty()) {
+                } else {
+                    PrefManager.put(
+                        conversationId.trim(),
+                        resp.chatModelList.last().messageTimeInMilliSeconds
+                    )
+                }
 
                 for (chatModel in resp.chatModelList) {
                     val chatObj =
@@ -205,7 +212,7 @@ object NetworkRequestHelper {
                     PrefManager.getLastSyncTime(conversationId).let { keys ->
                         arguments[keys.first] = keys.second
                     }
-                    isVideoPresentInUpdatedChat(conversationId, queryMap = arguments)
+                    videoType1=isVideoPresentInUpdatedChat(conversationId, queryMap = arguments)
                 }
             } catch (ex: Exception) {
                 ex.printStackTrace()
