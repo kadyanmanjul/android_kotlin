@@ -291,12 +291,23 @@ class CourseExploreActivity : CoreJoshActivity() {
         })
 
         language_chip_group.setOnCheckedChangeListener { group, checkedId ->
-            if (checkedId == -1)
+            if (checkedId == -1) {
                 selectedLanguage = EMPTY
-            else
+            }
+            else {
                 selectedLanguage = languageList.filter { languageList.indexOf(it) == checkedId }[0]
+                logChipSelectedEvent(selectedLanguage)
+            }
             filterCourses()
         }
+    }
+
+    private fun logChipSelectedEvent(selectedLanguage: String) {
+        AppAnalytics.create(AnalyticsEvent.LANGUAGE_FILTER_CLICKED.NAME)
+            .addUserDetails()
+            .addBasicParam()
+            .addParam(AnalyticsEvent.LANGUAGE_SELECTED.name,selectedLanguage)
+            .push()
     }
 
     private fun renderLanguageChips() {
