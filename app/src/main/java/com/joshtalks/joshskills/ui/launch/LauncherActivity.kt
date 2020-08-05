@@ -64,7 +64,6 @@ class LauncherActivity : CoreJoshActivity(), CustomPermissionDialogInteractionLi
                         jsonParams.getString(Defines.Jsonkey.ContentType.key)
                     } else ExploreCardType.NORMAL.name
                     PrefManager.put(EXPLORE_TYPE, exploreType, true)
-                    AppObjectController.uiHandler.removeCallbacksAndMessages(null)
                     WorkMangerAdmin.registerUserGAIDWithTestId(null, exploreType)
                     val referralCode = parseReferralCode(jsonParams)
                     referralCode?.let {
