@@ -41,7 +41,7 @@ class ListenPractiseFragment private constructor() : Fragment(), AudioPlayerEven
         arguments?.let {
             conversationPractiseModel =
                 it.getParcelable<ConversationPractiseModel>(ARG_PRACTISE_OBJ) as ConversationPractiseModel
-            listenModelList.addAll(ArrayList(conversationPractiseModel.listen.sortedBy { it.sortOrder }))
+            listenModelList.addAll(ArrayList(conversationPractiseModel.listen.sortedBy { sort -> sort.sortOrder }))
         }
     }
 
@@ -82,7 +82,7 @@ class ListenPractiseFragment private constructor() : Fragment(), AudioPlayerEven
         recycler_view.itemAnimator = SlideInUpAnimator(OvershootInterpolator(2f))
         recycler_view.layoutManager = SmoothLinearLayoutManager(context)
         recycler_view.addItemDecoration(LayoutMarginDecoration(Utils.dpToPx(requireContext(), 6f)))
-        audioPractiseAdapter = AudioPractiseAdapter(arrayListOf()).apply {
+        audioPractiseAdapter = AudioPractiseAdapter().apply {
             setHasStableIds(true)
         }
         recycler_view.adapter = audioPractiseAdapter
@@ -111,13 +111,11 @@ class ListenPractiseFragment private constructor() : Fragment(), AudioPlayerEven
     override fun onTrackChange(tag: String?) {
         if (tag.isNullOrEmpty().not()) {
             listenModelList.indexOfFirst { it.id == tag?.toInt() }.run {
-                val totalItemInAdapter = audioPractiseAdapter?.items?.size ?: 0
+                val startPos = audioPractiseAdapter?.items?.size ?: 0
                 if (this == -1) {
                     return@run
                 }
-
-                if (this >= totalItemInAdapter) {
-                    val startPos = totalItemInAdapter
+                if (this >= startPos) {
                     val endPos = this
                     if (startPos == endPos) {
                         audioPractiseAdapter?.addItem(listenModelList[startPos])
@@ -129,14 +127,16 @@ class ListenPractiseFragment private constructor() : Fragment(), AudioPlayerEven
                         audioPractiseAdapter?.notifyItemRangeInserted(startPos, items.size)
                         recycler_view.smoothScrollToPosition(startPos + items.size)
                     }
-                } else {
-                    recycler_view.smoothScrollToPosition(this)
                 }
             }
         }
     }
 
     override fun onPositionDiscontinuity(lastPos: Long, reason: Int) {
+    }
+
+    override fun onPositionDiscontinuity(reason: Int) {
+
     }
 
     override fun onPlayerReleased() {
@@ -149,6 +149,13 @@ class ListenPractiseFragment private constructor() : Fragment(), AudioPlayerEven
     override fun onPause() {
         super.onPause()
         RxBus2.publish(ViewPagerDisableEventBus(false))
+    }
+
+    override fun onResume() {
+        super.onResume()
+        listenModelList.forEach {
+            it.disable = false
+        }
     }
 
     companion object {

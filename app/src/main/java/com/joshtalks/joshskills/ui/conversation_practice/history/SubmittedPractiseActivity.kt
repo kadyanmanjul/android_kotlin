@@ -10,6 +10,7 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.CoreJoshActivity
 import com.joshtalks.joshskills.core.custom_ui.decorator.LayoutMarginDecoration
 import com.joshtalks.joshskills.core.custom_ui.exo_audio_player.AudioModel
+import com.joshtalks.joshskills.core.custom_ui.exo_audio_player.AudioPlayerEventListener
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.RequestAudioPlayEventBus
 import com.joshtalks.joshskills.repository.server.conversation_practice.SubmittedConversationPractiseModel
@@ -26,7 +27,7 @@ import kotlinx.android.synthetic.main.fragment_listen_practise.audio_player
 import java.util.*
 
 
-class SubmittedPractiseActivity : CoreJoshActivity() {
+class SubmittedPractiseActivity : CoreJoshActivity(), AudioPlayerEventListener {
 
     private var cPosition = -1
     private val viewModel: ConversationPracticeViewModel by lazy {
@@ -67,7 +68,7 @@ class SubmittedPractiseActivity : CoreJoshActivity() {
         recycler_view.builder
             .setHasFixedSize(true)
         recycler_view.itemAnimator = SlideInUpAnimator(OvershootInterpolator(1f))
-        recycler_view.addItemDecoration(LayoutMarginDecoration(Utils.dpToPx(this, 6f)))
+        recycler_view.addItemDecoration(LayoutMarginDecoration(Utils.dpToPx(this, 8f)))
     }
 
     private fun addObserver() {
@@ -120,6 +121,39 @@ class SubmittedPractiseActivity : CoreJoshActivity() {
     override fun onPause() {
         super.onPause()
         compositeDisposable.clear()
+    }
+
+    override fun onPlayerPause() {
+        list[cPosition].isPlaying = false
+        recycler_view.refreshView(cPosition)
+
+    }
+
+    override fun onPlayerResume() {
+    }
+
+    override fun onCurrentTimeUpdated(lastPosition: Long) {
+
+    }
+
+    override fun onTrackChange(tag: String?) {
+
+    }
+
+    override fun onPositionDiscontinuity(lastPos: Long, reason: Int) {
+
+    }
+
+    override fun onPositionDiscontinuity(reason: Int) {
+
+    }
+
+    override fun onPlayerReleased() {
+
+    }
+
+    override fun onPlayerEmptyTrack() {
+
     }
 }
 

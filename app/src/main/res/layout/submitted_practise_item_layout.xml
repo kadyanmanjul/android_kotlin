@@ -3,13 +3,15 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/root_view"
+        xmlns:card_view="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:keepScreenOn="true"
+        app:contentPadding="@dimen/_12sdp"
         app:cardBackgroundColor="@color/artboard_color"
         app:cardCornerRadius="@dimen/_6sdp"
-        app:contentPadding="@dimen/_16sdp">
+        card_view:cardUseCompatPadding="true">
 
     <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -17,48 +19,33 @@
 
         <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/image_view"
-                android:layout_width="@dimen/_36sdp"
-                android:layout_height="@dimen/_36sdp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:adjustViewBounds="true"
-                android:scaleType="fitXY"
-                android:src="@drawable/ic_headphone_icon"
+                android:scaleType="center"
+                android:src="@drawable/ic_play_24dp"
+                app:tint="@color/light_grey"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/title"
-                fontPath="fonts/Poppins-Bold.ttf"
+                fontPath="fonts/Poppins-Medium.ttf"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginHorizontal="@dimen/_8sdp"
                 android:gravity="start"
                 android:textColor="@color/black"
-                android:textSize="@dimen/font_15"
-                app:layout_constraintEnd_toEndOf="parent"
+                android:textSize="@dimen/font_16"
+                app:layout_constraintBottom_toBottomOf="@+id/image_view"
                 app:layout_constraintStart_toEndOf="@+id/image_view"
                 app:layout_constraintTop_toTopOf="@+id/image_view"
                 tools:ignore="MissingPrefix"
-                tools:text="with Ankur Warikoo" />
+                tools:text="Ordering At McDonalds " />
 
         <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/text"
-                fontPath="fonts/Poppins-Regular.ttf"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginTop="@dimen/_4sdp"
-                android:gravity="start"
-                android:textColor="@color/black"
-                android:textSize="@dimen/font_13"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="@+id/title"
-                app:layout_constraintTop_toBottomOf="@+id/title"
-                tools:ignore="MissingPrefix"
-                tools:text="with Ankur Warikoo" />
-
-        <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/date"
+                android:id="@+id/duration"
                 fontPath="fonts/Poppins-Regular.ttf"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -67,11 +54,26 @@
                 android:gravity="start"
                 android:textColor="@color/black"
                 android:textSize="@dimen/font_13"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="@+id/text"
-                app:layout_constraintTop_toBottomOf="@+id/text"
+                app:layout_constraintStart_toStartOf="@+id/title"
+                app:layout_constraintTop_toBottomOf="@+id/title"
                 tools:ignore="MissingPrefix"
-                tools:text="with Ankur Warikoo" />
+                tools:text=" 00:01:00" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/date"
+                fontPath="fonts/Poppins-Regular.ttf"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="start"
+                android:textColor="@color/black"
+                android:textSize="@dimen/font_13"
+                android:layout_marginStart="@dimen/_20sdp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/duration"
+                app:layout_constraintTop_toTopOf="@+id/duration"
+                tools:ignore="MissingPrefix"
+                tools:text="01-08-2020" />
 
         <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/iv_share"

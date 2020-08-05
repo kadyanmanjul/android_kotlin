@@ -62,8 +62,8 @@ enum class VerificationStatus {
 }
 
 
-enum class PractiseUser {
-    FIRST, SECOND
+enum class PractiseUser(val type: Int) {
+    FIRST(0), SECOND(1)
 }
 
 enum class ViewTypeForPractiseUser(val type: Int) {

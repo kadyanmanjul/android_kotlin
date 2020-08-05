@@ -1,15 +1,17 @@
 package com.joshtalks.joshskills.ui.conversation_practice.history
 
 
+import android.content.res.ColorStateList
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
-import androidx.core.view.ViewCompat
+import androidx.core.widget.ImageViewCompat
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.custom_ui.PlayerUtil
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.RequestAudioPlayEventBus
 import com.joshtalks.joshskills.repository.server.conversation_practice.SubmittedConversationPractiseModel
@@ -34,8 +36,8 @@ class SubmittedPractiseItemHolder(
     @com.mindorks.placeholderview.annotations.View(R.id.title)
     lateinit var title: AppCompatTextView
 
-    @com.mindorks.placeholderview.annotations.View(R.id.text)
-    lateinit var text: AppCompatTextView
+    @com.mindorks.placeholderview.annotations.View(R.id.duration)
+    lateinit var duration: AppCompatTextView
 
     @com.mindorks.placeholderview.annotations.View(R.id.date)
     lateinit var date: AppCompatTextView
@@ -52,7 +54,7 @@ class SubmittedPractiseItemHolder(
     @Resolve
     fun onResolved() {
         title.text = data.title
-        text.text = data.text
+        duration.text = PlayerUtil.toTimeSongString(data.duration)
         date.text = DD_MM_YYYY.format(data.created.time)
         if (data.isPlaying) {
             playing()
@@ -64,21 +66,15 @@ class SubmittedPractiseItemHolder(
 
     private fun playing() {
         val greyFilter = PorterDuffColorFilter(
-            ContextCompat.getColor(context, R.color.received_bg_BC),
+            ContextCompat.getColor(context, R.color.light_blue),
             PorterDuff.Mode.MULTIPLY
         )
         cardView.background.colorFilter = greyFilter
-        ViewCompat.setBackgroundTintList(
+        ImageViewCompat.setImageTintList(
             imageView,
-            ContextCompat.getColorStateList(context, R.color.received_bg_BC)
+            ColorStateList.valueOf(ContextCompat.getColor(context, R.color.button_primary_color))
         )
-        ViewCompat.setBackgroundTintList(
-            ivShare,
-            ContextCompat.getColorStateList(context, R.color.received_bg_BC)
-        )
-        title.setTextColor(ContextCompat.getColor(context, R.color.received_bg_BC))
-        text.setTextColor(ContextCompat.getColor(context, R.color.received_bg_BC))
-        date.setTextColor(ContextCompat.getColor(context, R.color.received_bg_BC))
+
     }
 
     private fun notPlaying() {
@@ -87,11 +83,10 @@ class SubmittedPractiseItemHolder(
             PorterDuff.Mode.MULTIPLY
         )
         cardView.background.colorFilter = greyFilter
-        imageView.colorFilter = greyFilter
-        ivShare.colorFilter = greyFilter
-        title.setTextColor(ContextCompat.getColor(context, R.color.artboard_color))
-        text.setTextColor(ContextCompat.getColor(context, R.color.artboard_color))
-        date.setTextColor(ContextCompat.getColor(context, R.color.artboard_color))
+        ImageViewCompat.setImageTintList(
+            imageView,
+            ColorStateList.valueOf(ContextCompat.getColor(context, R.color.light_grey))
+        )
     }
 
 

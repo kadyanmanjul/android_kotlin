@@ -14,7 +14,6 @@ import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.OnLifecycleEvent
 import com.google.android.exoplayer2.ExoPlaybackException
-import com.google.android.exoplayer2.PlaybackParameters
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.Timeline
@@ -58,8 +57,11 @@ class ExoAudioPlayerView : FrameLayout, LifecycleObserver {
 
     private val playerEventListener: Player.EventListener = object : Player.EventListener {
         override fun onTimelineChanged(timeline: Timeline, reason: Int) {
-            if (player!!.currentTag != null)
-                playerListener?.onTrackChange(player?.currentTag as String?)
+            Timber.tag(tag).e("onTimelineChanged")
+            player?.currentTag?.run {
+                playerListener?.onTrackChange(this as String)
+            }
+
         }
 
         override fun onTracksChanged(
@@ -112,8 +114,13 @@ class ExoAudioPlayerView : FrameLayout, LifecycleObserver {
 
         }
 
-        override fun onPositionDiscontinuity(reason: Int) {}
-        override fun onPlaybackParametersChanged(playbackParameters: PlaybackParameters) {}
+        override fun onPositionDiscontinuity(reason: Int) {
+            Timber.tag(tag).e("onPositionDiscontinuity=  ${reason}")
+
+            playerListener?.onPositionDiscontinuity(reason)
+
+        }
+
         override fun onSeekProcessed() {}
 
     }
@@ -160,6 +167,7 @@ class ExoAudioPlayerView : FrameLayout, LifecycleObserver {
 
     fun setAudioPlayerEventListener(playerListener: AudioPlayerEventListener?) {
         this.playerListener = playerListener
+        player?.addListener(playerEventListener)
     }
 
     fun seekTo(pos: Long) {
@@ -173,12 +181,11 @@ class ExoAudioPlayerView : FrameLayout, LifecycleObserver {
     fun onPause() {
         player?.playWhenReady = false
         player?.seekTo(0, 0)
-
     }
 
 
     private fun initListener() {
-        player!!.addListener(playerEventListener)
+        player?.addListener(playerEventListener)
     }
 
     private fun stringForTime(timeMs: Int): String {
@@ -208,14 +215,18 @@ class ExoAudioPlayerView : FrameLayout, LifecycleObserver {
         var lastTime: Long = 0
 
         for (audioModel in audioModels) {
-            val factory = ProgressiveMediaSource.Factory(dataSourceFactory)
-            if (audioModel.tag != null) {
-                factory.setTag(audioModel.tag)
-            }
             if (audioModel.isSilent) {
-                val silentMedia = SilenceMediaSource(audioModel.duration * 1000L + extraMuteTime)
-                concatenatingMediaSource.addMediaSource(silentMedia)
+                val audioSource: MediaSource = SilenceMediaSource.Factory()
+                    .setTag(audioModel.tag)
+                    .setDurationUs(audioModel.duration * 1000L + extraMuteTime)
+                    .createMediaSource()
+
+                concatenatingMediaSource.addMediaSource(audioSource)
             } else {
+                val factory = ProgressiveMediaSource.Factory(dataSourceFactory)
+                if (audioModel.tag != null) {
+                    factory.setTag(audioModel.tag)
+                }
                 val audioSource: MediaSource =
                     factory.createMediaSource(Uri.parse(audioModel.audioUrl))
                 val clip = ClippingMediaSource(audioSource, audioModel.duration * 1000L)
@@ -272,7 +283,7 @@ class ExoAudioPlayerView : FrameLayout, LifecycleObserver {
     }
 
 
-    private fun isPlaying(): Boolean {
+    fun isPlaying(): Boolean {
         return player?.isPlaying ?: false
     }
 

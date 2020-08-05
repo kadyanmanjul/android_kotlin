@@ -50,7 +50,6 @@ class ConversationPracticeActivity : CoreJoshActivity() {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_conversation_practice_2)
         binding.lifecycleOwner = this
         binding.handler = this
-
         addObserver()
         intent?.getStringExtra(PRACTISE_ID)?.run {
             practiseId = this

@@ -35,6 +35,7 @@ class ConversationPracticeViewModel(application: Application) : AndroidViewModel
 
     var isPractise = false
     var isPlayerInit = false
+    var isRecord = false
 
     var practiseWho: PractiseUser? = null
     var recordFile: File? = null

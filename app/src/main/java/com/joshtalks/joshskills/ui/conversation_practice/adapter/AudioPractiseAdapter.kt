@@ -16,7 +16,7 @@ import com.joshtalks.joshskills.databinding.AudioPractiseReceivedItemBinding
 import com.joshtalks.joshskills.databinding.AudioPractiseSentItemBinding
 import com.joshtalks.joshskills.repository.server.conversation_practice.ListenModel
 
-class AudioPractiseAdapter(var items: MutableList<ListenModel>) :
+class AudioPractiseAdapter(var items: MutableList<ListenModel> = arrayListOf()) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>(), Filterable {
     private var disableBG =
         ContextCompat.getColorStateList(AppObjectController.joshApplication, R.color.text_f1f2)
@@ -32,6 +32,11 @@ class AudioPractiseAdapter(var items: MutableList<ListenModel>) :
 
     fun addItems(list: List<ListenModel>) {
         items.addAll(list)
+    }
+
+    fun clear() {
+        items = arrayListOf()
+        notifyDataSetChanged()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
