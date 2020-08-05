@@ -1,7 +1,6 @@
 package com.joshtalks.joshskills.ui.conversation_practice.fragment
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,10 +10,6 @@ import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import com.afollestad.materialdialogs.LayoutMode
-import com.afollestad.materialdialogs.MaterialDialog
-import com.afollestad.materialdialogs.bottomsheets.BottomSheet
-import com.afollestad.materialdialogs.customview.customView
 import com.google.android.exoplayer2.Player
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.ALPHA_MAX
@@ -31,7 +26,7 @@ import com.joshtalks.joshskills.core.custom_ui.decorator.LayoutMarginDecoration
 import com.joshtalks.joshskills.core.custom_ui.exo_audio_player.AudioModel
 import com.joshtalks.joshskills.core.custom_ui.exo_audio_player.AudioPlayerEventListener
 import com.joshtalks.joshskills.core.custom_ui.recorder.AudioRecorder
-import com.joshtalks.joshskills.core.io.AppDirectory
+import com.joshtalks.joshskills.core.interfaces.OnConversationPractiseSubmit
 import com.joshtalks.joshskills.core.setImage
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.FragmentRecordPractiseBinding
@@ -43,6 +38,7 @@ import com.joshtalks.joshskills.repository.server.conversation_practice.ListenMo
 import com.joshtalks.joshskills.ui.conversation_practice.ConversationPracticeViewModel
 import com.joshtalks.joshskills.ui.conversation_practice.adapter.ARG_PRACTISE_OBJ
 import com.joshtalks.joshskills.ui.conversation_practice.adapter.AudioPractiseAdapter
+import com.joshtalks.joshskills.ui.conversation_practice.extra.ConversationSubmitBottomSheet
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
@@ -51,7 +47,8 @@ import com.vanniktech.emoji.Utils
 import jp.wasabeef.recyclerview.animators.SlideInUpAnimator
 import java.util.*
 
-class RecordPractiseFragment private constructor() : Fragment(), AudioPlayerEventListener {
+class RecordPractiseFragment private constructor() : Fragment(), AudioPlayerEventListener,
+    OnConversationPractiseSubmit {
     private lateinit var conversationPractiseModel: ConversationPractiseModel
     private lateinit var binding: FragmentRecordPractiseBinding
     private var audioPractiseAdapter: AudioPractiseAdapter? = null
@@ -109,7 +106,7 @@ class RecordPractiseFragment private constructor() : Fragment(), AudioPlayerEven
         AppAnalytics.create(AnalyticsEvent.PATNER_SELECTED.NAME)
             .addBasicParam()
             .addUserDetails()
-            .addParam("patner side",patner)
+            .addParam("patner side", patner)
             .addParam("flow", "record practise")
             .push()
     }
@@ -231,36 +228,38 @@ class RecordPractiseFragment private constructor() : Fragment(), AudioPlayerEven
     }
 
     fun practiseWithFirstUser() {
+        if (viewModel.isRecordingRunning) {
+            return
+        }
         if (viewModel.isRecord) {
             binding.ivTickFirstUser.visibility = View.GONE
             enableView(binding.ivSecondUser)
             resetPlayer()
         } else {
-            binding.placeholderBg.visibility = View.GONE
-            binding.placeholderBg.setImageResource(0)
             viewModel.practiseWho = PractiseUser.FIRST
             viewModel.isRecord = true
             binding.ivTickFirstUser.visibility = View.VISIBLE
             disableView(binding.ivSecondUser)
-            filterProperty(ViewTypeForPractiseUser.FIRST.type)
+            filterProperty(ViewTypeForPractiseUser.SECOND.type)
             initAudioPlayer(PractiseUser.FIRST)
         }
         logPatnerSelectedEvent("first")
     }
 
     fun practiseWithSecondUser() {
+        if (viewModel.isRecordingRunning) {
+            return
+        }
         if (viewModel.isRecord) {
             binding.ivTickSecondUser.visibility = View.GONE
             enableView(binding.ivFirstUser)
             resetPlayer()
         } else {
-            binding.placeholderBg.visibility = View.GONE
-            binding.placeholderBg.setImageResource(0)
             viewModel.practiseWho = PractiseUser.SECOND
             viewModel.isRecord = true
             binding.ivTickSecondUser.visibility = View.VISIBLE
             disableView(binding.ivFirstUser)
-            filterProperty(ViewTypeForPractiseUser.SECOND.type)
+            filterProperty(ViewTypeForPractiseUser.FIRST.type)
             initAudioPlayer(PractiseUser.SECOND)
         }
         logPatnerSelectedEvent("second")
@@ -288,6 +287,8 @@ class RecordPractiseFragment private constructor() : Fragment(), AudioPlayerEven
         view.isClickable = true
         view.isEnabled = true
         view.alpha = ALPHA_MAX
+        binding.placeholderBg.visibility = View.VISIBLE
+
     }
 
     private fun disableView(view: View) {
@@ -295,7 +296,6 @@ class RecordPractiseFragment private constructor() : Fragment(), AudioPlayerEven
         view.isEnabled = false
         view.alpha = ALPHA_MIN
         binding.placeholderBg.visibility = View.GONE
-        binding.placeholderBg.setImageResource(0)
     }
 
 
@@ -328,9 +328,9 @@ class RecordPractiseFragment private constructor() : Fragment(), AudioPlayerEven
             viewModel.isRecordingRunning = false
             viewModel.stopRecording(object : AudioRecorder.OnPauseListener {
                 override fun onPaused(activeRecordFileName: String?) {
-                    completePractise()
                     resetAllState()
                     binding.audioPlayer.onPause()
+                    completePractise()
                 }
 
                 override fun onException(e: Exception?) {
@@ -359,23 +359,35 @@ class RecordPractiseFragment private constructor() : Fragment(), AudioPlayerEven
     }
 
     private fun completePractise() {
-        val bottomSheet = BottomSheet(LayoutMode.WRAP_CONTENT)
-        val view = LayoutInflater.from(requireContext())
-            .inflate(R.layout.conversation_submit_dialog, null, false)
-        val dialog = MaterialDialog(requireActivity(), bottomSheet).show {
-            customView(view = view)
-            cancelOnTouchOutside(false)
+        val prev =
+            childFragmentManager.findFragmentByTag(ConversationSubmitBottomSheet::class.java.name)
+        if (prev != null) {
+            return
         }
 
-        view.findViewById<View>(R.id.btn_no).setOnClickListener {
-            AppDirectory.deleteRecordingFile()
-            viewModel.practiseWho = null
-            dialog.cancel()
-        }
-        view.findViewById<View>(R.id.btn_yes).setOnClickListener {
-            RxBus2.publish(ConversationPractiseSubmitEventBus(getTextWithTalk() ?: EMPTY))
-            dialog.cancel()
-        }
+        val bottomSheetFragment = ConversationSubmitBottomSheet.newInstance()
+        bottomSheetFragment.show(
+            childFragmentManager,
+            ConversationSubmitBottomSheet::class.java.name
+        )
+
+        /* val bottomSheet = BottomSheet(LayoutMode.WRAP_CONTENT)
+         val view = LayoutInflater.from(requireContext())
+             .inflate(R.layout.conversation_submit_dialog, null, false)
+         val dialog = MaterialDialog(requireActivity(), bottomSheet).show {
+             customView(view = view)
+             cancelOnTouchOutside(false)
+         }
+
+         view.findViewById<View>(R.id.btn_no).setOnClickListener {
+             AppDirectory.deleteRecordingFile()
+             viewModel.practiseWho = null
+             dialog.cancel()
+         }
+         view.findViewById<View>(R.id.btn_yes).setOnClickListener {
+             RxBus2.publish(ConversationPractiseSubmitEventBus(getTextWithTalk() ?: EMPTY))
+             dialog.cancel()
+         }*/
     }
 
     private fun getTextWithTalk(): String? {
@@ -398,7 +410,6 @@ class RecordPractiseFragment private constructor() : Fragment(), AudioPlayerEven
 
     override fun onPlayerPause() {
         RxBus2.publish(ViewPagerDisableEventBus(false))
-
     }
 
     override fun onPlayerResume() {
@@ -410,7 +421,6 @@ class RecordPractiseFragment private constructor() : Fragment(), AudioPlayerEven
     }
 
     override fun onTrackChange(tag: String?) {
-        Log.e("napta", "onTrackChange  " + tag)
         if (binding.audioPlayer.isPlaying().not()) {
             return
         }
@@ -438,7 +448,6 @@ class RecordPractiseFragment private constructor() : Fragment(), AudioPlayerEven
     }
 
     override fun onPositionDiscontinuity(lastPos: Long, reason: Int) {
-
     }
 
     override fun onPositionDiscontinuity(reason: Int) {
@@ -455,6 +464,15 @@ class RecordPractiseFragment private constructor() : Fragment(), AudioPlayerEven
     }
 
     override fun onPlayerEmptyTrack() {
+    }
+
+    override fun complete() {
+        if (viewModel.isRecordingRunning) {
+            viewModel.isRecordingRunning = false
+            binding.audioPlayer.onPause()
+            completePractise()
+            resetAllState()
+        }
 
     }
 
@@ -476,5 +494,13 @@ class RecordPractiseFragment private constructor() : Fragment(), AudioPlayerEven
                     putParcelable(ARG_PRACTISE_OBJ, conversationPractiseModel)
                 }
             }
+    }
+
+    override fun onDone() {
+        RxBus2.publish(ConversationPractiseSubmitEventBus(getTextWithTalk() ?: EMPTY))
+    }
+
+    override fun onCancel() {
+        viewModel.practiseWho = null
     }
 }

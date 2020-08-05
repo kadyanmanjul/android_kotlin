@@ -41,7 +41,7 @@ class ConversationPracticeViewModel(application: Application) : AndroidViewModel
     var recordFile: File? = null
     var isRecordingRunning = false
     private var mAudioRecorder: AudioRecorder? = null
-    var context: JoshApplication = getApplication()
+    private var context: JoshApplication = getApplication()
 
 
     private val jobs = arrayListOf<Job>()
@@ -206,7 +206,6 @@ class ConversationPracticeViewModel(application: Application) : AndroidViewModel
         super.onCleared()
         jobs.forEach { it.cancel() }
         mAudioRecorder?.isRecording?.run {
-            mAudioRecorder?.cancel()
         }
     }
 }

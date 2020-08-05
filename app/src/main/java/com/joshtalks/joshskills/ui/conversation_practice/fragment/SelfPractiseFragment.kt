@@ -1,6 +1,7 @@
 package com.joshtalks.joshskills.ui.conversation_practice.fragment
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -181,7 +182,7 @@ class SelfPractiseFragment private constructor() : Fragment(), AudioPlayerEventL
             viewModel.isPractise = true
             binding.ivTickFirstUser.visibility = View.VISIBLE
             disableView(binding.ivSecondUser)
-            filterProperty(ViewTypeForPractiseUser.FIRST.type)
+            filterProperty(ViewTypeForPractiseUser.SECOND.type)
             initAudioPlayer(PractiseUser.FIRST)
         }
         logPatnerSelectedEvent("first")
@@ -197,7 +198,7 @@ class SelfPractiseFragment private constructor() : Fragment(), AudioPlayerEventL
             viewModel.isPractise = true
             binding.ivTickSecondUser.visibility = View.VISIBLE
             disableView(binding.ivFirstUser)
-            filterProperty(ViewTypeForPractiseUser.SECOND.type)
+            filterProperty(ViewTypeForPractiseUser.FIRST.type)
             initAudioPlayer(PractiseUser.SECOND)
         }
         logPatnerSelectedEvent("second")
@@ -236,6 +237,8 @@ class SelfPractiseFragment private constructor() : Fragment(), AudioPlayerEventL
         view.isClickable = true
         view.isEnabled = true
         view.alpha = ALPHA_MAX
+        binding.placeholderBg.visibility = View.VISIBLE
+
     }
 
     private fun disableView(view: View) {
@@ -243,7 +246,6 @@ class SelfPractiseFragment private constructor() : Fragment(), AudioPlayerEventL
         view.isEnabled = false
         view.alpha = ALPHA_MIN
         binding.placeholderBg.visibility = View.GONE
-        binding.placeholderBg.setImageResource(0)
     }
 
 
@@ -271,6 +273,7 @@ class SelfPractiseFragment private constructor() : Fragment(), AudioPlayerEventL
                         binding.recyclerView.smoothScrollToPosition(startPos + items.size)
                     }
                 }
+
             }
         }
     }
@@ -298,6 +301,11 @@ class SelfPractiseFragment private constructor() : Fragment(), AudioPlayerEventL
 
     override fun onPlayerEmptyTrack() {
         showToast(getString(R.string.select_character), Toast.LENGTH_LONG)
+    }
+
+    override fun complete() {
+        Log.e("napta", "complete  ")
+
     }
 
     override fun onPause() {

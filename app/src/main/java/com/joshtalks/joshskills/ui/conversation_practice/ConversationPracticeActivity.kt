@@ -3,7 +3,6 @@ package com.joshtalks.joshskills.ui.conversation_practice
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.view.WindowManager
 import androidx.databinding.DataBindingUtil
@@ -106,7 +105,6 @@ class ConversationPracticeActivity : CoreJoshActivity() {
         binding.viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
-                Log.e("postion", "postion  " + position)
                 if (position == 3) {
                     binding.historyIv.visibility = View.VISIBLE
                 } else {

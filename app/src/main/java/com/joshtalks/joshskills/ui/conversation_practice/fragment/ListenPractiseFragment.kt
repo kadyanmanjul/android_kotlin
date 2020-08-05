@@ -23,7 +23,6 @@ import com.joshtalks.joshskills.ui.conversation_practice.adapter.ARG_PRACTISE_OB
 import com.joshtalks.joshskills.ui.conversation_practice.adapter.AudioPractiseAdapter
 import com.vanniktech.emoji.Utils
 import jp.wasabeef.recyclerview.animators.SlideInUpAnimator
-import kotlinx.android.synthetic.main.fragment_listen_practise.audio_container
 import kotlinx.android.synthetic.main.fragment_listen_practise.audio_player
 import kotlinx.android.synthetic.main.fragment_listen_practise.image_view
 import kotlinx.android.synthetic.main.fragment_listen_practise.placeholder_bg
@@ -71,7 +70,6 @@ class ListenPractiseFragment private constructor() : Fragment(), AudioPlayerEven
         placeholder_bg.setOnClickListener {
             logConversationTapToContinueEvent(conversationPractiseModel.id.toString())
             placeholder_bg.visibility = View.GONE
-            audio_container.visibility = View.VISIBLE
             placeholder_bg.setImageResource(0)
             initAudioPlayer()
         }
@@ -165,6 +163,10 @@ class ListenPractiseFragment private constructor() : Fragment(), AudioPlayerEven
     }
 
     override fun onPlayerEmptyTrack() {
+
+    }
+
+    override fun complete() {
 
     }
 

@@ -32,7 +32,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:gravity="start"
-                    android:text="@string/choose_character"
+                    android:text="@string/select_character"
                     android:textColor="@color/dark_grey"
                     android:textSize="@dimen/font_14"
                     app:layout_constraintEnd_toEndOf="parent"

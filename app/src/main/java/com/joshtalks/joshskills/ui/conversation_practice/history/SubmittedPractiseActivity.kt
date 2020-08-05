@@ -166,5 +166,9 @@ class SubmittedPractiseActivity : CoreJoshActivity(), AudioPlayerEventListener {
     override fun onPlayerEmptyTrack() {
 
     }
+
+    override fun complete() {
+
+    }
 }
 

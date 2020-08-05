@@ -12,9 +12,12 @@ public class AudioRecording {
 
     public void startPlayer(File recordFile) {
         recorder = new MediaRecorder();
+        recorder.setAudioEncodingBitRate(128000);
+        recorder.setAudioSamplingRate(44100);
+        /*
         recorder.setAudioSamplingRate(16000);
         recorder.setAudioEncodingBitRate(32000);
-        recorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+        *///recorder.setAudioSource(MediaRecorder.AudioSource.MIC);
         recorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
         recorder.setAudioEncoder(MediaRecorder.AudioEncoder.HE_AAC);
         recorder.setOutputFile(recordFile.getAbsolutePath());

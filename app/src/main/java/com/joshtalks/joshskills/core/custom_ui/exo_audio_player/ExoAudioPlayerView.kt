@@ -79,6 +79,9 @@ class ExoAudioPlayerView : FrameLayout, LifecycleObserver {
             if (playbackState == Player.STATE_ENDED) {
                 player?.playWhenReady = false
                 player?.seekTo(0, 0)
+                if (playWhenReady.not()) {
+                    playerListener?.complete()
+                }
             }
             if (audioModels.isNullOrEmpty() && playWhenReady && playbackState == Player.STATE_ENDED) {
                 playerListener?.onPlayerEmptyTrack()

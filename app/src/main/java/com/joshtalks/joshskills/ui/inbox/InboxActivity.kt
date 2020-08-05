@@ -56,7 +56,6 @@ import com.joshtalks.joshskills.repository.server.ProfileResponse
 import com.joshtalks.joshskills.repository.server.SearchLocality
 import com.joshtalks.joshskills.repository.server.UpdateUserLocality
 import com.joshtalks.joshskills.ui.chat.ConversationActivity
-import com.joshtalks.joshskills.ui.conversation_practice.ConversationPracticeActivity
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
 import com.joshtalks.joshskills.ui.payment.order_summary.PaymentSummaryActivity
 import com.joshtalks.joshskills.ui.referral.ReferralActivity
@@ -323,14 +322,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe {
-                // openCourseExplorer()
-                ConversationPracticeActivity.startConversationPracticeActivity(
-                    this,
-                    10001,
-                    "1",
-                    "https://png.pngtree.com/png-clipart/20190924/original/pngtree-user-vector-avatar-png-image_4830521.jpg"
-                )
-
+                 openCourseExplorer()
             })
         compositeDisposable.add(RxBus2.listen(NPSEventGenerateEventBus::class.java)
             .subscribeOn(Schedulers.io())

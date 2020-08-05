@@ -158,12 +158,16 @@ class AudioRecorder internal constructor(
         mediaRecorder = MediaRecorder()
         mediaRecorder!!.setAudioSamplingRate(16000)
         mediaRecorder!!.setAudioEncodingBitRate(32000)
-        //mMediaRecorder.setAudioEncodingBitRate(mMediaRecorderConfig.mAudioEncodingBitRate);
-        mediaRecorder!!.setAudioChannels(mMediaRecorderConfig.mAudioChannels)
-        mediaRecorder!!.setAudioSource(mMediaRecorderConfig.mAudioSource)
+        //recorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+        mediaRecorder!!.setAudioSource(MediaRecorder.AudioSource.MIC)
         mediaRecorder!!.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
+        mediaRecorder!!.setAudioEncoder(MediaRecorder.AudioEncoder.HE_AAC)
+
+        //mMediaRecorder.setAudioEncodingBitRate(mMediaRecorderConfig.mAudioEncodingBitRate);
+        //  mediaRecorder!!.setAudioChannels(mMediaRecorderConfig.mAudioChannels)
+        // mediaRecorder!!.setAudioSource(mMediaRecorderConfig.mAudioSource)
         mediaRecorder!!.setOutputFile(temporaryFileName)
-        mediaRecorder!!.setAudioEncoder(mMediaRecorderConfig.mAudioEncoder)
+        //  mediaRecorder!!.setAudioEncoder(mMediaRecorderConfig.mAudioEncoder)
         task.execute(listener)
     }
 

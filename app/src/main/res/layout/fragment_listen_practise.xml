@@ -94,7 +94,6 @@
             android:divider="@android:color/transparent"
             android:dividerHeight="0.0px"
             android:elevation="@dimen/_8sdp"
-            android:visibility="invisible"
             app:contentPaddingBottom="@dimen/_8sdp"
             app:contentPaddingLeft="@dimen/_10sdp"
             app:contentPaddingRight="@dimen/_10sdp"

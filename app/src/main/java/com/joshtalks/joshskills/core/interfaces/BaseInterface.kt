@@ -19,3 +19,8 @@ interface OnUrlClickSpanListener {
 interface OnSelectVerificationMethodListener {
     fun onSelect(verificationVia: VerificationVia)
 }
+
+interface OnConversationPractiseSubmit {
+    fun onDone()
+    fun onCancel()
+}

@@ -19,10 +19,10 @@
 
         <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/image_view"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="@dimen/_16sdp"
+                android:layout_height="@dimen/_16sdp"
                 android:adjustViewBounds="true"
-                android:scaleType="center"
+                android:scaleType="fitXY"
                 android:src="@drawable/ic_play_24dp"
                 app:tint="@color/light_grey"
                 app:layout_constraintStart_toStartOf="parent"
@@ -83,6 +83,7 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:padding="@dimen/_4sdp"
+                android:visibility="gone"
                 android:src="@drawable/ic_share"
                 app:layout_constraintBottom_toBottomOf="@+id/image_view"
                 app:layout_constraintEnd_toEndOf="parent"
