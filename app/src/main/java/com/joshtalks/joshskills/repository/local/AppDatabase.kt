@@ -251,29 +251,32 @@ abstract class AppDatabase : RoomDatabase() {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("ALTER TABLE question_table ADD COLUMN conversation_practice_id TEXT ")
                 database.execSQL("ALTER TABLE question_table ADD COLUMN assessment_id INTEGER")
+                database.execSQL("ALTER TABLE question_table ADD COLUMN temp_type TEXT")
 
-                database.execSQL("CREATE TABLE IF NOT EXISTS assessments (`localId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `remoteId` INTEGER NOT NULL, `heading` TEXT NOT NULL, `title` TEXT NOT NULL, `imageUrl` TEXT NOT NULL, `description` TEXT NOT NULL, `type` TEXT NOT NULL, `status` TEXT NOT NULL)")
+                database.execSQL("ALTER TABLE VideoTable ADD COLUMN interval INTEGER NOT NULL DEFAULT -1")
+
+                database.execSQL("CREATE TABLE IF NOT EXISTS assessments (`localId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `remoteId` INTEGER NOT NULL, `icon_url` TEXT,`text1` TEXT, `text2` TEXT, `score_text` TEXT, `heading` TEXT NOT NULL, `title` TEXT, `imageUrl` TEXT, `description` TEXT, `type` TEXT NOT NULL, `status` TEXT NOT NULL)")
                 database.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS `index_assessments_remoteId` ON assessments (`remoteId`)")
 
                 database.execSQL("CREATE TABLE IF NOT EXISTS assessment_questions (`localId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `remoteId` INTEGER NOT NULL, `assessmentId` INTEGER NOT NULL, `text` TEXT NOT NULL, `sortOrder` INTEGER NOT NULL, `mediaUrl` TEXT NOT NULL, `mediaType` TEXT NOT NULL, `videoThumbnailUrl` TEXT, `choiceType` TEXT NOT NULL, `isAttempted` INTEGER NOT NULL, `status` TEXT NOT NULL, FOREIGN KEY(`assessmentId`) REFERENCES `assessments`(`remoteId`) ON UPDATE NO ACTION ON DELETE CASCADE )")
                 database.execSQL("CREATE INDEX IF NOT EXISTS `index_assessment_questions_assessmentId` ON `assessment_questions` (`assessmentId`)")
                 database.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS `index_assessment_questions_remoteId` ON `assessment_questions` (`remoteId`)")
 
-
                 database.execSQL("CREATE TABLE IF NOT EXISTS `assessment_choice` (`localId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `remoteId` INTEGER NOT NULL, `questionId` INTEGER NOT NULL, `text` TEXT, `imageUrl` TEXT, `isCorrect` INTEGER NOT NULL, `sortOrder` INTEGER NOT NULL, `correctAnswerOrder` INTEGER NOT NULL, `column` TEXT NOT NULL, `userSelectedOrder` INTEGER NOT NULL, `isSelectedByUser` INTEGER NOT NULL, FOREIGN KEY(`questionId`) REFERENCES `assessment_questions`(`remoteId`) ON UPDATE NO ACTION ON DELETE CASCADE )")
-                database.execSQL("CREATE INDEX IF NOT EXISTS `index_assessment_answer_questionId` ON `assessment_choice` (`questionId`)")
-                database.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS `index_assessment_answer_remoteId` ON `assessment_choice` (`remoteId`)")
+                database.execSQL("CREATE INDEX IF NOT EXISTS `index_assessment_choice_questionId` ON `assessment_choice` (`questionId`)")
+                database.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS `index_assessment_choice_remoteId` ON `assessment_choice` (`remoteId`)")
 
 
-                database.execSQL("CREATE TABLE IF NOT EXISTS `assessment_revise_concept` (`localId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `questionId` INTEGER NOT NULL, `heading` TEXT NOT NULL, `title` TEXT NOT NULL, `description` TEXT NOT NULL, `mediaUrl` TEXT NOT NULL, `mediaType` TEXT NOT NULL, `videoThumbnailUrl` TEXT, FOREIGN KEY(`questionId`) REFERENCES `assessment_questions`(`localId`) ON UPDATE NO ACTION ON DELETE CASCADE )")
+                database.execSQL("CREATE TABLE IF NOT EXISTS `assessment_revise_concept` (`localId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `questionId` INTEGER NOT NULL, `heading` TEXT NOT NULL, `title` TEXT NOT NULL, `description` TEXT NOT NULL, `mediaUrl` TEXT NOT NULL, `mediaType` TEXT NOT NULL, `videoThumbnailUrl` TEXT, FOREIGN KEY(`questionId`) REFERENCES `assessment_questions`(`remoteId`) ON UPDATE NO ACTION ON DELETE CASCADE )")
                 database.execSQL("CREATE INDEX IF NOT EXISTS `index_assessment_revise_concept_questionId` ON `assessment_revise_concept` (`questionId`)")
                 database.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS `index_assessment_revise_concept_localId` ON `assessment_revise_concept` (`localId`)")
 
 
-                database.execSQL("CREATE TABLE IF NOT EXISTS `assessment_intro` (`localId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `type` TEXT NOT NULL, `assessmentId` INTEGER NOT NULL, `title` TEXT, `description` TEXT, `imageUrl` TEXT, FOREIGN KEY(`assessmentId`) REFERENCES `assessments`(`localId`) ON UPDATE NO ACTION ON DELETE CASCADE )")
+                database.execSQL("CREATE TABLE IF NOT EXISTS `assessment_intro` (`localId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `type` TEXT NOT NULL, `assessmentId` INTEGER NOT NULL, `title` TEXT, `description` TEXT, `imageUrl` TEXT, FOREIGN KEY(`assessmentId`) REFERENCES `assessments`(`remoteId`) ON UPDATE NO ACTION ON DELETE CASCADE )")
                 database.execSQL("CREATE INDEX IF NOT EXISTS `index_assessment_intro_assessmentId` ON `assessment_intro` (`assessmentId`)")
                 database.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS `index_assessment_intro_localId` ON `assessment_intro` (`localId`)")
                 database.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS `index_assessment_intro_type` ON `assessment_intro` (`type`)")
+
             }
         }
 
