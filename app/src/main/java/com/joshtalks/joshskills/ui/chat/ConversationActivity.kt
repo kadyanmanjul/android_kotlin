@@ -832,7 +832,7 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
                 .addParam(
                     AnalyticsEvent.CHAT_LENGTH.NAME,
                     conversationBinding.chatEdit.text.toString().length
-                )
+                ).push()
             val tChatMessage =
                 TChatMessage(conversationBinding.chatEdit.text.toString())
             val cell = MessageBuilderFactory.getMessage(
@@ -1208,6 +1208,7 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
                                 .not())
                         )
                         .addParam("chatId", it.chatModel.chatId)
+                        .push()
                     PractiseSubmitActivity.startPractiseSubmissionActivity(
                         activityRef.get()!!,
                         PRACTISE_SUBMIT_REQUEST_CODE,
@@ -1244,6 +1245,7 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
+                    logUnlockCardEvent()
                     CoroutineScope(Dispatchers.Main).launch {
                         unlockViewHolder = null
                         conversationBinding.chatRv.removeView(it.viewHolder)
@@ -1274,6 +1276,14 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
         )
     }
 
+    private fun logUnlockCardEvent() {
+        AppAnalytics.create(AnalyticsEvent.UNLOCK_CARD_CLICKED.NAME)
+            .addBasicParam()
+            .addUserDetails()
+            .addParam(AnalyticsEvent.COURSE_NAME.NAME, inboxEntity.course_name)
+            .push()
+    }
+
     private fun analyticsAudioPlayed(
         audioType: AudioType?
     ) {
@@ -1288,7 +1298,7 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
             .addParam(
                 AnalyticsEvent.FLOW_FROM_PARAM.NAME,
                 this@ConversationActivity.javaClass.simpleName
-            )
+            ).push()
     }
 
     private fun refreshViewAtPos(chatObj: ChatModel, callback: () -> Unit = {}) {

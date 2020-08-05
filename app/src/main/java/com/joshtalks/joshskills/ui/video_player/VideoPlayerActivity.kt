@@ -383,6 +383,7 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
     }
 
     private fun initiatePlaySequence() {
+        logNextVideoTimerEvent()
         CoroutineScope(Dispatchers.Main).launch {
             binding.frameProgress.visibility = View.VISIBLE
             binding.toolbar.visibility = View.GONE
@@ -390,6 +391,20 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
             nextButtonVisible = true
             startProgress()
         }
+    }
+
+    private fun logNextVideoTimerEvent() {
+        AppAnalytics.create(AnalyticsEvent.NEXT_VIDEO_TIMER_STARTED.NAME)
+            .addBasicParam()
+            .addUserDetails()
+            .push()
+    }
+
+    private fun logNextVideoClickedEvent() {
+        AppAnalytics.create(AnalyticsEvent.NEXT_VIDEO_BUTTON_CLICKED.NAME)
+            .addBasicParam()
+            .addUserDetails()
+            .push()
     }
 
     private fun startProgress() {
@@ -429,6 +444,7 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
     }
 
     private fun pushPreviousAnalyticsEvents() {
+        logNextVideoClickedEvent()
         pushAnalyticsEvents(false)
         countUpTimer.reset()
         appAnalytics.addParam(AnalyticsEvent.VIDEO_ID.NAME, videoId)
