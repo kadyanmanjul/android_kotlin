@@ -276,9 +276,16 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         })
 
         txtConvert.setOnClickListener {
-            PaymentSummaryActivity.startPaymentSummaryActivity(this, "122")
+            logEvent(AnalyticsEvent.CONVERT_CLICKED.name)
+            PaymentSummaryActivity.startPaymentSummaryActivity(this, "122") // todo remove hardcode
         }
+    }
 
+    private fun logEvent(eventName: String) {
+        AppAnalytics.create(eventName)
+            .addBasicParam()
+            .addUserDetails()
+            .push()
     }
 
     private fun addCourseInRecyclerView(items: List<InboxEntity>?) {

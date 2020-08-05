@@ -16,6 +16,8 @@ import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.STARTED_FROM
+import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
+import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.databinding.ActivityStartSubscriptionBinding
 import com.joshtalks.joshskills.repository.local.model.ExploreCardType
 import com.joshtalks.joshskills.ui.payment.order_summary.PaymentSummaryActivity
@@ -59,6 +61,7 @@ class StartSubscriptionActivity : BaseActivity() {
             }
 
             ExploreCardType.FREETRIAL -> {
+                logEvent(AnalyticsEvent.SEVEN_DAY_POPUP.name)
                 binding.startBtn.text =
                     AppObjectController.getFirebaseRemoteConfig().getString("start_7_day_trial")
                 binding.txtHeading.text = getString(R.string.trial_heading)
@@ -69,6 +72,7 @@ class StartSubscriptionActivity : BaseActivity() {
             }
 
             ExploreCardType.SUBSCRIPTION -> {
+                logEvent(AnalyticsEvent.SUBSCRIPTION_POPUP.name)
                 binding.startBtn.text =
                     AppObjectController.getFirebaseRemoteConfig().getString("start_subscription")
                 binding.txtHeading.text = getString(R.string.subscription_heading)
@@ -88,6 +92,13 @@ class StartSubscriptionActivity : BaseActivity() {
 
     }
 
+    private fun logEvent(eventName: String) {
+        AppAnalytics.create(eventName)
+            .addBasicParam()
+            .addUserDetails()
+            .push()
+    }
+
     private fun addObservers() {
         binding.startBtn.setOnClickListener {
             when (exploreCardType) {
@@ -96,8 +107,12 @@ class StartSubscriptionActivity : BaseActivity() {
                     finish()
                 }
 
-                ExploreCardType.FREETRIAL,
+                ExploreCardType.FREETRIAL -> {
+                    logEvent(AnalyticsEvent.SEVEN_DAY_CLICKED.NAME)
+                    getSubscriptionDetails()
+                }
                 ExploreCardType.SUBSCRIPTION -> {
+                    logEvent(AnalyticsEvent.SUBSCRIPTION_BUTTON_CLICKED.NAME)
                     getSubscriptionDetails()
                 }
 
