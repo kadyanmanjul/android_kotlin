@@ -483,6 +483,3 @@ class ConvectorForNPSEvent {
         return AppObjectController.gsonMapper.fromJson(value, type)
     }
 }
-
-
-

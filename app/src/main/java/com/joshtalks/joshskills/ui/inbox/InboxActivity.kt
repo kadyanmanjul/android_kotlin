@@ -33,6 +33,7 @@ import com.joshtalks.joshskills.core.COURSE_ID
 import com.joshtalks.joshskills.core.CoreJoshActivity
 import com.joshtalks.joshskills.core.EXPLORE_TYPE
 import com.joshtalks.joshskills.core.IS_TRIAL_ENDED
+import com.joshtalks.joshskills.core.IS_TRIAL_STARTED
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.REMAINING_TRIAL_DAYS
 import com.joshtalks.joshskills.core.Utils
@@ -556,6 +557,9 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
     private fun setTrialEndParam(coursesList: List<InboxEntity>) {
         val trialCourse =
             coursesList.filter { it.courseId == TRIAL_COURSE_ID }.getOrNull(0)
+        if (trialCourse != null) {
+            PrefManager.put(IS_TRIAL_STARTED, true, true)
+        }
         val expiryTimeInMs =
             trialCourse?.courseCreatedDate?.time?.plus(
                 (trialCourse.duration ?: 7)
