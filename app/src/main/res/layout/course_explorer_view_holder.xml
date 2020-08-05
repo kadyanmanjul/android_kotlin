@@ -10,7 +10,7 @@
 
     <com.google.android.material.textview.MaterialTextView
             android:id="@+id/language_tag"
-            fontPath="fonts/OpenSans-SemiBold.ttf"
+            fontPath="fonts/OpenSans-Bold.ttf"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
@@ -20,7 +20,7 @@
             android:paddingEnd="@dimen/_4sdp"
             android:paddingBottom="@dimen/_8sdp"
             android:text="@string/courses_in_other_languages"
-            android:textSize="@dimen/font_16"
+            android:textSize="@dimen/font_18"
             card_view:layout_constraintEnd_toEndOf="parent"
             card_view:layout_constraintStart_toStartOf="parent"
             card_view:layout_constraintTop_toTopOf="parent" />
