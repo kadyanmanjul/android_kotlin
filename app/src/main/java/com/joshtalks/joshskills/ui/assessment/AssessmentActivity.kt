@@ -24,6 +24,8 @@ import com.joshtalks.joshskills.core.CoreJoshActivity
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.STARTED_FROM
 import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
+import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.ActivityAssessmentBinding
 import com.joshtalks.joshskills.messaging.RxBus2
@@ -186,6 +188,7 @@ class AssessmentActivity : CoreJoshActivity() {
 
                 }
                 AssessmentButtonClick.BACK_TO_SUMMARY -> {
+                    logBackToSummaryAnalyticEvent()
                     binding.buttonView.visibility = GONE
                     onBackPressed()
                 }
@@ -194,6 +197,7 @@ class AssessmentActivity : CoreJoshActivity() {
     }
 
     private fun onSubmit(assessmentQuestion: AssessmentQuestionWithRelations) {
+        logSubmitButtonAnalyticEvent(assessmentQuestion.question.choiceType)
         if (assessmentQuestion.question.choiceType == ChoiceType.FILL_IN_THE_BLANKS_TEXT)
             RxBus2.publish(FillInTheBlankSubmitEvent(assessmentQuestion.question.remoteId))
         else
@@ -202,6 +206,42 @@ class AssessmentActivity : CoreJoshActivity() {
         assessmentQuestion.question.status = evaluateQuestionStatus(assessmentQuestion)
         showToastForQuestion(assessmentQuestion)
         viewModel.saveAssessmentQuestion(assessmentQuestion)
+    }
+
+    private fun logReviseConceptEvent(questionId: Int, title: String) {
+        AppAnalytics.create(AnalyticsEvent.REVISE_CONCEPT_CLICKED.NAME)
+            .addBasicParam()
+            .addUserDetails()
+            .addParam(AnalyticsEvent.ASSESSMENT_ID.NAME,assessmentId)
+            .addParam(AnalyticsEvent.QUESTION_ID.name,questionId)
+            .addParam(AnalyticsEvent.TITLE.name,title)
+            .push()
+    }
+
+    private fun logNextButtonAnalyticEvent(choiceType: ChoiceType) {
+        AppAnalytics.create(AnalyticsEvent.ASSESSMENT_NEXT_BUTTON_CLICKED.NAME)
+            .addBasicParam()
+            .addUserDetails()
+            .addParam(AnalyticsEvent.ASSESSMENT_ID.NAME,assessmentId)
+            .addParam(AnalyticsEvent.OPTION_TYPE.NAME,choiceType.type)
+            .push()
+    }
+
+    private fun logSubmitButtonAnalyticEvent(choiceType: ChoiceType) {
+        AppAnalytics.create(AnalyticsEvent.ASSESSMENT_SUBMIT_BUTTON_CLICKED.NAME)
+            .addBasicParam()
+            .addUserDetails()
+            .addParam(AnalyticsEvent.ASSESSMENT_ID.NAME,assessmentId)
+            .addParam(AnalyticsEvent.OPTION_TYPE.NAME,choiceType.type)
+            .push()
+    }
+
+    private fun logBackToSummaryAnalyticEvent() {
+        AppAnalytics.create(AnalyticsEvent.BACK_TO_SUMMARY_CLICKED.NAME)
+            .addBasicParam()
+            .addUserDetails()
+            .addParam(AnalyticsEvent.ASSESSMENT_ID.NAME,assessmentId)
+            .push()
     }
 
     private fun evaluateQuestionStatus(assessmentQuestion: AssessmentQuestionWithRelations): QuestionStatus {
@@ -239,6 +279,7 @@ class AssessmentActivity : CoreJoshActivity() {
         assessmentQuestionWithRelations: AssessmentQuestionWithRelations,
         assessment: Assessment
     ) {
+        logNextButtonAnalyticEvent(assessmentQuestionWithRelations.question.choiceType)
         if (isLastQuestion) {
             if (assessmentType == AssessmentType.QUIZ) {
                 when (assessment.status) {
@@ -268,6 +309,7 @@ class AssessmentActivity : CoreJoshActivity() {
 
     private fun onReviseConcept(reviseConcept: ReviseConcept?) {
         reviseConcept?.let {
+            logReviseConceptEvent(reviseConcept.questionId,reviseConcept.title)
             showReviseConceptFragment(it)
         }
     }

@@ -12,6 +12,8 @@ import android.widget.TextView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
+import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.core.showToast
 import com.tonyodev.fetch2.Download
@@ -254,6 +256,7 @@ class AudioPlayerView : FrameLayout, View.OnClickListener, CurrentSessionCallbac
     }
 
     private fun initAndPlay(file: File) {
+        logAudioPlayedEvent(true)
         val audioMediaMetaData = MediaMetaData()
         audioMediaMetaData.mediaId = id
         audioMediaMetaData.mediaUrl = file.absolutePath
@@ -321,6 +324,7 @@ class AudioPlayerView : FrameLayout, View.OnClickListener, CurrentSessionCallbac
 
     private fun downloadAndPlay(url: String) {
         try {
+            logAudioPlayedEvent(false)
 
             val fileName = Random(1000).nextInt().toString().plus(Utils.getFileNameFromURL(url))
             val cacheFile = File(AppObjectController.createDefaultCacheDir(), fileName)
@@ -344,6 +348,14 @@ class AudioPlayerView : FrameLayout, View.OnClickListener, CurrentSessionCallbac
         } catch (ex: Exception) {
             ex.printStackTrace()
         }
+    }
+
+    private fun logAudioPlayedEvent(isDowloaded: Boolean) {
+        AppAnalytics.create(AnalyticsEvent.ASSESSMENT_AUDIO_PLAYED.NAME)
+            .addBasicParam()
+            .addUserDetails()
+            .addParam(AnalyticsEvent.IS_DOWNLOADED.name, isDowloaded)
+            .push()
     }
 
     private fun checkFileInCache(): File? {

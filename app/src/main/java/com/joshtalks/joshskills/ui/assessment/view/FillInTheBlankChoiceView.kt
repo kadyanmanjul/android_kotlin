@@ -19,6 +19,8 @@ import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 import com.google.android.material.textview.MaterialTextView
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
+import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.AssessmentButtonStateEvent
 import com.joshtalks.joshskills.repository.local.eventbus.FillInTheBlankSubmitEvent
@@ -106,12 +108,22 @@ class FillInTheBlankChoiceView : FrameLayout, OnChoiceClickListener {
     }
 
     private fun sortChoiceViaCorrectOrder() {
+        logSeeYourAnswerEvent()
         chipChoiceList.clear()
         assessmentQuestion?.choiceList?.sortedBy { it.correctAnswerOrder }?.forEach { choice ->
             choice.userSelectedOrder = choice.correctAnswerOrder
             chipChoiceList.add(choice)
         }
         seeAnswer.text = context.getString(R.string.see_your_answer)
+    }
+
+    private fun logSeeYourAnswerEvent() {
+        AppAnalytics.create(AnalyticsEvent.SEE_YOUR_ANSWER_CLICKED.NAME)
+            .addBasicParam()
+            .addUserDetails()
+            .addParam(AnalyticsEvent.ASSESSMENT_ID.NAME, assessment?.remoteId ?: -1)
+            .addParam(AnalyticsEvent.QUESTION_ID.NAME, assessmentQuestion?.question?.remoteId?:-1)
+            .push()
     }
 
     private fun sortChoiceViaUserOrder() {
@@ -286,6 +298,7 @@ class FillInTheBlankChoiceView : FrameLayout, OnChoiceClickListener {
 
     override fun onChoiceClick(choice: Choice) {
         if (assessmentQuestion?.question?.choiceType == ChoiceType.FILL_IN_THE_BLANKS_TEXT) {
+            logChoiceSelectedEvent(assessmentQuestion?.question?.choiceType)
             choicesChipGroup.forEach { view ->
                 if (choice.remoteId == view.id) {
                     view.visibility = View.VISIBLE
@@ -309,6 +322,13 @@ class FillInTheBlankChoiceView : FrameLayout, OnChoiceClickListener {
         }
     }
 
+    private fun logChoiceSelectedEvent(choiceType: ChoiceType?) {
+        AppAnalytics.create(AnalyticsEvent.OPTION_SELECTED.NAME)
+            .addBasicParam()
+            .addUserDetails()
+            .addParam(AnalyticsEvent.OPTION_TYPE.NAME, choiceType?.type ?: "NA")
+            .push()
+    }
 
     private fun onSubmit() {
         updateView()

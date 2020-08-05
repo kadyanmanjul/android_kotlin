@@ -75,6 +75,7 @@ class MiniExoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibilit
     }
 
     private var uri: Uri? = null
+    private var videoId: Int? = null
     private var lastPosition: Long = 0
     private var player: SimpleExoPlayer? = null
     private var trackSelector: DefaultTrackSelector? = null
@@ -299,7 +300,8 @@ class MiniExoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibilit
         }
     }
 
-    fun setUrl(url: String?, placeHolderUrl: String? = null) {
+    fun setUrl(url: String?, placeHolderUrl: String? = null, remoteId: Int) {
+        videoId=remoteId
         uri = Uri.parse(url)
         if (placeHolderUrl.isNullOrEmpty().not()) {
             setPlaceHolder(placeHolderUrl!!)
@@ -323,6 +325,7 @@ class MiniExoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibilit
     private fun initVideo() {
         uri?.let {
             player!!.prepare(VideoDownloadController.getInstance().getMediaSource(uri))
+            logVideoPlayedEvent(false)
         }
         player?.playWhenReady = true
         player?.playbackState
@@ -331,6 +334,15 @@ class MiniExoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibilit
             seekTo(lastPosition)
         }
         timeHandler.post(timeRunnable)
+    }
+
+    private fun logVideoPlayedEvent(videoResumed: Boolean) {
+        AppAnalytics.create(AnalyticsEvent.ASSESSMENT_VIDEO_PLAYED.NAME)
+            .addBasicParam()
+            .addUserDetails()
+            .addParam(AnalyticsEvent.VIDEO_ID.NAME,videoId.toString())
+            .addParam("video_resumed",videoResumed)
+            .push()
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
@@ -376,6 +388,7 @@ class MiniExoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibilit
 
     private fun resumePlayer() {
         player?.run {
+            logVideoPlayedEvent(true)
             playWhenReady = true
             playbackState
         }

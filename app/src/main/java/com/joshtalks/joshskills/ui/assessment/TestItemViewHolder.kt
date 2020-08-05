@@ -5,6 +5,8 @@ import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.res.ResourcesCompat
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
+import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.TestItemClickedEventBus
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionWithRelations
@@ -127,8 +129,32 @@ class TestItemViewHolder(
 
     @Click(R.id.test_button)
     fun onClick() {
-        RxBus2.publish(
+        if (status == AssessmentStatus.STARTED || status == AssessmentStatus.NOT_STARTED) {
+            logEditAnswerClickedEvent()
+        }
+        else{
+            logViewAnswerClickedEvent()
+        }
+            RxBus2.publish(
             TestItemClickedEventBus(questionWithRelations.question.remoteId)
         )
+    }
+
+    private fun logEditAnswerClickedEvent() {
+        AppAnalytics.create(AnalyticsEvent.EDIT_ANSWER_CLICKED.NAME)
+            .addBasicParam()
+            .addUserDetails()
+            .addParam(AnalyticsEvent.QUESTION_ID.NAME,questionWithRelations.question.remoteId)
+            .addParam(AnalyticsEvent.ASSESSMENT_ID.NAME,questionWithRelations.question.assessmentId)
+            .push()
+    }
+
+    private fun logViewAnswerClickedEvent() {
+        AppAnalytics.create(AnalyticsEvent.VIEW_ANSWER_CLICKED.NAME)
+            .addBasicParam()
+            .addUserDetails()
+            .addParam(AnalyticsEvent.QUESTION_ID.NAME,questionWithRelations.question.remoteId)
+            .addParam(AnalyticsEvent.ASSESSMENT_ID.NAME,questionWithRelations.question.assessmentId)
+            .push()
     }
 }

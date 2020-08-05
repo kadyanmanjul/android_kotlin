@@ -9,6 +9,8 @@ import com.crashlytics.android.Crashlytics
 import com.google.android.material.card.MaterialCardView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
+import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.repository.local.model.assessment.Assessment
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestion
 import com.joshtalks.joshskills.repository.local.model.assessment.Choice
@@ -75,8 +77,19 @@ class MCQChoiceViewHolder(
 
     @Click(R.id.choice_container)
     fun onClick() {
+        choiceData.imageUrl?.let {
+            logImageClickedEvent(choiceData)
+        }
         onClickListener.onChoiceClick(choiceData)
 
+    }
+
+    private fun logImageClickedEvent(choice: Choice) {
+        AppAnalytics.create(AnalyticsEvent.ASSESSMENT_IMAGE_CLICKED.NAME)
+            .addBasicParam()
+            .addUserDetails()
+            .addParam(AnalyticsEvent.CHOICE_ID.NAME,choice.remoteId)
+            .push()
     }
 
     private fun setColor() {

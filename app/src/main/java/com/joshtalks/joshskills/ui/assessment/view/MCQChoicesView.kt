@@ -9,6 +9,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.crashlytics.android.Crashlytics
 import com.esafirm.imagepicker.view.GridSpacingItemDecoration
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
+import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.custom_ui.SmoothLinearLayoutManager
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.AssessmentButtonStateEvent
@@ -151,6 +153,7 @@ class MCQChoicesView : FrameLayout, OnChoiceClickListener {
 
     override fun onChoiceClick(choice: Choice) {
         if (assessmentQuestion?.question?.isAttempted == false) {
+            logChoiceSelectedEvent(assessmentQuestion?.question?.choiceType)
             when (assessmentQuestion?.question?.choiceType) {
 
                 ChoiceType.SINGLE_SELECTION_TEXT, ChoiceType.SINGLE_SELECTION_IMAGE -> {
@@ -198,5 +201,12 @@ class MCQChoicesView : FrameLayout, OnChoiceClickListener {
         }
     }
 
+    private fun logChoiceSelectedEvent(choiceType: ChoiceType?) {
+        AppAnalytics.create(AnalyticsEvent.OPTION_SELECTED.NAME)
+            .addBasicParam()
+            .addUserDetails()
+            .addParam(AnalyticsEvent.OPTION_TYPE.NAME,choiceType?.type?:"NA")
+            .push()
+    }
 
 }

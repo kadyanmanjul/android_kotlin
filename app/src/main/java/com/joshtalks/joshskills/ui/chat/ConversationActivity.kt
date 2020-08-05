@@ -1234,6 +1234,7 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
+                    logAssessmentEvent(it.assessmentId)
                     AssessmentActivity.startAssessmentActivity(this, it.assessmentId)
                 }, {
                     it.printStackTrace()
@@ -1275,6 +1276,15 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
                     it.printStackTrace()
                 })
         )
+    }
+
+    private fun logAssessmentEvent(assessmentId: Int) {
+        AppAnalytics.create(AnalyticsEvent.QUIZ_TEST_OPENED.NAME)
+            .addBasicParam()
+            .addUserDetails()
+            .addParam(AnalyticsEvent.COURSE_NAME.NAME, inboxEntity.course_name)
+            .addParam(AnalyticsEvent.ASSESSMENT_ID.NAME, assessmentId.toString())
+            .push()
     }
 
     private fun logUnlockCardEvent() {

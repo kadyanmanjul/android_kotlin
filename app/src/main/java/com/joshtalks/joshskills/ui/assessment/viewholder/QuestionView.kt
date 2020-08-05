@@ -105,7 +105,7 @@ class QuestionView : FrameLayout {
                 AssessmentMediaType.VIDEO -> {
                     miniExoPlayerStub?.run {
                         if (this.resolved().not()) {
-                            this.get()?.setUrl(it.question.mediaUrl, it.question.videoThumbnailUrl)
+                            this.get()?.setUrl(it.question.mediaUrl, it.question.videoThumbnailUrl,it.question.remoteId)
                         }
                     }
                     return@let
