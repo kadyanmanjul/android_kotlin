@@ -228,41 +228,35 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val isTrialEnded = PrefManager.getBoolValue(IS_TRIAL_ENDED)
-        val exploreType = PrefManager.getStringValue(EXPLORE_TYPE, true)
-        if (isTrialEnded && exploreType == ExploreCardType.FREETRIAL.name) {
-            showTrialEndFragment()
-        } else {
-            if (intent.hasExtra(CHAT_ROOM_OBJECT)) {
-                flowFrom = "Inbox journey"
-                val temp = intent.getParcelableExtra(CHAT_ROOM_OBJECT) as InboxEntity?
-                if (temp == null) {
-                    this@ConversationActivity.finish()
-                    return
-                }
-                inboxEntity = temp
+        if (intent.hasExtra(CHAT_ROOM_OBJECT)) {
+            flowFrom = "Inbox journey"
+            val temp = intent.getParcelableExtra(CHAT_ROOM_OBJECT) as InboxEntity?
+            if (temp == null) {
+                this@ConversationActivity.finish()
+                return
             }
-            if (intent.hasExtra(UPDATED_CHAT_ROOM_OBJECT)) {
-                flowFrom = "Notification"
-                val temp = intent.getParcelableExtra(UPDATED_CHAT_ROOM_OBJECT) as InboxEntity?
-                if (temp == null) {
-                    this@ConversationActivity.finish()
-                    return
-                }
-                inboxEntity = temp
-            }
-            if (intent.hasExtra(HAS_COURSE_REPORT)) {
-                openCourseProgressListingScreen()
-            }
-
-            conversationBinding =
-                DataBindingUtil.setContentView(this, R.layout.activity_conversation)
-
-            conversationBinding.viewmodel = initViewModel()
-            conversationBinding.handler = this
-            activityRef = WeakReference(this)
-            init()
+            inboxEntity = temp
         }
+        if (intent.hasExtra(UPDATED_CHAT_ROOM_OBJECT)) {
+            flowFrom = "Notification"
+            val temp = intent.getParcelableExtra(UPDATED_CHAT_ROOM_OBJECT) as InboxEntity?
+            if (temp == null) {
+                this@ConversationActivity.finish()
+                return
+            }
+            inboxEntity = temp
+        }
+        if (intent.hasExtra(HAS_COURSE_REPORT)) {
+            openCourseProgressListingScreen()
+        }
+
+        conversationBinding =
+            DataBindingUtil.setContentView(this, R.layout.activity_conversation)
+
+        conversationBinding.viewmodel = initViewModel()
+        conversationBinding.handler = this
+        activityRef = WeakReference(this)
+        init()
     }
 
     override fun onNewIntent(mIntent: Intent) {
@@ -1763,9 +1757,15 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
 
     override fun onResume() {
         super.onResume()
-        conversationBinding.chatRv.refresh()
-        subscribeRXBus()
-        observeNetwork()
+        val isTrialEnded = PrefManager.getBoolValue(IS_TRIAL_ENDED)
+        val exploreType = PrefManager.getStringValue(EXPLORE_TYPE, true)
+        if (isTrialEnded && exploreType == ExploreCardType.FREETRIAL.name) {
+            showTrialEndFragment()
+        } else {
+            conversationBinding.chatRv.refresh()
+            subscribeRXBus()
+            observeNetwork()
+        }
     }
 
     override fun onPause() {
