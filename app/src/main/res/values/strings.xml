@@ -335,9 +335,9 @@
     <string name="loading_new_classess">Loading new classes...</string>
     <string name="start_now">Start Now</string>
     <string name="already_a_subscriber">Already a subscriber?</string>
-    <string name="trial_feature_3">Agar accha lage toh aap 7 days ke baad upgrade kar sakte hai for just 599!</string>
-    <string name="trial_feature_2">7 dino ke liye aap app ke saare courses unlimited access kar sakte hai</string>
-    <string name="trial_feature_1">ye pass aapko saare courses ka access dega for 7 days - completely free</string>
+    <string name="subscription_feature_3">Agar accha lage toh aap 7 days ke baad upgrade kar sakte hai for just 599!</string>
+    <string name="subscription_feature_2">7 dino ke liye aap app ke saare courses unlimited access kar sakte hai</string>
+    <string name="subscription_feature_1">ye pass aapko saare courses ka access dega for 7 days - completely free</string>
     <string name="unlimited_learning">Unlimited Learning</string>
     <string name="subscription_heading">India ka pehla subscription with</string>
     <string name="start_7_day_trial">Start 7-Day Free Trial</string>
@@ -351,5 +351,10 @@
     <string name="free_trial_ended">Free trial has ended</string>
     <string name="free_trial_last_day">Last day for free subsciption</string>
     <string name="free_trial_enjoy">Enjoy Your Free Trial!</string>
+    <string name="trial_heading"><![CDATA[Enroll in any course & learn for free]]></string>
+    <string name="trial_heading_main">First 7 Days Free</string>
+    <string name="trial_feature_1">Unlock the full Josh experience</string>
+    <string name="trial_feature_2">Never get bored with over 600 classes</string>
+    <string name="trial_feature_3"><![CDATA[Stay motivated with quizzes & tests]]></string>
 
 </resources>

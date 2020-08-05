@@ -85,6 +85,7 @@ import com.joshtalks.joshskills.ui.course_details.viewholder.SyllabusViewHolder
 import com.joshtalks.joshskills.ui.course_details.viewholder.TeacherDetailsViewHolder
 import com.joshtalks.joshskills.ui.extra.ImageShowFragment
 import com.joshtalks.joshskills.ui.payment.order_summary.PaymentSummaryActivity
+import com.joshtalks.joshskills.ui.subscription.SUBSCRIPTION_TEST_ID
 import com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity
 import com.joshtalks.joshskills.util.DividerItemDecoration
 import com.karumi.dexter.MultiplePermissionsReport
@@ -549,12 +550,28 @@ class CourseDetailsActivity : BaseActivity() {
     }
 
     fun buyCourse() {
-        logStartCourseAnalyticEvent()
-        PaymentSummaryActivity.startPaymentSummaryActivity(this, testId.toString())
+        val exploreTypeStr = PrefManager.getStringValue(EXPLORE_TYPE, true)
+        val discountedPrice =
+            viewModel.courseDetailsLiveData.value!!.paymentData.discountedAmount.substring(1)
+                .toDouble()
+        if (exploreTypeStr.isNotBlank()
+            && exploreTypeStr != ExploreCardType.NORMAL.name
+            && exploreTypeStr != ExploreCardType.FFCOURSE.name
+            && discountedPrice > 0.0
+        ) {
+            logStartCourseAnalyticEvent(SUBSCRIPTION_TEST_ID)
+            PaymentSummaryActivity.startPaymentSummaryActivity(
+                this,
+                SUBSCRIPTION_TEST_ID.toString()
+            )
+        } else {
+            logStartCourseAnalyticEvent(testId)
+            PaymentSummaryActivity.startPaymentSummaryActivity(this, testId.toString())
+        }
         appAnalytics.addParam(AnalyticsEvent.START_COURSE_NOW.NAME, "Clicked")
     }
 
-    private fun logStartCourseAnalyticEvent() {
+    private fun logStartCourseAnalyticEvent(testId: Int) {
         AppAnalytics.create(AnalyticsEvent.START_COURSE_NOW.NAME)
             .addBasicParam()
             .addUserDetails()

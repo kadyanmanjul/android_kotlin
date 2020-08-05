@@ -10,6 +10,9 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.databinding.FragmentTrialEndBottomsheetBinding
 import com.joshtalks.joshskills.ui.payment.order_summary.PaymentSummaryActivity
 
+const val SUBSCRIPTION_TEST_ID = 122
+const val TRIAL_TEST_ID = 13
+
 class TrialEndBottomSheetFragment : BottomSheetDialogFragment() {
 
     private lateinit var binding: FragmentTrialEndBottomsheetBinding
@@ -38,7 +41,10 @@ class TrialEndBottomSheetFragment : BottomSheetDialogFragment() {
     }
 
     fun unlockCourses() {
-        PaymentSummaryActivity.startPaymentSummaryActivity(requireActivity(), "122")
+        PaymentSummaryActivity.startPaymentSummaryActivity(
+            requireActivity(),
+            SUBSCRIPTION_TEST_ID.toString()
+        )
     }
 
     companion object {

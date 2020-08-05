@@ -288,11 +288,12 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         recycler_view_inbox.removeAllViews()
         val total = items.size
         items.forEachWithIndex { i, inbox ->
-            recycler_view_inbox.addView(
-                InboxViewHolder(
-                    inbox, total, i
+            if (inbox.courseId != SUBSCRIPTION_COURSE_ID && inbox.courseId != TRIAL_COURSE_ID)
+                recycler_view_inbox.addView(
+                    InboxViewHolder(
+                        inbox, total, i
+                    )
                 )
-            )
         }
         progress_bar.visibility = View.GONE
         addCourseExploreView()
@@ -560,7 +561,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
 
         expiryTimeInMs?.let {
             if (it <= currentTimeInMs) {
-                PrefManager.put(IS_TRIAL_ENDED, true)
+                PrefManager.put(IS_TRIAL_ENDED, true, true)
             }
             val remainingTrialDays =
                 (it.minus(currentTimeInMs))

@@ -89,12 +89,13 @@
                     app:srcCompat="@drawable/ic_green_tick" />
 
             <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+                    android:id="@+id/item1_txt"
                     fontPath="fonts/Poppins-Regular.ttf"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="5"
                     android:gravity="center|start"
-                    android:text="@string/trial_feature_1"
+                    android:text="@string/subscription_feature_1"
                     android:textColor="@color/black"
                     android:textSize="@dimen/font_14" />
 
@@ -120,12 +121,13 @@
                     app:srcCompat="@drawable/ic_green_tick" />
 
             <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+                    android:id="@+id/item2_txt"
                     fontPath="fonts/Poppins-Regular.ttf"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="5"
                     android:gravity="center|start"
-                    android:text="@string/trial_feature_2"
+                    android:text="@string/subscription_feature_2"
                     android:textColor="@color/black"
                     android:textSize="@dimen/font_14" />
 
@@ -151,12 +153,13 @@
                     app:srcCompat="@drawable/ic_green_tick" />
 
             <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+                    android:id="@+id/item3_txt"
                     fontPath="fonts/Poppins-Regular.ttf"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="5"
                     android:gravity="center|start"
-                    android:text="@string/trial_feature_3"
+                    android:text="@string/subscription_feature_3"
                     android:textColor="@color/black"
                     android:textSize="@dimen/font_14" />
 

@@ -61,11 +61,21 @@ class StartSubscriptionActivity : BaseActivity() {
             ExploreCardType.FREETRIAL -> {
                 binding.startBtn.text =
                     AppObjectController.getFirebaseRemoteConfig().getString("start_7_day_trial")
+                binding.txtHeading.text = getString(R.string.trial_heading)
+                binding.txtHeadingMain.text = getString(R.string.trial_heading_main)
+                binding.item1Txt.text = getString(R.string.trial_feature_1)
+                binding.item2Txt.text = getString(R.string.trial_feature_2)
+                binding.item3Txt.text = getString(R.string.trial_feature_3)
             }
 
             ExploreCardType.SUBSCRIPTION -> {
                 binding.startBtn.text =
                     AppObjectController.getFirebaseRemoteConfig().getString("start_subscription")
+                binding.txtHeading.text = getString(R.string.subscription_heading)
+                binding.txtHeadingMain.text = getString(R.string.unlimited_learning)
+                binding.item1Txt.text = getString(R.string.subscription_feature_1)
+                binding.item2Txt.text = getString(R.string.subscription_feature_2)
+                binding.item3Txt.text = getString(R.string.subscription_feature_3)
             }
 
             ExploreCardType.FFCOURSE -> {
