@@ -8,7 +8,7 @@ import androidx.databinding.DataBindingUtil
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.databinding.FragmentTrialEndBottomsheetBinding
-import com.joshtalks.joshskills.repository.local.model.ExploreCardType
+import com.joshtalks.joshskills.ui.payment.order_summary.PaymentSummaryActivity
 
 class TrialEndBottomSheetFragment : BottomSheetDialogFragment() {
 
@@ -38,7 +38,7 @@ class TrialEndBottomSheetFragment : BottomSheetDialogFragment() {
     }
 
     fun unlockCourses() {
-        StartSubscriptionActivity.startActivity(requireActivity(), 0, ExploreCardType.SUBSCRIPTION)
+        PaymentSummaryActivity.startPaymentSummaryActivity(requireActivity(), "122")
     }
 
     companion object {
