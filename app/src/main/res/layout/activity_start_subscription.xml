@@ -21,11 +21,12 @@
                 android:id="@+id/headerImage"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
+                android:scaleType="fitXY"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHeight_percent="0.4"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/feedback_rectangle" />
+                app:srcCompat="@drawable/start_subscription_banner" />
 
         <ImageButton
                 android:id="@+id/btnClose"
