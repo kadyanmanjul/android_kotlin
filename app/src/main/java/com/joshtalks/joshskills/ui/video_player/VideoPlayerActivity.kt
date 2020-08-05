@@ -352,7 +352,7 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
     }
 
     suspend fun checkInDbForNextVideo(inboxActivity: InboxEntity?) {
-        if(maxInterval==courseDuration) {
+        if(interval==courseDuration) {
             return
         }
         while (maxInterval > interval) {
