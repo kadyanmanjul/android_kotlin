@@ -25,6 +25,7 @@ import com.joshtalks.joshskills.core.analytics.UsbEventReceiver
 import com.joshtalks.joshskills.core.interfaces.UsbEventListener
 import com.joshtalks.joshskills.core.service.WorkMangerAdmin
 import com.joshtalks.joshskills.core.service.video_download.VideoDownloadController
+import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.core.videoplayer.VideoPlayerEventListener
 import com.joshtalks.joshskills.databinding.ActivityVideoPlayer1Binding
 import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
@@ -423,6 +424,7 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
             nextButtonVisible = false
             searchingNextUrl = false
             pushPreviousAnalyticsEvents()
+            showToast("Next Class Started")
         }
     }
 
