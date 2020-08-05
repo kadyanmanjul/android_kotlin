@@ -215,41 +215,7 @@ class CourseExploreActivity : CoreJoshActivity() {
                             courseExploreModel.language?.let { languageSet.add(it.capitalize()) }
                             courseList.add(courseExploreModel)
                         } else {
-                            val headerImage = findViewById<AppCompatImageView>(R.id.image_view)
-                            val headerBuyNowBtn = findViewById<MaterialButton>(R.id.buy_now_button)
-                            val headerContainer = findViewById<View>(R.id.courseListHeader)
-
-                            headerContainer.visibility = View.VISIBLE
-                            try {
-                                Glide.with(this@CourseExploreActivity)
-                                    .load(courseExploreModel.imageUrl)
-                                    .override(Target.SIZE_ORIGINAL)
-                                    .optionalTransform(
-                                        WebpDrawable::class.java,
-                                        WebpDrawableTransformation(CircleCrop())
-                                    )
-                                    .into(headerImage)
-                            } catch (ex: Exception) {
-                                Crashlytics.logException(ex)
-                            }
-                            if (courseExploreModel.isClickable) {
-                                headerBuyNowBtn.visibility = View.VISIBLE
-                                headerBuyNowBtn.text =
-                                    AppObjectController.getFirebaseRemoteConfig()
-                                        .getString("show_details_label")
-
-                                headerBuyNowBtn.setOnClickListener {
-                                    RxBus2.publish(courseExploreModel)
-                                }
-
-                                headerImage.setOnClickListener {
-                                    RxBus2.publish(courseExploreModel)
-                                }
-                            } else {
-                                headerBuyNowBtn.visibility = View.GONE
-                                headerImage.isClickable = false
-                                headerImage.isFocusable = false
-                            }
+                            setSubscriptionHeaderView(courseExploreModel)
                         }
                         courseExploreModel.language?.let {
                             //Creating language set for filter option chips
@@ -268,7 +234,6 @@ class CourseExploreActivity : CoreJoshActivity() {
                                 languageMap.put(it.capitalize(), newLanguageCourse)
                             }
                         }
-                        courseList.add(courseExploreModel)
                     }
 
                     languageList = languageSet.toMutableList()
@@ -363,8 +328,7 @@ class CourseExploreActivity : CoreJoshActivity() {
         language_chip_group.setOnCheckedChangeListener { group, checkedId ->
             if (checkedId == -1) {
                 selectedLanguage = EMPTY
-            }
-            else {
+            } else {
                 selectedLanguage = languageList.filter { languageList.indexOf(it) == checkedId }[0]
                 logChipSelectedEvent(selectedLanguage)
             }
@@ -376,7 +340,7 @@ class CourseExploreActivity : CoreJoshActivity() {
         AppAnalytics.create(AnalyticsEvent.LANGUAGE_FILTER_CLICKED.NAME)
             .addUserDetails()
             .addBasicParam()
-            .addParam(AnalyticsEvent.LANGUAGE_SELECTED.name,selectedLanguage)
+            .addParam(AnalyticsEvent.LANGUAGE_SELECTED.name, selectedLanguage)
             .push()
     }
 
@@ -422,6 +386,44 @@ class CourseExploreActivity : CoreJoshActivity() {
         val resultIntent = Intent()
         setResult(Activity.RESULT_CANCELED, resultIntent)
         this.finish()
+    }
+
+    private fun setSubscriptionHeaderView(courseExploreModel: CourseExploreModel) {
+        val headerImage = findViewById<AppCompatImageView>(R.id.image_view)
+        val headerBuyNowBtn = findViewById<MaterialButton>(R.id.buy_now_button)
+        val headerContainer = findViewById<View>(R.id.courseListHeader)
+
+        headerContainer.visibility = View.VISIBLE
+        try {
+            Glide.with(this@CourseExploreActivity)
+                .load(courseExploreModel.imageUrl)
+                .override(Target.SIZE_ORIGINAL)
+                .optionalTransform(
+                    WebpDrawable::class.java,
+                    WebpDrawableTransformation(CircleCrop())
+                )
+                .into(headerImage)
+        } catch (ex: Exception) {
+            Crashlytics.logException(ex)
+        }
+        if (courseExploreModel.isClickable) {
+            headerBuyNowBtn.visibility = View.VISIBLE
+            headerBuyNowBtn.text =
+                AppObjectController.getFirebaseRemoteConfig()
+                    .getString("show_details_label")
+
+            headerBuyNowBtn.setOnClickListener {
+                RxBus2.publish(courseExploreModel)
+            }
+
+            headerImage.setOnClickListener {
+                RxBus2.publish(courseExploreModel)
+            }
+        } else {
+            headerBuyNowBtn.visibility = View.GONE
+            headerImage.isClickable = false
+            headerImage.isFocusable = false
+        }
     }
 
 }
