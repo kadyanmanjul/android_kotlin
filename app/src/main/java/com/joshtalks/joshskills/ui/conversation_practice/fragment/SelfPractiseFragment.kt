@@ -15,6 +15,8 @@ import com.joshtalks.joshskills.core.ALPHA_MAX
 import com.joshtalks.joshskills.core.ALPHA_MIN
 import com.joshtalks.joshskills.core.PractiseUser
 import com.joshtalks.joshskills.core.ViewTypeForPractiseUser
+import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
+import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.custom_ui.SmoothLinearLayoutManager
 import com.joshtalks.joshskills.core.custom_ui.decorator.LayoutMarginDecoration
 import com.joshtalks.joshskills.core.custom_ui.exo_audio_player.AudioModel
@@ -74,6 +76,24 @@ class SelfPractiseFragment private constructor() : Fragment(), AudioPlayerEventL
         initView()
         initRV()
         initAudioList()
+        logSelfPractiseAnalyticsEvents()
+    }
+
+    private fun logSelfPractiseAnalyticsEvents() {
+        AppAnalytics.create(AnalyticsEvent.PRACTISE_OPENED.NAME)
+            .addBasicParam()
+            .addUserDetails()
+            .addParam("flow", "Conversational prac")
+            .push()
+    }
+
+    private fun logPatnerSelectedEvent(patner: String) {
+        AppAnalytics.create(AnalyticsEvent.PATNER_SELECTED.NAME)
+            .addBasicParam()
+            .addUserDetails()
+            .addParam("patner side",patner)
+            .addParam("flow", "self practise")
+            .push()
     }
 
     private fun initView() {
@@ -164,6 +184,7 @@ class SelfPractiseFragment private constructor() : Fragment(), AudioPlayerEventL
             filterProperty(ViewTypeForPractiseUser.FIRST.type)
             initAudioPlayer(PractiseUser.FIRST)
         }
+        logPatnerSelectedEvent("first")
     }
 
     fun practiseWithSecondUser() {
@@ -179,6 +200,7 @@ class SelfPractiseFragment private constructor() : Fragment(), AudioPlayerEventL
             filterProperty(ViewTypeForPractiseUser.SECOND.type)
             initAudioPlayer(PractiseUser.SECOND)
         }
+        logPatnerSelectedEvent("second")
     }
 
     private fun resetPlayer() {

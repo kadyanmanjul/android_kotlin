@@ -1238,7 +1238,6 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
                     it.printStackTrace()
                 })
         )
-
     }
 
     private fun analyticsAudioPlayed(

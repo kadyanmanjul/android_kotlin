@@ -24,6 +24,8 @@ import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.PermissionUtils
 import com.joshtalks.joshskills.core.PractiseUser
 import com.joshtalks.joshskills.core.ViewTypeForPractiseUser
+import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
+import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.custom_ui.SmoothLinearLayoutManager
 import com.joshtalks.joshskills.core.custom_ui.decorator.LayoutMarginDecoration
 import com.joshtalks.joshskills.core.custom_ui.exo_audio_player.AudioModel
@@ -92,6 +94,32 @@ class RecordPractiseFragment private constructor() : Fragment(), AudioPlayerEven
         initRV()
         initView()
         initAudioList()
+        logRecordPractiseAnalyticsEvents()
+    }
+
+    private fun logRecordPractiseAnalyticsEvents() {
+        AppAnalytics.create(AnalyticsEvent.RECORD_OPENED.NAME)
+            .addBasicParam()
+            .addUserDetails()
+            .addParam("flow", "Conversational prac")
+            .push()
+    }
+
+    private fun logPatnerSelectedEvent(patner: String) {
+        AppAnalytics.create(AnalyticsEvent.PATNER_SELECTED.NAME)
+            .addBasicParam()
+            .addUserDetails()
+            .addParam("patner side",patner)
+            .addParam("flow", "record practise")
+            .push()
+    }
+
+    private fun logRecordStartedEvent() {
+        AppAnalytics.create(AnalyticsEvent.RECORD_STARTED.NAME)
+            .addBasicParam()
+            .addUserDetails()
+            .addParam("flow", "record practise")
+            .push()
     }
 
     private fun initView() {
@@ -217,6 +245,7 @@ class RecordPractiseFragment private constructor() : Fragment(), AudioPlayerEven
             filterProperty(ViewTypeForPractiseUser.FIRST.type)
             initAudioPlayer(PractiseUser.FIRST)
         }
+        logPatnerSelectedEvent("first")
     }
 
     fun practiseWithSecondUser() {
@@ -234,6 +263,7 @@ class RecordPractiseFragment private constructor() : Fragment(), AudioPlayerEven
             filterProperty(ViewTypeForPractiseUser.SECOND.type)
             initAudioPlayer(PractiseUser.SECOND)
         }
+        logPatnerSelectedEvent("second")
     }
 
 
@@ -319,6 +349,7 @@ class RecordPractiseFragment private constructor() : Fragment(), AudioPlayerEven
                     RxBus2.publish(ViewPagerDisableEventBus(true))
                     viewModel.isRecordingRunning = true
                     binding.audioPlayer.onPlay()
+                    logRecordStartedEvent()
                 }
 
                 override fun onException(e: Exception?) {

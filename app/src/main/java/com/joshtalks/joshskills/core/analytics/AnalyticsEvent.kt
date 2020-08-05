@@ -350,6 +350,66 @@ enum class AnalyticsEvent(val NAME: String) {
     QNA_CARD_CLICKED("qna_card_clicked v3"),
     QNA_QUESTION_CLICKED("qna_question_clicked v3"),
     LANDING_SCREEN("landing screen v3"),
-    DEMO_VIDEO_PLAYED("demo video played V3")
+    DEMO_VIDEO_PLAYED("demo video played V3"),
+
+    //unlock Next class events
+
+    NEXT_VIDEO_TIMER_STARTED("next video timer started v3"),
+    NEXT_VIDEO_BUTTON_CLICKED("next video button clicked v3"),
+    UNLOCK_CARD_CLICKED("unlock card clicked v3"),
+
+    //Explore language filter
+    LANGUAGE_FILTER_CLICKED("language filter clicked v3"),
+    LANGUAGE_SELECTED("language selected v3"),
+
+
+    //Assessment events
+    ASSESSMENT_ID("assessment id v3"),
+    QUESTION_ID("question id v3"),
+    CHOICE_ID("choice id v3"),
+    TITLE("title id v3"),
+    QUIZ_TEST_OPENED("quiz or test opened v3"),
+    IS_DOWNLOADED("is downloaded v3"),
+    OPTION_SELECTED("option selected v3"),
+    OPTION_TYPE("option type v3"),
+    ASSESSMENT_VIDEO_PLAYED("assessment video played v3"),
+    ASSESSMENT_AUDIO_PLAYED("assessment audio played v3"),
+    ASSESSMENT_IMAGE_CLICKED("assessment image clicked v3"),
+    REVISE_CONCEPT_CLICKED("revise concept clicked v3"),
+    BACK_TO_QUESTION_CLICKED("back to question clicked v3"), //TODO later
+    BACK_TO_COURSE_CLICKED("back to course clicked v3"),
+    BACK_TO_SUMMARY_CLICKED("back to summary clicked v3"),
+    NAVIGATION_BAR_CLICKED("navigation bar clicked v3"), // todo
+    EDIT_ANSWER_CLICKED("edit answer clicked v3"),
+    VIEW_ANSWER_CLICKED("view answer clicked v3"),
+    ASSESSMENT_CROSS_CLICKED("assessment cross clicked v3"), // todo which one ?
+    ASSESSMENT_NEXT_BUTTON_CLICKED("assessment next button clicked v3"),
+    ASSESSMENT_SUBMIT_BUTTON_CLICKED("assessment submit button clicked v3"),
+    SEE_YOUR_ANSWER_CLICKED("see your answer clicked v3"),
+
+    // Subscription events
+    FREE_COURSE_CLICKED("Free Course Clicked clicked v3"),
+    FREE_COURSE_POPUP("Free Course Popup v3"),
+    SEVEN_DAY_POPUP("7Day Popup v3"),
+    SEVEN_DAY_CLICKED("7Day clicked v3"),
+    SEVEN_DAY_TRIAL_OVER("7Day trial over v3"),
+    CONVERT_CLICKED("convert clicked v3"),
+    EXPLORE_TYPE("explore_type"),
+
+    //CONVERSATION PRACTISE EVENTS
+
+    CONVERSATION_PRACTISE_STARTED("conv prac started v3"),
+    CONVERSATION_PRACTISE_TAP_TO_START("conv prac tap to continue v3"),
+    CONVERSATION_PRACTISE_SUBMITTED("conv prac submitted v3"),
+    CONVERSATION_PRACTISE_ID("conv prac id v3"),
+    CONVO_OPTION_SELECTED("conv prac option selected v3"),
+    CONVERSATION_PLAY_BACK("conv play back v3"),
+    PRACTISE_OPENED("prac opened v3"),
+    PATNER_SELECTED("patner selected v3"),
+    RECORD_OPENED("record opened v3"),
+    RECORD_STARTED("record started v3"),
+    RECORD_SHARED("recording shared v3"),
+    CON_QUIZ_SUBMIT_BUTTON_CLICKED("conv prac quiz submit clicked v3"),
+    CON_RECORDING_SUBMITTED("conv recording submitted v3"),
 
 }

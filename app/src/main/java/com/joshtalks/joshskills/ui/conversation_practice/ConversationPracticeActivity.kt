@@ -15,6 +15,8 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.ApiCallStatus
 import com.joshtalks.joshskills.core.CoreJoshActivity
 import com.joshtalks.joshskills.core.ViewTypeForPractiseUser
+import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
+import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.custom_ui.FullScreenProgressDialog
 import com.joshtalks.joshskills.databinding.ActivityConversationPractice2Binding
 import com.joshtalks.joshskills.messaging.RxBus2
@@ -55,6 +57,15 @@ class ConversationPracticeActivity : CoreJoshActivity() {
             practiseId = this
             viewModel.fetchConversationPractice(this)
         }
+        logConversationPracticeEvent(practiseId)
+    }
+
+    private fun logConversationPracticeEvent(id: String) {
+        AppAnalytics.create(AnalyticsEvent.CONVERSATION_PRACTISE_STARTED.NAME)
+            .addBasicParam()
+            .addUserDetails()
+            .addParam(AnalyticsEvent.CONVERSATION_PRACTISE_ID.NAME,id)
+            .push()
     }
 
     private fun addObserver() {

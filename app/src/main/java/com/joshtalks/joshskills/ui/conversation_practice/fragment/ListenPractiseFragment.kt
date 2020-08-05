@@ -7,6 +7,8 @@ import android.view.ViewGroup
 import android.view.animation.OvershootInterpolator
 import androidx.fragment.app.Fragment
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
+import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.custom_ui.SmoothLinearLayoutManager
 import com.joshtalks.joshskills.core.custom_ui.decorator.LayoutMarginDecoration
 import com.joshtalks.joshskills.core.custom_ui.exo_audio_player.AudioModel
@@ -67,11 +69,20 @@ class ListenPractiseFragment private constructor() : Fragment(), AudioPlayerEven
             }
         }
         placeholder_bg.setOnClickListener {
+            logConversationTapToContinueEvent(conversationPractiseModel.id.toString())
             placeholder_bg.visibility = View.GONE
             audio_container.visibility = View.VISIBLE
             placeholder_bg.setImageResource(0)
             initAudioPlayer()
         }
+    }
+
+    private fun logConversationTapToContinueEvent(id: String) {
+        AppAnalytics.create(AnalyticsEvent.CONVERSATION_PRACTISE_TAP_TO_START.NAME)
+            .addBasicParam()
+            .addUserDetails()
+            .addParam(AnalyticsEvent.CONVERSATION_PRACTISE_ID.NAME,id)
+            .push()
     }
 
     private fun initRV() {
@@ -97,11 +108,22 @@ class ListenPractiseFragment private constructor() : Fragment(), AudioPlayerEven
         audio_player.setAudioPlayerEventListener(this)
     }
 
+
+    private fun logConversationPracticeAudioEvent(isResumed: Boolean) {
+        AppAnalytics.create(AnalyticsEvent.CONVERSATION_PLAY_BACK.NAME)
+            .addBasicParam()
+            .addUserDetails()
+            .addParam(AnalyticsEvent.AUDIO_PLAYING_STATUS.NAME, isResumed)
+            .push()
+    }
+
     override fun onPlayerPause() {
+        logConversationPracticeAudioEvent(false)
         RxBus2.publish(ViewPagerDisableEventBus(false))
     }
 
     override fun onPlayerResume() {
+        logConversationPracticeAudioEvent(true)
         RxBus2.publish(ViewPagerDisableEventBus(true))
     }
 

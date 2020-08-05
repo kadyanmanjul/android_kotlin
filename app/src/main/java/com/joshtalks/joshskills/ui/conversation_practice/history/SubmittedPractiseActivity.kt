@@ -8,6 +8,8 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.CoreJoshActivity
+import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
+import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.custom_ui.decorator.LayoutMarginDecoration
 import com.joshtalks.joshskills.core.custom_ui.exo_audio_player.AudioModel
 import com.joshtalks.joshskills.core.custom_ui.exo_audio_player.AudioPlayerEventListener
@@ -58,8 +60,17 @@ class SubmittedPractiseActivity : CoreJoshActivity(), AudioPlayerEventListener {
             viewModel.fetchAllSubmittedConversation(this)
 
         }
+        logConvoRecordSubmittedEvent()
     }
 
+
+    private fun logConvoRecordSubmittedEvent() {
+        AppAnalytics.create(AnalyticsEvent.CON_RECORDING_SUBMITTED.NAME)
+            .addBasicParam()
+            .addUserDetails()
+            .addParam("flow", "record practise")
+            .push()
+    }
 
     private fun setupUI() {
         iv_back.setOnClickListener {

@@ -11,6 +11,8 @@ import androidx.viewpager2.widget.ViewPager2
 import androidx.viewpager2.widget.ViewPager2.ORIENTATION_VERTICAL
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
+import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.FragmentQuizPractiseBinding
 import com.joshtalks.joshskills.messaging.RxBus2
@@ -80,6 +82,34 @@ class QuizPractiseFragment private constructor() : Fragment(), OnChoiceClickList
             }
         })
         binding.totalQuestionTv.text = quizModelList.size.toString()
+        logQuizAnalyticsEvents()
+    }
+
+    private fun logQuizAnalyticsEvents() {
+        AppAnalytics.create(AnalyticsEvent.QUIZ_TEST_OPENED.NAME)
+            .addBasicParam()
+            .addUserDetails()
+            .addParam("flow", "Conversational prac")
+            .push()
+    }
+
+
+    private fun logChoiceSelectedEvent(answersModelID: String) {
+        AppAnalytics.create(AnalyticsEvent.CONVO_OPTION_SELECTED.NAME)
+            .addBasicParam()
+            .addUserDetails()
+            .addParam(AnalyticsEvent.OPTION_TYPE.NAME,answersModelID)
+            .addParam("flow", "Conversational prac")
+            .push()
+    }
+
+    private fun logSubmitButtonAnalyticEvent(answersModelID: String) {
+        AppAnalytics.create(AnalyticsEvent.CON_QUIZ_SUBMIT_BUTTON_CLICKED.NAME)
+            .addBasicParam()
+            .addUserDetails()
+            .addParam(AnalyticsEvent.CHOICE_ID.NAME,answersModelID)
+            .addParam("flow", "Conversational prac")
+            .push()
     }
 
     fun submit() {
@@ -103,13 +133,15 @@ class QuizPractiseFragment private constructor() : Fragment(), OnChoiceClickList
             quizModel.answersModel.listIterator().forEach {
                 it.isEvaluate = true
             }
+            logSubmitButtonAnalyticEvent(quizModel.id.toString())
             binding.viewPager.adapter?.notifyDataSetChanged()
             isEvaluate = true
             btnTextSetup()
         }
     }
 
-    override fun onChoiceSelectListener() {
+    override fun onChoiceSelectListener(answersModelId: Int) {
+        logChoiceSelectedEvent(answersModelId.toString())
         binding.btnSubmit.isEnabled = true
         binding.btnSubmit.isClickable = true
         binding.btnSubmit.backgroundTintList = ContextCompat.getColorStateList(

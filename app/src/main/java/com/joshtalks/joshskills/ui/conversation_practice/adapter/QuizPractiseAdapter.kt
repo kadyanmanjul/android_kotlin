@@ -66,7 +66,7 @@ class QuizPractiseAdapter(
             items[bindingAdapterPosition].answersModel.listIterator()
                 .forEach { it.isSelectedByUser = false }
             answersModel.isSelectedByUser = true
-            listener?.onChoiceSelectListener()
+            listener?.onChoiceSelectListener(answersModel.id)
             binding.rvChoice.refresh()
         }
     }
@@ -78,7 +78,7 @@ interface OnChoiceClickListener {
 }
 
 interface OnChoiceClickListener2 {
-    fun onChoiceSelectListener()
+    fun onChoiceSelectListener(answersModelID: Int)
 
 }
 
