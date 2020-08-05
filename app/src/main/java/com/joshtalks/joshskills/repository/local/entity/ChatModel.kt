@@ -597,7 +597,7 @@ interface ChatDao {
                 return question.interval
             }
         }
-        return -1
+        return 0
     }
 
     @Query("SELECT * FROM question_table WHERE course_id= :course_id AND interval=:interval")
