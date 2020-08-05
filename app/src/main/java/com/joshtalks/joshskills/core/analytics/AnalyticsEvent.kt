@@ -395,6 +395,8 @@ enum class AnalyticsEvent(val NAME: String) {
     SEVEN_DAY_TRIAL_OVER("7Day trial over v3"),
     CONVERT_CLICKED("convert clicked v3"),
     EXPLORE_TYPE("explore_type"),
+    SUBSCRIPTION_BUTTON_CLICKED("subscription_button_clicked"),
+    SUBSCRIPTION_POPUP("SUBSCRIPTION_POPUP"),
 
     //CONVERSATION PRACTISE EVENTS
 
