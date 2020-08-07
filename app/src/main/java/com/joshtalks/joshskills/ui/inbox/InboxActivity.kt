@@ -32,6 +32,7 @@ import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.COURSE_ID
 import com.joshtalks.joshskills.core.CoreJoshActivity
 import com.joshtalks.joshskills.core.EXPLORE_TYPE
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
 import com.joshtalks.joshskills.core.IS_TRIAL_ENDED
 import com.joshtalks.joshskills.core.IS_TRIAL_STARTED
 import com.joshtalks.joshskills.core.PrefManager
@@ -129,10 +130,31 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
 
         val remainingTrialDays = PrefManager.getIntValue(REMAINING_TRIAL_DAYS, true)
         when {
-            remainingTrialDays < 0 -> txtSubscriptionTip.text = getString(R.string.free_trial_ended)
-            remainingTrialDays == 0 -> txtSubscriptionTip.text =
-                getString(R.string.free_trial_last_day)
-            remainingTrialDays > 0 -> txtSubscriptionTip.text = getString(R.string.free_trial_enjoy)
+
+            remainingTrialDays < 0 -> AppObjectController.getFirebaseRemoteConfig()
+                .getString(FirebaseRemoteConfigKey.SUBSCRIPTION_TRIAL_TIP_DAY7)
+
+            remainingTrialDays == 1 -> txtSubscriptionTip.text =
+                AppObjectController.getFirebaseRemoteConfig()
+                    .getString(FirebaseRemoteConfigKey.SUBSCRIPTION_TRIAL_TIP_DAY6)
+
+            remainingTrialDays == 2 -> AppObjectController.getFirebaseRemoteConfig()
+                .getString(FirebaseRemoteConfigKey.SUBSCRIPTION_TRIAL_TIP_DAY5)
+
+            remainingTrialDays == 3 -> AppObjectController.getFirebaseRemoteConfig()
+                .getString(FirebaseRemoteConfigKey.SUBSCRIPTION_TRIAL_TIP_DAY4)
+
+            remainingTrialDays == 4 -> AppObjectController.getFirebaseRemoteConfig()
+                .getString(FirebaseRemoteConfigKey.SUBSCRIPTION_TRIAL_TIP_DAY3)
+
+            remainingTrialDays == 5 -> AppObjectController.getFirebaseRemoteConfig()
+                .getString(FirebaseRemoteConfigKey.SUBSCRIPTION_TRIAL_TIP_DAY2)
+
+            remainingTrialDays == 6 -> AppObjectController.getFirebaseRemoteConfig()
+                .getString(FirebaseRemoteConfigKey.SUBSCRIPTION_TRIAL_TIP_DAY1)
+
+            remainingTrialDays > 6 -> AppObjectController.getFirebaseRemoteConfig()
+                .getString(FirebaseRemoteConfigKey.SUBSCRIPTION_TRIAL_TIP_DAY0)
         }
 
     }
@@ -322,7 +344,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe {
-                 openCourseExplorer()
+                openCourseExplorer()
             })
         compositeDisposable.add(RxBus2.listen(NPSEventGenerateEventBus::class.java)
             .subscribeOn(Schedulers.io())
@@ -581,11 +603,11 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
     }
 
     private fun logTrailEventExpired() {
-        if(PrefManager.getBoolValue(IS_TRIAL_ENDED,true).not()){
-         AppAnalytics.create(AnalyticsEvent.SEVEN_DAY_TRIAL_OVER.NAME)
-             .addBasicParam()
-             .addUserDetails()
-             .push()
+        if (PrefManager.getBoolValue(IS_TRIAL_ENDED, true).not()) {
+            AppAnalytics.create(AnalyticsEvent.SEVEN_DAY_TRIAL_OVER.NAME)
+                .addBasicParam()
+                .addUserDetails()
+                .push()
         }
     }
 

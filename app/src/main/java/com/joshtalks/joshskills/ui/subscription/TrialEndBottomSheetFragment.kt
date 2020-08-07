@@ -7,6 +7,8 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
 import com.joshtalks.joshskills.databinding.FragmentTrialEndBottomsheetBinding
 import com.joshtalks.joshskills.ui.payment.order_summary.PaymentSummaryActivity
 
@@ -30,6 +32,15 @@ class TrialEndBottomSheetFragment : BottomSheetDialogFragment() {
         binding.lifecycleOwner = this
         binding.handler = this
         return binding.root
+    }
+
+    override fun onResume() {
+        super.onResume()
+        binding.txtTrailEndMsg.text = AppObjectController.getFirebaseRemoteConfig()
+            .getString(FirebaseRemoteConfigKey.TRAIL_END_SCREEN_MESSAGE)
+
+        binding.btnUnlock.text = AppObjectController.getFirebaseRemoteConfig()
+            .getString(FirebaseRemoteConfigKey.TRAIL_END_SCREEN_CTA_LABEL)
     }
 
     fun cancel() {

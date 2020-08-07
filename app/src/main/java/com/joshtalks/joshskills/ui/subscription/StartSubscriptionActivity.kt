@@ -15,6 +15,7 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
 import com.joshtalks.joshskills.core.STARTED_FROM
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
@@ -63,23 +64,35 @@ class StartSubscriptionActivity : BaseActivity() {
             ExploreCardType.FREETRIAL -> {
                 logEvent(AnalyticsEvent.SEVEN_DAY_POPUP.name)
                 binding.startBtn.text =
-                    AppObjectController.getFirebaseRemoteConfig().getString("start_7_day_trial")
-                binding.txtHeading.text = getString(R.string.trial_heading)
-                binding.txtHeadingMain.text = getString(R.string.trial_heading_main)
-                binding.item1Txt.text = getString(R.string.trial_feature_1)
-                binding.item2Txt.text = getString(R.string.trial_feature_2)
-                binding.item3Txt.text = getString(R.string.trial_feature_3)
+                    AppObjectController.getFirebaseRemoteConfig()
+                        .getString(FirebaseRemoteConfigKey.START_TRIAL_CTA_LABEL)
+                binding.txtHeading.text = AppObjectController.getFirebaseRemoteConfig()
+                    .getString(FirebaseRemoteConfigKey.START_TRAIL_TITLE)
+                binding.txtHeadingMain.text = AppObjectController.getFirebaseRemoteConfig()
+                    .getString(FirebaseRemoteConfigKey.START_TRAIL_HEADING)
+                binding.item1Txt.text = AppObjectController.getFirebaseRemoteConfig()
+                    .getString(FirebaseRemoteConfigKey.START_TRAIL_FEATURE1)
+                binding.item2Txt.text = AppObjectController.getFirebaseRemoteConfig()
+                    .getString(FirebaseRemoteConfigKey.START_TRAIL_FEATURE2)
+                binding.item3Txt.text = AppObjectController.getFirebaseRemoteConfig()
+                    .getString(FirebaseRemoteConfigKey.START_TRAIL_FEATURE3)
             }
 
             ExploreCardType.SUBSCRIPTION -> {
                 logEvent(AnalyticsEvent.SUBSCRIPTION_POPUP.name)
                 binding.startBtn.text =
-                    AppObjectController.getFirebaseRemoteConfig().getString("start_subscription")
-                binding.txtHeading.text = getString(R.string.subscription_heading)
-                binding.txtHeadingMain.text = getString(R.string.unlimited_learning)
-                binding.item1Txt.text = getString(R.string.subscription_feature_1)
-                binding.item2Txt.text = getString(R.string.subscription_feature_2)
-                binding.item3Txt.text = getString(R.string.subscription_feature_3)
+                    AppObjectController.getFirebaseRemoteConfig()
+                        .getString(FirebaseRemoteConfigKey.START_SUBSCRIPTION_CTA_LABEL)
+                binding.txtHeading.text = AppObjectController.getFirebaseRemoteConfig()
+                    .getString(FirebaseRemoteConfigKey.START_SUBSCRIPTION_TITLE)
+                binding.txtHeadingMain.text = AppObjectController.getFirebaseRemoteConfig()
+                    .getString(FirebaseRemoteConfigKey.START_SUBSCRIPTION_HEADING)
+                binding.item1Txt.text = AppObjectController.getFirebaseRemoteConfig()
+                    .getString(FirebaseRemoteConfigKey.START_SUBSCRIPTION_FEATURE1)
+                binding.item2Txt.text = AppObjectController.getFirebaseRemoteConfig()
+                    .getString(FirebaseRemoteConfigKey.START_SUBSCRIPTION_FEATURE2)
+                binding.item3Txt.text = AppObjectController.getFirebaseRemoteConfig()
+                    .getString(FirebaseRemoteConfigKey.START_SUBSCRIPTION_FEATURE3)
             }
 
             ExploreCardType.FFCOURSE -> {

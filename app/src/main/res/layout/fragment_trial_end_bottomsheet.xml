@@ -41,7 +41,7 @@
                 app:layout_constraintTop_toTopOf="@+id/view" />
 
         <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/text_view_1"
+                android:id="@+id/txt_trail_end_msg"
                 fontPath="fonts/Poppins-Regular.ttf"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -64,7 +64,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_16sdp"
-                android:backgroundTint="@color/text_color_10"
+                android:backgroundTint="@color/button_color"
                 android:clickable="true"
                 android:focusable="true"
                 android:maxLines="1"

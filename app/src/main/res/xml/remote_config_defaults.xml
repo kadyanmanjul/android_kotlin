@@ -139,5 +139,86 @@
         <key>start_subscription</key>
         <value>Start 1-Year Subscription</value>
     </entry>
-
+    <entry>
+        <key>SUBSCRIPTION_TRIAL_TIP_DAY0</key>
+        <value>Enjoy Your Free Trial!</value>
+    </entry>
+    <entry>
+        <key>SUBSCRIPTION_TRIAL_TIP_DAY1</key>
+        <value>Enjoy Your Free Trial!</value>
+    </entry>
+    <entry>
+        <key>SUBSCRIPTION_TRIAL_TIP_DAY2</key>
+        <value>Enjoy Your Free Trial!</value>
+    </entry>
+    <entry>
+        <key>SUBSCRIPTION_TRIAL_TIP_DAY3</key>
+        <value>Enjoy Your Free Trial!</value>
+    </entry>
+    <entry>
+        <key>SUBSCRIPTION_TRIAL_TIP_DAY4</key>
+        <value>Enjoy Your Free Trial!</value>
+    </entry>
+    <entry>
+        <key>SUBSCRIPTION_TRIAL_TIP_DAY5</key>
+        <value>Enjoy Your Free Trial!</value>
+    </entry>
+    <entry>
+        <key>SUBSCRIPTION_TRIAL_TIP_DAY6</key>
+        <value>Last day for free subscription</value>
+    </entry>
+    <entry>
+        <key>SUBSCRIPTION_TRIAL_TIP_DAY7</key>
+        <value>Free trial has ended</value>
+    </entry>
+    <entry>
+        <key>TRAIL_END_MESSAGE</key>
+        <value>
+            Your 7 day trial has ended!\nKya aapko mazaa aaya?\nAccess all your courses now.
+        </value>
+    </entry>
+    <entry>
+        <key>TRAIL_END_SCREEN_CTA_LABEL</key>
+        <value>Unlock All Courses</value>
+    </entry>
+    <entry>
+        <key>START_TRAIL_TITLE</key>
+        <value>Enroll in any course &amp; learn for free</value>
+    </entry>
+    <entry>
+        <key>START_TRAIL_HEADING</key>
+        <value>First 7 Days Free</value>
+    </entry>
+    <entry>
+        <key>START_TRAIL_FEATURE1</key>
+        <value>Unlock the full Josh experience</value>
+    </entry>
+    <entry>
+        <key>START_TRAIL_FEATURE2</key>
+        <value>Never get bored with over 600 classes</value>
+    </entry>
+    <entry>
+        <key>START_TRAIL_FEATURE3</key>
+        <value>Stay motivated with quizzes &amp; tests</value>
+    </entry>
+    <entry>
+        <key>START_SUBSCRIPTION_TITLE</key>
+        <value>India ka pehla subscription with</value>
+    </entry>
+    <entry>
+        <key>START_SUBSCRIPTION_HEADING</key>
+        <value>Unlimited Learning</value>
+    </entry>
+    <entry>
+        <key>START_SUBSCRIPTION_FEATURE1</key>
+        <value>ye pass aapko saare courses ka access dega for 7 days - completely free</value>
+    </entry>
+    <entry>
+        <key>START_SUBSCRIPTION_FEATURE2</key>
+        <value>7 dino ke liye aap app ke saare courses unlimited access kar sakte hai</value>
+    </entry>
+    <entry>
+        <key>START_SUBSCRIPTION_FEATURE3</key>
+        <value>Agar accha lage toh aap 7 days ke baad upgrade kar sakte hai for just 599!</value>
+    </entry>
 </defaultsMap>
