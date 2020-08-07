@@ -243,7 +243,7 @@ class CourseExploreActivity : CoreJoshActivity() {
                     }
                     renderLanguageChips()
                     filteredCourseList.clear()
-                    filteredCourseList.addAll(courseList)
+                    filteredCourseList.addAll(courseList.filter { it.cardType == ExploreCardType.NORMAL })
                     adapter.notifyDataSetChanged()
                     courseExploreBinding.progressBar.visibility = View.GONE
                 }
@@ -260,14 +260,14 @@ class CourseExploreActivity : CoreJoshActivity() {
     private fun filterCourses() {
         filteredCourseList.clear()
         if (selectedLanguage.isBlank()) {
-            filteredCourseList.addAll(courseList)
+            filteredCourseList.addAll(courseList.filter { it.cardType == ExploreCardType.NORMAL })
             adapter.isFilterEnabled = false
         } else {
             adapter.isFilterEnabled = true
-            languageMap.get(selectedLanguage)?.let { filteredCourseList.addAll(it) }
+            languageMap[selectedLanguage]?.let { filteredCourseList.addAll(it.filter { it.cardType == ExploreCardType.NORMAL }) }
             if (!selectedLanguage.equals("Hindi", true))
                 languageMap.get("Hindi")
-                    ?.let { filteredCourseList.addAll(it) }
+                    ?.let { filteredCourseList.addAll(it.filter { it.cardType == ExploreCardType.NORMAL }) }
         }
 
         adapter.notifyDataSetChanged()
