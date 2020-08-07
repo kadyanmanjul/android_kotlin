@@ -15,7 +15,6 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.integration.webp.decoder.WebpDrawable
 import com.bumptech.glide.integration.webp.decoder.WebpDrawableTransformation
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
-import com.bumptech.glide.request.target.Target
 import com.google.android.material.button.MaterialButton
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
@@ -66,7 +65,7 @@ class CourseExploreAdapter(
             holder.languageTag.visibility = GONE
 
         if (courseExploreModel.isClickable) {
-            holder.buyNow.visibility = View.VISIBLE
+            holder.buyNow.visibility = VISIBLE
             holder.buyNow.text =
                 AppObjectController.getFirebaseRemoteConfig().getString("show_details_label")
 
@@ -79,12 +78,12 @@ class CourseExploreAdapter(
             }
 
         } else {
-            holder.buyNow.visibility = View.GONE
+            holder.buyNow.visibility = GONE
         }
         try {
             Glide.with(context)
                 .load(courseExploreModel.imageUrl)
-                .override(Target.SIZE_ORIGINAL)
+                .override(holder.imageView.width, holder.imageView.height)
                 .optionalTransform(
                     WebpDrawable::class.java,
                     WebpDrawableTransformation(CircleCrop())
