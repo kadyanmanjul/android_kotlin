@@ -6,6 +6,8 @@ import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
+import android.widget.Filter
+import android.widget.Filterable
 import android.widget.TextView
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.recyclerview.widget.RecyclerView
@@ -18,15 +20,22 @@ import com.google.android.material.button.MaterialButton
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.messaging.RxBus2
+import com.joshtalks.joshskills.repository.local.model.ExploreCardType
 import com.joshtalks.joshskills.repository.server.CourseExploreModel
 
 class CourseExploreAdapter(
     var context: Context,
-    var courseList: ArrayList<CourseExploreModel>
-) : RecyclerView.Adapter<CourseExploreAdapter.CourseExploreViewHolder>() {
+    var courseList: ArrayList<CourseExploreModel>,
+    var languageWiseCoursesMap: HashMap<String, ArrayList<CourseExploreModel>>
+) : RecyclerView.Adapter<CourseExploreAdapter.CourseExploreViewHolder>(), Filterable {
 
     //Will be true if user has applied filter. We will show language tags between course list on its basis.
-    var isFilterEnabled: Boolean = false
+    private var isFilterEnabled: Boolean = false
+    private var filteredCourseList: ArrayList<CourseExploreModel>
+
+    init {
+        filteredCourseList = courseList
+    }
 
     class CourseExploreViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         var imageView: AppCompatImageView = itemView.findViewById(R.id.image_view)
@@ -42,14 +51,14 @@ class CourseExploreAdapter(
     }
 
     override fun getItemCount(): Int {
-        return courseList.size
+        return filteredCourseList.size
     }
 
     override fun onBindViewHolder(holder: CourseExploreViewHolder, position: Int) {
-        val courseExploreModel = courseList.get(position)
+        val courseExploreModel = filteredCourseList.get(position)
 
         if (isFilterEnabled && position != 0 && !courseExploreModel.language.equals(
-                courseList.get(position - 1).language, true
+                filteredCourseList.get(position - 1).language, true
             )
         ) {
             holder.languageTag.visibility = VISIBLE
@@ -84,6 +93,50 @@ class CourseExploreAdapter(
 
         } catch (ex: Exception) {
         }
+    }
+
+
+    var fRecords: Filter? = null
+    override fun getFilter(): Filter {
+        if (fRecords == null) {
+            fRecords = LanguageFilter()
+        }
+        return fRecords!!
+    }
+
+    inner class LanguageFilter : Filter() {
+
+        override fun performFiltering(constraint: CharSequence?): FilterResults {
+            val results = FilterResults()
+
+            if (constraint == null || constraint.isEmpty()) {
+                //No need for filter
+                results.values = courseList
+                results.count = courseList.size
+                isFilterEnabled = false
+            } else {
+                //Need Filter
+                // it matches the text  entered in the edittext and set the data in adapter list
+                isFilterEnabled = true
+                val fRecords = ArrayList<CourseExploreModel>()
+                languageWiseCoursesMap.get(constraint.toString())?.let { fRecords.addAll(it) }
+                if (!constraint.toString().equals("Hindi", true))
+                    languageWiseCoursesMap.get("Hindi")
+                        ?.let { fRecords.addAll(it.filter { it.cardType == ExploreCardType.NORMAL }) }
+
+                results.values = fRecords
+                results.count = fRecords.size
+            }
+            return results
+
+
+        }
+
+        override fun publishResults(constraint: CharSequence?, results: FilterResults?) {
+            filteredCourseList = results!!.values as ArrayList<CourseExploreModel>
+            notifyDataSetChanged()
+        }
+
     }
 
 }

@@ -60,7 +60,6 @@ class CourseExploreActivity : CoreJoshActivity() {
     private val languageMap: HashMap<String, ArrayList<CourseExploreModel>> = HashMap()
     private lateinit var adapter: CourseExploreAdapter
     private val courseList: ArrayList<CourseExploreModel> = ArrayList()
-    private val filteredCourseList: ArrayList<CourseExploreModel> = ArrayList()
     private var selectedLanguage: String = EMPTY
     private var compositeDisposable = CompositeDisposable()
     private lateinit var courseExploreBinding: ActivityCourseExploreBinding
@@ -173,7 +172,7 @@ class CourseExploreActivity : CoreJoshActivity() {
             )
         )
 
-        adapter = CourseExploreAdapter(this, filteredCourseList)
+        adapter = CourseExploreAdapter(this, courseList, languageMap)
         courseExploreBinding.recyclerView.adapter = adapter
     }
 
@@ -216,25 +215,27 @@ class CourseExploreActivity : CoreJoshActivity() {
                         if (courseExploreModel.cardType == ExploreCardType.NORMAL) {
                             courseExploreModel.language?.let { languageSet.add(it.capitalize()) }
                             courseList.add(courseExploreModel)
+
+                            courseExploreModel.language?.let {
+                                //Creating language set for filter option chips
+                                languageSet.add(it.capitalize())
+
+                                //manage map to at the time of filtering.
+                                val courses: ArrayList<CourseExploreModel>? =
+                                    languageMap.get(it.capitalize())
+                                if (courses != null) {
+                                    //Map already has key with course of this language. so add course to same list.
+                                    courses.add(courseExploreModel)
+                                } else {
+                                    //This is the first course with this language so add new key to map.
+                                    val newLanguageCourse: ArrayList<CourseExploreModel> =
+                                        ArrayList()
+                                    newLanguageCourse.add(courseExploreModel)
+                                    languageMap.put(it.capitalize(), newLanguageCourse)
+                                }
+                            }
                         } else {
                             setSubscriptionHeaderView(courseExploreModel)
-                        }
-                        courseExploreModel.language?.let {
-                            //Creating language set for filter option chips
-                            languageSet.add(it.capitalize())
-
-                            //manage map to at the time of filtering.
-                            val courses: ArrayList<CourseExploreModel>? =
-                                languageMap.get(it.capitalize())
-                            if (courses != null) {
-                                //Map already has key with course of this language. so add course to same list.
-                                courses.add(courseExploreModel)
-                            } else {
-                                //This is the first course with this language so add new key to map.
-                                val newLanguageCourse: ArrayList<CourseExploreModel> = ArrayList()
-                                newLanguageCourse.add(courseExploreModel)
-                                languageMap.put(it.capitalize(), newLanguageCourse)
-                            }
                         }
                     }
 
@@ -244,8 +245,6 @@ class CourseExploreActivity : CoreJoshActivity() {
                         languageList.add(0, "Hindi")
                     }
                     renderLanguageChips()
-                    filteredCourseList.clear()
-                    filteredCourseList.addAll(courseList.filter { it.cardType == ExploreCardType.NORMAL })
                     adapter.notifyDataSetChanged()
                     courseExploreBinding.progressBar.visibility = View.GONE
                 }
@@ -260,19 +259,7 @@ class CourseExploreActivity : CoreJoshActivity() {
     }
 
     private fun filterCourses() {
-        filteredCourseList.clear()
-        if (selectedLanguage.isBlank()) {
-            filteredCourseList.addAll(courseList.filter { it.cardType == ExploreCardType.NORMAL })
-            adapter.isFilterEnabled = false
-        } else {
-            adapter.isFilterEnabled = true
-            languageMap[selectedLanguage]?.let { filteredCourseList.addAll(it.filter { it.cardType == ExploreCardType.NORMAL }) }
-            if (!selectedLanguage.equals("Hindi", true))
-                languageMap.get("Hindi")
-                    ?.let { filteredCourseList.addAll(it.filter { it.cardType == ExploreCardType.NORMAL }) }
-        }
-
-        adapter.notifyDataSetChanged()
+        adapter.filter.filter(selectedLanguage)
         courseExploreBinding.recyclerView.scrollToPosition(0)
     }
 
