@@ -564,6 +564,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
 
         expiryTimeInMs?.let {
             if (it <= currentTimeInMs) {
+                logTrailEventExpired()
                 PrefManager.put(IS_TRIAL_ENDED, true, true)
             }
             val remainingTrialDays =
@@ -577,6 +578,15 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
             updateSubscriptionTipView()
         }
 
+    }
+
+    private fun logTrailEventExpired() {
+        if(PrefManager.getBoolValue(IS_TRIAL_ENDED,true).not()){
+         AppAnalytics.create(AnalyticsEvent.SEVEN_DAY_TRIAL_OVER.NAME)
+             .addBasicParam()
+             .addUserDetails()
+             .push()
+        }
     }
 
     private fun updateExploreTypeParam(coursesList: List<InboxEntity>) {
