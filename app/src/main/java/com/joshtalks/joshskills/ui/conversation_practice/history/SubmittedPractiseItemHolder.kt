@@ -92,7 +92,6 @@ class SubmittedPractiseItemHolder(
 
     @Click(R.id.root_view)
     fun onClick() {
-        data.isPlaying = true
         RxBus2.publish(RequestAudioPlayEventBus(postion, data.answerAudioUrl, data.duration))
     }
 }

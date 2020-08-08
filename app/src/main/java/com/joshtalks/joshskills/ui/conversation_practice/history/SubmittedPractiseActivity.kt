@@ -85,9 +85,9 @@ class SubmittedPractiseActivity : CoreJoshActivity(), AudioPlayerEventListener {
     private fun addObserver() {
         viewModel.submittedPracticeLiveData.observe(this, Observer {
             if (list.isEmpty()) {
-                list.addAll(it)
+                list.addAll(it.sortedByDescending { obj -> obj.created })
             }
-            list.sortedByDescending { obj -> obj.created }.forEachIndexed { index, obj ->
+            list.forEachIndexed { index, obj ->
                 recycler_view.addView(
                     SubmittedPractiseItemHolder(
                         index,
@@ -108,6 +108,7 @@ class SubmittedPractiseActivity : CoreJoshActivity(), AudioPlayerEventListener {
                         list[cPosition].isPlaying = false
                     }
                     cPosition = it.position
+
                     list[cPosition].isPlaying = true
                     recycler_view.refresh()
                     playAudioPlayer(it.url, it.duration)
