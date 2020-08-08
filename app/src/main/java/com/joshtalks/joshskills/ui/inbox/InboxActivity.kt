@@ -31,6 +31,7 @@ import com.joshtalks.joshskills.core.ARG_PLACEHOLDER_URL
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.COURSE_ID
 import com.joshtalks.joshskills.core.CoreJoshActivity
+import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.EXPLORE_TYPE
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
 import com.joshtalks.joshskills.core.IS_TRIAL_ENDED
@@ -129,14 +130,13 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         }
 
         val remainingTrialDays = PrefManager.getIntValue(REMAINING_TRIAL_DAYS, true)
-        when {
+        txtSubscriptionTip.text = when {
 
             remainingTrialDays < 0 -> AppObjectController.getFirebaseRemoteConfig()
                 .getString(FirebaseRemoteConfigKey.SUBSCRIPTION_TRIAL_TIP_DAY7)
 
-            remainingTrialDays == 1 -> txtSubscriptionTip.text =
-                AppObjectController.getFirebaseRemoteConfig()
-                    .getString(FirebaseRemoteConfigKey.SUBSCRIPTION_TRIAL_TIP_DAY6)
+            remainingTrialDays == 1 -> AppObjectController.getFirebaseRemoteConfig()
+                .getString(FirebaseRemoteConfigKey.SUBSCRIPTION_TRIAL_TIP_DAY6)
 
             remainingTrialDays == 2 -> AppObjectController.getFirebaseRemoteConfig()
                 .getString(FirebaseRemoteConfigKey.SUBSCRIPTION_TRIAL_TIP_DAY5)
@@ -155,6 +155,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
 
             remainingTrialDays > 6 -> AppObjectController.getFirebaseRemoteConfig()
                 .getString(FirebaseRemoteConfigKey.SUBSCRIPTION_TRIAL_TIP_DAY0)
+            else -> EMPTY
         }
 
     }
