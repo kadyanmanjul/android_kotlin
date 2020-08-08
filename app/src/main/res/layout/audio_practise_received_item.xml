@@ -12,8 +12,6 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/root_view"
-            android:visibility="invisible"
-            tools:visibility="visible"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingEnd="@dimen/_48sdp">

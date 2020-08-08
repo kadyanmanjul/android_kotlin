@@ -117,10 +117,10 @@ import com.joshtalks.joshskills.ui.pdfviewer.PdfViewerActivity
 import com.joshtalks.joshskills.ui.practise.PRACTISE_OBJECT
 import com.joshtalks.joshskills.ui.practise.PractiseSubmitActivity
 import com.joshtalks.joshskills.ui.referral.ReferralActivity
+import com.joshtalks.joshskills.ui.subscription.TrialEndBottomSheetFragment
 import com.joshtalks.joshskills.ui.video_player.IS_BATCH_CHANGED
 import com.joshtalks.joshskills.ui.video_player.LAST_VIDEO_INTERVAL
 import com.joshtalks.joshskills.ui.video_player.NEXT_VIDEO_AVAILABLE
-import com.joshtalks.joshskills.ui.subscription.TrialEndBottomSheetFragment
 import com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity
 import com.joshtalks.joshskills.ui.view_holders.AssessmentViewHolder
 import com.joshtalks.joshskills.ui.view_holders.AudioPlayerViewHolder
@@ -584,19 +584,19 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
                 window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
                 AppAnalytics.create(AnalyticsEvent.AUDIO_BUTTON_CLICKED.NAME).push()
                 conversationBinding.recordView.visibility = VISIBLE
-                conversationViewModel.startRecord()
+                conversationViewModel.startRecord(null)
                 AppAnalytics.create(AnalyticsEvent.AUDIO_RECORD.NAME).push()
             }
 
             override fun onCancel() {
-                conversationViewModel.stopRecording()
+                conversationViewModel.stopRecording(true)
             }
 
             override fun onFinish(recordTime: Long) {
                 try {
                     AppAnalytics.create(AnalyticsEvent.AUDIO_SENT.NAME).push()
                     conversationBinding.recordView.visibility = GONE
-                    conversationViewModel.stopRecording()
+                    conversationViewModel.stopRecording(false)
                     conversationViewModel.recordFile.let {
                         addUploadAudioMedia(it.absolutePath)
                         window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
@@ -608,14 +608,14 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
 
             override fun onLessThanSecond() {
                 conversationBinding.recordView.visibility = GONE
-                conversationViewModel.stopRecording()
+                conversationViewModel.stopRecording(true)
                 AppAnalytics.create(AnalyticsEvent.AUDIO_CANCELLED.NAME).push()
             }
         })
 
         conversationBinding.recordView.setOnBasketAnimationEndListener {
             conversationBinding.recordView.visibility = GONE
-            conversationViewModel.stopRecording()
+            conversationViewModel.stopRecording(true)
             AppAnalytics.create(AnalyticsEvent.AUDIO_CANCELLED.NAME).push()
             window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         }
@@ -1770,6 +1770,7 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
 
     override fun onPause() {
         super.onPause()
+        compositeDisposable.clear()
         //streamingManager?.onPause()
         BaseChatViewHolder.sId = EMPTY
         streamingManager?.handlePauseRequest()

@@ -12,6 +12,9 @@ import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.JoshApplication
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.custom_ui.recorder.AudioRecording
+import com.joshtalks.joshskills.core.custom_ui.recorder.OnAudioRecordListener
+import com.joshtalks.joshskills.core.custom_ui.recorder.RecordingItem
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.DatabaseUtils
@@ -27,12 +30,12 @@ import com.joshtalks.joshskills.repository.server.chat_message.BaseChatMessage
 import com.joshtalks.joshskills.repository.server.chat_message.BaseMediaMessage
 import com.joshtalks.joshskills.repository.service.NetworkRequestHelper
 import com.joshtalks.joshskills.repository.service.SyncChatService
-import com.joshtalks.joshskills.util.AudioRecording
 import id.zelory.compressor.Compressor
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -59,42 +62,72 @@ class ConversationViewModel(application: Application) :
     private var lastMessageTime: Date? = null
     private var broadCastForNetwork = CheckConnectivity()
     private var mRefreshControl = true
+    private val mAudioRecording: AudioRecording = AudioRecording()
+    private var isRecordingStarted = false
+    private val jobs = arrayListOf<Job>()
 
     init {
         addObserver()
     }
 
-    fun startRecord(): Boolean {
+    @Synchronized
+    fun startRecord(recordListener: OnAudioRecordListener?) {
+        val onRecordListener: OnAudioRecordListener = object :
+            OnAudioRecordListener {
+            override fun onRecordFinished(recordingItem: RecordingItem) {
+                isRecordingStarted = false
+                recordListener?.onRecordFinished(recordingItem)
+            }
+
+            override fun onError(e: Int) {
+                recordListener?.onError(e)
+            }
+
+            override fun onRecordingStarted() {
+                isRecordingStarted = true
+                recordListener?.onRecordingStarted()
+            }
+        }
         AppDirectory.tempRecordingFile().let {
+            mAudioRecording.setOnAudioRecordListener(onRecordListener)
+            mAudioRecording.setFile(it.absolutePath)
             recordFile = it
-            AudioRecording.audioRecording.startPlayer(recordFile)
+            mAudioRecording.startRecording()
             return@let true
         }
-        return false
     }
 
-    fun stopRecording() {
-        AudioRecording.audioRecording.stopPlaying()
+    fun isRecordingStarted(): Boolean {
+        return isRecordingStarted
     }
 
+    @Synchronized
+    fun stopRecording(cancel: Boolean) {
+        mAudioRecording.stopRecording(cancel)
+        isRecordingStarted = false
+    }
 
     override fun onCleared() {
         super.onCleared()
+        jobs.forEach { it.cancel() }
         compositeDisposable.clear()
         context.unregisterReceiver(broadCastForNetwork)
+        if (isRecordingStarted) {
+            mAudioRecording.stopRecording(true)
+        }
     }
 
 
     private fun addObserver() {
         compositeDisposable.add(
             RxBus2.listen(DBInsertion::class.java).subscribeOn(Schedulers.computation()).subscribe {
-                getUserRecentChats()
+                jobs += getUserRecentChats()
             })
         val filter = IntentFilter("android.net.conn.CONNECTIVITY_CHANGE")
         context.registerReceiver(
             broadCastForNetwork,
             filter
-        )       //TODO(FixMe) - ViewModel should not hold any reference of Context
+        )
     }
 
     inner class CheckConnectivity : BroadcastReceiver() {
@@ -107,7 +140,7 @@ class ConversationViewModel(application: Application) :
     }
 
 
-    fun getUserRecentChats() = viewModelScope.launch(Dispatchers.IO) {
+    private fun getUserRecentChats() = viewModelScope.launch(Dispatchers.IO) {
 
         val chatReturn: MutableList<ChatModel> = mutableListOf()
 
@@ -275,7 +308,7 @@ class ConversationViewModel(application: Application) :
     fun getAllUserMessage() {
         viewModelScope.launch(Dispatchers.IO) {
             val rows = appDatabase.chatDao().getTotalCountOfRows(inboxEntity.conversation_id)
-            getUserRecentChats()
+            jobs += getUserRecentChats()
             try {
                 if (rows > 0) {
                     delay(2500)
@@ -309,20 +342,15 @@ class ConversationViewModel(application: Application) :
     }
 
     fun getAllUnlockedMessage(date: Date) {
-        viewModelScope.launch(Dispatchers.IO) {
-            getUserUnlockClass(date)
-        }
+        getUserUnlockClass(date)
     }
 
     private fun getUserUnlockClass(date: Date) = viewModelScope.launch(Dispatchers.IO) {
 
         val chatReturn: MutableList<ChatModel> = mutableListOf()
 
-        val listOfChat: List<ChatModel> = if (date != null) {
+        val listOfChat: List<ChatModel> =
             appDatabase.chatDao().getRecentChatAfterTime(inboxEntity.conversation_id, date)
-        } else {
-            return@launch
-        }
         if (listOfChat.isNotEmpty()) {
             lastChatTime = listOfChat.last().created
         }
@@ -392,7 +420,7 @@ class ConversationViewModel(application: Application) :
     }
 
     fun updateInDatabaseReadMessage(readChatList: MutableSet<ChatModel>) {
-        viewModelScope.launch(Dispatchers.IO) {
+        jobs += viewModelScope.launch(Dispatchers.IO) {
             try {
                 if (readChatList.isNullOrEmpty().not()) {
                     val idList = readChatList.map { it.chatId }.toMutableList()
@@ -431,9 +459,7 @@ class ConversationViewModel(application: Application) :
     }
 
     suspend fun insertUnlockClassToDatabase(unlockChatModel: ChatModel) {
-
         deleteChatModelOfType(BASE_MESSAGE_TYPE.UNLOCK)
-
         val chatObj =
             AppObjectController.appDatabase.chatDao()
                 .getNullableChatObject(unlockChatModel.chatId)

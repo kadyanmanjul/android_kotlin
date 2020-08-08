@@ -12,8 +12,8 @@
 
     <androidx.cardview.widget.CardView
             android:id="@+id/root_sub_view"
-            android:layout_width="@dimen/_216sdp"
-            android:layout_height="@dimen/_170sdp"
+            android:layout_width="@dimen/_220sdp"
+            android:layout_height="@dimen/_150sdp"
             android:background="@color/white"
             android:clickable="true"
             android:divider="@android:color/transparent"
@@ -81,8 +81,8 @@
                     android:layout_gravity="center"
                     android:layout_marginHorizontal="@dimen/_12sdp"
                     android:layout_marginVertical="@dimen/_2sdp"
-                    android:layout_weight=".7"
-                    android:backgroundTint="@color/button_primary_color"
+                    android:layout_weight=".68"
+                    android:backgroundTint="@color/light_grey"
                     android:gravity="center"
                     android:text="@string/start_practise"
                     android:textAllCaps="false"

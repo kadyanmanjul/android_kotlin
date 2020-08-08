@@ -12,18 +12,18 @@ public class AudioRecording {
 
     public void startPlayer(File recordFile) {
         recorder = new MediaRecorder();
-        recorder.setAudioEncodingBitRate(128000);
-        recorder.setAudioSamplingRate(44100);
-        /*
+
+        recorder.setAudioChannels(1);
         recorder.setAudioSamplingRate(16000);
         recorder.setAudioEncodingBitRate(32000);
-        *///recorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-        recorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
-        recorder.setAudioEncoder(MediaRecorder.AudioEncoder.HE_AAC);
+        recorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+        recorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
+        recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
         recorder.setOutputFile(recordFile.getAbsolutePath());
-        MediaRecorder.OnErrorListener errorListener = (arg0, what, extra) -> {
-            arg0.release();
-            LogException.INSTANCE.catchError(ErrorTag.AUDIO_RECORDER, what + " , " + extra);
+        MediaRecorder.OnErrorListener errorListener = new MediaRecorder.OnErrorListener() {
+            public void onError(MediaRecorder arg0, int arg1, int arg2) {
+                LogException.INSTANCE.catchError(ErrorTag.AUDIO_RECORDER, arg1 + " , " + arg2);
+            }
         };
         recorder.setOnErrorListener(errorListener);
         try {
@@ -40,7 +40,6 @@ public class AudioRecording {
     public void stopPlaying() {
         try {
             recorder.stop();
-            recorder.reset();
             recorder.release();
         } catch (Exception e) {
             e.printStackTrace();

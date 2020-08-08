@@ -180,7 +180,12 @@
         <item name="android:textSize">@dimen/font_14</item>
         <item name="android:textAllCaps">false</item>
         <item name="fontPath">fonts/Roboto-Medium.ttf</item>
+    </style>
 
+    <style name="TabLayoutStyleV2" parent="Base.Widget.Design.TabLayout">
+        <item name="android:textSize">@dimen/font_14</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="fontPath">fonts/Poppins-SemiBold.ttf</item>
     </style>
 
     <style name="FullDialogWithAnimationV2" parent="@android:style/Theme.Holo.Light.Dialog">

@@ -131,6 +131,9 @@ class SignUpProfileFragment : BaseSignUpFragment() {
                 binding.phoneNumberEt.setText(word.substring(length - 10))
                 binding.etContainer.visibility = View.VISIBLE
                 binding.textViewPhone.visibility = View.VISIBLE
+                binding.countryCodePicker.isEnabled = false
+                binding.countryCodePicker.isClickable = false
+
             }
         } else if (PrefManager.getStringValue(PAYMENT_MOBILE_NUMBER).isNotEmpty()) {
             val mobileNumber = PrefManager.getStringValue(PAYMENT_MOBILE_NUMBER).split(SINGLE_SPACE)

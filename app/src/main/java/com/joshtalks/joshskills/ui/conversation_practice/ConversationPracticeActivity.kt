@@ -188,6 +188,7 @@ class ConversationPracticeActivity : CoreJoshActivity() {
             val intent = Intent(activity, ConversationPracticeActivity::class.java).apply {
                 putExtra(PRACTISE_ID, practiseId)
                 putExtra(IMAGE_URL, imageUrl)
+                addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
             }
             activity.startActivityForResult(intent, requestCode)
         }

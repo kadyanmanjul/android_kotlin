@@ -24,6 +24,7 @@ import com.joshtalks.joshskills.core.custom_ui.exo_audio_player.AudioModel
 import com.joshtalks.joshskills.core.custom_ui.exo_audio_player.AudioPlayerEventListener
 import com.joshtalks.joshskills.core.setImage
 import com.joshtalks.joshskills.core.showToast
+import com.joshtalks.joshskills.core.textColorSet
 import com.joshtalks.joshskills.databinding.SelfPractiseLayoutBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.ViewPagerDisableEventBus
@@ -92,7 +93,7 @@ class SelfPractiseFragment private constructor() : Fragment(), AudioPlayerEventL
         AppAnalytics.create(AnalyticsEvent.PATNER_SELECTED.NAME)
             .addBasicParam()
             .addUserDetails()
-            .addParam("patner side",patner)
+            .addParam("patner side", patner)
             .addParam("flow", "self practise")
             .push()
     }
@@ -184,6 +185,7 @@ class SelfPractiseFragment private constructor() : Fragment(), AudioPlayerEventL
             disableView(binding.ivSecondUser)
             filterProperty(ViewTypeForPractiseUser.SECOND.type)
             initAudioPlayer(PractiseUser.FIRST)
+            nameStateViewChange()
         }
         logPatnerSelectedEvent("first")
     }
@@ -200,6 +202,7 @@ class SelfPractiseFragment private constructor() : Fragment(), AudioPlayerEventL
             disableView(binding.ivFirstUser)
             filterProperty(ViewTypeForPractiseUser.FIRST.type)
             initAudioPlayer(PractiseUser.SECOND)
+            nameStateViewChange()
         }
         logPatnerSelectedEvent("second")
     }
@@ -210,15 +213,37 @@ class SelfPractiseFragment private constructor() : Fragment(), AudioPlayerEventL
         audioPractiseAdapter?.clear()
         filterProperty(null)
         binding.audioPlayer.addAudios(LinkedList())
+        nameStateViewChange()
     }
 
     private fun filterProperty(viewType: Int?) {
         listenModelList.forEach {
             it.disable = false
+            it.hasPractising = false
         }
         if (viewType != null) {
             listenModelList.filter { it.viewType == viewType }.forEach {
                 it.disable = true
+            }
+            listenModelList.filter { it.viewType != viewType }.forEach {
+                it.hasPractising = true
+            }
+        }
+    }
+
+    private fun nameStateViewChange() {
+        if (viewModel.practiseWho == null) {
+            binding.tvFirstUser.text = conversationPractiseModel.characterNameA
+            binding.tvSecondUser.text = conversationPractiseModel.characterNameB
+            binding.tvFirstUser.textColorSet(R.color.black)
+            binding.tvSecondUser.textColorSet(R.color.black)
+        } else {
+            if (viewModel.practiseWho == PractiseUser.FIRST) {
+                binding.tvFirstUser.text = getString(R.string.me)
+                binding.tvFirstUser.textColorSet(R.color.button_primary_color)
+            } else {
+                binding.tvSecondUser.text = getString(R.string.me)
+                binding.tvSecondUser.textColorSet(R.color.button_primary_color)
             }
         }
     }

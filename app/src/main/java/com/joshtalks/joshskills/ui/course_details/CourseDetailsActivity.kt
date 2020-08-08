@@ -537,8 +537,11 @@ class CourseDetailsActivity : BaseActivity() {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
-                    appAnalytics.addParam(AnalyticsEvent.DEMO_VIDEO_PLAYED.NAME, "Clicked")
-                    //demo_video_played
+                    AppAnalytics.create(AnalyticsEvent.DEMO_VIDEO_PLAYED.NAME)
+                        .addBasicParam()
+                        .addUserDetails()
+                        .addParam(VERSION, PrefManager.getStringValue(VERSION))
+                        .addParam(AnalyticsEvent.TEST_ID_PARAM.NAME, testId).push()
                     VideoPlayerActivity.startVideoActivity(
                         this,
                         it.videoTitle,

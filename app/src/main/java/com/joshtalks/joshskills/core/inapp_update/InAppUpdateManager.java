@@ -101,7 +101,8 @@ public class InAppUpdateManager implements LifecycleObserver {
             if (startUpdate) {
                 if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE) {
                     // Request the update.
-                    if (mode == Constants.UpdateMode.FLEXIBLE && appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.FLEXIBLE)) {
+                    if (mode == Constants.UpdateMode.FLEXIBLE) {
+//                    if (mode == Constants.UpdateMode.FLEXIBLE && appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.FLEXIBLE)) {
                         // Start an update.
                         startAppUpdateFlexible(appUpdateInfo);
                     } else if (appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.IMMEDIATE)) {

@@ -19,36 +19,43 @@
                 android:background="@color/white"
                 android:gravity="start|center"
                 android:minHeight="?attr/actionBarSize"
+                android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
                 app:layout_constraintTop_toTopOf="parent"
                 app:popupTheme="@style/AppTheme.PopupOverlay"
                 app:theme="@style/Theme.GuidelinesCompat.Light.DarkToolbar">
 
-            <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/iv_back"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingHorizontal="@dimen/_4sdp"
-                    android:paddingVertical="@dimen/_4sdp"
-                    android:visibility="visible"
-                    app:srcCompat="@drawable/ic_cross"
-                    app:tint="@color/black" />
 
+            <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
 
-            <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/text_message_title"
-                    fontPath="fonts/Roboto-Medium.ttf"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:ellipsize="marquee"
-                    android:gravity="center_vertical|start"
-                    android:paddingHorizontal="@dimen/_6sdp"
-                    android:paddingVertical="@dimen/_5sdp"
-                    android:singleLine="true"
-                    android:text="@string/submitted_recording"
-                    android:textColor="@color/black"
-                    android:textSize="@dimen/font_18" />
+                <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/text_message_title"
+                        fontPath="fonts/Roboto-Medium.ttf"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="marquee"
+                        android:gravity="center_vertical|start"
+                        android:paddingHorizontal="@dimen/_4sdp"
+                        android:paddingVertical="@dimen/_4sdp"
+                        android:singleLine="true"
+                        android:text="@string/submitted_recording"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/font_18" />
+
+                <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/iv_back"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="end"
+                        android:paddingHorizontal="@dimen/_4sdp"
+                        android:paddingVertical="@dimen/_4sdp"
+                        android:visibility="visible"
+                        app:srcCompat="@drawable/ic_cross"
+                        app:tint="@color/black" />
+            </FrameLayout>
+
         </com.google.android.material.appbar.MaterialToolbar>
-
     </com.google.android.material.appbar.AppBarLayout>
 
     <com.mindorks.placeholderview.PlaceHolderView

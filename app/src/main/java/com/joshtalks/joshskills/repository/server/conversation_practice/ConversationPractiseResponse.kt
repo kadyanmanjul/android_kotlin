@@ -30,7 +30,7 @@ data class ListenModel(
     @SerializedName("audio") val audio: AudioType,
     var disable: Boolean = false,
     var viewType: Int = 0,
-    var isVisible: Boolean = false
+    var hasPractising: Boolean = false
 
 ) : Parcelable
 

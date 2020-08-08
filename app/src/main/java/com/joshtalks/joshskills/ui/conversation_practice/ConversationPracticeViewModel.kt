@@ -11,8 +11,9 @@ import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.JoshApplication
 import com.joshtalks.joshskills.core.PractiseUser
 import com.joshtalks.joshskills.core.Utils
-import com.joshtalks.joshskills.core.custom_ui.recorder.AudioRecorder
-import com.joshtalks.joshskills.core.custom_ui.recorder.AudioRecorderBuilder
+import com.joshtalks.joshskills.core.custom_ui.recorder.AudioRecording
+import com.joshtalks.joshskills.core.custom_ui.recorder.OnAudioRecordListener
+import com.joshtalks.joshskills.core.custom_ui.recorder.RecordingItem
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.repository.server.AmazonPolicyResponse
 import com.joshtalks.joshskills.repository.server.conversation_practice.Answer
@@ -34,17 +35,17 @@ import java.io.File
 class ConversationPracticeViewModel(application: Application) : AndroidViewModel(application) {
 
     var isPractise = false
-    var isPlayerInit = false
     var isRecord = false
-
     var practiseWho: PractiseUser? = null
     var recordFile: File? = null
     var isRecordingRunning = false
-    private var mAudioRecorder: AudioRecorder? = null
     private var context: JoshApplication = getApplication()
-
-
     private val jobs = arrayListOf<Job>()
+    private val mAudioRecording: AudioRecording =
+        AudioRecording()
+    private var isRecordingStarted = false
+
+
     private val _conversationPracticeLiveData: MutableLiveData<ConversationPractiseModel> =
         MutableLiveData()
     val conversationPracticeLiveData: LiveData<ConversationPractiseModel> =
@@ -55,27 +56,41 @@ class ConversationPracticeViewModel(application: Application) : AndroidViewModel
         MutableLiveData()
 
 
-    fun initRecorder(): Boolean {
+    @Synchronized
+    fun startRecord(recordListener: OnAudioRecordListener?) {
+        val onRecordListener: OnAudioRecordListener = object :
+            OnAudioRecordListener {
+            override fun onRecordFinished(recordingItem: RecordingItem) {
+                isRecordingStarted = false
+                recordListener?.onRecordFinished(recordingItem)
+            }
+
+            override fun onError(e: Int) {
+                recordListener?.onError(e)
+            }
+
+            override fun onRecordingStarted() {
+                isRecordingStarted = true
+                recordListener?.onRecordingStarted()
+            }
+        }
         AppDirectory.tempRecordingFile().let {
-            mAudioRecorder = AudioRecorderBuilder.with(context)
-                .fileName(it.absolutePath)
-                .config(AudioRecorder.MediaRecorderConfig.DEFAULT)
-                .loggable()
-                .build()
+            mAudioRecording.setOnAudioRecordListener(onRecordListener)
+            mAudioRecording.setFile(it.absolutePath)
             recordFile = it
-            isPlayerInit = true
+            mAudioRecording.startRecording()
             return@let true
         }
-        return false
     }
 
-    fun startRecording(listener: AudioRecorder.OnStartListener?) {
-        mAudioRecorder?.start(listener)
+    fun isRecordingStarted(): Boolean {
+        return isRecordingStarted
     }
 
-    fun stopRecording(listener: AudioRecorder.OnPauseListener?) {
-        mAudioRecorder?.pause(listener)
-        isRecordingRunning = false
+    @Synchronized
+    fun stopRecording(cancel: Boolean) {
+        mAudioRecording.stopRecording(cancel)
+        isRecordingStarted = false
     }
 
     fun fetchConversationPractice(practiseId: String) {
@@ -172,12 +187,18 @@ class ConversationPracticeViewModel(application: Application) : AndroidViewModel
                 responseObj.fields["key"],
                 requestFile
             )
-            val responseUpload = AppObjectController.mediaDUNetworkService.uploadMediaAsync(
-                responseObj.url,
-                parameters,
-                body
-            ).execute()
-            return@async responseUpload.code()
+
+            try {
+                val responseUpload = AppObjectController.mediaDUNetworkService.uploadMediaAsync(
+                    responseObj.url,
+                    parameters,
+                    body
+                ).execute()
+                return@async responseUpload.code()
+
+            } catch (ex: kotlin.Exception) {
+                return@async 220
+            }
         }.await()
     }
 
@@ -205,7 +226,5 @@ class ConversationPracticeViewModel(application: Application) : AndroidViewModel
     override fun onCleared() {
         super.onCleared()
         jobs.forEach { it.cancel() }
-        mAudioRecorder?.isRecording?.run {
-        }
     }
 }

@@ -24,7 +24,7 @@
                 android:layout_height="wrap_content"
                 android:background="@color/white"
                 android:elevation="@dimen/_4sdp"
-                android:paddingTop="@dimen/_6sdp"
+                android:paddingTop="@dimen/_10sdp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
@@ -56,7 +56,7 @@
                     android:gravity="start"
                     android:text="@string/conversation_practice"
                     android:textColor="@color/black"
-                    android:textSize="@dimen/font_20"
+                    android:textSize="@dimen/font_18"
                     app:layout_constraintBottom_toBottomOf="@+id/iv_back"
                     app:layout_constraintStart_toEndOf="@+id/iv_back"
                     app:layout_constraintTop_toTopOf="@+id/iv_back"
@@ -88,7 +88,7 @@
                     app:tabPaddingEnd="0dp"
                     app:tabPaddingStart="0dp"
                     app:tabSelectedTextColor="@color/button_primary_color"
-                    app:tabTextAppearance="@style/TabLayoutStyle"
+                    app:tabTextAppearance="@style/TabLayoutStyleV2"
                     app:tabTextColor="@color/dark_grey" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 

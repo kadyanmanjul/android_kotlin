@@ -203,7 +203,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_marginHorizontal="@dimen/_8sdp"
-                    android:backgroundTint="@color/button_primary_color"
+                    android:backgroundTint="@color/light_grey"
                     android:gravity="center"
                     android:insetTop="0dp"
                     android:insetBottom="0dp"

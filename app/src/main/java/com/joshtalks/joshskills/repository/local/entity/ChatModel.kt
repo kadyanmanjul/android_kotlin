@@ -205,10 +205,10 @@ data class Question(
     @Expose var uploadFeedbackStatus: Boolean = false,
 
     @ColumnInfo(name = "interval")
-    @Expose var interval: Int = -1,
+    @SerializedName("interval") var interval: Int = -1,
 
     @ColumnInfo(name = "assessment_id")
-    @Expose var assessmentId: Int? = null,
+    @SerializedName("assessment_id") var assessmentId: Int? = null,
 
     @ColumnInfo(name = "conversation_practice_id")
     @SerializedName("conversation_practice_id") var conversationPracticeId: String? = null,

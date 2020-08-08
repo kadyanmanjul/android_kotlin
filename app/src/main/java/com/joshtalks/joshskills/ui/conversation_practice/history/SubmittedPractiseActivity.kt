@@ -87,7 +87,7 @@ class SubmittedPractiseActivity : CoreJoshActivity(), AudioPlayerEventListener {
             if (list.isEmpty()) {
                 list.addAll(it)
             }
-            list.forEachIndexed { index, obj ->
+            list.sortedByDescending { obj -> obj.created }.forEachIndexed { index, obj ->
                 recycler_view.addView(
                     SubmittedPractiseItemHolder(
                         index,

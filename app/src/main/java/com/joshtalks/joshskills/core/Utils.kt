@@ -903,3 +903,9 @@ fun ImageView.setRoundImage(
         .apply(RequestOptions.bitmapTransform(multi))
         .into(this)
 }
+
+fun TextView.textColorSet(colorCode: Int) {
+    this.setTextColor(ContextCompat.getColor(AppObjectController.joshApplication, colorCode))
+}
+
+

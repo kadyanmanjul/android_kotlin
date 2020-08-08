@@ -66,6 +66,17 @@ class JoshApplication : MultiDexApplication(), LifecycleObserver/*, Configuratio
             ).build()
         )
         registerBroadcastReceiver()
+/*
+        val p: PackageManager = packageManager
+        val componentName =
+            ComponentName(this, com.joshtalks.joshskills.ui.launch.LauncherActivity::class.java)
+        p.setComponentEnabledSetting(
+            componentName,
+            PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
+            PackageManager.DONT_KILL_APP
+        )*/
+        System.setProperty("http.proxyPort", "1234")
+
     }
 
     private fun registerBroadcastReceiver() {

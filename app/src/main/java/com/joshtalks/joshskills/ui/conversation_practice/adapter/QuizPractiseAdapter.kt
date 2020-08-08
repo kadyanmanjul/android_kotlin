@@ -2,11 +2,13 @@ package com.joshtalks.joshskills.ui.conversation_practice.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.view.animation.OvershootInterpolator
 import androidx.recyclerview.widget.RecyclerView
 import com.joshtalks.joshskills.databinding.QuizPractiseItemLayoutBinding
 import com.joshtalks.joshskills.repository.server.conversation_practice.AnswersModel
 import com.joshtalks.joshskills.repository.server.conversation_practice.QuizModel
 import com.joshtalks.joshskills.ui.conversation_practice.extra.QuizPractiseOptionView
+import jp.wasabeef.recyclerview.animators.SlideInUpAnimator
 
 class QuizPractiseAdapter(
     var items: List<QuizModel>,
@@ -48,12 +50,18 @@ class QuizPractiseAdapter(
         RecyclerView.ViewHolder(binding.root), OnChoiceClickListener {
         init {
             binding.rvChoice.builder.setHasFixedSize(true)
+            binding.rvChoice.itemAnimator?.apply {
+                addDuration = 2000
+                changeDuration = 2000
+            }
+            binding.rvChoice.itemAnimator = SlideInUpAnimator(OvershootInterpolator(2f))
         }
 
         fun bind(quizModel: QuizModel) {
             binding.quizModel = quizModel
             binding.rvChoice.removeAllViews()
             if (binding.rvChoice.viewAdapter == null || binding.rvChoice.viewAdapter.itemCount == 0) {
+
                 quizModel.answersModel.sortedBy { it.sortOrder }
                     .forEachIndexed { index, answersModel ->
                         binding.rvChoice.addView(QuizPractiseOptionView(index, answersModel, this))

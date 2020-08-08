@@ -25,10 +25,12 @@ import com.joshtalks.joshskills.core.custom_ui.SmoothLinearLayoutManager
 import com.joshtalks.joshskills.core.custom_ui.decorator.LayoutMarginDecoration
 import com.joshtalks.joshskills.core.custom_ui.exo_audio_player.AudioModel
 import com.joshtalks.joshskills.core.custom_ui.exo_audio_player.AudioPlayerEventListener
-import com.joshtalks.joshskills.core.custom_ui.recorder.AudioRecorder
+import com.joshtalks.joshskills.core.custom_ui.recorder.OnAudioRecordListener
+import com.joshtalks.joshskills.core.custom_ui.recorder.RecordingItem
 import com.joshtalks.joshskills.core.interfaces.OnConversationPractiseSubmit
 import com.joshtalks.joshskills.core.setImage
 import com.joshtalks.joshskills.core.showToast
+import com.joshtalks.joshskills.core.textColorSet
 import com.joshtalks.joshskills.databinding.FragmentRecordPractiseBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.ConversationPractiseSubmitEventBus
@@ -228,7 +230,7 @@ class RecordPractiseFragment private constructor() : Fragment(), AudioPlayerEven
     }
 
     fun practiseWithFirstUser() {
-        if (viewModel.isRecordingRunning) {
+        if (viewModel.isRecordingStarted()) {
             return
         }
         if (viewModel.isRecord) {
@@ -242,12 +244,14 @@ class RecordPractiseFragment private constructor() : Fragment(), AudioPlayerEven
             disableView(binding.ivSecondUser)
             filterProperty(ViewTypeForPractiseUser.SECOND.type)
             initAudioPlayer(PractiseUser.FIRST)
+            changeStatusOfButton(true)
+            nameStateViewChange()
         }
         logPatnerSelectedEvent("first")
     }
 
     fun practiseWithSecondUser() {
-        if (viewModel.isRecordingRunning) {
+        if (viewModel.isRecordingStarted()) {
             return
         }
         if (viewModel.isRecord) {
@@ -261,6 +265,8 @@ class RecordPractiseFragment private constructor() : Fragment(), AudioPlayerEven
             disableView(binding.ivFirstUser)
             filterProperty(ViewTypeForPractiseUser.FIRST.type)
             initAudioPlayer(PractiseUser.SECOND)
+            changeStatusOfButton(true)
+            nameStateViewChange()
         }
         logPatnerSelectedEvent("second")
     }
@@ -270,17 +276,43 @@ class RecordPractiseFragment private constructor() : Fragment(), AudioPlayerEven
         RxBus2.publish(ViewPagerDisableEventBus(false))
         binding.ivTickFirstUser.visibility = View.GONE
         binding.ivTickSecondUser.visibility = View.GONE
+        binding.btnRecord.backgroundTintList =
+            ContextCompat.getColorStateList(AppObjectController.joshApplication, R.color.light_grey)
         enableView(binding.ivFirstUser)
         enableView(binding.ivSecondUser)
+        viewModel.practiseWho = null
         viewModel.isRecord = false
         audioPractiseAdapter?.clear()
         filterProperty(null)
+        changeStatusOfButton(false)
+        nameStateViewChange()
+    }
+
+    private fun nameStateViewChange() {
+        if (viewModel.practiseWho == null) {
+            binding.tvFirstUser.text = conversationPractiseModel.characterNameA
+            binding.tvSecondUser.text = conversationPractiseModel.characterNameB
+            binding.tvFirstUser.textColorSet(R.color.black)
+            binding.tvSecondUser.textColorSet(R.color.black)
+        } else {
+            if (viewModel.practiseWho == PractiseUser.FIRST) {
+                binding.tvFirstUser.text = getString(R.string.me)
+                binding.tvFirstUser.textColorSet(R.color.button_primary_color)
+            } else {
+                binding.tvSecondUser.text = getString(R.string.me)
+                binding.tvSecondUser.textColorSet(R.color.button_primary_color)
+            }
+        }
     }
 
     private fun resetPlayer() {
+        viewModel.practiseWho = null
         viewModel.isRecord = false
         audioPractiseAdapter?.clear()
         filterProperty(null)
+        nameStateViewChange()
+        changeStatusOfButton(false)
+
     }
 
     private fun enableView(view: View) {
@@ -288,7 +320,6 @@ class RecordPractiseFragment private constructor() : Fragment(), AudioPlayerEven
         view.isEnabled = true
         view.alpha = ALPHA_MAX
         binding.placeholderBg.visibility = View.VISIBLE
-
     }
 
     private fun disableView(view: View) {
@@ -298,14 +329,34 @@ class RecordPractiseFragment private constructor() : Fragment(), AudioPlayerEven
         binding.placeholderBg.visibility = View.GONE
     }
 
+    private fun changeStatusOfButton(active: Boolean) {
+        if (active) {
+            binding.btnRecord.backgroundTintList =
+                ContextCompat.getColorStateList(
+                    AppObjectController.joshApplication,
+                    R.color.button_primary_color
+                )
+
+        } else {
+            binding.btnRecord.backgroundTintList =
+                ContextCompat.getColorStateList(
+                    AppObjectController.joshApplication,
+                    R.color.light_grey
+                )
+        }
+    }
 
     private fun filterProperty(viewType: Int?) {
         recordListenList.forEach {
             it.disable = false
+            it.hasPractising = false
         }
         if (viewType != null) {
             recordListenList.filter { it.viewType == viewType }.forEach {
                 it.disable = true
+            }
+            recordListenList.filter { it.viewType != viewType }.forEach {
+                it.hasPractising = true
             }
         }
     }
@@ -315,9 +366,6 @@ class RecordPractiseFragment private constructor() : Fragment(), AudioPlayerEven
             showToast(getString(R.string.select_your_character))
             return
         }
-        if (viewModel.isPlayerInit.not()) {
-            viewModel.initRecorder()
-        }
 
         if (viewModel.isRecordingRunning) {
             binding.audioPlayer.onPause()
@@ -326,34 +374,39 @@ class RecordPractiseFragment private constructor() : Fragment(), AudioPlayerEven
                 R.color.button_primary_color
             )
             viewModel.isRecordingRunning = false
-            viewModel.stopRecording(object : AudioRecorder.OnPauseListener {
-                override fun onPaused(activeRecordFileName: String?) {
-                    resetAllState()
-                    binding.audioPlayer.onPause()
-                    completePractise()
-                }
-
-                override fun onException(e: Exception?) {
-                    viewModel.practiseWho = null
-                    resetAllState()
-                }
-            })
+            viewModel.stopRecording(false)
         } else {
             binding.btnRecord.backgroundTintList = ContextCompat.getColorStateList(
                 AppObjectController.joshApplication,
                 R.color.recording_9D
             )
-            viewModel.startRecording(object : AudioRecorder.OnStartListener {
-
-                override fun onStarted() {
-                    RxBus2.publish(ViewPagerDisableEventBus(true))
-                    viewModel.isRecordingRunning = true
-                    binding.audioPlayer.onPlay()
+            viewModel.startRecord(object :
+                OnAudioRecordListener {
+                override fun onRecordingStarted() {
+                    AppObjectController.uiHandler.post {
+                        RxBus2.publish(ViewPagerDisableEventBus(true))
+                        viewModel.isRecordingRunning = true
+                        binding.audioPlayer.onPlay()
+                    }
                     logRecordStartedEvent()
                 }
 
-                override fun onException(e: Exception?) {
+                override fun onRecordFinished(recordingItem: RecordingItem?) {
+                    AppObjectController.uiHandler.post {
+                        resetAllState()
+                        binding.audioPlayer.onPause()
+                        completePractise()
+                    }
                 }
+
+                override fun onError(errorCode: Int) {
+                    AppObjectController.uiHandler.post {
+                        resetAllState()
+                        binding.audioPlayer.onPause()
+                        completePractise()
+                    }
+                }
+
             })
         }
     }
@@ -370,24 +423,6 @@ class RecordPractiseFragment private constructor() : Fragment(), AudioPlayerEven
             childFragmentManager,
             ConversationSubmitBottomSheet::class.java.name
         )
-
-        /* val bottomSheet = BottomSheet(LayoutMode.WRAP_CONTENT)
-         val view = LayoutInflater.from(requireContext())
-             .inflate(R.layout.conversation_submit_dialog, null, false)
-         val dialog = MaterialDialog(requireActivity(), bottomSheet).show {
-             customView(view = view)
-             cancelOnTouchOutside(false)
-         }
-
-         view.findViewById<View>(R.id.btn_no).setOnClickListener {
-             AppDirectory.deleteRecordingFile()
-             viewModel.practiseWho = null
-             dialog.cancel()
-         }
-         view.findViewById<View>(R.id.btn_yes).setOnClickListener {
-             RxBus2.publish(ConversationPractiseSubmitEventBus(getTextWithTalk() ?: EMPTY))
-             dialog.cancel()
-         }*/
     }
 
     private fun getTextWithTalk(): String? {
@@ -404,7 +439,7 @@ class RecordPractiseFragment private constructor() : Fragment(), AudioPlayerEven
     override fun onPause() {
         super.onPause()
         resetAllState()
-        viewModel.stopRecording(null)
+        viewModel.stopRecording(true)
         RxBus2.publish(ViewPagerDisableEventBus(false))
     }
 
@@ -474,15 +509,6 @@ class RecordPractiseFragment private constructor() : Fragment(), AudioPlayerEven
             resetAllState()
         }
 
-    }
-
-    override fun onResume() {
-        super.onResume()
-        if (viewModel.isRecord.not()) {
-            recordListenList.forEach {
-                it.disable = false
-            }
-        }
     }
 
     companion object {

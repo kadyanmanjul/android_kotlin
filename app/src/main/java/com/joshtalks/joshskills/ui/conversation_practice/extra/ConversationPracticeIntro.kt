@@ -64,7 +64,6 @@ class ConversationPracticeIntro private constructor() : DialogFragment() {
         savedInstanceState: Bundle?
     ): View? {
         return inflater.inflate(R.layout.fragment_conversation_practice_ntro, container, false)
-
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

@@ -84,7 +84,7 @@ object AppDirectory {
         }
 
         if (fileName.isEmpty()) {
-            fileName = "Record_" + System.currentTimeMillis().toString() + ".amr"
+            fileName = "Record_" + System.currentTimeMillis().toString() + ".aac"
         }
         val file = File(AUDIO_SENT_PATH + File.separator + fileName)
         file.createNewFile()
@@ -349,12 +349,12 @@ object AppDirectory {
     fun tempRecordingFile(): File {
         val outputDir =
             AppObjectController.joshApplication.cacheDir // context being the Activity pointer
-        return File.createTempFile("record", ".amr", outputDir)
+        return File.createTempFile("record", ".aac", outputDir)
     }
 
     fun deleteRecordingFile() {
         try {
-            File.createTempFile("record", ".amr", AppObjectController.joshApplication.cacheDir)
+            File.createTempFile("record", ".aac", AppObjectController.joshApplication.cacheDir)
                 .delete()
         } catch (ex: Exception) {
             ex.printStackTrace()

@@ -1,7 +1,6 @@
 package com.joshtalks.joshskills.ui.conversation_practice.adapter
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import android.widget.Filter
 import android.widget.Filterable
@@ -15,6 +14,7 @@ import com.joshtalks.joshskills.core.ViewTypeForPractiseUser
 import com.joshtalks.joshskills.databinding.AudioPractiseReceivedItemBinding
 import com.joshtalks.joshskills.databinding.AudioPractiseSentItemBinding
 import com.joshtalks.joshskills.repository.server.conversation_practice.ListenModel
+import org.jetbrains.anko.textColor
 
 class AudioPractiseAdapter(var items: MutableList<ListenModel> = arrayListOf()) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>(), Filterable {
@@ -24,7 +24,11 @@ class AudioPractiseAdapter(var items: MutableList<ListenModel> = arrayListOf()) 
         ContextCompat.getColorStateList(AppObjectController.joshApplication, R.color.sent_bg_7a)
     private var receiveBG =
         ContextCompat.getColorStateList(AppObjectController.joshApplication, R.color.received_bg_BC)
-
+    private var standardBG =
+        ContextCompat.getColorStateList(
+            AppObjectController.joshApplication,
+            R.color.button_primary_color
+        )
 
     fun addItem(list: ListenModel) {
         items.add(list)
@@ -64,12 +68,10 @@ class AudioPractiseAdapter(var items: MutableList<ListenModel> = arrayListOf()) 
         if (holder is ViewHolderSent) {
             (holder).also {
                 it.bind(items[position])
-                it.binding.rootView.visibility = View.VISIBLE
             }
         } else if (holder is ViewHolderReceived) {
             (holder).also {
                 it.bind(items[position])
-                it.binding.rootView.visibility = View.VISIBLE
             }
         }
     }
@@ -80,15 +82,43 @@ class AudioPractiseAdapter(var items: MutableList<ListenModel> = arrayListOf()) 
         RecyclerView.ViewHolder(binding.root) {
         fun bind(listenModel: ListenModel) {
             with(binding) {
-                name.text = listenModel.name
-                statementTv.text = listenModel.text
+                name.apply {
+                    text = listenModel.name
+                    textColor = ContextCompat.getColor(
+                        AppObjectController.joshApplication,
+                        R.color.light_grey
+                    )
+                }
+                statementTv.apply {
+                    text = listenModel.text
+                    textColor = ContextCompat.getColor(
+                        AppObjectController.joshApplication,
+                        R.color.black
+                    )
+                }
                 if (listenModel.disable) {
                     tvContainer.backgroundTintList = disableBG
                     tvContainer.alpha = ALPHA_MIN
                 } else {
-                    tvContainer.backgroundTintList = sentBG
+                    if (listenModel.hasPractising) {
+                        tvContainer.backgroundTintList = standardBG
+                        statementTv.setTextColor(
+                            ContextCompat.getColor(
+                                AppObjectController.joshApplication,
+                                R.color.white
+                            )
+                        )
+                        name.apply {
+                            text = "Me"
+                            textColor = ContextCompat.getColor(
+                                AppObjectController.joshApplication,
+                                R.color.button_primary_color
+                            )
+                        }
+                    } else {
+                        tvContainer.backgroundTintList = sentBG
+                    }
                     tvContainer.alpha = ALPHA_MAX
-
                 }
             }
         }
@@ -100,15 +130,45 @@ class AudioPractiseAdapter(var items: MutableList<ListenModel> = arrayListOf()) 
         RecyclerView.ViewHolder(binding.root) {
         fun bind(listenModel: ListenModel) {
             with(binding) {
-                name.text = listenModel.name
-                statementTv.text = listenModel.text
+                name.apply {
+                    text = listenModel.name
+                    textColor = ContextCompat.getColor(
+                        AppObjectController.joshApplication,
+                        R.color.light_grey
+                    )
+                }
+                statementTv.apply {
+                    text = listenModel.text
+                    textColor = ContextCompat.getColor(
+                        AppObjectController.joshApplication,
+                        R.color.black
+                    )
+                }
+
                 if (listenModel.disable) {
                     tvContainer.backgroundTintList = disableBG
                     tvContainer.alpha = ALPHA_MIN
                 } else {
-                    tvContainer.backgroundTintList = receiveBG
-                    tvContainer.alpha = ALPHA_MAX
+                    if (listenModel.hasPractising) {
+                        tvContainer.backgroundTintList = standardBG
+                        name.apply {
+                            text = "Me"
+                            textColor = ContextCompat.getColor(
+                                AppObjectController.joshApplication,
+                                R.color.button_primary_color
+                            )
+                        }
+                        statementTv.setTextColor(
+                            ContextCompat.getColor(
+                                AppObjectController.joshApplication,
+                                R.color.white
+                            )
+                        )
 
+                    } else {
+                        tvContainer.backgroundTintList = receiveBG
+                    }
+                    tvContainer.alpha = ALPHA_MAX
                 }
             }
         }
