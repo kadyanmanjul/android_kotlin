@@ -225,4 +225,12 @@
         <key>FFCOURSE_CARD_CLICK_MSG</key>
         <value>Select any course below &amp; get it FREE</value>
     </entry>
+    <entry>
+        <key>EXPLORE_TYPE_FFCOURSE_TIP</key>
+        <value>Enjoy your Free Trial!</value>
+    </entry>
+    <entry>
+        <key>EXPLORE_TYPE_NORMAL_TIP</key>
+        <value>Get all course pass for 1-Year</value>
+    </entry>
 </defaultsMap>
