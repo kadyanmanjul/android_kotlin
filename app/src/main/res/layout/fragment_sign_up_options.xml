@@ -15,108 +15,6 @@
             android:layout_height="match_parent"
             android:background="@color/white">
 
-        <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_truecaller_login"
-                style="@style/Widget.MaterialComponents.Button"
-                fontPath="fonts/OpenSans-SemiBold.ttf"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:backgroundTint="#107BE5"
-                android:clickable="true"
-                android:focusable="true"
-                android:maxLines="1"
-                android:onClick="@{()->handler.loginViaTrueCaller()}"
-                android:paddingTop="@dimen/_12sdp"
-                android:paddingBottom="@dimen/_12sdp"
-                android:text="@string/truecaller_label"
-                android:textAllCaps="false"
-                android:textColor="@color/white"
-                android:textSize="@dimen/font_15"
-                android:visibility="gone"
-                app:cornerRadius="@dimen/_16sdp"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:ignore="RtlHardcoded"
-                tools:visibility="visible" />
-
-        <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/text_view_1"
-                fontPath="fonts/Roboto-Bold.ttf"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_12sdp"
-                android:gravity="center"
-                android:text="@string/join_social_text"
-                android:textColor="@color/grey"
-                android:textSize="@dimen/font_15"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/btn_truecaller_login"
-                app:layout_constraintWidth_default="percent"
-                app:layout_constraintWidth_percent="0.9" />
-
-        <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/btn_facebook"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_12sdp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:clickable="true"
-                android:focusable="true"
-                android:onClick="@{()->handler.loginViaFacebook()}"
-                android:src="@drawable/ic_facebook"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.4"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/text_view_1" />
-
-        <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/btn_google"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_12sdp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:clickable="true"
-                android:focusable="true"
-                android:onClick="@{()->handler.loginViaGoogle()}"
-                android:src="@drawable/ic_google"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.6"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/text_view_1" />
-
-
-        <FrameLayout
-                android:id="@+id/view_separator"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_12sdp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/btn_google"
-                app:layout_constraintWidth_default="percent"
-                app:layout_constraintWidth_percent="0.8">
-
-            <View
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/_1sdp"
-                    android:layout_gravity="center"
-                    android:background="@color/grey" />
-
-            <androidx.appcompat.widget.AppCompatTextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:background="@color/white"
-                    android:paddingStart="@dimen/_6sdp"
-                    android:paddingEnd="@dimen/_6sdp"
-                    android:text="@string/or"
-                    android:textColor="@color/grey"
-                    android:textSize="@dimen/font_14" />
-
-        </FrameLayout>
-
         <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/text_view_2"
                 fontPath="fonts/Roboto-Medium.ttf"
@@ -129,7 +27,7 @@
                 android:textSize="@dimen/font_20"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/view_separator"
+                app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintWidth_default="percent"
                 app:layout_constraintWidth_percent="0.8" />
 
@@ -259,7 +157,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginTop="@dimen/_24sdp"
+                android:layout_marginTop="@dimen/_12sdp"
                 android:clickable="true"
                 android:focusable="true"
                 android:gravity="center"
@@ -319,6 +217,108 @@
                 app:layout_constraintWidth_default="percent"
                 app:layout_constraintWidth_percent="0.65"
                 tools:text="@string/wait_for_second" />
+
+        <FrameLayout
+                android:id="@+id/view_separator"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_24sdp"
+                android:paddingBottom="@dimen/_12sdp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/btn_login"
+                app:layout_constraintWidth_default="percent"
+                app:layout_constraintWidth_percent="0.8">
+
+            <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_1sdp"
+                    android:layout_gravity="center"
+                    android:background="@color/grey" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:background="@color/white"
+                    android:paddingStart="@dimen/_6sdp"
+                    android:paddingEnd="@dimen/_6sdp"
+                    android:text="@string/or"
+                    android:textColor="@color/grey"
+                    android:textSize="@dimen/font_14" />
+
+        </FrameLayout>
+
+        <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_truecaller_login"
+                style="@style/Widget.MaterialComponents.Button"
+                fontPath="fonts/OpenSans-SemiBold.ttf"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="#107BE5"
+                android:clickable="true"
+                android:focusable="true"
+                android:maxLines="1"
+                android:onClick="@{()->handler.loginViaTrueCaller()}"
+                android:paddingTop="@dimen/_12sdp"
+                android:paddingBottom="@dimen/_12sdp"
+                android:text="@string/truecaller_label"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                android:textSize="@dimen/font_15"
+                android:visibility="gone"
+                app:cornerRadius="@dimen/_16sdp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/view_separator"
+                tools:ignore="RtlHardcoded"
+                tools:visibility="visible" />
+
+        <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/text_view_1"
+                fontPath="fonts/Roboto-Bold.ttf"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_12sdp"
+                android:gravity="center"
+                android:text="@string/join_social_text"
+                android:textColor="@color/grey"
+                android:textSize="@dimen/font_15"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/btn_truecaller_login"
+                app:layout_constraintWidth_default="percent"
+                app:layout_constraintWidth_percent="0.9" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/btn_facebook"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_12sdp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:clickable="true"
+                android:focusable="true"
+                android:onClick="@{()->handler.loginViaFacebook()}"
+                android:src="@drawable/ic_facebook"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.4"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/text_view_1" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/btn_google"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_12sdp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:clickable="true"
+                android:focusable="true"
+                android:onClick="@{()->handler.loginViaGoogle()}"
+                android:src="@drawable/ic_google"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.6"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/text_view_1" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
