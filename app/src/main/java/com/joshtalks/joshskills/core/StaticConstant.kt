@@ -103,5 +103,8 @@ class FirebaseRemoteConfigKey {
         const val START_SUBSCRIPTION_FEATURE2 = "START_SUBSCRIPTION_FEATURE2"
         const val START_SUBSCRIPTION_FEATURE3 = "START_SUBSCRIPTION_FEATURE3"
 
+        // Course Explore Screen
+        const val FFCOURSE_CARD_CLICK_MSG = "FFCOURSE_CARD_CLICK_MSG"
+
     }
 }

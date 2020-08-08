@@ -221,4 +221,8 @@
         <key>START_SUBSCRIPTION_FEATURE3</key>
         <value>Agar accha lage toh aap 7 days ke baad upgrade kar sakte hai for just 599!</value>
     </entry>
+    <entry>
+        <key>FFCOURSE_CARD_CLICK_MSG</key>
+        <value>Select any course below &amp; get it FREE</value>
+    </entry>
 </defaultsMap>
