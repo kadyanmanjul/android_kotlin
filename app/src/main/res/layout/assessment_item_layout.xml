@@ -52,7 +52,7 @@
 
         <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_start"
-                fontPath="fonts/Poppins-Bold.ttf"
+                fontPath="fonts/Poppins-SemiBold.ttf"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:backgroundTint="@color/text_90"
