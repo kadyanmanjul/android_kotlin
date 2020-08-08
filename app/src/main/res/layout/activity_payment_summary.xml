@@ -81,13 +81,13 @@
 
                         <TextView
                                 android:id="@+id/course_name"
-                                style="@style/TextStyle.TopBarScroll"
+                                fontPath="fonts/Poppins-SemiBold.ttf"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_marginHorizontal="@dimen/_8sdp"
                                 android:gravity="start"
                                 android:textColor="@color/font_color"
-                                android:textSize="@dimen/font_17"
+                                android:textSize="@dimen/font_16"
                                 app:layout_constraintEnd_toEndOf="parent"
                                 app:layout_constraintStart_toEndOf="@+id/iv_container"
                                 app:layout_constraintTop_toTopOf="@+id/iv_container"
@@ -95,7 +95,7 @@
 
                         <TextView
                                 android:id="@+id/tutor_name"
-                                style="@style/TextStyle.NormalText"
+                                fontPath="fonts/Poppins-Regular.ttf"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center"
@@ -121,13 +121,12 @@
 
                         <TextView
                                 android:id="@+id/enrolled"
-                                style="@style/TextStyle.TopBarScroll"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="@dimen/_10sdp"
                                 android:gravity="start"
                                 android:textColor="@color/black"
-                                android:textSize="@dimen/font_17"
+                                android:textSize="@dimen/font_16"
                                 android:textStyle="bold"
                                 app:layout_constraintStart_toStartOf="@+id/imageView3"
                                 app:layout_constraintTop_toBottomOf="@+id/imageView3"
@@ -135,11 +134,11 @@
 
                         <TextView
                                 android:id="@+id/txt_joined"
-                                style="@style/TextStyle.NormalText"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:gravity="start|top"
                                 android:text="@string/joined"
+                                android:layout_marginTop="@dimen/_minus8sdp"
                                 android:textColor="@color/dark_grey"
                                 android:textSize="@dimen/font_14"
                                 app:layout_constraintStart_toStartOf="@+id/enrolled"
@@ -147,6 +146,7 @@
 
                         <com.google.android.material.textview.MaterialTextView
                                 android:id="@+id/rating"
+                                fontPath="fonts/Poppins-Bold.ttf"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:background="@drawable/ic_payment_rating"
@@ -187,7 +187,7 @@
 
                         <TextView
                                 android:id="@+id/total_amount"
-                                style="@style/TextStyle.TopBarScroll"
+                                fontPath="fonts/Poppins-Medium.ttf"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginHorizontal="@dimen/_10sdp"
@@ -200,7 +200,7 @@
 
                         <TextView
                                 android:id="@+id/actual_txt_price"
-                                style="@style/TextStyle.TopBarScroll"
+                                fontPath="fonts/Poppins-Medium.ttf"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginHorizontal="@dimen/_14sdp"
@@ -215,7 +215,7 @@
 
                         <TextView
                                 android:id="@+id/txt_price"
-                                style="@style/TextStyle.TopBarScroll"
+                                fontPath="fonts/Poppins-Bold.ttf"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginHorizontal="@dimen/_6sdp"
@@ -229,6 +229,7 @@
 
                         <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
                                 android:id="@+id/tip_used_msg"
+                                fontPath="fonts/Poppins-Regular.ttf"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_marginVertical="@dimen/_6sdp"
@@ -272,10 +273,10 @@
 
                         <com.joshtalks.joshskills.core.custom_ui.countrycodepicker.CountryCodePicker
                                 android:id="@+id/country_code_picker"
+                                fontPath="fonts/Poppins-Regular.ttf"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:gravity="center"
-                                android:padding="@dimen/_2sdp"
                                 app:ccpDialog_allowSearch="true"
                                 app:ccpDialog_backgroundColor="@color/wh_f4"
                                 app:ccpDialog_fastScroller_bubbleColor="@color/checkmark_blue"
@@ -312,7 +313,7 @@
 
                         <androidx.appcompat.widget.AppCompatEditText
                                 android:id="@+id/mobile_et"
-                                fontPath="fonts/Roboto-Regular.ttf"
+                                fontPath="fonts/Poppins-Regular.ttf"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center"
@@ -358,6 +359,7 @@
 
                     <TextView
                             android:id="@+id/textview_number"
+                            fontPath="fonts/Poppins-Regular.ttf"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginHorizontal="@dimen/_52sdp"
@@ -383,7 +385,7 @@
 
                     <com.google.android.material.textview.MaterialTextView
                             android:id="@+id/materialButton"
-                            style="@style/TextStyle.ButtonText"
+                            fontPath="fonts/Poppins-Regular.ttf"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="@dimen/_16sdp"
@@ -475,7 +477,7 @@
 
                     <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
                             android:id="@+id/text_view_1"
-                            style="@style/TextStyle.TopBarScroll"
+                            fontPath="fonts/Poppins-SemiBold.ttf"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
@@ -504,7 +506,7 @@
 
                     <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
                             android:id="@+id/tv_tip"
-                            style="@style/TextStyle.TopBarScroll"
+                            fontPath="fonts/Poppins-Regular.ttf"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginHorizontal="@dimen/_12sdp"
@@ -521,7 +523,7 @@
 
                     <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
                             android:id="@+id/tv_tip_off"
-                            style="@style/TextStyle.TopBarScroll"
+                            fontPath="fonts/Poppins-Bold.ttf"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginHorizontal="@dimen/_12sdp"
@@ -538,7 +540,7 @@
 
                     <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
                             android:id="@+id/tv_tip_valid"
-                            style="@style/TextStyle.TopBarScroll"
+                            fontPath="fonts/Poppins-Regular.ttf"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginHorizontal="@dimen/_12sdp"
@@ -554,6 +556,7 @@
 
                     <androidx.appcompat.widget.AppCompatTextView
                             android:id="@+id/tv_tip_used"
+                            fontPath="fonts/Poppins-Regular.ttf"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginEnd="@dimen/_12sdp"
