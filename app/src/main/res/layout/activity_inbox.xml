@@ -16,7 +16,7 @@
             android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
         <include
-                layout="@layout/base_toolbar"
+                layout="@layout/inbox_toolbar"
                 app:popupTheme="@style/AppTheme.PopupOverlay" />
 
 

@@ -7,8 +7,8 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.FrameLayout
-import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
+import androidx.appcompat.widget.PopupMenu
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -42,6 +42,7 @@ import com.joshtalks.joshskills.repository.local.eventbus.ExploreCourseEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.NPSEventGenerateEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.OpenCourseEventBus
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
+import com.joshtalks.joshskills.repository.local.model.ACTION_UPSELLING_POPUP
 import com.joshtalks.joshskills.repository.local.model.ExploreCardType
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.NotificationAction
@@ -52,6 +53,7 @@ import com.joshtalks.joshskills.ui.chat.ConversationActivity
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
 import com.joshtalks.joshskills.ui.payment.order_summary.PaymentSummaryActivity
 import com.joshtalks.joshskills.ui.referral.ReferralActivity
+import com.joshtalks.joshskills.ui.reminder.ReminderActivity
 import com.joshtalks.joshskills.ui.tooltip.BalloonFactory
 import com.joshtalks.joshskills.ui.view_holders.InboxViewHolder
 import com.joshtalks.skydoves.balloon.Balloon
@@ -96,7 +98,6 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
     }
     private var compositeDisposable = CompositeDisposable()
     private var inAppUpdateManager: InAppUpdateManager? = null
-    private lateinit var earnIV: AppCompatImageView
     private lateinit var findMoreLayout: FrameLayout
     private var offerInHint: Balloon? = null
 
@@ -203,19 +204,6 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
     private fun setToolbar() {
         val titleView = findViewById<AppCompatTextView>(R.id.text_message_title)
         titleView.text = getString(R.string.inbox_header)
-        earnIV = findViewById(R.id.iv_earn)
-        earnIV.setOnClickListener {
-            AppAnalytics
-                .create(AnalyticsEvent.REFER_BUTTON_CLICKED.NAME)
-                .addBasicParam()
-                .addUserDetails()
-                .addParam(AnalyticsEvent.REFERRAL_CODE.NAME, Mentor.getInstance().referralCode)
-                .push()
-            ReferralActivity.startReferralActivity(
-                this@InboxActivity,
-                InboxActivity::class.java.name
-            )
-        }
         findMoreLayout = findViewById(R.id.parent_layout)
         find_more.setOnClickListener {
             AppAnalytics.create(AnalyticsEvent.FIND_MORE_COURSE_CLICKED.NAME)
@@ -224,7 +212,46 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
                 .push()
             RxBus2.publish(ExploreCourseEventBus())
         }
-        visibleShareEarn()
+        findViewById<View>(R.id.iv_setting).setOnClickListener {
+            openPopupMenu(it)
+        }
+        findViewById<View>(R.id.iv_reminder).setOnClickListener {
+            openReminderScreen()
+        }
+    }
+
+    private fun openReminderScreen() {
+        startActivity(Intent(this, ReminderActivity::class.java))
+    }
+
+    private fun openPopupMenu(view: View) {
+        val popupMenu = PopupMenu(this, view, R.style.setting_menu_style)
+        popupMenu.inflate(R.menu.more_options_menu)
+        popupMenu.setOnMenuItemClickListener {
+            when (it.itemId) {
+                R.id.menu_referral -> {
+                    AppAnalytics
+                        .create(AnalyticsEvent.REFER_BUTTON_CLICKED.NAME)
+                        .addBasicParam()
+                        .addUserDetails()
+                        .addParam(
+                            AnalyticsEvent.REFERRAL_CODE.NAME,
+                            Mentor.getInstance().referralCode
+                        )
+                        .push()
+                    ReferralActivity.startReferralActivity(
+                        this@InboxActivity,
+                        InboxActivity::class.java.name
+                    )
+                    return@setOnMenuItemClickListener true
+                }
+                R.id.menu_help -> {
+                    openHelpActivity()
+                }
+            }
+            return@setOnMenuItemClickListener false
+        }
+        popupMenu.show()
     }
 
     private fun workInBackground() {
@@ -532,13 +559,6 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         }
     }
 
-    private fun visibleShareEarn() {
-        var url = AppObjectController.getFirebaseRemoteConfig().getString("EARN_SHARE_IMAGE_URL")
-        if (url.isEmpty()) {
-            url = "file:///android_asset/ic_rupee.svg"
-        }
-        earnIV.setVectorImage(url, tintColor = R.color.white)
-    }
 
     private fun attachOfferHintView() {
         compositeDisposable.add(

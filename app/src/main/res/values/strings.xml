@@ -359,4 +359,6 @@
     <string name="me">Me</string>
     <string name="delete_media_title">Clear Course Media</string>
     <string name="delete_media_message">Are you sure you want to delete all media from this course?</string>
+    <string name="referral">Referral</string>
+    <string name="reminder_note">Note : Lorem ipsum dolor sit amet, consectetur adipiscing elit Vitae pellentesque</string>
 </resources>

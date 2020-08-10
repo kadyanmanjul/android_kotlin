@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="MyTimePickerWidgetStyle" parent="@android:style/Widget.Material.TimePicker">
+        <item name="android:headerBackground">#FFFFFF</item>
+        <item name="android:numbersInnerTextColor">@color/colorPrimary</item>
+        <item name="android:textColorPrimary">
+            @color/primary_text_secondary_when_activated_material
+        </item>
+        <item name="android:numbersTextColor">@color/black</item>
+        <item name="android:numbersSelectorColor">@color/colorPrimary</item>
+        <item name="android:numbersBackgroundColor">@color/artboard_color</item>
+        <item name="android:amPmTextColor">@color/primary_text_secondary_when_activated_material
+        </item>
+    </style>
+</resources>

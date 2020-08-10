@@ -333,6 +333,12 @@
                 android:screenOrientation="portrait"
                 android:theme="@style/AppNoBarTheme"
                 android:windowSoftInputMode="stateHidden|adjustResize" />
+        <activity
+                android:name=".ui.reminder.ReminderActivity"
+                android:launchMode="singleTask"
+                android:screenOrientation="portrait"
+                android:theme="@style/AppNoBarTheme"
+                android:windowSoftInputMode="stateHidden|adjustResize" />
 
         <service
                 android:name=".core.service.video_download.VideoDownloadService"
