@@ -80,8 +80,8 @@ android {
             buildConfigField "String", "FLURRY_API_KEY", "\"466BRVHZTGCMRRQW67KX\""
             buildConfigField "String", "SINCH_API_KEY", "\"86f34ed9-cdcf-497c-af80-3f352170164f\""
             debuggable false
-            minifyEnabled true
-            shrinkResources true
+            minifyEnabled false
+            shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.release
         }

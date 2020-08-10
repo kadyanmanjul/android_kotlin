@@ -133,7 +133,7 @@ class SignUpProfileFragment : BaseSignUpFragment() {
                 binding.textViewPhone.visibility = View.VISIBLE
                 binding.countryCodePicker.isEnabled = false
                 binding.countryCodePicker.isClickable = false
-
+                binding.countryCodePicker.setCcpClickable(false)
             }
         } else if (PrefManager.getStringValue(PAYMENT_MOBILE_NUMBER).isNotEmpty()) {
             val mobileNumber = PrefManager.getStringValue(PAYMENT_MOBILE_NUMBER).split(SINGLE_SPACE)

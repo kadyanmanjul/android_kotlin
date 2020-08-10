@@ -49,11 +49,12 @@
 
             <com.joshtalks.joshskills.core.custom_ui.countrycodepicker.CountryCodePicker
                     android:id="@+id/country_code_picker"
+                    fontPath="fonts/Roboto-Regular.ttf"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:padding="@dimen/_2sdp"
-                    fontPath="fonts/Roboto-Regular.ttf"
+                    android:visibility="visible"
                     app:ccpDialog_allowSearch="true"
                     app:ccpDialog_backgroundColor="@color/wh_f4"
                     app:ccpDialog_fastScroller_bubbleColor="@color/checkmark_blue"
@@ -78,7 +79,6 @@
                     app:ccp_defaultLanguage="ENGLISH"
                     app:ccp_hintExampleNumber="false"
                     app:ccp_rememberLastSelection="true"
-                    android:visibility="visible"
                     app:ccp_showArrow="false"
                     app:ccp_showFullName="false"
                     app:ccp_showNameCode="false"
@@ -221,9 +221,9 @@
         <FrameLayout
                 android:id="@+id/view_separator"
                 android:layout_width="0dp"
+                android:layout_marginTop="@dimen/_16sdp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_24sdp"
-                android:paddingBottom="@dimen/_12sdp"
+                android:paddingVertical="@dimen/_12sdp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/btn_login"
@@ -249,75 +249,65 @@
 
         </FrameLayout>
 
-        <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_truecaller_login"
-                style="@style/Widget.MaterialComponents.Button"
-                fontPath="fonts/OpenSans-SemiBold.ttf"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:backgroundTint="#107BE5"
-                android:clickable="true"
-                android:focusable="true"
-                android:maxLines="1"
-                android:onClick="@{()->handler.loginViaTrueCaller()}"
-                android:paddingTop="@dimen/_12sdp"
-                android:paddingBottom="@dimen/_12sdp"
-                android:text="@string/truecaller_label"
-                android:textAllCaps="false"
-                android:textColor="@color/white"
-                android:textSize="@dimen/font_15"
-                android:visibility="gone"
-                app:cornerRadius="@dimen/_16sdp"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/view_separator"
-                tools:ignore="RtlHardcoded"
-                tools:visibility="visible" />
-
         <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/text_view_1"
                 fontPath="fonts/Roboto-Bold.ttf"
                 android:layout_width="0dp"
+                android:layout_marginTop="@dimen/_16sdp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_12sdp"
                 android:gravity="center"
                 android:text="@string/join_social_text"
                 android:textColor="@color/grey"
                 android:textSize="@dimen/font_15"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/btn_truecaller_login"
+                app:layout_constraintTop_toBottomOf="@+id/view_separator"
                 app:layout_constraintWidth_default="percent"
                 app:layout_constraintWidth_percent="0.9" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/btn_truecaller_login"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_12sdp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:clickable="true"
+                android:focusable="true"
+                android:onClick="@{()->handler.loginViaTrueCaller()}"
+                android:src="@drawable/ic_truecaller"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.3"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/text_view_1"
+                tools:visibility="visible" />
 
         <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/btn_facebook"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_12sdp"
                 android:layout_marginTop="@dimen/_12sdp"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:clickable="true"
                 android:focusable="true"
                 android:onClick="@{()->handler.loginViaFacebook()}"
                 android:src="@drawable/ic_facebook"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.4"
-                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/btn_truecaller_login"
                 app:layout_constraintTop_toBottomOf="@+id/text_view_1" />
 
         <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/btn_google"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_12sdp"
                 android:layout_marginTop="@dimen/_12sdp"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:clickable="true"
                 android:focusable="true"
                 android:onClick="@{()->handler.loginViaGoogle()}"
                 android:src="@drawable/ic_google"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.6"
-                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/btn_facebook"
                 app:layout_constraintTop_toBottomOf="@+id/text_view_1" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
