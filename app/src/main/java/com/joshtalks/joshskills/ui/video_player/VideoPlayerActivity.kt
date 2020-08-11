@@ -13,6 +13,7 @@ import android.view.View
 import android.view.WindowManager
 import androidx.databinding.DataBindingUtil
 import com.google.android.exoplayer2.Player
+import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.BaseActivity
@@ -271,12 +272,14 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
     }
 
     private fun showUsbConnectedMsg() {
-        AlertDialog.Builder(this)
-            .setTitle(getString(R.string.usb_disconnect_title))
-            .setMessage(getString(R.string.usb_connected_message))
-            .setPositiveButton(
-                getString(R.string.ok_got_it_lbl)
-            ) { dialog, _ -> dialog.dismiss() }.show()
+        if (!isFinishing) {
+            AlertDialog.Builder(this)
+                .setTitle(getString(R.string.usb_disconnect_title))
+                .setMessage(getString(R.string.usb_connected_message))
+                .setPositiveButton(
+                    getString(R.string.ok_got_it_lbl)
+                ) { dialog, _ -> dialog.dismiss() }.show()
+        }
     }
 
     override fun onPlayerReady() {
@@ -320,7 +323,7 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
 
             val inboxActivity = AppObjectController.appDatabase.courseDao()
                 .chooseRegisterCourseMinimal(chatObject?.conversationId!!)
-            if(isBatchChanged.not()) {
+            if (isBatchChanged.not()) {
                 checkInDbForNextVideo(inboxActivity)
             }
 
@@ -353,7 +356,7 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
     }
 
     suspend fun checkInDbForNextVideo(inboxActivity: InboxEntity?) {
-        if(interval==courseDuration) {
+        if (interval == courseDuration) {
             return
         }
         while (maxInterval > interval) {
@@ -521,6 +524,9 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
 
     override fun onResume() {
         super.onResume()
+        if (BuildConfig.DEBUG) {
+            return
+        }
         setBroadcastReceivers()
     }
 
