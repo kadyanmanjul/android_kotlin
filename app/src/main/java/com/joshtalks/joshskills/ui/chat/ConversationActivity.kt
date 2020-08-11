@@ -1577,8 +1577,10 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
                     BASE_MESSAGE_TYPE.UNLOCK,
                     tUnlockClassMessage
                 )
-                if (unlockViewHolder != null) {
-                    conversationBinding.chatRv.removeView(unlockViewHolder)
+                CoroutineScope(Dispatchers.Main).launch {
+                    if (unlockViewHolder != null) {
+                        conversationBinding.chatRv.removeView(unlockViewHolder)
+                    }
                 }
                 conversationViewModel.insertUnlockClassToDatabase(cell.message)
                 CoroutineScope(Dispatchers.Main).launch {
