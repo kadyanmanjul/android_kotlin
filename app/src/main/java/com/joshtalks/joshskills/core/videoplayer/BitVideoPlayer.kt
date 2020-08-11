@@ -578,6 +578,9 @@ class BitVideoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibili
         player?.playWhenReady = true
         player?.playbackState
         uri?.let {
+            if(player==null) {
+                initPlayer()
+            }
             player!!.prepare(VideoDownloadController.getInstance().getMediaSource(uri), true, false)
         }
         seekTo(lastPosition)
