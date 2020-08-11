@@ -10,6 +10,7 @@ import com.github.twocoffeesoneteam.glidetovectoryou.GlideToVectorYou
 import com.google.android.material.card.MaterialCardView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.setImage
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.CategorySelectEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.LandingPageCategorySelectEventBus
@@ -40,14 +41,18 @@ class FaqCategoryViewHolder(
     @Resolve
     fun onViewInflated() {
         categoryNameTV.text = faqCategory.categoryName
-        GlideToVectorYou
-            .init()
-            .with(AppObjectController.joshApplication)
-            .requestBuilder
-            .load(faqCategory.iconUrl)
-            .transition(DrawableTransitionOptions.withCrossFade())
-            .apply(RequestOptions().centerCrop())
-            .into(categoryIconIV)
+        if (faqCategory.iconUrl.endsWith(".svg")) {
+            GlideToVectorYou
+                .init()
+                .with(AppObjectController.joshApplication)
+                .requestBuilder
+                .load(faqCategory.iconUrl)
+                .transition(DrawableTransitionOptions.withCrossFade())
+                .apply(RequestOptions().centerCrop())
+                .into(categoryIconIV)
+        } else {
+            categoryIconIV.setImage(faqCategory.iconUrl)
+        }
         typefaceSpan =
             ResourcesCompat.getFont(AppObjectController.joshApplication, R.font.poppins_medium)
         if (position != -1)
@@ -82,7 +87,13 @@ class FaqCategoryViewHolder(
     @Click(R.id.root_view)
     fun onClick() {
         if (position != -1)
-            RxBus2.publish(LandingPageCategorySelectEventBus(position, faqCategory.id,faqCategory.categoryName))
+            RxBus2.publish(
+                LandingPageCategorySelectEventBus(
+                    position,
+                    faqCategory.id,
+                    faqCategory.categoryName
+                )
+            )
         else RxBus2.publish(CategorySelectEventBus(listFAQCategory, faqCategory))
     }
 }
