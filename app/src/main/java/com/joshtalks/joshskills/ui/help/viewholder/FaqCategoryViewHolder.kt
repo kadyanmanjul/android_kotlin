@@ -1,11 +1,16 @@
 package com.joshtalks.joshskills.ui.help.viewholder
 
 import android.graphics.Typeface
+import android.graphics.drawable.PictureDrawable
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.res.ResourcesCompat
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
+import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
+import com.bumptech.glide.request.target.Target
 import com.github.twocoffeesoneteam.glidetovectoryou.GlideToVectorYou
 import com.google.android.material.card.MaterialCardView
 import com.joshtalks.joshskills.R
@@ -41,15 +46,43 @@ class FaqCategoryViewHolder(
     @Resolve
     fun onViewInflated() {
         categoryNameTV.text = faqCategory.categoryName
+
         if (faqCategory.iconUrl.endsWith(".svg")) {
-            GlideToVectorYou
+
+            val requestBuilder = GlideToVectorYou
                 .init()
                 .with(AppObjectController.joshApplication)
                 .requestBuilder
-                .load(faqCategory.iconUrl)
+            requestBuilder.load(faqCategory.iconUrl)
                 .transition(DrawableTransitionOptions.withCrossFade())
                 .apply(RequestOptions().centerCrop())
-                .into(categoryIconIV)
+                .listener(object : RequestListener<PictureDrawable> {
+                    override fun onLoadFailed(
+                        e: GlideException?,
+                        model: Any?,
+                        target: Target<PictureDrawable>?,
+                        isFirstResource: Boolean
+                    ): Boolean {
+                        return false
+                    }
+
+                    override fun onResourceReady(
+                        resource: PictureDrawable?,
+                        model: Any?,
+                        target: Target<PictureDrawable>?,
+                        dataSource: DataSource?,
+                        isFirstResource: Boolean
+                    ): Boolean {
+                        resource?.let {
+                            AppObjectController.uiHandler.post {
+                                categoryIconIV.setImageDrawable(it)
+                            }
+                        }
+                        return false
+                    }
+
+                }).submit()
+
         } else {
             categoryIconIV.setImage(faqCategory.iconUrl)
         }
