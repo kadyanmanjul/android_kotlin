@@ -8,7 +8,7 @@ apply plugin: 'newrelic'
 
 def majorVersion = 2
 def minorVersion = 0
-def patchVersion = 3
+def patchVersion = 5
 
 android {
     compileSdkVersion 29
