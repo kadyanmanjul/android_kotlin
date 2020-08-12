@@ -334,6 +334,7 @@ class AudioPlayerView : FrameLayout, View.OnClickListener, CurrentSessionCallbac
             request.priority = Priority.HIGH
             request.tag = id
             jobs += CoroutineScope(Dispatchers.IO).launch {
+                AppObjectController.getFetchObject().remove(request.id)
                 AppObjectController.getFetchObject()
                     .addListener(downloadListener)
                     .enqueue(request, Func {
@@ -343,7 +344,6 @@ class AudioPlayerView : FrameLayout, View.OnClickListener, CurrentSessionCallbac
                             onDownloadIssue()
                         }).awaitFinishOrTimeout(20000)
             }
-
 
         } catch (ex: Exception) {
             ex.printStackTrace()

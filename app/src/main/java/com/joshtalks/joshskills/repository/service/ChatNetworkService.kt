@@ -97,8 +97,6 @@ interface ChatNetworkService {
     ): Response<AssessmentResponse>
 
     @PATCH("$DIR/chat/add_next_class/{id}/")
-    suspend fun changeBatchRequest(
-        @Path("id") conversationId: String
-    ): Response<Any>
+    suspend fun changeBatchRequest(@Path("id") conversationId: String): Response<Any>
 
 }

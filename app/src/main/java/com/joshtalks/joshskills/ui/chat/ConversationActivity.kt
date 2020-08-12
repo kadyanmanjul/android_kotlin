@@ -1255,14 +1255,11 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
                     logUnlockCardEvent()
-                    CoroutineScope(Dispatchers.Main).launch {
-                        unlockViewHolder = null
-                        conversationBinding.chatRv.removeView(it.viewHolder)
-                        conversationViewModel.updateBatchChangeRequest()
-                        conversationBinding.refreshLayout.isRefreshing = true
-                        scrollToEnd()
-                    }
-
+                    unlockViewHolder = null
+                    conversationBinding.chatRv.removeView(it.viewHolder)
+                    conversationViewModel.updateBatchChangeRequest()
+                    conversationBinding.refreshLayout.isRefreshing = true
+                    scrollToEnd()
                 }, {
                     it.printStackTrace()
                 })

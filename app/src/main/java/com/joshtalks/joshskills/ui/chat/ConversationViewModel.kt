@@ -44,6 +44,7 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import org.jetbrains.anko.collections.forEachWithIndex
+import retrofit2.HttpException
 import java.io.File
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -106,19 +107,6 @@ class ConversationViewModel(application: Application) :
         mAudioRecording.stopRecording(cancel)
         isRecordingStarted = false
     }
-
-    override fun onCleared() {
-        super.onCleared()
-        jobs.listIterator().forEach {
-            it.cancel()
-        }
-        compositeDisposable.clear()
-        context.unregisterReceiver(broadCastForNetwork)
-        if (isRecordingStarted) {
-            mAudioRecording.stopRecording(true)
-        }
-    }
-
 
     private fun addObserver() {
         compositeDisposable.add(
@@ -439,23 +427,26 @@ class ConversationViewModel(application: Application) :
         val arguments = mutableMapOf<String, String>()
         val (key, value) = PrefManager.getLastSyncTime(inboxEntity.conversation_id)
         arguments[key] = value
-        NetworkRequestHelper.getUpdatedChat(
+        jobs += NetworkRequestHelper.getUpdatedChat(
             inboxEntity.conversation_id,
             queryMap = arguments
         )
     }
 
-    suspend fun updateBatchChangeRequest() {
-        try {
-            val response =
-                AppObjectController.chatNetworkService.changeBatchRequest(inboxEntity.conversation_id)
-            if (response.isSuccessful) {
-                deleteChatModelOfType(BASE_MESSAGE_TYPE.UNLOCK)
-                refreshChatOnManual()
+    fun updateBatchChangeRequest() {
+        jobs += viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val response =
+                    AppObjectController.chatNetworkService.changeBatchRequest(inboxEntity.conversation_id)
+                if (response.isSuccessful) {
+                    deleteChatModelOfType(BASE_MESSAGE_TYPE.UNLOCK)
+                    refreshChatOnManual()
+                }
+            } catch (ex: HttpException) {
+                ex.printStackTrace()
             }
-        } catch (ex: Exception) {
-            ex.printStackTrace()
         }
+
     }
 
     suspend fun deleteChatModelOfType(type: BASE_MESSAGE_TYPE) {
@@ -482,6 +473,18 @@ class ConversationViewModel(application: Application) :
     fun refreshChat() {
         lastChatTime = null
         getAllUserMessage()
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        jobs.listIterator().forEach {
+            it.cancel()
+        }
+        compositeDisposable.clear()
+        context.unregisterReceiver(broadCastForNetwork)
+        if (isRecordingStarted) {
+            mAudioRecording.stopRecording(true)
+        }
     }
 
 }
