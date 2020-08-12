@@ -335,7 +335,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         recycler_view_inbox.removeAllViews()
         val total = items.size
         items.forEachWithIndex { i, inbox ->
-            if (inbox.courseId != SUBSCRIPTION_COURSE_ID && inbox.courseId != TRIAL_COURSE_ID)
+            if (inbox.courseId != TRIAL_COURSE_ID)
                 recycler_view_inbox.addView(
                     InboxViewHolder(
                         inbox, total, i
