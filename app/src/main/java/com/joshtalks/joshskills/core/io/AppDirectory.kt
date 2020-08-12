@@ -4,9 +4,7 @@ import android.net.Uri
 import android.os.Environment
 import android.os.ParcelFileDescriptor
 import android.text.format.DateUtils
-import android.util.Log
 import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.AppObjectController.Companion.joshApplication
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.Utils
@@ -18,12 +16,8 @@ import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.io.IOException
 import java.io.InputStreamReader
-import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.math.log10
-import kotlin.math.pow
-
 
 object AppDirectory {
     const val APP_DIRECTORY = "JoshSkill"
@@ -490,36 +484,5 @@ object AppDirectory {
 
     fun getFileSize(file: File?): Long {
         return file?.length() ?: 0
-    }
-
-
-    fun initializeCache() {
-        var size: Long = 0
-        joshApplication.getExternalFilesDir(null)?.run {
-            Log.e("externalfilessize", " " + readableFileSize(getDirSize(this)))
-        }
-        joshApplication.filesDir?.run {
-            Log.e("filesDir", " " + readableFileSize(getDirSize(this)))
-
-        }
-        joshApplication.cacheDir?.run {
-            Log.e("cacheDir", " " + readableFileSize(getDirSize(this)))
-
-        }
-        joshApplication.externalCacheDir?.run {
-            Log.e("externalCacheDir", " " + readableFileSize(getDirSize(this)))
-
-        }
-    }
-
-    fun readableFileSize(size: Long): String? {
-        if (size <= 0) return "0 Bytes"
-        Log.e("bytes", size.toString())
-        val units =
-            arrayOf("Bytes", "kB", "MB", "GB", "TB")
-        val digitGroups = (log10(size.toDouble()) / log10(1024.0)).toInt()
-        return DecimalFormat("#,##0.#").format(
-            size / 1024.0.pow(digitGroups.toDouble())
-        ).toString() + " " + units[digitGroups]
     }
 }

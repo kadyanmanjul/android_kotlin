@@ -56,6 +56,7 @@ class RemoveMediaWorker(var context: Context, var workerParams: WorkerParameters
                                         this.video_url ?: EMPTY
                                     )
                                 )
+                                deleteLocalCreatedFile(downloadedLocalPath)
                                 chat.downloadStatus = DOWNLOAD_STATUS.NOT_START
                                 appDatabase.chatDao().updateChatMessage(chat)
                                 this.downloadStatus = DOWNLOAD_STATUS.NOT_START
@@ -76,6 +77,7 @@ class RemoveMediaWorker(var context: Context, var workerParams: WorkerParameters
                                                 ).bytesToKB()
                                                 AppDirectory.deleteFileFile(this)
                                             }
+                                            deleteLocalCreatedFile(downloadedLocalPath)
                                             chat.downloadStatus = DOWNLOAD_STATUS.NOT_START
                                             appDatabase.chatDao().updateChatMessage(chat)
                                             downloadStatus = DOWNLOAD_STATUS.NOT_START
@@ -130,6 +132,13 @@ class RemoveMediaWorker(var context: Context, var workerParams: WorkerParameters
             Timber.tag("Storage").e("" + totalDeletedMediaSize + "  " + index)
         }
         return Result.success()
+    }
+
+    private fun deleteLocalCreatedFile(path: String?) {
+        path?.run {
+            AppDirectory.getFileSize(File(this))
+            AppDirectory.deleteFile(this)
+        }
     }
 }
 
