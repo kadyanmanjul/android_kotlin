@@ -253,4 +253,12 @@
         <key>PAYMENT_SUMMARY_CTA_LABEL_FREE</key>
         <value>Start for Free</value>
     </entry>
+    <entry>
+        <key>MAXIMUM_STORAGE_IN_MB</key>
+        <value>1024</value>
+    </entry>
+    <entry>
+        <key>MINIMUM_STORAGE_REMOVE_IN_MB</key>
+        <value>512</value>
+    </entry>
 </defaultsMap>

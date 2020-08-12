@@ -124,6 +124,11 @@ object Utils {
         return "0"
     }
 
+    const val MEGABYTE = 1024L * 1024L
+
+    fun bytesToMB(bytes: Long): Long {
+        return bytes / MEGABYTE
+    }
 
     fun getDeviceId(): String {
         if (PrefManager.hasKey("deviceId"))
@@ -906,6 +911,14 @@ fun ImageView.setRoundImage(
 
 fun TextView.textColorSet(colorCode: Int) {
     this.setTextColor(ContextCompat.getColor(AppObjectController.joshApplication, colorCode))
+}
+
+fun Long.bytesToMb(): Double {
+    return (this / Utils.MEGABYTE).toDouble()
+}
+
+fun Long.bytesToKB(): Double {
+    return (this / 1024).toDouble()
 }
 
 

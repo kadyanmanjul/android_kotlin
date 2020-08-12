@@ -87,7 +87,7 @@ class ImageViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
         if (message.url != null) {
             if (message.downloadStatus == DOWNLOAD_STATUS.DOWNLOADING) {
                 fileDownloadRunView()
-                download(message.url!!)
+               // download(message.url!!)
             } else {
                 Utils.fileUrl(message.downloadedLocalPath, message.url)?.run {
                     setImageView(imageView, this)
@@ -97,7 +97,7 @@ class ImageViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
             message.question?.imageList?.getOrNull(0)?.let { imageObj ->
                 if (message.downloadStatus == DOWNLOAD_STATUS.DOWNLOADING) {
                     fileDownloadRunView()
-                    download(imageObj.imageUrl)
+                    // download(imageObj.imageUrl)
                 } else {
                     if (imageView.tag != null) {
                         if (imageView.tag.toString() != message.downloadedLocalPath) {

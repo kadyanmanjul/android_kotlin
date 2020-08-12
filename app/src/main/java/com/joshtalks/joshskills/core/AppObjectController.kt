@@ -168,6 +168,7 @@ internal class AppObjectController {
             Branch.getAutoInstance(joshApplication)
             initFirebaseRemoteConfig()
             WorkMangerAdmin.deviceIdGenerateWorker()
+            WorkMangerAdmin.runMemoryManagementWorker()
             configureCrashlytics()
             initFlurryAnalytics()
             initNewRelic()
@@ -374,6 +375,8 @@ internal class AppObjectController {
                     .setHttpDownloader(HttpUrlConnectionDownloader(Downloader.FileDownloaderType.PARALLEL))
                     .setHttpDownloader(getOkHttpDownloader())
                     .setNamespace("JoshTalks")
+                    .enableHashCheck(false)
+                    .enableFileExistChecks(false)
                     .build()
                 Fetch.setDefaultInstanceConfiguration(fetchConfiguration)
                 fetch = Fetch.Impl.getInstance(fetchConfiguration)
@@ -435,7 +438,6 @@ internal class AppObjectController {
                 AndroidThreeTen.init(joshApplication)
                 EmojiManager.install(GoogleEmojiProvider())
                 videoDownloadTracker = VideoDownloadController.getInstance().downloadTracker
-
                 multiTransformation = MultiTransformation(
                     CropTransformation(
                         Utils.dpToPx(IMAGE_SIZE),

@@ -479,4 +479,9 @@ class ConversationViewModel(application: Application) :
         }
     }
 
+    fun refreshChat() {
+        lastChatTime = null
+        getAllUserMessage()
+    }
+
 }

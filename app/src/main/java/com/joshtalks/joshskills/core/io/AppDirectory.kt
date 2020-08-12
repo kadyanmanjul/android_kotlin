@@ -4,7 +4,9 @@ import android.net.Uri
 import android.os.Environment
 import android.os.ParcelFileDescriptor
 import android.text.format.DateUtils
+import android.util.Log
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.AppObjectController.Companion.joshApplication
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.Utils
@@ -16,8 +18,11 @@ import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.io.IOException
 import java.io.InputStreamReader
+import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.math.log10
+import kotlin.math.pow
 
 
 object AppDirectory {
@@ -32,15 +37,23 @@ object AppDirectory {
 
     const val TODAY_DATE = "today_date"
     const val APP_SHORT_NAME = "JS"
-
-    @Volatile
-    private var downloadDirectory: File? = null
+    const val AUDIO_EXTENSION = ".aac"
 
 
     enum class FileType {
         IMAGE_SENT, IMAGE_RECEIVED, RECORDING_SENT, RECORDING_RECEIVED, VIDEO_SENT, VIDEO_RECEIVED, DOCS_RECEIVED
     }
 
+
+    fun getRootDirectoryPath(): File {
+        val f = File(
+            Environment.getExternalStorageDirectory().toString() + File.separator + APP_DIRECTORY
+        )
+        if (f.exists().not()) {
+            f.mkdirs()
+        }
+        return f
+    }
 
     /**
      * this code is using for received audio file
@@ -84,7 +97,7 @@ object AppDirectory {
         }
 
         if (fileName.isEmpty()) {
-            fileName = "Record_" + System.currentTimeMillis().toString() + ".aac"
+            fileName = "Record_" + System.currentTimeMillis().toString() + AUDIO_EXTENSION
         }
         val file = File(AUDIO_SENT_PATH + File.separator + fileName)
         file.createNewFile()
@@ -220,18 +233,6 @@ object AppDirectory {
         ) + ".jpg"
     }
 
-    private fun getAudioFileName(): String {
-        return "RECORD".plus("-").plus(getDate()).plus("-".plus(APP_SHORT_NAME)) + getFileEndName(
-            FileType.RECORDING_SENT
-        ) + ".amr"
-    }
-
-    private fun getAudioFileName(extension: String): String {
-        return "RECORD".plus("-").plus(getDate()).plus("-".plus(APP_SHORT_NAME)) + getFileEndName(
-            FileType.RECORDING_SENT
-        ) + extension
-    }
-
     private fun getVideoFileName(): String {
         return "VID".plus("-").plus(getDate()).plus("-".plus(APP_SHORT_NAME)) + getFileEndName(
             FileType.IMAGE_SENT
@@ -258,10 +259,7 @@ object AppDirectory {
             FileType.DOCS_RECEIVED -> getFileTodayCount(TODAY_DOCS_COUNT)
 
         }
-
-
     }
-
 
     private fun getFileTodayCount(prefName: String): String {
         val lDate = Date(PrefManager.getLongValue(TODAY_DATE))
@@ -273,7 +271,6 @@ object AppDirectory {
             val c = 1 + PrefManager.getIntValue(prefName)
             PrefManager.put(prefName, c)
             String.format("%04d", c)
-
         }
     }
 
@@ -324,50 +321,24 @@ object AppDirectory {
         return file
     }
 
-    fun getInstanceIdKeyFile(): File {
-        val f = File(KEY_PATH)
-        if (f.exists().not()) {
-            f.mkdirs()
-        }
-        val file = File(KEY_PATH + File.separator + "Key.txt")
-        file.createNewFile()
-        return file
-    }
-
-
-    /*fun recordingReceivedFile(fileName: String): File {
-        val extension = fileName.substring(fileName.lastIndexOf("."))
-        val f = File(RECORDING_RECEIVED_PATH)
-        if (f.exists().not()) {
-            f.mkdirs()
-        }
-        val file = File(RECORDING_RECEIVED_PATH + File.separator + getAudioFileName(extension))
-        file.createNewFile()
-        return file
-    }*/
-
     fun tempRecordingFile(): File {
         val outputDir =
             AppObjectController.joshApplication.cacheDir // context being the Activity pointer
-        return File.createTempFile("record", ".aac", outputDir)
+        return File.createTempFile("record", AUDIO_EXTENSION, outputDir)
     }
 
     fun deleteRecordingFile() {
         try {
-            File.createTempFile("record", ".aac", AppObjectController.joshApplication.cacheDir)
+            File.createTempFile(
+                "record",
+                AUDIO_EXTENSION,
+                AppObjectController.joshApplication.cacheDir
+            )
                 .delete()
         } catch (ex: Exception) {
             ex.printStackTrace()
         }
     }
-
-
-    fun tempImageFile(): File {
-        val outputDir =
-            AppObjectController.joshApplication.cacheDir // context being the Activity pointer
-        return File.createTempFile("image", ".jpg", outputDir)
-    }
-
 
     fun getCacheFile(fileName: String, fileExtension: String): File {
         return File.createTempFile(
@@ -378,28 +349,15 @@ object AppDirectory {
     }
 
 
-    fun getVideoCacheFolder(): File {
-        val f = File(VIDEO_CACHED_RECEIVED_PATH)
-        if (f.exists().not()) {
-            f.mkdirs()
+    fun deleteFile(filePath: String?): Boolean {
+        if (filePath.isNullOrEmpty()) {
+            return true
         }
-        return f
-
+        return File(filePath).deleteRecursively()
     }
 
-
-    fun getTempImageFile() {
-
-    }
-
-    fun deleteFile(file: File): Boolean {
+    fun deleteFileFile(file: File): Boolean {
         return file.delete()
-
-    }
-
-    fun deleteFile(filePath: String): Boolean {
-        return File(filePath).delete()
-
     }
 
     @JvmStatic
@@ -413,12 +371,6 @@ object AppDirectory {
             false
         }
 
-    }
-
-    fun rename(fromPath: String, toPath: String): Boolean {
-        val file = File(fromPath)
-        val newFile = File(toPath)
-        return file.renameTo(newFile)
     }
 
     fun copy(fromPath: String, toPath: String): Boolean {
@@ -447,12 +399,9 @@ object AppDirectory {
 
 
     private fun closeSilently(closeable: Closeable?) {
-        if (closeable != null) {
-            try {
-                closeable.close()
-            } catch (e: IOException) {
-            }
-
+        try {
+            closeable?.close()
+        } catch (e: IOException) {
         }
     }
 
@@ -465,28 +414,6 @@ object AppDirectory {
 
     }
 
-    fun getFilePathForVideoRecordCache(): File {
-        var path =
-            Environment.getExternalStorageDirectory()
-                .toString() + File.separator + APP_DIRECTORY + File.separator + MEDIA_DIRECTORY + "/cached"
-        val f = File(path)
-        if (f.exists().not()) {
-            f.mkdirs()
-        }
-        return f
-    }
-
-
-    private fun getAppDirectory(): File? {
-
-        if (downloadDirectory == null) {
-            downloadDirectory = AppObjectController.joshApplication.getExternalFilesDir(null)
-            if (downloadDirectory == null) {
-                downloadDirectory = AppObjectController.joshApplication.filesDir
-            }
-        }
-        return downloadDirectory
-    }
 
     fun copy2(sourceUri: Uri, file: File): File? {
 
@@ -536,5 +463,63 @@ object AppDirectory {
             e.printStackTrace()
         }
         return res
+    }
+
+    fun getInstanceIdKeyFile(): File {
+        val f = File(KEY_PATH)
+        if (f.exists().not()) {
+            f.mkdirs()
+        }
+        val file = File(KEY_PATH + File.separator + "Key.txt")
+        file.createNewFile()
+        return file
+    }
+
+
+    fun getDirSize(dir: File?): Long {
+        var size: Long = 0
+        dir?.listFiles()?.forEach { file ->
+            if (file != null && file.isDirectory) {
+                size += getDirSize(file)
+            } else if (file != null && file.isFile) {
+                size += file.length()
+            }
+        }
+        return size
+    }
+
+    fun getFileSize(file: File?): Long {
+        return file?.length() ?: 0
+    }
+
+
+    fun initializeCache() {
+        var size: Long = 0
+        joshApplication.getExternalFilesDir(null)?.run {
+            Log.e("externalfilessize", " " + readableFileSize(getDirSize(this)))
+        }
+        joshApplication.filesDir?.run {
+            Log.e("filesDir", " " + readableFileSize(getDirSize(this)))
+
+        }
+        joshApplication.cacheDir?.run {
+            Log.e("cacheDir", " " + readableFileSize(getDirSize(this)))
+
+        }
+        joshApplication.externalCacheDir?.run {
+            Log.e("externalCacheDir", " " + readableFileSize(getDirSize(this)))
+
+        }
+    }
+
+    fun readableFileSize(size: Long): String? {
+        if (size <= 0) return "0 Bytes"
+        Log.e("bytes", size.toString())
+        val units =
+            arrayOf("Bytes", "kB", "MB", "GB", "TB")
+        val digitGroups = (log10(size.toDouble()) / log10(1024.0)).toInt()
+        return DecimalFormat("#,##0.#").format(
+            size / 1024.0.pow(digitGroups.toDouble())
+        ).toString() + " " + units[digitGroups]
     }
 }

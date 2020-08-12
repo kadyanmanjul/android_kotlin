@@ -82,6 +82,10 @@ public class DownloadTracker {
         return download != null && download.state != Download.STATE_FAILED;
     }
 
+    public long downloadMediaSize(String url) {
+        return VideoDownloadController.getInstance().getDownloadedUrlSize(url);
+    }
+
     DownloadRequest getDownloadRequest(Uri uri) {
         Download download = downloads.get(uri);
         return download != null && download.state != Download.STATE_FAILED ? download.request : null;
@@ -116,6 +120,14 @@ public class DownloadTracker {
     }
 
     public void cancelDownload(
+            Uri uri) {
+        Download download = downloads.get(uri);
+        if (download != null) {
+            DownloadService.sendRemoveDownload(context, VideoDownloadService.class, download.request.id, /* foreground= */ true);
+        }
+    }
+
+    public void removeDownload(
             Uri uri) {
         Download download = downloads.get(uri);
         if (download != null) {

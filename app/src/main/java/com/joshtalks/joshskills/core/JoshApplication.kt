@@ -1,6 +1,7 @@
 package com.joshtalks.joshskills.core
 
 import android.content.BroadcastReceiver
+import android.content.ComponentCallbacks2
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
@@ -29,7 +30,8 @@ import timber.log.Timber
 
 var TAG = "JoshSkill"
 
-class JoshApplication : MultiDexApplication(), LifecycleObserver/*, Configuration.Provider*/ {
+class JoshApplication : MultiDexApplication(), LifecycleObserver,
+    ComponentCallbacks2/*, Configuration.Provider*/ {
     companion object {
         @JvmStatic
         var isAppVisible = false
@@ -49,8 +51,6 @@ class JoshApplication : MultiDexApplication(), LifecycleObserver/*, Configuratio
             FacebookSdk.setIsDebugEnabled(true)
             FacebookSdk.addLoggingBehavior(LoggingBehavior.APP_EVENTS)
             Branch.enableLogging()
-            Branch.enableDebugMode()
-            Branch.enableSimulateInstalls()
             Branch.enableTestMode()
             Timber.plant(Timber.DebugTree())
         }
@@ -66,17 +66,6 @@ class JoshApplication : MultiDexApplication(), LifecycleObserver/*, Configuratio
             ).build()
         )
         registerBroadcastReceiver()
-/*
-        val p: PackageManager = packageManager
-        val componentName =
-            ComponentName(this, com.joshtalks.joshskills.ui.launch.LauncherActivity::class.java)
-        p.setComponentEnabledSetting(
-            componentName,
-            PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
-            PackageManager.DONT_KILL_APP
-        )*/
-        System.setProperty("http.proxyPort", "1234")
-
     }
 
     private fun registerBroadcastReceiver() {
@@ -161,5 +150,29 @@ class JoshApplication : MultiDexApplication(), LifecycleObserver/*, Configuratio
 
     private fun isActivityVisible(): String {
         return ProcessLifecycleOwner.get().lifecycle.currentState.name
+    }
+
+    override fun onTrimMemory(level: Int) {
+        super.onTrimMemory(level)
+        when (level) {
+            ComponentCallbacks2.TRIM_MEMORY_UI_HIDDEN -> {
+            }
+
+            ComponentCallbacks2.TRIM_MEMORY_RUNNING_MODERATE,
+            ComponentCallbacks2.TRIM_MEMORY_RUNNING_LOW,
+            ComponentCallbacks2.TRIM_MEMORY_RUNNING_CRITICAL -> {
+                System.runFinalization()
+                Runtime.getRuntime().gc()
+                System.gc()
+            }
+
+            ComponentCallbacks2.TRIM_MEMORY_BACKGROUND,
+            ComponentCallbacks2.TRIM_MEMORY_MODERATE,
+            ComponentCallbacks2.TRIM_MEMORY_COMPLETE -> {
+            }
+
+            else -> {
+            }
+        }
     }
 }

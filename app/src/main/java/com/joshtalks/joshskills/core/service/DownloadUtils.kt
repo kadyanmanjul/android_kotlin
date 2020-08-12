@@ -7,6 +7,7 @@ import com.bumptech.glide.Glide
 import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.AppObjectController.Companion.appDatabase
+import com.joshtalks.joshskills.core.JoshSkillExecutors
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.messaging.RxBus2
@@ -24,11 +25,11 @@ import com.tonyodev.fetch2core.Extras
 import com.tonyodev.fetch2core.Func
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.lang.reflect.Type
 import java.util.*
+import java.util.concurrent.ExecutorService
 
 const val DOWNLOAD_OBJECT = "DownloadObject"
 
@@ -36,6 +37,8 @@ object DownloadUtils {
 
     val CHAT_MODEL_TYPE_TOKEN: Type = object : TypeToken<ChatModel>() {}.type
     val objectFetchListener = HashMap<String, FetchListener>()
+    private val executor: ExecutorService =
+        JoshSkillExecutors.newCachedSingleThreadExecutor("Josh-Download Media")
 
 
     fun downloadFile(
@@ -45,7 +48,7 @@ object DownloadUtils {
         chatModel: ChatModel,
         fetchListener: FetchListener
     ) {
-        CoroutineScope(Dispatchers.IO).launch {
+        executor.execute {
             val request = Request(url, filePath)
             request.priority = Priority.HIGH
             request.networkType = NetworkType.ALL
@@ -60,13 +63,11 @@ object DownloadUtils {
                 )
             AppObjectController.getFetchObject().addListener(fetchListener)
             objectFetchListener[tag] = fetchListener
-            //request.toDownloadInfo()
-            AppObjectController.getFetchObject().enqueue(request, Func {
-                CoroutineScope(Dispatchers.IO).launch {
+            AppObjectController.getFetchObject().remove(request.id)
+            AppObjectController.getFetchObject().enqueue(
+                request, Func {
                     updateDownloadStatus(it.file, it.extras)
-                }
-
-            },
+                },
                 Func {
                     it.throwable?.printStackTrace()
                     request.tag?.let { tag ->
@@ -76,7 +77,6 @@ object DownloadUtils {
                     }
                 })
         }
-
     }
 
     fun removeCallbackListener(tag: String?) {
@@ -89,9 +89,9 @@ object DownloadUtils {
 
     }
 
-    suspend fun updateDownloadStatus(filePath: String, extras: Extras): Boolean {
+    fun updateDownloadStatus(filePath: String, extras: Extras) {
+        executor.execute {
 
-        return CoroutineScope(Dispatchers.IO).async {
             try {
                 val chatModel = AppObjectController.gsonMapperForLocal.fromJson<ChatModel>(
                     extras.map[DOWNLOAD_OBJECT],
@@ -133,16 +133,11 @@ object DownloadUtils {
                 } else {
                     chatModel.downloadedLocalPath = filePath
                 }
-                appDatabase.chatDao().updateChatMessage(chatModel)
-                return@async true
-
+                appDatabase.chatDao().updateChatMessageOnAnyThread(chatModel)
             } catch (ex: Exception) {
                 ex.printStackTrace()
-                return@async false
-
             }
-        }.await()
-
+        }
     }
 
     fun downloadImage(
@@ -151,7 +146,8 @@ object DownloadUtils {
         imageUrl: String,
         destPath: String
     ) {
-        CoroutineScope(Dispatchers.IO).launch {
+        executor.execute {
+
             try {
                 val extras = Extras(
                     mapOf(
@@ -160,7 +156,6 @@ object DownloadUtils {
                         )
                     )
                 )
-
                 val imageBitmap = Glide.with(AppObjectController.joshApplication)
                     .asBitmap()
                     .load(imageUrl).submit().get()
@@ -173,48 +168,45 @@ object DownloadUtils {
                 ex.printStackTrace()
             }
         }
-
     }
 
+    fun downloadAudioFile(listAudioData: List<AudioType>) {
 
-    fun downloadAudioFile(listAudioData: List<AudioType>) = CoroutineScope(Dispatchers.IO).launch {
-
-        try {
-            if (checkStoragePermission().not()) {
-                return@launch
-            }
-            for (audioType in listAudioData) {
-                audioType.downloadStatus = DOWNLOAD_STATUS.DOWNLOADING
-                appDatabase.chatDao().updateAudioObject(audioType)
-                val file = AppDirectory.getAudioReceivedFile(audioType.audio_url).absolutePath
-                if (audioType.downloadStatus == DOWNLOAD_STATUS.DOWNLOADED) {   //TODO(FixMe) - Condition check at wrong place
-                    return@launch
+        executor.execute {
+            try {
+                if (checkStoragePermission().not()) {
+                    return@execute
                 }
-
-                val request = Request(audioType.audio_url, file)
-                request.priority = Priority.HIGH
-                request.networkType = NetworkType.ALL
-                request.tag = audioType.id
-                AppObjectController.getFetchObject().enqueue(request, Func {
-                    audioType.downloadedLocalPath = it.file
-                    audioType.downloadStatus = DOWNLOAD_STATUS.DOWNLOADED
-                    CoroutineScope(Dispatchers.IO).launch {
-                        appDatabase.chatDao().updateAudioObject(audioType)
+                for (audioType in listAudioData) {
+                    audioType.downloadStatus = DOWNLOAD_STATUS.DOWNLOADING
+                    appDatabase.chatDao().updateAudioObject(audioType)
+                    val file = AppDirectory.getAudioReceivedFile(audioType.audio_url).absolutePath
+                    if (audioType.downloadStatus == DOWNLOAD_STATUS.DOWNLOADED) {
+                        return@execute
                     }
-                    objectFetchListener.remove(it.tag)
-                    Timber.e(it.url + "   " + it.file)
-                },
-                    Func {
-                        it.throwable?.printStackTrace()
-                        audioType.downloadStatus = DOWNLOAD_STATUS.FAILED
+
+                    val request = Request(audioType.audio_url, file)
+                    request.priority = Priority.HIGH
+                    request.networkType = NetworkType.ALL
+                    request.tag = audioType.id
+                    AppObjectController.getFetchObject().enqueue(request, Func {
+                        audioType.downloadedLocalPath = it.file
+                        audioType.downloadStatus = DOWNLOAD_STATUS.DOWNLOADED
                         CoroutineScope(Dispatchers.IO).launch {
                             appDatabase.chatDao().updateAudioObject(audioType)
                         }
-
-                    })
+                        objectFetchListener.remove(it.tag)
+                        Timber.e(it.url + "   " + it.file)
+                    },
+                        Func {
+                            it.throwable?.printStackTrace()
+                            audioType.downloadStatus = DOWNLOAD_STATUS.FAILED
+                            appDatabase.chatDao().updateAudioObject(audioType)
+                        })
+                }
+            } catch (ex: Exception) {
+                ex.printStackTrace()
             }
-        } catch (ex: Exception) {
-            ex.printStackTrace()
         }
     }
 

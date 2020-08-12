@@ -59,7 +59,7 @@ const val DATABASE_NAME = "JoshEnglishDB.db"
         AudioType::class, OptionType::class, PdfType::class, ImageType::class, VideoEngage::class,
         FeedbackEngageModel::class, NPSEventModel::class, Assessment::class, AssessmentQuestion::class,
         Choice::class, ReviseConcept::class, AssessmentIntro::class],
-    version = 18,
+    version = 19,
     exportSchema = true
 )
 @TypeConverters(
@@ -111,7 +111,8 @@ abstract class AppDatabase : RoomDatabase() {
                                 MIGRATION_13_14,
                                 MIGRATION_14_16,
                                 MIGRATION_16_17,
-                                MIGRATION_17_18
+                                MIGRATION_17_18,
+                                MIGRATION_18_19
                             )
                             .fallbackToDestructiveMigration()
                             .addCallback(sRoomDatabaseCallback)
@@ -277,6 +278,14 @@ abstract class AppDatabase : RoomDatabase() {
                 database.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS `index_assessment_intro_localId` ON `assessment_intro` (`localId`)")
                 database.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS `index_assessment_intro_type` ON `assessment_intro` (`type`)")
 
+            }
+        }
+
+        private val MIGRATION_18_19: Migration = object : Migration(18, 19) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL(
+                    "ALTER TABLE chat_table ADD COLUMN last_use_time INTEGER DEFAULT '" + Date().time + "'"
+                )
             }
         }
 

@@ -1,6 +1,7 @@
 package com.joshtalks.joshskills.repository.local
 
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.JoshSkillExecutors
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
 import com.joshtalks.joshskills.repository.local.entity.DOWNLOAD_STATUS
 import kotlinx.coroutines.CoroutineScope
@@ -8,11 +9,14 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import java.util.*
+import java.util.concurrent.ExecutorService
 
 object DatabaseUtils {
+    private val executor: ExecutorService =
+        JoshSkillExecutors.newCachedSingleThreadExecutor("Josh-LastUsed")
 
     fun updateUserMessageSeen() {
-        CoroutineScope(Dispatchers.IO).launch {
+        executor.execute {
             val cal = Calendar.getInstance()
             cal.time = Date()
             cal.add(Calendar.HOUR, -1)
@@ -44,6 +48,7 @@ object DatabaseUtils {
                     AppObjectController.gsonMapperForLocal.fromJson(objs, ChatModel::class.java)
                 AppObjectController.appDatabase.chatDao()
                     .updateDownloadVideoStatus(chatModel, downloadStatus)
+
             } catch (ex: Exception) {
 
             }
@@ -73,5 +78,10 @@ object DatabaseUtils {
         }
     }
 
+    fun updateLastUsedModification(conversationId: String) {
+        executor.execute {
+            AppObjectController.appDatabase.chatDao().lastUsedBy(conversationId)
+        }
+    }
 
 }

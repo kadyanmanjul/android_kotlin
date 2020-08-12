@@ -61,6 +61,7 @@ public class VideoDownloadService extends DownloadService {
         notificationListMap.clear();
     }
 
+
     @Override
     public void onCreate() {
         super.onCreate();

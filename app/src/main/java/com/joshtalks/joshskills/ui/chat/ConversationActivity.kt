@@ -34,6 +34,9 @@ import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
+import androidx.work.WorkInfo
+import androidx.work.WorkManager
+import com.afollestad.materialdialogs.MaterialDialog
 import com.bumptech.glide.Glide
 import com.bumptech.glide.integration.webp.decoder.WebpDrawable
 import com.bumptech.glide.integration.webp.decoder.WebpDrawableTransformation
@@ -66,18 +69,20 @@ import com.joshtalks.joshskills.core.Utils.getCurrentMediaVolume
 import com.joshtalks.joshskills.core.alphaAnimation
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
+import com.joshtalks.joshskills.core.custom_ui.FullScreenProgressDialog
 import com.joshtalks.joshskills.core.custom_ui.JoshSnackBar
 import com.joshtalks.joshskills.core.custom_ui.PageTransformer
 import com.joshtalks.joshskills.core.custom_ui.SnappingLinearLayoutManager
 import com.joshtalks.joshskills.core.custom_ui.decorator.LayoutMarginDecoration
-import com.joshtalks.joshskills.core.custom_ui.progress.FlipProgressDialog
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.core.notification.HAS_COURSE_REPORT
 import com.joshtalks.joshskills.core.playback.PlaybackInfoListener.State.PLAYING
+import com.joshtalks.joshskills.core.service.WorkMangerAdmin
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.ActivityConversationBinding
 import com.joshtalks.joshskills.messaging.MessageBuilderFactory
 import com.joshtalks.joshskills.messaging.RxBus2
+import com.joshtalks.joshskills.repository.local.DatabaseUtils
 import com.joshtalks.joshskills.repository.local.entity.AudioType
 import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
@@ -196,7 +201,6 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
     private lateinit var emojiPopup: EmojiPopup
     private lateinit var activityRef: WeakReference<FragmentActivity>
     private lateinit var linearLayoutManager: SnappingLinearLayoutManager
-    private lateinit var progressDialog: FlipProgressDialog
     private lateinit var internetAvailableStatus: Snackbar
     private lateinit var mBottomSheetBehaviour: BottomSheetBehavior<MaterialCardView>
     private lateinit var mPlayingSong: TextView
@@ -319,17 +323,20 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
         streamingManager = AudioStreamingManager.getInstance(activityRef.get())
         fetchMessage()
         uiHandler.postDelayed({
-            try {
-                progressDialog.dismissAllowingStateLoss()
-            } catch (ex: Exception) {
-                Crashlytics.logException(ex)
-                ex.printStackTrace()
-            }
+            hideProgressBar()
         }, 5000)
     }
 
+    private fun showProgressBar() {
+        FullScreenProgressDialog.showProgressBar(this)
+    }
+
+    private fun hideProgressBar() {
+        FullScreenProgressDialog.hideProgressBar(this)
+    }
+
     private fun fetchMessage() {
-        initProgressDialog()
+        showProgressBar()
         conversationViewModel.getAllUserMessage()
         onlyChatView()
         if (inboxEntity.report_status && PrefManager.hasKey(
@@ -394,13 +401,6 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
             })
     }
 
-    private fun initProgressDialog() {
-        progressDialog = FlipProgressDialog()
-        progressDialog.setCanceledOnTouchOutside(false)
-        progressDialog.setDimAmount(0.8f)
-        progressDialog.show(supportFragmentManager, "ProgressDialog")
-    }
-
     private fun refreshChat() {
         conversationBinding.refreshLayout.setOnRefreshListener {
             if (Utils.isInternetAvailable()) {
@@ -451,6 +451,8 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
                         this@ConversationActivity,
                         ConversationActivity::class.java.name
                     )
+                } else if (it?.itemId == R.id.menu_clear_media) {
+                    clearMediaFromInternal()
                 }
                 return@setOnMenuItemClickListener true
             }
@@ -1005,8 +1007,8 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
                     PdfViewerActivity.startPdfActivity(
                         activityRef.get()!!,
                         it.pdfObject.id,
-                        inboxEntity.course_name
-
+                        inboxEntity.course_name,
+                        it.chatId
                     )
                 }, {
                     it.printStackTrace()
@@ -1128,7 +1130,7 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
                             .solidBackground().show()
                     }
                     if (it.flag.not()) {
-                        progressDialog.dismissAllowingStateLoss()
+                        hideProgressBar()
                     }
                     conversationBinding.refreshLayout.isRefreshing = false
                 })
@@ -1193,6 +1195,7 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
                     AppObjectController.currentPlayingAudioObject = it.chatModel
                     bottomSheetLayout.visibility = VISIBLE
                     window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+                    DatabaseUtils.updateLastUsedModification(it.chatModel.chatId)
                 },
                     {
                         it.printStackTrace()
@@ -1536,7 +1539,7 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
 
     private suspend fun fetchNewUnlockClasses(data: Intent) {
         lastVideoStartingDate?.let { date ->
-            initProgressDialog()
+            showProgressBar()
             val tUnlockClassMessage =
                 TUnlockClassMessage("Unlock Class Demo For now")
             val cell = MessageBuilderFactory.getMessage(
@@ -1975,6 +1978,67 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
             )
             .commitAllowingStateLoss()
 
+    }
+
+    private fun clearMediaFromInternal() {
+        PermissionUtils.storageReadAndWritePermission(this,
+            object : MultiplePermissionsListener {
+                override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
+                    report?.areAllPermissionsGranted()?.let { flag ->
+                        if (flag) {
+                            MaterialDialog(this@ConversationActivity).show {
+                                title(R.string.delete_media_title)
+                                message(R.string.delete_media_title) {
+                                    lineSpacing(1.4f)
+                                }
+                                positiveButton(R.string.yes) { dialog ->
+                                    startDeleteMessageWorker()
+                                }
+                                negativeButton(R.string.no) { dialog ->
+                                }
+                            }
+                            return
+                        }
+                        if (report.isAnyPermissionPermanentlyDenied) {
+                            PermissionUtils.permissionPermanentlyDeniedDialog(
+                                activityRef.get()!!
+                            )
+                            return
+                        }
+                    }
+                }
+
+                override fun onPermissionRationaleShouldBeShown(
+                    permissions: MutableList<PermissionRequest>?,
+                    token: PermissionToken?
+                ) {
+                    token?.continuePermissionRequest()
+                }
+            })
+    }
+
+    private fun startDeleteMessageWorker() {
+        val observer = Observer<WorkInfo> { workInfo ->
+            try {
+                workInfo?.run {
+                    if (state == WorkInfo.State.ENQUEUED) {
+                        showProgressBar()
+                    } else if (state == WorkInfo.State.SUCCEEDED) {
+                        conversationBinding.chatRv.removeAllViews()
+                        conversationViewModel.refreshChat()
+                        uiHandler.postDelayed({
+                            hideProgressBar()
+                        }, 2000)
+                    }
+                }
+
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+            }
+        }
+        WorkManager.getInstance(applicationContext)
+            .getWorkInfoByIdLiveData(WorkMangerAdmin.clearMediaOfConversation(inboxEntity.conversation_id))
+            .observe(this, observer)
     }
 
 }

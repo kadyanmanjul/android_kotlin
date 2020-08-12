@@ -20,6 +20,7 @@ import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.databinding.ActivityPdfViewerBinding
+import com.joshtalks.joshskills.repository.local.DatabaseUtils
 import com.joshtalks.joshskills.repository.local.entity.PdfType
 import com.joshtalks.joshskills.repository.server.engage.PdfEngage
 import com.joshtalks.joshskills.repository.service.EngagementNetworkHelper
@@ -31,6 +32,7 @@ import java.io.File
 
 const val PDF_ID = "pdf_id"
 const val COURSE_NAME = "course_name"
+const val MESSAGE_ID = "message_id"
 
 class PdfViewerActivity : BaseActivity() {
     private lateinit var conversationBinding: ActivityPdfViewerBinding
@@ -128,6 +130,9 @@ class PdfViewerActivity : BaseActivity() {
                         AppAnalytics.create(AnalyticsEvent.PDF_OPENED.NAME)
                             .addParam("URL", pdfObject?.url)
                             .push()
+                        intent.getStringExtra(MESSAGE_ID)?.run {
+                            DatabaseUtils.updateLastUsedModification(this)
+                        }
                     } catch (ex: Exception) {
                         ex.printStackTrace()
                     }
@@ -152,11 +157,14 @@ class PdfViewerActivity : BaseActivity() {
         fun startPdfActivity(
             context: Context,
             pdfId: String,
-            courseName: String
+            courseName: String,
+            messageId: String? = null
+
         ) {
             Intent(context, PdfViewerActivity::class.java).apply {
                 putExtra(PDF_ID, pdfId)
                 putExtra(COURSE_NAME, courseName)
+                putExtra(MESSAGE_ID, messageId)
             }.run {
                 context.startActivity(this)
             }

@@ -3,10 +3,15 @@ package com.joshtalks.joshskills.core.service
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.PeriodicWorkRequest
+import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.workDataOf
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.GID_SET_FOR_USER
+import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.memory.MemoryManagementWorker
+import com.joshtalks.joshskills.core.memory.RemoveMediaWorker
 import com.joshtalks.joshskills.repository.local.entity.NPSEvent
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -105,7 +110,6 @@ object WorkMangerAdmin {
             )
     }
 
-
     fun registerUserGAID(testId: String?, exploreType: String? = null) {
         val data =
             when {
@@ -180,5 +184,23 @@ object WorkMangerAdmin {
             .build()
         WorkManager.getInstance(AppObjectController.joshApplication).enqueue(workRequest)
     }
+
+    fun clearMediaOfConversation(conversationId: String, isTimeDelete: Boolean = false): UUID {
+        val data = workDataOf("conversation_id" to conversationId, "time_delete" to isTimeDelete)
+        val workRequest = OneTimeWorkRequestBuilder<RemoveMediaWorker>()
+            .setInputData(data)
+            .build()
+        WorkManager.getInstance(AppObjectController.joshApplication).enqueue(workRequest)
+        return workRequest.id
+    }
+
+    fun runMemoryManagementWorker() {
+        val workRequest = PeriodicWorkRequestBuilder<MemoryManagementWorker>(24, TimeUnit.HOURS)
+            .addTag("cleanup")
+            .build()
+        WorkManager.getInstance(AppObjectController.joshApplication).enqueue(workRequest)
+
+    }
+
 
 }

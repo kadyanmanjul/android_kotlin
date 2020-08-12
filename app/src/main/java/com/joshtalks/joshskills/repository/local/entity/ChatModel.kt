@@ -97,7 +97,11 @@ data class ChatModel(
 
     @ColumnInfo(name = "message_time_in_milliSeconds")
     @SerializedName("createdmilisecond")
-    var messageTimeInMilliSeconds: String = EMPTY
+    var messageTimeInMilliSeconds: String = EMPTY,
+
+    @ColumnInfo(name = "last_use_time")
+    @Expose
+    var lastUseTime: Date? = null
 
 
 ) : DataBaseClass(), Parcelable {
@@ -446,7 +450,7 @@ interface ChatDao {
 
 
     @Query("UPDATE chat_table SET message_deliver_status = :messageDeliverStatus where created <= :compareTime ")
-    suspend fun updateSeenMessages(
+    fun updateSeenMessages(
         messageDeliverStatus: MESSAGE_DELIVER_STATUS = MESSAGE_DELIVER_STATUS.READ,
         compareTime: Date
     )
@@ -463,6 +467,9 @@ interface ChatDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun updateChatMessage(chat: ChatModel)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun updateChatMessageOnAnyThread(chat: ChatModel)
 
     @Delete
     suspend fun deleteChatMessage(chat: ChatModel)
@@ -504,16 +511,16 @@ interface ChatDao {
     suspend fun getPdfOfQuestion(questionId: String): List<PdfType>
 
     @Update
-    suspend fun updateAudioObject(vararg audioList: AudioType)
+    fun updateAudioObject(vararg audioList: AudioType)
 
     @Update
-    suspend fun updateImageObject(vararg imageObj: ImageType)
+    fun updateImageObject(vararg imageObj: ImageType)
 
     @Update
-    suspend fun updateVideoObject(vararg videoObj: VideoType)
+    fun updateVideoObject(vararg videoObj: VideoType)
 
     @Update
-    suspend fun updatePdfObject(vararg pdfObj: PdfType)
+    fun updatePdfObject(vararg pdfObj: PdfType)
 
     @Transaction
     suspend fun getUpdatedChatObject(chat: ChatModel): ChatModel {
@@ -588,7 +595,7 @@ interface ChatDao {
     @Query(value = "SELECT * FROM chat_table where conversation_id= :conversationId ORDER BY ID DESC LIMIT 1")
     suspend fun getLastOneChat(conversationId: String): ChatModel?
 
-     suspend fun getMaxIntervalForVideo(conversationId: String): Int {
+    suspend fun getMaxIntervalForVideo(conversationId: String): Int {
 
         val chatModel: ChatModel? = getLastQuestionInterval(conversationId)
         if (chatModel?.type == BASE_MESSAGE_TYPE.Q) {
@@ -674,6 +681,13 @@ interface ChatDao {
 
     @Query("UPDATE question_table SET upload_feedback_status = 1 WHERE questionId= :questionId")
     suspend fun userSubmitFeedbackStatusUpdate(questionId: String)
+
+    @Query("UPDATE chat_table SET last_use_time = :date where chat_id=:chatId ")
+    fun lastUsedBy(chatId: String, date: Date = Date())
+
+    @Query(value = "SELECT * FROM chat_table where last_use_time ORDER BY last_use_time ASC")
+    suspend fun getAllRecentDownloadMedia(): List<ChatModel>
+
 
 }
 

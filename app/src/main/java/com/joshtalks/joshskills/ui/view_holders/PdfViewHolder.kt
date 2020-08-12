@@ -283,7 +283,7 @@ class PdfViewHolder(activityRef: WeakReference<FragmentActivity>, message: ChatM
                     pdfObj.downloadedLocalPath
                 )
             ) {
-                RxBus2.publish(PdfOpenEventBus(pdfObj))
+                RxBus2.publish(PdfOpenEventBus(message.chatId, pdfObj))
             } else {
                 RxBus2.publish(DownloadMediaEventBus(pdfViewHolder, message))
             }

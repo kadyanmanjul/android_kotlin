@@ -29,6 +29,7 @@ import com.joshtalks.joshskills.core.service.video_download.VideoDownloadControl
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.core.videoplayer.VideoPlayerEventListener
 import com.joshtalks.joshskills.databinding.ActivityVideoPlayer1Binding
+import com.joshtalks.joshskills.repository.local.DatabaseUtils
 import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
 import com.joshtalks.joshskills.repository.local.entity.NPSEvent
@@ -53,6 +54,8 @@ const val NEXT_VIDEO_AVAILABLE = "next_video_available"
 const val LAST_VIDEO_INTERVAL = "last_video_interval"
 const val TAG = "video_watch_time"
 const val DURATION = "duration"
+const val VIDEO_URL = "video_url"
+const val VIDEO_ID = "video_id"
 
 class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventListener {
 
@@ -71,20 +74,6 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
             activity.startActivityForResult(intent, VIDEO_OPEN_REQUEST_CODE)
         }
 
-        fun startConversionActivityV2(
-            context: Context,
-            videoTitle: String?,
-            videoId: String?,
-            videoUrl: String?
-
-        ) {
-            val intent = Intent(context, VideoPlayerActivity::class.java)
-            intent.putExtra(VIDEO_URL, videoUrl)
-            intent.putExtra(VIDEO_ID, videoId)
-            intent.putExtra(COURSE_NAME, videoTitle)
-            context.startActivity(intent)
-        }
-
         fun startVideoActivity(
             context: Context,
             videoTitle: String?,
@@ -99,10 +88,6 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
             intent.putExtra(COURSE_NAME, videoTitle)
             context.startActivity(intent)
         }
-
-        const val VIDEO_URL = "video_url"
-        const val VIDEO_ID = "video_id"
-
     }
 
     private lateinit var usbEventReceiver: UsbEventReceiver
@@ -146,33 +131,37 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
 
         if (intent.hasExtra(VIDEO_OBJECT)) {
             chatObject = intent.getParcelableExtra(VIDEO_OBJECT) as ChatModel
-            videoId = chatObject?.question?.videoList?.getOrNull(0)?.id
-            feedbackEngagementStatus(chatObject?.question)
-            chatObject?.question?.interval?.let {
-                WorkMangerAdmin.determineNPAEvent(
-                    NPSEvent.WATCH_VIDEO,
-                    it, chatObject?.question?.questionId
-                )
-            }
-
-            if (chatObject?.url != null) {
-                if (chatObject?.downloadedLocalPath.isNullOrEmpty()) {
-                    videoUrl = chatObject?.url
-                } else {
-                    Utils.fileUrl(chatObject?.downloadedLocalPath, chatObject?.url)?.run {
-                        videoUrl = this
-                        AppObjectController.videoDownloadTracker.download(
-                            chatObject,
-                            Uri.parse(chatObject?.url),
-                            VideoDownloadController.getInstance().buildRenderersFactory(true)
-                        )
-                    }
+            chatObject?.run {
+                videoId = this.question?.videoList?.getOrNull(0)?.id
+                feedbackEngagementStatus(this.question)
+                DatabaseUtils.updateLastUsedModification(this.chatId)
+                chatObject?.question?.interval?.let {
+                    WorkMangerAdmin.determineNPAEvent(
+                        NPSEvent.WATCH_VIDEO,
+                        it, chatObject?.question?.questionId
+                    )
                 }
-            } else {
-                videoUrl = chatObject?.question?.videoList?.getOrNull(0)?.video_url
-            }
 
-            interval = chatObject!!.question?.interval ?: -1
+                if (chatObject?.url != null) {
+                    if (chatObject?.downloadedLocalPath.isNullOrEmpty()) {
+                        videoUrl = this.url
+                    } else {
+                        Utils.fileUrl(this.downloadedLocalPath, this.url)?.run {
+                            videoUrl = this
+                            AppObjectController.videoDownloadTracker.download(
+                                chatObject,
+                                Uri.parse(chatObject?.url),
+                                VideoDownloadController.getInstance().buildRenderersFactory(true)
+                            )
+                        }
+                    }
+                } else {
+                    videoUrl = chatObject?.question?.videoList?.getOrNull(0)?.video_url
+                }
+
+                interval = chatObject!!.question?.interval ?: -1
+
+            }
         }
         if (intent.hasExtra(VIDEO_URL)) {
             videoUrl = intent.getStringExtra(VIDEO_URL)
@@ -531,6 +520,9 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
     }
 
     override fun onUsbConnect() {
+        if (BuildConfig.DEBUG) {
+            return
+        }
         showUsbConnectedMsg()
         binding.videoPlayer.pausePlayer()
         usbConnected = true

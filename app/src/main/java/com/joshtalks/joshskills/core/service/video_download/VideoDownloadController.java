@@ -1,5 +1,7 @@
 package com.joshtalks.joshskills.core.service.video_download;
 
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import androidx.annotation.Nullable;
 import com.google.android.exoplayer2.C;
@@ -53,14 +55,13 @@ public class VideoDownloadController {
                     "com.google.android.exoplayer2.source.smoothstreaming.SsMediaSource$Factory");
     private static final MediaSourceFactory HLS_FACTORY =
             getMediaSourceFactory("com.google.android.exoplayer2.source.hls.HlsMediaSource$Factory");
-    volatile private static VideoDownloadController videoDownloadController;
+    private static volatile VideoDownloadController videoDownloadController;
     private volatile String userAgent;
     private volatile DatabaseProvider databaseProvider;
     private volatile File downloadDirectory;
     private volatile Cache downloadCache;
     private volatile DownloadManager downloadManager;
     private volatile DownloadTracker downloadTracker;
-
 
     private VideoDownloadController() {
         userAgent = Util.getUserAgent(AppObjectController.getJoshApplication(), AppObjectController.getJoshApplication().getString(R.string.app_name));
@@ -114,7 +115,6 @@ public class VideoDownloadController {
             constructor = factoryClazz.getConstructor(DataSource.Factory.class);
             setStreamKeysMethod = factoryClazz.getMethod("setStreamKeys", List.class);
             createMethod = factoryClazz.getMethod("createMediaSource", Uri.class);
-            // LINT.ThenChange(../../../../../../../../proguard-rules.txt)
         } catch (ClassNotFoundException e) {
             // Expected if the app was built without the respective module.
         } catch (NoSuchMethodException | SecurityException e) {
@@ -199,7 +199,8 @@ public class VideoDownloadController {
                 upstreamFactory,
                 new FileDataSource.Factory(),
                 null,
-                CacheDataSource.FLAG_IGNORE_CACHE_ON_ERROR,
+                CacheDataSource.FLAG_BLOCK_ON_CACHE
+                        | CacheDataSource.FLAG_IGNORE_CACHE_ON_ERROR,
                 null);
     }
 
@@ -234,6 +235,7 @@ public class VideoDownloadController {
         }
         return databaseProvider;
     }
+
 
     public DownloadTracker getDownloadTracker() {
         initDownloadManager();
@@ -297,6 +299,22 @@ public class VideoDownloadController {
                 throw new IllegalStateException("Failed to instantiate media source.", e);
             }
         }
+    }
+
+    public long getDownloadedUrlSize(String url) {
+        long size = 0L;
+        try {
+            SQLiteDatabase db = getDatabaseProvider().getReadableDatabase();
+            db.beginTransaction();
+            Cursor cursor = db.rawQuery("select * from ExoPlayerDownloads where id='" + url + "'", null);
+            if (cursor.moveToFirst()) {
+                size = cursor.getLong(cursor.getColumnIndex("bytes_downloaded"));
+            }
+            cursor.close();
+            db.endTransaction();
+        } catch (Exception e) {
+        }
+        return size;
     }
 }
 

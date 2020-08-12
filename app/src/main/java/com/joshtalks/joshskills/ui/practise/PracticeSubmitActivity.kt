@@ -404,7 +404,7 @@ class PractiseSubmitActivity : CoreJoshActivity() {
                         binding.videoPlayer.setPlayListener {
                             val videoId = this.videoList?.getOrNull(0)?.id
                             val videoUrl = this.videoList?.getOrNull(0)?.video_url
-                            VideoPlayerActivity.startConversionActivityV2(
+                            VideoPlayerActivity.startVideoActivity(
                                 this@PractiseSubmitActivity,
                                 "",
                                 videoId,
@@ -599,7 +599,7 @@ class PractiseSubmitActivity : CoreJoshActivity() {
                             binding.videoPlayerSubmit.setUrl(filePath)
                             binding.videoPlayerSubmit.fitToScreen()
                             binding.videoPlayerSubmit.setPlayListener {
-                                VideoPlayerActivity.startConversionActivityV2(
+                                VideoPlayerActivity.startVideoActivity(
                                     this@PractiseSubmitActivity,
                                     null,
                                     null,
@@ -1156,7 +1156,7 @@ class PractiseSubmitActivity : CoreJoshActivity() {
         binding.videoPlayerSubmit.fitToScreen()
         binding.videoPlayerSubmit.downloadStreamButNotPlay()
         binding.videoPlayerSubmit.setPlayListener {
-            VideoPlayerActivity.startConversionActivityV2(
+            VideoPlayerActivity.startVideoActivity(
                 this@PractiseSubmitActivity,
                 null,
                 null,
