@@ -57,6 +57,9 @@
     <uses-permission android:name="android.permission.READ_CALL_LOG" />
     <uses-permission android:name="android.permission.ANSWER_PHONE_CALLS" />
 
+    <!--Permission for reminder-->
+    <uses-permission android:name="android.permission.SET_ALARM" />
+
     <application
             android:name=".core.JoshApplication"
             android:allowBackup="true"
@@ -334,7 +337,19 @@
                 android:theme="@style/AppNoBarTheme"
                 android:windowSoftInputMode="stateHidden|adjustResize" />
         <activity
-                android:name=".ui.reminder.ReminderActivity"
+                android:name=".ui.reminder.set_reminder.ReminderActivity"
+                android:launchMode="singleTask"
+                android:screenOrientation="portrait"
+                android:theme="@style/AppNoBarTheme"
+                android:windowSoftInputMode="stateHidden|adjustResize" />
+        <activity
+                android:name=".ui.reminder.set_reminder.AlarmNotifierActivity"
+                android:launchMode="singleTask"
+                android:screenOrientation="portrait"
+                android:theme="@style/AppNoBarTheme"
+                android:windowSoftInputMode="stateHidden|adjustResize" />
+        <activity
+                android:name=".ui.reminder.reminder_listing.ReminderListActivity"
                 android:launchMode="singleTask"
                 android:screenOrientation="portrait"
                 android:theme="@style/AppNoBarTheme"
@@ -432,6 +447,11 @@
         <receiver
                 android:name=".core.analytics.DismissNotifEventReceiver"
                 android:exported="false" />
+
+        <receiver
+                android:name=".ui.reminder.set_reminder.AlarmReceiver"
+                android:enabled="true"
+                android:exported="true" />
 
         <provider
                 android:name=".repository.service.GenericFileProvider"

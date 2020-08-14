@@ -361,4 +361,13 @@
     <string name="delete_media_message">Are you sure you want to delete all media from this course?</string>
     <string name="referral">Referral</string>
     <string name="reminder_note">Note : Lorem ipsum dolor sit amet, consectetur adipiscing elit Vitae pellentesque</string>
+    <string name="reminders">Reminders</string>
+    <string name="set_reminder">Set Reminder</string>
+    <string name="add_reminder">Add Reminder</string>
+    <string name="every_day">Every Day</string>
+    <string name="on_weekdays">On Weekdays</string>
+    <string name="on_weekends">On Weekends</string>
+    <string name="repeat">Repeat</string>
+    <string name="delete">Delete</string>
+    <string name="save_changes">\"Save Changes\"</string>
 </resources>
