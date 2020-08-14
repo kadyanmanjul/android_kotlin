@@ -14,7 +14,6 @@ import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.COUNTRY_ISO
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.EXPLORE_TYPE
-import com.joshtalks.joshskills.core.GID_SET_FOR_USER
 import com.joshtalks.joshskills.core.INSTANCE_ID
 import com.joshtalks.joshskills.core.InstallReferralUtil
 import com.joshtalks.joshskills.core.LOGIN_ON
@@ -226,15 +225,14 @@ class RegisterUserGAId(context: Context, private val workerParams: WorkerParamet
                 workerParams.inputData.getString("test_id")?.split("_")?.get(1)?.toInt()
             requestRegisterGAId.utmMedium = InstallReferrerModel.getPrefObject()?.utmMedium ?: EMPTY
             requestRegisterGAId.utmSource = InstallReferrerModel.getPrefObject()?.utmSource ?: EMPTY
-            val exploreType = PrefManager.getStringValue(EXPLORE_TYPE, true)
-            requestRegisterGAId.exploreCardType = if (exploreType.isNotBlank()) {
-                ExploreCardType.valueOf(exploreType)
-            } else ExploreCardType.NORMAL
+            val exploreType = workerParams.inputData.getString("explore_type")
+            requestRegisterGAId.exploreCardType =
+                if (exploreType?.isNotBlank() == true) ExploreCardType.valueOf(exploreType) else null
             val resp =
                 AppObjectController.commonNetworkService.registerGAIdAsync(requestRegisterGAId)
                     .await()
             PrefManager.put(SERVER_GID_ID, resp.id)
-            PrefManager.put(GID_SET_FOR_USER, true)
+            PrefManager.put(EXPLORE_TYPE, resp.exploreCardType!!.name)
         } catch (ex: Throwable) {
             //LogException.catchException(ex)
         }

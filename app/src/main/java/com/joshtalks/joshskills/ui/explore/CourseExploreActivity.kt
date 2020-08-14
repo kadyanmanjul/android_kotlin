@@ -23,19 +23,24 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.CoreJoshActivity
 import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.EXPLORE_TYPE
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
 import com.joshtalks.joshskills.core.INSTANCE_ID
 import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.SERVER_GID_ID
 import com.joshtalks.joshskills.core.USER_UNIQUE_ID
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.custom_ui.decorator.LayoutMarginDecoration
+import com.joshtalks.joshskills.core.service.WorkMangerAdmin
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.ActivityCourseExploreBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.local.model.ExploreCardType
+import com.joshtalks.joshskills.repository.local.model.InstallReferrerModel
 import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.repository.local.model.RequestRegisterGAId
 import com.joshtalks.joshskills.repository.local.model.ScreenEngagementModel
 import com.joshtalks.joshskills.repository.server.CourseExploreModel
 import com.joshtalks.joshskills.ui.course_details.CourseDetailsActivity
@@ -50,6 +55,10 @@ import kotlinx.android.synthetic.main.activity_course_explore.language_chip_grou
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
+import kotlin.collections.HashSet
 import kotlin.collections.set
 
 const val COURSE_EXPLORER_SCREEN_NAME = "Course Explorer"
@@ -98,7 +107,7 @@ class CourseExploreActivity : CoreJoshActivity() {
 
         initRV()
         initView()
-        loadCourses()
+        registerUserGAID()
         appAnalytics = AppAnalytics.create(AnalyticsEvent.COURSE_EXPLORE.NAME)
             .addUserDetails()
             .addBasicParam()
@@ -178,6 +187,13 @@ class CourseExploreActivity : CoreJoshActivity() {
 
     private fun loadCourses() {
         CoroutineScope(Dispatchers.IO).launch {
+
+            val exploreType = PrefManager.getStringValue(EXPLORE_TYPE, true)
+            WorkMangerAdmin.registerUserGAID(
+                null,
+                if (exploreType.isNotBlank()) exploreType else null
+            )
+
             try {
                 val data = HashMap<String, String>()
                 if (PrefManager.getStringValue(USER_UNIQUE_ID).isNotEmpty()) {
@@ -255,6 +271,33 @@ class CourseExploreActivity : CoreJoshActivity() {
                     courseExploreBinding.progressBar.visibility = View.GONE
                 }
             }
+        }
+    }
+
+    private fun registerUserGAID() {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val requestRegisterGAId = RequestRegisterGAId()
+                requestRegisterGAId.gaid = PrefManager.getStringValue(USER_UNIQUE_ID)
+                requestRegisterGAId.installOn =
+                    InstallReferrerModel.getPrefObject()?.installOn ?: Date().time
+                requestRegisterGAId.utmMedium =
+                    InstallReferrerModel.getPrefObject()?.utmMedium ?: EMPTY
+                requestRegisterGAId.utmSource =
+                    InstallReferrerModel.getPrefObject()?.utmSource ?: EMPTY
+                requestRegisterGAId.test = null
+                val exploreType = PrefManager.getStringValue(EXPLORE_TYPE, true)
+                requestRegisterGAId.exploreCardType =
+                    if (exploreType.isNotBlank()) ExploreCardType.valueOf(exploreType) else null
+                val resp =
+                    AppObjectController.commonNetworkService.registerGAIdAsync(requestRegisterGAId)
+                        .await()
+                PrefManager.put(SERVER_GID_ID, resp.id)
+                PrefManager.put(EXPLORE_TYPE, resp.exploreCardType!!.name)
+            } catch (ex: Throwable) {
+                //LogException.catchException(ex)
+            }
+            loadCourses()
         }
     }
 

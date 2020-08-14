@@ -7,8 +7,6 @@ import androidx.work.WorkManager
 import androidx.work.workDataOf
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.GID_SET_FOR_USER
-import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.repository.local.entity.NPSEvent
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -108,16 +106,13 @@ object WorkMangerAdmin {
     }
 
 
-    fun registerUserGAIDWithTestId(testId: String?, exploreType: String? = null) {
-        if (PrefManager.getBoolValue(GID_SET_FOR_USER) ||
-            (testId.isNullOrBlank() && exploreType.isNullOrBlank())
-        ) {
-            return
-        }
-
+    fun registerUserGAID(testId: String?, exploreType: String? = null) {
         val data =
-            if (testId.isNullOrEmpty()) workDataOf("explore_type" to exploreType)
-            else workDataOf("test_id" to testId)
+            when {
+                testId?.isNotBlank() == true -> workDataOf("test_id" to testId)
+                exploreType?.isNotBlank() == true -> workDataOf("explore_type" to exploreType)
+                else -> workDataOf()
+            }
 
         val workRequest = OneTimeWorkRequestBuilder<RegisterUserGAId>()
             .setInputData(data)

@@ -29,7 +29,7 @@ data class RequestRegisterGAId(
     var id: Int = 0,
 
     @SerializedName("explore_type")
-    var exploreCardType: ExploreCardType = ExploreCardType.NORMAL
+    var exploreCardType: ExploreCardType? = ExploreCardType.NORMAL
 
 )
 
