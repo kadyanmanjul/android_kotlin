@@ -383,9 +383,9 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
                 )
         }
         progress_bar.visibility = View.GONE
-        addCourseExploreView()
+        findMoreLayout.visibility = View.VISIBLE
+        attachOfferHintView()
     }
-
 
     private fun addObserver() {
         compositeDisposable.add(
@@ -459,8 +459,6 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         } else if (requestCode == USER_DETAILS_CODE && resultCode == Activity.RESULT_CANCELED) {
             finish()
         }
-
-
     }
 
     @SuppressLint("MissingPermission")
@@ -501,14 +499,11 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
                                     }
                                     compositeDisposable.clear()
                                 }
-                            }, { ex ->
-                                // ex.printStackTrace()
+                            }, { _ ->
                             })
                     )
                 }
-
                 override fun onError(e: Throwable) {
-                    //  e.printStackTrace()
                 }
             })
     }
@@ -546,17 +541,12 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         }
     }
 
-    private fun addCourseExploreView() {
-        findMoreLayout.visibility = View.VISIBLE
-        attachOfferHintView()
-    }
-
     private fun visibleShareEarn() {
         var url = AppObjectController.getFirebaseRemoteConfig().getString("EARN_SHARE_IMAGE_URL")
         if (url.isEmpty()) {
             url = "file:///android_asset/ic_rupee.svg"
         }
-        earnIV.setVectorImage(url, R.color.white)
+        earnIV.setVectorImage(url, tintColor = R.color.white)
     }
 
     private fun attachOfferHintView() {
@@ -623,7 +613,6 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
 
             PrefManager.put(REMAINING_TRIAL_DAYS, remainingTrialDays.toInt(), true)
         }
-
     }
 
     private fun logTrialEventExpired() {
