@@ -237,7 +237,7 @@ public class VideoDownloadController {
     }
 
 
-    public DownloadTracker getDownloadTracker() {
+    public synchronized DownloadTracker getDownloadTracker() {
         initDownloadManager();
         return downloadTracker;
     }

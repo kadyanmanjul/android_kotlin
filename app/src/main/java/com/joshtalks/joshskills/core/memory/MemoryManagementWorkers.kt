@@ -1,6 +1,5 @@
 package com.joshtalks.joshskills.core.memory
 
-import android.content.ComponentCallbacks2.TRIM_MEMORY_RUNNING_CRITICAL
 import android.content.Context
 import android.net.Uri
 import androidx.work.CoroutineWorker
@@ -193,7 +192,7 @@ class MemoryManagementWorker(var context: Context, workerParams: WorkerParameter
 
     private fun cacheClearOfGlide() {
         Glide.get(context).clearDiskCache()
-        Glide.get(context).trimMemory(TRIM_MEMORY_RUNNING_CRITICAL)
+        //Glide.get(context).trimMemory(TRIM_MEMORY_RUNNING_CRITICAL)
     }
 
     private fun removeOldMedia() {

@@ -3,44 +3,24 @@ package com.joshtalks.joshskills.ui.explore
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import androidx.appcompat.widget.AppCompatImageView
-import androidx.appcompat.widget.AppCompatTextView
 import androidx.databinding.DataBindingUtil
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.afollestad.materialdialogs.MaterialDialog
-import com.bumptech.glide.Glide
-import com.bumptech.glide.integration.webp.decoder.WebpDrawable
-import com.bumptech.glide.integration.webp.decoder.WebpDrawableTransformation
-import com.bumptech.glide.load.resource.bitmap.CircleCrop
-import com.bumptech.glide.request.target.Target
-import com.crashlytics.android.Crashlytics
-import com.google.android.material.appbar.MaterialToolbar
-import com.google.android.material.button.MaterialButton
-import com.google.android.material.chip.Chip
+import com.google.android.material.tabs.TabLayoutMediator
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.CoreJoshActivity
 import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.EXPLORE_TYPE
-import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
 import com.joshtalks.joshskills.core.INSTANCE_ID
 import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.core.SERVER_GID_ID
 import com.joshtalks.joshskills.core.USER_UNIQUE_ID
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
-import com.joshtalks.joshskills.core.custom_ui.decorator.LayoutMarginDecoration
-import com.joshtalks.joshskills.core.service.WorkMangerAdmin
-import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.ActivityCourseExploreBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.local.model.ExploreCardType
-import com.joshtalks.joshskills.repository.local.model.InstallReferrerModel
 import com.joshtalks.joshskills.repository.local.model.Mentor
-import com.joshtalks.joshskills.repository.local.model.RequestRegisterGAId
 import com.joshtalks.joshskills.repository.local.model.ScreenEngagementModel
 import com.joshtalks.joshskills.repository.server.CourseExploreModel
 import com.joshtalks.joshskills.ui.course_details.CourseDetailsActivity
@@ -49,16 +29,10 @@ import com.joshtalks.joshskills.ui.signup.FLOW_FROM
 import com.joshtalks.joshskills.ui.signup.SignUpActivity
 import com.joshtalks.joshskills.ui.subscription.StartSubscriptionActivity
 import com.joshtalks.joshskills.util.showAppropriateMsg
-import com.vanniktech.emoji.Utils
 import io.reactivex.disposables.CompositeDisposable
-import kotlinx.android.synthetic.main.activity_course_explore.language_chip_group
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.util.*
-import kotlin.collections.ArrayList
-import kotlin.collections.HashMap
-import kotlin.collections.HashSet
 import kotlin.collections.set
 
 const val COURSE_EXPLORER_SCREEN_NAME = "Course Explorer"
@@ -66,17 +40,13 @@ const val USER_COURSES = "user_courses"
 const val PREV_ACTIVITY = "previous_activity"
 
 class CourseExploreActivity : CoreJoshActivity() {
-    private val languageMap: HashMap<String, ArrayList<CourseExploreModel>> = HashMap()
-    private lateinit var adapter: CourseExploreAdapter
-    private val courseList: ArrayList<CourseExploreModel> = ArrayList()
-    private var selectedLanguage: String = EMPTY
     private var compositeDisposable = CompositeDisposable()
     private lateinit var courseExploreBinding: ActivityCourseExploreBinding
     private lateinit var appAnalytics: AppAnalytics
     private var prevAct: String? = EMPTY
     private var screenEngagementModel: ScreenEngagementModel =
         ScreenEngagementModel(COURSE_EXPLORER_SCREEN_NAME)
-    private var languageList: MutableList<String> = ArrayList()
+    private val tabName: MutableList<String> = ArrayList()
 
     companion object {
         fun startCourseExploreActivity(
@@ -104,16 +74,17 @@ class CourseExploreActivity : CoreJoshActivity() {
         courseExploreBinding =
             DataBindingUtil.setContentView(this, R.layout.activity_course_explore)
         courseExploreBinding.lifecycleOwner = this
-
-        initRV()
-        initView()
-        registerUserGAID()
         appAnalytics = AppAnalytics.create(AnalyticsEvent.COURSE_EXPLORE.NAME)
             .addUserDetails()
             .addBasicParam()
-        if (prevAct.isNullOrBlank().not())
-            appAnalytics.addParam(AnalyticsEvent.FLOW_FROM_PARAM.NAME, prevAct)
-
+        if (intent.hasExtra(PREV_ACTIVITY)) {
+            prevAct = intent.getStringExtra(PREV_ACTIVITY)
+            if (prevAct.isNullOrBlank().not()) {
+                appAnalytics.addParam(AnalyticsEvent.FLOW_FROM_PARAM.NAME, prevAct)
+            }
+        }
+        initView()
+        loadCourses()
     }
 
     override fun onNewIntent(intent: Intent) {
@@ -122,16 +93,11 @@ class CourseExploreActivity : CoreJoshActivity() {
     }
 
     private fun initView() {
-        val titleView = findViewById<AppCompatTextView>(R.id.text_message_title)
-        titleView.text = getString(R.string.explorer_courses)
-        findViewById<View>(R.id.iv_back).visibility = View.VISIBLE
-        findViewById<View>(R.id.iv_back).setOnClickListener {
-            onCancelResult()
-        }
+        courseExploreBinding.titleTv.text = getString(R.string.explorer_courses)
         if (Mentor.getInstance().hasId()) {
-            findViewById<MaterialToolbar>(R.id.toolbar).inflateMenu(R.menu.logout_menu)
+            courseExploreBinding.toolbar.inflateMenu(R.menu.logout_menu)
         }
-        findViewById<MaterialToolbar>(R.id.toolbar).setOnMenuItemClickListener {
+        courseExploreBinding.toolbar.setOnMenuItemClickListener {
             if (it?.itemId == R.id.menu_logout) {
                 MaterialDialog(this@CourseExploreActivity).show {
                     message(R.string.logout_message)
@@ -165,36 +131,23 @@ class CourseExploreActivity : CoreJoshActivity() {
         }
     }
 
-    private fun initRV() {
-        val linearLayoutManager = LinearLayoutManager(this)
-        linearLayoutManager.isSmoothScrollbarEnabled = true
-        courseExploreBinding.recyclerView
-            .setHasFixedSize(true)
-        courseExploreBinding.recyclerView.layoutManager = linearLayoutManager
-        courseExploreBinding.recyclerView.itemAnimator = null
-        courseExploreBinding.recyclerView.addItemDecoration(
-            LayoutMarginDecoration(
-                Utils.dpToPx(
-                    this,
-                    6f
-                )
-            )
-        )
-
-        adapter = CourseExploreAdapter(this, courseList, languageMap)
-        courseExploreBinding.recyclerView.adapter = adapter
+    private fun initViewPagerTab() {
+        TabLayoutMediator(courseExploreBinding.tabLayout, courseExploreBinding.courseListingRv,
+            TabLayoutMediator.TabConfigurationStrategy { tab, position ->
+                tab.text = tabName[position]
+                logChipSelectedEvent(tabName[position])
+            }
+        ).attach()
+        courseExploreBinding.courseListingRv.offscreenPageLimit = 10
     }
 
     private fun loadCourses() {
         CoroutineScope(Dispatchers.IO).launch {
-
-            val exploreType = PrefManager.getStringValue(EXPLORE_TYPE, true)
-            WorkMangerAdmin.registerUserGAID(
-                null,
-                if (exploreType.isNotBlank()) exploreType else null
-            )
-
             try {
+                var list: ArrayList<InboxEntity>? = null
+                if (intent.hasExtra(USER_COURSES)) {
+                    list = intent.getParcelableArrayListExtra(USER_COURSES)
+                }
                 val data = HashMap<String, String>()
                 if (PrefManager.getStringValue(USER_UNIQUE_ID).isNotEmpty()) {
                     data["gaid"] = PrefManager.getStringValue(USER_UNIQUE_ID)
@@ -208,102 +161,41 @@ class CourseExploreActivity : CoreJoshActivity() {
                 if (data.isNullOrEmpty()) {
                     data["is_default"] = "true"
                 }
+
                 val response: List<CourseExploreModel> =
                     AppObjectController.signUpNetworkService.exploreCourses(data)
-                CoroutineScope(Dispatchers.Main).launch {
-                    var list: ArrayList<InboxEntity>? = null
-                    if (intent.hasExtra(USER_COURSES)) {
-                        list = intent.getParcelableArrayListExtra(USER_COURSES)
-                    }
-                    if (intent.hasExtra(PREV_ACTIVITY)) {
-                        prevAct = intent.getStringExtra(PREV_ACTIVITY)
-                    }
-                    courseExploreBinding.recyclerView.removeAllViews()
-                    val languageSet: HashSet<String> = HashSet()
-                    response.forEach { courseExploreModel ->
-                        list?.let { inboxEntityList ->
-                            val entity: InboxEntity? =
-                                inboxEntityList.find { it.courseId == courseExploreModel.course.toString() }
-                            if (entity != null) {
-                                return@forEach
-                            }
-                        }
-                        if (courseExploreModel.cardType == ExploreCardType.NORMAL) {
-                            courseExploreModel.language?.let { languageSet.add(it.capitalize()) }
-                            courseList.add(courseExploreModel)
 
-                            courseExploreModel.language?.let {
-                                //Creating language set for filter option chips
-                                languageSet.add(it.capitalize())
+                val languageSet: LinkedHashSet<String> = linkedSetOf()
 
-                                //manage map to at the time of filtering.
-                                val courses: ArrayList<CourseExploreModel>? =
-                                    languageMap.get(it.capitalize())
-                                if (courses != null) {
-                                    //Map already has key with course of this language. so add course to same list.
-                                    courses.add(courseExploreModel)
-                                } else {
-                                    //This is the first course with this language so add new key to map.
-                                    val newLanguageCourse: ArrayList<CourseExploreModel> =
-                                        ArrayList()
-                                    newLanguageCourse.add(courseExploreModel)
-                                    languageMap.put(it.capitalize(), newLanguageCourse)
-                                }
-                            }
-                        } else {
-                            setSubscriptionHeaderView(courseExploreModel)
-                        }
+                val listIterator =
+                    response.sortedBy { it.languageId }.toMutableList().listIterator()
+                while (listIterator.hasNext()) {
+                    val courseExploreModel = listIterator.next()
+                    val resp = list?.find { it.courseId == courseExploreModel.course.toString() }
+                    if (resp != null) {
+                        listIterator.remove()
                     }
+                    languageSet.add(courseExploreModel.language)
+                }
+                tabName.addAll(languageSet)
 
-                    languageList = languageSet.toMutableList()
-                    if (languageList.contains("Hindi")) {
-                        languageList.remove("Hindi")
-                        languageList.add(0, "Hindi")
-                    }
-                    renderLanguageChips()
-                    adapter.notifyDataSetChanged()
+                val courseByMap: Map<Int, List<CourseExploreModel>> =
+                    response.groupBy { it.languageId }.toSortedMap(compareBy { it })
+
+                AppObjectController.uiHandler.post {
+                    courseExploreBinding.courseListingRv.adapter =
+                        PractiseViewPagerAdapter(this@CourseExploreActivity, courseByMap)
                     courseExploreBinding.progressBar.visibility = View.GONE
+                    initViewPagerTab()
                 }
 
             } catch (ex: Throwable) {
                 ex.showAppropriateMsg()
-                CoroutineScope(Dispatchers.Main).launch {
+                AppObjectController.uiHandler.post {
                     courseExploreBinding.progressBar.visibility = View.GONE
                 }
             }
         }
-    }
-
-    private fun registerUserGAID() {
-        CoroutineScope(Dispatchers.IO).launch {
-            try {
-                val requestRegisterGAId = RequestRegisterGAId()
-                requestRegisterGAId.gaid = PrefManager.getStringValue(USER_UNIQUE_ID)
-                requestRegisterGAId.installOn =
-                    InstallReferrerModel.getPrefObject()?.installOn ?: Date().time
-                requestRegisterGAId.utmMedium =
-                    InstallReferrerModel.getPrefObject()?.utmMedium ?: EMPTY
-                requestRegisterGAId.utmSource =
-                    InstallReferrerModel.getPrefObject()?.utmSource ?: EMPTY
-                requestRegisterGAId.test = null
-                val exploreType = PrefManager.getStringValue(EXPLORE_TYPE, true)
-                requestRegisterGAId.exploreCardType =
-                    if (exploreType.isNotBlank()) ExploreCardType.valueOf(exploreType) else null
-                val resp =
-                    AppObjectController.commonNetworkService.registerGAIdAsync(requestRegisterGAId)
-                        .await()
-                PrefManager.put(SERVER_GID_ID, resp.id)
-                PrefManager.put(EXPLORE_TYPE, resp.exploreCardType!!.name, true)
-            } catch (ex: Throwable) {
-                //LogException.catchException(ex)
-            }
-            loadCourses()
-        }
-    }
-
-    private fun filterCourses() {
-        adapter.filter.filter(selectedLanguage)
-        courseExploreBinding.recyclerView.scrollToPosition(0)
     }
 
     override fun onResume() {
@@ -357,15 +249,15 @@ class CourseExploreActivity : CoreJoshActivity() {
                 }
             })
 
-        language_chip_group.setOnCheckedChangeListener { group, checkedId ->
-            if (checkedId == -1) {
-                selectedLanguage = EMPTY
-            } else {
-                selectedLanguage = languageList.filter { languageList.indexOf(it) == checkedId }[0]
-                logChipSelectedEvent(selectedLanguage)
-            }
-            filterCourses()
-        }
+        /* language_chip_group.setOnCheckedChangeListener { group, checkedId ->
+             if (checkedId == -1) {
+                 selectedLanguage = EMPTY
+             } else {
+                 selectedLanguage = languageList.filter { languageList.indexOf(it) == checkedId }[0]
+                 logChipSelectedEvent(selectedLanguage)
+             }
+             filterCourses()
+         }*/
     }
 
     private fun logChipSelectedEvent(selectedLanguage: String) {
@@ -374,18 +266,6 @@ class CourseExploreActivity : CoreJoshActivity() {
             .addBasicParam()
             .addParam(AnalyticsEvent.LANGUAGE_SELECTED.name, selectedLanguage)
             .push()
-    }
-
-    private fun renderLanguageChips() {
-        language_chip_group.removeAllViews()
-        languageList.forEach {
-            val chip = LayoutInflater.from(this)
-                .inflate(R.layout.language_filter_item, language_chip_group, false) as Chip
-            chip.text = it.capitalize()
-            chip.tag = it
-            chip.id = languageList.indexOf(it)
-            language_chip_group.addView(chip)
-        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -418,59 +298,6 @@ class CourseExploreActivity : CoreJoshActivity() {
         val resultIntent = Intent()
         setResult(Activity.RESULT_CANCELED, resultIntent)
         this.finish()
-    }
-
-    private fun setSubscriptionHeaderView(courseExploreModel: CourseExploreModel) {
-        val headerImage = findViewById<AppCompatImageView>(R.id.image_view)
-        val headerBuyNowBtn = findViewById<MaterialButton>(R.id.buy_now_button)
-        val headerContainer = findViewById<View>(R.id.courseListHeader)
-
-        headerContainer.visibility = View.VISIBLE
-        try {
-            Glide.with(this@CourseExploreActivity)
-                .load(courseExploreModel.imageUrl)
-                .override(Target.SIZE_ORIGINAL)
-                .optionalTransform(
-                    WebpDrawable::class.java,
-                    WebpDrawableTransformation(CircleCrop())
-                )
-                .into(headerImage)
-        } catch (ex: Exception) {
-            Crashlytics.logException(ex)
-        }
-        if (courseExploreModel.isClickable) {
-            headerBuyNowBtn.visibility = View.VISIBLE
-            headerBuyNowBtn.text =
-                AppObjectController.getFirebaseRemoteConfig()
-                    .getString("show_details_label")
-
-            headerBuyNowBtn.setOnClickListener {
-                RxBus2.publish(courseExploreModel)
-            }
-
-            headerImage.setOnClickListener {
-                RxBus2.publish(courseExploreModel)
-            }
-        } else {
-            headerBuyNowBtn.visibility = View.GONE
-            headerImage.isClickable = false
-            headerImage.isFocusable = false
-
-            headerBuyNowBtn.setOnClickListener {
-                showToast(
-                    AppObjectController.getFirebaseRemoteConfig()
-                        .getString(FirebaseRemoteConfigKey.FFCOURSE_CARD_CLICK_MSG)
-                )
-            }
-
-            headerImage.setOnClickListener {
-                showToast(
-                    AppObjectController.getFirebaseRemoteConfig()
-                        .getString(FirebaseRemoteConfigKey.FFCOURSE_CARD_CLICK_MSG)
-                )
-            }
-
-        }
     }
 
 }

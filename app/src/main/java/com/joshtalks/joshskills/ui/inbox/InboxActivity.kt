@@ -44,7 +44,6 @@ import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.inapp_update.Constants
 import com.joshtalks.joshskills.core.inapp_update.InAppUpdateManager
 import com.joshtalks.joshskills.core.inapp_update.InAppUpdateStatus
-import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.core.service.WorkMangerAdmin
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.NPSEventModel
@@ -121,7 +120,6 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         checkAppUpdate()
         workInBackground()
         handelIntentAction()
-        AppDirectory.initializeCache()
     }
 
     private fun updateSubscriptionTipView(exploreType: ExploreCardType) {

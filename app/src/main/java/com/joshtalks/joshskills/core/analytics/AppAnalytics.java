@@ -11,6 +11,7 @@ import com.freshchat.consumer.sdk.FreshchatUser;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.joshtalks.joshskills.BuildConfig;
 import com.joshtalks.joshskills.core.AppObjectController;
+import com.joshtalks.joshskills.core.JoshSkillExecutors;
 import com.joshtalks.joshskills.core.PrefManager;
 import com.joshtalks.joshskills.repository.local.model.InstallReferrerModel;
 import com.joshtalks.joshskills.repository.local.model.Mentor;
@@ -244,12 +245,15 @@ public class AppAnalytics {
     public void push() {
         Timber.v(this.toString());
         if (BuildConfig.DEBUG) {
-            return;
+            //  return;
         }
-        formatParameters();
-        pushToFirebase();
-        pushToCleverTap();
-        pushToFlurry(false);
+        JoshSkillExecutors.getBOUNDED().submit(() -> {
+            formatParameters();
+            pushToFirebase();
+            pushToCleverTap();
+            pushToFlurry(false);
+        });
+
     }
 
     public void push(boolean trackSession) {

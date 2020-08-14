@@ -50,7 +50,11 @@ data class CourseExploreModel(
     var whatsappUrl: String?,
 
     @SerializedName("language")
-    var language: String?,
+    var language: String = EMPTY,
+
+    @SerializedName("language_id")
+    var languageId: Int = 1,
+
 
     @SerializedName("certificate")
     val certificate: Boolean = false,
