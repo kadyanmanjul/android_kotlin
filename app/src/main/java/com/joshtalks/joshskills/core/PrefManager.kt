@@ -143,6 +143,7 @@ object PrefManager {
         WorkMangerAdmin.appStartWorker()
     }
 
+
     fun removeKey(key: String, isConsistent: Boolean = false) {
         if (isConsistent) prefManagerConsistent.edit().remove(key).apply()
         else prefManagerCommon.edit().remove(key).apply()

@@ -59,7 +59,7 @@ interface CourseDao {
 
     @SuppressWarnings(RoomWarnings.CURSOR_MISMATCH)
     @Query(value = "select * from course where conversation_id= :conversation_id AND is_deleted=0 ")
-    suspend fun chooseRegisterCourseMinimal(conversation_id: String): InboxEntity?
+    fun chooseRegisterCourseMinimal(conversation_id: String): InboxEntity?
 
 
     @SuppressWarnings(RoomWarnings.CURSOR_MISMATCH)
@@ -74,5 +74,9 @@ interface CourseDao {
 
     @Query(value = "SELECT * from course ORDER BY course_created_date ASC LIMIT 1")
     fun isUserInOfferDays(): Maybe<Course>
+
+    @Query(value = "select conversation_id from course")
+    fun getAllConversationId(): List<String>
+
 }
 

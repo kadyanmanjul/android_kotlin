@@ -45,15 +45,16 @@ import com.joshtalks.joshskills.core.inapp_update.Constants
 import com.joshtalks.joshskills.core.inapp_update.InAppUpdateManager
 import com.joshtalks.joshskills.core.inapp_update.InAppUpdateStatus
 import com.joshtalks.joshskills.core.service.WorkMangerAdmin
+import com.joshtalks.joshskills.core.setVectorImage
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.NPSEventModel
 import com.joshtalks.joshskills.repository.local.eventbus.ExploreCourseEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.NPSEventGenerateEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.OpenCourseEventBus
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
-import com.joshtalks.joshskills.repository.local.model.ACTION_UPSELLING_POPUP
 import com.joshtalks.joshskills.repository.local.model.ExploreCardType
 import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.repository.local.model.NotificationAction
 import com.joshtalks.joshskills.repository.server.ProfileResponse
 import com.joshtalks.joshskills.repository.server.SearchLocality
 import com.joshtalks.joshskills.repository.server.UpdateUserLocality
@@ -292,8 +293,9 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
 
     private fun handelIntentAction() {
         if (intent != null && intent.hasExtra(ACTION_TYPE)) {
-            intent.getStringExtra(ACTION_TYPE)?.let {
-                if (ACTION_UPSELLING_POPUP.equals(it, ignoreCase = true)) {
+            val obj = intent.getSerializableExtra(ACTION_TYPE) as NotificationAction?
+            obj?.let {
+                if (NotificationAction.ACTION_UP_SELLING_POPUP == it) {
                     showPromotionScreen(
                         intent.getStringExtra(COURSE_ID)!!,
                         intent.getStringExtra(ARG_PLACEHOLDER_URL)!!
@@ -550,44 +552,11 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
     }
 
     private fun visibleShareEarn() {
-        val url = AppObjectController.getFirebaseRemoteConfig().getString("EARN_SHARE_IMAGE_URL")
-        var iconUri = Uri.parse(url)
+        var url = AppObjectController.getFirebaseRemoteConfig().getString("EARN_SHARE_IMAGE_URL")
         if (url.isEmpty()) {
-            iconUri = Uri.parse("file:///android_asset/ic_rupee.svg")
+            url = "file:///android_asset/ic_rupee.svg"
         }
-        earnIV.visibility = View.VISIBLE
-        val requestBuilder = GlideToVectorYou
-            .init()
-            .with(this)
-            .requestBuilder
-        requestBuilder.load(iconUri)
-            .transition(DrawableTransitionOptions.withCrossFade())
-            .apply(RequestOptions().centerCrop())
-            .listener(object : RequestListener<PictureDrawable> {
-                override fun onLoadFailed(
-                    e: GlideException?,
-                    model: Any?,
-                    target: Target<PictureDrawable>?,
-                    isFirstResource: Boolean
-                ): Boolean {
-                    return false
-                }
-
-                override fun onResourceReady(
-                    resource: PictureDrawable?,
-                    model: Any?,
-                    target: Target<PictureDrawable>?,
-                    dataSource: DataSource?,
-                    isFirstResource: Boolean
-                ): Boolean {
-                    resource?.setTint(ContextCompat.getColor(applicationContext, R.color.white))
-                    earnIV.setImageDrawable(resource)
-                    earnIV.visibility = View.VISIBLE
-                    return false
-                }
-
-            })
-            .into(earnIV)
+        earnIV.setVectorImage(url, R.color.white)
     }
 
     private fun attachOfferHintView() {

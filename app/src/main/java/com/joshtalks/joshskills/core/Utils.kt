@@ -20,6 +20,7 @@ import android.graphics.PorterDuff
 import android.graphics.PorterDuffXfermode
 import android.graphics.Rect
 import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.PictureDrawable
 import android.graphics.drawable.VectorDrawable
 import android.media.AudioManager
 import android.media.AudioManager.STREAM_MUSIC
@@ -52,10 +53,15 @@ import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat
 import com.bumptech.glide.Glide
 import com.bumptech.glide.integration.webp.decoder.WebpDrawable
 import com.bumptech.glide.integration.webp.decoder.WebpDrawableTransformation
+import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.MultiTransformation
+import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
+import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
+import com.github.twocoffeesoneteam.glidetovectoryou.GlideToVectorYou
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.custom_ui.CustomTabHelper
 import com.joshtalks.joshskills.core.datetimeutils.DateTimeStyle
@@ -919,6 +925,44 @@ fun Long.bytesToMb(): Double {
 
 fun Long.bytesToKB(): Double {
     return (this / 1024).toDouble()
+}
+
+fun ImageView.setVectorImage(
+    url: String,
+    tintColor: Int = R.color.white,
+    context: Context = AppObjectController.joshApplication
+) {
+    GlideToVectorYou
+        .init()
+        .with(context)
+        .requestBuilder.load(Uri.parse(url))
+        .transition(DrawableTransitionOptions.withCrossFade())
+        .apply(RequestOptions().centerCrop())
+        .listener(object : RequestListener<PictureDrawable> {
+            override fun onLoadFailed(
+                e: GlideException?,
+                model: Any?,
+                target: Target<PictureDrawable>?,
+                isFirstResource: Boolean
+            ): Boolean {
+                return false
+            }
+
+            override fun onResourceReady(
+                resource: PictureDrawable?,
+                model: Any?,
+                target: Target<PictureDrawable>?,
+                dataSource: DataSource?,
+                isFirstResource: Boolean
+            ): Boolean {
+                resource?.setTint(ContextCompat.getColor(context, tintColor))
+                this@setVectorImage.setImageDrawable(resource)
+                this@setVectorImage.visibility = View.VISIBLE
+                return false
+            }
+
+        })
+        .into(this)
 }
 
 

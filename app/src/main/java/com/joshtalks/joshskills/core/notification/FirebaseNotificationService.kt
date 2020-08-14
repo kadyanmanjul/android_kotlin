@@ -19,22 +19,17 @@ import com.freshchat.consumer.sdk.Freshchat
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.google.gson.Gson
+import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.ARG_PLACEHOLDER_URL
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.COURSE_ID
+import com.joshtalks.joshskills.core.JoshSkillExecutors
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.analytics.DismissNotifEventReceiver
 import com.joshtalks.joshskills.core.service.WorkMangerAdmin
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
-import com.joshtalks.joshskills.repository.local.model.ACTION_OPEN_CONVERSATION
-import com.joshtalks.joshskills.repository.local.model.ACTION_OPEN_CONVERSATION_LIST
-import com.joshtalks.joshskills.repository.local.model.ACTION_OPEN_COURSE_EXPLORER
-import com.joshtalks.joshskills.repository.local.model.ACTION_OPEN_COURSE_REPORT
-import com.joshtalks.joshskills.repository.local.model.ACTION_OPEN_REFERRAL
-import com.joshtalks.joshskills.repository.local.model.ACTION_OPEN_TEST
-import com.joshtalks.joshskills.repository.local.model.ACTION_OPEN_URL
-import com.joshtalks.joshskills.repository.local.model.ACTION_UPSELLING_POPUP
+import com.joshtalks.joshskills.repository.local.model.NotificationAction
 import com.joshtalks.joshskills.repository.local.model.NotificationObject
 import com.joshtalks.joshskills.repository.service.EngagementNetworkHelper
 import com.joshtalks.joshskills.ui.chat.ConversationActivity
@@ -44,10 +39,8 @@ import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
 import com.joshtalks.joshskills.ui.inbox.InboxActivity
 import com.joshtalks.joshskills.ui.launch.LauncherActivity
 import com.joshtalks.joshskills.ui.referral.ReferralActivity
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import timber.log.Timber
+import java.util.concurrent.ExecutorService
 
 const val FCM_TOKEN = "fcmToken"
 const val HAS_NOTIFICATION = "has_notification"
@@ -62,6 +55,9 @@ class FirebaseNotificationService : FirebaseMessagingService() {
 
     @RequiresApi(Build.VERSION_CODES.N)
     private var importance = NotificationManager.IMPORTANCE_DEFAULT
+    private val executor: ExecutorService =
+        JoshSkillExecutors.newCachedSingleThreadExecutor("Josh-Notification-Process")
+
 
     override fun onNewToken(token: String) {
         super.onNewToken(token)
@@ -80,16 +76,17 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                 Gson().toJson(remoteMessage.data),
                 NotificationObject::class.java
             )
-            Timber.i(
-                FirebaseNotificationService::class.java.simpleName,
-                Gson().toJson(remoteMessage.data)
-            )
+            if (BuildConfig.DEBUG) {
+                Timber.tag(FirebaseNotificationService::class.java.simpleName).e(
+                    Gson().toJson(remoteMessage.data)
+                )
+            }
             sendNotification(nc)
         }
     }
 
     private fun sendNotification(notificationObject: NotificationObject) {
-        CoroutineScope(Dispatchers.IO).launch {
+        executor.execute {
             EngagementNetworkHelper.receivedNotification(notificationObject)
             val style = NotificationCompat.BigTextStyle()
             style.setBigContentTitle(notificationObject.contentTitle)
@@ -102,130 +99,126 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                 notificationObject.actionData
             )
 
-            intent.putExtra(NOTIFICATION_ID, notificationObject.id)
-            val uniqueInt = (System.currentTimeMillis() and 0xfffffff).toInt()
-            val defaultSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
-            val pendingIntent = PendingIntent.getActivity(
-                applicationContext,
-                uniqueInt,
-                intent,
-                PendingIntent.FLAG_UPDATE_CURRENT
-            )
-
-            val notificationBuilder =
-                NotificationCompat.Builder(
-                    this@FirebaseNotificationService,
-                    notificationChannelId
+            intent?.run {
+                intent.putExtra(NOTIFICATION_ID, notificationObject.id)
+                val uniqueInt = (System.currentTimeMillis() and 0xfffffff).toInt()
+                val defaultSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
+                val pendingIntent = PendingIntent.getActivity(
+                    applicationContext,
+                    uniqueInt,
+                    intent,
+                    PendingIntent.FLAG_UPDATE_CURRENT
                 )
-                    .setTicker(notificationObject.ticker)
-                    .setSmallIcon(R.drawable.ic_status_bar_notification)
-                    .setContentTitle(notificationObject.contentTitle)
-                    .setAutoCancel(true)
-                    .setSound(defaultSound)
-                    .setContentText(notificationObject.contentText)
-                    .setContentIntent(pendingIntent)
-                    .setStyle(style)
-                    .setColor(
-                        ContextCompat.getColor(
-                            this@FirebaseNotificationService,
-                            R.color.colorAccent
-                        )
+
+                val notificationBuilder =
+                    NotificationCompat.Builder(
+                        this@FirebaseNotificationService,
+                        notificationChannelId
                     )
-                    .setWhen(System.currentTimeMillis())
+                        .setTicker(notificationObject.ticker)
+                        .setSmallIcon(R.drawable.ic_status_bar_notification)
+                        .setContentTitle(notificationObject.contentTitle)
+                        .setAutoCancel(true)
+                        .setSound(defaultSound)
+                        .setContentText(notificationObject.contentText)
+                        .setContentIntent(pendingIntent)
+                        .setStyle(style)
+                        .setColor(
+                            ContextCompat.getColor(
+                                this@FirebaseNotificationService,
+                                R.color.colorAccent
+                            )
+                        )
+                        .setWhen(System.currentTimeMillis())
+                notificationBuilder.setDefaults(Notification.DEFAULT_ALL)
 
-
-            notificationBuilder.setDefaults(Notification.DEFAULT_ALL)
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                notificationBuilder.priority = NotificationManager.IMPORTANCE_HIGH
-            }
-
-            val dismissIntent =
-                Intent(applicationContext, DismissNotifEventReceiver::class.java).apply {
-                    putExtra(NOTIFICATION_ID, notificationObject.id)
-                    putExtra(HAS_NOTIFICATION, true)
-
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    notificationBuilder.priority = NotificationManager.IMPORTANCE_HIGH
                 }
-            val dismissPendingIntent: PendingIntent =
-                PendingIntent.getBroadcast(applicationContext, uniqueInt, dismissIntent, 0)
 
-            notificationBuilder.setDeleteIntent(dismissPendingIntent)
+                val dismissIntent =
+                    Intent(applicationContext, DismissNotifEventReceiver::class.java).apply {
+                        putExtra(NOTIFICATION_ID, notificationObject.id)
+                        putExtra(HAS_NOTIFICATION, true)
 
-            val notificationManager =
-                getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+                    }
+                val dismissPendingIntent: PendingIntent =
+                    PendingIntent.getBroadcast(applicationContext, uniqueInt, dismissIntent, 0)
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                val notificationChannel = NotificationChannel(
-                    notificationChannelId,
-                    notificationChannelName,
-                    importance
-                )
-                notificationChannel.enableLights(true)
-                notificationChannel.enableVibration(true)
-                notificationBuilder.setChannelId(notificationChannelId)
-                notificationManager.createNotificationChannel(notificationChannel)
+                notificationBuilder.setDeleteIntent(dismissPendingIntent)
+
+                val notificationManager =
+                    getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    val notificationChannel = NotificationChannel(
+                        notificationChannelId,
+                        notificationChannelName,
+                        importance
+                    )
+                    notificationChannel.enableLights(true)
+                    notificationChannel.enableVibration(true)
+                    notificationBuilder.setChannelId(notificationChannelId)
+                    notificationManager.createNotificationChannel(notificationChannel)
+                }
+                notificationManager.notify(uniqueInt, notificationBuilder.build())
             }
-            notificationManager.notify(uniqueInt, notificationBuilder.build())
         }
     }
 
-    private suspend fun getIntentAccordingAction(
+    private fun getIntentAccordingAction(
         notificationObject: NotificationObject,
-        action: String?,
+        action: NotificationAction?,
         actionData: String?
-    ): Intent {
-        if (action.isNullOrEmpty().not()) {
-            if (ACTION_OPEN_TEST.equals(action, ignoreCase = true)) {
+    ): Intent? {
+
+        return when (action) {
+            NotificationAction.ACTION_OPEN_TEST -> {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                     importance = NotificationManager.IMPORTANCE_HIGH
                 }
-                notificationChannelId = ACTION_OPEN_TEST
-                return CourseDetailsActivity.getIntent(
+                notificationChannelId = NotificationAction.ACTION_OPEN_TEST.type
+                CourseDetailsActivity.getIntent(
                     applicationContext,
                     actionData!!.toInt(),
                     "Notification",
                     arrayOf(Intent.FLAG_ACTIVITY_CLEAR_TOP, Intent.FLAG_ACTIVITY_SINGLE_TOP)
                 )
-
-            } else if (ACTION_OPEN_CONVERSATION.equals(
-                    action,
-                    ignoreCase = true
-                ) || ACTION_OPEN_COURSE_REPORT.equals(action, ignoreCase = true)
-            ) {
+            }
+            NotificationAction.ACTION_OPEN_CONVERSATION, NotificationAction.ACTION_OPEN_COURSE_REPORT -> {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                     importance = NotificationManager.IMPORTANCE_HIGH
                 }
-                notificationChannelId = action ?: ""
+                notificationChannelId = action.name
                 val obj: InboxEntity? = AppObjectController.appDatabase.courseDao()
                     .chooseRegisterCourseMinimal(actionData!!)
                 obj?.run {
                     WorkMangerAdmin.updatedCourseForConversation(this.conversation_id)
                 }
 
-                if (obj != null) {
+                if (null != obj) {
                     notificationChannelId = obj.conversation_id
                     notificationChannelName = obj.course_name
-                    val rIntnet =
-                        Intent(applicationContext, isNotificationCrash()).apply {
-                            putExtra(UPDATED_CHAT_ROOM_OBJECT, obj)
-                            putExtra(HAS_NOTIFICATION, true)
-                            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                        }
-                    if (ACTION_OPEN_COURSE_REPORT.equals(action, ignoreCase = true)) {
+                    val rIntnet = Intent(applicationContext, isNotificationCrash()).apply {
+                        putExtra(UPDATED_CHAT_ROOM_OBJECT, obj)
+                        putExtra(HAS_NOTIFICATION, true)
+                    }
+                    if (NotificationAction.ACTION_OPEN_COURSE_REPORT == action) {
                         rIntnet.putExtra(HAS_COURSE_REPORT, true)
                     }
-                    return rIntnet
-
+                    rIntnet
+                } else {
+                    returnDefaultIntent()
                 }
-            } else if (ACTION_OPEN_COURSE_EXPLORER.equals(action, ignoreCase = true)) {
-                notificationChannelId = ACTION_OPEN_COURSE_EXPLORER
+            }
+            NotificationAction.ACTION_OPEN_COURSE_EXPLORER -> {
+                notificationChannelId = NotificationAction.ACTION_OPEN_COURSE_EXPLORER.name
                 return Intent(applicationContext, CourseExploreActivity::class.java).apply {
                     flags = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
                 }
-
-            } else if (ACTION_OPEN_URL.equals(action, ignoreCase = true)) {
-                notificationChannelId = ACTION_OPEN_URL
+            }
+            NotificationAction.ACTION_OPEN_URL -> {
+                notificationChannelId = NotificationAction.ACTION_OPEN_URL.name
                 val intent = Intent(Intent.ACTION_VIEW).apply {
                     addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 }
@@ -235,17 +228,17 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                     intent.data = Uri.parse(actionData.trim())
                 }
                 return intent
-
-
-            } else if (ACTION_OPEN_CONVERSATION_LIST.equals(action, ignoreCase = true)) {
-                notificationChannelId = ACTION_OPEN_CONVERSATION_LIST
-                return Intent(applicationContext, InboxActivity::class.java).apply {
+            }
+            NotificationAction.ACTION_OPEN_CONVERSATION_LIST -> {
+                notificationChannelId = NotificationAction.ACTION_OPEN_CONVERSATION_LIST.name
+                Intent(applicationContext, InboxActivity::class.java).apply {
                     addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
                     putExtra(HAS_NOTIFICATION, true)
                 }
-            } else if (ACTION_UPSELLING_POPUP.equals(action, ignoreCase = true)) {
-                notificationChannelId = ACTION_UPSELLING_POPUP
-                return Intent(applicationContext, InboxActivity::class.java).apply {
+            }
+            NotificationAction.ACTION_UP_SELLING_POPUP -> {
+                notificationChannelId = NotificationAction.ACTION_UP_SELLING_POPUP.name
+                Intent(applicationContext, InboxActivity::class.java).apply {
                     addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
                     putExtra(HAS_NOTIFICATION, true)
                     putExtra(COURSE_ID, actionData)
@@ -257,17 +250,53 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                             .submit()
                     }
                 }
-            } else if (ACTION_OPEN_REFERRAL.equals(action, ignoreCase = true)) {
-                notificationChannelId = ACTION_OPEN_REFERRAL
+            }
+            NotificationAction.ACTION_OPEN_REFERRAL -> {
+                notificationChannelId = NotificationAction.ACTION_OPEN_REFERRAL.name
                 return Intent(applicationContext, ReferralActivity::class.java).apply {
                     flags = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
                 }
             }
+            NotificationAction.ACTION_OPEN_QUESTION -> {
+                return null
+            }
+            NotificationAction.ACTION_DELETE_DATA -> {
+                deleteUserData()
+                return null
+            }
+            NotificationAction.ACTION_DELETE_USER -> {
+                deleteUserCredentials()
+                return null
+            }
+            NotificationAction.ACTION_DELETE_USER_AND_DATA -> {
+                deleteUserCredentials()
+                deleteUserData()
+                return null
+            }
+            else -> {
+                return null
+            }
         }
+    }
+
+    private fun returnDefaultIntent(): Intent {
         return Intent(applicationContext, LauncherActivity::class.java).apply {
             addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
             putExtra(HAS_NOTIFICATION, true)
         }
+    }
+
+    private fun deleteUserData() {
+        AppObjectController.appDatabase.run {
+            courseDao().getAllConversationId().forEach {
+                PrefManager.removeKey(it)
+            }
+            clearAllTables()
+        }
+    }
+
+    private fun deleteUserCredentials() {
+        PrefManager.logoutUser()
     }
 
     private fun isNotificationCrash(): Class<*> {

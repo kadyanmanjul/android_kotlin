@@ -2,7 +2,6 @@ package com.joshtalks.joshskills.repository.local.model
 
 import com.google.gson.annotations.SerializedName
 
-
 class NotificationObject {
 
     @SerializedName("id")
@@ -30,7 +29,7 @@ class NotificationObject {
     var isClicked: Boolean = false
 
     @SerializedName("action")
-    var action: String? = null
+    var action: NotificationAction? = null
 
     @SerializedName("action_data")
     var actionData: String? = null
@@ -65,23 +64,45 @@ class NotificationObject {
     @SerializedName("deep_link_url")
     var deeplink: String? = null
 
+    @SerializedName("additional_data")
+    var extraData: Map<String, String>? = null
 }
 
-const val ACTION_OPEN_TEST = "open_test"
-const val ACTION_OPEN_CONVERSATION = "open_conversation"
-const val ACTION_OPEN_COURSE_EXPLORER = "course_explorer"
-const val ACTION_OPEN_URL = "open_url"
-const val ACTION_OPEN_CONVERSATION_LIST = "open_conversation_list"
-const val ACTION_OPEN_DIALOG = "show_dialog"
-const val ACTION_OPEN_POPUP = "popup"
-const val ACTION_UPSELLING_POPUP = "upselling_popup"
-const val ACTION_OPEN_REFERRAL = "open_referral"
-const val ACTION_OPEN_COURSE_REPORT = "course_report"
+enum class NotificationAction(val type: String) {
+    @SerializedName("open_test")
+    ACTION_OPEN_TEST("open_test"),
 
+    @SerializedName("open_conversation")
+    ACTION_OPEN_CONVERSATION("open_conversation"),
 
+    @SerializedName("course_explorer")
+    ACTION_OPEN_COURSE_EXPLORER("course_explorer"),
 
+    @SerializedName("open_url")
+    ACTION_OPEN_URL("open_url"),
 
+    @SerializedName("open_conversation_list")
+    ACTION_OPEN_CONVERSATION_LIST("open_conversation_list"),
 
+    @SerializedName("upselling_popup")
+    ACTION_UP_SELLING_POPUP("up_selling_popup"),
 
+    @SerializedName("open_referral")
+    ACTION_OPEN_REFERRAL("open_referral"),
 
+    @SerializedName("course_report")
+    ACTION_OPEN_COURSE_REPORT("course_report"),
+
+    @SerializedName("open_question")
+    ACTION_OPEN_QUESTION("open_question"),
+
+    @SerializedName("delete_data")
+    ACTION_DELETE_DATA("delete_data"),
+
+    @SerializedName("delete_user")
+    ACTION_DELETE_USER("delete_user"),
+
+    @SerializedName("delete_user_and_data")
+    ACTION_DELETE_USER_AND_DATA("delete_user_and_data"),
+}
 
