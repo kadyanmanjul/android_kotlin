@@ -233,4 +233,20 @@
         <key>EXPLORE_TYPE_NORMAL_TIP</key>
         <value>Get all course pass for 1-Year</value>
     </entry>
+    <entry>
+        <key>INBOX_SCREEN_CTA_TEXT_NORMAL</key>
+        <value>Find More Courses</value>
+    </entry>
+    <entry>
+        <key>INBOX_SCREEN_CTA_TEXT_FFCOURSE</key>
+        <value>Find More Courses</value>
+    </entry>
+    <entry>
+        <key>INBOX_SCREEN_CTA_TEXT_FREETRIAL</key>
+        <value>Find More Courses</value>
+    </entry>
+    <entry>
+        <key>INBOX_SCREEN_CTA_TEXT_SUBSCRIPTION</key>
+        <value>Find More Courses</value>
+    </entry>
 </defaultsMap>

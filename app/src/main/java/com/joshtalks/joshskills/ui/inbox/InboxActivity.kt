@@ -122,9 +122,8 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         handelIntentAction()
     }
 
-    private fun updateSubscriptionTipView() {
-        val exploreType = PrefManager.getStringValue(EXPLORE_TYPE, true)
-        if (exploreType.isNotBlank() && ExploreCardType.valueOf(exploreType) == ExploreCardType.FREETRIAL) {
+    private fun updateSubscriptionTipView(exploreType: ExploreCardType) {
+        if (exploreType == ExploreCardType.FREETRIAL) {
             subscriptionTipContainer.visibility = View.VISIBLE
 
             val remainingTrialDays = PrefManager.getIntValue(REMAINING_TRIAL_DAYS, true)
@@ -155,7 +154,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
                     .getString(FirebaseRemoteConfigKey.SUBSCRIPTION_TRIAL_TIP_DAY0)
                 else -> EMPTY
             }
-        } else if (exploreType.isNotBlank() && ExploreCardType.valueOf(exploreType) == ExploreCardType.FFCOURSE) {
+        } else if (exploreType == ExploreCardType.FFCOURSE) {
             subscriptionTipContainer.visibility = View.VISIBLE
             viewModel.registerCourseNetworkLiveData.value?.let {
                 txtSubscriptionTip.text = if (it.size > 1) {
@@ -166,7 +165,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
                         .getString(FirebaseRemoteConfigKey.EXPLORE_TYPE_FFCOURSE_TIP)
                 }
             }
-        } else if (exploreType.isNotBlank() && ExploreCardType.valueOf(exploreType) == ExploreCardType.NORMAL) {
+        } else if (exploreType == ExploreCardType.NORMAL) {
             subscriptionTipContainer.visibility = View.VISIBLE
             viewModel.registerCourseNetworkLiveData.value?.let {
                 txtSubscriptionTip.text = AppObjectController.getFirebaseRemoteConfig()
@@ -174,6 +173,28 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
             }
         }
 
+    }
+
+    private fun setCTAButtonText(exploreType: ExploreCardType) {
+        find_more.text = when (exploreType) {
+
+            ExploreCardType.NORMAL ->
+                AppObjectController.getFirebaseRemoteConfig()
+                    .getString(FirebaseRemoteConfigKey.INBOX_SCREEN_CTA_TEXT_NORMAL)
+
+            ExploreCardType.FFCOURSE ->
+                AppObjectController.getFirebaseRemoteConfig()
+                    .getString(FirebaseRemoteConfigKey.INBOX_SCREEN_CTA_TEXT_FFCOURSE)
+
+            ExploreCardType.FREETRIAL ->
+                AppObjectController.getFirebaseRemoteConfig()
+                    .getString(FirebaseRemoteConfigKey.INBOX_SCREEN_CTA_TEXT_FREETRIAL)
+
+            ExploreCardType.SUBSCRIPTION ->
+                AppObjectController.getFirebaseRemoteConfig()
+                    .getString(FirebaseRemoteConfigKey.INBOX_SCREEN_CTA_TEXT_SUBSCRIPTION)
+
+        }
     }
 
     private fun setToolbar() {
@@ -308,7 +329,12 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
                 addCourseInRecyclerView(it)
                 setTrialEndParam(it)
                 updateExploreTypeParam(it)
-                updateSubscriptionTipView()
+                val exploreTypeStr = PrefManager.getStringValue(EXPLORE_TYPE, true)
+                val exploreType =
+                    if (exploreTypeStr.isNotBlank()) ExploreCardType.valueOf(exploreTypeStr) else ExploreCardType.NORMAL
+                updateSubscriptionTipView(exploreType)
+                setCTAButtonText(exploreType)
+
             }
         })
         viewModel.registerCourseMinimalLiveData.observe(this, Observer {
