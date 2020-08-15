@@ -109,7 +109,9 @@ class ConversationViewModel(application: Application) :
 
     override fun onCleared() {
         super.onCleared()
-        jobs.forEach { it.cancel() }
+        jobs.listIterator().forEach {
+            it.cancel()
+        }
         compositeDisposable.clear()
         context.unregisterReceiver(broadCastForNetwork)
         if (isRecordingStarted) {
@@ -444,12 +446,15 @@ class ConversationViewModel(application: Application) :
     }
 
     suspend fun updateBatchChangeRequest() {
-
-        val response =
-            AppObjectController.chatNetworkService.changeBatchRequest(inboxEntity.conversation_id)
-        if (response.isSuccessful) {
-            deleteChatModelOfType(BASE_MESSAGE_TYPE.UNLOCK)
-            refreshChatOnManual()
+        try {
+            val response =
+                AppObjectController.chatNetworkService.changeBatchRequest(inboxEntity.conversation_id)
+            if (response.isSuccessful) {
+                deleteChatModelOfType(BASE_MESSAGE_TYPE.UNLOCK)
+                refreshChatOnManual()
+            }
+        } catch (ex: Exception) {
+            ex.printStackTrace()
         }
     }
 

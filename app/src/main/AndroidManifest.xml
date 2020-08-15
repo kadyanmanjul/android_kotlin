@@ -200,7 +200,7 @@
         <activity
                 android:name=".ui.chat.ConversationActivity"
                 android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize"
-                android:launchMode="singleTask"
+                android:launchMode="singleTop"
                 android:parentActivityName=".ui.inbox.InboxActivity"
                 android:theme="@style/AppNoBarTheme">
             <meta-data

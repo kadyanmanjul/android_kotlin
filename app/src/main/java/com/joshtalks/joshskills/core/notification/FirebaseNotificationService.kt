@@ -209,6 +209,8 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                         Intent(applicationContext, isNotificationCrash()).apply {
                             putExtra(UPDATED_CHAT_ROOM_OBJECT, obj)
                             putExtra(HAS_NOTIFICATION, true)
+                            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                         }
                     if (ACTION_OPEN_COURSE_REPORT.equals(action, ignoreCase = true)) {
                         rIntnet.putExtra(HAS_COURSE_REPORT, true)
