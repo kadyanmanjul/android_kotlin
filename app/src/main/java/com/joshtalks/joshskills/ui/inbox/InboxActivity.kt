@@ -123,53 +123,65 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
     }
 
     private fun updateSubscriptionTipView(exploreType: ExploreCardType) {
-        if (exploreType == ExploreCardType.FREETRIAL) {
-            subscriptionTipContainer.visibility = View.VISIBLE
+        when (exploreType) {
 
-            val remainingTrialDays = PrefManager.getIntValue(REMAINING_TRIAL_DAYS, true)
-            txtSubscriptionTip.text = when {
+            ExploreCardType.FREETRIAL -> {
+                subscriptionTipContainer.visibility = View.VISIBLE
 
-                remainingTrialDays < 0 -> AppObjectController.getFirebaseRemoteConfig()
-                    .getString(FirebaseRemoteConfigKey.SUBSCRIPTION_TRIAL_TIP_DAY7)
+                val remainingTrialDays = PrefManager.getIntValue(REMAINING_TRIAL_DAYS, true)
+                txtSubscriptionTip.text = when {
 
-                remainingTrialDays == 1 -> AppObjectController.getFirebaseRemoteConfig()
-                    .getString(FirebaseRemoteConfigKey.SUBSCRIPTION_TRIAL_TIP_DAY6)
+                    remainingTrialDays <= 0 -> AppObjectController.getFirebaseRemoteConfig()
+                        .getString(FirebaseRemoteConfigKey.SUBSCRIPTION_TRIAL_TIP_DAY7)
 
-                remainingTrialDays == 2 -> AppObjectController.getFirebaseRemoteConfig()
-                    .getString(FirebaseRemoteConfigKey.SUBSCRIPTION_TRIAL_TIP_DAY5)
+                    remainingTrialDays == 1 -> AppObjectController.getFirebaseRemoteConfig()
+                        .getString(FirebaseRemoteConfigKey.SUBSCRIPTION_TRIAL_TIP_DAY6)
 
-                remainingTrialDays == 3 -> AppObjectController.getFirebaseRemoteConfig()
-                    .getString(FirebaseRemoteConfigKey.SUBSCRIPTION_TRIAL_TIP_DAY4)
+                    remainingTrialDays == 2 -> AppObjectController.getFirebaseRemoteConfig()
+                        .getString(FirebaseRemoteConfigKey.SUBSCRIPTION_TRIAL_TIP_DAY5)
 
-                remainingTrialDays == 4 -> AppObjectController.getFirebaseRemoteConfig()
-                    .getString(FirebaseRemoteConfigKey.SUBSCRIPTION_TRIAL_TIP_DAY3)
+                    remainingTrialDays == 3 -> AppObjectController.getFirebaseRemoteConfig()
+                        .getString(FirebaseRemoteConfigKey.SUBSCRIPTION_TRIAL_TIP_DAY4)
 
-                remainingTrialDays == 5 -> AppObjectController.getFirebaseRemoteConfig()
-                    .getString(FirebaseRemoteConfigKey.SUBSCRIPTION_TRIAL_TIP_DAY2)
+                    remainingTrialDays == 4 -> AppObjectController.getFirebaseRemoteConfig()
+                        .getString(FirebaseRemoteConfigKey.SUBSCRIPTION_TRIAL_TIP_DAY3)
 
-                remainingTrialDays == 6 -> AppObjectController.getFirebaseRemoteConfig()
-                    .getString(FirebaseRemoteConfigKey.SUBSCRIPTION_TRIAL_TIP_DAY1)
+                    remainingTrialDays == 5 -> AppObjectController.getFirebaseRemoteConfig()
+                        .getString(FirebaseRemoteConfigKey.SUBSCRIPTION_TRIAL_TIP_DAY2)
 
-                remainingTrialDays > 6 -> AppObjectController.getFirebaseRemoteConfig()
-                    .getString(FirebaseRemoteConfigKey.SUBSCRIPTION_TRIAL_TIP_DAY0)
-                else -> EMPTY
-            }
-        } else if (exploreType == ExploreCardType.FFCOURSE) {
-            subscriptionTipContainer.visibility = View.VISIBLE
-            viewModel.registerCourseNetworkLiveData.value?.let {
-                txtSubscriptionTip.text = if (it.size > 1) {
-                    AppObjectController.getFirebaseRemoteConfig()
-                        .getString(FirebaseRemoteConfigKey.EXPLORE_TYPE_NORMAL_TIP)
-                } else {
-                    AppObjectController.getFirebaseRemoteConfig()
-                        .getString(FirebaseRemoteConfigKey.EXPLORE_TYPE_FFCOURSE_TIP)
+                    remainingTrialDays == 6 -> AppObjectController.getFirebaseRemoteConfig()
+                        .getString(FirebaseRemoteConfigKey.SUBSCRIPTION_TRIAL_TIP_DAY1)
+
+                    remainingTrialDays > 6 -> AppObjectController.getFirebaseRemoteConfig()
+                        .getString(FirebaseRemoteConfigKey.SUBSCRIPTION_TRIAL_TIP_DAY0)
+
+                    else -> EMPTY
                 }
             }
-        } else if (exploreType == ExploreCardType.NORMAL) {
-            subscriptionTipContainer.visibility = View.VISIBLE
-            viewModel.registerCourseNetworkLiveData.value?.let {
-                txtSubscriptionTip.text = AppObjectController.getFirebaseRemoteConfig()
-                    .getString(FirebaseRemoteConfigKey.EXPLORE_TYPE_NORMAL_TIP)
+
+            ExploreCardType.FFCOURSE -> {
+                subscriptionTipContainer.visibility = View.VISIBLE
+                viewModel.registerCourseNetworkLiveData.value?.let {
+                    txtSubscriptionTip.text = if (it.size > 1) {
+                        AppObjectController.getFirebaseRemoteConfig()
+                            .getString(FirebaseRemoteConfigKey.EXPLORE_TYPE_NORMAL_TIP)
+                    } else {
+                        AppObjectController.getFirebaseRemoteConfig()
+                            .getString(FirebaseRemoteConfigKey.EXPLORE_TYPE_FFCOURSE_TIP)
+                    }
+                }
+            }
+
+            ExploreCardType.NORMAL -> {
+                subscriptionTipContainer.visibility = View.VISIBLE
+                viewModel.registerCourseNetworkLiveData.value?.let {
+                    txtSubscriptionTip.text = AppObjectController.getFirebaseRemoteConfig()
+                        .getString(FirebaseRemoteConfigKey.EXPLORE_TYPE_NORMAL_TIP)
+                }
+            }
+
+            else -> {
+                subscriptionTipContainer.visibility = View.GONE
             }
         }
 
@@ -630,7 +642,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
 
         expiryTimeInMs?.let {
             if (it <= currentTimeInMs) {
-                logTrailEventExpired()
+                logTrialEventExpired()
                 PrefManager.put(IS_TRIAL_ENDED, true, true)
             }
             val remainingTrialDays =
@@ -645,7 +657,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
 
     }
 
-    private fun logTrailEventExpired() {
+    private fun logTrialEventExpired() {
         if (PrefManager.getBoolValue(IS_TRIAL_ENDED, true).not()) {
             AppAnalytics.create(AnalyticsEvent.SEVEN_DAY_TRIAL_OVER.NAME)
                 .addBasicParam()

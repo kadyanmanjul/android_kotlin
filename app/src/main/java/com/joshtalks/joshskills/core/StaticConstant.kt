@@ -73,7 +73,7 @@ enum class ViewTypeForPractiseUser(val type: Int) {
 class FirebaseRemoteConfigKey {
     companion object {
 
-        // Inbox Screen (SubscriptionTrail Tip)
+        // Inbox Screen (SubscriptionTrial Tip)
         const val SUBSCRIPTION_TRIAL_TIP_DAY0 = "SUBSCRIPTION_TRIAL_TIP_DAY0"
         const val SUBSCRIPTION_TRIAL_TIP_DAY1 = "SUBSCRIPTION_TRIAL_TIP_DAY1"
         const val SUBSCRIPTION_TRIAL_TIP_DAY2 = "SUBSCRIPTION_TRIAL_TIP_DAY2"
@@ -89,7 +89,7 @@ class FirebaseRemoteConfigKey {
         const val INBOX_SCREEN_CTA_TEXT_FREETRIAL = "INBOX_SCREEN_CTA_TEXT_FREETRIAL"
         const val INBOX_SCREEN_CTA_TEXT_SUBSCRIPTION = "INBOX_SCREEN_CTA_TEXT_SUBSCRIPTION"
 
-        // Trail End Screen
+        // Trial End Screen
         const val TRAIL_END_SCREEN_MESSAGE = "TRAIL_END_SCREEN_MESSAGE"
         const val TRAIL_END_SCREEN_CTA_LABEL = "TRAIL_END_SCREEN_CTA_LABEL"
 
@@ -111,6 +111,10 @@ class FirebaseRemoteConfigKey {
 
         // Course Explore Screen
         const val FFCOURSE_CARD_CLICK_MSG = "FFCOURSE_CARD_CLICK_MSG"
+
+        // Payment Summary Screen
+        const val PAYMENT_SUMMARY_CTA_LABEL_FREE = "PAYMENT_SUMMARY_CTA_LABEL_FREE"
+        const val CTA_PAYMENT_SUMMARY = "CTA_PAYMENT_SUMMARY"
 
     }
 }

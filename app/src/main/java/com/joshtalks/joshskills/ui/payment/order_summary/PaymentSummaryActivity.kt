@@ -36,6 +36,8 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.CoreJoshActivity
 import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.CTA_PAYMENT_SUMMARY
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.PAYMENT_SUMMARY_CTA_LABEL_FREE
 import com.joshtalks.joshskills.core.INSTANCE_ID
 import com.joshtalks.joshskills.core.PAYMENT_MOBILE_NUMBER
 import com.joshtalks.joshskills.core.PrefManager
@@ -231,10 +233,15 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                         if (it.isEmpty().not()) multiLineLL.addView(getTextView(it))
                     }
             }
-            binding.materialButton.text =
-                "${AppObjectController.getFirebaseRemoteConfig()
-                    .getString("CTA_PAYMENT_SUMMARY")} ₹ ${viewModel.getCourseDiscountedAmount()
-                    .roundToInt()}"
+            if (viewModel.getCourseDiscountedAmount() > 0) {
+                binding.materialButton.text =
+                    "${AppObjectController.getFirebaseRemoteConfig()
+                        .getString(CTA_PAYMENT_SUMMARY)} ₹ ${viewModel.getCourseDiscountedAmount()
+                        .roundToInt()}"
+            } else {
+                binding.materialButton.text = AppObjectController.getFirebaseRemoteConfig()
+                    .getString(PAYMENT_SUMMARY_CTA_LABEL_FREE)
+            }
             if (it.couponDetails.title.isEmpty().not()) {
                 binding.textView1.text = it.couponDetails.name
                 binding.tvTip.text = it.couponDetails.title

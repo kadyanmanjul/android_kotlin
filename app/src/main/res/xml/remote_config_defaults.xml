@@ -249,4 +249,8 @@
         <key>INBOX_SCREEN_CTA_TEXT_SUBSCRIPTION</key>
         <value>Find More Courses</value>
     </entry>
+    <entry>
+        <key>PAYMENT_SUMMARY_CTA_LABEL_FREE</key>
+        <value>Start for Free</value>
+    </entry>
 </defaultsMap>

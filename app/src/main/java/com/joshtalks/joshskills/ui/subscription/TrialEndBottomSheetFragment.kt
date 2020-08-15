@@ -36,7 +36,7 @@ class TrialEndBottomSheetFragment : BottomSheetDialogFragment() {
 
     override fun onResume() {
         super.onResume()
-        binding.txtTrailEndMsg.text = AppObjectController.getFirebaseRemoteConfig()
+        binding.txtTrialEndMsg.text = AppObjectController.getFirebaseRemoteConfig()
             .getString(FirebaseRemoteConfigKey.TRAIL_END_SCREEN_MESSAGE)
 
         binding.btnUnlock.text = AppObjectController.getFirebaseRemoteConfig()

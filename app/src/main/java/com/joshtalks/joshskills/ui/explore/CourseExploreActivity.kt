@@ -293,7 +293,7 @@ class CourseExploreActivity : CoreJoshActivity() {
                     AppObjectController.commonNetworkService.registerGAIdAsync(requestRegisterGAId)
                         .await()
                 PrefManager.put(SERVER_GID_ID, resp.id)
-                PrefManager.put(EXPLORE_TYPE, resp.exploreCardType!!.name)
+                PrefManager.put(EXPLORE_TYPE, resp.exploreCardType!!.name, true)
             } catch (ex: Throwable) {
                 //LogException.catchException(ex)
             }
