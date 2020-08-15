@@ -12,9 +12,7 @@ import com.joshtalks.joshskills.repository.server.feedback.FeedbackTypes
 import com.joshtalks.joshskills.repository.service.EngagementNetworkHelper
 import com.joshtalks.joshskills.ui.chat.PRACTISE_SUBMIT_REQUEST_CODE
 import com.joshtalks.joshskills.ui.chat.VIDEO_OPEN_REQUEST_CODE
-import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
 import com.joshtalks.joshskills.ui.feedback.FeedbackFragment
-import com.joshtalks.joshskills.ui.inbox.COURSE_EXPLORER_WITHOUT_CODE
 import com.joshtalks.joshskills.ui.practise.PRACTISE_OBJECT
 import com.joshtalks.joshskills.ui.referral.PromotionDialogFragment
 import com.joshtalks.joshskills.ui.video_player.VIDEO_OBJECT
@@ -51,23 +49,6 @@ abstract class CoreJoshActivity : BaseActivity() {
         }
     }
 
-    protected fun setResult() {
-        val resultIntent = Intent()
-        setResult(Activity.RESULT_OK, resultIntent)
-        finish()
-    }
-
-    protected fun openCourseExplorerScreen(act: Activity) {
-        //AppAnalytics.create(AnalyticsEvent.EXPLORE_OPENED.NAME).push()
-        CourseExploreActivity.startCourseExploreActivity(
-            this,
-            COURSE_EXPLORER_WITHOUT_CODE,
-            null,
-            true,
-            getActivityType(act)
-        )
-        this.finish()
-    }
 
     protected fun endAudioEngagePart(endTime: Long) {
         graph?.endTime = endTime

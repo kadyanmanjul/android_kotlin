@@ -111,11 +111,15 @@ abstract class BaseActivity : AppCompatActivity() {
     }
 
     fun getIntentForState(): Intent? {
-        val intent: Intent? = if (PrefManager.getStringValue(API_TOKEN).isEmpty()) {
-            Intent(this, OnBoardActivity::class.java)
-        } else if (isUserProfileComplete()) {
-            Intent(this, SignUpActivity::class.java)
-        } else getInboxActivityIntent()
+        val intent: Intent? = when {
+            PrefManager.getStringValue(API_TOKEN).isEmpty() -> {
+                Intent(this, OnBoardActivity::class.java)
+            }
+            isUserProfileComplete() -> {
+                Intent(this, SignUpActivity::class.java)
+            }
+            else -> getInboxActivityIntent()
+        }
         return intent?.apply {
             addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)

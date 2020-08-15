@@ -21,6 +21,7 @@ import com.google.firebase.messaging.RemoteMessage
 import com.google.gson.Gson
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.API_TOKEN
 import com.joshtalks.joshskills.core.ARG_PLACEHOLDER_URL
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.COURSE_ID
@@ -46,6 +47,7 @@ const val FCM_TOKEN = "fcmToken"
 const val HAS_NOTIFICATION = "has_notification"
 const val NOTIFICATION_ID = "notification_id"
 const val HAS_COURSE_REPORT = "has_course_report"
+const val QUESTION_ID = "question_id"
 
 
 class FirebaseNotificationService : FirebaseMessagingService() {
@@ -186,6 +188,10 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                 )
             }
             NotificationAction.ACTION_OPEN_CONVERSATION, NotificationAction.ACTION_OPEN_COURSE_REPORT -> {
+                if (PrefManager.getStringValue(API_TOKEN).isEmpty()) {
+                    return null
+                }
+
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                     importance = NotificationManager.IMPORTANCE_HIGH
                 }
@@ -201,10 +207,16 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                     notificationChannelName = obj.course_name
                     val rIntnet = Intent(applicationContext, isNotificationCrash()).apply {
                         putExtra(UPDATED_CHAT_ROOM_OBJECT, obj)
+                        putExtra(ACTION_TYPE, action)
                         putExtra(HAS_NOTIFICATION, true)
+                        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                        addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                     }
                     if (NotificationAction.ACTION_OPEN_COURSE_REPORT == action) {
                         rIntnet.putExtra(HAS_COURSE_REPORT, true)
+                    }
+                    notificationObject.extraData?.let {
+                        rIntnet.putExtra(QUESTION_ID, it["question_id"])
                     }
                     rIntnet
                 } else {
@@ -230,6 +242,9 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                 return intent
             }
             NotificationAction.ACTION_OPEN_CONVERSATION_LIST -> {
+                if (PrefManager.getStringValue(API_TOKEN).isEmpty()) {
+                    return null
+                }
                 notificationChannelId = NotificationAction.ACTION_OPEN_CONVERSATION_LIST.name
                 Intent(applicationContext, InboxActivity::class.java).apply {
                     addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
@@ -237,6 +252,9 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                 }
             }
             NotificationAction.ACTION_UP_SELLING_POPUP -> {
+                if (PrefManager.getStringValue(API_TOKEN).isEmpty()) {
+                    return null
+                }
                 notificationChannelId = NotificationAction.ACTION_UP_SELLING_POPUP.name
                 Intent(applicationContext, InboxActivity::class.java).apply {
                     addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
