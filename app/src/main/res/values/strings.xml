@@ -326,6 +326,7 @@
     <string name="total_question">Total Question \n</string>
     <string name="see_answer">See correct answer</string>
     <string name="see_your_answer">See your answer</string>
+    <string name="reset">Reset</string>
     <string name="submitted_recording">Submitted Recordings</string>
     <string name="submit_record_msz">Do you want to submit this recording?</string>
     <string name="courses_in_other_languages">Courses in other languages:</string>
@@ -357,6 +358,7 @@
     <string name="trial_feature_2">Never get bored with over 600 classes</string>
     <string name="trial_feature_3"><![CDATA[Stay motivated with quizzes & tests]]></string>
     <string name="me">Me</string>
+    <string name="add_this">Add This</string>
     <string name="delete_media_title">Clear Course Media</string>
     <string name="delete_media_message">Are you sure you want to delete all media from this course?</string>
     <string name="referral">Referral</string>

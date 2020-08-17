@@ -7,9 +7,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/rectangle_with_dotted_border"
-            android:maxWidth="@dimen/_156sdp"
-            android:minWidth="@dimen/_156sdp"
-            android:minHeight="@dimen/_100sdp"
+            android:maxWidth="@dimen/_176sdp"
+            android:minWidth="@dimen/_166sdp"
+            android:minHeight="@dimen/_90sdp"
             android:paddingStart="@dimen/_2sdp"
             android:paddingTop="@dimen/_4sdp"
             android:paddingEnd="@dimen/_2sdp">
@@ -26,7 +26,7 @@
                 android:paddingEnd="@dimen/_8sdp"
                 android:paddingBottom="@dimen/_2sdp"
                 android:textColor="@color/light_grey"
-                android:textSize="@dimen/font_12"
+                android:textSize="@dimen/font_14"
                 tools:text="@string/unlock_class_text" />
 
     </FrameLayout>

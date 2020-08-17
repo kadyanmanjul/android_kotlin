@@ -178,7 +178,7 @@ class MatchTheFollowingChoiceView : FrameLayout,
             LayoutMarginDecoration(
                 Utils.dpToPx(
                     context,
-                    6f
+                    10f
                 )
             )
         )
@@ -189,7 +189,7 @@ class MatchTheFollowingChoiceView : FrameLayout,
             LayoutMarginDecoration(
                 Utils.dpToPx(
                     context,
-                    6f
+                    10f
                 )
             )
         )
