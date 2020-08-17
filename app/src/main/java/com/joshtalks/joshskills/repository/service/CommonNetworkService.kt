@@ -20,8 +20,8 @@ import com.joshtalks.joshskills.repository.server.course_detail.CourseDetailsRes
 import com.joshtalks.joshskills.repository.server.feedback.FeedbackStatusResponse
 import com.joshtalks.joshskills.repository.server.feedback.RatingDetails
 import com.joshtalks.joshskills.repository.server.feedback.UserFeedbackRequest
+import com.joshtalks.joshskills.repository.server.reminder.ReminderRequest
 import com.joshtalks.joshskills.repository.server.reminder.ReminderResponse
-import com.joshtalks.joshskills.repository.server.reminder.RequestSetReminderRequest
 import kotlinx.coroutines.Deferred
 import retrofit2.Response
 import retrofit2.http.Body
@@ -117,7 +117,7 @@ interface CommonNetworkService {
     suspend fun getSubmittedConversationPractise(@Query("conversationpractice_id") eventName: String): Response<List<SubmittedConversationPractiseModel>>
 
     @POST("$DIR/mentor/reminders/")
-    suspend fun setReminder(@Body requestSetReminderRequest: RequestSetReminderRequest): Response<BaseResponse<*>>
+    suspend fun setReminder(@Body requestSetReminderRequest: ReminderRequest): Response<BaseResponse<Int>>
 
     @GET("$DIR/mentor/reminders/")
     suspend fun getReminders(@Query("mentor_id") mentorId: String): Response<BaseResponse<List<ReminderResponse>>>

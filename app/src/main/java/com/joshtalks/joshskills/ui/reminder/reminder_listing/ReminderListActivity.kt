@@ -1,5 +1,6 @@
 package com.joshtalks.joshskills.ui.reminder.reminder_listing
 
+import android.app.PendingIntent
 import android.content.Intent
 import android.os.Bundle
 import android.view.GestureDetector
@@ -15,22 +16,21 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.CoreJoshActivity
 import com.joshtalks.joshskills.databinding.ActivityReminderListLayoutBinding
-import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.reminder.ReminderResponse
+import com.joshtalks.joshskills.ui.reminder.ReminderBaseActivity
 import com.joshtalks.joshskills.ui.reminder.set_reminder.ReminderActivity
 import com.joshtalks.joshskills.util.DividerItemDecoration
 import com.mindorks.placeholderview.SmoothLinearLayoutManager
 
-class ReminderListActivity : CoreJoshActivity(), ReminderAdapter.ReminderItemActionListener,
+class ReminderListActivity : ReminderBaseActivity(),
     RecyclerView.OnItemTouchListener {
 
     private lateinit var gestureDetector: GestureDetectorCompat
     private var actionMode: Boolean = false
     private lateinit var titleView: AppCompatTextView
     private lateinit var helpIv: AppCompatImageView
-    private val reminderItemList: ArrayList<ReminderResponse> = ArrayList()
+    private var reminderItemList: ArrayList<ReminderResponse> = ArrayList()
     lateinit var binding: ActivityReminderListLayoutBinding
     private val viewModel by lazy { ViewModelProvider(this).get(ReminderListingViewModel::class.java) }
     private lateinit var adapter: ReminderAdapter
@@ -58,24 +58,12 @@ class ReminderListActivity : CoreJoshActivity(), ReminderAdapter.ReminderItemAct
         initRv()
         viewModel.reminderList.observe(this,
             Observer { data ->
-                reminderItemList.clear()
-                reminderItemList.addAll(data.filter {
-                    !it.status.equals(
-                        ReminderActivity.Companion.ReminderStatus.DELETED.name,
-                        true
-                    )
-                })
-                adapter.notifyDataSetChanged()
+                adapter.submitList(data)
             })
     }
 
-    override fun onResume() {
-        super.onResume()
-        viewModel.getReminders(Mentor.getInstance().getId())
-    }
-
     private fun initRv() {
-        var linearLayoutManager = SmoothLinearLayoutManager(this)
+        val linearLayoutManager = SmoothLinearLayoutManager(this)
         linearLayoutManager.isSmoothScrollbarEnabled = true
         binding.reminderRecyclerView.layoutManager = linearLayoutManager
         binding.reminderRecyclerView.addItemDecoration(
@@ -84,7 +72,7 @@ class ReminderListActivity : CoreJoshActivity(), ReminderAdapter.ReminderItemAct
                 R.drawable.list_divider
             )
         )
-        adapter = ReminderAdapter(this, reminderItemList, this)
+        adapter = ReminderAdapter(this, this::onStatusUpdate, this::onItemTimeClick)
         binding.reminderRecyclerView.adapter = adapter
 
         binding.reminderRecyclerView.addOnItemTouchListener(this)
@@ -96,40 +84,48 @@ class ReminderListActivity : CoreJoshActivity(), ReminderAdapter.ReminderItemAct
 
     private fun openSetReminder() {
         startActivity(Intent(this, ReminderActivity::class.java))
+        finish()
     }
 
-    override fun onStatusUpdate(status: ReminderActivity.Companion.ReminderStatus, position: Int) {
-        val reminderItem = reminderItemList[position]
+    fun onStatusUpdate(
+        status: Companion.ReminderStatus,
+        reminderItem: ReminderResponse
+    ) {
         if (status.name != reminderItem.status) {
             viewModel.updateReminder(
+                reminderItem.id,
                 reminderItem.reminderTime,
                 reminderItem.reminderFrequency,
                 status.name,
                 reminderItem.mentor,
                 reminderItem.reminderTime
             )
+
         }
     }
 
-    override fun onItemTimeClick(position: Int) {
+    fun onItemTimeClick(reminderItem: ReminderResponse) {
         startActivity(
             ReminderActivity.getIntent(
                 this,
-                reminderItemList.get(position).reminderTime,
-                reminderItemList.get(position).reminderFrequency
+                reminderItem.reminderTime,
+                reminderItem.reminderFrequency,
+                reminderItem.id
             )
         )
     }
 
     private fun deleteReminders() {
-        adapter.getSelectedItems().let {
-            it?.forEach {
+        adapter.getSelectedItems().let { items ->
+            items?.forEach {
                 viewModel.updateReminder(
+                    it.id,
                     it.reminderTime,
                     it.reminderFrequency,
-                    ReminderActivity.Companion.ReminderStatus.DELETED.name,
+                    Companion.ReminderStatus.DELETED.name,
                     it.mentor,
-                    it.reminderTime
+                    it.reminderTime,
+                    this::onReminderUpdated
                 )
             }
         }
@@ -137,6 +133,41 @@ class ReminderListActivity : CoreJoshActivity(), ReminderAdapter.ReminderItemAct
         disableActionMode()
     }
 
+
+    private fun onReminderUpdated(reminderResponse: ReminderResponse) {
+        val timeParts = reminderResponse.reminderTime.split(":")
+
+        if (timeParts.isEmpty())
+            return
+
+        val pendingIntent: PendingIntent =
+            if (reminderResponse.status == Companion.ReminderStatus.ACTIVE.name) {
+                getAlarmPendingIntent(reminderResponse.id)
+            } else
+                getAlarmCancelPendingIntent(reminderResponse.id)
+
+        setAlarm(
+            getReminderFrequency(reminderResponse.reminderFrequency),
+            pendingIntent,
+            timeParts[0].toIntOrNull(),
+            timeParts[1].toIntOrNull()
+        )
+    }
+
+    private fun getReminderFrequency(frequency: String): Companion.ReminderFrequency {
+        return when (frequency) {
+            Companion.ReminderFrequency.WEEKDAYS.name -> {
+                Companion.ReminderFrequency.WEEKDAYS
+            }
+            Companion.ReminderFrequency.WEEKENDS.name -> {
+                Companion.ReminderFrequency.WEEKENDS
+            }
+            else -> {
+                Companion.ReminderFrequency.EVERYDAY
+            }
+        }
+
+    }
 
     fun onTap(view: View?) {
         // item click
@@ -206,5 +237,10 @@ class ReminderListActivity : CoreJoshActivity(), ReminderAdapter.ReminderItemAct
 
     override fun onRequestDisallowInterceptTouchEvent(disallowIntercept: Boolean) {
 
+    }
+
+
+    private fun getAlarmCancelPendingIntent(reminderId: Int): PendingIntent {
+        return getAlarmPendingIntent(reminderId, PendingIntent.FLAG_CANCEL_CURRENT)
     }
 }

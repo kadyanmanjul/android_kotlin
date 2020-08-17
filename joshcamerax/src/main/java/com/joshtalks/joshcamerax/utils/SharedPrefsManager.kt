@@ -2,11 +2,12 @@ package com.joshtalks.joshcamerax.utils
 
 import android.content.Context
 
-class SharedPrefsManager private constructor( context: Context) {
+class SharedPrefsManager private constructor(context: Context) {
     private val preferences = context.getSharedPreferences(PREFERENCES, Context.MODE_PRIVATE)
 
     companion object {
         private const val PREFERENCES = "sPrefs"
+        const val IS_FIRST_REMINDER = "is_first_reminder"
 
         @Synchronized
         fun newInstance(context: Context) = SharedPrefsManager(context)
@@ -23,4 +24,5 @@ class SharedPrefsManager private constructor( context: Context) {
 
     fun getString(key: String, defValue: String) = preferences.getString(key, defValue)
 
+    fun putBoolean(key: String, value: Boolean) = preferences.edit().putBoolean(key, value).apply()
 }

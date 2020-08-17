@@ -2,7 +2,7 @@ package com.joshtalks.joshskills.ui.reminder.reminder_listing
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.viewModelScope
 import com.crashlytics.android.Crashlytics
 import com.joshtalks.joshskills.R
@@ -10,18 +10,32 @@ import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.JoshApplication
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.repository.server.reminder.ReminderRequest
 import com.joshtalks.joshskills.repository.server.reminder.ReminderResponse
-import com.joshtalks.joshskills.repository.server.reminder.RequestSetReminderRequest
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
+import java.util.*
 
 class ReminderListingViewModel(application: Application) : AndroidViewModel(application) {
 
     val context: JoshApplication = getApplication()
-    val reminderList: MutableLiveData<List<ReminderResponse>> = MutableLiveData()
+    var appDatabase = AppObjectController.appDatabase
+    lateinit var reminderList: LiveData<List<ReminderResponse>>
+
+    init {
+        updateReminderList()
+    }
+
+    fun updateReminderList() {
+        reminderList = appDatabase.reminderDao().getAllReminders()
+        if (reminderList.value.isNullOrEmpty()) {
+            println("local reminder list empty ")
+            getReminders(Mentor.getInstance().getId())
+        }
+    }
 
     fun getReminders(mentorId: String) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -32,7 +46,11 @@ class ReminderListingViewModel(application: Application) : AndroidViewModel(appl
                 if (response.isSuccessful) {
                     response.body()?.let {
                         if (it.success)
-                            reminderList.postValue(response.body()?.responseData)
+                            response.body()?.responseData?.let { it1 ->
+                                appDatabase.reminderDao().insertAllReminders(
+                                    it1
+                                )
+                            }
                         else
                             showToast(it.message)
                         return@launch
@@ -55,24 +73,31 @@ class ReminderListingViewModel(application: Application) : AndroidViewModel(appl
     }
 
     fun updateReminder(
+        id: Int,
         time: String,
         frequency: String,
         status: String,
         mentorId: String,
-        previousTime: String
+        previousTime: String,
+        onReminderUpdate: ((reminderResponse: ReminderResponse) -> Unit)? = null
     ) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val request =
-                    RequestSetReminderRequest(mentorId, time, frequency, status, previousTime)
+                    ReminderRequest(mentorId, time, frequency, status, previousTime)
                 val response = AppObjectController.commonNetworkService.setReminder(
                     request
                 )
                 if (response.isSuccessful) {
                     response.body()?.let {
-                        if (it.success)
-                            getReminders(Mentor.getInstance().getId())
-                        else
+                        if (it.success) {
+                            val reminderResponse = ReminderResponse(
+                                id, mentorId, frequency, status, time, "",
+                                Date().toString()
+                            )
+                            appDatabase.reminderDao().updateReminder(reminderResponse)
+                            onReminderUpdate?.invoke(reminderResponse)
+                        } else
                             showToast(it.message)
                         return@launch
                     }

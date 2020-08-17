@@ -12,6 +12,7 @@ import androidx.appcompat.widget.PopupMenu
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.crashlytics.android.Crashlytics
 import com.facebook.share.internal.ShareConstants.ACTION_TYPE
 import com.google.android.gms.location.LocationRequest
@@ -95,7 +96,6 @@ const val REQ_CODE_VERSION_UPDATE = 530
 const val USER_DETAILS_CODE = 1001
 const val TRIAL_COURSE_ID = "76"
 const val SUBSCRIPTION_COURSE_ID = "60"
-
 
 class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.InAppUpdateHandler {
 
@@ -227,7 +227,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
     }
 
     private fun openReminderScreen() {
-        CoroutineScope(Dispatchers.IO).launch {
+        lifecycleScope.launch(Dispatchers.IO) {
             try {
                 val response = AppObjectController.commonNetworkService.getReminders(
                     Mentor.getInstance().getId()
@@ -247,6 +247,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
                 }
                 startActivity(Intent(applicationContext, ReminderActivity::class.java))
             } catch (ex: Exception) {
+                ex.printStackTrace()
                 when (ex) {
                     is HttpException -> {
                     }

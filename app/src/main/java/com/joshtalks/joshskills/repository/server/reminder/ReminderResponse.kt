@@ -1,30 +1,39 @@
 package com.joshtalks.joshskills.repository.server.reminder
 
-import com.google.gson.annotations.Expose
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.Index
+import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
 
+@Entity(tableName = "reminder_table", indices = [Index(value = ["reminder_id"])])
 data class ReminderResponse(
+    @PrimaryKey
+    @ColumnInfo(name = "reminder_id")
     @SerializedName("id")
-    @Expose
     var id: Int,
+
+    @ColumnInfo(name = "mentor_id")
     @SerializedName("mentor")
-    @Expose
     var mentor: String,
+
+    @ColumnInfo(name = "reminder_frequency")
     @SerializedName("reminder_frequency")
-    @Expose
     var reminderFrequency: String,
+
+    @ColumnInfo(name = "status")
     @SerializedName("status")
-    @Expose
     var status: String,
+
+    @ColumnInfo(name = "reminder_time")
     @SerializedName("reminder_time")
-    @Expose
     var reminderTime: String,
+
+    @ColumnInfo(name = "created_at")
     @SerializedName("created_at")
-    @Expose
     var createdAt: String,
+
+    @ColumnInfo(name = "modified_at")
     @SerializedName("modified_at")
-    @Expose
     var modifiedAt: String
-) {
-    var isSelected: Boolean = false
-}
+)

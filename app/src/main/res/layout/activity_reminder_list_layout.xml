@@ -23,30 +23,44 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-                android:id="@+id/alarm_list_description"
+        <androidx.core.widget.NestedScrollView
+                android:id="@+id/scroll_view"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingStart="@dimen/_16sdp"
-                android:paddingTop="@dimen/_16sdp"
-                android:paddingEnd="@dimen/_16sdp"
-                android:text="Klsdjfiosdf sdfiosf sdifos fd sdfsdklsopiwe oisd foiwe sdfuoiuwe fksdflk"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/toolbar" />
-
-        <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/reminder_recycler_view"
-                android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:nestedScrollingEnabled="true"
-                android:scrollbars="none"
                 app:layout_constraintBottom_toTopOf="@+id/barrier_button"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/alarm_list_description"
-                tools:itemCount="8"
-                tools:listitem="@layout/reminder_item_view_holder" />
+                app:layout_constraintTop_toBottomOf="@+id/toolbar">
+
+            <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                <TextView
+                        android:id="@+id/alarm_list_description"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingStart="@dimen/_16sdp"
+                        android:paddingTop="@dimen/_16sdp"
+                        android:paddingEnd="@dimen/_16sdp"
+                        android:text="Klsdjfiosdf sdfiosf sdifos fd sdfsdklsopiwe oisd foiwe sdfuoiuwe fksdflk"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/reminder_recycler_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:nestedScrollingEnabled="true"
+                        android:scrollbars="none"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/alarm_list_description"
+                        tools:itemCount="8"
+                        tools:listitem="@layout/reminder_item_view_holder" />
+            </LinearLayout>
+        </androidx.core.widget.NestedScrollView>
 
         <com.google.android.material.button.MaterialButton
                 android:id="@+id/create_reminder_btn"
@@ -56,6 +70,11 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_16sdp"
                 android:layout_marginBottom="@dimen/_16sdp"
+                android:letterSpacing="0.05"
+                android:paddingStart="@dimen/_32sdp"
+                android:paddingTop="@dimen/_6sdp"
+                android:paddingEnd="@dimen/_32sdp"
+                android:paddingBottom="@dimen/_6sdp"
                 android:text="@string/add_reminder"
                 android:textAllCaps="false"
                 app:cornerRadius="@dimen/_16sdp"
@@ -64,7 +83,6 @@
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/reminder_recycler_view"
                 app:layout_constraintWidth_default="percent"
                 app:layout_constraintWidth_percent="0.7"
                 app:rippleColor="@color/white"
@@ -73,11 +91,16 @@
         <com.google.android.material.button.MaterialButton
                 android:id="@+id/delete_reminders_btn"
                 style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                fontPath="fonts/Poppins-Bold.ttf"
+                fontPath="fonts/Poppins-SemiBold.ttf"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_16sdp"
                 android:layout_marginBottom="@dimen/_16sdp"
+                android:letterSpacing="0.05"
+                android:paddingStart="@dimen/_32sdp"
+                android:paddingTop="@dimen/_6sdp"
+                android:paddingEnd="@dimen/_32sdp"
+                android:paddingBottom="@dimen/_6sdp"
                 android:text="@string/delete"
                 android:textAllCaps="false"
                 android:visibility="gone"
@@ -87,7 +110,6 @@
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/reminder_recycler_view"
                 app:layout_constraintWidth_default="percent"
                 app:layout_constraintWidth_percent="0.7"
                 app:rippleColor="@color/white"

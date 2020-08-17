@@ -369,5 +369,8 @@
     <string name="on_weekends">On Weekends</string>
     <string name="repeat">Repeat</string>
     <string name="delete">Delete</string>
-    <string name="save_changes">\"Save Changes\"</string>
+    <string name="save_changes">Save Changes</string>
+    <string name="add_more_reminder">"Add More Reminder "</string>
+    <string name="dismiss">Dismiss</string>
+    <string name="alarm">Alarm</string>
 </resources>

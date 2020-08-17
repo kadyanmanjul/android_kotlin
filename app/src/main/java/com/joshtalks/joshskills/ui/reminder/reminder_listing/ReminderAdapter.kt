@@ -7,20 +7,22 @@ import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.checkbox.MaterialCheckBox
 import com.google.android.material.switchmaterial.SwitchMaterial
 import com.google.android.material.textview.MaterialTextView
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.repository.server.reminder.ReminderResponse
-import com.joshtalks.joshskills.ui.reminder.set_reminder.ReminderActivity
+import com.joshtalks.joshskills.ui.reminder.ReminderBaseActivity
 
 class ReminderAdapter(
     var context: Context,
-    private var reminderItemList: List<ReminderResponse>,
-    private var actionListener: ReminderItemActionListener
-) : RecyclerView.Adapter<ReminderAdapter.ReminderViewHolder>() {
+    private var onStatusUpdate: ((status: ReminderBaseActivity.Companion.ReminderStatus, reminderItem: ReminderResponse) -> Unit)? =
+        null,
+    private var onItemTimeClick: ((reminderItem: ReminderResponse) -> Unit)? = null
+) : ListAdapter<ReminderResponse, ReminderAdapter.ReminderViewHolder>(ReminderDiffUtil()) {
 
     private val selectedItems: SparseBooleanArray = SparseBooleanArray()
 
@@ -31,71 +33,57 @@ class ReminderAdapter(
         )
     }
 
-    override fun getItemCount(): Int {
-        return reminderItemList.size
-    }
-
     override fun onBindViewHolder(holder: ReminderViewHolder, position: Int) {
-        val reminderItem = reminderItemList.get(position)
-        reminderItem.reminderTime.let {
-            val timeParts = it.split(":")
+        val reminderItem = getItem(position)
+        reminderItem.reminderTime.let { time ->
+            val timeParts = time.split(":")
+
             if (timeParts.isEmpty())
                 return
-            val hour = timeParts[0]
             val mins = timeParts[1]
-            hour.toIntOrNull()?.let {
-                var timeStr = EMPTY
-                var amPm = EMPTY
 
-                if (it < 12) {
-                    if (it == 0)
-                        timeStr = "12:$mins"
-                    else
-                        timeStr = "${hour}:$mins"
-                    amPm = "am"
+            timeParts[0].toIntOrNull()?.let {
+                val timeStr: String
+
+                holder.amPmTv.text = if (it < 12) {
+                    timeStr = if (it == 0) "12:$mins" else "${it}:$mins"
+                    "am"
                 } else {
-                    if (it == 12)
-                        timeStr = "12:$mins"
-                    else
-                        timeStr = "${it - 12}:$mins"
-                    amPm = "pm"
+                    timeStr = if (it == 12) "12:$mins" else "${it - 12}:$mins"
+                    "pm"
                 }
                 holder.timeTv.text =
                     org.shadow.apache.commons.lang3.StringUtils.stripStart(timeStr, "0")
-                holder.amPmTv.text = amPm
-
             }
         }
-        holder.status.isChecked =
-            reminderItem.status == ReminderActivity.Companion.ReminderStatus.ACTIVE.name
+        holder.statusSw.setOnCheckedChangeListener(null)
+        holder.statusSw.isChecked =
+            reminderItem.status == ReminderBaseActivity.Companion.ReminderStatus.ACTIVE.name
 
-        holder.status.setOnCheckedChangeListener { _, isChecked ->
-            if (reminderItem.isSelected == isChecked)
-                return@setOnCheckedChangeListener
-
+        holder.statusSw.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked)
-                actionListener.onStatusUpdate(
-                    ReminderActivity.Companion.ReminderStatus.ACTIVE,
-                    position
+                onStatusUpdate?.invoke(
+                    ReminderBaseActivity.Companion.ReminderStatus.ACTIVE,
+                    getItem(position)
                 )
             else {
-                actionListener.onStatusUpdate(
-                    ReminderActivity.Companion.ReminderStatus.INACTIVE,
-                    position
+                onStatusUpdate?.invoke(
+                    ReminderBaseActivity.Companion.ReminderStatus.INACTIVE,
+                    getItem(position)
                 )
             }
         }
 
         if (selectedItems.size() == 0) {
-            holder.status.visibility = VISIBLE
+            holder.statusSw.visibility = VISIBLE
             holder.checkBox.visibility = GONE
         } else {
-            holder.status.visibility = GONE
+            holder.statusSw.visibility = GONE
             holder.checkBox.visibility = VISIBLE
         }
-        holder.timeTv.setOnClickListener(View.OnClickListener {
-            actionListener.onItemTimeClick(position)
-        })
+        holder.timeTv.setOnClickListener {
+            onItemTimeClick?.invoke(getItem(position))
+        }
         holder.checkBox.isChecked = selectedItems.get(position, false)
 
     }
@@ -128,7 +116,7 @@ class ReminderAdapter(
         val items: java.util.ArrayList<ReminderResponse> =
             java.util.ArrayList<ReminderResponse>(selectedItems.size())
         for (i in 0 until selectedItems.size()) {
-            items.add(reminderItemList.get(selectedItems.keyAt(i)))
+            items.add(getItem(selectedItems.keyAt(i)))
         }
         return items
     }
@@ -139,12 +127,27 @@ class ReminderAdapter(
         val item = itemView
         var timeTv: MaterialTextView = itemView.findViewById(R.id.time_tv)
         var amPmTv: MaterialTextView = itemView.findViewById(R.id.am_pm_tv)
-        var status: SwitchMaterial = itemView.findViewById(R.id.alarm_status_sw)
+        var statusSw: SwitchMaterial = itemView.findViewById(R.id.alarm_status_sw)
         var checkBox: MaterialCheckBox = itemView.findViewById(R.id.alarm_check)
     }
 
     interface ReminderItemActionListener {
-        fun onStatusUpdate(status: ReminderActivity.Companion.ReminderStatus, position: Int)
+        fun onStatusUpdate(status: ReminderBaseActivity.Companion.ReminderStatus, position: Int)
         fun onItemTimeClick(position: Int)
     }
+
+    fun getReminderItem(position: Int) =
+        getItem(position)
+
+}
+
+class ReminderDiffUtil : DiffUtil.ItemCallback<ReminderResponse>() {
+    override fun areItemsTheSame(oldItem: ReminderResponse, newItem: ReminderResponse): Boolean {
+        return oldItem.id == newItem.id
+    }
+
+    override fun areContentsTheSame(oldItem: ReminderResponse, newItem: ReminderResponse): Boolean {
+        return oldItem == newItem
+    }
+
 }

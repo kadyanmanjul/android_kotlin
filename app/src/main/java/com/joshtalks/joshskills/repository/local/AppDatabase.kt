@@ -13,6 +13,7 @@ import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.repository.local.dao.AssessmentDao
+import com.joshtalks.joshskills.repository.local.dao.reminder.ReminderDao
 import com.joshtalks.joshskills.repository.local.entity.AudioType
 import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
 import com.joshtalks.joshskills.repository.local.entity.ChatDao
@@ -49,6 +50,7 @@ import com.joshtalks.joshskills.repository.local.type_converter.TypeConverterQue
 import com.joshtalks.joshskills.repository.server.assessment.AssessmentIntro
 import com.joshtalks.joshskills.repository.server.assessment.ReviseConcept
 import com.joshtalks.joshskills.repository.server.engage.Graph
+import com.joshtalks.joshskills.repository.server.reminder.ReminderResponse
 import java.util.*
 
 
@@ -58,7 +60,7 @@ const val DATABASE_NAME = "JoshEnglishDB.db"
     entities = [Course::class, ChatModel::class, Question::class, VideoType::class,
         AudioType::class, OptionType::class, PdfType::class, ImageType::class, VideoEngage::class,
         FeedbackEngageModel::class, NPSEventModel::class, Assessment::class, AssessmentQuestion::class,
-        Choice::class, ReviseConcept::class, AssessmentIntro::class],
+        Choice::class, ReviseConcept::class, AssessmentIntro::class, ReminderResponse::class],
     version = 19,
     exportSchema = true
 )
@@ -286,9 +288,10 @@ abstract class AppDatabase : RoomDatabase() {
                 database.execSQL(
                     "ALTER TABLE chat_table ADD COLUMN last_use_time INTEGER DEFAULT '" + Date().time + "'"
                 )
+                database.execSQL("CREATE TABLE IF NOT EXISTS `reminder_table` (`reminder_id` INTEGER PRIMARY KEY NOT NULL, `mentor_id` TEXT NOT NULL, `reminder_frequency` TEXT NOT NULL, `status` TEXT NOT NULL, `reminder_time` TEXT NOT NULL, `created_at` TEXT NOT NULL, `modified_at` TEXT NOT NULL)")
+                database.execSQL("CREATE INDEX IF NOT EXISTS `index_reminder_table_reminder_id` ON `reminder_table` (`reminder_id`)")
             }
         }
-
 
         fun clearDatabase() {
             INSTANCE?.clearAllTables()
@@ -317,6 +320,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun feedbackEngageModelDao(): FeedbackEngageModelDao
     abstract fun npsEventModelDao(): NPSEventModelDao
     abstract fun assessmentDao(): AssessmentDao
+    abstract fun reminderDao(): ReminderDao
 
 }
 

@@ -2,7 +2,7 @@ package com.joshtalks.joshskills.repository.server.reminder
 
 import com.google.gson.annotations.SerializedName
 
-data class RequestSetReminderRequest(
+data class ReminderRequest(
     @SerializedName("mentor_id")
     val mentorId: String,
     @SerializedName("reminder_time")
