@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools">
+
+    <FrameLayout
+            android:id="@+id/root_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/rectangle_with_dotted_border"
+            android:maxWidth="@dimen/_156sdp"
+            android:minWidth="@dimen/_156sdp"
+            android:minHeight="@dimen/_100sdp"
+            android:paddingStart="@dimen/_2sdp"
+            android:paddingTop="@dimen/_4sdp"
+            android:paddingEnd="@dimen/_2sdp">
+
+        <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/item_description"
+                fontPath="fonts/Poppins-Regular.ttf"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:paddingStart="@dimen/_8sdp"
+                android:paddingTop="@dimen/_8sdp"
+                android:paddingEnd="@dimen/_8sdp"
+                android:paddingBottom="@dimen/_2sdp"
+                android:textColor="@color/light_grey"
+                android:textSize="@dimen/font_12"
+                tools:text="@string/unlock_class_text" />
+
+    </FrameLayout>
+</layout>
