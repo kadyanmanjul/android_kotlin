@@ -13,11 +13,35 @@ data class ChoiceRequest(
     val id: Int,
 
     @SerializedName("selected_order")
-    var userSelectedOrder: Int = 100
+    var userSelectedOrder: Int? = 100,
+
+    @SerializedName("right_matching")
+    var rightMatchingId: Int? = 100
 
 ) : Parcelable {
     constructor(choice: Choice) : this(
         id = choice.remoteId,
+        userSelectedOrder = choice.userSelectedOrder,
+        rightMatchingId = null
+    )
+
+    constructor(choice: Choice, choiceList: List<Choice>) : this(
+        id = choice.remoteId,
+        rightMatchingId = if (choice.isSelectedByUser) {
+            when (choice.column) {
+                ChoiceColumn.RIGHT -> {
+                    choiceList.filter { it.column == ChoiceColumn.RIGHT }.sortedBy { it.sortOrder }
+                        .get(choice.userSelectedOrder.minus(1)).remoteId
+                }
+                ChoiceColumn.LEFT -> {
+                    choiceList.filter { it.column == ChoiceColumn.LEFT }.sortedBy { it.sortOrder }
+                        .get(choice.userSelectedOrder.minus(1)).remoteId
+                }
+            }
+
+        } else {
+            100
+        },
         userSelectedOrder = choice.userSelectedOrder
     )
 }

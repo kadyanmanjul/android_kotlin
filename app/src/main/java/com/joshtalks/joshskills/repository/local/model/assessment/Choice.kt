@@ -42,7 +42,7 @@ data class Choice(
 
     @ColumnInfo
     @SerializedName("text")
-    val text: String?,
+    var text: String?,
 
     @ColumnInfo
     @SerializedName("image_url")

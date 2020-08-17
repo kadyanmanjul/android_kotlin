@@ -67,7 +67,7 @@ class TestSummaryHeaderViewHolder(
                 }
             }
 
-            ChoiceType.FILL_IN_THE_BLANKS_TEXT -> {
+            ChoiceType.FILL_IN_THE_BLANKS_TEXT, ChoiceType.MATCH_TEXT -> {
                 var numberOfChoicesSelected = 0
                 assessmentQuestion.choiceList.forEach {
                     if (it.isSelectedByUser) {
@@ -79,8 +79,6 @@ class TestSummaryHeaderViewHolder(
                 }
             }
 
-            else ->
-                return false
         }
         return false
     }

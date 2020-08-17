@@ -109,7 +109,7 @@ class TestItemViewHolder(
                 }
             }
 
-            ChoiceType.FILL_IN_THE_BLANKS_TEXT -> {
+            ChoiceType.FILL_IN_THE_BLANKS_TEXT, ChoiceType.MATCH_TEXT -> {
                 var numberOfChoicesSelected = 0
                 assessmentQuestion.choiceList.forEach {
                     if (it.isSelectedByUser) {
@@ -120,9 +120,6 @@ class TestItemViewHolder(
                     return true
                 }
             }
-
-            else ->
-                return false
         }
         return false
     }
@@ -131,11 +128,10 @@ class TestItemViewHolder(
     fun onClick() {
         if (status == AssessmentStatus.STARTED || status == AssessmentStatus.NOT_STARTED) {
             logEditAnswerClickedEvent()
-        }
-        else{
+        } else {
             logViewAnswerClickedEvent()
         }
-            RxBus2.publish(
+        RxBus2.publish(
             TestItemClickedEventBus(questionWithRelations.question.remoteId)
         )
     }
@@ -144,8 +140,11 @@ class TestItemViewHolder(
         AppAnalytics.create(AnalyticsEvent.EDIT_ANSWER_CLICKED.NAME)
             .addBasicParam()
             .addUserDetails()
-            .addParam(AnalyticsEvent.QUESTION_ID.NAME,questionWithRelations.question.remoteId)
-            .addParam(AnalyticsEvent.ASSESSMENT_ID.NAME,questionWithRelations.question.assessmentId)
+            .addParam(AnalyticsEvent.QUESTION_ID.NAME, questionWithRelations.question.remoteId)
+            .addParam(
+                AnalyticsEvent.ASSESSMENT_ID.NAME,
+                questionWithRelations.question.assessmentId
+            )
             .push()
     }
 
@@ -153,8 +152,11 @@ class TestItemViewHolder(
         AppAnalytics.create(AnalyticsEvent.VIEW_ANSWER_CLICKED.NAME)
             .addBasicParam()
             .addUserDetails()
-            .addParam(AnalyticsEvent.QUESTION_ID.NAME,questionWithRelations.question.remoteId)
-            .addParam(AnalyticsEvent.ASSESSMENT_ID.NAME,questionWithRelations.question.assessmentId)
+            .addParam(AnalyticsEvent.QUESTION_ID.NAME, questionWithRelations.question.remoteId)
+            .addParam(
+                AnalyticsEvent.ASSESSMENT_ID.NAME,
+                questionWithRelations.question.assessmentId
+            )
             .push()
     }
 }

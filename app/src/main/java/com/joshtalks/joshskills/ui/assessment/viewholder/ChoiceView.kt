@@ -11,6 +11,7 @@ import com.joshtalks.joshskills.repository.server.assessment.ChoiceType
 import com.joshtalks.joshskills.ui.assessment.AssessmentQuestionViewType
 import com.joshtalks.joshskills.ui.assessment.view.FillInTheBlankChoiceView
 import com.joshtalks.joshskills.ui.assessment.view.MCQChoicesView
+import com.joshtalks.joshskills.ui.assessment.view.MatchTheFollowingChoiceView
 import com.joshtalks.joshskills.ui.assessment.view.Stub
 import timber.log.Timber
 
@@ -20,6 +21,7 @@ class ChoiceView : FrameLayout {
     private var viewType = AssessmentQuestionViewType.CORRECT_ANSWER_VIEW
     private var assessmentQuestion: AssessmentQuestionWithRelations? = null
     private var fillInTheBlankChoiceStub: Stub<FillInTheBlankChoiceView>? = null
+    private var matchTheFollowingChoiceStub: Stub<MatchTheFollowingChoiceView>? = null
     private var mcqChoicesStub: Stub<MCQChoicesView>? = null
 
     constructor(context: Context) : super(context) {
@@ -42,6 +44,7 @@ class ChoiceView : FrameLayout {
         View.inflate(context, R.layout.choice_view, this)
         mcqChoicesStub = Stub(findViewById(R.id.single_selection_text_stub))
         fillInTheBlankChoiceStub = Stub(findViewById(R.id.fill_in_the_blank_stub))
+        matchTheFollowingChoiceStub = Stub(findViewById(R.id.match_the_following_stub))
     }
 
     fun bind(
@@ -94,7 +97,17 @@ class ChoiceView : FrameLayout {
                 }
 
                 ChoiceType.MATCH_TEXT -> {
-                    null
+                    matchTheFollowingChoiceStub?.run {
+                        if (this.resolved().not()) {
+                            this.get()
+                                ?.bind(
+                                    assessment!!,
+                                    viewType,
+                                    assessmentQuestion
+                                )
+                        }
+                    }
+                    return@let
                 }
             }
         }
