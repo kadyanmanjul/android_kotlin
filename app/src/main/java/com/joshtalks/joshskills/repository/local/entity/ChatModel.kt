@@ -661,6 +661,10 @@ interface ChatDao {
     @Query("SELECT * FROM  question_table  WHERE questionId= :questionId")
     suspend fun getQuestionOnId(questionId: String): Question?
 
+    @Query("SELECT * FROM  question_table  WHERE questionId= :questionId")
+    fun getQuestionOnIdV2(questionId: String): Question?
+
+
     @Transaction
     suspend fun getPractiseFromQuestionId(id: String): ChatModel? {
         val question: Question? = getQuestionOnId(id)
@@ -669,6 +673,12 @@ interface ChatDao {
             getUpdatedChatObjectViaId(question.chatId)
         }
     }
+
+    @Transaction
+    suspend fun getChatFromQuestionId(chatId: String): ChatModel? {
+        return getUpdatedChatObjectViaId(chatId)
+    }
+
 
     @Query("SELECT * FROM  PdfTable  WHERE id= :pdfId")
     suspend fun getPdfById(pdfId: String): PdfType

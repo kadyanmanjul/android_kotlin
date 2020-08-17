@@ -65,7 +65,7 @@ class NotificationObject {
     var deeplink: String? = null
 
     @SerializedName("additional_data")
-    var extraData: Map<String, String>? = null
+    var extraData: String? = null
 }
 
 enum class NotificationAction(val type: String) {

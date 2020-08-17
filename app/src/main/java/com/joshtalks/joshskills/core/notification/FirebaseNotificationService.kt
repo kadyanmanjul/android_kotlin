@@ -19,28 +19,36 @@ import com.freshchat.consumer.sdk.Freshchat
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.API_TOKEN
 import com.joshtalks.joshskills.core.ARG_PLACEHOLDER_URL
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.COURSE_ID
+import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.JoshSkillExecutors
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.analytics.DismissNotifEventReceiver
 import com.joshtalks.joshskills.core.service.WorkMangerAdmin
+import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
+import com.joshtalks.joshskills.repository.local.entity.Question
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.local.model.NotificationAction
 import com.joshtalks.joshskills.repository.local.model.NotificationObject
 import com.joshtalks.joshskills.repository.service.EngagementNetworkHelper
+import com.joshtalks.joshskills.ui.assessment.AssessmentActivity
 import com.joshtalks.joshskills.ui.chat.ConversationActivity
 import com.joshtalks.joshskills.ui.chat.UPDATED_CHAT_ROOM_OBJECT
+import com.joshtalks.joshskills.ui.conversation_practice.ConversationPracticeActivity
+import com.joshtalks.joshskills.ui.conversation_practice.PRACTISE_ID
 import com.joshtalks.joshskills.ui.course_details.CourseDetailsActivity
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
 import com.joshtalks.joshskills.ui.inbox.InboxActivity
 import com.joshtalks.joshskills.ui.launch.LauncherActivity
 import com.joshtalks.joshskills.ui.referral.ReferralActivity
 import timber.log.Timber
+import java.lang.reflect.Type
 import java.util.concurrent.ExecutorService
 
 const val FCM_TOKEN = "fcmToken"
@@ -58,7 +66,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
     @RequiresApi(Build.VERSION_CODES.N)
     private var importance = NotificationManager.IMPORTANCE_DEFAULT
     private val executor: ExecutorService =
-        JoshSkillExecutors.newCachedSingleThreadExecutor("Josh-Notification-Process")
+        JoshSkillExecutors.newCachedSingleThreadExecutor("Josh-Notification")
 
 
     override fun onNewToken(token: String) {
@@ -74,22 +82,22 @@ class FirebaseNotificationService : FirebaseMessagingService() {
         if (Freshchat.isFreshchatNotification(remoteMessage)) {
             Freshchat.handleFcmMessage(this, remoteMessage)
         } else {
-            val nc: NotificationObject = Gson().fromJson(
-                Gson().toJson(remoteMessage.data),
-                NotificationObject::class.java
-            )
             if (BuildConfig.DEBUG) {
                 Timber.tag(FirebaseNotificationService::class.java.simpleName).e(
                     Gson().toJson(remoteMessage.data)
                 )
             }
+            val notificationTypeToken: Type = object : TypeToken<NotificationObject>() {}.type
+            val nc: NotificationObject = AppObjectController.gsonMapper.fromJson(
+                AppObjectController.gsonMapper.toJson(remoteMessage.data),
+                notificationTypeToken
+            )
             sendNotification(nc)
         }
     }
 
     private fun sendNotification(notificationObject: NotificationObject) {
         executor.execute {
-            EngagementNetworkHelper.receivedNotification(notificationObject)
             val style = NotificationCompat.BigTextStyle()
             style.setBigContentTitle(notificationObject.contentTitle)
             style.bigText(notificationObject.contentText)
@@ -102,13 +110,23 @@ class FirebaseNotificationService : FirebaseMessagingService() {
             )
 
             intent?.run {
+                val activityList = if (PrefManager.getStringValue(API_TOKEN).isEmpty()) {
+                    arrayOf(this)
+                } else {
+                    val backIntent =
+                        Intent(this@FirebaseNotificationService, InboxActivity::class.java).apply {
+                            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                        }
+                    arrayOf(backIntent, this)
+                }
+
                 intent.putExtra(NOTIFICATION_ID, notificationObject.id)
                 val uniqueInt = (System.currentTimeMillis() and 0xfffffff).toInt()
                 val defaultSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
-                val pendingIntent = PendingIntent.getActivity(
+                val pendingIntent = PendingIntent.getActivities(
                     applicationContext,
-                    uniqueInt,
-                    intent,
+                    uniqueInt, activityList,
                     PendingIntent.FLAG_UPDATE_CURRENT
                 )
 
@@ -165,6 +183,9 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                 }
                 notificationManager.notify(uniqueInt, notificationBuilder.build())
             }
+            if (PrefManager.getStringValue(API_TOKEN).isNotEmpty()) {
+                EngagementNetworkHelper.receivedNotification(notificationObject)
+            }
         }
     }
 
@@ -187,7 +208,9 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                     arrayOf(Intent.FLAG_ACTIVITY_CLEAR_TOP, Intent.FLAG_ACTIVITY_SINGLE_TOP)
                 )
             }
-            NotificationAction.ACTION_OPEN_CONVERSATION, NotificationAction.ACTION_OPEN_COURSE_REPORT -> {
+            NotificationAction.ACTION_OPEN_CONVERSATION,
+            NotificationAction.ACTION_OPEN_COURSE_REPORT,
+            NotificationAction.ACTION_OPEN_QUESTION -> {
                 if (PrefManager.getStringValue(API_TOKEN).isEmpty()) {
                     return null
                 }
@@ -196,32 +219,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                     importance = NotificationManager.IMPORTANCE_HIGH
                 }
                 notificationChannelId = action.name
-                val obj: InboxEntity? = AppObjectController.appDatabase.courseDao()
-                    .chooseRegisterCourseMinimal(actionData!!)
-                obj?.run {
-                    WorkMangerAdmin.updatedCourseForConversation(this.conversation_id)
-                }
-
-                if (null != obj) {
-                    notificationChannelId = obj.conversation_id
-                    notificationChannelName = obj.course_name
-                    val rIntnet = Intent(applicationContext, isNotificationCrash()).apply {
-                        putExtra(UPDATED_CHAT_ROOM_OBJECT, obj)
-                        putExtra(ACTION_TYPE, action)
-                        putExtra(HAS_NOTIFICATION, true)
-                        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                        addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                    }
-                    if (NotificationAction.ACTION_OPEN_COURSE_REPORT == action) {
-                        rIntnet.putExtra(HAS_COURSE_REPORT, true)
-                    }
-                    notificationObject.extraData?.let {
-                        rIntnet.putExtra(QUESTION_ID, it["question_id"])
-                    }
-                    rIntnet
-                } else {
-                    returnDefaultIntent()
-                }
+                return processChatTypeNotification(notificationObject, action, actionData)
             }
             NotificationAction.ACTION_OPEN_COURSE_EXPLORER -> {
                 notificationChannelId = NotificationAction.ACTION_OPEN_COURSE_EXPLORER.name
@@ -275,9 +273,18 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                     flags = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
                 }
             }
-            NotificationAction.ACTION_OPEN_QUESTION -> {
-                return null
-            }
+            /* NotificationAction.ACTION_OPEN_QUESTION -> {
+
+                 if (PrefManager.getStringValue(API_TOKEN).isEmpty()) {
+                     return null
+                 }
+                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                     importance = NotificationManager.IMPORTANCE_HIGH
+                 }
+                 notificationChannelId = action.name
+                 return processQuestionTypeNotification(notificationObject, action, actionData)
+
+             }*/
             NotificationAction.ACTION_DELETE_DATA -> {
                 deleteUserData()
                 return null
@@ -325,5 +332,83 @@ class FirebaseNotificationService : FirebaseMessagingService() {
         } else {
             ConversationActivity::class.java
         }
+    }
+
+    private fun processQuestionTypeNotification(
+        notificationObject: NotificationObject?,
+        action: NotificationAction?, actionData: String?
+    ): Intent? {
+
+        notificationChannelId = action?.name ?: EMPTY
+        var questionId = ""
+
+        notificationObject?.extraData?.let {
+            val mapTypeToken: Type = object : TypeToken<Map<String, String>>() {}.type
+            val map: Map<String, String> = Gson().fromJson(it, mapTypeToken)
+            questionId = map["question_id"] ?: EMPTY
+        }
+        val question: Question? =
+            AppObjectController.appDatabase.chatDao().getQuestionOnIdV2(questionId)
+
+        return if (question == null) {
+            processChatTypeNotification(notificationObject, action, actionData)
+        } else {
+            when {
+                question.type == BASE_MESSAGE_TYPE.QUIZ || question.type == BASE_MESSAGE_TYPE.TEST -> {
+                    return Intent(applicationContext, AssessmentActivity::class.java).apply {
+                        putExtra(AssessmentActivity.KEY_ASSESSMENT_ID, question.assessmentId)
+                        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    }
+                }
+                question.type == BASE_MESSAGE_TYPE.CP -> {
+                    return Intent(
+                        applicationContext,
+                        ConversationPracticeActivity::class.java
+                    ).apply {
+                        putExtra(PRACTISE_ID, question.conversationPracticeId)
+                        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    }
+                }
+
+                question.type == BASE_MESSAGE_TYPE.PR || question.material_type == BASE_MESSAGE_TYPE.VI -> {
+                    return processChatTypeNotification(notificationObject, action, actionData)
+                }
+                else -> {
+                    return null
+                }
+            }
+        }
+    }
+
+    private fun processChatTypeNotification(
+        notificationObject: NotificationObject?,
+        action: NotificationAction?, actionData: String?
+    ): Intent? {
+        val obj: InboxEntity? = AppObjectController.appDatabase.courseDao()
+            .chooseRegisterCourseMinimal(actionData!!)
+        obj?.run {
+            WorkMangerAdmin.updatedCourseForConversation(this.conversation_id)
+        }
+
+        val rIntnet = Intent(applicationContext, ConversationActivity::class.java).apply {
+            putExtra(UPDATED_CHAT_ROOM_OBJECT, obj)
+            putExtra(ACTION_TYPE, action)
+            putExtra(HAS_NOTIFICATION, true)
+            putExtra(QUESTION_ID, actionData)
+            // addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            //addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+
+        }
+        if (NotificationAction.ACTION_OPEN_COURSE_REPORT == action) {
+            rIntnet.putExtra(HAS_COURSE_REPORT, true)
+        }
+        notificationObject?.extraData?.let {
+            val mapTypeToken: Type = object : TypeToken<Map<String, String>>() {}.type
+            val map: Map<String, String> = Gson().fromJson(it, mapTypeToken)
+            if (map.containsKey("question_id")) {
+                rIntnet.putExtra(QUESTION_ID, map["question_id"] ?: EMPTY)
+            }
+        }
+        return rIntnet
     }
 }

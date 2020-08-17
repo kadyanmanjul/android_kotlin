@@ -59,6 +59,7 @@ class ConversationViewModel(application: Application) :
     var context: JoshApplication = getApplication()
     var appDatabase = AppObjectController.appDatabase
     val chatObservableLiveData: MutableLiveData<List<ChatModel>> = MutableLiveData()
+    val emptyChatLiveData: MutableLiveData<Nothing> = MutableLiveData()
     val refreshViewLiveData: MutableLiveData<ChatModel> = MutableLiveData()
     private var lastMessageTime: Date? = null
     private var broadCastForNetwork = CheckConnectivity()
@@ -173,6 +174,7 @@ class ConversationViewModel(application: Application) :
             chatReturn.add(chat)
         }
         if (chatReturn.isNullOrEmpty()) {
+            emptyChatLiveData.postValue(null)
             return@launch
         }
         lastMessageTime = chatReturn.last().created

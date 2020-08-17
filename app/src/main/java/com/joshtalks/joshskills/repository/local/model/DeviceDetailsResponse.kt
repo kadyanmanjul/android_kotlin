@@ -3,6 +3,7 @@ package com.joshtalks.joshskills.repository.local.model
 
 import com.google.gson.annotations.SerializedName
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.PrefManager
 
 const val DEVICE_DETAILS_KEY = "device_details"
@@ -25,7 +26,7 @@ data class DeviceDetailsResponse(
     @SerializedName("manufacture")
     val manufacture: String,
     @SerializedName("mentor_id")
-    val mentorId: String,
+    val mentorId: String = EMPTY,
     @SerializedName("model")
     val model: String,
     @SerializedName("os_version_code")

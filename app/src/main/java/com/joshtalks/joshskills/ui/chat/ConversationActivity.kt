@@ -31,6 +31,7 @@ import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentActivity
+import androidx.fragment.app.commit
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
@@ -43,6 +44,7 @@ import com.bumptech.glide.integration.webp.decoder.WebpDrawableTransformation
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.bumptech.glide.request.target.Target
 import com.crashlytics.android.Crashlytics
+import com.facebook.share.internal.ShareConstants
 import com.github.pwittchen.reactivenetwork.library.rx2.ReactiveNetwork
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -76,6 +78,7 @@ import com.joshtalks.joshskills.core.custom_ui.SnappingLinearLayoutManager
 import com.joshtalks.joshskills.core.custom_ui.decorator.LayoutMarginDecoration
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.core.notification.HAS_COURSE_REPORT
+import com.joshtalks.joshskills.core.notification.QUESTION_ID
 import com.joshtalks.joshskills.core.playback.PlaybackInfoListener.State.PLAYING
 import com.joshtalks.joshskills.core.service.WorkMangerAdmin
 import com.joshtalks.joshskills.core.showToast
@@ -108,6 +111,7 @@ import com.joshtalks.joshskills.repository.local.eventbus.UnlockNextClassEventBu
 import com.joshtalks.joshskills.repository.local.eventbus.VideoDownloadedBus
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.local.model.ExploreCardType
+import com.joshtalks.joshskills.repository.local.model.NotificationAction
 import com.joshtalks.joshskills.repository.server.chat_message.TAudioMessage
 import com.joshtalks.joshskills.repository.server.chat_message.TChatMessage
 import com.joshtalks.joshskills.repository.server.chat_message.TImageMessage
@@ -186,7 +190,6 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
                 putExtra(CHAT_ROOM_OBJECT, inboxEntity)
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-               // addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
             }.run {
                 activity.startActivity(this)
             }
@@ -232,6 +235,11 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        conversationBinding =
+            DataBindingUtil.setContentView(this, R.layout.activity_conversation)
+        conversationBinding.handler = this
+        activityRef = WeakReference(this)
+
         if (intent.hasExtra(CHAT_ROOM_OBJECT)) {
             flowFrom = "Inbox journey"
             val temp = intent.getParcelableExtra(CHAT_ROOM_OBJECT) as InboxEntity?
@@ -249,17 +257,17 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
                 return
             }
             inboxEntity = temp
+            notificationActionProcess()
         }
         if (intent.hasExtra(HAS_COURSE_REPORT)) {
             openCourseProgressListingScreen()
         }
-
-        conversationBinding =
-            DataBindingUtil.setContentView(this, R.layout.activity_conversation)
-
+        if (intent.hasExtra(FOCUS_ON_CHAT_ID)) {
+            intent.getParcelableExtra<ChatModel>(FOCUS_ON_CHAT_ID)?.chatId?.run {
+                scrollToPosition(this)
+            }
+        }
         conversationBinding.viewmodel = initViewModel()
-        conversationBinding.handler = this
-        activityRef = WeakReference(this)
         init()
     }
 
@@ -291,6 +299,7 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
                 scrollToPosition(this)
             }
         }
+        notificationActionProcess()
         super.onNewIntent(mIntent)
     }
 
@@ -964,6 +973,10 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
                 conversationBinding.chatRv.refreshView(view)
             }, 250)
         })
+        conversationViewModel.emptyChatLiveData.observe(this, Observer {
+            hideProgressBar()
+            notificationActionProcess()
+        })
     }
 
     private fun subscribeRXBus() {
@@ -1562,7 +1575,6 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
     }
 
     private fun addUnlockNextClassCard(data: Intent) {
-
         val interval = data.getIntExtra(LAST_VIDEO_INTERVAL, -1)
         val isNextVideoAvailable = data.getBooleanExtra(NEXT_VIDEO_AVAILABLE, false)
         CoroutineScope(Dispatchers.IO).launch {
@@ -1583,7 +1595,7 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
                     }
                 }
                 conversationViewModel.insertUnlockClassToDatabase(cell.message)
-                CoroutineScope(Dispatchers.Main).launch {
+                AppObjectController.uiHandler.post {
                     conversationBinding.chatRv.addView(cell)
                     unlockViewHolder = cell as UnlockNextClassViewHolder
                     refreshViewAtPos(cell.message)
@@ -1592,7 +1604,7 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
         }
     }
 
-    suspend fun checkInDbForLastVideo(maxInterval: Int, interval1: Int): Boolean {
+    private suspend fun checkInDbForLastVideo(maxInterval: Int, interval1: Int): Boolean {
         var interval = interval1
         if (interval == inboxEntity.duration!!) {
             return false
@@ -1615,7 +1627,6 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
                 }
                 break
             }
-
         }
         return true
     }
@@ -1666,7 +1677,6 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
 
     }
 
-
     private fun addUserImageInView(imagePath: String) {
         val imageUpdatedPath = AppDirectory.getImageSentFilePath()
         AppDirectory.copy(imagePath, imageUpdatedPath)
@@ -1683,7 +1693,6 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
         conversationViewModel.uploadMedia(
             imageUpdatedPath, tImageMessage, cell.message
         )
-
     }
 
     private fun addUserVideoInView(videoPath: String) {
@@ -1749,7 +1758,6 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
         AppAnalytics.create(AnalyticsEvent.ATTACHMENT_CLICKED.NAME).push()
         AttachmentUtil.revealAttachments(revealAttachmentView, conversationBinding)
         this.revealAttachmentView = !revealAttachmentView
-
     }
 
     override fun onStart() {
@@ -1773,7 +1781,6 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
     override fun onPause() {
         super.onPause()
         compositeDisposable.clear()
-        //streamingManager?.onPause()
         BaseChatViewHolder.sId = EMPTY
         streamingManager?.handlePauseRequest()
     }
@@ -1966,15 +1973,13 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
     }
 
     private fun showTrialEndFragment() {
-        supportFragmentManager
-            .beginTransaction()
-            .replace(
+        supportFragmentManager.commit(true) {
+            replace(
                 R.id.root_view,
                 TrialEndBottomSheetFragment.newInstance(),
-                "Trial Ended"
+                TrialEndBottomSheetFragment::class.java.name
             )
-            .commitAllowingStateLoss()
-
+        }
     }
 
     private fun clearMediaFromInternal() {
@@ -2037,5 +2042,64 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
             .getWorkInfoByIdLiveData(WorkMangerAdmin.clearMediaOfConversation(inboxEntity.conversation_id))
             .observe(this, observer)
     }
+
+    private fun notificationActionProcess() {
+        val questionId = intent.getStringExtra(QUESTION_ID) ?: EMPTY
+        (intent.getSerializableExtra(ShareConstants.ACTION_TYPE) as NotificationAction?)?.let {
+            if (it == NotificationAction.ACTION_OPEN_QUESTION && questionId.isNotEmpty()) {
+                intent.removeExtra(QUESTION_ID)
+                intent.removeExtra(ShareConstants.ACTION_TYPE)
+                CoroutineScope(Dispatchers.IO).launch {
+                    val question: Question? =
+                        AppObjectController.appDatabase.chatDao().getQuestionOnIdV2(questionId)
+                    if (question != null) {
+                        val chatModel: ChatModel =
+                            AppObjectController.appDatabase.chatDao()
+                                .getUpdatedChatObjectViaId(question.chatId)
+
+                        when {
+                            question.type == BASE_MESSAGE_TYPE.QUIZ || question.type == BASE_MESSAGE_TYPE.TEST -> {
+                                AssessmentActivity.startAssessmentActivity(
+                                    this@ConversationActivity,
+                                    question.assessmentId?.toInt() ?: 0
+                                )
+                            }
+                            question.type == BASE_MESSAGE_TYPE.CP -> {
+
+                                chatModel.question?.conversationPracticeId?.let { cpId ->
+                                    ConversationPracticeActivity.startConversationPracticeActivity(
+                                        this@ConversationActivity,
+                                        CONVERSATION_PRACTISE_REQUEST_CODE,
+                                        cpId,
+                                        chatModel.question?.imageList?.getOrNull(0)?.imageUrl
+                                    )
+                                }
+                            }
+                            question.type == BASE_MESSAGE_TYPE.PR -> {
+                                PractiseSubmitActivity.startPractiseSubmissionActivity(
+                                    this@ConversationActivity,
+                                    PRACTISE_SUBMIT_REQUEST_CODE,
+                                    chatModel
+                                )
+                            }
+                            question.material_type == BASE_MESSAGE_TYPE.VI -> {
+                                VideoPlayerActivity.startConversionActivity(
+                                    this@ConversationActivity,
+                                    chatModel,
+                                    inboxEntity.course_name,
+                                    inboxEntity.duration
+                                )
+                            }
+                            else -> {
+                                return@launch
+                            }
+                        }
+                    }
+                }
+            }
+
+        }
+    }
+
 
 }

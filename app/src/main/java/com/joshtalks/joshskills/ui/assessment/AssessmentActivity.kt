@@ -80,7 +80,7 @@ class AssessmentActivity : CoreJoshActivity() {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_assessment)
         binding.lifecycleOwner = this
         binding.handler = this
-        assessmentId = intent.getIntExtra(AssessmentActivity.KEY_ASSESSMENT_ID, 0)
+        assessmentId = intent.getIntExtra(KEY_ASSESSMENT_ID, 0)
         if (intent.hasExtra(STARTED_FROM)) {
             flowFrom = intent.getStringExtra(STARTED_FROM)
         }

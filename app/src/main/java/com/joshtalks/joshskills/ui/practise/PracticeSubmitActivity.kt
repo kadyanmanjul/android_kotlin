@@ -359,6 +359,7 @@ class PractiseSubmitActivity : CoreJoshActivity() {
     private fun initToolbarView() {
         val titleView = findViewById<AppCompatTextView>(R.id.text_message_title)
         chatModel.question?.title?.run {
+            titleView.text = "Today's Practice"
             titleView.text = this
         }
         findViewById<View>(R.id.iv_back).visibility = VISIBLE
