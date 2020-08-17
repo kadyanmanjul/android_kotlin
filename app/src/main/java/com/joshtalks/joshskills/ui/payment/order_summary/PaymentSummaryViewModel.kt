@@ -37,12 +37,14 @@ class PaymentSummaryViewModel(application: Application) : AndroidViewModel(appli
     }
 
     var phoneNumber = EMPTY
-    var mTestId: String? = null
     var responsePaymentSummary = MediatorLiveData<PaymentSummaryResponse>()
+    var responseSubscriptionPaymentSummary = MediatorLiveData<PaymentSummaryResponse>()
     var mPaymentDetailsResponse = MediatorLiveData<OrderDetailResponse>()
     var viewState: MutableLiveData<ViewState>? = null
     val isRegisteredAlready by lazy { Mentor.getInstance().getId().isNotBlank() }
     var isFreeOrderCreated = MutableLiveData<Boolean>(false)
+    var isSubscriptionTipUsed = false
+    var mTestId = EMPTY
 
     val hasRegisteredMobileNumber by lazy {
         (User.getInstance().phoneNumber.isNotBlank() || PrefManager.getStringValue(
@@ -57,19 +59,86 @@ class PaymentSummaryViewModel(application: Application) : AndroidViewModel(appli
         }
     }
 
-    fun getCourseName(): String = responsePaymentSummary.value?.courseName ?: EMPTY
+    fun getCourseName(): String {
+        if (isSubscriptionTipUsed) {
+            return responseSubscriptionPaymentSummary.value?.courseName ?: EMPTY
 
-    fun getCourseDiscountedAmount(): Double = responsePaymentSummary.value?.discountedAmount ?: 0.0
+        } else {
+            return responsePaymentSummary.value?.courseName ?: EMPTY
+        }
+    }
 
-    fun getCourseActualAmount(): Double = responsePaymentSummary.value?.amount ?: 0.0
+    private fun getEncryptedText(): String {
+        if (isSubscriptionTipUsed) {
+            return responseSubscriptionPaymentSummary.value?.encryptedText.toString()
 
-    fun haveCoupon(): Boolean = responsePaymentSummary.value?.couponDetails?.title.isNullOrBlank()
+        } else {
+            return responsePaymentSummary.value?.encryptedText.toString()
+        }
+    }
 
-    fun getDiscount(): Int? =
-        responsePaymentSummary.value?.amount?.minus(responsePaymentSummary.value?.discountedAmount!!)
-            ?.toInt()
+    fun getCourseDiscountedAmount(): Double {
+        if (isSubscriptionTipUsed) {
+            return responseSubscriptionPaymentSummary.value?.discountedAmount ?: 0.0
 
-    fun getCurrency(): String = responsePaymentSummary.value?.currency ?: "INR"
+        } else {
+            return responsePaymentSummary.value?.discountedAmount ?: 0.0
+        }
+    }
+
+    fun getCourseActualAmount(): Double {
+        if (isSubscriptionTipUsed) {
+            return responseSubscriptionPaymentSummary.value?.amount ?: 0.0
+
+        } else {
+            return responsePaymentSummary.value?.amount ?: 0.0
+        }
+    }
+
+    fun haveCoupon(): Boolean {
+        if (isSubscriptionTipUsed) {
+            return responseSubscriptionPaymentSummary.value?.couponDetails?.title.isNullOrBlank()
+
+        } else {
+            return responsePaymentSummary.value?.couponDetails?.title.isNullOrBlank()
+        }
+    }
+
+    fun getDiscount(): Int? {
+        if (isSubscriptionTipUsed) {
+            return responseSubscriptionPaymentSummary.value?.amount?.minus(responsePaymentSummary.value?.discountedAmount!!)
+                ?.toInt()
+
+        } else {
+            return responsePaymentSummary.value?.amount?.minus(responsePaymentSummary.value?.discountedAmount!!)
+                ?.toInt()
+        }
+    }
+
+
+    fun getCurrency(): String {
+        if (isSubscriptionTipUsed) {
+            return responseSubscriptionPaymentSummary.value?.currency ?: "INR"
+
+        } else {
+            return responsePaymentSummary.value?.currency ?: "INR"
+        }
+    }
+
+    fun setIsSubscriptionTipUsed(isSubscriptionTipUsed: Boolean) {
+        this.isSubscriptionTipUsed = isSubscriptionTipUsed
+    }
+
+    fun IsSubscriptionTipUsed() =
+        this.isSubscriptionTipUsed
+
+    fun getPaymentTestId(): String {
+        if (isSubscriptionTipUsed) {
+            return responsePaymentSummary.value!!.specialOffer!!.test_id.toString()
+        } else {
+            return mTestId
+        }
+    }
 
     fun getPaymentSummaryDetails(data: HashMap<String, String>) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -95,6 +164,30 @@ class PaymentSummaryViewModel(application: Application) : AndroidViewModel(appli
         }
     }
 
+    fun getSubscriptionPaymentDetails(data: HashMap<String, String>) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                viewState?.postValue(ViewState.PROCESSED)
+                val res =
+                    AppObjectController.signUpNetworkService.getPaymentSummaryDetails(data)
+                responseSubscriptionPaymentSummary.postValue(res)
+
+            } catch (ex: Exception) {
+                when (ex) {
+                    is HttpException -> {
+                        viewState?.postValue(ViewState.ERROR_OCCURED)
+                    }
+                    is SocketTimeoutException, is UnknownHostException -> {
+                        viewState?.postValue(ViewState.INTERNET_NOT_AVAILABLE)
+                    }
+                    else -> {
+                        Crashlytics.logException(ex)
+                    }
+                }
+            }
+        }
+    }
+
     fun getOrderDetails(testId: String?, mobileNumber: String) {
         viewState?.postValue(ViewState.PROCESSING)
         viewModelScope.launch(Dispatchers.IO) {
@@ -103,10 +196,10 @@ class PaymentSummaryViewModel(application: Application) : AndroidViewModel(appli
                     mTestId = testId!!
                 }
                 val data = mutableMapOf(
-                    "encrypted_text" to responsePaymentSummary.value?.encryptedText,
+                    "encrypted_text" to getEncryptedText(),
                     "instance_id" to PrefManager.getStringValue(INSTANCE_ID, true),
                     "mobile" to mobileNumber,
-                    "test_id" to mTestId.toString()
+                    "test_id" to getPaymentTestId()
                 )
                 if (isRegisteredAlready) {
                     data["mentor_id"] = Mentor.getInstance().getId()
@@ -156,7 +249,7 @@ class PaymentSummaryViewModel(application: Application) : AndroidViewModel(appli
                     testId,
                     PrefManager.getStringValue(INSTANCE_ID, true),
                     mobileNumber,
-                    responsePaymentSummary.value?.encryptedText.toString(),
+                    getEncryptedText(),
                     null
                 )
                 if (Mentor.getInstance().getId().isNotEmpty()) {

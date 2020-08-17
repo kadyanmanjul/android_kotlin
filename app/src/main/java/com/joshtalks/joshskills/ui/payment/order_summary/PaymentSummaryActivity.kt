@@ -21,6 +21,7 @@ import android.widget.TextView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.text.HtmlCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
@@ -36,6 +37,7 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.CoreJoshActivity
 import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.CTA_PAYMENT_SUMMARY
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.PAYMENT_SUMMARY_CTA_LABEL_FREE
 import com.joshtalks.joshskills.core.INSTANCE_ID
@@ -58,6 +60,7 @@ import com.joshtalks.joshskills.repository.local.entity.NPSEventModel
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.OrderDetailResponse
+import com.joshtalks.joshskills.repository.server.PaymentSummaryResponse
 import com.joshtalks.joshskills.ui.extra.setOnSingleClickListener
 import com.joshtalks.joshskills.ui.payment.ChatNPayDialogFragment
 import com.joshtalks.joshskills.ui.payment.PaymentFailedDialogFragment
@@ -154,7 +157,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
             .addUserDetails()
             .addParam(AnalyticsEvent.COURSE_NAME.NAME, viewModel.getCourseName())
             .addParam(AnalyticsEvent.SHOWN_COURSE_PRICE.NAME, viewModel.getCourseDiscountedAmount())
-            .addParam("test_id", testId)
+            .addParam("test_id", viewModel.getPaymentTestId())
             .addParam(AnalyticsEvent.COURSE_PRICE.NAME, viewModel.getCourseActualAmount()).push()
     }
 
@@ -166,7 +169,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
             .addParam(AnalyticsEvent.REASON.NAME, reason)
             .addParam(AnalyticsEvent.COURSE_NAME.NAME, viewModel.getCourseName())
             .addParam(AnalyticsEvent.SHOWN_COURSE_PRICE.NAME, viewModel.getCourseDiscountedAmount())
-            .addParam("test_id", testId)
+            .addParam("test_id", viewModel.getPaymentTestId())
             .addParam(AnalyticsEvent.COURSE_PRICE.NAME, viewModel.getCourseActualAmount()).push()
     }
 
@@ -206,15 +209,18 @@ class PaymentSummaryActivity : CoreJoshActivity(),
         })
 
         viewModel.responsePaymentSummary.observe(this, androidx.lifecycle.Observer {
+
             val stringListName = it.courseName.split(" with ")
             binding.courseName.text = stringListName.get(0)
             binding.tutorName.text = "with ".plus(it.teacherName)
+
             val df = DecimalFormat("###,###", DecimalFormatSymbols(Locale.US))
             val enrollUser = df.format(it.totalEnrolled)
             binding.enrolled.text = enrollUser.plus("+")
-            binding.enrolled.text = enrollUser.plus("+")
             binding.enrolled.setTypeface(binding.enrolled.typeface, Typeface.BOLD)
+
             binding.rating.text = it.rating.toString()
+
             appAnalytics.addParam(AnalyticsEvent.COURSE_NAME.NAME, it.courseName)
             appAnalytics.addParam(AnalyticsEvent.COURSE_PRICE.NAME, it.discountedAmount)
 
@@ -243,13 +249,18 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                     .getString(PAYMENT_SUMMARY_CTA_LABEL_FREE)
             }
             if (it.couponDetails.title.isEmpty().not()) {
+
                 binding.textView1.text = it.couponDetails.name
                 binding.tvTip.text = it.couponDetails.title
                 binding.tvTipValid.text = it.couponDetails.validity
                 binding.tvTipOff.text = it.couponDetails.header
+
                 appAnalytics.addParam(AnalyticsEvent.SPECIAL_DISCOUNT.NAME, it.couponDetails.title)
+
                 binding.badeBhaiyaTipContainer.visibility = View.VISIBLE
+
                 binding.badeBhaiyaTipContainer.setOnClickListener {
+
                     appAnalytics.addParam(AnalyticsEvent.HAVE_COUPON_CODE.NAME, true)
                     binding.badeBhaiyaTipContainer.visibility = View.GONE
                     binding.txtPrice.text =
@@ -259,6 +270,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                         "₹ ${String.format("%.2f", viewModel.getCourseActualAmount())}"
                     binding.actualTxtPrice.paintFlags =
                         binding.actualTxtPrice.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
+
                     if (viewModel.getCourseDiscountedAmount() > 0) {
                         binding.tipUsedMsg.text = SpannableStringBuilder(
                             getString(
@@ -271,8 +283,37 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                         binding.materialButton.text = AppObjectController.getFirebaseRemoteConfig()
                             .getString("CTA_PAYMENT_SUMMARY_FREE")
                     }
+
                     binding.tipUsedMsg.visibility = View.VISIBLE
                 }
+            } else if (it.specialOffer != null) {
+
+                binding.subContainer.visibility = View.VISIBLE
+
+                binding.titleSub.text =
+                    HtmlCompat.fromHtml(it.specialOffer.title, HtmlCompat.FROM_HTML_MODE_LEGACY)
+                binding.textSub.text =
+                    HtmlCompat.fromHtml(
+                        it.specialOffer.description,
+                        HtmlCompat.FROM_HTML_MODE_LEGACY
+                    )
+                binding.subCheckBox.setOnCheckedChangeListener { buttonView, isChecked ->
+                    if (isChecked) {
+                        showSubscriptionDetails(
+                            true,
+                            viewModel.responseSubscriptionPaymentSummary.value
+                        )
+                        binding.addThisTv.visibility=View.GONE
+                    } else {
+                        showSubscriptionDetails(
+                            false,
+                            viewModel.responsePaymentSummary.value
+                        )
+                        binding.addThisTv.visibility=View.VISIBLE
+                    }
+                }
+
+                getPaymentDetails(true, it.specialOffer.test_id.toString())
             }
 
             binding.materialButton.setOnSingleClickListener(View.OnClickListener {
@@ -292,8 +333,91 @@ class PaymentSummaryActivity : CoreJoshActivity(),
         })
     }
 
+    private fun showSubscriptionDetails(
+        isSubscriptionTipUsed: Boolean,
+        data: PaymentSummaryResponse?
+    ) {
+        if (data == null)
+            return
+
+        viewModel.setIsSubscriptionTipUsed(isSubscriptionTipUsed)
+
+        val stringListName = data.courseName.split(" with ")
+        binding.courseName.text = stringListName.get(0)
+        binding.tutorName.text = "with ".plus(data.teacherName)
+
+        val df = DecimalFormat("###,###", DecimalFormatSymbols(Locale.US))
+        val enrollUser = df.format(data.totalEnrolled)
+        binding.enrolled.text = enrollUser.plus("+")
+        binding.enrolled.setTypeface(binding.enrolled.typeface, Typeface.BOLD)
+
+        binding.rating.text = data.rating.toString()
+
+        Glide.with(applicationContext)
+            .load(data.imageUrl)
+            .fitCenter()
+            .into(binding.profileImage)
+
+        binding.txtPrice.text =
+            "₹ ${String.format("%.2f", data.amount)}"
+        multiLineLL = binding.multiLineLl
+        multiLineLL.removeAllViews()
+
+        data.features?.let {
+            val stringList = it.split(",")
+            if (stringList.isNullOrEmpty().not())
+                stringList.forEach {
+                    if (it.isEmpty().not()) multiLineLL.addView(getTextView(it))
+                }
+        }
+
+        if (viewModel.getCourseDiscountedAmount() > 0) {
+            binding.materialButton.text =
+                "${AppObjectController.getFirebaseRemoteConfig()
+                    .getString(CTA_PAYMENT_SUMMARY)} ₹ ${viewModel.getCourseDiscountedAmount()
+                    .roundToInt()}"
+        } else {
+            binding.materialButton.text = AppObjectController.getFirebaseRemoteConfig()
+                .getString(PAYMENT_SUMMARY_CTA_LABEL_FREE)
+        }
+
+        if (isSubscriptionTipUsed) {
+
+            binding.titleSub.text =
+                HtmlCompat.fromHtml(
+                    AppObjectController.getFirebaseRemoteConfig()
+                        .getString(FirebaseRemoteConfigKey.SUBSCRIPTION_BB_TIP),
+                    HtmlCompat.FROM_HTML_MODE_LEGACY
+                )
+            binding.textSub.text =
+                HtmlCompat.fromHtml(
+                    AppObjectController.getFirebaseRemoteConfig()
+                        .getString(FirebaseRemoteConfigKey.SUBSCRIPTION_BB_TEXT),
+                    HtmlCompat.FROM_HTML_MODE_LEGACY
+                )
+
+        } else {
+            if (data.specialOffer != null) {
+
+                binding.titleSub.text =
+                    HtmlCompat.fromHtml(data.specialOffer.title, HtmlCompat.FROM_HTML_MODE_LEGACY)
+                binding.textSub.text =
+                    HtmlCompat.fromHtml(
+                        data.specialOffer.description,
+                        HtmlCompat.FROM_HTML_MODE_LEGACY
+                    )
+
+            }
+        }
+    }
+
     private fun initViewModel() {
         viewModel = ViewModelProvider(this).get(PaymentSummaryViewModel::class.java)
+        viewModel.mTestId = testId
+        getPaymentDetails(false, testId)
+    }
+
+    private fun getPaymentDetails(isSubscription: Boolean, testId: String) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 val data = HashMap<String, String>()
@@ -303,10 +427,16 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                 if (Mentor.getInstance().getId().isNotEmpty()) {
                     data["mentor_id"] = Mentor.getInstance().getId()
                 }
-                if (PrefManager.getStringValue(REFERRED_REFERRAL_CODE).isNotBlank()) {
+                if (PrefManager.getStringValue(REFERRED_REFERRAL_CODE)
+                        .isNotBlank() && isSubscription.not()
+                ) {
                     data["coupon"] = PrefManager.getStringValue(REFERRED_REFERRAL_CODE)
                 }
-                viewModel.getPaymentSummaryDetails(data)
+                if (isSubscription) {
+                    viewModel.getSubscriptionPaymentDetails(data)
+                } else {
+                    viewModel.getPaymentSummaryDetails(data)
+                }
             } catch (ex: Exception) {
                 LogException.catchException(ex)
             }
@@ -478,11 +608,17 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                         return
                     }
                     viewModel.getCourseDiscountedAmount() < 1 -> {
-                        viewModel.createFreeOrder(testId, binding.mobileEt.text.toString())
+                        viewModel.createFreeOrder(
+                            viewModel.getPaymentTestId(),
+                            binding.mobileEt.text.toString()
+                        )
                         return
                     }
                     prefix.equals("+91") && viewModel.getCourseDiscountedAmount() >= 1 ->
-                        viewModel.getOrderDetails(testId, binding.mobileEt.text.toString())
+                        viewModel.getOrderDetails(
+                            viewModel.getPaymentTestId(),
+                            binding.mobileEt.text.toString()
+                        )
                     else ->
                         uiHandler.post {
                             showChatNPayDialog()
@@ -490,10 +626,10 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                 }
             }
             viewModel.getCourseDiscountedAmount() < 1 -> viewModel.createFreeOrder(
-                testId,
+                viewModel.getPaymentTestId(),
                 getPhoneNumber()
             )
-            else -> viewModel.getOrderDetails(testId, getPhoneNumber())
+            else -> viewModel.getOrderDetails(viewModel.getPaymentTestId(), getPhoneNumber())
         }
     }
 
@@ -526,7 +662,9 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                 PAYMENT_MOBILE_NUMBER,
                 prefix.plus(SINGLE_SPACE).plus(binding.mobileEt.text)
             )
-        if (isEcommereceEventFire && (viewModel.mPaymentDetailsResponse.value?.amount!! > 0) && razorpayPaymentId.isNotEmpty() && testId.isNotEmpty()) {
+        if (isEcommereceEventFire && (viewModel.mPaymentDetailsResponse.value?.amount!! > 0) && razorpayPaymentId.isNotEmpty() && viewModel.getPaymentTestId()
+                .isNotEmpty()
+        ) {
             isEcommereceEventFire = false
             addECommerceEvent(razorpayPaymentId)
         }
@@ -549,7 +687,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
     private fun addECommerceEvent(razorpayPaymentId: String) {
         AppObjectController.firebaseAnalytics.resetAnalyticsData()
         val bundle = Bundle()
-        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, testId)
+        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, viewModel.getPaymentTestId())
         bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, viewModel.getCourseName())
         bundle.putDouble(
             FirebaseAnalytics.Param.PRICE, viewModel.getCourseDiscountedAmount()
@@ -559,7 +697,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
         AppObjectController.firebaseAnalytics.logEvent(FirebaseAnalytics.Event.PURCHASE, bundle)
 
         val extras: HashMap<String, String> = HashMap()
-        extras["test_id"] = testId
+        extras["test_id"] = viewModel.getPaymentTestId()
         extras["payment_id"] = razorpayPaymentId
         extras["currency"] = CurrencyType.INR.name
         extras["amount"] = viewModel.getCourseDiscountedAmount().toString()
@@ -572,7 +710,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
             }
             AppObjectController.facebookEventLogger.flush()
             val params = Bundle().apply {
-                putString(AppEventsConstants.EVENT_PARAM_CONTENT_ID, testId)
+                putString(AppEventsConstants.EVENT_PARAM_CONTENT_ID, viewModel.getPaymentTestId())
                 putString(
                     AppEventsConstants.EVENT_PARAM_SUCCESS,
                     AppEventsConstants.EVENT_PARAM_VALUE_YES
