@@ -20,4 +20,12 @@
             android:layout="@layout/fill_in_the_blank_choices_view_stub"
             app:layout_constraintTop_toTopOf="parent" />
 
+    <ViewStub
+            android:id="@+id/match_the_following_stub"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout="@layout/match_the_following_choices_view_stub"
+            app:layout_constraintTop_toTopOf="parent" />
+
 </merge>
