@@ -136,9 +136,9 @@
                                 android:id="@+id/txt_joined"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
+                                android:layout_marginTop="@dimen/_minus8sdp"
                                 android:gravity="start|top"
                                 android:text="@string/joined"
-                                android:layout_marginTop="@dimen/_minus8sdp"
                                 android:textColor="@color/dark_grey"
                                 android:textSize="@dimen/font_14"
                                 app:layout_constraintStart_toStartOf="@+id/enrolled"
@@ -256,6 +256,89 @@
 
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
+                    <androidx.constraintlayout.widget.Barrier
+                            android:id="@+id/barrier_phone"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            app:barrierDirection="bottom"
+                            app:constraint_referenced_ids="sub_container,root_sub_view" />
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                            android:id="@+id/sub_container"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginHorizontal="@dimen/_12sdp"
+                            android:layout_marginBottom="@dimen/_8sdp"
+                            android:background="@drawable/round_both_bottom_bg"
+                            android:backgroundTint="@color/green"
+                            android:paddingBottom="@dimen/_8sdp"
+                            android:visibility="gone"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/root_sub_view"
+                            tools:visibility="visible">
+
+                        <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+                                android:id="@+id/title_sub"
+                                fontPath="fonts/Poppins-Bold.ttf"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginHorizontal="@dimen/_10sdp"
+                                android:paddingVertical="@dimen/_8sdp"
+                                android:textColor="@color/white"
+                                android:textSize="@dimen/font_18"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintHorizontal_bias="0"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                tools:text="Special Offer" />
+
+                        <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+                                android:id="@+id/text_sub"
+                                fontPath="fonts/Poppins-Medium.ttf"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginHorizontal="@dimen/_10sdp"
+                                android:textColor="@color/white"
+                                android:textSize="@dimen/font_14"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintHorizontal_bias="0"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toBottomOf="@id/title_sub"
+                                app:layout_constraintWidth_default="percent"
+                                app:layout_constraintWidth_percent="0.7"
+                                tools:text="Get unlimited access to all \n 200+ courses - valid for 1 year! \n For just $X more." />
+
+                        <CheckBox
+                                android:id="@+id/sub_check_box"
+                                android:layout_width="@dimen/_24sdp"
+                                android:layout_height="@dimen/_24sdp"
+                                android:layout_marginEnd="@dimen/_23sdp"
+                                android:button="@drawable/custom_check_box_button"
+                                android:buttonTint="@color/white"
+                                android:checked="false"
+                                android:elevation="@dimen/_4sdp"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:layout_constraintVertical_bias="0.5"/>
+
+                        <TextView
+                                android:id="@+id/add_this_tv"
+                                fontPath="fonts/Poppins-Bold.ttf"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/add_this"
+                                android:textColor="@color/white"
+                                android:textSize="@dimen/font_14"
+                                app:layout_constraintEnd_toEndOf="@id/sub_check_box"
+                                app:layout_constraintStart_toStartOf="@id/sub_check_box"
+                                app:layout_constraintTop_toBottomOf="@id/sub_check_box" />
+
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
                     <androidx.constraintlayout.widget.ConstraintLayout
                             android:id="@+id/et_container"
                             android:layout_width="0dp"
@@ -267,7 +350,7 @@
                             android:visibility="visible"
                             app:layout_constraintLeft_toLeftOf="parent"
                             app:layout_constraintRight_toRightOf="parent"
-                            app:layout_constraintTop_toBottomOf="@+id/root_sub_view"
+                            app:layout_constraintTop_toBottomOf="@+id/barrier_phone"
                             app:layout_constraintWidth_default="percent"
                             app:layout_constraintWidth_percent="0.75">
 
@@ -367,7 +450,7 @@
                             android:background="@color/white"
                             android:text="@string/your_mobile_number"
                             app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toBottomOf="@+id/root_sub_view"
+                            app:layout_constraintTop_toBottomOf="@+id/barrier_phone"
                             app:layout_constraintWidth_default="percent"
                             tools:ignore="MissingConstraints" />
 
