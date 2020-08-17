@@ -99,6 +99,25 @@
         <key>CTA_PAYMENT_SUMMARY_FREE</key>
         <value>Get this course for free</value>
     </entry>
+
+    <entry>
+        <key>SUBSCRIPTION_BB_TIP</key>
+        <value>Woohoo!</value>
+    </entry>
+
+    <entry>
+        <key>SUBSCRIPTION_BB_TEXT</key>
+        <value>1 year Subscription pack added!
+            You saved more then 3400 rupees
+        </value>
+    </entry>
+
+    <entry>
+        <key>SUBSCRIPTION_TEST_ID</key>
+        <value>122
+        </value>
+    </entry>
+
     <entry>
         <key>FIND_MORE_COURSE_HINT_FIRST_TIME</key>
         <value>

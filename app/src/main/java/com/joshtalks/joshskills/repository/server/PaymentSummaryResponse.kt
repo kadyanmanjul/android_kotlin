@@ -15,6 +15,8 @@ data class PaymentSummaryResponse(
     val rating: Double,
     @SerializedName("coupon_details")
     val couponDetails: CouponDetails,
+    @SerializedName("special_offer")
+    val specialOffer: SpecialOffer?,
     @SerializedName("teacher_name")
     val teacherName: String,
     @SerializedName("features")
@@ -47,6 +49,16 @@ data class CouponDetails(
     val discount: Int,
     @SerializedName("discount_type")
     val discountType: DISCOUNT_TYPE
+) : Parcelable
+
+@Parcelize
+data class SpecialOffer(
+    @SerializedName("description")
+    val description: String,
+    @SerializedName("test_id")
+    val test_id: Int,
+    @SerializedName("title")
+    val title: String
 ) : Parcelable
 
 enum class DISCOUNT_TYPE(val state: String) {
