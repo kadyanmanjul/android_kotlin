@@ -32,6 +32,7 @@ import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.AssessmentButtonClick
 import com.joshtalks.joshskills.repository.local.eventbus.AssessmentButtonClickEvent
 import com.joshtalks.joshskills.repository.local.eventbus.FillInTheBlankSubmitEvent
+import com.joshtalks.joshskills.repository.local.eventbus.MatchTheFollowingSubmitEvent
 import com.joshtalks.joshskills.repository.local.eventbus.McqSubmitEvent
 import com.joshtalks.joshskills.repository.local.eventbus.TestItemClickedEventBus
 import com.joshtalks.joshskills.repository.local.model.assessment.Assessment
@@ -39,6 +40,7 @@ import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQues
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentWithRelations
 import com.joshtalks.joshskills.repository.server.assessment.AssessmentStatus
 import com.joshtalks.joshskills.repository.server.assessment.AssessmentType
+import com.joshtalks.joshskills.repository.server.assessment.ChoiceColumn
 import com.joshtalks.joshskills.repository.server.assessment.ChoiceType
 import com.joshtalks.joshskills.repository.server.assessment.QuestionStatus
 import com.joshtalks.joshskills.repository.server.assessment.ReviseConcept
@@ -150,7 +152,6 @@ class AssessmentActivity : CoreJoshActivity() {
             }
         })
 
-
         viewModel.assessmentStatus.observe(this, Observer { status ->
             if ((status == AssessmentStatus.COMPLETED) && (viewModel.getAssessmentType() == null || viewModel.getAssessmentType() == AssessmentType.TEST)) {
                 val fragment = supportFragmentManager.findFragmentByTag("Test Summary")
@@ -198,10 +199,12 @@ class AssessmentActivity : CoreJoshActivity() {
 
     private fun onSubmit(assessmentQuestion: AssessmentQuestionWithRelations) {
         logSubmitButtonAnalyticEvent(assessmentQuestion.question.choiceType)
-        if (assessmentQuestion.question.choiceType == ChoiceType.FILL_IN_THE_BLANKS_TEXT)
+        if (assessmentQuestion.question.choiceType == ChoiceType.FILL_IN_THE_BLANKS_TEXT) {
             RxBus2.publish(FillInTheBlankSubmitEvent(assessmentQuestion.question.remoteId))
-        else
-            RxBus2.publish(McqSubmitEvent(assessmentQuestion.question.remoteId))
+        } else if (assessmentQuestion.question.choiceType == ChoiceType.MATCH_TEXT) {
+            RxBus2.publish(MatchTheFollowingSubmitEvent(assessmentQuestion.question.remoteId))
+        } else RxBus2.publish(McqSubmitEvent(assessmentQuestion.question.remoteId))
+
         assessmentQuestion.question.isAttempted = true
         assessmentQuestion.question.status = evaluateQuestionStatus(assessmentQuestion)
         showToastForQuestion(assessmentQuestion)
@@ -212,9 +215,9 @@ class AssessmentActivity : CoreJoshActivity() {
         AppAnalytics.create(AnalyticsEvent.REVISE_CONCEPT_CLICKED.NAME)
             .addBasicParam()
             .addUserDetails()
-            .addParam(AnalyticsEvent.ASSESSMENT_ID.NAME,assessmentId)
-            .addParam(AnalyticsEvent.QUESTION_ID.name,questionId)
-            .addParam(AnalyticsEvent.TITLE.name,title)
+            .addParam(AnalyticsEvent.ASSESSMENT_ID.NAME, assessmentId)
+            .addParam(AnalyticsEvent.QUESTION_ID.name, questionId)
+            .addParam(AnalyticsEvent.TITLE.name, title)
             .push()
     }
 
@@ -222,8 +225,8 @@ class AssessmentActivity : CoreJoshActivity() {
         AppAnalytics.create(AnalyticsEvent.ASSESSMENT_NEXT_BUTTON_CLICKED.NAME)
             .addBasicParam()
             .addUserDetails()
-            .addParam(AnalyticsEvent.ASSESSMENT_ID.NAME,assessmentId)
-            .addParam(AnalyticsEvent.OPTION_TYPE.NAME,choiceType.type)
+            .addParam(AnalyticsEvent.ASSESSMENT_ID.NAME, assessmentId)
+            .addParam(AnalyticsEvent.OPTION_TYPE.NAME, choiceType.type)
             .push()
     }
 
@@ -231,8 +234,8 @@ class AssessmentActivity : CoreJoshActivity() {
         AppAnalytics.create(AnalyticsEvent.ASSESSMENT_SUBMIT_BUTTON_CLICKED.NAME)
             .addBasicParam()
             .addUserDetails()
-            .addParam(AnalyticsEvent.ASSESSMENT_ID.NAME,assessmentId)
-            .addParam(AnalyticsEvent.OPTION_TYPE.NAME,choiceType.type)
+            .addParam(AnalyticsEvent.ASSESSMENT_ID.NAME, assessmentId)
+            .addParam(AnalyticsEvent.OPTION_TYPE.NAME, choiceType.type)
             .push()
     }
 
@@ -240,7 +243,7 @@ class AssessmentActivity : CoreJoshActivity() {
         AppAnalytics.create(AnalyticsEvent.BACK_TO_SUMMARY_CLICKED.NAME)
             .addBasicParam()
             .addUserDetails()
-            .addParam(AnalyticsEvent.ASSESSMENT_ID.NAME,assessmentId)
+            .addParam(AnalyticsEvent.ASSESSMENT_ID.NAME, assessmentId)
             .push()
     }
 
@@ -265,7 +268,12 @@ class AssessmentActivity : CoreJoshActivity() {
                     if (it.userSelectedOrder != it.correctAnswerOrder)
                         status = QuestionStatus.WRONG
                 }
-                else -> status = QuestionStatus.SKIPPED
+                ChoiceType.MATCH_TEXT -> {
+                    if (it.userSelectedOrder < 50)
+                        isAttempted = true
+                    if (it.userSelectedOrder != it.correctAnswerOrder.minus(1))
+                        status = QuestionStatus.WRONG
+                }
             }
         }
         if (isAttempted.not())
@@ -309,7 +317,7 @@ class AssessmentActivity : CoreJoshActivity() {
 
     private fun onReviseConcept(reviseConcept: ReviseConcept?) {
         reviseConcept?.let {
-            logReviseConceptEvent(reviseConcept.questionId,reviseConcept.title)
+            logReviseConceptEvent(reviseConcept.questionId, reviseConcept.title)
             showReviseConceptFragment(it)
         }
     }
@@ -399,7 +407,11 @@ class AssessmentActivity : CoreJoshActivity() {
                 }
                 ChoiceType.FILL_IN_THE_BLANKS_TEXT -> if (it.userSelectedOrder != it.correctAnswerOrder)
                     return false
-                else -> return true
+                ChoiceType.MATCH_TEXT -> if (it.column == ChoiceColumn.LEFT && it.userSelectedOrder != it.correctAnswerOrder.minus(
+                        1
+                    )
+                )
+                    return false
             }
         }
         return true

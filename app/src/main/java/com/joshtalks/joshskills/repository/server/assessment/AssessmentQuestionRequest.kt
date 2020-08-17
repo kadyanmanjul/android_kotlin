@@ -26,8 +26,14 @@ data class AssessmentQuestionRequest(
         choices: List<Choice>
     ) : this(
         id = assessmentQuestion.remoteId,
-        choices = choices.filter { it.isSelectedByUser }.map {
-            ChoiceRequest(it)
+        choices = if (assessmentQuestion.choiceType == ChoiceType.MATCH_TEXT) {
+            choices.filter { it.isSelectedByUser }.map {
+                ChoiceRequest(it, choices)
+            }
+        } else {
+            choices.filter { it.isSelectedByUser }.map {
+                ChoiceRequest(it)
+            }
         },
         isAttempted = assessmentQuestion.isAttempted
     )

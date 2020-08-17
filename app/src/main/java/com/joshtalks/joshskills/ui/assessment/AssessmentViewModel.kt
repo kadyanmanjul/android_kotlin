@@ -4,7 +4,6 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.crashlytics.android.Crashlytics
 import com.joshtalks.joshskills.core.ApiCallStatus
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionWithRelations
@@ -19,7 +18,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import java.io.InvalidClassException
 
 class AssessmentViewModel(application: Application) : AndroidViewModel(application) {
     private val jobs = arrayListOf<Job>()
@@ -145,20 +143,21 @@ class AssessmentViewModel(application: Application) : AndroidViewModel(applicati
                         }
                     }
                 }
-                ChoiceType.FILL_IN_THE_BLANKS_TEXT -> {
+                ChoiceType.FILL_IN_THE_BLANKS_TEXT, ChoiceType.MATCH_TEXT -> {
                     questionWithRelations.question.isAttempted = true
-                    run loop@{
+
+                    questionWithRelations.choiceList.forEach {
+                        it.userSelectedOrder = it.userSelectedOrder.plus(1)
+                    }
+
+                    run loop1@{
                         questionWithRelations.choiceList.forEach {
                             if (it.isSelectedByUser.not()) {
                                 questionWithRelations.question.isAttempted = false
-                                return@loop
+                                return@loop1
                             }
                         }
                     }
-                }
-
-                else -> {
-                    Crashlytics.logException(InvalidClassException("Wrong Choice Type ${questionWithRelations.question.choiceType}"))
                 }
             }
             AppObjectController.appDatabase.assessmentDao()
@@ -174,6 +173,12 @@ class AssessmentViewModel(application: Application) : AndroidViewModel(applicati
                     AppObjectController.chatNetworkService.getTestReport(assessmentId)
                 if (resp.isSuccessful && resp.body() != null) {
                     apiCallStatusLiveData.postValue(ApiCallStatus.SUCCESS)
+                    resp.body()?.questions?.filter { it.choiceType == ChoiceType.MATCH_TEXT }
+                        ?.forEach {
+                            it.choices.forEach {
+                                it.userSelectedOrder = it.userSelectedOrder.minus(1)
+                            }
+                        }
                     assessmentLiveData.postValue(AssessmentWithRelations(resp.body()!!))
                     return@launch
                 }
