@@ -2,8 +2,11 @@ package com.joshtalks.joshskills.ui.reminder.set_reminder
 
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.PowerManager
+import android.provider.Settings
 import android.view.View
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.databinding.DataBindingUtil
@@ -20,12 +23,9 @@ import java.util.*
 
 
 class ReminderActivity : ReminderBaseActivity() {
-    //    private lateinit var bottomSheetLayout: ConstraintLayout
     private var previousTime: String = EMPTY
     private lateinit var titleView: AppCompatTextView
     private var reminderId: Int = -1
-
-    //    private lateinit var sheetBehavior: BottomSheetBehavior<*>
     private lateinit var binding: ActivityReminderBinding
     private val viewModel by lazy { ViewModelProvider(this).get(ReminderViewModel::class.java) }
     private var alarmHour: Int = 0
@@ -49,11 +49,23 @@ class ReminderActivity : ReminderBaseActivity() {
         binding.reminderData = this
 
         titleView = findViewById(R.id.text_message_title)
-        titleView.text = getString(R.string.reminders)
+        titleView.text = getString(R.string.set_reminder)
 
         findViewById<View>(R.id.iv_back).visibility = View.VISIBLE
         findViewById<View>(R.id.iv_back).setOnClickListener {
             onBackPressed()
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            val intent = Intent()
+            val packageName = packageName
+            val pm: PowerManager =
+                getSystemService(Context.POWER_SERVICE) as PowerManager
+            if (!pm.isIgnoringBatteryOptimizations(packageName)) {
+                intent.action = Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
+                intent.data = Uri.parse("package:$packageName")
+                startActivity(intent)
+            }
         }
 
         if (intent.extras != null) {
@@ -90,10 +102,10 @@ class ReminderActivity : ReminderBaseActivity() {
             val sdf = SimpleDateFormat("HH:mm")
             val time1: String = sdf.format(dt)
 
-            val timeparts = time1.split(":")
+            val timeParts = time1.split(":")
             try {
-                alarmHour = timeparts[0].toInt()
-                alarmMins = timeparts[1].toInt()
+                alarmHour = timeParts[0].toInt()
+                alarmMins = timeParts[1].toInt()
             } catch (e: Exception) {
 
             }
@@ -139,6 +151,7 @@ class ReminderActivity : ReminderBaseActivity() {
     }
 
     private fun openNextScreen(firstTime: Boolean) {
+//        showBottomSheet()
         if (!firstTime) {
             startActivity(Intent(this, ReminderListActivity::class.java))
             finish()

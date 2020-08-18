@@ -1,6 +1,7 @@
 package com.joshtalks.joshskills.ui.reminder.set_reminder
 
 import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,9 +11,9 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.VerificationVia
 import com.joshtalks.joshskills.core.interfaces.OnSelectVerificationMethodListener
 import com.joshtalks.joshskills.databinding.ReminderBottomSheetLayoutBinding
+import com.joshtalks.joshskills.ui.inbox.InboxActivity
 
 class ReminderBottomSheet : BottomSheetDialogFragment() {
 
@@ -49,13 +50,8 @@ class ReminderBottomSheet : BottomSheetDialogFragment() {
         cancel()
     }
 
-    fun finishActivity() {
-        (context as Activity).finish()
-    }
-
-    fun smsVerify() {
-        listener?.onSelect(VerificationVia.SMS)
-        cancel()
+    fun goToCourse() {
+        (context as Activity).startActivity(Intent(context, InboxActivity::class.java))
     }
 
     fun cancel() {

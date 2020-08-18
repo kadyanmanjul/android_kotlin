@@ -1,6 +1,7 @@
 package com.joshtalks.joshskills.ui.reminder.reminder_listing
 
 import android.content.Context
+import android.graphics.Color
 import android.util.SparseBooleanArray
 import android.view.LayoutInflater
 import android.view.View
@@ -16,6 +17,7 @@ import com.google.android.material.textview.MaterialTextView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.repository.server.reminder.ReminderResponse
 import com.joshtalks.joshskills.ui.reminder.ReminderBaseActivity
+import org.jetbrains.anko.textColor
 
 class ReminderAdapter(
     var context: Context,
@@ -52,14 +54,20 @@ class ReminderAdapter(
                     timeStr = if (it == 12) "12:$mins" else "${it - 12}:$mins"
                     "pm"
                 }
-                holder.timeTv.text =
-                    org.shadow.apache.commons.lang3.StringUtils.stripStart(timeStr, "0")
+                holder.timeTv.text = timeStr
             }
         }
         holder.statusSw.setOnCheckedChangeListener(null)
-        holder.statusSw.isChecked =
-            reminderItem.status == ReminderBaseActivity.Companion.ReminderStatus.ACTIVE.name
+        if (reminderItem.status == ReminderBaseActivity.Companion.ReminderStatus.ACTIVE.name) {
+            holder.statusSw.isChecked = true
+            holder.timeTv.textColor = Color.parseColor("#172344")
+            holder.amPmTv.textColor = Color.parseColor("#172344")
+        } else {
+            holder.statusSw.isChecked = false
+            holder.timeTv.textColor = Color.parseColor("#9098B1")
+            holder.amPmTv.textColor = Color.parseColor("#9098B1")
 
+        }
         holder.statusSw.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked)
                 onStatusUpdate?.invoke(

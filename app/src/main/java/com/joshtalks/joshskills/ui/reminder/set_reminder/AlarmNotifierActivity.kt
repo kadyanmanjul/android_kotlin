@@ -41,7 +41,7 @@ class AlarmNotifierActivity : AppCompatActivity(),
         val sdf = SimpleDateFormat("hh:mm aa")
         val time1: String = sdf.format(dt)
         val timeparts = time1.split(" ")
-        timeTv.text = org.shadow.apache.commons.lang3.StringUtils.stripStart(timeparts[0], "0")
+        timeTv.text = timeparts[0]
         amPmTv.text = timeparts[1]
 
         turnScreenOnAndKeyguardOff()

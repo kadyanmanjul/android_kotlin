@@ -1,6 +1,5 @@
 package com.joshtalks.joshskills.ui.reminder.reminder_listing
 
-import android.app.PendingIntent
 import android.content.Intent
 import android.os.Bundle
 import android.view.GestureDetector
@@ -30,7 +29,6 @@ class ReminderListActivity : ReminderBaseActivity(),
     private var actionMode: Boolean = false
     private lateinit var titleView: AppCompatTextView
     private lateinit var helpIv: AppCompatImageView
-    private var reminderItemList: ArrayList<ReminderResponse> = ArrayList()
     lateinit var binding: ActivityReminderListLayoutBinding
     private val viewModel by lazy { ViewModelProvider(this).get(ReminderListingViewModel::class.java) }
     private lateinit var adapter: ReminderAdapter
@@ -40,9 +38,9 @@ class ReminderListActivity : ReminderBaseActivity(),
         binding = DataBindingUtil.setContentView(this, R.layout.activity_reminder_list_layout)
         binding.lifecycleOwner = this
         binding.handler = this
-        titleView = findViewById<AppCompatTextView>(R.id.text_message_title)
-        helpIv = findViewById<AppCompatImageView>(R.id.iv_help)
-        titleView.text = getString(R.string.set_reminder)
+        titleView = findViewById(R.id.text_message_title)
+        helpIv = findViewById(R.id.iv_help)
+        titleView.text = getString(R.string.reminders)
         helpIv.visibility = View.GONE
         findViewById<View>(R.id.iv_back).visibility = View.VISIBLE
         findViewById<View>(R.id.iv_back).setOnClickListener {
@@ -84,7 +82,6 @@ class ReminderListActivity : ReminderBaseActivity(),
 
     private fun openSetReminder() {
         startActivity(Intent(this, ReminderActivity::class.java))
-        finish()
     }
 
     fun onStatusUpdate(
@@ -129,7 +126,6 @@ class ReminderListActivity : ReminderBaseActivity(),
                 )
             }
         }
-
         disableActionMode()
     }
 
@@ -139,19 +135,17 @@ class ReminderListActivity : ReminderBaseActivity(),
 
         if (timeParts.isEmpty())
             return
+        if (reminderResponse.status == Companion.ReminderStatus.ACTIVE.name) {
+            setAlarm(
+                getReminderFrequency(reminderResponse.reminderFrequency),
+                getAlarmPendingIntent(reminderResponse.id),
+                timeParts[0].toIntOrNull(),
+                timeParts[1].toIntOrNull()
+            )
+        } else {
+            deleteAlarm(getAlarmPendingIntent(reminderResponse.id))
+        }
 
-        val pendingIntent: PendingIntent =
-            if (reminderResponse.status == Companion.ReminderStatus.ACTIVE.name) {
-                getAlarmPendingIntent(reminderResponse.id)
-            } else
-                getAlarmCancelPendingIntent(reminderResponse.id)
-
-        setAlarm(
-            getReminderFrequency(reminderResponse.reminderFrequency),
-            pendingIntent,
-            timeParts[0].toIntOrNull(),
-            timeParts[1].toIntOrNull()
-        )
     }
 
     private fun getReminderFrequency(frequency: String): Companion.ReminderFrequency {
@@ -170,7 +164,6 @@ class ReminderListActivity : ReminderBaseActivity(),
     }
 
     fun onTap(view: View?) {
-        // item click
         val idx: Int? = view?.let { binding.reminderRecyclerView.getChildAdapterPosition(it) }
         if (actionMode) {
             myToggleSelection(idx)
@@ -237,10 +230,5 @@ class ReminderListActivity : ReminderBaseActivity(),
 
     override fun onRequestDisallowInterceptTouchEvent(disallowIntercept: Boolean) {
 
-    }
-
-
-    private fun getAlarmCancelPendingIntent(reminderId: Int): PendingIntent {
-        return getAlarmPendingIntent(reminderId, PendingIntent.FLAG_CANCEL_CURRENT)
     }
 }
