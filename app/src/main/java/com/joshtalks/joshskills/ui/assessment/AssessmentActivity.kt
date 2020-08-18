@@ -159,6 +159,11 @@ class AssessmentActivity : CoreJoshActivity() {
 
         viewModel.assessmentStatus.observe(this, Observer { status ->
             if ((status == AssessmentStatus.COMPLETED) && (viewModel.getAssessmentType() == null || viewModel.getAssessmentType() == AssessmentType.TEST)) {
+                viewModel.assessmentLiveData.value?.let {
+                    if (it.questionList.filter { it.question.choiceType == ChoiceType.MATCH_TEXT }.size > 0) {
+                        RxBus2.publish(MatchTheFollowingSubmitEvent(it.assessment.remoteId))
+                    }
+                }
                 val fragment = supportFragmentManager.findFragmentByTag("Test Summary")
                 if (fragment != null) supportFragmentManager.beginTransaction().remove(fragment)
                     .commit()

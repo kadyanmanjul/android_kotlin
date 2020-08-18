@@ -107,7 +107,6 @@ class AssessmentViewModel(application: Application) : AndroidViewModel(applicati
                 } catch (ex: Throwable) {
                     ex.showAppropriateMsg()
                 }
-                removeAll(assessmentWithRelations)
                 apiCallStatusLiveData.postValue(ApiCallStatus.FAILED)
             }
         }
@@ -147,10 +146,6 @@ class AssessmentViewModel(application: Application) : AndroidViewModel(applicati
                 ChoiceType.FILL_IN_THE_BLANKS_TEXT, ChoiceType.MATCH_TEXT -> {
                     questionWithRelations.question.isAttempted = true
 
-                    questionWithRelations.choiceList.forEach {
-                        it.userSelectedOrder = it.userSelectedOrder.plus(1)
-                    }
-
                     run loop1@{
                         questionWithRelations.choiceList.forEach {
                             if (it.isSelectedByUser.not()) {
@@ -163,22 +158,6 @@ class AssessmentViewModel(application: Application) : AndroidViewModel(applicati
             }
             AppObjectController.appDatabase.assessmentDao()
                 .updateAssessmentQuestionWithoutRelation(questionWithRelations.question)
-        }
-    }
-    private fun removeAll(assessmentWithRelations: AssessmentWithRelations) {
-        assessmentWithRelations.questionList.forEach { questionWithRelations ->
-            when (questionWithRelations.question.choiceType) {
-                ChoiceType.FILL_IN_THE_BLANKS_TEXT, ChoiceType.MATCH_TEXT -> {
-
-                    questionWithRelations.choiceList.forEach {
-                        if(it.userSelectedOrder<50)
-                        it.userSelectedOrder = it.userSelectedOrder.minus(1)
-                    }
-                }
-                else->{
-
-                }
-            }
         }
     }
 

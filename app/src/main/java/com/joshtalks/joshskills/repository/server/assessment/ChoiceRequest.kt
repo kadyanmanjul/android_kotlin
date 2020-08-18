@@ -31,17 +31,17 @@ data class ChoiceRequest(
             when (choice.column) {
                 ChoiceColumn.RIGHT -> {
                     choiceList.filter { it.column == ChoiceColumn.RIGHT }.sortedBy { it.sortOrder }
-                        .get(choice.userSelectedOrder.minus(1)).remoteId
+                        .get(choice.userSelectedOrder).remoteId
                 }
                 ChoiceColumn.LEFT -> {
                     choiceList.filter { it.column == ChoiceColumn.LEFT }.sortedBy { it.sortOrder }
-                        .get(choice.userSelectedOrder.minus(1)).remoteId
+                        .get(choice.userSelectedOrder).remoteId
                 }
             }
 
         } else {
             100
         },
-        userSelectedOrder = choice.userSelectedOrder
+        userSelectedOrder = choice.userSelectedOrder.plus(1)
     )
 }
