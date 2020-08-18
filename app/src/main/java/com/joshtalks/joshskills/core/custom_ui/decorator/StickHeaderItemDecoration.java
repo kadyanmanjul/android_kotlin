@@ -34,6 +34,9 @@ public class StickHeaderItemDecoration extends RecyclerView.ItemDecoration {
             return;
         }
         View currentHeader = getHeaderViewForItem(headerPos, parent);
+        if (currentHeader == null) {
+            return;
+        }
         fixLayoutSize(parent, currentHeader);
         int contactPoint = currentHeader.getBottom();
         View childInContact = getChildInContact(parent, contactPoint, headerPos);
@@ -42,15 +45,23 @@ public class StickHeaderItemDecoration extends RecyclerView.ItemDecoration {
             moveHeader(c, currentHeader, childInContact);
             return;
         }
-
         drawHeader(c, currentHeader);
     }
 
     private View getHeaderViewForItem(int headerPosition, RecyclerView parent) {
-        int layoutResId = mListener.getHeaderLayout(headerPosition);
-        View header = LayoutInflater.from(parent.getContext()).inflate(layoutResId, parent, false);
-        mListener.bindHeaderData(header, headerPosition);
-        return header;
+        try {
+            if (headerPosition == -1) {
+                return null;
+            }
+            int layoutResId = mListener.getHeaderLayout(headerPosition);
+            View header = LayoutInflater.from(parent.getContext()).inflate(layoutResId, parent, false);
+            mListener.bindHeaderData(header, headerPosition);
+            return header;
+        } catch (Exception e) {
+            // e.printStackTrace();
+        }
+        return null;
+
     }
 
     /**

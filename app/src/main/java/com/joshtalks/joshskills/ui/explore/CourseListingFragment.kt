@@ -61,8 +61,8 @@ class CourseListingFragment private constructor() : Fragment() {
             LayoutMarginDecoration(Utils.dpToPx(requireContext(), 6f))
         )
         val adapter = CourseExploreAdapter(courseList)
-        binding.recyclerView.adapter = adapter
         binding.recyclerView.addItemDecoration(StickHeaderItemDecoration(adapter))
+        binding.recyclerView.adapter = adapter
     }
 
     companion object {

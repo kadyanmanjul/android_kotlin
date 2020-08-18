@@ -18,6 +18,7 @@ import com.joshtalks.joshskills.repository.local.entity.Question
 import timber.log.Timber
 import java.io.File
 
+
 class RemoveMediaWorker(var context: Context, var workerParams: WorkerParameters) :
     CoroutineWorker(context, workerParams) {
 
@@ -198,6 +199,4 @@ class MemoryManagementWorker(var context: Context, workerParams: WorkerParameter
     private fun removeOldMedia() {
         WorkMangerAdmin.clearMediaOfConversation(EMPTY, isTimeDelete = true)
     }
-
-
 }

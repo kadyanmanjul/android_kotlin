@@ -479,8 +479,11 @@ class ConversationViewModel(application: Application) :
 
     override fun onCleared() {
         super.onCleared()
-        jobs.listIterator().forEach {
-            it.cancel()
+        val iterator = jobs.listIterator()
+        while (iterator.hasNext()) {
+            val item = iterator.next()
+            item.cancel()
+            iterator.remove()
         }
         compositeDisposable.clear()
         context.unregisterReceiver(broadCastForNetwork)

@@ -1,5 +1,6 @@
 package com.joshtalks.joshskills.core.notification
 
+import android.app.ActivityManager
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -113,12 +114,19 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                 val activityList = if (PrefManager.getStringValue(API_TOKEN).isEmpty()) {
                     arrayOf(this)
                 } else {
-                    val backIntent =
-                        Intent(this@FirebaseNotificationService, InboxActivity::class.java).apply {
-                            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                        }
-                    arrayOf(backIntent, this)
+                    if (isAppRunning().not()) {
+                        arrayOf(this)
+                    } else {
+                        val backIntent =
+                            Intent(
+                                this@FirebaseNotificationService,
+                                InboxActivity::class.java
+                            ).apply {
+                                addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                            }
+                        arrayOf(backIntent, this)
+                    }
                 }
 
                 intent.putExtra(NOTIFICATION_ID, notificationObject.id)
@@ -411,4 +419,23 @@ class FirebaseNotificationService : FirebaseMessagingService() {
         }
         return rIntnet
     }
+
+    private fun isAppRunning(): Boolean {
+        try {
+            val activityManager: ActivityManager? =
+                applicationContext.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager?
+            if (activityManager != null) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    Timber.tag(FirebaseNotificationService::class.java.simpleName)
+                        .e(activityManager.appTasks[0].taskInfo.topActivity?.className)
+                }
+                //  activityManager.appTasks[0].taskInfo.topActivity?.className== InboxActivity::class.java.name)){
+                return true
+            }
+        } catch (ex: Exception) {
+        }
+        return false
+    }
+
+
 }
