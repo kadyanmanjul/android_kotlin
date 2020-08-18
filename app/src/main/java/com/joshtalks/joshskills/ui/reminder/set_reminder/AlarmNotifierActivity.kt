@@ -6,11 +6,15 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.os.VibrationEffect
+import android.os.Vibrator
 import android.view.View
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.textview.MaterialTextView
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
 import com.joshtalks.joshskills.ui.launch.LauncherActivity
 import com.joshtalks.joshskills.util.RingtoneManager
 import java.text.SimpleDateFormat
@@ -19,12 +23,14 @@ import java.util.*
 class AlarmNotifierActivity : AppCompatActivity(),
     View.OnClickListener {
 
-
     private var mAudioPlayer: RingtoneManager? = null
+    private lateinit var vibrator: Vibrator
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_reminder_notifier)
 
+        val descriptionTv = findViewById<MaterialTextView>(R.id.start_exp)
         val timeTv = findViewById<MaterialTextView>(R.id.alarm_time_tv)
         val amPmTv = findViewById<MaterialTextView>(R.id.alarm_am_pm)
 
@@ -37,6 +43,9 @@ class AlarmNotifierActivity : AppCompatActivity(),
             finish()
         }
 
+        descriptionTv.text = AppObjectController.getFirebaseRemoteConfig()
+            .getString(FirebaseRemoteConfigKey.REMINDER_NOTIFIER_SCREEN_DESCRIPTION)
+
         val dt = Date(System.currentTimeMillis())
         val sdf = SimpleDateFormat("hh:mm aa")
         val time1: String = sdf.format(dt)
@@ -48,6 +57,20 @@ class AlarmNotifierActivity : AppCompatActivity(),
 
         mAudioPlayer = RingtoneManager.getInstance(this)
         mAudioPlayer?.playRingtone()
+
+        vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+        val pattern = longArrayOf(0, 100, 1000, 300, 200, 100, 500, 200, 100)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            vibrator.vibrate(
+                VibrationEffect.createWaveform(
+                    pattern, 6
+                )
+            )
+        } else {
+            //deprecated in API 26
+            vibrator.vibrate(pattern, 6)
+        }
+
     }
 
     override fun onClick(v: View) {
@@ -64,7 +87,7 @@ class AlarmNotifierActivity : AppCompatActivity(),
     }
 
 
-    fun Activity.turnScreenOnAndKeyguardOff() {
+    private fun Activity.turnScreenOnAndKeyguardOff() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
             setShowWhenLocked(true)
             setTurnScreenOn(true)
@@ -89,7 +112,7 @@ class AlarmNotifierActivity : AppCompatActivity(),
         }
     }
 
-    fun Activity.turnScreenOffAndKeyguardOn() {
+    private fun Activity.turnScreenOffAndKeyguardOn() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
             setShowWhenLocked(false)
             setTurnScreenOn(false)
@@ -111,6 +134,7 @@ class AlarmNotifierActivity : AppCompatActivity(),
     override fun onDestroy() {
         super.onDestroy()
         mAudioPlayer?.stopRingtone()
+        vibrator.cancel()
         turnScreenOffAndKeyguardOn()
     }
 }

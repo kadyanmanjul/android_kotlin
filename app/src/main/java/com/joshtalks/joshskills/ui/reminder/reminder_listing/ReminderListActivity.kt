@@ -7,6 +7,7 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
+import android.widget.Toast
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.view.GestureDetectorCompat
@@ -15,6 +16,8 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
 import com.joshtalks.joshskills.databinding.ActivityReminderListLayoutBinding
 import com.joshtalks.joshskills.repository.server.reminder.ReminderResponse
 import com.joshtalks.joshskills.ui.reminder.ReminderBaseActivity
@@ -41,8 +44,8 @@ class ReminderListActivity : ReminderBaseActivity(),
         titleView = findViewById(R.id.text_message_title)
         helpIv = findViewById(R.id.iv_help)
         titleView.text = getString(R.string.reminders)
-        helpIv.visibility = View.GONE
-        findViewById<View>(R.id.iv_back).visibility = View.VISIBLE
+        helpIv.visibility = GONE
+        findViewById<View>(R.id.iv_back).visibility = VISIBLE
         findViewById<View>(R.id.iv_back).setOnClickListener {
             onBackPressed()
         }
@@ -52,6 +55,9 @@ class ReminderListActivity : ReminderBaseActivity(),
         binding.deleteRemindersBtn.setOnClickListener {
             deleteReminders()
         }
+
+        binding.alarmListDescription.text = AppObjectController.getFirebaseRemoteConfig()
+            .getString(FirebaseRemoteConfigKey.REMINDERS_SCREEN_DESCRIPTION)
 
         initRv()
         viewModel.reminderList.observe(this,
@@ -101,7 +107,7 @@ class ReminderListActivity : ReminderBaseActivity(),
         }
     }
 
-    fun onItemTimeClick(reminderItem: ReminderResponse) {
+    private fun onItemTimeClick(reminderItem: ReminderResponse) {
         startActivity(
             ReminderActivity.getIntent(
                 this,
@@ -126,6 +132,8 @@ class ReminderListActivity : ReminderBaseActivity(),
                 )
             }
         }
+        Toast.makeText(this, getString(R.string.alarms_deleted), Toast.LENGTH_SHORT).show()
+//        showToast(getString(R.string.alarms_deleted))
         disableActionMode()
     }
 

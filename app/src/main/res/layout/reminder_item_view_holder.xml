@@ -25,7 +25,7 @@
             android:id="@+id/am_pm_tv"
             fontPath="fonts/Poppins-Medium.ttf"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
             android:layout_marginStart="@dimen/_8sdp"
             android:textColor="@color/black"
             app:layout_constraintBaseline_toBaselineOf="@+id/time_tv"
@@ -35,7 +35,7 @@
     <com.google.android.material.switchmaterial.SwitchMaterial
             android:id="@+id/alarm_status_sw"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
             android:paddingEnd="@dimen/_16sdp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -45,7 +45,7 @@
     <com.google.android.material.checkbox.MaterialCheckBox
             android:id="@+id/alarm_check"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
             android:checked="false"
             android:paddingEnd="@dimen/_16sdp"
             android:visibility="gone"

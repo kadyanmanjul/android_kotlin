@@ -2,18 +2,17 @@ package com.joshtalks.joshskills.ui.reminder.set_reminder
 
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.os.PowerManager
-import android.provider.Settings
 import android.view.View
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshcamerax.utils.SharedPrefsManager
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.SET_REMINDER_DESCRIPTION
 import com.joshtalks.joshskills.databinding.ActivityReminderBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.ui.reminder.ReminderBaseActivity
@@ -56,17 +55,8 @@ class ReminderActivity : ReminderBaseActivity() {
             onBackPressed()
         }
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            val intent = Intent()
-            val packageName = packageName
-            val pm: PowerManager =
-                getSystemService(Context.POWER_SERVICE) as PowerManager
-            if (!pm.isIgnoringBatteryOptimizations(packageName)) {
-                intent.action = Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
-                intent.data = Uri.parse("package:$packageName")
-                startActivity(intent)
-            }
-        }
+        binding.reminderMsgTv.text = AppObjectController.getFirebaseRemoteConfig()
+            .getString(SET_REMINDER_DESCRIPTION)
 
         if (intent.extras != null) {
             if (intent.hasExtra("time")) {
@@ -139,23 +129,18 @@ class ReminderActivity : ReminderBaseActivity() {
             alarmMins
         )
         println("alarm set success")
-        val firstTime = SharedPrefsManager.newInstance(this)
-            .getBoolean(SharedPrefsManager.Companion.IS_FIRST_REMINDER, true)
-        if (firstTime) {
-            SharedPrefsManager.newInstance(this)
-                .putBoolean(SharedPrefsManager.Companion.IS_FIRST_REMINDER, false)
-            openNextScreen(firstTime)
-        }
-
-        openNextScreen(false)
+        openNextScreen()
     }
 
-    private fun openNextScreen(firstTime: Boolean) {
-//        showBottomSheet()
+    private fun openNextScreen() {
+        val firstTime = SharedPrefsManager.newInstance(this)
+            .getBoolean(SharedPrefsManager.Companion.IS_FIRST_REMINDER, true)
         if (!firstTime) {
             startActivity(Intent(this, ReminderListActivity::class.java))
             finish()
         } else {
+            SharedPrefsManager.newInstance(this)
+                .putBoolean(SharedPrefsManager.Companion.IS_FIRST_REMINDER, false)
             showBottomSheet()
         }
     }

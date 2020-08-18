@@ -18,6 +18,8 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.repository.server.reminder.ReminderResponse
 import com.joshtalks.joshskills.ui.reminder.ReminderBaseActivity
 import org.jetbrains.anko.textColor
+import java.text.DecimalFormat
+import java.text.NumberFormat
 
 class ReminderAdapter(
     var context: Context,
@@ -25,7 +27,7 @@ class ReminderAdapter(
         null,
     private var onItemTimeClick: ((reminderItem: ReminderResponse) -> Unit)? = null
 ) : ListAdapter<ReminderResponse, ReminderAdapter.ReminderViewHolder>(ReminderDiffUtil()) {
-
+    var formatter: NumberFormat = DecimalFormat("00")
     private val selectedItems: SparseBooleanArray = SparseBooleanArray()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ReminderViewHolder {
@@ -38,20 +40,21 @@ class ReminderAdapter(
     override fun onBindViewHolder(holder: ReminderViewHolder, position: Int) {
         val reminderItem = getItem(position)
         reminderItem.reminderTime.let { time ->
-            val timeParts = time.split(":")
+
+            val timeParts = time.trim().split(":")
 
             if (timeParts.isEmpty())
                 return
-            val mins = timeParts[1]
+            val mins = formatter.format(timeParts[1].toInt())
 
             timeParts[0].toIntOrNull()?.let {
                 val timeStr: String
 
                 holder.amPmTv.text = if (it < 12) {
-                    timeStr = if (it == 0) "12:$mins" else "${it}:$mins"
+                    timeStr = if (it == 0) "12:$mins" else "${formatter.format(it)}:$mins"
                     "am"
                 } else {
-                    timeStr = if (it == 12) "12:$mins" else "${it - 12}:$mins"
+                    timeStr = if (it == 12) "12:$mins" else "${formatter.format(it - 12)}:$mins"
                     "pm"
                 }
                 holder.timeTv.text = timeStr

@@ -233,6 +233,35 @@
         <key>EXPLORE_TYPE_NORMAL_TIP</key>
         <value>Get all course pass for 1-Year</value>
     </entry>
+
+    <entry>
+        <key>SET_REMINDER_DESCRIPTION</key>
+        <value>Note : Lorem ipsum dolor sit amet, consectetur adipiscing elit Vitae pellentesque
+        </value>
+    </entry>
+    <entry>
+        <key>REMINDERS_SCREEN_DESCRIPTION</key>
+        <value>Note : Lorem ipsum dolor sit amet, consectetur adipiscing elit Vitae pellentesque
+        </value>
+    </entry>
+    <entry>
+        <key>REMINDER_NOTIFIER_SCREEN_DESCRIPTION</key>
+        <value>Lorem ipsum dolor sit amet, consecte tur adipiscing elit.</value>
+    </entry>
+    <entry>
+        <key>REMINDER_BOTTOM_POPUP_DESCRIPTION</key>
+        <value>Sit amet, consectetur Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam
+            hendrerit
+        </value>
+    </entry>
+    <entry>
+        <key>REMINDER_NOTIFICATION_DESCRIPTION</key>
+        <value>Its time to learn something valuable</value>
+    </entry>
+    <entry>
+        <key>REMINDER_NOTIFICATION_TITLE</key>
+        <value>You have an update</value>
+    </entry>
     <entry>
         <key>INBOX_SCREEN_CTA_TEXT_NORMAL</key>
         <value>Find More Courses</value>

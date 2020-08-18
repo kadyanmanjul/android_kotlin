@@ -11,6 +11,8 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
 import com.joshtalks.joshskills.core.interfaces.OnSelectVerificationMethodListener
 import com.joshtalks.joshskills.databinding.ReminderBottomSheetLayoutBinding
 import com.joshtalks.joshskills.ui.inbox.InboxActivity
@@ -43,6 +45,9 @@ class ReminderBottomSheet : BottomSheetDialogFragment() {
         )
         binding.lifecycleOwner = this
         binding.handler = this
+        binding.textView1.text = AppObjectController.getFirebaseRemoteConfig()
+            .getString(FirebaseRemoteConfigKey.REMINDER_BOTTOM_POPUP_DESCRIPTION)
+
         return binding.root
     }
 

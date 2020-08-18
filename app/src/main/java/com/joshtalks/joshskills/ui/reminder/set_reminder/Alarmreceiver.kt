@@ -12,6 +12,8 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
 
 
 class AlarmReceiver : BroadcastReceiver() {
@@ -19,7 +21,7 @@ class AlarmReceiver : BroadcastReceiver() {
         context: Context,
         intent: Intent
     ) {
-        context.showNotificationWithFullScreenIntent()
+        context.showNotificationWithFullScreenIntent(context)
         /*  if (intent.hasExtra("id")) println("AlarmReceiver.onReceive " + intent.getStringExtra("id")) else println(
               "AlarmReceiver.onReceive no extra found"
           )
@@ -89,20 +91,17 @@ class AlarmReceiver : BroadcastReceiver() {
                     .setFullScreenIntent(pendingIntent, true)
             notificationManager.notify(101, builder.build())
         }
-        /* val i = Intent(context, AlarmNotifierActivity::class.java)
-         *//*i.setClassName(
-            "com.joshtalks.joshskills",
-            "com.joshtalks.joshskills.ui.reminder.set_reminder.AlarmNotifierActivity"
-        )*//*
-        i.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-        context.startActivity(i)*/
     }
 
 
     fun Context.showNotificationWithFullScreenIntent(
+        context: Context,
         channelId: String = CHANNEL_ID,
-        title: String = "Title",
-        description: String = "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+        title: String = AppObjectController.getFirebaseRemoteConfig()
+            .getString(FirebaseRemoteConfigKey.REMINDER_NOTIFICATION_TITLE),
+        description: String = AppObjectController.getFirebaseRemoteConfig()
+            .getString(FirebaseRemoteConfigKey.REMINDER_NOTIFICATION_DESCRIPTION)
+
 
     ) {
         val builder = NotificationCompat.Builder(this, channelId)
@@ -111,6 +110,12 @@ class AlarmReceiver : BroadcastReceiver() {
             .setContentText(description)
             .setCategory(Notification.CATEGORY_ALARM)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setSmallIcon(R.drawable.ic_status_bar_notification).setColor(
+                ContextCompat.getColor(
+                    context,
+                    R.color.colorAccent
+                )
+            )
             .setFullScreenIntent(getFullScreenIntent(), true)
 
 
