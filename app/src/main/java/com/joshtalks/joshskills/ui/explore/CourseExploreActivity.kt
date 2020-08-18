@@ -74,6 +74,7 @@ class CourseExploreActivity : CoreJoshActivity() {
         courseExploreBinding =
             DataBindingUtil.setContentView(this, R.layout.activity_course_explore)
         courseExploreBinding.lifecycleOwner = this
+        courseExploreBinding.handler=this
         appAnalytics = AppAnalytics.create(AnalyticsEvent.COURSE_EXPLORE.NAME)
             .addUserDetails()
             .addBasicParam()
@@ -248,16 +249,6 @@ class CourseExploreActivity : CoreJoshActivity() {
                     }
                 }
             })
-
-        /* language_chip_group.setOnCheckedChangeListener { group, checkedId ->
-             if (checkedId == -1) {
-                 selectedLanguage = EMPTY
-             } else {
-                 selectedLanguage = languageList.filter { languageList.indexOf(it) == checkedId }[0]
-                 logChipSelectedEvent(selectedLanguage)
-             }
-             filterCourses()
-         }*/
     }
 
     private fun logChipSelectedEvent(selectedLanguage: String) {
@@ -299,5 +290,4 @@ class CourseExploreActivity : CoreJoshActivity() {
         setResult(Activity.RESULT_CANCELED, resultIntent)
         this.finish()
     }
-
 }
