@@ -267,6 +267,7 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
                 scrollToPosition(this)
             }
         }
+        super.processIntent(intent)
         conversationBinding.viewmodel = initViewModel()
         init()
     }

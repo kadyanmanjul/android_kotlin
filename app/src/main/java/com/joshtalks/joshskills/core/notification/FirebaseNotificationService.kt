@@ -111,6 +111,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
             )
 
             intent?.run {
+                this.putExtra(HAS_NOTIFICATION, true)
                 val activityList = if (PrefManager.getStringValue(API_TOKEN).isEmpty()) {
                     arrayOf(this)
                 } else {
