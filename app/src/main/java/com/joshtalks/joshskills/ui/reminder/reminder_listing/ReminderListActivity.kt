@@ -133,7 +133,6 @@ class ReminderListActivity : ReminderBaseActivity(),
             }
         }
         Toast.makeText(this, getString(R.string.alarms_deleted), Toast.LENGTH_SHORT).show()
-//        showToast(getString(R.string.alarms_deleted))
         disableActionMode()
     }
 

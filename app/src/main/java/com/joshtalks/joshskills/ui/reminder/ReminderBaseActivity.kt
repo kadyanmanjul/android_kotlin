@@ -45,7 +45,7 @@ open class ReminderBaseActivity : CoreJoshActivity() {
         alarmCalendar.set(Calendar.HOUR_OF_DAY, alarmHour)
         alarmCalendar.set(Calendar.MINUTE, alarmMins)
         alarmCalendar.set(Calendar.SECOND, 0)
-// Check if the Calendar time is in the past
+        // Check if the Calendar time is in the past
         if (alarmCalendar.timeInMillis < System.currentTimeMillis()) {
             alarmCalendar.add(Calendar.DAY_OF_YEAR, 1) // it will tell to run to next day
         }
@@ -115,7 +115,6 @@ open class ReminderBaseActivity : CoreJoshActivity() {
     }
 
     private fun createAlarm(pendingIntent: PendingIntent, triggerTime: Long, intervalMillis: Long) {
-        println("triggertime $triggerTime")
         val alarmManager: AlarmManager =
             getSystemService(Context.ALARM_SERVICE) as AlarmManager
         if (Build.VERSION.SDK_INT < 23) {

@@ -34,7 +34,6 @@ class ReminderViewModel(application: Application) : AndroidViewModel(application
         previousTime: String,
         onAlarmSetSuccess: ((reminderId: Int) -> Unit)? = null
     ) {
-        println("setReminder api call")
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val request = ReminderRequest(mentorId, time, frequency, status, previousTime)

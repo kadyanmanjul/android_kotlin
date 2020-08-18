@@ -101,8 +101,6 @@ class ReminderActivity : ReminderBaseActivity() {
             }
         }
 
-        println("default time is $alarmHour $alarmMins")
-
         binding.createReminderBtn.setOnClickListener {
             viewModel.submitReminder(
                 reminderId,
@@ -128,7 +126,6 @@ class ReminderActivity : ReminderBaseActivity() {
             alarmHour,
             alarmMins
         )
-        println("alarm set success")
         openNextScreen()
     }
 
@@ -165,7 +162,6 @@ class ReminderActivity : ReminderBaseActivity() {
                 ReminderBaseActivity.Companion.ReminderFrequency.EVERYDAY
             }
         }
-
     }
 
 }
