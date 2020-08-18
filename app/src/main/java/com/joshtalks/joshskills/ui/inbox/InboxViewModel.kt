@@ -5,9 +5,12 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.crashlytics.android.Crashlytics
+import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.JoshApplication
+import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
+import com.joshtalks.joshskills.repository.local.model.Mentor
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -77,5 +80,41 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
+    fun openReminderScreen(openReminderCallback: ((responseLiseSize: Int) -> Unit)? = null) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val response = AppObjectController.commonNetworkService.getReminders(
+                    Mentor.getInstance().getId()
+                )
+                if (response.isSuccessful) {
+                    response.body()?.let {
+                        if (it.success)
+                            response.body()?.responseData?.let { it1 ->
+                                appDatabase.reminderDao().insertAllReminders(
+                                    it1
+                                )
+                                openReminderCallback?.invoke(it1.size)
+                            }
+                        else
+                            showToast(it.message)
+                        return@launch
+                    }
+                }
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+                when (ex) {
+                    is HttpException -> {
+                    }
+                    is SocketTimeoutException, is UnknownHostException -> {
+                        showToast(context.getString(R.string.internet_not_available_msz))
+                    }
+                    else -> {
+                        Crashlytics.logException(ex)
+                    }
+                }
+            }
+            return@launch
+        }
+    }
 
 }

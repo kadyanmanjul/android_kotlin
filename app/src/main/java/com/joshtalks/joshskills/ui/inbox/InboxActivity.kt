@@ -12,8 +12,6 @@ import androidx.appcompat.widget.PopupMenu
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
-import com.crashlytics.android.Crashlytics
 import com.facebook.share.internal.ShareConstants.ACTION_TYPE
 import com.google.android.gms.location.LocationRequest
 import com.google.android.material.snackbar.Snackbar
@@ -37,7 +35,6 @@ import com.joshtalks.joshskills.core.inapp_update.Constants
 import com.joshtalks.joshskills.core.inapp_update.InAppUpdateManager
 import com.joshtalks.joshskills.core.inapp_update.InAppUpdateStatus
 import com.joshtalks.joshskills.core.service.WorkMangerAdmin
-import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.NPSEventModel
 import com.joshtalks.joshskills.repository.local.eventbus.ExploreCourseEventBus
@@ -81,9 +78,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.jetbrains.anko.collections.forEachWithIndex
-import retrofit2.HttpException
-import java.net.SocketTimeoutException
-import java.net.UnknownHostException
 import java.util.*
 
 const val REGISTER_INFO_CODE = 2001
@@ -220,45 +214,24 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
             openPopupMenu(it)
         }
         findViewById<View>(R.id.iv_reminder).setOnClickListener {
-            openReminderScreen()
+            viewModel.openReminderScreen(this::openReminderCallback)
         }
     }
 
-    private fun openReminderScreen() {
-        lifecycleScope.launch(Dispatchers.IO) {
-            try {
-                val response = AppObjectController.commonNetworkService.getReminders(
-                    Mentor.getInstance().getId()
+    private fun openReminderCallback(reminderListSize: Int) {
+        if (reminderListSize > 0)
+            startActivity(
+                Intent(
+                    applicationContext,
+                    ReminderListActivity::class.java
                 )
-                if (response.isSuccessful) {
-                    response.body()?.let {
-                        if (it.responseData?.size!! > 0) {
-                            startActivity(
-                                Intent(
-                                    applicationContext,
-                                    ReminderListActivity::class.java
-                                )
-                            )
-                            return@launch
-                        }
-                    }
-                }
-                startActivity(Intent(applicationContext, ReminderActivity::class.java))
-            } catch (ex: Exception) {
-                ex.printStackTrace()
-                when (ex) {
-                    is HttpException -> {
-                    }
-                    is SocketTimeoutException, is UnknownHostException -> {
-                        showToast(applicationContext.getString(R.string.internet_not_available_msz))
-                    }
-                    else -> {
-                        Crashlytics.logException(ex)
-                    }
-                }
-            }
-            return@launch
-        }
+            )
+        else startActivity(
+            Intent(
+                applicationContext,
+                ReminderActivity::class.java
+            )
+        )
     }
 
     private fun openPopupMenu(view: View) {

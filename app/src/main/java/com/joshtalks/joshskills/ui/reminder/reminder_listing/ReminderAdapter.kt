@@ -39,6 +39,7 @@ class ReminderAdapter(
 
     override fun onBindViewHolder(holder: ReminderViewHolder, position: Int) {
         val reminderItem = getItem(position)
+        println("item time ${reminderItem.reminderTime}")
         reminderItem.reminderTime.let { time ->
 
             val timeParts = time.trim().split(":")
@@ -125,7 +126,7 @@ class ReminderAdapter(
 
     fun getSelectedItems(): java.util.ArrayList<ReminderResponse>? {
         val items: java.util.ArrayList<ReminderResponse> =
-            java.util.ArrayList<ReminderResponse>(selectedItems.size())
+            java.util.ArrayList(selectedItems.size())
         for (i in 0 until selectedItems.size()) {
             items.add(getItem(selectedItems.keyAt(i)))
         }
@@ -141,15 +142,6 @@ class ReminderAdapter(
         var statusSw: SwitchMaterial = itemView.findViewById(R.id.alarm_status_sw)
         var checkBox: MaterialCheckBox = itemView.findViewById(R.id.alarm_check)
     }
-
-    interface ReminderItemActionListener {
-        fun onStatusUpdate(status: ReminderBaseActivity.Companion.ReminderStatus, position: Int)
-        fun onItemTimeClick(position: Int)
-    }
-
-    fun getReminderItem(position: Int) =
-        getItem(position)
-
 }
 
 class ReminderDiffUtil : DiffUtil.ItemCallback<ReminderResponse>() {

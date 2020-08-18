@@ -48,6 +48,7 @@ import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
 import com.joshtalks.joshskills.ui.inbox.InboxActivity
 import com.joshtalks.joshskills.ui.launch.LauncherActivity
 import com.joshtalks.joshskills.ui.referral.ReferralActivity
+import com.joshtalks.joshskills.ui.reminder.reminder_listing.ReminderListActivity
 import timber.log.Timber
 import java.lang.reflect.Type
 import java.util.concurrent.ExecutorService
@@ -306,6 +307,15 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                 deleteUserCredentials()
                 deleteUserData()
                 return null
+            }
+            NotificationAction.ACTION_OPEN_REMINDER -> {
+                if (PrefManager.getStringValue(API_TOKEN).isEmpty()) {
+                    return null
+                }
+                notificationChannelId = NotificationAction.ACTION_OPEN_REFERRAL.name
+                return Intent(applicationContext, ReminderListActivity::class.java).apply {
+                    flags = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
+                }
             }
             else -> {
                 return null
