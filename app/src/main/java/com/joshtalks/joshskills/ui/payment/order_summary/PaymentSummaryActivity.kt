@@ -20,7 +20,6 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.ContextCompat
-import androidx.core.content.res.ResourcesCompat
 import androidx.core.text.HtmlCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
@@ -142,7 +141,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
         binding = DataBindingUtil.setContentView(this, R.layout.activity_payment_summary)
         binding.lifecycleOwner = this
         binding.handler = this
-        typefaceSpan = ResourcesCompat.getFont(applicationContext, R.font.poppins)
+        typefaceSpan = Typeface.createFromAsset(assets, "fonts/Poppins-Medium.ttf")
         initToolbarView()
         initViewModel()
         subscribeObservers()

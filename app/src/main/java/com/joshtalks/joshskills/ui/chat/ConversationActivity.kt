@@ -1991,7 +1991,7 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
                         if (flag) {
                             MaterialDialog(this@ConversationActivity).show {
                                 title(R.string.delete_media_title)
-                                message(R.string.delete_media_title) {
+                                message(R.string.delete_media_message) {
                                     lineSpacing(1.4f)
                                 }
                                 positiveButton(R.string.yes) { dialog ->
