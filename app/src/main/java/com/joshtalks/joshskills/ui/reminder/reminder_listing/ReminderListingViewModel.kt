@@ -22,49 +22,10 @@ class ReminderListingViewModel(application: Application) : AndroidViewModel(appl
 
     val context: JoshApplication = getApplication()
     var appDatabase = AppObjectController.appDatabase
-    lateinit var reminderList: LiveData<List<ReminderResponse>>
+    var reminderList: LiveData<List<ReminderResponse>>
 
     init {
-        updateReminderList()
-    }
-
-    fun updateReminderList() {
         reminderList = appDatabase.reminderDao().getAllReminders()
-    }
-
-    fun getReminders(mentorId: String) {
-        viewModelScope.launch(Dispatchers.IO) {
-            try {
-                val response = AppObjectController.commonNetworkService.getReminders(
-                    mentorId
-                )
-                if (response.isSuccessful) {
-                    response.body()?.let {
-                        if (it.success)
-                            response.body()?.responseData?.let { it1 ->
-                                appDatabase.reminderDao().insertAllReminders(
-                                    it1
-                                )
-                            }
-                        else
-                            showToast(it.message)
-                        return@launch
-                    }
-                }
-            } catch (ex: Exception) {
-                when (ex) {
-                    is HttpException -> {
-                    }
-                    is SocketTimeoutException, is UnknownHostException -> {
-                        showToast(context.getString(R.string.internet_not_available_msz))
-                    }
-                    else -> {
-                        Crashlytics.logException(ex)
-                    }
-                }
-            }
-            return@launch
-        }
     }
 
     fun updateReminder(
