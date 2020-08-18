@@ -142,6 +142,7 @@ class ConversationViewModel(application: Application) :
         }
         if (listOfChat.isNotEmpty()) {
             lastChatTime = listOfChat.last().created
+            deleteChatModelOfType(BASE_MESSAGE_TYPE.UNLOCK)
         }
         listOfChat.forEachWithIndex { _, chat ->
             val question: Question? = appDatabase.chatDao().getQuestion(chat.chatId)
@@ -345,6 +346,7 @@ class ConversationViewModel(application: Application) :
             appDatabase.chatDao().getRecentChatAfterTime(inboxEntity.conversation_id, date)
         if (listOfChat.isNotEmpty()) {
             lastChatTime = listOfChat.last().created
+            deleteChatModelOfType(BASE_MESSAGE_TYPE.UNLOCK)
         }
         listOfChat.forEachWithIndex { _, chat ->
             val question: Question? = appDatabase.chatDao().getQuestion(chat.chatId)
@@ -451,9 +453,11 @@ class ConversationViewModel(application: Application) :
 
     }
 
-    suspend fun deleteChatModelOfType(type: BASE_MESSAGE_TYPE) {
-        AppObjectController.appDatabase.chatDao()
-            .deleteSpecificTypeChatModel(inboxEntity.conversation_id, type)
+    fun deleteChatModelOfType(type: BASE_MESSAGE_TYPE) {
+        viewModelScope.launch(Dispatchers.IO) {
+            AppObjectController.appDatabase.chatDao()
+                .deleteSpecificTypeChatModel(inboxEntity.conversation_id, type)
+        }
     }
 
     suspend fun insertUnlockClassToDatabase(unlockChatModel: ChatModel) {
