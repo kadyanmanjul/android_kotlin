@@ -1,4 +1,4 @@
-package com.joshtalks.joshskills.ui.assessment
+package com.joshtalks.joshskills.ui.assessment.viewholder
 
 import android.annotation.SuppressLint
 import androidx.appcompat.widget.AppCompatTextView

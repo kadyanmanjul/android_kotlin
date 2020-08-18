@@ -1,4 +1,4 @@
-package com.joshtalks.joshskills.ui.assessment
+package com.joshtalks.joshskills.ui.assessment.adapter
 
 import android.view.LayoutInflater
 import android.view.View
@@ -15,7 +15,7 @@ import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQues
 import com.joshtalks.joshskills.repository.local.model.assessment.Choice
 import com.joshtalks.joshskills.repository.server.assessment.AssessmentStatus
 import com.joshtalks.joshskills.repository.server.assessment.AssessmentType
-import com.joshtalks.joshskills.ui.assessment.viewholder.OnChoiceClickListener
+import com.joshtalks.joshskills.ui.assessment.listener.OnChoiceClickListener
 
 class FillInTheBlankQuestionAdapter(
     private var assessment: Assessment,

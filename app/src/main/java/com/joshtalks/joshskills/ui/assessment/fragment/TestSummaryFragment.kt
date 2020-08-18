@@ -1,4 +1,4 @@
-package com.joshtalks.joshskills.ui.assessment
+package com.joshtalks.joshskills.ui.assessment.fragment
 
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
@@ -17,6 +17,11 @@ import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.databinding.FragmentTestSummaryReportBinding
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentWithRelations
 import com.joshtalks.joshskills.repository.server.assessment.AssessmentStatus
+import com.joshtalks.joshskills.ui.assessment.AssessmentActivity
+import com.joshtalks.joshskills.ui.assessment.viewholder.TestItemViewHolder
+import com.joshtalks.joshskills.ui.assessment.viewholder.TestScoreCardViewHolder
+import com.joshtalks.joshskills.ui.assessment.viewholder.TestSummaryHeaderViewHolder
+import com.joshtalks.joshskills.ui.assessment.viewmodel.AssessmentViewModel
 
 
 class TestSummaryFragment : Fragment() {
@@ -65,11 +70,11 @@ class TestSummaryFragment : Fragment() {
         } else {
             viewModel.assessmentLiveData.value?.let {
                 testData = it
+                initView(testData)
             }
             if (testData == null) {
                 requireActivity().finish()
             }
-            initView(testData)
         }
     }
 
@@ -104,7 +109,8 @@ class TestSummaryFragment : Fragment() {
                 binding.recyclerView.addView(
                     TestItemViewHolder(
                         questionList,
-                        assessment.assessment.status)
+                        assessment.assessment.status
+                    )
                 )
             }
         }
@@ -137,7 +143,8 @@ class TestSummaryFragment : Fragment() {
 
         @JvmStatic
         fun newInstance(assessmentId: Int, isTestAlreadyAttempted: Boolean = false) =
-            TestSummaryFragment().apply {
+            TestSummaryFragment()
+                .apply {
                 arguments = Bundle().apply {
                     putInt(ASSESSMENT_ID, assessmentId)
                     putBoolean(IS_TEST_ATTEMPTED, isTestAlreadyAttempted)

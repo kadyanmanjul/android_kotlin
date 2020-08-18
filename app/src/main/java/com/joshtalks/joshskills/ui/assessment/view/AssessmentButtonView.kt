@@ -1,4 +1,4 @@
-package com.joshtalks.joshskills.ui.assessment.viewholder
+package com.joshtalks.joshskills.ui.assessment.view
 
 
 import android.content.Context

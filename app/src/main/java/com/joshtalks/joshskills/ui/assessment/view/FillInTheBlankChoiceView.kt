@@ -30,15 +30,16 @@ import com.joshtalks.joshskills.repository.local.model.assessment.Choice
 import com.joshtalks.joshskills.repository.server.assessment.AssessmentStatus
 import com.joshtalks.joshskills.repository.server.assessment.AssessmentType
 import com.joshtalks.joshskills.repository.server.assessment.ChoiceType
-import com.joshtalks.joshskills.ui.assessment.AssessmentQuestionViewType
-import com.joshtalks.joshskills.ui.assessment.FillInTheBlankQuestionAdapter
-import com.joshtalks.joshskills.ui.assessment.viewholder.OnChoiceClickListener
+import com.joshtalks.joshskills.ui.assessment.adapter.FillInTheBlankQuestionAdapter
+import com.joshtalks.joshskills.ui.assessment.extra.AssessmentQuestionViewType
+import com.joshtalks.joshskills.ui.assessment.listener.OnChoiceClickListener
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
 
-class FillInTheBlankChoiceView : FrameLayout, OnChoiceClickListener {
+class FillInTheBlankChoiceView : FrameLayout,
+    OnChoiceClickListener {
 
     private var assessment: Assessment? = null
     private var viewType = AssessmentQuestionViewType.CORRECT_ANSWER_VIEW

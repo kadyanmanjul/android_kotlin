@@ -1,4 +1,4 @@
-package com.joshtalks.joshskills.ui.assessment
+package com.joshtalks.joshskills.ui.assessment.extra
 
 enum class AssessmentQuestionViewType(viewType: String) {
 

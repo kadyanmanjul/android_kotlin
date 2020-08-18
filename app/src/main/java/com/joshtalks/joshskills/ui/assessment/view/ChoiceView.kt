@@ -1,4 +1,4 @@
-package com.joshtalks.joshskills.ui.assessment.viewholder
+package com.joshtalks.joshskills.ui.assessment.view
 
 import android.content.Context
 import android.util.AttributeSet
@@ -8,11 +8,7 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.repository.local.model.assessment.Assessment
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionWithRelations
 import com.joshtalks.joshskills.repository.server.assessment.ChoiceType
-import com.joshtalks.joshskills.ui.assessment.AssessmentQuestionViewType
-import com.joshtalks.joshskills.ui.assessment.view.FillInTheBlankChoiceView
-import com.joshtalks.joshskills.ui.assessment.view.MCQChoicesView
-import com.joshtalks.joshskills.ui.assessment.view.MatchTheFollowingChoiceView
-import com.joshtalks.joshskills.ui.assessment.view.Stub
+import com.joshtalks.joshskills.ui.assessment.extra.AssessmentQuestionViewType
 import timber.log.Timber
 
 class ChoiceView : FrameLayout {

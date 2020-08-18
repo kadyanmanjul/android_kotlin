@@ -8,7 +8,7 @@
 
         <variable
                 name="fragment"
-                type="com.joshtalks.joshskills.ui.assessment.ReviseConceptFragment" />
+                type="com.joshtalks.joshskills.ui.assessment.fragment.ReviseConceptFragment" />
 
     </data>
 

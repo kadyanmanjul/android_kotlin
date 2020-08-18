@@ -1,4 +1,4 @@
-package com.joshtalks.joshskills.ui.assessment.viewholder
+package com.joshtalks.joshskills.ui.assessment.adapter
 
 import android.content.ClipData
 import android.os.Build
@@ -21,9 +21,9 @@ import com.joshtalks.joshskills.repository.local.model.assessment.Choice
 import com.joshtalks.joshskills.repository.server.assessment.AssessmentStatus
 import com.joshtalks.joshskills.repository.server.assessment.AssessmentType
 import com.joshtalks.joshskills.repository.server.assessment.ChoiceColumn
-import com.joshtalks.joshskills.ui.assessment.AssessmentQuestionViewType
-import com.joshtalks.joshskills.ui.assessment.DragListener
-import com.joshtalks.joshskills.ui.assessment.view.EmptyListListener
+import com.joshtalks.joshskills.ui.assessment.extra.AssessmentQuestionViewType
+import com.joshtalks.joshskills.ui.assessment.listener.DragListener
+import com.joshtalks.joshskills.ui.assessment.listener.EmptyListListener
 
 
 class MatchTheFollowingChoiceAdapter(

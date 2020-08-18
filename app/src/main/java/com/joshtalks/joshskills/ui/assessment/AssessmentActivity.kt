@@ -44,7 +44,12 @@ import com.joshtalks.joshskills.repository.server.assessment.ChoiceColumn
 import com.joshtalks.joshskills.repository.server.assessment.ChoiceType
 import com.joshtalks.joshskills.repository.server.assessment.QuestionStatus
 import com.joshtalks.joshskills.repository.server.assessment.ReviseConcept
-import com.joshtalks.joshskills.ui.assessment.viewholder.AssessmentQuestionAdapter
+import com.joshtalks.joshskills.ui.assessment.adapter.AssessmentQuestionAdapter
+import com.joshtalks.joshskills.ui.assessment.extra.AssessmentQuestionViewType
+import com.joshtalks.joshskills.ui.assessment.fragment.QuizSuccessFragment
+import com.joshtalks.joshskills.ui.assessment.fragment.ReviseConceptFragment
+import com.joshtalks.joshskills.ui.assessment.fragment.TestSummaryFragment
+import com.joshtalks.joshskills.ui.assessment.viewmodel.AssessmentViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -351,11 +356,12 @@ class AssessmentActivity : CoreJoshActivity() {
     }
 
     private fun setupViewPager(assessmentWithRelations: AssessmentWithRelations) {
-        val adapter = AssessmentQuestionAdapter(
-            assessmentWithRelations.assessment,
-            AssessmentQuestionViewType.CORRECT_ANSWER_VIEW,
-            assessmentWithRelations.questionList
-        )
+        val adapter =
+            AssessmentQuestionAdapter(
+                assessmentWithRelations.assessment,
+                AssessmentQuestionViewType.CORRECT_ANSWER_VIEW,
+                assessmentWithRelations.questionList
+            )
         binding.questionViewPager.adapter = adapter
         TabLayoutMediator(
             binding.tabLayout,
@@ -469,9 +475,7 @@ class AssessmentActivity : CoreJoshActivity() {
             if (isTestFragmentVisible) {
                 return true
             } else {
-                showTestSummaryFragment(
-                    assessmentId, false
-                )
+                showTestSummaryFragment(assessmentId)
                 return false
             }
         }

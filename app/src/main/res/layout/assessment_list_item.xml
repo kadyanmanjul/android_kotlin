@@ -18,7 +18,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-            <com.joshtalks.joshskills.ui.assessment.viewholder.QuestionView
+            <com.joshtalks.joshskills.ui.assessment.view.QuestionView
                     android:id="@+id/question_view"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -26,7 +26,7 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
-            <com.joshtalks.joshskills.ui.assessment.viewholder.ChoiceView
+            <com.joshtalks.joshskills.ui.assessment.view.ChoiceView
                     android:id="@+id/choice_view"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

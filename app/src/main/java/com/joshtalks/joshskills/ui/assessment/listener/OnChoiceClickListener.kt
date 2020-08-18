@@ -1,4 +1,4 @@
-package com.joshtalks.joshskills.ui.assessment.viewholder
+package com.joshtalks.joshskills.ui.assessment.listener
 
 import com.joshtalks.joshskills.repository.local.model.assessment.Choice
 

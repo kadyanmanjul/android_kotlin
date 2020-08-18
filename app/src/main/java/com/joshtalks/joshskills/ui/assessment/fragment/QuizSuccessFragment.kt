@@ -1,4 +1,4 @@
-package com.joshtalks.joshskills.ui.assessment
+package com.joshtalks.joshskills.ui.assessment.fragment
 
 import android.os.Bundle
 import android.view.LayoutInflater

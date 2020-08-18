@@ -1,4 +1,4 @@
-package com.joshtalks.joshskills.ui.assessment
+package com.joshtalks.joshskills.ui.assessment.fragment
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -84,7 +84,8 @@ class ReviseConceptFragment : Fragment() {
 
         @JvmStatic
         fun newInstance(reviseConcept: ReviseConcept) =
-            ReviseConceptFragment().apply {
+            ReviseConceptFragment()
+                .apply {
                 arguments = Bundle().apply {
                     putParcelable(REVISE_CONCEPT_DETAILS, reviseConcept)
                 }
@@ -92,7 +93,8 @@ class ReviseConceptFragment : Fragment() {
 
         @JvmStatic
         fun newInstance(reviseConcept: ReviseConceptResponse) =
-            ReviseConceptFragment().apply {
+            ReviseConceptFragment()
+                .apply {
                 arguments = Bundle().apply {
                     putParcelable(REVISE_CONCEPT_RESPONSE, reviseConcept)
                 }

@@ -1,12 +1,11 @@
-package com.joshtalks.joshskills.ui.assessment
+package com.joshtalks.joshskills.ui.assessment.listener
 
 import android.view.DragEvent
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.repository.local.model.assessment.Choice
-import com.joshtalks.joshskills.ui.assessment.view.EmptyListListener
-import com.joshtalks.joshskills.ui.assessment.viewholder.MatchTheFollowingChoiceAdapter
+import com.joshtalks.joshskills.ui.assessment.adapter.MatchTheFollowingChoiceAdapter
 
 class DragListener(private val listener: EmptyListListener) : View.OnDragListener {
     private var isDropped = false

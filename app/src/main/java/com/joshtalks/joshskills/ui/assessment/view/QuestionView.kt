@@ -1,4 +1,4 @@
-package com.joshtalks.joshskills.ui.assessment.viewholder
+package com.joshtalks.joshskills.ui.assessment.view
 
 
 import android.content.Context
@@ -18,8 +18,6 @@ import com.joshtalks.joshskills.core.custom_ui.MiniExoPlayer
 import com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionWithRelations
 import com.joshtalks.joshskills.repository.server.assessment.AssessmentMediaType
-import com.joshtalks.joshskills.ui.assessment.view.AudioPlayerView
-import com.joshtalks.joshskills.ui.assessment.view.Stub
 import timber.log.Timber
 
 class QuestionView : FrameLayout {

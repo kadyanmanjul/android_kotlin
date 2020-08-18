@@ -1,4 +1,4 @@
-package com.joshtalks.joshskills.ui.assessment
+package com.joshtalks.joshskills.ui.assessment.fragment
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -23,7 +23,8 @@ class IntroQuestionFragment : DialogFragment() {
 
     companion object {
         fun newInstance(assessmentIntro: AssessmentIntro) =
-            IntroQuestionFragment().apply {
+            IntroQuestionFragment()
+                .apply {
                 arguments = Bundle().apply {
                     putParcelable(ASSESSMENT_DETAIL_SOURCE, assessmentIntro)
                 }

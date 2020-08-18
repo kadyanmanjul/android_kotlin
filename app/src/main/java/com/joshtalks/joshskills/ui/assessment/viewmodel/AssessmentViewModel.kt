@@ -1,4 +1,4 @@
-package com.joshtalks.joshskills.ui.assessment
+package com.joshtalks.joshskills.ui.assessment.viewmodel
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
@@ -107,6 +107,7 @@ class AssessmentViewModel(application: Application) : AndroidViewModel(applicati
                 } catch (ex: Throwable) {
                     ex.showAppropriateMsg()
                 }
+                removeAll(assessmentWithRelations)
                 apiCallStatusLiveData.postValue(ApiCallStatus.FAILED)
             }
         }
@@ -162,6 +163,22 @@ class AssessmentViewModel(application: Application) : AndroidViewModel(applicati
             }
             AppObjectController.appDatabase.assessmentDao()
                 .updateAssessmentQuestionWithoutRelation(questionWithRelations.question)
+        }
+    }
+    private fun removeAll(assessmentWithRelations: AssessmentWithRelations) {
+        assessmentWithRelations.questionList.forEach { questionWithRelations ->
+            when (questionWithRelations.question.choiceType) {
+                ChoiceType.FILL_IN_THE_BLANKS_TEXT, ChoiceType.MATCH_TEXT -> {
+
+                    questionWithRelations.choiceList.forEach {
+                        if(it.userSelectedOrder<50)
+                        it.userSelectedOrder = it.userSelectedOrder.minus(1)
+                    }
+                }
+                else->{
+
+                }
+            }
         }
     }
 

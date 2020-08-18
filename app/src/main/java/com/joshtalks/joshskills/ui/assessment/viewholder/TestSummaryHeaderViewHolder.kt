@@ -1,4 +1,4 @@
-package com.joshtalks.joshskills.ui.assessment
+package com.joshtalks.joshskills.ui.assessment.viewholder
 
 import androidx.appcompat.widget.AppCompatTextView
 import com.joshtalks.joshskills.R

@@ -1,4 +1,4 @@
-package com.joshtalks.joshskills.ui.assessment.viewholder
+package com.joshtalks.joshskills.ui.assessment.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.joshtalks.joshskills.databinding.AssessmentListItemBinding
 import com.joshtalks.joshskills.repository.local.model.assessment.Assessment
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionWithRelations
-import com.joshtalks.joshskills.ui.assessment.AssessmentQuestionViewType
+import com.joshtalks.joshskills.ui.assessment.extra.AssessmentQuestionViewType
 
 class AssessmentQuestionAdapter(
     private var assessment: Assessment,

@@ -19,9 +19,9 @@ import com.joshtalks.joshskills.repository.local.model.assessment.Assessment
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionWithRelations
 import com.joshtalks.joshskills.repository.local.model.assessment.Choice
 import com.joshtalks.joshskills.repository.server.assessment.ChoiceType
-import com.joshtalks.joshskills.ui.assessment.AssessmentQuestionViewType
+import com.joshtalks.joshskills.ui.assessment.extra.AssessmentQuestionViewType
+import com.joshtalks.joshskills.ui.assessment.listener.OnChoiceClickListener
 import com.joshtalks.joshskills.ui.assessment.viewholder.MCQChoiceViewHolder
-import com.joshtalks.joshskills.ui.assessment.viewholder.OnChoiceClickListener
 import com.mindorks.placeholderview.PlaceHolderView
 import com.vanniktech.emoji.Utils
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -31,7 +31,8 @@ import timber.log.Timber
 import java.io.InvalidClassException
 
 
-class MCQChoicesView : FrameLayout, OnChoiceClickListener {
+class MCQChoicesView : FrameLayout,
+    OnChoiceClickListener {
 
     private var assessment: Assessment? = null
     private var viewType = AssessmentQuestionViewType.CORRECT_ANSWER_VIEW
