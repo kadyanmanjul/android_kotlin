@@ -62,8 +62,8 @@ class AlarmReceiver : BroadcastReceiver() {
 
     private fun NotificationManager.buildChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val name = "Example Notification Channel"
-            val descriptionText = "This is used to demonstrate the Full Screen Intent"
+            val name = "Example Notification Channel" // todo move to string file
+            val descriptionText = "This is used to demonstrate the Full Screen Intent"  // todo move to string file
             val importance = NotificationManager.IMPORTANCE_HIGH
             val channel = NotificationChannel(CHANNEL_ID, name, importance).apply {
                 description = descriptionText
