@@ -8,8 +8,6 @@ import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
-import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.checkbox.MaterialCheckBox
 import com.google.android.material.switchmaterial.SwitchMaterial
@@ -25,8 +23,9 @@ class ReminderAdapter(
     var context: Context,
     private var onStatusUpdate: ((status: ReminderBaseActivity.Companion.ReminderStatus, reminderItem: ReminderResponse) -> Unit)? =
         null,
-    private var onItemTimeClick: ((reminderItem: ReminderResponse) -> Unit)? = null
-) : ListAdapter<ReminderResponse, ReminderAdapter.ReminderViewHolder>(ReminderDiffUtil()) {
+    private var onItemTimeClick: ((reminderItem: ReminderResponse) -> Unit)? = null,
+    private val itemList: List<ReminderResponse>
+) : RecyclerView.Adapter<ReminderAdapter.ReminderViewHolder>() {
     var formatter: NumberFormat = DecimalFormat("00")
     private val selectedItems: SparseBooleanArray = SparseBooleanArray()
 
@@ -142,15 +141,12 @@ class ReminderAdapter(
         var statusSw: SwitchMaterial = itemView.findViewById(R.id.alarm_status_sw)
         var checkBox: MaterialCheckBox = itemView.findViewById(R.id.alarm_check)
     }
-}
 
-class ReminderDiffUtil : DiffUtil.ItemCallback<ReminderResponse>() {
-    override fun areItemsTheSame(oldItem: ReminderResponse, newItem: ReminderResponse): Boolean {
-        return oldItem.id == newItem.id
+    override fun getItemCount(): Int {
+        return itemList.size
     }
 
-    override fun areContentsTheSame(oldItem: ReminderResponse, newItem: ReminderResponse): Boolean {
-        return oldItem == newItem
+    private fun getItem(position: Int): ReminderResponse {
+        return itemList.get(position)
     }
-
 }

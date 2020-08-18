@@ -16,7 +16,6 @@ import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
-import java.util.*
 
 class ReminderListingViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -48,8 +47,7 @@ class ReminderListingViewModel(application: Application) : AndroidViewModel(appl
                     response.body()?.let {
                         if (it.success) {
                             val reminderResponse = ReminderResponse(
-                                id, mentorId, frequency, status, time, "",
-                                Date().toString()
+                                id, mentorId, frequency, status, time
                             )
                             appDatabase.reminderDao().updateReminder(reminderResponse)
                             onReminderUpdate?.invoke(reminderResponse)

@@ -17,7 +17,6 @@ import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
-import java.util.*
 
 class ReminderViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -52,8 +51,7 @@ class ReminderViewModel(application: Application) : AndroidViewModel(application
                             submitApiCallStatusLiveData.postValue(ApiCallStatus.SUCCESS)
                             appDatabase.reminderDao().insertReminder(
                                 ReminderResponse(
-                                    id, mentorId, frequency, status, time,
-                                    Date().toString(), Date().toString()
+                                    id, mentorId, frequency, status, time
                                 )
                             )
                         } else {

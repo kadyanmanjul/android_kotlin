@@ -27,13 +27,5 @@ data class ReminderResponse(
 
     @ColumnInfo(name = "reminder_time")
     @SerializedName("reminder_time")
-    var reminderTime: String,
-
-    @ColumnInfo(name = "created_at")
-    @SerializedName("created_at")
-    var createdAt: String,
-
-    @ColumnInfo(name = "modified_at")
-    @SerializedName("modified_at")
-    var modifiedAt: String
+    var reminderTime: String
 )

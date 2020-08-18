@@ -286,7 +286,7 @@ abstract class AppDatabase : RoomDatabase() {
         private val MIGRATION_18_19: Migration = object : Migration(18, 19) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("ALTER TABLE chat_table ADD COLUMN last_use_time INTEGER DEFAULT '" + Date().time + "'")
-                database.execSQL("CREATE TABLE IF NOT EXISTS `reminder_table` (`reminder_id` INTEGER PRIMARY KEY NOT NULL, `mentor_id` TEXT NOT NULL, `reminder_frequency` TEXT NOT NULL, `status` TEXT NOT NULL, `reminder_time` TEXT NOT NULL, `created_at` TEXT NOT NULL, `modified_at` TEXT NOT NULL)")
+                database.execSQL("CREATE TABLE IF NOT EXISTS `reminder_table` (`reminder_id` INTEGER PRIMARY KEY NOT NULL, `mentor_id` TEXT NOT NULL, `reminder_frequency` TEXT NOT NULL, `status` TEXT NOT NULL, `reminder_time` TEXT NOT NULL)")
                 database.execSQL("CREATE INDEX IF NOT EXISTS `index_reminder_table_reminder_id` ON `reminder_table` (`reminder_id`)")
             }
         }

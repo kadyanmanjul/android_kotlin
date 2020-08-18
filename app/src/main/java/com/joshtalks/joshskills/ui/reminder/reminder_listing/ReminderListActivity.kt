@@ -14,6 +14,7 @@ import androidx.core.view.GestureDetectorCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
@@ -23,11 +24,11 @@ import com.joshtalks.joshskills.repository.server.reminder.ReminderResponse
 import com.joshtalks.joshskills.ui.reminder.ReminderBaseActivity
 import com.joshtalks.joshskills.ui.reminder.set_reminder.ReminderActivity
 import com.joshtalks.joshskills.util.DividerItemDecoration
-import com.mindorks.placeholderview.SmoothLinearLayoutManager
 
 class ReminderListActivity : ReminderBaseActivity(),
     RecyclerView.OnItemTouchListener {
 
+    private val reminderList: ArrayList<ReminderResponse> = ArrayList()
     private lateinit var gestureDetector: GestureDetectorCompat
     private var actionMode: Boolean = false
     private lateinit var titleView: AppCompatTextView
@@ -62,12 +63,14 @@ class ReminderListActivity : ReminderBaseActivity(),
         initRv()
         viewModel.reminderList.observe(this,
             Observer { data ->
-                adapter.submitList(data)
+                reminderList.clear()
+                reminderList.addAll(data)
+                adapter.notifyDataSetChanged()
             })
     }
 
     private fun initRv() {
-        val linearLayoutManager = SmoothLinearLayoutManager(this)
+        val linearLayoutManager = LinearLayoutManager(this)
         linearLayoutManager.isSmoothScrollbarEnabled = true
         binding.reminderRecyclerView.layoutManager = linearLayoutManager
         binding.reminderRecyclerView.addItemDecoration(
@@ -76,7 +79,7 @@ class ReminderListActivity : ReminderBaseActivity(),
                 R.drawable.list_divider
             )
         )
-        adapter = ReminderAdapter(this, this::onStatusUpdate, this::onItemTimeClick)
+        adapter = ReminderAdapter(this, this::onStatusUpdate, this::onItemTimeClick, reminderList)
         binding.reminderRecyclerView.adapter = adapter
 
         binding.reminderRecyclerView.addOnItemTouchListener(this)
