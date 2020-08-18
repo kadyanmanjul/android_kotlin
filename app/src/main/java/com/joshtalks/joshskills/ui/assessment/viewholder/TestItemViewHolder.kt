@@ -44,6 +44,12 @@ class TestItemViewHolder(
             if (isQuestionAttempted(questionWithRelations)) {
                 attempt_status.text =
                     AppObjectController.joshApplication.getString(R.string.attempted)
+                attempt_status.supportBackgroundTintList =
+                    ResourcesCompat.getColorStateList(
+                        AppObjectController.joshApplication.resources,
+                        R.color.button_color,
+                        null
+                    )
             } else {
                 attempt_status.text =
                     AppObjectController.joshApplication.getString(R.string.not_attempted)
