@@ -933,7 +933,6 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
             try {
                 if (unlockViewHolder != null) {
                     conversationBinding.chatRv.removeView(unlockViewHolder)
-                    conversationViewModel.deleteChatModelOfType(BASE_MESSAGE_TYPE.UNLOCK)
                 }
                 chatModelLast = listChat.find { it.isSeen.not() }
                 conversationList.addAll(listChat)
@@ -1523,6 +1522,7 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
                     )
                 ) {
                     CoroutineScope(Dispatchers.Main).launch {
+                        conversationViewModel.deleteChatModelOfType(BASE_MESSAGE_TYPE.UNLOCK)
                         if (unlockViewHolder != null) {
                             conversationBinding.chatRv.removeView(unlockViewHolder)
                         }

@@ -30,6 +30,7 @@ import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.core.notification.FCM_TOKEN
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.DatabaseUtils
+import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
 import com.joshtalks.joshskills.repository.local.entity.NPSEvent
 import com.joshtalks.joshskills.repository.local.entity.NPSEventModel
 import com.joshtalks.joshskills.repository.local.eventbus.NPSEventGenerateEventBus
@@ -68,6 +69,7 @@ class AppRunRequiredTaskWorker(var context: Context, workerParams: WorkerParamet
         }
 
         WorkMangerAdmin.readMessageUpdating()
+        WorkMangerAdmin.deleteUnlockTypeQuestions()
         AppObjectController.getFirebaseRemoteConfig().fetchAndActivate().addOnCompleteListener {
             val npsEvent =
                 AppObjectController.getFirebaseRemoteConfig().getString("NPS_EVENT_LIST")
@@ -573,6 +575,24 @@ class MergeMentorWithGAIDWorker(context: Context, workerParams: WorkerParameters
             val data = mapOf("mentor" to Mentor.getInstance().getId())
             AppObjectController.chatNetworkService.mergeMentorWithGAId(id.toString(), data)
             PrefManager.removeKey(SERVER_GID_ID)
+        } catch (ex: Throwable) {
+            LogException.catchException(ex)
+        }
+        return Result.success()
+    }
+}
+
+class DeleteUnlockTypeQuestion(context: Context, workerParams: WorkerParameters) :
+    CoroutineWorker(context, workerParams) {
+    override suspend fun doWork(): Result {
+        try {
+            val listConversastionId=AppObjectController.appDatabase.courseDao().getAllConversationId()
+            listConversastionId.forEach { conversationId->
+                if (conversationId.isNotBlank()){
+                    AppObjectController.appDatabase.chatDao()
+                        .deleteSpecificTypeChatModel(conversationId, BASE_MESSAGE_TYPE.UNLOCK)
+                }
+            }
         } catch (ex: Throwable) {
             LogException.catchException(ex)
         }

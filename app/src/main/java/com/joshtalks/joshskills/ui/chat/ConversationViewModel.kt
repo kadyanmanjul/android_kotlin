@@ -142,7 +142,6 @@ class ConversationViewModel(application: Application) :
         }
         if (listOfChat.isNotEmpty()) {
             lastChatTime = listOfChat.last().created
-            deleteChatModelOfType(BASE_MESSAGE_TYPE.UNLOCK)
         }
         listOfChat.forEachWithIndex { _, chat ->
             val question: Question? = appDatabase.chatDao().getQuestion(chat.chatId)
@@ -346,7 +345,6 @@ class ConversationViewModel(application: Application) :
             appDatabase.chatDao().getRecentChatAfterTime(inboxEntity.conversation_id, date)
         if (listOfChat.isNotEmpty()) {
             lastChatTime = listOfChat.last().created
-            deleteChatModelOfType(BASE_MESSAGE_TYPE.UNLOCK)
         }
         listOfChat.forEachWithIndex { _, chat ->
             val question: Question? = appDatabase.chatDao().getQuestion(chat.chatId)

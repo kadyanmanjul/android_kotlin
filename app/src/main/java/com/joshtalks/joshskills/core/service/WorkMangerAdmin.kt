@@ -8,8 +8,6 @@ import androidx.work.WorkManager
 import androidx.work.workDataOf
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.GID_SET_FOR_USER
-import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.memory.MemoryManagementWorker
 import com.joshtalks.joshskills.core.memory.RemoveMediaWorker
 import com.joshtalks.joshskills.repository.local.entity.NPSEvent
@@ -202,5 +200,36 @@ object WorkMangerAdmin {
 
     }
 
+
+    fun deleteUnlockTypeQuestions() {
+
+        val deleteAtHour = 1
+        val delay: Long
+        val date=Calendar.getInstance()
+
+        if (date.get(Calendar.HOUR_OF_DAY) > deleteAtHour) {
+            delay = date.get(Calendar.HOUR_OF_DAY).plus(24).minus(deleteAtHour).toLong()
+        } else {
+            delay = deleteAtHour.minus(date.get(Calendar.HOUR_OF_DAY)).toLong()
+        }
+
+        val workRequest = PeriodicWorkRequest.Builder(
+            DeleteUnlockTypeQuestion::class.java,
+            24,
+            TimeUnit.HOURS,
+            PeriodicWorkRequest.MIN_PERIODIC_FLEX_MILLIS,
+            TimeUnit.MILLISECONDS
+        )
+            .setInitialDelay(delay, TimeUnit.HOURS)
+            .addTag(DeleteUnlockTypeQuestion::class.java.simpleName)
+            .build()
+
+        WorkManager.getInstance(AppObjectController.joshApplication)
+            .enqueueUniquePeriodicWork(
+                DeleteUnlockTypeQuestion::class.java.simpleName,
+                ExistingPeriodicWorkPolicy.REPLACE,
+                workRequest
+            )
+    }
 
 }
