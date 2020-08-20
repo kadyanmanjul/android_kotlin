@@ -5,12 +5,14 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.crashlytics.android.Crashlytics
+import com.joshtalks.joshcamerax.utils.SharedPrefsManager
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.JoshApplication
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.util.ReminderUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -69,7 +71,6 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-
     private fun getAllRegisterCourseMinimalFromDB() = viewModelScope.launch {
         try {
             registerCourseMinimalLiveData.postValue(
@@ -80,25 +81,52 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    fun openReminderScreen(openReminderCallback: ((responseLiseSize: Int) -> Unit)? = null) {
+    fun openReminderScreen(openReminderCallback: ((responseLiseSize: Int?) -> Unit)? = null) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val response = AppObjectController.commonNetworkService.getReminders(
-                    Mentor.getInstance().getId()
-                )
-                if (response.isSuccessful) {
-                    response.body()?.let {
-                        if (it.success)
-                            response.body()?.responseData?.let { it1 ->
-                                appDatabase.reminderDao().insertAllReminders(
-                                    it1
-                                )
-                                openReminderCallback?.invoke(it1.size)
-                            }
-                        else
-                            showToast(it.message)
-                        return@launch
+                if (SharedPrefsManager.newInstance(context)
+                        .getBoolean(SharedPrefsManager.Companion.IS_FIRST_REMINDER, false)
+                ) {
+                    val response = AppObjectController.commonNetworkService.getReminders(
+                        Mentor.getInstance().getId()
+                    )
+                    if (response.isSuccessful) {
+                        response.body()?.let {
+                            if (it.success) {
+                                response.body()?.responseData?.let { it1 ->
+                                    appDatabase.reminderDao().insertAllReminders(
+                                        it1
+                                    )
+                                    SharedPrefsManager.newInstance(context)
+                                        .putBoolean(
+                                            SharedPrefsManager.Companion.IS_FIRST_REMINDER,
+                                            false
+                                        )
+                                    val reminderUtil = ReminderUtil(getApplication())
+                                    it1.forEach { reminderItem ->
+                                        val timeParts = reminderItem.reminderTime.split(":")
+                                        val hours = timeParts[0]
+                                        val mins = timeParts[1]
+                                        reminderUtil.setAlarm(
+                                            when (reminderItem.reminderFrequency) {
+                                                ReminderUtil.Companion.ReminderFrequency.EVERYDAY.name -> ReminderUtil.Companion.ReminderFrequency.EVERYDAY
+                                                ReminderUtil.Companion.ReminderFrequency.WEEKDAYS.name -> ReminderUtil.Companion.ReminderFrequency.WEEKDAYS
+                                                else -> ReminderUtil.Companion.ReminderFrequency.WEEKENDS
+                                            },
+                                            reminderUtil.getAlarmPendingIntent(reminderItem.id),
+                                            hours.toIntOrNull(),
+                                            mins.toIntOrNull()
+                                        )
+                                    }
+                                    openReminderCallback?.invoke(it.message.toIntOrNull())
+                                }
+                            } else
+                                showToast(it.message)
+                            return@launch
+                        }
                     }
+                } else {
+                    openReminderCallback?.invoke(appDatabase.reminderDao().getRemindersList().size)
                 }
             } catch (ex: Exception) {
                 ex.printStackTrace()

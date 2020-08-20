@@ -18,14 +18,16 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.CoreJoshActivity
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
 import com.joshtalks.joshskills.databinding.ActivityReminderListLayoutBinding
 import com.joshtalks.joshskills.repository.server.reminder.ReminderResponse
-import com.joshtalks.joshskills.ui.reminder.ReminderBaseActivity
 import com.joshtalks.joshskills.ui.reminder.set_reminder.ReminderActivity
 import com.joshtalks.joshskills.util.DividerItemDecoration
+import com.joshtalks.joshskills.util.ReminderUtil
+import com.joshtalks.joshskills.util.ReminderUtil.Companion
 
-class ReminderListActivity : ReminderBaseActivity(),
+class ReminderListActivity : CoreJoshActivity(),
     RecyclerView.OnItemTouchListener {
 
     private val reminderList: ArrayList<ReminderResponse> = ArrayList()
@@ -93,7 +95,7 @@ class ReminderListActivity : ReminderBaseActivity(),
         startActivity(Intent(this, ReminderActivity::class.java))
     }
 
-    fun onStatusUpdate(
+    private fun onStatusUpdate(
         status: Companion.ReminderStatus,
         reminderItem: ReminderResponse
     ) {
@@ -104,7 +106,8 @@ class ReminderListActivity : ReminderBaseActivity(),
                 reminderItem.reminderFrequency,
                 status.name,
                 reminderItem.mentor,
-                reminderItem.reminderTime
+                reminderItem.reminderTime,
+                this::onReminderUpdated
             )
 
         }
@@ -123,15 +126,12 @@ class ReminderListActivity : ReminderBaseActivity(),
 
     private fun deleteReminders() {
         adapter.getSelectedItems().let { items ->
+            val reminderIds: ArrayList<Int> = ArrayList()
             items?.forEach {
-                viewModel.updateReminder(
-                    it.id,
-                    it.reminderTime,
-                    it.reminderFrequency,
-                    Companion.ReminderStatus.DELETED.name,
-                    it.mentor,
-                    it.reminderTime,
-                    this::onReminderUpdated
+                reminderIds.add((it.id))
+                viewModel.deleteReminders(
+                    reminderIds,
+                    this::onRemindersDeleted
                 )
             }
         }
@@ -139,23 +139,28 @@ class ReminderListActivity : ReminderBaseActivity(),
         disableActionMode()
     }
 
+    private fun onRemindersDeleted(reminderIds: ArrayList<Int>) {
+        val reminderUtil = ReminderUtil(applicationContext)
+        reminderIds.forEach { reminderUtil.deleteAlarm(reminderUtil.getAlarmPendingIntent(it)) }
+    }
 
     private fun onReminderUpdated(reminderResponse: ReminderResponse) {
         val timeParts = reminderResponse.reminderTime.split(":")
 
         if (timeParts.isEmpty())
             return
+        val reminderUtil = ReminderUtil(applicationContext)
         if (reminderResponse.status == Companion.ReminderStatus.ACTIVE.name) {
-            setAlarm(
+
+            reminderUtil.setAlarm(
                 getReminderFrequency(reminderResponse.reminderFrequency),
-                getAlarmPendingIntent(reminderResponse.id),
+                reminderUtil.getAlarmPendingIntent(reminderResponse.id),
                 timeParts[0].toIntOrNull(),
                 timeParts[1].toIntOrNull()
             )
         } else {
-            deleteAlarm(getAlarmPendingIntent(reminderResponse.id))
+            reminderUtil.deleteAlarm(reminderUtil.getAlarmPendingIntent(reminderResponse.id))
         }
-
     }
 
     private fun getReminderFrequency(frequency: String): Companion.ReminderFrequency {

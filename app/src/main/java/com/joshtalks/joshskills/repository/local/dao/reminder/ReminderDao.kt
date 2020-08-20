@@ -19,6 +19,15 @@ interface ReminderDao {
     @Query("SELECT * FROM REMINDER_TABLE WHERE status <> 'DELETED' ORDER BY reminder_time ASC")
     fun getAllReminders(): LiveData<List<ReminderResponse>>
 
+    @Query("SELECT * FROM REMINDER_TABLE WHERE status <> 'DELETED' ORDER BY reminder_time ASC")
+    fun getRemindersList(): List<ReminderResponse>
+
+    @Query("SELECT * FROM REMINDER_TABLE WHERE status <> 'DELETED' AND reminder_id= :reminderId ORDER BY reminder_time ASC")
+    fun getReminder(reminderId: Int): ReminderResponse
+
     @Update
     fun updateReminder(reminderItem: ReminderResponse)
+
+    @Query("DELETE FROM REMINDER_TABLE WHERE REMINDER_ID IN (:reminderIds)")
+    fun deleteReminders(reminderIds: List<Int>)
 }

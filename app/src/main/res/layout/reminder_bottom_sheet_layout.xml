@@ -94,6 +94,7 @@
                 android:layout_marginStart="@dimen/_16sdp"
                 android:layout_marginTop="@dimen/_8sdp"
                 android:layout_marginEnd="@dimen/_16sdp"
+                android:layout_marginBottom="@dimen/_8sdp"
                 android:gravity="center"
                 android:onClick="@{()->handler.goToCourse()}"
                 android:paddingTop="@dimen/_10sdp"

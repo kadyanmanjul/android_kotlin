@@ -9,6 +9,8 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.JoshApplication
 import com.joshtalks.joshskills.core.showToast
+import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.repository.server.reminder.DeleteReminderRequest
 import com.joshtalks.joshskills.repository.server.reminder.ReminderRequest
 import com.joshtalks.joshskills.repository.server.reminder.ReminderResponse
 import kotlinx.coroutines.Dispatchers
@@ -72,4 +74,41 @@ class ReminderListingViewModel(application: Application) : AndroidViewModel(appl
         }
     }
 
+    fun deleteReminders(
+        reminderIds: ArrayList<Int>,
+        onRemindersDeleted: ((reminderIds: ArrayList<Int>) -> Unit)? = null
+    ) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val request =
+                    DeleteReminderRequest(Mentor.getInstance().getId(), reminderIds)
+                val response = AppObjectController.commonNetworkService.deleteReminders(
+                    request
+                )
+                if (response.isSuccessful) {
+                    response.body()?.let {
+                        if (it.success) {
+                            appDatabase.reminderDao().deleteReminders(reminderIds)
+                            onRemindersDeleted?.invoke(reminderIds)
+                        } else
+                            showToast(it.message)
+                        return@launch
+                    }
+                }
+            } catch (ex: Exception) {
+                when (ex) {
+                    is HttpException -> {
+                    }
+                    is SocketTimeoutException, is UnknownHostException -> {
+                        showToast(context.getString(R.string.internet_not_available_msz))
+                    }
+                    else -> {
+                        Crashlytics.logException(ex)
+                    }
+                }
+            }
+            return@launch
+        }
+
+    }
 }

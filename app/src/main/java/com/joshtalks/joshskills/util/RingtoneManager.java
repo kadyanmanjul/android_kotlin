@@ -45,8 +45,6 @@ public class RingtoneManager {
     public void playRingtone() {
         android.media.AudioManager audioManager = (android.media.AudioManager) mContext.getSystemService(Context.AUDIO_SERVICE);
 
-        if (mPlayer != null)
-            System.out.println("AudioPlayer.playRingtone " + mPlayer.isPlaying() + " " + mPlayer.isLooping());
         if (mPlayer != null && mPlayer.isPlaying())
             stopRingtone();
         // Honour silent mode

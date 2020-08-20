@@ -11,17 +11,20 @@ import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshcamerax.utils.SharedPrefsManager
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.CoreJoshActivity
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.SET_REMINDER_DESCRIPTION
 import com.joshtalks.joshskills.databinding.ActivityReminderBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor
-import com.joshtalks.joshskills.ui.reminder.ReminderBaseActivity
 import com.joshtalks.joshskills.ui.reminder.reminder_listing.ReminderListActivity
+import com.joshtalks.joshskills.util.ReminderUtil
+import java.text.DecimalFormat
+import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.util.*
 
 
-class ReminderActivity : ReminderBaseActivity() {
+class ReminderActivity : CoreJoshActivity() {
     private var previousTime: String = EMPTY
     private lateinit var titleView: AppCompatTextView
     private var reminderId: Int = -1
@@ -30,6 +33,7 @@ class ReminderActivity : ReminderBaseActivity() {
     private var alarmHour: Int = 0
     private var alarmMins: Int = 0
     private var alarmAmPm: Int = Calendar.AM
+    var timeFormatter: NumberFormat = DecimalFormat("00")
 
     companion object {
         fun getIntent(context: Context, time: String, frequency: String, reminderId: Int): Intent {
@@ -79,11 +83,11 @@ class ReminderActivity : ReminderBaseActivity() {
             if (intent.hasExtra("frequency")) {
                 val frequency = intent.getStringExtra("frequency")
                 when {
-                    ReminderBaseActivity.Companion.ReminderFrequency.EVERYDAY.name == frequency -> binding.everydayChip.isChecked =
+                    ReminderUtil.Companion.ReminderFrequency.EVERYDAY.name == frequency -> binding.everydayChip.isChecked =
                         true
-                    ReminderBaseActivity.Companion.ReminderFrequency.WEEKENDS.name == frequency -> binding.weekendChip.isChecked =
+                    ReminderUtil.Companion.ReminderFrequency.WEEKENDS.name == frequency -> binding.weekendChip.isChecked =
                         true
-                    ReminderBaseActivity.Companion.ReminderFrequency.WEEKDAYS.name == frequency -> binding.weekdaysChip.isChecked =
+                    ReminderUtil.Companion.ReminderFrequency.WEEKDAYS.name == frequency -> binding.weekdaysChip.isChecked =
                         true
                 }
             }
@@ -104,9 +108,9 @@ class ReminderActivity : ReminderBaseActivity() {
         binding.createReminderBtn.setOnClickListener {
             viewModel.submitReminder(
                 reminderId,
-                "$alarmHour:$alarmMins",
+                "${timeFormatter.format(alarmHour)}:${timeFormatter.format(alarmMins)}:00",
                 getReminderFrequency().name,
-                ReminderBaseActivity.Companion.ReminderStatus.ACTIVE.name,
+                ReminderUtil.Companion.ReminderStatus.ACTIVE.name,
                 Mentor.getInstance().getId(),
                 previousTime,
                 this::onAlarmSetSuccess
@@ -120,9 +124,10 @@ class ReminderActivity : ReminderBaseActivity() {
     }
 
     private fun onAlarmSetSuccess(reminderId: Int) {
-        setAlarm(
+        val reminderUtil = ReminderUtil(applicationContext)
+        reminderUtil.setAlarm(
             getReminderFrequency(),
-            getAlarmPendingIntent(reminderId),
+            reminderUtil.getAlarmPendingIntent(reminderId),
             alarmHour,
             alarmMins
         )
@@ -150,16 +155,16 @@ class ReminderActivity : ReminderBaseActivity() {
         )
     }
 
-    private fun getReminderFrequency(): ReminderBaseActivity.Companion.ReminderFrequency {
+    private fun getReminderFrequency(): ReminderUtil.Companion.ReminderFrequency {
         return when (binding.repeatModeChips.checkedChipId) {
             R.id.weekdays_chip -> {
-                ReminderBaseActivity.Companion.ReminderFrequency.WEEKDAYS
+                ReminderUtil.Companion.ReminderFrequency.WEEKDAYS
             }
             R.id.weekend_chip -> {
-                ReminderBaseActivity.Companion.ReminderFrequency.WEEKENDS
+                ReminderUtil.Companion.ReminderFrequency.WEEKENDS
             }
             else -> {
-                ReminderBaseActivity.Companion.ReminderFrequency.EVERYDAY
+                ReminderUtil.Companion.ReminderFrequency.EVERYDAY
             }
         }
     }

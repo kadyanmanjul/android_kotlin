@@ -20,6 +20,7 @@ import com.joshtalks.joshskills.repository.server.course_detail.CourseDetailsRes
 import com.joshtalks.joshskills.repository.server.feedback.FeedbackStatusResponse
 import com.joshtalks.joshskills.repository.server.feedback.RatingDetails
 import com.joshtalks.joshskills.repository.server.feedback.UserFeedbackRequest
+import com.joshtalks.joshskills.repository.server.reminder.DeleteReminderRequest
 import com.joshtalks.joshskills.repository.server.reminder.ReminderRequest
 import com.joshtalks.joshskills.repository.server.reminder.ReminderResponse
 import kotlinx.coroutines.Deferred
@@ -121,4 +122,8 @@ interface CommonNetworkService {
 
     @GET("$DIR/mentor/reminders/")
     suspend fun getReminders(@Query("mentor_id") mentorId: String): Response<BaseResponse<List<ReminderResponse>>>
+
+    @POST("$DIR/mentor/delete_reminders/")
+    suspend fun deleteReminders(@Body deleteReminderRequest: DeleteReminderRequest): Response<BaseResponse<*>>
+
 }

@@ -14,14 +14,14 @@ import com.google.android.material.switchmaterial.SwitchMaterial
 import com.google.android.material.textview.MaterialTextView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.repository.server.reminder.ReminderResponse
-import com.joshtalks.joshskills.ui.reminder.ReminderBaseActivity
+import com.joshtalks.joshskills.util.ReminderUtil
 import org.jetbrains.anko.textColor
 import java.text.DecimalFormat
 import java.text.NumberFormat
 
 class ReminderAdapter(
     var context: Context,
-    private var onStatusUpdate: ((status: ReminderBaseActivity.Companion.ReminderStatus, reminderItem: ReminderResponse) -> Unit)? =
+    private var onStatusUpdate: ((status: ReminderUtil.Companion.ReminderStatus, reminderItem: ReminderResponse) -> Unit)? =
         null,
     private var onItemTimeClick: ((reminderItem: ReminderResponse) -> Unit)? = null,
     private val itemList: List<ReminderResponse>
@@ -38,7 +38,6 @@ class ReminderAdapter(
 
     override fun onBindViewHolder(holder: ReminderViewHolder, position: Int) {
         val reminderItem = getItem(position)
-        println("item time ${reminderItem.reminderTime}")
         reminderItem.reminderTime.let { time ->
 
             val timeParts = time.trim().split(":")
@@ -61,7 +60,7 @@ class ReminderAdapter(
             }
         }
         holder.statusSw.setOnCheckedChangeListener(null)
-        if (reminderItem.status == ReminderBaseActivity.Companion.ReminderStatus.ACTIVE.name) {
+        if (reminderItem.status == ReminderUtil.Companion.ReminderStatus.ACTIVE.name) {
             holder.statusSw.isChecked = true
             holder.timeTv.textColor = Color.parseColor("#172344")
             holder.amPmTv.textColor = Color.parseColor("#172344")
@@ -74,12 +73,12 @@ class ReminderAdapter(
         holder.statusSw.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked)
                 onStatusUpdate?.invoke(
-                    ReminderBaseActivity.Companion.ReminderStatus.ACTIVE,
+                    ReminderUtil.Companion.ReminderStatus.ACTIVE,
                     getItem(position)
                 )
             else {
                 onStatusUpdate?.invoke(
-                    ReminderBaseActivity.Companion.ReminderStatus.INACTIVE,
+                    ReminderUtil.Companion.ReminderStatus.INACTIVE,
                     getItem(position)
                 )
             }

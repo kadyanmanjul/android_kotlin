@@ -15,7 +15,6 @@ import androidx.lifecycle.ViewModelProvider
 import com.facebook.share.internal.ShareConstants.ACTION_TYPE
 import com.google.android.gms.location.LocationRequest
 import com.google.android.material.snackbar.Snackbar
-import com.joshtalks.joshcamerax.utils.SharedPrefsManager
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.ARG_PLACEHOLDER_URL
@@ -196,7 +195,6 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
             ExploreCardType.SUBSCRIPTION ->
                 AppObjectController.getFirebaseRemoteConfig()
                     .getString(FirebaseRemoteConfigKey.INBOX_SCREEN_CTA_TEXT_SUBSCRIPTION)
-
         }
     }
 
@@ -219,10 +217,8 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         }
     }
 
-    private fun openReminderCallback(reminderListSize: Int) {
-        if (reminderListSize > 0) {
-            SharedPrefsManager.newInstance(this)
-                .putBoolean(SharedPrefsManager.Companion.IS_FIRST_REMINDER, false)
+    private fun openReminderCallback(reminderListSize: Int?) {
+        if (reminderListSize != null && reminderListSize > 0) {
             startActivity(
                 Intent(
                     applicationContext,

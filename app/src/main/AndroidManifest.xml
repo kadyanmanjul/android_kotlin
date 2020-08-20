@@ -355,8 +355,6 @@
                 android:screenOrientation="portrait"
                 android:theme="@style/AppNoBarTheme"
                 android:windowSoftInputMode="stateHidden|adjustResize" />
-        <activity android:name=".ui.reminder.ReminderBaseActivity" />
-
         <service
                 android:name=".core.service.video_download.VideoDownloadService"
                 android:enabled="true"
@@ -453,7 +451,11 @@
         <receiver
                 android:name=".ui.reminder.set_reminder.AlarmReceiver"
                 android:enabled="true"
-                android:exported="true" />
+                android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
 
         <provider
                 android:name=".repository.service.GenericFileProvider"
