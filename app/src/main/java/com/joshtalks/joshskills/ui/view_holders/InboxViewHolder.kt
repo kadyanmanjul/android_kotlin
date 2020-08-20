@@ -82,11 +82,11 @@ class InboxViewHolder(
 
         inboxEntity.created?.run {
             tvLastReceivedMessageTime.text = Utils.getMessageTime(this)
-            if (inboxEntity.batchStarted.isNullOrEmpty().not()) {
+            if (inboxEntity.batchStarted.isNotEmpty()) {
                 val lastDownloadDate = YYYY_MM_DD.format(this).toLowerCase(Locale.getDefault())
                 val diff =
                     Utils.dateDifferenceInDays(
-                        inboxEntity.batchStarted!!,
+                        inboxEntity.batchStarted,
                         lastDownloadDate,
                         YYYY_MM_DD
                     )

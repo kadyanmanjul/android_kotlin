@@ -35,7 +35,8 @@ data class InboxEntity constructor(
     var material_type: BASE_MESSAGE_TYPE?,
     var message_deliver_status: MESSAGE_DELIVER_STATUS? = MESSAGE_DELIVER_STATUS.READ,
     var report_status: Boolean,
-    @ColumnInfo(name = "batch_started") val batchStarted: String?
+    @ColumnInfo(name = "batch_started")
+    val batchStarted: String
 
 
 ) : Parcelable
