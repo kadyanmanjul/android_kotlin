@@ -51,7 +51,7 @@
     <dimen name="roundedBottomSheetCornerRadiusTopPadding">6dp</dimen>
     <dimen name="roundedBottomSheetCornerRadiusLeftPadding">6dp</dimen>
     <dimen name="roundedBottomSheetCornerRadiusRightPadding">6dp</dimen>
-    <dimen name="course_padding_dimen">@dimen/_16sdp</dimen>
+    <dimen name="course_padding_dimen">@dimen/_12sdp</dimen>
     <dimen name="play_pause_size">@dimen/_48sdp</dimen>
 
 </resources>

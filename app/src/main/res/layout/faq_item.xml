@@ -21,15 +21,14 @@
 
     <TextView
             android:id="@+id/question"
-            fontPath="fonts/Roboto-Regular.ttf"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/_4sdp"
             android:layout_marginVertical="@dimen/_8sdp"
             android:layout_marginEnd="@dimen/_4sdp"
             android:paddingHorizontal="@dimen/_6sdp"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
             android:textColor="@color/black"
-            android:textSize="@dimen/font_14"
             android:translationZ="@dimen/_4sdp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/imageView4"

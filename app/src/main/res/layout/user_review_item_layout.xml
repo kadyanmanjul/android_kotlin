@@ -7,7 +7,6 @@
 
     <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/rating"
-            fontPath="fonts/Roboto-Medium.ttf"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/round_rect_default"
@@ -18,24 +17,22 @@
             android:paddingTop="@dimen/_2sdp"
             android:paddingEnd="@dimen/_6sdp"
             android:paddingBottom="@dimen/_2sdp"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Bold"
             android:textColor="@color/white"
-            android:textSize="@dimen/font_20"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="5" />
 
     <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/user_review_title"
-            fontPath="fonts/Roboto-Medium.ttf"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="start"
             android:layout_marginHorizontal="@dimen/_8sdp"
             android:gravity="center|start"
-            android:letterSpacing="0.04"
             android:paddingBottom="@dimen/_4sdp"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6"
             android:textColor="@color/black"
-            android:textSize="@dimen/font_16"
             app:layout_constraintBottom_toBottomOf="@+id/rating"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/rating"
@@ -44,20 +41,18 @@
 
     <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/user_review_message"
-            fontPath="fonts/Roboto-Regular.ttf"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="start"
             android:layout_marginVertical="@dimen/_8sdp"
             android:gravity="center_vertical|start"
-            android:letterSpacing="0.03"
-            android:lineSpacingExtra="@dimen/_1sdp"
-            android:paddingStart="@dimen/_2sdp"
+            android:paddingHorizontal="@dimen/_2sdp"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
             android:textColor="@color/dark_grey"
-            android:textSize="@dimen/font_14"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@+id/rating"
-            app:layout_constraintTop_toBottomOf="@+id/rating" />
+            app:layout_constraintTop_toBottomOf="@+id/rating"
+            tools:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam hendrerit nisi sed sollicitudin pellentesque" />
 
     <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/user_picture"
@@ -66,20 +61,19 @@
             android:layout_marginVertical="@dimen/_8sdp"
             app:layout_constraintStart_toStartOf="@+id/user_review_message"
             app:layout_constraintTop_toBottomOf="@+id/user_review_message"
-            tools:src="@color/button_primary_color" />
+            tools:src="@drawable/round_rectangle" />
 
 
     <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/user_name"
-            fontPath="fonts/Roboto-Regular.ttf"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="start|center"
             android:layout_marginHorizontal="@dimen/_8sdp"
             android:gravity="start|center"
             android:lines="1"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
             android:textColor="@color/dark_grey"
-            android:textSize="@dimen/font_13"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/user_picture"
             app:layout_constraintTop_toTopOf="@+id/user_picture"
@@ -87,11 +81,11 @@
 
     <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/user_location"
-            fontPath="fonts/Roboto-Regular.ttf"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="top|start"
             android:gravity="center|start"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
             android:textColor="@color/gray_9E"
             android:textSize="@dimen/font_12"
             app:layout_constraintEnd_toEndOf="parent"

@@ -9,11 +9,10 @@
 
     <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
             android:id="@+id/txtTeacherName"
-            fontPath="fonts/Roboto-Bold.ttf"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H5"
             android:textColor="@color/black"
-            android:textSize="@dimen/font_18"
             app:layout_constraintEnd_toStartOf="@+id/barrier"
             app:layout_constraintHorizontal_bias="0"
             app:layout_constraintStart_toStartOf="parent"
@@ -22,10 +21,10 @@
 
     <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
             android:id="@+id/txtDesignation"
-            fontPath="fonts/Roboto-Regular.ttf"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:paddingTop="@dimen/_4sdp"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
             android:textColor="#858585"
             android:textSize="@dimen/font_14"
             app:layout_constraintEnd_toStartOf="@+id/barrier"
@@ -36,14 +35,11 @@
 
     <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
             android:id="@+id/txtDescription"
-            fontPath="fonts/Roboto-Regular.ttf"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:letterSpacing="0.05"
-            android:lineSpacingExtra="@dimen/_2sdp"
             android:paddingTop="@dimen/_4sdp"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
             android:textColor="@color/black"
-            android:textSize="@dimen/font_14"
             app:layout_constraintEnd_toStartOf="@+id/barrier"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/txtDesignation"
@@ -52,7 +48,6 @@
 
     <com.google.android.material.textview.MaterialTextView
             android:id="@+id/btn_meet_me"
-            fontPath="fonts/Roboto-Medium.ttf"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_8sdp"
@@ -62,8 +57,8 @@
             android:paddingVertical="@dimen/_6sdp"
             android:text="@string/meet_me"
             android:textAllCaps="false"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Link_Normal"
             android:textColor="@color/white"
-            android:textSize="@dimen/font_16"
             app:cornerRadius="@dimen/_32sdp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/txtDescription" />

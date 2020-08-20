@@ -18,14 +18,12 @@
 
     <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
             android:id="@+id/landing_text"
-            fontPath="fonts/Roboto-Regular.ttf"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:letterSpacing="0.03"
             android:padding="@dimen/_4sdp"
             android:text="@string/download_certificate"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
             android:textColor="@color/dark_grey"
-            android:textSize="@dimen/font_14"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@+id/landing_image"
             app:layout_constraintTop_toTopOf="parent" />

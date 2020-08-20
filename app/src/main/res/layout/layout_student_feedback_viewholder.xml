@@ -10,13 +10,12 @@
 
     <TextView
             android:id="@+id/title"
-            fontPath="fonts/Roboto-Bold.ttf"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/course_padding_dimen"
             android:text="@string/meet_the_students"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H5"
             android:textColor="@color/black"
-            android:textSize="@dimen/font_18"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

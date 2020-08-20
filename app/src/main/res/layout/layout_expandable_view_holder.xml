@@ -8,11 +8,10 @@
 
     <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
             android:id="@+id/txt_title"
-            fontPath="fonts/Roboto-Medium.ttf"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H5"
             android:textColor="@color/black"
-            android:textSize="@dimen/font_18"
             tools:text="Questions &amp; Answers" />
 
     <com.mindorks.placeholderview.PlaceHolderView

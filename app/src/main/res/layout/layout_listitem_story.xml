@@ -29,12 +29,11 @@
 
     <TextView
             android:id="@+id/name"
-            fontPath="fonts/Roboto-Regular.ttf"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_3sdp"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
             android:textColor="@color/black"
-            android:textSize="@dimen/font_14"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/frameLayout"
@@ -42,11 +41,10 @@
 
     <TextView
             android:id="@+id/profession"
-            fontPath="fonts/Roboto-Regular.ttf"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
             android:textColor="@color/dark_grey"
-            android:textSize="@dimen/font_10"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/name"

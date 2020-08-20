@@ -11,11 +11,10 @@
 
     <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
             android:id="@+id/title"
-            fontPath="fonts/Roboto-Bold.ttf"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H5"
             android:textColor="@color/black"
-            android:textSize="@dimen/font_18"
             app:layout_constraintBottom_toTopOf="@+id/multi_linelayout"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
@@ -39,7 +38,6 @@
 
     <com.google.android.material.textview.MaterialTextView
             android:id="@+id/download_syllabus"
-            fontPath="fonts/Roboto-Medium.ttf"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_10sdp"
@@ -51,8 +49,8 @@
             android:paddingHorizontal="@dimen/_16sdp"
             android:paddingVertical="@dimen/_8sdp"
             android:text="@string/download_syllabus"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Link_Normal"
             android:textColor="@color/white"
-            android:textSize="@dimen/font_16"
             app:cornerRadius="@dimen/_8sdp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

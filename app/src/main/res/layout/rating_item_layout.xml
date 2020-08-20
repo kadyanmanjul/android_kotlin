@@ -7,12 +7,11 @@
 
     <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/user_rating"
-            fontPath="fonts/Roboto-Regular.ttf"
             android:layout_width="@dimen/_12sdp"
             android:layout_height="wrap_content"
             android:gravity="center"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
             android:textColor="@color/dark_grey"
-            android:textSize="@dimen/font_13"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -44,12 +43,11 @@
 
     <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/user_rating_percentage"
-            fontPath="fonts/Roboto-Medium.ttf"
             android:layout_width="@dimen/_28sdp"
             android:layout_height="wrap_content"
             android:gravity="start"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
             android:textColor="@color/dark_grey"
-            android:textSize="@dimen/font_13"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
