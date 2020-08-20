@@ -950,8 +950,8 @@ class BitVideoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibili
     }
 
     fun hideButtons() {
-        mControlsDisabled=true
         hideController()
+        mControlsDisabled=true
     }
 
 

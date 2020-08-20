@@ -451,11 +451,9 @@ class ConversationViewModel(application: Application) :
 
     }
 
-    fun deleteChatModelOfType(type: BASE_MESSAGE_TYPE) {
-        viewModelScope.launch(Dispatchers.IO) {
-            AppObjectController.appDatabase.chatDao()
-                .deleteSpecificTypeChatModel(inboxEntity.conversation_id, type)
-        }
+    suspend fun deleteChatModelOfType(type: BASE_MESSAGE_TYPE) {
+        AppObjectController.appDatabase.chatDao()
+            .deleteSpecificTypeChatModel(inboxEntity.conversation_id, type)
     }
 
     suspend fun insertUnlockClassToDatabase(unlockChatModel: ChatModel) {
