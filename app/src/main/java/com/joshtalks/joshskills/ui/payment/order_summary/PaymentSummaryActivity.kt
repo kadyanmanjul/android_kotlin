@@ -94,9 +94,6 @@ class PaymentSummaryActivity : CoreJoshActivity(),
     private lateinit var viewModel: PaymentSummaryViewModel
     private var isEcommereceEventFire = true
     private lateinit var appAnalytics: AppAnalytics
-
-    // TODO (Later)--> payment failed
-    private var npsShow = false
     private var isBackPressDisabled = false
     private var isRequestHintAppearred = false
     private var razorpayOrderId = EMPTY
@@ -302,13 +299,13 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                             true,
                             viewModel.responseSubscriptionPaymentSummary.value
                         )
-                        binding.addThisTv.visibility=View.GONE
+                        binding.addThisTv.visibility = View.GONE
                     } else {
                         showSubscriptionDetails(
                             false,
                             viewModel.responsePaymentSummary.value
                         )
-                        binding.addThisTv.visibility=View.VISIBLE
+                        binding.addThisTv.visibility = View.VISIBLE
                     }
                 }
 

@@ -25,9 +25,9 @@ object WorkMangerAdmin {
                     OneTimeWorkRequestBuilder<RefreshFCMTokenWorker>().build()
                 )
             )
-            .then(OneTimeWorkRequestBuilder<InstanceIdGenerationWorker>().build())
             .then(OneTimeWorkRequestBuilder<UniqueIdGenerationWorker>().build())
             .then(OneTimeWorkRequestBuilder<MappingGaIDWithMentor>().build())
+            .then(OneTimeWorkRequestBuilder<InstanceIdGenerationWorker>().build())
             .then(
                 mutableListOf(
                     OneTimeWorkRequestBuilder<UploadFCMTokenOnServer>().build(),
@@ -122,32 +122,6 @@ object WorkMangerAdmin {
         WorkManager.getInstance(AppObjectController.joshApplication).enqueue(workRequest)
     }
 
-    fun mappingGIDWithMentor() {
-        WorkManager.getInstance(AppObjectController.joshApplication)
-            .enqueue(OneTimeWorkRequestBuilder<MappingGaIDWithMentor>().build())
-    }
-
-    fun refreshFCMToken() {
-        WorkManager.getInstance(AppObjectController.joshApplication)
-            .enqueue(OneTimeWorkRequestBuilder<RefreshFCMTokenWorker>().build())
-    }
-
-    fun pushTokenToServer() {
-        WorkManager.getInstance(AppObjectController.joshApplication)
-            .enqueue(OneTimeWorkRequestBuilder<UploadFCMTokenOnServer>().build())
-    }
-
-
-    fun syncVideoEngage() {
-        WorkManager.getInstance(AppObjectController.joshApplication)
-            .enqueue(OneTimeWorkRequestBuilder<SyncEngageVideo>().build())
-    }
-
-    fun fetchFeedbackRating() {
-        WorkManager.getInstance(AppObjectController.joshApplication)
-            .enqueue(OneTimeWorkRequestBuilder<FeedbackRatingWorker>().build())
-    }
-
     fun getQuestionFeedback(questionId: String): UUID {
         val data = workDataOf("question_id" to questionId)
         val workRequest = OneTimeWorkRequestBuilder<FeedbackStatusForQuestionWorker>()
@@ -205,7 +179,7 @@ object WorkMangerAdmin {
 
         val deleteAtHour = 1
         val delay: Long
-        val date=Calendar.getInstance()
+        val date = Calendar.getInstance()
 
         if (date.get(Calendar.HOUR_OF_DAY) > deleteAtHour) {
             delay = date.get(Calendar.HOUR_OF_DAY).plus(24).minus(deleteAtHour).toLong()
