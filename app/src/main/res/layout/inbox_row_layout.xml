@@ -20,96 +20,98 @@
         tools:cardBackgroundColor="@color/white"
         tools:cardPreventCornerOverlap="false">
 
-    <RelativeLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingStart="@dimen/_15sdp"
-            android:paddingTop="@dimen/_10sdp"
-            android:paddingEnd="@dimen/_15sdp">
+            android:paddingStart="@dimen/_8sdp"
+            android:paddingTop="@dimen/_8sdp"
+            android:paddingEnd="@dimen/_8sdp"
+            android:paddingBottom="@dimen/_4sdp">
 
         <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/profile_image"
                 android:layout_width="@dimen/_48sdp"
                 android:layout_height="@dimen/_48sdp"
-                android:layout_marginEnd="@dimen/_10sdp"
-                android:layout_marginBottom="@dimen/_10sdp"
+                android:layout_marginVertical="@dimen/_8sdp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
                 tools:src="@color/button_color" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/iv_tick"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/ic_course_complete_bg"
+                android:gravity="center_vertical|start"
+                android:padding="@dimen/_4sdp"
+                app:layout_constraintBottom_toBottomOf="@+id/profile_image"
+                app:layout_constraintEnd_toEndOf="@+id/profile_image"
+                tools:visibility="visible" />
+
 
         <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tv_name"
                 fontPath="fonts/Poppins-SemiBold.ttf"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_5sdp"
+                android:layout_marginHorizontal="@dimen/_8sdp"
                 android:layout_toStartOf="@id/tv_last_message_time"
                 android:layout_toEndOf="@id/profile_image"
                 android:ellipsize="end"
                 android:inputType="none"
                 android:maxLines="1"
-                android:paddingEnd="@dimen/_10sdp"
-                android:text=""
+                android:layout_marginTop="@dimen/_2sdp"
                 android:textColor="@color/black"
                 android:textSize="@dimen/font_16"
+                app:layout_constraintStart_toEndOf="@+id/profile_image"
+                app:layout_constraintTop_toTopOf="@+id/profile_image"
+                app:layout_constraintWidth_default="percent"
+                app:layout_constraintWidth_percent="0.62"
                 tools:ignore="MissingPrefix"
                 tools:text="Course Name" />
 
-        <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/tv_last_message_status"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/tv_name"
-                android:layout_marginTop="@dimen/_10sdp"
-                android:layout_marginEnd="@dimen/_4sdp"
-                android:layout_toEndOf="@id/profile_image"
-                android:gravity="start" />
+        <ProgressBar
+                android:id="@+id/course_progress_bar"
+                style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/_14sdp"
+                android:layout_gravity="bottom"
+                android:layout_marginTop="@dimen/_4sdp"
+                android:max="100"
+                android:progress="50"
+                android:progressDrawable="@drawable/progress_background"
+                android:secondaryProgress="0"
+                app:layout_constraintBottom_toBottomOf="@+id/profile_image"
+                app:layout_constraintEnd_toEndOf="@+id/tv_name"
+                app:layout_constraintStart_toStartOf="@+id/tv_name"
+                app:layout_constraintTop_toBottomOf="@+id/tv_name" />
+
 
         <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/tv_last_message"
                 fontPath="fonts/Poppins-Regular.ttf"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/tv_name"
-                android:layout_marginTop="@dimen/_8sdp"
-                android:layout_marginEnd="@dimen/_8sdp"
-                android:layout_toEndOf="@id/tv_last_message_status"
-                android:ellipsize="end"
-                android:gravity="start"
-                android:maxLines="1"
-                android:text=""
-                android:textColor="@color/dark_grey"
-                android:textSize="@dimen/font_14"
-                tools:ignore="MissingPrefix"
-                tools:text="Click to start the course" />
-
-        <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tv_last_message_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignTop="@id/tv_name"
-                android:layout_alignParentEnd="true"
-                android:layout_marginTop="@dimen/_5sdp"
                 android:maxLines="1"
-                android:text=""
-                android:textSize="@dimen/font_12" />
-
-        <androidx.appcompat.widget.AppCompatTextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignTop="@id/tv_last_message"
-                android:layout_alignParentEnd="true"
-                android:layout_marginTop="3dp"
-                android:maxLines="1"
-                android:textSize="@dimen/font_11_5" />
+                android:paddingHorizontal="@dimen/_2sdp"
+                android:textSize="@dimen/font_12"
+                app:layout_constraintBottom_toBottomOf="@+id/tv_name"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/tv_name"
+                tools:text="08/12/90" />
 
         <LinearLayout
                 android:id="@+id/horizontal_line"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="1dp"
-                android:layout_below="@id/profile_image"
-                android:layout_marginStart="@dimen/_60sdp"
                 android:background="@color/gray_e6"
-                android:orientation="horizontal" />
+                android:orientation="horizontal"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/profile_image" />
 
-    </RelativeLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.cardview.widget.CardView>

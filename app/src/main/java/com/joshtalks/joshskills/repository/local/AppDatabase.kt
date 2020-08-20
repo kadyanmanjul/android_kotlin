@@ -61,7 +61,7 @@ const val DATABASE_NAME = "JoshEnglishDB.db"
         AudioType::class, OptionType::class, PdfType::class, ImageType::class, VideoEngage::class,
         FeedbackEngageModel::class, NPSEventModel::class, Assessment::class, AssessmentQuestion::class,
         Choice::class, ReviseConcept::class, AssessmentIntro::class, ReminderResponse::class],
-    version = 19,
+    version = 20,
     exportSchema = true
 )
 @TypeConverters(
@@ -114,7 +114,8 @@ abstract class AppDatabase : RoomDatabase() {
                                 MIGRATION_14_16,
                                 MIGRATION_16_17,
                                 MIGRATION_17_18,
-                                MIGRATION_18_19
+                                MIGRATION_18_19,
+                                MIGRATION_19_20
                             )
                             .fallbackToDestructiveMigration()
                             .addCallback(sRoomDatabaseCallback)
@@ -290,6 +291,13 @@ abstract class AppDatabase : RoomDatabase() {
                 database.execSQL("CREATE INDEX IF NOT EXISTS `index_reminder_table_reminder_id` ON `reminder_table` (`reminder_id`)")
             }
         }
+
+        private val MIGRATION_19_20: Migration = object : Migration(19, 20) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("ALTER TABLE course ADD COLUMN batch_started TEXT NOT NULL DEFAULT ''")
+            }
+        }
+
 
         fun clearDatabase() {
             INSTANCE?.clearAllTables()

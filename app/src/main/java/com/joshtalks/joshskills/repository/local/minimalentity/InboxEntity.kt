@@ -14,10 +14,11 @@ data class InboxEntity constructor(
     val conversation_id: String = "",
     val course_icon: String? = "",
     val courseId: String? = "",
-    val duration: Int? = 0,
+    val duration: Int = 0,
     val is_deleted: Boolean? = false,
     val teacher_id: String? = "",
     var chat_id: String? = "",
+    @ColumnInfo(name = "created")
     var created: Long? = 0,
     @ColumnInfo(name = "course_created_date")
     var courseCreatedDate: Date? = null,
@@ -33,6 +34,8 @@ data class InboxEntity constructor(
     var user: User? = null,
     var material_type: BASE_MESSAGE_TYPE?,
     var message_deliver_status: MESSAGE_DELIVER_STATUS? = MESSAGE_DELIVER_STATUS.READ,
-    var report_status: Boolean
+    var report_status: Boolean,
+    @ColumnInfo(name = "batch_started") val batchStarted: String
+
 
 ) : Parcelable

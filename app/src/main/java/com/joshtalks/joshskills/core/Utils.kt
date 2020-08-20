@@ -98,6 +98,7 @@ import kotlin.math.pow
 private val CHAT_TIME_FORMATTER = SimpleDateFormat("hh:mm aa")
 private val DD_MMM = SimpleDateFormat("dd-MMM hh:mm aa")
 private val MMM_DD_YYYY = SimpleDateFormat("MMM DD, yyyy")
+val YYYY_MM_DD = SimpleDateFormat("yyyy-MM-dd")
 
 
 object Utils {
@@ -721,6 +722,17 @@ object Utils {
             else -> {
                 DateTimeUtils.formatWithStyle(date, DateTimeStyle.LONG)
             }
+        }
+    }
+
+    fun dateDifferenceInDays(minDate: String, maxDate: String, dateFormat: SimpleDateFormat): Long {
+        return try {
+            val min = dateFormat.parse(minDate)
+            val max = dateFormat.parse(maxDate)
+            val daysDiff = TimeUnit.DAYS.convert(max!!.time - min!!.time, TimeUnit.MILLISECONDS)
+            daysDiff
+        } catch (ex: Exception) {
+            0L
         }
     }
 
