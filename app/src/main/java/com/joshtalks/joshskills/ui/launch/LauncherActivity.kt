@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.telephony.TelephonyManager
+import com.google.firebase.perf.metrics.AddTrace
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.CoreJoshActivity
@@ -30,6 +31,7 @@ import timber.log.Timber
 
 class LauncherActivity : CoreJoshActivity(), CustomPermissionDialogInteractionListener {
 
+    @AddTrace(name = "LauncherActivity - onCreate", enabled = true)
     override fun onCreate(savedInstanceState: Bundle?) {
         Branch.getInstance(applicationContext).resetUserSession()
         WorkMangerAdmin.appStartWorker()
@@ -39,6 +41,7 @@ class LauncherActivity : CoreJoshActivity(), CustomPermissionDialogInteractionLi
         AppObjectController.initialiseFreshchat()
     }
 
+    @AddTrace(name = "handleIntent", enabled = true)
     private fun handleIntent() {
         Branch.sessionBuilder(this).withCallback { referringParams, error ->
             try {

@@ -10,14 +10,20 @@
                 type="com.joshtalks.joshskills.ui.explore.CourseListingFragment" />
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+        <com.joshtalks.joshskills.ui.explore.view.OfferCourseView
+                android:id="@+id/offer_card_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
 
         <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recycler_view"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:background="@android:color/white"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -25,5 +31,5 @@
                 app:layout_constraintTop_toTopOf="parent"
                 tools:listitem="@layout/course_explorer_view_holder" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
 </layout>

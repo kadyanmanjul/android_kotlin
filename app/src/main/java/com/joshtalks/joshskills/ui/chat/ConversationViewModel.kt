@@ -479,16 +479,20 @@ class ConversationViewModel(application: Application) :
 
     override fun onCleared() {
         super.onCleared()
-        val iterator = jobs.listIterator()
-        while (iterator.hasNext()) {
-            val item = iterator.next()
-            item.cancel()
-            iterator.remove()
-        }
         compositeDisposable.clear()
         context.unregisterReceiver(broadCastForNetwork)
         if (isRecordingStarted) {
             mAudioRecording.stopRecording(true)
+        }
+        try {
+            val iterator = jobs.listIterator()
+            while (iterator.hasNext()) {
+                val item = iterator.next()
+                item.cancel()
+                iterator.remove()
+            }
+        } catch (ex: ConcurrentModificationException) {
+            ex.printStackTrace()
         }
     }
 
