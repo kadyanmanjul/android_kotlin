@@ -78,7 +78,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.jetbrains.anko.collections.forEachWithIndex
-import java.util.*
+import java.util.Calendar
 
 const val REGISTER_INFO_CODE = 2001
 const val COURSE_EXPLORER_CODE = 2002
@@ -113,66 +113,70 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
     }
 
     private fun updateSubscriptionTipView(exploreType: ExploreCardType) {
-        when (exploreType) {
+        val subscriptionCourse =
+            viewModel.registerCourseNetworkLiveData.value?.filter { it.courseId == SUBSCRIPTION_COURSE_ID }
+                ?.getOrNull(0)
+        if (subscriptionCourse == null) {
+            when (exploreType) {
 
-            ExploreCardType.FREETRIAL -> {
-                subscriptionTipContainer.visibility = View.VISIBLE
+                ExploreCardType.FREETRIAL -> {
+                    subscriptionTipContainer.visibility = View.VISIBLE
 
-                val remainingTrialDays = PrefManager.getIntValue(REMAINING_TRIAL_DAYS, true)
-                txtSubscriptionTip.text = when {
+                    val remainingTrialDays = PrefManager.getIntValue(REMAINING_TRIAL_DAYS, true)
+                    txtSubscriptionTip.text = when {
 
-                    remainingTrialDays <= 0 -> AppObjectController.getFirebaseRemoteConfig()
-                        .getString(FirebaseRemoteConfigKey.SUBSCRIPTION_TRIAL_TIP_DAY7)
+                        remainingTrialDays <= 0 -> AppObjectController.getFirebaseRemoteConfig()
+                            .getString(FirebaseRemoteConfigKey.SUBSCRIPTION_TRIAL_TIP_DAY7)
 
-                    remainingTrialDays == 1 -> AppObjectController.getFirebaseRemoteConfig()
-                        .getString(FirebaseRemoteConfigKey.SUBSCRIPTION_TRIAL_TIP_DAY6)
+                        remainingTrialDays == 1 -> AppObjectController.getFirebaseRemoteConfig()
+                            .getString(FirebaseRemoteConfigKey.SUBSCRIPTION_TRIAL_TIP_DAY6)
 
-                    remainingTrialDays == 2 -> AppObjectController.getFirebaseRemoteConfig()
-                        .getString(FirebaseRemoteConfigKey.SUBSCRIPTION_TRIAL_TIP_DAY5)
+                        remainingTrialDays == 2 -> AppObjectController.getFirebaseRemoteConfig()
+                            .getString(FirebaseRemoteConfigKey.SUBSCRIPTION_TRIAL_TIP_DAY5)
 
-                    remainingTrialDays == 3 -> AppObjectController.getFirebaseRemoteConfig()
-                        .getString(FirebaseRemoteConfigKey.SUBSCRIPTION_TRIAL_TIP_DAY4)
+                        remainingTrialDays == 3 -> AppObjectController.getFirebaseRemoteConfig()
+                            .getString(FirebaseRemoteConfigKey.SUBSCRIPTION_TRIAL_TIP_DAY4)
 
-                    remainingTrialDays == 4 -> AppObjectController.getFirebaseRemoteConfig()
-                        .getString(FirebaseRemoteConfigKey.SUBSCRIPTION_TRIAL_TIP_DAY3)
+                        remainingTrialDays == 4 -> AppObjectController.getFirebaseRemoteConfig()
+                            .getString(FirebaseRemoteConfigKey.SUBSCRIPTION_TRIAL_TIP_DAY3)
 
-                    remainingTrialDays == 5 -> AppObjectController.getFirebaseRemoteConfig()
-                        .getString(FirebaseRemoteConfigKey.SUBSCRIPTION_TRIAL_TIP_DAY2)
+                        remainingTrialDays == 5 -> AppObjectController.getFirebaseRemoteConfig()
+                            .getString(FirebaseRemoteConfigKey.SUBSCRIPTION_TRIAL_TIP_DAY2)
 
-                    remainingTrialDays == 6 -> AppObjectController.getFirebaseRemoteConfig()
-                        .getString(FirebaseRemoteConfigKey.SUBSCRIPTION_TRIAL_TIP_DAY1)
+                        remainingTrialDays == 6 -> AppObjectController.getFirebaseRemoteConfig()
+                            .getString(FirebaseRemoteConfigKey.SUBSCRIPTION_TRIAL_TIP_DAY1)
 
-                    remainingTrialDays > 6 -> AppObjectController.getFirebaseRemoteConfig()
-                        .getString(FirebaseRemoteConfigKey.SUBSCRIPTION_TRIAL_TIP_DAY0)
+                        remainingTrialDays > 6 -> AppObjectController.getFirebaseRemoteConfig()
+                            .getString(FirebaseRemoteConfigKey.SUBSCRIPTION_TRIAL_TIP_DAY0)
 
-                    else -> EMPTY
-                }
-            }
-
-            ExploreCardType.FFCOURSE -> {
-                subscriptionTipContainer.visibility = View.VISIBLE
-                viewModel.registerCourseNetworkLiveData.value?.let {
-                    txtSubscriptionTip.text = if (it.size > 1) {
-                        AppObjectController.getFirebaseRemoteConfig()
-                            .getString(FirebaseRemoteConfigKey.EXPLORE_TYPE_NORMAL_TIP)
-                    } else {
-                        AppObjectController.getFirebaseRemoteConfig()
-                            .getString(FirebaseRemoteConfigKey.EXPLORE_TYPE_FFCOURSE_TIP)
+                        else -> EMPTY
                     }
                 }
-            }
 
-            ExploreCardType.NORMAL -> {
-                subscriptionTipContainer.visibility = View.VISIBLE
-                viewModel.registerCourseNetworkLiveData.value?.let {
-                    txtSubscriptionTip.text = AppObjectController.getFirebaseRemoteConfig()
-                        .getString(FirebaseRemoteConfigKey.EXPLORE_TYPE_NORMAL_TIP)
+                ExploreCardType.FFCOURSE -> {
+                    subscriptionTipContainer.visibility = View.VISIBLE
+                    viewModel.registerCourseNetworkLiveData.value?.let {
+                        txtSubscriptionTip.text = if (it.size > 1) {
+                            AppObjectController.getFirebaseRemoteConfig()
+                                .getString(FirebaseRemoteConfigKey.EXPLORE_TYPE_NORMAL_TIP)
+                        } else {
+                            AppObjectController.getFirebaseRemoteConfig()
+                                .getString(FirebaseRemoteConfigKey.EXPLORE_TYPE_FFCOURSE_TIP)
+                        }
+                    }
                 }
-            }
 
-            else -> {
-                subscriptionTipContainer.visibility = View.GONE
+                ExploreCardType.NORMAL -> {
+                    subscriptionTipContainer.visibility = View.VISIBLE
+                    viewModel.registerCourseNetworkLiveData.value?.let {
+                        txtSubscriptionTip.text = AppObjectController.getFirebaseRemoteConfig()
+                            .getString(FirebaseRemoteConfigKey.EXPLORE_TYPE_NORMAL_TIP)
+                    }
+                }
+
             }
+        } else {
+            subscriptionTipContainer.visibility = View.GONE
         }
 
     }
