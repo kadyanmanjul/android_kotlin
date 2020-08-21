@@ -17,7 +17,7 @@ data class RequestRegisterGAId(
     val otherInfo: Map<String, String> = emptyMap(),
 
     @SerializedName("test")
-    var test: Int? = 0,
+    var test: Int? = null,
 
     @SerializedName("utm_medium")
     var utmMedium: String = EMPTY,
