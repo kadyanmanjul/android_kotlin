@@ -1,6 +1,7 @@
 package com.joshtalks.joshskills.core.service
 
 import android.content.Context
+import android.text.format.DateUtils
 import androidx.work.CoroutineWorker
 import androidx.work.Worker
 import androidx.work.WorkerParameters
@@ -30,7 +31,6 @@ import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.core.notification.FCM_TOKEN
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.DatabaseUtils
-import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
 import com.joshtalks.joshskills.repository.local.entity.NPSEvent
 import com.joshtalks.joshskills.repository.local.entity.NPSEventModel
 import com.joshtalks.joshskills.repository.local.eventbus.NPSEventGenerateEventBus
@@ -586,11 +586,26 @@ class DeleteUnlockTypeQuestion(context: Context, workerParams: WorkerParameters)
     CoroutineWorker(context, workerParams) {
     override suspend fun doWork(): Result {
         try {
-            val listConversastionId=AppObjectController.appDatabase.courseDao().getAllConversationId()
-            listConversastionId.forEach { conversationId->
-                if (conversationId.isNotBlank()){
-                    AppObjectController.appDatabase.chatDao()
-                        .deleteSpecificTypeChatModel(conversationId, BASE_MESSAGE_TYPE.UNLOCK)
+            val listConversationId =
+                AppObjectController.appDatabase.courseDao().getAllConversationId()
+            listConversationId.forEach { conversationId ->
+                if (conversationId.isNotBlank()) {
+
+                    val listChatModel = AppObjectController.appDatabase.chatDao()
+                        .getUnlockChatModel(conversationId)
+
+                    if (listChatModel.isNullOrEmpty()) {
+                        return@forEach
+                    }
+
+                    listChatModel.forEach { chatModel ->
+                        chatModel?.let {
+                            if (DateUtils.isToday(it.created.time).not()) {
+                                AppObjectController.appDatabase.chatDao()
+                                    .deleteChatMessage(chatModel)
+                            }
+                        }
+                    }
                 }
             }
         } catch (ex: Throwable) {

@@ -176,34 +176,12 @@ object WorkMangerAdmin {
 
 
     fun deleteUnlockTypeQuestions() {
-
-        val deleteAtHour = 1
-        val delay: Long
-        val date = Calendar.getInstance()
-
-        if (date.get(Calendar.HOUR_OF_DAY) > deleteAtHour) {
-            delay = date.get(Calendar.HOUR_OF_DAY).plus(24).minus(deleteAtHour).toLong()
-        } else {
-            delay = deleteAtHour.minus(date.get(Calendar.HOUR_OF_DAY)).toLong()
-        }
-
-        val workRequest = PeriodicWorkRequest.Builder(
-            DeleteUnlockTypeQuestion::class.java,
-            24,
-            TimeUnit.HOURS,
-            PeriodicWorkRequest.MIN_PERIODIC_FLEX_MILLIS,
-            TimeUnit.MILLISECONDS
-        )
-            .setInitialDelay(delay, TimeUnit.HOURS)
+        val workRequest = OneTimeWorkRequestBuilder<DeleteUnlockTypeQuestion>()
             .addTag(DeleteUnlockTypeQuestion::class.java.simpleName)
             .build()
 
         WorkManager.getInstance(AppObjectController.joshApplication)
-            .enqueueUniquePeriodicWork(
-                DeleteUnlockTypeQuestion::class.java.simpleName,
-                ExistingPeriodicWorkPolicy.REPLACE,
-                workRequest
-            )
+            .enqueue(workRequest)
     }
 
 }
