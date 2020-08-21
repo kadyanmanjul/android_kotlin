@@ -94,6 +94,7 @@ class FillInTheBlankChoiceView : FrameLayout,
                 })
 
         seeAnswer.setOnClickListener {
+            choicesChipGroup.visibility=View.GONE
             toogleViews()
         }
     }

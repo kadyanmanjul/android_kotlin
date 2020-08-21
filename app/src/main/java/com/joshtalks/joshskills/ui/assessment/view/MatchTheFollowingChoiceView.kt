@@ -111,9 +111,7 @@ class MatchTheFollowingChoiceView : FrameLayout,
     }
 
     private fun onSubmit() {
-        if (assessment?.status == AssessmentStatus.COMPLETED) {
-            resetAnswer.visibility = View.GONE
-        }
+        resetAnswer.visibility = View.GONE
         recyclerTableA.adapter?.notifyDataSetChanged()
         recyclerTableB.adapter?.notifyDataSetChanged()
         //disable all listeners
