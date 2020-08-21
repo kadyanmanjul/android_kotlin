@@ -11,7 +11,7 @@ import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.memory.MemoryManagementWorker
 import com.joshtalks.joshskills.core.memory.RemoveMediaWorker
 import com.joshtalks.joshskills.repository.local.entity.NPSEvent
-import java.util.*
+import java.util.UUID
 import java.util.concurrent.TimeUnit
 
 object WorkMangerAdmin {
@@ -47,7 +47,7 @@ object WorkMangerAdmin {
             .then(
                 mutableListOf(
                     OneTimeWorkRequestBuilder<UploadFCMTokenOnServer>().build(),
-                    OneTimeWorkRequestBuilder<UpdateDeviceDetailsWorker>().build(),
+                    OneTimeWorkRequestBuilder<PatchDeviceDetailsWorker>().build(),
                     OneTimeWorkRequestBuilder<JoshTalksInstallWorker>().build()
 
                 )

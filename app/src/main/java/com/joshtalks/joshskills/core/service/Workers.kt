@@ -49,7 +49,8 @@ import com.joshtalks.joshskills.repository.service.SyncChatService
 import com.sinch.verification.PhoneNumberUtils
 import io.branch.referral.Branch
 import retrofit2.HttpException
-import java.util.*
+import java.util.Date
+import java.util.HashMap
 
 const val INSTALL_REFERRER_SYNC = "install_referrer_sync"
 const val CONVERSATION_ID = "conversation_id"
@@ -508,6 +509,22 @@ class UpdateDeviceDetailsWorker(context: Context, workerParams: WorkerParameters
     CoroutineWorker(context, workerParams) {
     override suspend fun doWork(): Result {
         try {
+            val details =
+                AppObjectController.signUpNetworkService.postDeviceDetails(
+                    UpdateDeviceRequest()
+                )
+            details.update()
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+        }
+        return Result.success()
+    }
+}
+
+class PatchDeviceDetailsWorker(context: Context, workerParams: WorkerParameters) :
+    CoroutineWorker(context, workerParams) {
+    override suspend fun doWork(): Result {
+        try {
             if (Mentor.getInstance().hasId()) {
                 val id = DeviceDetailsResponse.getInstance()?.id!!
                 val details =
@@ -516,14 +533,6 @@ class UpdateDeviceDetailsWorker(context: Context, workerParams: WorkerParameters
                         UpdateDeviceRequest()
                     )
                 details.update()
-            } else {
-                if (DeviceDetailsResponse.getInstance() == null) {
-                    val details =
-                        AppObjectController.signUpNetworkService.postDeviceDetails(
-                            UpdateDeviceRequest()
-                        )
-                    details.update()
-                }
             }
         } catch (ex: Exception) {
             ex.printStackTrace()
