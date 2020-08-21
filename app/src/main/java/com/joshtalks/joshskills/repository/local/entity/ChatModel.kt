@@ -101,7 +101,10 @@ data class ChatModel(
 
     @ColumnInfo(name = "last_use_time")
     @Expose
-    var lastUseTime: Date? = null
+    var lastUseTime: Date? = null,
+
+    @Ignore
+    var playProgress: Int = 0
 
 
 ) : DataBaseClass(), Parcelable {

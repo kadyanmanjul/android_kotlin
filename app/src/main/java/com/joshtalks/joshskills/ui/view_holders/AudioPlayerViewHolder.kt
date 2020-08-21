@@ -97,9 +97,6 @@ class AudioPlayerViewHolder(activityRef: WeakReference<FragmentActivity>, messag
     @View(R.id.btnPause)
     lateinit var btnPauseImageView: AppCompatImageView
 
-    @View(R.id.seekBar_ph)
-    lateinit var seekBarPlaceHolder: android.view.View
-
     @View(R.id.seekBar)
     lateinit var seekBar: SeekBar
 
@@ -109,9 +106,6 @@ class AudioPlayerViewHolder(activityRef: WeakReference<FragmentActivity>, messag
 
     @View(R.id.message_time)
     lateinit var messageTimeTV: AppCompatTextView
-
-    @View(R.id.seekBar_thumb_virtual)
-    lateinit var seekBarThumb: AppCompatImageView
 
     private var animBlink: Animation? = null
     lateinit var audioPlayerViewHolder: AudioPlayerViewHolder
@@ -215,9 +209,10 @@ class AudioPlayerViewHolder(activityRef: WeakReference<FragmentActivity>, messag
         startDownloadImageView.visibility = android.view.View.INVISIBLE
         btnPlayImageView.visibility = android.view.View.INVISIBLE
         btnPauseImageView.visibility = android.view.View.INVISIBLE
-        seekBarPlaceHolder.visibility = android.view.View.INVISIBLE
-        seekBarThumb.visibility = android.view.View.INVISIBLE
+        seekBar.isEnabled = false
 
+        println("progress ${message.playProgress}")
+        seekBar.progress = message.playProgress
         appAnalytics = AppAnalytics.create(AnalyticsEvent.AUDIO_VH.NAME)
             .addBasicParam()
             .addUserDetails()
@@ -273,23 +268,31 @@ class AudioPlayerViewHolder(activityRef: WeakReference<FragmentActivity>, messag
 
         }
 
-
         seekBar.setOnSeekBarChangeListener(
             object : SeekBar.OnSeekBarChangeListener {
                 var userSelectedPosition = 0
                 override fun onStartTrackingTouch(seekBar: SeekBar) {
                 }
 
-                override fun onProgressChanged(seekBar: SeekBar, progress: Int, fromUser: Boolean) {
+                override fun onProgressChanged(
+                    seekBar: SeekBar,
+                    progress: Int,
+                    fromUser: Boolean
+                ) {
                     if (fromUser) {
                         userSelectedPosition = progress
                     }
                 }
 
                 override fun onStopTrackingTouch(seekBar: SeekBar) {
-                    RxBus2.publish(InternalSeekBarProgressEventBus(userSelectedPosition))
+                    RxBus2.publish(
+                        InternalSeekBarProgressEventBus(
+                            userSelectedPosition
+                        )
+                    )
                 }
             })
+
         updateUI()
         audioPlayingStatus()
         updateTime(messageTimeTV)
@@ -299,20 +302,19 @@ class AudioPlayerViewHolder(activityRef: WeakReference<FragmentActivity>, messag
     }
 
     private fun audioPlayingStatus() {
-        seekBarThumb.clearAnimation()
         AppObjectController.currentPlayingAudioObject?.run {
             try {
 
                 if (this.chatId == message.chatId) {
                     val ref = activityRef.get() as ConversationActivity
                     if (ref.isAudioPlaying()) {
-                        seekBarThumb.startAnimation(animBlink)
                         btnPauseImageView.visibility = android.view.View.VISIBLE
                         btnPlayImageView.visibility = android.view.View.GONE
+                        seekBar.isEnabled = true
                     } else {
+                        seekBar.isEnabled = false
                         btnPauseImageView.visibility = android.view.View.GONE
                         btnPlayImageView.visibility = android.view.View.VISIBLE
-                        seekBar.progress = 0
                     }
 
                 }
@@ -375,7 +377,6 @@ class AudioPlayerViewHolder(activityRef: WeakReference<FragmentActivity>, messag
     private fun mediaNotDownloaded() {
         appAnalytics.addParam(AnalyticsEvent.AUDIO_VIEW_STATUS.NAME, "Already downloaded")
         downloadContainer.visibility = android.view.View.VISIBLE
-        seekBarPlaceHolder.visibility = android.view.View.VISIBLE
         startDownloadImageView.visibility = android.view.View.VISIBLE
         seekBar.visibility = android.view.View.INVISIBLE
         progressBar.visibility = android.view.View.INVISIBLE
@@ -390,17 +391,14 @@ class AudioPlayerViewHolder(activityRef: WeakReference<FragmentActivity>, messag
         downloadContainer.visibility = android.view.View.VISIBLE
         progressBar.visibility = android.view.View.VISIBLE
         cancelDownloadImageView.visibility = android.view.View.VISIBLE
-        seekBarPlaceHolder.visibility = android.view.View.VISIBLE
         startDownloadImageView.visibility = android.view.View.INVISIBLE
     }
 
     private fun mediaDownloaded() {
         btnPlayImageView.visibility = android.view.View.VISIBLE
-        // seekBar.visibility = android.view.View.VISIBLE
+        seekBar.visibility = android.view.View.VISIBLE
         btnPauseImageView.visibility = android.view.View.INVISIBLE
-        seekBarPlaceHolder.visibility = android.view.View.VISIBLE
         downloadContainer.visibility = android.view.View.INVISIBLE
-        seekBarThumb.visibility = android.view.View.VISIBLE
     }
 
     fun downloadStart(url: String) {
@@ -415,7 +413,6 @@ class AudioPlayerViewHolder(activityRef: WeakReference<FragmentActivity>, messag
 
     private fun mediaUploading() {
         seekBar.visibility = android.view.View.INVISIBLE
-        seekBarPlaceHolder.visibility = android.view.View.VISIBLE
         downloadContainer.visibility = android.view.View.VISIBLE
         progressBar.visibility = android.view.View.VISIBLE
         cancelDownloadImageView.visibility = android.view.View.VISIBLE
@@ -423,7 +420,6 @@ class AudioPlayerViewHolder(activityRef: WeakReference<FragmentActivity>, messag
         btnPlayImageView.visibility = android.view.View.INVISIBLE
         btnPauseImageView.visibility = android.view.View.INVISIBLE
     }
-
 
     @Click(R.id.btnPlay)
     fun play() {
@@ -465,6 +461,7 @@ class AudioPlayerViewHolder(activityRef: WeakReference<FragmentActivity>, messag
         btnPauseImageView.visibility = android.view.View.GONE
         btnPlayImageView.visibility = android.view.View.VISIBLE
         txtCurrentDurationTV.text = PlayerUtil.toTimeSongString(duration)
+        seekBar.isEnabled = false
 
     }
 
@@ -491,11 +488,12 @@ class AudioPlayerViewHolder(activityRef: WeakReference<FragmentActivity>, messag
             if (AppObjectController.currentPlayingAudioObject != null && AppObjectController.currentPlayingAudioObject?.chatId == message.chatId && ref.isAudioPlaying()) {
                 btnPauseImageView.visibility = android.view.View.INVISIBLE
                 btnPlayImageView.visibility = android.view.View.VISIBLE
+                seekBar.isEnabled = false
 
             } else {
                 btnPauseImageView.visibility = android.view.View.VISIBLE
                 btnPlayImageView.visibility = android.view.View.INVISIBLE
-                seekBarThumb.startAnimation(animBlink)
+                seekBar.isEnabled = true
             }
 
             if (message.url.isNullOrEmpty().not()) {

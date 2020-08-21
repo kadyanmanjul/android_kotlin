@@ -141,32 +141,15 @@
                     android:layout_marginEnd="@dimen/_5sdp"
                     android:layout_toEndOf="@id/fl_controller">
 
-                <View
-                        android:id="@+id/seekBar_ph"
-                        android:layout_width="wrap_content"
-                        android:layout_height="@dimen/_2sdp"
-                        android:layout_gravity="center"
-                        android:layout_marginStart="@dimen/_6sdp"
-                        android:background="@color/gray_9E"
-                        android:visibility="invisible" />
-
                 <SeekBar
                         android:id="@+id/seekBar"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:paddingStart="@dimen/_6sdp"
                         android:paddingEnd="@dimen/_6sdp"
-                        android:progressDrawable="@null"
-                        android:visibility="invisible" />
-
-                <androidx.appcompat.widget.AppCompatImageView
-                        android:id="@+id/seekBar_thumb_virtual"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="start|center"
-                        android:src="@drawable/seek_thumb"
-                        android:visibility="invisible" />
-
+                        android:progressTint="@color/colorPrimary"
+                        android:thumb="@drawable/seek_thumb"
+                        android:visibility="visible" />
 
             </FrameLayout>
 
