@@ -560,8 +560,7 @@ class CourseDetailsActivity : BaseActivity() {
             viewModel.courseDetailsLiveData.value!!.paymentData.discountedAmount.substring(1)
                 .toDouble()
         if (exploreTypeStr.isNotBlank()
-            && exploreTypeStr != ExploreCardType.NORMAL.name
-            && exploreTypeStr != ExploreCardType.FFCOURSE.name
+            && exploreTypeStr == ExploreCardType.FREETRIAL.name
         ) {
             val isTrialStarted = PrefManager.getBoolValue(IS_TRIAL_STARTED, true)
             val tempTestId = if (isTrialStarted && discountedPrice > 0.0) SUBSCRIPTION_TEST_ID
@@ -732,8 +731,7 @@ class CourseDetailsActivity : BaseActivity() {
         val exploreTypeStr = PrefManager.getStringValue(EXPLORE_TYPE, true)
         if (exploreTypeStr.isNotBlank()) {
             when (ExploreCardType.valueOf(exploreTypeStr)) {
-                ExploreCardType.FREETRIAL,
-                ExploreCardType.SUBSCRIPTION -> {
+                ExploreCardType.FREETRIAL -> {
                     if (discountedPrice > 0) {
                         binding.btnStartCourse.text = getString(R.string.get_one_year_pass)
                         binding.btnStartCourse.textSize = 16f

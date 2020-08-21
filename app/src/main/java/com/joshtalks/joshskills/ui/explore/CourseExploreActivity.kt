@@ -265,8 +265,7 @@ class CourseExploreActivity : CoreJoshActivity() {
 
                 when (courseExploreModel.cardType) {
 
-                    ExploreCardType.NORMAL,
-                    ExploreCardType.SUBSCRIPTION -> {
+                    ExploreCardType.NORMAL -> {
                         courseExploreModel.id?.let { testId ->
                             CourseDetailsActivity.startCourseDetailsActivity(
                                 this,

@@ -192,9 +192,6 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
                 AppObjectController.getFirebaseRemoteConfig()
                     .getString(FirebaseRemoteConfigKey.INBOX_SCREEN_CTA_TEXT_FREETRIAL)
 
-            ExploreCardType.SUBSCRIPTION ->
-                AppObjectController.getFirebaseRemoteConfig()
-                    .getString(FirebaseRemoteConfigKey.INBOX_SCREEN_CTA_TEXT_SUBSCRIPTION)
         }
     }
 
@@ -648,11 +645,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
     private fun updateExploreTypeParam(coursesList: List<InboxEntity>) {
         val trialCourse =
             coursesList.filter { it.courseId == TRIAL_COURSE_ID }.getOrNull(0)
-        val subscriptionCourse =
-            coursesList.filter { it.courseId == SUBSCRIPTION_COURSE_ID }.getOrNull(0)
-        if (subscriptionCourse != null) {
-            PrefManager.put(EXPLORE_TYPE, ExploreCardType.SUBSCRIPTION.name, true)
-        } else if (trialCourse != null) {
+        if (trialCourse != null) {
             PrefManager.put(EXPLORE_TYPE, ExploreCardType.FREETRIAL.name, true)
         }
     }

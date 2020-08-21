@@ -78,23 +78,6 @@ class StartSubscriptionActivity : BaseActivity() {
                     .getString(FirebaseRemoteConfigKey.START_TRAIL_FEATURE3)
             }
 
-            ExploreCardType.SUBSCRIPTION -> {
-                logEvent(AnalyticsEvent.SUBSCRIPTION_POPUP.name)
-                binding.startBtn.text =
-                    AppObjectController.getFirebaseRemoteConfig()
-                        .getString(FirebaseRemoteConfigKey.START_SUBSCRIPTION_CTA_LABEL)
-                binding.txtHeading.text = AppObjectController.getFirebaseRemoteConfig()
-                    .getString(FirebaseRemoteConfigKey.START_SUBSCRIPTION_TITLE)
-                binding.txtHeadingMain.text = AppObjectController.getFirebaseRemoteConfig()
-                    .getString(FirebaseRemoteConfigKey.START_SUBSCRIPTION_HEADING)
-                binding.item1Txt.text = AppObjectController.getFirebaseRemoteConfig()
-                    .getString(FirebaseRemoteConfigKey.START_SUBSCRIPTION_FEATURE1)
-                binding.item2Txt.text = AppObjectController.getFirebaseRemoteConfig()
-                    .getString(FirebaseRemoteConfigKey.START_SUBSCRIPTION_FEATURE2)
-                binding.item3Txt.text = AppObjectController.getFirebaseRemoteConfig()
-                    .getString(FirebaseRemoteConfigKey.START_SUBSCRIPTION_FEATURE3)
-            }
-
             ExploreCardType.FFCOURSE -> {
                 binding.startBtn.text =
                     AppObjectController.getFirebaseRemoteConfig().getString("start_free_course")
@@ -122,10 +105,6 @@ class StartSubscriptionActivity : BaseActivity() {
 
                 ExploreCardType.FREETRIAL -> {
                     logEvent(AnalyticsEvent.SEVEN_DAY_CLICKED.NAME)
-                    getSubscriptionDetails()
-                }
-                ExploreCardType.SUBSCRIPTION -> {
-                    logEvent(AnalyticsEvent.SUBSCRIPTION_BUTTON_CLICKED.NAME)
                     getSubscriptionDetails()
                 }
 
