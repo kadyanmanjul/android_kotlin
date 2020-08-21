@@ -113,6 +113,7 @@ class FillInTheBlankChoiceView : FrameLayout,
         chipChoiceList.clear()
         assessmentQuestion?.choiceList?.sortedBy { it.correctAnswerOrder }?.forEach { choice ->
             choice.userSelectedOrder = choice.correctAnswerOrder
+            choice.isSelectedByUser=true
             chipChoiceList.add(choice)
         }
         seeAnswer.text = context.getString(R.string.see_your_answer)
@@ -136,6 +137,9 @@ class FillInTheBlankChoiceView : FrameLayout,
         }
         chipChoiceList.clear()
         assessmentQuestion?.choiceList?.sortedBy { it.userSelectedOrder }?.forEach { choice ->
+            if(choice.userSelectedOrder>50){
+                choice.isSelectedByUser=false
+            }
             chipChoiceList.add(choice)
         }
 
