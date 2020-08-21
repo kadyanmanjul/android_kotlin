@@ -25,7 +25,7 @@ import com.joshtalks.joshskills.repository.local.minimalentity.CourseContentEnti
 import com.joshtalks.joshskills.util.RandomString
 import kotlinx.android.parcel.Parcelize
 import java.io.Serializable
-import java.util.*
+import java.util.Date
 
 @Parcelize
 @Entity(tableName = "chat_table", indices = [Index(value = ["chat_id", "conversation_id"])])
@@ -609,6 +609,12 @@ interface ChatDao {
 
     @Query("SELECT * FROM question_table WHERE course_id= :course_id AND interval=:interval")
     suspend fun getQuestionForNextInterval(course_id: String, interval: Int): Question?
+
+    @Query(value = "SELECT * FROM chat_table where conversation_id= :conversationId AND type= :type ")
+    suspend fun getUnlockChatModel(
+        conversationId: String,
+        type: BASE_MESSAGE_TYPE = BASE_MESSAGE_TYPE.UNLOCK
+    ): List<ChatModel?>?
 
     @Query(value = "SELECT * FROM chat_table where question_id IS NOT NULL AND conversation_id= :conversationId ORDER BY created DESC LIMIT 1; ")
     suspend fun getLastQuestionInterval(conversationId: String): ChatModel?
