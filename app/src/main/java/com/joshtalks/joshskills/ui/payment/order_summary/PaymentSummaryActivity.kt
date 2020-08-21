@@ -78,7 +78,9 @@ import org.json.JSONObject
 import retrofit2.HttpException
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
-import java.util.*
+import java.util.Currency
+import java.util.HashMap
+import java.util.Locale
 import kotlin.math.roundToInt
 
 const val TRANSACTION_ID = "TRANSACTION_ID"
@@ -805,9 +807,9 @@ class PaymentSummaryActivity : CoreJoshActivity(),
     private fun navigateToStartCourseActivity(hasOrderId: Boolean) {
         StartCourseActivity.openStartCourseActivity(
             this,
-            viewModel.responsePaymentSummary.value?.courseName ?: "Course",
-            viewModel.responsePaymentSummary.value?.teacherName ?: EMPTY,
-            viewModel.responsePaymentSummary.value?.imageUrl ?: EMPTY,
+            viewModel.getCourseName(),
+            viewModel.getTeacherName(),
+            viewModel.getImageUrl(),
             if (hasOrderId)
                 viewModel.mPaymentDetailsResponse.value?.joshtalksOrderId ?: 0
             else 0

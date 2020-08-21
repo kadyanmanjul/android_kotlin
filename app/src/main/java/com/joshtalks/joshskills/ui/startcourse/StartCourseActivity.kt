@@ -134,7 +134,7 @@ class StartCourseActivity : CoreJoshActivity() {
     }
 
     private fun setListeners() {
-        binding.materialButton.setOnClickListener(View.OnClickListener {
+        binding.materialButton.setOnClickListener {
             if (isUserRegistered) {
                 AppAnalytics.create(AnalyticsEvent.COURSE_START_CLCIKED.NAME)
                     .addUserDetails()
@@ -159,7 +159,7 @@ class StartCourseActivity : CoreJoshActivity() {
                 startActivity(intent)
                 this.finish()
             }
-        })
+        }
     }
 
 }

@@ -27,7 +27,7 @@ import retrofit2.HttpException
 import retrofit2.Response
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
-import java.util.*
+import java.util.HashMap
 
 class PaymentSummaryViewModel(application: Application) : AndroidViewModel(application) {
     var context: JoshApplication = getApplication()
@@ -65,6 +65,24 @@ class PaymentSummaryViewModel(application: Application) : AndroidViewModel(appli
 
         } else {
             return responsePaymentSummary.value?.courseName ?: EMPTY
+        }
+    }
+
+    fun getTeacherName(): String {
+        if (isSubscriptionTipUsed) {
+            return responseSubscriptionPaymentSummary.value?.teacherName ?: EMPTY
+
+        } else {
+            return responsePaymentSummary.value?.teacherName ?: EMPTY
+        }
+    }
+
+    fun getImageUrl(): String {
+        if (isSubscriptionTipUsed) {
+            return responseSubscriptionPaymentSummary.value?.imageUrl ?: EMPTY
+
+        } else {
+            return responsePaymentSummary.value?.imageUrl ?: EMPTY
         }
     }
 
