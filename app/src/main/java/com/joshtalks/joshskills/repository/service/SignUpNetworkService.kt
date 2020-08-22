@@ -48,7 +48,7 @@ interface SignUpNetworkService {
     ): Response<LoginResponse>
 
     @POST("$DIR/mentor/instance/")
-    suspend fun getInstanceIdAsync(): InstanceIdResponse
+    suspend fun getInstanceIdAsync(@Body params: Map<String, String?>): InstanceIdResponse
 
     @GET("$DIR/user/login/")
     suspend fun getOtpForNumberAsync(@QueryMap params: Map<String, String>): Response<Any>
