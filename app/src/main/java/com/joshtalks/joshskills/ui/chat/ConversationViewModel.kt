@@ -174,7 +174,9 @@ class ConversationViewModel(application: Application) :
             chatReturn.add(chat)
         }
         if (chatReturn.isNullOrEmpty()) {
-            emptyChatLiveData.postValue(null)
+            if (lastMessageTime != null) {
+                emptyChatLiveData.postValue(null)
+            }
             return@launch
         }
         lastMessageTime = chatReturn.last().created

@@ -294,7 +294,7 @@ abstract class AppDatabase : RoomDatabase() {
 
         private val MIGRATION_19_20: Migration = object : Migration(19, 20) {
             override fun migrate(database: SupportSQLiteDatabase) {
-                database.execSQL("ALTER TABLE course ADD COLUMN batch_started TEXT NOT NULL DEFAULT ''")
+                database.execSQL("ALTER TABLE course ADD COLUMN batch_started TEXT")
             }
         }
 

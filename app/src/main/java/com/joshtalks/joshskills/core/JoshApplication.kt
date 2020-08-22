@@ -32,6 +32,7 @@ var TAG = "JoshSkill"
 
 class JoshApplication : MultiDexApplication(), LifecycleObserver,
     ComponentCallbacks2/*, Configuration.Provider*/ {
+
     companion object {
         @JvmStatic
         var isAppVisible = false
@@ -156,9 +157,6 @@ class JoshApplication : MultiDexApplication(), LifecycleObserver,
     override fun onTrimMemory(level: Int) {
         super.onTrimMemory(level)
         when (level) {
-            ComponentCallbacks2.TRIM_MEMORY_UI_HIDDEN -> {
-            }
-
             ComponentCallbacks2.TRIM_MEMORY_RUNNING_MODERATE,
             ComponentCallbacks2.TRIM_MEMORY_RUNNING_LOW,
             ComponentCallbacks2.TRIM_MEMORY_RUNNING_CRITICAL -> {
@@ -170,9 +168,10 @@ class JoshApplication : MultiDexApplication(), LifecycleObserver,
             ComponentCallbacks2.TRIM_MEMORY_BACKGROUND,
             ComponentCallbacks2.TRIM_MEMORY_MODERATE,
             ComponentCallbacks2.TRIM_MEMORY_COMPLETE -> {
+                return
             }
-
             else -> {
+                return
             }
         }
     }

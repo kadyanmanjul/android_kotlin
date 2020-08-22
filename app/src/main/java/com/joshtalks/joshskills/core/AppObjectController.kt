@@ -59,10 +59,14 @@ import io.branch.referral.Branch
 import io.fabric.sdk.android.Fabric
 import jp.wasabeef.glide.transformations.CropTransformation
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation
+import okhttp3.CertificatePinner
+import okhttp3.CipherSuite
+import okhttp3.ConnectionSpec
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
+import okhttp3.TlsVersion
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.HttpException
 import retrofit2.Retrofit
@@ -71,15 +75,22 @@ import timber.log.Timber
 import java.io.File
 import java.lang.reflect.Modifier
 import java.lang.reflect.Type
+import java.net.URL
 import java.text.DateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
+import javax.net.ssl.HostnameVerifier
 
 const val KEY_AUTHORIZATION = "Authorization"
 const val KEY_APP_VERSION_CODE = "app-version-code"
 const val KEY_APP_VERSION_NAME = "app-version-name"
 const val KEY_APP_USER_AGENT = "HTTP_USER_AGENT"
 private const val JOSH_SKILLS_CACHE = "joshskills-cache"
+private const val READ_TIMEOUT = 30L
+private const val WRITE_TIMEOUT = 30L
+private const val CONNECTION_TIMEOUT = 30L
+private const val CALL_TIMEOUT = 60L
+
 
 internal class AppObjectController {
 
@@ -133,9 +144,6 @@ internal class AppObjectController {
 
         @JvmStatic
         var screenHeight: Int = 0
-
-        @JvmStatic
-        lateinit var okHttpClient: OkHttpClient
 
         @JvmStatic
         lateinit var videoDownloadTracker: DownloadTracker
@@ -201,64 +209,68 @@ internal class AppObjectController {
                 .create()
 
             val builder = OkHttpClient().newBuilder()
-                .connectTimeout(30, TimeUnit.SECONDS)
-                .writeTimeout(30, TimeUnit.SECONDS)
-                .readTimeout(30, TimeUnit.SECONDS)
+                .connectTimeout(CONNECTION_TIMEOUT, TimeUnit.SECONDS)
+                .writeTimeout(WRITE_TIMEOUT, TimeUnit.SECONDS)
+                .readTimeout(READ_TIMEOUT, TimeUnit.SECONDS)
+                .callTimeout(CALL_TIMEOUT, TimeUnit.SECONDS)
                 .retryOnConnectionFailure(true)
                 .followSslRedirects(true)
                 .addInterceptor(StatusCodeInterceptor())
                 .addInterceptor(NewRelicHttpMetricsLogger())
+                .addInterceptor(HeaderInterceptor())
+                .hostnameVerifier(HostnameVerifier { _, _ -> true })
+                .certificatePinner(
+                    CertificatePinner.Builder()
+                        .add(
+                            getHostOfUrl(),
+                            *getCertificatePins()
+                        )
+                        .build()
+                )
 
-            val logging =
-                HttpLoggingInterceptor(object : HttpLoggingInterceptor.Logger {
-                    override fun log(message: String) {
-                        Timber.tag("OkHttp").d(message)
-                    }
+            val spec: ConnectionSpec = ConnectionSpec.Builder(ConnectionSpec.MODERN_TLS)
+                .tlsVersions(TlsVersion.TLS_1_2)
+                .cipherSuites(
+                    CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,
+                    CipherSuite.TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,
+                    CipherSuite.TLS_DHE_RSA_WITH_AES_128_GCM_SHA256
+                )
+                .build()
 
-                }).apply {
-                    level = HttpLoggingInterceptor.Level.BODY
-
-                }
+            builder.connectionSpecs(Collections.singletonList(spec))
 
             if (BuildConfig.DEBUG) {
-                builder.addNetworkInterceptor(StethoInterceptor())
-                builder.addInterceptor(logging)
-            }
-            builder.addInterceptor(object : Interceptor {
-                override fun intercept(chain: Interceptor.Chain): Response {
-                    val original = chain.request()
-                    val newRequest: Request.Builder = original.newBuilder()
-                    if (PrefManager.getStringValue(API_TOKEN).isNotEmpty()) {
-                        newRequest.addHeader(
-                            KEY_AUTHORIZATION, "JWT " + PrefManager.getStringValue(API_TOKEN)
-                        )
+                val logging =
+                    HttpLoggingInterceptor(object : HttpLoggingInterceptor.Logger {
+                        override fun log(message: String) {
+                            Timber.tag("OkHttp").d(message)
+                        }
+
+                    }).apply {
+                        level = HttpLoggingInterceptor.Level.BODY
+
                     }
-                    newRequest.addHeader(KEY_APP_VERSION_NAME, BuildConfig.VERSION_NAME)
-                        .addHeader(KEY_APP_VERSION_CODE, BuildConfig.VERSION_CODE.toString())
-                        .addHeader(
-                            KEY_APP_USER_AGENT,
-                            "APP_" + BuildConfig.VERSION_NAME + "_" + BuildConfig.VERSION_CODE.toString()
-                        )
-
-                    return chain.proceed(newRequest.build())
-                }
-            })
-            okHttpClient = builder.build()
-
+                builder.addInterceptor(logging)
+                builder.addNetworkInterceptor(StethoInterceptor())
+                builder.eventListener(PrintingEventListener())
+            }
             retrofit = Retrofit.Builder()
                 .baseUrl(BuildConfig.BASE_URL)
                 .client(builder.build())
                 .addCallAdapterFactory(CoroutineCallAdapterFactory())
                 .addConverterFactory(GsonConverterFactory.create(gsonMapper))
                 .build()
-
-
             signUpNetworkService = retrofit.create(SignUpNetworkService::class.java)
             chatNetworkService = retrofit.create(ChatNetworkService::class.java)
             commonNetworkService = retrofit.create(CommonNetworkService::class.java)
-
             initObjectInThread()
+
             return INSTANCE
+        }
+
+        private fun getHostOfUrl(): String {
+            val aURL = URL(BuildConfig.BASE_URL)
+            return aURL.host
         }
 
         private fun initNewRelic() {
@@ -305,20 +317,26 @@ internal class AppObjectController {
                 .build(joshApplication, BuildConfig.FLURRY_API_KEY)
         }
 
-        fun initialiseFreshchat() {
-            try {
-                val config =
-                    FreshchatConfig(BuildConfig.FRESH_CHAT_APP_ID, BuildConfig.FRESH_CHAT_APP_KEY)
-                config.isCameraCaptureEnabled = true
-                config.isGallerySelectionEnabled = true
-                config.isResponseExpectationEnabled = true
-                config.domain = "https://msdk.in.freshchat.com"
-                freshChat = Freshchat.getInstance(joshApplication)
-                freshChat?.init(config)
-                val notificationConfig = FreshchatNotificationConfig()
-                    .setImportance(NotificationManagerCompat.IMPORTANCE_MAX)
-                freshChat?.setNotificationConfig(notificationConfig)
-            } catch (ex: Exception) {
+        fun initialiseFreshChat() {
+            JoshSkillExecutors.BOUNDED.submit {
+                try {
+                    val config =
+                        FreshchatConfig(
+                            BuildConfig.FRESH_CHAT_APP_ID,
+                            BuildConfig.FRESH_CHAT_APP_KEY
+                        )
+                    config.isCameraCaptureEnabled = true
+                    config.isGallerySelectionEnabled = true
+                    config.isResponseExpectationEnabled = true
+                    config.domain = "https://msdk.in.freshchat.com"
+                    freshChat = Freshchat.getInstance(joshApplication)
+                    freshChat?.init(config)
+                    val notificationConfig = FreshchatNotificationConfig()
+                        .setImportance(NotificationManagerCompat.IMPORTANCE_MAX)
+                    freshChat?.setNotificationConfig(notificationConfig)
+                } catch (ex: Exception) {
+                    ex.printStackTrace()
+                }
             }
         }
 
@@ -344,6 +362,7 @@ internal class AppObjectController {
                     DownloadUtils.objectFetchListener.remove(key)
                 }
             } catch (ex: Exception) {
+                ex.printStackTrace()
             }
         }
 
@@ -396,7 +415,7 @@ internal class AppObjectController {
             return "${joshApplication.cacheDir}/${JOSH_SKILLS_CACHE}"
         }
 
-        fun initObjectInThread() {
+        private fun initObjectInThread() {
             Thread(Runnable {
                 val mediaOkhttpBuilder = OkHttpClient().newBuilder()
                 mediaOkhttpBuilder.connectTimeout(45, TimeUnit.SECONDS)
@@ -404,19 +423,20 @@ internal class AppObjectController {
                     .readTimeout(45, TimeUnit.SECONDS)
                     .followRedirects(true)
                     .addInterceptor(StatusCodeInterceptor())
-                val logging =
-                    HttpLoggingInterceptor(object : HttpLoggingInterceptor.Logger {
-                        override fun log(message: String) {
-                            Timber.tag("OkHttp").d(message)
-                        }
 
-                    }).apply {
-                        level = HttpLoggingInterceptor.Level.BODY
-
-                    }
                 if (BuildConfig.DEBUG) {
-                    mediaOkhttpBuilder.addNetworkInterceptor(StethoInterceptor())
+                    val logging =
+                        HttpLoggingInterceptor(object : HttpLoggingInterceptor.Logger {
+                            override fun log(message: String) {
+                                Timber.tag("OkHttp").d(message)
+                            }
+
+                        }).apply {
+                            level = HttpLoggingInterceptor.Level.BODY
+
+                        }
                     mediaOkhttpBuilder.addInterceptor(logging)
+                    mediaOkhttpBuilder.addNetworkInterceptor(StethoInterceptor())
                 }
 
                 mediaOkhttpBuilder.addInterceptor(object : Interceptor {
@@ -454,6 +474,34 @@ internal class AppObjectController {
             }).start()
         }
 
+        private fun getCertificatePins() =
+            arrayOf(
+                "sha256/dSlQHeoe4vMRu/nWoQvU9oQAMgtJ7ZJBjy8qeERS9BU=",
+                "sha256/JSMzqOOrtyOT1kmau6zKhgT676hGgczD5VMdRMyJZFA=",
+                "sha256/++MBgDH5WGvL9Bcn5Be30cRcL0f5O+NyoXuWtQdX1aI=",
+                "sha256/KwccWaCgrnaw6tsrrSO61FgLacNgG2MMLq8GE6+oP5I="
+            )
+    }
+
+}
+
+class HeaderInterceptor : Interceptor {
+    override fun intercept(chain: Interceptor.Chain): Response {
+        val original = chain.request()
+        val newRequest: Request.Builder = original.newBuilder()
+        if (PrefManager.getStringValue(API_TOKEN).isNotEmpty()) {
+            newRequest.addHeader(
+                KEY_AUTHORIZATION, "JWT " + PrefManager.getStringValue(API_TOKEN)
+            )
+        }
+        newRequest.addHeader(KEY_APP_VERSION_NAME, BuildConfig.VERSION_NAME)
+            .addHeader(KEY_APP_VERSION_CODE, BuildConfig.VERSION_CODE.toString())
+            .addHeader(
+                KEY_APP_USER_AGENT,
+                "APP_" + BuildConfig.VERSION_NAME + "_" + BuildConfig.VERSION_CODE.toString()
+            )
+
+        return chain.proceed(newRequest.build())
     }
 }
 

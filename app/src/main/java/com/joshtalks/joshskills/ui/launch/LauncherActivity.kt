@@ -38,7 +38,7 @@ class LauncherActivity : CoreJoshActivity(), CustomPermissionDialogInteractionLi
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_launcher)
         logAppLaunchEvent(getNetworkOperatorName())
-        AppObjectController.initialiseFreshchat()
+        AppObjectController.initialiseFreshChat()
     }
 
     @AddTrace(name = "handleIntent", enabled = true)

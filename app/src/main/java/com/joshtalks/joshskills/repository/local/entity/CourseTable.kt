@@ -48,7 +48,7 @@ data class Course(
     @SerializedName("report_status") val reportStatus: Boolean = false,
 
     @ColumnInfo(name = "batch_started")
-    @SerializedName("batch_started") val batchStarted: String
+    @SerializedName("batch_started") val batchStarted: String?
 
 ) : Serializable
 
