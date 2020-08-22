@@ -9,7 +9,7 @@ apply plugin: 'com.google.firebase.firebase-perf'
 
 def majorVersion = 2
 def minorVersion = 1
-def patchVersion = 2
+def patchVersion = 3
 
 android {
     compileSdkVersion 29
