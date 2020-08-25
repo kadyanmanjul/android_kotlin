@@ -35,10 +35,13 @@ data class PaymentSummaryResponse(
 
 @Parcelize
 data class CouponDetails(
+
     @SerializedName("id")
     val id: Int,
     @SerializedName("name")
     val name: String,
+    @SerializedName("is_promo_code")
+    val isPromoCode: Boolean,
     @SerializedName("title")
     val title: String,
     @SerializedName("header")
