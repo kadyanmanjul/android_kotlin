@@ -21,6 +21,7 @@ import android.widget.TextView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.ContextCompat
 import androidx.core.text.HtmlCompat
+import androidx.core.text.color
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
@@ -264,8 +265,16 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                 when (it.couponDetails.isPromoCode) {
                     true -> {
                         showToast("Coupon Applied Successfully")
+
+                        val blackColor = ContextCompat.getColor(this, R.color.black)
+                        val greenColor = ContextCompat.getColor(this, R.color.green_right_answer)
+                        val text = SpannableStringBuilder()
+                            .color(blackColor) { append("Coupon Applied") }
+                            .append("\n")
+                            .color(greenColor) { append(it.couponDetails.header) }
+
                         applyCouponText.text =
-                            "Coupon Applied".plus('\n').plus(it.couponDetails.header)
+                            text
                         binding.txtPrice.text =
                             "₹ ${String.format("%.2f", viewModel.getCourseDiscountedAmount())}"
                         binding.actualTxtPrice.visibility = View.VISIBLE
