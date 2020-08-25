@@ -9,13 +9,20 @@ import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.SeekBar
 import android.widget.TextView
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.OnLifecycleEvent
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.JoshApplication
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
+import com.joshtalks.joshskills.core.custom_ui.exo_audio_player.AudioPlayerEventListener
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.core.showToast
+import com.joshtalks.joshskills.util.ExoAudioPlayer
 import com.tonyodev.fetch2.Download
 import com.tonyodev.fetch2.Error
 import com.tonyodev.fetch2.Fetch
@@ -41,17 +48,20 @@ import java.io.File
 import kotlin.random.Random
 
 
-class AudioPlayerView : FrameLayout, View.OnClickListener, CurrentSessionCallback {
+class AudioPlayerView : FrameLayout, View.OnClickListener, CurrentSessionCallback,
+    LifecycleObserver,
+    ExoAudioPlayer.ProgressUpdateListener, AudioPlayerEventListener {
 
     private lateinit var playButton: ImageView
     private lateinit var pauseButton: ImageView
     private lateinit var seekPlayerProgress: SeekBar
     private lateinit var timestamp: TextView
     private lateinit var progressWheel: ProgressBar
+    private var audioManger: ExoAudioPlayer? = null
     private var streamingManager: AudioStreamingManager? = null
     private val context = AppObjectController.joshApplication
 
-    private var id: String? = null
+    private var id: String = EMPTY
     private var url: String? = null
     private var audioFile: File? = null
     private var mediaDuration: Long? = null
@@ -72,7 +82,8 @@ class AudioPlayerView : FrameLayout, View.OnClickListener, CurrentSessionCallbac
             if (AppDirectory.copy(download.file, cacheFile.absolutePath)) {
                 audioFile = cacheFile
                 audioFile?.run {
-                    if ((streamingManager != null && streamingManager!!.isPlaying).not()) {
+//                    if ((streamingManager != null && streamingManager!!.isPlaying).not()) {
+                    if (audioManger != null && audioManger!!.isPlaying().not()) {
                         playPause(this)
                     }
                     AppDirectory.deleteFile(download.file)
@@ -150,8 +161,14 @@ class AudioPlayerView : FrameLayout, View.OnClickListener, CurrentSessionCallbac
 
     private fun init() {
         AppObjectController.createDefaultCacheDir()
-        streamingManager = AudioStreamingManager.getInstance(AppObjectController.joshApplication)
-        streamingManager?.subscribesCallBack(this)
+//        streamingManager = AudioStreamingManager.getInstance(AppObjectController.joshApplication)
+//        streamingManager?.subscribesCallBack(this)
+
+        audioManger = ExoAudioPlayer.getInstance()
+        ExoAudioPlayer.LAST_ID = EMPTY
+        audioManger?.playerListener = this
+        audioManger?.setProgressUpdateListener(this)
+
         View.inflate(context, R.layout.audio_player_layout, this)
         playButton = findViewById(R.id.btnPlay)
         pauseButton = findViewById(R.id.btnPause)
@@ -180,7 +197,8 @@ class AudioPlayerView : FrameLayout, View.OnClickListener, CurrentSessionCallbac
                 }
 
                 override fun onStopTrackingTouch(seekBar: SeekBar) {
-                    streamingManager?.onSeekTo(userSelectedPosition.toLong())
+                    audioManger?.seekTo(userSelectedPosition.toLong())
+//                    streamingManager?.onSeekTo(userSelectedPosition.toLong())
                 }
             })
     }
@@ -238,7 +256,19 @@ class AudioPlayerView : FrameLayout, View.OnClickListener, CurrentSessionCallbac
     }
 
     private fun playPause(file: File) {
-        streamingManager?.let {
+        audioManger?.let {
+            if (ExoAudioPlayer.LAST_ID.isEmpty()) {
+                initAndPlay(file)
+                return@let
+            }
+            if (ExoAudioPlayer.LAST_ID == id) {
+                audioManger?.resumeOrPause()
+            } else {
+                initAndPlay(file)
+            }
+
+        }
+        /*streamingManager?.let {
             if (streamingManager?.currentAudio == null) {
                 initAndPlay(file)
                 return@let
@@ -252,12 +282,18 @@ class AudioPlayerView : FrameLayout, View.OnClickListener, CurrentSessionCallbac
             } else {
                 initAndPlay(file)
             }
-        }
+        }*/
     }
 
     private fun initAndPlay(file: File) {
         logAudioPlayedEvent(true)
-        val audioMediaMetaData = MediaMetaData()
+        audioManger?.play(file.absolutePath, id)
+        seekPlayerProgress.progress = 0
+
+        val duration = Utils.getDurationOfMedia(context, file.absolutePath) ?: 0
+        seekPlayerProgress.max = duration.toInt()
+
+        /*val audioMediaMetaData = MediaMetaData()
         audioMediaMetaData.mediaId = id
         audioMediaMetaData.mediaUrl = file.absolutePath
         audioMediaMetaData.mediaDuration = 10_000.toString()
@@ -269,7 +305,7 @@ class AudioPlayerView : FrameLayout, View.OnClickListener, CurrentSessionCallbac
         seekPlayerProgress.max = duration.toInt()
         timestamp.text = Utils.formatDuration(duration.toInt())
         streamingManager?.onPlay(audioMediaMetaData)
-        streamingManager?.setShowPlayerNotification(false)
+        streamingManager?.setShowPlayerNotification(false)*/
     }
 
     override fun currentSeekBarPosition(progress: Int) {
@@ -380,8 +416,10 @@ class AudioPlayerView : FrameLayout, View.OnClickListener, CurrentSessionCallbac
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
         compositeDisposable.clear()
-        streamingManager?.unSubscribeCallBack()
-        streamingManager?.handlePauseRequest()
+//        streamingManager?.unSubscribeCallBack()
+//        streamingManager?.handlePauseRequest()
+        audioManger?.release()
+        ExoAudioPlayer.LAST_ID = ""
         AppObjectController.getFetchObject().removeListener(downloadListener)
         Timber.tag("onDetachedFromWindow").e("AudioPlayer")
     }
@@ -404,5 +442,52 @@ class AudioPlayerView : FrameLayout, View.OnClickListener, CurrentSessionCallbac
             .build()
         return Fetch.getInstance(fetchConfiguration)
 
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
+    fun onPausePlayer() {
+        audioManger?.onPause()
+        pausingAudio()
+    }
+
+    override fun onProgressUpdate(progress: Long) {
+        if (!JoshApplication.isAppVisible)
+            onPausePlayer()
+        seekPlayerProgress.progress = progress.toInt()
+    }
+
+    override fun onDurationUpdate(duration: Long?) {
+    }
+
+    override fun onPlayerPause() {
+        pausingAudio()
+    }
+
+    override fun onPlayerResume() {
+        playingAudio()
+    }
+
+    override fun onCurrentTimeUpdated(lastPosition: Long) {
+    }
+
+    override fun onTrackChange(tag: String?) {
+    }
+
+    override fun onPositionDiscontinuity(lastPos: Long, reason: Int) {
+    }
+
+    override fun onPositionDiscontinuity(reason: Int) {
+    }
+
+    override fun onPlayerReleased() {
+    }
+
+    override fun onPlayerEmptyTrack() {
+    }
+
+    override fun complete() {
+        seekPlayerProgress.progress = 0
+        audioManger?.seekTo(0)
+        audioManger?.onPause()
     }
 }

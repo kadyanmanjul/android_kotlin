@@ -458,8 +458,8 @@ class AudioPlayerViewHolder(activityRef: WeakReference<FragmentActivity>, messag
     @Click(R.id.btnPause)
     fun pause() {
         RxBus2.publish(AudioPlayEventBus(PlaybackInfoListener.State.PAUSED, message, null))
-        btnPauseImageView.visibility = android.view.View.GONE
-        btnPlayImageView.visibility = android.view.View.VISIBLE
+//        btnPauseImageView.visibility = android.view.View.GONE
+//        btnPlayImageView.visibility = android.view.View.VISIBLE
         txtCurrentDurationTV.text = PlayerUtil.toTimeSongString(duration)
         seekBar.isEnabled = false
 
@@ -485,17 +485,16 @@ class AudioPlayerViewHolder(activityRef: WeakReference<FragmentActivity>, messag
     fun playAudioInPlayer() {
         try {
             val ref = activityRef.get() as ConversationActivity
-            if (AppObjectController.currentPlayingAudioObject != null && AppObjectController.currentPlayingAudioObject?.chatId == message.chatId && ref.isAudioPlaying()) {
-                btnPauseImageView.visibility = android.view.View.INVISIBLE
-                btnPlayImageView.visibility = android.view.View.VISIBLE
-                seekBar.isEnabled = false
-
-            } else {
-                btnPauseImageView.visibility = android.view.View.VISIBLE
-                btnPlayImageView.visibility = android.view.View.INVISIBLE
-                seekBar.isEnabled = true
-            }
-
+            /* if (AppObjectController.currentPlayingAudioObject != null && AppObjectController.currentPlayingAudioObject?.chatId == message.chatId) {
+                 btnPauseImageView.visibility = android.view.View.INVISIBLE
+                 btnPlayImageView.visibility = android.view.View.VISIBLE
+                 seekBar.isEnabled = false
+             } else {
+                 btnPauseImageView.visibility = android.view.View.VISIBLE
+                 btnPlayImageView.visibility = android.view.View.INVISIBLE
+                 seekBar.isEnabled = true
+             }
+ */
             if (message.url.isNullOrEmpty().not()) {
                 val audioObject = AudioType(
                     message.url!!,
@@ -525,6 +524,7 @@ class AudioPlayerViewHolder(activityRef: WeakReference<FragmentActivity>, messag
                 )
             }
         } catch (ex: Exception) {
+            ex.printStackTrace()
         }
     }
 

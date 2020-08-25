@@ -45,6 +45,8 @@ import com.bumptech.glide.load.resource.bitmap.FitCenter
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import com.crashlytics.android.Crashlytics
+import com.google.android.exoplayer2.ExoPlaybackException
+import com.google.android.exoplayer2.Player
 import com.greentoad.turtlebody.mediapicker.MediaPicker
 import com.greentoad.turtlebody.mediapicker.core.MediaPickerConfig
 import com.joshtalks.joshcamerax.JoshCameraActivity
@@ -58,6 +60,7 @@ import com.joshtalks.joshskills.core.PermissionUtils
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
+import com.joshtalks.joshskills.core.custom_ui.exo_audio_player.AudioPlayerEventListener
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.core.playback.MusicService
 import com.joshtalks.joshskills.core.playback.PlaybackInfoListener
@@ -77,6 +80,8 @@ import com.joshtalks.joshskills.repository.server.RequestEngage
 import com.joshtalks.joshskills.ui.extra.ImageShowFragment
 import com.joshtalks.joshskills.ui.pdfviewer.PdfViewerActivity
 import com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity
+import com.joshtalks.joshskills.util.ExoAudioPlayer
+import com.joshtalks.joshskills.util.ExoAudioPlayer.ProgressUpdateListener
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
@@ -97,7 +102,8 @@ const val IMAGE_OR_VIDEO_SELECT_REQUEST_CODE = 1081
 const val TEXT_FILE_ATTACHMENT_REQUEST_CODE = 1082
 
 
-class PractiseSubmitActivity : CoreJoshActivity() {
+class PractiseSubmitActivity : CoreJoshActivity(), Player.EventListener, AudioPlayerEventListener,
+    ProgressUpdateListener {
     private var compositeDisposable = CompositeDisposable()
 
     private lateinit var binding: ActivityPraticeSubmitBinding
@@ -115,6 +121,7 @@ class PractiseSubmitActivity : CoreJoshActivity() {
     private var totalTimeSpend: Long = 0
     private var filePath: String? = null
     private lateinit var appAnalytics: AppAnalytics
+    private var audioManager: ExoAudioPlayer? = null
 
 
     private val DOCX_FILE_MIME_TYPE = arrayOf(
@@ -219,6 +226,9 @@ class PractiseSubmitActivity : CoreJoshActivity() {
     override fun onPause() {
         super.onPause()
 
+        if (audioManager != null) {
+            audioManager?.onPause()
+        }
         if (mPlayerInterface != null && mPlayerInterface!!.isPlaying) {
             mPlayerInterface?.resumeOrPause()
             setAudioPlayerStateDefault()
@@ -268,9 +278,10 @@ class PractiseSubmitActivity : CoreJoshActivity() {
     override fun onDestroy() {
         try {
             super.onDestroy()
+            audioManager?.release()
             mPlaybackListener = null
             doUnbindService()
-            mPlayerInterface?.clearNotification()
+//            mPlayerInterface?.clearNotification()
         } catch (ex: Exception) {
 
         }
@@ -452,7 +463,6 @@ class PractiseSubmitActivity : CoreJoshActivity() {
             }
         }
     }
-
 
     private fun setViewAccordingExpectedAnswer() {
         chatModel.question?.run {
@@ -686,7 +696,8 @@ class PractiseSubmitActivity : CoreJoshActivity() {
 
                 override fun onStopTrackingTouch(seekBar: SeekBar) {
                     mUserIsSeeking = false
-                    mPlayerInterface?.seekTo(userSelectedPosition)
+                    audioManager?.seekTo(userSelectedPosition.toLong())
+//                    mPlayerInterface?.seekTo(userSelectedPosition)
                 }
             })
         binding.submitPractiseSeekbar.setOnSeekBarChangeListener(
@@ -704,7 +715,8 @@ class PractiseSubmitActivity : CoreJoshActivity() {
 
                 override fun onStopTrackingTouch(seekBar: SeekBar) {
                     mUserIsSeeking = false
-                    mPlayerInterface?.seekTo(userSelectedPosition)
+                    audioManager?.seekTo(userSelectedPosition.toLong())
+//                    mPlayerInterface?.seekTo(userSelectedPosition)
                 }
             })
     }
@@ -1068,7 +1080,9 @@ class PractiseSubmitActivity : CoreJoshActivity() {
         } else {
             if (currentAudio == chatModel.question?.audioList?.getOrNull(0)?.audio_url) {
                 if (checkIsPlayer()) {
-                    mPlayerInterface?.resumeOrPause()
+                    audioManager?.setProgressUpdateListener(this)
+                    audioManager?.resumeOrPause()
+//                    mPlayerInterface?.resumeOrPause()
                 } else {
                     onPlayAudio(chatModel, chatModel.question?.audioList?.getOrNull(0)!!)
                 }
@@ -1094,7 +1108,8 @@ class PractiseSubmitActivity : CoreJoshActivity() {
             )
 
             val state =
-                if (binding.submitBtnPlayInfo.state == MaterialPlayPauseDrawable.State.Pause && mPlayerInterface!!.isPlaying) {
+                if (binding.submitBtnPlayInfo.state == MaterialPlayPauseDrawable.State.Pause && audioManager!!.isPlaying()) {
+                    audioManager?.setProgressUpdateListener(this)
                     MaterialPlayPauseDrawable.State.Play
                 } else {
                     MaterialPlayPauseDrawable.State.Pause
@@ -1113,7 +1128,9 @@ class PractiseSubmitActivity : CoreJoshActivity() {
             } else {
                 if (currentAudio == audioType.audio_url) {
                     if (checkIsPlayer()) {
-                        mPlayerInterface?.resumeOrPause()
+                        audioManager?.setProgressUpdateListener(this)
+                        audioManager?.resumeOrPause()
+//                        mPlayerInterface?.resumeOrPause()
                     } else {
                         onPlayAudio(chatModel, audioType)
                     }
@@ -1122,8 +1139,9 @@ class PractiseSubmitActivity : CoreJoshActivity() {
 
                 }
             }
-            mPlayerInterface?.clearNotification()
+//            mPlayerInterface?.clearNotification()
         } catch (ex: Exception) {
+            ex.printStackTrace()
         }
 
     }
@@ -1174,9 +1192,9 @@ class PractiseSubmitActivity : CoreJoshActivity() {
         }
     }
 
-
     private fun checkIsPlayer(): Boolean {
-        return this.mPlayerInterface != null && mPlayerInterface!!.isMediaPlayer
+        return audioManager != null
+//        return this.mPlayerInterface != null && mPlayerInterface!!.isMediaPlayer
     }
 
     private fun isAudioPlaying(): Boolean {
@@ -1187,8 +1205,14 @@ class PractiseSubmitActivity : CoreJoshActivity() {
         currentAudio = audioObject.audio_url
         val audioList = java.util.ArrayList<AudioType>()
         audioList.add(audioObject)
-        mPlayerInterface?.setCurrentSong(null, chatModel, audioObject, audioList)
-        mPlayerInterface?.initMediaPlayer(chatModel, audioObject)
+        audioManager = ExoAudioPlayer.getInstance()
+        audioManager?.playerListener = this
+        audioManager?.play(currentAudio!!)
+
+        audioManager?.setProgressUpdateListener(this)
+
+//        mPlayerInterface?.setCurrentSong(null, chatModel, audioObject, audioList)
+//        mPlayerInterface?.initMediaPlayer(chatModel, audioObject)
 
         if (filePath.isNullOrEmpty().not() && currentAudio == filePath) {
             binding.submitBtnPlayInfo.state = MaterialPlayPauseDrawable.State.Pause
@@ -1196,8 +1220,12 @@ class PractiseSubmitActivity : CoreJoshActivity() {
             binding.btnPlayInfo.state = MaterialPlayPauseDrawable.State.Pause
         }
 
-        mPlayerInterface?.clearNotification()
+//        mPlayerInterface?.clearNotification()
 
+    }
+
+    override fun onPlayerError(error: ExoPlaybackException) {
+        error.printStackTrace()
     }
 
     fun openAttachmentFile() {
@@ -1321,6 +1349,48 @@ class PractiseSubmitActivity : CoreJoshActivity() {
     override fun onBackPressed() {
         super.onBackPressed()
         this@PractiseSubmitActivity.finishAndRemoveTask()
+    }
+
+    override fun onPlayerPause() {
+        binding.submitBtnPlayInfo.state = MaterialPlayPauseDrawable.State.Play
+    }
+
+    override fun onPlayerResume() {
+        binding.submitBtnPlayInfo.state = MaterialPlayPauseDrawable.State.Pause
+    }
+
+    override fun onCurrentTimeUpdated(lastPosition: Long) {
+    }
+
+    override fun onTrackChange(tag: String?) {
+    }
+
+    override fun onPositionDiscontinuity(lastPos: Long, reason: Int) {
+    }
+
+    override fun onPositionDiscontinuity(reason: Int) {
+    }
+
+    override fun onPlayerReleased() {
+    }
+
+    override fun onPlayerEmptyTrack() {
+    }
+
+    override fun complete() {
+        binding.submitBtnPlayInfo.state = MaterialPlayPauseDrawable.State.Play
+        binding.submitPractiseSeekbar.progress = 0
+        audioManager?.seekTo(0)
+        audioManager?.onPause()
+        audioManager?.setProgressUpdateListener(null)
+    }
+
+    override fun onProgressUpdate(progress: Long) {
+        binding.submitPractiseSeekbar.progress = progress.toInt()
+    }
+
+    override fun onDurationUpdate(duration: Long?) {
+        duration?.toInt()?.let { binding.submitPractiseSeekbar.max = it }
     }
 
 }

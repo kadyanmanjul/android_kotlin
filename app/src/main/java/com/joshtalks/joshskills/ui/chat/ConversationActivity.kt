@@ -11,7 +11,6 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.provider.Settings
-import android.support.v4.media.session.PlaybackStateCompat
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.Gravity
@@ -46,6 +45,7 @@ import com.bumptech.glide.request.target.Target
 import com.crashlytics.android.Crashlytics
 import com.facebook.share.internal.ShareConstants
 import com.github.pwittchen.reactivenetwork.library.rx2.ReactiveNetwork
+import com.google.android.exoplayer2.Player
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.card.MaterialCardView
@@ -80,7 +80,7 @@ import com.joshtalks.joshskills.core.custom_ui.decorator.LayoutMarginDecoration
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.core.notification.HAS_COURSE_REPORT
 import com.joshtalks.joshskills.core.notification.QUESTION_ID
-import com.joshtalks.joshskills.core.playback.PlaybackInfoListener.State.PLAYING
+import com.joshtalks.joshskills.core.playback.PlaybackInfoListener.State.PAUSED
 import com.joshtalks.joshskills.core.service.WorkMangerAdmin
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.ActivityConversationBinding
@@ -145,6 +145,8 @@ import com.joshtalks.joshskills.ui.view_holders.TextViewHolder
 import com.joshtalks.joshskills.ui.view_holders.TimeViewHolder
 import com.joshtalks.joshskills.ui.view_holders.UnlockNextClassViewHolder
 import com.joshtalks.joshskills.ui.view_holders.VideoViewHolder
+import com.joshtalks.joshskills.util.AudioPlayerManager
+import com.joshtalks.joshskills.util.ExoAudioPlayer
 import com.joshtalks.recordview.CustomImageButton.FIRST_STATE
 import com.joshtalks.recordview.CustomImageButton.SECOND_STATE
 import com.joshtalks.recordview.OnRecordListener
@@ -185,7 +187,8 @@ const val PRACTISE_UPDATE_MESSAGE_KEY = "practise_update_message_id"
 const val FOCUS_ON_CHAT_ID = "focus_on_chat_id"
 
 
-class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
+class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback, Player.EventListener,
+    AudioPlayerManager.ProgressUpdateListener, ExoAudioPlayer.ProgressUpdateListener {
 
     companion object {
         fun startConversionActivity(activity: Activity, inboxEntity: InboxEntity) {
@@ -226,6 +229,7 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
     private var readMessageTimerTask: TimerTask? = null
     private val uiHandler = Handler(Looper.getMainLooper())
     private var streamingManager: AudioStreamingManager? = null
+    private var audioPlayerManager: ExoAudioPlayer? = null
     private var mUserIsSeeking = false
     private var isOnlyChat = false
     private var isNewChatViewAdd = true
@@ -335,6 +339,8 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
         refreshChat()
         initAudioPlayerView()
         streamingManager = AudioStreamingManager.getInstance(activityRef.get())
+        audioPlayerManager = ExoAudioPlayer.getInstance()
+        audioPlayerManager?.setProgressUpdateListener(this)
         fetchMessage()
         uiHandler.postDelayed({
             hideProgressBar()
@@ -1164,6 +1170,10 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
                             .length(Toast.LENGTH_LONG)
                             .solidBackground().show()
                     }
+                    if (it.state == PAUSED) {
+                        audioPlayerManager?.onPause()
+                        return@subscribe
+                    }
                     setCurrentItemPosition(it.chatModel.chatId)
                     AppObjectController.currentPlayingAudioObject?.let { chatModel ->
                         refreshViewAtPos(chatModel)
@@ -1172,6 +1182,29 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
                     streamingManager?.isPlayMultiple = false
                     endAudioEngagePart(mSeekBarAudio.progress.toLong())
                     engageAudio()
+
+                    if (ExoAudioPlayer.LAST_ID == it?.chatModel?.chatId) {
+                        audioPlayerManager?.resumeOrPause()
+                        /* audioPlayerManager?.play(
+                             it.audioType!!.audio_url,
+                             it.audioType!!.id
+                         )
+                         audioPlayerManager?.seekTo(it.chatModel.playProgress.toLong())*/
+                    } else {
+                        audioPlayerManager?.onPause()
+                        countUpTimer.reset()
+                        setPlayProgress(it.chatModel.playProgress)
+                        AppObjectController.currentPlayingAudioObject = it.chatModel
+//                    bottomSheetLayout.visibility = VISIBLE
+                        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+                        audioPlayerManager?.play(
+                            it.audioType!!.audio_url,
+                            it.chatModel.chatId
+                        )
+
+                    }
+
+/*
                     if (streamingManager?.currentAudio == null) {
                         val obj = MediaMetaData()
                         obj.mediaId = it.chatModel.chatId
@@ -1189,9 +1222,14 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
                         if (streamingManager?.currentAudioId == it?.chatModel?.chatId) {
 
                             if (it.state == PLAYING) {
-
+                                audioPlayerManager?.play(
+                                    Uri.parse(it.audioType!!.audio_url),
+                                    this,
+                                    it.audioType!!.id
+                                )
                                 streamingManager?.handlePlayRequest()
                             } else {
+                                audioPlayerManager?.pause()
                                 streamingManager?.handlePauseRequest()
                             }
                         } else {
@@ -1201,20 +1239,26 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
                             cAudioId = it.audioType!!.id
                             obj.mediaDuration = it.audioType!!.duration.toString()
                             setPlayProgress(0)
-                            mSeekBarAudio.progress = 0
+                            *//*mSeekBarAudio.progress = 0
                             mSeekBarAudio.max = it.audioType!!.duration
                             streamingManager?.onPlay(obj)
                             streamingManager?.setShowPlayerNotification(false)
                             streamingManager?.setPendingIntentAct(
                                 getNotificationPendingIntent()
+                            )*//*
+                            audioPlayerManager?.play(
+                                Uri.parse(it.audioType!!.audio_url),
+                                this,
+                                it.audioType!!.id
                             )
                             countUpTimer.reset()
                         }
                     }
-                    currentAudio = streamingManager?.currentAudioId
-                    AppObjectController.currentPlayingAudioObject = it.chatModel
-//                    bottomSheetLayout.visibility = VISIBLE
-                    window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+                    */
+                    /*  currentAudio = streamingManager?.currentAudioId
+                      AppObjectController.currentPlayingAudioObject = it.chatModel
+  //                    bottomSheetLayout.visibility = VISIBLE
+                      window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)*/
                     DatabaseUtils.updateLastUsedModification(it.chatModel.chatId)
                 },
                     {
@@ -1226,7 +1270,8 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
-                    streamingManager?.onSeekTo(it.progress.toLong())
+//                    streamingManager?.onSeekTo(it.progress.toLong())
+                    audioPlayerManager?.seekTo(it.progress.toLong())
                 }
         )
         compositeDisposable.add(
@@ -1310,8 +1355,9 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
         )
     }
 
+
     private fun setCurrentItemPosition(chatId: String) {
-        var currentChatId = chatId.toLowerCase(Locale.getDefault())
+        var currentChatid = chatId.toLowerCase(Locale.getDefault())
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 var tempView: BaseChatViewHolder
@@ -1319,7 +1365,7 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
                     it.forEachIndexed { index, view ->
                         if (view is BaseChatViewHolder) {
                             tempView = view
-                            if (currentChatId == tempView.message.chatId.toLowerCase(
+                            if (currentChatid == tempView.message.chatId.toLowerCase(
                                     Locale.getDefault()
                                 )
                             ) {
@@ -1587,6 +1633,7 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
         super.onActivityResult(requestCode, resultCode, data)
     }
 
+
     private suspend fun fetchNewUnlockClasses(data: Intent) {
         lastVideoStartingDate?.let { date ->
             showProgressBar()
@@ -1844,6 +1891,7 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
     override fun onDestroy() {
         super.onDestroy()
         AppObjectController.currentPlayingAudioObject = null
+        audioPlayerManager?.release()
         NPSEventModel.removeCurrentNPA()
     }
 
@@ -1945,7 +1993,8 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
     }
 
     fun isAudioPlaying(): Boolean {
-        return streamingManager !== null && streamingManager!!.isPlaying
+        return audioPlayerManager?.isPlaying()!!
+//        return streamingManager !== null && streamingManager!!.isPlaying
     }
 
     private fun getNotificationPendingIntent(): PendingIntent {
@@ -1959,7 +2008,7 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
     override fun currentSeekBarPosition(progress: Int) {
         try {
             mSeekBarAudio.progress = progress
-            setPlayProgress(progress)
+//            setPlayProgress(progress)
             RxBus2.publish(SeekBarProgressEventBus(currentAudio!!, progress))
 
             if (graph != null) {
@@ -1973,9 +2022,10 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
 
     private fun setPlayProgress(progress: Int) {
         AppObjectController.currentPlayingAudioObject?.playProgress = progress
+        if (currentAudio != null)
+            RxBus2.publish(SeekBarProgressEventBus(currentAudio!!, progress))
 
         if (currentAudioPosition != -1) {
-            conversationList.get(currentAudioPosition).playProgress = progress
             conversationBinding.chatRv.adapter?.let {
                 println("progress set $currentAudioPosition")
                 it.notifyItemChanged(
@@ -1997,7 +2047,7 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
     }
 
     override fun updatePlaybackState(state: Int) {
-        when (state) {
+        /*when (state) {
             PlaybackStateCompat.STATE_PLAYING -> {
                 mPlayPauseButton.setImageResource(R.drawable.ic_pause_player)
                 countUpTimer.resume()
@@ -2022,7 +2072,7 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
             }
             PlaybackStateCompat.STATE_BUFFERING -> {
             }
-        }
+        }*/
     }
 
     override fun playCurrent(indexP: Int, currentAudio: MediaMetaData?) {
@@ -2159,6 +2209,14 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
             }
 
         }
+    }
+
+    override fun onProgressUpdate(progress: Long) {
+        setPlayProgress(progress.toInt())
+    }
+
+    override fun onDurationUpdate(duration: Long?) {
+
     }
 
 

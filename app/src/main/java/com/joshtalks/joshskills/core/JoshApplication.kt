@@ -35,12 +35,13 @@ class JoshApplication : MultiDexApplication(), LifecycleObserver,
     companion object {
         @JvmStatic
         var isAppVisible = false
+        var instance: JoshApplication? = null
     }
 
     override fun onCreate() {
         super.onCreate()
         ProcessLifecycleOwner.get().lifecycle.addObserver(this)
-
+        instance = this
         if (BuildConfig.DEBUG) {
             StrictMode.setVmPolicy(
                 StrictMode.VmPolicy.Builder().detectActivityLeaks().detectLeakedClosableObjects()
