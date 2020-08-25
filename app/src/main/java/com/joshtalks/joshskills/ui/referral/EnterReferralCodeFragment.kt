@@ -24,23 +24,31 @@ import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.hideKeyboard
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.FragmentEnterReferralCodeBinding
+import com.joshtalks.joshskills.messaging.RxBus2
+import com.joshtalks.joshskills.repository.local.eventbus.PromoCodeSubmitEventBus
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
-import java.util.*
+import java.util.HashMap
 
+private const val IS_PROMO_CODE_FRAGMENT = "is_promo_code_fragment"
 
 class EnterReferralCodeFragment : BottomSheetDialogFragment() {
     private lateinit var binding: FragmentEnterReferralCodeBinding
     private lateinit var appAnalyticsP: AppAnalytics
+    private var is_promo_code_fragment: Boolean? = null
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setStyle(DialogFragment.STYLE_NORMAL, R.style.BaseBottomSheetDialogResizable)
         changeDialogConfiguration()
+        arguments?.let {
+            is_promo_code_fragment = it.getBoolean(IS_PROMO_CODE_FRAGMENT)
+        }
         appAnalyticsP = AppAnalytics.create(AnalyticsEvent.HAVE_COUPON_CODE_CLICKED.NAME)
             .addBasicParam()
             .addUserDetails()
@@ -66,7 +74,7 @@ class EnterReferralCodeFragment : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.tvReferralCode.filters =
-            arrayOf(InputFilter.AllCaps(), InputFilter.LengthFilter(5))
+            arrayOf(InputFilter.AllCaps(), InputFilter.LengthFilter(10))
         setListeners()
     }
 
@@ -87,7 +95,17 @@ class EnterReferralCodeFragment : BottomSheetDialogFragment() {
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
         })
+
+        binding.next.setOnClickListener {
+            if (is_promo_code_fragment!!) {
+                RxBus2.publish(PromoCodeSubmitEventBus(binding.tvReferralCode.text.toString()))
+                requireActivity().supportFragmentManager.beginTransaction().remove(this).commit()
+            } else {
+                validateAndMoveToNextFragment()
+            }
+        }
     }
+
 
     private fun changeDialogConfiguration() {
         val params: WindowManager.LayoutParams? = dialog?.window?.attributes
@@ -166,6 +184,11 @@ class EnterReferralCodeFragment : BottomSheetDialogFragment() {
 
     companion object {
         @JvmStatic
-        fun newInstance() = EnterReferralCodeFragment()
+        fun newInstance(isPromoCodeFragment: Boolean = false) =
+            EnterReferralCodeFragment().apply {
+                arguments = Bundle().apply {
+                    putBoolean(IS_PROMO_CODE_FRAGMENT, isPromoCodeFragment)
+                }
+            }
     }
 }
