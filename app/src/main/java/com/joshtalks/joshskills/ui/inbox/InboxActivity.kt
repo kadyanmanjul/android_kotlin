@@ -474,7 +474,15 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
             }
         } else if (requestCode == REQ_CODE_VERSION_UPDATE) {
             if (resultCode == Activity.RESULT_CANCELED) {
-                inAppUpdateManager?.checkForAppUpdate()
+                val forceUpdateMinVersion =
+                    AppObjectController.getFirebaseRemoteConfig().getLong("force_upgrade_after_version")
+                val forceUpdateFlag =
+                    AppObjectController.getFirebaseRemoteConfig().getBoolean("update_force")
+                val currentAppVersion = BuildConfig.VERSION_CODE
+
+                if (currentAppVersion <= forceUpdateMinVersion && forceUpdateFlag) {
+                    inAppUpdateManager?.checkForAppUpdate()
+                }
             }
         } else if (requestCode == COURSE_EXPLORER_CODE) {
             if (resultCode == Activity.RESULT_OK) {
