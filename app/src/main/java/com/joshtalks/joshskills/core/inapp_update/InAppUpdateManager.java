@@ -24,7 +24,7 @@ public class InAppUpdateManager implements LifecycleObserver {
     private static final String LOG_TAG = "InAppUpdateManager";
     //region Constructor
     private static InAppUpdateManager instance;
-    private AppCompatActivity activity;
+    private final AppCompatActivity activity;
     private AppUpdateManager appUpdateManager;
     private int requestCode = 64534;
     private String snackBarMessage = "An update has just been downloaded.";
@@ -34,10 +34,10 @@ public class InAppUpdateManager implements LifecycleObserver {
     private boolean useCustomNotification = false;
     private InAppUpdateHandler handler;
     private Snackbar snackbar;
-    private InAppUpdateStatus inAppUpdateStatus = new InAppUpdateStatus();
+    private final InAppUpdateStatus inAppUpdateStatus = new InAppUpdateStatus();
 
 
-    private InstallStateUpdatedListener installStateUpdatedListener = installState -> {
+    private final InstallStateUpdatedListener installStateUpdatedListener = installState -> {
         inAppUpdateStatus.setInstallState(installState);
 
         reportStatus();
@@ -104,10 +104,10 @@ public class InAppUpdateManager implements LifecycleObserver {
                     if (mode == Constants.UpdateMode.FLEXIBLE) {
 //                    if (mode == Constants.UpdateMode.FLEXIBLE && appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.FLEXIBLE)) {
                         // Start an update.
-                        startAppUpdateFlexible(appUpdateInfo);
+                        startAppUpdate(appUpdateInfo,AppUpdateType.FLEXIBLE);
                     } else if (appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.IMMEDIATE)) {
                         // Start an update.
-                        startAppUpdateImmediate(appUpdateInfo);
+                        startAppUpdate(appUpdateInfo,AppUpdateType.IMMEDIATE);
                     }
 
                     Log.d(LOG_TAG, "checkForAppUpdate(): Update available. Version Code: " + appUpdateInfo.availableVersionCode());
@@ -121,11 +121,11 @@ public class InAppUpdateManager implements LifecycleObserver {
 
     }
 
-    private void startAppUpdateFlexible(AppUpdateInfo appUpdateInfo) {
+    private void startAppUpdate(AppUpdateInfo appUpdateInfo, int appUpdateType)  {
         try {
             appUpdateManager.startUpdateFlowForResult(
                     appUpdateInfo,
-                    AppUpdateType.FLEXIBLE,
+                    appUpdateType,
                     // The current activity making the update request.
                     activity,
                     // Include a request code to later monitor this update request.
@@ -133,21 +133,6 @@ public class InAppUpdateManager implements LifecycleObserver {
         } catch (IntentSender.SendIntentException e) {
             Log.e(LOG_TAG, "error in startAppUpdateFlexible", e);
             reportUpdateError(Constants.UPDATE_ERROR_START_APP_UPDATE_FLEXIBLE, e);
-        }
-    }
-
-    private void startAppUpdateImmediate(AppUpdateInfo appUpdateInfo) {
-        try {
-            appUpdateManager.startUpdateFlowForResult(
-                    appUpdateInfo,
-                    AppUpdateType.IMMEDIATE,
-                    // The current activity making the update request.
-                    activity,
-                    // Include a request code to later monitor this update request.
-                    requestCode);
-        } catch (IntentSender.SendIntentException e) {
-            Log.e(LOG_TAG, "error in startAppUpdateImmediate", e);
-            reportUpdateError(Constants.UPDATE_ERROR_START_APP_UPDATE_IMMEDIATE, e);
         }
     }
     //endregion
@@ -306,7 +291,7 @@ public class InAppUpdateManager implements LifecycleObserver {
                     //IMMEDIATE:
                     if (appUpdateInfo.updateAvailability() == UpdateAvailability.DEVELOPER_TRIGGERED_UPDATE_IN_PROGRESS) {
                         // If an in-app update is already running, resume the update.
-                        startAppUpdateImmediate(appUpdateInfo);
+                        startAppUpdate(appUpdateInfo,AppUpdateType.IMMEDIATE);
 
                         Log.d(LOG_TAG, "checkNewAppVersionState(): resuming immediate update. Code: " + appUpdateInfo.updateAvailability());
 
