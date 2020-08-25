@@ -54,8 +54,10 @@ import com.joshtalks.joshskills.core.getPhoneNumber
 import com.joshtalks.joshskills.core.isValidFullNumber
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.ActivityPaymentSummaryBinding
+import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.NPSEvent
 import com.joshtalks.joshskills.repository.local.entity.NPSEventModel
+import com.joshtalks.joshskills.repository.local.eventbus.PromoCodeSubmitEventBus
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.OrderDetailResponse
@@ -65,12 +67,16 @@ import com.joshtalks.joshskills.ui.payment.ChatNPayDialogFragment
 import com.joshtalks.joshskills.ui.payment.PaymentFailedDialogFragment
 import com.joshtalks.joshskills.ui.payment.PaymentProcessingFragment
 import com.joshtalks.joshskills.ui.payment.PaymentSuccessFragment
+import com.joshtalks.joshskills.ui.referral.EnterReferralCodeFragment
 import com.joshtalks.joshskills.ui.startcourse.StartCourseActivity
 import com.razorpay.Checkout
 import com.razorpay.PaymentResultListener
 import com.sinch.verification.PhoneNumberUtils
 import io.branch.referral.util.BRANCH_STANDARD_EVENT
 import io.branch.referral.util.CurrencyType
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -91,6 +97,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
     private lateinit var binding: ActivityPaymentSummaryBinding
     private var testId: String = EMPTY
     private val uiHandler = Handler(Looper.getMainLooper())
+    lateinit var applyCouponText: AppCompatTextView
     lateinit var multiLineLL: LinearLayout
     private var typefaceSpan: Typeface? = null
     private lateinit var viewModel: PaymentSummaryViewModel
@@ -98,7 +105,9 @@ class PaymentSummaryActivity : CoreJoshActivity(),
     private lateinit var appAnalytics: AppAnalytics
     private var isBackPressDisabled = false
     private var isRequestHintAppearred = false
+    private var couponApplied = false
     private var razorpayOrderId = EMPTY
+    private var compositeDisposable = CompositeDisposable()
 
     companion object {
         fun startPaymentSummaryActivity(
@@ -174,6 +183,8 @@ class PaymentSummaryActivity : CoreJoshActivity(),
     private fun initToolbarView() {
         val titleView = findViewById<AppCompatTextView>(R.id.text_message_title)
         titleView.text = getString(R.string.order_summary)
+        applyCouponText = findViewById<AppCompatTextView>(R.id.apply_coupon)
+
         findViewById<View>(R.id.iv_back).visibility = View.VISIBLE
         findViewById<View>(R.id.iv_back).setOnClickListener {
             appAnalytics.addParam(AnalyticsEvent.BACK_PRESSED.NAME, true)
@@ -228,7 +239,9 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                 .into(binding.profileImage)
             binding.txtPrice.text =
                 "₹ ${String.format("%.2f", it.amount)}"
+
             multiLineLL = binding.multiLineLl
+            multiLineLL.removeAllViews()
 
             it.features?.let {
                 val stringList = it.split(",")
@@ -246,14 +259,36 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                 binding.materialButton.text = AppObjectController.getFirebaseRemoteConfig()
                     .getString(PAYMENT_SUMMARY_CTA_LABEL_FREE)
             }
-            if (it.couponDetails.title.isEmpty().not()) {
 
+            if (couponApplied) {
+                when (it.couponDetails.isPromoCode) {
+                    true -> {
+                        showToast("Coupon Applied Successfully")
+                        applyCouponText.text =
+                            "Coupon Applied".plus('\n').plus(it.couponDetails.header)
+                        binding.txtPrice.text =
+                            "₹ ${String.format("%.2f", viewModel.getCourseDiscountedAmount())}"
+                        binding.actualTxtPrice.visibility = View.VISIBLE
+                        binding.actualTxtPrice.text =
+                            "₹ ${String.format("%.2f", viewModel.getCourseActualAmount())}"
+                        binding.actualTxtPrice.paintFlags =
+                            binding.actualTxtPrice.paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
+                        applyCouponText.isClickable = false
+                    }
+                    false -> {
+                        showToast("Invalid Coupon Code. Try Again")
+                    }
+                }
+            } else if (it.couponDetails.title.isEmpty().not()) {
                 binding.textView1.text = it.couponDetails.name
                 binding.tvTip.text = it.couponDetails.title
                 binding.tvTipValid.text = it.couponDetails.validity
                 binding.tvTipOff.text = it.couponDetails.header
 
-                appAnalytics.addParam(AnalyticsEvent.SPECIAL_DISCOUNT.NAME, it.couponDetails.title)
+                appAnalytics.addParam(
+                    AnalyticsEvent.SPECIAL_DISCOUNT.NAME,
+                    it.couponDetails.title
+                )
 
                 binding.badeBhaiyaTipContainer.visibility = View.VISIBLE
 
@@ -278,8 +313,9 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                         )
                     } else {
                         binding.tipUsedMsg.text = getString(R.string.coupon_applied_free_course)
-                        binding.materialButton.text = AppObjectController.getFirebaseRemoteConfig()
-                            .getString("CTA_PAYMENT_SUMMARY_FREE")
+                        binding.materialButton.text =
+                            AppObjectController.getFirebaseRemoteConfig()
+                                .getString("CTA_PAYMENT_SUMMARY_FREE")
                     }
 
                     binding.tipUsedMsg.visibility = View.VISIBLE
@@ -287,7 +323,6 @@ class PaymentSummaryActivity : CoreJoshActivity(),
             } else if (it.specialOffer != null) {
 
                 binding.subContainer.visibility = View.VISIBLE
-
                 binding.titleSub.text =
                     HtmlCompat.fromHtml(it.specialOffer.title, HtmlCompat.FROM_HTML_MODE_LEGACY)
                 binding.textSub.text =
@@ -312,6 +347,11 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                 }
 
                 getPaymentDetails(true, it.specialOffer.test_id.toString())
+            } else {
+                applyCouponText.visibility = View.VISIBLE
+                applyCouponText.setOnClickListener {
+                    openPromoCodeBottomSheet()
+                }
             }
 
             binding.materialButton.setOnSingleClickListener(View.OnClickListener {
@@ -321,14 +361,37 @@ class PaymentSummaryActivity : CoreJoshActivity(),
         if (viewModel.hasRegisteredMobileNumber) {
             binding.group1.visibility = View.GONE
         }
-        viewModel.mPaymentDetailsResponse.observe(this, androidx.lifecycle.Observer {
+        viewModel.mPaymentDetailsResponse.observe(this, androidx.lifecycle.Observer
+        {
             initializeRazorpayPayment(it)
         })
 
-        viewModel.isFreeOrderCreated.observe(this, androidx.lifecycle.Observer {
+        viewModel.isFreeOrderCreated.observe(this, androidx.lifecycle.Observer
+        {
             if (it)
                 navigateToStartCourseActivity(false)
         })
+    }
+
+    private fun openPromoCodeBottomSheet() {
+        val bottomSheetFragment = EnterReferralCodeFragment.newInstance(true)
+        bottomSheetFragment.show(supportFragmentManager, bottomSheetFragment.tag)
+    }
+
+    private fun subscribeRXBus() {
+        compositeDisposable.add(
+            RxBus2.listen(PromoCodeSubmitEventBus::class.java)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({
+                    if (it.promoCode.isNullOrBlank().not()) {
+                        couponApplied = true
+                        getPaymentDetails(false, testId, it.promoCode)
+                    }
+                }, {
+                    it.printStackTrace()
+                })
+        )
     }
 
     private fun showSubscriptionDetails(
@@ -415,7 +478,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
         getPaymentDetails(false, testId)
     }
 
-    private fun getPaymentDetails(isSubscription: Boolean, testId: String) {
+    private fun getPaymentDetails(isSubscription: Boolean, testId: String, coupon: String? = null) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 val data = HashMap<String, String>()
@@ -429,6 +492,8 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                         .isNotBlank() && isSubscription.not()
                 ) {
                     data["coupon"] = PrefManager.getStringValue(REFERRED_REFERRAL_CODE)
+                } else if (coupon.isNullOrEmpty().not()) {
+                    data["coupon"] = coupon!!
                 }
                 if (isSubscription) {
                     viewModel.getSubscriptionPaymentDetails(data)
@@ -739,14 +804,25 @@ class PaymentSummaryActivity : CoreJoshActivity(),
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        subscribeRXBus()
+    }
+
     override fun onBackPressed() {
         if (!isBackPressDisabled)
             super.onBackPressed()
     }
 
+    override fun onPause() {
+        super.onPause()
+        compositeDisposable.clear()
+    }
+
     override fun onStop() {
         appAnalytics.push()
         super.onStop()
+        compositeDisposable.clear()
         AppObjectController.facebookEventLogger.flush()
     }
 
