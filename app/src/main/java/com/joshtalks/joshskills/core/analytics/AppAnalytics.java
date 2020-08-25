@@ -39,7 +39,7 @@ public class AppAnalytics {
     private static CleverTapAPI cleverTapAnalytics;
     private static FirebaseAnalytics firebaseAnalytics;
     private final String event;
-    private HashMap<String, Object> parameters = new HashMap<>();
+    private final HashMap<String, Object> parameters = new HashMap<>();
 
     public AppAnalytics(String event) {
         init();
@@ -58,6 +58,18 @@ public class AppAnalytics {
         }
     }
 
+    public static void updateUser() {
+        init();
+        updateCleverTapUser();
+        updateFlurryUser();
+        updateFreshchatSdkUser();
+        updateFreshchatSdkUserProperties();
+    }
+
+    public static AppAnalytics create(String title) {
+        return new AppAnalytics(title);
+    }
+
     private static void updateFreshchatSdkUser() {
         try {
             FreshchatUser freshchatUser = AppObjectController.getFreshChat().getUser();
@@ -69,7 +81,7 @@ public class AppAnalytics {
                 if (length > 10) {
                     freshchatUser.setPhone(mobileNumber.substring(0, length - 10), mobileNumber.substring(length - 10));
                 }
-            } else freshchatUser.setPhone("+91", "9999999999");
+            } else freshchatUser.setPhone("+91", "XXXXXXXXXX");
 
             AppObjectController.getFreshChat().setUser(freshchatUser);
         } catch (Exception e) {
@@ -77,15 +89,36 @@ public class AppAnalytics {
         }
     }
 
-    public static AppAnalytics create(String title) {
-        return new AppAnalytics(title);
-    }
+    private static void updateFreshchatSdkUserProperties() {
+        Map<String, String> userMeta = new HashMap<>();
+        userMeta.put("Username", User.getInstance().getFirstName());
+        userMeta.put("Email_id", User.getInstance().getEmail());
+        userMeta.put("Mobile_no", getPhoneNumber());
+        userMeta.put("Age", String.valueOf(getAge(User.getInstance().getDateOfBirth())));
+        userMeta.put("Gender", User.getInstance().getGender());
+        if (Mentor.getInstance().hasId()) {
+            userMeta.put("Mentor_id", Mentor.getInstance().getId());
+            userMeta.put("Login_type", "yes");
+            userMeta.put("Subscribed_user", "yes");
 
-    public static void updateUser() {
-        init();
-        updateCleverTapUser();
-        updateFlurryUser();
-        updateFreshchatSdkUser();
+            try {
+                List<String> allConversationId = AppObjectController.getAppDatabase().courseDao().getAllConversationId();
+                userMeta.put("courses_availed", String.valueOf(allConversationId.size()));
+                for (int i = 0; i < allConversationId.size(); i++) {
+                    userMeta.put("courses_" + i, AppObjectController.getAppDatabase().courseDao().chooseRegisterCourseMinimal(allConversationId.get(i)).getCourse_name());
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        }
+
+//Call setUserProperties to sync the user properties with Freshchat's servers
+        try {
+            AppObjectController.getFreshChat().setUserProperties(userMeta);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private static void updateCleverTapUser() {
