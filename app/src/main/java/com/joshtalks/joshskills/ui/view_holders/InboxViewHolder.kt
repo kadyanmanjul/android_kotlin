@@ -58,9 +58,7 @@ class InboxViewHolder(
     fun onResolved() {
         profileImage.setImageResource(R.drawable.ic_josh_course)
         tvName.text = inboxEntity.course_name
-        courseProgressBar.max = inboxEntity.duration
         courseProgressBar.progress = 0
-
         inboxEntity.course_icon?.let {
             setImageInImageView(profileImage, it)
         }
@@ -92,11 +90,16 @@ class InboxViewHolder(
                     )
                         .toInt()
                 courseProgressBar.progress = diff
-                if (diff >= inboxEntity.duration) {
-                    ivTick.setBackgroundResource(R.drawable.ic_course_in_complete_bg)
-                } else {
-                    ivTick.setBackgroundResource(R.drawable.ic_course_complete_bg)
+                inboxEntity.duration?.run {
+                    courseProgressBar.max = this
+
+                    if (diff >= this) {
+                        ivTick.setBackgroundResource(R.drawable.ic_course_in_complete_bg)
+                    } else {
+                        ivTick.setBackgroundResource(R.drawable.ic_course_complete_bg)
+                    }
                 }
+
             }
         }
     }

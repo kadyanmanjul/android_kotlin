@@ -79,7 +79,6 @@ import java.net.URL
 import java.text.DateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
-import javax.net.ssl.HostnameVerifier
 
 const val KEY_AUTHORIZATION = "Authorization"
 const val KEY_APP_VERSION_CODE = "app-version-code"
@@ -218,8 +217,10 @@ internal class AppObjectController {
                 .addInterceptor(StatusCodeInterceptor())
                 .addInterceptor(NewRelicHttpMetricsLogger())
                 .addInterceptor(HeaderInterceptor())
-                .hostnameVerifier(HostnameVerifier { _, _ -> true })
-                .certificatePinner(
+                .hostnameVerifier { _, _ -> true }
+
+            if (BuildConfig.DEBUG.not()) {
+                builder.certificatePinner(
                     CertificatePinner.Builder()
                         .add(
                             getHostOfUrl(),
@@ -227,17 +228,17 @@ internal class AppObjectController {
                         )
                         .build()
                 )
+                val spec: ConnectionSpec = ConnectionSpec.Builder(ConnectionSpec.MODERN_TLS)
+                    .tlsVersions(TlsVersion.TLS_1_2)
+                    .cipherSuites(
+                        CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,
+                        CipherSuite.TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,
+                        CipherSuite.TLS_DHE_RSA_WITH_AES_128_GCM_SHA256
+                    )
+                    .build()
 
-            val spec: ConnectionSpec = ConnectionSpec.Builder(ConnectionSpec.MODERN_TLS)
-                .tlsVersions(TlsVersion.TLS_1_2)
-                .cipherSuites(
-                    CipherSuite.TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,
-                    CipherSuite.TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,
-                    CipherSuite.TLS_DHE_RSA_WITH_AES_128_GCM_SHA256
-                )
-                .build()
-
-            builder.connectionSpecs(Collections.singletonList(spec))
+                builder.connectionSpecs(Collections.singletonList(spec))
+            }
 
             if (BuildConfig.DEBUG) {
                 val logging =
