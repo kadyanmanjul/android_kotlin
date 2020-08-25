@@ -40,7 +40,7 @@
 
                     <include
                             android:id="@+id/header"
-                            layout="@layout/new_base_toolbar" />
+                            layout="@layout/payment_toolbar" />
 
                     <androidx.constraintlayout.widget.ConstraintLayout
                             android:id="@+id/root_sub_view"
@@ -321,7 +321,7 @@
                                 app:layout_constraintBottom_toBottomOf="parent"
                                 app:layout_constraintEnd_toEndOf="parent"
                                 app:layout_constraintTop_toTopOf="parent"
-                                app:layout_constraintVertical_bias="0.5"/>
+                                app:layout_constraintVertical_bias="0.5" />
 
                         <TextView
                                 android:id="@+id/add_this_tv"

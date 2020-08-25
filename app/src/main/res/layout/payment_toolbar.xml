@@ -45,13 +45,12 @@
 
         <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_message_title"
-                style="@style/TextStyle.TopBarNoScroll"
-                android:layout_width="match_parent"
+                fontPath="fonts/Poppins-SemiBold.ttf"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_marginStart="@dimen/_4sdp"
                 android:layout_marginEnd="@dimen/_8sdp"
-                android:layout_toStartOf="@id/iv_help"
                 android:layout_toEndOf="@id/iv_back"
                 android:autoSizeMaxTextSize="@dimen/font_18"
                 android:ellipsize="marquee"
@@ -61,18 +60,28 @@
                 android:singleLine="true"
                 android:textColor="@color/black"
                 android:textSize="@dimen/font_18"
-                tools:text="Order Summary" />
+                tools:text="@string/order_summary" />
 
-        <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/iv_help"
+        <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/apply_coupon"
+                fontPath="fonts/Poppins-Medium.ttf"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
+                android:layout_marginEnd="@dimen/_12sdp"
+                android:autoSizeMaxTextSize="@dimen/font_12"
+                android:ellipsize="marquee"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:gravity="end"
                 android:padding="@dimen/_4sdp"
-                android:src="@drawable/ic_help_outline"
-                android:tint="@color/black"
-                android:visibility="visible" />
+                android:paddingVertical="@dimen/_4sdp"
+                android:text="@string/apply_coupon"
+                android:textColor="@color/colorPrimary"
+                android:textSize="@dimen/font_12"
+                tools:text="@string/apply_coupon"
+                tools:visibility="visible" />
+
     </RelativeLayout>
 
 </com.google.android.material.appbar.MaterialToolbar>
