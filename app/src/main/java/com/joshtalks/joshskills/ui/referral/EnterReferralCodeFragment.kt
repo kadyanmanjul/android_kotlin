@@ -75,6 +75,11 @@ class EnterReferralCodeFragment : BottomSheetDialogFragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.tvReferralCode.filters =
             arrayOf(InputFilter.AllCaps(), InputFilter.LengthFilter(10))
+        is_promo_code_fragment?.let {
+            if(it){
+                binding.textviewNumber.text=getString(R.string.enter_promo_code)
+            }
+        }
         setListeners()
     }
 

@@ -185,6 +185,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
         val titleView = findViewById<AppCompatTextView>(R.id.text_message_title)
         titleView.text = getString(R.string.order_summary)
         applyCouponText = findViewById<AppCompatTextView>(R.id.apply_coupon)
+        applyCouponText.visibility = View.GONE
 
         findViewById<View>(R.id.iv_back).visibility = View.VISIBLE
         findViewById<View>(R.id.iv_back).setOnClickListener {
@@ -356,7 +357,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                 }
 
                 getPaymentDetails(true, it.specialOffer.test_id.toString())
-            } else {
+            } else if(viewModel.getCourseDiscountedAmount() > 0) {
                 applyCouponText.visibility = View.VISIBLE
                 applyCouponText.setOnClickListener {
                     openPromoCodeBottomSheet()

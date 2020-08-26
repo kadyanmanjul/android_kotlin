@@ -259,6 +259,7 @@
     <!--Referral Activity-->
     <string name="have_a_referral_code">Have a referral code?</string>
     <string name="enter_referral_code">Enter a referral code</string>
+    <string name="enter_promo_code">Enter a promo code</string>
     <string name="wrong_coupon">Wrong coupon code</string>
     <string name="referral_success_info">You have been referred by your friend\n%s</string>
     <string name="referral_success_info2">&amp; you get ₹ 50 off on your first course.</string>
