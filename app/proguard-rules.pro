@@ -20,6 +20,11 @@
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
 
+
+-optimizationpasses 5
+-repackageclasses
+
+
 # Keeping views
 -keep public class * extends android.view.View {
     public <init>(android.content.Context);
@@ -117,3 +122,61 @@
 -keep,allowobfuscation interface <1>
 # Animal Sniffer compileOnly dependency to ensure APIs are compatible with older versions of Java.
 -dontwarn org.codehaus.mojo.animal_sniffer.*
+
+#com.wonderkiln:camerakit
+-dontwarn com.google.android.gms.**
+-keepclasseswithmembers class com.camerakit.preview.CameraSurfaceView {
+    native <methods>;
+}
+
+#com.daimajia.easing:library enable if class not found exception occurs
+#-keep class com.daimajia.easing.** { *; }
+#-keep interface com.daimajia.easing.** { *; }
+
+#io.michaelrocks:libphonenumber-android: for dexguard only
+#-keepresourcefiles assets/io/michaelrocks/libphonenumber/android/**
+
+#com.github.pwittchen:reactivenetwork-
+-dontwarn com.github.pwittchen.reactivenetwork.library.rx2.ReactiveNetwork
+-dontwarn io.reactivex.functions.Function
+-dontwarn rx.internal.util.**
+-dontwarn sun.misc.Unsafe
+
+#io.branch.sdk.android:library:5.0.1
+-keep class com.google.android.gms.** { *; }
+-keep class com.facebook.applinks.** { *; }
+-keepclassmembers class com.facebook.applinks.** { *; }
+-keep class com.facebook.FacebookSdk { *; }
+-keep class com.huawei.hms.ads.** { *; }
+-keep interface com.huawei.hms.ads.** { *; }
+
+# For CleverTap SDK
+-dontwarn com.clevertap.android.sdk.**
+
+# For com.razorpay:checkout:
+-keepclassmembers class * {
+    @android.webkit.JavascriptInterface <methods>;
+}
+
+-keepattributes JavascriptInterface
+-keepattributes *Annotation*
+
+-dontwarn com.razorpay.**
+-keep class com.razorpay.** {*;}
+
+-optimizations !method/inlining/*
+
+-keepclasseswithmembers class * {
+  public void onPayment*(...);
+}
+
+# For com.newrelic.agent.android:android-agent
+-keep class com.newrelic.** { *; }
+-dontwarn com.newrelic.**
+-keepattributes Exceptions, Signature, InnerClasses, LineNumberTable, SourceFile, EnclosingMethod
+# for dexguard
+#-dontnote com.newrelic.agent.android.NewRelic
+#-dontnote com.newrelic.agent.android.harvest.crash.Crash
+
+# For com.github.barteksc:android-pdf-viewer
+-keep class com.shockwave.**

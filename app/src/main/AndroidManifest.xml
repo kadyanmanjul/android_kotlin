@@ -347,6 +347,7 @@
                 android:name=".ui.reminder.set_reminder.AlarmNotifierActivity"
                 android:launchMode="singleTask"
                 android:screenOrientation="portrait"
+                android:autoRemoveFromRecents="true"
                 android:theme="@style/AppNoBarTheme"
                 android:windowSoftInputMode="stateHidden|adjustResize" />
         <activity

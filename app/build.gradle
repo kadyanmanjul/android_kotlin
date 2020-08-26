@@ -66,7 +66,9 @@ android {
         debug {
             debuggable true
             signingConfig signingConfigs.debug
-            minifyEnabled false
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             resValue("string", "branch_id", "key_test_anIJDPvxqLaamLdPJyO6AhpmuvgaD8Un")
             resValue("bool", "branch_test", "true")
             resValue("string", "truecaller_key", "P31uP46c15762366b41fdba957b16b9a7c620")
