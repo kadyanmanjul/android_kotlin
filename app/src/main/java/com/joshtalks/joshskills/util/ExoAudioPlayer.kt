@@ -26,6 +26,9 @@ class ExoAudioPlayer {
         println("ExoAudioPlayer.init block")
         context = JoshApplication.instance?.applicationContext
         playerEventListener = object : Player.EventListener {
+            override fun onSeekProcessed() {
+
+            }
 
             override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
                 if (playbackState == ExoPlayer.STATE_ENDED)
@@ -73,6 +76,8 @@ class ExoAudioPlayer {
     }
 
     fun seekTo(pos: Long) {
+//        player?.playWhenReady = false
+        println("pos = [${pos}] duration = ${player?.duration}")
         player?.seekTo(pos)
     }
 
@@ -104,6 +109,7 @@ class ExoAudioPlayer {
         val audioSource: MediaSource =
             factory.createMediaSource(Uri.parse(audioUrl))
         player!!.prepare(audioSource)
+        player!!.repeatMode = ExoPlayer.REPEAT_MODE_OFF
         player!!.playWhenReady = true
     }
 

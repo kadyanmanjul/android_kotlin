@@ -370,6 +370,7 @@ class AudioPlayerViewHolder(activityRef: WeakReference<FragmentActivity>, messag
         }
         if (duration > 0) {
             txtCurrentDurationTV.text = PlayerUtil.toTimeSongString(duration)
+            println("duration adapter $duration")
             seekBar.max = duration
         }
     }
@@ -484,7 +485,7 @@ class AudioPlayerViewHolder(activityRef: WeakReference<FragmentActivity>, messag
 
     fun playAudioInPlayer() {
         try {
-            val ref = activityRef.get() as ConversationActivity
+//            val ref = activityRef.get() as ConversationActivity
             /* if (AppObjectController.currentPlayingAudioObject != null && AppObjectController.currentPlayingAudioObject?.chatId == message.chatId) {
                  btnPauseImageView.visibility = android.view.View.INVISIBLE
                  btnPlayImageView.visibility = android.view.View.VISIBLE

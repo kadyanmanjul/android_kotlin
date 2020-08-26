@@ -236,6 +236,8 @@ class AudioPlayerView : FrameLayout, View.OnClickListener, CurrentSessionCallbac
                 checkFileInCache()
             }
             progressWheel.visibility = View.VISIBLE
+            playButton.visibility = View.GONE
+            pauseButton.visibility = View.GONE
             if (file != null) {
                 audioFile = file
                 playPause(file)
@@ -289,7 +291,7 @@ class AudioPlayerView : FrameLayout, View.OnClickListener, CurrentSessionCallbac
         logAudioPlayedEvent(true)
         audioManger?.play(file.absolutePath, id)
         seekPlayerProgress.progress = 0
-
+        playingAudio()
         val duration = Utils.getDurationOfMedia(context, file.absolutePath) ?: 0
         seekPlayerProgress.max = duration.toInt()
 
@@ -351,6 +353,7 @@ class AudioPlayerView : FrameLayout, View.OnClickListener, CurrentSessionCallbac
     private fun playingAudio() {
         playButton.visibility = View.GONE
         pauseButton.visibility = View.VISIBLE
+        progressWheel.visibility = View.GONE
     }
 
     private fun pausingAudio() {
