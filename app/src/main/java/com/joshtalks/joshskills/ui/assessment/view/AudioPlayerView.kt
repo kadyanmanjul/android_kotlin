@@ -240,12 +240,16 @@ class AudioPlayerView : FrameLayout, View.OnClickListener, CurrentSessionCallbac
                 }
             }
         } else if (v.id == R.id.btnPause) {
-            audioFile?.run {
-                progressWheel.visibility = View.GONE
-                playPause(this)
-                mediaDuration?.let {
-                    timestamp.text = Utils.formatDuration(it.toInt())
-                }
+            pauseAudio()
+        }
+    }
+
+    fun pauseAudio() {
+        audioFile?.run {
+            progressWheel.visibility = View.GONE
+            playPause(this)
+            mediaDuration?.let {
+                timestamp.text = Utils.formatDuration(it.toInt())
             }
         }
     }
@@ -325,7 +329,7 @@ class AudioPlayerView : FrameLayout, View.OnClickListener, CurrentSessionCallbac
         progressWheel.visibility = View.GONE
     }
 
-    fun pausingAudio() {
+    private fun pausingAudio() {
         playButton.visibility = View.VISIBLE
         pauseButton.visibility = View.GONE
         progressWheel.visibility = View.GONE

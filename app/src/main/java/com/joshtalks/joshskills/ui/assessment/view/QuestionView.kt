@@ -80,7 +80,7 @@ class QuestionView : FrameLayout {
         audioPlayerStub?.run {
             if (this.resolved()) {
                 this.get()
-                    ?.pausingAudio()
+                    ?.pauseAudio()
             }
         }
 
