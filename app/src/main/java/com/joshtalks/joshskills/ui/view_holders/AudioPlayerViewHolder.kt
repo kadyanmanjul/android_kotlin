@@ -52,7 +52,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.lang.ref.WeakReference
-import java.util.*
+import java.util.Locale
 import kotlin.math.roundToInt
 
 @Layout(R.layout.audio_player_view)
@@ -211,8 +211,10 @@ class AudioPlayerViewHolder(activityRef: WeakReference<FragmentActivity>, messag
         btnPauseImageView.visibility = android.view.View.INVISIBLE
         seekBar.isEnabled = false
 
-        println("progress ${message.playProgress}")
         seekBar.progress = message.playProgress
+//        seekBar.max = message.mediaDuration?.toInt()?:0
+
+        println("progress ${message.playProgress} max duration ${seekBar.max}")
         appAnalytics = AppAnalytics.create(AnalyticsEvent.AUDIO_VH.NAME)
             .addBasicParam()
             .addUserDetails()
@@ -363,7 +365,6 @@ class AudioPlayerViewHolder(activityRef: WeakReference<FragmentActivity>, messag
                 } else {
                     mediaNotDownloaded()
                 }
-
             }
         } catch (ex: Exception) {
             ex.printStackTrace()

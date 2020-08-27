@@ -1140,14 +1140,13 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback, Player.
                     endAudioEngagePart(mSeekBarAudio.progress.toLong())
                     engageAudio()
 
-                    if (ExoAudioPlayer.LAST_ID == it?.chatModel?.chatId) {
+                    if (AppObjectController.currentPlayingAudioObject != null && ExoAudioPlayer.LAST_ID == it?.chatModel?.chatId) {
                         audioPlayerManager?.resumeOrPause()
                     } else {
                         audioPlayerManager?.onPause()
                         countUpTimer.reset()
                         setPlayProgress(it.chatModel.playProgress)
                         AppObjectController.currentPlayingAudioObject = it.chatModel
-//                    bottomSheetLayout.visibility = VISIBLE
                         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
                         audioPlayerManager?.play(
                             it.audioType!!.audio_url,

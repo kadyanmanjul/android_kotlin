@@ -265,26 +265,14 @@ class AudioPlayerView : FrameLayout, View.OnClickListener, CurrentSessionCallbac
             }
             if (ExoAudioPlayer.LAST_ID == id) {
                 audioManger?.resumeOrPause()
+                if (audioManger?.isPlaying() == true) {
+                    playingAudio()
+                } else
+                    pausingAudio()
             } else {
                 initAndPlay(file)
             }
-
         }
-        /*streamingManager?.let {
-            if (streamingManager?.currentAudio == null) {
-                initAndPlay(file)
-                return@let
-            }
-            if (streamingManager?.currentAudioId == id) {
-                if (it.isPlaying) {
-                    streamingManager?.handlePauseRequest()
-                } else {
-                    streamingManager?.handlePlayRequest()
-                }
-            } else {
-                initAndPlay(file)
-            }
-        }*/
     }
 
     private fun initAndPlay(file: File) {
@@ -294,20 +282,6 @@ class AudioPlayerView : FrameLayout, View.OnClickListener, CurrentSessionCallbac
         playingAudio()
         val duration = Utils.getDurationOfMedia(context, file.absolutePath) ?: 0
         seekPlayerProgress.max = duration.toInt()
-
-        /*val audioMediaMetaData = MediaMetaData()
-        audioMediaMetaData.mediaId = id
-        audioMediaMetaData.mediaUrl = file.absolutePath
-        audioMediaMetaData.mediaDuration = 10_000.toString()
-        streamingManager?.isPlayMultiple = false
-        val duration = Utils.getDurationOfMedia(context, file.absolutePath) ?: 0
-        mediaDuration = duration
-        audioMediaMetaData.mediaDuration = this.toString()
-        seekPlayerProgress.progress = 0
-        seekPlayerProgress.max = duration.toInt()
-        timestamp.text = Utils.formatDuration(duration.toInt())
-        streamingManager?.onPlay(audioMediaMetaData)
-        streamingManager?.setShowPlayerNotification(false)*/
     }
 
     override fun currentSeekBarPosition(progress: Int) {
@@ -316,6 +290,8 @@ class AudioPlayerView : FrameLayout, View.OnClickListener, CurrentSessionCallbac
 
     override fun playSongComplete() {
         seekPlayerProgress.progress = 0
+        audioManger?.seekTo(0)
+        audioManger?.onPause()
         pausingAudio()
     }
 
@@ -359,6 +335,7 @@ class AudioPlayerView : FrameLayout, View.OnClickListener, CurrentSessionCallbac
     private fun pausingAudio() {
         playButton.visibility = View.VISIBLE
         pauseButton.visibility = View.GONE
+        progressWheel.visibility = View.GONE
     }
 
     private fun downloadAndPlay(url: String) {
@@ -421,6 +398,7 @@ class AudioPlayerView : FrameLayout, View.OnClickListener, CurrentSessionCallbac
         compositeDisposable.clear()
 //        streamingManager?.unSubscribeCallBack()
 //        streamingManager?.handlePauseRequest()
+        setDefaultValue()
         audioManger?.release()
         ExoAudioPlayer.LAST_ID = ""
         AppObjectController.getFetchObject().removeListener(downloadListener)

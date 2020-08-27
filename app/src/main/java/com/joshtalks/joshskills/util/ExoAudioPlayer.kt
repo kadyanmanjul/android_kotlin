@@ -11,6 +11,7 @@ import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.upstream.DataSource
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.google.android.exoplayer2.util.Util
+import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.JoshApplication
 import com.joshtalks.joshskills.core.custom_ui.exo_audio_player.AudioPlayerEventListener
 
@@ -66,8 +67,6 @@ class ExoAudioPlayer {
 
     fun setProgressUpdateListener(progressUpdateListener: ProgressUpdateListener?) {
         this.progressUpdateListener = progressUpdateListener
-        progressTracker =
-            ProgressTracker(player!!)
     }
 
     private fun initializePlayer() {
@@ -76,7 +75,6 @@ class ExoAudioPlayer {
     }
 
     fun seekTo(pos: Long) {
-//        player?.playWhenReady = false
         println("pos = [${pos}] duration = ${player?.duration}")
         player?.seekTo(pos)
     }
@@ -84,12 +82,13 @@ class ExoAudioPlayer {
     fun onPlay() {
         player?.playWhenReady = true
         playerListener?.onPlayerResume()
+        progressTracker?.let { it.handler.post(it) }
     }
 
     fun onPause() {
         player?.playWhenReady = false
         playerListener?.onPlayerPause()
-//        player?.seekTo(0, 0)
+        progressTracker?.let { it.handler.removeCallbacks(it) }
     }
 
 
@@ -111,6 +110,8 @@ class ExoAudioPlayer {
         player!!.prepare(audioSource)
         player!!.repeatMode = ExoPlayer.REPEAT_MODE_OFF
         player!!.playWhenReady = true
+        progressTracker =
+            ProgressTracker(player!!)
     }
 
     fun isPlaying(): Boolean {
@@ -121,6 +122,7 @@ class ExoAudioPlayer {
         player?.run {
             playWhenReady = false
         }
+        progressTracker?.let { it.handler.removeCallbacks(it) }
     }
 
     private fun resumePlayer() {
@@ -128,10 +130,15 @@ class ExoAudioPlayer {
             seekTo(currentPosition)
             playWhenReady = true
         }
+        progressTracker?.let { it.handler.post(it) }
     }
 
     fun resumeOrPause() {
         player?.playWhenReady = player?.playWhenReady!!.not()
+        if (isPlaying())
+            progressTracker?.let { it.handler.post(it) }
+        else
+            progressTracker?.let { it.handler.removeCallbacks(it) }
     }
 
     inner class ProgressTracker(private val player: SimpleExoPlayer) : Runnable {
@@ -148,13 +155,9 @@ class ExoAudioPlayer {
     }
 
     fun release() {
-//        player?.stop(true)
-//        player?.release()
-
         player?.playWhenReady = false
-        if (progressTracker != null) {
-            progressTracker!!.handler.removeCallbacks(progressTracker)
-        }
+        progressTracker?.let { it.handler.removeCallbacks(it) }
+        LAST_ID = EMPTY
         if (playerListener != null)
             playerListener = null
     }
