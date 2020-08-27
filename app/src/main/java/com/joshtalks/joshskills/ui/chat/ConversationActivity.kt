@@ -1559,7 +1559,7 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback, Player.
             val maxInterval =
                 AppObjectController.appDatabase.chatDao()
                     .getMaxIntervalForVideo(inboxEntity.conversation_id)
-            if (checkInDbForLastVideo(maxInterval, interval)) {
+            if (checkInDbForLastVideo(maxInterval, interval, isNextVideoAvailable)) {
                 val tUnlockClassMessage =
                     TUnlockClassMessage("Unlock Class Demo For now")
                 val cell = MessageBuilderFactory.getMessage(
@@ -1582,7 +1582,13 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback, Player.
         }
     }
 
-    private suspend fun checkInDbForLastVideo(maxInterval: Int, interval1: Int): Boolean {
+    private suspend fun checkInDbForLastVideo(
+        maxInterval: Int,
+        interval1: Int,
+        nextVideoAvailable: Boolean
+    ): Boolean {
+        if (nextVideoAvailable)
+            return false
         var interval = interval1
         if (interval == inboxEntity.duration!!) {
             return false

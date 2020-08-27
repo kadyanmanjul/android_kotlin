@@ -290,8 +290,10 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
 
     override fun onCurrentTimeUpdated(time: Long) {
 
-        if (searchingNextUrl.not() && (videoDuration?.minus(time))!! < 6000 && chatObject?.conversationId.isNullOrBlank()
-                .not()
+        if (searchingNextUrl.not()
+            && (videoDuration?.minus(time))!! < 6000
+            && chatObject?.conversationId.isNullOrBlank().not()
+            && chatObject?.sender?.user?.id.isNullOrBlank().not()
         ) {
             getNextClassUrl()
         }
