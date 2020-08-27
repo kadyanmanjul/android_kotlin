@@ -281,6 +281,9 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback, Player.
         if (intent.hasExtra(UPDATED_CHAT_ROOM_OBJECT)) {
             flowFrom = "Notification"
             val temp = intent.getParcelableExtra(UPDATED_CHAT_ROOM_OBJECT) as InboxEntity?
+            if (temp == null) {
+                this.finish()
+            }
             temp?.let { inboxObj ->
                 try {
                     val tempIn: InboxEntity? = inboxEntity
@@ -291,6 +294,7 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback, Player.
                     this.finish()
                     ex.printStackTrace()
                 }
+
                 initViewModel()
                 fetchMessage()
             }
@@ -1600,7 +1604,7 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback, Player.
             interval++
             val question: Question? = AppObjectController.appDatabase.chatDao()
                 .getQuestionForNextInterval(
-                    inboxEntity.courseId!!, interval
+                    inboxEntity.courseId, interval
                 )
 
             if (question != null && question.material_type == BASE_MESSAGE_TYPE.VI && question.type == BASE_MESSAGE_TYPE.Q) {
