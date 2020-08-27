@@ -46,8 +46,14 @@ class CourseOverviewMediaViewHolder(
                 setImageView(this, imageView)
             }
         } else {
-            overviewMedia.video?.video_image_url?.run {
-                setImageView(this, imageView)
+            if (overviewMedia.thumbnailUrl.isNullOrEmpty()) {
+                overviewMedia.video?.video_image_url?.run {
+                    setImageView(this, imageView)
+                }
+            } else {
+                overviewMedia.thumbnailUrl.run {
+                    setImageView(this, imageView)
+                }
             }
         }
         if (overviewMedia.type == OverviewMediaType.VIDEO) {
