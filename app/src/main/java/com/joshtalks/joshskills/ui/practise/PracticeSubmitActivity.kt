@@ -394,8 +394,8 @@ class PractiseSubmitActivity : CoreJoshActivity(), Player.EventListener, AudioPl
                         if (binding.practiseSeekbar.max == 0) {
                             binding.practiseSeekbar.max = 2_00_000
                         }
-                        initializePractiseSeekBar()
                     }
+                    initializePractiseSeekBar()
                 }
 
                 BASE_MESSAGE_TYPE.IM -> {
@@ -867,6 +867,7 @@ class PractiseSubmitActivity : CoreJoshActivity(), Player.EventListener, AudioPl
     private fun audioAttachmentInit() {
         binding.practiseSubmitLayout.visibility = VISIBLE
         binding.submitAudioViewContainer.visibility = VISIBLE
+        initializePractiseSeekBar()
         binding.submitPractiseSeekbar.max = Utils.getDurationOfMedia(this, filePath!!)?.toInt() ?: 0
         enableSubmitButton()
         scrollToEnd()
