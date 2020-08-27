@@ -27,6 +27,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.crashlytics.android.Crashlytics
 import com.facebook.appevents.AppEventsConstants
+import com.facebook.appevents.AppEventsLogger
 import com.flurry.android.FlurryAgent
 import com.google.android.gms.auth.api.credentials.Credential
 import com.google.android.gms.auth.api.credentials.Credentials
@@ -758,6 +759,9 @@ class PaymentSummaryActivity : CoreJoshActivity(),
     }
 
     private fun addECommerceEvent(razorpayPaymentId: String) {
+        if (viewModel.getCourseDiscountedAmount() <= 0) {
+            return
+        }
         AppObjectController.firebaseAnalytics.resetAnalyticsData()
         val bundle = Bundle()
         bundle.putString(FirebaseAnalytics.Param.ITEM_ID, viewModel.getPaymentTestId())
@@ -766,7 +770,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
             FirebaseAnalytics.Param.PRICE, viewModel.getCourseDiscountedAmount()
         )
         bundle.putString(FirebaseAnalytics.Param.TRANSACTION_ID, razorpayPaymentId)
-        bundle.putString(FirebaseAnalytics.Param.CURRENCY, "INR")
+        bundle.putString(FirebaseAnalytics.Param.CURRENCY, CurrencyType.INR.name)
         AppObjectController.firebaseAnalytics.logEvent(FirebaseAnalytics.Event.PURCHASE, bundle)
 
         val extras: HashMap<String, String> = HashMap()
@@ -790,7 +794,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                 )
                 putString(AppEventsConstants.EVENT_PARAM_CURRENCY, CurrencyType.INR.name)
             }
-            AppObjectController.facebookEventLogger.logPurchase(
+            AppEventsLogger.newLogger(this).logPurchase(
                 viewModel.getCourseDiscountedAmount().toBigDecimal(),
                 Currency.getInstance(viewModel.getCurrency().trim()),
                 params
@@ -840,6 +844,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
         super.onDestroy()
         Checkout.clearUserData(applicationContext)
         uiHandler.removeCallbacksAndMessages(null)
+        AppObjectController.facebookEventLogger.flush()
     }
 
     private fun showPaymentProcessingFragment() {

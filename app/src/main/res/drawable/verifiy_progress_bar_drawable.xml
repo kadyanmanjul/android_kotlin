@@ -17,12 +17,10 @@
             android:right="@dimen/_1sdp"
             android:top="@dimen/_1sdp">
         <clip>
-            <scale android:scaleWidth="100%">
-                <shape>
-                    <corners android:radius="@dimen/_16sdp" />
-                    <solid android:color="@color/text_color_10" />
-                </shape>
-            </scale>
+            <shape>
+                <corners android:radius="@dimen/_16sdp" />
+                <solid android:color="@color/text_color_10" />
+            </shape>
         </clip>
     </item>
 </layer-list>

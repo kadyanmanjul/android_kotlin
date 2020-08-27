@@ -278,7 +278,7 @@ public class AppAnalytics {
     public void push() {
         Timber.v(this.toString());
         if (BuildConfig.DEBUG) {
-            //  return;
+              return;
         }
         JoshSkillExecutors.getBOUNDED().submit(() -> {
             formatParameters();

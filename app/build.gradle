@@ -9,7 +9,7 @@ apply plugin: 'com.google.firebase.firebase-perf'
 
 def majorVersion = 2
 def minorVersion = 1
-def patchVersion = 3
+def patchVersion = 5
 
 android {
     compileSdkVersion 29
@@ -17,8 +17,8 @@ android {
         applicationId "com.joshtalks.joshskills"
         minSdkVersion 21
         targetSdkVersion 29
-        versionCode majorVersion * 10000 + minorVersion * 100 + patchVersion
-        versionName "${majorVersion}.${minorVersion}.${patchVersion}"
+        versionCode majorVersion*10000 + minorVersion*100 + patchVersion
+        versionName "${majorVersion}.${minorVersion}.${patchVersion}Rev"
         vectorDrawables.useSupportLibrary true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField "String", "CLIENT_TOKEN", "\"Ctt75ss5IxyHgBJb48diBbHUXIQ1VANCYRykjdcj\""
@@ -72,6 +72,7 @@ android {
             resValue("string", "truecaller_key", "P31uP46c15762366b41fdba957b16b9a7c620")
             buildConfigField "String", "FLURRY_API_KEY", "\"2MHQRXWJ93XX7BWRHXWS\""
             buildConfigField "String", "SINCH_API_KEY", "\"86f34ed9-cdcf-497c-af80-3f352170164f\""
+            crunchPngs false
 
         }
         release {

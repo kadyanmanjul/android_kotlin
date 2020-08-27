@@ -172,6 +172,7 @@ internal class AppObjectController {
             firebaseAnalytics.setAnalyticsCollectionEnabled(true)
             AppEventsLogger.activateApp(joshApplication)
             facebookEventLogger = AppEventsLogger.newLogger(joshApplication)
+            facebookEventLogger.flush()
             Branch.getAutoInstance(joshApplication)
             initFirebaseRemoteConfig()
             WorkMangerAdmin.deviceIdGenerateWorker()
@@ -301,11 +302,12 @@ internal class AppObjectController {
         }
 
         private fun configureCrashlytics() {
-            Fabric.with(
-                joshApplication, Crashlytics.Builder()
-                    .core(CrashlyticsCore.Builder().disabled(BuildConfig.DEBUG).build())
-                    .build()
-            )
+            Crashlytics.Builder()
+                .core(CrashlyticsCore.Builder().disabled(BuildConfig.DEBUG).build())
+                .build()
+                .also { crashlyticsKit ->
+                    Fabric.with(joshApplication, crashlyticsKit)
+                }
         }
 
         private fun initFlurryAnalytics() {

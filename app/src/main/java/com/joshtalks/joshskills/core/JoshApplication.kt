@@ -42,6 +42,9 @@ class JoshApplication : MultiDexApplication(), LifecycleObserver,
     override fun onCreate() {
         super.onCreate()
         ProcessLifecycleOwner.get().lifecycle.addObserver(this)
+        FacebookSdk.setAutoLogAppEventsEnabled(false)
+        FacebookSdk.setLimitEventAndDataUsage(this, true)
+
         instance = this
         if (BuildConfig.DEBUG) {
             StrictMode.setVmPolicy(
@@ -52,6 +55,14 @@ class JoshApplication : MultiDexApplication(), LifecycleObserver,
             Stetho.initializeWithDefaults(this)
             FacebookSdk.setIsDebugEnabled(true)
             FacebookSdk.addLoggingBehavior(LoggingBehavior.APP_EVENTS)
+            FacebookSdk.addLoggingBehavior(LoggingBehavior.CACHE)
+            FacebookSdk.addLoggingBehavior(LoggingBehavior.DEVELOPER_ERRORS)
+            FacebookSdk.addLoggingBehavior(LoggingBehavior.GRAPH_API_DEBUG_INFO)
+            FacebookSdk.addLoggingBehavior(LoggingBehavior.GRAPH_API_DEBUG_WARNING)
+            FacebookSdk.addLoggingBehavior(LoggingBehavior.REQUESTS)
+
+            FacebookSdk.setCodelessDebugLogEnabled(true)
+            FacebookSdk.setMonitorEnabled(true)
             Branch.enableLogging()
             Branch.enableTestMode()
             Timber.plant(Timber.DebugTree())
