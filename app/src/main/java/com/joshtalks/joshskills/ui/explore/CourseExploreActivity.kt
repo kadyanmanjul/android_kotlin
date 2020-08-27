@@ -38,9 +38,8 @@ import io.reactivex.disposables.CompositeDisposable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.util.*
-import kotlin.collections.ArrayList
-import kotlin.collections.HashMap
+import java.util.Date
+import java.util.LinkedHashSet
 import kotlin.collections.set
 
 const val COURSE_EXPLORER_SCREEN_NAME = "Course Explorer"
@@ -231,7 +230,7 @@ class CourseExploreActivity : CoreJoshActivity() {
                     AppObjectController.commonNetworkService.registerGAIdAsync(requestRegisterGAId)
                         .await()
                 PrefManager.put(SERVER_GID_ID, resp.id)
-                PrefManager.put(EXPLORE_TYPE, resp.exploreCardType!!.name)
+                PrefManager.put(EXPLORE_TYPE, resp.exploreCardType!!.name, true)
             } catch (ex: Throwable) {
                 //LogException.catchException(ex)
             }

@@ -608,9 +608,8 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
     private fun setTrialEndParam(coursesList: List<InboxEntity>) {
         val trialCourse =
             coursesList.filter { it.courseId == TRIAL_COURSE_ID }.getOrNull(0)
-        if (trialCourse != null) {
-            PrefManager.put(IS_TRIAL_STARTED, true, true)
-        }
+        val isTrialStarted = trialCourse != null
+        PrefManager.put(IS_TRIAL_STARTED, isTrialStarted, true)
         val expiryTimeInMs =
             trialCourse?.courseCreatedDate?.time?.plus(
                 (trialCourse.duration ?: 7)
@@ -621,20 +620,25 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
             )
         val currentTimeInMs = Calendar.getInstance().timeInMillis
 
+        var isTrialEnded = false
+        var remainingTrialDays = 0
         expiryTimeInMs?.let {
             if (it <= currentTimeInMs) {
                 logTrialEventExpired()
-                PrefManager.put(IS_TRIAL_ENDED, true, true)
+                isTrialEnded = true
             }
-            val remainingTrialDays =
+            val remainingDays =
                 (it.minus(currentTimeInMs))
                     .div(1000L)
                     .div(60L)
                     .div(60L)
                     .div(24L)
 
-            PrefManager.put(REMAINING_TRIAL_DAYS, remainingTrialDays.toInt(), true)
+            remainingTrialDays = remainingDays.toInt()
+
         }
+        PrefManager.put(IS_TRIAL_ENDED, isTrialEnded, true)
+        PrefManager.put(REMAINING_TRIAL_DAYS, remainingTrialDays, true)
     }
 
     private fun logTrialEventExpired() {
