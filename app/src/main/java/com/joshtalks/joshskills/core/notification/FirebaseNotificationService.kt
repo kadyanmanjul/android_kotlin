@@ -116,19 +116,19 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                 val activityList = if (PrefManager.getStringValue(API_TOKEN).isEmpty()) {
                     arrayOf(this)
                 } else {
-                    if (isAppRunning().not()) {
-                        arrayOf(this)
-                    } else {
-                        val backIntent =
-                            Intent(
-                                this@FirebaseNotificationService,
-                                InboxActivity::class.java
-                            ).apply {
-                                addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                            }
-                        arrayOf(backIntent, this)
-                    }
+                    /* if (isAppRunning().not()) {
+                         arrayOf(this)
+                     } else {*/
+                    val backIntent =
+                        Intent(
+                            this@FirebaseNotificationService,
+                            InboxActivity::class.java
+                        ).apply {
+                            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                        }
+                    arrayOf(backIntent, this)
+                    //  }
                 }
 
                 intent.putExtra(NOTIFICATION_ID, notificationObject.id)
