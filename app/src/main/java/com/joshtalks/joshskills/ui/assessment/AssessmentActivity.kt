@@ -31,6 +31,7 @@ import com.joshtalks.joshskills.databinding.ActivityAssessmentBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.AssessmentButtonClick
 import com.joshtalks.joshskills.repository.local.eventbus.AssessmentButtonClickEvent
+import com.joshtalks.joshskills.repository.local.eventbus.AssessmentLastQuestionSubmitEvent
 import com.joshtalks.joshskills.repository.local.eventbus.FillInTheBlankSubmitEvent
 import com.joshtalks.joshskills.repository.local.eventbus.MatchTheFollowingSubmitEvent
 import com.joshtalks.joshskills.repository.local.eventbus.McqSubmitEvent
@@ -299,6 +300,7 @@ class AssessmentActivity : CoreJoshActivity() {
     ) {
         logNextButtonAnalyticEvent(assessmentQuestionWithRelations.question.choiceType)
         if (isLastQuestion) {
+            RxBus2.publish(AssessmentLastQuestionSubmitEvent(assessmentQuestionWithRelations.question.remoteId))
             if (assessmentType == AssessmentType.QUIZ) {
                 when (assessment.status) {
                     AssessmentStatus.NOT_STARTED,

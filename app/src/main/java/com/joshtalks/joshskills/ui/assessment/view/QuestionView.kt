@@ -16,8 +16,13 @@ import com.bumptech.glide.request.target.Target
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.custom_ui.MiniExoPlayer
 import com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+import com.joshtalks.joshskills.messaging.RxBus2
+import com.joshtalks.joshskills.repository.local.eventbus.AssessmentLastQuestionSubmitEvent
 import com.joshtalks.joshskills.repository.local.model.assessment.AssessmentQuestionWithRelations
 import com.joshtalks.joshskills.repository.server.assessment.AssessmentMediaType
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
 
 class QuestionView : FrameLayout {
@@ -28,6 +33,8 @@ class QuestionView : FrameLayout {
     private var miniExoPlayerStub: Stub<MiniExoPlayer>? = null
     private var audioPlayerStub: Stub<AudioPlayerView>? = null
     private var imageViewStub: Stub<AppCompatImageView>? = null
+    private var compositeDisposable = CompositeDisposable()
+
 
     constructor(context: Context) : super(context) {
         init()
@@ -54,6 +61,35 @@ class QuestionView : FrameLayout {
         miniExoPlayerStub = Stub(findViewById(R.id.video_view_stub))
         audioPlayerStub = Stub(findViewById(R.id.audio_player_stub))
         imageViewStub = Stub(findViewById(R.id.image_view_stub))
+        addObservers()
+    }
+
+    private fun addObservers() {
+        compositeDisposable.add(
+            RxBus2.listenWithoutDelay(AssessmentLastQuestionSubmitEvent::class.java)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe {
+                    if (it.questionId == assessmentQuestion?.question?.remoteId) {
+                        pauseMediaPLayers()
+                    }
+                })
+    }
+
+    private fun pauseMediaPLayers() {
+        audioPlayerStub?.run {
+            if (this.resolved()) {
+                this.get()
+                    ?.pausingAudio()
+            }
+        }
+
+        miniExoPlayerStub?.run {
+            if (this.resolved()) {
+                this.get()
+                    ?.onPausePlayer()
+            }
+        }
     }
 
 
@@ -103,13 +139,17 @@ class QuestionView : FrameLayout {
                 AssessmentMediaType.VIDEO -> {
                     miniExoPlayerStub?.run {
                         if (this.resolved().not()) {
-                            this.get()?.setUrl(it.question.mediaUrl, it.question.videoThumbnailUrl,it.question.remoteId)
+                            this.get()?.setUrl(
+                                it.question.mediaUrl,
+                                it.question.videoThumbnailUrl,
+                                it.question.remoteId
+                            )
                         }
                     }
                     return@let
                 }
                 else -> {
-                    cardView.visibility= View.GONE
+                    cardView.visibility = View.GONE
                     return@let
                 }
 
@@ -120,6 +160,7 @@ class QuestionView : FrameLayout {
 
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
+        compositeDisposable.clear()
         Timber.tag("onDetachedFromWindow").e("QuestionView")
     }
 }

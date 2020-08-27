@@ -325,7 +325,7 @@ class AudioPlayerView : FrameLayout, View.OnClickListener, CurrentSessionCallbac
         progressWheel.visibility = View.GONE
     }
 
-    private fun pausingAudio() {
+    fun pausingAudio() {
         playButton.visibility = View.VISIBLE
         pauseButton.visibility = View.GONE
         progressWheel.visibility = View.GONE
