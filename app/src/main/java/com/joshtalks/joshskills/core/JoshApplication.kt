@@ -5,23 +5,13 @@ import android.content.ComponentCallbacks2
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.os.StrictMode
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
 import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.multidex.MultiDexApplication
-import com.facebook.FacebookSdk
-import com.facebook.LoggingBehavior
-import com.facebook.stetho.Stetho
 import com.freshchat.consumer.sdk.Freshchat
-import com.joshtalks.joshskills.BuildConfig
-import com.joshtalks.joshskills.R
-import io.branch.referral.Branch
-import io.github.inflationx.calligraphy3.CalligraphyConfig
-import io.github.inflationx.calligraphy3.CalligraphyInterceptor
-import io.github.inflationx.viewpump.ViewPump
 import io.github.inflationx.viewpump.ViewPumpContextWrapper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -42,42 +32,7 @@ class JoshApplication : MultiDexApplication(), LifecycleObserver,
     override fun onCreate() {
         super.onCreate()
         ProcessLifecycleOwner.get().lifecycle.addObserver(this)
-        FacebookSdk.setAutoLogAppEventsEnabled(false)
-        FacebookSdk.setLimitEventAndDataUsage(this, true)
-
-        instance = this
-        if (BuildConfig.DEBUG) {
-            StrictMode.setVmPolicy(
-                StrictMode.VmPolicy.Builder().detectActivityLeaks().detectLeakedClosableObjects()
-                    .penaltyLog()
-                    .build()
-            )
-            Stetho.initializeWithDefaults(this)
-            FacebookSdk.setIsDebugEnabled(true)
-            FacebookSdk.addLoggingBehavior(LoggingBehavior.APP_EVENTS)
-            FacebookSdk.addLoggingBehavior(LoggingBehavior.CACHE)
-            FacebookSdk.addLoggingBehavior(LoggingBehavior.DEVELOPER_ERRORS)
-            FacebookSdk.addLoggingBehavior(LoggingBehavior.GRAPH_API_DEBUG_INFO)
-            FacebookSdk.addLoggingBehavior(LoggingBehavior.GRAPH_API_DEBUG_WARNING)
-            FacebookSdk.addLoggingBehavior(LoggingBehavior.REQUESTS)
-
-            FacebookSdk.setCodelessDebugLogEnabled(true)
-            FacebookSdk.setMonitorEnabled(true)
-            Branch.enableLogging()
-            Branch.enableTestMode()
-            Timber.plant(Timber.DebugTree())
-        }
         AppObjectController.init(this)
-        ViewPump.init(
-            ViewPump.builder().addInterceptor(
-                CalligraphyInterceptor(
-                    CalligraphyConfig.Builder()
-                        .setDefaultFontPath("fonts/OpenSans-Regular.ttf")
-                        .setFontAttrId(R.attr.fontPath)
-                        .build()
-                )
-            ).build()
-        )
         registerBroadcastReceiver()
     }
 

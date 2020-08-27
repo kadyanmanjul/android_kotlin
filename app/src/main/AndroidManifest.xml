@@ -467,6 +467,27 @@
                     android:resource="@xml/provider_paths" />
         </provider>
 
+        <provider
+                android:name="androidx.startup.InitializationProvider"
+                android:authorities="${applicationId}.androidx-startup"
+                android:exported="false"
+                tools:node="merge">
+
+            <!-- Automatically run MyInitializer at app startup -->
+
+            <meta-data
+                    android:name="com.joshtalks.joshskills.core.speedx.JoshWorkManagerInitializer"
+                    android:value="androidx.startup" />
+            <meta-data
+                    android:name="com.joshtalks.joshskills.core.speedx.JoshAppInitializer"
+                    android:value="androidx.startup" />
+        </provider>
+        <provider
+                android:name="androidx.work.impl.WorkManagerInitializer"
+                android:authorities="${applicationId}.workmanager-init"
+                android:enabled="false"
+                android:exported="false" />
+
         <!--<activity android:name=".ui.game.GameWebViewActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

@@ -77,7 +77,6 @@
                 android:layout_width="0dp"
                 android:layout_height="@dimen/_14sdp"
                 android:layout_gravity="bottom"
-                android:layout_marginTop="@dimen/_4sdp"
                 tools:max="100"
                 tools:progress="40"
                 android:progressDrawable="@drawable/progress_background"

@@ -1,7 +1,5 @@
 package com.joshtalks.joshskills.core
 
-const val ARG_PHONE_NUMBER = "phone_number"
-
 enum class SignUpStepStatus {
     SignUpStepFirst, SignUpStepSecond, SignUpCompleted,
     RequestForOTP, ReGeneratedOTP, ProfileCompleted,
@@ -31,14 +29,8 @@ const val ALPHA_MIN = 0.45F
 
 
 val IMAGE_REGEX = Regex(pattern = IMAGE_PATTERN)
-
 const val MINIMUM_VIDEO_DOWNLOAD_PROGRESS = 20
 const val ARG_PLACEHOLDER_URL = "placeholder_image_url"
-
-enum class REFERRAL_EVENT(val type: String) {
-    CLICK_ON_REFERRAL("click_on_referral"), LONG_PRESS_CODE("long_press_code"), CLICK_ON_SHARE("click_on_share")
-}
-
 
 enum class RegistrationMethods(val type: String) {
     MOBILE_NUMBER("Mobile Number"), TRUE_CALLER("True Caller"), GOOGLE("Google"), FACEBOOK("Facebook")
@@ -58,9 +50,7 @@ enum class VerificationVia {
 
 enum class VerificationStatus {
     INITIATED, SUCCESS, FAILED, USER_DENY, TIMEOUT
-
 }
-
 
 enum class PractiseUser(val type: Int) {
     FIRST(0), SECOND(1)
@@ -87,6 +77,8 @@ class FirebaseRemoteConfigKey {
         const val INBOX_SCREEN_CTA_TEXT_NORMAL = "INBOX_SCREEN_CTA_TEXT_NORMAL"
         const val INBOX_SCREEN_CTA_TEXT_FFCOURSE = "INBOX_SCREEN_CTA_TEXT_FFCOURSE"
         const val INBOX_SCREEN_CTA_TEXT_FREETRIAL = "INBOX_SCREEN_CTA_TEXT_FREETRIAL"
+        const val INBOX_SCREEN_CTA_TEXT_SUBSCRIPTION = "INBOX_SCREEN_CTA_TEXT_SUBSCRIPTION"
+        const val SUBSCRIPTION_COURSE_IDS = "SUBSCRIPTION_COURSE_IDS"
 
         // Trial End Screen
         const val TRAIL_END_SCREEN_MESSAGE = "TRAIL_END_SCREEN_MESSAGE"

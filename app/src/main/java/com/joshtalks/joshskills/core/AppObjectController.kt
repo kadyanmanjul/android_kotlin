@@ -1,16 +1,21 @@
 package com.joshtalks.joshskills.core
 
+import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Handler
 import android.os.Looper
+import android.os.StrictMode
 import android.util.Log
 import androidx.core.app.NotificationManagerCompat
 import com.bumptech.glide.load.MultiTransformation
 import com.clevertap.android.sdk.ActivityLifecycleCallback
 import com.crashlytics.android.Crashlytics
 import com.crashlytics.android.core.CrashlyticsCore
+import com.facebook.FacebookSdk
+import com.facebook.LoggingBehavior
 import com.facebook.appevents.AppEventsLogger
+import com.facebook.stetho.Stetho
 import com.facebook.stetho.okhttp3.StethoInterceptor
 import com.flurry.android.FlurryAgent
 import com.flurry.android.FlurryPerformance
@@ -57,6 +62,9 @@ import com.vanniktech.emoji.EmojiManager
 import com.vanniktech.emoji.google.GoogleEmojiProvider
 import io.branch.referral.Branch
 import io.fabric.sdk.android.Fabric
+import io.github.inflationx.calligraphy3.CalligraphyConfig
+import io.github.inflationx.calligraphy3.CalligraphyInterceptor
+import io.github.inflationx.viewpump.ViewPump
 import jp.wasabeef.glide.transformations.CropTransformation
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation
 import okhttp3.CertificatePinner
@@ -91,7 +99,7 @@ private const val CONNECTION_TIMEOUT = 30L
 private const val CALL_TIMEOUT = 60L
 
 
-internal class AppObjectController {
+class AppObjectController {
 
     companion object {
 
@@ -163,23 +171,21 @@ internal class AppObjectController {
         @JvmStatic
         var currentPlayingAudioObject: ChatModel? = null
 
-        fun init(context: JoshApplication): AppObjectController {
-            joshApplication = context
+        fun initLibrary(context: Context): AppObjectController {
+            joshApplication = context as JoshApplication
             appDatabase = AppDatabase.getDatabase(context)!!
-            com.joshtalks.joshskills.core.ActivityLifecycleCallback.register(joshApplication)
-            ActivityLifecycleCallback.register(joshApplication)
-            firebaseAnalytics = FirebaseAnalytics.getInstance(joshApplication)
+            firebaseAnalytics = FirebaseAnalytics.getInstance(context)
             firebaseAnalytics.setAnalyticsCollectionEnabled(true)
-            AppEventsLogger.activateApp(joshApplication)
-            facebookEventLogger = AppEventsLogger.newLogger(joshApplication)
-            facebookEventLogger.flush()
-            Branch.getAutoInstance(joshApplication)
+            initDebugService()
+            initFacebookService(context)
+            Branch.getAutoInstance(context)
             initFirebaseRemoteConfig()
+            configureCrashlytics(context)
+            initFlurryAnalytics(context)
+            initNewRelic(context)
+            initFonts()
             WorkMangerAdmin.deviceIdGenerateWorker()
             WorkMangerAdmin.runMemoryManagementWorker()
-            configureCrashlytics()
-            initFlurryAnalytics()
-            initNewRelic()
 
             gsonMapper = GsonBuilder()
                 .enableComplexMapKeySerialization()
@@ -265,9 +271,64 @@ internal class AppObjectController {
             signUpNetworkService = retrofit.create(SignUpNetworkService::class.java)
             chatNetworkService = retrofit.create(ChatNetworkService::class.java)
             commonNetworkService = retrofit.create(CommonNetworkService::class.java)
-            initObjectInThread()
-
+            initObjectInThread(context)
             return INSTANCE
+
+        }
+
+        fun init(context: JoshApplication) {
+            joshApplication = context
+            com.joshtalks.joshskills.core.ActivityLifecycleCallback.register(joshApplication)
+            ActivityLifecycleCallback.register(joshApplication)
+            AppEventsLogger.activateApp(joshApplication)
+        }
+
+
+        private fun initDebugService() {
+            if (BuildConfig.DEBUG) {
+                StrictMode.setVmPolicy(
+                    StrictMode.VmPolicy.Builder().detectActivityLeaks()
+                        .detectLeakedClosableObjects()
+                        .penaltyLog()
+                        .build()
+                )
+                Timber.plant(Timber.DebugTree())
+                Branch.enableLogging()
+                Branch.enableTestMode()
+            }
+        }
+
+        private fun initFacebookService(context: Context) {
+            FacebookSdk.setAutoLogAppEventsEnabled(false)
+            FacebookSdk.setLimitEventAndDataUsage(context, true)
+            facebookEventLogger = AppEventsLogger.newLogger(context)
+            facebookEventLogger.flush()
+
+            if (BuildConfig.DEBUG) {
+                Stetho.initializeWithDefaults(context)
+                FacebookSdk.setIsDebugEnabled(true)
+                FacebookSdk.addLoggingBehavior(LoggingBehavior.APP_EVENTS)
+                FacebookSdk.addLoggingBehavior(LoggingBehavior.CACHE)
+                FacebookSdk.addLoggingBehavior(LoggingBehavior.DEVELOPER_ERRORS)
+                FacebookSdk.addLoggingBehavior(LoggingBehavior.GRAPH_API_DEBUG_INFO)
+                FacebookSdk.addLoggingBehavior(LoggingBehavior.GRAPH_API_DEBUG_WARNING)
+                FacebookSdk.addLoggingBehavior(LoggingBehavior.REQUESTS)
+                FacebookSdk.setCodelessDebugLogEnabled(true)
+                FacebookSdk.setMonitorEnabled(true)
+            }
+        }
+
+        private fun initFonts() {
+            ViewPump.init(
+                ViewPump.builder().addInterceptor(
+                    CalligraphyInterceptor(
+                        CalligraphyConfig.Builder()
+                            .setDefaultFontPath("fonts/OpenSans-Regular.ttf")
+                            .setFontAttrId(R.attr.fontPath)
+                            .build()
+                    )
+                ).build()
+            )
         }
 
         private fun getHostOfUrl(): String {
@@ -275,7 +336,7 @@ internal class AppObjectController {
             return aURL.host
         }
 
-        private fun initNewRelic() {
+        private fun initNewRelic(context: Context) {
             NewRelic.enableFeature(FeatureFlag.CrashReporting)
             NewRelic.enableFeature(FeatureFlag.DefaultInteractions)
             NewRelic.enableFeature(FeatureFlag.DistributedTracing)
@@ -289,7 +350,7 @@ internal class AppObjectController {
                 .withLocationServiceEnabled(true)
                 // .withLogLevel(AgentLog.AUDIT)
                 .start(
-                    joshApplication
+                    context
                 )
         }
 
@@ -301,23 +362,23 @@ internal class AppObjectController {
             getFirebaseRemoteConfig().fetchAndActivate()
         }
 
-        private fun configureCrashlytics() {
+        private fun configureCrashlytics(context: Context) {
             Crashlytics.Builder()
                 .core(CrashlyticsCore.Builder().disabled(BuildConfig.DEBUG).build())
                 .build()
                 .also { crashlyticsKit ->
-                    Fabric.with(joshApplication, crashlyticsKit)
+                    Fabric.with(context, crashlyticsKit)
                 }
         }
 
-        private fun initFlurryAnalytics() {
+        private fun initFlurryAnalytics(context: Context) {
             FlurryAgent.Builder()
                 .withDataSaleOptOut(false) //CCPA - the default value is false
                 .withCaptureUncaughtExceptions(true)
                 .withIncludeBackgroundSessionsInMetrics(true)
                 .withLogLevel(Log.VERBOSE)
                 .withPerformanceMetrics(FlurryPerformance.ALL)
-                .build(joshApplication, BuildConfig.FLURRY_API_KEY)
+                .build(context, BuildConfig.FLURRY_API_KEY)
         }
 
         fun initialiseFreshChat() {
@@ -418,8 +479,8 @@ internal class AppObjectController {
             return "${joshApplication.cacheDir}/${JOSH_SKILLS_CACHE}"
         }
 
-        private fun initObjectInThread() {
-            Thread(Runnable {
+        private fun initObjectInThread(context: Context) {
+            Thread {
                 val mediaOkhttpBuilder = OkHttpClient().newBuilder()
                 mediaOkhttpBuilder.connectTimeout(45, TimeUnit.SECONDS)
                     .writeTimeout(45, TimeUnit.SECONDS)
@@ -458,7 +519,7 @@ internal class AppObjectController {
 
 
                 DateTimeUtils.setTimeZone("UTC")
-                AndroidThreeTen.init(joshApplication)
+                AndroidThreeTen.init(context)
                 EmojiManager.install(GoogleEmojiProvider())
                 videoDownloadTracker = VideoDownloadController.getInstance().downloadTracker
                 multiTransformation = MultiTransformation(
@@ -473,8 +534,8 @@ internal class AppObjectController {
                         RoundedCornersTransformation.CornerType.ALL
                     )
                 )
-                InstallReferralUtil.installReferrer(joshApplication)
-            }).start()
+                InstallReferralUtil.installReferrer(context)
+            }.start()
         }
 
         private fun getCertificatePins() =
