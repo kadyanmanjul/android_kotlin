@@ -176,7 +176,6 @@ class AppObjectController {
             firebaseAnalytics = FirebaseAnalytics.getInstance(context)
             firebaseAnalytics.setAnalyticsCollectionEnabled(true)
             initDebugService()
-            initFacebookService(context)
             Branch.getAutoInstance(context)
             initFirebaseRemoteConfig()
             configureCrashlytics(context)
@@ -276,6 +275,9 @@ class AppObjectController {
         }
         fun init(context: JoshApplication) {
             joshApplication = context
+            initFacebookService(context)
+            //AppInitializer.getInstance(context).isEagerlyInitialized(JoshAppInitializer::class.java)
+            //AppInitializer.getInstance(context).initializeComponent(JoshAppInitializer::class.java)
             com.joshtalks.joshskills.core.ActivityLifecycleCallback.register(joshApplication)
             ActivityLifecycleCallback.register(joshApplication)
             AppEventsLogger.activateApp(joshApplication)
