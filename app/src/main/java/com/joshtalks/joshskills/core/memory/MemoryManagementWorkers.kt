@@ -10,7 +10,7 @@ import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.PermissionUtils
 import com.joshtalks.joshskills.core.bytesToKB
 import com.joshtalks.joshskills.core.io.AppDirectory
-import com.joshtalks.joshskills.core.service.WorkMangerAdmin
+import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
 import com.joshtalks.joshskills.repository.local.entity.DOWNLOAD_STATUS
@@ -197,6 +197,6 @@ class MemoryManagementWorker(var context: Context, workerParams: WorkerParameter
     }
 
     private fun removeOldMedia() {
-        WorkMangerAdmin.clearMediaOfConversation(EMPTY, isTimeDelete = true)
+        WorkManagerAdmin.clearMediaOfConversation(EMPTY, isTimeDelete = true)
     }
 }

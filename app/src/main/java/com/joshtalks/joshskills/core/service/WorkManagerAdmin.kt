@@ -14,7 +14,7 @@ import com.joshtalks.joshskills.repository.local.entity.NPSEvent
 import java.util.UUID
 import java.util.concurrent.TimeUnit
 
-object WorkMangerAdmin {
+object WorkManagerAdmin {
 
     fun appStartWorker() {
 

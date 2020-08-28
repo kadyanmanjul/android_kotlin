@@ -18,7 +18,7 @@ import com.joshtalks.joshskills.core.SERVER_GID_ID
 import com.joshtalks.joshskills.core.USER_UNIQUE_ID
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
-import com.joshtalks.joshskills.core.service.WorkMangerAdmin
+import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.databinding.ActivityCourseExploreBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
@@ -152,7 +152,7 @@ class CourseExploreActivity : CoreJoshActivity() {
     private fun loadCourses() {
         CoroutineScope(Dispatchers.IO).launch {
             val exploreType = PrefManager.getStringValue(EXPLORE_TYPE, true)
-            WorkMangerAdmin.registerUserGAID(
+            WorkManagerAdmin.registerUserGAID(
                 null,
                 if (exploreType.isNotBlank()) exploreType else null
             )

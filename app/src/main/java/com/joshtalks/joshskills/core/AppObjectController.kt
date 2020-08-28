@@ -38,7 +38,7 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.analytics.LogException
 import com.joshtalks.joshskills.core.datetimeutils.DateTimeUtils
 import com.joshtalks.joshskills.core.service.DownloadUtils
-import com.joshtalks.joshskills.core.service.WorkMangerAdmin
+import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.core.service.video_download.DownloadTracker
 import com.joshtalks.joshskills.core.service.video_download.VideoDownloadController
 import com.joshtalks.joshskills.repository.local.AppDatabase
@@ -182,8 +182,8 @@ class AppObjectController {
             initFlurryAnalytics(context)
             initNewRelic(context)
             initFonts()
-            WorkMangerAdmin.deviceIdGenerateWorker()
-            WorkMangerAdmin.runMemoryManagementWorker()
+            WorkManagerAdmin.deviceIdGenerateWorker()
+            WorkManagerAdmin.runMemoryManagementWorker()
 
             gsonMapper = GsonBuilder()
                 .enableComplexMapKeySerialization()

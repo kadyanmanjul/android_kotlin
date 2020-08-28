@@ -31,7 +31,7 @@ import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.JoshSkillExecutors
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.analytics.DismissNotifEventReceiver
-import com.joshtalks.joshskills.core.service.WorkMangerAdmin
+import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
 import com.joshtalks.joshskills.repository.local.entity.Question
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
@@ -406,7 +406,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
         val obj: InboxEntity? = AppObjectController.appDatabase.courseDao()
             .chooseRegisterCourseMinimal(actionData!!)
         obj?.run {
-            WorkMangerAdmin.updatedCourseForConversation(this.conversation_id)
+            WorkManagerAdmin.updatedCourseForConversation(this.conversation_id)
         }
 
         val rIntnet = Intent(applicationContext, ConversationActivity::class.java).apply {

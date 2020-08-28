@@ -19,7 +19,7 @@ import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.LogException
 import com.joshtalks.joshskills.core.io.AppDirectory
-import com.joshtalks.joshskills.core.service.WorkMangerAdmin
+import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.ui.course_details.CourseDetailsActivity
 import com.joshtalks.joshskills.ui.extra.CustomPermissionDialogInteractionListener
 import com.karumi.dexter.MultiplePermissionsReport
@@ -42,7 +42,7 @@ class LauncherActivity : CoreJoshActivity(), CustomPermissionDialogInteractionLi
         animatedProgressBar()
         this.reportFullyDrawn()
         Branch.getInstance(applicationContext).resetUserSession()
-        WorkMangerAdmin.appStartWorker()
+        WorkManagerAdmin.appStartWorker()
         logAppLaunchEvent(getNetworkOperatorName())
         AppObjectController.initialiseFreshChat()
 
@@ -67,7 +67,7 @@ class LauncherActivity : CoreJoshActivity(), CustomPermissionDialogInteractionLi
                 if (error == null && jsonParams?.has(Defines.Jsonkey.AndroidDeepLinkPath.key) == true) {
                     AppObjectController.uiHandler.removeCallbacksAndMessages(null)
                     val testId = jsonParams.getString(Defines.Jsonkey.AndroidDeepLinkPath.key)
-                    WorkMangerAdmin.registerUserGAID(testId)
+                    WorkManagerAdmin.registerUserGAID(testId)
                     val referralCode = parseReferralCode(jsonParams)
                     referralCode?.let {
                         logInstallByReferralEvent(testId, null, it)
@@ -79,7 +79,7 @@ class LauncherActivity : CoreJoshActivity(), CustomPermissionDialogInteractionLi
                     val exploreType = if (jsonParams.has(Defines.Jsonkey.ContentType.key)) {
                         jsonParams.getString(Defines.Jsonkey.ContentType.key)
                     } else null
-                    WorkMangerAdmin.registerUserGAID(null, exploreType)
+                    WorkManagerAdmin.registerUserGAID(null, exploreType)
                     val referralCode = parseReferralCode(jsonParams)
                     referralCode?.let {
                         logInstallByReferralEvent(null, exploreType, it)

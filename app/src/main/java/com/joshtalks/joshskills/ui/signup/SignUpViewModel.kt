@@ -21,7 +21,7 @@ import com.joshtalks.joshskills.core.VerificationVia
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
-import com.joshtalks.joshskills.core.service.WorkMangerAdmin
+import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.repository.local.eventbus.LoginViaStatus
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
@@ -236,7 +236,7 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
             .setUserId(loginResponse.userId)
             .update()
         AppAnalytics.updateUser()
-        WorkMangerAdmin.requiredTaskAfterLoginComplete()
+        WorkManagerAdmin.requiredTaskAfterLoginComplete()
         fetchMentor()
     }
 

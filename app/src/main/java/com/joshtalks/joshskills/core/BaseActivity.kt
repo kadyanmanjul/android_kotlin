@@ -22,7 +22,7 @@ import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.LogException
 import com.joshtalks.joshskills.core.notification.HAS_NOTIFICATION
 import com.joshtalks.joshskills.core.notification.NOTIFICATION_ID
-import com.joshtalks.joshskills.core.service.WorkMangerAdmin
+import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.repository.local.entity.NPSEvent
 import com.joshtalks.joshskills.repository.local.entity.NPSEventModel
 import com.joshtalks.joshskills.repository.local.entity.Question
@@ -194,7 +194,7 @@ abstract class BaseActivity : AppCompatActivity() {
     protected fun feedbackEngagementStatus(question: Question?) {
         if (question != null && question.needFeedback == null) {
             WorkManager.getInstance(applicationContext)
-                .getWorkInfoByIdLiveData(WorkMangerAdmin.getQuestionFeedback(question.questionId))
+                .getWorkInfoByIdLiveData(WorkManagerAdmin.getQuestionFeedback(question.questionId))
                 .observe(this, Observer {
                 })
         }
@@ -261,11 +261,11 @@ abstract class BaseActivity : AppCompatActivity() {
                 }
 
                 WorkManager.getInstance(applicationContext)
-                    .getWorkInfoByIdLiveData(WorkMangerAdmin.getQuestionNPA(eventModel.eventName))
+                    .getWorkInfoByIdLiveData(WorkManagerAdmin.getQuestionNPA(eventModel.eventName))
                     .removeObservers(this@BaseActivity)
             }
             WorkManager.getInstance(applicationContext)
-                .getWorkInfoByIdLiveData(WorkMangerAdmin.getQuestionNPA(eventModel.eventName))
+                .getWorkInfoByIdLiveData(WorkManagerAdmin.getQuestionNPA(eventModel.eventName))
                 .observe(this@BaseActivity, observer)
         }
     }

@@ -80,7 +80,7 @@ import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.core.notification.HAS_COURSE_REPORT
 import com.joshtalks.joshskills.core.notification.QUESTION_ID
 import com.joshtalks.joshskills.core.playback.PlaybackInfoListener.State.PAUSED
-import com.joshtalks.joshskills.core.service.WorkMangerAdmin
+import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.ActivityConversationBinding
 import com.joshtalks.joshskills.messaging.MessageBuilderFactory
@@ -1987,7 +1987,7 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback, Player.
             }
         }
         WorkManager.getInstance(applicationContext)
-            .getWorkInfoByIdLiveData(WorkMangerAdmin.clearMediaOfConversation(inboxEntity.conversation_id))
+            .getWorkInfoByIdLiveData(WorkManagerAdmin.clearMediaOfConversation(inboxEntity.conversation_id))
             .observe(this, observer)
     }
 

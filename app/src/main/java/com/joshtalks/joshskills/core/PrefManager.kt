@@ -5,7 +5,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import androidx.preference.PreferenceManager
 import com.joshtalks.joshskills.BuildConfig
-import com.joshtalks.joshskills.core.service.WorkMangerAdmin
+import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.repository.local.AppDatabase
 
 const val USER_UNIQUE_ID = "user_unique_id"
@@ -137,13 +137,13 @@ object PrefManager {
 
     fun logoutUser() {
         prefManagerCommon.edit().clear().apply()
-        WorkMangerAdmin.appStartWorker()
+        WorkManagerAdmin.appStartWorker()
     }
 
     fun clearUser() {
         prefManagerCommon.edit().clear().apply()
         AppDatabase.clearDatabase()
-        WorkMangerAdmin.appStartWorker()
+        WorkManagerAdmin.appStartWorker()
     }
 
 

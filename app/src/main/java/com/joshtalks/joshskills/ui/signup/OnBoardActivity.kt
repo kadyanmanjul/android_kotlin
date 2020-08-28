@@ -11,7 +11,7 @@ import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.REFERRED_REFERRAL_CODE
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
-import com.joshtalks.joshskills.core.service.WorkMangerAdmin
+import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.databinding.ActivityOnboardBinding
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
 import com.joshtalks.joshskills.ui.referral.EnterReferralCodeFragment
@@ -49,9 +49,9 @@ class OnBoardActivity : CoreJoshActivity() {
     fun openCourseExplore() {
         val exploreType = PrefManager.getStringValue(EXPLORE_TYPE, true)
         if (exploreType.isNotBlank()) {
-            WorkMangerAdmin.registerUserGAID(null, exploreType)
+            WorkManagerAdmin.registerUserGAID(null, exploreType)
         } else {
-            WorkMangerAdmin.registerUserGAID(null, null)
+            WorkManagerAdmin.registerUserGAID(null, null)
         }
 
         AppAnalytics.create(AnalyticsEvent.EXPLORE_BTN_CLICKED.NAME)

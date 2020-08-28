@@ -69,8 +69,8 @@ class AppRunRequiredTaskWorker(var context: Context, workerParams: WorkerParamet
             PrefManager.put(COUNTRY_ISO, PhoneNumberUtils.getDefaultCountryIso(context))
         }
 
-        WorkMangerAdmin.readMessageUpdating()
-        WorkMangerAdmin.deleteUnlockTypeQuestions()
+        WorkManagerAdmin.readMessageUpdating()
+        WorkManagerAdmin.deleteUnlockTypeQuestions()
         AppObjectController.getFirebaseRemoteConfig().fetchAndActivate().addOnCompleteListener {
             val npsEvent =
                 AppObjectController.getFirebaseRemoteConfig().getString("NPS_EVENT_LIST")

@@ -65,7 +65,7 @@ import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.core.playback.MusicService
 import com.joshtalks.joshskills.core.playback.PlaybackInfoListener
 import com.joshtalks.joshskills.core.playback.PlayerInterface
-import com.joshtalks.joshskills.core.service.WorkMangerAdmin
+import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.ActivityPraticeSubmitBinding
 import com.joshtalks.joshskills.messaging.RxBus2
@@ -536,7 +536,7 @@ class PractiseSubmitActivity : CoreJoshActivity(), Player.EventListener, AudioPl
             if (it) {
                 CoroutineScope(Dispatchers.IO).launch {
                     chatModel.question?.interval?.run {
-                        WorkMangerAdmin.determineNPAEvent(NPSEvent.PRACTICE_COMPLETED, this)
+                        WorkManagerAdmin.determineNPAEvent(NPSEvent.PRACTICE_COMPLETED, this)
                     }
                     delay(250)
                     val resultIntent = Intent().apply {

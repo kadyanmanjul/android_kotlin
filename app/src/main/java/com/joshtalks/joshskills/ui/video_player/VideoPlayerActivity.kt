@@ -24,7 +24,7 @@ import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.UsbEventReceiver
 import com.joshtalks.joshskills.core.interfaces.UsbEventListener
-import com.joshtalks.joshskills.core.service.WorkMangerAdmin
+import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.core.service.video_download.VideoDownloadController
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.core.videoplayer.VideoPlayerEventListener
@@ -136,7 +136,7 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
                 feedbackEngagementStatus(this.question)
                 DatabaseUtils.updateLastUsedModification(this.chatId)
                 chatObject?.question?.interval?.let {
-                    WorkMangerAdmin.determineNPAEvent(
+                    WorkManagerAdmin.determineNPAEvent(
                         NPSEvent.WATCH_VIDEO,
                         it, chatObject?.question?.questionId
                     )

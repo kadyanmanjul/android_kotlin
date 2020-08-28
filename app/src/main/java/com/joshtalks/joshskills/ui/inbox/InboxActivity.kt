@@ -37,7 +37,7 @@ import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.inapp_update.Constants
 import com.joshtalks.joshskills.core.inapp_update.InAppUpdateManager
 import com.joshtalks.joshskills.core.inapp_update.InAppUpdateStatus
-import com.joshtalks.joshskills.core.service.WorkMangerAdmin
+import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.NPSEventModel
 import com.joshtalks.joshskills.repository.local.eventbus.ExploreCourseEventBus
@@ -103,7 +103,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
     private var offerInHint: Balloon? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        WorkMangerAdmin.requiredTaskInLandingPage()
+        WorkManagerAdmin.requiredTaskInLandingPage()
         AppAnalytics.create(AnalyticsEvent.INBOX_SCREEN.NAME).push()
         super.onCreate(savedInstanceState)
         lifecycle.addObserver(this)
@@ -270,7 +270,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
     private fun workInBackground() {
         CoroutineScope(Dispatchers.Default).launch {
             processIntent(intent)
-            WorkMangerAdmin.determineNPAEvent()
+            WorkManagerAdmin.determineNPAEvent()
         }
         when {
             shouldRequireCustomPermission() -> {
