@@ -184,6 +184,7 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:background="@null"
+                            android:digits="1234567890"
                             android:enabled="false"
                             android:focusable="false"
                             android:gravity="start|center"
@@ -199,9 +200,9 @@
                             android:textSize="@dimen/font_15"
                             app:backgroundTint="@color/white"
                             app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toStartOf="@id/iv_tick"
                             app:layout_constraintStart_toEndOf="@+id/country_code_picker"
-                            app:layout_constraintTop_toTopOf="parent"
-                            app:layout_constraintEnd_toStartOf="@id/iv_tick" />
+                            app:layout_constraintTop_toTopOf="parent" />
 
                     <androidx.appcompat.widget.AppCompatImageView
                             android:id="@+id/iv_tick"

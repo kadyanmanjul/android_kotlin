@@ -401,6 +401,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center"
                                 android:background="@null"
+                                android:digits="1234567890"
                                 android:gravity="start|center"
                                 android:imeOptions="actionGo"
                                 android:importantForAutofill="no"
