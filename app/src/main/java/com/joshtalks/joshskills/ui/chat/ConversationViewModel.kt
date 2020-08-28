@@ -44,7 +44,6 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import org.jetbrains.anko.collections.forEachWithIndex
-import retrofit2.HttpException
 import java.io.File
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -446,7 +445,7 @@ class ConversationViewModel(application: Application) :
                     deleteChatModelOfType(BASE_MESSAGE_TYPE.UNLOCK)
                     refreshChatOnManual()
                 }
-            } catch (ex: HttpException) {
+            } catch (ex: Throwable) {
                 ex.printStackTrace()
             }
         }
