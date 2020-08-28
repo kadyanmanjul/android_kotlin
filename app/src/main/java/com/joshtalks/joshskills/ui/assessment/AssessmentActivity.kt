@@ -200,6 +200,7 @@ class AssessmentActivity : CoreJoshActivity() {
 
                 }
                 AssessmentButtonClick.BACK_TO_SUMMARY -> {
+                    RxBus2.publish(AssessmentLastQuestionSubmitEvent(questionId))
                     logBackToSummaryAnalyticEvent()
                     binding.buttonView.visibility = GONE
                     onBackPressed()
