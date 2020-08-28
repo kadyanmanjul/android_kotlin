@@ -191,13 +191,23 @@
         <value>Free trial has ended</value>
     </entry>
     <entry>
-        <key>TRAIL_END_MESSAGE</key>
+        <key>TRAIL_END_SCREEN_MESSAGE</key>
         <value>
-            Your 7 day trial has ended!\nKya aapko mazaa aaya?\nAccess all your courses now.
+            Your 1 year subscription has ended! Access all your courses now 👇
         </value>
     </entry>
     <entry>
         <key>TRAIL_END_SCREEN_CTA_LABEL</key>
+        <value>Unlock All Courses</value>
+    </entry>
+    <entry>
+        <key>SUBSCRIPTION_END_SCREEN_MESSAGE</key>
+        <value>
+            Your 1 year subscription has ended! Subscribe again and Access all your courses now 👇
+        </value>
+    </entry>
+    <entry>
+        <key>SUBSCRIPTION_END_SCREEN_CTA_LABEL</key>
         <value>Unlock All Courses</value>
     </entry>
     <entry>

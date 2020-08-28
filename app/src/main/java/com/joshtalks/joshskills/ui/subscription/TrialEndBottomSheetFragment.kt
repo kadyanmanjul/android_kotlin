@@ -9,6 +9,8 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
+import com.joshtalks.joshskills.core.IS_SUBSCRIPTION_ENDED
+import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.databinding.FragmentTrialEndBottomsheetBinding
 import com.joshtalks.joshskills.ui.payment.order_summary.PaymentSummaryActivity
 
@@ -36,11 +38,23 @@ class TrialEndBottomSheetFragment : BottomSheetDialogFragment() {
 
     override fun onResume() {
         super.onResume()
-        binding.txtTrialEndMsg.text = AppObjectController.getFirebaseRemoteConfig()
-            .getString(FirebaseRemoteConfigKey.TRAIL_END_SCREEN_MESSAGE)
+        val isSubscriptionEnded = PrefManager.getBoolValue(IS_SUBSCRIPTION_ENDED, true)
 
-        binding.btnUnlock.text = AppObjectController.getFirebaseRemoteConfig()
-            .getString(FirebaseRemoteConfigKey.TRAIL_END_SCREEN_CTA_LABEL)
+        binding.txtTrialEndMsg.text = if (isSubscriptionEnded) {
+            AppObjectController.getFirebaseRemoteConfig()
+                .getString(FirebaseRemoteConfigKey.SUBSCRIPTION_END_SCREEN_MESSAGE)
+        } else {
+            AppObjectController.getFirebaseRemoteConfig()
+                .getString(FirebaseRemoteConfigKey.TRAIL_END_SCREEN_MESSAGE)
+        }
+
+        binding.btnUnlock.text = if (isSubscriptionEnded) {
+            AppObjectController.getFirebaseRemoteConfig()
+                .getString(FirebaseRemoteConfigKey.SUBSCRIPTION_END_SCREEN_CTA_LABEL)
+        } else {
+            AppObjectController.getFirebaseRemoteConfig()
+                .getString(FirebaseRemoteConfigKey.TRAIL_END_SCREEN_CTA_LABEL)
+        }
     }
 
     fun cancel() {

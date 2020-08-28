@@ -91,6 +91,8 @@ class FirebaseRemoteConfigKey {
         // Trial End Screen
         const val TRAIL_END_SCREEN_MESSAGE = "TRAIL_END_SCREEN_MESSAGE"
         const val TRAIL_END_SCREEN_CTA_LABEL = "TRAIL_END_SCREEN_CTA_LABEL"
+        const val SUBSCRIPTION_END_SCREEN_MESSAGE = "SUBSCRIPTION_END_SCREEN_MESSAGE"
+        const val SUBSCRIPTION_END_SCREEN_CTA_LABEL = "SUBSCRIPTION_END_SCREEN_CTA_LABEL"
 
         // Start Subscription Screen (TRAIL)
         const val START_TRIAL_CTA_LABEL = "start_7_day_trial"

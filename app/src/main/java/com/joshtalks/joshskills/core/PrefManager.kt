@@ -29,6 +29,9 @@ const val EXPLORE_TYPE = "joshskills_explore_type"
 const val IS_TRIAL_ENDED = "joshskills_is_trial_ended"
 const val IS_TRIAL_STARTED = "joshskills_is_trial_started"
 const val REMAINING_TRIAL_DAYS = "joshskills_remaining_trial_days"
+const val IS_SUBSCRIPTION_ENDED = "joshskills_is_subscription_ended"
+const val IS_SUBSCRIPTION_STARTED = "joshskills_is_subscription_started"
+const val REMAINING_SUBSCRIPTION_DAYS = "joshskills_remaining_subscription_days"
 
 object PrefManager {
 

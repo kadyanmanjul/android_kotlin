@@ -24,9 +24,12 @@ import com.joshtalks.joshskills.core.CoreJoshActivity
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.EXPLORE_TYPE
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
+import com.joshtalks.joshskills.core.IS_SUBSCRIPTION_ENDED
+import com.joshtalks.joshskills.core.IS_SUBSCRIPTION_STARTED
 import com.joshtalks.joshskills.core.IS_TRIAL_ENDED
 import com.joshtalks.joshskills.core.IS_TRIAL_STARTED
 import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.REMAINING_SUBSCRIPTION_DAYS
 import com.joshtalks.joshskills.core.REMAINING_TRIAL_DAYS
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
@@ -369,6 +372,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
             } else {
                 addCourseInRecyclerView(it)
                 setTrialEndParam(it)
+                setSubscriptionEndParam(it)
                 updateExploreTypeParam(it)
                 val exploreTypeStr = PrefManager.getStringValue(EXPLORE_TYPE, true)
                 val exploreType =
@@ -639,6 +643,42 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         }
         PrefManager.put(IS_TRIAL_ENDED, isTrialEnded, true)
         PrefManager.put(REMAINING_TRIAL_DAYS, remainingTrialDays, true)
+    }
+
+    private fun setSubscriptionEndParam(coursesList: List<InboxEntity>) {
+        val subscriptionCourse =
+            coursesList.filter { it.courseId == SUBSCRIPTION_COURSE_ID }.getOrNull(0)
+        val isSubscriptionStarted = subscriptionCourse != null
+        PrefManager.put(IS_SUBSCRIPTION_STARTED, isSubscriptionStarted, true)
+        val expiryTimeInMs =
+            subscriptionCourse?.courseCreatedDate?.time?.plus(
+                (subscriptionCourse.duration ?: 365)
+                    .times(24L)
+                    .times(60L)
+                    .times(60L)
+                    .times(1000L)
+            )
+        val currentTimeInMs = Calendar.getInstance().timeInMillis
+
+        var isSubscriptionEnded = false
+        var remainingSubscriptionDays = 0
+        expiryTimeInMs?.let {
+            if (it <= currentTimeInMs) {
+                logTrialEventExpired()
+                isSubscriptionEnded = true
+            }
+            val remainingDays =
+                (it.minus(currentTimeInMs))
+                    .div(1000L)
+                    .div(60L)
+                    .div(60L)
+                    .div(24L)
+
+            remainingSubscriptionDays = remainingDays.toInt()
+
+        }
+        PrefManager.put(IS_SUBSCRIPTION_ENDED, isSubscriptionEnded, true)
+        PrefManager.put(REMAINING_SUBSCRIPTION_DAYS, remainingSubscriptionDays, true)
     }
 
     private fun logTrialEventExpired() {

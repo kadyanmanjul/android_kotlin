@@ -60,8 +60,9 @@ import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.CERTIFICATE_GENERATE
 import com.joshtalks.joshskills.core.CoreJoshActivity
 import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.EXPLORE_TYPE
 import com.joshtalks.joshskills.core.IMAGE_REGEX
+import com.joshtalks.joshskills.core.IS_SUBSCRIPTION_ENDED
+import com.joshtalks.joshskills.core.IS_SUBSCRIPTION_STARTED
 import com.joshtalks.joshskills.core.IS_TRIAL_ENDED
 import com.joshtalks.joshskills.core.MESSAGE_CHAT_SIZE_LIMIT
 import com.joshtalks.joshskills.core.PermissionUtils
@@ -110,7 +111,6 @@ import com.joshtalks.joshskills.repository.local.eventbus.SeekBarProgressEventBu
 import com.joshtalks.joshskills.repository.local.eventbus.UnlockNextClassEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.VideoDownloadedBus
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
-import com.joshtalks.joshskills.repository.local.model.ExploreCardType
 import com.joshtalks.joshskills.repository.local.model.NotificationAction
 import com.joshtalks.joshskills.repository.server.chat_message.TAudioMessage
 import com.joshtalks.joshskills.repository.server.chat_message.TChatMessage
@@ -165,8 +165,10 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.lang.ref.WeakReference
-import java.util.*
-import kotlin.collections.ArrayList
+import java.util.Date
+import java.util.Locale
+import java.util.Timer
+import java.util.TimerTask
 import kotlin.concurrent.scheduleAtFixedRate
 
 const val CHAT_ROOM_OBJECT = "chat_room"
@@ -1769,8 +1771,11 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback {
     override fun onResume() {
         super.onResume()
         val isTrialEnded = PrefManager.getBoolValue(IS_TRIAL_ENDED, true)
-        val exploreType = PrefManager.getStringValue(EXPLORE_TYPE, true)
-        if (isTrialEnded && exploreType == ExploreCardType.FREETRIAL.name) {
+        val isSubscriptionEnded = PrefManager.getBoolValue(IS_SUBSCRIPTION_ENDED, true)
+        val isSubscriptionStarted = PrefManager.getBoolValue(IS_SUBSCRIPTION_STARTED, true)
+        if (isTrialEnded && isSubscriptionStarted.not()) {
+            showTrialEndFragment()
+        } else if (isSubscriptionStarted && isSubscriptionEnded) {
             showTrialEndFragment()
         } else {
             conversationBinding.chatRv.refresh()
