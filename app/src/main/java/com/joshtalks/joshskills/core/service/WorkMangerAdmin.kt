@@ -42,6 +42,7 @@ object WorkMangerAdmin {
     fun requiredTaskAfterLoginComplete() {
         WorkManager.getInstance(AppObjectController.joshApplication)
             .beginWith(OneTimeWorkRequestBuilder<WorkerAfterLoginInApp>().build())
+            .then(OneTimeWorkRequestBuilder<RegisterUserGAId>().build())
             .then(OneTimeWorkRequestBuilder<MappingGaIDWithMentor>().build())
             .then(OneTimeWorkRequestBuilder<MergeMentorWithGAIDWorker>().build())
             .then(
