@@ -136,28 +136,29 @@
                             android:visibility="gone" />
 
                     <LinearLayout
+                            android:paddingHorizontal="@dimen/_16sdp"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content">
+                        <!--
+                                                <FrameLayout
+                                                        android:layout_width="wrap_content"
+                                                        android:layout_height="wrap_content"
+                                                        android:layout_gravity="center"
+                                                        android:background="@drawable/bg_white_round_36"
+                                                        android:onClick="@{()->handler.emojiToggle()}">
 
-                        <FrameLayout
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center"
-                                android:background="@drawable/bg_white_round_36"
-                                android:onClick="@{()->handler.emojiToggle()}">
-
-                            <androidx.appcompat.widget.AppCompatImageView
-                                    android:id="@+id/iv_emoji"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_gravity="center"
-                                    android:clickable="false"
-                                    android:scaleType="centerInside"
-                                    app:srcCompat="@drawable/happy_face" />
-                        </FrameLayout>
+                                                    <androidx.appcompat.widget.AppCompatImageView
+                                                            android:id="@+id/iv_emoji"
+                                                            android:layout_width="wrap_content"
+                                                            android:layout_height="wrap_content"
+                                                            android:layout_gravity="center"
+                                                            android:clickable="false"
+                                                            android:scaleType="centerInside"
+                                                            app:srcCompat="@drawable/happy_face" />
+                                                </FrameLayout>-->
 
 
-                        <com.vanniktech.emoji.EmojiEditText
+                        <androidx.appcompat.widget.AppCompatEditText
                                 android:id="@+id/chat_edit"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
@@ -205,7 +206,6 @@
                                 android:onClick="@{()->handler.uploadImageByCameraOrGallery()}"
                                 android:paddingStart="@dimen/_5sdp"
                                 android:paddingTop="@dimen/_10sdp"
-                                android:paddingEnd="@dimen/_10sdp"
                                 android:paddingBottom="@dimen/_10sdp"
                                 android:visibility="visible">
 

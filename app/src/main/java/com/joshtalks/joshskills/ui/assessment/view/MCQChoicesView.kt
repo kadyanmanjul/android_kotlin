@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.crashlytics.android.Crashlytics
 import com.esafirm.imagepicker.view.GridSpacingItemDecoration
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.custom_ui.SmoothLinearLayoutManager
@@ -23,7 +24,6 @@ import com.joshtalks.joshskills.ui.assessment.extra.AssessmentQuestionViewType
 import com.joshtalks.joshskills.ui.assessment.listener.OnChoiceClickListener
 import com.joshtalks.joshskills.ui.assessment.viewholder.MCQChoiceViewHolder
 import com.mindorks.placeholderview.PlaceHolderView
-import com.vanniktech.emoji.Utils
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers

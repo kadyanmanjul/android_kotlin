@@ -239,9 +239,9 @@ class AudioPlayerViewHolder(activityRef: WeakReference<FragmentActivity>, messag
                     ViewGroup.LayoutParams.WRAP_CONTENT
                 )
                 params.setMargins(
-                    com.vanniktech.emoji.Utils.dpToPx(getAppContext(), 80f),
+                    Utils.dpToPx(getAppContext(), 80f),
                     0,
-                    com.vanniktech.emoji.Utils.dpToPx(getAppContext(), 7f),
+                    Utils.dpToPx(getAppContext(), 7f),
                     0
                 )
                 params.gravity = Gravity.END
@@ -255,9 +255,9 @@ class AudioPlayerViewHolder(activityRef: WeakReference<FragmentActivity>, messag
                 )
                 params.gravity = Gravity.START
                 params.setMargins(
-                    com.vanniktech.emoji.Utils.dpToPx(getAppContext(), 7f),
+                    Utils.dpToPx(getAppContext(), 7f),
                     0,
-                    com.vanniktech.emoji.Utils.dpToPx(getAppContext(), 80f),
+                    Utils.dpToPx(getAppContext(), 80f),
                     0
                 )
                 rootView.layoutParams = params

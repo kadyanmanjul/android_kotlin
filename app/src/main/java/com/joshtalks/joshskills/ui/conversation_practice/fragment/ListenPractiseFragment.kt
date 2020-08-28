@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.view.animation.OvershootInterpolator
 import androidx.fragment.app.Fragment
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.custom_ui.SmoothLinearLayoutManager
@@ -21,7 +22,6 @@ import com.joshtalks.joshskills.repository.server.conversation_practice.ListenMo
 import com.joshtalks.joshskills.ui.conversation_practice.IMAGE_URL
 import com.joshtalks.joshskills.ui.conversation_practice.adapter.ARG_PRACTISE_OBJ
 import com.joshtalks.joshskills.ui.conversation_practice.adapter.AudioPractiseAdapter
-import com.vanniktech.emoji.Utils
 import jp.wasabeef.recyclerview.animators.SlideInUpAnimator
 import kotlinx.android.synthetic.main.fragment_listen_practise.audio_player
 import kotlinx.android.synthetic.main.fragment_listen_practise.image_view
@@ -29,7 +29,8 @@ import kotlinx.android.synthetic.main.fragment_listen_practise.placeholder_bg
 import kotlinx.android.synthetic.main.fragment_listen_practise.recycler_view
 import kotlinx.android.synthetic.main.fragment_listen_practise.sub_title_tv
 import kotlinx.android.synthetic.main.fragment_listen_practise.title_tv
-import java.util.*
+import java.util.ArrayList
+import java.util.LinkedList
 
 class ListenPractiseFragment private constructor() : Fragment(), AudioPlayerEventListener {
 

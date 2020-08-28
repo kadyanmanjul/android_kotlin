@@ -73,7 +73,6 @@ import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.custom_ui.FullScreenProgressDialog
 import com.joshtalks.joshskills.core.custom_ui.JoshSnackBar
-import com.joshtalks.joshskills.core.custom_ui.PageTransformer
 import com.joshtalks.joshskills.core.custom_ui.SnappingLinearLayoutManager
 import com.joshtalks.joshskills.core.custom_ui.decorator.LayoutMarginDecoration
 import com.joshtalks.joshskills.core.custom_ui.exo_audio_player.AudioPlayerEventListener
@@ -155,7 +154,6 @@ import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.muddzdev.styleabletoast.StyleableToast
-import com.vanniktech.emoji.EmojiPopup
 import de.hdodenhof.circleimageview.CircleImageView
 import dm.audiostreamer.CurrentSessionCallback
 import dm.audiostreamer.MediaMetaData
@@ -206,7 +204,6 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback, Player.
     }
     private lateinit var conversationBinding: ActivityConversationBinding
     private lateinit var inboxEntity: InboxEntity
-    private lateinit var emojiPopup: EmojiPopup
     private lateinit var activityRef: WeakReference<FragmentActivity>
     private lateinit var linearLayoutManager: SnappingLinearLayoutManager
     private lateinit var internetAvailableStatus: Snackbar
@@ -332,7 +329,6 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback, Player.
         initSnackBar()
         setToolbar()
         initRV()
-        setUpEmojiPopup()
         liveDataObservable()
         initView()
         refreshChat()
@@ -427,10 +423,6 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback, Player.
             }
 
         }
-    }
-
-    fun emojiToggle() {
-        emojiPopup.toggle()
     }
 
     private fun setToolbar() {
@@ -534,7 +526,7 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback, Player.
         conversationBinding.chatRv.itemAnimator = null
         conversationBinding.chatRv.addItemDecoration(
             LayoutMarginDecoration(
-                com.vanniktech.emoji.Utils.dpToPx(
+                Utils.dpToPx(
                     this,
                     4f
                 )
@@ -553,34 +545,6 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback, Player.
             }
 
         })
-    }
-
-    private fun setUpEmojiPopup() {
-        emojiPopup = EmojiPopup.Builder.fromRootView(conversationBinding.rootView)
-            .setOnEmojiBackspaceClickListener {
-            }
-            .setOnEmojiClickListener { _, _ ->
-                AppAnalytics.create(AnalyticsEvent.EMOJI_CLICKED.NAME).push()
-            }
-            .setOnEmojiPopupShownListener { conversationBinding.ivEmoji.setImageResource(R.drawable.ic_keyboard) }
-            .setOnSoftKeyboardOpenListener { }
-            .setOnEmojiPopupDismissListener { conversationBinding.ivEmoji.setImageResource(R.drawable.happy_face) }
-            .setOnSoftKeyboardCloseListener { }
-            .setKeyboardAnimationStyle(R.style.emoji_fade_animation_style)
-            .setPageTransformer(PageTransformer())
-            .setBackgroundColor(
-                ContextCompat.getColor(
-                    applicationContext,
-                    R.color.emoji_bg_color
-                )
-            )
-            .setIconColor(
-                ContextCompat.getColor(
-                    applicationContext,
-                    R.color.emoji_icon_color
-                )
-            )
-            .build(conversationBinding.chatEdit)
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -672,14 +636,6 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback, Player.
             }
 
         })
-        conversationBinding.chatEdit.setOnTouchListener { _, event ->
-            if (MotionEvent.ACTION_UP == event.action) {
-                if (emojiPopup.isShowing) {
-                    emojiPopup.toggle()
-                }
-            }
-            false
-        }
 
         conversationBinding.recordButton.setOnTouchListener(OnRecordTouchListener {
             if (conversationBinding.chatEdit.text.toString()

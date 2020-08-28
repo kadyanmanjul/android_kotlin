@@ -45,14 +45,14 @@ abstract class BaseChatViewHolder(
     )
 
 
-    private fun getLeftPaddingForReceiver() = com.vanniktech.emoji.Utils.dpToPx(getAppContext(), 7f)
+    private fun getLeftPaddingForReceiver() = Utils.dpToPx(getAppContext(), 7f)
     private fun getRightPaddingForReceiver() =
-        com.vanniktech.emoji.Utils.dpToPx(getAppContext(), 80f)
+        Utils.dpToPx(getAppContext(), 80f)
 
-    private fun getMarginForReceiver() = com.vanniktech.emoji.Utils.dpToPx(getAppContext(), 0f)
-    private fun getLeftPaddingForSender() = com.vanniktech.emoji.Utils.dpToPx(getAppContext(), 80f)
-    private fun getRightPaddingForSender() = com.vanniktech.emoji.Utils.dpToPx(getAppContext(), 7f)
-    private fun getMarginForSender() = com.vanniktech.emoji.Utils.dpToPx(getAppContext(), 0f)
+    private fun getMarginForReceiver() = Utils.dpToPx(getAppContext(), 0f)
+    private fun getLeftPaddingForSender() = Utils.dpToPx(getAppContext(), 80f)
+    private fun getRightPaddingForSender() = Utils.dpToPx(getAppContext(), 7f)
+    private fun getMarginForSender() = Utils.dpToPx(getAppContext(), 0f)
 
 
     fun updateView(
@@ -317,9 +317,9 @@ fun updateView(rootView: RelativeLayout, sender: Sender) {
             ViewGroup.LayoutParams.WRAP_CONTENT
         )
         params.setMargins(
-            com.vanniktech.emoji.Utils.dpToPx(getAppContext(), 80f),
+            Utils.dpToPx(getAppContext(), 80f),
             0,
-            com.vanniktech.emoji.Utils.dpToPx(getAppContext(), 7f),
+            Utils.dpToPx(getAppContext(), 7f),
             0
         )
         params.gravity = Gravity.END
@@ -332,9 +332,9 @@ fun updateView(rootView: RelativeLayout, sender: Sender) {
         )
         params.gravity = Gravity.START
         params.setMargins(
-            com.vanniktech.emoji.Utils.dpToPx(getAppContext(), 7f),
+            Utils.dpToPx(getAppContext(), 7f),
             0,
-            com.vanniktech.emoji.Utils.dpToPx(getAppContext(), 80f),
+            Utils.dpToPx(getAppContext(), 80f),
             0
         )
         rootView.layoutParams = params

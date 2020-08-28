@@ -15,6 +15,7 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.ALPHA_MAX
 import com.joshtalks.joshskills.core.ALPHA_MIN
 import com.joshtalks.joshskills.core.PractiseUser
+import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.ViewTypeForPractiseUser
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
@@ -32,9 +33,9 @@ import com.joshtalks.joshskills.repository.server.conversation_practice.Conversa
 import com.joshtalks.joshskills.repository.server.conversation_practice.ListenModel
 import com.joshtalks.joshskills.ui.conversation_practice.ConversationPracticeViewModel
 import com.joshtalks.joshskills.ui.conversation_practice.adapter.AudioPractiseAdapter
-import com.vanniktech.emoji.Utils
 import jp.wasabeef.recyclerview.animators.SlideInUpAnimator
-import java.util.*
+import java.util.ArrayList
+import java.util.LinkedList
 
 class SelfPractiseFragment private constructor() : Fragment(), AudioPlayerEventListener {
     private lateinit var conversationPractiseModel: ConversationPractiseModel

@@ -58,8 +58,6 @@ import com.tonyodev.fetch2.HttpUrlConnectionDownloader
 import com.tonyodev.fetch2.NetworkType
 import com.tonyodev.fetch2core.Downloader
 import com.tonyodev.fetch2okhttp.OkHttpDownloader
-import com.vanniktech.emoji.EmojiManager
-import com.vanniktech.emoji.google.GoogleEmojiProvider
 import io.branch.referral.Branch
 import io.fabric.sdk.android.Fabric
 import io.github.inflationx.calligraphy3.CalligraphyConfig
@@ -85,7 +83,8 @@ import java.lang.reflect.Modifier
 import java.lang.reflect.Type
 import java.net.URL
 import java.text.DateFormat
-import java.util.*
+import java.util.Collections
+import java.util.Date
 import java.util.concurrent.TimeUnit
 
 const val KEY_AUTHORIZATION = "Authorization"
@@ -519,7 +518,6 @@ class AppObjectController {
 
                 DateTimeUtils.setTimeZone("UTC")
                 AndroidThreeTen.init(context)
-                EmojiManager.install(GoogleEmojiProvider())
                 videoDownloadTracker = VideoDownloadController.getInstance().downloadTracker
                 multiTransformation = MultiTransformation(
                     CropTransformation(

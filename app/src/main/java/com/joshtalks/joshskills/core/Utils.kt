@@ -89,10 +89,13 @@ import java.net.URL
 import java.nio.charset.Charset
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Calendar
+import java.util.Date
+import java.util.Locale
 import java.util.concurrent.TimeUnit
 import kotlin.math.ceil
 import kotlin.math.pow
+import kotlin.math.roundToInt
 
 
 private val CHAT_TIME_FORMATTER = SimpleDateFormat("hh:mm aa")
@@ -298,12 +301,10 @@ object Utils {
     }
 
     fun dpToPx(context: Context, dp: Float): Int {
-        return Math.round(
-            TypedValue.applyDimension(
-                TypedValue.COMPLEX_UNIT_DIP, dp,
-                context.resources.displayMetrics
-            ) + 0.5f
-        )
+        return (TypedValue.applyDimension(
+            TypedValue.COMPLEX_UNIT_DIP, dp,
+            context.resources.displayMetrics
+        ) + 0.5f).roundToInt()
     }
 
     fun call(context: Context, phoneNumber: String) {

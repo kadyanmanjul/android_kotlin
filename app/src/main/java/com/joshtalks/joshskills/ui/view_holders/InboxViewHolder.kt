@@ -40,7 +40,7 @@ import com.mindorks.placeholderview.annotations.View
 import jp.wasabeef.glide.transformations.CropTransformation
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation
 import timber.log.Timber
-import java.util.*
+import java.util.Locale
 
 @Layout(R.layout.inbox_row_layout)
 class InboxViewHolder(
@@ -86,7 +86,7 @@ class InboxViewHolder(
 
     fun getAppContext() = AppObjectController.joshApplication
 
-    private fun getDrawablePadding() = com.vanniktech.emoji.Utils.dpToPx(getAppContext(), 4f)
+    private fun getDrawablePadding() = Utils.dpToPx(getAppContext(), 4f)
 
     @Resolve
     fun onResolved() {

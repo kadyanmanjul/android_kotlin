@@ -11,8 +11,6 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
-            <option value="$PROJECT_DIR$/emoji-google" />
-            <option value="$PROJECT_DIR$/emojiBase" />
             <option value="$PROJECT_DIR$/joshcamerax" />
             <option value="$PROJECT_DIR$/joshlibrary" />
             <option value="$PROJECT_DIR$/mediapicker" />

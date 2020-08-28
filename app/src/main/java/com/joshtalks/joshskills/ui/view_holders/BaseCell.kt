@@ -26,7 +26,7 @@ const val ROUND_CORNER = 8
 
 abstract class BaseCell {
     fun getUserId() = Mentor.getInstance().getId()
-    fun getDrawablePadding() = com.vanniktech.emoji.Utils.dpToPx(getAppContext(), 4f)
+    fun getDrawablePadding() = Utils.dpToPx(getAppContext(), 4f)
 
     fun getScreenWidth() {
         Resources.getSystem().displayMetrics.widthPixels

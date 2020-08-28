@@ -18,6 +18,7 @@ import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.PermissionUtils
 import com.joshtalks.joshskills.core.PractiseUser
+import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.ViewTypeForPractiseUser
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
@@ -45,9 +46,9 @@ import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
-import com.vanniktech.emoji.Utils
 import jp.wasabeef.recyclerview.animators.SlideInUpAnimator
-import java.util.*
+import java.util.ArrayList
+import java.util.LinkedList
 
 class RecordPractiseFragment private constructor() : Fragment(), AudioPlayerEventListener,
     OnConversationPractiseSubmit {

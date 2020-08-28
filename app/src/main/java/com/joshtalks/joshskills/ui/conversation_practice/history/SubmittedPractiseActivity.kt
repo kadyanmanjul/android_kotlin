@@ -8,6 +8,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.CoreJoshActivity
+import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.custom_ui.decorator.LayoutMarginDecoration
@@ -18,7 +19,6 @@ import com.joshtalks.joshskills.repository.local.eventbus.RequestAudioPlayEventB
 import com.joshtalks.joshskills.repository.server.conversation_practice.SubmittedConversationPractiseModel
 import com.joshtalks.joshskills.ui.conversation_practice.ConversationPracticeViewModel
 import com.joshtalks.joshskills.ui.conversation_practice.PRACTISE_ID
-import com.vanniktech.emoji.Utils
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -26,7 +26,8 @@ import jp.wasabeef.recyclerview.animators.SlideInUpAnimator
 import kotlinx.android.synthetic.main.activity_submitted_practise.iv_back
 import kotlinx.android.synthetic.main.activity_submitted_practise.recycler_view
 import kotlinx.android.synthetic.main.fragment_listen_practise.audio_player
-import java.util.*
+import java.util.ArrayList
+import java.util.LinkedList
 
 
 class SubmittedPractiseActivity : CoreJoshActivity(), AudioPlayerEventListener {
