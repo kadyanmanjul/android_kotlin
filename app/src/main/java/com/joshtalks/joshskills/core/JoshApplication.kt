@@ -26,7 +26,6 @@ class JoshApplication : MultiDexApplication(), LifecycleObserver,
     companion object {
         @JvmStatic
         var isAppVisible = false
-        var instance: JoshApplication? = null
     }
 
     override fun onCreate() {

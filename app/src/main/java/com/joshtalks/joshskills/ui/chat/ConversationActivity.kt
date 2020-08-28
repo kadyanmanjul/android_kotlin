@@ -1559,6 +1559,7 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback, Player.
 
     private fun addUnlockNextClassCard(data: Intent) {
         val interval = data.getIntExtra(LAST_VIDEO_INTERVAL, -1)
+        val isNextVideoAvailable = data.getBooleanExtra(NEXT_VIDEO_AVAILABLE, false)
         CoroutineScope(Dispatchers.IO).launch {
             val maxInterval =
                 AppObjectController.appDatabase.chatDao()
