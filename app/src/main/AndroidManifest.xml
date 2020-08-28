@@ -348,6 +348,7 @@
                 android:launchMode="singleTask"
                 android:screenOrientation="portrait"
                 android:theme="@style/AppNoBarTheme"
+                android:autoRemoveFromRecents="true"
                 android:windowSoftInputMode="stateHidden|adjustResize" />
         <activity
                 android:name=".ui.reminder.reminder_listing.ReminderListActivity"

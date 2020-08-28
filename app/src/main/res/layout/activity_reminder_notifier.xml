@@ -86,7 +86,6 @@
             android:layout_marginBottom="@dimen/_16sdp"
             android:background="@drawable/rounded_bg_white_border"
             android:gravity="center"
-            android:onClick="@{()->handler.finishActivity()}"
             android:paddingTop="@dimen/_14sdp"
             android:paddingBottom="@dimen/_14sdp"
             android:text="@string/dismiss"

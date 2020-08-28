@@ -1151,7 +1151,7 @@ class PractiseSubmitActivity : CoreJoshActivity(), Player.EventListener, AudioPl
         binding.submitPractiseSeekbar.max = 0
         binding.submitBtnPlayInfo.state = MaterialPlayPauseDrawable.State.Play
         if (isAudioPlaying()) {
-            mPlayerInterface?.resumeOrPause()
+            audioManager?.resumeOrPause()
         }
         disableSubmitButton()
         appAnalytics.addParam(AnalyticsEvent.PRACTICE_EXTRA.NAME, "Audio practise removed")
@@ -1192,7 +1192,7 @@ class PractiseSubmitActivity : CoreJoshActivity(), Player.EventListener, AudioPl
     }
 
     private fun isAudioPlaying(): Boolean {
-        return this.checkIsPlayer() && this.mPlayerInterface!!.isPlaying
+        return this.checkIsPlayer() && this.audioManager!!.isPlaying()
     }
 
     private fun onPlayAudio(chatModel: ChatModel, audioObject: AudioType) {
