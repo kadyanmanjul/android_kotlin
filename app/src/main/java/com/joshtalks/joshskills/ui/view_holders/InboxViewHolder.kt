@@ -114,6 +114,14 @@ class InboxViewHolder(
             hLine.visibility = android.view.View.GONE
         }
 
+        if (progressBarStatus) {
+            courseProgressBar.visibility = android.view.View.VISIBLE
+            tvLastReceivedMessage.visibility = android.view.View.GONE
+        } else {
+            courseProgressBar.visibility = android.view.View.GONE
+            tvLastReceivedMessage.visibility = android.view.View.VISIBLE
+        }
+
         inboxEntity.created?.run {
             tvLastReceivedMessageTime.text = Utils.getMessageTime(this)
 
@@ -157,13 +165,7 @@ class InboxViewHolder(
                 }
             }
         }
-        if (progressBarStatus) {
-            courseProgressBar.visibility = android.view.View.VISIBLE
-            tvLastReceivedMessage.visibility = android.view.View.GONE
-        } else {
-            courseProgressBar.visibility = android.view.View.GONE
-            tvLastReceivedMessage.visibility = android.view.View.VISIBLE
-        }
+
     }
 
     @SuppressLint("SetTextI18n")
