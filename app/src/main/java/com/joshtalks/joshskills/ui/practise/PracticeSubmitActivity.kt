@@ -281,7 +281,6 @@ class PractiseSubmitActivity : CoreJoshActivity(), Player.EventListener, AudioPl
             audioManager?.release()
             mPlaybackListener = null
             doUnbindService()
-//            mPlayerInterface?.clearNotification()
         } catch (ex: Exception) {
 
         }
@@ -697,7 +696,6 @@ class PractiseSubmitActivity : CoreJoshActivity(), Player.EventListener, AudioPl
                 override fun onStopTrackingTouch(seekBar: SeekBar) {
                     mUserIsSeeking = false
                     audioManager?.seekTo(userSelectedPosition.toLong())
-//                    mPlayerInterface?.seekTo(userSelectedPosition)
                 }
             })
         binding.submitPractiseSeekbar.setOnSeekBarChangeListener(
@@ -716,7 +714,6 @@ class PractiseSubmitActivity : CoreJoshActivity(), Player.EventListener, AudioPl
                 override fun onStopTrackingTouch(seekBar: SeekBar) {
                     mUserIsSeeking = false
                     audioManager?.seekTo(userSelectedPosition.toLong())
-//                    mPlayerInterface?.seekTo(userSelectedPosition)
                 }
             })
     }
@@ -1083,7 +1080,6 @@ class PractiseSubmitActivity : CoreJoshActivity(), Player.EventListener, AudioPl
                 if (checkIsPlayer()) {
                     audioManager?.setProgressUpdateListener(this)
                     audioManager?.resumeOrPause()
-//                    mPlayerInterface?.resumeOrPause()
                 } else {
                     onPlayAudio(chatModel, chatModel.question?.audioList?.getOrNull(0)!!)
                 }
@@ -1131,7 +1127,6 @@ class PractiseSubmitActivity : CoreJoshActivity(), Player.EventListener, AudioPl
                     if (checkIsPlayer()) {
                         audioManager?.setProgressUpdateListener(this)
                         audioManager?.resumeOrPause()
-//                        mPlayerInterface?.resumeOrPause()
                     } else {
                         onPlayAudio(chatModel, audioType)
                     }
@@ -1140,7 +1135,6 @@ class PractiseSubmitActivity : CoreJoshActivity(), Player.EventListener, AudioPl
 
                 }
             }
-//            mPlayerInterface?.clearNotification()
         } catch (ex: Exception) {
             ex.printStackTrace()
         }
@@ -1195,7 +1189,6 @@ class PractiseSubmitActivity : CoreJoshActivity(), Player.EventListener, AudioPl
 
     private fun checkIsPlayer(): Boolean {
         return audioManager != null
-//        return this.mPlayerInterface != null && mPlayerInterface!!.isMediaPlayer
     }
 
     private fun isAudioPlaying(): Boolean {
@@ -1209,20 +1202,12 @@ class PractiseSubmitActivity : CoreJoshActivity(), Player.EventListener, AudioPl
         audioManager = ExoAudioPlayer.getInstance()
         audioManager?.playerListener = this
         audioManager?.play(currentAudio!!)
-
         audioManager?.setProgressUpdateListener(this)
-
-//        mPlayerInterface?.setCurrentSong(null, chatModel, audioObject, audioList)
-//        mPlayerInterface?.initMediaPlayer(chatModel, audioObject)
-
         if (filePath.isNullOrEmpty().not() && currentAudio == filePath) {
             binding.submitBtnPlayInfo.state = MaterialPlayPauseDrawable.State.Pause
         } else {
             binding.btnPlayInfo.state = MaterialPlayPauseDrawable.State.Pause
         }
-
-//        mPlayerInterface?.clearNotification()
-
     }
 
     override fun onPlayerError(error: ExoPlaybackException) {

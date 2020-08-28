@@ -16,19 +16,14 @@ import com.joshtalks.joshskills.core.JoshApplication
 import com.joshtalks.joshskills.core.custom_ui.exo_audio_player.AudioPlayerEventListener
 
 class ExoAudioPlayer {
-
-
     private var progressTracker: ProgressTracker? = null
     private var progressUpdateListener: ProgressUpdateListener? = null
-    var context: Context?
+    var context: Context? = JoshApplication.instance?.applicationContext
     private val playerEventListener: Player.EventListener
 
     init {
-        println("ExoAudioPlayer.init block")
-        context = JoshApplication.instance?.applicationContext
         playerEventListener = object : Player.EventListener {
             override fun onSeekProcessed() {
-
             }
 
             override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
@@ -75,7 +70,6 @@ class ExoAudioPlayer {
     }
 
     fun seekTo(pos: Long) {
-        println("pos = [${pos}] duration = ${player?.duration}")
         player?.seekTo(pos)
     }
 
@@ -97,7 +91,6 @@ class ExoAudioPlayer {
     }
 
     fun play(audioUrl: String, id: String = "") {
-        println("audioUrl = [${audioUrl}]")
         val dataSourceFactory: DataSource.Factory = DefaultDataSourceFactory(
             context,
             Util.getUserAgent(context!!, "joshskills")
@@ -116,21 +109,6 @@ class ExoAudioPlayer {
 
     fun isPlaying(): Boolean {
         return player?.isPlaying ?: false
-    }
-
-    private fun pausePlayer() {
-        player?.run {
-            playWhenReady = false
-        }
-        progressTracker?.let { it.handler.removeCallbacks(it) }
-    }
-
-    private fun resumePlayer() {
-        player?.run {
-            seekTo(currentPosition)
-            playWhenReady = true
-        }
-        progressTracker?.let { it.handler.post(it) }
     }
 
     fun resumeOrPause() {

@@ -35,7 +35,6 @@ import com.tonyodev.fetch2.Request
 import com.tonyodev.fetch2core.DownloadBlock
 import com.tonyodev.fetch2core.Downloader
 import com.tonyodev.fetch2core.Func
-import dm.audiostreamer.AudioStreamingManager
 import dm.audiostreamer.CurrentSessionCallback
 import dm.audiostreamer.MediaMetaData
 import io.reactivex.disposables.CompositeDisposable
@@ -58,7 +57,6 @@ class AudioPlayerView : FrameLayout, View.OnClickListener, CurrentSessionCallbac
     private lateinit var timestamp: TextView
     private lateinit var progressWheel: ProgressBar
     private var audioManger: ExoAudioPlayer? = null
-    private var streamingManager: AudioStreamingManager? = null
     private val context = AppObjectController.joshApplication
 
     private var id: String = EMPTY
@@ -82,7 +80,6 @@ class AudioPlayerView : FrameLayout, View.OnClickListener, CurrentSessionCallbac
             if (AppDirectory.copy(download.file, cacheFile.absolutePath)) {
                 audioFile = cacheFile
                 audioFile?.run {
-//                    if ((streamingManager != null && streamingManager!!.isPlaying).not()) {
                     if (audioManger != null && audioManger!!.isPlaying().not()) {
                         playPause(this)
                     }
@@ -161,9 +158,6 @@ class AudioPlayerView : FrameLayout, View.OnClickListener, CurrentSessionCallbac
 
     private fun init() {
         AppObjectController.createDefaultCacheDir()
-//        streamingManager = AudioStreamingManager.getInstance(AppObjectController.joshApplication)
-//        streamingManager?.subscribesCallBack(this)
-
         audioManger = ExoAudioPlayer.getInstance()
         ExoAudioPlayer.LAST_ID = EMPTY
         audioManger?.playerListener = this
@@ -198,7 +192,6 @@ class AudioPlayerView : FrameLayout, View.OnClickListener, CurrentSessionCallbac
 
                 override fun onStopTrackingTouch(seekBar: SeekBar) {
                     audioManger?.seekTo(userSelectedPosition.toLong())
-//                    streamingManager?.onSeekTo(userSelectedPosition.toLong())
                 }
             })
     }
@@ -396,8 +389,6 @@ class AudioPlayerView : FrameLayout, View.OnClickListener, CurrentSessionCallbac
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
         compositeDisposable.clear()
-//        streamingManager?.unSubscribeCallBack()
-//        streamingManager?.handlePauseRequest()
         setDefaultValue()
         audioManger?.release()
         ExoAudioPlayer.LAST_ID = ""
