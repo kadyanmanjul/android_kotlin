@@ -555,14 +555,14 @@ class CourseDetailsActivity : BaseActivity() {
     }
 
     fun buyCourse() {
-        val exploreTypeStr = PrefManager.getStringValue(EXPLORE_TYPE, true)
+        val exploreTypeStr = PrefManager.getStringValue(EXPLORE_TYPE, false)
         val discountedPrice =
             viewModel.courseDetailsLiveData.value!!.paymentData.discountedAmount.substring(1)
                 .toDouble()
         if (exploreTypeStr.isNotBlank()
             && exploreTypeStr == ExploreCardType.FREETRIAL.name
         ) {
-            val isTrialStarted = PrefManager.getBoolValue(IS_TRIAL_STARTED, true)
+            val isTrialStarted = PrefManager.getBoolValue(IS_TRIAL_STARTED, false)
             val tempTestId = if (isTrialStarted && discountedPrice > 0.0) SUBSCRIPTION_TEST_ID
             else if (isTrialStarted.not()) TRIAL_TEST_ID
             else testId
@@ -728,7 +728,7 @@ class CourseDetailsActivity : BaseActivity() {
             binding.btnStartCourse.textSize = 16f
         }
 
-        val exploreTypeStr = PrefManager.getStringValue(EXPLORE_TYPE, true)
+        val exploreTypeStr = PrefManager.getStringValue(EXPLORE_TYPE, false)
         if (exploreTypeStr.isNotBlank()) {
             when (ExploreCardType.valueOf(exploreTypeStr)) {
                 ExploreCardType.FREETRIAL -> {

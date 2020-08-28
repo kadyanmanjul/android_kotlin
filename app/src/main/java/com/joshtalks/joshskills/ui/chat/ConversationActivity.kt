@@ -1707,9 +1707,9 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback, Player.
 
     override fun onResume() {
         super.onResume()
-        val isTrialEnded = PrefManager.getBoolValue(IS_TRIAL_ENDED, true)
-        val isSubscriptionEnded = PrefManager.getBoolValue(IS_SUBSCRIPTION_ENDED, true)
-        val isSubscriptionStarted = PrefManager.getBoolValue(IS_SUBSCRIPTION_STARTED, true)
+        val isTrialEnded = PrefManager.getBoolValue(IS_TRIAL_ENDED, false)
+        val isSubscriptionEnded = PrefManager.getBoolValue(IS_SUBSCRIPTION_ENDED, false)
+        val isSubscriptionStarted = PrefManager.getBoolValue(IS_SUBSCRIPTION_STARTED, false)
         if (isTrialEnded && isSubscriptionStarted.not()) {
             showTrialEndFragment()
         } else if (isSubscriptionStarted && isSubscriptionEnded) {

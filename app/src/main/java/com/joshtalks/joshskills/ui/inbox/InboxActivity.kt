@@ -125,7 +125,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
                 ExploreCardType.FREETRIAL -> {
                     subscriptionTipContainer.visibility = View.VISIBLE
 
-                    val remainingTrialDays = PrefManager.getIntValue(REMAINING_TRIAL_DAYS, true)
+                    val remainingTrialDays = PrefManager.getIntValue(REMAINING_TRIAL_DAYS, false)
                     txtSubscriptionTip.text = when {
 
                         remainingTrialDays <= 0 -> AppObjectController.getFirebaseRemoteConfig()
@@ -374,7 +374,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
                 setTrialEndParam(it)
                 setSubscriptionEndParam(it)
                 updateExploreTypeParam(it)
-                val exploreTypeStr = PrefManager.getStringValue(EXPLORE_TYPE, true)
+                val exploreTypeStr = PrefManager.getStringValue(EXPLORE_TYPE, false)
                 val exploreType =
                     if (exploreTypeStr.isNotBlank()) ExploreCardType.valueOf(exploreTypeStr) else ExploreCardType.NORMAL
                 updateSubscriptionTipView(exploreType)
@@ -600,7 +600,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                     { value ->
-                        val exploreType = PrefManager.getStringValue(EXPLORE_TYPE, true)
+                        val exploreType = PrefManager.getStringValue(EXPLORE_TYPE, false)
                         if (exploreType.isBlank() || exploreType.contentEquals(ExploreCardType.NORMAL.name)) {
                             val root = findViewById<View>(R.id.find_more)
                             offerInHint?.run {
@@ -621,7 +621,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         val trialCourse =
             coursesList.filter { it.courseId == TRIAL_COURSE_ID }.getOrNull(0)
         val isTrialStarted = trialCourse != null
-        PrefManager.put(IS_TRIAL_STARTED, isTrialStarted, true)
+        PrefManager.put(IS_TRIAL_STARTED, isTrialStarted, false)
         val expiryTimeInMs =
             trialCourse?.courseCreatedDate?.time?.plus(
                 (trialCourse.duration ?: 7)
@@ -649,15 +649,15 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
             remainingTrialDays = remainingDays.toInt()
 
         }
-        PrefManager.put(IS_TRIAL_ENDED, isTrialEnded, true)
-        PrefManager.put(REMAINING_TRIAL_DAYS, remainingTrialDays, true)
+        PrefManager.put(IS_TRIAL_ENDED, isTrialEnded, false)
+        PrefManager.put(REMAINING_TRIAL_DAYS, remainingTrialDays, false)
     }
 
     private fun setSubscriptionEndParam(coursesList: List<InboxEntity>) {
         val subscriptionCourse =
             coursesList.filter { it.courseId == SUBSCRIPTION_COURSE_ID }.getOrNull(0)
         val isSubscriptionStarted = subscriptionCourse != null
-        PrefManager.put(IS_SUBSCRIPTION_STARTED, isSubscriptionStarted, true)
+        PrefManager.put(IS_SUBSCRIPTION_STARTED, isSubscriptionStarted, false)
         val expiryTimeInMs =
             subscriptionCourse?.courseCreatedDate?.time?.plus(
                 (subscriptionCourse.duration ?: 365)
@@ -685,12 +685,12 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
             remainingSubscriptionDays = remainingDays.toInt()
 
         }
-        PrefManager.put(IS_SUBSCRIPTION_ENDED, isSubscriptionEnded, true)
-        PrefManager.put(REMAINING_SUBSCRIPTION_DAYS, remainingSubscriptionDays, true)
+        PrefManager.put(IS_SUBSCRIPTION_ENDED, isSubscriptionEnded, false)
+        PrefManager.put(REMAINING_SUBSCRIPTION_DAYS, remainingSubscriptionDays, false)
     }
 
     private fun logTrialEventExpired() {
-        if (PrefManager.getBoolValue(IS_TRIAL_ENDED, true).not()) {
+        if (PrefManager.getBoolValue(IS_TRIAL_ENDED, false).not()) {
             AppAnalytics.create(AnalyticsEvent.SEVEN_DAY_TRIAL_OVER.NAME)
                 .addBasicParam()
                 .addUserDetails()
@@ -702,7 +702,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         val trialCourse =
             coursesList.filter { it.courseId == TRIAL_COURSE_ID }.getOrNull(0)
         if (trialCourse != null) {
-            PrefManager.put(EXPLORE_TYPE, ExploreCardType.FREETRIAL.name, true)
+            PrefManager.put(EXPLORE_TYPE, ExploreCardType.FREETRIAL.name, false)
         }
     }
 

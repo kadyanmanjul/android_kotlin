@@ -47,7 +47,7 @@ class OnBoardActivity : CoreJoshActivity() {
     }
 
     fun openCourseExplore() {
-        val exploreType = PrefManager.getStringValue(EXPLORE_TYPE, true)
+        val exploreType = PrefManager.getStringValue(EXPLORE_TYPE, false)
         if (exploreType.isNotBlank()) {
             WorkManagerAdmin.registerUserGAID(null, exploreType)
         } else {

@@ -151,7 +151,7 @@ class CourseExploreActivity : CoreJoshActivity() {
 
     private fun loadCourses() {
         CoroutineScope(Dispatchers.IO).launch {
-            val exploreType = PrefManager.getStringValue(EXPLORE_TYPE, true)
+            val exploreType = PrefManager.getStringValue(EXPLORE_TYPE, false)
             WorkManagerAdmin.registerUserGAID(
                 null,
                 if (exploreType.isNotBlank()) exploreType else null
@@ -223,14 +223,14 @@ class CourseExploreActivity : CoreJoshActivity() {
                     InstallReferrerModel.getPrefObject()?.utmMedium ?: EMPTY
                 requestRegisterGAId.utmSource =
                     InstallReferrerModel.getPrefObject()?.utmSource ?: EMPTY
-                val exploreType = PrefManager.getStringValue(EXPLORE_TYPE, true)
+                val exploreType = PrefManager.getStringValue(EXPLORE_TYPE, false)
                 requestRegisterGAId.exploreCardType =
                     if (exploreType.isNotBlank()) ExploreCardType.valueOf(exploreType) else null
                 val resp =
                     AppObjectController.commonNetworkService.registerGAIdAsync(requestRegisterGAId)
                         .await()
                 PrefManager.put(SERVER_GID_ID, resp.id)
-                PrefManager.put(EXPLORE_TYPE, resp.exploreCardType!!.name, true)
+                PrefManager.put(EXPLORE_TYPE, resp.exploreCardType!!.name, false)
             } catch (ex: Throwable) {
                 //LogException.catchException(ex)
             }

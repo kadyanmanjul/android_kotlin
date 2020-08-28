@@ -38,7 +38,7 @@ class TrialEndBottomSheetFragment : BottomSheetDialogFragment() {
 
     override fun onResume() {
         super.onResume()
-        val isSubscriptionEnded = PrefManager.getBoolValue(IS_SUBSCRIPTION_ENDED, true)
+        val isSubscriptionEnded = PrefManager.getBoolValue(IS_SUBSCRIPTION_ENDED, false)
 
         binding.txtTrialEndMsg.text = if (isSubscriptionEnded) {
             AppObjectController.getFirebaseRemoteConfig()
