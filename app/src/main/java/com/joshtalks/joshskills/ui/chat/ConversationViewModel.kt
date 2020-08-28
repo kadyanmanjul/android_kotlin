@@ -492,7 +492,7 @@ class ConversationViewModel(application: Application) :
                 item.cancel()
                 iterator.remove()
             }
-        } catch (ex: ConcurrentModificationException) {
+        } catch (ex: Throwable) {
             ex.printStackTrace()
         }
     }

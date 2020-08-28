@@ -1,5 +1,7 @@
 package com.joshtalks.joshskills.ui.course_details.viewholder
 
+import android.animation.ObjectAnimator
+import android.view.animation.DecelerateInterpolator
 import android.widget.ProgressBar
 import androidx.appcompat.widget.AppCompatTextView
 import com.joshtalks.joshskills.R
@@ -23,7 +25,15 @@ class RatingViewHolder(var rating: Rating) {
     @Resolve
     fun onViewInflated() {
         userRating.text = rating.rating.toString()
-        progressBar.progress = rating.percent
         userRatingPercentage.text = rating.percent.toString().plus("%")
+        progressBarAnimate()
+    }
+
+    private fun progressBarAnimate() {
+        val animation: ObjectAnimator =
+            ObjectAnimator.ofInt(progressBar, "progress", rating.percent)
+        animation.duration = 750
+        animation.interpolator = DecelerateInterpolator()
+        animation.start()
     }
 }

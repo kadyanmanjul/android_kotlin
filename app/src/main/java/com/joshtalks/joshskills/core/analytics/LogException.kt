@@ -3,11 +3,13 @@ package com.joshtalks.joshskills.core.analytics
 import com.crashlytics.android.Crashlytics
 import com.joshtalks.joshskills.BuildConfig
 import com.newrelic.agent.android.NewRelic
+import timber.log.Timber
 
 object LogException {
 
     fun catchException(throwable: Throwable) {
         if (BuildConfig.DEBUG) {
+            Timber.e(throwable)
             throwable.printStackTrace()
             return
         }

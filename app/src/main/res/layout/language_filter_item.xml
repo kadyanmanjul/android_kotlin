@@ -9,7 +9,6 @@
         android:checkable="true"
         android:checked="false"
         android:focusable="true"
-        android:fontFamily="@font/poppins"
         android:textAlignment="center"
         android:textAppearance="@style/TextStyle.ChipText"
         android:textSize="@dimen/font_12"

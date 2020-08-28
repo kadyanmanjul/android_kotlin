@@ -288,7 +288,7 @@ dependencies {
     implementation 'com.flurry.android:analytics:12.3.0@aar'
 
     //Payment Razor pay
-    implementation 'com.razorpay:checkout:1.6.3'
+    implementation 'com.razorpay:checkout:1.5.16'
     implementation 'com.github.dibakarece:DMAudioStreamer:v1.0.5'
     implementation 'com.github.nisrulz:easydeviceinfo-base:2.4.1'
     implementation 'me.samlss:lighter:1.0.3'

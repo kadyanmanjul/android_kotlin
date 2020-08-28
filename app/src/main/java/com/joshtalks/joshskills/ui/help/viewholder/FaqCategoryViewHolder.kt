@@ -86,8 +86,11 @@ class FaqCategoryViewHolder(
         } else {
             categoryIconIV.setImage(faqCategory.iconUrl)
         }
-        typefaceSpan =
-            ResourcesCompat.getFont(AppObjectController.joshApplication, R.font.poppins_medium)
+
+        typefaceSpan = Typeface.createFromAsset(
+            AppObjectController.joshApplication.assets,
+            "fonts/Poppins-Medium.ttf"
+        )
         if (position != -1)
             setCardDefaultTint()
     }

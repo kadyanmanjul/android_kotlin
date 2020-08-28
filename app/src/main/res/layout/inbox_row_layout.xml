@@ -56,12 +56,12 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/_8sdp"
+                android:layout_marginTop="@dimen/_2sdp"
                 android:layout_toStartOf="@id/tv_last_message_time"
                 android:layout_toEndOf="@id/profile_image"
                 android:ellipsize="end"
                 android:inputType="none"
                 android:maxLines="1"
-                android:layout_marginTop="@dimen/_2sdp"
                 android:textColor="@color/black"
                 android:textSize="@dimen/font_16"
                 app:layout_constraintStart_toEndOf="@+id/profile_image"
@@ -72,24 +72,45 @@
                 tools:text="Course Name" />
 
         <ProgressBar
+                android:visibility="invisible"
                 android:id="@+id/course_progress_bar"
                 style="@style/Widget.AppCompat.ProgressBar.Horizontal"
                 android:layout_width="0dp"
                 android:layout_height="@dimen/_14sdp"
                 android:layout_gravity="bottom"
-                tools:max="100"
-                tools:progress="40"
                 android:progressDrawable="@drawable/progress_background"
                 android:secondaryProgress="0"
                 app:layout_constraintBottom_toBottomOf="@+id/profile_image"
                 app:layout_constraintEnd_toEndOf="@+id/tv_name"
                 app:layout_constraintStart_toStartOf="@+id/tv_name"
-                app:layout_constraintTop_toBottomOf="@+id/tv_name" />
+                app:layout_constraintTop_toBottomOf="@+id/tv_name"
+                tools:max="100"
+                tools:progress="40" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_last_message"
+                fontPath="fonts/Poppins-Regular.ttf"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tv_name"
+                android:ellipsize="end"
+                android:gravity="start"
+                android:maxLines="1"
+                android:text="Click to start the course"
+                android:textColor="@color/dark_grey"
+                android:textSize="@dimen/font_14"
+                android:visibility="invisible"
+                app:layout_constraintBottom_toBottomOf="@+id/profile_image"
+                app:layout_constraintEnd_toEndOf="@+id/tv_last_message_time"
+                app:layout_constraintStart_toStartOf="@+id/tv_name"
+                app:layout_constraintTop_toBottomOf="@+id/tv_name"
+                tools:ignore="MissingPrefix"
+                tools:text="Click to start the course" />
 
 
         <androidx.appcompat.widget.AppCompatTextView
-                fontPath="fonts/Poppins-Regular.ttf"
                 android:id="@+id/tv_last_message_time"
+                fontPath="fonts/Poppins-Regular.ttf"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignTop="@id/tv_name"

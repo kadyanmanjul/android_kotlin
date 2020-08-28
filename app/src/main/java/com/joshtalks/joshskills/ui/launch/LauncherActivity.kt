@@ -1,5 +1,7 @@
 package com.joshtalks.joshskills.ui.launch
 
+import android.animation.ArgbEvaluator
+import android.animation.ObjectAnimator
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -9,6 +11,7 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.CoreJoshActivity
 import com.joshtalks.joshskills.core.INSTANCE_ID
+import com.joshtalks.joshskills.core.JoshSkillExecutors
 import com.joshtalks.joshskills.core.PermissionUtils
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.READ_WRITE_PERMISSION_GIVEN
@@ -25,6 +28,7 @@ import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import io.branch.referral.Branch
 import io.branch.referral.Defines
+import kotlinx.android.synthetic.main.activity_launcher.progress_bar
 import org.json.JSONObject
 import timber.log.Timber
 
@@ -33,12 +37,23 @@ class LauncherActivity : CoreJoshActivity(), CustomPermissionDialogInteractionLi
 
     @AddTrace(name = "LauncherActivity - onCreate", enabled = true)
     override fun onCreate(savedInstanceState: Bundle?) {
-        Branch.getInstance(applicationContext).resetUserSession()
-        WorkMangerAdmin.appStartWorker()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_launcher)
+        animatedProgressBar()
+        this.reportFullyDrawn()
+        Branch.getInstance(applicationContext).resetUserSession()
+        WorkMangerAdmin.appStartWorker()
         logAppLaunchEvent(getNetworkOperatorName())
         AppObjectController.initialiseFreshChat()
+
+    }
+
+    private fun animatedProgressBar() {
+        val backgroundColorAnimator: ObjectAnimator = ObjectAnimator.ofObject(
+            progress_bar, "backgroundColor", ArgbEvaluator(), -0x1, -0x873a07
+        )
+        backgroundColorAnimator.duration = 300
+        backgroundColorAnimator.start()
     }
 
     @AddTrace(name = "handleIntent", enabled = true)
@@ -115,10 +130,16 @@ class LauncherActivity : CoreJoshActivity(), CustomPermissionDialogInteractionLi
     }
 
     private fun initInstanceId() {
-        val instanceId = AppDirectory.readFromFile(AppDirectory.getInstanceIdKeyFile())
-        if (instanceId.isNullOrBlank())
-            writeInstanceIdInFile(PrefManager.getStringValue(INSTANCE_ID, true))
-        else PrefManager.put(INSTANCE_ID, instanceId, true)
+        JoshSkillExecutors.BOUNDED.submit {
+            try {
+                val instanceId = AppDirectory.readFromFile(AppDirectory.getInstanceIdKeyFile())
+                if (instanceId.isNullOrBlank())
+                    writeInstanceIdInFile(PrefManager.getStringValue(INSTANCE_ID, true))
+                else PrefManager.put(INSTANCE_ID, instanceId, true)
+            } catch (ex: Throwable) {
+                Timber.e(ex)
+            }
+        }
         navigateToNextScreen()
     }
 

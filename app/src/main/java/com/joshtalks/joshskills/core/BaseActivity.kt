@@ -77,9 +77,11 @@ abstract class BaseActivity : AppCompatActivity() {
         windowManager.defaultDisplay.getMetrics(displayMetrics)
         AppObjectController.screenHeight = displayMetrics.heightPixels
         AppObjectController.screenWidth = displayMetrics.widthPixels
-        initUserForCrashlytics()
-        initIdentifierForTools()
-        InstallReferralUtil.installReferrer(applicationContext)
+        JoshSkillExecutors.BOUNDED.submit {
+            initUserForCrashlytics()
+            initIdentifierForTools()
+            InstallReferralUtil.installReferrer(applicationContext)
+        }
     }
 
     private fun initIdentifierForTools() {
@@ -207,8 +209,6 @@ abstract class BaseActivity : AppCompatActivity() {
     protected suspend fun canShowNPSDialog(nps: NPSEvent? = null, id: String = EMPTY): Boolean {
         return CoroutineScope(Dispatchers.IO).async(Dispatchers.IO) {
             val currentState: NPSEvent? = getCurrentNpsState(nps) ?: return@async false
-
-            // if (!(currentState == NPSEvent.PAYMENT_SUCCESS || currentState == NPSEvent.PAYMENT_FAILED)) {
             val minNpsInADay = AppObjectController.getFirebaseRemoteConfig()
                 .getDouble("MINIMUM_NPS_IN_A_DAY_COUNT").toInt()
             val totalCountToday =
@@ -216,8 +216,6 @@ abstract class BaseActivity : AppCompatActivity() {
             if (totalCountToday >= minNpsInADay) {
                 return@async false
             }
-            // }
-
             val npsEventModel =
                 NPSEventModel.getAllNpaList()?.filter { it.enable }
                     ?.find { it.event == currentState }
@@ -278,7 +276,6 @@ abstract class BaseActivity : AppCompatActivity() {
     ) {
         val bottomSheetFragment = NetPromoterScoreFragment.newInstance(npsModel, questionList)
         bottomSheetFragment.show(supportFragmentManager, bottomSheetFragment.tag)
-
     }
 
     fun checkForOemNotifications() {

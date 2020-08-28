@@ -28,6 +28,7 @@
             app:shimmer_tilt="5">
 
         <View
+                android:id="@+id/progress_bar"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/_4sdp"
                 android:background="#FF7200" />

@@ -16,7 +16,7 @@
             <stroke
                     android:width="@dimen/_4sdp"
                     android:color="@android:color/transparent" />
-            <solid android:color="@color/button_primary_color" />
+            <solid android:color="@color/text_light_ac" />
 
         </shape>
     </item>

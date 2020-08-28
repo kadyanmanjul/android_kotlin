@@ -275,7 +275,6 @@ class AppObjectController {
             return INSTANCE
 
         }
-
         fun init(context: JoshApplication) {
             joshApplication = context
             com.joshtalks.joshskills.core.ActivityLifecycleCallback.register(joshApplication)

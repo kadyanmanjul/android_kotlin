@@ -1,11 +1,17 @@
 package com.joshtalks.joshskills.ui.view_holders
 
+import android.animation.ObjectAnimator
+import android.annotation.SuppressLint
+import android.content.res.ColorStateList
 import android.graphics.drawable.Drawable
 import android.view.ViewGroup
+import android.view.animation.DecelerateInterpolator
 import android.widget.ImageView
 import android.widget.ProgressBar
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
+import androidx.core.content.ContextCompat
+import androidx.core.text.HtmlCompat
 import com.bumptech.glide.Glide
 import com.bumptech.glide.integration.webp.decoder.WebpDrawable
 import com.bumptech.glide.integration.webp.decoder.WebpDrawableTransformation
@@ -24,6 +30,7 @@ import com.joshtalks.joshskills.core.YYYY_MM_DD
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.messaging.RxBus2
+import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
 import com.joshtalks.joshskills.repository.local.eventbus.OpenCourseEventBus
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.mindorks.placeholderview.annotations.Click
@@ -32,6 +39,7 @@ import com.mindorks.placeholderview.annotations.Resolve
 import com.mindorks.placeholderview.annotations.View
 import jp.wasabeef.glide.transformations.CropTransformation
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation
+import timber.log.Timber
 import java.util.*
 
 @Layout(R.layout.inbox_row_layout)
@@ -61,33 +69,36 @@ class InboxViewHolder(
     @View(R.id.course_progress_bar)
     lateinit var courseProgressBar: ProgressBar
 
+    @View(R.id.tv_last_message)
+    lateinit var tvLastReceivedMessage: AppCompatTextView
+
+
     @JvmField
     var drawablePadding: Float = 2f
 
     @JvmField
-    var subscriptionsIdList: ArrayList<String> = arrayListOf()
+    var progressBarStatus: Boolean = true
 
     init {
-        val s = AppObjectController.getFirebaseRemoteConfig()
-            .getString(FirebaseRemoteConfigKey.SUBSCRIPTION_COURSE_IDS)
-        if (s.isNotEmpty()) {
-            subscriptionsIdList.addAll(s.split(","))
-        }
+        progressBarStatus = AppObjectController.getFirebaseRemoteConfig()
+            .getBoolean(FirebaseRemoteConfigKey.INBOX_SCREEN_COURSE_PROGRESS)
     }
+
+    fun getAppContext() = AppObjectController.joshApplication
+
+    private fun getDrawablePadding() = com.vanniktech.emoji.Utils.dpToPx(getAppContext(), 4f)
 
     @Resolve
     fun onResolved() {
-        profileImage.setImageResource(R.drawable.ic_josh_course)
         tvName.text = inboxEntity.course_name
         courseProgressBar.progress = 0
-        inboxEntity.course_icon?.let {
-            profileImage.setInboxImageView(it)
+        if (inboxEntity.course_icon.isNullOrEmpty()) {
+            profileImage.setImageResource(R.drawable.ic_josh_course)
+        } else {
+            inboxEntity.course_icon?.let {
+                profileImage.setInboxImageView(it)
+            }
         }
-
-        if (subscriptionsIdList.contains(inboxEntity.courseId)) {
-            courseProgressBar.visibility = android.view.View.GONE
-        }
-
         if (inboxEntity.chat_id.isNullOrEmpty()) {
             tvLastReceivedMessageTime.setCompoundDrawablesWithIntrinsicBounds(
                 R.drawable.ic_unread,
@@ -105,30 +116,130 @@ class InboxViewHolder(
 
         inboxEntity.created?.run {
             tvLastReceivedMessageTime.text = Utils.getMessageTime(this)
-            if (inboxEntity.batchStarted.isNotEmpty()) {
-                val lastDownloadDate = YYYY_MM_DD.format(this).toLowerCase(Locale.getDefault())
-                val diff =
-                    Utils.dateDifferenceInDays(
-                        inboxEntity.batchStarted,
-                        lastDownloadDate,
-                        YYYY_MM_DD
-                    )
-                        .toInt()
-                courseProgressBar.progress = diff
-                inboxEntity.duration?.run {
-                    courseProgressBar.max = this
 
-                    if (diff >= this) {
-                        ivTick.setBackgroundResource(R.drawable.ic_course_in_complete_bg)
-                    } else {
-                        ivTick.setBackgroundResource(R.drawable.ic_course_complete_bg)
+            if (progressBarStatus) {
+                if (inboxEntity.batchStarted.isNullOrEmpty().not()) {
+                    val lastDownloadDate = YYYY_MM_DD.format(this).toLowerCase(Locale.getDefault())
+                    val diff =
+                        Utils.dateDifferenceInDays(
+                            inboxEntity.batchStarted!!,
+                            lastDownloadDate,
+                            YYYY_MM_DD
+                        )
+                            .toInt()
+                    setUpProgressAnimate(diff)
+
+                    inboxEntity.duration?.run {
+                        courseProgressBar.max = this
+
+                        if (diff >= this) {
+                            ivTick.setBackgroundResource(R.drawable.ic_course_in_complete_bg)
+                            courseProgressBar.progressTintList = ColorStateList.valueOf(
+                                ContextCompat.getColor(getAppContext(), R.color.text_light_ac)
+                            )
+                        } else {
+                            ivTick.setBackgroundResource(R.drawable.ic_course_complete_bg)
+                        }
                     }
+
+                } else {
+                    Timber.d("Batch Created not found")
+                }
+            } else {
+                inboxEntity.type?.let {
+                    if (BASE_MESSAGE_TYPE.Q == it || BASE_MESSAGE_TYPE.AR == it) {
+                        inboxEntity.material_type?.let { messageType ->
+                            showRecentAsPerView(messageType)
+                        }
+                    } else {
+                        showRecentAsPerView(it)
+                    }
+                }
+            }
+        }
+        if (progressBarStatus) {
+            courseProgressBar.visibility = android.view.View.VISIBLE
+            tvLastReceivedMessage.visibility = android.view.View.GONE
+        } else {
+            courseProgressBar.visibility = android.view.View.GONE
+            tvLastReceivedMessage.visibility = android.view.View.VISIBLE
+        }
+    }
+
+    @SuppressLint("SetTextI18n")
+    private fun showRecentAsPerView(baseMessageType: BASE_MESSAGE_TYPE) {
+        tvLastReceivedMessage.compoundDrawablePadding = getDrawablePadding()
+        when {
+            BASE_MESSAGE_TYPE.TX == baseMessageType -> {
+                inboxEntity.qText?.let { text ->
+                    tvLastReceivedMessage.text =
+                        HtmlCompat.fromHtml(text, HtmlCompat.FROM_HTML_MODE_LEGACY)
+                }
+                inboxEntity.text?.let { text ->
+                    tvLastReceivedMessage.text =
+                        HtmlCompat.fromHtml(text, HtmlCompat.FROM_HTML_MODE_LEGACY)
                 }
 
             }
-        }
+            BASE_MESSAGE_TYPE.IM == baseMessageType -> {
+                tvLastReceivedMessage.setCompoundDrawablesWithIntrinsicBounds(
+                    R.drawable.ic_inbox_camera,
+                    0,
+                    0,
+                    0
+                )
+                tvLastReceivedMessage.compoundDrawablePadding =
+                    Utils.dpToPx(getAppContext(), drawablePadding)
+                tvLastReceivedMessage.text = "Photo"
+            }
+            BASE_MESSAGE_TYPE.AU == baseMessageType -> {
+                tvLastReceivedMessage.setCompoundDrawablesWithIntrinsicBounds(
+                    R.drawable.ic_inbox_audio,
+                    0,
+                    0,
+                    0
+                )
+                tvLastReceivedMessage.compoundDrawablePadding =
+                    Utils.dpToPx(getAppContext(), drawablePadding)
+                tvLastReceivedMessage.text = "Audio"
 
+
+            }
+            BASE_MESSAGE_TYPE.VI == baseMessageType -> {
+                tvLastReceivedMessage.setCompoundDrawablesWithIntrinsicBounds(
+                    R.drawable.ic_inbox_video,
+                    0,
+                    0,
+                    0
+                )
+                tvLastReceivedMessage.compoundDrawablePadding =
+                    Utils.dpToPx(getAppContext(), drawablePadding)
+                tvLastReceivedMessage.text = "Video"
+
+            }
+            BASE_MESSAGE_TYPE.PD == baseMessageType -> {
+                tvLastReceivedMessage.setCompoundDrawablesWithIntrinsicBounds(
+                    R.drawable.ic_inbox_pdf,
+                    0,
+                    0,
+                    0
+                )
+                tvLastReceivedMessage.compoundDrawablePadding =
+                    Utils.dpToPx(getAppContext(), drawablePadding)
+                tvLastReceivedMessage.text = "Pdf"
+
+            }
+        }
     }
+
+    private fun setUpProgressAnimate(diff: Int) {
+        val animation: ObjectAnimator =
+            ObjectAnimator.ofInt(courseProgressBar, "progress", diff)
+        animation.duration = 750
+        animation.interpolator = DecelerateInterpolator()
+        animation.start()
+    }
+
 
     @Click(R.id.root_view)
     fun onClick() {
@@ -153,8 +264,8 @@ class InboxViewHolder(
     private fun ImageView.setInboxImageView(url: String) {
         val multi = MultiTransformation(
             CropTransformation(
-                Utils.dpToPx(280),
-                Utils.dpToPx(280),
+                Utils.dpToPx(240),
+                Utils.dpToPx(240),
                 CropTransformation.CropType.CENTER
             ),
             RoundedCornersTransformation(

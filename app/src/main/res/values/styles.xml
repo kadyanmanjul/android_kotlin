@@ -106,7 +106,6 @@
 
     <!-- ______________New App Typography's_______________-->
     <style name="TextStyle">
-        <item name="android:fontFamily">@font/poppins</item>
     </style>
 
     <style name="TextStyle.TopBarNoScroll" parent="TextStyle">
@@ -148,13 +147,11 @@
     </style>
 
     <style name="TeamMemberMessageTextStyle" parent="Widget.Freshchat.ChatResolutionPromptText">
-        <item name="android:fontFamily">@font/poppins_medium</item>
         <item name="android:textColor">@color/dark_grey</item>
         <item name="android:textSize">16sp</item>
     </style>
 
     <style name="TeamMemberMessageTextStyleSmall" parent="Widget.Freshchat.ChatResolutionPromptText">
-        <item name="android:fontFamily">@font/poppins_medium</item>
         <item name="android:textColor">@color/gray_9E</item>
         <item name="android:textSize">12sp</item>
     </style>

@@ -60,8 +60,10 @@ class MasterFaqViewHolder(
     }
 
     private fun addViews() {
-        typefaceSpan =
-            ResourcesCompat.getFont(AppObjectController.joshApplication, R.font.poppins_medium)
+        typefaceSpan = Typeface.createFromAsset(
+            AppObjectController.joshApplication.assets,
+            "fonts/Poppins-Medium.ttf"
+        )
         if (recyclerView.viewAdapter == null || recyclerView.viewAdapter.itemCount == 0) {
             faqData.categoryList.sortedBy { it.sortOrder }.forEach { typeOfHelpModel ->
                 if (categoryId == null) {
