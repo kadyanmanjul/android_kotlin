@@ -604,7 +604,7 @@ interface ChatDao {
         if (chatModel?.type == BASE_MESSAGE_TYPE.Q) {
             val question: Question? = getQuestion(chatModel.chatId)
             if (question != null) {
-                return question.interval
+                return question.interval.plus(1)
             }
         }
         return 0
