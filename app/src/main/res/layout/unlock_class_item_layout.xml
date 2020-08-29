@@ -12,8 +12,8 @@
 
     <androidx.cardview.widget.CardView
             android:id="@+id/card_top"
-            android:layout_width="@dimen/_200sdp"
-            android:layout_height="@dimen/_150sdp"
+            android:layout_width="@dimen/_216sdp"
+            android:layout_height="@dimen/_160sdp"
             android:background="#F1F2F4"
             android:clickable="true"
             android:divider="@android:color/transparent"
