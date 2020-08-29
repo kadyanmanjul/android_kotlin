@@ -346,7 +346,7 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
         }
     }
 
-    suspend fun checkInDbForNextVideo(inboxActivity: InboxEntity?) {
+    private suspend fun checkInDbForNextVideo(inboxActivity: InboxEntity?) {
         if (interval == courseDuration) {
             return
         }

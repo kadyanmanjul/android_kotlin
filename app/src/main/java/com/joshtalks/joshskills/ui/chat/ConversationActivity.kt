@@ -874,7 +874,8 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback, Player.
                         lastDay = key
                     }
                     value.forEach { chatModel ->
-                        if (chatModelLast != null && chatModelLast == chatModel && isNewChatViewAdd) {
+                        if (chatModelLast != null && chatModelLast == chatModel && isNewChatViewAdd && chatModelLast!!.type != BASE_MESSAGE_TYPE.UNLOCK) {
+
                             isNewChatViewAdd = false
                             conversationBinding.chatRv.addView(NewMessageViewHolder("Aapki Nayi Classes"))
                             linearLayoutManager.scrollToPosition(conversationBinding.chatRv.viewResolverCount - 1)

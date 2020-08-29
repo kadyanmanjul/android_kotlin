@@ -1,8 +1,7 @@
 package com.joshtalks.joshskills.ui.view_holders
 
-import android.view.View.GONE
 import android.widget.FrameLayout
-import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.cardview.widget.CardView
 import androidx.fragment.app.FragmentActivity
 import com.google.android.material.button.MaterialButton
 import com.joshtalks.joshskills.R
@@ -27,8 +26,8 @@ class UnlockNextClassViewHolder(activityRef: WeakReference<FragmentActivity>, me
     @View(R.id.root_view_fl)
     lateinit var rootView: FrameLayout
 
-    @View(R.id.root_sub_view)
-    lateinit var subRootView: ConstraintLayout
+    @View(R.id.card_top)
+    lateinit var subRootView: CardView
 
     lateinit var viewHolder: UnlockNextClassViewHolder
 
@@ -42,15 +41,15 @@ class UnlockNextClassViewHolder(activityRef: WeakReference<FragmentActivity>, me
         }
 
         message.question?.let { question ->
-            btnStart.text = AppObjectController.joshApplication.getString(R.string.unlock_class_text)
+            btnStart.text =
+                AppObjectController.joshApplication.getString(R.string.unlock_class_text)
         }
     }
 
 
-    @Click(R.id.root_sub_view)
+    @Click(R.id.card_top)
     fun onClickRootView() {
         RxBus2.publish(UnlockNextClassEventBus(message.question?.assessmentId ?: 0, viewHolder))
-        subRootView.visibility = GONE
     }
 
     @Click(R.id.btn_start)
