@@ -3,7 +3,8 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        app:layout_anchorGravity="center">
 
     <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/rating"
@@ -28,12 +29,11 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="start"
-            android:layout_marginHorizontal="@dimen/_8sdp"
+            android:layout_marginHorizontal="@dimen/_6sdp"
             android:gravity="center|start"
             android:paddingBottom="@dimen/_4sdp"
-            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H7"
             android:textColor="@color/black"
-            app:layout_constraintBottom_toBottomOf="@+id/rating"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/rating"
             app:layout_constraintTop_toTopOf="@+id/rating"
@@ -44,21 +44,21 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="start"
-            android:layout_marginVertical="@dimen/_8sdp"
+            android:layout_marginVertical="@dimen/_6sdp"
             android:gravity="center_vertical|start"
             android:paddingHorizontal="@dimen/_2sdp"
-            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
             android:textColor="@color/dark_grey"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@+id/rating"
-            app:layout_constraintTop_toBottomOf="@+id/rating"
+            app:layout_constraintTop_toBottomOf="@+id/user_review_title"
             tools:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam hendrerit nisi sed sollicitudin pellentesque" />
 
     <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/user_picture"
             android:layout_width="@dimen/_32sdp"
             android:layout_height="@dimen/_32sdp"
-            android:layout_marginVertical="@dimen/_8sdp"
+            android:layout_marginTop="@dimen/_8sdp"
             app:layout_constraintStart_toStartOf="@+id/user_review_message"
             app:layout_constraintTop_toBottomOf="@+id/user_review_message"
             tools:src="@drawable/round_rectangle" />
@@ -72,7 +72,7 @@
             android:layout_marginHorizontal="@dimen/_8sdp"
             android:gravity="start|center"
             android:lines="1"
-            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
             android:textColor="@color/dark_grey"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/user_picture"

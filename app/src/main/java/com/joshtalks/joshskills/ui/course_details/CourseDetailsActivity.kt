@@ -40,6 +40,7 @@ import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.EXPLORE_TYPE
+import com.joshtalks.joshskills.core.IS_SUBSCRIPTION_STARTED
 import com.joshtalks.joshskills.core.IS_TRIAL_STARTED
 import com.joshtalks.joshskills.core.PermissionUtils
 import com.joshtalks.joshskills.core.PrefManager
@@ -563,8 +564,9 @@ class CourseDetailsActivity : BaseActivity() {
             && exploreTypeStr == ExploreCardType.FREETRIAL.name
         ) {
             val isTrialStarted = PrefManager.getBoolValue(IS_TRIAL_STARTED, false)
+            val isSubscriptionStarted = PrefManager.getBoolValue(IS_SUBSCRIPTION_STARTED, false)
             val tempTestId = if (isTrialStarted && discountedPrice > 0.0) SUBSCRIPTION_TEST_ID
-            else if (isTrialStarted.not()) TRIAL_TEST_ID
+            else if (isTrialStarted.not() && isSubscriptionStarted.not()) TRIAL_TEST_ID
             else testId
             logStartCourseAnalyticEvent(tempTestId)
             PaymentSummaryActivity.startPaymentSummaryActivity(

@@ -5,9 +5,9 @@
         xmlns:wheel="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:cardCornerRadius="@dimen/_8sdp"
         android:layout_marginHorizontal="@dimen/course_padding_dimen"
-        android:layout_marginVertical="@dimen/_20sdp">
+        android:layout_marginVertical="@dimen/_20sdp"
+        app:cardCornerRadius="@dimen/_12sdp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -26,11 +26,10 @@
 
         <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
                 android:id="@+id/students_enrolled_nearby"
-                fontPath="fonts/Roboto-Regular.ttf"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Regular"
                 android:textColor="@color/white"
-                android:textSize="@dimen/font_14"
                 app:layout_constraintBottom_toTopOf="@+id/state_country"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.12"
@@ -41,11 +40,10 @@
 
         <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
                 android:id="@+id/state_country"
-                fontPath="fonts/Roboto-Bold.ttf"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4"
                 android:textColor="@color/white"
-                android:textSize="@dimen/font_24"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.12"
@@ -56,7 +54,6 @@
 
         <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/check_location_btn"
-                fontPath="fonts/Poppins-Regular.ttf"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginVertical="@dimen/_6sdp"
@@ -65,11 +62,12 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:gravity="center"
-                android:padding="@dimen/_6sdp"
+                android:paddingHorizontal="@dimen/_12sdp"
+                android:paddingVertical="@dimen/_6sdp"
                 android:text="@string/chech_location"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Button"
                 android:textColor="@color/black"
-                android:textSize="@dimen/font_14"
-                app:cornerRadius="@dimen/_8sdp"
+                app:cornerRadius="@dimen/_32sdp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.15"

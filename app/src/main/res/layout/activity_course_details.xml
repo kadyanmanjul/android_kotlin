@@ -114,14 +114,13 @@
 
             <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
                     android:id="@+id/txt_extra_hint"
-                    fontPath="fonts/Roboto-Medium.ttf"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@color/light_grey"
                     android:gravity="center"
                     android:paddingVertical="@dimen/_2sdp"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
                     android:textColor="@color/white"
-                    android:textSize="@dimen/font_12_5"
                     android:visibility="gone"
                     app:layout_constraintBottom_toTopOf="@+id/footer_buy_course"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -133,16 +132,15 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:background="@color/white"
-                    android:paddingHorizontal="@dimen/_12sdp"
+                    android:paddingHorizontal="@dimen/_8sdp"
                     android:paddingVertical="@dimen/_4sdp">
 
                 <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
                         android:id="@+id/txt_actual_price"
-                        fontPath="fonts/Roboto-Medium.ttf"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
                         android:textColor="@color/black"
-                        android:textSize="@dimen/font_13"
                         app:layout_constraintBottom_toTopOf="@+id/txt_discounted_price"
                         app:layout_constraintEnd_toEndOf="@+id/txt_discounted_price"
                         app:layout_constraintStart_toStartOf="@+id/txt_discounted_price"
@@ -150,21 +148,19 @@
 
                 <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
                         android:id="@+id/txt_discounted_price"
-                        fontPath="fonts/Roboto-Bold.ttf"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="@dimen/_10sdp"
-                        android:layout_marginEnd="@dimen/_10sdp"
+                        android:layout_marginEnd="@dimen/_4sdp"
                         android:paddingBottom="@dimen/_2sdp"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6"
                         android:textColor="@color/black"
-                        android:textSize="@dimen/font_20"
                         app:layout_constraintBottom_toBottomOf="@+id/btn_start_course"
                         app:layout_constraintStart_toStartOf="parent"
                         tools:text="$2999.0" />
 
                 <com.google.android.material.textview.MaterialTextView
                         android:id="@+id/btn_start_course"
-                        fontPath="fonts/Roboto-Bold.ttf"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:background="@drawable/round_rectangle_for_course_expo"
@@ -174,8 +170,8 @@
                         android:paddingVertical="@dimen/_8sdp"
                         android:text="@string/start_course"
                         android:textAllCaps="false"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Button"
                         android:textColor="@color/white"
-                        android:textSize="@dimen/font_18"
                         app:cornerRadius="@dimen/_32sdp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
