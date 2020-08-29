@@ -448,6 +448,9 @@
         <receiver
                 android:name=".core.analytics.DismissNotifEventReceiver"
                 android:exported="false" />
+        <receiver
+                android:name=".ui.reminder.set_reminder.AlarmNotifDismissReceiver"
+                android:exported="false" />
 
         <receiver
                 android:name=".ui.reminder.set_reminder.AlarmReceiver"

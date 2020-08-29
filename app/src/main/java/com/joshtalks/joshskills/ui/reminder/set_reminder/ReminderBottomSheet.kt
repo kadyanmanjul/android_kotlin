@@ -44,7 +44,7 @@ class ReminderBottomSheet : BottomSheetDialogFragment() {
             false
         )
         binding.lifecycleOwner = this
-        binding.handler = this
+//        binding.fragment = this
         binding.textView1.text = AppObjectController.getFirebaseRemoteConfig()
             .getString(FirebaseRemoteConfigKey.REMINDER_BOTTOM_POPUP_DESCRIPTION)
 

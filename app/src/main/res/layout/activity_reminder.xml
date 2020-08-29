@@ -13,6 +13,7 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
+            android:id="@+id/parent_Container"
             android:layout_height="match_parent">
 
         <include
@@ -84,69 +85,82 @@
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/sperator1" />
 
-                <com.google.android.material.chip.ChipGroup
-                        android:id="@+id/repeat_mode_chips"
+                <HorizontalScrollView
+                        android:id="@+id/chips_layout"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="@dimen/_16sdp"
                         android:layout_marginEnd="@dimen/_16sdp"
-                        app:chipSpacingHorizontal="@dimen/_8sdp"
-                        app:flow_horizontalStyle="spread"
+                        android:overScrollMode="never"
+                        android:scrollbars="none"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/repeat_tv"
-                        app:singleLine="true"
-                        app:singleSelection="true">
+                        app:layout_constraintTop_toBottomOf="@+id/repeat_tv">
 
-                    <com.google.android.material.chip.Chip
-                            android:id="@+id/weekend_chip"
-                            style="@style/ReminderChipStyle"
-                            fontPath="fonts/Poppins-Medium.ttf"
+                    <com.google.android.material.chip.ChipGroup
+                            android:id="@+id/repeat_mode_chips"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/on_weekends"
-                            android:textAlignment="center"
-                            android:textAppearance="@style/TextStyle.ChipText"
-                            android:textSize="@dimen/font_12"
-                            app:chipEndPadding="@dimen/_10sdp"
-                            app:chipMinHeight="@dimen/_20sdp"
-                            app:chipStartPadding="@dimen/_10sdp"
+                            android:paddingStart="@dimen/_8sdp"
+                            android:paddingEnd="@dimen/_8sdp"
+                            app:chipSpacingHorizontal="@dimen/_8sdp"
+                            app:flow_horizontalStyle="spread"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/repeat_tv"
                             app:singleLine="true"
-                            app:singleSelection="true" />
+                            app:singleSelection="true">
 
-                    <com.google.android.material.chip.Chip
-                            android:id="@+id/weekdays_chip"
-                            style="@style/ReminderChipStyle"
-                            fontPath="fonts/Poppins-Medium.ttf"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/on_weekdays"
-                            android:textAlignment="center"
-                            android:textAppearance="@style/TextStyle.ChipText"
-                            android:textSize="@dimen/font_12"
-                            app:chipEndPadding="@dimen/_10sdp"
-                            app:chipMinHeight="@dimen/_20sdp"
-                            app:chipStartPadding="@dimen/_10sdp"
-                            app:singleLine="true"
-                            app:singleSelection="true" />
+                        <com.google.android.material.chip.Chip
+                                android:id="@+id/weekend_chip"
+                                style="@style/ReminderChipStyle"
+                                fontPath="fonts/Poppins-Medium.ttf"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/on_weekends"
+                                android:textAlignment="center"
+                                android:textAppearance="@style/TextStyle.ChipText"
+                                android:textSize="@dimen/font_12"
+                                app:chipEndPadding="@dimen/_10sdp"
+                                app:chipMinHeight="@dimen/_20sdp"
+                                app:chipStartPadding="@dimen/_10sdp"
+                                app:singleLine="true"
+                                app:singleSelection="true" />
 
-                    <com.google.android.material.chip.Chip
-                            android:id="@+id/everyday_chip"
-                            style="@style/ReminderChipStyle"
-                            fontPath="fonts/Poppins-Medium.ttf"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:checked="true"
-                            android:text="@string/every_day"
-                            android:textAlignment="center"
-                            android:textAppearance="@style/TextStyle.ChipText"
-                            android:textSize="@dimen/font_12"
-                            app:chipEndPadding="@dimen/_10sdp"
-                            app:chipMinHeight="@dimen/_20sdp"
-                            app:chipStartPadding="@dimen/_10sdp"
-                            app:singleLine="true"
-                            app:singleSelection="true" />
-                </com.google.android.material.chip.ChipGroup>
+                        <com.google.android.material.chip.Chip
+                                android:id="@+id/weekdays_chip"
+                                style="@style/ReminderChipStyle"
+                                fontPath="fonts/Poppins-Medium.ttf"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/on_weekdays"
+                                android:textAlignment="center"
+                                android:textAppearance="@style/TextStyle.ChipText"
+                                android:textSize="@dimen/font_12"
+                                app:chipEndPadding="@dimen/_10sdp"
+                                app:chipMinHeight="@dimen/_20sdp"
+                                app:chipStartPadding="@dimen/_10sdp"
+                                app:singleLine="true"
+                                app:singleSelection="true" />
+
+                        <com.google.android.material.chip.Chip
+                                android:id="@+id/everyday_chip"
+                                style="@style/ReminderChipStyle"
+                                fontPath="fonts/Poppins-Medium.ttf"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:checked="true"
+                                android:text="@string/every_day"
+                                android:textAlignment="center"
+                                android:textAppearance="@style/TextStyle.ChipText"
+                                android:textSize="@dimen/font_12"
+                                app:chipEndPadding="@dimen/_10sdp"
+                                app:chipMinHeight="@dimen/_20sdp"
+                                app:chipStartPadding="@dimen/_10sdp"
+                                app:singleLine="true"
+                                app:singleSelection="true" />
+                    </com.google.android.material.chip.ChipGroup>
+                </HorizontalScrollView>
 
                 <View
                         android:id="@+id/saperator2"
@@ -156,7 +170,7 @@
                         android:background="@color/artboard_color"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/repeat_mode_chips" />
+                        app:layout_constraintTop_toBottomOf="@+id/chips_layout" />
             </androidx.constraintlayout.widget.ConstraintLayout>
         </ScrollView>
 

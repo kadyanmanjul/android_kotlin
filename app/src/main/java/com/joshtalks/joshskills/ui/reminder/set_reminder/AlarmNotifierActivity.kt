@@ -2,6 +2,7 @@ package com.joshtalks.joshskills.ui.reminder.set_reminder
 
 import android.app.Activity
 import android.app.KeyguardManager
+import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
 import android.os.Build
@@ -18,7 +19,8 @@ import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
 import com.joshtalks.joshskills.ui.launch.LauncherActivity
 import com.joshtalks.joshskills.util.RingtoneManager
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
+
 
 class AlarmNotifierActivity : AppCompatActivity(),
     View.OnClickListener {
@@ -59,16 +61,16 @@ class AlarmNotifierActivity : AppCompatActivity(),
         mAudioPlayer?.playRingtone()
 
         vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
-        val pattern = longArrayOf(0, 100, 1000, 300, 200, 100, 500, 200, 100)
+        val pattern = longArrayOf(1000, 1000, 1000, 1000, 1000, 1000)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             vibrator.vibrate(
                 VibrationEffect.createWaveform(
-                    pattern, 6
+                    pattern, 5
                 )
             )
         } else {
             //deprecated in API 26
-            vibrator.vibrate(pattern, 6)
+            vibrator.vibrate(pattern, 5)
         }
 
     }
@@ -133,6 +135,9 @@ class AlarmNotifierActivity : AppCompatActivity(),
 
     override fun onDestroy() {
         super.onDestroy()
+        val notificationManager: NotificationManager =
+            getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.cancel(AlarmReceiver.NOTIFICATION_ID)
         mAudioPlayer?.stopRingtone()
         vibrator.cancel()
         turnScreenOffAndKeyguardOn()

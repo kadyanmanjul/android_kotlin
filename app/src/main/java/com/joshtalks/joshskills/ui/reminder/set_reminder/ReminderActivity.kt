@@ -21,7 +21,8 @@ import com.joshtalks.joshskills.util.ReminderUtil
 import java.text.DecimalFormat
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Calendar
+import java.util.Date
 
 
 class ReminderActivity : CoreJoshActivity() {

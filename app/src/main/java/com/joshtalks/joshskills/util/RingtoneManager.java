@@ -5,10 +5,9 @@ import android.content.res.AssetFileDescriptor;
 import android.media.AudioManager;
 import android.media.AudioTrack;
 import android.media.MediaPlayer;
+import com.joshtalks.joshskills.core.AppObjectController;
 import java.io.FileInputStream;
 import java.io.IOException;
-
-import static com.facebook.FacebookSdk.getApplicationContext;
 
 public class RingtoneManager {
 
@@ -54,7 +53,7 @@ public class RingtoneManager {
 
             try {
                 mPlayer.setDataSource(mContext,
-                        android.media.RingtoneManager.getActualDefaultRingtoneUri(getApplicationContext(), android.media.RingtoneManager.TYPE_RINGTONE));
+                        android.media.RingtoneManager.getActualDefaultRingtoneUri(AppObjectController.getJoshApplication(), android.media.RingtoneManager.TYPE_ALARM));
                 mPlayer.prepare();
             } catch (IOException e) {
                 mPlayer = null;

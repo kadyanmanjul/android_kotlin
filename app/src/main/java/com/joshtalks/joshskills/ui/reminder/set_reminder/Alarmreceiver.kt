@@ -7,7 +7,10 @@ import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.media.RingtoneManager
 import android.os.Build
+import android.os.VibrationEffect
+import android.os.Vibrator
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import com.joshtalks.joshskills.R
@@ -18,7 +21,7 @@ import com.joshtalks.joshskills.util.ReminderUtil
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.util.*
+import java.util.Calendar
 
 class AlarmReceiver : BroadcastReceiver() {
     override fun onReceive(
@@ -91,11 +94,12 @@ class AlarmReceiver : BroadcastReceiver() {
 
     ) {
         val builder = NotificationCompat.Builder(this, channelId)
+            .setFullScreenIntent(getFullScreenIntent(), true)
             .setSmallIcon(android.R.drawable.arrow_up_float)
             .setContentTitle(title)
             .setAutoCancel(true)
             .setContentText(description)
-            .setCategory(Notification.CATEGORY_ALARM)
+            .setCategory(Notification.CATEGORY_REMINDER)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setSmallIcon(R.drawable.ic_status_bar_notification).setColor(
                 ContextCompat.getColor(
@@ -103,8 +107,18 @@ class AlarmReceiver : BroadcastReceiver() {
                     R.color.colorAccent
                 )
             )
-            .setFullScreenIntent(getFullScreenIntent(), true)
+            .setSound(
+                RingtoneManager.getActualDefaultRingtoneUri(
+                    context,
+                    RingtoneManager.TYPE_ALARM
+                )
+            )
+        val dismissIntent =
+            Intent(applicationContext, AlarmNotifDismissReceiver::class.java)
+        val dismissPendingIntent: PendingIntent =
+            PendingIntent.getBroadcast(applicationContext, 1, dismissIntent, 0)
 
+        builder.setDeleteIntent(dismissPendingIntent)
 
         val notificationManager =
             getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -114,7 +128,8 @@ class AlarmReceiver : BroadcastReceiver() {
 
             val notification = builder.build()
 
-            notify(0, notification)
+            notify(NOTIFICATION_ID, notification)
+            playRingtone(context)
         }
     }
 
@@ -144,7 +159,25 @@ class AlarmReceiver : BroadcastReceiver() {
 
     companion object {
         private const val CHANNEL_ID = "josh_app_alarm_channel"
+        const val NOTIFICATION_ID = 0
     }
 
+    private fun playRingtone(context: Context) {
+        val mAudioPlayer = com.joshtalks.joshskills.util.RingtoneManager.getInstance(context)
+        mAudioPlayer?.playRingtone()
+
+        val vibrator = context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+        val pattern = longArrayOf(1000, 1000, 1000, 1000, 1000, 1000)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            vibrator.vibrate(
+                VibrationEffect.createWaveform(
+                    pattern, 5
+                )
+            )
+        } else {
+            //deprecated in API 26
+            vibrator.vibrate(pattern, 5)
+        }
+    }
 }
 
