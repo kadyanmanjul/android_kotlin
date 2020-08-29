@@ -228,7 +228,7 @@
 
     <!-- Signup V2 Screen  -->
     <string name="otp_verify_label">Apna OTP verify kare</string>
-    <string name="otp_received_message" formatted="false">Enter the OTP you received to \n  %s </string>
+    <string name="otp_received_message" formatted="false">Enter the OTP you received on \n  %s </string>
     <string name="edit_number">Edit number</string>
     <string name="truecaller_label">True Caller Se Jude </string>
     <string name="register">Register</string>
@@ -379,4 +379,8 @@
     <string name="class_reminder">Class Reminder</string>
     <string name="alarms_deleted">Alarms Deleted</string>
     <string name="start_learning_now">Start Learning Now</string>
+    <string name="resend">Resend</string>
+    <string name="hint_name_field">e.g.mohit</string>
+    <string name="hint_email_field">e.g. abc@xyz.com</string>
+    <string name="hint_date_field">e.g. 01 Jan 1990</string>
 </resources>

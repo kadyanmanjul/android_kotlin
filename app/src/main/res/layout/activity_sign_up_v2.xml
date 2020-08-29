@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools">
+        xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
 
@@ -38,22 +37,19 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:srcCompat="@drawable/ic_arrow_back"
-                    app:tint="@color/gray_3B" />
+                    app:tint="@color/black" />
 
             <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/text_message_title"
-                    fontPath="fonts/Roboto-Medium.ttf"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/_8sdp"
-                    android:autoSizeMaxTextSize="@dimen/font_18"
                     android:gravity="start"
                     android:text="@string/registration"
-                    android:textColor="@color/gray_3B"
-                    android:textSize="@dimen/font_22"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H5"
+                    android:textColor="@color/black"
                     app:layout_constraintStart_toStartOf="@+id/iv_back"
-                    app:layout_constraintTop_toBottomOf="@+id/iv_back"
-                    tools:targetApi="o" />
+                    app:layout_constraintTop_toBottomOf="@+id/iv_back" />
 
             <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/iv_help"
@@ -62,7 +58,7 @@
                     android:onClick="@{()->handler.openHelpActivity()}"
                     android:padding="@dimen/_4sdp"
                     android:src="@drawable/ic_help_outline"
-                    android:tint="@color/gray_3B"
+                    android:tint="@color/black"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 

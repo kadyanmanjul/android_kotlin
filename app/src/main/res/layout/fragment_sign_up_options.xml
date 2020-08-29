@@ -17,14 +17,13 @@
 
         <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/text_view_2"
-                fontPath="fonts/Roboto-Medium.ttf"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_12sdp"
                 android:gravity="center"
                 android:text="@string/confirm_number"
-                android:textColor="@color/font_color"
-                android:textSize="@dimen/font_20"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6"
+                android:textColor="@color/black"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
@@ -49,7 +48,7 @@
 
             <com.joshtalks.joshskills.core.custom_ui.countrycodepicker.CountryCodePicker
                     android:id="@+id/country_code_picker"
-                    fontPath="fonts/Roboto-Regular.ttf"
+                    style="@style/TextAppearance.JoshTypography.Body_Text_Medium_Regular"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:gravity="center"
@@ -58,6 +57,7 @@
                     app:ccpDialog_allowSearch="true"
                     app:ccpDialog_backgroundColor="@color/wh_f4"
                     app:ccpDialog_fastScroller_bubbleColor="@color/checkmark_blue"
+                    app:ccpDialog_fastScroller_bubbleTextAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Regular"
                     app:ccpDialog_fastScroller_handleColor="@color/colorAccent"
                     app:ccpDialog_initialScrollToSelection="true"
                     app:ccpDialog_keyboardAutoPopup="false"
@@ -66,7 +66,7 @@
                     app:ccpDialog_showFastScroller="true"
                     app:ccpDialog_showPhoneCode="true"
                     app:ccpDialog_showTitle="false"
-                    app:ccpDialog_textColor="@color/font_color"
+                    app:ccpDialog_textColor="@color/black"
                     app:ccp_areaCodeDetectedCountry="true"
                     app:ccp_arrowColor="@color/button_activated"
                     app:ccp_arrowSize="@dimen/_4sdp"
@@ -74,7 +74,7 @@
                     app:ccp_autoDetectLanguage="true"
                     app:ccp_autoFormatNumber="false"
                     app:ccp_clickable="true"
-                    app:ccp_contentColor="@color/font_color"
+                    app:ccp_contentColor="@color/black"
                     app:ccp_countryAutoDetectionPref="SIM_NETWORK_LOCALE"
                     app:ccp_defaultLanguage="ENGLISH"
                     app:ccp_hintExampleNumber="false"
@@ -84,14 +84,12 @@
                     app:ccp_showNameCode="false"
                     app:ccp_showPhoneCode="true"
                     app:ccp_textGravity="CENTER"
-                    app:ccp_textSize="@dimen/font_15"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
             <androidx.appcompat.widget.AppCompatEditText
                     android:id="@+id/mobile_et"
-                    fontPath="fonts/Roboto-Regular.ttf"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
@@ -105,9 +103,9 @@
                     android:lines="1"
                     android:maxLength="13"
                     android:paddingStart="@dimen/_8sdp"
-                    android:textColor="@color/font_color"
-                    android:textColorHint="@color/font_color"
-                    android:textSize="@dimen/font_15"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Regular"
+                    android:textColor="@color/black"
+                    android:textColorHint="@color/black"
                     app:backgroundTint="@color/white"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/iv_clear_number"
@@ -137,14 +135,13 @@
 
         <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/info"
-                fontPath="fonts/Roboto-Regular.ttf"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_12sdp"
                 android:gravity="center"
                 android:text="@string/missed_call_verify_message"
-                android:textColor="#9098B1"
-                android:textSize="@dimen/font_13"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+                android:textColor="@color/grey"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/et_container"
@@ -154,7 +151,6 @@
         <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_login"
                 style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                fontPath="fonts/Roboto-Medium.ttf"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -167,17 +163,17 @@
                 android:paddingBottom="@dimen/_12sdp"
                 android:text="@string/missed_call_label"
                 android:textAllCaps="false"
-                android:textColor="@color/text_color_10"
-                android:textSize="@dimen/font_13"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Bold"
+                android:textColor="@color/button_color"
                 android:visibility="visible"
-                app:cornerRadius="@dimen/_16sdp"
+                app:cornerRadius="@dimen/_32sdp"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/info"
                 app:layout_constraintWidth_default="percent"
                 app:layout_constraintWidth_percent="0.7"
                 app:rippleColor="@color/white"
-                app:strokeColor="@color/text_color_10" />
+                app:strokeColor="@color/button_color" />
 
         <androidx.constraintlayout.widget.Group
                 android:id="@+id/progress_bar_group"
@@ -204,14 +200,13 @@
 
         <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/timer_tv"
-                fontPath="fonts/Roboto-Medium.ttf"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginTop="@dimen/_4sdp"
                 android:gravity="center"
-                android:textColor="@color/text_color_10"
-                android:textSize="@dimen/font_13"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
+                android:textColor="@color/button_color"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/progress_bar"
@@ -245,21 +240,20 @@
                     android:paddingStart="@dimen/_6sdp"
                     android:paddingEnd="@dimen/_6sdp"
                     android:text="@string/or"
-                    android:textColor="@color/grey"
-                    android:textSize="@dimen/font_14" />
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
+                    android:textColor="@color/grey" />
 
         </FrameLayout>
 
         <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/text_view_1"
-                fontPath="fonts/Roboto-Bold.ttf"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_16sdp"
                 android:gravity="center"
                 android:text="@string/join_social_text"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Bold"
                 android:textColor="@color/grey"
-                android:textSize="@dimen/font_15"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/view_separator"
