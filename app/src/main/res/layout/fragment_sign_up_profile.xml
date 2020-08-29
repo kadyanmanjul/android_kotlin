@@ -274,7 +274,7 @@
 
                     <com.google.android.material.textview.MaterialTextView
                             android:id="@+id/tv_male_gender"
-                            android:layout_width="@dimen/_90sdp"
+                            android:layout_width="@dimen/_85sdp"
                             android:layout_height="wrap_content"
                             android:background="@drawable/mobile_no_bg"
                             android:duplicateParentState="true"
@@ -291,7 +291,7 @@
 
                     <com.google.android.material.textview.MaterialTextView
                             android:id="@+id/tv_female_gender"
-                            android:layout_width="@dimen/_90sdp"
+                            android:layout_width="@dimen/_85sdp"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="@dimen/_12sdp"
                             android:background="@drawable/mobile_no_bg"
@@ -309,7 +309,7 @@
 
                     <com.google.android.material.textview.MaterialTextView
                             android:id="@+id/tv_other_gender"
-                            android:layout_width="@dimen/_90sdp"
+                            android:layout_width="@dimen/_85sdp"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="@dimen/_12sdp"
                             android:background="@drawable/mobile_no_bg"
