@@ -62,7 +62,7 @@
                                 android:layout_marginVertical="@dimen/_6sdp"
                                 app:cardCornerRadius="@dimen/_4sdp"
                                 app:layout_constraintHeight_default="percent"
-                                app:layout_constraintHeight_percent="0.42"
+                                app:layout_constraintHeight_percent="0.5"
                                 app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintTop_toTopOf="parent"
                                 app:layout_constraintWidth_default="percent"
