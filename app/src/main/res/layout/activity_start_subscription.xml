@@ -43,14 +43,13 @@
 
         <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
                 android:id="@+id/txtHeading"
-                fontPath="fonts/Poppins-Regular.ttf"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_12sdp"
                 android:gravity="center"
                 android:text="@string/subscription_heading"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
                 android:textColor="@color/black"
-                android:textSize="@dimen/font_16"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/headerImage"
@@ -58,13 +57,12 @@
 
         <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
                 android:id="@+id/txtHeadingMain"
-                fontPath="fonts/Poppins-Bold.ttf"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:text="@string/unlimited_learning"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H3"
                 android:textColor="@color/black"
-                android:textSize="@dimen/font_32"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/txtHeading"
@@ -91,14 +89,13 @@
 
             <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
                     android:id="@+id/item1_txt"
-                    fontPath="fonts/Poppins-Regular.ttf"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="5"
                     android:gravity="center|start"
                     android:text="@string/subscription_feature_1"
-                    android:textColor="@color/black"
-                    android:textSize="@dimen/font_14" />
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
+                    android:textColor="@color/black" />
 
         </LinearLayout>
 
@@ -123,14 +120,13 @@
 
             <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
                     android:id="@+id/item2_txt"
-                    fontPath="fonts/Poppins-Regular.ttf"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="5"
                     android:gravity="center|start"
                     android:text="@string/subscription_feature_2"
-                    android:textColor="@color/black"
-                    android:textSize="@dimen/font_14" />
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
+                    android:textColor="@color/black" />
 
         </LinearLayout>
 
@@ -155,20 +151,18 @@
 
             <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
                     android:id="@+id/item3_txt"
-                    fontPath="fonts/Poppins-Regular.ttf"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="5"
                     android:gravity="center|start"
                     android:text="@string/subscription_feature_3"
-                    android:textColor="@color/black"
-                    android:textSize="@dimen/font_14" />
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
+                    android:textColor="@color/black" />
 
         </LinearLayout>
 
         <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/start_btn"
-                fontPath="fonts/Poppins-Bold.ttf"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/_12sdp"
@@ -180,30 +174,16 @@
                 android:paddingVertical="@dimen/_10sdp"
                 android:text="@string/start_7_day_trial"
                 android:textAllCaps="false"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Button"
                 android:textColor="@color/white"
-                android:textSize="@dimen/font_16"
                 app:cornerRadius="@dimen/_32sdp"
-                app:layout_constraintBottom_toTopOf="@+id/txtAlreadySubscribed"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintWidth_percent="0.9" />
-
-        <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
-                android:id="@+id/txtAlreadySubscribed"
-                fontPath="fonts/Poppins-Regular.ttf"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_12sdp"
-                android:layout_marginBottom="@dimen/_16sdp"
-                android:gravity="center"
-                android:text="@string/already_a_subscriber"
-                android:textColor="@color/dark_grey"
-                android:textSize="@dimen/font_16"
-                android:visibility="invisible"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintWidth_percent="0.8" />
+                app:layout_constraintTop_toBottomOf="@+id/item3"
+                app:layout_constraintVertical_bias="1"
+                app:layout_constraintWidth_percent="0.9" />
+
 
         <com.pnikosis.materialishprogress.ProgressWheel
                 android:id="@+id/progress_bar"
