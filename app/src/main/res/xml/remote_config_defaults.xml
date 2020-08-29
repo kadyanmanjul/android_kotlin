@@ -315,4 +315,12 @@
         <key>MINIMUM_STORAGE_REMOVE_IN_MB</key>
         <value>512</value>
     </entry>
+    <entry>
+        <key>IS_APPLY_COUPON_ENABLED</key>
+        <value>true</value>
+    </entry>
+    <entry>
+        <key>APPLY_COUPON_TEXT</key>
+        <value>Apply Coupon</value>
+    </entry>
 </defaultsMap>

@@ -358,8 +358,10 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                 }
 
                 getPaymentDetails(true, it.specialOffer.test_id.toString())
-            } else if(viewModel.getCourseDiscountedAmount() > 0) {
+            } else if(viewModel.getCourseDiscountedAmount() > 0 &&
+            AppObjectController.getFirebaseRemoteConfig().getBoolean(FirebaseRemoteConfigKey.IS_APPLY_COUPON_ENABLED)) {
                 applyCouponText.visibility = View.VISIBLE
+                applyCouponText.text= AppObjectController.getFirebaseRemoteConfig().getString(FirebaseRemoteConfigKey.APPLY_COUPON_TEXT)
                 applyCouponText.setOnClickListener {
                     openPromoCodeBottomSheet()
                 }
