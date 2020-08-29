@@ -16,6 +16,7 @@ import android.text.Spanned
 import android.text.style.IconMarginSpan
 import android.util.TypedValue
 import android.view.View
+import android.view.inputmethod.EditorInfo
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.widget.AppCompatTextView
@@ -82,6 +83,7 @@ import io.reactivex.schedulers.Schedulers
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import org.jetbrains.anko.sdk27.coroutines.onEditorAction
 import org.json.JSONObject
 import retrofit2.HttpException
 import java.text.DecimalFormat
@@ -255,9 +257,13 @@ class PaymentSummaryActivity : CoreJoshActivity(),
             }
             if (viewModel.getCourseDiscountedAmount() > 0) {
                 binding.materialButton.text =
-                    "${AppObjectController.getFirebaseRemoteConfig()
-                        .getString(CTA_PAYMENT_SUMMARY)} ₹ ${viewModel.getCourseDiscountedAmount()
-                        .roundToInt()}"
+                    "${
+                        AppObjectController.getFirebaseRemoteConfig()
+                            .getString(CTA_PAYMENT_SUMMARY)
+                    } ₹ ${
+                        viewModel.getCourseDiscountedAmount()
+                            .roundToInt()
+                    }"
             } else {
                 binding.materialButton.text = AppObjectController.getFirebaseRemoteConfig()
                     .getString(PAYMENT_SUMMARY_CTA_LABEL_FREE)
@@ -358,18 +364,21 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                 }
 
                 getPaymentDetails(true, it.specialOffer.test_id.toString())
-            } else if(viewModel.getCourseDiscountedAmount() > 0 &&
-            AppObjectController.getFirebaseRemoteConfig().getBoolean(FirebaseRemoteConfigKey.IS_APPLY_COUPON_ENABLED)) {
+            } else if (viewModel.getCourseDiscountedAmount() > 0 &&
+                AppObjectController.getFirebaseRemoteConfig()
+                    .getBoolean(FirebaseRemoteConfigKey.IS_APPLY_COUPON_ENABLED)
+            ) {
                 applyCouponText.visibility = View.VISIBLE
-                applyCouponText.text= AppObjectController.getFirebaseRemoteConfig().getString(FirebaseRemoteConfigKey.APPLY_COUPON_TEXT)
+                applyCouponText.text = AppObjectController.getFirebaseRemoteConfig()
+                    .getString(FirebaseRemoteConfigKey.APPLY_COUPON_TEXT)
                 applyCouponText.setOnClickListener {
                     openPromoCodeBottomSheet()
                 }
             }
 
-            binding.materialButton.setOnSingleClickListener(View.OnClickListener {
+            binding.materialButton.setOnSingleClickListener {
                 startPayment()
-            })
+            }
         })
         if (viewModel.hasRegisteredMobileNumber) {
             binding.group1.visibility = View.GONE
@@ -384,6 +393,13 @@ class PaymentSummaryActivity : CoreJoshActivity(),
             if (it)
                 navigateToStartCourseActivity(false)
         })
+
+        binding.mobileEt.onEditorAction { v, actionId, event ->
+            if (actionId == EditorInfo.IME_ACTION_GO) {
+                startPayment()
+            }
+        }
+
     }
 
     private fun openPromoCodeBottomSheet() {
@@ -447,9 +463,13 @@ class PaymentSummaryActivity : CoreJoshActivity(),
 
         if (viewModel.getCourseDiscountedAmount() > 0) {
             binding.materialButton.text =
-                "${AppObjectController.getFirebaseRemoteConfig()
-                    .getString(CTA_PAYMENT_SUMMARY)} ₹ ${viewModel.getCourseDiscountedAmount()
-                    .roundToInt()}"
+                "${
+                    AppObjectController.getFirebaseRemoteConfig()
+                        .getString(CTA_PAYMENT_SUMMARY)
+                } ₹ ${
+                    viewModel.getCourseDiscountedAmount()
+                        .roundToInt()
+                }"
         } else {
             binding.materialButton.text = AppObjectController.getFirebaseRemoteConfig()
                 .getString(PAYMENT_SUMMARY_CTA_LABEL_FREE)
