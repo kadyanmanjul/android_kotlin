@@ -30,7 +30,6 @@ import com.joshtalks.joshskills.core.analytics.LogException
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.core.notification.FCM_TOKEN
 import com.joshtalks.joshskills.messaging.RxBus2
-import com.joshtalks.joshskills.repository.local.DatabaseUtils
 import com.joshtalks.joshskills.repository.local.entity.NPSEvent
 import com.joshtalks.joshskills.repository.local.entity.NPSEventModel
 import com.joshtalks.joshskills.repository.local.eventbus.NPSEventGenerateEventBus
@@ -363,7 +362,7 @@ class WorkerInLandingScreen(context: Context, workerParams: WorkerParameters) :
     CoroutineWorker(context, workerParams) {
     override suspend fun doWork(): Result {
         InstallReferralUtil.installReferrer(applicationContext)
-        DatabaseUtils.updateUserMessageSeen()
+        //DatabaseUtils.updateUserMessageSeen()
         AppObjectController.clearDownloadMangerCallback()
         AppAnalytics.updateUser()
         SyncChatService.syncChatWithServer()

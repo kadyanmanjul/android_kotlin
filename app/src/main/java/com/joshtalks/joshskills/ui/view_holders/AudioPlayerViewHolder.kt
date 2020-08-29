@@ -11,6 +11,7 @@ import android.widget.RelativeLayout
 import android.widget.SeekBar
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import com.crashlytics.android.Crashlytics
 import com.joshtalks.joshskills.R
@@ -199,10 +200,10 @@ class AudioPlayerViewHolder(activityRef: WeakReference<FragmentActivity>, messag
         profileImage.setImageResource(R.drawable.ic_user_rec_placeholder)
         this.audioPlayerViewHolder = this
         seekBar.progress = 0
+        //seekBar.thumb=null
         txtCurrentDurationTV.text = EMPTY
         audioViewSent.visibility = android.view.View.GONE
         audioViewReceived.visibility = android.view.View.GONE
-        seekBar.visibility = android.view.View.INVISIBLE
         downloadContainer.visibility = android.view.View.VISIBLE
         progressBar.visibility = android.view.View.INVISIBLE
         cancelDownloadImageView.visibility = android.view.View.INVISIBLE
@@ -210,7 +211,6 @@ class AudioPlayerViewHolder(activityRef: WeakReference<FragmentActivity>, messag
         btnPlayImageView.visibility = android.view.View.INVISIBLE
         btnPauseImageView.visibility = android.view.View.INVISIBLE
         seekBar.isEnabled = false
-
         seekBar.progress = message.playProgress
         appAnalytics = AppAnalytics.create(AnalyticsEvent.AUDIO_VH.NAME)
             .addBasicParam()
@@ -334,11 +334,11 @@ class AudioPlayerViewHolder(activityRef: WeakReference<FragmentActivity>, messag
                     .addParam(AnalyticsEvent.AUDIO_ID.NAME, audioTypeObj.id)
                     .addParam("ChatId", message.chatId)
 
-                when {
-                    message.downloadStatus === DOWNLOAD_STATUS.DOWNLOADED -> {
+                when (message.downloadStatus) {
+                    DOWNLOAD_STATUS.DOWNLOADED -> {
                         mediaDownloaded()
                     }
-                    message.downloadStatus === DOWNLOAD_STATUS.DOWNLOADING -> {
+                    DOWNLOAD_STATUS.DOWNLOADING -> {
                         downloadStart(audioTypeObj.audio_url)
                         mediaDownloading()
                     }
@@ -348,16 +348,16 @@ class AudioPlayerViewHolder(activityRef: WeakReference<FragmentActivity>, messag
                 }
 
             } else {
-                if (message.downloadStatus === DOWNLOAD_STATUS.DOWNLOADED || message.downloadStatus === DOWNLOAD_STATUS.UPLOADED) {
+                if (message.downloadStatus == DOWNLOAD_STATUS.DOWNLOADED || message.downloadStatus == DOWNLOAD_STATUS.UPLOADED) {
                     mediaDownloaded()
                     duration = Utils.getDurationOfMedia(
                         activityRef.get()!!,
                         message.downloadedLocalPath!!
                     )?.toInt() ?: 0
-                } else if (message.downloadStatus === DOWNLOAD_STATUS.DOWNLOADING) {
+                } else if (message.downloadStatus == DOWNLOAD_STATUS.DOWNLOADING) {
                     mediaDownloading()
                     downloadStart(message.url!!)
-                } else if (message.downloadStatus === DOWNLOAD_STATUS.UPLOADING) {
+                } else if (message.downloadStatus == DOWNLOAD_STATUS.UPLOADING) {
                     mediaUploading()
                 } else {
                     mediaNotDownloaded()
@@ -374,14 +374,13 @@ class AudioPlayerViewHolder(activityRef: WeakReference<FragmentActivity>, messag
 
     private fun mediaNotDownloaded() {
         appAnalytics.addParam(AnalyticsEvent.AUDIO_VIEW_STATUS.NAME, "Already downloaded")
-        downloadContainer.visibility = android.view.View.VISIBLE
-        startDownloadImageView.visibility = android.view.View.VISIBLE
-        seekBar.visibility = android.view.View.INVISIBLE
-        progressBar.visibility = android.view.View.INVISIBLE
-        cancelDownloadImageView.visibility = android.view.View.INVISIBLE
         btnPlayImageView.visibility = android.view.View.INVISIBLE
         btnPauseImageView.visibility = android.view.View.INVISIBLE
-
+        downloadContainer.visibility = android.view.View.VISIBLE
+        startDownloadImageView.visibility = android.view.View.VISIBLE
+        //seekBar.visibility = android.view.View.INVISIBLE
+        progressBar.visibility = android.view.View.INVISIBLE
+        cancelDownloadImageView.visibility = android.view.View.INVISIBLE
     }
 
     private fun mediaDownloading() {
@@ -393,6 +392,7 @@ class AudioPlayerViewHolder(activityRef: WeakReference<FragmentActivity>, messag
     }
 
     private fun mediaDownloaded() {
+        seekBar.thumb = ContextCompat.getDrawable(getAppContext(), R.drawable.seek_thumb)
         btnPlayImageView.visibility = android.view.View.VISIBLE
         seekBar.visibility = android.view.View.VISIBLE
         btnPauseImageView.visibility = android.view.View.INVISIBLE

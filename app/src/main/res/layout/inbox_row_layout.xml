@@ -42,7 +42,6 @@
                 android:id="@+id/iv_tick"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/ic_course_complete_bg"
                 android:gravity="center_vertical|start"
                 android:padding="@dimen/_4sdp"
                 app:layout_constraintBottom_toBottomOf="@+id/profile_image"

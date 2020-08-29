@@ -5,7 +5,7 @@ import android.annotation.SuppressLint
 import android.content.res.ColorStateList
 import android.graphics.drawable.Drawable
 import android.view.ViewGroup
-import android.view.animation.DecelerateInterpolator
+import android.view.animation.AccelerateDecelerateInterpolator
 import android.widget.ImageView
 import android.widget.ProgressBar
 import androidx.appcompat.widget.AppCompatImageView
@@ -40,6 +40,7 @@ import com.mindorks.placeholderview.annotations.View
 import jp.wasabeef.glide.transformations.CropTransformation
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation
 import timber.log.Timber
+import java.util.Date
 import java.util.Locale
 
 @Layout(R.layout.inbox_row_layout)
@@ -113,57 +114,51 @@ class InboxViewHolder(
         ) {
             hLine.visibility = android.view.View.GONE
         }
-
         if (progressBarStatus) {
             courseProgressBar.visibility = android.view.View.VISIBLE
             tvLastReceivedMessage.visibility = android.view.View.GONE
+            if (inboxEntity.batchStarted.isNullOrEmpty().not()) {
+                val todayDate = YYYY_MM_DD.format(Date()).toLowerCase(Locale.getDefault())
+                val diff =
+                    Utils.dateDifferenceInDays(
+                        inboxEntity.batchStarted!!,
+                        todayDate,
+                        YYYY_MM_DD
+                    )
+                        .toInt()
+
+                inboxEntity.duration?.run {
+                    courseProgressBar.max = this * 100
+                    setUpProgressAnimate(diff * 100)
+
+                    if (diff >= this) {
+                        ivTick.setBackgroundResource(R.drawable.ic_course_in_complete_bg)
+                        courseProgressBar.progressTintList = ColorStateList.valueOf(
+                            ContextCompat.getColor(getAppContext(), R.color.text_light_ac)
+                        )
+                    } else {
+                        ivTick.setBackgroundResource(R.drawable.ic_course_complete_bg)
+                    }
+                }
+
+            } else {
+                Timber.d("Batch Created not found")
+            }
         } else {
             courseProgressBar.visibility = android.view.View.GONE
             tvLastReceivedMessage.visibility = android.view.View.VISIBLE
-        }
-
-        inboxEntity.created?.run {
-            tvLastReceivedMessageTime.text = Utils.getMessageTime(this)
-
-            if (progressBarStatus) {
-                if (inboxEntity.batchStarted.isNullOrEmpty().not()) {
-                    val lastDownloadDate = YYYY_MM_DD.format(this).toLowerCase(Locale.getDefault())
-                    val diff =
-                        Utils.dateDifferenceInDays(
-                            inboxEntity.batchStarted!!,
-                            lastDownloadDate,
-                            YYYY_MM_DD
-                        )
-                            .toInt()
-                    setUpProgressAnimate(diff)
-
-                    inboxEntity.duration?.run {
-                        courseProgressBar.max = this
-
-                        if (diff >= this) {
-                            ivTick.setBackgroundResource(R.drawable.ic_course_in_complete_bg)
-                            courseProgressBar.progressTintList = ColorStateList.valueOf(
-                                ContextCompat.getColor(getAppContext(), R.color.text_light_ac)
-                            )
-                        } else {
-                            ivTick.setBackgroundResource(R.drawable.ic_course_complete_bg)
-                        }
+            inboxEntity.type?.let {
+                if (BASE_MESSAGE_TYPE.Q == it || BASE_MESSAGE_TYPE.AR == it) {
+                    inboxEntity.material_type?.let { messageType ->
+                        showRecentAsPerView(messageType)
                     }
-
                 } else {
-                    Timber.d("Batch Created not found")
-                }
-            } else {
-                inboxEntity.type?.let {
-                    if (BASE_MESSAGE_TYPE.Q == it || BASE_MESSAGE_TYPE.AR == it) {
-                        inboxEntity.material_type?.let { messageType ->
-                            showRecentAsPerView(messageType)
-                        }
-                    } else {
-                        showRecentAsPerView(it)
-                    }
+                    showRecentAsPerView(it)
                 }
             }
+        }
+        inboxEntity.created?.run {
+            tvLastReceivedMessageTime.text = Utils.getMessageTime(this)
         }
 
     }
@@ -236,9 +231,10 @@ class InboxViewHolder(
 
     private fun setUpProgressAnimate(diff: Int) {
         val animation: ObjectAnimator =
-            ObjectAnimator.ofInt(courseProgressBar, "progress", diff)
-        animation.duration = 750
-        animation.interpolator = DecelerateInterpolator()
+            ObjectAnimator.ofInt(courseProgressBar, "progress", 0, diff)
+        animation.startDelay = 0
+        animation.duration = 700
+        animation.interpolator = AccelerateDecelerateInterpolator()
         animation.start()
     }
 
