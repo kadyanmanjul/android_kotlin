@@ -55,7 +55,7 @@ public class RingtoneManager {
                 mPlayer.setDataSource(mContext,
                         android.media.RingtoneManager.getActualDefaultRingtoneUri(AppObjectController.getJoshApplication(), android.media.RingtoneManager.TYPE_ALARM));
                 mPlayer.prepare();
-            } catch (IOException e) {
+            } catch (Exception e) {
                 mPlayer = null;
                 return;
             }
