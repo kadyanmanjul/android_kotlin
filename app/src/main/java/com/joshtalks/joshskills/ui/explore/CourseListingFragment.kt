@@ -16,7 +16,7 @@ import com.joshtalks.joshskills.repository.local.model.ExploreCardType
 import com.joshtalks.joshskills.repository.server.CourseExploreModel
 import jp.wasabeef.recyclerview.animators.SlideInUpAnimator
 
-class CourseListingFragment private constructor() : Fragment() {
+class CourseListingFragment : Fragment() {
     private lateinit var binding: FragmentCourseListingBinding
     private var courseList: ArrayList<CourseExploreModel> = arrayListOf()
 
