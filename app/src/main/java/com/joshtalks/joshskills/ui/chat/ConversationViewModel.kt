@@ -45,7 +45,8 @@ import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import org.jetbrains.anko.collections.forEachWithIndex
 import java.io.File
-import java.util.*
+import java.util.ConcurrentModificationException
+import java.util.Date
 import java.util.concurrent.TimeUnit
 
 
@@ -445,16 +446,18 @@ class ConversationViewModel(application: Application) :
                     deleteChatModelOfType(BASE_MESSAGE_TYPE.UNLOCK)
                     refreshChatOnManual()
                 }
-            } catch (ex: Throwable) {
+            } catch (ex: Exception) {
                 ex.printStackTrace()
             }
         }
 
     }
 
-    suspend fun deleteChatModelOfType(type: BASE_MESSAGE_TYPE) {
-        AppObjectController.appDatabase.chatDao()
-            .deleteSpecificTypeChatModel(inboxEntity.conversation_id, type)
+    fun deleteChatModelOfType(type: BASE_MESSAGE_TYPE) {
+        jobs += viewModelScope.launch(Dispatchers.IO) {
+            AppObjectController.appDatabase.chatDao()
+                .deleteSpecificTypeChatModel(inboxEntity.conversation_id, type)
+        }
     }
 
     suspend fun insertUnlockClassToDatabase(unlockChatModel: ChatModel) {

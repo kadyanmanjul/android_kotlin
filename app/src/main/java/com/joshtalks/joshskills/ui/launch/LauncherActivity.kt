@@ -40,7 +40,6 @@ class LauncherActivity : CoreJoshActivity(), CustomPermissionDialogInteractionLi
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_launcher)
         animatedProgressBar()
-        this.reportFullyDrawn()
         Branch.getInstance(applicationContext).resetUserSession()
         WorkManagerAdmin.appStartWorker()
         logAppLaunchEvent(getNetworkOperatorName())

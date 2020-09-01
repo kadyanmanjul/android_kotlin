@@ -268,6 +268,7 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback, Player.
             }
         }
         super.processIntent(intent)
+        checkInboxModel()
         conversationBinding.viewmodel = initViewModel()
         init()
     }
@@ -291,7 +292,7 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback, Player.
                     this.finish()
                     ex.printStackTrace()
                 }
-
+                checkInboxModel()
                 initViewModel()
                 fetchMessage()
             }
@@ -306,6 +307,17 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback, Player.
         }
         notificationActionProcess()
         super.onNewIntent(mIntent)
+    }
+
+    private fun checkInboxModel() {
+        try {
+            if (::inboxEntity.isInitialized.not()) {
+                this.finish()
+            }
+        } catch (ex: Exception) {
+            this.finish()
+        }
+
     }
 
     private fun initViewModel(): ConversationViewModel {
@@ -893,7 +905,7 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback, Player.
             }
         })
 
-        conversationViewModel.refreshViewLiveData.observe(this, Observer { chatModel ->
+        conversationViewModel.refreshViewLiveData.observe(this, { chatModel ->
             val view: BaseChatViewHolder =
                 conversationBinding.chatRv.getViewResolverAtPosition(conversationBinding.chatRv.viewResolverCount - 1) as BaseChatViewHolder
             view.message = chatModel
@@ -901,7 +913,7 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback, Player.
                 conversationBinding.chatRv.refreshView(view)
             }, 250)
         })
-        conversationViewModel.emptyChatLiveData.observe(this, Observer {
+        conversationViewModel.emptyChatLiveData.observe(this, {
             hideProgressBar()
             notificationActionProcess()
         })
@@ -1459,7 +1471,7 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback, Player.
                         false
                     )
                 ) {
-                    CoroutineScope(Dispatchers.Main).launch {
+                    AppObjectController.uiHandler.post {
                         conversationViewModel.deleteChatModelOfType(BASE_MESSAGE_TYPE.UNLOCK)
                         if (unlockViewHolder != null) {
                             conversationBinding.chatRv.removeView(unlockViewHolder)
@@ -1487,7 +1499,7 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback, Player.
     }
 
 
-    private suspend fun fetchNewUnlockClasses(data: Intent) {
+    private fun fetchNewUnlockClasses(data: Intent) {
         lastVideoStartingDate?.let { date ->
             showProgressBar()
             val tUnlockClassMessage =

@@ -325,23 +325,28 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
                     initiatePlaySequence()
                 }
             } else {
-                if (interval < courseDuration) {
-                    val response =
-                        AppObjectController.chatNetworkService.changeBatchRequest(chatObject?.conversationId!!)
-                    val arguments = mutableMapOf<String, String>()
-                    val (key, value) = PrefManager.getLastSyncTime(chatObject?.conversationId!!)
-                    arguments[key] = value
-                    if (response.isSuccessful) {
-                        isBatchChanged = true
-                        val videoType =
-                            isVideoPresentInUpdatedChat(chatObject?.conversationId!!, arguments)
-                        videoType?.let {
-                            interval = it.interval
-                            setVideoObject(videoType)
-                            initiatePlaySequence()
+                try {
+                    if (interval < courseDuration) {
+                        val response =
+                            AppObjectController.chatNetworkService.changeBatchRequest(chatObject?.conversationId!!)
+                        val arguments = mutableMapOf<String, String>()
+                        val (key, value) = PrefManager.getLastSyncTime(chatObject?.conversationId!!)
+                        arguments[key] = value
+                        if (response.isSuccessful) {
+                            isBatchChanged = true
+                            val videoType =
+                                isVideoPresentInUpdatedChat(chatObject?.conversationId!!, arguments)
+                            videoType?.let {
+                                interval = it.interval
+                                setVideoObject(videoType)
+                                initiatePlaySequence()
+                            }
                         }
                     }
+                } catch (ex: Exception) {
+                    ex.printStackTrace()
                 }
+
             }
         }
     }
