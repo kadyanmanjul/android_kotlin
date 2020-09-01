@@ -58,6 +58,7 @@ class ListenPractiseFragment private constructor() : Fragment(), AudioPlayerEven
         super.onViewCreated(view, savedInstanceState)
         initView()
         initRV()
+        initAudioPlayer()
     }
 
     private fun initView() {
@@ -70,17 +71,21 @@ class ListenPractiseFragment private constructor() : Fragment(), AudioPlayerEven
         }
         placeholder_bg.setOnClickListener {
             logConversationTapToContinueEvent(conversationPractiseModel.id.toString())
-            placeholder_bg.visibility = View.GONE
-            placeholder_bg.setImageResource(0)
+            hidePlaceHolderView()
             initAudioPlayer()
         }
+    }
+
+    private fun hidePlaceHolderView() {
+        placeholder_bg.visibility = View.GONE
+        placeholder_bg.setImageResource(0)
     }
 
     private fun logConversationTapToContinueEvent(id: String) {
         AppAnalytics.create(AnalyticsEvent.CONVERSATION_PRACTISE_TAP_TO_START.NAME)
             .addBasicParam()
             .addUserDetails()
-            .addParam(AnalyticsEvent.CONVERSATION_PRACTISE_ID.NAME,id)
+            .addParam(AnalyticsEvent.CONVERSATION_PRACTISE_ID.NAME, id)
             .push()
     }
 
@@ -122,6 +127,7 @@ class ListenPractiseFragment private constructor() : Fragment(), AudioPlayerEven
     }
 
     override fun onPlayerResume() {
+        hidePlaceHolderView()
         logConversationPracticeAudioEvent(true)
         RxBus2.publish(ViewPagerDisableEventBus(true))
     }
@@ -130,6 +136,11 @@ class ListenPractiseFragment private constructor() : Fragment(), AudioPlayerEven
     }
 
     override fun onTrackChange(tag: String?) {
+
+        if (placeholder_bg.visibility == View.VISIBLE) {
+            return
+        }
+
         if (tag.isNullOrEmpty().not()) {
             listenModelList.indexOfFirst { it.id == tag?.toInt() }.run {
                 val startPos = audioPractiseAdapter?.items?.size ?: 0
