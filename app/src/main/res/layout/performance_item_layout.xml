@@ -41,7 +41,6 @@
 
         <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tv_practise_content"
-                fontPath="fonts/Roboto-Medium.ttf"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/_4sdp"
@@ -50,17 +49,16 @@
                 android:marqueeRepeatLimit="marquee_forever"
                 android:scrollHorizontally="true"
                 android:singleLine="true"
-                android:textColor="@color/font_color"
-                android:textSize="@dimen/_11sdp" />
+                android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Bold"
+                android:textColor="@color/font_color" />
 
         <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tv_practise_status"
-                fontPath="fonts/Roboto-Light.ttf"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:maxLines="2"
-                android:textColor="@color/gray_82"
-                android:textSize="@dimen/_9sdp" />
+                android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Small_Regular"
+                android:textColor="@color/gray_82" />
     </LinearLayout>
 
     <HorizontalScrollView

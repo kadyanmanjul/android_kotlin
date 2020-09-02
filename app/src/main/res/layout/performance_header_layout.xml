@@ -9,22 +9,20 @@
         android:paddingBottom="@dimen/_12sdp">
 
     <androidx.appcompat.widget.AppCompatTextView
-            fontPath="fonts/Roboto-Medium.ttf"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Semi_Bold"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="start|center"
             android:gravity="start|center"
             android:text="@string/your_performance_so_far"
-            android:textColor="@color/white"
-            android:textSize="@dimen/font_16" />
+            android:textColor="@color/white" />
 
     <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tv_performance_title"
-            fontPath="fonts/Roboto-Medium.ttf"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Semi_Bold"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end|center"
             android:gravity="center"
-            android:textColor="@color/white"
-            android:textSize="@dimen/font_16" />
+            android:textColor="@color/white" />
 </FrameLayout>
