@@ -65,7 +65,7 @@
 
         <TextView
                 android:id="@+id/textView3"
-                style="@style/TextStyle.TopBarNoScroll"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/_16sdp"
@@ -73,14 +73,13 @@
                 android:gravity="center"
                 android:text="@string/starting_title"
                 android:textColor="@color/black"
-                android:textSize="@dimen/font_22"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/transation_id" />
 
         <TextView
                 android:id="@+id/course"
-                style="@style/TextStyle.TopBarNoScroll"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/_16sdp"
@@ -88,7 +87,6 @@
                 android:gravity="center"
                 android:text="@string/starting_info"
                 android:textColor="@color/dark_grey"
-                android:textSize="@dimen/font_16"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.497"
                 app:layout_constraintStart_toStartOf="parent"
@@ -96,7 +94,7 @@
 
         <TextView
                 android:id="@+id/transation_id"
-                style="@style/TextStyle.TopBarNoScroll"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/_16sdp"
@@ -104,7 +102,6 @@
                 android:gravity="center"
                 android:text="@string/trx_id"
                 android:textColor="@color/grey"
-                android:textSize="@dimen/_10sdp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/line" />
@@ -140,7 +137,7 @@
 
         <TextView
                 android:id="@+id/tutor_line"
-                style="@style/TextStyle.TopBarNoScroll"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_20sdp"
@@ -148,21 +145,19 @@
                 android:gravity="right"
                 android:text="@string/tutor_line"
                 android:textColor="@color/dark_grey"
-                android:textSize="@dimen/font_14"
                 app:layout_constraintEnd_toEndOf="@+id/author_layout"
                 app:layout_constraintTop_toTopOf="@+id/author_layout"
                 tools:ignore="MissingConstraints,RtlHardcoded" />
 
         <TextView
                 android:id="@+id/start_register"
-                style="@style/TextStyle.TopBarNoScroll"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/_20sdp"
                 android:gravity="right"
                 android:text="@string/tutor_register"
                 android:textColor="@color/dark_grey"
-                android:textSize="@dimen/font_14"
                 app:layout_constraintEnd_toEndOf="@+id/author_layout"
                 app:layout_constraintTop_toBottomOf="@+id/tutor_line"
                 tools:ignore="MissingConstraints,RtlHardcoded" />
@@ -178,7 +173,7 @@
 
         <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/materialButton"
-                style="@style/TextStyle.TopBarNoScroll"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Button"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -192,7 +187,6 @@
                 android:padding="@dimen/_8sdp"
                 android:text="@string/register_now"
                 android:textColor="@color/white"
-                android:textSize="@dimen/font_18"
                 app:cornerRadius="@dimen/_8sdp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
