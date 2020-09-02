@@ -12,8 +12,8 @@
             android:layout_centerVertical="true"
             android:singleLine="true"
             android:textColor="@android:color/black"
-            android:textSize="@dimen/font_16"
-            android:textStyle="bold"
+            android:text="sdfsdf sdfsdf sdfsd"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Bold"
             android:visibility="visible" />
 
     <ImageView

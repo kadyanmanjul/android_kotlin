@@ -63,7 +63,7 @@
                     android:layout_marginTop="@dimen/_16sdp"
                     android:gravity="center"
                     android:textColor="@color/white"
-                    android:textSize="@dimen/font_20"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Regular"
                     android:visibility="gone"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintRight_toRightOf="parent"
