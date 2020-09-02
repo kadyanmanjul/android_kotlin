@@ -59,12 +59,11 @@
 
         <TextView
                 android:id="@+id/textView3"
-                style="@style/TextStyle.TopBarNoScroll"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/complete_payment"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4"
                 android:textColor="@color/black"
-                android:textSize="@dimen/font_20"
                 app:layout_constraintBottom_toBottomOf="@+id/view"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -73,7 +72,6 @@
 
         <com.google.android.material.button.MaterialButton
                 android:id="@+id/chat_pay"
-                style="@style/TextStyle.TopBarNoScroll"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/_24sdp"
@@ -84,8 +82,8 @@
                 android:paddingVertical="@dimen/_8sdp"
                 android:text="@string/chat_option"
                 android:textAllCaps="false"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Button"
                 android:textColor="@color/dark_grey"
-                android:textSize="@dimen/_14sdp"
                 app:cornerRadius="@dimen/_20sdp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
