@@ -207,7 +207,6 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
     private var readMessageTimerTask: TimerTask? = null
     private val uiHandler = Handler(Looper.getMainLooper())
     private var audioPlayerManager: ExoAudioPlayer? = null
-    private var mUserIsSeeking = false
     private var isOnlyChat = false
     private var isNewChatViewAdd = true
     private var lastDay: Date = Date()
