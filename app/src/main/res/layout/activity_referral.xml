@@ -54,18 +54,18 @@
 
                 <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/tv_header"
-                        fontPath="fonts/Roboto-Medium.ttf"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:ellipsize="marquee"
                         android:gravity="center"
                         android:paddingStart="@dimen/_8sdp"
-                        android:paddingTop="@dimen/_16sdp"
+                        android:paddingTop="@dimen/_12sdp"
                         android:paddingEnd="@dimen/_8sdp"
+                        android:paddingBottom="@dimen/_4sdp"
                         android:singleLine="true"
                         android:text="@string/paise_kamao"
                         android:textColor="@color/white"
-                        android:textSize="@dimen/font_22"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4_Semi_Bold"
                         app:layout_constraintLeft_toLeftOf="parent"
                         app:layout_constraintRight_toRightOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
@@ -86,13 +86,12 @@
 
                 <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/text_view_1"
-                        fontPath="fonts/OpenSans-SemiBold.ttf"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/_16sdp"
                         android:gravity="center"
                         android:textColor="@color/white"
-                        android:textSize="@dimen/font_15"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/image_view"
@@ -100,13 +99,12 @@
 
                 <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/text_view_2"
-                        fontPath="fonts/Roboto-Regular.ttf"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/_8sdp"
                         android:gravity="center"
                         android:textColor="@color/font_color"
-                        android:textSize="@dimen/font_15"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/text_view_1"
@@ -124,7 +122,6 @@
 
             <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/text_view_3"
-                    fontPath="fonts/Roboto-Bold.ttf"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:ellipsize="marquee"
@@ -132,14 +129,13 @@
                     android:singleLine="true"
                     android:text="@string/share_more_text"
                     android:textColor="@color/font_color"
-                    android:textSize="@dimen/font_13"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintRight_toRightOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
             <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
                     android:id="@+id/tv_referral_code"
-                    fontPath="fonts/Roboto-Bold.ttf"
                     android:layout_width="0dp"
                     android:layout_height="@dimen/_42sdp"
                     android:layout_gravity="center"
@@ -157,7 +153,7 @@
                     android:paddingBottom="@dimen/_8sdp"
                     android:textColor="@color/font_color"
                     android:textIsSelectable="true"
-                    android:textSize="@dimen/font_16"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Bold"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/text_view_3"
@@ -166,7 +162,6 @@
                     tools:text="5CFFD" />
 
             <com.google.android.material.button.MaterialButton
-                    fontPath="fonts/Roboto-Bold.ttf"
                     android:layout_width="0dp"
                     android:layout_height="@dimen/_46sdp"
                     android:layout_gravity="center"
@@ -177,9 +172,9 @@
                     android:gravity="center"
                     android:onClick="@{()->handler.inviteOnlyWhatsapp()}"
                     android:text="Whatsapp"
-                    android:textAllCaps="true"
+                    android:textAllCaps="false"
                     android:textColor="@android:color/white"
-                    android:textSize="@dimen/font_13"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
                     app:cornerRadius="@dimen/_4sdp"
                     app:icon="@drawable/ic_whatsapp_share"
                     app:iconGravity="textStart"
@@ -195,19 +190,18 @@
 
             <com.google.android.material.button.MaterialButton
                     android:id="@+id/btn_other_share"
-                    fontPath="fonts/Roboto-Bold.ttf"
                     android:layout_width="0dp"
                     android:layout_height="@dimen/_44sdp"
                     android:layout_marginTop="@dimen/_8sdp"
                     android:backgroundTint="@color/pdf_bg_color"
                     android:clickable="true"
                     android:focusable="true"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Bold"
                     android:gravity="center"
                     android:onClick="@{()->handler.inviteFriends(packageVal)}"
                     android:text="\u00b7\u00b7\u00b7"
                     android:textAllCaps="true"
                     android:textColor="@color/font_color"
-                    android:textSize="@dimen/font_18"
                     app:cornerRadius="@dimen/_4sdp"
                     app:layout_constraintEnd_toEndOf="@+id/tv_referral_code"
                     app:layout_constraintTop_toBottomOf="@id/tv_referral_code"
