@@ -11,24 +11,22 @@
 
     <com.google.android.material.textview.MaterialTextView
             android:id="@+id/alarm_time_tv"
-            fontPath="@fonts/Poppins-Bold"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_40sdp"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H2"
             android:textColor="@color/white"
-            android:textSize="@dimen/font_42"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.textview.MaterialTextView
             android:id="@+id/alarm_am_pm"
-            fontPath="fonts/Poppins-SemiBold.ttf"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/_8sdp"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
             android:textColor="@color/white"
-            android:textSize="@dimen/font_14"
             app:layout_constraintBaseline_toBaselineOf="@+id/alarm_time_tv"
             app:layout_constraintBottom_toBottomOf="@+id/alarm_time_tv"
             app:layout_constraintStart_toEndOf="@+id/alarm_time_tv" />
@@ -36,13 +34,12 @@
 
     <com.google.android.material.textview.MaterialTextView
             android:id="@+id/alarm_tag"
-            fontPath="fonts/Poppins-Regular.ttf"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_16sdp"
             android:text="@string/class_reminder"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
             android:textColor="@color/white"
-            android:textSize="@dimen/font_12"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/alarm_time_tv" />
@@ -50,12 +47,11 @@
 
     <com.google.android.material.textview.MaterialTextView
             android:id="@+id/start_learning_tv"
-            fontPath="@fonts/Poppins-Bold.ttf"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/start_learning_now"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4"
             android:textColor="@color/white"
-            android:textSize="@dimen/font_20"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -63,21 +59,19 @@
 
     <com.google.android.material.textview.MaterialTextView
             android:id="@+id/start_exp"
-            fontPath="@fonts/Poppins-Regular.ttf"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/_48sdp"
             android:layout_marginEnd="@dimen/_48sdp"
             android:gravity="center"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
             android:textColor="@color/white"
-            android:textSize="@dimen/font_14"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/start_learning_tv" />
 
     <com.google.android.material.textview.MaterialTextView
             android:id="@+id/dismiss_bt"
-            fontPath="fonts/Poppins-Medium.ttf"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/_8sdp"
@@ -90,9 +84,8 @@
             android:paddingBottom="@dimen/_14sdp"
             android:text="@string/dismiss"
             android:textAllCaps="false"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Button"
             android:textColor="@color/white"
-            android:textSize="@dimen/font_18"
-            android:textStyle="bold"
             app:cornerRadius="@dimen/_16sdp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/start_course_bt"
@@ -103,7 +96,6 @@
 
     <com.google.android.material.textview.MaterialTextView
             android:id="@+id/start_course_bt"
-            fontPath="fonts/Poppins-Bold.ttf"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/_8sdp"
@@ -116,9 +108,8 @@
             android:paddingBottom="@dimen/_14sdp"
             android:text="@string/start_course"
             android:textAllCaps="false"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Button"
             android:textColor="@color/black"
-            android:textSize="@dimen/font_18"
-            android:textStyle="bold"
             app:cornerRadius="@dimen/_20sdp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

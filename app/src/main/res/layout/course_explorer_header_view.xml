@@ -31,7 +31,6 @@
 
         <com.google.android.material.button.MaterialButton
                 android:id="@+id/buy_now_button"
-                fontPath="fonts/OpenSans-SemiBold.ttf"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="end|bottom"
@@ -40,10 +39,10 @@
                 android:gravity="center"
                 android:paddingTop="@dimen/_6sdp"
                 android:paddingBottom="@dimen/_6sdp"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
                 android:text="@string/show_details"
                 android:textAllCaps="false"
                 android:textColor="@color/white"
-                android:textSize="@dimen/font_13"
                 android:visibility="gone"
                 tools:visibility="visible" />
 

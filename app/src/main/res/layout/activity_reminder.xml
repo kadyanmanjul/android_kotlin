@@ -12,8 +12,8 @@
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
             android:id="@+id/parent_Container"
+            android:layout_width="match_parent"
             android:layout_height="match_parent">
 
         <include
@@ -40,15 +40,14 @@
 
                 <com.google.android.material.textview.MaterialTextView
                         android:id="@+id/reminder_msg_tv"
-                        fontPath="@fonts/Poppins-Regular.ttf"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="@dimen/_16sdp"
                         android:layout_marginTop="@dimen/_16sdp"
                         android:layout_marginEnd="@dimen/_16sdp"
                         android:text="@string/reminder_note"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
                         android:textColor="@color/black"
-                        android:textSize="@dimen/font_14"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
@@ -74,14 +73,13 @@
 
                 <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/repeat_tv"
-                        fontPath="fonts/Poppins-Medium.ttf"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="@dimen/_16sdp"
                         android:layout_marginTop="@dimen/_8sdp"
                         android:text="@string/repeat"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
                         android:textColor="@color/black"
-                        android:textSize="@dimen/font_14"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/sperator1" />
 
@@ -114,7 +112,6 @@
                         <com.google.android.material.chip.Chip
                                 android:id="@+id/weekend_chip"
                                 style="@style/ReminderChipStyle"
-                                fontPath="fonts/Poppins-Medium.ttf"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="@string/on_weekends"
@@ -130,7 +127,6 @@
                         <com.google.android.material.chip.Chip
                                 android:id="@+id/weekdays_chip"
                                 style="@style/ReminderChipStyle"
-                                fontPath="fonts/Poppins-Medium.ttf"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="@string/on_weekdays"
@@ -146,7 +142,6 @@
                         <com.google.android.material.chip.Chip
                                 android:id="@+id/everyday_chip"
                                 style="@style/ReminderChipStyle"
-                                fontPath="fonts/Poppins-Medium.ttf"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:checked="true"
@@ -177,19 +172,18 @@
         <com.google.android.material.button.MaterialButton
                 android:id="@+id/create_reminder_btn"
                 style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                fontPath="fonts/Poppins-SemiBold.ttf"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="@dimen/_16sdp"
                 android:layout_marginBottom="@dimen/_16sdp"
-                android:letterSpacing="0.05"
                 android:paddingStart="@dimen/_32sdp"
                 android:paddingTop="@dimen/_6sdp"
                 android:paddingEnd="@dimen/_32sdp"
                 android:paddingBottom="@dimen/_6sdp"
                 android:text="@string/set_reminder"
                 android:textAllCaps="false"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Button"
                 app:cornerRadius="@dimen/_16sdp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"

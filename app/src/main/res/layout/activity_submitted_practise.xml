@@ -31,17 +31,16 @@
 
                 <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/text_message_title"
-                        fontPath="fonts/Roboto-Medium.ttf"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:ellipsize="marquee"
                         android:gravity="center_vertical|start"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Semi_Bold"
                         android:paddingHorizontal="@dimen/_4sdp"
                         android:paddingVertical="@dimen/_4sdp"
                         android:singleLine="true"
                         android:text="@string/submitted_recording"
-                        android:textColor="@color/black"
-                        android:textSize="@dimen/font_18" />
+                        android:textColor="@color/black" />
 
                 <androidx.appcompat.widget.AppCompatImageView
                         android:id="@+id/iv_back"
