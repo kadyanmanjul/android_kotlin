@@ -8,27 +8,24 @@
 
     <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/welcome_msg"
-            fontPath="fonts/Poppins-Regular.ttf"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/_12sdp"
             android:layout_marginTop="@dimen/_12sdp"
             android:textColor="@color/dark_grey"
-            android:textSize="@dimen/font_14"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Well done Akshat, you scored" />
 
     <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/score"
-            fontPath="fonts/Poppins-Bold.ttf"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/_12sdp"
             tools:text="100/100"
             android:textColor="@color/dark_grey"
-            android:textSize="@dimen/font_22"
-            android:textStyle="bold"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/welcome_msg" />
 
@@ -56,13 +53,12 @@
 
     <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
             android:id="@+id/extra_text"
-            fontPath="fonts/Poppins-Regular.ttf"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/_12sdp"
             android:layout_marginTop="@dimen/_4sdp"
             android:textColor="@color/dark_grey"
-            android:textSize="@dimen/font_14"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/divider"

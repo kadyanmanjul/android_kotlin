@@ -25,13 +25,12 @@
 
         <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
                 android:id="@+id/text_title"
-                fontPath="fonts/Roboto-Regular.ttf"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:gravity="center"
-                android:textColor="@color/time_color"
-                android:textSize="@dimen/font_15" />
+                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
+                android:textColor="@color/time_color" />
 
     </androidx.cardview.widget.CardView>
 </FrameLayout>

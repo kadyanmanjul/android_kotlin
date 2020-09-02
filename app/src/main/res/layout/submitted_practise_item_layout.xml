@@ -30,14 +30,13 @@
 
         <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/title"
-                fontPath="fonts/Poppins-Medium.ttf"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginHorizontal="@dimen/_8sdp"
                 android:gravity="start"
                 android:textColor="@color/black"
-                android:textSize="@dimen/font_16"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Semi_Bold"
                 app:layout_constraintBottom_toBottomOf="@+id/image_view"
                 app:layout_constraintStart_toEndOf="@+id/image_view"
                 app:layout_constraintTop_toTopOf="@+id/image_view"
@@ -46,14 +45,13 @@
 
         <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/duration"
-                fontPath="fonts/Poppins-Regular.ttf"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginTop="@dimen/_2sdp"
                 android:gravity="start"
                 android:textColor="@color/black"
-                android:textSize="@dimen/font_13"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
                 app:layout_constraintStart_toStartOf="@+id/title"
                 app:layout_constraintTop_toBottomOf="@+id/title"
                 tools:ignore="MissingPrefix"
@@ -61,13 +59,12 @@
 
         <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/date"
-                fontPath="fonts/Poppins-Regular.ttf"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:gravity="start"
                 android:textColor="@color/black"
-                android:textSize="@dimen/font_13"
                 android:layout_marginStart="@dimen/_20sdp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/duration"

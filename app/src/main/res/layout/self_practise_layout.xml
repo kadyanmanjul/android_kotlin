@@ -28,13 +28,12 @@
 
             <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/title_tv"
-                    fontPath="fonts/Poppins-Regular.ttf"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:gravity="start"
                     android:text="@string/select_character"
                     android:textColor="@color/dark_grey"
-                    android:textSize="@dimen/font_14"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
@@ -78,7 +77,6 @@
 
             <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/tv_first_user"
-                    fontPath="fonts/Poppins-Medium.ttf"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="@dimen/_8sdp"
@@ -86,7 +84,7 @@
                     android:gravity="start"
                     android:maxLength="16"
                     android:textColor="@color/black"
-                    android:textSize="@dimen/font_12"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
                     app:layout_constraintBottom_toBottomOf="@+id/iv_first_user"
                     app:layout_constraintStart_toEndOf="@+id/iv_first_user"
                     app:layout_constraintTop_toTopOf="@+id/iv_first_user"
@@ -125,14 +123,13 @@
 
             <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/tv_second_user"
-                    fontPath="fonts/Poppins-Medium.ttf"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:ellipsize="marquee"
                     android:gravity="end"
                     android:maxLength="16"
                     android:textColor="@color/black"
-                    android:textSize="@dimen/font_12"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
                     app:layout_constraintBottom_toBottomOf="@+id/iv_first_user"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@+id/iv_first_user"

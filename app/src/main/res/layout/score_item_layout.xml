@@ -3,12 +3,11 @@
 
     <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tv_number"
-            fontPath="fonts/Roboto-Medium.ttf"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/score_unselect_drawable"
             android:gravity="center"
             android:text="1"
-            android:textColor="@color/ca_color"
-            android:textSize="@dimen/font_14" />
+            android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
+            android:textColor="@color/ca_color" />
 </layout>

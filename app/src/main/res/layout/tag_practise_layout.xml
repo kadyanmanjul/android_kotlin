@@ -31,7 +31,6 @@
 
         <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
                 android:id="@+id/tv_sender_name"
-                fontPath="fonts/Roboto-Medium.ttf"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
@@ -46,20 +45,20 @@
                 android:inputType=""
                 android:maxLines="1"
                 android:paddingBottom="@dimen/_3sdp"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Bold"
                 android:textAlignment="center"
                 android:textColor="@color/colorPrimaryDark"
-                android:textSize="@dimen/font_15"
                 android:visibility="visible" />
 
         <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tv_detail_last"
-                fontPath="fonts/Roboto-Regular.ttf"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/tv_sender_name"
                 android:layout_alignParentStart="true"
                 android:layout_gravity="center|start"
                 android:layout_marginEnd="@dimen/_8sdp"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
                 android:clickable="false"
                 android:drawablePadding="@dimen/_4sdp"
                 android:drawableTint="@color/emoji_icon_color"
@@ -68,8 +67,7 @@
                 android:inputType=""
                 android:maxLines="2"
                 android:textAlignment="center"
-                android:textColor="@color/emoji_icon_color"
-                android:textSize="@dimen/font_14" />
+                android:textColor="@color/emoji_icon_color" />
 
 
         <androidx.appcompat.widget.AppCompatImageView

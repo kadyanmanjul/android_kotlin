@@ -48,7 +48,6 @@
 
             <com.google.android.material.button.MaterialButton
                     android:id="@+id/btn_start"
-                    fontPath="fonts/Poppins-Bold.ttf"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="@dimen/_6sdp"
@@ -60,7 +59,7 @@
                     android:textAlignment="center"
                     android:textAllCaps="false"
                     android:textColor="@color/white"
-                    android:textSize="@dimen/font_14"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Bold"
                     app:cornerRadius="@dimen/_16sdp"
                     app:elevation="0dp"
                     app:icon="@drawable/ic_baseline_arrow_right"

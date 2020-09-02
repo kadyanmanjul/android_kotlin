@@ -7,32 +7,29 @@
 
     <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/welcome_msg"
-            fontPath="fonts/Poppins-Regular.ttf"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/_12sdp"
             android:layout_marginTop="@dimen/_12sdp"
             android:textColor="@color/dark_grey"
-            android:textSize="@dimen/font_14"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Hello Akshat," />
 
     <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/text"
-            fontPath="fonts/Poppins-Regular.ttf"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/_12sdp"
             android:text="@string/test_summary"
             android:textColor="@color/dark_grey"
-            android:textSize="@dimen/font_14"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/welcome_msg" />
 
     <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/total_questions"
-            fontPath="fonts/Poppins-Bold.ttf"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginVertical="@dimen/_9sdp"
@@ -44,8 +41,7 @@
             android:minLines="2"
             android:paddingVertical="@dimen/_9sdp"
             android:textColor="@color/black"
-            android:textSize="@dimen/font_16"
-            android:textStyle="bold"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.07"
@@ -57,7 +53,6 @@
 
     <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/total_attempted"
-            fontPath="fonts/Poppins-Bold.ttf"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginVertical="@dimen/_9sdp"
@@ -69,8 +64,7 @@
             android:minLines="2"
             android:paddingVertical="@dimen/_9sdp"
             android:textColor="@color/black"
-            android:textSize="@dimen/font_16"
-            android:textStyle="bold"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.97"
