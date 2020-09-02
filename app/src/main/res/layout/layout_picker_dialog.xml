@@ -19,7 +19,7 @@
                 android:layout_toStartOf="@+id/img_dismiss"
                 android:layout_toLeftOf="@+id/img_dismiss"
                 android:text="Select country"
-                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4"
                 android:textColor="@android:color/secondary_text_light" />
 
         <ImageView
@@ -93,6 +93,7 @@
             android:layout_centerHorizontal="true"
             android:layout_marginTop="16dp"
             android:text="no result found "
+            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
             android:textColor="@android:color/primary_text_light"
             android:visibility="gone" />
 

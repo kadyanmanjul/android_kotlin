@@ -35,14 +35,19 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
 
-                <TextView
+                <com.google.android.material.textview.MaterialTextView
                         android:id="@+id/alarm_list_description"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/_16sdp"
+                        android:layout_marginTop="@dimen/_12sdp"
+                        android:layout_marginEnd="@dimen/_16sdp"
+                        android:background="@drawable/yellow_rounded_bg"
+                        android:paddingTop="@dimen/_8sdp"
+                        android:paddingBottom="@dimen/_8sdp"
                         android:paddingStart="@dimen/_16sdp"
-                        android:paddingTop="@dimen/_16sdp"
                         android:paddingEnd="@dimen/_16sdp"
-                        android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent" />
 
@@ -73,10 +78,10 @@
                 android:paddingBottom="@dimen/_6sdp"
                 android:text="@string/add_reminder"
                 android:textAllCaps="false"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Button"
                 app:cornerRadius="@dimen/_16sdp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Button"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -88,7 +93,6 @@
         <com.google.android.material.button.MaterialButton
                 android:id="@+id/delete_reminders_btn"
                 style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_16sdp"
@@ -99,6 +103,7 @@
                 android:paddingBottom="@dimen/_6sdp"
                 android:text="@string/delete"
                 android:textAllCaps="false"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Button"
                 android:visibility="gone"
                 app:cornerRadius="@dimen/_16sdp"
                 app:layout_constraintBottom_toBottomOf="parent"

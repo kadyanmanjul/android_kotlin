@@ -57,13 +57,12 @@
 
             <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/top_feedback_title"
-                    fontPath="fonts/Roboto-Regular.ttf"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/_16sdp"
                     android:gravity="center"
-                    android:textColor="@color/white"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Regular"
+                    android:textColor="@color/white"
                     android:visibility="gone"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintRight_toRightOf="parent"
@@ -97,12 +96,11 @@
 
                     <androidx.appcompat.widget.AppCompatTextView
                             android:id="@+id/feedback_title"
-                            fontPath="fonts/Roboto-Regular.ttf"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:gravity="center"
+                            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Regular"
                             android:textColor="@color/gray_53"
-                            android:textSize="@dimen/font_18"
                             app:layout_constraintLeft_toLeftOf="parent"
                             app:layout_constraintRight_toRightOf="parent"
                             app:layout_constraintTop_toTopOf="parent"
@@ -127,7 +125,6 @@
 
                     <androidx.appcompat.widget.AppCompatTextView
                             android:id="@+id/feedback_rating_in_words"
-                            fontPath="fonts/Roboto-Bold.ttf"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
@@ -135,8 +132,8 @@
                             android:layout_marginEnd="@dimen/_6sdp"
                             android:gravity="center"
                             android:padding="@dimen/_6sdp"
+                            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4"
                             android:textColor="@color/font_color"
-                            android:textSize="@dimen/font_22"
                             android:textStyle="bold"
                             app:contentPadding="@dimen/_8sdp"
                             app:layout_constraintEnd_toEndOf="parent"
@@ -160,7 +157,6 @@
 
                     <androidx.appcompat.widget.AppCompatEditText
                             android:id="@+id/et_feedback"
-                            fontPath="fonts/Roboto-Regular.ttf"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="@dimen/_8sdp"
@@ -178,10 +174,10 @@
                             android:paddingEnd="@dimen/_16sdp"
                             android:paddingBottom="@dimen/_10sdp"
                             android:singleLine="false"
+                            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
                             android:textColor="@color/font_color"
                             android:textColorHint="@color/emoji_bg_color"
                             android:textCursorDrawable="@drawable/cursor_drawable"
-                            android:textSize="@dimen/font_16"
                             android:visibility="gone"
                             app:layout_constraintBottom_toTopOf="@+id/submit"
                             app:layout_constraintEnd_toEndOf="parent"
@@ -194,7 +190,6 @@
 
                     <com.google.android.material.button.MaterialButton
                             android:id="@+id/submit"
-                            fontPath="fonts/Roboto-Regular.ttf"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
@@ -206,10 +201,9 @@
                             android:text="@string/submit"
                             android:textAllCaps="false"
                             android:textColor="@color/white"
-                            android:textSize="@dimen/font_18"
+                            android:textAppearance="@style/TextAppearance.JoshTypography.Button"
                             app:cornerRadius="@dimen/_4sdp"
                             app:elevation="0dp"
-
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"

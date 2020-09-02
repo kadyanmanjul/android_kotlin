@@ -25,7 +25,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/_8sdp"
-            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Bold"
             android:textColor="@color/white"
             app:layout_constraintBaseline_toBaselineOf="@+id/alarm_time_tv"
             app:layout_constraintBottom_toBottomOf="@+id/alarm_time_tv"
