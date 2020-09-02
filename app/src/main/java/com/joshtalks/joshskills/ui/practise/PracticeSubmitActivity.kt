@@ -2,17 +2,13 @@ package com.joshtalks.joshskills.ui.practise
 
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.content.ComponentName
-import android.content.Context
 import android.content.Intent
-import android.content.ServiceConnection
 import android.content.pm.ActivityInfo
 import android.content.res.ColorStateList
 import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
-import android.os.IBinder
 import android.os.Looper
 import android.os.SystemClock
 import android.provider.OpenableColumns
@@ -62,9 +58,6 @@ import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.custom_ui.exo_audio_player.AudioPlayerEventListener
 import com.joshtalks.joshskills.core.io.AppDirectory
-import com.joshtalks.joshskills.core.playback.MusicService
-import com.joshtalks.joshskills.core.playback.PlaybackInfoListener
-import com.joshtalks.joshskills.core.playback.PlayerInterface
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.ActivityPraticeSubmitBinding
@@ -108,9 +101,6 @@ class PractiseSubmitActivity : CoreJoshActivity(), Player.EventListener, AudioPl
 
     private lateinit var binding: ActivityPraticeSubmitBinding
     private lateinit var chatModel: ChatModel
-    private var mPlayerInterface: PlayerInterface? = null
-    private var mMusicService: MusicService? = null
-    private var mPlaybackListener: PlaybackListener? = null
     private var sBound = false
     private var mUserIsSeeking = false
     private var isAudioRecordDone = false
@@ -178,7 +168,6 @@ class PractiseSubmitActivity : CoreJoshActivity(), Player.EventListener, AudioPl
             .addParam("chatId", chatModel.chatId)
         initToolbarView()
         setPracticeInfoView()
-        doBindService()
         addObserver()
         chatModel.question?.run {
             if (this.practiceEngagement.isNullOrEmpty()) {
@@ -208,9 +197,6 @@ class PractiseSubmitActivity : CoreJoshActivity(), Player.EventListener, AudioPl
         } else {
             ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         }
-        if (mPlayerInterface != null && mPlayerInterface!!.isMediaPlayer) {
-            mPlayerInterface?.onResumeActivity()
-        }
         try {
             binding.videoPlayer.onResume()
         } catch (ex: Exception) {
@@ -229,14 +215,6 @@ class PractiseSubmitActivity : CoreJoshActivity(), Player.EventListener, AudioPl
         if (audioManager != null) {
             audioManager?.onPause()
         }
-        if (mPlayerInterface != null && mPlayerInterface!!.isPlaying) {
-            mPlayerInterface?.resumeOrPause()
-            setAudioPlayerStateDefault()
-        }
-
-        if (mPlayerInterface != null && mPlayerInterface!!.isMediaPlayer) {
-            mPlayerInterface?.onPauseActivity()
-        }
 
         try {
             binding.videoPlayer.onPause()
@@ -251,8 +229,6 @@ class PractiseSubmitActivity : CoreJoshActivity(), Player.EventListener, AudioPl
         } catch (ex: Exception) {
 
         }
-        mPlayerInterface?.clearNotification()
-
     }
 
     override fun onStop() {
@@ -269,18 +245,14 @@ class PractiseSubmitActivity : CoreJoshActivity(), Player.EventListener, AudioPl
                 binding.videoPlayerSubmit.onStop()
             }
         } catch (ex: Exception) {
-
+            ex.printStackTrace()
         }
-
     }
-
 
     override fun onDestroy() {
         try {
             super.onDestroy()
             audioManager?.release()
-            mPlaybackListener = null
-            doUnbindService()
         } catch (ex: Exception) {
 
         }
@@ -965,92 +937,6 @@ class PractiseSubmitActivity : CoreJoshActivity(), Player.EventListener, AudioPl
         }
     }
 
-
-    private fun doBindService() {
-        bindService(
-            Intent(this, MusicService::class.java),
-            mConnection,
-            Context.BIND_AUTO_CREATE
-        )
-        sBound = true
-        val startNotStickyIntent = Intent(this, MusicService::class.java)
-        startService(startNotStickyIntent)
-    }
-
-    private val mConnection: ServiceConnection =
-        object : ServiceConnection {
-            override fun onServiceConnected(componentName: ComponentName, iBinder: IBinder) {
-                mMusicService = (iBinder as MusicService.LocalBinder).instance
-                mPlayerInterface = mMusicService?.mediaPlayerHolder
-                if (mPlaybackListener == null) {
-                    mPlaybackListener = PlaybackListener()
-                    mPlayerInterface?.setPlaybackInfoListener(mPlaybackListener)
-                }
-            }
-
-            override fun onServiceDisconnected(componentName: ComponentName) {
-                mMusicService = null
-            }
-        }
-
-    private fun doUnbindService() {
-        if (sBound) {
-            unbindService(mConnection)
-            sBound = false
-        }
-    }
-
-
-    private fun updatePlayingInfo(restore: Boolean, startPlay: Boolean) {
-        try {
-            if (startPlay) {
-                mPlayerInterface?.mediaPlayer?.start()
-                AppObjectController.uiHandler.postDelayed({
-                    try {
-                        val startNotStickyIntent = Intent(this, MusicService::class.java)
-                        startService(startNotStickyIntent)
-                        mPlayerInterface?.clearNotification()
-                    } catch (ex: Exception) {
-                    }
-                }, 250)
-            }
-            if (restore) {
-                if (filePath.isNullOrEmpty().not() && currentAudio == filePath) {
-                    binding.submitPractiseSeekbar.progress = mPlayerInterface!!.playerPosition
-                } else {
-                    binding.practiseSeekbar.progress = mPlayerInterface!!.playerPosition
-                }
-                updateResetStatus(false)
-                AppObjectController.uiHandler.postDelayed({
-                    try {
-                        //stop foreground if coming from pause state
-                        if (mMusicService!!.isRestoredFromPause) {
-                            mMusicService!!.stopForeground(false)
-                            mMusicService!!.isRestoredFromPause = false
-                        }
-                        mPlayerInterface?.clearNotification()
-                    } catch (ex: Exception) {
-                    }
-                }, 250)
-
-            }
-        } catch (ex: Exception) {
-        }
-    }
-
-    private fun updateResetStatus(onPlaybackCompletion: Boolean) {
-        try {
-            if (onPlaybackCompletion) {
-                if (mPlayerInterface!!.state != PlaybackInfoListener.State.COMPLETED && mPlayerInterface!!.isPlaying) {
-                    mPlayerInterface?.resumeOrPause()
-                    mPlayerInterface?.clearNotification()
-                }
-                setAudioPlayerStateDefault()
-            }
-        } catch (ex: Exception) {
-        }
-    }
-
     private fun setAudioPlayerStateDefault() {
         AppObjectController.uiHandler.post {
             binding.practiseSeekbar.progress = 0
@@ -1068,9 +954,6 @@ class PractiseSubmitActivity : CoreJoshActivity(), Player.EventListener, AudioPl
                 .length(Toast.LENGTH_LONG)
                 .solidBackground().show()
         }
-        endAudioEngagePart(binding.practiseSeekbar.progress.toLong())
-        engageAudio()
-        countUpTimer.reset()
         appAnalytics.addParam(AnalyticsEvent.PRACTICE_EXTRA.NAME, "Audio Played")
 
         if (currentAudio == null) {
@@ -1087,8 +970,6 @@ class PractiseSubmitActivity : CoreJoshActivity(), Player.EventListener, AudioPl
                 onPlayAudio(chatModel, chatModel.question?.audioList?.getOrNull(0)!!)
             }
         }
-        cAudioId = chatModel.question?.audioList?.getOrNull(0)?.id
-        mPlayerInterface?.clearNotification()
 
     }
 
@@ -1301,34 +1182,6 @@ class PractiseSubmitActivity : CoreJoshActivity(), Player.EventListener, AudioPl
                 binding.progressLayout.visibility = VISIBLE
                 practiceViewModel.submitPractise(chatModel, requestEngage, engageType)
             }
-        }
-    }
-
-    inner class PlaybackListener : PlaybackInfoListener() {
-        override fun onPositionChanged(position: Int) {
-            mPlayerInterface?.clearNotification()
-            if (!mUserIsSeeking) {
-                RxBus2.publish(SeekBarProgressEventBus(currentAudio!!, position))
-            }
-        }
-
-        override fun onStateChanged(@State state: Int) {
-            try {
-                if (mPlayerInterface!!.state != State.RESUMED && mPlayerInterface!!.state != State.PAUSED) {
-                    updatePlayingInfo(restore = false, startPlay = true)
-                }
-            } catch (ex: Exception) {
-                ex.printStackTrace()
-            }
-        }
-
-        override fun onPlaybackCompleted() {
-            updateResetStatus(true)
-            mPlayerInterface?.clearNotification()
-        }
-
-        override fun onPlaybackStop() {
-            mPlayerInterface?.clearNotification()
         }
     }
 

@@ -14,12 +14,6 @@
                 type="com.joshtalks.joshskills.ui.chat.ConversationViewModel" />
     </data>
 
-
-    <androidx.coordinatorlayout.widget.CoordinatorLayout
-            android:id="@+id/context_view"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
         <RelativeLayout
                 android:id="@+id/root_view"
                 android:layout_width="match_parent"
@@ -118,7 +112,8 @@
                     <LinearLayout
                             android:paddingHorizontal="@dimen/_8sdp"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content">
+                            android:layout_height="wrap_content"
+                            android:paddingHorizontal="@dimen/_16sdp">
 
                         <androidx.appcompat.widget.AppCompatEditText
                                 android:id="@+id/chat_edit"
@@ -220,7 +215,6 @@
                         app:layout_constraintTop_toTopOf="@+id/inputLL"
                         app:layout_constraintVertical_bias="1.0" />
 
-
                 <androidx.appcompat.widget.AppCompatImageView
                         android:id="@+id/message_button"
                         android:layout_width="@dimen/_36sdp"
@@ -241,9 +235,4 @@
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </RelativeLayout>
-
-
-        <include layout="@layout/player_controls_panel" />
-
-    </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>

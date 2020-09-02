@@ -20,26 +20,7 @@ import androidx.annotation.IntDef;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
-
-/**
- * Allows {@link MediaPlayerHolder} to report media playback duration and progress updates to
- * the {@link }.
- */
 public abstract class PlaybackInfoListener {
-
-    public void onPositionChanged(final int position) {
-    }
-
-    public void onStateChanged(final @State int state) {
-    }
-
-    public void onPlaybackCompleted() {
-    }
-
-    public void onPlaybackStop() {
-
-    }
-
     @IntDef({State.INVALID, State.PLAYING, State.PAUSED, State.COMPLETED, State.RESUMED, State.STOPPED})
     @Retention(RetentionPolicy.SOURCE)
     public @interface State {

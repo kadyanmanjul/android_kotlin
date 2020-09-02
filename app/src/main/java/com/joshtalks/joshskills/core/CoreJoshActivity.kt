@@ -7,9 +7,7 @@ import android.os.Build
 import android.os.Bundle
 import com.joshtalks.joshskills.core.analytics.LogException
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
-import com.joshtalks.joshskills.repository.server.engage.Graph
 import com.joshtalks.joshskills.repository.server.feedback.FeedbackTypes
-import com.joshtalks.joshskills.repository.service.EngagementNetworkHelper
 import com.joshtalks.joshskills.ui.chat.PRACTISE_SUBMIT_REQUEST_CODE
 import com.joshtalks.joshskills.ui.chat.VIDEO_OPEN_REQUEST_CODE
 import com.joshtalks.joshskills.ui.feedback.FeedbackFragment
@@ -25,11 +23,7 @@ import kotlinx.coroutines.withContext
 import java.util.concurrent.TimeUnit
 
 abstract class CoreJoshActivity : BaseActivity() {
-    protected var countUpTimer = CountUpTimer(true)
-    protected var videoViewGraphList: MutableSet<Graph> = mutableSetOf()
-    protected var graph: Graph? = null
     protected var currentAudio: String? = null
-    protected var cAudioId: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         requestedOrientation = if (Build.VERSION.SDK_INT == 26) {
@@ -47,22 +41,6 @@ abstract class CoreJoshActivity : BaseActivity() {
         } catch (ex: Throwable) {
             //LogException.catchException(ex)
         }
-    }
-
-
-    protected fun endAudioEngagePart(endTime: Long) {
-        graph?.endTime = endTime
-        graph?.let {
-            videoViewGraphList.add(it)
-        }
-        graph = null
-    }
-
-    protected fun engageAudio() {
-        if (cAudioId.isNullOrEmpty().not() && videoViewGraphList.isNullOrEmpty().not()) {
-            EngagementNetworkHelper.engageAudioApi(cAudioId!!, videoViewGraphList.toList())
-        }
-        videoViewGraphList.clear()
     }
 
     fun showPromotionScreen(courseId: String?, placeholderImageUrl: String?) {

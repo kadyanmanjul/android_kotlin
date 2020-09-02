@@ -1,7 +1,6 @@
 package com.joshtalks.joshskills.ui.assessment.view
 
 import android.content.Context
-import android.support.v4.media.session.PlaybackStateCompat
 import android.util.AttributeSet
 import android.view.View
 import android.widget.FrameLayout
@@ -35,8 +34,6 @@ import com.tonyodev.fetch2.Request
 import com.tonyodev.fetch2core.DownloadBlock
 import com.tonyodev.fetch2core.Downloader
 import com.tonyodev.fetch2core.Func
-import dm.audiostreamer.CurrentSessionCallback
-import dm.audiostreamer.MediaMetaData
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -47,7 +44,7 @@ import java.io.File
 import kotlin.random.Random
 
 
-class AudioPlayerView : FrameLayout, View.OnClickListener, CurrentSessionCallback,
+class AudioPlayerView : FrameLayout, View.OnClickListener,
     LifecycleObserver,
     ExoAudioPlayer.ProgressUpdateListener, AudioPlayerEventListener {
 
@@ -279,48 +276,6 @@ class AudioPlayerView : FrameLayout, View.OnClickListener, CurrentSessionCallbac
         playingAudio()
         val duration = Utils.getDurationOfMedia(context, file.absolutePath) ?: 0
         seekPlayerProgress.max = duration.toInt()
-    }
-
-    override fun currentSeekBarPosition(progress: Int) {
-        seekPlayerProgress.progress = progress
-    }
-
-    override fun playSongComplete() {
-        seekPlayerProgress.progress = 0
-        audioManger?.seekTo(0)
-        audioManger?.onPause()
-        pausingAudio()
-    }
-
-    override fun playNext(indexP: Int, currentAudio: MediaMetaData?) {
-        progressWheel.visibility = View.GONE
-    }
-
-    override fun updatePlaybackState(state: Int) {
-        when (state) {
-            PlaybackStateCompat.STATE_PLAYING -> {
-                progressWheel.visibility = View.GONE
-                playingAudio()
-            }
-            PlaybackStateCompat.STATE_PAUSED -> {
-                pausingAudio()
-            }
-            PlaybackStateCompat.STATE_STOPPED -> {
-                seekPlayerProgress.progress = 0
-                pausingAudio()
-            }
-            PlaybackStateCompat.STATE_BUFFERING -> {
-                //  progressWheel.visibility = View.VISIBLE
-            }
-        }
-    }
-
-    override fun playCurrent(indexP: Int, currentAudio: MediaMetaData?) {
-
-    }
-
-    override fun playPrevious(indexP: Int, currentAudio: MediaMetaData?) {
-
     }
 
     private fun playingAudio() {
