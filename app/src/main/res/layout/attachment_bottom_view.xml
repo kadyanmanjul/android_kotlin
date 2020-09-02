@@ -40,14 +40,13 @@
 
             <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/text_view"
-                    fontPath="fonts/Roboto-Regular.ttf"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:gravity="center"
                     android:text="@string/audio"
-                    android:textColor="@color/gray_48"
-                    android:textSize="@dimen/font_14" />
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
+                    android:textColor="@color/black" />
 
         </LinearLayout>
 
@@ -71,26 +70,25 @@
 
 
             <androidx.appcompat.widget.AppCompatTextView
-                    fontPath="fonts/Roboto-Regular.ttf"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:gravity="center"
                     android:text="@string/camera"
-                    android:textColor="@color/gray_48"
-                    android:textSize="@dimen/font_14" />
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
+                    android:textColor="@color/black" />
 
         </LinearLayout>
 
         <LinearLayout
-                android:visibility="gone"
                 android:id="@+id/ll_gallery"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_weight="1"
                 android:orientation="vertical"
-                android:padding="@dimen/_5sdp">
+                android:padding="@dimen/_5sdp"
+                android:visibility="gone">
 
             <androidx.appcompat.widget.AppCompatImageView
                     android:layout_width="wrap_content"
@@ -103,14 +101,13 @@
 
 
             <androidx.appcompat.widget.AppCompatTextView
-                    fontPath="fonts/Roboto-Regular.ttf"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:gravity="center"
                     android:text="@string/gallery"
-                    android:textColor="@color/gray_48"
-                    android:textSize="@dimen/font_14" />
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
+                    android:textColor="@color/black" />
 
         </LinearLayout>
 
