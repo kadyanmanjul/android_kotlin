@@ -55,13 +55,12 @@
 
         <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/text_view_1"
-                fontPath="fonts/Roboto-Regular.ttf"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_48sdp"
                 android:text="@string/verification_failed"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4"
                 android:textColor="@color/font_color"
-                android:textSize="@dimen/font_20"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/view" />
@@ -69,8 +68,6 @@
 
         <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_retry_call_verify"
-                style="@style/Widget.MaterialComponents.Button"
-                fontPath="fonts/Roboto-Medium.ttf"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_16sdp"
@@ -83,8 +80,8 @@
                 android:paddingBottom="@dimen/_10sdp"
                 android:text="@string/retry_miss_call_verify"
                 android:textAllCaps="false"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Button"
                 android:textColor="@color/white"
-                android:textSize="@dimen/font_15"
                 app:cornerRadius="@dimen/_16sdp"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
@@ -95,19 +92,18 @@
 
         <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_request_for_otp"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                fontPath="fonts/Roboto-Medium.ttf"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_8sdp"
+                android:backgroundTint="@color/white"
                 android:gravity="center"
                 android:onClick="@{()->handler.smsVerify()}"
                 android:paddingTop="@dimen/_10sdp"
                 android:paddingBottom="@dimen/_10sdp"
                 android:text="@string/send_otp"
                 android:textAllCaps="false"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Button"
                 android:textColor="#596273"
-                android:textSize="@dimen/font_15"
                 app:cornerRadius="@dimen/_16sdp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
