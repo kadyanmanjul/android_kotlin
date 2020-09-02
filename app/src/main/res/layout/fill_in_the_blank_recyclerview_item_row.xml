@@ -11,7 +11,7 @@
 
         <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/item_description"
-                fontPath="fonts/Poppins-Regular.ttf"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Regular"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/round_rect_default"
@@ -22,7 +22,6 @@
                 android:paddingEnd="@dimen/_8sdp"
                 android:paddingBottom="@dimen/_2sdp"
                 android:textColor="@color/button_primary_color"
-                android:textSize="@dimen/font_15"
                 app:elevation="0dp" />
 
         <View

@@ -16,7 +16,7 @@
 
         <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/item_description"
-                fontPath="fonts/Poppins-Regular.ttf"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -26,7 +26,6 @@
                 android:paddingEnd="@dimen/_8sdp"
                 android:paddingBottom="@dimen/_2sdp"
                 android:textColor="@color/light_grey"
-                android:textSize="@dimen/font_14"
                 tools:text="@string/unlock_class_text" />
 
     </FrameLayout>

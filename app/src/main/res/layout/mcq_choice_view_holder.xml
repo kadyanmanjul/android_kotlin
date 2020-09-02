@@ -18,7 +18,7 @@
 
     <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/choice_textview"
-            fontPath="fonts/Poppins-Regular.ttf"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:drawableStart="@drawable/ic_check_box_outline_blank"
@@ -26,7 +26,6 @@
             android:gravity="start|center"
             android:minHeight="@dimen/_16sdp"
             android:textColor="@color/light_grey"
-            android:textSize="@dimen/font_14"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

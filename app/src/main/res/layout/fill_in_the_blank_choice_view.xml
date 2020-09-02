@@ -17,6 +17,7 @@
 
     <TextView
             android:id="@+id/total_answered"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/_4sdp"
@@ -43,7 +44,7 @@
 
     <com.google.android.material.textview.MaterialTextView
             android:id="@+id/see_answer"
-            fontPath="fonts/Poppins-Bold.ttf"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Bold"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_10sdp"
@@ -51,7 +52,6 @@
             android:focusable="true"
             android:text="@string/see_answer"
             android:textColor="@color/button_primary_color"
-            android:textSize="@dimen/font_16"
             android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"

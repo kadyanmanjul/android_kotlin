@@ -38,7 +38,7 @@
 
     <com.google.android.material.textview.MaterialTextView
             android:id="@+id/see_answer"
-            fontPath="fonts/Poppins-Bold.ttf"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Bold"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_12sdp"
@@ -46,7 +46,6 @@
             android:focusable="true"
             android:text="@string/see_answer"
             android:textColor="@color/button_primary_color"
-            android:textSize="@dimen/font_16"
             android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
@@ -55,7 +54,7 @@
 
     <com.google.android.material.textview.MaterialTextView
             android:id="@+id/reset_answer"
-            fontPath="fonts/Poppins-Bold.ttf"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Bold"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/_15sdp"
@@ -63,7 +62,6 @@
             android:focusable="true"
             android:text="@string/reset"
             android:textColor="@color/light_grey"
-            android:textSize="@dimen/font_14"
             android:visibility="visible"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
