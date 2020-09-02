@@ -22,7 +22,7 @@
             android:layout_height="wrap_content"
             android:padding="@dimen/_4sdp"
             android:text="@string/download_certificate"
-            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
             android:textColor="@color/dark_grey"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@+id/landing_image"

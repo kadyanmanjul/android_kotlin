@@ -1,6 +1,5 @@
 package com.joshtalks.joshskills.ui.course_details.extra
 
-import android.graphics.Typeface
 import android.os.Bundle
 import android.text.SpannableString
 import android.text.Spanned
@@ -11,11 +10,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.ContextCompat
+import androidx.core.widget.TextViewCompat
 import androidx.fragment.app.Fragment
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.repository.server.course_detail.Guideline
-import io.github.inflationx.calligraphy3.TypefaceUtils
 import kotlinx.android.synthetic.main.guideline_item_view.container
 
 const val GUIDELINE_OBJECT = "guideline_obj"
@@ -48,17 +47,15 @@ class GuidelineFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val typefaceSpan = TypefaceUtils.load(requireContext().assets, "fonts/OpenSans-Regular.ttf")
         guideLine.text.forEach {
-            container.addView(getTextView(it, typefaceSpan))
+            container.addView(getTextView(it))
         }
     }
 
-    private fun getTextView(text: String, typefaceSpan: Typeface): AppCompatTextView {
+    private fun getTextView(text: String): AppCompatTextView {
         val textView = AppCompatTextView(requireContext())
-        textView.setTextColor(ContextCompat.getColor(requireContext(), R.color.gray_48))
-        textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14F)
-        textView.typeface = typefaceSpan
+        textView.setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
+        TextViewCompat.setTextAppearance(textView, R.style.TextAppearance_JoshTypography_Body_Text_Small_Regular)
         val spanString = SpannableString(text)
         spanString.setSpan(
             IconMarginSpan(
