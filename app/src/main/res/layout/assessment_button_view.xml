@@ -15,7 +15,6 @@
 
         <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/submit_btn"
-                fontPath="fonts/Poppins-Bold.ttf"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:background="@drawable/round_rectangle_for_course_expo"
@@ -24,9 +23,8 @@
                 android:gravity="center"
                 android:paddingVertical="@dimen/_10sdp"
                 android:text="@string/submit"
-                android:textAllCaps="false"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Button"
                 android:textColor="@color/white"
-                android:textSize="@dimen/font_16"
                 app:cornerRadius="@dimen/_32sdp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -46,7 +44,6 @@
 
         <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/revise_btn"
-                fontPath="fonts/Poppins-Bold.ttf"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/_4sdp"
@@ -55,9 +52,8 @@
                 android:maxLines="1"
                 android:paddingVertical="@dimen/_10sdp"
                 android:text="@string/revise_concept"
-                android:textAllCaps="false"
-                android:textColor="@color/button_primary_color"
-                android:textSize="@dimen/font_16"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Button"
+                android:textColor="@color/button_color"
                 android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/next_btn"
@@ -67,7 +63,6 @@
 
         <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/next_btn"
-                fontPath="fonts/Poppins-Bold.ttf"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:background="@drawable/rectangle_with_blue_bound_stroke"
@@ -75,9 +70,8 @@
                 android:gravity="center"
                 android:paddingVertical="@dimen/_10sdp"
                 android:text="@string/next"
-                android:textAllCaps="false"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Button"
                 android:textColor="@color/white"
-                android:textSize="@dimen/font_16"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
@@ -97,7 +91,6 @@
 
         <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/back_button"
-                fontPath="fonts/Poppins-Bold.ttf"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:background="@drawable/rectangle_with_blue_bound_stroke"
@@ -105,9 +98,8 @@
                 android:gravity="center"
                 android:paddingVertical="@dimen/_10sdp"
                 android:text="@string/back_to_summary"
-                android:textAllCaps="false"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Button"
                 android:textColor="@color/white"
-                android:textSize="@dimen/font_16"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"

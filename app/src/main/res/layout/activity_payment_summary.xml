@@ -81,13 +81,12 @@
 
                         <TextView
                                 android:id="@+id/course_name"
-                                fontPath="fonts/Poppins-SemiBold.ttf"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_marginHorizontal="@dimen/_8sdp"
                                 android:gravity="start"
-                                android:textColor="@color/font_color"
-                                android:textSize="@dimen/font_16"
+                                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H7"
+                                android:textColor="@color/black"
                                 app:layout_constraintEnd_toEndOf="parent"
                                 app:layout_constraintStart_toEndOf="@+id/iv_container"
                                 app:layout_constraintTop_toTopOf="@+id/iv_container"
@@ -95,14 +94,13 @@
 
                         <TextView
                                 android:id="@+id/tutor_name"
-                                fontPath="fonts/Poppins-Regular.ttf"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center"
                                 android:layout_marginTop="@dimen/_4sdp"
                                 android:gravity="start"
+                                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
                                 android:textColor="@color/dark_grey"
-                                android:textSize="@dimen/font_13"
                                 app:layout_constraintEnd_toEndOf="parent"
                                 app:layout_constraintStart_toStartOf="@+id/course_name"
                                 app:layout_constraintTop_toBottomOf="@+id/course_name"
@@ -125,9 +123,8 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="@dimen/_10sdp"
                                 android:gravity="start"
+                                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Bold"
                                 android:textColor="@color/black"
-                                android:textSize="@dimen/font_16"
-                                android:textStyle="bold"
                                 app:layout_constraintStart_toStartOf="@+id/imageView3"
                                 app:layout_constraintTop_toBottomOf="@+id/imageView3"
                                 tools:text="28,000+" />
@@ -139,22 +136,20 @@
                                 android:layout_marginTop="@dimen/_minus8sdp"
                                 android:gravity="start|top"
                                 android:text="@string/joined"
+                                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
                                 android:textColor="@color/dark_grey"
-                                android:textSize="@dimen/font_14"
                                 app:layout_constraintStart_toStartOf="@+id/enrolled"
                                 app:layout_constraintTop_toBottomOf="@+id/enrolled" />
 
                         <com.google.android.material.textview.MaterialTextView
                                 android:id="@+id/rating"
-                                fontPath="fonts/Poppins-Bold.ttf"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:background="@drawable/ic_payment_rating"
                                 android:gravity="center"
                                 android:paddingStart="@dimen/medium_margin"
+                                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6"
                                 android:textColor="@color/white"
-                                android:textSize="@dimen/font_17"
-                                android:textStyle="bold"
                                 app:layout_constraintBottom_toBottomOf="@+id/txt_joined"
                                 app:layout_constraintEnd_toEndOf="parent"
                                 app:layout_constraintTop_toTopOf="@+id/enrolled"
@@ -187,27 +182,24 @@
 
                         <TextView
                                 android:id="@+id/total_amount"
-                                fontPath="fonts/Poppins-Medium.ttf"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginHorizontal="@dimen/_10sdp"
                                 android:paddingVertical="@dimen/_8sdp"
                                 android:text="@string/total_amount"
-                                android:textColor="@color/font_color"
-                                android:textSize="@dimen/font_16"
+                                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Semi_Bold"
+                                android:textColor="@color/black"
                                 app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintTop_toBottomOf="@+id/double_line" />
 
                         <TextView
                                 android:id="@+id/actual_txt_price"
-                                fontPath="fonts/Poppins-Medium.ttf"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginHorizontal="@dimen/_14sdp"
                                 android:paddingVertical="@dimen/_8sdp"
-                                android:textColor="@color/font_color"
-                                android:textSize="@dimen/font_16"
-                                android:textStyle="bold"
+                                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Bold"
+                                android:textColor="@color/black"
                                 android:visibility="gone"
                                 app:layout_constraintEnd_toEndOf="parent"
                                 app:layout_constraintTop_toBottomOf="@+id/double_line"
@@ -215,21 +207,18 @@
 
                         <TextView
                                 android:id="@+id/txt_price"
-                                fontPath="fonts/Poppins-Bold.ttf"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginHorizontal="@dimen/_6sdp"
                                 android:paddingVertical="@dimen/_8sdp"
-                                android:textColor="@color/font_color"
-                                android:textSize="@dimen/font_16"
-                                android:textStyle="bold"
+                                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Bold"
+                                android:textColor="@color/black"
                                 app:layout_constraintEnd_toStartOf="@id/actual_txt_price"
                                 app:layout_constraintTop_toBottomOf="@+id/double_line"
                                 tools:text="$ 499" />
 
                         <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
                                 android:id="@+id/tip_used_msg"
-                                fontPath="fonts/Poppins-Regular.ttf"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_marginVertical="@dimen/_6sdp"
@@ -237,8 +226,8 @@
                                 android:backgroundTint="@color/green"
                                 android:padding="@dimen/_10sdp"
                                 android:text="@string/tip_used_info"
+                                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
                                 android:textColor="@color/white"
-                                android:textSize="@dimen/font_14"
                                 android:visibility="gone"
                                 app:drawableEndCompat="@drawable/ic_small_tick"
                                 app:drawableTint="@color/white"
@@ -280,13 +269,12 @@
 
                         <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
                                 android:id="@+id/title_sub"
-                                fontPath="fonts/Poppins-Bold.ttf"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginHorizontal="@dimen/_10sdp"
                                 android:paddingVertical="@dimen/_8sdp"
+                                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6"
                                 android:textColor="@color/white"
-                                android:textSize="@dimen/font_18"
                                 app:layout_constraintEnd_toEndOf="parent"
                                 app:layout_constraintHorizontal_bias="0"
                                 app:layout_constraintStart_toStartOf="parent"
@@ -295,12 +283,11 @@
 
                         <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
                                 android:id="@+id/text_sub"
-                                fontPath="fonts/Poppins-Medium.ttf"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_marginHorizontal="@dimen/_10sdp"
+                                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
                                 android:textColor="@color/white"
-                                android:textSize="@dimen/font_14"
                                 app:layout_constraintEnd_toEndOf="parent"
                                 app:layout_constraintHorizontal_bias="0"
                                 app:layout_constraintStart_toStartOf="parent"
@@ -325,12 +312,11 @@
 
                         <TextView
                                 android:id="@+id/add_this_tv"
-                                fontPath="fonts/Poppins-Bold.ttf"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="@string/add_this"
+                                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Bold"
                                 android:textColor="@color/white"
-                                android:textSize="@dimen/font_14"
                                 app:layout_constraintEnd_toEndOf="@id/sub_check_box"
                                 app:layout_constraintStart_toStartOf="@id/sub_check_box"
                                 app:layout_constraintTop_toBottomOf="@id/sub_check_box" />
@@ -356,22 +342,22 @@
 
                         <com.joshtalks.joshskills.core.custom_ui.countrycodepicker.CountryCodePicker
                                 android:id="@+id/country_code_picker"
-                                fontPath="fonts/Poppins-Regular.ttf"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:gravity="center"
+                                android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
                                 app:ccpDialog_allowSearch="true"
-                                app:ccpDialog_backgroundColor="@color/wh_f4"
+                                app:ccpDialog_backgroundColor="@color/white"
                                 app:ccpDialog_fastScroller_bubbleColor="@color/checkmark_blue"
                                 app:ccpDialog_fastScroller_handleColor="@color/colorAccent"
                                 app:ccpDialog_initialScrollToSelection="true"
                                 app:ccpDialog_keyboardAutoPopup="false"
-                                app:ccpDialog_searchEditTextTint="@color/emoji_bg_color"
+                                app:ccpDialog_searchEditTextTint="@color/white"
                                 app:ccpDialog_showCloseIcon="true"
                                 app:ccpDialog_showFastScroller="true"
                                 app:ccpDialog_showPhoneCode="true"
                                 app:ccpDialog_showTitle="false"
-                                app:ccpDialog_textColor="@color/font_color"
+                                app:ccpDialog_textColor="@color/black"
                                 app:ccp_areaCodeDetectedCountry="true"
                                 app:ccp_arrowColor="@color/button_activated"
                                 app:ccp_arrowSize="@dimen/_4sdp"
@@ -379,7 +365,7 @@
                                 app:ccp_autoDetectLanguage="true"
                                 app:ccp_autoFormatNumber="false"
                                 app:ccp_clickable="true"
-                                app:ccp_contentColor="@color/font_color"
+                                app:ccp_contentColor="@color/black"
                                 app:ccp_countryAutoDetectionPref="SIM_NETWORK_LOCALE"
                                 app:ccp_defaultLanguage="ENGLISH"
                                 app:ccp_hintExampleNumber="false"
@@ -389,14 +375,12 @@
                                 app:ccp_showNameCode="false"
                                 app:ccp_showPhoneCode="true"
                                 app:ccp_textGravity="CENTER"
-                                app:ccp_textSize="@dimen/font_15"
                                 app:layout_constraintBottom_toBottomOf="parent"
                                 app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintTop_toTopOf="parent" />
 
                         <androidx.appcompat.widget.AppCompatEditText
                                 android:id="@+id/mobile_et"
-                                fontPath="fonts/Poppins-Regular.ttf"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center"
@@ -410,9 +394,9 @@
                                 android:lines="1"
                                 android:maxLength="13"
                                 android:paddingStart="@dimen/_8sdp"
-                                android:textColor="@color/font_color"
-                                android:textColorHint="@color/font_color"
-                                android:textSize="@dimen/font_15"
+                                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
+                                android:textColor="@color/black"
+                                android:textColorHint="@color/black"
                                 app:backgroundTint="@color/white"
                                 app:layout_constraintBottom_toBottomOf="parent"
                                 app:layout_constraintEnd_toStartOf="@+id/iv_clear_number"
@@ -443,13 +427,13 @@
 
                     <TextView
                             android:id="@+id/textview_number"
-                            fontPath="fonts/Poppins-Regular.ttf"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginHorizontal="@dimen/_52sdp"
                             android:layout_marginTop="@dimen/_40sdp"
                             android:background="@color/white"
                             android:text="@string/your_mobile_number"
+                            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toBottomOf="@+id/barrier_phone"
                             app:layout_constraintWidth_default="percent"
@@ -469,7 +453,6 @@
 
                     <com.google.android.material.textview.MaterialTextView
                             android:id="@+id/materialButton"
-                            fontPath="fonts/Poppins-Regular.ttf"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="@dimen/_16sdp"
@@ -482,8 +465,8 @@
                             android:focusable="true"
                             android:gravity="center"
                             android:padding="@dimen/_6sdp"
+                            android:textAppearance="@style/TextAppearance.JoshTypography.Button"
                             android:textColor="@color/white"
-                            android:textSize="@dimen/font_22"
                             app:cornerRadius="@dimen/_8sdp"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
@@ -518,7 +501,7 @@
                     android:layout_width="@dimen/_82sdp"
                     android:layout_height="@dimen/_82sdp"
                     android:layout_gravity="center"
-                    wheel:matProg_barColor="@color/button_primary_color"
+                    wheel:matProg_barColor="@color/button_color"
                     wheel:matProg_fillRadius="true"
                     wheel:matProg_linearProgress="false"
                     wheel:matProg_progressIndeterminate="true"
@@ -534,7 +517,7 @@
                 android:background="#CC000000"
                 android:elevation="@dimen/_6sdp"
                 android:visibility="gone"
-                tools:visibility="gone">
+                tools:visibility="visible">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
@@ -561,15 +544,14 @@
 
                     <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
                             android:id="@+id/text_view_1"
-                            fontPath="fonts/Poppins-SemiBold.ttf"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:drawableTint="@color/white"
                             android:gravity="start|center"
                             android:text="@string/bade_bhaiya_tips_new"
+                            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4_Semi_Bold"
                             android:textColor="@color/white"
-                            android:textSize="@dimen/font_20"
                             tools:ignore="UnusedAttribute" />
 
                 </FrameLayout>
@@ -590,14 +572,13 @@
 
                     <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
                             android:id="@+id/tv_tip"
-                            fontPath="fonts/Poppins-Regular.ttf"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginHorizontal="@dimen/_12sdp"
                             android:gravity="start|center"
                             android:text="@string/tip_title"
-                            android:textColor="@color/font_color"
-                            android:textSize="@dimen/font_13"
+                            android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
+                            android:textColor="@color/black"
                             android:visibility="visible"
                             app:layout_constraintBottom_toTopOf="@+id/tv_tip_off"
                             app:layout_constraintEnd_toEndOf="parent"
@@ -607,15 +588,13 @@
 
                     <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
                             android:id="@+id/tv_tip_off"
-                            fontPath="fonts/Poppins-Bold.ttf"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginHorizontal="@dimen/_12sdp"
                             android:gravity="start|center"
                             android:text="@string/tip_discount"
-                            android:textColor="@color/font_color"
-                            android:textSize="@dimen/font_22"
-                            android:textStyle="bold"
+                            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4"
+                            android:textColor="@color/black"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintHorizontal_bias="0"
@@ -624,14 +603,13 @@
 
                     <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
                             android:id="@+id/tv_tip_valid"
-                            fontPath="fonts/Poppins-Regular.ttf"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginHorizontal="@dimen/_12sdp"
                             android:gravity="start|center"
                             android:text="@string/tip_valid"
+                            android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
                             android:textColor="@color/error_color"
-                            android:textSize="@dimen/font_13"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toStartOf="@+id/tv_tip_used"
                             app:layout_constraintHorizontal_bias="0"
@@ -640,7 +618,6 @@
 
                     <androidx.appcompat.widget.AppCompatTextView
                             android:id="@+id/tv_tip_used"
-                            fontPath="fonts/Poppins-Regular.ttf"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginEnd="@dimen/_12sdp"
@@ -650,12 +627,11 @@
                             android:paddingHorizontal="@dimen/_16sdp"
                             android:paddingVertical="@dimen/_4sdp"
                             android:text="@string/use_tip"
+                            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
                             android:textColor="@color/white"
-                            android:textSize="@dimen/font_14"
                             app:layout_constraintBottom_toBottomOf="@+id/tv_tip_valid"
                             app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintTop_toTopOf="@+id/tv_tip_valid"
-                            tools:ignore="MissingConstraints" />
+                            app:layout_constraintTop_toTopOf="@+id/tv_tip_valid" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 

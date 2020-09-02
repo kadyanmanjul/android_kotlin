@@ -36,10 +36,8 @@
                         app:srcCompat="@drawable/ic_cross"
                         app:tint="@color/black" />
 
-
                 <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/text_message_title"
-                        fontPath="fonts/Roboto-Medium.ttf"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:ellipsize="marquee"
@@ -48,12 +46,11 @@
                         android:paddingVertical="@dimen/_5sdp"
                         android:singleLine="true"
                         android:text="@string/about_teacher_title"
-                        android:textColor="@color/black"
-                        android:textSize="@dimen/font_18" />
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
+                        android:textColor="@color/black" />
             </com.google.android.material.appbar.MaterialToolbar>
 
         </com.google.android.material.appbar.AppBarLayout>
-
 
         <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/iv_profile_pic"
@@ -69,14 +66,13 @@
 
         <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/textView"
-                fontPath="fonts/Roboto-Medium.ttf"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/_16sdp"
                 android:gravity="start|center"
                 android:text="@string/hi_i_am"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4_Semi_Bold"
                 android:textColor="@color/font_color"
-                android:textSize="@dimen/font_20"
                 app:layout_constraintBottom_toBottomOf="@+id/iv_profile_pic"
                 app:layout_constraintStart_toEndOf="@+id/iv_profile_pic"
                 app:layout_constraintTop_toTopOf="@+id/iv_profile_pic"
@@ -84,19 +80,17 @@
 
         <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/teacher_name"
-                fontPath="fonts/Roboto-Bold.ttf"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:gravity="start"
-                android:textColor="@color/font_color"
-                android:textSize="@dimen/font_20"
                 android:paddingEnd="@dimen/_4sdp"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4"
+                android:textColor="@color/font_color"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView"
                 app:layout_constraintStart_toStartOf="@+id/textView"
+                app:layout_constraintTop_toBottomOf="@+id/textView"
                 app:layout_constraintVertical_bias="0.6"
                 tools:text="Mohit Kumar" />
-
 
         <androidx.constraintlayout.widget.Barrier
                 android:id="@+id/barrier"
@@ -120,17 +114,17 @@
 
             <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
                     android:id="@+id/teacher_details"
-                    fontPath="fonts/Poppins-Regular.ttf"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="start|top"
-                    android:textIsSelectable="true"
                     android:gravity="top|start"
                     android:letterSpacing="0.03"
                     android:lineSpacingExtra="@dimen/_2sdp"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
                     android:textColor="@color/gray_48"
-                    android:textSize="@dimen/font_14" />
+                    android:textIsSelectable="true" />
         </ScrollView>
-    </androidx.constraintlayout.widget.ConstraintLayout>
-</layout>
 
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

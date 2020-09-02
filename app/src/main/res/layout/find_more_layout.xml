@@ -16,7 +16,6 @@
 
     <com.google.android.material.textview.MaterialTextView
             android:id="@+id/find_more"
-            fontPath="fonts/Poppins-SemiBold.ttf"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -28,9 +27,8 @@
             android:paddingEnd="@dimen/_30sdp"
             android:paddingBottom="@dimen/_10sdp"
             android:text="@string/find_more_courses"
-            android:textAllCaps="false"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Bold"
             android:textColor="@color/white"
-            android:textSize="@dimen/font_14"
             app:rippleColor="@color/white" />
 
     <View
@@ -38,7 +36,7 @@
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_gravity="bottom"
-            android:background="@color/gray_e6"
+            android:background="@color/lighter_grey"
             android:orientation="horizontal" />
 
 </FrameLayout>

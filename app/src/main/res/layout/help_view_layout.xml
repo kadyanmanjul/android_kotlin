@@ -14,7 +14,7 @@
             android:layout_width="@dimen/_40sdp"
             android:layout_height="@dimen/_40sdp"
             android:background="@drawable/timer_drawable"
-            android:backgroundTint="@color/button_primary_color"
+            android:backgroundTint="@color/button_color"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
@@ -28,15 +28,14 @@
 
     <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tv_category_name"
-            fontPath="fonts/Poppins-Regular.ttf"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="start|center"
             android:layout_marginHorizontal="@dimen/_12sdp"
             android:gravity="start|center"
             android:lines="1"
-            android:textColor="@color/font_color"
-            android:textSize="@dimen/font_17"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Regular"
+            android:textColor="@color/black"
             app:layout_constraintBottom_toBottomOf="@+id/fl_container"
             app:layout_constraintStart_toEndOf="@+id/fl_container"
             app:layout_constraintTop_toTopOf="@+id/fl_container"

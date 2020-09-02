@@ -51,15 +51,14 @@
 
                 <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/title"
-                        ffontPath="fonts/Poppins-Regular.ttf"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:ellipsize="marquee"
                         android:gravity="center_vertical|start"
                         android:singleLine="true"
                         android:text="@string/test_summary_title"
-                        android:textColor="@color/black"
-                        android:textSize="@dimen/font_18" />
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
+                        android:textColor="@color/black" />
 
             </com.google.android.material.appbar.MaterialToolbar>
         </com.google.android.material.appbar.AppBarLayout>
@@ -81,7 +80,6 @@
 
         <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/materialButton"
-                fontPath="fonts/Poppins-Bold.ttf"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -95,9 +93,8 @@
                 android:onClick="@{()->handler.dismiss()}"
                 android:padding="@dimen/_10sdp"
                 android:text="@string/done"
-                android:textAllCaps="false"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Button"
                 android:textColor="@color/white"
-                android:textSize="@dimen/font_16"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -115,11 +112,11 @@
                     android:layout_width="@dimen/_82sdp"
                     android:layout_height="@dimen/_82sdp"
                     android:layout_gravity="center"
-                    wheel:matProg_barColor="@color/colorPrimary"
+                    wheel:matProg_barColor="@color/button_color"
                     wheel:matProg_fillRadius="true"
                     wheel:matProg_linearProgress="false"
                     wheel:matProg_progressIndeterminate="true"
-                    wheel:matProg_rimColor="#33128C7E"
+                    wheel:matProg_rimColor="@color/light_blue"
                     wheel:matProg_rimWidth="@dimen/_2sdp" />
 
         </FrameLayout>

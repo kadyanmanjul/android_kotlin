@@ -19,28 +19,26 @@
 
         <TextView
                 android:id="@+id/success_title"
-                style="@style/TextStyle.TopBarNoScroll"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_10sdp"
                 android:gravity="center"
                 android:text="@string/header_congratulation"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4"
                 android:textColor="@color/black"
-                android:textSize="@dimen/font_20"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
                 android:id="@+id/description"
-                style="@style/TextStyle.TopBarNoScroll"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_5sdp"
                 android:gravity="center"
                 android:text="@string/referral_success_info"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
                 android:textColor="@color/black"
-                android:textSize="@dimen/font_14"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/success_title" />
@@ -57,20 +55,18 @@
 
         <TextView
                 android:id="@+id/offer_text"
-                style="@style/TextStyle.TopBarNoScroll"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:text="@string/referral_success_info2"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
                 android:textColor="@color/black"
-                android:textSize="@dimen/font_14"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/iv" />
 
         <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/explore_course_btn"
-                style="@style/TextStyle.TopBarNoScroll"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -84,8 +80,8 @@
                 android:onClick="@{()->handler.openCourseExplore()}"
                 android:padding="@dimen/_6sdp"
                 android:text="@string/explore_new"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Button"
                 android:textColor="@color/white"
-                android:textSize="@dimen/font_22"
                 app:cornerRadius="@dimen/_8sdp"
                 app:layout_constraintBottom_toTopOf="@+id/login_btn"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -97,7 +93,6 @@
 
         <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/login_btn"
-                style="@style/TextStyle.TopBarNoScroll"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -109,8 +104,8 @@
                 android:onClick="@{()->handler.signUp()}"
                 android:padding="@dimen/_6sdp"
                 android:text="@string/login_signup"
-                android:textColor="@color/light_grey"
-                android:textSize="@dimen/font_22"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Button"
+                android:textColor="@color/dark_grey"
                 app:cornerRadius="@dimen/_8sdp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"

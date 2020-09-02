@@ -27,11 +27,9 @@
                 tools:itemCount="3"
                 tools:listitem="@layout/help_view_layout" />
 
-
         <com.google.android.material.button.MaterialButton
                 android:id="@+id/info_support"
                 style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                fontPath="fonts/Poppins-Regular.ttf"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/_16sdp"
@@ -40,8 +38,8 @@
                 android:paddingBottom="@dimen/_8sdp"
                 android:text="@string/permission_dialog_description"
                 android:textAllCaps="false"
-                android:textColor="#9098B1"
-                android:textSize="@dimen/font_12"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
+                android:textColor="@color/grey"
                 android:visibility="invisible"
                 app:cornerRadius="@dimen/_12sdp"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -54,6 +52,6 @@
                 app:strokeWidth="@dimen/_1sdp"
                 tools:visibility="visible" />
 
-
     </androidx.constraintlayout.widget.ConstraintLayout>
+
 </layout>

@@ -24,7 +24,6 @@
 
             <include layout="@layout/tag_practise_layout" />
 
-
             <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/parent_layout"
                     android:layout_width="wrap_content"
@@ -46,7 +45,6 @@
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
-
                 <FrameLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -67,30 +65,27 @@
                     <TextView
 
                             android:id="@+id/text_message_time"
-                            fontPath="fonts/Roboto-Light.ttf"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="bottom|end"
                             android:drawablePadding="@dimen/_4sdp"
                             android:paddingEnd="@dimen/_10sdp"
                             android:paddingBottom="@dimen/_5sdp"
-                            android:textColor="@color/white"
-                            android:textSize="@dimen/font_13" />
+                            android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
+                            android:textColor="@color/white" />
 
                 </FrameLayout>
 
-
                 <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
                         android:id="@+id/text_message_body"
-                        fontPath="fonts/Roboto-Regular.ttf"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="start"
                         android:gravity="center_vertical|start"
                         android:paddingTop="@dimen/_5sdp"
                         android:paddingEnd="@dimen/_10sdp"
-                        android:textColor="@color/gray_48"
-                        android:textSize="@dimen/font_17"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Regular"
+                        android:textColor="@color/black"
                         android:visibility="gone"
                         app:layout_constraintBottom_toBottomOf="@+id/image_view"
                         app:layout_constraintLeft_toLeftOf="parent"
@@ -147,8 +142,10 @@
                         android:src="@drawable/ic_cross"
                         android:visibility="gone" />
 
-
             </FrameLayout>
+
         </LinearLayout>
+
     </FrameLayout>
+
 </FrameLayout>

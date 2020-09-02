@@ -19,7 +19,6 @@
 
         <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/tvNativeLogin"
-                fontPath="fonts/OpenSans-Bold.ttf"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -30,8 +29,8 @@
                 android:onClick="@{()->handler.signUp()}"
                 android:padding="@dimen/half_margin"
                 android:text="@string/login_signup"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Bold"
                 android:textColor="@color/black"
-                android:textSize="@dimen/font_13"
                 android:visibility="visible"
                 app:cornerRadius="@dimen/_8sdp"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -44,13 +43,12 @@
 
         <TextView
                 android:id="@+id/textView"
-                fontPath="fonts/OpenSans-SemiBold.ttf"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:text="@string/welcome_josh_skill_new"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H2"
                 android:textColor="@color/black"
-                android:textSize="@dimen/font_42"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintHorizontal_bias="0.185"
                 app:layout_constraintLeft_toLeftOf="parent"
@@ -60,14 +58,13 @@
 
         <TextView
                 android:id="@+id/textView_sub"
-                fontPath="fonts/OpenSans-SemiBold.ttf"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_2sdp"
                 android:gravity="start"
                 android:text="@string/splash_sub_string_english"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Bold"
                 android:textColor="@color/black"
-                android:textSize="@dimen/font_14"
                 app:layout_constraintHorizontal_bias="0.187"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
@@ -88,7 +85,6 @@
 
         <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/materialButton"
-                fontPath="fonts/OpenSans-Bold.ttf"
                 android:layout_width="185dp"
                 android:layout_height="51dp"
                 android:layout_gravity="center"
@@ -99,8 +95,8 @@
                 android:gravity="center"
                 android:onClick="@{()->handler.openCourseExplore()}"
                 android:text="@string/start_now"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Button"
                 android:textColor="@color/white"
-                android:textSize="@dimen/font_17"
                 app:cornerRadius="@dimen/_8sdp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -113,7 +109,6 @@
 
         <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/have_a_referral_code"
-                fontPath="fonts/OpenSans-Bold.ttf"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -122,8 +117,8 @@
                 android:gravity="center"
                 android:onClick="@{()->handler.openReferralDialogue()}"
                 android:text="@string/have_a_referral_code"
-                android:textColor="@color/button_primary_color"
-                android:textSize="@dimen/font_16"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Bold"
+                android:textColor="@color/button_color"
                 android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -132,7 +127,8 @@
                 app:layout_constraintTop_toBottomOf="@+id/materialButton"
                 app:layout_constraintVertical_bias="0.3"
                 app:layout_constraintWidth_default="percent"
-                app:layout_constraintWidth_percent="0.45" />
+                app:layout_constraintWidth_percent="0.45"
+                tools:visibility="visible" />
 
         <FrameLayout
                 android:id="@+id/parent_Container"
