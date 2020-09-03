@@ -69,7 +69,6 @@ import com.joshtalks.joshskills.ui.extra.setOnSingleClickListener
 import com.joshtalks.joshskills.ui.payment.ChatNPayDialogFragment
 import com.joshtalks.joshskills.ui.payment.PaymentFailedDialogFragment
 import com.joshtalks.joshskills.ui.payment.PaymentProcessingFragment
-import com.joshtalks.joshskills.ui.payment.PaymentSuccessFragment
 import com.joshtalks.joshskills.ui.referral.EnterReferralCodeFragment
 import com.joshtalks.joshskills.ui.startcourse.StartCourseActivity
 import com.razorpay.Checkout
@@ -770,12 +769,8 @@ class PaymentSummaryActivity : CoreJoshActivity(),
         }
 
         uiHandler.postDelayed({
-            showPaymentSuccessfulFragment()
-        }, 1000 * 5)
-
-        uiHandler.postDelayed({
             navigateToStartCourseActivity(true)
-        }, 1000 * 8)
+        }, 1000 * 5)
 
         FlurryAgent.UserProperties.set(FlurryAgent.UserProperties.PROPERTY_PURCHASER, "true")
     }
@@ -889,18 +884,6 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                 PaymentFailedDialogFragment.newInstance(
                     viewModel.mPaymentDetailsResponse.value?.joshtalksOrderId ?: 0
                 ),
-                "Payment Success"
-            )
-            .commitAllowingStateLoss()
-    }
-
-    private fun showPaymentSuccessfulFragment() {
-        binding.container.visibility = View.GONE
-        supportFragmentManager
-            .beginTransaction()
-            .replace(
-                R.id.parent_Container,
-                PaymentSuccessFragment.newInstance(),
                 "Payment Success"
             )
             .commitAllowingStateLoss()

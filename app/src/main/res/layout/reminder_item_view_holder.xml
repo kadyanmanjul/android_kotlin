@@ -9,13 +9,13 @@
 
     <com.google.android.material.textview.MaterialTextView
             android:id="@+id/time_tv"
-            fontPath="fonts/Poppins-Medium.ttf"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
             android:paddingStart="@dimen/_16sdp"
             android:textColor="@color/black"
-            android:textSize="@dimen/font_32"
+            tools:text="@string/add_reminder"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -23,11 +23,12 @@
 
     <com.google.android.material.textview.MaterialTextView
             android:id="@+id/am_pm_tv"
-            fontPath="fonts/Poppins-Medium.ttf"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/_8sdp"
             android:textColor="@color/black"
+            tools:text="am/pm"
             app:layout_constraintBaseline_toBaselineOf="@+id/time_tv"
             app:layout_constraintBottom_toBottomOf="@+id/time_tv"
             app:layout_constraintStart_toEndOf="@id/time_tv" />

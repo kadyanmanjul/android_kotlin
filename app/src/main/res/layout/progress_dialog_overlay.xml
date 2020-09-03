@@ -20,7 +20,7 @@
             wheel:matProg_rimWidth="@dimen/_2sdp" />
 
     <androidx.appcompat.widget.AppCompatTextView
-            fontPath="fonts/Roboto-Medium.ttf"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6_Normal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/progress_bar"
@@ -28,6 +28,5 @@
             android:layout_centerVertical="true"
             android:layout_marginTop="@dimen/_12sdp"
             android:text="@string/plz_wait"
-            android:textColor="@color/white"
-            android:textSize="@dimen/font_18" />
+            android:textColor="@color/white" />
 </RelativeLayout>

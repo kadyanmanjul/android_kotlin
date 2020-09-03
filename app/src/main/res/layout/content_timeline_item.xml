@@ -46,11 +46,11 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="start"
+                    android:maxLines="3"
                     android:ellipsize="end"
                     android:gravity="center_vertical|start"
-                    android:maxLines="1"
-                    android:textColor="@color/gray_48"
-                    android:textSize="@dimen/font_16" />
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Semi_Bold"
+                    android:textColor="@color/black" />
         </com.google.android.material.card.MaterialCardView>
     </LinearLayout>
 </layout>

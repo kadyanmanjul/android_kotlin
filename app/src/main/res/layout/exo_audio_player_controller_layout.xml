@@ -67,12 +67,11 @@
 
     <TextView
             android:id="@+id/exo_position"
-            fontPath="fonts/Poppins-Regular.ttf"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="right"
             android:textColor="@color/text_90"
-            android:textSize="@dimen/_12sdp"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -80,13 +79,12 @@
             tools:text="10:15" />
 
     <TextView
+            android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
             android:id="@+id/exo_duration"
-            fontPath="fonts/Poppins-Regular.ttf"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="right"
             android:textColor="@color/text_90"
-            android:textSize="@dimen/_12sdp"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

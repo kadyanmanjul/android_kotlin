@@ -57,14 +57,13 @@
 
         <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tv_title"
-                fontPath="fonts/Roboto-Medium.ttf"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H7_Semi_Bold"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/_8sdp"
                 android:gravity="start"
                 android:lineSpacingExtra="@dimen/_2sdp"
                 android:textColor="@color/font_color"
-                android:textSize="@dimen/font_13"
                 app:layout_constraintBottom_toTopOf="@+id/tv_question"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
@@ -74,14 +73,13 @@
 
         <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tv_question"
-                fontPath="fonts/Roboto-Medium.ttf"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4_Semi_Bold"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/_10sdp"
                 android:gravity="start"
                 android:lineSpacingExtra="@dimen/_2sdp"
                 android:textColor="@color/font_color"
-                android:textSize="@dimen/font_19"
                 app:layout_constraintBottom_toTopOf="@+id/container_cl"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
@@ -229,7 +227,7 @@
 
                 <androidx.appcompat.widget.AppCompatEditText
                         android:id="@+id/edit_text"
-                        fontPath="fonts/Roboto-Regular.ttf"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
@@ -243,7 +241,6 @@
                         android:minLines="1"
                         android:textColorHint="@color/emoji_bg_color"
                         android:textCursorDrawable="@drawable/cursor_drawable"
-                        android:textSize="@dimen/_14sdp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
@@ -256,7 +253,7 @@
         <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_submit"
                 style="@style/Widget.MaterialComponents.Button"
-                fontPath="fonts/Roboto-Regular.ttf"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6_Normal"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -270,7 +267,6 @@
                 android:text="@string/next"
                 android:textAllCaps="false"
                 android:textColor="@color/white"
-                android:textSize="@dimen/font_16"
                 android:translationZ="@dimen/_1sdp"
                 app:cornerRadius="@dimen/_36sdp"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -301,12 +297,11 @@
 
             <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/tv_user_name"
-                    fontPath="fonts/Roboto-Regular.ttf"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Regular"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/_12sdp"
                     android:textColor="@color/font_color"
-                    android:textSize="@dimen/font_16"
                     android:visibility="visible"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintRight_toRightOf="parent"
@@ -314,14 +309,13 @@
                     tools:text="@string/bilkul_nahi" />
 
             <androidx.appcompat.widget.AppCompatTextView
-                    fontPath="fonts/Roboto-Medium.ttf"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/_12sdp"
                     android:gravity="center"
                     android:text="@string/npr_thank_you"
                     android:textColor="@color/font_color"
-                    android:textSize="@dimen/font_22"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintRight_toRightOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/tv_user_name" />

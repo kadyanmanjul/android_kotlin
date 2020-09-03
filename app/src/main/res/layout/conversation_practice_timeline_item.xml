@@ -28,6 +28,7 @@
                 app:startLineColor="#BABFCF" />
 
         <LinearLayout
+                android:layout_marginTop="@dimen/_minus2sdp"
                 android:paddingBottom="@dimen/_2sdp"
                 android:layout_gravity="top"
                 android:id="@+id/root_view"
@@ -39,21 +40,19 @@
             <androidx.appcompat.widget.AppCompatTextView
                     android:layout_gravity="top|start|center"
                     android:id="@+id/text_header"
-                    android:layout_marginTop="@dimen/_minus1sdp"
                     fontPath="fonts/Poppins-Medium.ttf"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/gray_48"
-                    android:textSize="@dimen/font_14"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Semi_Bold"
+                    android:textColor="@color/black"
                     tools:text="@string/retry_miss_call_verify" />
 
             <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/text_sub_header"
-                    fontPath="fonts/Poppins-Regular.ttf"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="@color/text_90"
-                    android:textSize="@dimen/font_12"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
                     tools:text="@string/retry_miss_call_verify" />
         </LinearLayout>
     </LinearLayout>

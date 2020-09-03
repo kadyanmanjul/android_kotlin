@@ -17,7 +17,6 @@ import com.mindorks.placeholderview.annotations.Resolve
 import com.mindorks.placeholderview.annotations.View
 import java.lang.ref.WeakReference
 
-
 @Layout(R.layout.chat_text_message_holder)
 class TextViewHolder(activityRef: WeakReference<FragmentActivity>, message: ChatModel) :
     BaseChatViewHolder(activityRef, message) {
@@ -87,37 +86,4 @@ class TextViewHolder(activityRef: WeakReference<FragmentActivity>, message: Chat
     override fun getRoot(): FrameLayout {
         return rootView
     }
-
-
-    /* private fun updateForegroundView() {
-         if (message.isSelected) {
-             root_view.foreground = ColorDrawable(
-                 ContextCompat.getColor(
-                     getAppContext(),
-                     R.color.select_forground_color
-                 )
-             )
-         } else {
-             root_view.foreground =
-                 ColorDrawable(ContextCompat.getColor(getAppContext(), R.color.transparent))
-         }
-     }
-
-     @LongClick(R.id.root_view)
-     fun onLongClick() {
-         message.isSelected = message.isSelected.not()
-         updateForegroundView()
-         RxBus2.publish(DeleteMessageEventBus(message))
-
-     }
-
-     @Click(R.id.root_view)
-     fun onSelect() {
-         message.isSelected = false
-         root_view.foreground =
-             ColorDrawable(ContextCompat.getColor(getAppContext(), R.color.transparent))
-         RxBus2.publish(DeleteMessageEventBus(message))
-
-     }
- */
 }

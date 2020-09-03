@@ -40,8 +40,6 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         app:srl_direction="bottom">
-
-
                     <com.mindorks.placeholderview.PlaceHolderView
                             android:id="@+id/chatRv"
                             android:layout_width="match_parent"
@@ -54,25 +52,6 @@
                             app:fastScrollHorizontalTrackDrawable="@drawable/thumb_drawable_rv"
                             app:fastScrollVerticalThumbDrawable="@drawable/thumb_drawable_rv"
                             app:fastScrollVerticalTrackDrawable="@drawable/thumb_drawable_rv" />
-
-
-                    <com.facebook.shimmer.ShimmerFrameLayout
-                            android:id="@+id/shimmer_progress"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:visibility="gone"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:shimmer_duration="1700"
-                            app:shimmer_tilt="5">
-
-                        <View
-                                android:layout_width="match_parent"
-                                android:layout_height="@dimen/_8sdp"
-                                android:background="#FF7200" />
-
-                    </com.facebook.shimmer.ShimmerFrameLayout>
                 </com.joshtalks.joshskills.core.custom_ui.swipyrefreshlayout.library.SwipyRefreshLayout>
 
 
@@ -88,6 +67,7 @@
                         android:scaleType="centerInside"
                         android:src="@drawable/ic_arrow_down"
                         android:visibility="gone"
+                        tools:visibility="visible"
                         app:elevation="@dimen/_4sdp" />
             </FrameLayout>
 
@@ -136,26 +116,28 @@
                             android:visibility="gone" />
 
                     <LinearLayout
-                            android:paddingHorizontal="@dimen/_16sdp"
+                            android:paddingHorizontal="@dimen/_8sdp"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content">
 
                         <androidx.appcompat.widget.AppCompatEditText
                                 android:id="@+id/chat_edit"
+                                android:backgroundTint="@android:color/transparent"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
+                                android:cursorVisible="true"
                                 android:layout_gravity="center"
                                 android:layout_weight="1"
-                                android:autoSizeMaxTextSize="@dimen/_17sdp"
-                                android:backgroundTint="@android:color/transparent"
+                                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
+                                android:textColor="@color/black"
                                 android:clickable="true"
                                 android:focusable="true"
+                                android:textCursorDrawable="@color/button_primary_color"
                                 android:hint="@string/type_message_hint"
                                 android:imeOptions="actionSend"
                                 android:inputType="textCapSentences|textMultiLine"
                                 android:maxLines="3"
                                 android:textColorHint="@color/gray_9E"
-                                android:textSize="@dimen/font_17"
                                 tools:targetApi="o" />
 
 

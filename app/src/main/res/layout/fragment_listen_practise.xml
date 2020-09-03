@@ -22,7 +22,7 @@
 
     <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/title_tv"
-            fontPath="fonts/Poppins-Bold.ttf"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H7"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/_8sdp"
@@ -30,7 +30,6 @@
             android:layout_marginEnd="@dimen/_16sdp"
             android:gravity="start"
             android:textColor="@color/dark_grey"
-            android:textSize="@dimen/font_16"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/image_view"
             app:layout_constraintTop_toTopOf="@+id/image_view"
@@ -38,14 +37,13 @@
 
     <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/sub_title_tv"
-            fontPath="fonts/Poppins-Regular.ttf"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:gravity="start"
             android:maxLines="3"
             android:textColor="@color/dark_grey"
-            android:textSize="@dimen/font_14"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@+id/title_tv"
             app:layout_constraintTop_toBottomOf="@+id/title_tv"

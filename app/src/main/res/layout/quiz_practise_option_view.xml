@@ -17,14 +17,13 @@
         app:strokeWidth="1dp">
 
     <androidx.appcompat.widget.AppCompatTextView
+            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
             android:id="@+id/choice_textview"
-            fontPath="fonts/Poppins-Regular.ttf"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:drawablePadding="@dimen/_8sdp"
             android:gravity="start|center"
             android:textColor="@color/light_grey"
-            android:textSize="@dimen/font_14"
             tools:ignore="MissingPrefix"
             tools:text="Lorem ipsum dolor sit amet"
             tools:visibility="visible" />

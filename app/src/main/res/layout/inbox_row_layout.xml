@@ -51,7 +51,7 @@
 
         <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tv_name"
-                fontPath="fonts/Poppins-SemiBold.ttf"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/_8sdp"
@@ -62,7 +62,6 @@
                 android:inputType="none"
                 android:maxLines="1"
                 android:textColor="@color/black"
-                android:textSize="@dimen/font_16"
                 app:layout_constraintStart_toEndOf="@+id/profile_image"
                 app:layout_constraintTop_toTopOf="@+id/profile_image"
                 app:layout_constraintWidth_default="percent"
@@ -88,7 +87,7 @@
 
         <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tv_last_message"
-                fontPath="fonts/Poppins-Regular.ttf"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/tv_name"
@@ -97,7 +96,6 @@
                 android:maxLines="1"
                 android:text="Click to start the course"
                 android:textColor="@color/dark_grey"
-                android:textSize="@dimen/font_14"
                 android:visibility="invisible"
                 app:layout_constraintBottom_toBottomOf="@+id/profile_image"
                 app:layout_constraintEnd_toEndOf="@+id/tv_last_message_time"
@@ -108,6 +106,7 @@
 
 
         <androidx.appcompat.widget.AppCompatTextView
+                android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal"
                 android:id="@+id/tv_last_message_time"
                 fontPath="fonts/Poppins-Regular.ttf"
                 android:layout_width="wrap_content"

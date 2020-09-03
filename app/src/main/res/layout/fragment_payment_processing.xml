@@ -7,12 +7,11 @@
 
     <com.google.android.material.textview.MaterialTextView
             android:id="@+id/be_calm"
-            style="@style/TextStyle.TopBarNoScroll"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/be_calm"
             android:textColor="@color/black"
-            android:textSize="@dimen/font_22"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -20,12 +19,11 @@
             app:layout_constraintVertical_bias="0.1" />
 
     <com.google.android.material.textview.MaterialTextView
-            style="@style/TextStyle.TopBarNoScroll"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H7_Semi_Bold"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/dont_close"
             android:textColor="@color/black"
-            android:textSize="@dimen/font_14"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/be_calm" />
@@ -44,8 +42,8 @@
 
     <com.pnikosis.materialishprogress.ProgressWheel
             android:id="@+id/progress_bar"
-            android:layout_width="@dimen/_56sdp"
-            android:layout_height="@dimen/_56sdp"
+            android:layout_width="@dimen/_72sdp"
+            android:layout_height="@dimen/_72sdp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -56,18 +54,16 @@
             app:matProg_fillRadius="true"
             app:matProg_linearProgress="false"
             app:matProg_progressIndeterminate="true"
-            app:matProg_rimColor="#33128C7E"
             app:matProg_rimWidth="@dimen/_4sdp" />
 
     <com.google.android.material.textview.MaterialTextView
             android:id="@+id/info"
-            style="@style/TextStyle.TopBarNoScroll"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
             android:text="@string/processing"
             android:textColor="@color/dark_grey"
-            android:textSize="@dimen/font_14"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

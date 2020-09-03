@@ -32,48 +32,53 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-            <androidx.cardview.widget.CardView
+            <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/subscriptionTipContainer"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="@dimen/_12sdp"
+                    android:layout_marginHorizontal="@dimen/_8sdp"
                     android:layout_marginTop="@dimen/_12sdp"
                     android:layout_marginBottom="@dimen/_4sdp"
+                    android:background="@drawable/next_video_progress_drawable"
+                    android:backgroundTint="#DCDCDC"
+                    android:paddingHorizontal="@dimen/_10sdp"
+                    android:paddingVertical="@dimen/_8sdp"
                     android:visibility="gone"
-                    app:cardBackgroundColor="#DCDCDC"
-                    app:cardCornerRadius="@dimen/_20sdp"
-                    app:cardElevation="0dp"
-                    app:contentPaddingBottom="@dimen/_6sdp"
-                    app:contentPaddingLeft="@dimen/_12sdp"
-                    app:contentPaddingRight="@dimen/_12sdp"
-                    app:contentPaddingTop="@dimen/_6sdp"
                     tools:visibility="visible">
 
                 <com.google.android.material.textview.MaterialTextView
                         android:id="@+id/txtSubscriptionTip"
-                        fontPath="fonts/Poppins-Regular.ttf"
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="start"
+                        android:layout_gravity="start|center"
+                        android:layout_marginEnd="@dimen/_4sdp"
+                        android:gravity="start|center"
                         android:text="@string/enjoy_free_trial"
                         android:textAllCaps="false"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
                         android:textColor="@color/black"
-                        android:textSize="@dimen/font_13"
+                        app:layout_constraintBottom_toBottomOf="@id/txtConvert"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintEnd_toStartOf="@+id/txtConvert"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="@+id/txtConvert"
                         app:rippleColor="@color/white" />
 
                 <com.google.android.material.textview.MaterialTextView
                         android:id="@+id/txtConvert"
-                        fontPath="fonts/Poppins-SemiBold.ttf"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="end"
+                        android:foreground="?android:attr/selectableItemBackground"
                         android:text="@string/convert"
                         android:textAllCaps="false"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Bold"
                         android:textColor="@color/button_color"
-                        android:textSize="@dimen/font_13"
-                        app:rippleColor="@color/white" />
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
 
-            </androidx.cardview.widget.CardView>
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
             <com.mindorks.placeholderview.PlaceHolderView
                     android:id="@+id/recycler_view_inbox"

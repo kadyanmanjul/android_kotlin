@@ -48,15 +48,13 @@
 
             <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/text_message_title"
-                    fontPath="fonts/Poppins-Medium.ttf"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/_4sdp"
-                    android:autoSizeMaxTextSize="@dimen/font_18"
                     android:gravity="start"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4_Semi_Bold"
                     android:text="@string/conversation_practice"
                     android:textColor="@color/black"
-                    android:textSize="@dimen/font_18"
                     app:layout_constraintBottom_toBottomOf="@+id/iv_back"
                     app:layout_constraintStart_toEndOf="@+id/iv_back"
                     app:layout_constraintTop_toTopOf="@+id/iv_back"

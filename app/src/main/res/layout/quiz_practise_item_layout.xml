@@ -15,14 +15,13 @@
             android:layout_height="match_parent">
 
         <androidx.appcompat.widget.AppCompatTextView
+                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6_Normal"
                 android:id="@+id/title_tv"
-                fontPath="fonts/Poppins-Bold.ttf"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:gravity="start"
                 android:text="@{quizModel.text}"
                 android:textColor="#596273"
-                android:textSize="@dimen/font_18"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"

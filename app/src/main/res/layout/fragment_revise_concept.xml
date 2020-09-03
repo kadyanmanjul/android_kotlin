@@ -39,14 +39,12 @@
 
                 <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/text_message_title"
-                        fontPath="fonts/Poppins-Bold.ttf"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:ellipsize="marquee"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4_Semi_Bold"
                         android:gravity="center_vertical|start"
                         android:singleLine="true"
                         android:textColor="@color/black"
-                        android:textSize="@dimen/font_18"
                         tool:text="Revise Concept Fragment" />
 
                 <androidx.appcompat.widget.AppCompatImageView
@@ -67,14 +65,13 @@
 
         <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/heading"
-                fontPath="fonts/Poppins-Medium.ttf"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4_Semi_Bold"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/_12sdp"
                 android:layout_marginTop="@dimen/_11sdp"
                 android:gravity="start|center"
                 android:textColor="@color/font_color"
-                android:textSize="@dimen/font_20"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0"
                 app:layout_constraintLeft_toLeftOf="parent"
@@ -144,13 +141,12 @@
 
             <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
                     android:id="@+id/description"
-                    fontPath="fonts/Poppins-Regular.ttf"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Regular"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="@dimen/_12sdp"
                     android:gravity="start|center"
-                    android:textColor="@color/dark_grey"
-                    android:textSize="@dimen/font_16"
+                    android:textColor="@color/font_color"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -161,7 +157,7 @@
 
         <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/materialButton"
-                fontPath="fonts/Poppins-Bold.ttf"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Button"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -176,7 +172,6 @@
                 android:paddingVertical="@dimen/_10sdp"
                 android:text="@string/back_to_question"
                 android:textColor="@color/white"
-                android:textSize="@dimen/font_14"
                 app:cornerRadius="@dimen/_8sdp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"

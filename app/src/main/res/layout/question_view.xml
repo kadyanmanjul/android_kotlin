@@ -10,15 +10,13 @@
             android:layout_height="wrap_content">
 
         <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6_Normal"
                 android:id="@+id/tv_question"
-                fontPath="fonts/Poppins-Bold.ttf"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:gravity="start|center"
-                android:text="@string/retry_miss_call_verify"
                 android:textColor="@color/font_color"
                 android:maxLines="6"
-                android:textSize="@dimen/font_17"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
