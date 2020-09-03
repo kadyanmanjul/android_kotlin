@@ -11,7 +11,7 @@
 
     <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
             android:id="@+id/text_title"
-            fontPath="fonts/Roboto-Medium.ttf"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_SemiBold"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -24,8 +24,7 @@
             android:paddingEnd="@dimen/_12sdp"
             android:paddingBottom="@dimen/_8sdp"
             android:textAllCaps="true"
-            android:textColor="@color/time_color"
-            android:textSize="@dimen/font_15" />
+            android:textColor="@color/black"/>
 
     <View
             android:layout_width="match_parent"
