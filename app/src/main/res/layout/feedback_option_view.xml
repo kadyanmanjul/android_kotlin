@@ -11,7 +11,7 @@
 
         <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/title"
-                fontPath="fonts/Roboto-Regular.ttf"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/_6sdp"
@@ -23,7 +23,6 @@
                 android:paddingEnd="@dimen/_14sdp"
                 android:paddingBottom="@dimen/_8sdp"
                 android:textColor="@color/gray_82"
-                android:textSize="@dimen/font_15"
                 app:elevation="0dp" />
 
         <androidx.appcompat.widget.AppCompatImageView
