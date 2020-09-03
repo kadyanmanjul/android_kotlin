@@ -383,5 +383,6 @@
     <string name="hint_name_field">e.g.mohit arora</string>
     <string name="hint_email_field">e.g. abc@xyz.com</string>
     <string name="hint_date_field">e.g. 01 Jan 1990</string>
+    <string name="total_interests_selected">Total interests selected</string>
     <string name="click_to_start_the_course">Click to start the course</string>
 </resources>
