@@ -65,13 +65,19 @@
 
             <com.google.android.material.chip.ChipGroup
                     android:id="@+id/interest_cg"
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
+                    android:padding="@dimen/_16sdp"
                     android:layout_height="wrap_content"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:singleLine="false"
-                    app:singleSelection="true" />
+                    app:singleSelection="false" />
+            <!-- <com.google.android.material.chip.Chip
+                     android:layout_width="wrap_content"
+                     android:layout_height="wrap_content"
+                 android:text="Category"/>
+         </com.google.android.material.chip.ChipGroup>-->
 
         </ScrollView>
     </androidx.constraintlayout.widget.ConstraintLayout>

@@ -146,6 +146,14 @@
         <item name="android:textColor">@color/choice_chip_text_color_selector</item>
     </style>
 
+    <style name="InterestChipStyle" parent="@style/Widget.MaterialComponents.Chip.Choice">
+        <item name="chipBackgroundColor">@color/chip_borderd_selector</item>
+        <item name="chipStrokeColor">@color/language_chip_bg_color_selector</item>
+        <item name="chipStrokeWidth">@dimen/_1sdp</item>
+        <item name="android:textColor">@color/interest_chip_text_color_selector</item>
+        <item name="android:textAppearance">@style/TextAppearance.JoshTypography.Button</item>
+    </style>
+
     <style name="LanguageFilterChipStyle" parent="@style/Widget.MaterialComponents.Chip.Choice">
         <item name="chipBackgroundColor">@color/language_chip_bg_color_selector</item>
         <item name="chipStrokeColor">@color/text_90</item>

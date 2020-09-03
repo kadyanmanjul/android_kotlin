@@ -7,13 +7,14 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import com.google.android.material.chip.Chip
-import com.google.android.material.chip.ChipGroup
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.databinding.FragmentSelectInterestBinding
 
 class SelectInterestFragment : Fragment() {
 
     lateinit var binding: FragmentSelectInterestBinding
+
+    private val interestSet: MutableSet<Int> = hashSetOf()
 
     companion object {
         const val TAG = "SelectInterestFragment"
@@ -37,7 +38,14 @@ class SelectInterestFragment : Fragment() {
         binding =
             DataBindingUtil.inflate(inflater, R.layout.fragment_select_interest, container, false)
 
-        binding.interestCg.setOnCheckedChangeListener(ChipGroup.OnCheckedChangeListener { group, checkedId -> })
+        binding.interestCg.setOnCheckedChangeListener { _, checkedId ->
+            if (interestSet.contains(checkedId))
+                interestSet.remove(checkedId)
+            else
+                interestSet.add(checkedId)
+            binding.selectedInterestTv.text =
+                getString(R.string.interest_count, interestSet.size, 5)
+        }
         populateInterests()
         return binding.root
     }
@@ -45,7 +53,7 @@ class SelectInterestFragment : Fragment() {
     private fun populateInterests() {
         for (i in 1..10) {
             val chip = LayoutInflater.from(context)
-                .inflate(R.layout.faq_category_item, null, false) as Chip
+                .inflate(R.layout.interest_chip_item, null, false) as Chip
             chip.text = "Category Name"
             chip.tag = i
             chip.id = i
