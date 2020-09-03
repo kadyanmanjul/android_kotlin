@@ -20,6 +20,7 @@ import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.LogException
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
+import com.joshtalks.joshskills.repository.server.onboarding.OnboardingActivityNew
 import com.joshtalks.joshskills.ui.course_details.CourseDetailsActivity
 import com.joshtalks.joshskills.ui.extra.CustomPermissionDialogInteractionListener
 import com.karumi.dexter.MultiplePermissionsReport
@@ -39,6 +40,8 @@ class LauncherActivity : CoreJoshActivity(), CustomPermissionDialogInteractionLi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_launcher)
+        startActivity(OnboardingActivityNew.getIntent(this))
+        return
         animatedProgressBar()
         Branch.getInstance(applicationContext).resetUserSession()
         WorkManagerAdmin.appStartWorker()

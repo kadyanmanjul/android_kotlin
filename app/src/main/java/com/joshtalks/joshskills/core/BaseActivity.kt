@@ -10,6 +10,7 @@ import android.provider.Settings
 import android.util.DisplayMetrics
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
@@ -327,5 +328,20 @@ abstract class BaseActivity : AppCompatActivity() {
             ex.printStackTrace()
         }
         return false
+    }
+
+    fun replaceFragment(
+        containerId: Int,
+        fragment: Fragment,
+        newFragmentTag: String,
+        currentFragmentTag: String? = null
+    ) {
+        if (currentFragmentTag == null) {
+            supportFragmentManager.beginTransaction().replace(containerId, fragment, newFragmentTag)
+                .commit()
+        } else {
+            supportFragmentManager.beginTransaction().replace(containerId, fragment, newFragmentTag)
+                .addToBackStack(currentFragmentTag).commit()
+        }
     }
 }

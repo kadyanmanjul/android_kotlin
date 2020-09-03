@@ -357,6 +357,13 @@
                 android:theme="@style/AppNoBarTheme"
                 android:windowSoftInputMode="stateHidden|adjustResize" />
 
+        <activity
+                android:name=".repository.server.onboarding.OnboardingActivityNew"
+                android:launchMode="singleTask"
+                android:screenOrientation="portrait"
+                android:theme="@style/AppNoBarTheme"
+                android:windowSoftInputMode="stateHidden|adjustResize" />
+
         <service
                 android:name=".core.service.video_download.VideoDownloadService"
                 android:enabled="true"

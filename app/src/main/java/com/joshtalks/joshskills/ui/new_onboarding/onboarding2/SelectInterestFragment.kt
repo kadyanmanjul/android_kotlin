@@ -16,6 +16,7 @@ class SelectInterestFragment : Fragment() {
     lateinit var binding: FragmentSelectInterestBinding
 
     companion object {
+        const val TAG = "SelectInterestFragment"
         fun newInstance(
             maxInterest: Int,
             minInterest: Int
