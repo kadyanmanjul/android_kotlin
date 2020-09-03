@@ -54,7 +54,7 @@
 
             <androidx.appcompat.widget.AppCompatEditText
                     android:id="@+id/tv_referral_code"
-                    style="@style/TextStyle.ButtonText"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Regular"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_marginHorizontal="@dimen/_50sdp"
@@ -72,8 +72,7 @@
                     android:paddingHorizontal="@dimen/_12sdp"
                     android:singleLine="true"
                     android:textAllCaps="true"
-                    android:textColor="@color/light_grey"
-                    android:textSize="@dimen/font_16"
+                    android:textColor="@color/black"
                     app:layout_constraintBottom_toTopOf="@+id/progress_bar_button"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHeight_default="percent"
@@ -83,6 +82,7 @@
 
             <TextView
                     android:id="@+id/textview_number"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="@color/white"
@@ -97,6 +97,7 @@
 
             <TextView
                     android:id="@+id/wrong_code"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="@color/white"
