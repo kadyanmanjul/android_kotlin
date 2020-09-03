@@ -57,7 +57,7 @@
 
                     <TextView
                             android:id="@+id/tv_pdf_info"
-                            fontPath="fonts/Roboto-Regular.ttf"
+                            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_alignParentStart="true"
@@ -70,7 +70,6 @@
                             android:gravity="start|center"
                             android:maxLength="16"
                             android:textColor="@color/gray_48"
-                            android:textSize="@dimen/font_14"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent" />
 
@@ -135,14 +134,13 @@
 
                 <TextView
                         android:id="@+id/tv_message_detail"
-                        fontPath="fonts/Roboto-Light.ttf"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center|start"
                         android:layout_marginStart="@dimen/_12sdp"
                         android:gravity="start|center"
                         android:textColor="@color/gray_9E"
-                        android:textSize="@dimen/font_12"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
 
@@ -150,7 +148,7 @@
 
                 <TextView
                         android:id="@+id/text_message_time"
-                        fontPath="fonts/Roboto-Light.ttf"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="end"
@@ -158,7 +156,6 @@
                         android:drawablePadding="@dimen/_4sdp"
                         android:gravity="end"
                         android:textColor="@color/gray_9E"
-                        android:textSize="@dimen/font_13"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent" />
 

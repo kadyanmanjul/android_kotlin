@@ -18,9 +18,8 @@
             android:clickable="true"
             android:focusable="true"
             android:fontFamily="sans-serif-condensed"
-            android:textAppearance="@android:style/TextAppearance.Material.Small"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Regular"
             android:textColor="?android:attr/textColorPrimary"
-            android:textSize="@dimen/font_14"
             tools:ignore="MissingPrefix" />
 
     <SeekBar
@@ -33,15 +32,13 @@
 
     <TextView
             android:id="@+id/duration"
-
-            fontPath="fonts/Roboto-Regular.ttf"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:clickable="true"
             android:focusable="true"
             android:fontFamily="sans-serif-condensed"
             android:singleLine="true"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Regular"
             android:textColor="?android:attr/textColorPrimary"
-            android:textSize="@dimen/font_14"
             tools:ignore="MissingPrefix" />
 </LinearLayout>

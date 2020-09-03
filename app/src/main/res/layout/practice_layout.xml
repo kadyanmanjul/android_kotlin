@@ -62,7 +62,7 @@
 
                     <androidx.appcompat.widget.AppCompatTextView
                             android:id="@+id/tv_title"
-                            fontPath="fonts/Roboto-Bold.ttf"
+                            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H5"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
@@ -72,7 +72,6 @@
                             android:paddingEnd="@dimen/_4sdp"
                             android:text="@string/practice"
                             android:textColor="@color/colorAccent"
-                            android:textSize="@dimen/font_20"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
                             tools:targetApi="o" />
@@ -82,7 +81,7 @@
 
                 <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
                         android:id="@+id/status_tv"
-                        fontPath="fonts/OpenSans-Regular.ttf"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Regular"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="start"
@@ -94,13 +93,12 @@
                         android:paddingBottom="@dimen/_2sdp"
                         android:text="@string/status_with_colon"
                         android:textColor="@color/gray_82"
-                        android:textSize="@dimen/font_14"
                         app:layout_constraintBottom_toTopOf="@+id/sub_title_tv"
                         app:layout_constraintStart_toStartOf="parent" />
 
                 <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/sub_title_tv"
-                        fontPath="fonts/Roboto-Medium.ttf"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Regular"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="start"
@@ -110,7 +108,6 @@
                         android:paddingStart="@dimen/_8sdp"
                         android:paddingBottom="@dimen/_4sdp"
                         android:textColor="@color/gray_82"
-                        android:textSize="@dimen/font_14"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent" />
 
@@ -120,8 +117,7 @@
 
             <com.google.android.material.textview.MaterialTextView
                     android:id="@+id/tv_submit_answer"
-                    style="@style/Widget.MaterialComponents.TextView"
-                    fontPath="fonts/Roboto-Bold.ttf"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Bold"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_gravity="center"
@@ -132,7 +128,6 @@
                     android:text="@string/open"
                     android:textAllCaps="false"
                     android:textColor="#25d366"
-                    android:textSize="@dimen/font_17"
                     app:drawableTint="@color/white"
                     app:icon="@drawable/ef_ic_arrow_forward"
                     app:layout_constraintBottom_toBottomOf="parent"
