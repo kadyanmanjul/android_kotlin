@@ -57,7 +57,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:maxLines="2"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Small_Regular"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal"
                 android:textColor="@color/gray_82" />
     </LinearLayout>
 

@@ -12,7 +12,6 @@
         android:focusable="true"
         android:textAlignment="center"
         android:textAppearance="@style/TextStyle.ChipText"
-        android:textSize="@dimen/_8sdp"
         app:chipEndPadding="@dimen/_10sdp"
         app:chipMinHeight="@dimen/_32sdp"
         app:chipStartPadding="@dimen/_10sdp"

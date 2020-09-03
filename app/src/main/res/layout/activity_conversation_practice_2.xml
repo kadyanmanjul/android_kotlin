@@ -38,8 +38,8 @@
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:clickable="true"
                     android:focusable="true"
-                    android:onClick="@{()->handler.onBackPressed()}"
                     android:gravity="center_vertical|start"
+                    android:onClick="@{()->handler.onBackPressed()}"
                     android:padding="@dimen/_4sdp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
@@ -52,8 +52,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/_4sdp"
                     android:gravity="start"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4_Semi_Bold"
                     android:text="@string/conversation_practice"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4_Semi_Bold"
                     android:textColor="@color/black"
                     app:layout_constraintBottom_toBottomOf="@+id/iv_back"
                     app:layout_constraintStart_toEndOf="@+id/iv_back"
@@ -65,9 +65,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="@dimen/_8sdp"
+                    android:onClick="@{()->handler.openSubmittedPractise()}"
                     android:src="@drawable/ic_headphone_icon"
                     android:visibility="invisible"
-                    android:onClick="@{()->handler.openSubmittedPractise()}"
                     app:layout_constraintBottom_toBottomOf="@+id/iv_back"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@+id/iv_back" />
@@ -86,7 +86,7 @@
                     app:tabPaddingEnd="0dp"
                     app:tabPaddingStart="0dp"
                     app:tabSelectedTextColor="@color/button_primary_color"
-                    app:tabTextAppearance="@style/TabLayoutStyleV2"
+                    app:tabTextAppearance="@style/TabLayoutStyle"
                     app:tabTextColor="@color/dark_grey" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 

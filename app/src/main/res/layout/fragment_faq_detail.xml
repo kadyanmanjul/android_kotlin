@@ -111,6 +111,8 @@
                 android:backgroundTint="@color/button_primary_color"
                 android:elevation="@dimen/_8sdp"
                 android:onClick="@{()->handler.dismiss()}"
+                android:paddingHorizontal="@dimen/_12sdp"
+                android:paddingVertical="@dimen/_8sdp"
                 android:text="@string/go_home_text"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Button"
                 android:textColor="@color/white"

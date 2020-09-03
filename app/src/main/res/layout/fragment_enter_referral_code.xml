@@ -54,11 +54,10 @@
 
             <androidx.appcompat.widget.AppCompatEditText
                     android:id="@+id/tv_referral_code"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Regular"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_marginHorizontal="@dimen/_50sdp"
-                    android:layout_marginBottom="@dimen/_10sdp"
+                    android:layout_marginBottom="8dp"
                     android:background="@drawable/rounded_rectangle_with_border"
                     android:clickable="true"
                     android:focusable="true"
@@ -72,7 +71,9 @@
                     android:paddingHorizontal="@dimen/_12sdp"
                     android:singleLine="true"
                     android:textAllCaps="true"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Semi_Bold"
                     android:textColor="@color/black"
+                    android:textColorHint="@color/grey"
                     app:layout_constraintBottom_toTopOf="@+id/progress_bar_button"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHeight_default="percent"
@@ -82,12 +83,12 @@
 
             <TextView
                     android:id="@+id/textview_number"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="@color/white"
                     android:text="@string/enter_referral_code"
-                    android:textColor="@color/light_grey"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+                    android:textColor="@color/grey"
                     android:translationY="@dimen/_6sdp"
                     app:layout_constraintBottom_toTopOf="@+id/tv_referral_code"
                     app:layout_constraintEnd_toEndOf="@+id/tv_referral_code"
@@ -97,11 +98,11 @@
 
             <TextView
                     android:id="@+id/wrong_code"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="@color/white"
                     android:text="@string/wrong_coupon"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
                     android:textColor="#F92626"
                     android:visibility="gone"
                     app:layout_constraintEnd_toEndOf="@+id/tv_referral_code"

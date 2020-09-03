@@ -45,7 +45,6 @@
 
         <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_message_title"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H5"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
@@ -58,12 +57,12 @@
                 android:gravity="start"
                 android:padding="@dimen/_4sdp"
                 android:singleLine="true"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H5"
                 android:textColor="@color/black"
                 tools:text="@string/order_summary" />
 
         <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/apply_coupon"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Small_Regular"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
@@ -73,9 +72,10 @@
                 android:ellipsize="marquee"
                 android:foreground="?android:attr/selectableItemBackground"
                 android:gravity="end"
-                android:visibility="gone"
                 android:text="@string/apply_coupon"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal"
                 android:textColor="@color/colorPrimary"
+                android:visibility="gone"
                 tools:text="@string/apply_coupon"
                 tools:visibility="visible" />
 
