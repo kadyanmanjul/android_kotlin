@@ -11,7 +11,7 @@
 
     <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
             android:id="@+id/text_title"
-            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_SemiBold"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Bold"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
