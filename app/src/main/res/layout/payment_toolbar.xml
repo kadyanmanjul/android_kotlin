@@ -45,7 +45,7 @@
 
         <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_message_title"
-                fontPath="fonts/Poppins-SemiBold.ttf"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H5"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
@@ -59,12 +59,11 @@
                 android:padding="@dimen/_4sdp"
                 android:singleLine="true"
                 android:textColor="@color/black"
-                android:textSize="@dimen/font_18"
                 tools:text="@string/order_summary" />
 
         <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/apply_coupon"
-                fontPath="fonts/Poppins-Medium.ttf"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Small_Regular"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
@@ -77,7 +76,6 @@
                 android:visibility="gone"
                 android:text="@string/apply_coupon"
                 android:textColor="@color/colorPrimary"
-                android:textSize="@dimen/font_12"
                 tools:text="@string/apply_coupon"
                 tools:visibility="visible" />
 
