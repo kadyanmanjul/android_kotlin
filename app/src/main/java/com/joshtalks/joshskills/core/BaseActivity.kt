@@ -16,6 +16,7 @@ import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import com.android.installreferrer.api.InstallReferrerClient
 import com.flurry.android.FlurryAgent
+import com.google.gson.reflect.TypeToken
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
@@ -30,6 +31,7 @@ import com.joshtalks.joshskills.repository.local.entity.Question
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.local.model.nps.NPSQuestionModel
+import com.joshtalks.joshskills.repository.server.onboarding.VersionResponse
 import com.joshtalks.joshskills.repository.service.EngagementNetworkHelper
 import com.joshtalks.joshskills.ui.chat.ConversationActivity
 import com.joshtalks.joshskills.ui.course_details.CourseDetailsActivity
@@ -41,6 +43,7 @@ import com.joshtalks.joshskills.ui.inbox.InboxActivity
 import com.joshtalks.joshskills.ui.nps.NetPromoterScoreFragment
 import com.joshtalks.joshskills.ui.signup.OnBoardActivity
 import com.joshtalks.joshskills.ui.signup.SignUpActivity
+import com.joshtalks.joshskills.util.showAppropriateMsg
 import com.newrelic.agent.android.NewRelic
 import io.branch.referral.Branch
 import io.github.inflationx.viewpump.ViewPumpContextWrapper
@@ -48,12 +51,15 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import java.lang.reflect.Type
 
 const val HELP_ACTIVITY_REQUEST_CODE = 9010
 
 abstract class BaseActivity : AppCompatActivity() {
 
     private lateinit var referrerClient: InstallReferrerClient
+    private val versionResponseTypeToken: Type = object : TypeToken<VersionResponse>() {}.type
+    private var versionResponse: VersionResponse? = null
 
     enum class ActivityEnum {
         Conversation,
@@ -116,6 +122,9 @@ abstract class BaseActivity : AppCompatActivity() {
 
     fun getIntentForState(): Intent? {
         val intent: Intent? = when {
+            PrefManager.getBoolValue(IS_GUEST_ENROLLED,false) -> {
+                getInboxActivityIntent()
+            }
             PrefManager.getStringValue(API_TOKEN).isEmpty() -> {
                 Intent(this, OnBoardActivity::class.java)
             }
@@ -343,5 +352,25 @@ abstract class BaseActivity : AppCompatActivity() {
             supportFragmentManager.beginTransaction().replace(containerId, fragment, newFragmentTag)
                 .addToBackStack(currentFragmentTag).commit()
         }
+    }
+
+    public fun isGuestUser(): Boolean =
+        User.getInstance().source == GUEST_USER_SOURCE
+
+    fun getVersionData(): VersionResponse? {
+        versionResponse?.let {
+            return it
+        }
+        try {
+            versionResponse = AppObjectController.gsonMapper.fromJson(
+                PrefManager.getStringValue(ONBOARDING_VERSION_KEY),
+                versionResponseTypeToken
+            )
+            return versionResponse
+
+        } catch (ex: Throwable) {
+            ex.showAppropriateMsg()
+        }
+        return null
     }
 }
