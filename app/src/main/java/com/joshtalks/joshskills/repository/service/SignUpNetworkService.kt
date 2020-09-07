@@ -18,6 +18,8 @@ import com.joshtalks.joshskills.repository.server.RequestVerifyOTP
 import com.joshtalks.joshskills.repository.server.TrueCallerLoginRequest
 import com.joshtalks.joshskills.repository.server.UpdateDeviceRequest
 import com.joshtalks.joshskills.repository.server.UpdateUserLocality
+import com.joshtalks.joshskills.repository.server.onboarding.EnrollMentorWithTagIdRequest
+import com.joshtalks.joshskills.repository.server.onboarding.EnrollMentorWithTestIdRequest
 import com.joshtalks.joshskills.repository.server.signup.LoginResponse
 import com.joshtalks.joshskills.repository.server.signup.RequestSocialSignUp
 import com.joshtalks.joshskills.repository.server.signup.RequestUserVerification
@@ -111,7 +113,7 @@ interface SignUpNetworkService {
     fun createPaymentOrder(@Body params: Map<String, String?>): Deferred<Response<OrderDetailResponse>>
 
     @GET("$DIR/course/test/")
-    suspend fun exploreCourses(@QueryMap params: Map<String, String> = mapOf("is_default" to "true")): List<CourseExploreModel>
+    suspend fun exploreCourses(@QueryMap params: Map<String, String>? = mapOf("is_default" to "true")): List<CourseExploreModel>
 
     @GET("$DIR/payment/coupon/")
     fun validateOrGetAndReferralOrCouponAsync(@QueryMap params: Map<String, String>): Deferred<List<CouponCodeResponse>>
@@ -129,4 +131,13 @@ interface SignUpNetworkService {
     suspend fun getSubscriptionTestDetails(
         @Query("gaid") gaid: String
     ): Response<CourseExploreModel>
+
+    @POST("$DIR/user/create_user/")
+    suspend fun createUnverifiedUser(@Body params: Map<String, String>): Response<LoginResponse>
+
+    @POST("$DIR/mentor/enroll_mentor_test/")
+    suspend fun enrollMentorWithTestIds(@Body params: EnrollMentorWithTestIdRequest): Response<Any>
+
+    @POST("$DIR/mentor/enroll_mentor_tags/")
+    suspend fun enrollMentorWithTagIds(@Body params: EnrollMentorWithTagIdRequest): Response<Any>
 }
