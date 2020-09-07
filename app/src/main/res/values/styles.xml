@@ -151,7 +151,9 @@
         <item name="chipStrokeColor">@color/language_chip_bg_color_selector</item>
         <item name="chipStrokeWidth">@dimen/_1sdp</item>
         <item name="android:textColor">@color/interest_chip_text_color_selector</item>
-        <item name="android:textAppearance">@style/TextAppearance.JoshTypography.Button</item>
+        <item name="android:textAppearance">
+            @style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold
+        </item>
     </style>
 
     <style name="LanguageFilterChipStyle" parent="@style/Widget.MaterialComponents.Chip.Choice">

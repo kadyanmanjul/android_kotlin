@@ -358,7 +358,7 @@
                 android:windowSoftInputMode="stateHidden|adjustResize" />
 
         <activity
-                android:name=".repository.server.onboarding.OnboardingActivityNew"
+                android:name=".ui.newonboarding.OnBoardingActivityNew"
                 android:launchMode="singleTask"
                 android:screenOrientation="portrait"
                 android:theme="@style/AppNoBarTheme"

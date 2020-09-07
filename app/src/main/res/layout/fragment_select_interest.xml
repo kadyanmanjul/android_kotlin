@@ -6,79 +6,107 @@
 
         <variable
                 name="handler"
-                type="com.joshtalks.joshskills.ui.new_onboarding.onboarding2.SelectInterestFragment" />
+                type="com.joshtalks.joshskills.ui.newonboarding.fragment.SelectInterestFragment" />
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-        <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/interest_description_tv"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:background="@color/text_f1f2"
-                android:padding="@dimen/_16sdp"
-                android:text="dummy test remove it. to be configured from firebase config dynamically"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
-                android:textColor="@color/dark_grey"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+        <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
-        <com.google.android.material.textview.MaterialTextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:background="@color/text_f1f2"
-                android:paddingHorizontal="@dimen/_16sdp"
-                android:paddingBottom="@dimen/_8sdp"
-                android:text="@string/total_interests_selected"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4_Semi_Bold"
-                android:textColor="@color/dark_grey"
-                app:layout_constraintEnd_toStartOf="@+id/selected_interest_tv"
-                app:layout_constraintHorizontal_bias="0"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/interest_description_tv" />
+            <include
+                    android:id="@+id/toolbar"
+                    layout="@layout/base_toolbar" />
 
-        <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/selected_interest_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@color/text_f1f2"
-                android:paddingHorizontal="@dimen/_16sdp"
-                android:paddingBottom="@dimen/_8sdp"
-                android:text="(0/5)"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4_Semi_Bold"
-                android:textColor="@color/dark_grey"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/interest_description_tv" />
-
-        <ScrollView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:overScrollMode="never"
-                android:scrollbars="none"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/selected_interest_tv">
-
-
-            <com.google.android.material.chip.ChipGroup
-                    android:id="@+id/interest_cg"
-                    android:layout_width="match_parent"
-                    android:padding="@dimen/_16sdp"
+            <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/interest_description_tv"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:background="@color/text_f1f2"
+                    android:padding="@dimen/_16sdp"
+                    android:text="dummy test remove it. to be configured from firebase config dynamically"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+                    android:textColor="@color/dark_grey"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:singleLine="false"
-                    app:singleSelection="false" />
-            <!-- <com.google.android.material.chip.Chip
-                     android:layout_width="wrap_content"
-                     android:layout_height="wrap_content"
-                 android:text="Category"/>
-         </com.google.android.material.chip.ChipGroup>-->
+                    app:layout_constraintTop_toBottomOf="@+id/toolbar" />
 
-        </ScrollView>
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/total_interest_lbl"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:background="@color/text_f1f2"
+                    android:paddingHorizontal="@dimen/_16sdp"
+                    android:paddingBottom="@dimen/_8sdp"
+                    android:text="@string/total_interests_selected"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4_Semi_Bold"
+                    android:textColor="@color/dark_grey"
+                    app:layout_constraintEnd_toStartOf="@+id/selected_interest_tv"
+                    app:layout_constraintHorizontal_bias="0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/interest_description_tv" />
+
+            <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/selected_interest_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@color/text_f1f2"
+                    android:paddingHorizontal="@dimen/_16sdp"
+                    android:paddingBottom="@dimen/_8sdp"
+                    android:text="(0/5)"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4_Semi_Bold"
+                    android:textColor="@color/dark_grey"
+                    app:layout_constraintBottom_toBottomOf="@+id/total_interest_lbl"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/interest_description_tv" />
+
+            <ScrollView
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:overScrollMode="never"
+                    android:scrollbars="none"
+                    app:layout_constraintBottom_toTopOf="@+id/interest_btn"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/selected_interest_tv">
+
+                <com.google.android.material.chip.ChipGroup
+                        android:id="@+id/interest_cg"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="@dimen/_16sdp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:singleLine="false"
+                        app:singleSelection="false" />
+
+            </ScrollView>
+
+            <com.google.android.material.button.MaterialButton
+                    android:id="@+id/interest_btn"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/_16sdp"
+                    android:layout_marginVertical="@dimen/_8sdp"
+                    android:onClick="@{()->handler.onDoneClicked()}"
+                    android:padding="@dimen/_8sdp"
+                    android:text="@string/done"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Button"
+                    app:cornerRadius="@dimen/_16sdp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+            <ImageView
+                    android:id="@+id/translucent_bg"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/transparent_black"
+                    android:visibility="gone" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>

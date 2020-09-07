@@ -81,7 +81,7 @@ import io.michaelrocks.libphonenumber.android.Phonenumber
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import java.util.*
+import java.util.Locale
 
 private const val GOOGLE_SIGN_UP_REQUEST_CODE = 9001
 const val FLOW_FROM = "Flow"
@@ -129,7 +129,7 @@ class SignUpActivity : BaseActivity() {
         addViewModelObserver()
         initLoginFeatures()
         setupTrueCaller()
-        if (PrefManager.getStringValue(API_TOKEN).isEmpty()) {
+        if (PrefManager.getStringValue(API_TOKEN).isEmpty() || isGuestUser()) {
             openSignUpOptionsFragment()
         } else {
             openProfileDetailFragment()

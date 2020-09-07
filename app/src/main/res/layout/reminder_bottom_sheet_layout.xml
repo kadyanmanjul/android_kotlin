@@ -33,7 +33,7 @@
                 android:layout_width="@dimen/_72sdp"
                 android:layout_height="@dimen/_72sdp"
                 android:padding="@dimen/_2sdp"
-                android:src="@drawable/ic_tick_green"
+                android:src="@drawable/ic_green_tick"
                 app:layout_constraintBottom_toTopOf="@+id/view"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

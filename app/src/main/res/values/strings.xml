@@ -52,8 +52,11 @@
     <string name="explore_new">Course Dekhein</string>
 
     <string name="explorer_courses">Explore Courses</string>
+    <string name="select_courses">Select Courses</string>
     <string name="start_course">Start Course</string>
+    <string name="start_learning">Start Learning</string>
     <string name="paid">Paid</string>
+    <string name="upgrade">Upgrade</string>
     <string name="transaction_status">Your Transaction status:</string>
     <string name="course_payment_label">Course Payment</string>
     <string name="done">Done</string>
@@ -63,6 +66,7 @@
 
 
     <string name="find_more_courses">Find More Courses</string>
+    <string name="add_more_courses">Add More Courses</string>
     <string name="internet_not_available_msz">Seems like your Internet is too slow or not available.</string>
 
     <string name="plz_wait">Please wait&#8230;</string>
@@ -270,6 +274,9 @@
     <string name="help">Help</string>
     <string name="close">Close</string>
     <string name="show_details">Show Details</string>
+    <string name="select_course">Select Course</string>
+    <string name="selected">Selected</string>
+    <string name="course_selected">%s Courses</string>
     <string name="coupon_applied_free_course">Coupon Applied! You got this course\nfor free. Register Now</string>
 
     <string name="freshchat_file_provider_authority">com.joshtalks.joshskills.provider</string>
@@ -337,6 +344,7 @@
     <string name="unlock_class_text">Unlock Next Class     </string>
     <string name="loading_new_classess">Loading new classes...</string>
     <string name="start_now">Start Now</string>
+    <string name="get_started">Get Started</string>
     <string name="already_a_subscriber">Already a subscriber?</string>
     <string name="subscription_feature_3">Agar accha lage toh aap 7 days ke baad upgrade kar sakte hai for just 599!</string>
     <string name="subscription_feature_2">7 dino ke liye aap app ke saare courses unlimited access kar sakte hai</string>

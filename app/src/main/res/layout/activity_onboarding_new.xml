@@ -5,7 +5,7 @@
 
         <variable
                 name="handler"
-                type="com.joshtalks.joshskills.repository.server.onboarding.OnboardingActivityNew" />
+                type="com.joshtalks.joshskills.ui.newonboarding.OnBoardingActivityNew" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
