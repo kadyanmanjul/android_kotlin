@@ -23,6 +23,7 @@ import com.joshtalks.joshskills.core.CoreJoshActivity
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.EXPLORE_TYPE
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
+import com.joshtalks.joshskills.core.IS_GUEST_ENROLLED
 import com.joshtalks.joshskills.core.IS_SUBSCRIPTION_ENDED
 import com.joshtalks.joshskills.core.IS_SUBSCRIPTION_STARTED
 import com.joshtalks.joshskills.core.IS_TRIAL_ENDED
@@ -49,8 +50,10 @@ import com.joshtalks.joshskills.repository.local.model.NotificationAction
 import com.joshtalks.joshskills.repository.server.ProfileResponse
 import com.joshtalks.joshskills.repository.server.SearchLocality
 import com.joshtalks.joshskills.repository.server.UpdateUserLocality
+import com.joshtalks.joshskills.repository.server.onboarding.ONBOARD_VERSIONS
 import com.joshtalks.joshskills.ui.chat.ConversationActivity
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
+import com.joshtalks.joshskills.ui.newonboarding.OnBoardingActivityNew
 import com.joshtalks.joshskills.ui.payment.order_summary.PaymentSummaryActivity
 import com.joshtalks.joshskills.ui.referral.ReferralActivity
 import com.joshtalks.joshskills.ui.reminder.reminder_listing.ReminderListActivity
@@ -84,6 +87,7 @@ import java.util.Calendar
 
 const val REGISTER_INFO_CODE = 2001
 const val COURSE_EXPLORER_CODE = 2002
+const val COURSE_EXPLORER_NEW = 2008
 const val COURSE_EXPLORER_WITHOUT_CODE = 2003
 const val PAYMENT_FOR_COURSE_CODE = 2004
 const val REQ_CODE_VERSION_UPDATE = 530
@@ -184,20 +188,25 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
     }
 
     private fun setCTAButtonText(exploreType: ExploreCardType) {
-        find_more.text = when (exploreType) {
+        if (isGuestUser()) {
+            find_more.text = AppObjectController.getFirebaseRemoteConfig()
+                .getString(FirebaseRemoteConfigKey.INBOX_SCREEN_CTA_TEXT_ONBOARD_FLOW)
+        } else {
+            find_more.text = when (exploreType) {
 
-            ExploreCardType.NORMAL ->
-                AppObjectController.getFirebaseRemoteConfig()
-                    .getString(FirebaseRemoteConfigKey.INBOX_SCREEN_CTA_TEXT_NORMAL)
+                ExploreCardType.NORMAL ->
+                    AppObjectController.getFirebaseRemoteConfig()
+                        .getString(FirebaseRemoteConfigKey.INBOX_SCREEN_CTA_TEXT_NORMAL)
 
-            ExploreCardType.FFCOURSE ->
-                AppObjectController.getFirebaseRemoteConfig()
-                    .getString(FirebaseRemoteConfigKey.INBOX_SCREEN_CTA_TEXT_FFCOURSE)
+                ExploreCardType.FFCOURSE ->
+                    AppObjectController.getFirebaseRemoteConfig()
+                        .getString(FirebaseRemoteConfigKey.INBOX_SCREEN_CTA_TEXT_FFCOURSE)
 
-            ExploreCardType.FREETRIAL ->
-                AppObjectController.getFirebaseRemoteConfig()
-                    .getString(FirebaseRemoteConfigKey.INBOX_SCREEN_CTA_TEXT_FREETRIAL)
+                ExploreCardType.FREETRIAL ->
+                    AppObjectController.getFirebaseRemoteConfig()
+                        .getString(FirebaseRemoteConfigKey.INBOX_SCREEN_CTA_TEXT_FREETRIAL)
 
+            }
         }
     }
 
@@ -205,12 +214,28 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         val titleView = findViewById<AppCompatTextView>(R.id.text_message_title)
         titleView.text = getString(R.string.inbox_header)
         findMoreLayout = findViewById(R.id.parent_layout)
-        find_more.setOnClickListener {
-            AppAnalytics.create(AnalyticsEvent.FIND_MORE_COURSE_CLICKED.NAME)
-                .addBasicParam()
-                .addUserDetails()
-                .push()
-            RxBus2.publish(ExploreCourseEventBus())
+        getVersionData()?.let {
+            when (it.version!!.name) {
+                ONBOARD_VERSIONS.ONBOARDING_V1, ONBOARD_VERSIONS.ONBOARDING_V3 -> {
+                    find_more.setOnClickListener {
+                        AppAnalytics.create(AnalyticsEvent.FIND_MORE_COURSE_CLICKED.NAME)
+                            .addBasicParam()
+                            .addUserDetails()
+                            .push()
+                        RxBus2.publish(ExploreCourseEventBus())
+                    }
+                }
+                ONBOARD_VERSIONS.ONBOARDING_V2, ONBOARD_VERSIONS.ONBOARDING_V4 -> {
+                    find_more.text = getString(R.string.add_more_courses)
+                    find_more.setOnClickListener {
+                        AppAnalytics.create(AnalyticsEvent.ADD_MORE_COURSE_CLICKED.NAME)
+                            .addBasicParam()
+                            .addUserDetails()
+                            .push()
+                        openCourseSelectionExplorer()
+                    }
+                }
+            }
         }
         findViewById<View>(R.id.iv_setting).setOnClickListener {
             openPopupMenu(it)
@@ -367,7 +392,11 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
     private fun addLiveDataObservable() {
         viewModel.registerCourseNetworkLiveData.observe(this) {
             if (it == null || it.isEmpty()) {
-                openCourseExplorer()
+                if (isGuestUser()) {
+                    openNewOnBoardFlow()
+                } else {
+                    openCourseExplorer()
+                }
             } else {
                 addCourseInRecyclerView(it)
                 setTrialEndParam(it)
@@ -425,7 +454,9 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
             }
         progress_bar.visibility = View.GONE
         findMoreLayout.visibility = View.VISIBLE
-        attachOfferHintView()
+        if (PrefManager.getBoolValue(IS_GUEST_ENROLLED, false).not()) {
+            attachOfferHintView()
+        }
     }
 
 
@@ -455,6 +486,22 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
 
     }
 
+    private fun openNewOnBoardFlow() {
+        getVersionData()?.let {
+            when (it.version?.name) {
+                ONBOARD_VERSIONS.ONBOARDING_V1 -> {
+                    openCourseExplorer()
+                }
+                ONBOARD_VERSIONS.ONBOARDING_V2, ONBOARD_VERSIONS.ONBOARDING_V3, ONBOARD_VERSIONS.ONBOARDING_V4 -> {
+                    openCourseSelectionExplorer()
+                }
+                else -> {
+                    openCourseExplorer()
+                }
+            }
+        }
+    }
+
     private fun openCourseExplorer() {
         val registerCourses: MutableSet<InboxEntity> = mutableSetOf()
         viewModel.registerCourseMinimalLiveData.value?.let {
@@ -468,6 +515,10 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
             COURSE_EXPLORER_CODE,
             registerCourses, state = ActivityEnum.Inbox
         )
+    }
+
+    private fun openCourseSelectionExplorer() {
+        OnBoardingActivityNew.startOnBoardingActivity(this, COURSE_EXPLORER_NEW, true)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

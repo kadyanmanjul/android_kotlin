@@ -37,7 +37,6 @@ class OnBoardingActivityNew : CoreJoshActivity() {
                 openCoursesFragment()
             } else {
                 openOnBoardingIntroFragment()
-
             }
         } else openOnBoardingIntroFragment()
 
