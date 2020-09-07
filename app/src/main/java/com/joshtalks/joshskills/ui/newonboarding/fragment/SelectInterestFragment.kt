@@ -20,10 +20,6 @@ import kotlinx.android.synthetic.main.base_toolbar.view.text_message_title
 class SelectInterestFragment : Fragment() {
 
     lateinit var binding: FragmentSelectInterestBinding
-//    lateinit var layoutBottomSheet: RelativeLayout
-
-    //    lateinit var interestCg: ChipGroup
-//    lateinit var selectedInterestTv: MaterialTextView
     private val interestSet: MutableSet<Int> = hashSetOf()
     lateinit var viewmodel: OnBoardViewModel
     private var maxSelection = 5
@@ -44,8 +40,10 @@ class SelectInterestFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewmodel = ViewModelProvider(requireActivity()).get(OnBoardViewModel::class.java)
-        maxSelection = (requireActivity() as BaseActivity).getVersionData()?.maximumNumberOfInterests!!
-        minSelection = (requireActivity() as BaseActivity).getVersionData()?.minimumNumberOfInterests!!
+        maxSelection =
+            (requireActivity() as BaseActivity).getVersionData()?.maximumNumberOfInterests!!
+        minSelection =
+            (requireActivity() as BaseActivity).getVersionData()?.minimumNumberOfInterests!!
     }
 
     override fun onCreateView(
@@ -109,6 +107,8 @@ class SelectInterestFragment : Fragment() {
                         interestSet.add(buttonView.id)
                     else
                         interestSet.remove(buttonView.id)
+                    binding.interestBtn.isEnabled = interestSet.size >= minSelection
+
                     binding.selectedInterestTv.text =
                         getString(R.string.interest_count, interestSet.size, maxSelection)
                 }
