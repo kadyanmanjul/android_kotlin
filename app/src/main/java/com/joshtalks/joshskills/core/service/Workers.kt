@@ -140,6 +140,16 @@ class GetVersionAndFlowDataWorker(var context: Context, workerParams: WorkerPara
                     AppObjectController.commonNetworkService.getOnBoardingVersionDetails(mapOf("instance_id" to instanceId))
                 if (res.isSuccessful) {
                     res.body()?.let {
+                        println("courseInterestTags ${it.courseInterestTags}")
+                        println("courseCategories ${it.courseCategories}")
+                        val sortedInterest =
+                            it.courseInterestTags?.sortedBy { tag -> tag.sortOrder }
+                        val sortedCategories =
+                            it.courseCategories?.sortedBy { category -> category.sortOrder }
+                        it.courseInterestTags = sortedInterest
+                        it.courseCategories = sortedCategories
+                        println("courseInterestTags after ${it.courseInterestTags}")
+                        println("courseCategories after ${it.courseCategories}")
                         PrefManager.put(
                             ONBOARDING_VERSION_KEY,
                             AppObjectController.gsonMapper.toJson(it)

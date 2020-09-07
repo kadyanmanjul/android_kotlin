@@ -75,7 +75,7 @@ class SelectCourseFragment : Fragment() {
             response.forEach { courseExploreModel ->
                 courseExploreModel.isClickable = false
                 courseExploreModel.categoryIds?.forEach {
-                    var courseList = categoryList.get(it)
+                    var courseList = categoryList[it]
                     if (courseList == null) {
                         courseList = ArrayList()
                     }
@@ -84,14 +84,17 @@ class SelectCourseFragment : Fragment() {
                 }
             }
 
-            categoryList.keys.iterator().forEach { category_id ->
-                (requireActivity() as BaseActivity).getVersionData()?.courseCategories?.forEach {
+
+
+            (requireActivity() as BaseActivity).getVersionData()?.courseCategories?.forEach {
+                categoryList.keys.iterator().forEach { category_id ->
                     if (it.id == category_id) {
                         tabName.add(it.name!!)
                         return@forEach
                     }
                 }
             }
+
             AppObjectController.uiHandler.post {
                 binding.courseListingRv.adapter =
                     CourseSelectionViewPageAdapter(

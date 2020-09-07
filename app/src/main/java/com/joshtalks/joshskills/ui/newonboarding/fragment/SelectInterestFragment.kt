@@ -62,21 +62,16 @@ class SelectInterestFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        binding.toolbar.text_message_title.text = "Select Interest"
+        binding.toolbar.text_message_title.text = getString(R.string.select_interest)
     }
 
     fun onDoneClicked() {
-        if (interestSet.size < minSelection)
-            showToast("Please select minimum $minSelection topics for the best experience")
-        else {
-            viewmodel.apiCallStatusLiveData.observe(viewLifecycleOwner, Observer {
-                if (it == ApiCallStatus.SUCCESS) {
-                    showBottomDialog()
-                }
-            })
-
-            viewmodel.enrollMentorAgainstTags(interestSet.toList())
-        }
+        viewmodel.apiCallStatusLiveData.observe(viewLifecycleOwner, Observer {
+            if (it == ApiCallStatus.SUCCESS) {
+                showBottomDialog()
+            }
+        })
+        viewmodel.enrollMentorAgainstTags(interestSet.toList())
     }
 
     private fun showBottomDialog() {
