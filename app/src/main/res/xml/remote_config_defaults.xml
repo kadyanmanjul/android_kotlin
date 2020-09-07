@@ -304,6 +304,10 @@
         <value>Find More Courses</value>
     </entry>
     <entry>
+        <key>INBOX_SCREEN_CTA_TEXT_ONBOARD_FLOW</key>
+        <value>Add More Courses</value>
+    </entry>
+    <entry>
         <key>PAYMENT_SUMMARY_CTA_LABEL_FREE</key>
         <value>Start for Free</value>
     </entry>
@@ -322,5 +326,9 @@
     <entry>
         <key>APPLY_COUPON_TEXT</key>
         <value>Apply Coupon</value>
+    </entry>
+    <entry>
+        <key>NEW_ONBOARD_FLOW_TEXT_ON_ENROLLED</key>
+        <value>Aap aapne interest ke courses me enroll hogaye hai. Yeh Courses 7 Days tak Completely FREE hai . Aap inke alawa bhi courses le sakte hai </value>
     </entry>
 </defaultsMap>

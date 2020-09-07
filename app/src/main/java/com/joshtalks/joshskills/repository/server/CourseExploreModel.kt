@@ -55,12 +55,17 @@ data class CourseExploreModel(
     @SerializedName("language_id")
     var languageId: Int = 1,
 
+    @SerializedName("tag_ids")
+    var tagIds: List<Int>?,
+
+    @SerializedName("category_ids")
+    var categoryIds: List<Int>?,
 
     @SerializedName("certificate")
     val certificate: Boolean = false,
 
     @SerializedName("is_clickable")
-    val isClickable: Boolean = true,
+    var isClickable: Boolean = true,
 
     @SerializedName("card_type")
     val cardType: ExploreCardType = ExploreCardType.NORMAL
@@ -84,7 +89,9 @@ data class CourseExploreModel(
         language = EMPTY,
         certificate = false,
         isClickable = true,
-        cardType = ExploreCardType.NORMAL
+        cardType = ExploreCardType.NORMAL,
+        categoryIds = emptyList(),
+        tagIds = emptyList()
     )
 
 }

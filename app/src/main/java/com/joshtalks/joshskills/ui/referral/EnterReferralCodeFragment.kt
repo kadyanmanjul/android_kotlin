@@ -127,7 +127,7 @@ class EnterReferralCodeFragment : BottomSheetDialogFragment() {
             showProgress()
             try {
                 val data = HashMap<String, String>()
-                data["instance_id"] = PrefManager.getStringValue(INSTANCE_ID, true)
+                data["instance_id"] = PrefManager.getStringValue(INSTANCE_ID, false)
                 data["coupon"] = binding.tvReferralCode.text.toString()
 
                 val res =

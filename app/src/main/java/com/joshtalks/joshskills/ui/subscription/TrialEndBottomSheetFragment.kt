@@ -14,7 +14,6 @@ import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.databinding.FragmentTrialEndBottomsheetBinding
 import com.joshtalks.joshskills.ui.payment.order_summary.PaymentSummaryActivity
 
-const val SUBSCRIPTION_TEST_ID = 122
 const val TRIAL_TEST_ID = 13
 
 class TrialEndBottomSheetFragment : BottomSheetDialogFragment() {
@@ -68,7 +67,8 @@ class TrialEndBottomSheetFragment : BottomSheetDialogFragment() {
     fun unlockCourses() {
         PaymentSummaryActivity.startPaymentSummaryActivity(
             requireActivity(),
-            SUBSCRIPTION_TEST_ID.toString()
+            AppObjectController.getFirebaseRemoteConfig()
+                .getDouble(FirebaseRemoteConfigKey.SUBSCRIPTION_TEST_ID).toInt().toString()
         )
     }
 

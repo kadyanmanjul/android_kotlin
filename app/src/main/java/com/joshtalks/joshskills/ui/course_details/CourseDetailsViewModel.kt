@@ -15,7 +15,7 @@ import com.joshtalks.joshskills.util.showAppropriateMsg
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import java.util.*
+import java.util.HashMap
 
 class CourseDetailsViewModel(application: Application) : AndroidViewModel(application) {
     private val jobs = arrayListOf<Job>()
@@ -28,7 +28,7 @@ class CourseDetailsViewModel(application: Application) : AndroidViewModel(applic
                 val requestParams: HashMap<String, String> = HashMap()
                 requestParams["test_id"] = testId
                 requestParams["gaid"] = PrefManager.getStringValue(USER_UNIQUE_ID)
-                requestParams["instance_id"] = PrefManager.getStringValue(INSTANCE_ID, true)
+                requestParams["instance_id"] = PrefManager.getStringValue(INSTANCE_ID, false)
                 if (Mentor.getInstance().getId().isNotEmpty()) {
                     requestParams["mentor_id"] = Mentor.getInstance().getId()
                 }

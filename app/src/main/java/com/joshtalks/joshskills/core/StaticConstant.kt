@@ -15,6 +15,7 @@ const val TIMEOUT_TIME = 60_000L
 const val MESSAGE_CHAT_SIZE_LIMIT = 2048
 const val EMPTY = ""
 const val SINGLE_SPACE = " "
+const val GUEST_USER_SOURCE = "guest_user_source"
 
 const val IMAGE_PATTERN = "([^\\s]+(\\.(?i)(jpg|png|gif|bmp)|WEBP|webp|JPEG|PNG|Jpeg)$)"
 //const val VIDEO_PATTERN = "([^\\s]+(\\.(?i)(mp4|MP4)$)"
@@ -77,6 +78,7 @@ class FirebaseRemoteConfigKey {
         const val INBOX_SCREEN_CTA_TEXT_NORMAL = "INBOX_SCREEN_CTA_TEXT_NORMAL"
         const val INBOX_SCREEN_CTA_TEXT_FFCOURSE = "INBOX_SCREEN_CTA_TEXT_FFCOURSE"
         const val INBOX_SCREEN_CTA_TEXT_FREETRIAL = "INBOX_SCREEN_CTA_TEXT_FREETRIAL"
+        const val INBOX_SCREEN_CTA_TEXT_ONBOARD_FLOW = "INBOX_SCREEN_CTA_TEXT_ONBOARD_FLOW"
         const val INBOX_SCREEN_CTA_TEXT_SUBSCRIPTION = "INBOX_SCREEN_CTA_TEXT_SUBSCRIPTION"
         const val INBOX_SCREEN_COURSE_PROGRESS = "INBOX_SCREEN_COURSE_PROGRESS_ENABLE"
         const val SUBSCRIPTION_COURSE_IDS = "SUBSCRIPTION_COURSE_IDS"
@@ -110,7 +112,7 @@ class FirebaseRemoteConfigKey {
         const val SUBSCRIPTION_BB_TEXT = "SUBSCRIPTION_BB_TEXT"
 
         // subscription course test ID
-        //const val SUBSCRIPTION_TEST_ID = "SUBSCRIPTION_TEST_ID"
+        const val SUBSCRIPTION_TEST_ID = "SUBSCRIPTION_TEST_ID"
 
         // Course Explore Screen
         const val FFCOURSE_CARD_CLICK_MSG = "FFCOURSE_CARD_CLICK_MSG"
@@ -129,5 +131,6 @@ class FirebaseRemoteConfigKey {
 
         const val IS_APPLY_COUPON_ENABLED = "IS_APPLY_COUPON_ENABLED"
         const val APPLY_COUPON_TEXT = "APPLY_COUPON_TEXT"
+        const val NEW_ONBOARD_FLOW_TEXT_ON_ENROLLED = "NEW_ONBOARD_FLOW_TEXT_ON_ENROLLED"
     }
 }

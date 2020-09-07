@@ -168,8 +168,8 @@ class CourseExploreActivity : CoreJoshActivity() {
                 if (PrefManager.getStringValue(USER_UNIQUE_ID).isNotEmpty()) {
                     data["gaid"] = PrefManager.getStringValue(USER_UNIQUE_ID)
                 }
-                if (PrefManager.getStringValue(INSTANCE_ID, true).isNotEmpty()) {
-                    data["instance"] = PrefManager.getStringValue(INSTANCE_ID, true)
+                if (PrefManager.getStringValue(INSTANCE_ID, false).isNotEmpty()) {
+                    data["instance"] = PrefManager.getStringValue(INSTANCE_ID, false)
                 }
                 if (Mentor.getInstance().getId().isNotEmpty()) {
                     data["mentor"] = Mentor.getInstance().getId()

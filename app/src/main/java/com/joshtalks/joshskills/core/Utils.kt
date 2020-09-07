@@ -770,6 +770,13 @@ object Utils {
     fun isTrueCallerAppExist(): Boolean {
         return isPackageInstalled("com.truecaller", AppObjectController.joshApplication)
     }
+
+    fun setImage(imageView: ImageView, url: String) {
+        Glide.with(AppObjectController.joshApplication)
+            .load(url)
+            .fitCenter()
+            .into(imageView)
+    }
 }
 
 fun milliSecondsToSeconds(time: Long): Long {
