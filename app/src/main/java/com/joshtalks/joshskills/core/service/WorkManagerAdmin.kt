@@ -30,6 +30,8 @@ object WorkManagerAdmin {
                 )
             )
             .then(OneTimeWorkRequestBuilder<GenerateRestoreIdWorker>().build())
+            .then(OneTimeWorkRequestBuilder<GetVersionAndFlowDataWorker>().build())
+
             .enqueue()
 
     }

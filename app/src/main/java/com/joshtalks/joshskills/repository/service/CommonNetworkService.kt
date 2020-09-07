@@ -20,6 +20,7 @@ import com.joshtalks.joshskills.repository.server.course_detail.CourseDetailsRes
 import com.joshtalks.joshskills.repository.server.feedback.FeedbackStatusResponse
 import com.joshtalks.joshskills.repository.server.feedback.RatingDetails
 import com.joshtalks.joshskills.repository.server.feedback.UserFeedbackRequest
+import com.joshtalks.joshskills.repository.server.onboarding.VersionResponse
 import com.joshtalks.joshskills.repository.server.reminder.DeleteReminderRequest
 import com.joshtalks.joshskills.repository.server.reminder.ReminderRequest
 import com.joshtalks.joshskills.repository.server.reminder.ReminderResponse
@@ -34,7 +35,7 @@ import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Query
 import retrofit2.http.QueryMap
-import java.util.*
+import java.util.HashMap
 
 @JvmSuppressWildcards
 interface CommonNetworkService {
@@ -125,5 +126,8 @@ interface CommonNetworkService {
 
     @POST("$DIR/mentor/delete_reminders/")
     suspend fun deleteReminders(@Body deleteReminderRequest: DeleteReminderRequest): Response<BaseResponse<*>>
+
+    @POST("$DIR/version/onboarding/")
+    suspend fun getOnBoardingVersionDetails(@Body params: Map<String, String>): Response<VersionResponse>
 
 }

@@ -3,7 +3,7 @@ package com.joshtalks.joshskills.repository.server.onboarding
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 
-data class OnboardingResponse(
+data class VersionResponse(
     @SerializedName("version")
     @Expose
     var version: Version? = null,
@@ -41,6 +41,11 @@ data class CourseInterestTag(
     @SerializedName("id")
     @Expose
     var id: Int? = null,
+
+    @SerializedName("sort_order")
+    @Expose
+    var sortOrder: Int? = null,
+
     @SerializedName("name")
     @Expose
     var name: String? = null
@@ -59,6 +64,11 @@ data class CourseCategory(
     @SerializedName("id")
     @Expose
     var id: Int? = null,
+
+    @SerializedName("sort_order")
+    @Expose
+    var sortOrder: Int? = null,
+
     @SerializedName("name")
     @Expose
     var name: String? = null
@@ -70,5 +80,13 @@ class Version(
     var id: Int? = null,
     @SerializedName("name")
     @Expose
-    var name: String? = null
+    var name: ONBOARD_VERSIONS? = ONBOARD_VERSIONS.ONBOARDING_V1
 )
+
+enum class ONBOARD_VERSIONS(val type: String) {
+    ONBOARDING_V1("ONBOARDING_V1"),
+    ONBOARDING_V2("ONBOARDING_V2"),
+    ONBOARDING_V3("ONBOARDING_V3"),
+    ONBOARDING_V4("ONBOARDING_V4")
+}
+

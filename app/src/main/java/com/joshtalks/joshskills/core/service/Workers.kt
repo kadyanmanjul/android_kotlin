@@ -18,7 +18,7 @@ import com.joshtalks.joshskills.core.EXPLORE_TYPE
 import com.joshtalks.joshskills.core.INSTANCE_ID
 import com.joshtalks.joshskills.core.InstallReferralUtil
 import com.joshtalks.joshskills.core.LOGIN_ON
-import com.joshtalks.joshskills.core.PermissionUtils
+import com.joshtalks.joshskills.core.ONBOARDING_VERSION_KEY
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.RATING_DETAILS_KEY
 import com.joshtalks.joshskills.core.RESTORE_ID
@@ -27,7 +27,6 @@ import com.joshtalks.joshskills.core.USER_UNIQUE_ID
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.LogException
-import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.core.notification.FCM_TOKEN
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.NPSEvent
@@ -111,17 +110,12 @@ class InstanceIdGenerationWorker(var context: Context, workerParams: WorkerParam
 
     override suspend fun doWork(): Result {
         try {
-            if (PrefManager.hasKey(INSTANCE_ID, true).not()) {
+            if (PrefManager.hasKey(INSTANCE_ID, false).not()) {
                 val gaid = PrefManager.getStringValue(USER_UNIQUE_ID)
                 val res =
                     AppObjectController.signUpNetworkService.getInstanceIdAsync(mapOf("gaid" to gaid))
                 if (res.instanceId.isEmpty().not())
-                    PrefManager.put(INSTANCE_ID, res.instanceId, true)
-                if (PermissionUtils.isStoragePermissionEnabled(applicationContext)) {
-                    val instanceId = AppDirectory.readFromFile(AppDirectory.getInstanceIdKeyFile())
-                    if (instanceId.isNullOrBlank().not())
-                        PrefManager.put(INSTANCE_ID, instanceId!!, true)
-                }
+                    PrefManager.put(INSTANCE_ID, res.instanceId, false)
             }
 
         } catch (ex: Throwable) {
@@ -131,6 +125,35 @@ class InstanceIdGenerationWorker(var context: Context, workerParams: WorkerParam
     }
 }
 
+class GetVersionAndFlowDataWorker(var context: Context, workerParams: WorkerParameters) :
+    CoroutineWorker(context, workerParams) {
+
+    override suspend fun doWork(): Result {
+        try {
+            if (PrefManager.hasKey(INSTANCE_ID, false) && PrefManager.hasKey(
+                    ONBOARDING_VERSION_KEY,
+                    false
+                ).not()
+            ) {
+                val instanceId = PrefManager.getStringValue(INSTANCE_ID)
+                val res =
+                    AppObjectController.commonNetworkService.getOnBoardingVersionDetails(mapOf("instance_id" to instanceId))
+                if (res.isSuccessful) {
+                    res.body()?.let {
+                        PrefManager.put(
+                            ONBOARDING_VERSION_KEY,
+                            AppObjectController.gsonMapper.toJson(it)
+                        )
+                    }
+                }
+            }
+
+        } catch (ex: Throwable) {
+            LogException.catchException(ex)
+        }
+        return Result.success()
+    }
+}
 
 class UniqueIdGenerationWorker(var context: Context, workerParams: WorkerParameters) :
     Worker(context, workerParams) {
