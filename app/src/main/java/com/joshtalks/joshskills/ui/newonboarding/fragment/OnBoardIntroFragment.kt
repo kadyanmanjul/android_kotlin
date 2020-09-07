@@ -1,0 +1,143 @@
+package com.joshtalks.joshskills.ui.newonboarding.fragment
+
+import android.content.Intent
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
+import androidx.viewpager.widget.ViewPager
+import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.BaseActivity
+import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.databinding.FragmentOnBoardIntroBinding
+import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.repository.server.onboarding.ONBOARD_VERSIONS
+import com.joshtalks.joshskills.ui.newonboarding.adapter.OnBoardingIntroTextAdapter
+import com.joshtalks.joshskills.ui.newonboarding.viewmodel.OnBoardViewModel
+import com.joshtalks.joshskills.ui.signup.FLOW_FROM
+import com.joshtalks.joshskills.ui.signup.SignUpActivity
+
+class OnBoardIntroFragment : Fragment() {
+
+    lateinit var binding: FragmentOnBoardIntroBinding
+    private val viewModel: OnBoardViewModel by lazy {
+        ViewModelProvider(requireActivity()).get(
+            OnBoardViewModel::class.java
+        )
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        binding =
+            DataBindingUtil.inflate(inflater, R.layout.fragment_on_board_intro, container, false)
+        binding.lifecycleOwner = this
+        binding.handler = this
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        initView()
+        subscribeObserver()
+    }
+
+    private fun subscribeObserver() {
+        viewModel.isGuestUserCreated.observe(requireActivity(), Observer { isGuestUserCreated ->
+            if (isGuestUserCreated) {
+                (requireActivity() as BaseActivity).apply {
+                    when (getVersionData()?.version!!.name) {
+                        ONBOARD_VERSIONS.ONBOARDING_V1 -> {
+                            return@apply
+                        }
+                        ONBOARD_VERSIONS.ONBOARDING_V2 -> {
+                            replaceFragment(
+                                R.id.onboarding_container,
+                                SelectCourseFragment.newInstance(),
+                                SelectCourseFragment.TAG
+                            )
+                        }
+                        ONBOARD_VERSIONS.ONBOARDING_V3, ONBOARD_VERSIONS.ONBOARDING_V4 -> {
+                            replaceFragment(
+                                R.id.onboarding_container,
+                                SelectInterestFragment.newInstance(),
+                                SelectInterestFragment.TAG
+                            )
+
+                        }
+                    }
+                }
+            }
+        })
+    }
+
+    private fun initView() {
+        (requireActivity() as BaseActivity).getVersionData()?.image?.let {
+            Utils.setImage(binding.scrollingIv, it)
+            println(binding.scrollView.width)
+        }
+
+        (requireActivity() as BaseActivity).getVersionData()?.content?.let {
+            binding.viewPagerText.adapter = OnBoardingIntroTextAdapter(
+                requireActivity().supportFragmentManager,
+                it
+            )
+
+            binding.wormDotsIndicator.setViewPager(binding.viewPagerText)
+
+            binding.viewPagerText.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
+                override fun onPageScrolled(
+                    position: Int,
+                    positionOffset: Float,
+                    positionOffsetPixels: Int
+                ) {
+
+                }
+
+                override fun onPageSelected(position: Int) {
+                    val part = binding.scrollingIv.width / it.size
+                    binding.scrollView.post {
+                        binding.scrollView.smoothScrollTo(
+                            part * position,
+                            0
+                        )
+                    }
+                }
+
+                override fun onPageScrollStateChanged(state: Int) {
+
+                }
+
+            })
+        }
+
+        binding.startBtn.setOnClickListener {
+            viewModel.createGuestUser()
+        }
+
+        if ((requireActivity() as BaseActivity).isGuestUser()||Mentor.getInstance().hasId().not()) {
+            binding.alreadySubscribed.setOnClickListener {
+                val intent = Intent(requireActivity(), SignUpActivity::class.java).apply {
+                    putExtra(FLOW_FROM, "NewOnBoardFlow journey")
+                }
+                startActivity(intent)
+                requireActivity().finish()
+            }
+        } else binding.alreadySubscribed.visibility = View.GONE
+    }
+
+    companion object {
+        const val TAG = "OnBoardingIntroFragment"
+
+        @JvmStatic
+        fun newInstance() =
+            OnBoardIntroFragment()
+    }
+
+}

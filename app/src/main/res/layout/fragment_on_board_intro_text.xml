@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        tools:ignore="MissingPrefix">
+
+
+    <data>
+
+        <variable
+                name="handler"
+                type="com.joshtalks.joshskills.ui.newonboarding.fragment.OnBoardIntroTextFragment" />
+    </data>
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+        <TextView
+                android:id="@+id/title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6_Semi_Bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="Seekhiye from the Best" />
+
+        <TextView
+                android:id="@+id/description"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_4sdp"
+                android:gravity="center"
+                android:paddingHorizontal="@dimen/_13sdp"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
+                android:textColor="@color/dark_grey"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/title"
+                tools:text="Zindagi me aagey badhe Josh ke best courses ki help se" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
