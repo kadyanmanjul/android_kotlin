@@ -12,7 +12,6 @@ import android.widget.LinearLayout
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.tabs.TabLayoutMediator
 import com.joshtalks.joshskills.R
@@ -66,11 +65,11 @@ class SelectCourseFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initView()
-        subscibeObservers()
+        subscribeObservers()
     }
 
-    private fun subscibeObservers() {
-        viewModel.courseListLiveData.observe(requireActivity(), Observer { response ->
+    private fun subscribeObservers() {
+        viewModel.courseListLiveData.observe(requireActivity(), { response ->
 
             response.forEach { courseExploreModel ->
                 courseExploreModel.isClickable = false
@@ -105,15 +104,19 @@ class SelectCourseFragment : Fragment() {
             }
         })
 
-        viewModel.apiCallStatusLiveData.observe(requireActivity(), Observer { response ->
+        viewModel.apiCallStatusLiveData.observe(requireActivity(), { response ->
             AppObjectController.uiHandler.post {
-                if (response == ApiCallStatus.SUCCESS) {
-                    binding.progressBar.visibility = View.GONE
-                    showMoveToInboxScreen()
-                } else if (response == ApiCallStatus.START) {
-                    binding.progressBar.visibility = View.VISIBLE
-                } else {
-                    binding.progressBar.visibility = View.GONE
+                when (response) {
+                    ApiCallStatus.SUCCESS -> {
+                        binding.progressBar.visibility = View.GONE
+                        showMoveToInboxScreen()
+                    }
+                    ApiCallStatus.START -> {
+                        binding.progressBar.visibility = View.VISIBLE
+                    }
+                    else -> {
+                        binding.progressBar.visibility = View.GONE
+                    }
                 }
             }
         })
@@ -230,9 +233,9 @@ class SelectCourseFragment : Fragment() {
     fun registerCourses() {
         val testIds = ArrayList<Int>()
         viewModel.getCourseList()?.let {
-            it.forEach {
-                if (it.isClickable) {
-                    testIds.add(it.id!!)
+            it.forEach { course ->
+                if (course.isClickable) {
+                    testIds.add(course.id!!)
                 }
             }
         }
@@ -254,9 +257,9 @@ class SelectCourseFragment : Fragment() {
                 .subscribe({
                     var count = 0
                     viewModel.getCourseList()?.let {
-                        it.forEach {
-                            if (it.isClickable)
-                                count = count + 1
+                        it.forEach { course ->
+                            if (course.isClickable)
+                                count += 1
                         }
                     }
                     setSelectedCourse(count)
