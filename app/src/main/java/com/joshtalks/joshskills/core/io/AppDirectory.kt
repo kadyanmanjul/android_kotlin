@@ -8,16 +8,14 @@ import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.Utils
-import java.io.BufferedReader
 import java.io.Closeable
-import java.io.DataInputStream
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.io.IOException
-import java.io.InputStreamReader
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
+import java.util.Locale
 
 object AppDirectory {
     const val APP_DIRECTORY = "JoshSkill"
@@ -429,46 +427,6 @@ object AppDirectory {
         }
         return file
     }
-
-    fun writeToFile(data: String, file: File) {
-        try {
-            val stream = FileOutputStream(getInstanceIdKeyFile())
-            try {
-                stream.write(data.toByteArray())
-            } catch (e: Exception) {
-                e.printStackTrace()
-            } finally {
-                stream.close()
-            }
-        } catch (e: IOException) {
-            e.printStackTrace()
-        }
-    }
-
-    fun readFromFile(file: File): String? {
-        var res: String? = null
-        try {
-            val fis = FileInputStream(getInstanceIdKeyFile())
-            val input = DataInputStream(fis)
-            val br = BufferedReader(InputStreamReader(input))
-            res = br.readLine()
-            input.close()
-        } catch (e: IOException) {
-            e.printStackTrace()
-        }
-        return res
-    }
-
-    fun getInstanceIdKeyFile(): File {
-        val f = File(KEY_PATH)
-        if (f.exists().not()) {
-            f.mkdirs()
-        }
-        val file = File(KEY_PATH + File.separator + "Key.txt")
-        file.createNewFile()
-        return file
-    }
-
 
     fun getDirSize(dir: File?): Long {
         var size: Long = 0

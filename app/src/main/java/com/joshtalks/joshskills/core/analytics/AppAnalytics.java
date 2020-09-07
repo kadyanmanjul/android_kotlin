@@ -141,7 +141,7 @@ public class AppAnalytics {
     private static void updateFlurryUser() {
         Timber.tag("Flurry").d("updateFlurryUser() called");
         User user = User.getInstance();
-        FlurryAgent.setUserId(PrefManager.INSTANCE.getStringValue(INSTANCE_ID, true));
+        FlurryAgent.setUserId(PrefManager.INSTANCE.getStringValue(INSTANCE_ID, false));
         FlurryAgent.setVersionName(BuildConfig.VERSION_NAME);
         FlurryAgent.setAge(getAge(user.getDateOfBirth()));
         FlurryAgent.setGender((user.getGender().equals("M") ? Constants.MALE : Constants.FEMALE));
@@ -267,8 +267,8 @@ public class AppAnalytics {
                 parameters.put(AnalyticsEvent.USER_EMAIL.getNAME(), User.getInstance().getEmail());
             if (!User.getInstance().getPhoneNumber().isEmpty())
                 parameters.put(AnalyticsEvent.USER_PHONE_NUMBER.getNAME(), User.getInstance().getPhoneNumber());
-            if (PrefManager.INSTANCE != null && !PrefManager.INSTANCE.getStringValue(INSTANCE_ID, true).isEmpty())
-                parameters.put(AnalyticsEvent.INSTANCE_ID.getNAME(), PrefManager.INSTANCE.getStringValue(INSTANCE_ID, true));
+            if (PrefManager.INSTANCE != null && !PrefManager.INSTANCE.getStringValue(INSTANCE_ID, false).isEmpty())
+                parameters.put(AnalyticsEvent.INSTANCE_ID.getNAME(), PrefManager.INSTANCE.getStringValue(INSTANCE_ID, false));
         } catch (Exception ignored) {
         }
         return this;

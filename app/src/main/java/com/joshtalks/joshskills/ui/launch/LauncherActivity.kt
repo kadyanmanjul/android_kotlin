@@ -7,31 +7,29 @@ import android.content.Intent
 import android.os.Bundle
 import android.telephony.TelephonyManager
 import com.google.firebase.perf.metrics.AddTrace
+import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.CoreJoshActivity
-import com.joshtalks.joshskills.core.INSTANCE_ID
-import com.joshtalks.joshskills.core.JoshSkillExecutors
-import com.joshtalks.joshskills.core.PermissionUtils
+import com.joshtalks.joshskills.core.IS_GUEST_ENROLLED
+import com.joshtalks.joshskills.core.ONBOARDING_VERSION_KEY
 import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.core.READ_WRITE_PERMISSION_GIVEN
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.LogException
-import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
-import com.joshtalks.joshskills.repository.server.onboarding.OnboardingActivityNew
+import com.joshtalks.joshskills.repository.server.onboarding.ONBOARD_VERSIONS
+import com.joshtalks.joshskills.repository.server.onboarding.VersionResponse
 import com.joshtalks.joshskills.ui.course_details.CourseDetailsActivity
 import com.joshtalks.joshskills.ui.extra.CustomPermissionDialogInteractionListener
-import com.karumi.dexter.MultiplePermissionsReport
-import com.karumi.dexter.PermissionToken
-import com.karumi.dexter.listener.PermissionRequest
-import com.karumi.dexter.listener.multi.MultiplePermissionsListener
+import com.joshtalks.joshskills.ui.inbox.COURSE_EXPLORER_NEW
+import com.joshtalks.joshskills.ui.newonboarding.OnBoardingActivityNew
 import io.branch.referral.Branch
 import io.branch.referral.Defines
 import kotlinx.android.synthetic.main.activity_launcher.progress_bar
 import org.json.JSONObject
 import timber.log.Timber
+import java.lang.reflect.Type
 
 
 class LauncherActivity : CoreJoshActivity(), CustomPermissionDialogInteractionListener {
@@ -40,8 +38,6 @@ class LauncherActivity : CoreJoshActivity(), CustomPermissionDialogInteractionLi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_launcher)
-        startActivity(OnboardingActivityNew.getIntent(this))
-        return
         animatedProgressBar()
         Branch.getInstance(applicationContext).resetUserSession()
         WorkManagerAdmin.appStartWorker()
@@ -97,51 +93,6 @@ class LauncherActivity : CoreJoshActivity(), CustomPermissionDialogInteractionLi
     override fun onStart() {
         super.onStart()
         handleIntent()
-        if (PrefManager.getBoolValue(READ_WRITE_PERMISSION_GIVEN).not()) {
-            if (PermissionUtils.isStoragePermissionEnabled(this).not()) {
-                getPermission()
-            } else {
-                initInstanceId()
-            }
-        } else navigateToNextScreen()
-    }
-
-    private fun getPermission() {
-        PermissionUtils.storageReadAndWritePermission(this, object : MultiplePermissionsListener {
-            override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
-                report?.areAllPermissionsGranted()?.let { isGranted ->
-                    PrefManager.put(READ_WRITE_PERMISSION_GIVEN, true)
-                    if (isGranted) {
-                        initInstanceId()
-                        return
-                    } else navigateToNextScreen()
-                    if (report.isAnyPermissionPermanentlyDenied) {
-                        PermissionUtils.permissionPermanentlyDeniedDialog(this@LauncherActivity)
-                        return
-                    }
-                }
-            }
-
-            override fun onPermissionRationaleShouldBeShown(
-                permissions: MutableList<PermissionRequest>?,
-                token: PermissionToken?
-            ) {
-                token?.continuePermissionRequest()
-            }
-        })
-    }
-
-    private fun initInstanceId() {
-        JoshSkillExecutors.BOUNDED.submit {
-            try {
-                val instanceId = AppDirectory.readFromFile(AppDirectory.getInstanceIdKeyFile())
-                if (instanceId.isNullOrBlank())
-                    writeInstanceIdInFile(PrefManager.getStringValue(INSTANCE_ID, true))
-                else PrefManager.put(INSTANCE_ID, instanceId, true)
-            } catch (ex: Throwable) {
-                Timber.e(ex)
-            }
-        }
         navigateToNextScreen()
     }
 
@@ -149,10 +100,6 @@ class LauncherActivity : CoreJoshActivity(), CustomPermissionDialogInteractionLi
         super.onNewIntent(intent)
         this.intent = intent
         handleIntent()
-    }
-
-    private fun writeInstanceIdInFile(instanceId: String) {
-        AppDirectory.writeToFile(instanceId, AppDirectory.getInstanceIdKeyFile())
     }
 
     override fun onStop() {
@@ -172,10 +119,31 @@ class LauncherActivity : CoreJoshActivity(), CustomPermissionDialogInteractionLi
 
     override fun navigateToNextScreen() {
         AppObjectController.uiHandler.postDelayed({
-            val intent = getIntentForState()
-            startActivity(intent)
+            val versionResponseTypeToken: Type = object : TypeToken<VersionResponse>() {}.type
+            val versionResponse = AppObjectController.gsonMapper.fromJson<VersionResponse>(
+                PrefManager.getStringValue(ONBOARDING_VERSION_KEY),
+                versionResponseTypeToken
+            )
+            when (versionResponse?.version!!.name) {
+                ONBOARD_VERSIONS.ONBOARDING_V1 -> {
+                    val intent = getIntentForState()
+                    startActivity(intent)
+                }
+                ONBOARD_VERSIONS.ONBOARDING_V2, ONBOARD_VERSIONS.ONBOARDING_V3, ONBOARD_VERSIONS.ONBOARDING_V4 -> {
+                    if (PrefManager.getBoolValue(IS_GUEST_ENROLLED, false)) {
+                        val intent = getIntentForState()
+                        startActivity(intent)
+                    } else {
+                        OnBoardingActivityNew.startOnBoardingActivity(
+                            this,
+                            COURSE_EXPLORER_NEW,
+                            false
+                        )
+                    }
+                }
+            }
             this@LauncherActivity.finish()
-        }, 2500)
+        }, 3500)
     }
 
     private fun navigateToCourseDetailsScreen(testId: String) {

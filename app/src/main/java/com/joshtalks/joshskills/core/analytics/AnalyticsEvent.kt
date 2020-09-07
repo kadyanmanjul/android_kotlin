@@ -239,6 +239,7 @@ enum class AnalyticsEvent(val NAME: String) {
 
     // FIND more Course
     FIND_MORE_COURSE_CLICKED("Find more course clicked V3"),
+    ADD_MORE_COURSE_CLICKED("Add more course clicked V3"),
 
     INBOX_SCREEN("Inbox Screen V3"),
     COURSE_ENGAGEMENT("Course Engagement V3"),
