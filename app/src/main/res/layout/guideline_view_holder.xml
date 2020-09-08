@@ -16,7 +16,7 @@
             android:textColor="@color/font_color"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:text="Reviews and rating" />
+            tools:text="Course Kaise Chalta Hai?" />
 
     <com.google.android.material.tabs.TabLayout
             android:id="@+id/tab_layout"

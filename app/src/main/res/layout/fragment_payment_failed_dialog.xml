@@ -76,10 +76,10 @@
 
         <TextView
                 android:id="@+id/textView3"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/title"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4"
                 android:textColor="@color/black"
                 app:layout_constraintBottom_toBottomOf="@+id/view"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -88,14 +88,13 @@
                 app:layout_constraintVertical_bias="0.2" />
 
         <TextView
-                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
                 android:id="@+id/reason"
-                style="@style/TextStyle.TopBarNoScroll"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/_16sdp"
                 android:gravity="center"
                 android:text="@string/reason"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
                 android:textColor="@color/dark_grey"
                 android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="@+id/view"
@@ -106,14 +105,13 @@
                 tools:visibility="visible" />
 
         <TextView
-                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
                 android:id="@+id/transation_id"
-                style="@style/TextStyle.TopBarNoScroll"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/_16sdp"
                 android:gravity="center"
                 android:text="@string/trx_id"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
                 android:textColor="@color/light_grey"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="@+id/view"
@@ -124,7 +122,6 @@
 
         <com.google.android.material.button.MaterialButton
                 android:id="@+id/retry"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Semi_Bold"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/_24sdp"
@@ -133,6 +130,7 @@
                 android:paddingVertical="@dimen/_8sdp"
                 android:text="@string/try_again"
                 android:textAllCaps="false"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Semi_Bold"
                 android:textColor="@color/white"
                 app:cornerRadius="@dimen/_20sdp"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -144,7 +142,6 @@
 
         <com.google.android.material.button.MaterialButton
                 android:id="@+id/chat_pay"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Semi_Bold"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/_24sdp"
@@ -155,6 +152,7 @@
                 android:paddingVertical="@dimen/_8sdp"
                 android:text="@string/chat_option"
                 android:textAllCaps="false"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Semi_Bold"
                 android:textColor="@color/dark_grey"
                 app:cornerRadius="@dimen/_20sdp"
                 app:layout_constraintBottom_toBottomOf="parent"

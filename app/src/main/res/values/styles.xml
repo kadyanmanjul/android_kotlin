@@ -104,25 +104,6 @@
         <item name="android:background">@drawable/bg_rounded_bottom_sheet</item>
     </style>
 
-    <!-- ______________New App Typography's_______________-->
-    <style name="TextStyle"></style>
-
-    <style name="TextStyle.TopBarNoScroll" parent="TextStyle">
-        <item name="android:textSize">@dimen/_16sdp</item>
-    </style>
-
-    <style name="TextStyle.TopBarScroll" parent="TextStyle">
-        <item name="android:textSize">@dimen/_14sdp</item>
-    </style>
-
-    <style name="TextStyle.ButtonText" parent="TextStyle">
-        <item name="android:textSize">@dimen/_14sdp</item>
-    </style>
-
-    <style name="TextStyle.NormalText" parent="TextStyle">
-        <item name="android:textSize">@dimen/_12sdp</item>
-    </style>
-
     <style name="TextStyle.ChipText" parent="TextAppearance.JoshTypography.Caption_Normal_SemiBold">
         <item name="android:textSize">@dimen/_9ssp</item>
     </style>
