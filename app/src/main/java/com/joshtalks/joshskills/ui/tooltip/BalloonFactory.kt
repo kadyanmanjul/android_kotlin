@@ -5,6 +5,7 @@ import android.content.Context
 import androidx.lifecycle.LifecycleOwner
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.skydoves.balloon.ArrowOrientation
 import com.joshtalks.skydoves.balloon.Balloon
@@ -58,7 +59,7 @@ object BalloonFactory {
     @SuppressLint("DefaultLocale")
     fun offerIn7Days(
         baseContext: Context,
-        lifecycleOwner: LifecycleOwner, remainDay: String
+        lifecycleOwner: LifecycleOwner, remainDay: String=EMPTY, tipText: String? = null
     ): Balloon {
         var userName = "User"
         try {
@@ -68,20 +69,25 @@ object BalloonFactory {
         } catch (ex: NullPointerException) {
 
         }
-        val offerPercentage =
-            AppObjectController.getFirebaseRemoteConfig().getString("COURSE_MAX_OFFER_PER")
+        val textOfToolTip: String
+        if (tipText.isNullOrBlank()) {
+            val offerPercentage =
+                AppObjectController.getFirebaseRemoteConfig().getString("COURSE_MAX_OFFER_PER")
 
-        val text =
-            String.format(
-                AppObjectController.getFirebaseRemoteConfig()
-                    .getString("FIND_MORE_COURSE_HINT_FIRST_TIME"),
-                userName,
-                remainDay,
-                offerPercentage
-            )
+            textOfToolTip =
+                String.format(
+                    AppObjectController.getFirebaseRemoteConfig()
+                        .getString("FIND_MORE_COURSE_HINT_FIRST_TIME"),
+                    userName,
+                    remainDay,
+                    offerPercentage
+                )
+        } else {
+            textOfToolTip = tipText
+        }
         val typefaceSpan = TypefaceUtils.load(baseContext.assets, "fonts/OpenSans-SemiBold.ttf")
         val textForm: TextForm = TextForm.Builder(baseContext)
-            .setText(text)
+            .setText(textOfToolTip)
             .setTextColorResource(R.color.white)
             .setTextSize(12f)
             .setTextTypeface(typefaceSpan)

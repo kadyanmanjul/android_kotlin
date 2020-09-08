@@ -28,6 +28,10 @@ data class VersionResponse(
     @Expose
     var interestText: String? = null,
 
+    @SerializedName("tooltip_text")
+    @Expose
+    var tooltipText: String? = null,
+
     @SerializedName("course_interest_tags")
     @Expose
     var courseInterestTags: List<CourseInterestTag>? = null,

@@ -456,6 +456,15 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         findMoreLayout.visibility = View.VISIBLE
         if (PrefManager.getBoolValue(IS_GUEST_ENROLLED, false).not()) {
             attachOfferHintView()
+        } else {
+            if (offerInHint == null &&
+                getVersionData() != null &&
+                getVersionData()?.tooltipText.isNullOrBlank().not()
+            ) {
+                offerInHint =
+                    BalloonFactory.offerIn7Days(this, this, getVersionData()?.tooltipText!!)
+                hideToolTip()
+            }
         }
     }
 
@@ -662,21 +671,25 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                     { value ->
-                        val exploreType = PrefManager.getStringValue(EXPLORE_TYPE, false)
-                        if (exploreType.isBlank() || exploreType.contentEquals(ExploreCardType.NORMAL.name)) {
-                            val root = findViewById<View>(R.id.find_more)
-                            offerInHint?.run {
-                                if (this.isShowing.not() && isFinishing.not() && value) {
-                                    this.showAlignBottom(root)
-                                    findViewById<View>(R.id.bottom_line).visibility = View.GONE
-                                }
-                            }
-                        }
+                        hideToolTip(value)
                     },
                     { error ->
                         error.printStackTrace()
                     }
                 ))
+    }
+
+    private fun hideToolTip(value: Boolean = true) {
+        val exploreType = PrefManager.getStringValue(EXPLORE_TYPE, false)
+        if (exploreType.isBlank() || exploreType.contentEquals(ExploreCardType.NORMAL.name)) {
+            val root = findViewById<View>(R.id.find_more)
+            offerInHint?.run {
+                if (this.isShowing.not() && isFinishing.not() && value) {
+                    this.showAlignBottom(root)
+                    findViewById<View>(R.id.bottom_line).visibility = View.GONE
+                }
+            }
+        }
     }
 
     private fun setTrialEndParam(coursesList: List<InboxEntity>) {
