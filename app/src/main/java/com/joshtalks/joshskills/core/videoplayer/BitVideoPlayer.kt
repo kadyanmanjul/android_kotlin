@@ -74,7 +74,8 @@ import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.service.video_download.VideoDownloadController
 import com.mikhaellopez.circularprogressbar.CircularProgressBar
-import java.util.*
+import java.util.Formatter
+import java.util.Locale
 import java.util.concurrent.TimeUnit
 
 class BitVideoPlayer : PlayerView, LifecycleObserver, PlayerControlView.VisibilityListener,
@@ -479,7 +480,7 @@ class BitVideoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibili
 
     override fun onVisibilityChange(visibility: Int) {
         if (visibility == View.GONE) {
-            progressBarBottom.visibility = View.VISIBLE
+            progressBarBottom.visibility = View.GONE
             hideToolbarWithAnimation()
         } else {
             showToolbar()
@@ -502,7 +503,7 @@ class BitVideoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibili
                     }
                 }).start()
             hideToolbarWithAnimation()
-            progressBarBottom.visibility = View.VISIBLE
+            progressBarBottom.visibility = View.GONE
 
 
         } else {
@@ -578,7 +579,7 @@ class BitVideoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibili
         player?.playWhenReady = true
         player?.playbackState
         uri?.let {
-            if(player==null) {
+            if (player == null) {
                 initPlayer()
             }
             player!!.prepare(VideoDownloadController.getInstance().getMediaSource(uri), true, false)
@@ -702,10 +703,10 @@ class BitVideoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibili
         return player?.currentPosition ?: -1
     }
 
-    fun seekTo(pos: Long,isControllerDisable:Boolean=false) {
+    fun seekTo(pos: Long, isControllerDisable: Boolean = false) {
         player?.seekTo(pos)
-        if(isControllerDisable.not())
-        controllerAutoHideOnDelay()
+        if (isControllerDisable.not())
+            controllerAutoHideOnDelay()
     }
 
     private fun controllerAutoHideOnDelay() {
@@ -942,16 +943,16 @@ class BitVideoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibili
     fun playNextVideo(s: String?) {
         setUrl(s)
         playVideo()
-        seekTo(0,true)
+        seekTo(0, true)
         getCurrentPosition()
         timeHandler.post(timeRunnable)
-        mControlsDisabled=false
+        mControlsDisabled = false
         showController()
     }
 
     fun hideButtons() {
         hideController()
-        mControlsDisabled=true
+        mControlsDisabled = true
     }
 
 

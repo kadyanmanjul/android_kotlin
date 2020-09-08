@@ -56,8 +56,8 @@ import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.service.video_download.VideoDownloadController
 import com.joshtalks.joshskills.core.videoplayer.VideoPlayerEventListener
-import java.util.*
-import kotlin.collections.HashMap
+import java.util.Formatter
+import java.util.Locale
 
 class MiniExoPlayer : PlayerView, LifecycleObserver, PlayerControlView.VisibilityListener {
 
@@ -291,7 +291,7 @@ class MiniExoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibilit
             if (mIsPlaying.not()) {
                 //  visiblePlayButton()
             }
-            progressBarBottom.visibility = View.VISIBLE
+            progressBarBottom.visibility = View.GONE
         } else {
             progressBarBottom.visibility = View.GONE
             if (mIsPlaying) {

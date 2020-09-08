@@ -69,7 +69,7 @@ class GuidelineFragment : Fragment() {
             Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
         )
         textView.text = spanString
-        textView.setPadding(0, 8, 0, 8)
+        textView.setPadding(0, 4, 0, 4)
         textView.setLineSpacing(
             TypedValue.applyDimension(
                 TypedValue.COMPLEX_UNIT_DIP,
