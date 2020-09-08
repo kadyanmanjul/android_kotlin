@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.chip.Chip
 import com.joshtalks.joshskills.R
@@ -15,6 +14,7 @@ import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.FragmentSelectInterestBinding
 import com.joshtalks.joshskills.ui.newonboarding.viewmodel.OnBoardViewModel
+import kotlinx.android.synthetic.main.base_toolbar.view.iv_help
 import kotlinx.android.synthetic.main.base_toolbar.view.text_message_title
 
 class SelectInterestFragment : Fragment() {
@@ -56,6 +56,9 @@ class SelectInterestFragment : Fragment() {
         binding.handler = this
         binding.interestDescriptionTv.text =
             (requireActivity() as BaseActivity).getVersionData()?.interestText
+
+        binding.toolbar.iv_help.setOnClickListener { (requireActivity() as BaseActivity).openHelpActivity() }
+
         populateInterests()
         return binding.root
     }
@@ -66,7 +69,7 @@ class SelectInterestFragment : Fragment() {
     }
 
     fun onDoneClicked() {
-        viewmodel.apiCallStatusLiveData.observe(viewLifecycleOwner, Observer {
+        viewmodel.apiCallStatusLiveData.observe(viewLifecycleOwner, {
             if (it == ApiCallStatus.SUCCESS) {
                 showBottomDialog()
             }

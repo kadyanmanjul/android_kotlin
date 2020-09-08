@@ -7,20 +7,19 @@ import com.joshtalks.joshskills.ui.newonboarding.fragment.CourseSelectionViewPag
 import com.joshtalks.joshskills.ui.newonboarding.fragment.SelectCourseFragment
 
 class CourseSelectionViewPageAdapter(
-    fragmentActivity: SelectCourseFragment, private val courseByMap: Map<Int, List<CourseExploreModel>>
+    fragmentActivity: SelectCourseFragment,
+    private val tabNames: MutableList<String>,
+    private val courseByMap: Map<String, List<CourseExploreModel>>
 ) :
     FragmentStateAdapter(fragmentActivity) {
-    private val mKeys: IntArray = courseByMap.keys.toIntArray()
 
     override fun getItemCount(): Int {
         return courseByMap.size
     }
 
     override fun createFragment(position: Int): Fragment {
-        return CourseSelectionViewPagerFragment.newInstance(getItem(position))
-    }
-
-    private fun getItem(position: Int): List<CourseExploreModel> {
-        return courseByMap[mKeys[position]] ?: emptyList()
+        return CourseSelectionViewPagerFragment.newInstance(
+            courseByMap[tabNames[position]] ?: emptyList()
+        )
     }
 }

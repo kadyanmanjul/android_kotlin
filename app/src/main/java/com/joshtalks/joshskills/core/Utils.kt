@@ -771,11 +771,13 @@ object Utils {
         return isPackageInstalled("com.truecaller", AppObjectController.joshApplication)
     }
 
-    fun setImage(imageView: ImageView, url: String) {
-        Glide.with(AppObjectController.joshApplication)
-            .load(url)
-            .fitCenter()
-            .into(imageView)
+    fun setImage(imageView: ImageView, url: String?) {
+        url?.let {
+            Glide.with(AppObjectController.joshApplication)
+                .load(url)
+                .fitCenter()
+                .into(imageView)
+        }
     }
 }
 

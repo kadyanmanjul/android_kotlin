@@ -35,15 +35,13 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import org.jetbrains.anko.textColor
 
-class SelectCourseFragment() : Fragment() {
+class SelectCourseFragment : Fragment() {
 
     private lateinit var binding: FragmentCourseSelectionBinding
     private var courseList: ArrayList<InboxEntity>? = null
-    private var categoryList: HashMap<Int, ArrayList<CourseExploreModel>> = HashMap()
-    private val tabName: MutableList<String> = ArrayList()
+    private var tabName: MutableList<String> = ArrayList()
     private lateinit var viewModel: OnBoardViewModel
     private var compositeDisposable = CompositeDisposable()
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -73,7 +71,7 @@ class SelectCourseFragment() : Fragment() {
 
     private fun subscribeObservers() {
         viewModel.courseListLiveData.observe(requireActivity(), { response ->
-
+            val categoryList: HashMap<Int, ArrayList<CourseExploreModel>> = HashMap()
             response.forEach { courseExploreModel ->
                 courseExploreModel.isClickable = false
                 courseExploreModel.categoryIds?.forEach {
@@ -86,13 +84,14 @@ class SelectCourseFragment() : Fragment() {
                 }
             }
 
-
+            val courseMapByCategoryName: HashMap<String, ArrayList<CourseExploreModel>> = HashMap()
 
             (requireActivity() as BaseActivity).getVersionData()?.courseCategories?.forEach {
-                categoryList.keys.iterator().forEach { category_id ->
+                categoryList.keys.forEach innerLoop@{ category_id ->
                     if (it.id == category_id) {
+                        courseMapByCategoryName[it.name!!] = categoryList[category_id]!!
                         tabName.add(it.name!!)
-                        return@forEach
+                        return@innerLoop
                     }
                 }
             }
@@ -100,8 +99,8 @@ class SelectCourseFragment() : Fragment() {
             AppObjectController.uiHandler.post {
                 binding.courseListingRv.adapter =
                     CourseSelectionViewPageAdapter(
-                        this@SelectCourseFragment,
-                        categoryList
+                        this@SelectCourseFragment, tabName,
+                        courseMapByCategoryName
                     )
                 initViewPagerTab()
             }
@@ -279,14 +278,13 @@ class SelectCourseFragment() : Fragment() {
                         navigateToCourseDetailsScreen(it.id)
                     } else {
                         var count = 0
-                        viewModel.getCourseList()?.let {
-                            it.forEach { course ->
+                        viewModel.getCourseList()?.let { courseList ->
+                            courseList.forEach { course ->
                                 if (course.isClickable)
                                     count += 1
                             }
                         }
                         setSelectedCourse(count)
-
                     }
                 }, {
                     it.printStackTrace()

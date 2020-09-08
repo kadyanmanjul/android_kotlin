@@ -124,26 +124,32 @@ class LauncherActivity : CoreJoshActivity(), CustomPermissionDialogInteractionLi
                 PrefManager.getStringValue(ONBOARDING_VERSION_KEY),
                 versionResponseTypeToken
             )
-            when (versionResponse?.version!!.name) {
-                ONBOARD_VERSIONS.ONBOARDING_V1 -> {
-                    val intent = getIntentForState()
-                    startActivity(intent)
-                }
-                ONBOARD_VERSIONS.ONBOARDING_V2, ONBOARD_VERSIONS.ONBOARDING_V3, ONBOARD_VERSIONS.ONBOARDING_V4 -> {
-                    if (PrefManager.getBoolValue(IS_GUEST_ENROLLED, false)) {
+
+            if (versionResponse == null) {
+                navigateToNextScreen()
+            } else {
+                when (versionResponse.version!!.name) {
+                    ONBOARD_VERSIONS.ONBOARDING_V1 -> {
                         val intent = getIntentForState()
                         startActivity(intent)
-                    } else {
-                        OnBoardingActivityNew.startOnBoardingActivity(
-                            this,
-                            COURSE_EXPLORER_NEW,
-                            false
-                        )
+                    }
+                    ONBOARD_VERSIONS.ONBOARDING_V2, ONBOARD_VERSIONS.ONBOARDING_V3, ONBOARD_VERSIONS.ONBOARDING_V4 -> {
+                        if (PrefManager.getBoolValue(IS_GUEST_ENROLLED, false)) {
+                            val intent = getIntentForState()
+                            startActivity(intent)
+                        } else {
+                            OnBoardingActivityNew.startOnBoardingActivity(
+                                this,
+                                COURSE_EXPLORER_NEW,
+                                false
+                            )
+                        }
                     }
                 }
+
+                this@LauncherActivity.finish()
             }
-            this@LauncherActivity.finish()
-        }, 3500)
+        }, 500)
     }
 
     private fun navigateToCourseDetailsScreen(testId: String) {

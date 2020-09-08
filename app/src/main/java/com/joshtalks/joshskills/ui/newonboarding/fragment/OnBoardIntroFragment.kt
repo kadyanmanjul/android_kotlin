@@ -78,50 +78,60 @@ class OnBoardIntroFragment : Fragment() {
     }
 
     private fun initView() {
-        (requireActivity() as BaseActivity).getVersionData()?.image?.let {
-            Utils.setImage(binding.scrollingIv, it)
-            println(binding.scrollView.width)
-        }
+        (requireActivity() as BaseActivity).getVersionData()?.let { versionData ->
+            // Set buttonText
+            if (versionData.version!!.name == ONBOARD_VERSIONS.ONBOARDING_V2)
+                binding.startBtn.text = getString(R.string.start_your_7_day_trial)
+            else
+                binding.startBtn.text = getString(R.string.get_started)
 
-        (requireActivity() as BaseActivity).getVersionData()?.content?.let {
-            binding.viewPagerText.adapter = OnBoardingIntroTextAdapter(
-                requireActivity().supportFragmentManager,
-                it
-            )
+            //Set Cover Image
+            Utils.setImage(binding.scrollingIv, versionData.image)
 
-            binding.wormDotsIndicator.setViewPager(binding.viewPagerText)
+            //Set up text viewpager
+            versionData.content?.let {
+                binding.viewPagerText.adapter = OnBoardingIntroTextAdapter(
+                    requireActivity().supportFragmentManager,
+                    it
+                )
 
-            binding.viewPagerText.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
-                override fun onPageScrolled(
-                    position: Int,
-                    positionOffset: Float,
-                    positionOffsetPixels: Int
-                ) {
+                binding.wormDotsIndicator.setViewPager(binding.viewPagerText)
 
-                }
+                binding.viewPagerText.addOnPageChangeListener(object :
+                    ViewPager.OnPageChangeListener {
+                    override fun onPageScrolled(
+                        position: Int,
+                        positionOffset: Float,
+                        positionOffsetPixels: Int
+                    ) {
 
-                override fun onPageSelected(position: Int) {
-                    val part = binding.scrollingIv.width / it.size
-                    binding.scrollView.post {
-                        binding.scrollView.smoothScrollTo(
-                            part * position,
-                            0
-                        )
                     }
-                }
 
-                override fun onPageScrollStateChanged(state: Int) {
+                    override fun onPageSelected(position: Int) {
+                        val part = binding.scrollingIv.width / it.size
+                        binding.scrollView.post {
+                            binding.scrollView.smoothScrollTo(
+                                part * position,
+                                0
+                            )
+                        }
+                    }
 
-                }
+                    override fun onPageScrollStateChanged(state: Int) {
 
-            })
+                    }
+
+                })
+            }
         }
 
         binding.startBtn.setOnClickListener {
             viewModel.createGuestUser()
         }
 
-        if ((requireActivity() as BaseActivity).isGuestUser()||Mentor.getInstance().hasId().not()) {
+        if ((requireActivity() as BaseActivity).isGuestUser() || Mentor.getInstance().hasId()
+                .not()
+        ) {
             binding.alreadySubscribed.setOnClickListener {
                 val intent = Intent(requireActivity(), SignUpActivity::class.java).apply {
                     putExtra(FLOW_FROM, "NewOnBoardFlow journey")
