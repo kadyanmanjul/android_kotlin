@@ -187,7 +187,6 @@
                             android:imeOptions="actionDone"
                             android:importantForAutofill="no"
                             android:inputType="phone"
-                            android:letterSpacing=".04"
                             android:lines="1"
                             android:maxLength="13"
                             android:paddingStart="@dimen/_8sdp"

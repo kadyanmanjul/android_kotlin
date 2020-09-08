@@ -48,8 +48,6 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="start|top"
                     android:gravity="start|top"
-                    android:letterSpacing="0.04"
-                    android:lineSpacingExtra="@dimen/_2sdp"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
                     android:textColor="@color/black"
                     tools:ignore="MissingPrefix"

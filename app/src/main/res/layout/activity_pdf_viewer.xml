@@ -20,7 +20,7 @@
                     android:layout_height="match_parent"
                     android:layout_marginTop="?attr/actionBarSize"
                     android:background="@color/emoji_bg_color"
-                    tools:background="@color/bg_tint" />
+                    tools:background="@color/emoji_bg_color" />
 
         </FrameLayout>
 
@@ -31,16 +31,17 @@
                 android:layout_gravity="end|bottom"
                 android:layout_margin="@dimen/_16sdp"
                 android:background="@drawable/round_rectangle"
-                android:backgroundTint="@color/emoji_icon_color"
+                android:backgroundTint="@color/button_color"
                 android:padding="@dimen/_12sdp"
                 android:text="@string/page_number"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
                 android:textColor="@color/white" />
 
         <com.google.android.material.appbar.MaterialToolbar xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="#20000000"
+                android:background="@color/button_color"
                 android:gravity="start|center"
                 android:minHeight="?attr/actionBarSize"
                 app:theme="@style/Theme.GuidelinesCompat.Light.DarkToolbar">
@@ -52,14 +53,13 @@
                     android:layout_marginEnd="@dimen/_5sdp"
                     android:paddingTop="@dimen/_5sdp"
                     android:paddingBottom="@dimen/_5sdp"
-                    android:tint="@color/gray_48"
+                    android:tint="@color/white"
                     android:visibility="visible"
                     app:srcCompat="@drawable/ic_arrow_back" />
 
 
             <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/text_message_title"
-                    fontPath="fonts/OpenSans-SemiBold.ttf"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:ellipsize="end"
@@ -67,8 +67,8 @@
                     android:lines="1"
                     android:padding="@dimen/_5sdp"
                     android:text=""
-                    android:textColor="@color/gray_48"
-                    android:textSize="@dimen/font_20" />
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H5"
+                    android:textColor="@color/gray_48" />
         </com.google.android.material.appbar.MaterialToolbar>
     </FrameLayout>
 </layout>

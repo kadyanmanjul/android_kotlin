@@ -118,8 +118,6 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="start|top"
                     android:gravity="top|start"
-                    android:letterSpacing="0.03"
-                    android:lineSpacingExtra="@dimen/_2sdp"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
                     android:textColor="@color/gray_48"
                     android:textIsSelectable="true" />

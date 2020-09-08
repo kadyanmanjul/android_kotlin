@@ -48,7 +48,6 @@
 
             <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/text_message_title"
-                    fontPath="fonts/OpenSans-SemiBold.ttf"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:ellipsize="end"
@@ -56,8 +55,8 @@
                     android:lines="1"
                     android:padding="@dimen/_5sdp"
                     android:text=""
-                    android:textColor="@color/white"
-                    android:textSize="@dimen/font_20" />
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H5"
+                    android:textColor="@color/white" />
         </com.google.android.material.appbar.MaterialToolbar>
 
 

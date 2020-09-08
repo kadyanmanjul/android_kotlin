@@ -26,7 +26,6 @@
                 wheel:matProg_rimWidth="@dimen/_2sdp" />
 
         <androidx.appcompat.widget.AppCompatTextView
-                fontPath="fonts/OpenSans-SemiBold.ttf"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/progress_bar"
@@ -35,7 +34,9 @@
                 android:layout_centerVertical="true"
                 android:layout_marginTop="@dimen/_10sdp"
                 android:text="@string/plz_wait"
-                android:textColor="@color/white"
-                android:textSize="@dimen/font_18" />
+                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H5"
+                android:textColor="@color/white" />
+
     </RelativeLayout>
+
 </merge>
