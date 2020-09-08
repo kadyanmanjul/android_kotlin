@@ -23,6 +23,7 @@ object WorkManagerAdmin {
             .then(OneTimeWorkRequestBuilder<UniqueIdGenerationWorker>().build())
             .then(OneTimeWorkRequestBuilder<MappingGaIDWithMentor>().build())
             .then(OneTimeWorkRequestBuilder<InstanceIdGenerationWorker>().build())
+            .then(OneTimeWorkRequestBuilder<GetVersionAndFlowDataWorker>().build())
             .then(
                 mutableListOf(
                     OneTimeWorkRequestBuilder<UploadFCMTokenOnServer>().build(),
@@ -30,7 +31,6 @@ object WorkManagerAdmin {
                 )
             )
             .then(OneTimeWorkRequestBuilder<GenerateRestoreIdWorker>().build())
-            .then(OneTimeWorkRequestBuilder<GetVersionAndFlowDataWorker>().build())
 
             .enqueue()
 
