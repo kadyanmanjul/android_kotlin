@@ -5,7 +5,7 @@
             android:endColor="@color/white"
             android:startColor="@color/white" />
     <corners
-            android:bottomLeftRadius="@dimen/_4sdp"
-            android:bottomRightRadius="@dimen/_4sdp" />
+            android:bottomLeftRadius="@dimen/_6sdp"
+            android:bottomRightRadius="@dimen/_6sdp" />
 
 </shape>

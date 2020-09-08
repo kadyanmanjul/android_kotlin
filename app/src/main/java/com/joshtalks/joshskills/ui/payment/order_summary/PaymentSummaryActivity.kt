@@ -221,37 +221,43 @@ class PaymentSummaryActivity : CoreJoshActivity(),
             }
         })
 
-        viewModel.responsePaymentSummary.observe(this, androidx.lifecycle.Observer {
+        viewModel.responsePaymentSummary.observe(this) { paymentSummaryResponse ->
 
-            val stringListName = it.courseName.split(" with ")
+            val stringListName = paymentSummaryResponse.courseName.split(" with ")
             binding.courseName.text = stringListName.get(0)
-            binding.tutorName.text = "with ".plus(it.teacherName)
+            binding.tutorName.text = "with ".plus(paymentSummaryResponse.teacherName)
 
             val df = DecimalFormat("###,###", DecimalFormatSymbols(Locale.US))
-            val enrollUser = df.format(it.totalEnrolled)
+            val enrollUser = df.format(paymentSummaryResponse.totalEnrolled)
             binding.enrolled.text = enrollUser.plus("+")
             binding.enrolled.setTypeface(binding.enrolled.typeface, Typeface.BOLD)
 
-            binding.rating.text = it.rating.toString()
+            binding.rating.text = String.format("%.1f", paymentSummaryResponse.rating)
 
-            appAnalytics.addParam(AnalyticsEvent.COURSE_NAME.NAME, it.courseName)
-            appAnalytics.addParam(AnalyticsEvent.COURSE_PRICE.NAME, it.discountedAmount)
+            appAnalytics.addParam(
+                AnalyticsEvent.COURSE_NAME.NAME,
+                paymentSummaryResponse.courseName
+            )
+            appAnalytics.addParam(
+                AnalyticsEvent.COURSE_PRICE.NAME,
+                paymentSummaryResponse.discountedAmount
+            )
 
             Glide.with(applicationContext)
-                .load(it.imageUrl)
+                .load(paymentSummaryResponse.imageUrl)
                 .fitCenter()
                 .into(binding.profileImage)
             binding.txtPrice.text =
-                "₹ ${String.format("%.2f", it.amount)}"
+                "₹ ${String.format("%.2f", paymentSummaryResponse.amount)}"
 
             multiLineLL = binding.multiLineLl
             multiLineLL.removeAllViews()
 
-            it.features?.let {
+            paymentSummaryResponse.features?.let {
                 val stringList = it.split(",")
                 if (stringList.isNullOrEmpty().not())
-                    stringList.forEach {
-                        if (it.isEmpty().not()) multiLineLL.addView(getTextView(it))
+                    stringList.forEach { str ->
+                        if (str.isEmpty().not()) multiLineLL.addView(getTextView(str))
                     }
             }
             if (viewModel.getCourseDiscountedAmount() > 0) {
@@ -269,7 +275,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
             }
 
             if (couponApplied) {
-                when (it.couponDetails.isPromoCode) {
+                when (paymentSummaryResponse.couponDetails.isPromoCode) {
                     true -> {
                         showToast("Coupon Applied Successfully")
 
@@ -278,7 +284,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                         val text = SpannableStringBuilder()
                             .color(blackColor) { append("Coupon Applied") }
                             .append("\n")
-                            .color(greenColor) { append(it.couponDetails.header) }
+                            .color(greenColor) { append(paymentSummaryResponse.couponDetails.header) }
 
                         applyCouponText.text =
                             text
@@ -295,15 +301,15 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                         showToast("Invalid Coupon Code. Try Again")
                     }
                 }
-            } else if (it.couponDetails.title.isEmpty().not()) {
-                binding.textView1.text = it.couponDetails.name
-                binding.tvTip.text = it.couponDetails.title
-                binding.tvTipValid.text = it.couponDetails.validity
-                binding.tvTipOff.text = it.couponDetails.header
+            } else if (paymentSummaryResponse.couponDetails.title.isEmpty().not()) {
+                binding.textView1.text = paymentSummaryResponse.couponDetails.name
+                binding.tvTip.text = paymentSummaryResponse.couponDetails.title
+                binding.tvTipValid.text = paymentSummaryResponse.couponDetails.validity
+                binding.tvTipOff.text = paymentSummaryResponse.couponDetails.header
 
                 appAnalytics.addParam(
                     AnalyticsEvent.SPECIAL_DISCOUNT.NAME,
-                    it.couponDetails.title
+                    paymentSummaryResponse.couponDetails.title
                 )
 
                 binding.badeBhaiyaTipContainer.visibility = View.VISIBLE
@@ -336,14 +342,17 @@ class PaymentSummaryActivity : CoreJoshActivity(),
 
                     binding.tipUsedMsg.visibility = View.VISIBLE
                 }
-            } else if (it.specialOffer != null) {
+            } else if (paymentSummaryResponse.specialOffer != null) {
 
                 binding.subContainer.visibility = View.VISIBLE
                 binding.titleSub.text =
-                    HtmlCompat.fromHtml(it.specialOffer.title, HtmlCompat.FROM_HTML_MODE_LEGACY)
+                    HtmlCompat.fromHtml(
+                        paymentSummaryResponse.specialOffer.title,
+                        HtmlCompat.FROM_HTML_MODE_LEGACY
+                    )
                 binding.textSub.text =
                     HtmlCompat.fromHtml(
-                        it.specialOffer.description,
+                        paymentSummaryResponse.specialOffer.description,
                         HtmlCompat.FROM_HTML_MODE_LEGACY
                     )
                 binding.subCheckBox.setOnCheckedChangeListener { buttonView, isChecked ->
@@ -362,7 +371,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                     }
                 }
 
-                getPaymentDetails(true, it.specialOffer.test_id.toString())
+                getPaymentDetails(true, paymentSummaryResponse.specialOffer.test_id.toString())
             } else if (viewModel.getCourseDiscountedAmount() > 0 &&
                 AppObjectController.getFirebaseRemoteConfig()
                     .getBoolean(FirebaseRemoteConfigKey.IS_APPLY_COUPON_ENABLED)
@@ -378,7 +387,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
             binding.materialButton.setOnSingleClickListener {
                 startPayment()
             }
-        })
+        }
         if (viewModel.hasRegisteredMobileNumber) {
             binding.group1.visibility = View.GONE
         }

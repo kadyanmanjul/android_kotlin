@@ -56,17 +56,13 @@
 
                         <androidx.cardview.widget.CardView
                                 android:id="@+id/iv_container"
-                                android:layout_width="0dp"
-                                android:layout_height="0dp"
+                                android:layout_width="@dimen/_120sdp"
+                                android:layout_height="@dimen/_128sdp"
                                 android:layout_marginHorizontal="@dimen/_6sdp"
                                 android:layout_marginVertical="@dimen/_6sdp"
-                                app:cardCornerRadius="@dimen/_4sdp"
-                                app:layout_constraintHeight_default="percent"
-                                app:layout_constraintHeight_percent="0.5"
+                                app:cardCornerRadius="@dimen/_6sdp"
                                 app:layout_constraintStart_toStartOf="parent"
-                                app:layout_constraintTop_toTopOf="parent"
-                                app:layout_constraintWidth_default="percent"
-                                app:layout_constraintWidth_percent="0.4">
+                                app:layout_constraintTop_toTopOf="parent">
 
                             <androidx.appcompat.widget.AppCompatImageView
                                     android:id="@+id/profile_image"
@@ -98,6 +94,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center"
                                 android:layout_marginTop="@dimen/_4sdp"
+                                android:layout_marginEnd="@dimen/_8sdp"
                                 android:gravity="start"
                                 android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
                                 android:textColor="@color/dark_grey"
@@ -147,7 +144,9 @@
                                 android:layout_height="wrap_content"
                                 android:background="@drawable/ic_payment_rating"
                                 android:gravity="center"
-                                android:paddingStart="@dimen/medium_margin"
+                                android:paddingVertical="@dimen/_4sdp"
+                                android:paddingStart="@dimen/_24sdp"
+                                android:paddingEnd="@dimen/_4sdp"
                                 android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6"
                                 android:textColor="@color/white"
                                 app:layout_constraintBottom_toBottomOf="@+id/txt_joined"
@@ -260,6 +259,7 @@
                             android:layout_marginBottom="@dimen/_8sdp"
                             android:background="@drawable/round_both_bottom_bg"
                             android:backgroundTint="@color/green"
+                            android:elevation="@dimen/_4sdp"
                             android:paddingBottom="@dimen/_8sdp"
                             android:visibility="gone"
                             app:layout_constraintEnd_toEndOf="parent"
@@ -300,13 +300,13 @@
                                 android:id="@+id/sub_check_box"
                                 android:layout_width="@dimen/_24sdp"
                                 android:layout_height="@dimen/_24sdp"
-                                android:layout_marginEnd="@dimen/_23sdp"
                                 android:button="@drawable/custom_check_box_button"
                                 android:buttonTint="@color/white"
                                 android:checked="false"
                                 android:elevation="@dimen/_4sdp"
                                 app:layout_constraintBottom_toBottomOf="parent"
-                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintEnd_toEndOf="@id/add_this_tv"
+                                app:layout_constraintStart_toStartOf="@id/add_this_tv"
                                 app:layout_constraintTop_toTopOf="parent"
                                 app:layout_constraintVertical_bias="0.5" />
 
@@ -314,11 +314,12 @@
                                 android:id="@+id/add_this_tv"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
+                                android:layout_marginEnd="@dimen/_4sdp"
                                 android:text="@string/add_this"
                                 android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Bold"
                                 android:textColor="@color/white"
-                                app:layout_constraintEnd_toEndOf="@id/sub_check_box"
-                                app:layout_constraintStart_toStartOf="@id/sub_check_box"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toEndOf="@+id/text_sub"
                                 app:layout_constraintTop_toBottomOf="@id/sub_check_box" />
 
 
@@ -518,30 +519,30 @@
                 android:background="#CC000000"
                 android:elevation="@dimen/_6sdp"
                 android:visibility="gone"
-                tools:visibility="visible">
+                tools:visibility="gone">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:layout_marginHorizontal="@dimen/_16sdp"
+                    android:layout_marginHorizontal="@dimen/_12sdp"
                     android:layout_marginTop="@dimen/_8sdp"
                     android:background="@drawable/ic_use_tip_bg"
-                    android:elevation="@dimen/_16sdp">
+                    android:elevation="@dimen/_4sdp">
 
                 <FrameLayout
                         android:id="@+id/fl_container"
                         android:layout_width="0dp"
                         android:layout_height="0dp"
                         android:layout_marginBottom="@dimen/_4sdp"
-                        android:background="#596273"
-                        android:paddingTop="@dimen/_4sdp"
-                        android:paddingBottom="@dimen/_4sdp"
+                        android:background="@color/dark_grey"
+                        android:paddingHorizontal="@dimen/_4sdp"
+                        android:paddingVertical="@dimen/_4sdp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintWidth_default="percent"
-                        app:layout_constraintWidth_percent="0.24">
+                        app:layout_constraintWidth_percent="0.3">
 
                     <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
                             android:id="@+id/text_view_1"
@@ -551,7 +552,7 @@
                             android:drawableTint="@color/white"
                             android:gravity="start|center"
                             android:text="@string/bade_bhaiya_tips_new"
-                            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4_Semi_Bold"
+                            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6"
                             android:textColor="@color/white"
                             tools:ignore="UnusedAttribute" />
 
@@ -569,13 +570,13 @@
                         app:layout_constraintStart_toEndOf="@+id/fl_container"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintWidth_default="percent"
-                        app:layout_constraintWidth_percent="0.76">
+                        app:layout_constraintWidth_percent="0.7">
 
                     <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
                             android:id="@+id/tv_tip"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginHorizontal="@dimen/_12sdp"
+                            android:layout_marginHorizontal="@dimen/_8sdp"
                             android:gravity="start|center"
                             android:text="@string/tip_title"
                             android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
@@ -591,7 +592,7 @@
                             android:id="@+id/tv_tip_off"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginHorizontal="@dimen/_12sdp"
+                            android:layout_marginHorizontal="@dimen/_8sdp"
                             android:gravity="start|center"
                             android:text="@string/tip_discount"
                             android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4"
@@ -604,12 +605,12 @@
 
                     <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
                             android:id="@+id/tv_tip_valid"
-                            android:layout_width="wrap_content"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_marginHorizontal="@dimen/_12sdp"
+                            android:layout_marginHorizontal="@dimen/_8sdp"
                             android:gravity="start|center"
                             android:text="@string/tip_valid"
-                            android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
+                            android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal"
                             android:textColor="@color/error_color"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toStartOf="@+id/tv_tip_used"
@@ -621,11 +622,11 @@
                             android:id="@+id/tv_tip_used"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginEnd="@dimen/_12sdp"
+                            android:layout_marginEnd="@dimen/_8sdp"
                             android:background="@drawable/rect_with_black_bound"
                             android:backgroundTint="@color/green"
                             android:gravity="center"
-                            android:paddingHorizontal="@dimen/_16sdp"
+                            android:paddingHorizontal="@dimen/_14sdp"
                             android:paddingVertical="@dimen/_4sdp"
                             android:text="@string/use_tip"
                             android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
