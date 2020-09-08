@@ -19,12 +19,15 @@ import com.joshtalks.joshskills.core.ApiCallStatus
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
+import com.joshtalks.joshskills.core.IS_GUEST_ENROLLED
+import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.databinding.FragmentCourseSelectionBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.CourseSelectedEventBus
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.server.CourseExploreModel
+import com.joshtalks.joshskills.repository.server.onboarding.ONBOARD_VERSIONS
 import com.joshtalks.joshskills.ui.course_details.CourseDetailsActivity
 import com.joshtalks.joshskills.ui.newonboarding.adapter.CourseSelectionViewPageAdapter
 import com.joshtalks.joshskills.ui.newonboarding.viewmodel.OnBoardViewModel
@@ -32,7 +35,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import org.jetbrains.anko.textColor
 
-class SelectCourseFragment : Fragment() {
+class SelectCourseFragment(var flowFromInbox: Boolean) : Fragment() {
 
     private lateinit var binding: FragmentCourseSelectionBinding
     private var courseList: ArrayList<InboxEntity>? = null
@@ -172,7 +175,26 @@ class SelectCourseFragment : Fragment() {
     }
 
     private fun initView() {
-        binding.titleTv.text = getString(R.string.select_courses)
+        if (PrefManager.getBoolValue(IS_GUEST_ENROLLED, false)) {
+            binding.titleTv.text = getString(R.string.explorer_courses)
+
+            when ((requireActivity() as BaseActivity).getVersionData()?.version?.name) {
+                ONBOARD_VERSIONS.ONBOARDING_V2, ONBOARD_VERSIONS.ONBOARDING_V3 -> {
+                    binding.startTrialContainer.visibility = View.GONE
+                }
+                ONBOARD_VERSIONS.ONBOARDING_V4 -> {
+                    setSelectedCourse(0)
+                }
+                else -> {
+                    setSelectedCourse(0)
+                }
+            }
+
+        } else {
+            binding.titleTv.text = getString(R.string.select_courses)
+            setSelectedCourse(0)
+        }
+
         binding.toolbar.inflateMenu(R.menu.logout_menu)
 
         val item: MenuItem = binding.toolbar.menu.findItem(R.id.menu_logout)
@@ -184,8 +206,6 @@ class SelectCourseFragment : Fragment() {
             }
             return@setOnMenuItemClickListener true
         }
-        setSelectedCourse(0)
-
     }
 
     private fun setSelectedCourse(count: Int) {
@@ -255,14 +275,19 @@ class SelectCourseFragment : Fragment() {
             RxBus2.listenWithoutDelay(CourseSelectedEventBus::class.java)
                 .subscribeOn(AndroidSchedulers.mainThread())
                 .subscribe({
-                    var count = 0
-                    viewModel.getCourseList()?.let {
-                        it.forEach { course ->
-                            if (course.isClickable)
-                                count += 1
+                    if (it.isAlreadyEnrolled && it.id != null) {
+                        navigateToCourseDetailsScreen(it.id)
+                    } else {
+                        var count = 0
+                        viewModel.getCourseList()?.let {
+                            it.forEach { course ->
+                                if (course.isClickable)
+                                    count += 1
+                            }
                         }
+                        setSelectedCourse(count)
+
                     }
-                    setSelectedCourse(count)
                 }, {
                     it.printStackTrace()
                 })
@@ -274,7 +299,7 @@ class SelectCourseFragment : Fragment() {
         const val USER_COURSES_LIST = "user_courses_list"
 
         @JvmStatic
-        fun newInstance() =
-            SelectCourseFragment()
+        fun newInstance(flowFromInbox: Boolean) =
+            SelectCourseFragment(flowFromInbox)
     }
 }

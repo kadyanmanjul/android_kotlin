@@ -59,7 +59,7 @@ class OnBoardIntroFragment : Fragment() {
                         ONBOARD_VERSIONS.ONBOARDING_V2 -> {
                             replaceFragment(
                                 R.id.onboarding_container,
-                                SelectCourseFragment.newInstance(),
+                                SelectCourseFragment.newInstance(true),
                                 SelectCourseFragment.TAG
                             )
                         }

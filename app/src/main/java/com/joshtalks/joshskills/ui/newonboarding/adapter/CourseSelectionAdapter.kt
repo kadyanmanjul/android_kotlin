@@ -11,6 +11,8 @@ import com.bumptech.glide.integration.webp.decoder.WebpDrawableTransformation
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.IS_GUEST_ENROLLED
+import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.databinding.CourseSelectionViewHolderBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.CourseSelectedEventBus
@@ -45,15 +47,29 @@ class CourseSelectionAdapter(private var courseList: List<CourseExploreModel>) :
     inner class CourseSelectViewHolder(val binding: CourseSelectionViewHolderBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(courseExploreModel: CourseExploreModel, position: Int) {
-            binding.selectCourse.setOnClickListener {
-                setText(courseExploreModel, position)
-            }
+            if (PrefManager.getBoolValue(IS_GUEST_ENROLLED, false)) {
+                binding.selectCourse.visibility = View.GONE
+                binding.alfa.visibility = View.GONE
+                binding.rootView.setOnClickListener {
+                    RxBus2.publish(
+                        CourseSelectedEventBus(
+                            courseExploreModel.isClickable,
+                            courseExploreModel.id,
+                            true
+                        )
+                    )
+                }
+            } else {
+                binding.selectCourse.setOnClickListener {
+                    setText(courseExploreModel, position)
+                }
 
-            binding.rootView.setOnClickListener {
-                setText(courseExploreModel, position)
-            }
+                binding.rootView.setOnClickListener {
+                    setText(courseExploreModel, position)
+                }
 
-            setSelectionState(courseExploreModel)
+                setSelectionState(courseExploreModel)
+            }
             Glide.with(context)
                 .load(courseExploreModel.imageUrl)
                 .override(binding.imageView.width, binding.imageView.height)
@@ -64,7 +80,7 @@ class CourseSelectionAdapter(private var courseList: List<CourseExploreModel>) :
                 .into(binding.imageView)
         }
 
-        fun setSelectionState(courseExploreModel: CourseExploreModel) {
+        private fun setSelectionState(courseExploreModel: CourseExploreModel) {
             if (courseExploreModel.isClickable.not()) {
                 binding.selectCourse.text = context.getString(R.string.select_course)
                 binding.alfa.visibility = View.GONE

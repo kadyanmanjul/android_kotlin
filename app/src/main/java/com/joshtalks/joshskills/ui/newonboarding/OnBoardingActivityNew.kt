@@ -44,17 +44,17 @@ class OnBoardingActivityNew : CoreJoshActivity() {
 
     private fun openCoursesFragment() {
         when (getVersionData()?.version!!.name) {
-            ONBOARD_VERSIONS.ONBOARDING_V1, ONBOARD_VERSIONS.ONBOARDING_V3 -> {
+            ONBOARD_VERSIONS.ONBOARDING_V1 -> {
                 this.finish()
             }
             ONBOARD_VERSIONS.ONBOARDING_V2 -> {
                 replaceFragment(
                     R.id.onboarding_container,
-                    SelectCourseFragment.newInstance(),
+                    SelectCourseFragment.newInstance(true),
                     SelectCourseFragment.TAG
                 )
             }
-            ONBOARD_VERSIONS.ONBOARDING_V4 -> {
+            ONBOARD_VERSIONS.ONBOARDING_V4, ONBOARD_VERSIONS.ONBOARDING_V3 -> {
                 replaceFragment(
                     R.id.onboarding_container,
                     SelectInterestFragment.newInstance(),

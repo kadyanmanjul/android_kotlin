@@ -133,7 +133,7 @@ interface SignUpNetworkService {
     ): Response<CourseExploreModel>
 
     @POST("$DIR/user/create_user/")
-    suspend fun createUnverifiedUser(@Body params: Map<String, String>): Response<LoginResponse>
+    suspend fun createGuestUser(@Body params: Map<String, String>): Response<LoginResponse>
 
     @POST("$DIR/mentor/enroll_mentor_test/")
     suspend fun enrollMentorWithTestIds(@Body params: EnrollMentorWithTestIdRequest): Response<Any>

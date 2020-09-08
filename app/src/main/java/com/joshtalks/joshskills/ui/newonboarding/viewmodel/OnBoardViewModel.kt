@@ -46,7 +46,7 @@ class OnBoardViewModel(application: Application) :
                 ) {
                     val instanceId = PrefManager.getStringValue(INSTANCE_ID)
                     val response =
-                        AppObjectController.signUpNetworkService.createUnverifiedUser(mapOf("instance_id" to instanceId))
+                        AppObjectController.signUpNetworkService.createGuestUser(mapOf("instance_id" to instanceId))
                     if (response.isSuccessful)
                         response.body()?.let {
                             updateFromLoginResponse(it)
