@@ -60,7 +60,7 @@ class ReviewsAdapter(private val reviews: List<Review>) :
     }
 
     private fun placeHolder(context: Context, name: String): TextDrawable {
-        val font = Typeface.createFromAsset(context.assets, "fonts/Roboto-Bold.ttf")
+        val font = Typeface.createFromAsset(context.assets, "fonts/OpenSans-Bold.ttf")
         return TextDrawable.builder()
             .beginConfig()
             .textColor(Color.WHITE)

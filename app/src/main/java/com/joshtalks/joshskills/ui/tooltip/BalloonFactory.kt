@@ -23,7 +23,7 @@ object BalloonFactory {
         onBalloonDismissListener: OnBalloonDismissListener
     ): Balloon {
         val text = AppObjectController.getFirebaseRemoteConfig().getString("FIRST_TIME_USER_HINT")
-        val typefaceSpan = TypefaceUtils.load(baseContext.assets, "fonts/Roboto-Medium.ttf")
+        val typefaceSpan = TypefaceUtils.load(baseContext.assets, "fonts/OpenSans-SemiBold.ttf")
         val textForm: TextForm = TextForm.Builder(baseContext)
             .setText(text)
             .setTextColorResource(R.color.gray_53)
@@ -55,7 +55,6 @@ object BalloonFactory {
     }
 
 
-
     @SuppressLint("DefaultLocale")
     fun offerIn7Days(
         baseContext: Context,
@@ -80,7 +79,7 @@ object BalloonFactory {
                 remainDay,
                 offerPercentage
             )
-        val typefaceSpan = TypefaceUtils.load(baseContext.assets, "fonts/Roboto-Medium.ttf")
+        val typefaceSpan = TypefaceUtils.load(baseContext.assets, "fonts/OpenSans-SemiBold.ttf")
         val textForm: TextForm = TextForm.Builder(baseContext)
             .setText(text)
             .setTextColorResource(R.color.white)
@@ -125,7 +124,7 @@ object BalloonFactory {
             offerPercentage,
             remainDay
         )
-        val typefaceSpan = TypefaceUtils.load(baseContext.assets, "fonts/Roboto-Medium.ttf")
+        val typefaceSpan = TypefaceUtils.load(baseContext.assets, "fonts/OpenSans-SemiBold.ttf")
         val textForm: TextForm = TextForm.Builder(baseContext)
             .setText(text)
             .setTextColorResource(R.color.gray_53)
@@ -162,7 +161,7 @@ object BalloonFactory {
             AppObjectController.getFirebaseRemoteConfig().getString("COMPLETION_CERTIFICATE_HINT"),
             percentage
         )
-        val typefaceSpan = TypefaceUtils.load(baseContext.assets, "fonts/Roboto-Regular.ttf")
+        val typefaceSpan = TypefaceUtils.load(baseContext.assets, "fonts/OpenSans-Regular.ttf")
         val textForm: TextForm = TextForm.Builder(baseContext)
             .setText(text)
             .setTextColorResource(R.color.gray_53)

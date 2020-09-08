@@ -40,7 +40,6 @@
             <androidx.appcompat.widget.AppCompatTextView
                     android:layout_gravity="top|start|center"
                     android:id="@+id/text_header"
-                    fontPath="fonts/Poppins-Medium.ttf"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Semi_Bold"

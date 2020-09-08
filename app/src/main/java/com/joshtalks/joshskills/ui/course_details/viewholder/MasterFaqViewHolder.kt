@@ -1,12 +1,11 @@
 package com.joshtalks.joshskills.ui.course_details.viewholder
 
-import android.graphics.Typeface
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.widget.TextViewCompat
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.esafirm.imagepicker.view.GridSpacingItemDecoration
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.VERSION
@@ -48,8 +47,6 @@ class MasterFaqViewHolder(
     var categoryId: Int? = null
     private var compositeDisposable = CompositeDisposable()
 
-    var typefaceSpan: Typeface? = null
-
     @Resolve
     fun onViewInflated() {
         txtTitle.text = faqData.title
@@ -60,10 +57,6 @@ class MasterFaqViewHolder(
     }
 
     private fun addViews() {
-        typefaceSpan = Typeface.createFromAsset(
-            AppObjectController.joshApplication.assets,
-            "fonts/Poppins-Medium.ttf"
-        )
         if (recyclerView.viewAdapter == null || recyclerView.viewAdapter.itemCount == 0) {
             faqData.categoryList.sortedBy { it.sortOrder }.forEach { typeOfHelpModel ->
                 if (categoryId == null) {
@@ -135,7 +128,10 @@ class MasterFaqViewHolder(
                         R.color.button_primary_color,
                         null
                     )
-                    it.categoryNameTV.setTypeface(typefaceSpan, Typeface.BOLD)
+                    TextViewCompat.setTextAppearance(
+                        it.categoryNameTV,
+                        R.style.TextAppearance_JoshTypography_Body_Text_Small_Bold
+                    )
 
                 } else {
                     it.cardView.strokeColor = ResourcesCompat.getColor(
@@ -143,7 +139,10 @@ class MasterFaqViewHolder(
                         R.color.white,
                         null
                     )
-                    it.categoryNameTV.setTypeface(typefaceSpan, Typeface.NORMAL)
+                    TextViewCompat.setTextAppearance(
+                        it.categoryNameTV,
+                        R.style.TextAppearance_JoshTypography_Body_Text_Small_Regular
+                    )
                 }
             }
         }

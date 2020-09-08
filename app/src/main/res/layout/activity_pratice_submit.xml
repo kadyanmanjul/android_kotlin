@@ -220,7 +220,6 @@
 
                         <androidx.appcompat.widget.AppCompatEditText
                                 android:id="@+id/et_practise"
-                                fontPath="fonts/Roboto-Regular.ttf"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="@dimen/_16sdp"
@@ -235,11 +234,10 @@
                                 android:maxLines="8"
                                 android:padding="@dimen/_4sdp"
                                 android:singleLine="false"
-                                android:textColor="@color/font_color"
                                 android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+                                android:textColor="@color/font_color"
                                 android:textColorHint="@color/emoji_bg_color"
                                 android:textCursorDrawable="@drawable/cursor_drawable"
-                                android:textSize="@dimen/font_15"
                                 android:visibility="gone" />
 
 
@@ -265,8 +263,8 @@
                                 android:gravity="center"
                                 android:padding="@dimen/_4sdp"
                                 android:text="@string/hold_to_record_msz"
-                                android:textColor="@color/gray_9E"
                                 android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
+                                android:textColor="@color/gray_9E"
                                 android:visibility="gone" />
 
 
@@ -284,12 +282,13 @@
                                 android:paddingTop="@dimen/_4sdp"
                                 android:paddingEnd="@dimen/_4sdp"
                                 android:text="@string/upload_file_msz"
-                                android:textColor="@color/gray_9E"
                                 android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
+                                android:textColor="@color/gray_9E"
                                 android:visibility="gone"
                                 app:drawableTint="@color/emoji_icon_color" />
 
                     </LinearLayout>
+
                 </com.google.android.material.card.MaterialCardView>
 
                 <com.google.android.material.card.MaterialCardView
@@ -316,7 +315,6 @@
                             android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Semi_Bold"
                             android:textColor="@color/font_color" />
 
-
                     <LinearLayout
                             android:id="@+id/sub_practise_submit_layout"
                             android:layout_width="match_parent"
@@ -324,7 +322,6 @@
                             android:layout_marginTop="@dimen/_16sdp"
                             android:orientation="vertical"
                             android:padding="@dimen/_8sdp">
-
 
                         <com.joshtalks.joshskills.core.custom_ui.JoshVideoPlayer
                                 android:id="@+id/video_player_submit"
@@ -335,7 +332,6 @@
                                 android:focusable="true"
                                 android:visibility="gone"
                                 app:controller_layout_id="@layout/layout_live_player_controller" />
-
 
                         <RelativeLayout
                                 android:id="@+id/submit_audio_view_container"
@@ -359,7 +355,6 @@
                                     android:padding="@dimen/_4sdp"
                                     android:theme="?actionBarTheme"
                                     android:tint="?colorControlNormal" />
-
 
                             <SeekBar
                                     android:id="@+id/submit_practise_seekbar"
@@ -406,7 +401,6 @@
                                     app:layout_goneMarginTop="@dimen/spacing_large" />
                         </RelativeLayout>
 
-
                         <RelativeLayout
                                 android:id="@+id/submit_file_view_container"
                                 android:layout_width="match_parent"
@@ -439,8 +433,8 @@
                                     android:layout_toEndOf="@+id/attachment_placeholder"
                                     android:ellipsize="end"
                                     android:gravity="start|center"
-                                    android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
                                     android:maxLines="1"
+                                    android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
                                     android:textColor="@color/font_color" />
 
                             <androidx.appcompat.widget.AppCompatImageView
@@ -458,7 +452,6 @@
                                     android:tint="#878A91"
                                     android:visibility="visible" />
 
-
                         </RelativeLayout>
 
                         <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
@@ -475,13 +468,13 @@
                                 android:imeOptions="actionDone"
                                 android:inputType="none"
                                 android:padding="@dimen/_4sdp"
+                                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
                                 android:textColor="@color/font_color"
                                 android:textCursorDrawable="@drawable/cursor_drawable"
                                 android:textSize="@dimen/font_15"
-                                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
                                 android:visibility="gone" />
-                    </LinearLayout>
 
+                    </LinearLayout>
 
                 </com.google.android.material.card.MaterialCardView>
 
@@ -501,8 +494,8 @@
                         android:paddingBottom="@dimen/_12sdp"
                         android:text="@string/submit_answer"
                         android:textAllCaps="false"
-                        android:textColor="@color/white"
                         android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
+                        android:textColor="@color/white"
                         app:rippleColor="@color/white" />
 
             </LinearLayout>
@@ -516,7 +509,6 @@
                     android:visibility="gone">
 
                 <com.pnikosis.materialishprogress.ProgressWheel
-
                         android:id="@+id/progress_bar"
                         android:layout_width="@dimen/_60sdp"
                         android:layout_height="@dimen/_60sdp"
@@ -566,10 +558,11 @@
                         android:paddingBottom="@dimen/_8sdp"
                         android:textColor="@android:color/white"
                         android:textSize="@dimen/font_11_5" />
+
             </FrameLayout>
 
-
         </FrameLayout>
+
     </ScrollView>
 
 </layout>

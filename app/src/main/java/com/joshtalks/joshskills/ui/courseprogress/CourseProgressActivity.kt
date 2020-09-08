@@ -158,7 +158,7 @@ class CourseProgressActivity : CoreJoshActivity(), OnDismissDialog,
 
     fun setUserImage(url: String?) {
         if (url.isNullOrEmpty()) {
-            val font = Typeface.createFromAsset(assets, "fonts/Roboto-Medium.ttf")
+            val font = Typeface.createFromAsset(assets, "fonts/OpenSans-SemiBold.ttf")
             val drawable: TextDrawable = TextDrawable.builder()
                 .beginConfig()
                 .textColor(ContextCompat.getColor(applicationContext, R.color.white))
@@ -582,6 +582,4 @@ class CourseProgressActivity : CoreJoshActivity(), OnDismissDialog,
         }
     }
 
-
 }
-

@@ -1,10 +1,10 @@
 package com.joshtalks.joshskills.ui.help.viewholder
 
-import android.graphics.Typeface
 import android.graphics.drawable.PictureDrawable
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.widget.TextViewCompat
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
@@ -40,8 +40,6 @@ class FaqCategoryViewHolder(
 
     @View(R.id.root_view)
     lateinit var cardView: MaterialCardView
-
-    var typefaceSpan: Typeface? = null
 
     @Resolve
     fun onViewInflated() {
@@ -86,25 +84,26 @@ class FaqCategoryViewHolder(
         } else {
             categoryIconIV.setImage(faqCategory.iconUrl)
         }
-
-        typefaceSpan = Typeface.createFromAsset(
-            AppObjectController.joshApplication.assets,
-            "fonts/Poppins-Medium.ttf"
-        )
         if (position != -1)
             setCardDefaultTint()
     }
 
     private fun setCardDefaultTint() {
         if (position != 1) {
-            categoryNameTV.setTypeface(typefaceSpan, Typeface.NORMAL)
+            TextViewCompat.setTextAppearance(
+                categoryNameTV,
+                R.style.TextAppearance_JoshTypography_Body_Text_Small_Regular
+            )
             cardView.strokeColor = ResourcesCompat.getColor(
                 AppObjectController.joshApplication.resources,
                 R.color.white,
                 null
             )
         } else {
-            categoryNameTV.setTypeface(typefaceSpan, Typeface.BOLD)
+            TextViewCompat.setTextAppearance(
+                categoryNameTV,
+                R.style.TextAppearance_JoshTypography_Body_Text_Small_Bold
+            )
             cardView.strokeColor = ResourcesCompat.getColor(
                 AppObjectController.joshApplication.resources,
                 R.color.button_primary_color,

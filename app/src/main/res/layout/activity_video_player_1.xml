@@ -67,7 +67,6 @@
 
                 <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/text_message_title"
-                        fontPath="fonts/Roboto-Medium.ttf"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
@@ -80,8 +79,8 @@
                         android:gravity="start"
                         android:padding="@dimen/_4sdp"
                         android:singleLine="true"
-                        android:textColor="@color/white"
-                        android:textSize="@dimen/font_16" />
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Semi_Bold"
+                        android:textColor="@color/white" />
 
 
                 <androidx.appcompat.widget.AppCompatImageView

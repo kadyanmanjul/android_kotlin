@@ -57,12 +57,12 @@
 
         <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tv_title"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H7_Semi_Bold"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/_8sdp"
                 android:gravity="start"
                 android:lineSpacingExtra="@dimen/_2sdp"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H7_Semi_Bold"
                 android:textColor="@color/font_color"
                 app:layout_constraintBottom_toTopOf="@+id/tv_question"
                 app:layout_constraintLeft_toLeftOf="parent"
@@ -73,12 +73,12 @@
 
         <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tv_question"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4_Semi_Bold"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/_10sdp"
                 android:gravity="start"
                 android:lineSpacingExtra="@dimen/_2sdp"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4_Semi_Bold"
                 android:textColor="@color/font_color"
                 app:layout_constraintBottom_toTopOf="@+id/container_cl"
                 app:layout_constraintLeft_toLeftOf="parent"
@@ -159,26 +159,24 @@
 
             <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/hint_min"
-                    fontPath="fonts/Roboto-Regular.ttf"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/_8sdp"
                     android:text="@string/bilkul_nahi"
-                    android:textColor="@color/font_color"
-                    android:textSize="@dimen/_11sdp"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
+                    android:textColor="@color/black"
                     app:layout_constraintEnd_toEndOf="@+id/min_rating_view"
                     app:layout_constraintStart_toStartOf="@+id/min_rating_view"
                     app:layout_constraintTop_toTopOf="@+id/min_rating_view" />
 
             <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/hint_max"
-                    fontPath="fonts/Roboto-Regular.ttf"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/_8sdp"
                     android:text="@string/abhi_shuru_karein"
-                    android:textColor="@color/font_color"
-                    android:textSize="@dimen/_11sdp"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
+                    android:textColor="@color/black"
                     app:layout_constraintEnd_toEndOf="@+id/max_rating_view"
                     app:layout_constraintStart_toStartOf="@+id/max_rating_view"
                     app:layout_constraintTop_toTopOf="@+id/max_rating_view" />
@@ -227,7 +225,6 @@
 
                 <androidx.appcompat.widget.AppCompatEditText
                         android:id="@+id/edit_text"
-                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
@@ -239,6 +236,7 @@
                         android:lines="4"
                         android:maxLines="4"
                         android:minLines="1"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
                         android:textColorHint="@color/emoji_bg_color"
                         android:textCursorDrawable="@drawable/cursor_drawable"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -253,7 +251,6 @@
         <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_submit"
                 style="@style/Widget.MaterialComponents.Button"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6_Normal"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -266,6 +263,7 @@
                 android:paddingBottom="@dimen/_12sdp"
                 android:text="@string/next"
                 android:textAllCaps="false"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6_Normal"
                 android:textColor="@color/white"
                 android:translationZ="@dimen/_1sdp"
                 app:cornerRadius="@dimen/_36sdp"
@@ -297,10 +295,10 @@
 
             <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/tv_user_name"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Regular"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/_12sdp"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Regular"
                     android:textColor="@color/font_color"
                     android:visibility="visible"
                     app:layout_constraintLeft_toLeftOf="parent"
@@ -309,12 +307,12 @@
                     tools:text="@string/bilkul_nahi" />
 
             <androidx.appcompat.widget.AppCompatTextView
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/_12sdp"
                     android:gravity="center"
                     android:text="@string/npr_thank_you"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4"
                     android:textColor="@color/font_color"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintRight_toRightOf="parent"

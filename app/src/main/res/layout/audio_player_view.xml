@@ -6,15 +6,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-
     <include
             layout="@layout/tag_practise_layout"
             android:layout_width="match_parent"
             android:layout_height="@dimen/tag_height"
-            android:layout_margin="@dimen/_4sdp"
-
-            />
-
+            android:layout_margin="@dimen/_4sdp" />
 
     <RelativeLayout
             android:id="@+id/root_sub_view"
@@ -32,7 +28,6 @@
                 android:layout_alignParentStart="true"
                 android:visibility="gone"
                 tools:visibility="visible" />
-
 
         <RelativeLayout
                 android:id="@+id/audio_view"
@@ -86,7 +81,6 @@
                             android:src="@drawable/ic_cross"
                             android:tint="#7A7A7A"
                             android:visibility="invisible"
-
                             tools:visibility="invisible" />
 
                     <ProgressBar
@@ -96,7 +90,6 @@
                             android:layout_gravity="center"
                             android:indeterminate="true"
                             android:indeterminateTint="@color/button_primary_color"
-
                             android:visibility="invisible"
                             tools:visibility="visible" />
 
@@ -111,7 +104,6 @@
                         android:background="@null"
                         android:contentDescription="@string/play_button_description"
                         android:visibility="invisible"
-
                         app:srcCompat="@drawable/ic_play_24dp"
                         tools:visibility="visible" />
 
@@ -123,10 +115,8 @@
                         android:background="@null"
                         android:contentDescription="@string/play_button_description"
                         android:visibility="invisible"
-
                         app:srcCompat="@drawable/ic_pause_24dp"
                         tools:visibility="visible" />
-
 
             </FrameLayout>
 
@@ -155,21 +145,18 @@
 
             <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/txtCurrentDuration"
-                    fontPath="fonts/Roboto-Regular.ttf"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/fl_seek_bar"
                     android:layout_alignStart="@id/fl_seek_bar"
                     android:layout_marginTop="@dimen/_20sdp"
                     android:textAlignment="center"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
                     android:textColor="@color/gray_9E"
-                    android:textSize="@dimen/font_11"
                     app:layout_goneMarginTop="@dimen/spacing_large" />
-
 
             <TextView
                     android:id="@+id/message_time"
-                    fontPath="fonts/Roboto-Regular.ttf"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/fl_seek_bar"
@@ -178,12 +165,11 @@
                     android:layout_marginEnd="@dimen/_5sdp"
                     android:gravity="center|end"
                     android:textAlignment="center"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
                     android:textColor="@color/gray_9E"
-                    android:textSize="@dimen/font_11"
                     app:layout_goneMarginTop="@dimen/spacing_large"
                     tools:ignore="MissingPrefix" />
         </RelativeLayout>
-
 
         <include
                 android:id="@+id/audio_view_received"
@@ -192,8 +178,8 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:visibility="gone"
-
                 tools:visibility="visible" />
+
     </RelativeLayout>
 
 </FrameLayout>

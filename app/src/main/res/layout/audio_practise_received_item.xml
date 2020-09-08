@@ -14,17 +14,17 @@
             android:id="@+id/root_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:paddingStart="0dp"
             android:paddingEnd="@dimen/_48sdp">
 
         <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/name"
-                fontPath="fonts/Poppins-Regular.ttf"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:gravity="start"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
                 android:textColor="@color/light_grey"
-                android:textSize="@dimen/font_13"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
@@ -43,20 +43,19 @@
                 app:layout_constraintTop_toBottomOf="@id/name">
 
             <androidx.appcompat.widget.AppCompatTextView
-                    android:letterSpacing="0.04"
-                    android:lineSpacingExtra="@dimen/_2sdp"
                     android:id="@+id/statement_tv"
-                    fontPath="fonts/Poppins-Medium.ttf"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="start|top"
                     android:gravity="start|top"
+                    android:letterSpacing="0.04"
+                    android:lineSpacingExtra="@dimen/_2sdp"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
                     android:textColor="@color/black"
-                    android:textSize="@dimen/font_13"
                     tools:ignore="MissingPrefix"
                     tools:text="@string/about_teacher_title" />
         </FrameLayout>
 
-
     </androidx.constraintlayout.widget.ConstraintLayout>
+
 </layout>

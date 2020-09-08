@@ -207,7 +207,6 @@
 
                 <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/tv_congrats"
-                        fontPath="fonts/Roboto-Bold.ttf"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
@@ -215,7 +214,7 @@
                         android:gravity="center"
                         android:text="@string/header_congratulation"
                         android:textColor="@color/white"
-                        android:textSize="@dimen/_15sdp"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Bold"
                         android:visibility="invisible" />
 
 
@@ -236,7 +235,6 @@
 
                 <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/tv_success_message"
-                        fontPath="fonts/Roboto-Medium.ttf"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
@@ -246,7 +244,7 @@
                         android:gravity="center"
                         android:text="@string/certificate_generate_message"
                         android:textColor="@color/white"
-                        android:textSize="@dimen/_13sdp"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
                         android:visibility="invisible" />
 
                 <ProgressBar

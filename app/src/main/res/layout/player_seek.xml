@@ -12,12 +12,10 @@
 
     <TextView
             android:id="@+id/song_position"
-            fontPath="fonts/Roboto-Regular.ttf"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:clickable="true"
             android:focusable="true"
-            android:fontFamily="sans-serif-condensed"
             android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Regular"
             android:textColor="?android:attr/textColorPrimary"
             tools:ignore="MissingPrefix" />
@@ -36,7 +34,6 @@
             android:layout_height="wrap_content"
             android:clickable="true"
             android:focusable="true"
-            android:fontFamily="sans-serif-condensed"
             android:singleLine="true"
             android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Regular"
             android:textColor="?android:attr/textColorPrimary"

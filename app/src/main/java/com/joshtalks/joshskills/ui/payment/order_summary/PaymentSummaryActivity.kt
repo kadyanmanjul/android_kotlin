@@ -23,6 +23,7 @@ import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.ContextCompat
 import androidx.core.text.HtmlCompat
 import androidx.core.text.color
+import androidx.core.widget.TextViewCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
@@ -102,7 +103,6 @@ class PaymentSummaryActivity : CoreJoshActivity(),
     private val uiHandler = Handler(Looper.getMainLooper())
     lateinit var applyCouponText: AppCompatTextView
     lateinit var multiLineLL: LinearLayout
-    private var typefaceSpan: Typeface? = null
     private lateinit var viewModel: PaymentSummaryViewModel
     private var isEcommereceEventFire = true
     private lateinit var appAnalytics: AppAnalytics
@@ -152,7 +152,6 @@ class PaymentSummaryActivity : CoreJoshActivity(),
         binding = DataBindingUtil.setContentView(this, R.layout.activity_payment_summary)
         binding.lifecycleOwner = this
         binding.handler = this
-        typefaceSpan = Typeface.createFromAsset(assets, "fonts/Poppins-Medium.ttf")
         initToolbarView()
         initViewModel()
         subscribeObservers()
@@ -641,7 +640,10 @@ class PaymentSummaryActivity : CoreJoshActivity(),
     private fun getTextView(text: String): TextView {
         val textView = TextView(applicationContext)
         textView.setTextColor(ContextCompat.getColor(applicationContext, R.color.dark_grey))
-        textView.typeface = typefaceSpan
+        TextViewCompat.setTextAppearance(
+            textView,
+            R.style.TextAppearance_JoshTypography_Body_Text_Small_Semi_Bold
+        )
         val spanString = SpannableString(text)
         spanString.setSpan(
             IconMarginSpan(
