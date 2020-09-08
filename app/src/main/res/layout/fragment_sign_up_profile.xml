@@ -337,6 +337,7 @@
                         style="@style/Widget.MaterialComponents.Button"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/_16sdp"
                         android:backgroundTint="@color/button_color"
                         android:clickable="true"
                         android:focusable="true"
