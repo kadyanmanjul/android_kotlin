@@ -35,7 +35,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import org.jetbrains.anko.textColor
 
-class SelectCourseFragment(var flowFromInbox: Boolean) : Fragment() {
+class SelectCourseFragment() : Fragment() {
 
     private lateinit var binding: FragmentCourseSelectionBinding
     private var courseList: ArrayList<InboxEntity>? = null
@@ -299,7 +299,7 @@ class SelectCourseFragment(var flowFromInbox: Boolean) : Fragment() {
         const val USER_COURSES_LIST = "user_courses_list"
 
         @JvmStatic
-        fun newInstance(flowFromInbox: Boolean) =
-            SelectCourseFragment(flowFromInbox)
+        fun newInstance() =
+            SelectCourseFragment()
     }
 }

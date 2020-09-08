@@ -23,6 +23,7 @@ import com.joshtalks.joshskills.repository.server.onboarding.EnrollMentorWithTes
 import com.joshtalks.joshskills.repository.server.signup.LoginResponse
 import com.joshtalks.joshskills.repository.server.signup.RequestSocialSignUp
 import com.joshtalks.joshskills.repository.server.signup.RequestUserVerification
+import com.joshtalks.joshskills.repository.server.signup.request.SocialSignUpRequest
 import kotlinx.coroutines.Deferred
 import okhttp3.MultipartBody
 import retrofit2.Response
@@ -60,6 +61,9 @@ interface SignUpNetworkService {
 
     @POST("$DIR/user/truecaller/login/")
     suspend fun verifyViaTrueCaller(@Body requestVerifyOTP: TrueCallerLoginRequest): Response<LoginResponse>
+
+    @POST("$DIR//user/verify_user")
+    suspend fun verifyGuestUser(@Body socialSignUpRequest: SocialSignUpRequest): Response<LoginResponse>
 
     @POST("$DIR/user/user_verification/")
     suspend fun userVerification(@Body requestUserVerification: RequestUserVerification): Response<LoginResponse>
