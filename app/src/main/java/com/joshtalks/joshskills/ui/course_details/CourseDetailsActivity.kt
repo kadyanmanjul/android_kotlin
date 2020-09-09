@@ -110,6 +110,7 @@ class CourseDetailsActivity : BaseActivity() {
     private lateinit var linearLayoutManager: LinearLayoutManager
     private var compositeDisposable = CompositeDisposable()
     private var testId: Int = 0
+    private var isFromFreeTrial: Boolean = false
     private var flowFrom: String? = null
     private var downloadID: Long = -1
     private val appAnalytics by lazy { AppAnalytics.create(AnalyticsEvent.COURSE_OVERVIEW.NAME) }
@@ -143,6 +144,7 @@ class CourseDetailsActivity : BaseActivity() {
         binding.lifecycleOwner = this
         binding.handler = this
         testId = intent.getIntExtra(KEY_TEST_ID, 0)
+        isFromFreeTrial = intent.getBooleanExtra(IS_FROM_FREE_TRIAL, false)
         if (intent.hasExtra(STARTED_FROM)) {
             flowFrom = intent.getStringExtra(STARTED_FROM)
         }
@@ -271,8 +273,15 @@ class CourseDetailsActivity : BaseActivity() {
                         WebpDrawable::class.java,
                         WebpDrawableTransformation(CircleCrop())
                     ).into(imageView)
+            } else if (it == ApiCallStatus.START) {
+                showMoveToInboxScreen()
             }
         })
+    }
+
+    private fun showMoveToInboxScreen() {
+        startActivity(this.getInboxActivityIntent())
+        this.finish()
     }
 
     private fun getCourseDetails(testId: Int) {
@@ -556,28 +565,32 @@ class CourseDetailsActivity : BaseActivity() {
     }
 
     fun buyCourse() {
-        val exploreTypeStr = PrefManager.getStringValue(EXPLORE_TYPE, false)
-        val discountedPrice =
-            viewModel.courseDetailsLiveData.value!!.paymentData.discountedAmount.substring(1)
-                .toDouble()
-        if (exploreTypeStr.isNotBlank()
-            && exploreTypeStr == ExploreCardType.FREETRIAL.name
-        ) {
-            val isTrialStarted = PrefManager.getBoolValue(IS_TRIAL_STARTED, false)
-            val isSubscriptionStarted = PrefManager.getBoolValue(IS_SUBSCRIPTION_STARTED, false)
-            val tempTestId = if (isTrialStarted && discountedPrice > 0.0) {
-                AppObjectController.getFirebaseRemoteConfig()
-                    .getDouble(FirebaseRemoteConfigKey.SUBSCRIPTION_TEST_ID).toInt()
-            } else if (isTrialStarted.not() && isSubscriptionStarted.not()) TRIAL_TEST_ID
-            else testId
-            logStartCourseAnalyticEvent(tempTestId)
-            PaymentSummaryActivity.startPaymentSummaryActivity(
-                this,
-                tempTestId.toString()
-            )
+        if (isFromFreeTrial) {
+            viewModel.addMoreCourseToFreeTrial(testId)
         } else {
-            logStartCourseAnalyticEvent(testId)
-            PaymentSummaryActivity.startPaymentSummaryActivity(this, testId.toString())
+            val exploreTypeStr = PrefManager.getStringValue(EXPLORE_TYPE, false)
+            val discountedPrice =
+                viewModel.courseDetailsLiveData.value!!.paymentData.discountedAmount.substring(1)
+                    .toDouble()
+            if (exploreTypeStr.isNotBlank()
+                && exploreTypeStr == ExploreCardType.FREETRIAL.name
+            ) {
+                val isTrialStarted = PrefManager.getBoolValue(IS_TRIAL_STARTED, false)
+                val isSubscriptionStarted = PrefManager.getBoolValue(IS_SUBSCRIPTION_STARTED, false)
+                val tempTestId = if (isTrialStarted && discountedPrice > 0.0) {
+                    AppObjectController.getFirebaseRemoteConfig()
+                        .getDouble(FirebaseRemoteConfigKey.SUBSCRIPTION_TEST_ID).toInt()
+                } else if (isTrialStarted.not() && isSubscriptionStarted.not()) TRIAL_TEST_ID
+                else testId
+                logStartCourseAnalyticEvent(tempTestId)
+                PaymentSummaryActivity.startPaymentSummaryActivity(
+                    this,
+                    tempTestId.toString()
+                )
+            } else {
+                logStartCourseAnalyticEvent(testId)
+                PaymentSummaryActivity.startPaymentSummaryActivity(this, testId.toString())
+            }
         }
         appAnalytics.addParam(AnalyticsEvent.START_COURSE_NOW.NAME, "Clicked")
     }
@@ -693,14 +706,18 @@ class CourseDetailsActivity : BaseActivity() {
 
     companion object {
         const val KEY_TEST_ID = "test-id"
+        const val IS_FROM_FREE_TRIAL = "is_from_free_trial"
 
         fun startCourseDetailsActivity(
             activity: Activity,
             testId: Int,
-            startedFrom: String = EMPTY, flags: Array<Int> = arrayOf()
+            startedFrom: String = EMPTY,
+            flags: Array<Int> = arrayOf(),
+            isFromFreeTrial: Boolean = false
         ) {
             Intent(activity, CourseDetailsActivity::class.java).apply {
                 putExtra(KEY_TEST_ID, testId)
+                putExtra(IS_FROM_FREE_TRIAL, isFromFreeTrial)
                 if (startedFrom.isNotBlank())
                     putExtra(STARTED_FROM, startedFrom)
                 flags.forEach { flag ->

@@ -39,6 +39,8 @@ class SelectCourseFragment : Fragment() {
 
     private lateinit var binding: FragmentCourseSelectionBinding
     private var courseList: ArrayList<InboxEntity>? = null
+    private var haveCourses = false
+    private var categoryList: HashMap<Int, ArrayList<CourseExploreModel>> = HashMap()
     private var tabName: MutableList<String> = ArrayList()
     private lateinit var viewModel: OnBoardViewModel
     private var compositeDisposable = CompositeDisposable()
@@ -46,7 +48,7 @@ class SelectCourseFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            courseList = it.getParcelable(USER_COURSES_LIST)!!
+            haveCourses = it.getBoolean(HAVE_COURSES, false)
         }
         viewModel = ViewModelProvider(requireActivity()).get(OnBoardViewModel::class.java)
         viewModel.getCourses()
@@ -131,12 +133,13 @@ class SelectCourseFragment : Fragment() {
         }
     }
 
-    private fun navigateToCourseDetailsScreen(testId: Int) {
+    private fun navigateToCourseDetailsScreen(testId: Int, haveCourses: Boolean = false) {
         CourseDetailsActivity.startCourseDetailsActivity(
             requireActivity(),
             testId,
             requireActivity().javaClass.simpleName,
-            arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
+            arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT),
+            haveCourses
         )
     }
 
@@ -221,7 +224,7 @@ class SelectCourseFragment : Fragment() {
             } else {
                 binding.courses.textColor = ContextCompat.getColor(requireActivity(), R.color.black)
             }
-            if (count >= it.minimumNumberOfInterests!!) {
+            if (count >= 1) {
                 enabledSubmitButton()
             } else {
                 disableSubmitButton()
@@ -275,7 +278,7 @@ class SelectCourseFragment : Fragment() {
                 .subscribeOn(AndroidSchedulers.mainThread())
                 .subscribe({
                     if (it.isAlreadyEnrolled && it.id != null) {
-                        navigateToCourseDetailsScreen(it.id)
+                        navigateToCourseDetailsScreen(it.id,true)
                     } else {
                         var count = 0
                         viewModel.getCourseList()?.let { courseList ->
@@ -285,6 +288,7 @@ class SelectCourseFragment : Fragment() {
                             }
                         }
                         setSelectedCourse(count)
+
                     }
                 }, {
                     it.printStackTrace()
@@ -294,10 +298,15 @@ class SelectCourseFragment : Fragment() {
 
     companion object {
         const val TAG = "SelectInterestFragment"
-        const val USER_COURSES_LIST = "user_courses_list"
+        const val HAVE_COURSES = "have_courses"
 
         @JvmStatic
-        fun newInstance() =
+        fun newInstance(haveCourses: Boolean = false) =
             SelectCourseFragment()
+                .apply {
+                    arguments = Bundle().apply {
+                        putBoolean(HAVE_COURSES, haveCourses)
+                    }
+                }
     }
 }

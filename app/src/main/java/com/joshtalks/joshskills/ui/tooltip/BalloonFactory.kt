@@ -59,7 +59,7 @@ object BalloonFactory {
     @SuppressLint("DefaultLocale")
     fun offerIn7Days(
         baseContext: Context,
-        lifecycleOwner: LifecycleOwner, remainDay: String=EMPTY, tipText: String? = null
+        lifecycleOwner: LifecycleOwner, remainDay: String=EMPTY, tipText: String = EMPTY
     ): Balloon {
         var userName = "User"
         try {
@@ -69,25 +69,24 @@ object BalloonFactory {
         } catch (ex: NullPointerException) {
 
         }
-        val textOfToolTip: String
-        if (tipText.isNullOrBlank()) {
+        val text = if (tipText.isNullOrBlank()) {
             val offerPercentage =
                 AppObjectController.getFirebaseRemoteConfig().getString("COURSE_MAX_OFFER_PER")
 
-            textOfToolTip =
-                String.format(
-                    AppObjectController.getFirebaseRemoteConfig()
-                        .getString("FIND_MORE_COURSE_HINT_FIRST_TIME"),
-                    userName,
-                    remainDay,
-                    offerPercentage
-                )
+            String.format(
+                AppObjectController.getFirebaseRemoteConfig()
+                    .getString("FIND_MORE_COURSE_HINT_FIRST_TIME"),
+                userName,
+                remainDay,
+                offerPercentage
+            )
         } else {
-            textOfToolTip = tipText
+
+            tipText
         }
         val typefaceSpan = TypefaceUtils.load(baseContext.assets, "fonts/OpenSans-SemiBold.ttf")
         val textForm: TextForm = TextForm.Builder(baseContext)
-            .setText(textOfToolTip)
+            .setText(text)
             .setTextColorResource(R.color.white)
             .setTextSize(12f)
             .setTextTypeface(typefaceSpan)

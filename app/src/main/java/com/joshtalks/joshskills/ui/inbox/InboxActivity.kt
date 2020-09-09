@@ -216,7 +216,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         findMoreLayout = findViewById(R.id.parent_layout)
         getVersionData()?.let {
             when (it.version!!.name) {
-                ONBOARD_VERSIONS.ONBOARDING_V1, ONBOARD_VERSIONS.ONBOARDING_V3 -> {
+                ONBOARD_VERSIONS.ONBOARDING_V1 -> {
                     find_more.setOnClickListener {
                         AppAnalytics.create(AnalyticsEvent.FIND_MORE_COURSE_CLICKED.NAME)
                             .addBasicParam()
@@ -225,14 +225,14 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
                         RxBus2.publish(ExploreCourseEventBus())
                     }
                 }
-                ONBOARD_VERSIONS.ONBOARDING_V2, ONBOARD_VERSIONS.ONBOARDING_V4 -> {
+                ONBOARD_VERSIONS.ONBOARDING_V2, ONBOARD_VERSIONS.ONBOARDING_V4, ONBOARD_VERSIONS.ONBOARDING_V3 -> {
                     find_more.text = getString(R.string.add_more_courses)
                     find_more.setOnClickListener {
                         AppAnalytics.create(AnalyticsEvent.ADD_MORE_COURSE_CLICKED.NAME)
                             .addBasicParam()
                             .addUserDetails()
                             .push()
-                        openCourseSelectionExplorer()
+                        openCourseSelectionExplorer(true)
                     }
                 }
             }
@@ -416,7 +416,10 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
 
         txtConvert.setOnClickListener {
             logEvent(AnalyticsEvent.CONVERT_CLICKED.name)
-            PaymentSummaryActivity.startPaymentSummaryActivity(this, "122") // todo remove hardcode
+            PaymentSummaryActivity.startPaymentSummaryActivity(
+                this, AppObjectController.getFirebaseRemoteConfig()
+                    .getDouble(FirebaseRemoteConfigKey.SUBSCRIPTION_TEST_ID).toString()
+            )
         }
     }
 
@@ -454,18 +457,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
             }
         progress_bar.visibility = View.GONE
         findMoreLayout.visibility = View.VISIBLE
-        if (PrefManager.getBoolValue(IS_GUEST_ENROLLED, false).not()) {
-            attachOfferHintView()
-        } else {
-            if (offerInHint == null &&
-                getVersionData() != null &&
-                getVersionData()?.tooltipText.isNullOrBlank().not()
-            ) {
-                offerInHint =
-                    BalloonFactory.offerIn7Days(this, this, getVersionData()?.tooltipText!!)
-                hideToolTip()
-            }
-        }
+        attachOfferHintView()
     }
 
 
@@ -526,8 +518,8 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         )
     }
 
-    private fun openCourseSelectionExplorer() {
-        OnBoardingActivityNew.startOnBoardingActivity(this, COURSE_EXPLORER_NEW, true)
+    private fun openCourseSelectionExplorer(boolean: Boolean = false) {
+        OnBoardingActivityNew.startOnBoardingActivity(this, COURSE_EXPLORER_NEW, true, boolean)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -661,9 +653,21 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
                 .isUserInOfferDays()
                 .concatMap {
                     val (flag, remainDay) = Utils.isUserInDaysOld(it.courseCreatedDate)
-                    if (offerInHint == null) {
-                        offerInHint =
-                            BalloonFactory.offerIn7Days(this, this, remainDay.toString())
+                    if (PrefManager.getBoolValue(IS_GUEST_ENROLLED, false)) {
+                        if (offerInHint == null) {
+                            getVersionData()?.tooltipText?.let {
+                                offerInHint =
+                                    BalloonFactory.offerIn7Days(
+                                        this,
+                                        this,
+                                        tipText = getVersionData()?.tooltipText!!
+                                    )
+                            } ?: run {
+                                offerInHint =
+                                    BalloonFactory.offerIn7Days(this, this, remainDay.toString())
+                            }
+                            hideToolTip()
+                        }
                     }
                     return@concatMap Maybe.just(flag)
                 }

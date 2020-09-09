@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.core.API_TOKEN
 import com.joshtalks.joshskills.core.ApiCallStatus
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.EXPLORE_TYPE
 import com.joshtalks.joshskills.core.GUEST_USER_SOURCE
 import com.joshtalks.joshskills.core.INSTANCE_ID
 import com.joshtalks.joshskills.core.IS_GUEST_ENROLLED
@@ -15,6 +16,7 @@ import com.joshtalks.joshskills.core.USER_UNIQUE_ID
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.LogException
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
+import com.joshtalks.joshskills.repository.local.model.ExploreCardType
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.CourseExploreModel
@@ -64,6 +66,7 @@ class OnBoardViewModel(application: Application) :
     }
 
     private fun updateFromLoginResponse(loginResponse: LoginResponse) {
+        PrefManager.put(EXPLORE_TYPE, ExploreCardType.FREETRIAL.name, false)
         val user = User.getInstance()
         user.userId = loginResponse.userId
         user.source =

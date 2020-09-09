@@ -11,6 +11,7 @@ import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.USER_UNIQUE_ID
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.course_detail.CourseDetailsResponseV2
+import com.joshtalks.joshskills.repository.server.onboarding.EnrollMentorWithTestIdRequest
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -40,6 +41,24 @@ class CourseDetailsViewModel(application: Application) : AndroidViewModel(applic
                     return@launch
                 }
 
+            } catch (ex: Throwable) {
+                ex.showAppropriateMsg()
+            }
+            apiCallStatusLiveData.postValue(ApiCallStatus.FAILED)
+        }
+    }
+    fun addMoreCourseToFreeTrial(testId: Int) {
+        jobs += viewModelScope.launch(Dispatchers.IO) {
+            try {
+                if (Mentor.getInstance().getId().isNotEmpty()) {
+                    val data = EnrollMentorWithTestIdRequest(Mentor.getInstance().getId(), test_ids = arrayListOf(testId))
+                    val response =
+                        AppObjectController.signUpNetworkService.enrollMentorWithTestIds(data)
+                    if (response.isSuccessful) {
+                        apiCallStatusLiveData.postValue(ApiCallStatus.START)
+                        return@launch
+                    }
+                }
             } catch (ex: Throwable) {
                 ex.showAppropriateMsg()
             }

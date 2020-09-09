@@ -19,13 +19,15 @@ class OnBoardingActivityNew : CoreJoshActivity() {
 
     companion object {
         const val FLOW_FROM_INBOX = "FLOW_FROM_INBOX"
+        const val HAVE_COURSES = "HAVE_COURSES"
 
         fun startOnBoardingActivity(
-            context: Activity, requestCode: Int, flowFromInbox: Boolean = false
+            context: Activity, requestCode: Int, flowFromInbox: Boolean = false,alreadyHaveCourses:Boolean=false
         ) {
             val intent = Intent(context, OnBoardingActivityNew::class.java)
             intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
             intent.putExtra(FLOW_FROM_INBOX, flowFromInbox)
+            intent.putExtra(HAVE_COURSES, alreadyHaveCourses)
             context.startActivityForResult(intent, requestCode)
         }
     }
@@ -33,9 +35,10 @@ class OnBoardingActivityNew : CoreJoshActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_onboarding_new)
+        val haveCourses=intent.getBooleanExtra(HAVE_COURSES, false)
         if (intent.hasExtra(FLOW_FROM_INBOX)) {
             if (intent.getBooleanExtra(FLOW_FROM_INBOX, false)||Mentor.getInstance().hasId()) {
-                openCoursesFragment()
+                openCoursesFragment(haveCourses)
             } else {
                 openOnBoardingIntroFragment()
             }
@@ -43,7 +46,7 @@ class OnBoardingActivityNew : CoreJoshActivity() {
 
     }
 
-    private fun openCoursesFragment() {
+    private fun openCoursesFragment(haveCourses: Boolean) {
         when (getVersionData()?.version!!.name) {
             ONBOARD_VERSIONS.ONBOARDING_V1 -> {
                 this.finish()
@@ -51,11 +54,27 @@ class OnBoardingActivityNew : CoreJoshActivity() {
             ONBOARD_VERSIONS.ONBOARDING_V2 -> {
                 replaceFragment(
                     R.id.onboarding_container,
-                    SelectCourseFragment.newInstance(),
+                    SelectCourseFragment.newInstance(haveCourses),
                     SelectCourseFragment.TAG
                 )
             }
-            ONBOARD_VERSIONS.ONBOARDING_V4, ONBOARD_VERSIONS.ONBOARDING_V3 -> {
+            ONBOARD_VERSIONS.ONBOARDING_V3 -> {
+                if(haveCourses){
+                    replaceFragment(
+                        R.id.onboarding_container,
+                        SelectCourseFragment.newInstance(haveCourses),
+                        SelectCourseFragment.TAG
+                    )
+                }
+                else{
+                    replaceFragment(
+                        R.id.onboarding_container,
+                        SelectInterestFragment.newInstance(),
+                        SelectInterestFragment.TAG
+                    )
+                }
+            }
+            ONBOARD_VERSIONS.ONBOARDING_V4 -> {
                 replaceFragment(
                     R.id.onboarding_container,
                     SelectInterestFragment.newInstance(),
