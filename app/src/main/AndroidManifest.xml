@@ -69,13 +69,13 @@
             android:icon="@mipmap/ic_launcher"
             android:label="@string/app_name"
             android:largeHeap="true"
-            android:usesCleartextTraffic="true"
             android:persistent="true"
             android:requestLegacyExternalStorage="true"
             android:resizeableActivity="false"
             android:roundIcon="@mipmap/ic_launcher_round"
             android:supportsRtl="false"
             android:theme="@style/AppTheme"
+            android:usesCleartextTraffic="true"
             tools:ignore="AllowBackup,GoogleAppIndexingWarning,UnusedAttribute"
             tools:replace="android:allowBackup,android:supportsRtl">
 
@@ -345,10 +345,10 @@
                 android:windowSoftInputMode="stateHidden|adjustResize" />
         <activity
                 android:name=".ui.reminder.set_reminder.AlarmNotifierActivity"
+                android:autoRemoveFromRecents="true"
                 android:launchMode="singleTask"
                 android:screenOrientation="portrait"
                 android:theme="@style/AppNoBarTheme"
-                android:autoRemoveFromRecents="true"
                 android:windowSoftInputMode="stateHidden|adjustResize" />
         <activity
                 android:name=".ui.reminder.reminder_listing.ReminderListActivity"
@@ -356,6 +356,7 @@
                 android:screenOrientation="portrait"
                 android:theme="@style/AppNoBarTheme"
                 android:windowSoftInputMode="stateHidden|adjustResize" />
+
         <service
                 android:name=".core.service.video_download.VideoDownloadService"
                 android:enabled="true"
@@ -486,21 +487,13 @@
                     android:name="com.joshtalks.joshskills.core.speedx.JoshAppInitializer"
                     android:value="androidx.startup" />
         </provider>
+
         <provider
                 android:name="androidx.work.impl.WorkManagerInitializer"
                 android:authorities="${applicationId}.workmanager-init"
                 android:enabled="false"
                 android:exported="false" />
 
-        <!--<activity android:name=".ui.game.GameWebViewActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
--->
     </application>
 
 </manifest>
-
