@@ -11,14 +11,15 @@ import com.bumptech.glide.integration.webp.decoder.WebpDrawableTransformation
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.IS_GUEST_ENROLLED
-import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.databinding.CourseSelectionViewHolderBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.CourseSelectedEventBus
 import com.joshtalks.joshskills.repository.server.CourseExploreModel
 
-class CourseSelectionAdapter(private var courseList: List<CourseExploreModel>) :
+class CourseSelectionAdapter(
+    private var courseList: List<CourseExploreModel>,
+    private var isSecondFlow: Boolean
+) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private val context = AppObjectController.joshApplication
 
@@ -47,7 +48,7 @@ class CourseSelectionAdapter(private var courseList: List<CourseExploreModel>) :
     inner class CourseSelectViewHolder(val binding: CourseSelectionViewHolderBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(courseExploreModel: CourseExploreModel, position: Int) {
-            if (PrefManager.getBoolValue(IS_GUEST_ENROLLED, false)) {
+            if (isSecondFlow) {
                 binding.selectCourse.visibility = View.GONE
                 binding.alfa.visibility = View.GONE
                 binding.rootView.setOnClickListener {

@@ -8,11 +8,15 @@ import android.view.animation.OvershootInterpolator
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.BaseActivity
+import com.joshtalks.joshskills.core.IS_TRIAL_ENDED
+import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.custom_ui.SmoothLinearLayoutManager
 import com.joshtalks.joshskills.core.custom_ui.decorator.LayoutMarginDecoration
 import com.joshtalks.joshskills.databinding.FragmentViewpagerCourseSelectionBinding
 import com.joshtalks.joshskills.repository.server.CourseExploreModel
+import com.joshtalks.joshskills.repository.server.onboarding.ONBOARD_VERSIONS
 import com.joshtalks.joshskills.ui.newonboarding.adapter.CourseSelectionAdapter
 import jp.wasabeef.recyclerview.animators.SlideInUpAnimator
 
@@ -69,7 +73,15 @@ class CourseSelectionViewPagerFragment : Fragment() {
         courseList.forEach { course ->
             course.isClickable = false
         }
-        adapter = CourseSelectionAdapter(courseList)
+        var isSecondFlow = false
+        (requireActivity() as BaseActivity).getVersionData()?.let {
+            if (it.version!!.name == ONBOARD_VERSIONS.ONBOARDING_V3 ||
+                PrefManager.getBoolValue(IS_TRIAL_ENDED, false)
+            ) {
+                isSecondFlow = true
+            }
+        }
+        adapter = CourseSelectionAdapter(courseList, isSecondFlow)
         binding.recyclerView.adapter = adapter
 
     }

@@ -20,6 +20,7 @@ import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
 import com.joshtalks.joshskills.core.IS_GUEST_ENROLLED
+import com.joshtalks.joshskills.core.IS_TRIAL_ENDED
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.databinding.FragmentCourseSelectionBinding
@@ -48,7 +49,9 @@ class SelectCourseFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            haveCourses = it.getBoolean(HAVE_COURSES, false)
+            haveCourses = it.getBoolean(HAVE_COURSES, false) || PrefManager.getBoolValue(
+                IS_TRIAL_ENDED, false
+            )
         }
         viewModel = ViewModelProvider(requireActivity()).get(OnBoardViewModel::class.java)
         viewModel.getCourses()
@@ -180,18 +183,16 @@ class SelectCourseFragment : Fragment() {
         if (PrefManager.getBoolValue(IS_GUEST_ENROLLED, false)) {
             binding.titleTv.text = getString(R.string.explorer_courses)
 
-            when ((requireActivity() as BaseActivity).getVersionData()?.version?.name) {
-                ONBOARD_VERSIONS.ONBOARDING_V2, ONBOARD_VERSIONS.ONBOARDING_V3 -> {
-                    binding.startTrialContainer.visibility = View.GONE
-                }
-                ONBOARD_VERSIONS.ONBOARDING_V4 -> {
-                    setSelectedCourse(0)
-                }
-                else -> {
-                    setSelectedCourse(0)
-                }
-            }
+            if (PrefManager.getBoolValue(
+                    IS_TRIAL_ENDED,
+                    false
+                ) || (requireActivity() as BaseActivity).getVersionData()?.version?.name == ONBOARD_VERSIONS.ONBOARDING_V3
+            ) {
+                binding.startTrialContainer.visibility = View.GONE
 
+            } else {
+                setSelectedCourse(0)
+            }
         } else {
             binding.titleTv.text = getString(R.string.select_courses)
             setSelectedCourse(0)
@@ -278,7 +279,7 @@ class SelectCourseFragment : Fragment() {
                 .subscribeOn(AndroidSchedulers.mainThread())
                 .subscribe({
                     if (it.isAlreadyEnrolled && it.id != null) {
-                        navigateToCourseDetailsScreen(it.id,true)
+                        navigateToCourseDetailsScreen(it.id, true)
                     } else {
                         var count = 0
                         viewModel.getCourseList()?.let { courseList ->

@@ -88,7 +88,7 @@ class OnBoardViewModel(application: Application) :
             try {
                 apiCallStatusLiveData.postValue(ApiCallStatus.START)
                 if (Mentor.getInstance().getId().isNotEmpty()) {
-                    val data = EnrollMentorWithTestIdRequest(Mentor.getInstance().getId(), testIds)
+                    val data = EnrollMentorWithTestIdRequest(PrefManager.getStringValue(USER_UNIQUE_ID),Mentor.getInstance().getId(), testIds)
                     val response =
                         AppObjectController.signUpNetworkService.enrollMentorWithTestIds(data)
 
@@ -113,7 +113,7 @@ class OnBoardViewModel(application: Application) :
             try {
 
                 if (Mentor.getInstance().getId().isNotEmpty()) {
-                    val data = EnrollMentorWithTagIdRequest(Mentor.getInstance().getId(), tagIds)
+                    val data = EnrollMentorWithTagIdRequest(PrefManager.getStringValue(USER_UNIQUE_ID),Mentor.getInstance().getId(), tagIds)
                     val response =
                         AppObjectController.signUpNetworkService.enrollMentorWithTagIds(data)
 

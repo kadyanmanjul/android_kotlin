@@ -42,6 +42,7 @@ import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.EXPLORE_TYPE
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
 import com.joshtalks.joshskills.core.IS_SUBSCRIPTION_STARTED
+import com.joshtalks.joshskills.core.IS_TRIAL_ENDED
 import com.joshtalks.joshskills.core.IS_TRIAL_STARTED
 import com.joshtalks.joshskills.core.PermissionUtils
 import com.joshtalks.joshskills.core.PrefManager
@@ -566,7 +567,16 @@ class CourseDetailsActivity : BaseActivity() {
 
     fun buyCourse() {
         if (isFromFreeTrial) {
-            viewModel.addMoreCourseToFreeTrial(testId)
+            val isTrialEnded = PrefManager.getBoolValue(IS_TRIAL_ENDED, false)
+            if (isTrialEnded) {
+                val tempTestId = AppObjectController.getFirebaseRemoteConfig()
+                    .getDouble(FirebaseRemoteConfigKey.SUBSCRIPTION_TEST_ID).toInt()
+                logStartCourseAnalyticEvent(tempTestId)
+                PaymentSummaryActivity.startPaymentSummaryActivity(
+                    this,
+                    tempTestId.toString()
+                )
+            } else viewModel.addMoreCourseToFreeTrial(testId)
         } else {
             val exploreTypeStr = PrefManager.getStringValue(EXPLORE_TYPE, false)
             val discountedPrice =

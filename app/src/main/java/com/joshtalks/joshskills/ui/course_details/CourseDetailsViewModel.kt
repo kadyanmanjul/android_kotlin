@@ -51,7 +51,7 @@ class CourseDetailsViewModel(application: Application) : AndroidViewModel(applic
         jobs += viewModelScope.launch(Dispatchers.IO) {
             try {
                 if (Mentor.getInstance().getId().isNotEmpty()) {
-                    val data = EnrollMentorWithTestIdRequest(Mentor.getInstance().getId(), test_ids = arrayListOf(testId))
+                    val data = EnrollMentorWithTestIdRequest(PrefManager.getStringValue(USER_UNIQUE_ID),Mentor.getInstance().getId(), test_ids = arrayListOf(testId))
                     val response =
                         AppObjectController.signUpNetworkService.enrollMentorWithTestIds(data)
                     if (response.isSuccessful) {

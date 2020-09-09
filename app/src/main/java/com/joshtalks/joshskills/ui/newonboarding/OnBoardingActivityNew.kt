@@ -22,7 +22,10 @@ class OnBoardingActivityNew : CoreJoshActivity() {
         const val HAVE_COURSES = "HAVE_COURSES"
 
         fun startOnBoardingActivity(
-            context: Activity, requestCode: Int, flowFromInbox: Boolean = false,alreadyHaveCourses:Boolean=false
+            context: Activity,
+            requestCode: Int,
+            flowFromInbox: Boolean = false,
+            alreadyHaveCourses: Boolean = false
         ) {
             val intent = Intent(context, OnBoardingActivityNew::class.java)
             intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
@@ -35,9 +38,9 @@ class OnBoardingActivityNew : CoreJoshActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_onboarding_new)
-        val haveCourses=intent.getBooleanExtra(HAVE_COURSES, false)
+        val haveCourses = intent.getBooleanExtra(HAVE_COURSES, false)
         if (intent.hasExtra(FLOW_FROM_INBOX)) {
-            if (intent.getBooleanExtra(FLOW_FROM_INBOX, false)||Mentor.getInstance().hasId()) {
+            if (intent.getBooleanExtra(FLOW_FROM_INBOX, false) || Mentor.getInstance().hasId()) {
                 openCoursesFragment(haveCourses)
             } else {
                 openOnBoardingIntroFragment()
@@ -51,35 +54,27 @@ class OnBoardingActivityNew : CoreJoshActivity() {
             ONBOARD_VERSIONS.ONBOARDING_V1 -> {
                 this.finish()
             }
-            ONBOARD_VERSIONS.ONBOARDING_V2 -> {
+            ONBOARD_VERSIONS.ONBOARDING_V2, ONBOARD_VERSIONS.ONBOARDING_V4 -> {
                 replaceFragment(
                     R.id.onboarding_container,
-                    SelectCourseFragment.newInstance(haveCourses),
+                    SelectCourseFragment.newInstance(),
                     SelectCourseFragment.TAG
                 )
             }
             ONBOARD_VERSIONS.ONBOARDING_V3 -> {
-                if(haveCourses){
+                if (haveCourses) {
                     replaceFragment(
                         R.id.onboarding_container,
                         SelectCourseFragment.newInstance(haveCourses),
                         SelectCourseFragment.TAG
                     )
-                }
-                else{
+                } else {
                     replaceFragment(
                         R.id.onboarding_container,
                         SelectInterestFragment.newInstance(),
                         SelectInterestFragment.TAG
                     )
                 }
-            }
-            ONBOARD_VERSIONS.ONBOARDING_V4 -> {
-                replaceFragment(
-                    R.id.onboarding_container,
-                    SelectInterestFragment.newInstance(),
-                    SelectInterestFragment.TAG
-                )
             }
         }
     }
