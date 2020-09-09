@@ -122,7 +122,7 @@ abstract class BaseActivity : AppCompatActivity() {
 
     fun getIntentForState(): Intent? {
         val intent: Intent? = when {
-            PrefManager.getBoolValue(IS_GUEST_ENROLLED,false) -> {
+            PrefManager.getBoolValue(IS_GUEST_ENROLLED, false) -> {
                 getInboxActivityIntent()
             }
             PrefManager.getStringValue(API_TOKEN).isEmpty() -> {
@@ -355,7 +355,7 @@ abstract class BaseActivity : AppCompatActivity() {
     }
 
     public fun isGuestUser(): Boolean =
-        User.getInstance().source == GUEST_USER_SOURCE
+        User.getInstance().source == GUEST_USER_SOURCE && User.getInstance().firstName.isBlank()
 
     fun getVersionData(): VersionResponse? {
         versionResponse?.let {

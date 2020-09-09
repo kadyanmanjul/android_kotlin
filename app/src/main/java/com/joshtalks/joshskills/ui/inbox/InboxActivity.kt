@@ -214,27 +214,37 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         val titleView = findViewById<AppCompatTextView>(R.id.text_message_title)
         titleView.text = getString(R.string.inbox_header)
         findMoreLayout = findViewById(R.id.parent_layout)
-        getVersionData()?.let {
-            when (it.version!!.name) {
-                ONBOARD_VERSIONS.ONBOARDING_V1 -> {
-                    find_more.setOnClickListener {
-                        AppAnalytics.create(AnalyticsEvent.FIND_MORE_COURSE_CLICKED.NAME)
-                            .addBasicParam()
-                            .addUserDetails()
-                            .push()
-                        RxBus2.publish(ExploreCourseEventBus())
+        if (isGuestUser()) {
+            getVersionData()?.let {
+                when (it.version!!.name) {
+                    ONBOARD_VERSIONS.ONBOARDING_V1 -> {
+                        find_more.setOnClickListener {
+                            AppAnalytics.create(AnalyticsEvent.FIND_MORE_COURSE_CLICKED.NAME)
+                                .addBasicParam()
+                                .addUserDetails()
+                                .push()
+                            RxBus2.publish(ExploreCourseEventBus())
+                        }
+                    }
+                    ONBOARD_VERSIONS.ONBOARDING_V2, ONBOARD_VERSIONS.ONBOARDING_V4, ONBOARD_VERSIONS.ONBOARDING_V3 -> {
+                        find_more.text = getString(R.string.add_more_courses)
+                        find_more.setOnClickListener {
+                            AppAnalytics.create(AnalyticsEvent.ADD_MORE_COURSE_CLICKED.NAME)
+                                .addBasicParam()
+                                .addUserDetails()
+                                .push()
+                            openCourseSelectionExplorer(true)
+                        }
                     }
                 }
-                ONBOARD_VERSIONS.ONBOARDING_V2, ONBOARD_VERSIONS.ONBOARDING_V4, ONBOARD_VERSIONS.ONBOARDING_V3 -> {
-                    find_more.text = getString(R.string.add_more_courses)
-                    find_more.setOnClickListener {
-                        AppAnalytics.create(AnalyticsEvent.ADD_MORE_COURSE_CLICKED.NAME)
-                            .addBasicParam()
-                            .addUserDetails()
-                            .push()
-                        openCourseSelectionExplorer(true)
-                    }
-                }
+            }
+        } else {
+            find_more.setOnClickListener {
+                AppAnalytics.create(AnalyticsEvent.FIND_MORE_COURSE_CLICKED.NAME)
+                    .addBasicParam()
+                    .addUserDetails()
+                    .push()
+                RxBus2.publish(ExploreCourseEventBus())
             }
         }
         findViewById<View>(R.id.iv_setting).setOnClickListener {
@@ -418,7 +428,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
             logEvent(AnalyticsEvent.CONVERT_CLICKED.name)
             PaymentSummaryActivity.startPaymentSummaryActivity(
                 this, AppObjectController.getFirebaseRemoteConfig()
-                    .getDouble(FirebaseRemoteConfigKey.SUBSCRIPTION_TEST_ID).toString()
+                    .getDouble(FirebaseRemoteConfigKey.SUBSCRIPTION_TEST_ID).toInt().toString()
             )
         }
     }
@@ -653,21 +663,25 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
                 .isUserInOfferDays()
                 .concatMap {
                     val (flag, remainDay) = Utils.isUserInDaysOld(it.courseCreatedDate)
-                    if (PrefManager.getBoolValue(IS_GUEST_ENROLLED, false)) {
-                        if (offerInHint == null) {
-                            getVersionData()?.tooltipText?.let {
+                    if (offerInHint == null) {
+                        getVersionData()?.tooltipText?.let {
+                            if (PrefManager.getBoolValue(
+                                    IS_GUEST_ENROLLED,
+                                    false
+                                ) && isGuestUser()
+                            ) {
                                 offerInHint =
                                     BalloonFactory.offerIn7Days(
                                         this,
                                         this,
                                         tipText = getVersionData()?.tooltipText!!
                                     )
-                            } ?: run {
-                                offerInHint =
-                                    BalloonFactory.offerIn7Days(this, this, remainDay.toString())
                             }
-                            hideToolTip()
+                        } ?: run {
+                            offerInHint =
+                                BalloonFactory.offerIn7Days(this, this, remainDay.toString())
                         }
+                        hideToolTip()
                     }
                     return@concatMap Maybe.just(flag)
                 }
