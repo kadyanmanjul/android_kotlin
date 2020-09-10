@@ -1,7 +1,6 @@
 package com.joshtalks.joshskills.ui.newonboarding.fragment
 
 import android.content.Intent
-import android.content.res.ColorStateList
 import android.os.Bundle
 import android.text.SpannableStringBuilder
 import android.view.LayoutInflater
@@ -221,7 +220,8 @@ class SelectCourseFragment : Fragment() {
         binding.courses.text = string
         (requireActivity() as BaseActivity).getVersionData()?.let {
             if (count == 0) {
-                binding.courses.textColor = ContextCompat.getColor(requireActivity(), R.color.grey)
+                binding.courses.textColor =
+                    ContextCompat.getColor(requireActivity(), R.color.light_grey)
             } else {
                 binding.courses.textColor = ContextCompat.getColor(requireActivity(), R.color.black)
             }
@@ -235,22 +235,10 @@ class SelectCourseFragment : Fragment() {
 
     private fun enabledSubmitButton() {
         binding.btnStartCourse.isEnabled = true
-        binding.btnStartCourse.backgroundTintList = ColorStateList.valueOf(
-            ContextCompat.getColor(
-                requireContext(),
-                R.color.button_primary_color
-            )
-        )
     }
 
     private fun disableSubmitButton() {
         binding.btnStartCourse.isEnabled = false
-        binding.btnStartCourse.backgroundTintList = ColorStateList.valueOf(
-            ContextCompat.getColor(
-                requireContext(),
-                R.color.transparent_black
-            )
-        )
     }
 
     fun registerCourses() {

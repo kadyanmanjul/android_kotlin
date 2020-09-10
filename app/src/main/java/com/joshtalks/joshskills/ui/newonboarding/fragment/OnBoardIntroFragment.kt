@@ -2,6 +2,7 @@ package com.joshtalks.joshskills.ui.newonboarding.fragment
 
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,7 +10,6 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.viewpager.widget.ViewPager
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.core.Utils
@@ -22,7 +22,8 @@ import com.joshtalks.joshskills.ui.signup.FLOW_FROM
 import com.joshtalks.joshskills.ui.signup.SignUpActivity
 
 class OnBoardIntroFragment : Fragment() {
-
+    var scrollingPosition = 0
+    var width: Int = 0
     lateinit var binding: FragmentOnBoardIntroBinding
     private val viewModel: OnBoardViewModel by lazy {
         ViewModelProvider(requireActivity()).get(
@@ -87,41 +88,14 @@ class OnBoardIntroFragment : Fragment() {
 
             //Set Cover Image
             Utils.setImage(binding.scrollingIv, versionData.image)
-
+            startImageScrolling()
             //Set up text viewpager
             versionData.content?.let {
                 binding.viewPagerText.adapter = OnBoardingIntroTextAdapter(
                     requireActivity().supportFragmentManager,
                     it
                 )
-
                 binding.wormDotsIndicator.setViewPager(binding.viewPagerText)
-
-                binding.viewPagerText.addOnPageChangeListener(object :
-                    ViewPager.OnPageChangeListener {
-                    override fun onPageScrolled(
-                        position: Int,
-                        positionOffset: Float,
-                        positionOffsetPixels: Int
-                    ) {
-
-                    }
-
-                    override fun onPageSelected(position: Int) {
-                        val part = binding.scrollingIv.width / it.size
-                        binding.scrollView.post {
-                            binding.scrollView.smoothScrollTo(
-                                part * position,
-                                0
-                            )
-                        }
-                    }
-
-                    override fun onPageScrollStateChanged(state: Int) {
-
-                    }
-
-                })
             }
         }
 
@@ -140,6 +114,31 @@ class OnBoardIntroFragment : Fragment() {
                 requireActivity().finish()
             }
         } else binding.alreadySubscribed.visibility = View.GONE
+    }
+
+    private fun startImageScrolling() {
+        Handler().postDelayed({ /* Create an Intent that will start the MainActivity. */
+            if (width == 0) {
+                width = binding.scrollingIv.width
+            } else {
+                println("scrollingPosition $scrollingPosition")
+                if (scrollingPosition + binding.scrollView.width >= width) {
+                    scrollingPosition = 0
+                    binding.scrollView.scrollTo(
+                        0,
+                        0
+                    )
+                }
+                scrollingPosition += 5
+                binding.scrollView.post {
+                    binding.scrollView.smoothScrollTo(
+                        scrollingPosition,
+                        0
+                    )
+                }
+            }
+            startImageScrolling()
+        }, 20)
     }
 
     companion object {

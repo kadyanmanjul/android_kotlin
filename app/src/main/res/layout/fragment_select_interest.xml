@@ -39,6 +39,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:background="@color/text_f1f2"
+                    android:maxLines="1"
                     android:paddingHorizontal="@dimen/_16sdp"
                     android:paddingBottom="@dimen/_8sdp"
                     android:text="@string/total_interests_selected"
@@ -68,6 +69,7 @@
                     android:layout_height="0dp"
                     android:overScrollMode="never"
                     android:scrollbars="none"
+                    android:paddingHorizontal="@dimen/_8sdp"
                     app:layout_constraintBottom_toTopOf="@+id/interest_btn"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="1.0"
@@ -88,7 +90,7 @@
 
             </ScrollView>
 
-            <com.google.android.material.button.MaterialButton
+            <com.google.android.material.textview.MaterialTextView
                     android:id="@+id/interest_btn"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -97,10 +99,12 @@
                     android:onClick="@{()->handler.onDoneClicked()}"
                     android:padding="@dimen/_10sdp"
                     android:text="@string/done"
+                    android:background="@drawable/rounded_state_button_bg"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Button"
-                    app:cornerRadius="@dimen/_20sdp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     android:enabled="false"
+                    android:gravity="center"
+                    android:textColor="@color/white"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent" />
 
