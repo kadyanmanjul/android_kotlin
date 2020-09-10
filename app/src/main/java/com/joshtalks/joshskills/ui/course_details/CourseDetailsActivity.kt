@@ -42,7 +42,6 @@ import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.EXPLORE_TYPE
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
 import com.joshtalks.joshskills.core.IS_SUBSCRIPTION_STARTED
-import com.joshtalks.joshskills.core.IS_TRIAL_ENDED
 import com.joshtalks.joshskills.core.IS_TRIAL_STARTED
 import com.joshtalks.joshskills.core.PermissionUtils
 import com.joshtalks.joshskills.core.PrefManager
@@ -566,41 +565,29 @@ class CourseDetailsActivity : BaseActivity() {
     }
 
     fun buyCourse() {
-        if (isFromFreeTrial) {
-            val isTrialEnded = PrefManager.getBoolValue(IS_TRIAL_ENDED, false)
-            if (isTrialEnded) {
-                val tempTestId = AppObjectController.getFirebaseRemoteConfig()
+
+        val exploreTypeStr = PrefManager.getStringValue(EXPLORE_TYPE, false)
+        val discountedPrice =
+            viewModel.courseDetailsLiveData.value!!.paymentData.discountedAmount.substring(1)
+                .toDouble()
+        if (exploreTypeStr.isNotBlank()
+            && exploreTypeStr == ExploreCardType.FREETRIAL.name
+        ) {
+            val isTrialStarted = PrefManager.getBoolValue(IS_TRIAL_STARTED, false)
+            val isSubscriptionStarted = PrefManager.getBoolValue(IS_SUBSCRIPTION_STARTED, false)
+            val tempTestId = if (isTrialStarted && discountedPrice > 0.0) {
+                AppObjectController.getFirebaseRemoteConfig()
                     .getDouble(FirebaseRemoteConfigKey.SUBSCRIPTION_TEST_ID).toInt()
-                logStartCourseAnalyticEvent(tempTestId)
-                PaymentSummaryActivity.startPaymentSummaryActivity(
-                    this,
-                    tempTestId.toString()
-                )
-            } else viewModel.addMoreCourseToFreeTrial(testId)
+            } else if (isTrialStarted.not() && isSubscriptionStarted.not()) TRIAL_TEST_ID
+            else testId
+            logStartCourseAnalyticEvent(tempTestId)
+            PaymentSummaryActivity.startPaymentSummaryActivity(
+                this,
+                tempTestId.toString()
+            )
         } else {
-            val exploreTypeStr = PrefManager.getStringValue(EXPLORE_TYPE, false)
-            val discountedPrice =
-                viewModel.courseDetailsLiveData.value!!.paymentData.discountedAmount.substring(1)
-                    .toDouble()
-            if (exploreTypeStr.isNotBlank()
-                && exploreTypeStr == ExploreCardType.FREETRIAL.name
-            ) {
-                val isTrialStarted = PrefManager.getBoolValue(IS_TRIAL_STARTED, false)
-                val isSubscriptionStarted = PrefManager.getBoolValue(IS_SUBSCRIPTION_STARTED, false)
-                val tempTestId = if (isTrialStarted && discountedPrice > 0.0) {
-                    AppObjectController.getFirebaseRemoteConfig()
-                        .getDouble(FirebaseRemoteConfigKey.SUBSCRIPTION_TEST_ID).toInt()
-                } else if (isTrialStarted.not() && isSubscriptionStarted.not()) TRIAL_TEST_ID
-                else testId
-                logStartCourseAnalyticEvent(tempTestId)
-                PaymentSummaryActivity.startPaymentSummaryActivity(
-                    this,
-                    tempTestId.toString()
-                )
-            } else {
-                logStartCourseAnalyticEvent(testId)
-                PaymentSummaryActivity.startPaymentSummaryActivity(this, testId.toString())
-            }
+            logStartCourseAnalyticEvent(testId)
+            PaymentSummaryActivity.startPaymentSummaryActivity(this, testId.toString())
         }
         appAnalytics.addParam(AnalyticsEvent.START_COURSE_NOW.NAME, "Clicked")
     }

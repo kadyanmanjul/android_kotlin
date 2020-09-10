@@ -7,19 +7,16 @@ import android.content.Intent
 import android.os.Bundle
 import android.telephony.TelephonyManager
 import com.google.firebase.perf.metrics.AddTrace
-import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.CoreJoshActivity
 import com.joshtalks.joshskills.core.IS_GUEST_ENROLLED
-import com.joshtalks.joshskills.core.ONBOARDING_VERSION_KEY
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.LogException
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.repository.server.onboarding.ONBOARD_VERSIONS
-import com.joshtalks.joshskills.repository.server.onboarding.VersionResponse
 import com.joshtalks.joshskills.ui.course_details.CourseDetailsActivity
 import com.joshtalks.joshskills.ui.extra.CustomPermissionDialogInteractionListener
 import com.joshtalks.joshskills.ui.inbox.COURSE_EXPLORER_NEW
@@ -29,7 +26,6 @@ import io.branch.referral.Defines
 import kotlinx.android.synthetic.main.activity_launcher.progress_bar
 import org.json.JSONObject
 import timber.log.Timber
-import java.lang.reflect.Type
 
 
 class LauncherActivity : CoreJoshActivity(), CustomPermissionDialogInteractionListener {
@@ -119,11 +115,7 @@ class LauncherActivity : CoreJoshActivity(), CustomPermissionDialogInteractionLi
 
     override fun navigateToNextScreen() {
         AppObjectController.uiHandler.postDelayed({
-            val versionResponseTypeToken: Type = object : TypeToken<VersionResponse>() {}.type
-            val versionResponse = AppObjectController.gsonMapper.fromJson<VersionResponse>(
-                PrefManager.getStringValue(ONBOARDING_VERSION_KEY),
-                versionResponseTypeToken
-            )
+            val versionResponse = getVersionData()
 
             if (versionResponse == null) {
                 navigateToNextScreen()

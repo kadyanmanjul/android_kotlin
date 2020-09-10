@@ -408,7 +408,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
 
     private fun subscribeRXBus() {
         compositeDisposable.add(
-            RxBus2.listen(PromoCodeSubmitEventBus::class.java)
+            RxBus2.listenWithoutDelay(PromoCodeSubmitEventBus::class.java)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({

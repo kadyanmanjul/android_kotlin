@@ -11,7 +11,10 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.BaseActivity
+import com.joshtalks.joshskills.core.ONBOARDING_VERSION_KEY
+import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.databinding.FragmentOnBoardIntroBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor
@@ -107,6 +110,17 @@ class OnBoardIntroFragment : Fragment() {
                 .not()
         ) {
             binding.alreadySubscribed.setOnClickListener {
+                val versionData=(requireActivity() as BaseActivity).getVersionData()
+                versionData?.version?.let {
+                    it.name=ONBOARD_VERSIONS.ONBOARDING_V1
+                }
+                versionData?.let {
+                    PrefManager.put(
+                        ONBOARDING_VERSION_KEY,
+                        AppObjectController.gsonMapper.toJson(versionData)
+                    )
+                }
+
                 val intent = Intent(requireActivity(), SignUpActivity::class.java).apply {
                     putExtra(FLOW_FROM, "NewOnBoardFlow journey")
                 }

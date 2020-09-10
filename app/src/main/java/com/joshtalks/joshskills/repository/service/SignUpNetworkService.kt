@@ -62,7 +62,7 @@ interface SignUpNetworkService {
     @POST("$DIR/user/truecaller/login/")
     suspend fun verifyViaTrueCaller(@Body requestVerifyOTP: TrueCallerLoginRequest): Response<LoginResponse>
 
-    @POST("$DIR//user/verify_user")
+    @POST("$DIR/user/verify_user/")
     suspend fun verifyGuestUser(@Body socialSignUpRequest: SocialSignUpRequest): Response<LoginResponse>
 
     @POST("$DIR/user/user_verification/")

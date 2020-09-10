@@ -49,7 +49,7 @@ data class CouponDetails(
     @SerializedName("validity")
     val validity: String,
     @SerializedName("discount")
-    val discount: Int,
+    val discount: Double,
     @SerializedName("discount_type")
     val discountType: DISCOUNT_TYPE
 ) : Parcelable

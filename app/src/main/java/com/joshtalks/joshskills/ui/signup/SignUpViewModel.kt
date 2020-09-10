@@ -8,11 +8,13 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.auth.api.phone.SmsRetriever
 import com.google.android.gms.tasks.Task
+import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.core.API_TOKEN
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.INSTANCE_ID
 import com.joshtalks.joshskills.core.JoshApplication
+import com.joshtalks.joshskills.core.ONBOARDING_VERSION_KEY
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.RegistrationMethods
 import com.joshtalks.joshskills.core.SignUpStepStatus
@@ -28,6 +30,8 @@ import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.RequestVerifyOTP
 import com.joshtalks.joshskills.repository.server.TrueCallerLoginRequest
+import com.joshtalks.joshskills.repository.server.onboarding.ONBOARD_VERSIONS
+import com.joshtalks.joshskills.repository.server.onboarding.VersionResponse
 import com.joshtalks.joshskills.repository.server.signup.LoginResponse
 import com.joshtalks.joshskills.repository.server.signup.RequestSocialSignUp
 import com.joshtalks.joshskills.repository.server.signup.RequestUserVerification
@@ -361,6 +365,7 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
                     )
                 if (response.isSuccessful) {
                     response.body()?.run {
+                        setVersionDataToV1()
                         when (request.createdSource) {
                             CreatedSource.FB.name -> {
                                 MarketingAnalytics.completeRegistrationAnalytics(
@@ -396,6 +401,23 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
             }
             _signUpStatus.postValue(SignUpStepStatus.ERROR)
         }
+    }
+
+    private fun setVersionDataToV1() {
+        val versionData = AppObjectController.gsonMapper.fromJson<VersionResponse>(
+            PrefManager.getStringValue(ONBOARDING_VERSION_KEY),
+            object : TypeToken<VersionResponse>() {}.type
+        )
+        versionData?.version?.let {
+            it.name = ONBOARD_VERSIONS.ONBOARDING_V1
+        }
+        versionData?.let {
+            PrefManager.put(
+                ONBOARDING_VERSION_KEY,
+                AppObjectController.gsonMapper.toJson(versionData)
+            )
+        }
+
     }
 
 }

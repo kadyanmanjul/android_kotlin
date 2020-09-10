@@ -98,7 +98,7 @@ class SelectInterestFragment : Fragment() {
             chip.setOnCheckedChangeListener { buttonView, isChecked ->
                 if (interestSet.size == maxSelection && isChecked) {
                     buttonView.isChecked = false
-                    showToast("Max selection reached.")
+                    showToast("You can select upto ${maxSelection} interests.")
                 } else {
 
                     if (isChecked)
