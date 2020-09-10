@@ -64,6 +64,7 @@ android {
 
     buildTypes {
         debug {
+            versionNameSuffix "_Debug"
             debuggable true
             signingConfig signingConfigs.debug
             minifyEnabled false
@@ -122,11 +123,13 @@ android {
     flavorDimensions "version"
     productFlavors {
         local {
+            versionName "${majorVersion}.${minorVersion}.${patchVersion}.Local"
             buildConfigField "boolean", "PLAY_STORE_DISABLED", "false"
             manifestPlaceholders = [enableCrashReporting: "false"]
             buildConfigField "String", "BASE_URL", "\"http://43.239.132.193:8000\""
         }
         dev {
+            versionName "${majorVersion}.${minorVersion}.${patchVersion}.Dev"
             buildConfigField "boolean", "PLAY_STORE_DISABLED", "false"
             manifestPlaceholders = [enableCrashReporting: "false"]
             buildConfigField "String", "BASE_URL", "\"http://staging.joshtalks.org\""
