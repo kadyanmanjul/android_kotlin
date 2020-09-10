@@ -35,6 +35,7 @@ import com.joshtalks.joshskills.core.API_TOKEN
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.AppSignatureHelper
 import com.joshtalks.joshskills.core.BaseActivity
+import com.joshtalks.joshskills.core.INSTANCE_ID
 import com.joshtalks.joshskills.core.PermissionUtils
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.SignUpStepStatus
@@ -50,8 +51,12 @@ import com.joshtalks.joshskills.core.getFBProfilePicture
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.ActivitySignUpV2Binding
 import com.joshtalks.joshskills.messaging.RxBus2
+import com.joshtalks.joshskills.repository.local.eventbus.CreatedSource
 import com.joshtalks.joshskills.repository.local.eventbus.LoginViaEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.LoginViaStatus
+import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.repository.server.onboarding.ONBOARD_VERSIONS
+import com.joshtalks.joshskills.repository.server.signup.request.SocialSignUpRequest
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
@@ -243,7 +248,20 @@ class SignUpActivity : BaseActivity() {
             }
 
             override fun onSuccessProfileShared(trueProfile: TrueProfile) {
-                viewModel.verifyUserViaTrueCaller(trueProfile)
+                if (getVersionData()?.version?.name == ONBOARD_VERSIONS.ONBOARDING_V1)
+                    viewModel.verifyUserViaTrueCaller(trueProfile)
+                else {
+                    val requestObj = SocialSignUpRequest.Builder(
+                        Mentor.getInstance().getId(),
+                        PrefManager.getStringValue(INSTANCE_ID, false),
+                        CreatedSource.OTP.name,
+                        Mentor.getInstance().getUserId()
+                    ).payload(trueProfile.payload)
+                        .signatureAlgo(trueProfile.signatureAlgorithm)
+                        .signature(trueProfile.signature)
+                        .build()
+                    viewModel.verifyUser(requestObj)
+                }
             }
 
             override fun onVerificationRequired() {
@@ -352,13 +370,26 @@ class SignUpActivity : BaseActivity() {
                 if (jsonObject.has("email")) {
                     email = jsonObject.getString("email")
                 }
-                viewModel.signUpUsingSocial(
-                    LoginViaStatus.FACEBOOK,
-                    id,
-                    name,
-                    email,
-                    getFBProfilePicture(id)
-                )
+                if (getVersionData()?.version?.name == ONBOARD_VERSIONS.ONBOARDING_V1) {
+                    viewModel.signUpUsingSocial(
+                        LoginViaStatus.FACEBOOK,
+                        id,
+                        name,
+                        email,
+                        getFBProfilePicture(id)
+                    )
+                } else {
+                    val requestObj = SocialSignUpRequest.Builder(
+                        Mentor.getInstance().getId(),
+                        PrefManager.getStringValue(INSTANCE_ID, false),
+                        CreatedSource.FB.name,
+                        Mentor.getInstance().getUserId()
+                    ).name(name)
+                        .email(email)
+                        .photoUrl(getFBProfilePicture(id))
+                        .socialId(id).build()
+                    viewModel.verifyUser(requestObj)
+                }
             } catch (ex: Exception) {
                 LogException.catchException(ex)
             }
@@ -393,13 +424,27 @@ class SignUpActivity : BaseActivity() {
         accountUser: FirebaseUser?
     ) {
         if (accountUser != null) {
-            viewModel.signUpUsingSocial(
-                LoginViaStatus.GMAIL,
-                gId ?: accountUser.uid,
-                accountUser.displayName,
-                accountUser.email,
-                accountUser.photoUrl?.toString()
-            )
+            if (getVersionData()?.version?.name == ONBOARD_VERSIONS.ONBOARDING_V1) {
+
+                viewModel.signUpUsingSocial(
+                    LoginViaStatus.GMAIL,
+                    gId ?: accountUser.uid,
+                    accountUser.displayName,
+                    accountUser.email,
+                    accountUser.photoUrl?.toString()
+                )
+            } else {
+                val requestObj = SocialSignUpRequest.Builder(
+                    Mentor.getInstance().getId(),
+                    PrefManager.getStringValue(INSTANCE_ID, false),
+                    CreatedSource.GML.name,
+                    Mentor.getInstance().getUserId()
+                ).name(accountUser.displayName)
+                    .email(accountUser.email)
+                    .photoUrl(accountUser.photoUrl?.toString())
+                    .socialId(accountUser.uid).build()
+                viewModel.verifyUser(requestObj)
+            }
         } else {
             showToast(getString(R.string.generic_message_for_error))
         }

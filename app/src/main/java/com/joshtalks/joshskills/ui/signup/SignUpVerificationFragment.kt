@@ -17,7 +17,10 @@ import com.github.razir.progressbutton.showProgress
 import com.joshtalks.codeinputview.OTPListener
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.INSTANCE_ID
+import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.SignUpStepStatus
 import com.joshtalks.joshskills.core.TIMEOUT_TIME
 import com.joshtalks.joshskills.core.VerificationStatus
@@ -26,9 +29,13 @@ import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.FragmentSignUpVerificationBinding
 import com.joshtalks.joshskills.messaging.RxBus2
+import com.joshtalks.joshskills.repository.local.eventbus.CreatedSource
 import com.joshtalks.joshskills.repository.local.eventbus.LoginViaEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.LoginViaStatus
 import com.joshtalks.joshskills.repository.local.eventbus.OTPReceivedEventBus
+import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.repository.server.onboarding.ONBOARD_VERSIONS
+import com.joshtalks.joshskills.repository.server.signup.request.SocialSignUpRequest
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -208,7 +215,18 @@ class SignUpVerificationFragment : Fragment() {
                 (requireActivity() as SignUpActivity).verification?.verify(binding.otpView2.otp)
             } else {
                 startProgress()
-                viewModel.verifyOTP(binding.otpView2.otp)
+                if ((requireActivity() as BaseActivity).getVersionData()?.version?.name == ONBOARD_VERSIONS.ONBOARDING_V1)
+                    viewModel.verifyOTP(binding.otpView2.otp)
+                else {
+                    val requestObj = SocialSignUpRequest.Builder(
+                        Mentor.getInstance().getId(),
+                        PrefManager.getStringValue(INSTANCE_ID, false),
+                        CreatedSource.OTP.name,
+                        Mentor.getInstance().getUserId()
+                    ).otp(binding.otpView2.otp)
+                        .build()
+                    viewModel.verifyUser(requestObj)
+                }
             }
             AppAnalytics.create(AnalyticsEvent.OTP_SCREEN_SATUS.NAME)
                 .addParam(AnalyticsEvent.NEXT_OTP_CLICKED.NAME, "Otp Submitted")

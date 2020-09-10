@@ -22,6 +22,7 @@ import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
+import com.joshtalks.joshskills.repository.local.eventbus.CreatedSource
 import com.joshtalks.joshskills.repository.local.eventbus.LoginViaStatus
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
@@ -30,6 +31,7 @@ import com.joshtalks.joshskills.repository.server.TrueCallerLoginRequest
 import com.joshtalks.joshskills.repository.server.signup.LoginResponse
 import com.joshtalks.joshskills.repository.server.signup.RequestSocialSignUp
 import com.joshtalks.joshskills.repository.server.signup.RequestUserVerification
+import com.joshtalks.joshskills.repository.server.signup.request.SocialSignUpRequest
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import com.truecaller.android.sdk.TrueProfile
 import kotlinx.coroutines.Dispatchers
@@ -340,4 +342,45 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
     fun incrementIncorrectAttempts() {
         incorrectAttempt += 1
     }
+
+    fun verifyUser(
+        request: SocialSignUpRequest
+    ) {
+        if (request.createdSource == CreatedSource.OTP.name) {
+            request.countryCode = countryCode
+            request.mobile = phoneNumber
+        }
+
+        this.loginViaStatus = loginViaStatus
+        progressBarStatus.postValue(true)
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                /*val reqObj = RequestSocialSignUp.Builder(
+                    id = id,
+                    instanceId = PrefManager.getStringValue(INSTANCE_ID, false)
+                )
+                    .name(name)
+                    .email(email)
+                    .photoUrl(profilePicture)*/
+                val response =
+                    AppObjectController.signUpNetworkService.verifyGuestUser(
+                        request
+                    )
+                if (response.isSuccessful) {
+                    response.body()?.run {
+                        MarketingAnalytics.completeRegistrationAnalytics(
+                            this.newUser,
+                            RegistrationMethods.FACEBOOK
+                        )
+                        updateFromLoginResponse(this)
+                    }
+                    return@launch
+                }
+            } catch (ex: Throwable) {
+                ex.showAppropriateMsg()
+            }
+            _signUpStatus.postValue(SignUpStepStatus.ERROR)
+        }
+    }
+
 }

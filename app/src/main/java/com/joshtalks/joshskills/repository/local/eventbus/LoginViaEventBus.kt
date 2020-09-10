@@ -11,3 +11,7 @@ data class LoginViaEventBus(
 enum class LoginViaStatus {
     GMAIL, FACEBOOK, TRUECALLER, SMS_VERIFY, NUMBER_VERIFY
 }
+
+enum class CreatedSource {
+    FB, GML, OTP, TC
+}
