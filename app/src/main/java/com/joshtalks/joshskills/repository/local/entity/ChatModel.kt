@@ -37,7 +37,7 @@ data class ChatModel(
     @ColumnInfo(name = "conversation_id")
     @SerializedName("conversation") var conversationId: String = "",
 
-    @ColumnInfo
+    @ColumnInfo(name = "created")
     @SerializedName("created") var created: Date,
 
     @ColumnInfo(name = "is_seen")

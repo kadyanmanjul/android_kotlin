@@ -10,7 +10,6 @@ import android.widget.FrameLayout
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.appcompat.widget.PopupMenu
 import androidx.lifecycle.LifecycleObserver
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.facebook.share.internal.ShareConstants.ACTION_TYPE
 import com.google.android.gms.location.LocationRequest
@@ -366,7 +365,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
 
 
     private fun addLiveDataObservable() {
-        viewModel.registerCourseNetworkLiveData.observe(this, Observer {
+        viewModel.registerCourseNetworkLiveData.observe(this) {
             if (it == null || it.isEmpty()) {
                 openCourseExplorer()
             } else {
@@ -381,10 +380,10 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
                 setCTAButtonText(exploreType)
 
             }
-        })
-        viewModel.registerCourseMinimalLiveData.observe(this, Observer {
+        }
+        viewModel.registerCourseMinimalLiveData.observe(this) {
             addCourseInRecyclerView(it)
-        })
+        }
 
         txtConvert.setOnClickListener {
             logEvent(AnalyticsEvent.CONVERT_CLICKED.name)
@@ -405,14 +404,25 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         }
         recycler_view_inbox.removeAllViews()
         val total = items.size
-        items.forEachWithIndex { i, inbox ->
+        val newCourses = items.filter { it.created == null || it.created == 0L }
+        newCourses.sortedByDescending { it.courseCreatedDate }.forEachWithIndex { index, inbox ->
             if (inbox.courseId != TRIAL_COURSE_ID)
                 recycler_view_inbox.addView(
                     InboxViewHolder(
-                        inbox, total, i
+                        inbox, total, index
                     )
                 )
         }
+        items.filter { it.created != null && it.created != 0L }
+            .sortedByDescending { it.created }
+            .forEachWithIndex { index, inbox ->
+                if (inbox.courseId != TRIAL_COURSE_ID)
+                    recycler_view_inbox.addView(
+                        InboxViewHolder(
+                            inbox, total, newCourses.size + index
+                        )
+                    )
+            }
         progress_bar.visibility = View.GONE
         findMoreLayout.visibility = View.VISIBLE
         attachOfferHintView()
@@ -475,7 +485,8 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         } else if (requestCode == REQ_CODE_VERSION_UPDATE) {
             if (resultCode == Activity.RESULT_CANCELED) {
                 val forceUpdateMinVersion =
-                    AppObjectController.getFirebaseRemoteConfig().getLong("force_upgrade_after_version")
+                    AppObjectController.getFirebaseRemoteConfig()
+                        .getLong("force_upgrade_after_version")
                 val forceUpdateFlag =
                     AppObjectController.getFirebaseRemoteConfig().getBoolean("update_force")
                 val currentAppVersion = BuildConfig.VERSION_CODE
