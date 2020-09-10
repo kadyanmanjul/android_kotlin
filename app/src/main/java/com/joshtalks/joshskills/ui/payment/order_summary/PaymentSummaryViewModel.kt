@@ -5,7 +5,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.crashlytics.android.Crashlytics
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.INSTANCE_ID
@@ -175,7 +175,7 @@ class PaymentSummaryViewModel(application: Application) : AndroidViewModel(appli
                         viewState?.postValue(ViewState.INTERNET_NOT_AVAILABLE)
                     }
                     else -> {
-                        Crashlytics.logException(ex)
+                        FirebaseCrashlytics.getInstance().recordException(ex)
                     }
                 }
             }
@@ -199,7 +199,7 @@ class PaymentSummaryViewModel(application: Application) : AndroidViewModel(appli
                         viewState?.postValue(ViewState.INTERNET_NOT_AVAILABLE)
                     }
                     else -> {
-                        Crashlytics.logException(ex)
+                        FirebaseCrashlytics.getInstance().recordException(ex)
                     }
                 }
             }
@@ -241,7 +241,7 @@ class PaymentSummaryViewModel(application: Application) : AndroidViewModel(appli
                     }
                     else -> {
                         viewState?.postValue(ViewState.PROCESSED)
-                        Crashlytics.logException(ex)
+                        FirebaseCrashlytics.getInstance().recordException(ex)
                     }
                 }
             }
@@ -287,7 +287,7 @@ class PaymentSummaryViewModel(application: Application) : AndroidViewModel(appli
                         viewState?.postValue(ViewState.INTERNET_NOT_AVAILABLE)
                     }
                     else -> {
-                        Crashlytics.logException(ex)
+                        FirebaseCrashlytics.getInstance().recordException(ex)
                     }
                 }
             }

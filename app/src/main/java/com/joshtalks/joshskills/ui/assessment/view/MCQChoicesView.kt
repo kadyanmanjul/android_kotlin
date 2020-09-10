@@ -6,8 +6,8 @@ import android.view.View
 import android.widget.FrameLayout
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.crashlytics.android.Crashlytics
 import com.esafirm.imagepicker.view.GridSpacingItemDecoration
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
@@ -107,7 +107,8 @@ class MCQChoicesView : FrameLayout,
 
             else -> {
                 Timber.tag("Wrong Choice Type").e("Wrong Choice Type in  MCQViewHolder")
-                Crashlytics.logException(InvalidClassException("Wrong Choice Type"))
+                FirebaseCrashlytics.getInstance()
+                    .recordException(InvalidClassException("Wrong Choice Type"))
             }
 
         }
@@ -196,7 +197,8 @@ class MCQChoicesView : FrameLayout,
 
                 else -> {
                     Timber.tag("Wrong Choice Type").e("Wrong Choice Type in  MCQViewHolder")
-                    Crashlytics.logException(InvalidClassException("Wrong Choice Type"))
+                    FirebaseCrashlytics.getInstance()
+                        .recordException(InvalidClassException("Wrong Choice Type"))
                 }
             }
         }

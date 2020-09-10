@@ -1,6 +1,6 @@
 package com.joshtalks.joshskills.core.analytics
 
-import com.crashlytics.android.Crashlytics
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.JoshSkillExecutors
 import io.branch.referral.util.BRANCH_STANDARD_EVENT
@@ -25,7 +25,7 @@ object BranchIOAnalytics {
                 }
                 branchEvent.logEvent(AppObjectController.joshApplication)
             } catch (ex: Exception) {
-                Crashlytics.logException(ex)
+                FirebaseCrashlytics.getInstance().recordException(ex)
                 ex.printStackTrace()
             }
         }

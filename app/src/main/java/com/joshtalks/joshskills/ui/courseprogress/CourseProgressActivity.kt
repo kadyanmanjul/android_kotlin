@@ -34,7 +34,7 @@ import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
-import com.crashlytics.android.Crashlytics
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.CERTIFICATE_GENERATE
@@ -341,7 +341,7 @@ class CourseProgressActivity : CoreJoshActivity(), OnDismissDialog,
                     }
                     else -> {
                         showToast(getString(R.string.generic_message_for_error))
-                        Crashlytics.logException(ex)
+                        FirebaseCrashlytics.getInstance().recordException(ex)
                     }
                 }
                 hideProgressBar()

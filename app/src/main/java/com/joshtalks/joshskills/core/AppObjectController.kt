@@ -10,8 +10,6 @@ import android.util.Log
 import androidx.core.app.NotificationManagerCompat
 import com.bumptech.glide.load.MultiTransformation
 import com.clevertap.android.sdk.ActivityLifecycleCallback
-import com.crashlytics.android.Crashlytics
-import com.crashlytics.android.core.CrashlyticsCore
 import com.facebook.FacebookSdk
 import com.facebook.LoggingBehavior
 import com.facebook.appevents.AppEventsLogger
@@ -23,6 +21,7 @@ import com.freshchat.consumer.sdk.Freshchat
 import com.freshchat.consumer.sdk.FreshchatConfig
 import com.freshchat.consumer.sdk.FreshchatNotificationConfig
 import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings
 import com.google.gson.Gson
@@ -59,7 +58,6 @@ import com.tonyodev.fetch2.NetworkType
 import com.tonyodev.fetch2core.Downloader
 import com.tonyodev.fetch2okhttp.OkHttpDownloader
 import io.branch.referral.Branch
-import io.fabric.sdk.android.Fabric
 import io.github.inflationx.calligraphy3.CalligraphyConfig
 import io.github.inflationx.calligraphy3.CalligraphyInterceptor
 import io.github.inflationx.viewpump.ViewPump
@@ -178,7 +176,7 @@ class AppObjectController {
             initDebugService()
             Branch.getAutoInstance(context)
             initFirebaseRemoteConfig()
-            configureCrashlytics(context)
+            configureCrashlytics()
             initFlurryAnalytics(context)
             initNewRelic(context)
             initFonts()
@@ -273,6 +271,7 @@ class AppObjectController {
             return INSTANCE
 
         }
+
         fun init(context: JoshApplication) {
             joshApplication = context
             initFacebookService(context)
@@ -362,13 +361,12 @@ class AppObjectController {
             getFirebaseRemoteConfig().fetchAndActivate()
         }
 
-        private fun configureCrashlytics(context: Context) {
-            Crashlytics.Builder()
-                .core(CrashlyticsCore.Builder().disabled(BuildConfig.DEBUG).build())
-                .build()
-                .also { crashlyticsKit ->
-                    Fabric.with(context, crashlyticsKit)
-                }
+        private fun configureCrashlytics() {
+            if (BuildConfig.DEBUG) {
+                FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(false)
+            } else {
+                FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(true)
+            }
         }
 
         private fun initFlurryAnalytics(context: Context) {

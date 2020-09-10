@@ -4,7 +4,7 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.crashlytics.android.Crashlytics
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.ApiCallStatus
 import com.joshtalks.joshskills.core.AppObjectController
@@ -68,7 +68,7 @@ class ReminderViewModel(application: Application) : AndroidViewModel(application
                         showToast(context.getString(R.string.internet_not_available_msz))
                     }
                     else -> {
-                        Crashlytics.logException(ex)
+                        FirebaseCrashlytics.getInstance().recordException(ex)
                     }
                 }
                 submitApiCallStatusLiveData.postValue(ApiCallStatus.FAILED)

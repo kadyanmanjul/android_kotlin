@@ -43,12 +43,12 @@ import com.bumptech.glide.integration.webp.decoder.WebpDrawable
 import com.bumptech.glide.integration.webp.decoder.WebpDrawableTransformation
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.bumptech.glide.request.target.Target
-import com.crashlytics.android.Crashlytics
 import com.facebook.share.internal.ShareConstants
 import com.github.pwittchen.reactivenetwork.library.rx2.ReactiveNetwork
 import com.google.android.exoplayer2.Player
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.greentoad.turtlebody.mediapicker.MediaPicker
 import com.greentoad.turtlebody.mediapicker.core.MediaPickerConfig
 import com.joshtalks.joshcamerax.JoshCameraActivity
@@ -477,7 +477,7 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback, Player.
                 return@setOnMenuItemClickListener true
             }
         } catch (ex: Exception) {
-            Crashlytics.logException(ex)
+            FirebaseCrashlytics.getInstance().recordException(ex)
         }
 
     }
@@ -1240,7 +1240,7 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback, Player.
                     }
                 }
             } catch (ex: Exception) {
-                Crashlytics.logException(ex)
+                FirebaseCrashlytics.getInstance().recordException(ex)
                 ex.printStackTrace()
             }
         }
@@ -1303,7 +1303,7 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback, Player.
                     }
                 }
             } catch (ex: Exception) {
-                Crashlytics.logException(ex)
+                FirebaseCrashlytics.getInstance().recordException(ex)
                 ex.printStackTrace()
             }
         }
@@ -1349,7 +1349,7 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback, Player.
                 cell.message
             )
         } catch (ex: Exception) {
-            Crashlytics.logException(ex)
+            FirebaseCrashlytics.getInstance().recordException(ex)
         }
     }
 
@@ -1485,14 +1485,14 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback, Player.
                     try {
                         conversationViewModel.setMRefreshControl(true)
                     } catch (ex: Exception) {
-                        Crashlytics.logException(ex)
+                        FirebaseCrashlytics.getInstance().recordException(ex)
                         ex.printStackTrace()
                     }
                 }, 5000)
             }
 
         } catch (ex: Exception) {
-            Crashlytics.logException(ex)
+            FirebaseCrashlytics.getInstance().recordException(ex)
             ex.printStackTrace()
         }
         super.onActivityResult(requestCode, resultCode, data)
@@ -1706,7 +1706,7 @@ class ConversationActivity : CoreJoshActivity(), CurrentSessionCallback, Player.
                     }
                 }
             } catch (ex: Exception) {
-                Crashlytics.logException(ex)
+                FirebaseCrashlytics.getInstance().recordException(ex)
                 ex.printStackTrace()
             }
         }

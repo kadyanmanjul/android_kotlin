@@ -26,7 +26,6 @@ import androidx.core.text.color
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
-import com.crashlytics.android.Crashlytics
 import com.facebook.appevents.AppEventsConstants
 import com.facebook.appevents.AppEventsLogger
 import com.flurry.android.FlurryAgent
@@ -35,6 +34,7 @@ import com.google.android.gms.auth.api.credentials.Credentials
 import com.google.android.gms.auth.api.credentials.CredentialsOptions
 import com.google.android.gms.auth.api.credentials.HintRequest
 import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.CoreJoshActivity
@@ -818,7 +818,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
             )
         } catch (ex: Exception) {
             ex.printStackTrace()
-            Crashlytics.logException(ex)
+            FirebaseCrashlytics.getInstance().recordException(ex)
         }
     }
 

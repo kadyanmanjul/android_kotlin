@@ -5,7 +5,7 @@ import android.os.RemoteException
 import android.text.TextUtils
 import com.android.installreferrer.api.InstallReferrerClient
 import com.android.installreferrer.api.InstallReferrerStateListener
-import com.crashlytics.android.Crashlytics
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.repository.local.model.InstallReferrerModel
@@ -15,7 +15,8 @@ import org.threeten.bp.ZoneOffset
 import org.threeten.bp.ZonedDateTime
 import timber.log.Timber
 import java.net.URLDecoder
-import java.util.*
+import java.util.Date
+import java.util.HashMap
 
 object InstallReferralUtil {
 
@@ -100,7 +101,7 @@ object InstallReferralUtil {
                                 }
                             } catch (ex: RemoteException) {
                                 PrefHelper.Debug("onInstallReferrerSetupFinished() Exception: " + ex.message)
-                                Crashlytics.logException(ex)
+                                FirebaseCrashlytics.getInstance().recordException(ex)
                                 ex.printStackTrace()
                             }
                         }

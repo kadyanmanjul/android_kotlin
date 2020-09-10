@@ -14,8 +14,8 @@ import androidx.lifecycle.Observer
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import com.android.installreferrer.api.InstallReferrerClient
-import com.crashlytics.android.Crashlytics
 import com.flurry.android.FlurryAgent
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
@@ -26,6 +26,7 @@ import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.repository.local.entity.NPSEvent
 import com.joshtalks.joshskills.repository.local.entity.NPSEventModel
 import com.joshtalks.joshskills.repository.local.entity.Question
+import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.local.model.nps.NPSQuestionModel
 import com.joshtalks.joshskills.repository.service.EngagementNetworkHelper
@@ -161,9 +162,29 @@ abstract class BaseActivity : AppCompatActivity() {
 
     private fun initUserForCrashlytics() {
         try {
-            Crashlytics.getInstance().core.setUserName(User.getInstance().firstName)
-            Crashlytics.getInstance().core.setUserEmail(User.getInstance().email)
-            Crashlytics.getInstance().core.setUserIdentifier(
+            val user = User.getInstance()
+            val mentor = Mentor.getInstance()
+            val gaid = PrefManager.getStringValue(USER_UNIQUE_ID, false)
+
+            val firebaseCrashlytics = FirebaseCrashlytics.getInstance()
+            firebaseCrashlytics.setUserId(gaid)
+            firebaseCrashlytics.setCustomKey("gaid", gaid)
+            firebaseCrashlytics.setCustomKey("mentor_id", mentor.getId())
+            firebaseCrashlytics.setCustomKey("phone", getPhoneNumber())
+            firebaseCrashlytics.setCustomKey("first_name", user.firstName)
+            firebaseCrashlytics.setCustomKey("email", user.email)
+            firebaseCrashlytics.setCustomKey("username", user.username)
+            firebaseCrashlytics.setCustomKey("user_type", user.userType)
+            firebaseCrashlytics.setCustomKey(
+                "age",
+                AppAnalytics.getAge(user.dateOfBirth).toString() + ""
+            )
+            user.dateOfBirth?.let { firebaseCrashlytics.setCustomKey("date_of_birth", it) }
+            firebaseCrashlytics.setCustomKey(
+                "gender",
+                if (user.gender == "M") "MALE" else "FEMALE"
+            )
+            FirebaseCrashlytics.getInstance().setUserId(
                 PrefManager.getStringValue(
                     USER_UNIQUE_ID
                 )

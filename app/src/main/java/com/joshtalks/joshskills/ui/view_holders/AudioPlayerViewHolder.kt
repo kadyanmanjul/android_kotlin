@@ -13,7 +13,7 @@ import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
-import com.crashlytics.android.Crashlytics
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
@@ -318,7 +318,7 @@ class AudioPlayerViewHolder(activityRef: WeakReference<FragmentActivity>, messag
 
                 }
             } catch (ex: Exception) {
-                Crashlytics.logException(ex)
+                FirebaseCrashlytics.getInstance().recordException(ex)
                 ex.printStackTrace()
             }
         }

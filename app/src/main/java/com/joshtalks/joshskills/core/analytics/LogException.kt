@@ -1,6 +1,6 @@
 package com.joshtalks.joshskills.core.analytics
 
-import com.crashlytics.android.Crashlytics
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.joshtalks.joshskills.BuildConfig
 import com.newrelic.agent.android.NewRelic
 import timber.log.Timber
@@ -14,7 +14,7 @@ object LogException {
             return
         }
         NewRelic.recordHandledException(throwable as Exception)
-        Crashlytics.logException(throwable)
+        FirebaseCrashlytics.getInstance().recordException(throwable)
     }
 
     fun catchError(tag: ErrorTag, error: String) {
@@ -22,7 +22,7 @@ object LogException {
             return
         }
         NewRelic.recordCustomEvent(tag.name, mutableMapOf())
-        Crashlytics.log(3, tag.NAME, error)
+        FirebaseCrashlytics.getInstance().log("(" + tag.NAME + ") - " + error)
 
     }
 }

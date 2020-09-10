@@ -5,8 +5,8 @@ import android.view.View
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.ContextCompat
-import com.crashlytics.android.Crashlytics
 import com.google.android.material.card.MaterialCardView
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
@@ -57,12 +57,14 @@ class MCQChoiceViewHolder(
                 choiceData.imageUrl?.let {
                     setDefaultImageView(choiceImgView, it)
                     choiceImgView.visibility = View.VISIBLE
-                } ?: Crashlytics.logException(InvalidClassException("Choice ImageUrl is Null"))
+                } ?: FirebaseCrashlytics.getInstance()
+                    .recordException(InvalidClassException("Choice ImageUrl is Null"))
             }
 
             else -> {
                 Timber.tag("Wrong Choice Type").e("Wrong Choice Type in  MCQViewHolder")
-                Crashlytics.logException(InvalidClassException("Wrong Choice Type"))
+                FirebaseCrashlytics.getInstance()
+                    .recordException(InvalidClassException("Wrong Choice Type"))
             }
 
         }

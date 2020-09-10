@@ -64,6 +64,7 @@ public class AppAnalytics {
         updateFlurryUser();
         updateFreshchatSdkUser();
         updateFreshchatSdkUserProperties();
+        updateFirebaseSdkUser();
     }
 
     public static AppAnalytics create(String title) {
@@ -151,6 +152,29 @@ public class AppAnalytics {
         list.add(user.getGender());
         list.add("Age " + getAge(user.getDateOfBirth()));
         FlurryAgent.UserProperties.set("JoshSkills.User", list);
+    }
+
+    private static void updateFirebaseSdkUser() {
+        try {
+            User user = User.getInstance();
+            Mentor mentor = Mentor.getInstance();
+            String gaid = PrefManager.INSTANCE.getStringValue(USER_UNIQUE_ID, false);
+
+            firebaseAnalytics.setUserId(gaid);
+            firebaseAnalytics.setUserProperty("gaid", gaid);
+            firebaseAnalytics.setUserProperty("mentor_id", mentor.getId());
+            firebaseAnalytics.setUserProperty("phone", getPhoneNumber());
+            firebaseAnalytics.setUserProperty("first_name", user.getFirstName());
+            firebaseAnalytics.setUserProperty("email", user.getEmail());
+            firebaseAnalytics.setUserProperty("age", getAge(user.getDateOfBirth()) + "");
+            firebaseAnalytics.setUserProperty("date_of_birth", user.getDateOfBirth());
+            firebaseAnalytics.setUserProperty("gender", (user.getGender().equals("M") ? "MALE" : "FEMALE"));
+            firebaseAnalytics.setUserProperty("username", user.getUsername());
+            firebaseAnalytics.setUserProperty("user_type", user.getUserType());
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public static void setLocation(double latitude, double longitude) {
@@ -278,7 +302,7 @@ public class AppAnalytics {
     public void push() {
         Timber.v(this.toString());
         if (BuildConfig.DEBUG) {
-              return;
+            return;
         }
         JoshSkillExecutors.getBOUNDED().submit(() -> {
             formatParameters();

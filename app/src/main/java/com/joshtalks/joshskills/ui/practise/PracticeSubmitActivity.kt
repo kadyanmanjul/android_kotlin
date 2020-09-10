@@ -44,9 +44,9 @@ import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.load.resource.bitmap.FitCenter
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
-import com.crashlytics.android.Crashlytics
 import com.google.android.exoplayer2.ExoPlaybackException
 import com.google.android.exoplayer2.Player
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.greentoad.turtlebody.mediapicker.MediaPicker
 import com.greentoad.turtlebody.mediapicker.core.MediaPickerConfig
 import com.joshtalks.joshcamerax.JoshCameraActivity
@@ -333,7 +333,7 @@ class PractiseSubmitActivity : CoreJoshActivity(), Player.EventListener, AudioPl
             }
 
         } catch (ex: Exception) {
-            Crashlytics.logException(ex)
+            FirebaseCrashlytics.getInstance().recordException(ex)
             ex.printStackTrace()
         }
 

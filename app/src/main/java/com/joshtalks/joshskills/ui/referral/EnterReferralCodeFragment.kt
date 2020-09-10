@@ -11,8 +11,8 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
-import com.crashlytics.android.Crashlytics
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.INSTANCE_ID
@@ -162,7 +162,7 @@ class EnterReferralCodeFragment : BottomSheetDialogFragment() {
                         showToast(getString(R.string.internet_not_available_msz))
                     }
                     else -> {
-                        Crashlytics.logException(ex)
+                        FirebaseCrashlytics.getInstance().recordException(ex)
                     }
                 }
             }
