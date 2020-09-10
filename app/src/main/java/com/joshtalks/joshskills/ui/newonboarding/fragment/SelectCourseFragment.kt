@@ -17,15 +17,17 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.ApiCallStatus
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.BaseActivity
+import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
 import com.joshtalks.joshskills.core.IS_GUEST_ENROLLED
 import com.joshtalks.joshskills.core.IS_TRIAL_ENDED
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
+import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.databinding.FragmentCourseSelectionBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.CourseSelectedEventBus
-import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.server.CourseExploreModel
 import com.joshtalks.joshskills.repository.server.onboarding.ONBOARD_VERSIONS
 import com.joshtalks.joshskills.ui.course_details.CourseDetailsActivity
@@ -38,9 +40,8 @@ import org.jetbrains.anko.textColor
 class SelectCourseFragment : Fragment() {
 
     private lateinit var binding: FragmentCourseSelectionBinding
-    private var courseList: ArrayList<InboxEntity>? = null
     private var haveCourses = false
-    private var categoryList: HashMap<Int, ArrayList<CourseExploreModel>> = HashMap()
+    private var version = EMPTY
     private var tabName: MutableList<String> = ArrayList()
     private lateinit var viewModel: OnBoardViewModel
     private var compositeDisposable = CompositeDisposable()
@@ -69,6 +70,8 @@ class SelectCourseFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        version=
+            (requireActivity() as BaseActivity).getVersionData()?.version?.name?.type.toString()
         initView()
         subscribeObservers()
     }
@@ -128,6 +131,12 @@ class SelectCourseFragment : Fragment() {
         })
 
         binding.upgrade.setOnClickListener {
+            AppAnalytics.create(AnalyticsEvent.NEW_ONBOARDING_UPGRADE_CLICKED.NAME)
+                .addBasicParam()
+                .addUserDetails()
+                .addParam("is_already-enrolled",PrefManager.getBoolValue(IS_GUEST_ENROLLED))
+                .addParam("version",version)
+                .push()
             navigateToCourseDetailsScreen(
                 AppObjectController.getFirebaseRemoteConfig()
                     .getDouble(FirebaseRemoteConfigKey.SUBSCRIPTION_TEST_ID).toInt()
@@ -253,6 +262,14 @@ class SelectCourseFragment : Fragment() {
         if (testIds.isNullOrEmpty()) {
             return
         }
+        AppAnalytics.create(AnalyticsEvent.NEW_ONBOARDING_START_LEARNING.NAME)
+            .addBasicParam()
+            .addUserDetails()
+            .addParam("With no of course",testIds.size)
+            .addParam("is_already-enrolled",PrefManager.getBoolValue(IS_GUEST_ENROLLED))
+            .addParam("version",version)
+            .push()
+
         viewModel.enrollMentorAgainstTest(testIds)
     }
 

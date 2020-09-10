@@ -16,6 +16,8 @@ import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.core.ONBOARDING_VERSION_KEY
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
+import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.databinding.FragmentOnBoardIntroBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.onboarding.ONBOARD_VERSIONS
@@ -103,6 +105,10 @@ class OnBoardIntroFragment : Fragment() {
         }
 
         binding.startBtn.setOnClickListener {
+            AppAnalytics.create(AnalyticsEvent.NEW_ONBOARDING_GET_STARTED.NAME)
+                .addBasicParam()
+                .addUserDetails()
+                .push()
             viewModel.createGuestUser()
         }
 
@@ -120,6 +126,10 @@ class OnBoardIntroFragment : Fragment() {
                         AppObjectController.gsonMapper.toJson(versionData)
                     )
                 }
+                AppAnalytics.create(AnalyticsEvent.NEW_ONBOARDING_ALREADY_USER.NAME)
+                    .addBasicParam()
+                    .addUserDetails()
+                    .push()
 
                 val intent = Intent(requireActivity(), SignUpActivity::class.java).apply {
                     putExtra(FLOW_FROM, "NewOnBoardFlow journey")

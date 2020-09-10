@@ -239,7 +239,6 @@ enum class AnalyticsEvent(val NAME: String) {
 
     // FIND more Course
     FIND_MORE_COURSE_CLICKED("Find more course clicked V3"),
-    ADD_MORE_COURSE_CLICKED("Add more course clicked V3"),
 
     INBOX_SCREEN("Inbox Screen V3"),
     COURSE_ENGAGEMENT("Course Engagement V3"),
@@ -414,5 +413,15 @@ enum class AnalyticsEvent(val NAME: String) {
     RECORD_SHARED("recording shared v3"),
     CON_QUIZ_SUBMIT_BUTTON_CLICKED("conv prac quiz submit clicked v3"),
     CON_RECORDING_SUBMITTED("conv recording submitted v3"),
+
+    //onboarding new
+    NEW_ONBOARDING_GET_STARTED("new onboard get started clicked v3"),
+    NEW_ONBOARDING_ALREADY_USER("new onboard already subscriber v3"),
+    NEW_ONBOARDING_START_LEARNING("new_onboard_start learning_clicked v3"),
+    NEW_ONBOARDING_ENROLLED_WITH_INTERESTS("new onboard enrolled with interestv3"),
+    NEW_ONBOARDING_TAG_CLICKED("new_onboard tag clicked v3"), // todo click on tags with their name
+    NEW_ONBOARDING_UPGRADE_CLICKED("new_onboard upgrade clicked v3"),
+    ADD_MORE_COURSE_CLICKED("new_onboard add more course clicked V3"),
+
 
 }

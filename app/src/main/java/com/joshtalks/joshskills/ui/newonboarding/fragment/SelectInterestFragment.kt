@@ -11,6 +11,10 @@ import com.google.android.material.chip.Chip
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.ApiCallStatus
 import com.joshtalks.joshskills.core.BaseActivity
+import com.joshtalks.joshskills.core.IS_GUEST_ENROLLED
+import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
+import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.FragmentSelectInterestBinding
 import com.joshtalks.joshskills.ui.newonboarding.viewmodel.OnBoardViewModel
@@ -74,6 +78,12 @@ class SelectInterestFragment : Fragment() {
                 showBottomDialog()
             }
         })
+        AppAnalytics.create(AnalyticsEvent.NEW_ONBOARDING_ENROLLED_WITH_INTERESTS.NAME)
+            .addBasicParam()
+            .addUserDetails()
+            .addParam("With number of tag",interestSet.size)
+            .addParam("is_already-enrolled",PrefManager.getBoolValue(IS_GUEST_ENROLLED))
+            .push()
         viewmodel.enrollMentorAgainstTags(interestSet.toList())
     }
 
