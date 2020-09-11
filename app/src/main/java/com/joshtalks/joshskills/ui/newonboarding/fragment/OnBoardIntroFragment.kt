@@ -27,6 +27,7 @@ import com.joshtalks.joshskills.ui.signup.FLOW_FROM
 import com.joshtalks.joshskills.ui.signup.SignUpActivity
 
 class OnBoardIntroFragment : Fragment() {
+    var handler: Handler? = null
     var scrollingPosition = 0
     var width: Int = 0
     lateinit var binding: FragmentOnBoardIntroBinding
@@ -141,11 +142,11 @@ class OnBoardIntroFragment : Fragment() {
     }
 
     private fun startImageScrolling() {
-        Handler().postDelayed({ /* Create an Intent that will start the MainActivity. */
+        handler = Handler()
+        handler?.postDelayed({ /* Create an Intent that will start the MainActivity. */
             if (width == 0) {
                 width = binding.scrollingIv.width
             } else {
-                println("scrollingPosition $scrollingPosition")
                 if (scrollingPosition + binding.scrollView.width >= width) {
                     scrollingPosition = 0
                     binding.scrollView.scrollTo(
@@ -173,4 +174,8 @@ class OnBoardIntroFragment : Fragment() {
             OnBoardIntroFragment()
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        handler?.removeCallbacksAndMessages(null)
+    }
 }

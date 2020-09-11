@@ -17,7 +17,7 @@ import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.databinding.ActivityStartCourseBinding
-import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.ui.payment.order_summary.TRANSACTION_ID
 import com.joshtalks.joshskills.ui.pdfviewer.COURSE_NAME
 import com.joshtalks.joshskills.ui.signup.FLOW_FROM
@@ -30,7 +30,7 @@ const val IMAGE_URL = "image_url"
 
 class StartCourseActivity : CoreJoshActivity() {
 
-    private val isUserRegistered by lazy { Mentor.getInstance().getId().isNotBlank() }
+    private var isUserRegistered = false
     var courseName: String = EMPTY
     var teacherName: String = EMPTY
     var imageUrl: String = EMPTY
@@ -42,6 +42,7 @@ class StartCourseActivity : CoreJoshActivity() {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_start_course)
         binding.lifecycleOwner = this
         getIntentData()
+        isUserRegistered = User.getInstance().firstName.isNotBlank()
         initView()
         setListeners()
     }
