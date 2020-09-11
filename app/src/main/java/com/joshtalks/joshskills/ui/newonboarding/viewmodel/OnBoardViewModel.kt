@@ -66,7 +66,7 @@ class OnBoardViewModel(application: Application) :
     }
 
     private fun updateFromLoginResponse(loginResponse: LoginResponse) {
-        PrefManager.put(EXPLORE_TYPE, ExploreCardType.FREETRIAL.name, false)
+        PrefManager.put(EXPLORE_TYPE, ExploreCardType.NORMAL.name, false)
         val user = User.getInstance()
         user.userId = loginResponse.userId
         user.source =
@@ -94,7 +94,7 @@ class OnBoardViewModel(application: Application) :
 
                     if (response.isSuccessful) {
                         // bottom Sheet Dialog
-                        PrefManager.put(IS_GUEST_ENROLLED,true)
+                        PrefManager.put(IS_GUEST_ENROLLED,value = true)
                         apiCallStatusLiveData.postValue(ApiCallStatus.SUCCESS)
                         return@launch
                     }

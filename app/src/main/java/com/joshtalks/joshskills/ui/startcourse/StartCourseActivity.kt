@@ -13,13 +13,11 @@ import com.bumptech.glide.request.target.Target
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.CoreJoshActivity
 import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.GUEST_USER_SOURCE
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.databinding.ActivityStartCourseBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor
-import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.ui.payment.order_summary.TRANSACTION_ID
 import com.joshtalks.joshskills.ui.pdfviewer.COURSE_NAME
 import com.joshtalks.joshskills.ui.signup.FLOW_FROM
@@ -32,9 +30,7 @@ const val IMAGE_URL = "image_url"
 
 class StartCourseActivity : CoreJoshActivity() {
 
-    private val isUserRegistered by lazy {
-        Mentor.getInstance().getId().isNotBlank() && User.getInstance().source != GUEST_USER_SOURCE
-    }
+    private val isUserRegistered by lazy { Mentor.getInstance().getId().isNotBlank() }
     var courseName: String = EMPTY
     var teacherName: String = EMPTY
     var imageUrl: String = EMPTY

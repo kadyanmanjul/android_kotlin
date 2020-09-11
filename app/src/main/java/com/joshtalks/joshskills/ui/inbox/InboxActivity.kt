@@ -28,7 +28,6 @@ import com.joshtalks.joshskills.core.CoreJoshActivity
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.EXPLORE_TYPE
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
-import com.joshtalks.joshskills.core.IS_GUEST_ENROLLED
 import com.joshtalks.joshskills.core.IS_SUBSCRIPTION_ENDED
 import com.joshtalks.joshskills.core.IS_SUBSCRIPTION_STARTED
 import com.joshtalks.joshskills.core.IS_TRIAL_ENDED
@@ -702,22 +701,25 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
                 .concatMap {
                     val (flag, remainDay) = Utils.isUserInDaysOld(it.courseCreatedDate)
                     if (offerInHint == null) {
-                        getVersionData()?.tooltipText?.let {
-                            if (PrefManager.getBoolValue(
-                                    IS_GUEST_ENROLLED,
-                                    false
-                                ) && isGuestUser()
-                            ) {
-                                offerInHint =
-                                    BalloonFactory.offerIn7Days(
-                                        this,
-                                        this,
-                                        tipText = getVersionData()?.tooltipText!!
-                                    )
+                        getVersionData()?.let {
+                            when (it.version?.name) {
+                                ONBOARD_VERSIONS.ONBOARDING_V1 -> {
+                                    offerInHint =
+                                        BalloonFactory.offerIn7Days(
+                                            this,
+                                            this,
+                                            remainDay.toString()
+                                        )
+                                }
+                                else -> {
+                                    offerInHint =
+                                        BalloonFactory.offerIn7Days(
+                                            this,
+                                            this,
+                                            tipText = getVersionData()?.tooltipText!!
+                                        )
+                                }
                             }
-                        } ?: run {
-                            offerInHint =
-                                BalloonFactory.offerIn7Days(this, this, remainDay.toString())
                         }
                         hideToolTip()
                     }
