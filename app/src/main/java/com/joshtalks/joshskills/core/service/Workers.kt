@@ -436,6 +436,7 @@ class WorkerInLandingScreen(context: Context, workerParams: WorkerParameters) :
         AppObjectController.clearDownloadMangerCallback()
         AppAnalytics.updateUser()
         SyncChatService.syncChatWithServer()
+        AppObjectController.startSinchCallingService()
         return Result.success()
     }
 }

@@ -4,6 +4,7 @@ apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'com.google.firebase.crashlytics'
 apply plugin: 'com.google.gms.google-services'
+//apply plugin: 'com.google.firebase.firebase-perf'
 if (!project.hasProperty("devBuild")) {
     apply plugin: 'com.google.firebase.firebase-perf'
     apply plugin: 'newrelic'
@@ -27,6 +28,10 @@ android {
         buildConfigField "String", "NEW_RELIC_TOKEN", "\"AAd8bc1e3740f51d8d131e42fff378fa2168243e00-NRMA\""
         buildConfigField "String", "FRESH_CHAT_APP_ID", "\"e29909bd-f7d3-45f8-b346-e520dd053ea4\""
         buildConfigField "String", "FRESH_CHAT_APP_KEY", "\"dda815f3-0e82-450a-a6d5-e2644a055bf1\""
+        buildConfigField "String", "SINCH_API_KEY", "\"86f34ed9-cdcf-497c-af80-3f352170164f\""
+        buildConfigField "String", "SINCH_API_SECRET", "\"0A42yytE7kqLGwYOGGidng==\""
+        buildConfigField "String", "SINCH_SERVER", "\"clientapi.sinch.com\""
+
         javaCompileOptions {
             annotationProcessorOptions {
                 arguments = [
@@ -78,7 +83,6 @@ android {
             resValue("bool", "branch_test", "true")
             resValue("string", "truecaller_key", "P31uP46c15762366b41fdba957b16b9a7c620")
             buildConfigField "String", "FLURRY_API_KEY", "\"2MHQRXWJ93XX7BWRHXWS\""
-            buildConfigField "String", "SINCH_API_KEY", "\"86f34ed9-cdcf-497c-af80-3f352170164f\""
             crunchPngs false
             ext.enableCrashlytics = false
         }
@@ -87,7 +91,6 @@ android {
             resValue("bool", "branch_test", "false")
             resValue("string", "truecaller_key", "KQRWJ8cb0afe64bd6449daf31962c9009e763")
             buildConfigField "String", "FLURRY_API_KEY", "\"466BRVHZTGCMRRQW67KX\""
-            buildConfigField "String", "SINCH_API_KEY", "\"86f34ed9-cdcf-497c-af80-3f352170164f\""
             debuggable false
             minifyEnabled false
             shrinkResources false
@@ -169,6 +172,7 @@ dependencies {
     })
     implementation project(path: ':joshcamerax')
     implementation(name: 'sinch-android-verification-1.6.1', ext: 'aar')
+    implementation(name: 'sinch-android-rtc-3.17.4', ext: 'aar')
 
 
     implementation 'com.googlecode.mp4parser:isoparser:1.1.22'

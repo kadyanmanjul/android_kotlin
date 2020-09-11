@@ -21,8 +21,6 @@ import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
 import android.view.WindowManager
 import android.widget.Toast
-import androidx.appcompat.widget.AppCompatImageView
-import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentActivity
@@ -41,7 +39,6 @@ import com.bumptech.glide.request.target.Target
 import com.facebook.share.internal.ShareConstants
 import com.github.pwittchen.reactivenetwork.library.rx2.ReactiveNetwork
 import com.google.android.exoplayer2.Player
-import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.greentoad.turtlebody.mediapicker.MediaPicker
@@ -112,6 +109,7 @@ import com.joshtalks.joshskills.repository.server.chat_message.TImageMessage
 import com.joshtalks.joshskills.repository.server.chat_message.TUnlockClassMessage
 import com.joshtalks.joshskills.repository.server.chat_message.TVideoMessage
 import com.joshtalks.joshskills.ui.assessment.AssessmentActivity
+import com.joshtalks.joshskills.ui.chat.extra.CallingFeatureShowcaseView
 import com.joshtalks.joshskills.ui.conversation_practice.ConversationPracticeActivity
 import com.joshtalks.joshskills.ui.courseprogress.CourseProgressActivity
 import com.joshtalks.joshskills.ui.extra.ImageShowFragment
@@ -137,6 +135,7 @@ import com.joshtalks.joshskills.ui.view_holders.TextViewHolder
 import com.joshtalks.joshskills.ui.view_holders.TimeViewHolder
 import com.joshtalks.joshskills.ui.view_holders.UnlockNextClassViewHolder
 import com.joshtalks.joshskills.ui.view_holders.VideoViewHolder
+import com.joshtalks.joshskills.ui.voip.SearchingUserActivity
 import com.joshtalks.joshskills.util.ExoAudioPlayer
 import com.joshtalks.recordview.CustomImageButton.FIRST_STATE
 import com.joshtalks.recordview.CustomImageButton.SECOND_STATE
@@ -147,6 +146,8 @@ import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.muddzdev.styleabletoast.StyleableToast
+import dm.audiostreamer.CurrentSessionCallback
+import dm.audiostreamer.MediaMetaData
 import de.hdodenhof.circleimageview.CircleImageView
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -371,8 +372,13 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
 
     private fun setToolbar() {
         try {
-            findViewById<View>(R.id.iv_back).visibility = VISIBLE
-            findViewById<CircleImageView>(R.id.image_view_logo).setImageResource(R.drawable.ic_josh_course)
+            if (inboxEntity.voiceCallStatus) {
+                conversationBinding.ivCall.visibility = VISIBLE
+                CallingFeatureShowcaseView.newInstance()
+                    .show(supportFragmentManager, "calling_start_mediator_dialog")
+            }
+            conversationBinding.textMessageTitle.text = inboxEntity.course_name
+            conversationBinding.imageViewLogo.setImageResource(R.drawable.ic_josh_course)
             inboxEntity.course_icon?.let {
                 Glide.with(applicationContext)
                     .load(it)
@@ -381,37 +387,44 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
                         WebpDrawable::class.java,
                         WebpDrawableTransformation(CircleCrop())
                     )
-                    .into(findViewById<CircleImageView>(R.id.image_view_logo))
+                    .into(conversationBinding.imageViewLogo)
             }
-            findViewById<View>(R.id.image_view_logo).visibility = VISIBLE
-            findViewById<View>(R.id.image_view_logo).setOnClickListener {
+            conversationBinding.imageViewLogo.visibility = VISIBLE
+            conversationBinding.imageViewLogo.setOnClickListener {
                 openCourseProgressListingScreen()
             }
-            findViewById<AppCompatTextView>(R.id.text_message_title).setOnClickListener {
+            conversationBinding.textMessageTitle.setOnClickListener {
                 openCourseProgressListingScreen()
             }
 
-            findViewById<AppCompatImageView>(R.id.iv_back).setOnClickListener {
+            conversationBinding.ivBack.setOnClickListener {
                 finish()
             }
-            findViewById<AppCompatTextView>(R.id.text_message_title).text =
-                inboxEntity.course_name
-            findViewById<MaterialToolbar>(R.id.toolbar).inflateMenu(R.menu.conversation_menu)
-            findViewById<MaterialToolbar>(R.id.toolbar).setOnMenuItemClickListener {
-                if (it?.itemId == R.id.menu_referral) {
-                    ReferralActivity.startReferralActivity(
-                        this@ConversationActivity,
-                        ConversationActivity::class.java.name
-                    )
-                } else if (it?.itemId == R.id.menu_clear_media) {
-                    clearMediaFromInternal()
+            conversationBinding.toolbar.inflateMenu(R.menu.conversation_menu)
+            conversationBinding.toolbar.setOnMenuItemClickListener {
+                when (it?.itemId) {
+                    R.id.menu_referral -> {
+                        ReferralActivity.startReferralActivity(
+                            this@ConversationActivity,
+                            ConversationActivity::class.java.name
+                        )
+                    }
+                    R.id.menu_clear_media -> {
+                        clearMediaFromInternal()
+                    }
+                    R.id.menu_help -> {
+                        openHelpActivity()
+                    }
                 }
                 return@setOnMenuItemClickListener true
             }
         } catch (ex: Exception) {
             FirebaseCrashlytics.getInstance().recordException(ex)
         }
+    }
 
+    fun practiseOnCall() {
+        SearchingUserActivity.startUserForPractiseOnPhoneActivity(this, inboxEntity.courseId)
     }
 
     private fun initSnackBar() {

@@ -13,7 +13,6 @@ import io.branch.referral.PrefHelper
 import org.threeten.bp.Instant
 import org.threeten.bp.ZoneOffset
 import org.threeten.bp.ZonedDateTime
-import timber.log.Timber
 import java.net.URLDecoder
 import java.util.Date
 import java.util.HashMap
@@ -112,7 +111,7 @@ object InstallReferralUtil {
                     }
                 })
             }
-            Timber.tag("JoshReferral").e(InstallReferrerModel.getPrefObject().toString())
+            //Timber.tag("JoshReferral").e(InstallReferrerModel.getPrefObject().toString())
 
         } catch (ex: Exception) {
             ex.printStackTrace()

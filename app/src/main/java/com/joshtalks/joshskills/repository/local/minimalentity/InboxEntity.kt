@@ -6,7 +6,7 @@ import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
 import com.joshtalks.joshskills.repository.local.entity.MESSAGE_DELIVER_STATUS
 import com.joshtalks.joshskills.repository.local.entity.User
 import kotlinx.android.parcel.Parcelize
-import java.util.*
+import java.util.Date
 
 @Parcelize
 data class InboxEntity constructor(
@@ -36,7 +36,9 @@ data class InboxEntity constructor(
     var message_deliver_status: MESSAGE_DELIVER_STATUS? = MESSAGE_DELIVER_STATUS.READ,
     var report_status: Boolean,
     @ColumnInfo(name = "batch_started")
-    val batchStarted: String?
+    val batchStarted: String?,
+    @ColumnInfo(name = "voicecall_status")
+    val voiceCallStatus: Boolean = false,
 
 
-) : Parcelable
+    ) : Parcelable

@@ -398,4 +398,13 @@
     <string name="start_your_7_day_trial">Start Your 7 Day Free Trial</string>
     <string name="more_courses_coming_soon">More Courses Coming Soon</string>
     <string name="tab_tak_practice_karte_rahen">tab tak practice karte rahe</string>
+
+    <string name="stop">Stop</string>
+    <string name="practice_with_partner">Practice With Partner</string>
+    <string name="rules_promise">I promise to follow the above rules</string>
+    <string name="searching_user_title"> Aapke sath ke 70% students ek din mei 25 minute se zyada English mei baat karte hai</string>
+    <string name="mediator_screen_title">Seekhne ke liye sabse zaruri hai Shuru Karna.</string>
+    <string name="find_pp_label">Hum aapke liye aapka Practice Partner dhund rahe hai</string>
+
+    <string name="topic_for_pp">Apne Partner se aap iss topic par baat kar sakte hai</string>
 </resources>

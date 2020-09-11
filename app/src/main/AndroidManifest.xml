@@ -60,6 +60,8 @@
 
     <!--Permission for reminder-->
     <uses-permission android:name="android.permission.SET_ALARM" />
+    <uses-permission android:name="android.permission.DISABLE_KEYGUARD" />
+
 
     <application
             android:name=".core.JoshApplication"
@@ -476,6 +478,39 @@
                 android:enabled="false"
                 android:exported="false" />
 
+        <activity
+                android:name=".ui.voip.WebRtcActivity"
+                android:launchMode="singleTask"
+                android:screenOrientation="portrait"
+                android:theme="@style/AppNoBarTheme"
+                android:windowSoftInputMode="stateHidden|adjustResize"></activity>
+
+        <activity
+                android:name=".ui.voip.SearchingUserActivity"
+                android:launchMode="singleTop"
+                android:screenOrientation="portrait"
+                android:theme="@style/AppNoBarTheme"></activity>
+
+        <service
+                android:name="com.google.android.exoplayer2.scheduler.PlatformScheduler$PlatformSchedulerService"
+                android:exported="true"
+                android:permission="android.permission.BIND_JOB_SERVICE" />
+        <service
+                android:name=".ui.voip.WebRtcService"
+                android:enabled="true"
+                android:exported="true"
+                android:foregroundServiceType="phoneCall"
+                android:permission="android.permission.BIND_JOB_SERVICE" />
+
+
+        <!--<activity android:name=".ui.game.GameWebViewActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+-->
     </application>
 
 </manifest>

@@ -39,6 +39,7 @@ import com.joshtalks.joshskills.ui.inbox.InboxActivity
 import com.joshtalks.joshskills.ui.launch.LauncherActivity
 import com.joshtalks.joshskills.ui.referral.ReferralActivity
 import com.joshtalks.joshskills.ui.reminder.reminder_listing.ReminderListActivity
+import com.joshtalks.joshskills.ui.voip.WebRtcService
 import timber.log.Timber
 import java.lang.reflect.Type
 import java.util.concurrent.ExecutorService
@@ -79,12 +80,20 @@ class FirebaseNotificationService : FirebaseMessagingService() {
                     Gson().toJson(remoteMessage.data)
                 )
             }
-            val notificationTypeToken: Type = object : TypeToken<NotificationObject>() {}.type
-            val nc: NotificationObject = AppObjectController.gsonMapper.fromJson(
-                AppObjectController.gsonMapper.toJson(remoteMessage.data),
-                notificationTypeToken
-            )
-            sendNotification(nc)
+            val collapseKey = remoteMessage.collapseKey ?: ""
+            if (collapseKey.equals("incoming_call", ignoreCase = true)) {
+                if (PrefManager.getStringValue(API_TOKEN).isNotEmpty()) {
+                    WebRtcService.onIncomingCall(remoteMessage.data)
+                }
+
+            } else {
+                val notificationTypeToken: Type = object : TypeToken<NotificationObject>() {}.type
+                val nc: NotificationObject = AppObjectController.gsonMapper.fromJson(
+                    AppObjectController.gsonMapper.toJson(remoteMessage.data),
+                    notificationTypeToken
+                )
+                sendNotification(nc)
+            }
         }
     }
 

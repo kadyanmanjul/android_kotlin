@@ -160,4 +160,54 @@ object PermissionUtils {
             )
             .withListener(multiplePermissionsListener).check()
     }
+
+
+    fun isCallingPermissionEnabled(context: Context): Boolean {
+        return ContextCompat.checkSelfPermission(
+            context,
+            Manifest.permission.READ_PHONE_STATE
+        ) +
+                ContextCompat.checkSelfPermission(
+                    context,
+                    Manifest.permission.MODIFY_AUDIO_SETTINGS
+                ) +
+                ContextCompat.checkSelfPermission(
+                    context,
+                    Manifest.permission.RECORD_AUDIO
+                ) + ContextCompat.checkSelfPermission(
+            context,
+            Manifest.permission.ACCESS_NETWORK_STATE
+
+        ) == PackageManager.PERMISSION_GRANTED
+    }
+
+
+    fun callingFeaturePermission(
+        activity: Activity,
+        multiplePermissionsListener: MultiplePermissionsListener
+    ) {
+        Dexter.withContext(activity)
+            .withPermissions(
+                Manifest.permission.RECORD_AUDIO,
+                Manifest.permission.ACCESS_NETWORK_STATE,
+                Manifest.permission.MODIFY_AUDIO_SETTINGS,
+                Manifest.permission.READ_PHONE_STATE,
+            )
+            .withListener(multiplePermissionsListener).check()
+    }
+
+    fun callingPermissionPermanentlyDeniedDialog(
+        activity: Activity,
+        message: Int = R.string.storage_permission_message
+    ) {
+        MaterialDialog(activity).show {
+            message(message)
+            positiveButton(R.string.settings) {
+                openSettings(activity)
+
+            }
+            negativeButton(R.string.not_now)
+        }
+    }
+
 }

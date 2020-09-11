@@ -42,6 +42,7 @@ import com.joshtalks.joshskills.core.service.video_download.DownloadTracker
 import com.joshtalks.joshskills.core.service.video_download.VideoDownloadController
 import com.joshtalks.joshskills.repository.local.AppDatabase
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
+import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.service.ChatNetworkService
 import com.joshtalks.joshskills.repository.service.CommonNetworkService
 import com.joshtalks.joshskills.repository.service.MediaDUNetworkService
@@ -49,8 +50,11 @@ import com.joshtalks.joshskills.repository.service.SignUpNetworkService
 import com.joshtalks.joshskills.ui.signup.SignUpActivity
 import com.joshtalks.joshskills.ui.view_holders.IMAGE_SIZE
 import com.joshtalks.joshskills.ui.view_holders.ROUND_CORNER
+import com.joshtalks.joshskills.ui.voip.WebRtcService
 import com.newrelic.agent.android.FeatureFlag
 import com.newrelic.agent.android.NewRelic
+import com.sinch.android.rtc.Sinch
+import com.sinch.android.rtc.SinchClient
 import com.tonyodev.fetch2.Fetch
 import com.tonyodev.fetch2.FetchConfiguration
 import com.tonyodev.fetch2.HttpUrlConnectionDownloader
@@ -122,26 +126,33 @@ class AppObjectController {
 
         @JvmStatic
         lateinit var retrofit: Retrofit
+            private set
 
         @JvmStatic
         lateinit var signUpNetworkService: SignUpNetworkService
+            private set
 
         @JvmStatic
         lateinit var commonNetworkService: CommonNetworkService
+            private set
 
 
         @JvmStatic
         lateinit var chatNetworkService: ChatNetworkService
+            private set
+
 
         @JvmStatic
         lateinit var mediaDUNetworkService: MediaDUNetworkService
+            private set
+
 
         @JvmStatic
         private var fetch: Fetch? = null
 
         @JvmStatic
         var uiHandler: Handler = Handler(Looper.getMainLooper())
-
+            private set
 
         @JvmStatic
         var screenWidth: Int = 0
@@ -151,19 +162,29 @@ class AppObjectController {
 
         @JvmStatic
         lateinit var videoDownloadTracker: DownloadTracker
+            private set
 
         @JvmStatic
         lateinit var multiTransformation: MultiTransformation<Bitmap>
 
         @JvmStatic
         lateinit var facebookEventLogger: AppEventsLogger
+            private set
 
         @JvmStatic
         lateinit var firebaseAnalytics: FirebaseAnalytics
+            private set
 
         @JvmStatic
         var freshChat: Freshchat? = null
+            private set
 
+        @JvmStatic
+        var sinchClient: SinchClient? = null
+            private set
+
+        @JvmStatic
+        var currentActivityClass: String? = null
 
         @JvmStatic
         var currentPlayingAudioObject: ChatModel? = null
@@ -269,17 +290,15 @@ class AppObjectController {
             commonNetworkService = retrofit.create(CommonNetworkService::class.java)
             initObjectInThread(context)
             return INSTANCE
-
         }
 
         fun init(context: JoshApplication) {
             joshApplication = context
             initFacebookService(context)
-            //AppInitializer.getInstance(context).isEagerlyInitialized(JoshAppInitializer::class.java)
-            //AppInitializer.getInstance(context).initializeComponent(JoshAppInitializer::class.java)
             com.joshtalks.joshskills.core.ActivityLifecycleCallback.register(joshApplication)
             ActivityLifecycleCallback.register(joshApplication)
             AppEventsLogger.activateApp(joshApplication)
+            initSinchClient()
         }
 
 
@@ -432,6 +451,28 @@ class AppObjectController {
             return FirebaseRemoteConfig.getInstance()
         }
 
+        fun initSinchClient(): SinchClient? {
+            if (PrefManager.getStringValue(API_TOKEN).isEmpty()) {
+                return null
+            }
+            if (sinchClient != null) {
+                return sinchClient
+            }
+            sinchClient = Sinch.getSinchClientBuilder()
+                .context(joshApplication)
+                .userId(Mentor.getInstance().getId())
+                .applicationKey(BuildConfig.SINCH_API_KEY)
+                .applicationSecret(BuildConfig.SINCH_API_SECRET)
+                .environmentHost("clientapi.sinch.com")
+                .build()
+            sinchClient?.setSupportCalling(true)
+            sinchClient?.setSupportManagedPush(true)
+            sinchClient?.setSupportPushNotifications(true)
+            sinchClient?.startListeningOnActiveConnection()
+            sinchClient?.setSupportActiveConnectionInBackground(true)
+            return sinchClient
+        }
+
         private fun getOkHttpDownloader(): OkHttpDownloader {
             val mediaOkhttpBuilder = OkHttpClient().newBuilder()
             mediaOkhttpBuilder.connectTimeout(1, TimeUnit.MINUTES)
@@ -542,7 +583,20 @@ class AppObjectController {
                 "sha256/++MBgDH5WGvL9Bcn5Be30cRcL0f5O+NyoXuWtQdX1aI=",
                 "sha256/KwccWaCgrnaw6tsrrSO61FgLacNgG2MMLq8GE6+oP5I="
             )
+
+        fun startSinchCallingService() {
+            Intent(joshApplication, WebRtcService::class.java).also { intent ->
+                joshApplication.startService(intent)
+            }
+        }
+
+        fun releaseInstance() {
+            sinchClient = null
+            fetch = null
+            freshChat = null
+        }
     }
+
 
 }
 

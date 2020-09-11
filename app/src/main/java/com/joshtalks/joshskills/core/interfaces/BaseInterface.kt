@@ -24,3 +24,8 @@ interface OnConversationPractiseSubmit {
     fun onDone()
     fun onCancel()
 }
+
+interface OnDismissWithDialog : OnDismissDialog {
+    fun onSuccessDismiss()
+    fun onCancel()
+}

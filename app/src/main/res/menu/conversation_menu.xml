@@ -13,6 +13,12 @@
             android:orderInCategory="100"
             android:title="Clear all media"
             app:showAsAction="collapseActionView" />
+    <item
+            android:id="@+id/menu_help"
+            android:actionLayout="@layout/base_toolbar"
+            android:orderInCategory="100"
+            android:title="Help"
+            app:showAsAction="collapseActionView" />
 
 
 </menu>

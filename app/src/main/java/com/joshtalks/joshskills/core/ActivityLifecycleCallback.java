@@ -39,7 +39,7 @@ public class ActivityLifecycleCallback {
                                 .addParam("name", activity.getClass().getSimpleName())
                                 .push();
                         Timber.tag("Josh_Activity_Resumed").d(activity.getClass().getSimpleName());
-
+                        AppObjectController.setCurrentActivityClass(activity.getClass().getSimpleName());
                     }
 
                     @Override

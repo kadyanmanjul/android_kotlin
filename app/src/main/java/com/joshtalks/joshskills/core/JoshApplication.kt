@@ -101,6 +101,13 @@ class JoshApplication : MultiDexApplication(), LifecycleObserver,
     }
 
 
+    @OnLifecycleEvent(Lifecycle.Event.ON_START)
+    fun onAppForegrounded() {
+        Timber.tag(TAG).e("************* foregrounded")
+        Timber.tag(TAG).e("************* ${isActivityVisible()}")
+        isAppVisible = true
+    }
+
     @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
     fun onAppBackgrounded() {
         Timber.tag(TAG).e("************* backgrounded")
@@ -108,12 +115,12 @@ class JoshApplication : MultiDexApplication(), LifecycleObserver,
         isAppVisible = false
     }
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_START)
-    fun onAppForegrounded() {
-        Timber.tag(TAG).e("************* foregrounded")
-        Timber.tag(TAG).e("************* ${isActivityVisible()}")
-        isAppVisible = true
+    @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
+    fun onAppDestroy() {
+        Timber.tag(TAG).e("************* onAppDestroy")
+        AppObjectController.releaseInstance()
     }
+
 
     private fun isActivityVisible(): String {
         return ProcessLifecycleOwner.get().lifecycle.currentState.name

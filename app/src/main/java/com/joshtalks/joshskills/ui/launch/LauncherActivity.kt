@@ -37,7 +37,6 @@ import java.io.File
 
 class LauncherActivity : CoreJoshActivity(), CustomPermissionDialogInteractionListener {
 
-    @AddTrace(name = "LauncherActivity - onCreate", enabled = true)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_launcher)
@@ -57,7 +56,6 @@ class LauncherActivity : CoreJoshActivity(), CustomPermissionDialogInteractionLi
         backgroundColorAnimator.start()
     }
 
-    @AddTrace(name = "handleIntent", enabled = true)
     private fun handleIntent() {
         Branch.sessionBuilder(this).withCallback { referringParams, error ->
             try {
