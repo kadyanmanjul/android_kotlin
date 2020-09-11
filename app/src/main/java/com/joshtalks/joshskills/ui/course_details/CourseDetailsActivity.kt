@@ -169,9 +169,6 @@ class CourseDetailsActivity : BaseActivity() {
     }
 
     private fun initView() {
-        if (intent.hasExtra(WHATSAPP_URL)) {
-            binding.linkToWhatsapp.visibility = View.VISIBLE
-        }
         linearLayoutManager = SmoothLinearLayoutManager(this)
         linearLayoutManager.isSmoothScrollbarEnabled = true
         binding.placeHolderView.builder.setHasFixedSize(true).setLayoutManager(linearLayoutManager)
@@ -207,6 +204,9 @@ class CourseDetailsActivity : BaseActivity() {
             transition.addTarget(binding.buyCourseLl)
             TransitionManager.beginDelayedTransition(binding.coordinator, transition)
             binding.buyCourseLl.visibility = View.VISIBLE
+            if (intent.hasExtra(WHATSAPP_URL)) {
+                binding.linkToWhatsapp.visibility = View.VISIBLE
+            }
         }
     }
 
@@ -727,6 +727,25 @@ class CourseDetailsActivity : BaseActivity() {
         startActivity(intent)
     }
 
+    private fun updateButtonText(discountedPrice: Double) {
+        if (discountedPrice == 0.0) {
+            binding.btnStartCourse.text = getString(R.string.start_free_course)
+            binding.btnStartCourse.textSize = 16f
+        }
+
+        val exploreTypeStr = PrefManager.getStringValue(EXPLORE_TYPE, false)
+        if (exploreTypeStr.isNotBlank()) {
+            when (ExploreCardType.valueOf(exploreTypeStr)) {
+                ExploreCardType.FREETRIAL -> {
+                    if (discountedPrice > 0) {
+                        binding.btnStartCourse.text = getString(R.string.get_one_year_pass)
+                        binding.btnStartCourse.textSize = 16f
+                    }
+                }
+            }
+        }
+    }
+
 
     companion object {
         const val KEY_TEST_ID = "test-id"
@@ -743,8 +762,10 @@ class CourseDetailsActivity : BaseActivity() {
         ) {
             Intent(activity, CourseDetailsActivity::class.java).apply {
                 putExtra(KEY_TEST_ID, testId)
-                putExtra(WHATSAPP_URL, whatsappUrl)
                 putExtra(IS_FROM_FREE_TRIAL, isFromFreeTrial)
+                if (whatsappUrl.isNullOrEmpty().not()) {
+                    putExtra(WHATSAPP_URL, whatsappUrl)
+                }
                 if (startedFrom.isNotBlank())
                     putExtra(STARTED_FROM, startedFrom)
                 flags.forEach { flag ->
@@ -769,23 +790,5 @@ class CourseDetailsActivity : BaseActivity() {
         }
     }
 
-    private fun updateButtonText(discountedPrice: Double) {
 
-        if (discountedPrice == 0.0) {
-            binding.btnStartCourse.text = getString(R.string.start_free_course)
-            binding.btnStartCourse.textSize = 16f
-        }
-
-        val exploreTypeStr = PrefManager.getStringValue(EXPLORE_TYPE, false)
-        if (exploreTypeStr.isNotBlank()) {
-            when (ExploreCardType.valueOf(exploreTypeStr)) {
-                ExploreCardType.FREETRIAL -> {
-                    if (discountedPrice > 0) {
-                        binding.btnStartCourse.text = getString(R.string.get_one_year_pass)
-                        binding.btnStartCourse.textSize = 16f
-                    }
-                }
-            }
-        }
-    }
 }

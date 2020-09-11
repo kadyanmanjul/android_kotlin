@@ -263,17 +263,14 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <androidx.cardview.widget.CardView
+    <FrameLayout
             android:id="@+id/ratingView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:backgroundTint="@color/green"
+            android:background="@drawable/rating_bar_card_drawable"
             android:orientation="vertical"
-            app:cardCornerRadius="@dimen/_50sdp"
-            app:contentPaddingBottom="@dimen/_8sdp"
-            app:contentPaddingLeft="@dimen/_8sdp"
-            app:contentPaddingRight="@dimen/_8sdp"
-            app:contentPaddingTop="@dimen/_8sdp"
+            android:paddingHorizontal="@dimen/_10sdp"
+            android:paddingVertical="@dimen/_10sdp"
             app:layout_constraintBottom_toTopOf="@+id/bottom_container"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -285,6 +282,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
+                android:background="@color/green"
                 android:foregroundGravity="center">
 
             <com.joshtalks.joshskills.core.custom_ui.JoshRatingBar
@@ -341,7 +339,7 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-    </androidx.cardview.widget.CardView>
+    </FrameLayout>
 
     <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
             android:id="@+id/txtViewers"

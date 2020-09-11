@@ -102,14 +102,12 @@
 
         <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/link_to_whatsapp"
-                android:layout_width="@dimen/_40sdp"
-                android:layout_height="@dimen/_40sdp"
+                android:layout_width="@dimen/_48sdp"
+                android:layout_height="@dimen/_48sdp"
                 android:layout_gravity="end"
-                android:layout_marginEnd="@dimen/_4sdp"
-                android:layout_marginBottom="@dimen/_16sdp"
                 android:adjustViewBounds="true"
                 android:onClick="@{()->handler.openWhatsapp()}"
-                android:padding="@dimen/_6sdp"
+                android:padding="@dimen/_4sdp"
                 android:scaleType="fitXY"
                 android:src="@drawable/ic_whatsapp_payment"
                 android:visibility="gone"
