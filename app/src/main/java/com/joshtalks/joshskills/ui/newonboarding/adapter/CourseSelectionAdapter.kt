@@ -54,7 +54,7 @@ class CourseSelectionAdapter(
                 binding.rootView.setOnClickListener {
                     RxBus2.publish(
                         CourseSelectedEventBus(
-                            courseExploreModel.isClickable,
+                            courseExploreModel.isSelected,
                             courseExploreModel.id,
                             true
                         )
@@ -82,39 +82,38 @@ class CourseSelectionAdapter(
         }
 
         private fun setSelectionState(courseExploreModel: CourseExploreModel) {
-            if (courseExploreModel.isClickable.not()) {
-                binding.selectCourse.text = context.getString(R.string.select_course)
-                binding.alfa.visibility = View.GONE
-                setDrawableStart(null)
-                setBackgroundColor(R.color.button_primary_color)
-
-            } else {
+            if (courseExploreModel.isSelected) {
                 binding.selectCourse.text = context.getString(R.string.selected)
                 binding.alfa.visibility = View.VISIBLE
                 setDrawableStart()
                 setBackgroundColor(R.color.green)
+            } else {
+                binding.selectCourse.text = context.getString(R.string.select_course)
+                binding.alfa.visibility = View.GONE
+                setDrawableStart(null)
+                setBackgroundColor(R.color.button_primary_color)
             }
         }
 
         fun setText(courseExploreModel: CourseExploreModel, position: Int) {
-            if (courseExploreModel.isClickable) {
+            if (courseExploreModel.isSelected) {
                 binding.selectCourse.text = context.getString(R.string.select_course)
                 binding.alfa.visibility = View.GONE
                 setDrawableStart(null)
                 setBackgroundColor(R.color.button_primary_color)
-                courseExploreModel.isClickable = false
+                courseExploreModel.isSelected = false
 
             } else {
                 binding.selectCourse.text = context.getString(R.string.selected)
                 binding.alfa.visibility = View.VISIBLE
                 setDrawableStart()
                 setBackgroundColor(R.color.green)
-                courseExploreModel.isClickable = true
+                courseExploreModel.isSelected = true
             }
             notifyDataSetChanged()
             RxBus2.publish(
                 CourseSelectedEventBus(
-                    courseExploreModel.isClickable,
+                    courseExploreModel.isSelected,
                     courseExploreModel.id
                 )
             )

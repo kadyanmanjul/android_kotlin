@@ -70,9 +70,6 @@ class CourseSelectionViewPagerFragment : Fragment() {
         binding.recyclerView.addItemDecoration(
             LayoutMarginDecoration(Utils.dpToPx(requireContext(), 6f))
         )
-        courseList.forEach { course ->
-            course.isClickable = false
-        }
         var isSecondFlow = false
         (requireActivity() as BaseActivity).getVersionData()?.let {
             if (it.version!!.name == ONBOARD_VERSIONS.ONBOARDING_V3 ||

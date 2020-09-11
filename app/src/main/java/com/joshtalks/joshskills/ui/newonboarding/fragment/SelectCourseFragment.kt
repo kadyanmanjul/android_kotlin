@@ -70,7 +70,7 @@ class SelectCourseFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        version=
+        version =
             (requireActivity() as BaseActivity).getVersionData()?.version?.name?.type.toString()
         initView()
         subscribeObservers()
@@ -79,8 +79,8 @@ class SelectCourseFragment : Fragment() {
     private fun subscribeObservers() {
         viewModel.courseListLiveData.observe(requireActivity(), { response ->
             val categoryList: HashMap<Int, ArrayList<CourseExploreModel>> = HashMap()
+
             response.forEach { courseExploreModel ->
-                courseExploreModel.isClickable = false
                 courseExploreModel.categoryIds?.forEach {
                     var courseList = categoryList[it]
                     if (courseList == null) {
@@ -90,7 +90,11 @@ class SelectCourseFragment : Fragment() {
                     categoryList[it] = courseList
                 }
             }
-
+            if (categoryList.size == 0) {
+                binding.noCourseLayout.visibility = View.VISIBLE
+                binding.startTrialContainer.visibility = View.GONE
+                return@observe
+            }
             val courseMapByCategoryName: HashMap<String, ArrayList<CourseExploreModel>> = HashMap()
 
             (requireActivity() as BaseActivity).getVersionData()?.courseCategories?.forEach {
@@ -134,8 +138,8 @@ class SelectCourseFragment : Fragment() {
             AppAnalytics.create(AnalyticsEvent.NEW_ONBOARDING_UPGRADE_CLICKED.NAME)
                 .addBasicParam()
                 .addUserDetails()
-                .addParam("is_already-enrolled",PrefManager.getBoolValue(IS_GUEST_ENROLLED))
-                .addParam("version",version)
+                .addParam("is_already-enrolled", PrefManager.getBoolValue(IS_GUEST_ENROLLED))
+                .addParam("version", version)
                 .push()
             navigateToCourseDetailsScreen(
                 AppObjectController.getFirebaseRemoteConfig()
@@ -254,7 +258,7 @@ class SelectCourseFragment : Fragment() {
         val testIds = ArrayList<Int>()
         viewModel.getCourseList()?.let {
             it.forEach { course ->
-                if (course.isClickable) {
+                if (course.isSelected) {
                     testIds.add(course.id!!)
                 }
             }
@@ -265,9 +269,9 @@ class SelectCourseFragment : Fragment() {
         AppAnalytics.create(AnalyticsEvent.NEW_ONBOARDING_START_LEARNING.NAME)
             .addBasicParam()
             .addUserDetails()
-            .addParam("With no of course",testIds.size)
-            .addParam("is_already-enrolled",PrefManager.getBoolValue(IS_GUEST_ENROLLED))
-            .addParam("version",version)
+            .addParam("With no of course", testIds.size)
+            .addParam("is_already-enrolled", PrefManager.getBoolValue(IS_GUEST_ENROLLED))
+            .addParam("version", version)
             .push()
 
         viewModel.enrollMentorAgainstTest(testIds)
@@ -289,7 +293,7 @@ class SelectCourseFragment : Fragment() {
                         var count = 0
                         viewModel.getCourseList()?.let { courseList ->
                             courseList.forEach { course ->
-                                if (course.isClickable)
+                                if (course.isSelected)
                                     count += 1
                             }
                         }

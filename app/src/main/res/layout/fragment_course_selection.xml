@@ -25,10 +25,10 @@
 
             <com.google.android.material.appbar.AppBarLayout
                     android:layout_width="match_parent"
-                    app:elevation="0dp"
                     android:layout_height="wrap_content"
                     android:background="@color/white"
-                    android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+                    android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+                    app:elevation="0dp">
 
                 <com.google.android.material.appbar.MaterialToolbar
                         android:id="@+id/toolbar"
@@ -90,7 +90,6 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
-                        app:elevation="0dp"
                         android:layout_margin="@dimen/_6sdp"
                         android:background="@color/white"
                         android:clipToPadding="true"
@@ -98,6 +97,7 @@
                         android:minHeight="0dp"
                         android:tabStripEnabled="false"
                         android:textAlignment="center"
+                        app:elevation="0dp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/toolbar"
@@ -145,6 +145,50 @@
         </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/no_course_layout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="?attr/actionBarSize"
+                android:visibility="visible">
+
+            <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/coming_soon_tv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="@string/more_courses_coming_soon"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Bold"
+                    app:layout_constraintBottom_toTopOf="@+id/coming_soon_tv2"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_chainStyle="packed" />
+
+            <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/coming_soon_tv2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="@string/tab_tak_practice_karte_rahen"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
+                    app:layout_constraintBottom_toTopOf="@+id/imageView5"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/coming_soon_tv" />
+
+            <ImageView
+                    android:id="@+id/imageView5"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_28ssp"
+                    android:adjustViewBounds="true"
+                    android:src="@drawable/more_courses_coming_soon"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/coming_soon_tv2" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/start_trial_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -186,6 +230,8 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginVertical="@dimen/_4sdp"
+                    android:background="@drawable/rounded_state_button_bg"
+                    android:enabled="false"
                     android:gravity="center"
                     android:onClick="@{()->handler.registerCourses()}"
                     android:paddingVertical="@dimen/_8sdp"
@@ -194,14 +240,13 @@
                     android:textAppearance="@style/TextAppearance.JoshTypography.Button"
                     android:textColor="@color/white"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    android:background="@drawable/rounded_state_button_bg"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="1"
                     app:layout_constraintTop_toTopOf="parent"
-                    android:enabled="false"
                     app:layout_constraintWidth_default="percent"
                     app:layout_constraintWidth_percent="0.65" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
+
     </RelativeLayout>
 </layout>

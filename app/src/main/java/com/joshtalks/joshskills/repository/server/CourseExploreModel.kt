@@ -72,6 +72,8 @@ data class CourseExploreModel(
 
 ) : Parcelable {
 
+    var isSelected = false
+
     constructor() : this(
         amount = 0.0,
         batchType = 0,
