@@ -78,11 +78,7 @@ class SearchingUserActivity : BaseActivity(), OnDismissWithDialog {
             PractisePartnerDialogFragment.newInstance()
                 .show(supportFragmentManager, "PractisePartnerDialogFragment")
         }
-/*
-        Glide.with(this)
-            .asGif()
-            .load(urlGif)
-            .into(iv_gif)*/
+
     }
 
     private fun initView() {
@@ -92,6 +88,10 @@ class SearchingUserActivity : BaseActivity(), OnDismissWithDialog {
 
     private fun addObserver() {
         viewModel.voipDetailsLiveData.observe(this, {
+            if (it == null) {
+                timer?.cancel()
+                fillProgressBar(0)
+            }
             if (it != null && canTimerComplete) {
                 startMediatorDialog()
             }
@@ -166,12 +166,11 @@ class SearchingUserActivity : BaseActivity(), OnDismissWithDialog {
     }
 
     private fun requestForSearchUser() {
-        startProgressBarCountDown()
         courseId?.let {
             viewModel.getUserForTalk(it)
+            startProgressBarCountDown()
         }
     }
-
 
     fun stopCalling() {
         this.finish()

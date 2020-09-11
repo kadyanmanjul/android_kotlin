@@ -10,7 +10,6 @@ import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
 import android.os.SystemClock
-import android.util.Log
 import android.view.View
 import android.view.Window
 import android.view.WindowManager
@@ -36,13 +35,13 @@ import com.sinch.android.rtc.calling.CallListener
 import com.sinch.android.rtc.calling.CallState
 import com.sinch.gson.JsonElement
 import com.sinch.gson.JsonParser
+import timber.log.Timber
 
 const val CALL_USER_ID = "call_user_id"
-
 const val IS_INCOMING_CALL = "is_incoming_call"
 const val INCOMING_CALL_JSON_OBJECT = "incoming_json_call_object"
 
-class WebRtcActivity : BaseActivity() {
+class WebRtcActivity : BaseActivity(), CallListener {
 
     private lateinit var binding: ActivityCallingBinding
     private var call: Call? = null
@@ -55,6 +54,7 @@ class WebRtcActivity : BaseActivity() {
     private var roomId: String = ""
 
     companion object {
+        private val TAG = "WebRtcActivity"
         fun startVoipActivity(activity: Activity, voipCallDetailModel: VoipCallDetailModel) {
             Intent(activity, WebRtcActivity::class.java).apply {
                 putExtra(CALL_USER_ID, voipCallDetailModel)
@@ -64,64 +64,15 @@ class WebRtcActivity : BaseActivity() {
         }
     }
 
-    private var sinchCallListener = object : CallListener {
-        override fun onCallEnded(endedCall: Call) {
-            Log.e("onClientStarted", "ERROR" + endedCall.details?.error)
-            volumeControlStream = AudioManager.USE_DEFAULT_STREAM_TYPE
-            SoundPoolManager.getInstance(applicationContext).playDisconnect()
-            binding.callTime.stop()
-            call = null
-            binding.callTime.visibility = View.GONE
-            binding.callStatus.text = "Call Ended"
-            binding.callStatus.visibility = View.VISIBLE
-            AppObjectController.uiHandler.postDelayed({
-                onBackPressed()
-            }, 800)
-        }
-
-        override fun onCallEstablished(establishedCall: Call) {
-            if (CallDirection.OUTGOING == establishedCall.direction) {
-                AudioPlayer.getInstance().stopProgressTone()
-            }
-            SoundPoolManager.getInstance(applicationContext).stopRinging()
-            Log.e("onClientStarted", "onCallEstablished")
-            binding.callStatus.text = "Connecting"
-            AppObjectController.uiHandler.postDelayed({
-                binding.callStatus.visibility = View.GONE
-                binding.callTime.visibility = View.VISIBLE
-                binding.callTime.base = SystemClock.elapsedRealtime()
-                binding.callTime.start()
-            }, 800)
-        }
-
-        override fun onCallProgressing(progressingCall: Call) {
-            volumeControlStream = AudioManager.STREAM_VOICE_CALL
-            if (CallDirection.OUTGOING == progressingCall.direction) {
-                AudioPlayer.getInstance().playProgressTone()
-            }
-            binding.callStatus.text = "Ringing"
-            Log.e("onClientStarted", "onCallProgressing")
-
-            /* sinchClient?.audioController?.enableAutomaticAudioRouting(
-                 true,
-                 AudioController.UseSpeakerphone.SPEAKERPHONE_AUTO
-             )*/
-        }
-
-        override fun onShouldSendPushNotification(call: Call, pushPairs: List<PushPair>) {
-            Log.e("onClientStarted", "onShouldSendPushNotification")
-        }
-    }
-
     inner class ReceivedCallConnection : ServiceConnection {
         override fun onServiceConnected(name: ComponentName, service: IBinder) {
             val myBinder = service as WebRtcService.MyBinder
             mBoundService = myBinder.getService()
             mServiceBound = true
-            mBoundService?.call?.run {
+            mBoundService?.getCall()?.run {
                 if (call == null) {
                     call = this
-                    call?.addCallListener(sinchCallListener)
+                    call?.addCallListener(this@WebRtcActivity)
                 }
             }
         }
@@ -143,7 +94,6 @@ class WebRtcActivity : BaseActivity() {
             WindowManager.LayoutParams.FLAG_FULLSCREEN,
             WindowManager.LayoutParams.FLAG_FULLSCREEN
         )
-
         requestedOrientation = if (Build.VERSION.SDK_INT == 26) {
             ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
         } else {
@@ -155,15 +105,6 @@ class WebRtcActivity : BaseActivity() {
         binding.handler = this
         initSinch()
         actionAfterSinchInit()
-    }
-
-    override fun onStart() {
-        super.onStart()
-        AppObjectController.joshApplication.bindService(
-            Intent(AppObjectController.joshApplication, WebRtcService::class.java),
-            ReceivedCallConnection(),
-            BIND_AUTO_CREATE
-        )
     }
 
     private fun initSinch() {
@@ -206,7 +147,7 @@ class WebRtcActivity : BaseActivity() {
                     jsonElement.asJsonObject.get("mentor_id")?.asString?.run {
                         roomId = this
                         call = sinchClient?.callClient?.getCall(this)
-                        call?.addCallListener(sinchCallListener)
+                        call?.addCallListener(this@WebRtcActivity)
                         WebRtcService.isCallWasOnGoing = true
                     }
                 }
@@ -224,12 +165,13 @@ class WebRtcActivity : BaseActivity() {
             val map = hashMapOf<String, String?>()
             map["data"] = json
             call = sinchClient?.callClient?.callUser(mentorId, map)
-            call?.addCallListener(sinchCallListener)
+            call?.addCallListener(this)
             sinchClient?.setPushNotificationDisplayName(json)
         } catch (ex: Exception) {
             ex.printStackTrace()
         }
     }
+
 
     fun switchAudioMode() {
         isSpeakerEnable = !isSpeakerEnable
@@ -307,27 +249,7 @@ class WebRtcActivity : BaseActivity() {
         binding.groupForIncoming.visibility = View.GONE
         binding.groupForOutgoing.visibility = View.VISIBLE
         call.answer()
-        call.addCallListener(sinchCallListener)
-    }
-
-
-    private fun stopCall() {
-        try {
-            AudioPlayer.getInstance().stopProgressTone()
-            call?.run {
-                this.hangup()
-            }
-            SoundPoolManager.getInstance(this).release()
-        } catch (ex: Exception) {
-            ex.printStackTrace()
-        }
-    }
-
-    override fun onBackPressed() {
-        stopCall()
-        val resultIntent = Intent()
-        setResult(RESULT_OK, resultIntent)
-        finishAndRemoveTask()
+        call.addCallListener(this)
     }
 
     private fun updateStatus(view: View, enable: Boolean) {
@@ -344,5 +266,76 @@ class WebRtcActivity : BaseActivity() {
         }
     }
 
+    private fun stopCall() {
+        try {
+            AudioPlayer.getInstance().stopProgressTone()
+            call?.run {
+                removeCallListener(this@WebRtcActivity)
+                hangup()
+            }
+            SoundPoolManager.getInstance(this).release()
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+        }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        AppObjectController.joshApplication.bindService(
+            Intent(AppObjectController.joshApplication, WebRtcService::class.java),
+            ReceivedCallConnection(),
+            BIND_AUTO_CREATE
+        )
+    }
+
+    override fun onBackPressed() {
+        stopCall()
+        val resultIntent = Intent()
+        setResult(RESULT_OK, resultIntent)
+        finishAndRemoveTask()
+    }
+
+    override fun onCallEnded(endedCall: Call) {
+        volumeControlStream = AudioManager.USE_DEFAULT_STREAM_TYPE
+        SoundPoolManager.getInstance(applicationContext).playDisconnect()
+        call?.removeCallListener(this)
+        call = null
+        binding.callTime.stop()
+        binding.callTime.visibility = View.GONE
+        binding.callStatus.text = "Call Ended"
+        binding.callStatus.visibility = View.VISIBLE
+        AppObjectController.uiHandler.postDelayed({
+            onBackPressed()
+        }, 500)
+        Timber.tag(TAG).e("onCallEnded " + endedCall.details?.error)
+    }
+
+    override fun onCallEstablished(establishedCall: Call) {
+        if (CallDirection.OUTGOING == establishedCall.direction) {
+            AudioPlayer.getInstance().stopProgressTone()
+        }
+        SoundPoolManager.getInstance(applicationContext).stopRinging()
+        binding.callStatus.text = "Connecting"
+        AppObjectController.uiHandler.postDelayed({
+            binding.callStatus.visibility = View.GONE
+            binding.callTime.visibility = View.VISIBLE
+            binding.callTime.base = SystemClock.elapsedRealtime()
+            binding.callTime.start()
+        }, 500)
+        Timber.tag(TAG).e("onCallEstablished")
+    }
+
+    override fun onCallProgressing(progressingCall: Call) {
+        volumeControlStream = AudioManager.STREAM_VOICE_CALL
+        if (CallDirection.OUTGOING == progressingCall.direction) {
+            AudioPlayer.getInstance().playProgressTone()
+        }
+        binding.callStatus.text = "Ringing"
+        Timber.tag(TAG).e("onCallProgressing")
+    }
+
+    override fun onShouldSendPushNotification(call: Call, pushPairs: List<PushPair>) {
+        Timber.tag(TAG).e("onShouldSendPushNotification")
+    }
 
 }

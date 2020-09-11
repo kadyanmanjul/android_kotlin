@@ -21,6 +21,7 @@ class VoipCallingViewModel(application: Application) : AndroidViewModel(applicat
                 voipDetailsLiveData.postValue(response)
             } catch (ex: Throwable) {
                 ex.showAppropriateMsg()
+                voipDetailsLiveData.postValue(null)
             }
         }
     }
