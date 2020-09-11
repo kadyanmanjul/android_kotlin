@@ -118,9 +118,9 @@
                                 android:textAlignment="center"
                                 android:textAppearance="@style/TextStyle.ChipText"
                                 android:textSize="@dimen/font_12"
-                                app:chipEndPadding="@dimen/_10sdp"
+                                app:chipEndPadding="@dimen/_8sdp"
                                 app:chipMinHeight="@dimen/_20sdp"
-                                app:chipStartPadding="@dimen/_10sdp"
+                                app:chipStartPadding="@dimen/_8sdp"
                                 app:singleLine="true"
                                 app:singleSelection="true" />
 
@@ -133,9 +133,9 @@
                                 android:textAlignment="center"
                                 android:textAppearance="@style/TextStyle.ChipText"
                                 android:textSize="@dimen/font_12"
-                                app:chipEndPadding="@dimen/_10sdp"
+                                app:chipEndPadding="@dimen/_8sdp"
                                 app:chipMinHeight="@dimen/_20sdp"
-                                app:chipStartPadding="@dimen/_10sdp"
+                                app:chipStartPadding="@dimen/_8sdp"
                                 app:singleLine="true"
                                 app:singleSelection="true" />
 
@@ -149,9 +149,9 @@
                                 android:textAlignment="center"
                                 android:textAppearance="@style/TextStyle.ChipText"
                                 android:textSize="@dimen/font_12"
-                                app:chipEndPadding="@dimen/_10sdp"
+                                app:chipEndPadding="@dimen/_8sdp"
                                 app:chipMinHeight="@dimen/_20sdp"
-                                app:chipStartPadding="@dimen/_10sdp"
+                                app:chipStartPadding="@dimen/_8sdp"
                                 app:singleLine="true"
                                 app:singleSelection="true" />
                     </com.google.android.material.chip.ChipGroup>

@@ -279,6 +279,8 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
             println("bell shaking")
             val shake: Animation = AnimationUtils.loadAnimation(this, R.anim.shake_animation)
             reminderIv.animation = shake
+        } else {
+            reminderIv.clearAnimation()
         }
     }
 

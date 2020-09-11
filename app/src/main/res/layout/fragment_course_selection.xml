@@ -149,7 +149,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginTop="?attr/actionBarSize"
-                android:visibility="visible">
+                android:visibility="gone">
 
             <com.google.android.material.textview.MaterialTextView
                     android:id="@+id/coming_soon_tv"
