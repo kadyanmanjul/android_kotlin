@@ -14,6 +14,8 @@ import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.CoreJoshActivity
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.SET_REMINDER_DESCRIPTION
+import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
+import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.databinding.ActivityReminderBinding
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.ui.reminder.reminder_listing.ReminderListActivity
@@ -26,6 +28,7 @@ import java.util.Date
 
 
 class ReminderActivity : CoreJoshActivity() {
+    private var actionUpdate = false
     private var previousTime: String = EMPTY
     private lateinit var titleView: AppCompatTextView
     private var reminderId: Int = -1
@@ -57,6 +60,10 @@ class ReminderActivity : CoreJoshActivity() {
 
         findViewById<View>(R.id.iv_back).visibility = View.VISIBLE
         findViewById<View>(R.id.iv_back).setOnClickListener {
+            AppAnalytics.create(AnalyticsEvent.REMINDER_CROSS.NAME)
+                .addBasicParam()
+                .addUserDetails()
+                .push()
             onBackPressed()
         }
 
@@ -65,6 +72,7 @@ class ReminderActivity : CoreJoshActivity() {
 
         if (intent.extras != null) {
             if (intent.hasExtra("time")) {
+                actionUpdate = true
                 intent.getStringExtra("time")?.let {
                     previousTime = it
                     binding.createReminderBtn.text = getString(R.string.save_changes)
@@ -107,6 +115,17 @@ class ReminderActivity : CoreJoshActivity() {
         }
 
         binding.createReminderBtn.setOnClickListener {
+            if (actionUpdate) {
+                AppAnalytics.create(AnalyticsEvent.UPDATE_REMINDER_CLICKED.NAME)
+                    .addBasicParam()
+                    .addUserDetails()
+                    .push()
+            } else {
+                AppAnalytics.create(AnalyticsEvent.SET_REMINDER_CLICKED.NAME)
+                    .addBasicParam()
+                    .addUserDetails()
+                    .push()
+            }
             viewModel.submitReminder(
                 reminderId,
                 "${timeFormatter.format(alarmHour)}:${timeFormatter.format(alarmMins)}:00",

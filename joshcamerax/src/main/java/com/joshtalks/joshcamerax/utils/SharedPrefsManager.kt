@@ -8,6 +8,7 @@ class SharedPrefsManager private constructor(context: Context) {
     companion object {
         private const val PREFERENCES = "sPrefs"
         const val IS_FIRST_REMINDER = "is_first_reminder"
+        const val IS_REMINDER_SYNCED: String = "is_reminder_synced"
 
         @Synchronized
         fun newInstance(context: Context) = SharedPrefsManager(context)

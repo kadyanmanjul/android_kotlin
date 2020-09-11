@@ -423,5 +423,14 @@ enum class AnalyticsEvent(val NAME: String) {
     NEW_ONBOARDING_UPGRADE_CLICKED("new_onboard upgrade clicked v3"),
     ADD_MORE_COURSE_CLICKED("new_onboard add more course clicked V3"),
 
+    //REMINDER
+    REMINDER_BELL_CLICKED("reminder_bell_clicked"),
+    REMINDER_CROSS("reminder_cross"),
+    SET_REMINDER_CLICKED("set_reminder_clicked"),
+    ADD_REMINDER_CLICKED("add_more_reminder_clicked"),
+    GO_TO_COURSE_CLICKED("Go_to_course clicked"),
+    DELETE_REMINDER_CLICKED("delete_reminder_clicked"),
+    UPDATE_REMINDER_CLICKED("update_reminder_clicked"),
+
 
 }

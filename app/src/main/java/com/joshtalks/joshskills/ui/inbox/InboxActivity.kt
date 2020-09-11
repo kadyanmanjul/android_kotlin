@@ -6,7 +6,10 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
 import android.widget.FrameLayout
+import android.widget.ImageView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.appcompat.widget.PopupMenu
 import androidx.lifecycle.LifecycleObserver
@@ -14,9 +17,11 @@ import androidx.lifecycle.ViewModelProvider
 import com.facebook.share.internal.ShareConstants.ACTION_TYPE
 import com.google.android.gms.location.LocationRequest
 import com.google.android.material.snackbar.Snackbar
+import com.joshtalks.joshcamerax.utils.SharedPrefsManager
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.ARG_PLACEHOLDER_URL
+import com.joshtalks.joshskills.core.ApiCallStatus
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.COURSE_ID
 import com.joshtalks.joshskills.core.CoreJoshActivity
@@ -103,6 +108,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
     private var compositeDisposable = CompositeDisposable()
     private var inAppUpdateManager: InAppUpdateManager? = null
     private lateinit var findMoreLayout: FrameLayout
+    private lateinit var reminderIv: ImageView
     private var offerInHint: Balloon? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -250,8 +256,30 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         findViewById<View>(R.id.iv_setting).setOnClickListener {
             openPopupMenu(it)
         }
-        findViewById<View>(R.id.iv_reminder).setOnClickListener {
-            viewModel.openReminderScreen(this::openReminderCallback)
+        reminderIv = findViewById<ImageView>(R.id.iv_reminder)
+        reminderIv.setOnClickListener {
+            AppAnalytics.create(AnalyticsEvent.REMINDER_BELL_CLICKED.NAME)
+                .addBasicParam()
+                .addUserDetails()
+                .push()
+
+            viewModel.getTotalRemindersFromLocal()
+        }
+        if (!SharedPrefsManager.newInstance(this)
+                .getBoolean(SharedPrefsManager.Companion.IS_REMINDER_SYNCED, false)
+        ) {
+            viewModel.getRemindersFromServer()
+        } else
+            animateBell()
+    }
+
+    fun animateBell() {
+        if (SharedPrefsManager.newInstance(this)
+                .getBoolean(SharedPrefsManager.Companion.IS_FIRST_REMINDER, false)
+        ) {
+            println("bell shaking")
+            val shake: Animation = AnimationUtils.loadAnimation(this, R.anim.shake_animation)
+            reminderIv.animation = shake
         }
     }
 
@@ -430,6 +458,16 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
                 this, AppObjectController.getFirebaseRemoteConfig()
                     .getDouble(FirebaseRemoteConfigKey.SUBSCRIPTION_TEST_ID).toInt().toString()
             )
+        }
+
+        viewModel.reminderApiCallStatusLiveData.observe(this, {
+            if (it.equals(ApiCallStatus.SUCCESS)) {
+                animateBell()
+            }
+        })
+
+        viewModel.totalRemindersViewModel.observe(this) {
+            openReminderCallback(it)
         }
     }
 
@@ -622,12 +660,12 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
             })
     }
 
-
     override fun onResume() {
         super.onResume()
         Runtime.getRuntime().gc()
         addObserver()
         viewModel.getRegisterCourses()
+        animateBell()
     }
 
     override fun onPause() {

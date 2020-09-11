@@ -13,6 +13,8 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
+import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
+import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.interfaces.OnSelectVerificationMethodListener
 import com.joshtalks.joshskills.databinding.ReminderBottomSheetLayoutBinding
 import com.joshtalks.joshskills.ui.inbox.InboxActivity
@@ -52,10 +54,18 @@ class ReminderBottomSheet : BottomSheetDialogFragment() {
     }
 
     fun dismissDialog() {
+        AppAnalytics.create(AnalyticsEvent.ADD_REMINDER_CLICKED.NAME)
+            .addBasicParam()
+            .addUserDetails()
+            .push()
         cancel()
     }
 
     fun goToCourse() {
+        AppAnalytics.create(AnalyticsEvent.GO_TO_COURSE_CLICKED.NAME)
+            .addBasicParam()
+            .addUserDetails()
+            .push()
         (context as Activity).startActivity(Intent(context, InboxActivity::class.java))
     }
 

@@ -301,9 +301,9 @@ public class AppAnalytics {
 
     public void push() {
         Timber.v(this.toString());
-        if (BuildConfig.DEBUG) {
+      /*  if (BuildConfig.DEBUG) {
             return;
-        }
+        }*/
         JoshSkillExecutors.getBOUNDED().submit(() -> {
             formatParameters();
             pushToFirebase();
@@ -315,9 +315,9 @@ public class AppAnalytics {
 
     public void push(boolean trackSession) {
         Timber.v(this.toString());
-        if (BuildConfig.DEBUG) {
+       /* if (BuildConfig.DEBUG) {
             return;
-        }
+        }*/
         formatParameters();
         pushToFirebase();
         pushToCleverTap();

@@ -20,6 +20,8 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.CoreJoshActivity
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
+import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
+import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.databinding.ActivityReminderListLayoutBinding
 import com.joshtalks.joshskills.repository.server.reminder.ReminderResponse
 import com.joshtalks.joshskills.ui.reminder.set_reminder.ReminderActivity
@@ -56,6 +58,10 @@ class ReminderListActivity : CoreJoshActivity(),
             openSetReminder()
         }
         binding.deleteRemindersBtn.setOnClickListener {
+            AppAnalytics.create(AnalyticsEvent.DELETE_REMINDER_CLICKED.NAME)
+                .addBasicParam()
+                .addUserDetails()
+                .push()
             deleteReminders()
         }
 
