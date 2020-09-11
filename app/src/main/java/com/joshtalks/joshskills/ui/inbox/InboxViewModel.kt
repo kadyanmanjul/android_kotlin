@@ -132,7 +132,7 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
                                         hours.toIntOrNull(),
                                         mins.toIntOrNull()
                                     )
-                                    }
+                                }
 
                                 }
                             } else
