@@ -40,7 +40,21 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.CTA_PAYMENT_SUMMARY
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.PAYMENT_SUMMARY_CTA_LABEL_FREE
-import com.joshtalks.joshskills.core.analytics.*
+import com.joshtalks.joshskills.core.INSTANCE_ID
+import com.joshtalks.joshskills.core.JoshSkillExecutors
+import com.joshtalks.joshskills.core.PAYMENT_MOBILE_NUMBER
+import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.RC_HINT
+import com.joshtalks.joshskills.core.REFERRED_REFERRAL_CODE
+import com.joshtalks.joshskills.core.SINGLE_SPACE
+import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
+import com.joshtalks.joshskills.core.analytics.AppAnalytics
+import com.joshtalks.joshskills.core.analytics.BranchIOAnalytics
+import com.joshtalks.joshskills.core.analytics.LogException
+import com.joshtalks.joshskills.core.getPhoneNumber
+import com.joshtalks.joshskills.core.isValidFullNumber
+import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.ActivityPaymentSummaryBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.NPSEvent
@@ -72,7 +86,9 @@ import org.json.JSONObject
 import retrofit2.HttpException
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
-import java.util.*
+import java.util.Currency
+import java.util.HashMap
+import java.util.Locale
 import kotlin.math.roundToInt
 
 const val TRANSACTION_ID = "TRANSACTION_ID"

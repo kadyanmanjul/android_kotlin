@@ -21,7 +21,6 @@ import android.widget.ImageView
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -211,7 +210,7 @@ class CourseDetailsActivity : BaseActivity() {
     }
 
     private fun subscribeLiveData() {
-        viewModel.courseDetailsLiveData.observe(this, Observer { data ->
+        viewModel.courseDetailsLiveData.observe(this, { data ->
             binding.txtActualPrice.text = data.paymentData.actualAmount
             binding.txtDiscountedPrice.text = data.paymentData.discountedAmount
             if (data.paymentData.discountText.isNullOrEmpty().not()) {
@@ -253,7 +252,7 @@ class CourseDetailsActivity : BaseActivity() {
 
         })
 
-        viewModel.apiCallStatusLiveData.observe(this, Observer {
+        viewModel.apiCallStatusLiveData.observe(this, {
             binding.progressBar.visibility = View.GONE
             if (it == ApiCallStatus.FAILED) {
                 val imageUrl =
@@ -290,6 +289,7 @@ class CourseDetailsActivity : BaseActivity() {
 
     private fun getCourseDetails(testId: Int) {
         viewModel.fetchCourseDetails(testId.toString())
+
     }
 
     private fun getViewHolder(card: Card): CourseDetailsBaseCell? {

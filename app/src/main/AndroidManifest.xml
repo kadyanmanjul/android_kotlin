@@ -53,7 +53,6 @@
 
     <permission android:name="android.permission.MEDIA_CONTENT_CONTROL" />
 
-
     <!-- Add New Permission for phone number verification -->
     <uses-permission android:name="android.permission.READ_CALL_LOG" />
     <uses-permission android:name="android.permission.ANSWER_PHONE_CALLS" />
@@ -94,15 +93,6 @@
                 android:name="com.google.android.geo.API_KEY"
                 android:value="@string/google_places_api_key" />
         <meta-data
-                android:name="com.facebook.sdk.ApplicationId"
-                android:value="@string/facebook_app_id" />
-        <meta-data
-                android:name="com.facebook.accountkit.ApplicationName"
-                android:value="@string/app_name" />
-        <meta-data
-                android:name="com.facebook.accountkit.ClientToken"
-                android:value="@string/ACCOUNT_KIT_CLIENT_TOKEN" />
-        <meta-data
                 android:name="com.google.firebase.messaging.default_notification_icon"
                 android:resource="@drawable/ic_status_bar_notification" />
         <meta-data
@@ -117,6 +107,15 @@
         <meta-data
                 android:name="firebase_crashlytics_collection_enabled"
                 android:value="${enableCrashReporting}" />
+        <meta-data
+                android:name="com.facebook.sdk.ApplicationId"
+                android:value="@string/facebook_app_id" />
+        <meta-data
+                android:name="com.facebook.accountkit.ApplicationName"
+                android:value="@string/app_name" />
+        <meta-data
+                android:name="com.facebook.accountkit.ClientToken"
+                android:value="@string/ACCOUNT_KIT_CLIENT_TOKEN" />
         <meta-data
                 android:name="com.facebook.sdk.AutoLogAppEventsEnabled"
                 android:value="false" />
@@ -483,13 +482,13 @@
                 android:launchMode="singleTask"
                 android:screenOrientation="portrait"
                 android:theme="@style/AppNoBarTheme"
-                android:windowSoftInputMode="stateHidden|adjustResize"></activity>
+                android:windowSoftInputMode="stateHidden|adjustResize" />
 
         <activity
                 android:name=".ui.voip.SearchingUserActivity"
                 android:launchMode="singleTop"
                 android:screenOrientation="portrait"
-                android:theme="@style/AppNoBarTheme"></activity>
+                android:theme="@style/AppNoBarTheme" />
 
         <service
                 android:name="com.google.android.exoplayer2.scheduler.PlatformScheduler$PlatformSchedulerService"
@@ -502,15 +501,6 @@
                 android:foregroundServiceType="phoneCall"
                 android:permission="android.permission.BIND_JOB_SERVICE" />
 
-
-        <!--<activity android:name=".ui.game.GameWebViewActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
--->
     </application>
 
 </manifest>
