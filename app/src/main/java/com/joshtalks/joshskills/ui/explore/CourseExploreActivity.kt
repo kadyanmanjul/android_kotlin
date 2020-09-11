@@ -275,7 +275,9 @@ class CourseExploreActivity : CoreJoshActivity() {
                             CourseDetailsActivity.startCourseDetailsActivity(
                                 this,
                                 testId,
-                                this@CourseExploreActivity.javaClass.simpleName
+                                this@CourseExploreActivity.javaClass.simpleName,
+                                whatsappUrl = courseExploreModel.whatsappUrl
+
                             )
                         }
                     }

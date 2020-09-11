@@ -169,6 +169,9 @@ class CourseDetailsActivity : BaseActivity() {
     }
 
     private fun initView() {
+        if (intent.hasExtra(WHATSAPP_URL)) {
+            binding.linkToWhatsapp.visibility = View.VISIBLE
+        }
         linearLayoutManager = SmoothLinearLayoutManager(this)
         linearLayoutManager.isSmoothScrollbarEnabled = true
         binding.placeHolderView.builder.setHasFixedSize(true).setLayoutManager(linearLayoutManager)
@@ -715,20 +718,32 @@ class CourseDetailsActivity : BaseActivity() {
         )
     }
 
+    fun openWhatsapp() {
+        val intent = Intent(Intent.ACTION_VIEW)
+        intent.data = Uri.parse(intent.getStringExtra(WHATSAPP_URL))
+        intent.apply {
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
+        startActivity(intent)
+    }
+
 
     companion object {
         const val KEY_TEST_ID = "test-id"
+        const val WHATSAPP_URL = "whatsapp-url"
         const val IS_FROM_FREE_TRIAL = "is_from_free_trial"
 
         fun startCourseDetailsActivity(
             activity: Activity,
             testId: Int,
+            whatsappUrl: String? = null,
             startedFrom: String = EMPTY,
             flags: Array<Int> = arrayOf(),
             isFromFreeTrial: Boolean = false
         ) {
             Intent(activity, CourseDetailsActivity::class.java).apply {
                 putExtra(KEY_TEST_ID, testId)
+                putExtra(WHATSAPP_URL, whatsappUrl)
                 putExtra(IS_FROM_FREE_TRIAL, isFromFreeTrial)
                 if (startedFrom.isNotBlank())
                     putExtra(STARTED_FROM, startedFrom)
