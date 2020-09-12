@@ -1,10 +1,6 @@
 package com.joshtalks.joshskills.core.notification
 
-import android.app.ActivityManager
-import android.app.Notification
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.app.PendingIntent
+import android.app.*
 import android.content.Context
 import android.content.Intent
 import android.media.RingtoneManager
@@ -23,13 +19,7 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.API_TOKEN
-import com.joshtalks.joshskills.core.ARG_PLACEHOLDER_URL
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.COURSE_ID
-import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.JoshSkillExecutors
-import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.DismissNotifEventReceiver
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
@@ -409,7 +399,7 @@ class FirebaseNotificationService : FirebaseMessagingService() {
             WorkManagerAdmin.updatedCourseForConversation(this.conversation_id)
         }
 
-        val rIntnet = Intent(applicationContext, ConversationActivity::class.java).apply {
+        val rIntnet = Intent(applicationContext, isNotificationCrash()).apply {
             putExtra(UPDATED_CHAT_ROOM_OBJECT, obj)
             putExtra(ACTION_TYPE, action)
             putExtra(HAS_NOTIFICATION, true)

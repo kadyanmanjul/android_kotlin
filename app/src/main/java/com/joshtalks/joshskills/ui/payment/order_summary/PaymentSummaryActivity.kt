@@ -37,26 +37,10 @@ import com.google.android.gms.auth.api.credentials.HintRequest
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.CoreJoshActivity
-import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.CTA_PAYMENT_SUMMARY
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.PAYMENT_SUMMARY_CTA_LABEL_FREE
-import com.joshtalks.joshskills.core.INSTANCE_ID
-import com.joshtalks.joshskills.core.PAYMENT_MOBILE_NUMBER
-import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.core.RC_HINT
-import com.joshtalks.joshskills.core.REFERRED_REFERRAL_CODE
-import com.joshtalks.joshskills.core.SINGLE_SPACE
-import com.joshtalks.joshskills.core.Utils
-import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
-import com.joshtalks.joshskills.core.analytics.AppAnalytics
-import com.joshtalks.joshskills.core.analytics.BranchIOAnalytics
-import com.joshtalks.joshskills.core.analytics.LogException
-import com.joshtalks.joshskills.core.getPhoneNumber
-import com.joshtalks.joshskills.core.isValidFullNumber
-import com.joshtalks.joshskills.core.showToast
+import com.joshtalks.joshskills.core.analytics.*
 import com.joshtalks.joshskills.databinding.ActivityPaymentSummaryBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.NPSEvent
@@ -88,9 +72,7 @@ import org.json.JSONObject
 import retrofit2.HttpException
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
-import java.util.Currency
-import java.util.HashMap
-import java.util.Locale
+import java.util.*
 import kotlin.math.roundToInt
 
 const val TRANSACTION_ID = "TRANSACTION_ID"
@@ -115,10 +97,14 @@ class PaymentSummaryActivity : CoreJoshActivity(),
     companion object {
         fun startPaymentSummaryActivity(
             activity: Activity,
-            testId: String
+            testId: String,
+            hasFreeTrial: Boolean? = null
         ) {
             Intent(activity, PaymentSummaryActivity::class.java).apply {
                 putExtra(TEST_ID_PAYMENT, testId)
+                hasFreeTrial?.run {
+                    putExtra(HAS_FREE_7_DAY_TRIAL, hasFreeTrial)
+                }
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             }.run {
                 activity.startActivity(this)
@@ -127,6 +113,8 @@ class PaymentSummaryActivity : CoreJoshActivity(),
         }
 
         const val TEST_ID_PAYMENT = "test_ID"
+        const val HAS_FREE_7_DAY_TRIAL = "7 day free trial"
+
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -397,8 +385,12 @@ class PaymentSummaryActivity : CoreJoshActivity(),
 
         viewModel.isFreeOrderCreated.observe(this, androidx.lifecycle.Observer
         {
-            if (it)
+            if (it) {
+                if (intent.hasExtra(HAS_FREE_7_DAY_TRIAL)) {
+                    MarketingAnalytics.sevenDayFreeTrialStart(testId)
+                }
                 navigateToStartCourseActivity(false)
+            }
         })
 
         binding.mobileEt.onEditorAction { v, actionId, event ->
@@ -420,7 +412,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
-                    if (it.promoCode.isNullOrBlank().not()) {
+                    if (it.promoCode.isNullOrEmpty().not()) {
                         couponApplied = true
                         getPaymentDetails(false, testId, it.promoCode)
                     }
@@ -547,50 +539,48 @@ class PaymentSummaryActivity : CoreJoshActivity(),
     }
 
     private fun initializeRazorpayPayment(response: OrderDetailResponse) {
-        CoroutineScope(Dispatchers.Main).launch {
-            binding.progressBar.visibility = View.VISIBLE
-            val checkout = Checkout()
-            checkout.setImage(R.mipmap.ic_launcher)
-            checkout.setKeyID(response.razorpayKeyId)
-            try {
-                val preFill = JSONObject()
+        binding.progressBar.visibility = View.VISIBLE
+        val checkout = Checkout()
+        checkout.setImage(R.mipmap.ic_launcher)
+        checkout.setKeyID(response.razorpayKeyId)
+        try {
+            val preFill = JSONObject()
 
-                if (!viewModel.hasRegisteredMobileNumber && User.getInstance().email.isNotBlank())
-                    preFill.put("email", User.getInstance().email)
-                else
-                    preFill.put("email", Utils.getUserPrimaryEmail(applicationContext))
+            if (!viewModel.hasRegisteredMobileNumber && User.getInstance().email.isNotBlank())
+                preFill.put("email", User.getInstance().email)
+            else
+                preFill.put("email", Utils.getUserPrimaryEmail(applicationContext))
 
-                if (!viewModel.hasRegisteredMobileNumber)
-                    preFill.put("contact", binding.mobileEt.text.toString())
-                else if (User.getInstance().phoneNumber.isNotBlank())
-                    preFill.put("contact", User.getInstance().phoneNumber)
-                else if (PrefManager.getStringValue(PAYMENT_MOBILE_NUMBER).isNotBlank())
-                    preFill.put(
-                        "contact", PrefManager.getStringValue(PAYMENT_MOBILE_NUMBER).replace(
-                            SINGLE_SPACE,
-                            EMPTY
-                        )
+            if (!viewModel.hasRegisteredMobileNumber)
+                preFill.put("contact", binding.mobileEt.text.toString())
+            else if (User.getInstance().phoneNumber.isNotBlank())
+                preFill.put("contact", User.getInstance().phoneNumber)
+            else if (PrefManager.getStringValue(PAYMENT_MOBILE_NUMBER).isNotBlank())
+                preFill.put(
+                    "contact", PrefManager.getStringValue(PAYMENT_MOBILE_NUMBER).replace(
+                        SINGLE_SPACE,
+                        EMPTY
                     )
-                else
-                    preFill.put("contact", "9999999999")
-                val options = JSONObject()
-                options.put("key", response.razorpayKeyId)
-                options.put("name", "Josh Skills")
-                options.put("description", viewModel.getCourseName() + "_app")
-                options.put("order_id", response.razorpayOrderId)
-                options.put("currency", response.currency)
-                options.put("amount", response.amount * 100)
-                options.put("prefill", preFill)
-                checkout.open(this@PaymentSummaryActivity, options)
-                razorpayOrderId = response.razorpayOrderId
-                binding.progressBar.visibility = View.GONE
-                appAnalytics
-                    .addParam("razor id", razorpayOrderId)
-                    .addParam(AnalyticsEvent.TRANSACTION_ID.NAME, response.joshtalksOrderId)
+                )
+            else
+                preFill.put("contact", "9999999999")
+            val options = JSONObject()
+            options.put("key", response.razorpayKeyId)
+            options.put("name", "Josh Skills")
+            options.put("description", viewModel.getCourseName() + "_app")
+            options.put("order_id", response.razorpayOrderId)
+            options.put("currency", response.currency)
+            options.put("amount", response.amount * 100)
+            options.put("prefill", preFill)
+            checkout.open(this@PaymentSummaryActivity, options)
+            razorpayOrderId = response.razorpayOrderId
+            binding.progressBar.visibility = View.GONE
+            appAnalytics
+                .addParam("razor id", razorpayOrderId)
+                .addParam(AnalyticsEvent.TRANSACTION_ID.NAME, response.joshtalksOrderId)
 
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
 
@@ -787,49 +777,49 @@ class PaymentSummaryActivity : CoreJoshActivity(),
     }
 
     private fun addECommerceEvent(razorpayPaymentId: String) {
-        if (viewModel.getCourseDiscountedAmount() <= 0) {
-            return
-        }
-        AppObjectController.firebaseAnalytics.resetAnalyticsData()
-        val bundle = Bundle()
-        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, viewModel.getPaymentTestId())
-        bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, viewModel.getCourseName())
-        bundle.putDouble(
-            FirebaseAnalytics.Param.PRICE, viewModel.getCourseDiscountedAmount()
-        )
-        bundle.putString(FirebaseAnalytics.Param.TRANSACTION_ID, razorpayPaymentId)
-        bundle.putString(FirebaseAnalytics.Param.CURRENCY, CurrencyType.INR.name)
-        AppObjectController.firebaseAnalytics.logEvent(FirebaseAnalytics.Event.PURCHASE, bundle)
-
-        val extras: HashMap<String, String> = HashMap()
-        extras["test_id"] = viewModel.getPaymentTestId()
-        extras["payment_id"] = razorpayPaymentId
-        extras["currency"] = CurrencyType.INR.name
-        extras["amount"] = viewModel.getCourseDiscountedAmount().toString()
-        extras["course_name"] = viewModel.getCourseName()
-        BranchIOAnalytics.pushToBranch(BRANCH_STANDARD_EVENT.PURCHASE, extras)
-
-        try {
+        JoshSkillExecutors.BOUNDED.submit {
             if (viewModel.getCourseDiscountedAmount() <= 0) {
-                return
+                return@submit
             }
-            AppObjectController.facebookEventLogger.flush()
-            val params = Bundle().apply {
-                putString(AppEventsConstants.EVENT_PARAM_CONTENT_ID, viewModel.getPaymentTestId())
-                putString(
-                    AppEventsConstants.EVENT_PARAM_SUCCESS,
-                    AppEventsConstants.EVENT_PARAM_VALUE_YES
-                )
-                putString(AppEventsConstants.EVENT_PARAM_CURRENCY, CurrencyType.INR.name)
-            }
-            AppEventsLogger.newLogger(this).logPurchase(
-                viewModel.getCourseDiscountedAmount().toBigDecimal(),
-                Currency.getInstance(viewModel.getCurrency().trim()),
-                params
+            AppObjectController.firebaseAnalytics.resetAnalyticsData()
+            val bundle = Bundle()
+            bundle.putString(FirebaseAnalytics.Param.ITEM_ID, viewModel.getPaymentTestId())
+            bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, viewModel.getCourseName())
+            bundle.putDouble(
+                FirebaseAnalytics.Param.PRICE, viewModel.getCourseDiscountedAmount()
             )
-        } catch (ex: Exception) {
-            ex.printStackTrace()
-            FirebaseCrashlytics.getInstance().recordException(ex)
+            bundle.putString(FirebaseAnalytics.Param.TRANSACTION_ID, razorpayPaymentId)
+            bundle.putString(FirebaseAnalytics.Param.CURRENCY, CurrencyType.INR.name)
+            AppObjectController.firebaseAnalytics.logEvent(FirebaseAnalytics.Event.PURCHASE, bundle)
+
+            try {
+                val params = Bundle().apply {
+                    putString(
+                        AppEventsConstants.EVENT_PARAM_CONTENT_ID,
+                        viewModel.getPaymentTestId()
+                    )
+                    putString(
+                        AppEventsConstants.EVENT_PARAM_SUCCESS,
+                        AppEventsConstants.EVENT_PARAM_VALUE_YES
+                    )
+                    putString(AppEventsConstants.EVENT_PARAM_CURRENCY, CurrencyType.INR.name)
+                }
+                AppEventsLogger.newLogger(this).logPurchase(
+                    viewModel.getCourseDiscountedAmount().toBigDecimal(),
+                    Currency.getInstance(viewModel.getCurrency().trim()),
+                    params
+                )
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+                FirebaseCrashlytics.getInstance().recordException(ex)
+            }
+            val extras: HashMap<String, String> = HashMap()
+            extras["test_id"] = viewModel.getPaymentTestId()
+            extras["payment_id"] = razorpayPaymentId
+            extras["currency"] = CurrencyType.INR.name
+            extras["amount"] = viewModel.getCourseDiscountedAmount().toString()
+            extras["course_name"] = viewModel.getCourseName()
+            BranchIOAnalytics.pushToBranch(BRANCH_STANDARD_EVENT.PURCHASE, extras)
         }
     }
 
@@ -865,14 +855,12 @@ class PaymentSummaryActivity : CoreJoshActivity(),
         appAnalytics.push()
         super.onStop()
         compositeDisposable.clear()
-        AppObjectController.facebookEventLogger.flush()
     }
 
     override fun onDestroy() {
         super.onDestroy()
         Checkout.clearUserData(applicationContext)
         uiHandler.removeCallbacksAndMessages(null)
-        AppObjectController.facebookEventLogger.flush()
     }
 
     private fun showPaymentProcessingFragment() {
