@@ -81,7 +81,6 @@ android {
             buildConfigField "String", "SINCH_API_KEY", "\"86f34ed9-cdcf-497c-af80-3f352170164f\""
             crunchPngs false
             ext.enableCrashlytics = false
-
         }
         release {
             resValue("string", "branch_id", "key_live_hmRIENEBxRompOkPRCOXujibxFgew8w4")
