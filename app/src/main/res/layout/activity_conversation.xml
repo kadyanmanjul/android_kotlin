@@ -112,8 +112,7 @@
                     <LinearLayout
                             android:paddingHorizontal="@dimen/_8sdp"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:paddingHorizontal="@dimen/_16sdp">
+                            android:layout_height="wrap_content">
 
                         <androidx.appcompat.widget.AppCompatEditText
                                 android:id="@+id/chat_edit"
