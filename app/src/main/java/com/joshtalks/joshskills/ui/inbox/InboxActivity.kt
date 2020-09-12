@@ -276,7 +276,6 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         if (SharedPrefsManager.newInstance(this)
                 .getBoolean(SharedPrefsManager.Companion.IS_FIRST_REMINDER, false)
         ) {
-            println("bell shaking")
             val shake: Animation = AnimationUtils.loadAnimation(this, R.anim.shake_animation)
             reminderIv.animation = shake
         } else {

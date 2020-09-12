@@ -6,6 +6,12 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.telephony.TelephonyManager
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.target.Target
 import com.google.firebase.perf.metrics.AddTrace
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
@@ -26,6 +32,7 @@ import io.branch.referral.Defines
 import kotlinx.android.synthetic.main.activity_launcher.progress_bar
 import org.json.JSONObject
 import timber.log.Timber
+import java.io.File
 
 
 class LauncherActivity : CoreJoshActivity(), CustomPermissionDialogInteractionListener {
@@ -124,22 +131,48 @@ class LauncherActivity : CoreJoshActivity(), CustomPermissionDialogInteractionLi
                     ONBOARD_VERSIONS.ONBOARDING_V1 -> {
                         val intent = getIntentForState()
                         startActivity(intent)
+                        this@LauncherActivity.finish()
                     }
                     ONBOARD_VERSIONS.ONBOARDING_V2, ONBOARD_VERSIONS.ONBOARDING_V3, ONBOARD_VERSIONS.ONBOARDING_V4 -> {
                         if (PrefManager.getBoolValue(IS_GUEST_ENROLLED, false)) {
                             val intent = getIntentForState()
                             startActivity(intent)
+                            this@LauncherActivity.finish()
                         } else {
-                            OnBoardingActivityNew.startOnBoardingActivity(
-                                this,
-                                COURSE_EXPLORER_NEW,
-                                false
-                            )
+                            Glide.with(AppObjectController.joshApplication)
+                                .downloadOnly().load(versionResponse.image)
+                                .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
+                                .listener(object : RequestListener<File> {
+                                    override fun onLoadFailed(
+                                        e: GlideException?,
+                                        model: Any?,
+                                        target: Target<File>?,
+                                        isFirstResource: Boolean
+                                    ): Boolean {
+                                        return false
+                                    }
+
+                                    override fun onResourceReady(
+                                        resource: File?,
+                                        model: Any?,
+                                        target: Target<File>?,
+                                        dataSource: DataSource?,
+                                        isFirstResource: Boolean
+                                    ): Boolean {
+                                        OnBoardingActivityNew.startOnBoardingActivity(
+                                            this@LauncherActivity,
+                                            COURSE_EXPLORER_NEW,
+                                            false
+                                        )
+                                        this@LauncherActivity.finish()
+                                        return false
+                                    }
+
+                                }).submit()
+
                         }
                     }
                 }
-
-                this@LauncherActivity.finish()
             }
         }, 500)
     }
@@ -179,7 +212,6 @@ class LauncherActivity : CoreJoshActivity(), CustomPermissionDialogInteractionLi
     private fun getNetworkOperatorName() =
         (baseContext.getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager?)?.networkOperatorName
             ?: ""
-
 
     private fun parseReferralCode(jsonParams: JSONObject) =
         if (jsonParams.has(Defines.Jsonkey.ReferralCode.key)) jsonParams.getString(
