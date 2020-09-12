@@ -5,6 +5,7 @@ import com.joshtalks.joshskills.repository.local.model.FCMResponse
 import com.joshtalks.joshskills.repository.local.model.InstallReferrerModel
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
+import com.joshtalks.joshskills.repository.server.ActiveUserRequest
 import com.joshtalks.joshskills.repository.server.CouponCodeResponse
 import com.joshtalks.joshskills.repository.server.CourseExploreModel
 import com.joshtalks.joshskills.repository.server.CreateOrderResponse
@@ -152,4 +153,9 @@ interface SignUpNetworkService {
 
     @POST("$DIR/mentor/enroll_mentor_tags/")
     suspend fun enrollMentorWithTagIds(@Body params: EnrollMentorWithTagIdRequest): Response<Any>
+
+    @POST("$DIR/mentor/last-active")
+    suspend fun activeUser(@Body params: ActiveUserRequest): Response<Any>
+
+
 }

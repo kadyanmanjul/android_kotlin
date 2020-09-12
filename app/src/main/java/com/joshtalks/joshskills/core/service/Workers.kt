@@ -40,6 +40,7 @@ import com.joshtalks.joshskills.repository.local.model.InstallReferrerModel
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.RequestRegisterGAId
 import com.joshtalks.joshskills.repository.local.model.User
+import com.joshtalks.joshskills.repository.server.ActiveUserRequest
 import com.joshtalks.joshskills.repository.server.MessageStatusRequest
 import com.joshtalks.joshskills.repository.server.UpdateDeviceRequest
 import com.joshtalks.joshskills.repository.server.signup.LoginResponse
@@ -53,6 +54,8 @@ import java.util.HashMap
 
 const val INSTALL_REFERRER_SYNC = "install_referrer_sync"
 const val CONVERSATION_ID = "conversation_id"
+const val IS_ACTIVE = "is_active"
+
 
 class AppRunRequiredTaskWorker(var context: Context, workerParams: WorkerParameters) :
     CoroutineWorker(context, workerParams) {
@@ -694,6 +697,24 @@ class DeleteUnlockTypeQuestion(context: Context, workerParams: WorkerParameters)
         return Result.success()
     }
 }
+
+
+class IsUserActiveWorker(context: Context, private var workerParams: WorkerParameters) :
+    CoroutineWorker(context, workerParams) {
+    override suspend fun doWork(): Result {
+        try {
+            if (Mentor.getInstance().hasId()) {
+                val active = workerParams.inputData.getBoolean(IS_ACTIVE, false)
+                val data = ActiveUserRequest(Mentor.getInstance().getId(), active)
+                AppObjectController.signUpNetworkService.activeUser(data)
+            }
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+        }
+        return Result.success()
+    }
+}
+
 
 fun getGoogleAdId(context: Context): String {
     MobileAds.initialize(context)
