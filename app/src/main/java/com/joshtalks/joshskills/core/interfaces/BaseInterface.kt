@@ -29,3 +29,7 @@ interface OnDismissWithDialog : OnDismissDialog {
     fun onSuccessDismiss()
     fun onCancel()
 }
+
+interface OnDismissWithSuccess : OnDismissDialog {
+    fun onSuccessDismiss()
+}

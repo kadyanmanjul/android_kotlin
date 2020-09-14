@@ -15,13 +15,10 @@ import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.BaseActivity
-import com.joshtalks.joshskills.core.IS_PRACTISE_PARTNER_VIEWED
 import com.joshtalks.joshskills.core.PermissionUtils
-import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.interfaces.OnDismissWithDialog
 import com.joshtalks.joshskills.databinding.ActivitySearchingUserBinding
 import com.joshtalks.joshskills.ui.voip.extra.CallingStartMediatorDialog
-import com.joshtalks.joshskills.ui.voip.extra.PractisePartnerDialogFragment
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
@@ -34,10 +31,11 @@ class SearchingUserActivity : BaseActivity(), OnDismissWithDialog {
     private var courseId: String? = null
     private var timer: CountDownTimer? = null
     private lateinit var binding: ActivitySearchingUserBinding
+    private var canTimerComplete = false
     private val viewModel: VoipCallingViewModel by lazy {
         ViewModelProvider(this).get(VoipCallingViewModel::class.java)
     }
-    private var canTimerComplete = false
+
 
     companion object {
         fun startUserForPractiseOnPhoneActivity(activity: Activity, courseId: String) {
@@ -72,13 +70,7 @@ class SearchingUserActivity : BaseActivity(), OnDismissWithDialog {
         courseId = intent.getStringExtra(COURSE_ID)
         initView()
         addObserver()
-        if (PrefManager.hasKey(IS_PRACTISE_PARTNER_VIEWED)) {
-            addRequesting()
-        } else {
-            PractisePartnerDialogFragment.newInstance()
-                .show(supportFragmentManager, "PractisePartnerDialogFragment")
-        }
-
+        addRequesting()
     }
 
     private fun initView() {
@@ -167,12 +159,13 @@ class SearchingUserActivity : BaseActivity(), OnDismissWithDialog {
 
     private fun requestForSearchUser() {
         courseId?.let {
-            viewModel.getUserForTalk(it)
             startProgressBarCountDown()
+            viewModel.getUserForTalk(it)
         }
     }
 
     fun stopCalling() {
+        timer?.cancel()
         this.finish()
     }
 
@@ -188,8 +181,8 @@ class SearchingUserActivity : BaseActivity(), OnDismissWithDialog {
             addRequesting()
         } else {
             viewModel.voipDetailsLiveData.value?.let {
+                viewModel.voipDetailsLiveData.postValue(null)
                 WebRtcActivity.startVoipActivity(this, it)
-                binding.progressBar.progress = 0
             }
         }
     }
@@ -199,7 +192,11 @@ class SearchingUserActivity : BaseActivity(), OnDismissWithDialog {
     }
 
     override fun onDismiss() {
-        requestForSearchUser()
+        viewModel.voipDetailsLiveData.postValue(null)
+        AppObjectController.uiHandler.postDelayed({
+            requestForSearchUser()
+        }, 500)
+
     }
 
     private fun startMediatorDialog() {

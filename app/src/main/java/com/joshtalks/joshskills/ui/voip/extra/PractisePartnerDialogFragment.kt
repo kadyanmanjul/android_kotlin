@@ -14,26 +14,26 @@ import com.joshtalks.joshskills.core.IS_PRACTISE_PARTNER_VIEWED
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.custom_ui.decorator.LayoutMarginDecoration
-import com.joshtalks.joshskills.core.interfaces.OnDismissWithDialog
+import com.joshtalks.joshskills.core.interfaces.OnDismissWithSuccess
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.PractisePartnerLayoutBinding
 import com.mindorks.placeholderview.annotations.Layout
 import com.mindorks.placeholderview.annotations.Resolve
 
 class PractisePartnerDialogFragment : DialogFragment() {
-    private var listener: OnDismissWithDialog? = null
+    private var listener: OnDismissWithSuccess? = null
     private lateinit var binding: PractisePartnerLayoutBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setStyle(STYLE_NO_FRAME, R.style.full_dialog)
-        listener = requireActivity() as OnDismissWithDialog
+        listener = requireActivity() as OnDismissWithSuccess
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return object : Dialog(requireActivity(), R.style.full_dialog) {
             override fun onBackPressed() {
-                listener?.onCancel()
+                listener?.onDismiss()
             }
         }
     }
@@ -96,7 +96,7 @@ class PractisePartnerDialogFragment : DialogFragment() {
     override fun onDestroy() {
         super.onDestroy()
         if (PrefManager.hasKey(IS_PRACTISE_PARTNER_VIEWED).not()) {
-            listener?.onCancel()
+            listener?.onDismiss()
         }
     }
 

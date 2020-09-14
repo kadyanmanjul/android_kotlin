@@ -67,7 +67,7 @@ class SignUpOptionsFragment : BaseSignUpFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setupVerificationSystem()
+        setupVerificationSystem("IN")
         if (Utils.isTrueCallerAppExist()) {
             binding.btnTruecallerLogin.visibility = View.VISIBLE
         }
@@ -282,7 +282,7 @@ class SignUpOptionsFragment : BaseSignUpFragment() {
 
     private fun onVerificationNumberStarting() {
         binding.progressBarGroup.visibility = View.VISIBLE
-        binding.btnLogin.visibility = View.GONE
+        binding.btnLogin.visibility = View.INVISIBLE
         startVerificationTimer()
     }
 

@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/root_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="@dimen/_16sdp"
+        android:paddingEnd="@dimen/_32sdp">
+
+    <FrameLayout
+            android:id="@+id/root_sub_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start">
+
+        <LinearLayout
+                android:id="@+id/message_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_16sdp"
+                android:orientation="vertical"
+                android:paddingLeft="@dimen/_5sdp"
+                android:paddingTop="@dimen/_1sdp"
+                android:paddingRight="@dimen/_5sdp"
+                android:paddingBottom="@dimen/_1sdp">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/parent_layout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="start">
+
+                <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+                        android:id="@+id/text_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="start|center"
+                        android:gravity="center"
+                        android:paddingBottom="@dimen/_5sdp"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4"
+                        android:textColor="@color/font_color"
+                        android:visibility="gone"
+                        tools:visibility="visible"
+                        tools:text="@string/please_enter_valid_number"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+                        android:id="@+id/text_message_body"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="start"
+                        android:gravity="center_vertical|start"
+                        android:paddingVertical="@dimen/_8sdp"
+                        android:paddingEnd="@dimen/_4sdp"
+                        tools:text="@string/usb_connected_message"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Regular"
+                        android:textColor="@color/font_color"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/text_title" />
+
+                <com.google.android.material.button.MaterialButton
+                        app:layout_constraintTop_toBottomOf="@+id/text_message_body"
+                        android:id="@+id/btn_start"
+                        android:layout_width="0dp"
+                        android:layout_marginTop="@dimen/_2sdp"
+                        android:layout_height="wrap_content"
+                        android:backgroundTint="@color/button_primary_color"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:maxLines="1"
+                        android:textAlignment="center"
+                        android:textAllCaps="false"
+                        android:textColor="@color/white"
+                        android:text="@string/start_practise"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Bold"
+                        app:cornerRadius="@dimen/_16sdp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintWidth_default="percent"
+                        app:layout_constraintWidth_percent="0.75"
+                        app:rippleColor="@color/white" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </LinearLayout>
+    </FrameLayout>
+</FrameLayout>

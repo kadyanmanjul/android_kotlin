@@ -150,6 +150,9 @@ class WebRtcActivity : BaseActivity(), CallListener {
                         call?.addCallListener(this@WebRtcActivity)
                         WebRtcService.isCallWasOnGoing = true
                     }
+                    if (binding.userName.text.isNullOrEmpty()) {
+                        binding.userName.text = "User"
+                    }
                 }
             }
         } catch (ex: Exception) {

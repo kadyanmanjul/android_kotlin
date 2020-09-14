@@ -13,7 +13,7 @@ data class VoipCallDetailModel(
     @SerializedName("mentor_id") var mentorId: String = EMPTY,
     @SerializedName("locality") val locality: String? = EMPTY,
     @SerializedName("profile_pic") val profilePic: String? = EMPTY,
-    val topic: String? = "aise hi sexy lag rha hai"
+    @SerializedName("topic") val topic: String? = EMPTY
 
 ) : Parcelable {
     constructor() : this(
@@ -21,7 +21,7 @@ data class VoipCallDetailModel(
         mentorId = EMPTY,
         locality = EMPTY,
         profilePic = EMPTY,
-        topic = "English par"
+        topic = EMPTY
     )
 
     fun getOutgoingCallObject(): VoipCallDetailModel {

@@ -28,7 +28,7 @@ class CallingStartMediatorDialog : DialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return object : Dialog(requireActivity(), R.style.full_dialog) {
             override fun onBackPressed() {
-                listener?.onDismiss()
+                stopCalling()
             }
         }
     }
@@ -93,6 +93,8 @@ class CallingStartMediatorDialog : DialogFragment() {
     }
 
     fun stopCalling() {
+        timer?.cancel()
+        dismissAllowingStateLoss()
         listener?.onDismiss()
     }
 

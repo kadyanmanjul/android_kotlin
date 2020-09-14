@@ -157,7 +157,6 @@ class CourseDetailsActivity : BaseActivity() {
             .addBasicParam()
             .addUserDetails()
             .addParam(AnalyticsEvent.FLOW_FROM_PARAM.NAME, flowFrom)
-
             .push()
         appAnalytics.addBasicParam()
             .addUserDetails()
@@ -203,7 +202,7 @@ class CourseDetailsActivity : BaseActivity() {
             transition.addTarget(binding.buyCourseLl)
             TransitionManager.beginDelayedTransition(binding.coordinator, transition)
             binding.buyCourseLl.visibility = View.VISIBLE
-            if (intent.hasExtra(WHATSAPP_URL)) {
+            if (intent.hasExtra(WHATSAPP_URL)&& intent.getStringExtra(WHATSAPP_URL).isNullOrEmpty().not()) {
                 binding.linkToWhatsapp.visibility = View.VISIBLE
             }
         }

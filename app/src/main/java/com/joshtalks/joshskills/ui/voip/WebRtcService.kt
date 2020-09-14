@@ -143,11 +143,11 @@ class WebRtcService : Service() {
 
     override fun onCreate() {
         super.onCreate()
-        executor.execute {
-            mNotificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager?
             if (AppObjectController.sinchClient == null || sinchClient == null) {
                 sinchClient = AppObjectController.initSinchClient()
             }
+        executor.execute {
+            mNotificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager?
             sinchClient?.let { sinchClient ->
                 if (sinchClient.isStarted.not()) {
                     sinchClient.setSupportActiveConnectionInBackground(true)
@@ -195,8 +195,9 @@ class WebRtcService : Service() {
                         call?.hangup()
                     }
                     this == CallConnect().action -> {
-                        processIncomingCall(intent.getStringExtra(INCOMING_CALL_JSON_OBJECT))
+                        stopForeground(true)
                         mNotificationManager?.cancel(CALL_NOTIFICATION_ID)
+                        processIncomingCall(intent.getStringExtra(INCOMING_CALL_JSON_OBJECT))
                     }
                     this == OutgoingCall().action -> {
                         Timber.tag(TAG).e("Outgoing")

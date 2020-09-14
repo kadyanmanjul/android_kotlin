@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.skydoves.balloon.ArrowOrientation
 import com.joshtalks.skydoves.balloon.Balloon
 import com.joshtalks.skydoves.balloon.BalloonAnimation
@@ -58,19 +59,19 @@ class CallingFeatureShowcaseView : DialogFragment() {
         val textForm: TextForm = TextForm.Builder(requireContext())
             .setText("Practice English on live call with partner")
             .setTextColorResource(R.color.black)
-            .setTextSize(16f)
+            .setTextSize(14f)
             .setTextTypeface(typefaceSpan)
             .build()
         val ballon = Balloon.Builder(requireContext())
             .setTextForm(textForm)
             .setArrowSize(10)
             .setArrowVisible(true)
-            .setWidthRatio(0.95f)
+            .setWidthRatio(0.85f)
             .setSpace(8)
             .setArrowPosition(0.84f)
             .setArrowOrientation(ArrowOrientation.TOP)
             .setArrowVisible(true)
-            //.setHeight(Utils.dpToPx(34))
+            .setHeight(Utils.dpToPx(28))
             .setDismissWhenTouchOutside(true)
             .setCornerRadius(4f)
             .setBackgroundColorResource(R.color.yellow)

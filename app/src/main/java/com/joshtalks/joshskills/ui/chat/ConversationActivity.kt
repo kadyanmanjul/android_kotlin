@@ -52,6 +52,7 @@ import com.joshtalks.joshskills.core.CERTIFICATE_GENERATE
 import com.joshtalks.joshskills.core.CoreJoshActivity
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.IMAGE_REGEX
+import com.joshtalks.joshskills.core.IS_PRACTISE_PARTNER_VIEWED
 import com.joshtalks.joshskills.core.IS_SUBSCRIPTION_ENDED
 import com.joshtalks.joshskills.core.IS_SUBSCRIPTION_STARTED
 import com.joshtalks.joshskills.core.IS_TRIAL_ENDED
@@ -68,6 +69,8 @@ import com.joshtalks.joshskills.core.custom_ui.JoshSnackBar
 import com.joshtalks.joshskills.core.custom_ui.SnappingLinearLayoutManager
 import com.joshtalks.joshskills.core.custom_ui.decorator.LayoutMarginDecoration
 import com.joshtalks.joshskills.core.custom_ui.exo_audio_player.AudioPlayerEventListener
+import com.joshtalks.joshskills.core.interfaces.OnDismissWithDialog
+import com.joshtalks.joshskills.core.interfaces.OnDismissWithSuccess
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.core.notification.HAS_COURSE_REPORT
 import com.joshtalks.joshskills.core.notification.QUESTION_ID
@@ -96,6 +99,7 @@ import com.joshtalks.joshskills.repository.local.eventbus.ImageShowEvent
 import com.joshtalks.joshskills.repository.local.eventbus.InternalSeekBarProgressEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.MediaProgressEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.MessageCompleteEventBus
+import com.joshtalks.joshskills.repository.local.eventbus.P2PStartEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.PdfOpenEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.PlayVideoEvent
 import com.joshtalks.joshskills.repository.local.eventbus.PractiseSubmitEventBus
@@ -129,6 +133,7 @@ import com.joshtalks.joshskills.ui.view_holders.BaseChatViewHolder
 import com.joshtalks.joshskills.ui.view_holders.ConversationPractiseViewHolder
 import com.joshtalks.joshskills.ui.view_holders.ImageViewHolder
 import com.joshtalks.joshskills.ui.view_holders.NewMessageViewHolder
+import com.joshtalks.joshskills.ui.view_holders.P2PViewHolder
 import com.joshtalks.joshskills.ui.view_holders.PdfViewHolder
 import com.joshtalks.joshskills.ui.view_holders.PracticeViewHolder
 import com.joshtalks.joshskills.ui.view_holders.TextViewHolder
@@ -136,6 +141,7 @@ import com.joshtalks.joshskills.ui.view_holders.TimeViewHolder
 import com.joshtalks.joshskills.ui.view_holders.UnlockNextClassViewHolder
 import com.joshtalks.joshskills.ui.view_holders.VideoViewHolder
 import com.joshtalks.joshskills.ui.voip.SearchingUserActivity
+import com.joshtalks.joshskills.ui.voip.extra.PractisePartnerDialogFragment
 import com.joshtalks.joshskills.util.ExoAudioPlayer
 import com.joshtalks.recordview.CustomImageButton.FIRST_STATE
 import com.joshtalks.recordview.CustomImageButton.SECOND_STATE
@@ -424,7 +430,6 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
     }
 
     fun practiseOnCall() {
-        SearchingUserActivity.startUserForPractiseOnPhoneActivity(this, inboxEntity.courseId)
     }
 
     private fun initSnackBar() {
@@ -1160,6 +1165,23 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
                     it.printStackTrace()
                 })
         )
+        compositeDisposable.add(
+            RxBus2.listenWithoutDelay(P2PStartEventBus::class.java)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({
+                    if (PrefManager.hasKey(IS_PRACTISE_PARTNER_VIEWED)) {
+                        SearchingUserActivity.startUserForPractiseOnPhoneActivity(this, inboxEntity.courseId)
+                    }else{
+                        PractisePartnerDialogFragment.newInstance()
+                            .show(supportFragmentManager, "PractisePartnerDialogFragment")
+                    }
+                }, {
+                    it.printStackTrace()
+                })
+        )
+
+
     }
 
 
@@ -1302,7 +1324,7 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
         return when (chatModel.type) {
             BASE_MESSAGE_TYPE.Q -> {
                 return when (chatModel.question?.type) {
-
+                    BASE_MESSAGE_TYPE.P2P,
                     BASE_MESSAGE_TYPE.PR,
                     BASE_MESSAGE_TYPE.OTHER,
                     BASE_MESSAGE_TYPE.QUIZ,
@@ -1346,6 +1368,7 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
                 unlockViewHolder = UnlockNextClassViewHolder(activityRef, chatModel)
                 unlockViewHolder
             }
+            BASE_MESSAGE_TYPE.P2P-> P2PViewHolder(activityRef, chatModel)
             else -> return null
         }
     }
@@ -1984,6 +2007,13 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
         audioPlayerManager?.seekTo(0)
         audioPlayerManager?.onPause()
         setPlayProgress(0)
+    }
+
+    override fun onSuccessDismiss() {
+        SearchingUserActivity.startUserForPractiseOnPhoneActivity(this, inboxEntity.courseId)
+    }
+
+    override fun onDismiss() {
     }
 
 
