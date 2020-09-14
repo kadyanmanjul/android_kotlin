@@ -20,6 +20,7 @@ import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
 import com.joshtalks.joshskills.core.IS_GUEST_ENROLLED
+import com.joshtalks.joshskills.core.IS_SUBSCRIPTION_STARTED
 import com.joshtalks.joshskills.core.IS_TRIAL_ENDED
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.Utils
@@ -198,7 +199,8 @@ class SelectCourseFragment : Fragment() {
             if (PrefManager.getBoolValue(
                     IS_TRIAL_ENDED,
                     false
-                ) || (requireActivity() as BaseActivity).getVersionData()?.version?.name == ONBOARD_VERSIONS.ONBOARDING_V3
+                ) || (requireActivity() as BaseActivity).getVersionData()?.version?.name == ONBOARD_VERSIONS.ONBOARDING_V3 ||
+                PrefManager.getBoolValue(IS_SUBSCRIPTION_STARTED)
             ) {
                 binding.startTrialContainer.visibility = View.GONE
 
@@ -287,8 +289,13 @@ class SelectCourseFragment : Fragment() {
             RxBus2.listenWithoutDelay(CourseSelectedEventBus::class.java)
                 .subscribeOn(AndroidSchedulers.mainThread())
                 .subscribe({
-                    if (it.isAlreadyEnrolled && it.id != null) {
-                        navigateToCourseDetailsScreen(it.id, true)
+                    if ((it.isAlreadyEnrolled && it.id != null) || PrefManager.getBoolValue(
+                            IS_SUBSCRIPTION_STARTED
+                        )
+                    ) {
+                        it.id?.let { id ->
+                            navigateToCourseDetailsScreen(id, true)
+                        }
                     } else {
                         var count = 0
                         viewModel.getCourseList()?.let { courseList ->

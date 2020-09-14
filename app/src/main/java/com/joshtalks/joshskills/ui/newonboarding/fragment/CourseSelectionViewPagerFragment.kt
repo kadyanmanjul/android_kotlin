@@ -9,6 +9,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.BaseActivity
+import com.joshtalks.joshskills.core.IS_SUBSCRIPTION_STARTED
 import com.joshtalks.joshskills.core.IS_TRIAL_ENDED
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.Utils
@@ -73,7 +74,8 @@ class CourseSelectionViewPagerFragment : Fragment() {
         var isSecondFlow = false
         (requireActivity() as BaseActivity).getVersionData()?.let {
             if (it.version!!.name == ONBOARD_VERSIONS.ONBOARDING_V3 ||
-                PrefManager.getBoolValue(IS_TRIAL_ENDED, false)
+                PrefManager.getBoolValue(IS_TRIAL_ENDED, false) ||
+                PrefManager.getBoolValue(IS_SUBSCRIPTION_STARTED)
             ) {
                 isSecondFlow = true
             }

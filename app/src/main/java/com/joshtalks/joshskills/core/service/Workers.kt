@@ -15,6 +15,7 @@ import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.COUNTRY_ISO
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.EXPLORE_TYPE
+import com.joshtalks.joshskills.core.GUEST_USER_SOURCE
 import com.joshtalks.joshskills.core.INSTANCE_ID
 import com.joshtalks.joshskills.core.InstallReferralUtil
 import com.joshtalks.joshskills.core.LOGIN_ON
@@ -42,6 +43,7 @@ import com.joshtalks.joshskills.repository.local.model.RequestRegisterGAId
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.MessageStatusRequest
 import com.joshtalks.joshskills.repository.server.UpdateDeviceRequest
+import com.joshtalks.joshskills.repository.server.signup.LoginResponse
 import com.joshtalks.joshskills.repository.service.NetworkRequestHelper
 import com.joshtalks.joshskills.repository.service.SyncChatService
 import com.sinch.verification.PhoneNumberUtils
@@ -159,6 +161,47 @@ class GetVersionAndFlowDataWorker(var context: Context, workerParams: WorkerPara
         }
         return Result.success()
     }
+}
+
+class GenerateGuestUserMentorWorker(var context: Context, workerParams: WorkerParameters) :
+    CoroutineWorker(context, workerParams) {
+
+    override suspend fun doWork(): Result {
+        try {
+            if (PrefManager.hasKey(INSTANCE_ID, false) && PrefManager.getStringValue(API_TOKEN)
+                    .isBlank()
+                && PrefManager.getStringValue(INSTANCE_ID).isBlank().not()
+            ) {
+                val instanceId = PrefManager.getStringValue(INSTANCE_ID)
+                val response =
+                    AppObjectController.signUpNetworkService.createGuestUser(mapOf("instance_id" to instanceId))
+                if (response.isSuccessful)
+                    response.body()?.let {
+                        updateFromLoginResponse(it)
+                    }
+            }
+        } catch (ex: Throwable) {
+            LogException.catchException(ex)
+        }
+        return Result.success()
+    }
+}
+
+private fun updateFromLoginResponse(loginResponse: LoginResponse) {
+    val user = User.getInstance()
+    user.userId = loginResponse.userId
+    user.source =
+        if (loginResponse.createdSource.isNullOrBlank()) GUEST_USER_SOURCE else loginResponse.createdSource
+    user.token = loginResponse.token
+    User.update(user.toString())
+    PrefManager.put(API_TOKEN, loginResponse.token)
+    Mentor.getInstance()
+        .setId(loginResponse.mentorId)
+        .setReferralCode(loginResponse.referralCode)
+        .setUserId(loginResponse.userId)
+        .update()
+    AppAnalytics.updateUser()
+    WorkManagerAdmin.requiredTaskAfterLoginComplete()
 }
 
 class UniqueIdGenerationWorker(var context: Context, workerParams: WorkerParameters) :
@@ -420,7 +463,6 @@ class SyncEngageVideo(context: Context, workerParams: WorkerParameters) :
         return Result.success()
     }
 }
-
 
 class FeedbackRatingWorker(context: Context, workerParams: WorkerParameters) :
     CoroutineWorker(context, workerParams) {

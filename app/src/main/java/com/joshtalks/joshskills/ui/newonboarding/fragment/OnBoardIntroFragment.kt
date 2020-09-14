@@ -8,7 +8,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
@@ -19,7 +18,6 @@ import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.databinding.FragmentOnBoardIntroBinding
-import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.onboarding.ONBOARD_VERSIONS
 import com.joshtalks.joshskills.ui.newonboarding.adapter.OnBoardingIntroTextAdapter
 import com.joshtalks.joshskills.ui.newonboarding.viewmodel.OnBoardViewModel
@@ -52,36 +50,6 @@ class OnBoardIntroFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initView()
-        subscribeObserver()
-    }
-
-    private fun subscribeObserver() {
-        viewModel.isGuestUserCreated.observe(requireActivity(), Observer { isGuestUserCreated ->
-            if (isGuestUserCreated) {
-                (requireActivity() as BaseActivity).apply {
-                    when (getVersionData()?.version!!.name) {
-                        ONBOARD_VERSIONS.ONBOARDING_V1 -> {
-                            return@apply
-                        }
-                        ONBOARD_VERSIONS.ONBOARDING_V2 -> {
-                            replaceFragment(
-                                R.id.onboarding_container,
-                                SelectCourseFragment.newInstance(),
-                                SelectCourseFragment.TAG
-                            )
-                        }
-                        ONBOARD_VERSIONS.ONBOARDING_V3, ONBOARD_VERSIONS.ONBOARDING_V4 -> {
-                            replaceFragment(
-                                R.id.onboarding_container,
-                                SelectInterestFragment.newInstance(),
-                                SelectInterestFragment.TAG
-                            )
-
-                        }
-                    }
-                }
-            }
-        })
     }
 
     private fun initView() {
@@ -110,16 +78,14 @@ class OnBoardIntroFragment : Fragment() {
                 .addBasicParam()
                 .addUserDetails()
                 .push()
-            viewModel.createGuestUser()
+            moveToNextScreen()
         }
 
-        if ((requireActivity() as BaseActivity).isGuestUser() || Mentor.getInstance().hasId()
-                .not()
-        ) {
+        if ((requireActivity() as BaseActivity).isGuestUser()) {
             binding.alreadySubscribed.setOnClickListener {
-                val versionData=(requireActivity() as BaseActivity).getVersionData()
+                val versionData = (requireActivity() as BaseActivity).getVersionData()
                 versionData?.version?.let {
-                    it.name=ONBOARD_VERSIONS.ONBOARDING_V1
+                    it.name = ONBOARD_VERSIONS.ONBOARDING_V1
                 }
                 versionData?.let {
                     PrefManager.put(
@@ -139,6 +105,31 @@ class OnBoardIntroFragment : Fragment() {
                 requireActivity().finish()
             }
         } else binding.alreadySubscribed.visibility = View.GONE
+    }
+
+    private fun moveToNextScreen() {
+        (requireActivity() as BaseActivity).apply {
+            when (getVersionData()?.version!!.name) {
+                ONBOARD_VERSIONS.ONBOARDING_V1 -> {
+                    return@apply
+                }
+                ONBOARD_VERSIONS.ONBOARDING_V2 -> {
+                    replaceFragment(
+                        R.id.onboarding_container,
+                        SelectCourseFragment.newInstance(),
+                        SelectCourseFragment.TAG
+                    )
+                }
+                ONBOARD_VERSIONS.ONBOARDING_V3, ONBOARD_VERSIONS.ONBOARDING_V4 -> {
+                    replaceFragment(
+                        R.id.onboarding_container,
+                        SelectInterestFragment.newInstance(),
+                        SelectInterestFragment.TAG
+                    )
+
+                }
+            }
+        }
     }
 
     private fun startImageScrolling() {

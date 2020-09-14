@@ -54,7 +54,7 @@ class OnBoardingActivityNew : CoreJoshActivity() {
             ONBOARD_VERSIONS.ONBOARDING_V1 -> {
                 this.finish()
             }
-            ONBOARD_VERSIONS.ONBOARDING_V2, ONBOARD_VERSIONS.ONBOARDING_V4 -> {
+            ONBOARD_VERSIONS.ONBOARDING_V2 -> {
                 replaceFragment(
                     R.id.onboarding_container,
                     SelectCourseFragment.newInstance(),
@@ -66,6 +66,21 @@ class OnBoardingActivityNew : CoreJoshActivity() {
                     replaceFragment(
                         R.id.onboarding_container,
                         SelectCourseFragment.newInstance(haveCourses),
+                        SelectCourseFragment.TAG
+                    )
+                } else {
+                    replaceFragment(
+                        R.id.onboarding_container,
+                        SelectInterestFragment.newInstance(),
+                        SelectInterestFragment.TAG
+                    )
+                }
+            }
+            ONBOARD_VERSIONS.ONBOARDING_V4 -> {
+                if (haveCourses) {
+                    replaceFragment(
+                        R.id.onboarding_container,
+                        SelectCourseFragment.newInstance(),
                         SelectCourseFragment.TAG
                     )
                 } else {

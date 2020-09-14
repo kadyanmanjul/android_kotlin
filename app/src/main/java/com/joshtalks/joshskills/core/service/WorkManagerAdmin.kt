@@ -24,6 +24,7 @@ object WorkManagerAdmin {
             .then(OneTimeWorkRequestBuilder<MappingGaIDWithMentor>().build())
             .then(OneTimeWorkRequestBuilder<InstanceIdGenerationWorker>().build())
             .then(OneTimeWorkRequestBuilder<GetVersionAndFlowDataWorker>().build())
+            .then(OneTimeWorkRequestBuilder<GenerateGuestUserMentorWorker>().build())
             .then(
                 mutableListOf(
                     OneTimeWorkRequestBuilder<UploadFCMTokenOnServer>().build(),
