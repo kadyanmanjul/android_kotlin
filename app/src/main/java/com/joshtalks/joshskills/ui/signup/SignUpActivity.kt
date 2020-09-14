@@ -249,14 +249,16 @@ class SignUpActivity : BaseActivity() {
             }
 
             override fun onSuccessProfileShared(trueProfile: TrueProfile) {
-                if (getVersionData()?.version?.name == ONBOARD_VERSIONS.ONBOARDING_V1||PrefManager.getBoolValue(
-                        IS_GUEST_ENROLLED,false).not())
+                if (getVersionData()?.version?.name == ONBOARD_VERSIONS.ONBOARDING_V1 || PrefManager.getBoolValue(
+                        IS_GUEST_ENROLLED, false
+                    ).not()
+                )
                     viewModel.verifyUserViaTrueCaller(trueProfile)
                 else {
                     val requestObj = SocialSignUpRequest.Builder(
                         Mentor.getInstance().getId(),
                         PrefManager.getStringValue(INSTANCE_ID, false),
-                        CreatedSource.OTP.name,
+                        CreatedSource.TC.name,
                         Mentor.getInstance().getUserId()
                     ).payload(trueProfile.payload)
                         .signatureAlgo(trueProfile.signatureAlgorithm)
