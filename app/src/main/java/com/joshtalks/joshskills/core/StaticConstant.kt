@@ -15,8 +15,6 @@ const val TIMEOUT_TIME = 60_000L
 const val MESSAGE_CHAT_SIZE_LIMIT = 2048
 const val EMPTY = ""
 const val SINGLE_SPACE = " "
-const val GUEST_USER_SOURCE = "guest_user_source"
-
 const val IMAGE_PATTERN = "([^\\s]+(\\.(?i)(jpg|png|gif|bmp)|WEBP|webp|JPEG|PNG|Jpeg)$)"
 //const val VIDEO_PATTERN = "([^\\s]+(\\.(?i)(mp4|MP4)$)"
 

@@ -15,7 +15,6 @@ import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.COUNTRY_ISO
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.EXPLORE_TYPE
-import com.joshtalks.joshskills.core.GUEST_USER_SOURCE
 import com.joshtalks.joshskills.core.INSTANCE_ID
 import com.joshtalks.joshskills.core.InstallReferralUtil
 import com.joshtalks.joshskills.core.LOGIN_ON
@@ -190,8 +189,7 @@ class GenerateGuestUserMentorWorker(var context: Context, workerParams: WorkerPa
 private fun updateFromLoginResponse(loginResponse: LoginResponse) {
     val user = User.getInstance()
     user.userId = loginResponse.userId
-    user.source =
-        if (loginResponse.createdSource.isNullOrBlank()) GUEST_USER_SOURCE else loginResponse.createdSource
+    user.isVerified =loginResponse.isVerified
     user.token = loginResponse.token
     User.update(user.toString())
     PrefManager.put(API_TOKEN, loginResponse.token)

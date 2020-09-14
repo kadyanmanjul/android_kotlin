@@ -42,7 +42,7 @@ class StartCourseActivity : CoreJoshActivity() {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_start_course)
         binding.lifecycleOwner = this
         getIntentData()
-        isUserRegistered = User.getInstance().firstName.isNotBlank()
+        isUserRegistered = User.getInstance().isVerified
         initView()
         setListeners()
     }

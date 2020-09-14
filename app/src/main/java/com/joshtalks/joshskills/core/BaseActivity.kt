@@ -125,7 +125,7 @@ abstract class BaseActivity : AppCompatActivity() {
             PrefManager.getBoolValue(IS_GUEST_ENROLLED, false) -> {
                 getInboxActivityIntent()
             }
-            User.getInstance().firstName.isBlank() -> {
+            User.getInstance().isVerified.not() -> {
                 Intent(this, OnBoardActivity::class.java)
             }
             isUserProfileComplete() -> {
@@ -354,8 +354,7 @@ abstract class BaseActivity : AppCompatActivity() {
         }
     }
 
-    fun isGuestUser(): Boolean =
-        User.getInstance().source == GUEST_USER_SOURCE && User.getInstance().firstName.isBlank()
+    fun isGuestUser(): Boolean = User.getInstance().isVerified.not()
 
     fun getVersionData(): VersionResponse? {
         versionResponse?.let {
