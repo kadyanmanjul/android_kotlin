@@ -10,35 +10,34 @@
         android:contentInsetLeft="0dp"
         android:contentInsetEnd="0dp"
         android:contentInsetRight="0dp"
-        android:minHeight="?attr/actionBarSize"
-        android:elevation="@dimen/_4sdp"
-        app:contentInsetEnd="0dp"
-        app:contentInsetLeft="0dp"
+    android:elevation="@dimen/_4sdp"
+    android:minHeight="?attr/actionBarSize"
+    app:contentInsetEnd="0dp"
+    app:contentInsetEndWithActions="0dp"
+    app:contentInsetLeft="0dp"
         app:contentInsetRight="0dp"
         app:contentInsetStart="0dp"
-        app:contentInsetEndWithActions="0dp"
         app:theme="@style/Theme.GuidelinesCompat.Light.DarkToolbar">
 
     <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingHorizontal="@dimen/_6sdp">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="@dimen/_4sdp">
 
         <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/iv_back"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_centerVertical="true"
-                android:layout_marginStart="@dimen/_4sdp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:clickable="true"
-                android:focusable="true"
-                android:gravity="center_vertical|start"
-                android:paddingTop="@dimen/_6sdp"
-                android:paddingBottom="@dimen/_6sdp"
-                android:visibility="gone"
-                app:srcCompat="@drawable/ic_arrow_back"
+            android:id="@+id/iv_back"
+            android:layout_width="@dimen/_24sdp"
+            android:layout_height="@dimen/_24sdp"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="@dimen/_4sdp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center_vertical|start"
+            android:padding="@dimen/_4sdp"
+            android:visibility="gone"
+            app:srcCompat="@drawable/ic_arrow_back"
                 tools:visibility="visible" />
 
         <de.hdodenhof.circleimageview.CircleImageView
@@ -57,17 +56,17 @@
         <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/text_message_title"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginHorizontal="@dimen/_8sdp"
+            android:layout_height="match_parent"
+            android:layout_centerVertical="true"
+            android:layout_marginHorizontal="@dimen/_8sdp"
                 android:layout_marginVertical="@dimen/_4sdp"
-                android:layout_centerVertical="true"
-                android:gravity="start|center"
                 android:layout_toStartOf="@id/iv_help"
                 android:layout_toEndOf="@id/image_view_logo"
-                android:foreground="?android:attr/selectableItemBackground"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4_Semi_Bold"
-                android:singleLine="true"
-                android:textColor="@color/white"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:gravity="start|center"
+            android:singleLine="true"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Semi_Bold"
+            android:textColor="@color/white"
                 tools:text="Spoken English Course" />
 
         <androidx.appcompat.widget.AppCompatImageView
@@ -87,23 +86,23 @@
                 android:id="@+id/iv_earn"
                 android:layout_width="@dimen/_26sdp"
                 android:layout_height="@dimen/_26sdp"
-                android:layout_centerVertical="true"
-                android:layout_marginEnd="@dimen/_6sdp"
-                android:layout_toStartOf="@id/iv_help"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="@dimen/_4sdp"
+            android:layout_toStartOf="@id/iv_help"
                 android:padding="@dimen/_4sdp"
                 android:visibility="gone"
                 tools:visibility="visible" />
 
         <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/iv_help"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
-                android:padding="@dimen/_4sdp"
-                android:src="@drawable/ic_help_outline"
-                android:tint="@color/white"
-                android:visibility="visible" />
+            android:id="@+id/iv_help"
+            android:layout_width="@dimen/_22sdp"
+            android:layout_height="@dimen/_22sdp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:padding="@dimen/_4sdp"
+            android:src="@drawable/ic_help_outline"
+            android:tint="@color/white"
+            android:visibility="visible" />
     </RelativeLayout>
 
 </com.google.android.material.appbar.MaterialToolbar>

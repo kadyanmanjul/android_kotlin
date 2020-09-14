@@ -1,29 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/tag_view"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/tag_view"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/tag_height"
-        android:layout_gravity="top|center"
-        android:layout_marginTop="@dimen/_1sdp"
-        android:layout_marginBottom="@dimen/_4sdp"
-        android:clickable="true"
-        android:duplicateParentState="true"
-        android:focusable="true"
-        android:focusableInTouchMode="true"
-        android:foreground="?android:attr/selectableItemBackground"
-        android:visibility="gone"
-        app:cardBackgroundColor="#F5F5F5">
+    android:layout_height="@dimen/tag_height"
+    android:layout_gravity="top|center"
+    android:layout_marginTop="@dimen/_1sdp"
+    android:layout_marginBottom="@dimen/_4sdp"
+    android:clickable="true"
+    android:duplicateParentState="true"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    android:foreground="?android:attr/selectableItemBackground"
+    android:visibility="gone"
+    app:cardBackgroundColor="#F5F5F5"
+    tools:visibility="visible">
 
     <View
-            android:layout_width="@dimen/_4sdp"
-            android:layout_height="match_parent"
-            android:layout_gravity="start"
-            android:background="@color/colorPrimaryDark"
-            android:duplicateParentState="true" />
+        android:layout_width="@dimen/_4sdp"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:background="@color/colorPrimaryDark"
+        android:duplicateParentState="true" />
 
     <RelativeLayout
-            android:id="@+id/sub_rl"
+        android:id="@+id/sub_rl"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="center"
@@ -38,17 +40,18 @@
                 android:layout_marginTop="@dimen/_4sdp"
                 android:layout_marginEnd="@dimen/_8sdp"
                 android:layout_toStartOf="@id/iv_detail_last"
-                android:clickable="false"
-                android:ellipsize="end"
-                android:focusable="false"
-                android:gravity="center|start"
-                android:inputType=""
-                android:maxLines="1"
-                android:paddingBottom="@dimen/_3sdp"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Bold"
-                android:textAlignment="center"
-                android:textColor="@color/colorPrimaryDark"
-                android:visibility="visible" />
+            android:clickable="false"
+            android:ellipsize="end"
+            android:focusable="false"
+            android:gravity="center|start"
+            android:inputType=""
+            android:maxLines="1"
+            android:paddingBottom="@dimen/_3sdp"
+            android:textAlignment="center"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Bold"
+            android:textColor="@color/colorPrimaryDark"
+            android:visibility="visible"
+            tools:text="Vedant Maheshwari" />
 
         <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tv_detail_last"
@@ -56,32 +59,32 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/tv_sender_name"
                 android:layout_alignParentStart="true"
-                android:layout_gravity="center|start"
-                android:layout_marginEnd="@dimen/_8sdp"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
-                android:clickable="false"
-                android:drawablePadding="@dimen/_4sdp"
-                android:drawableTint="@color/emoji_icon_color"
-                android:focusable="false"
-                android:gravity="center|start"
-                android:inputType=""
-                android:maxLines="2"
-                android:textAlignment="center"
-                android:textColor="@color/emoji_icon_color" />
-
+            android:layout_gravity="center|start"
+            android:layout_marginEnd="@dimen/_8sdp"
+            android:clickable="false"
+            android:drawablePadding="@dimen/_4sdp"
+            android:drawableTint="@color/emoji_icon_color"
+            android:focusable="false"
+            android:gravity="center|start"
+            android:inputType=""
+            android:maxLines="2"
+            android:textAlignment="center"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+            android:textColor="@color/emoji_icon_color"
+            tools:text="Practice #1" />
 
         <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/iv_detail_last"
-                android:layout_width="@dimen/_48sdp"
-                android:layout_height="match_parent"
-                android:layout_alignParentEnd="true"
-                android:layout_gravity="end"
-                android:adjustViewBounds="true"
-                android:clickable="false"
-                android:focusable="false"
-                android:scaleType="centerCrop"
-                android:visibility="gone" />
+            android:id="@+id/iv_detail_last"
+            android:layout_width="@dimen/_48sdp"
+            android:layout_height="match_parent"
+            android:layout_alignParentEnd="true"
+            android:layout_gravity="end"
+            android:adjustViewBounds="true"
+            android:clickable="false"
+            android:focusable="false"
+            android:scaleType="centerCrop"
+            android:visibility="gone"
+            tools:visibility="visible" />
     </RelativeLayout>
-
 
 </com.google.android.material.card.MaterialCardView>

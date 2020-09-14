@@ -1,36 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/_4sdp"
-        android:layout_marginBottom="@dimen/_4sdp">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="@dimen/_4sdp"
+    android:layout_marginBottom="@dimen/_4sdp">
 
     <androidx.cardview.widget.CardView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:animateLayoutChanges="true"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        android:dividerHeight="0.0px"
+        android:elevation="@dimen/_4sdp"
+        app:cardBackgroundColor="#D6EAF5"
+        app:cardCornerRadius="@dimen/_4sdp"
+        app:cardElevation="0dp"
+        app:contentPaddingBottom="@dimen/_4sdp"
+        app:contentPaddingLeft="@dimen/_8sdp"
+        app:contentPaddingRight="@dimen/_8sdp"
+        app:contentPaddingTop="@dimen/_4sdp">
+
+        <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+            android:id="@+id/text_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:animateLayoutChanges="true"
-            android:clipChildren="false"
-            android:clipToPadding="false"
-            android:dividerHeight="0.0px"
-            android:elevation="@dimen/_4sdp"
-            app:cardBackgroundColor="#D3E9f4"
-            app:cardCornerRadius="@dimen/_4sdp"
-            app:cardElevation="0dp"
-            app:contentPaddingBottom="@dimen/_4sdp"
-            app:contentPaddingLeft="@dimen/_8sdp"
-            app:contentPaddingRight="@dimen/_8sdp"
-            app:contentPaddingTop="@dimen/_4sdp">
-
-        <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
-                android:id="@+id/text_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:gravity="center"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
-                android:textColor="@color/time_color" />
+            android:gravity="center"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
+            android:textColor="@color/time_color"
+            tools:text="Yesterday" />
 
     </androidx.cardview.widget.CardView>
+
 </FrameLayout>

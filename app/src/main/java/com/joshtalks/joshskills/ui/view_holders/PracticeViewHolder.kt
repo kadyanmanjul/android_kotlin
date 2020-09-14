@@ -15,6 +15,7 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import com.google.android.material.textview.MaterialTextView
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
@@ -87,7 +88,7 @@ class PracticeViewHolder(activityRef: WeakReference<FragmentActivity>, message: 
 
             if (this.practiceEngagement.isNullOrEmpty()) {
                 sBuilder.append("Pending")
-                layoutP.height = Utils.dpToPx(getAppContext(), 180f)
+                layoutP.height = FrameLayout.LayoutParams.WRAP_CONTENT
                 layoutP.width = Utils.dpToPx(getAppContext(), 260f)
                 layoutP.gravity = android.view.Gravity.START
                 setResourceInImageView(imageView, R.drawable.ic_pattern)
@@ -104,10 +105,15 @@ class PracticeViewHolder(activityRef: WeakReference<FragmentActivity>, message: 
                 )
                 setResourceInImageView(imageView, R.drawable.ic_practise_submit_bg)
                 layoutP.gravity = android.view.Gravity.END
-                layoutP.height = Utils.dpToPx(getAppContext(), 160f)
+                layoutP.height = FrameLayout.LayoutParams.WRAP_CONTENT
                 layoutP.width = Utils.dpToPx(getAppContext(), 260f)
                 subRootView.layoutParams = layoutP
-                subRootView.setCardBackgroundColor(Color.parseColor("#EFFAFF"))
+                subRootView.setCardBackgroundColor(
+                    ContextCompat.getColor(
+                        AppObjectController.joshApplication,
+                        R.color.sent_msg_background
+                    )
+                )
                 sBuilder.setSpan(
                     ForegroundColorSpan(Color.parseColor("#25d366")),
                     8,
@@ -125,11 +131,6 @@ class PracticeViewHolder(activityRef: WeakReference<FragmentActivity>, message: 
     fun onClickRootView() {
         RxBus2.publish(PractiseSubmitEventBus(viewHolder, message))
     }
-/*
-    @Click(R.id.status_tv)
-    fun onClickStatusView() {
-        RxBus2.publish(PractiseSubmitEventBus(viewHolder, message))
-    }*/
 
     override fun getRoot(): FrameLayout {
         return rootView

@@ -12,13 +12,7 @@ import android.content.Intent
 import android.content.Intent.ACTION_VIEW
 import android.content.pm.PackageManager
 import android.content.res.Resources
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.graphics.Canvas
-import android.graphics.Paint
-import android.graphics.PorterDuff
-import android.graphics.PorterDuffXfermode
-import android.graphics.Rect
+import android.graphics.*
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.PictureDrawable
 import android.graphics.drawable.VectorDrawable
@@ -78,20 +72,14 @@ import io.reactivex.schedulers.Schedulers
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
-import java.io.File
-import java.io.FileOutputStream
-import java.io.IOException
-import java.io.InputStream
-import java.io.OutputStream
+import java.io.*
 import java.net.InetSocketAddress
 import java.net.Socket
 import java.net.URL
 import java.nio.charset.Charset
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
-import java.util.Calendar
-import java.util.Date
-import java.util.Locale
+import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.math.ceil
 import kotlin.math.pow
@@ -715,10 +703,10 @@ object Utils {
     fun dateHeaderDateFormat(date: Date): String {
         return when {
             DateUtils.isToday(date.time) -> {
-                "TODAY"
+                "Today"
             }
             isYesterday(date) -> {
-                "YESTERDAY"
+                "Yesterday"
             }
             else -> {
                 DateTimeUtils.formatWithStyle(date, DateTimeStyle.LONG)

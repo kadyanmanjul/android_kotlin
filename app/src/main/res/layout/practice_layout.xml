@@ -1,140 +1,130 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:id="@+id/root_view_fl"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/_2sdp"
-        android:layout_marginBottom="@dimen/_2sdp"
-        android:paddingStart="@dimen/_14sdp"
-        android:paddingEnd="@dimen/_14sdp">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root_view_fl"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="@dimen/_2sdp"
+    android:layout_marginBottom="@dimen/_2sdp"
+    android:paddingStart="@dimen/_14sdp"
+    android:paddingEnd="@dimen/_14sdp">
 
     <androidx.cardview.widget.CardView
+        android:id="@+id/root_sub_view"
+        android:layout_width="@dimen/_216sdp"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:clickable="true"
+        android:divider="@android:color/transparent"
+        android:dividerHeight="0.0px"
+        android:elevation="@dimen/_4sdp"
+        android:enabled="true"
+        android:focusable="true"
+        android:foreground="?android:attr/selectableItemBackground"
+        app:cardBackgroundColor="@color/white"
+        app:cardCornerRadius="@dimen/_4sdp"
+        app:cardElevation="0dp"
+        app:cardPreventCornerOverlap="false"
+        app:contentPaddingBottom="@dimen/_4sdp"
+        app:contentPaddingLeft="@dimen/_4sdp"
+        app:contentPaddingRight="@dimen/_4sdp"
+        app:contentPaddingTop="@dimen/_4sdp"
+        tools:cardBackgroundColor="@color/white">
 
-            android:id="@+id/root_sub_view"
-            android:layout_width="@dimen/_216sdp"
-            android:layout_height="@dimen/_170sdp"
-            android:background="@color/white"
-            android:clickable="true"
-            android:divider="@android:color/transparent"
-            android:dividerHeight="0.0px"
-            android:elevation="@dimen/_4sdp"
-            android:enabled="true"
-            android:focusable="true"
-            android:foreground="?android:attr/selectableItemBackground"
-            app:cardBackgroundColor="@color/white"
-            app:cardCornerRadius="@dimen/_4sdp"
-            app:cardElevation="0dp"
-            app:contentPaddingLeft="@dimen/_4sdp"
-            app:contentPaddingRight="@dimen/_4sdp"
-            app:contentPaddingTop="@dimen/_4sdp"
-            tools:cardBackgroundColor="@color/white"
-            tools:cardPreventCornerOverlap="false">
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/round_rect_default"
+            android:backgroundTint="#EFEFEF">
 
-        <LinearLayout
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/image_view"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical">
+                android:layout_height="@dimen/_80sdp"
+                android:adjustViewBounds="true"
+                android:scaleType="fitXY"
+                android:src="@drawable/ic_pattern"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight=".22"
-                    android:background="@drawable/round_rect_default"
-                    android:backgroundTint="#EFEFEF">
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:autoSizeMaxTextSize="@dimen/font_18"
+                android:gravity="center"
+                android:paddingStart="@dimen/_4sdp"
+                android:paddingEnd="@dimen/_4sdp"
+                android:text="@string/practice"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6"
+                android:textColor="@color/colorAccent"
+                app:layout_constraintBottom_toBottomOf="@+id/image_view"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/image_view" />
 
-                <androidx.appcompat.widget.AppCompatImageView
-                        android:id="@+id/image_view"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:adjustViewBounds="true"
-                        android:scaleType="fitXY"
-                        android:src="@drawable/ic_pattern" />
+            <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+                android:id="@+id/status_tv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start"
+                android:background="@drawable/round_both_bottom_bg"
+                android:backgroundTint="#EFEFEF"
+                android:gravity="center_vertical|start"
+                android:paddingStart="@dimen/_8sdp"
+                android:paddingTop="@dimen/_4sdp"
+                android:paddingBottom="@dimen/_2sdp"
+                android:text="@string/status_with_colon"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+                android:textColor="@color/gray_82"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/image_view"
+                tools:text="Status: Pending" />
 
-                <FrameLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        app:layout_constraintBottom_toTopOf="@+id/status_tv"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent">
-
-                    <androidx.appcompat.widget.AppCompatTextView
-                            android:id="@+id/tv_title"
-                            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H5"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:autoSizeMaxTextSize="@dimen/font_18"
-                            android:gravity="center"
-                            android:paddingStart="@dimen/_4sdp"
-                            android:paddingEnd="@dimen/_4sdp"
-                            android:text="@string/practice"
-                            android:textColor="@color/colorAccent"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            tools:targetApi="o" />
-
-                </FrameLayout>
-
-
-                <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
-                        android:id="@+id/status_tv"
-                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Regular"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="start"
-                        android:background="@drawable/round_both_bottom_bg"
-                        android:backgroundTint="#EFEFEF"
-                        android:gravity="center_vertical|start"
-                        android:paddingStart="@dimen/_8sdp"
-                        android:paddingTop="@dimen/_4sdp"
-                        android:paddingBottom="@dimen/_2sdp"
-                        android:text="@string/status_with_colon"
-                        android:textColor="@color/gray_82"
-                        app:layout_constraintBottom_toTopOf="@+id/sub_title_tv"
-                        app:layout_constraintStart_toStartOf="parent" />
-
-                <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/sub_title_tv"
-                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Regular"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="start"
-                        android:background="@drawable/round_both_bottom_bg"
-                        android:backgroundTint="#EFEFEF"
-                        android:gravity="center_vertical|start"
-                        android:paddingStart="@dimen/_8sdp"
-                        android:paddingBottom="@dimen/_4sdp"
-                        android:textColor="@color/gray_82"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintStart_toStartOf="parent" />
-
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/sub_title_tv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start"
+                android:background="@drawable/round_both_bottom_bg"
+                android:backgroundTint="#EFEFEF"
+                android:gravity="center_vertical|start"
+                android:paddingStart="@dimen/_8sdp"
+                android:paddingBottom="@dimen/_4sdp"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
+                android:textColor="@color/gray_82"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/status_tv"
+                tools:text="Reading Practice" />
 
             <com.google.android.material.textview.MaterialTextView
-                    android:id="@+id/tv_submit_answer"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Bold"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="center"
-                    android:layout_weight=".78"
-                    android:gravity="center"
-                    android:paddingTop="@dimen/_6sdp"
-                    android:paddingBottom="@dimen/_6sdp"
-                    android:text="@string/open"
-                    android:textAllCaps="false"
-                    android:textColor="#25d366"
-                    app:drawableTint="@color/white"
-                    app:icon="@drawable/ef_ic_arrow_forward"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:rippleColor="@color/white" />
+                android:id="@+id/tv_submit_answer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|center"
+                android:background="@color/white"
+                android:gravity="bottom|center"
+                android:paddingTop="@dimen/_6sdp"
+                android:paddingBottom="@dimen/_6sdp"
+                android:text="@string/open"
+                android:textAllCaps="false"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Bold"
+                android:textColor="#25d366"
+                app:drawableTint="@color/white"
+                app:icon="@drawable/ef_ic_arrow_forward"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/sub_title_tv"
+                app:rippleColor="@color/white" />
 
-        </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
     </androidx.cardview.widget.CardView>
+
 </FrameLayout>

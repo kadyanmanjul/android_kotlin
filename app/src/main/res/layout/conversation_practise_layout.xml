@@ -1,100 +1,101 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:id="@+id/root_view_fl"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/_2sdp"
-        android:layout_marginBottom="@dimen/_2sdp"
-        android:paddingStart="@dimen/_14sdp"
-        android:paddingEnd="@dimen/_14sdp">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root_view_fl"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="@dimen/_2sdp"
+    android:layout_marginBottom="@dimen/_2sdp"
+    android:paddingStart="@dimen/_14sdp"
+    android:paddingEnd="@dimen/_14sdp">
 
     <androidx.cardview.widget.CardView
-            android:id="@+id/root_sub_view"
-            android:layout_width="@dimen/_216sdp"
-            android:layout_height="@dimen/_160sdp"
-            android:background="@color/white"
-            android:clickable="true"
-            android:divider="@android:color/transparent"
-            android:dividerHeight="0.0px"
-            android:elevation="@dimen/_4sdp"
-            android:enabled="true"
-            android:focusable="true"
-            android:foreground="?android:attr/selectableItemBackground"
-            android:paddingBottom="@dimen/_4sdp"
-            app:cardBackgroundColor="@color/white"
-            app:cardCornerRadius="@dimen/_4sdp"
-            app:cardElevation="0dp"
-            app:contentPaddingLeft="@dimen/_4sdp"
-            app:contentPaddingRight="@dimen/_4sdp"
-            app:contentPaddingTop="@dimen/_4sdp"
-            tools:cardBackgroundColor="@color/white"
-            tools:cardPreventCornerOverlap="false">
+        android:id="@+id/root_sub_view"
+        android:layout_width="@dimen/_216sdp"
+        android:layout_height="@dimen/_160sdp"
+        android:background="@color/white"
+        android:clickable="true"
+        android:divider="@android:color/transparent"
+        android:dividerHeight="0.0px"
+        android:elevation="@dimen/_4sdp"
+        android:enabled="true"
+        android:focusable="true"
+        android:foreground="?android:attr/selectableItemBackground"
+        android:paddingBottom="@dimen/_4sdp"
+        app:cardBackgroundColor="@color/white"
+        app:cardCornerRadius="@dimen/_4sdp"
+        app:cardElevation="0dp"
+        app:contentPaddingLeft="@dimen/_4sdp"
+        app:contentPaddingRight="@dimen/_4sdp"
+        app:contentPaddingTop="@dimen/_4sdp"
+        tools:cardBackgroundColor="@color/white"
+        tools:cardPreventCornerOverlap="false">
 
         <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical">
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight=".25"
-                    android:background="@drawable/round_rect_default"
-                    android:backgroundTint="#EFEFEF">
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight=".25"
+                android:background="@drawable/round_rect_default"
+                android:backgroundTint="#EFEFEF">
 
                 <androidx.appcompat.widget.AppCompatImageView
-                        android:id="@+id/image_view"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:adjustViewBounds="true"
-                        android:alpha="0.15"
-                        android:scaleType="fitXY"
-                        android:src="@drawable/ic_pattern" />
-
-                <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/tv_title"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:gravity="center"
-                        android:paddingStart="@dimen/_4sdp"
-                        android:paddingEnd="@dimen/_4sdp"
-                        android:text="@string/practice"
-                        android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4"
-                        android:textColor="@color/button_primary_color"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        tools:targetApi="o" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-            <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btn_start"
-                    style="@style/Widget.MaterialComponents.Button"
+                    android:id="@+id/image_view"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:adjustViewBounds="true"
+                    android:alpha="0.15"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/ic_pattern" />
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tv_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:layout_marginHorizontal="@dimen/_6sdp"
-                    android:layout_marginVertical="@dimen/_2sdp"
-                    android:layout_weight=".68"
-                    android:backgroundTint="@color/light_grey"
                     android:gravity="center"
-                    android:text="@string/start_practise"
-                    android:textAllCaps="false"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Button"
-                    android:translationZ="@dimen/_1sdp"
-                    app:cornerRadius="@dimen/_36sdp"
-                    app:icon="@drawable/ic_baseline_arrow_right"
-                    app:iconGravity="end"
-                    app:iconPadding="@dimen/_minus16sdp"
-                    app:iconSize="@dimen/_24sdp"
+                    android:paddingStart="@dimen/_4sdp"
+                    android:paddingEnd="@dimen/_4sdp"
+                    android:text="@string/practice"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6"
+                    android:textColor="@color/button_primary_color"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="@+id/constraintLayout"
-                    app:layout_constraintStart_toStartOf="@+id/constraintLayout"
-                    app:rippleColor="@color/white" />
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:targetApi="o" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_start"
+                style="@style/Widget.MaterialComponents.Button"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_marginHorizontal="@dimen/_6sdp"
+                android:layout_marginVertical="@dimen/_2sdp"
+                android:layout_weight=".68"
+                android:backgroundTint="@color/dark_grey"
+                android:gravity="center"
+                android:text="@string/start_practise"
+                android:textAllCaps="false"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Button"
+                android:translationZ="@dimen/_1sdp"
+                app:cornerRadius="@dimen/_36sdp"
+                app:icon="@drawable/ic_baseline_arrow_right"
+                app:iconGravity="end"
+                app:iconPadding="@dimen/_minus16sdp"
+                app:iconSize="@dimen/_24sdp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="@+id/constraintLayout"
+                app:layout_constraintStart_toStartOf="@+id/constraintLayout"
+                app:rippleColor="@color/white" />
         </LinearLayout>
+
     </androidx.cardview.widget.CardView>
+
 </FrameLayout>
