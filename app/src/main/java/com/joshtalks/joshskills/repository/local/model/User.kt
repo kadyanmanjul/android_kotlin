@@ -44,6 +44,9 @@ open class User {
     @SerializedName("source")
     var source: String = EMPTY
 
+    @SerializedName("is_verified")
+    var isVerified: Boolean = false
+
     fun update() {
         PrefManager.put(USER_PERSISTANT_KEY, toString())
     }

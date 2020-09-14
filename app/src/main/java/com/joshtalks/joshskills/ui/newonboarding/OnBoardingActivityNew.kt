@@ -6,7 +6,6 @@ import android.os.Bundle
 import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.CoreJoshActivity
-import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.onboarding.ONBOARD_VERSIONS
 import com.joshtalks.joshskills.ui.newonboarding.fragment.OnBoardIntroFragment
 import com.joshtalks.joshskills.ui.newonboarding.fragment.SelectCourseFragment
@@ -40,7 +39,7 @@ class OnBoardingActivityNew : CoreJoshActivity() {
         setContentView(R.layout.activity_onboarding_new)
         val haveCourses = intent.getBooleanExtra(HAVE_COURSES, false)
         if (intent.hasExtra(FLOW_FROM_INBOX)) {
-            if (intent.getBooleanExtra(FLOW_FROM_INBOX, false) || Mentor.getInstance().hasId()) {
+            if (intent.getBooleanExtra(FLOW_FROM_INBOX, false)) {
                 openCoursesFragment(haveCourses)
             } else {
                 openOnBoardingIntroFragment()

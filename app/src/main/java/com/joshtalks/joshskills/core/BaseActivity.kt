@@ -16,8 +16,8 @@ import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import com.android.installreferrer.api.InstallReferrerClient
 import com.flurry.android.FlurryAgent
-import com.google.gson.reflect.TypeToken
 import com.google.firebase.crashlytics.FirebaseCrashlytics
+import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
@@ -125,7 +125,7 @@ abstract class BaseActivity : AppCompatActivity() {
             PrefManager.getBoolValue(IS_GUEST_ENROLLED, false) -> {
                 getInboxActivityIntent()
             }
-            PrefManager.getStringValue(API_TOKEN).isEmpty() -> {
+            User.getInstance().firstName.isBlank() -> {
                 Intent(this, OnBoardActivity::class.java)
             }
             isUserProfileComplete() -> {
@@ -354,7 +354,7 @@ abstract class BaseActivity : AppCompatActivity() {
         }
     }
 
-    public fun isGuestUser(): Boolean =
+    fun isGuestUser(): Boolean =
         User.getInstance().source == GUEST_USER_SOURCE && User.getInstance().firstName.isBlank()
 
     fun getVersionData(): VersionResponse? {

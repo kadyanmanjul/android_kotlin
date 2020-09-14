@@ -19,6 +19,8 @@ data class LoginResponse(
     val referralCode: String = EMPTY,
     @SerializedName("new_user")
     val newUser: Boolean,
+    @SerializedName("is_verified")
+    val isVerified: Boolean,
     @SerializedName("created_source")
     val createdSource: String?
 )

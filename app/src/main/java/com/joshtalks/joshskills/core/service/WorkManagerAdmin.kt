@@ -23,6 +23,7 @@ object WorkManagerAdmin {
             .then(OneTimeWorkRequestBuilder<UniqueIdGenerationWorker>().build())
             .then(OneTimeWorkRequestBuilder<MappingGaIDWithMentor>().build())
             .then(OneTimeWorkRequestBuilder<InstanceIdGenerationWorker>().build())
+            .then(OneTimeWorkRequestBuilder<RegisterUserGAId>().build())
             .then(OneTimeWorkRequestBuilder<GetVersionAndFlowDataWorker>().build())
             .then(OneTimeWorkRequestBuilder<GenerateGuestUserMentorWorker>().build())
             .then(
