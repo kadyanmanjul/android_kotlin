@@ -20,6 +20,7 @@ import com.joshtalks.joshskills.repository.server.UpdateDeviceRequest
 import com.joshtalks.joshskills.repository.server.UpdateUserLocality
 import com.joshtalks.joshskills.repository.server.onboarding.EnrollMentorWithTagIdRequest
 import com.joshtalks.joshskills.repository.server.onboarding.EnrollMentorWithTestIdRequest
+import com.joshtalks.joshskills.repository.server.onboarding.OnBoardingStatusResponse
 import com.joshtalks.joshskills.repository.server.signup.LoginResponse
 import com.joshtalks.joshskills.repository.server.signup.RequestSocialSignUp
 import com.joshtalks.joshskills.repository.server.signup.RequestUserVerification
@@ -64,6 +65,13 @@ interface SignUpNetworkService {
 
     @POST("$DIR/user/verify_user/")
     suspend fun verifyGuestUser(@Body socialSignUpRequest: SocialSignUpRequest): Response<LoginResponse>
+
+    @GET("$DIR/version/get_onboarding_status/")
+    suspend fun getOnBoardingStatus(
+        @Query("instance_id") instanceId: String,
+        @Query("mentor_id") mentorId: String,
+        @Query("gaid") gaId: String
+    ): Response<OnBoardingStatusResponse>
 
     @POST("$DIR/user/user_verification/")
     suspend fun userVerification(@Body requestUserVerification: RequestUserVerification): Response<LoginResponse>

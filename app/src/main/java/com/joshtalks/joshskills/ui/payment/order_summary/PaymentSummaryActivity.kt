@@ -750,6 +750,7 @@ class PaymentSummaryActivity : CoreJoshActivity(),
         logPaymentStatusAnalyticsEvents(AnalyticsEvent.SUCCESS_PARAM.NAME)
         isBackPressDisabled = true
         razorpayOrderId.verifyPayment()
+        viewModel.updateSubscriptionStatus()
         NPSEventModel.setCurrentNPA(
             NPSEvent.PAYMENT_SUCCESS
         )

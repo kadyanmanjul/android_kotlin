@@ -410,7 +410,7 @@ class SignUpActivity : BaseActivity() {
                 .addOnCompleteListener(this) { task ->
                     if (task.isSuccessful) {
                         val accountUser = auth.currentUser
-                        handleFirebaseAuth(account.id, accountUser)
+                        handleFirebaseAuth(accountUser)
                     } else {
                         task.exception?.showAppropriateMsg()
 
@@ -423,7 +423,6 @@ class SignUpActivity : BaseActivity() {
     }
 
     private fun handleFirebaseAuth(
-        gId: String?,
         accountUser: FirebaseUser?
     ) {
         if (accountUser != null) {
@@ -432,7 +431,7 @@ class SignUpActivity : BaseActivity() {
 
                 viewModel.signUpUsingSocial(
                     LoginViaStatus.GMAIL,
-                    gId ?: accountUser.uid,
+                    accountUser.uid,
                     accountUser.displayName,
                     accountUser.email,
                     accountUser.photoUrl?.toString()

@@ -6,22 +6,38 @@ import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.crashlytics.FirebaseCrashlytics
-import com.joshtalks.joshskills.core.*
+import com.google.gson.reflect.TypeToken
+import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.EXPLORE_TYPE
+import com.joshtalks.joshskills.core.INSTANCE_ID
+import com.joshtalks.joshskills.core.IS_SUBSCRIPTION_STARTED
+import com.joshtalks.joshskills.core.IS_TRIAL_STARTED
+import com.joshtalks.joshskills.core.JoshApplication
+import com.joshtalks.joshskills.core.ONBOARDING_VERSION_KEY
+import com.joshtalks.joshskills.core.PAYMENT_MOBILE_NUMBER
+import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.USER_UNIQUE_ID
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
+import com.joshtalks.joshskills.core.analytics.BranchIOAnalytics
 import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.CreateOrderResponse
 import com.joshtalks.joshskills.repository.server.OrderDetailResponse
 import com.joshtalks.joshskills.repository.server.PaymentSummaryResponse
+import com.joshtalks.joshskills.repository.server.onboarding.FreeTrialData
+import com.joshtalks.joshskills.repository.server.onboarding.VersionResponse
+import com.joshtalks.joshskills.util.showAppropriateMsg
+import io.branch.referral.util.BRANCH_STANDARD_EVENT
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import retrofit2.Response
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
-import java.util.*
+import java.util.HashMap
 
 class PaymentSummaryViewModel(application: Application) : AndroidViewModel(application) {
     var context: JoshApplication = getApplication()
@@ -286,6 +302,50 @@ class PaymentSummaryViewModel(application: Application) : AndroidViewModel(appli
                 }
             }
             viewState?.postValue(ViewState.PROCESSED)
+        }
+    }
+
+    fun updateSubscriptionStatus() {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val response =
+                    AppObjectController.signUpNetworkService.getOnBoardingStatus(
+                        PrefManager.getStringValue(INSTANCE_ID, false),
+                        Mentor.getInstance().getId(),
+                        PrefManager.getStringValue(USER_UNIQUE_ID)
+                    )
+                if (response.isSuccessful) {
+                    response.body()?.run {
+                        // Update Version Data in local
+                        val versionData = AppObjectController.gsonMapper.fromJson<VersionResponse>(
+                            PrefManager.getStringValue(ONBOARDING_VERSION_KEY),
+                            object : TypeToken<VersionResponse>() {}.type
+                        )
+                        versionData?.version?.let {
+                            it.name = this.version.name
+                            it.id = this.version.id
+                        }
+                        versionData?.let {
+                            PrefManager.put(
+                                ONBOARDING_VERSION_KEY,
+                                AppObjectController.gsonMapper.toJson(versionData)
+                            )
+                        }
+
+                        // save Free trial data
+                        FreeTrialData.update(this.freeTrialData)
+
+                        PrefManager.put(EXPLORE_TYPE, this.exploreType)
+                        PrefManager.put(
+                            IS_SUBSCRIPTION_STARTED,
+                            this.subscriptionData.isSubscriptionBought ?: false
+                        )
+                        PrefManager.put(IS_TRIAL_STARTED, this.freeTrialData.is7DFTBought ?: false)
+                    }
+                }
+            } catch (ex: Throwable) {
+                ex.showAppropriateMsg()
+            }
         }
     }
 }

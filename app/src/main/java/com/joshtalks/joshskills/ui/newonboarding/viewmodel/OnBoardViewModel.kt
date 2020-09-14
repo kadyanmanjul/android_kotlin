@@ -7,7 +7,6 @@ import androidx.lifecycle.viewModelScope
 import com.joshtalks.joshskills.core.API_TOKEN
 import com.joshtalks.joshskills.core.ApiCallStatus
 import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.EXPLORE_TYPE
 import com.joshtalks.joshskills.core.GUEST_USER_SOURCE
 import com.joshtalks.joshskills.core.INSTANCE_ID
 import com.joshtalks.joshskills.core.IS_GUEST_ENROLLED
@@ -16,7 +15,6 @@ import com.joshtalks.joshskills.core.USER_UNIQUE_ID
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.LogException
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
-import com.joshtalks.joshskills.repository.local.model.ExploreCardType
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.CourseExploreModel
@@ -66,7 +64,6 @@ class OnBoardViewModel(application: Application) :
     }
 
     private fun updateFromLoginResponse(loginResponse: LoginResponse) {
-        PrefManager.put(EXPLORE_TYPE, ExploreCardType.NORMAL.name, false)
         val user = User.getInstance()
         user.userId = loginResponse.userId
         user.source =
@@ -88,13 +85,17 @@ class OnBoardViewModel(application: Application) :
             try {
                 apiCallStatusLiveData.postValue(ApiCallStatus.START)
                 if (Mentor.getInstance().getId().isNotEmpty()) {
-                    val data = EnrollMentorWithTestIdRequest(PrefManager.getStringValue(USER_UNIQUE_ID),Mentor.getInstance().getId(), testIds)
+                    val data = EnrollMentorWithTestIdRequest(
+                        PrefManager.getStringValue(USER_UNIQUE_ID),
+                        Mentor.getInstance().getId(),
+                        testIds
+                    )
                     val response =
                         AppObjectController.signUpNetworkService.enrollMentorWithTestIds(data)
 
                     if (response.isSuccessful) {
                         // bottom Sheet Dialog
-                        PrefManager.put(IS_GUEST_ENROLLED,value = true)
+                        PrefManager.put(IS_GUEST_ENROLLED, value = true)
                         apiCallStatusLiveData.postValue(ApiCallStatus.SUCCESS)
                         return@launch
                     }
@@ -113,12 +114,16 @@ class OnBoardViewModel(application: Application) :
             try {
 
                 if (Mentor.getInstance().getId().isNotEmpty()) {
-                    val data = EnrollMentorWithTagIdRequest(PrefManager.getStringValue(USER_UNIQUE_ID),Mentor.getInstance().getId(), tagIds)
+                    val data = EnrollMentorWithTagIdRequest(
+                        PrefManager.getStringValue(USER_UNIQUE_ID),
+                        Mentor.getInstance().getId(),
+                        tagIds
+                    )
                     val response =
                         AppObjectController.signUpNetworkService.enrollMentorWithTagIds(data)
 
                     if (response.isSuccessful) {
-                        PrefManager.put(IS_GUEST_ENROLLED,true)
+                        PrefManager.put(IS_GUEST_ENROLLED, true)
                         apiCallStatusLiveData.postValue(ApiCallStatus.SUCCESS)
                         return@launch
                         // bottom Sheet Dialog

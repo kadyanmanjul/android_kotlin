@@ -12,12 +12,16 @@ import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.core.API_TOKEN
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.EXPLORE_TYPE
 import com.joshtalks.joshskills.core.INSTANCE_ID
+import com.joshtalks.joshskills.core.IS_SUBSCRIPTION_STARTED
+import com.joshtalks.joshskills.core.IS_TRIAL_STARTED
 import com.joshtalks.joshskills.core.JoshApplication
 import com.joshtalks.joshskills.core.ONBOARDING_VERSION_KEY
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.RegistrationMethods
 import com.joshtalks.joshskills.core.SignUpStepStatus
+import com.joshtalks.joshskills.core.USER_UNIQUE_ID
 import com.joshtalks.joshskills.core.VerificationStatus
 import com.joshtalks.joshskills.core.VerificationVia
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
@@ -30,7 +34,7 @@ import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.RequestVerifyOTP
 import com.joshtalks.joshskills.repository.server.TrueCallerLoginRequest
-import com.joshtalks.joshskills.repository.server.onboarding.ONBOARD_VERSIONS
+import com.joshtalks.joshskills.repository.server.onboarding.FreeTrialData
 import com.joshtalks.joshskills.repository.server.onboarding.VersionResponse
 import com.joshtalks.joshskills.repository.server.signup.LoginResponse
 import com.joshtalks.joshskills.repository.server.signup.RequestSocialSignUp
@@ -354,8 +358,6 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
             request.countryCode = countryCode
             request.mobile = phoneNumber
         }
-
-        this.loginViaStatus = loginViaStatus
         progressBarStatus.postValue(true)
         viewModelScope.launch(Dispatchers.IO) {
             try {
@@ -365,7 +367,7 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
                     )
                 if (response.isSuccessful) {
                     response.body()?.run {
-                        setVersionDataToV1()
+                        updateSubscriptionStatus()
                         when (request.createdSource) {
                             CreatedSource.FB.name -> {
                                 MarketingAnalytics.completeRegistrationAnalytics(
@@ -403,21 +405,48 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
         }
     }
 
-    private fun setVersionDataToV1() {
-        val versionData = AppObjectController.gsonMapper.fromJson<VersionResponse>(
-            PrefManager.getStringValue(ONBOARDING_VERSION_KEY),
-            object : TypeToken<VersionResponse>() {}.type
-        )
-        versionData?.version?.let {
-            it.name = ONBOARD_VERSIONS.ONBOARDING_V1
-        }
-        versionData?.let {
-            PrefManager.put(
-                ONBOARDING_VERSION_KEY,
-                AppObjectController.gsonMapper.toJson(versionData)
-            )
-        }
+    fun updateSubscriptionStatus() {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val response =
+                    AppObjectController.signUpNetworkService.getOnBoardingStatus(
+                        PrefManager.getStringValue(INSTANCE_ID, false),
+                        Mentor.getInstance().getId(),
+                        PrefManager.getStringValue(USER_UNIQUE_ID)
+                    )
+                if (response.isSuccessful) {
+                    response.body()?.run {
+                        // Update Version Data in local
+                        val versionData = AppObjectController.gsonMapper.fromJson<VersionResponse>(
+                            PrefManager.getStringValue(ONBOARDING_VERSION_KEY),
+                            object : TypeToken<VersionResponse>() {}.type
+                        )
+                        versionData?.version?.let {
+                            it.name = this.version.name
+                            it.id = this.version.id
+                        }
+                        versionData?.let {
+                            PrefManager.put(
+                                ONBOARDING_VERSION_KEY,
+                                AppObjectController.gsonMapper.toJson(versionData)
+                            )
+                        }
 
+                        // save Free trial data
+                        FreeTrialData.update(this.freeTrialData)
+
+                        PrefManager.put(EXPLORE_TYPE, this.exploreType)
+                        PrefManager.put(
+                            IS_SUBSCRIPTION_STARTED,
+                            this.subscriptionData.isSubscriptionBought ?: false
+                        )
+                        PrefManager.put(IS_TRIAL_STARTED, this.freeTrialData.is7DFTBought ?: false)
+                    }
+                }
+            } catch (ex: Throwable) {
+                ex.showAppropriateMsg()
+            }
+        }
     }
 
 }
