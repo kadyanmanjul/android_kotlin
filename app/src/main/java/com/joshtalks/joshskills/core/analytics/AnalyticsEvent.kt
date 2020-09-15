@@ -397,7 +397,7 @@ enum class AnalyticsEvent(val NAME: String) {
     EXPLORE_TYPE("explore_type"),
     SUBSCRIPTION_BUTTON_CLICKED("subscription_button_clicked"),
     SUBSCRIPTION_POPUP("SUBSCRIPTION_POPUP"),
-
+    SUBSCRIPTION_EXPIRED("subscription_expired"),
     //CONVERSATION PRACTISE EVENTS
 
     CONVERSATION_PRACTISE_STARTED("conv prac started v3"),

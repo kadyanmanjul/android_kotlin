@@ -122,6 +122,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         lifecycle.addObserver(this)
         setContentView(R.layout.activity_inbox)
         setToolbar()
+        viewModel.updateSubscriptionStatus()
         addLiveDataObservable()
         checkAppUpdate()
         workInBackground()
@@ -243,7 +244,14 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
                                 .addBasicParam()
                                 .addUserDetails()
                                 .push()
-                            openCourseSelectionExplorer(true)
+                            if (PrefManager.getBoolValue(IS_SUBSCRIPTION_STARTED) && PrefManager.getBoolValue(
+                                    IS_SUBSCRIPTION_ENDED
+                                ).not()
+                            ) {
+                                openCourseExplorer()
+                            } else {
+                                openCourseSelectionExplorer(true)
+                            }
                         }
                     }
                 }
@@ -765,7 +773,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
 
         val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
         freeTrialData?.let {
-            if (it.is7DFTBought == true) {
+            if (it.is7DFTBought == false) {
                 PrefManager.put(IS_TRIAL_ENDED, true, false)
                 PrefManager.put(IS_TRIAL_STARTED, false, false)
                 PrefManager.put(REMAINING_TRIAL_DAYS, 0, false)
@@ -775,11 +783,16 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
 
                 val currentDate = Calendar.getInstance().time
 
-                PrefManager.put(
-                    IS_TRIAL_ENDED,
-                    (it.is7DFTBought?.not() ?: true || expiryDate?.after(currentDate) ?: true),
-                    false
-                )
+                (it.is7DFTBought?.not() != false || expiryDate?.after(currentDate) != false).let { result ->
+                    PrefManager.put(
+                        IS_TRIAL_ENDED,
+                        result,
+                        false
+                    )
+
+                    if (result)
+                        logTrialEventExpired()
+                }
 
                 PrefManager.put(
                     IS_TRIAL_STARTED,
@@ -828,21 +841,25 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
 
         val subscriptionData = SubscriptionData.getMapObject()
         subscriptionData?.let {
-            if (it.isSubscriptionBought == true) {
-                PrefManager.put(IS_TRIAL_ENDED, true, false)
-                PrefManager.put(IS_TRIAL_STARTED, false, false)
-                PrefManager.put(REMAINING_TRIAL_DAYS, 0, false)
+            if (it.isSubscriptionBought == false) {
+                PrefManager.put(IS_SUBSCRIPTION_ENDED, true, false)
+                PrefManager.put(IS_SUBSCRIPTION_STARTED, false, false)
+                PrefManager.put(REMAINING_SUBSCRIPTION_DAYS, 0, false)
             } else {
                 val expiryDate: Date? = sdf.parse(it.endDate)
                 val startDate: Date? = sdf.parse(it.startDate)
 
                 val currentDate = Calendar.getInstance().time
 
-                PrefManager.put(
-                    IS_SUBSCRIPTION_ENDED,
-                    (it.isSubscriptionBought?.not() ?: true || expiryDate?.after(currentDate) ?: true),
-                    false
-                )
+                (it.isSubscriptionBought?.not() ?: true || expiryDate?.after(currentDate) ?: true).let { result ->
+                    PrefManager.put(
+                        IS_SUBSCRIPTION_ENDED,
+                        result,
+                        false
+                    )
+                    if (result)
+                        logSubscriptionExpired()
+                }
 
                 PrefManager.put(
                     IS_SUBSCRIPTION_STARTED,
@@ -891,6 +908,15 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
     private fun logTrialEventExpired() {
         if (PrefManager.getBoolValue(IS_TRIAL_ENDED, false).not()) {
             AppAnalytics.create(AnalyticsEvent.SEVEN_DAY_TRIAL_OVER.NAME)
+                .addBasicParam()
+                .addUserDetails()
+                .push()
+        }
+    }
+
+    private fun logSubscriptionExpired() {
+        if (PrefManager.getBoolValue(IS_SUBSCRIPTION_ENDED, false).not()) {
+            AppAnalytics.create(AnalyticsEvent.SUBSCRIPTION_EXPIRED.NAME)
                 .addBasicParam()
                 .addUserDetails()
                 .push()

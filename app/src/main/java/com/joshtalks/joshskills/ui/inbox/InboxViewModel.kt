@@ -5,15 +5,26 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.crashlytics.FirebaseCrashlytics
+import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshcamerax.utils.SharedPrefsManager
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.ApiCallStatus
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.EXPLORE_TYPE
+import com.joshtalks.joshskills.core.INSTANCE_ID
+import com.joshtalks.joshskills.core.IS_SUBSCRIPTION_STARTED
+import com.joshtalks.joshskills.core.IS_TRIAL_STARTED
 import com.joshtalks.joshskills.core.JoshApplication
+import com.joshtalks.joshskills.core.ONBOARDING_VERSION_KEY
+import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.USER_UNIQUE_ID
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.repository.server.onboarding.FreeTrialData
+import com.joshtalks.joshskills.repository.server.onboarding.VersionResponse
 import com.joshtalks.joshskills.util.ReminderUtil
+import com.joshtalks.joshskills.util.showAppropriateMsg
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -160,6 +171,50 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
     fun getTotalRemindersFromLocal() {
         viewModelScope.launch(Dispatchers.IO) {
             totalRemindersViewModel.postValue(appDatabase.reminderDao().getRemindersList().size)
+        }
+    }
+
+    fun updateSubscriptionStatus() {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val response =
+                    AppObjectController.signUpNetworkService.getOnBoardingStatus(
+                        PrefManager.getStringValue(INSTANCE_ID, false),
+                        Mentor.getInstance().getId(),
+                        PrefManager.getStringValue(USER_UNIQUE_ID)
+                    )
+                if (response.isSuccessful) {
+                    response.body()?.run {
+                        // Update Version Data in local
+                        val versionData = AppObjectController.gsonMapper.fromJson<VersionResponse>(
+                            PrefManager.getStringValue(ONBOARDING_VERSION_KEY),
+                            object : TypeToken<VersionResponse>() {}.type
+                        )
+                        versionData?.version?.let {
+                            it.name = this.version.name
+                            it.id = this.version.id
+                        }
+                        versionData?.let {
+                            PrefManager.put(
+                                ONBOARDING_VERSION_KEY,
+                                AppObjectController.gsonMapper.toJson(versionData)
+                            )
+                        }
+
+                        // save Free trial data
+                        FreeTrialData.update(this.freeTrialData)
+
+                        PrefManager.put(EXPLORE_TYPE, this.exploreType)
+                        PrefManager.put(
+                            IS_SUBSCRIPTION_STARTED,
+                            this.subscriptionData.isSubscriptionBought ?: false
+                        )
+                        PrefManager.put(IS_TRIAL_STARTED, this.freeTrialData.is7DFTBought ?: false)
+                    }
+                }
+            } catch (ex: Throwable) {
+                ex.showAppropriateMsg()
+            }
         }
     }
 
