@@ -260,6 +260,7 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
                     response.body()?.run {
                         Mentor.getInstance().updateFromResponse(this)
                         this.getUser()?.let {
+                            it.isVerified = true
                             User.update(it.toString())
                         }
                         AppAnalytics.updateUser()
@@ -307,6 +308,7 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
                     )
                 if (response.isSuccessful) {
                     response.body()?.run {
+                        this.isVerified = true
                         User.getInstance().updateFromResponse(this)
                         _signUpStatus.postValue(SignUpStepStatus.ProfileCompleted)
                     }
