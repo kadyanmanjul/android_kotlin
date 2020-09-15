@@ -22,6 +22,7 @@ import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.onboarding.FreeTrialData
+import com.joshtalks.joshskills.repository.server.onboarding.OnBoardingStatusResponse
 import com.joshtalks.joshskills.repository.server.onboarding.VersionResponse
 import com.joshtalks.joshskills.util.ReminderUtil
 import com.joshtalks.joshskills.util.showAppropriateMsg
@@ -39,7 +40,8 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
     val registerCourseMinimalLiveData: MutableLiveData<List<InboxEntity>> = MutableLiveData()
     val registerCourseNetworkLiveData: MutableLiveData<List<InboxEntity>> = MutableLiveData()
     val reminderApiCallStatusLiveData: MutableLiveData<ApiCallStatus> = MutableLiveData()
-    val totalRemindersViewModel: MutableLiveData<Int> = MutableLiveData()
+    val totalRemindersLiveData: MutableLiveData<Int> = MutableLiveData()
+    val onBoardingLiveData: MutableLiveData<OnBoardingStatusResponse> = MutableLiveData()
 
     fun getRegisterCourses() {
         viewModelScope.launch(Dispatchers.IO) {
@@ -170,7 +172,7 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
 
     fun getTotalRemindersFromLocal() {
         viewModelScope.launch(Dispatchers.IO) {
-            totalRemindersViewModel.postValue(appDatabase.reminderDao().getRemindersList().size)
+            totalRemindersLiveData.postValue(appDatabase.reminderDao().getRemindersList().size)
         }
     }
 
@@ -185,6 +187,7 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
                     )
                 if (response.isSuccessful) {
                     response.body()?.run {
+                        onBoardingLiveData.postValue(this)
                         // Update Version Data in local
                         val versionData = AppObjectController.gsonMapper.fromJson<VersionResponse>(
                             PrefManager.getStringValue(ONBOARDING_VERSION_KEY),

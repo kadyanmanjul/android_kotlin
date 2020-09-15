@@ -232,7 +232,6 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
 
     }
 
-
     private fun updateFromLoginResponse(loginResponse: LoginResponse) {
         val user = User.getInstance()
         user.userId = loginResponse.userId

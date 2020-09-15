@@ -10,10 +10,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.BaseActivity
-import com.joshtalks.joshskills.core.ONBOARDING_VERSION_KEY
-import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
@@ -83,16 +80,6 @@ class OnBoardIntroFragment : Fragment() {
 
         if ((requireActivity() as BaseActivity).isGuestUser()) {
             binding.alreadySubscribed.setOnClickListener {
-                val versionData = (requireActivity() as BaseActivity).getVersionData()
-                versionData?.version?.let {
-                    it.name = ONBOARD_VERSIONS.ONBOARDING_V1
-                }
-                versionData?.let {
-                    PrefManager.put(
-                        ONBOARDING_VERSION_KEY,
-                        AppObjectController.gsonMapper.toJson(versionData)
-                    )
-                }
                 AppAnalytics.create(AnalyticsEvent.NEW_ONBOARDING_ALREADY_USER.NAME)
                     .addBasicParam()
                     .addUserDetails()

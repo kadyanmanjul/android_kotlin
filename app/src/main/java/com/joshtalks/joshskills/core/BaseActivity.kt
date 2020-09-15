@@ -354,7 +354,13 @@ abstract class BaseActivity : AppCompatActivity() {
         }
     }
 
-    fun isGuestUser(): Boolean = User.getInstance().isVerified.not()
+    fun isGuestUser(): Boolean {
+        if (User.getInstance().isVerified) {
+            return !PrefManager.getBoolValue(IS_GUEST_ENROLLED)
+        } else {
+            return true
+        }
+    }
 
     fun getVersionData(): VersionResponse? {
         versionResponse?.let {

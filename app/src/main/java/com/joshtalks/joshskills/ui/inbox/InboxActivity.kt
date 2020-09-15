@@ -130,16 +130,12 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
     }
 
     private fun updateSubscriptionTipView(exploreType: ExploreCardType) {
-        val subscriptionCourse =
-            viewModel.registerCourseNetworkLiveData.value?.filter { it.courseId == SUBSCRIPTION_COURSE_ID }
-                ?.getOrNull(0)
-        if (subscriptionCourse == null) {
+        if (PrefManager.getBoolValue(IS_SUBSCRIPTION_STARTED).not()) {
             when (exploreType) {
-
                 ExploreCardType.FREETRIAL -> {
                     subscriptionTipContainer.visibility = View.VISIBLE
 
-                    val remainingTrialDays = PrefManager.getIntValue(REMAINING_TRIAL_DAYS, false)
+                    val remainingTrialDays = PrefManager.getIntValue(REMAINING_TRIAL_DAYS)
                     txtSubscriptionTip.text = when {
 
                         remainingTrialDays <= 0 -> AppObjectController.getFirebaseRemoteConfig()
@@ -450,14 +446,16 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
                 }
             } else {
                 addCourseInRecyclerView(it)
-                setTrialEndParam(it)
-                setSubscriptionEndParam(it)
-                updateExploreTypeParam(it)
-                val exploreTypeStr = PrefManager.getStringValue(EXPLORE_TYPE, false)
-                val exploreType =
-                    if (exploreTypeStr.isNotBlank()) ExploreCardType.valueOf(exploreTypeStr) else ExploreCardType.NORMAL
-                updateSubscriptionTipView(exploreType)
-                setCTAButtonText(exploreType)
+            }
+        })
+        viewModel.onBoardingLiveData.observe(this, {
+            setTrialEndParam()
+            setSubscriptionEndParam()
+            val exploreTypeStr = PrefManager.getStringValue(EXPLORE_TYPE, false)
+            val exploreType =
+                if (exploreTypeStr.isNotBlank()) ExploreCardType.valueOf(exploreTypeStr) else ExploreCardType.NORMAL
+            updateSubscriptionTipView(exploreType)
+            setCTAButtonText(exploreType)
 
             }
         }
@@ -479,7 +477,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
             }
         })
 
-        viewModel.totalRemindersViewModel.observe(this) {
+        viewModel.totalRemindersLiveData.observe(this) {
             openReminderCallback(it)
         }
     }
@@ -764,26 +762,21 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         }
     }
 
-    private fun setTrialEndParam(coursesList: List<InboxEntity>) {
-        val trialCourse =
-            coursesList.filter { it.courseId == TRIAL_COURSE_ID }.getOrNull(0)
-        val isTrialStarted = trialCourse != null
-
+    private fun setTrialEndParam() {
         val freeTrialData = FreeTrialData.getMapObject()
-
         val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
         freeTrialData?.let {
             if (it.is7DFTBought == false) {
                 PrefManager.put(IS_TRIAL_ENDED, true, false)
                 PrefManager.put(IS_TRIAL_STARTED, false, false)
-                PrefManager.put(REMAINING_TRIAL_DAYS, 0, false)
+                PrefManager.put(REMAINING_TRIAL_DAYS, 0)
             } else {
                 val expiryDate: Date? = sdf.parse(it.endDate)
                 val startDate: Date? = sdf.parse(it.startDate)
 
                 val currentDate = Calendar.getInstance().time
 
-                (it.is7DFTBought?.not() != false || expiryDate?.after(currentDate) != false).let { result ->
+                (it.is7DFTBought?.not() == true || currentDate.after(expiryDate) == true).let { result ->
                     PrefManager.put(
                         IS_TRIAL_ENDED,
                         result,
@@ -799,44 +792,16 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
                     (it.is7DFTBought ?: false && startDate?.before(currentDate) ?: false), false
                 )
 
-                PrefManager.put(REMAINING_TRIAL_DAYS, currentDate.compareTo(expiryDate), false)
+                var difference_In_Time = expiryDate?.time?.minus(currentDate.time)
+
+                val difference_In_Days: Long =
+                    ((difference_In_Time?.div(1000 * 60 * 60 * 24))?.rem(365) ?: 0)
+                PrefManager.put(REMAINING_TRIAL_DAYS, difference_In_Days.toInt())
             }
         }
-
-        /*  val expiryTimeInMs =
-              trialCourse?.courseCreatedDate?.time?.plus(
-                  (trialCourse.duration ?: 7)
-                      .times(24L)
-                      .times(60L)
-                      .times(60L)
-                      .times(1000L)
-              )
-          val currentTimeInMs = Calendar.getInstance().timeInMillis
-
-          var isTrialEnded = false
-          var remainingTrialDays = 0
-          expiryTimeInMs?.let {
-              if (it <= currentTimeInMs) {
-                  logTrialEventExpired()
-                  isTrialEnded = true
-              }
-              val remainingDays =
-                  (it.minus(currentTimeInMs))
-                      .div(1000L)
-                      .div(60L)
-                      .div(60L)
-                      .div(24L)
-
-              remainingTrialDays = remainingDays.toInt()
-
-          }
-          PrefManager.put(IS_TRIAL_ENDED, isTrialEnded, false)
-        PrefManager.put(REMAINING_TRIAL_DAYS, remainingTrialDays, false)*/
     }
 
-    private fun setSubscriptionEndParam(coursesList: List<InboxEntity>) {
-        val subscriptionCourse =
-            coursesList.filter { it.courseId == SUBSCRIPTION_COURSE_ID }.getOrNull(0)
+    private fun setSubscriptionEndParam() {
         val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
 
         val subscriptionData = SubscriptionData.getMapObject()
@@ -851,7 +816,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
 
                 val currentDate = Calendar.getInstance().time
 
-                (it.isSubscriptionBought?.not() ?: true || expiryDate?.after(currentDate) ?: true).let { result ->
+                (it.isSubscriptionBought?.not() ?: true || currentDate.after(expiryDate)).let { result ->
                     PrefManager.put(
                         IS_SUBSCRIPTION_ENDED,
                         result,
@@ -867,9 +832,14 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
                     false
                 )
 
+
+                var difference_In_Time = expiryDate?.time?.minus(currentDate.time)
+
+                val difference_In_Days: Long =
+                    ((difference_In_Time?.div(1000 * 60 * 60 * 24))?.rem(365) ?: 0)
+
                 PrefManager.put(
-                    REMAINING_SUBSCRIPTION_DAYS,
-                    currentDate.compareTo(expiryDate),
+                    REMAINING_SUBSCRIPTION_DAYS, difference_In_Days.toInt(),
                     false
                 )
             }
@@ -920,14 +890,6 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
                 .addBasicParam()
                 .addUserDetails()
                 .push()
-        }
-    }
-
-    private fun updateExploreTypeParam(coursesList: List<InboxEntity>) {
-        val trialCourse =
-            coursesList.filter { it.courseId == TRIAL_COURSE_ID }.getOrNull(0)
-        if (trialCourse != null) {
-            PrefManager.put(EXPLORE_TYPE, ExploreCardType.FREETRIAL.name, false)
         }
     }
 

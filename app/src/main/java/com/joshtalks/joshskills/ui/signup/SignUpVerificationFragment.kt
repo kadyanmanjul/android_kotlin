@@ -215,9 +215,11 @@ class SignUpVerificationFragment : Fragment() {
                 (requireActivity() as SignUpActivity).verification?.verify(binding.otpView2.otp)
             } else {
                 startProgress()
-                if ((requireActivity() as BaseActivity).getVersionData()?.version?.name == ONBOARD_VERSIONS.ONBOARDING_V1)
+                if ((requireActivity() as BaseActivity).getVersionData()?.version?.name == ONBOARD_VERSIONS.ONBOARDING_V1 || (requireActivity() as BaseActivity).isGuestUser()
+                        .not()
+                ) {
                     viewModel.verifyOTP(binding.otpView2.otp)
-                else {
+                } else {
                     val requestObj = SocialSignUpRequest.Builder(
                         Mentor.getInstance().getId(),
                         PrefManager.getStringValue(INSTANCE_ID, false),

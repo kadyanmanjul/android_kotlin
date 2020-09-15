@@ -36,7 +36,6 @@ import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.AppSignatureHelper
 import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.core.INSTANCE_ID
-import com.joshtalks.joshskills.core.IS_GUEST_ENROLLED
 import com.joshtalks.joshskills.core.PermissionUtils
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.SignUpStepStatus
@@ -249,10 +248,7 @@ class SignUpActivity : BaseActivity() {
             }
 
             override fun onSuccessProfileShared(trueProfile: TrueProfile) {
-                if (getVersionData()?.version?.name == ONBOARD_VERSIONS.ONBOARDING_V1 || PrefManager.getBoolValue(
-                        IS_GUEST_ENROLLED, false
-                    ).not()
-                )
+                if (getVersionData()?.version?.name == ONBOARD_VERSIONS.ONBOARDING_V1 || isGuestUser().not())
                     viewModel.verifyUserViaTrueCaller(trueProfile)
                 else {
                     val requestObj = SocialSignUpRequest.Builder(
@@ -374,8 +370,8 @@ class SignUpActivity : BaseActivity() {
                 if (jsonObject.has("email")) {
                     email = jsonObject.getString("email")
                 }
-                if (getVersionData()?.version?.name == ONBOARD_VERSIONS.ONBOARDING_V1||PrefManager.getBoolValue(
-                        IS_GUEST_ENROLLED,false).not()) {
+
+                if (getVersionData()?.version?.name == ONBOARD_VERSIONS.ONBOARDING_V1 || isGuestUser().not()) {
                     viewModel.signUpUsingSocial(
                         LoginViaStatus.FACEBOOK,
                         id,
@@ -428,9 +424,8 @@ class SignUpActivity : BaseActivity() {
         accountUser: FirebaseUser?
     ) {
         if (accountUser != null) {
-            if (getVersionData()?.version?.name == ONBOARD_VERSIONS.ONBOARDING_V1||PrefManager.getBoolValue(
-                    IS_GUEST_ENROLLED,false).not()) {
 
+            if (getVersionData()?.version?.name == ONBOARD_VERSIONS.ONBOARDING_V1 || isGuestUser().not()) {
                 viewModel.signUpUsingSocial(
                     LoginViaStatus.GMAIL,
                     accountUser.uid,
