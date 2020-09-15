@@ -13,6 +13,7 @@ import android.os.Binder
 import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
+import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import com.joshtalks.joshskills.R
@@ -80,6 +81,8 @@ class WebRtcService : Service() {
             } else {
                 AppObjectController.joshApplication.startService(serviceIntent)
             }
+            // AppObjectController.joshApplication.startService(serviceIntent)
+
         }
     }
 
@@ -118,34 +121,36 @@ class WebRtcService : Service() {
             call = incomingCall
             Timber.tag(TAG).e("Call Incoming%s", call)
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && call == null) {
-                Intent(
-                    AppObjectController.joshApplication,
-                    WebRtcService::class.java
-                ).apply {
-                    action = IncomingCall().action
-                    putExtra(
-                        INCOMING_CALL_JSON_OBJECT, incomingCall.headers["data"]
-                    )
-                }.also { intent ->
+            val serviceIntent = Intent(
+                AppObjectController.joshApplication,
+                WebRtcService::class.java
+            ).apply {
+                action = IncomingCallNotification().action
+                putExtra(INCOMING_CALL_JSON_OBJECT, incomingCall.headers["data"])
+            }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && JoshApplication.isAppVisible.not()) {
+                serviceIntent.also { intent ->
                     AppObjectController.joshApplication.startForegroundService(intent)
                 }
             } else {
-                val i = Intent()
-                i.setClass(this, WebRtcActivity::class.java).apply {
-                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                    addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                }
-                i.putExtra(INCOMING_CALL_JSON_OBJECT, incomingCall.headers["data"])
-                startActivity(i)
+                AppObjectController.joshApplication.startService(serviceIntent)
             }
+
+            val i = Intent()
+            i.setClass(this, WebRtcActivity::class.java).apply {
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+            }
+            i.putExtra(INCOMING_CALL_JSON_OBJECT, incomingCall.headers["data"])
+            startActivity(i)
+
         }
 
     override fun onCreate() {
         super.onCreate()
-            if (AppObjectController.sinchClient == null || sinchClient == null) {
-                sinchClient = AppObjectController.initSinchClient()
-            }
+        if (AppObjectController.sinchClient == null || sinchClient == null) {
+            sinchClient = AppObjectController.initSinchClient()
+        }
         executor.execute {
             mNotificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager?
             sinchClient?.let { sinchClient ->
@@ -166,14 +171,13 @@ class WebRtcService : Service() {
         if (intent?.action == null || sinchClient == null) {
             return START_NOT_STICKY
         }
-
         executor.execute {
             intent.action?.run {
                 Timber.tag(TAG).e(intent.getStringExtra(INCOMING_CALL_JSON_OBJECT))
                 when {
                     this == IncomingCallNotification().action -> {
                         getSinchCall(intent.getStringExtra(INCOMING_CALL_JSON_OBJECT))
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && JoshApplication.isAppVisible.not()) {
                             val notification = incomingCallNotification(
                                 intent.getStringExtra(INCOMING_CALL_JSON_OBJECT)
                             )
@@ -195,9 +199,13 @@ class WebRtcService : Service() {
                         call?.hangup()
                     }
                     this == CallConnect().action -> {
+                        printDAta(intent)
                         stopForeground(true)
                         mNotificationManager?.cancel(CALL_NOTIFICATION_ID)
-                        processIncomingCall(intent.getStringExtra(INCOMING_CALL_JSON_OBJECT))
+                        processIncomingCall(
+                            intent.getStringExtra(INCOMING_CALL_JSON_OBJECT),
+                            pickupCall = true
+                        )
                     }
                     this == OutgoingCall().action -> {
                         Timber.tag(TAG).e("Outgoing")
@@ -209,7 +217,7 @@ class WebRtcService : Service() {
         return START_STICKY
     }
 
-    private fun processIncomingCall(data: String?) {
+    private fun processIncomingCall(data: String?, pickupCall: Boolean? = false) {
         val backIntent = Intent(
             AppObjectController.joshApplication,
             InboxActivity::class.java
@@ -220,6 +228,7 @@ class WebRtcService : Service() {
         val callActivityIntent =
             Intent(AppObjectController.joshApplication, WebRtcActivity::class.java).apply {
                 putExtra(IS_INCOMING_CALL, true)
+                putExtra(AUTO_PICKUP_CALL, pickupCall)
                 putExtra(INCOMING_CALL_JSON_OBJECT, data)
             }
 
@@ -278,6 +287,8 @@ class WebRtcService : Service() {
     }
 
     private fun incomingCallNotification(data: String?): android.app.Notification {
+        Timber.tag(TAG).e("incomingCallNotification   " + data)
+
 
         val incomingSoundUri: Uri =
             Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + applicationContext.packageName + "/" + R.raw.incoming)
@@ -326,7 +337,11 @@ class WebRtcService : Service() {
 
         val answerActionIntent =
             Intent(AppObjectController.joshApplication, WebRtcService::class.java)
-        answerActionIntent.action = CallConnect().action
+                .apply {
+                    action = CallConnect().action
+                    putExtra(INCOMING_CALL_JSON_OBJECT, data)
+                }
+
         val answerActionPendingIntent: PendingIntent =
             PendingIntent.getService(this, 0, answerActionIntent, PendingIntent.FLAG_UPDATE_CURRENT)
         val extras = Bundle()
@@ -367,6 +382,16 @@ class WebRtcService : Service() {
             .isAtLeast(Lifecycle.State.STARTED)
     }*/
 
+    fun printDAta(intent: Intent?) {
+        intent?.run {
+            this.getExtras()?.run {
+                for (key in this.keySet()) {
+                    Log.e(TAG, key + " : " + if (this[key] != null) this[key] else "NULL")
+                }
+            }
+        }
+
+    }
 }
 
 

@@ -47,6 +47,7 @@ public class ActivityLifecycleCallback {
                         AppAnalytics.create(AnalyticsEvent.ACTIVITY_PAUSE.getNAME())
                                 .addParam("name", activity.getClass().getSimpleName())
                                 .push();
+                        AppObjectController.setCurrentActivityClass(null);
 
                         Timber.tag("Josh_Activity_Paused").d(activity.getClass().getSimpleName());
 

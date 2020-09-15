@@ -433,4 +433,15 @@ enum class AnalyticsEvent(val NAME: String) {
     UPDATE_REMINDER_CLICKED("update_reminder_clicked"),
 
 
+    //Voip
+    OPEN_CALL_SEARCH_SCREEN_VOIP("open search for call screen v3"),
+    SEARCH_USER_FOR_VOIP("search user for call v3"),
+    STOP_USER_FOR_VOIP("stop user for call v3"),
+    START_CALL_USER_FOR_VOIP("start user for call v3"),
+    OPEN_CALL_SCREEN_VOIP("open call screen user for call v3"),
+    INCOMING_CALL_VOIP("incoming call v3"),
+    OUTGOING_CALL_VOIP("outgoing call v3"),
+    DISCONNECT_CALL_VOIP("disconnect call v3"),
+    ANSWER_CALL_VOIP("answer call v3"),
+
 }

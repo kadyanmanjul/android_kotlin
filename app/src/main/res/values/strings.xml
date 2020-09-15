@@ -407,4 +407,8 @@
     <string name="find_pp_label">Hum aapke liye aapka Practice Partner dhund rahe hai</string>
 
     <string name="topic_for_pp">Apne Partner se aap iss topic par baat kar sakte hai</string>
+
+    <string name="call_permission_message">To answer this call from %s , allow Josh Skills access to your microphone.</string>
+    <string name="call_permission_permanent_message">To answer this call from %s , allow Josh Skills access to your microphone . Tap Settings > Permissions, and turn Microphone on .</string>
+
 </resources>

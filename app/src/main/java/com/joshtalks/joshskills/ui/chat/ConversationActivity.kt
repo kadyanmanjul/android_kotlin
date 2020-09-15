@@ -430,6 +430,7 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
     }
 
     fun practiseOnCall() {
+        RxBus2.publish(P2PStartEventBus())
     }
 
     private fun initSnackBar() {

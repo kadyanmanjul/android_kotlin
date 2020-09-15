@@ -19,6 +19,8 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.core.PermissionUtils
+import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
+import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.databinding.ActivityCallingBinding
 import com.joshtalks.joshskills.repository.server.voip.VoipCallDetailModel
 import com.joshtalks.joshskills.ui.voip.util.AudioPlayer
@@ -40,6 +42,7 @@ import timber.log.Timber
 const val CALL_USER_ID = "call_user_id"
 const val IS_INCOMING_CALL = "is_incoming_call"
 const val INCOMING_CALL_JSON_OBJECT = "incoming_json_call_object"
+const val AUTO_PICKUP_CALL = "auto_pickup_call"
 
 class WebRtcActivity : BaseActivity(), CallListener {
 
@@ -103,6 +106,10 @@ class WebRtcActivity : BaseActivity(), CallListener {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_calling)
         binding.lifecycleOwner = this
         binding.handler = this
+        AppAnalytics.create(AnalyticsEvent.OPEN_CALL_SCREEN_VOIP.NAME)
+            .addBasicParam()
+            .addUserDetails()
+            .push()
         initSinch()
         actionAfterSinchInit()
     }
@@ -127,6 +134,7 @@ class WebRtcActivity : BaseActivity(), CallListener {
                     binding.userLocation.text = locality
                     binding.topicTextview.text = topic
                     initCall(mentorId)
+                    // initCall("3b268cc8-0e9b-4d10-92d3-14407aeb2274")
                 }
             } else {//You are receiver
                 binding.groupForIncoming.visibility = View.VISIBLE
@@ -153,6 +161,18 @@ class WebRtcActivity : BaseActivity(), CallListener {
                     if (binding.userName.text.isNullOrEmpty()) {
                         binding.userName.text = "User"
                     }
+                    AppAnalytics.create(AnalyticsEvent.INCOMING_CALL_VOIP.NAME)
+                        .addBasicParam()
+                        .addUserDetails()
+                        .push()
+                    AppObjectController.uiHandler.postDelayed({
+                        intent.getBooleanExtra(AUTO_PICKUP_CALL, false).run {
+                            if (this) {
+                                binding.btnIncomingConnect.performClick()
+                            }
+                        }
+                    }, 250)
+
                 }
             }
         } catch (ex: Exception) {
@@ -170,6 +190,11 @@ class WebRtcActivity : BaseActivity(), CallListener {
             call = sinchClient?.callClient?.callUser(mentorId, map)
             call?.addCallListener(this)
             sinchClient?.setPushNotificationDisplayName(json)
+            AppAnalytics.create(AnalyticsEvent.OUTGOING_CALL_VOIP.NAME)
+                .addBasicParam()
+                .addUserDetails()
+                .push()
+
         } catch (ex: Exception) {
             ex.printStackTrace()
         }
@@ -231,7 +256,10 @@ class WebRtcActivity : BaseActivity(), CallListener {
                             return
                         }
                         if (report.isAnyPermissionPermanentlyDenied) {
-                            PermissionUtils.callingPermissionPermanentlyDeniedDialog(this@WebRtcActivity)
+                            PermissionUtils.callingPermissionPermanentlyDeniedDialog(
+                                this@WebRtcActivity,
+                                message = R.string.call_permission_permanent_message
+                            )
                             return
                         }
                     }
@@ -253,6 +281,10 @@ class WebRtcActivity : BaseActivity(), CallListener {
         binding.groupForOutgoing.visibility = View.VISIBLE
         call.answer()
         call.addCallListener(this)
+        AppAnalytics.create(AnalyticsEvent.ANSWER_CALL_VOIP.NAME)
+            .addBasicParam()
+            .addUserDetails()
+            .push()
     }
 
     private fun updateStatus(view: View, enable: Boolean) {
@@ -293,6 +325,10 @@ class WebRtcActivity : BaseActivity(), CallListener {
 
     override fun onBackPressed() {
         stopCall()
+        AppAnalytics.create(AnalyticsEvent.DISCONNECT_CALL_VOIP.NAME)
+            .addBasicParam()
+            .addUserDetails()
+            .push()
         val resultIntent = Intent()
         setResult(RESULT_OK, resultIntent)
         finishAndRemoveTask()
@@ -332,9 +368,12 @@ class WebRtcActivity : BaseActivity(), CallListener {
         volumeControlStream = AudioManager.STREAM_VOICE_CALL
         if (CallDirection.OUTGOING == progressingCall.direction) {
             AudioPlayer.getInstance().playProgressTone()
+            binding.callStatus.text = "Ringing"
+        } else {
+            binding.callStatus.text = "Voice call"
         }
-        binding.callStatus.text = "Ringing"
         Timber.tag(TAG).e("onCallProgressing")
+
     }
 
     override fun onShouldSendPushNotification(call: Call, pushPairs: List<PushPair>) {

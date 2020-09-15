@@ -16,6 +16,8 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.core.PermissionUtils
+import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
+import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.interfaces.OnDismissWithDialog
 import com.joshtalks.joshskills.databinding.ActivitySearchingUserBinding
 import com.joshtalks.joshskills.ui.voip.extra.CallingStartMediatorDialog
@@ -35,6 +37,7 @@ class SearchingUserActivity : BaseActivity(), OnDismissWithDialog {
     private val viewModel: VoipCallingViewModel by lazy {
         ViewModelProvider(this).get(VoipCallingViewModel::class.java)
     }
+    private var appAnalytics: AppAnalytics?=null
 
 
     companion object {
@@ -68,9 +71,15 @@ class SearchingUserActivity : BaseActivity(), OnDismissWithDialog {
         binding.lifecycleOwner = this
         binding.handler = this
         courseId = intent.getStringExtra(COURSE_ID)
+        appAnalytics=AppAnalytics.create(AnalyticsEvent.OPEN_CALL_SEARCH_SCREEN_VOIP.NAME)
+            .addBasicParam()
+            .addUserDetails()
+            .addParam(AnalyticsEvent.COURSE_ID.NAME,courseId)
+            .addParam(AnalyticsEvent.FLOW_FROM_PARAM.NAME, "Conversation list")
         initView()
         addObserver()
         addRequesting()
+
     }
 
     private fun initView() {
@@ -158,6 +167,7 @@ class SearchingUserActivity : BaseActivity(), OnDismissWithDialog {
     }
 
     private fun requestForSearchUser() {
+        appAnalytics?.addParam(AnalyticsEvent.SEARCH_USER_FOR_VOIP.NAME,courseId)
         courseId?.let {
             startProgressBarCountDown()
             viewModel.getUserForTalk(it)
@@ -165,6 +175,11 @@ class SearchingUserActivity : BaseActivity(), OnDismissWithDialog {
     }
 
     fun stopCalling() {
+        AppAnalytics.create(AnalyticsEvent.STOP_USER_FOR_VOIP.NAME)
+            .addBasicParam()
+            .addUserDetails()
+            .push()
+
         timer?.cancel()
         this.finish()
     }
@@ -174,6 +189,9 @@ class SearchingUserActivity : BaseActivity(), OnDismissWithDialog {
         timer?.cancel()
         timer = null
         window?.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        appAnalytics?.addParam(AnalyticsEvent.BACK_PRESSED.NAME, true)
+        appAnalytics?.push()
+
     }
 
     override fun onSuccessDismiss() {
@@ -181,6 +199,10 @@ class SearchingUserActivity : BaseActivity(), OnDismissWithDialog {
             addRequesting()
         } else {
             viewModel.voipDetailsLiveData.value?.let {
+                AppAnalytics.create(AnalyticsEvent.START_CALL_USER_FOR_VOIP.NAME)
+                    .addBasicParam()
+                    .addUserDetails()
+                    .push()
                 viewModel.voipDetailsLiveData.postValue(null)
                 WebRtcActivity.startVoipActivity(this, it)
             }
