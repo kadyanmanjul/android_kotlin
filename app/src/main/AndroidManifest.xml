@@ -380,12 +380,6 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
-        <service
-                android:name="dm.audiostreamer.AudioStreamingService"
-                android:enabled="true"
-                android:exported="true"
-                android:permission="android.permission.BIND_JOB_SERVICE"
-                tools:ignore="ExportedService" />
 
         <service
                 android:name=".core.chrome.KeepAliveService"
@@ -424,21 +418,6 @@
                 tools:ignore="ExportedReceiver,ExportedService">
             <intent-filter>
                 <action android:name="com.android.vending.INSTALL_REFERRER" />
-            </intent-filter>
-        </receiver>
-
-
-        <receiver
-                android:name="dm.audiostreamer.AudioStreamingReceiver"
-                tools:ignore="ExportedReceiver,ExportedService">
-            <intent-filter>
-                <action android:name="dm.audiostreamer.close" />
-                <action android:name="dm.audiostreamer.pause" />
-                <action android:name="dm.audiostreamer.next" />
-                <action android:name="dm.audiostreamer.play" />
-                <action android:name="dm.audiostreamer.previous" />
-                <action android:name="android.intent.action.MEDIA_BUTTON" />
-                <action android:name="android.media.AUDIO_BECOMING_NOISY" />
             </intent-filter>
         </receiver>
 
