@@ -55,7 +55,6 @@ import com.joshtalks.joshskills.repository.local.eventbus.CreatedSource
 import com.joshtalks.joshskills.repository.local.eventbus.LoginViaEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.LoginViaStatus
 import com.joshtalks.joshskills.repository.local.model.Mentor
-import com.joshtalks.joshskills.repository.server.onboarding.ONBOARD_VERSIONS
 import com.joshtalks.joshskills.repository.server.signup.request.SocialSignUpRequest
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import com.karumi.dexter.Dexter
@@ -248,20 +247,20 @@ class SignUpActivity : BaseActivity() {
             }
 
             override fun onSuccessProfileShared(trueProfile: TrueProfile) {
-                if (getVersionData()?.version?.name == ONBOARD_VERSIONS.ONBOARDING_V1 || isGuestUser().not())
+                /*if (getVersionData()?.version?.name == ONBOARD_VERSIONS.ONBOARDING_V1 || isGuestUser().not())
                     viewModel.verifyUserViaTrueCaller(trueProfile)
-                else {
-                    val requestObj = SocialSignUpRequest.Builder(
-                        Mentor.getInstance().getId(),
-                        PrefManager.getStringValue(INSTANCE_ID, false),
-                        CreatedSource.TC.name,
-                        Mentor.getInstance().getUserId()
-                    ).payload(trueProfile.payload)
-                        .signatureAlgo(trueProfile.signatureAlgorithm)
-                        .signature(trueProfile.signature)
-                        .build()
-                    viewModel.verifyUser(requestObj)
-                }
+                else {*/
+                val requestObj = SocialSignUpRequest.Builder(
+                    Mentor.getInstance().getId(),
+                    PrefManager.getStringValue(INSTANCE_ID, false),
+                    CreatedSource.TC.name,
+                    Mentor.getInstance().getUserId()
+                ).payload(trueProfile.payload)
+                    .signatureAlgo(trueProfile.signatureAlgorithm)
+                    .signature(trueProfile.signature)
+                    .build()
+                viewModel.verifyUser(requestObj)
+                //}
             }
 
             override fun onVerificationRequired() {
@@ -371,15 +370,15 @@ class SignUpActivity : BaseActivity() {
                     email = jsonObject.getString("email")
                 }
 
-                if (getVersionData()?.version?.name == ONBOARD_VERSIONS.ONBOARDING_V1 || isGuestUser().not()) {
-                    viewModel.signUpUsingSocial(
-                        LoginViaStatus.FACEBOOK,
-                        id,
-                        name,
-                        email,
-                        getFBProfilePicture(id)
-                    )
-                } else {
+                /*  if (getVersionData()?.version?.name == ONBOARD_VERSIONS.ONBOARDING_V1 || isGuestUser().not()) {
+                      viewModel.signUpUsingSocial(
+                          LoginViaStatus.FACEBOOK,
+                          id,
+                          name,
+                          email,
+                          getFBProfilePicture(id)
+                      )
+                  } else {*/
                     val requestObj = SocialSignUpRequest.Builder(
                         Mentor.getInstance().getId(),
                         PrefManager.getStringValue(INSTANCE_ID, false),
@@ -390,7 +389,7 @@ class SignUpActivity : BaseActivity() {
                         .photoUrl(getFBProfilePicture(id))
                         .socialId(id).build()
                     viewModel.verifyUser(requestObj)
-                }
+                //}
             } catch (ex: Exception) {
                 LogException.catchException(ex)
             }
@@ -425,15 +424,15 @@ class SignUpActivity : BaseActivity() {
     ) {
         if (accountUser != null) {
 
-            if (getVersionData()?.version?.name == ONBOARD_VERSIONS.ONBOARDING_V1 || isGuestUser().not()) {
-                viewModel.signUpUsingSocial(
-                    LoginViaStatus.GMAIL,
-                    accountUser.uid,
-                    accountUser.displayName,
-                    accountUser.email,
-                    accountUser.photoUrl?.toString()
-                )
-            } else {
+            /* if (getVersionData()?.version?.name == ONBOARD_VERSIONS.ONBOARDING_V1 || isGuestUser().not()) {
+                 viewModel.signUpUsingSocial(
+                     LoginViaStatus.GMAIL,
+                     accountUser.uid,
+                     accountUser.displayName,
+                     accountUser.email,
+                     accountUser.photoUrl?.toString()
+                 )
+             } else {*/
                 val requestObj = SocialSignUpRequest.Builder(
                     Mentor.getInstance().getId(),
                     PrefManager.getStringValue(INSTANCE_ID, false),
@@ -444,7 +443,7 @@ class SignUpActivity : BaseActivity() {
                     .photoUrl(accountUser.photoUrl?.toString())
                     .socialId(accountUser.uid).build()
                 viewModel.verifyUser(requestObj)
-            }
+            // }
         } else {
             showToast(getString(R.string.generic_message_for_error))
         }

@@ -189,7 +189,7 @@ class GenerateGuestUserMentorWorker(var context: Context, workerParams: WorkerPa
 private fun updateFromLoginResponse(loginResponse: LoginResponse) {
     val user = User.getInstance()
     user.userId = loginResponse.userId
-    user.isVerified =loginResponse.isVerified
+    user.isVerified = false
     user.token = loginResponse.token
     User.update(user.toString())
     PrefManager.put(API_TOKEN, loginResponse.token)

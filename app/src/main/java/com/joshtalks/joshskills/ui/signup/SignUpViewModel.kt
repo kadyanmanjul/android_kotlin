@@ -235,7 +235,7 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
     private fun updateFromLoginResponse(loginResponse: LoginResponse) {
         val user = User.getInstance()
         user.userId = loginResponse.userId
-        user.isVerified = loginResponse.isVerified
+        user.isVerified = true
         user.token = loginResponse.token
         User.update(user.toString())
         PrefManager.put(API_TOKEN, loginResponse.token)
