@@ -61,6 +61,7 @@ open class User {
         user.phoneNumber = user.phoneNumber
         user.dateOfBirth = user.dateOfBirth
         user.gender = user.gender
+        user.firstName = user.firstName
         update(user.toString())
     }
 

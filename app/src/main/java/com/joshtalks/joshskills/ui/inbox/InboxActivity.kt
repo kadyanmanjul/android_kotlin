@@ -185,6 +185,8 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
                     viewModel.registerCourseNetworkLiveData.value?.let {
                         txtSubscriptionTip.text = AppObjectController.getFirebaseRemoteConfig()
                             .getString(FirebaseRemoteConfigKey.EXPLORE_TYPE_NORMAL_TIP)
+                    }.run {
+                        subscriptionTipContainer.visibility = View.GONE
                     }
                 }
 
@@ -768,7 +770,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
         freeTrialData?.let {
             if (it.is7DFTBought == false) {
-                PrefManager.put(IS_TRIAL_ENDED, true, false)
+                PrefManager.put(IS_TRIAL_ENDED, false, false)
                 PrefManager.put(IS_TRIAL_STARTED, false, false)
                 PrefManager.put(REMAINING_TRIAL_DAYS, 0)
             } else {
@@ -813,7 +815,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         val subscriptionData = SubscriptionData.getMapObject()
         subscriptionData?.let {
             if (it.isSubscriptionBought == false) {
-                PrefManager.put(IS_SUBSCRIPTION_ENDED, true, false)
+                PrefManager.put(IS_SUBSCRIPTION_ENDED, false, false)
                 PrefManager.put(IS_SUBSCRIPTION_STARTED, false, false)
                 PrefManager.put(REMAINING_SUBSCRIPTION_DAYS, 0, false)
             } else {

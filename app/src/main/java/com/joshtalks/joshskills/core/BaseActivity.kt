@@ -122,11 +122,13 @@ abstract class BaseActivity : AppCompatActivity() {
 
     fun getIntentForState(): Intent? {
         val intent: Intent? = when {
-            PrefManager.getBoolValue(IS_GUEST_ENROLLED, false) -> {
-                getInboxActivityIntent()
-            }
             User.getInstance().isVerified.not() -> {
-                Intent(this, OnBoardActivity::class.java)
+                if(PrefManager.getBoolValue(IS_GUEST_ENROLLED,false)){
+                    getInboxActivityIntent()
+                }
+                else {
+                    Intent(this, OnBoardActivity::class.java)
+                }
             }
             isUserProfileComplete() -> {
                 Intent(this, SignUpActivity::class.java)
