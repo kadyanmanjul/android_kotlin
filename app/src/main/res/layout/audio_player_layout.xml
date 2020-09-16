@@ -32,40 +32,40 @@
                 app:layout_constraintTop_toTopOf="parent">
 
             <ProgressBar
-                    android:id="@+id/progress_bar"
-                    android:layout_width="@dimen/_36sdp"
-                    android:layout_height="@dimen/_36sdp"
-                    android:layout_gravity="center"
-                    android:indeterminate="true"
-                    android:indeterminateTint="@color/button_primary_color"
-                    android:visibility="gone"
-                    tools:visibility="visible" />
+                android:id="@+id/progress_bar"
+                android:layout_width="@dimen/_36sdp"
+                android:layout_height="@dimen/_36sdp"
+                android:layout_gravity="center"
+                android:indeterminate="true"
+                android:indeterminateTint="@color/button_color"
+                android:visibility="gone"
+                tools:visibility="visible" />
 
             <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/btnPlay"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:background="@null"
-                    android:contentDescription="@string/play_button_description"
-                    android:padding="@dimen/_4sdp"
-                    android:visibility="visible"
-                    app:srcCompat="@drawable/ic_play_24dp"
-                    app:tint="@color/button_primary_color"
-                    tools:visibility="visible" />
+                android:id="@+id/btnPlay"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:background="@null"
+                android:contentDescription="@string/play_button_description"
+                android:padding="@dimen/_4sdp"
+                android:visibility="visible"
+                app:srcCompat="@drawable/ic_play_24dp"
+                app:tint="@color/button_color"
+                tools:visibility="visible" />
 
             <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/btnPause"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:background="@null"
-                    android:contentDescription="@string/play_button_description"
-                    android:padding="@dimen/_4sdp"
-                    android:visibility="invisible"
-                    app:srcCompat="@drawable/ic_pause_24dp"
-                    app:tint="@color/button_primary_color"
-                    tools:visibility="visible" />
+                android:id="@+id/btnPause"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:background="@null"
+                android:contentDescription="@string/play_button_description"
+                android:padding="@dimen/_4sdp"
+                android:visibility="invisible"
+                app:srcCompat="@drawable/ic_pause_24dp"
+                app:tint="@color/button_color"
+                tools:visibility="visible" />
         </FrameLayout>
 
         <SeekBar

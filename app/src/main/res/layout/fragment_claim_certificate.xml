@@ -28,22 +28,22 @@
                     android:paddingEnd="@dimen/_8sdp">
 
                 <androidx.appcompat.widget.AppCompatImageView
-                        android:id="@+id/iv_back"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="?attr/selectableItemBackgroundBorderless"
-                        android:clickable="true"
-                        android:focusable="true"
-                        android:gravity="center_vertical|start"
-                        android:onClick="@{()->handler.dismissAllowingStateLoss()}"
-                        android:paddingTop="@dimen/_8sdp"
-                        android:paddingEnd="@dimen/_4sdp"
-                        android:paddingBottom="@dimen/_8sdp"
-                        android:visibility="visible"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:srcCompat="@drawable/ic_arrow_back"
-                        app:tint="@color/font_color" />
+                    android:id="@+id/iv_back"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center_vertical|start"
+                    android:onClick="@{()->handler.dismissAllowingStateLoss()}"
+                    android:paddingTop="@dimen/_8sdp"
+                    android:paddingEnd="@dimen/_4sdp"
+                    android:paddingBottom="@dimen/_8sdp"
+                    android:visibility="visible"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/ic_arrow_back"
+                    app:tint="@color/black" />
 
 
                 <androidx.appcompat.widget.AppCompatImageView
@@ -63,21 +63,21 @@
 
 
                 <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/text_view"
-                        android:textStyle="bold|italic"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/_4sdp"
-                        android:gravity="center"
-                        android:lines="2"
-                        android:text="@string/certificate_unmodify_msz"
-                        android:textColor="@color/font_color"
-                        android:textSize="@dimen/_12sdp"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/image_view"
-                        app:layout_constraintWidth_default="percent"
-                        app:layout_constraintWidth_percent="0.8" />
+                    android:id="@+id/text_view"
+                    android:textStyle="bold|italic"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_4sdp"
+                    android:gravity="center"
+                    android:lines="2"
+                    android:text="@string/certificate_unmodify_msz"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/_12sdp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/image_view"
+                    app:layout_constraintWidth_default="percent"
+                    app:layout_constraintWidth_percent="0.8" />
 
 
                 <androidx.appcompat.widget.AppCompatEditText
@@ -104,35 +104,35 @@
 
 
                 <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/text_view_name"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:gravity="center|start"
-                        android:paddingStart="@dimen/_12sdp"
-                        android:text="@string/name"
-                        android:textColor="@color/font_color"
-                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Regular"
-                        app:layout_constraintBottom_toBottomOf="@+id/et_name"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="@+id/et_name"
-                        app:layout_constraintWidth_default="percent"
-                        app:layout_constraintWidth_percent="0.25" />
+                    android:id="@+id/text_view_name"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="center|start"
+                    android:paddingStart="@dimen/_12sdp"
+                    android:text="@string/name"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Regular"
+                    android:textColor="@color/black"
+                    app:layout_constraintBottom_toBottomOf="@+id/et_name"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/et_name"
+                    app:layout_constraintWidth_default="percent"
+                    app:layout_constraintWidth_percent="0.25" />
 
 
                 <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/text_view_email"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:gravity="center|start"
-                        android:paddingStart="@dimen/_12sdp"
-                        android:text="@string/email"
-                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Regular"
-                        android:textColor="@color/font_color"
-                        app:layout_constraintBottom_toBottomOf="@+id/et_email"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="@+id/et_email"
-                        app:layout_constraintWidth_default="percent"
-                        app:layout_constraintWidth_percent="0.25" />
+                    android:id="@+id/text_view_email"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="center|start"
+                    android:paddingStart="@dimen/_12sdp"
+                    android:text="@string/email"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Regular"
+                    android:textColor="@color/black"
+                    app:layout_constraintBottom_toBottomOf="@+id/et_email"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/et_email"
+                    app:layout_constraintWidth_default="percent"
+                    app:layout_constraintWidth_percent="0.25" />
 
                 <androidx.appcompat.widget.AppCompatEditText
                         android:id="@+id/et_email"
@@ -192,17 +192,17 @@
                     app:layout_constraintTop_toTopOf="parent">
 
                 <com.pnikosis.materialishprogress.ProgressWheel
-                        android:id="@+id/progress_bar"
-                        android:layout_width="@dimen/_72sdp"
-                        android:layout_height="@dimen/_72sdp"
-                        android:layout_gravity="center"
-                        android:layout_marginBottom="@dimen/_24sdp"
-                        android:visibility="visible"
-                        wheel:matProg_barColor="@color/button_primary_color"
-                        wheel:matProg_fillRadius="true"
-                        wheel:matProg_linearProgress="false"
-                        wheel:matProg_progressIndeterminate="true"
-                        wheel:matProg_rimWidth="@dimen/_2sdp" />
+                    android:id="@+id/progress_bar"
+                    android:layout_width="@dimen/_72sdp"
+                    android:layout_height="@dimen/_72sdp"
+                    android:layout_gravity="center"
+                    android:layout_marginBottom="@dimen/_24sdp"
+                    android:visibility="visible"
+                    wheel:matProg_barColor="@color/button_color"
+                    wheel:matProg_fillRadius="true"
+                    wheel:matProg_linearProgress="false"
+                    wheel:matProg_progressIndeterminate="true"
+                    wheel:matProg_rimWidth="@dimen/_2sdp" />
 
 
                 <androidx.appcompat.widget.AppCompatTextView

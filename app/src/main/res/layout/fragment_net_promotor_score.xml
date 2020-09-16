@@ -56,34 +56,34 @@
 
 
         <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/tv_title"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/_8sdp"
-                android:gravity="start"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H7_Semi_Bold"
-                android:textColor="@color/font_color"
-                app:layout_constraintBottom_toTopOf="@+id/tv_question"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintWidth_default="percent"
-                app:layout_constraintWidth_percent="0.95"
-                tools:text="@string/complaint_message" />
+            android:id="@+id/tv_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/_8sdp"
+            android:gravity="start"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H7_Semi_Bold"
+            android:textColor="@color/black"
+            app:layout_constraintBottom_toTopOf="@+id/tv_question"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintWidth_default="percent"
+            app:layout_constraintWidth_percent="0.95"
+            tools:text="@string/complaint_message" />
 
         <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/tv_question"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/_10sdp"
-                android:gravity="start"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4_Semi_Bold"
-                android:textColor="@color/font_color"
-                app:layout_constraintBottom_toTopOf="@+id/container_cl"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintWidth_default="percent"
-                app:layout_constraintWidth_percent="0.95"
-                tools:text="@string/complaint_message" />
+            android:id="@+id/tv_question"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/_10sdp"
+            android:gravity="start"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4_Semi_Bold"
+            android:textColor="@color/black"
+            app:layout_constraintBottom_toTopOf="@+id/container_cl"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintWidth_default="percent"
+            app:layout_constraintWidth_percent="0.95"
+            tools:text="@string/complaint_message" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/container_cl"
@@ -292,29 +292,29 @@
                     app:layout_constraintTop_toTopOf="parent" />
 
             <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/tv_user_name"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_12sdp"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Regular"
-                    android:textColor="@color/font_color"
-                    android:visibility="visible"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/iv_tick"
-                    tools:text="@string/bilkul_nahi" />
+                android:id="@+id/tv_user_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_12sdp"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Regular"
+                android:textColor="@color/black"
+                android:visibility="visible"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/iv_tick"
+                tools:text="@string/bilkul_nahi" />
 
             <androidx.appcompat.widget.AppCompatTextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_12sdp"
-                    android:gravity="center"
-                    android:text="@string/npr_thank_you"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4"
-                    android:textColor="@color/font_color"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/tv_user_name" />
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_12sdp"
+                android:gravity="center"
+                android:text="@string/npr_thank_you"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4"
+                android:textColor="@color/black"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tv_user_name" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

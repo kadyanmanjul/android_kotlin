@@ -12,14 +12,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.exoplayer2.Player
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.ALPHA_MAX
-import com.joshtalks.joshskills.core.ALPHA_MIN
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.PermissionUtils
-import com.joshtalks.joshskills.core.PractiseUser
-import com.joshtalks.joshskills.core.Utils
-import com.joshtalks.joshskills.core.ViewTypeForPractiseUser
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.custom_ui.SmoothLinearLayoutManager
@@ -29,9 +22,6 @@ import com.joshtalks.joshskills.core.custom_ui.exo_audio_player.AudioPlayerEvent
 import com.joshtalks.joshskills.core.custom_ui.recorder.OnAudioRecordListener
 import com.joshtalks.joshskills.core.custom_ui.recorder.RecordingItem
 import com.joshtalks.joshskills.core.interfaces.OnConversationPractiseSubmit
-import com.joshtalks.joshskills.core.setImage
-import com.joshtalks.joshskills.core.showToast
-import com.joshtalks.joshskills.core.textColorSet
 import com.joshtalks.joshskills.databinding.FragmentRecordPractiseBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.ConversationPractiseSubmitEventBus
@@ -47,8 +37,7 @@ import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import jp.wasabeef.recyclerview.animators.SlideInUpAnimator
-import java.util.ArrayList
-import java.util.LinkedList
+import java.util.*
 
 class RecordPractiseFragment private constructor() : Fragment(), AudioPlayerEventListener,
     OnConversationPractiseSubmit {
@@ -298,10 +287,10 @@ class RecordPractiseFragment private constructor() : Fragment(), AudioPlayerEven
         } else {
             if (viewModel.practiseWho == PractiseUser.FIRST) {
                 binding.tvFirstUser.text = getString(R.string.me)
-                binding.tvFirstUser.textColorSet(R.color.button_primary_color)
+                binding.tvFirstUser.textColorSet(R.color.button_color)
             } else {
                 binding.tvSecondUser.text = getString(R.string.me)
-                binding.tvSecondUser.textColorSet(R.color.button_primary_color)
+                binding.tvSecondUser.textColorSet(R.color.button_color)
             }
         }
     }
@@ -335,7 +324,7 @@ class RecordPractiseFragment private constructor() : Fragment(), AudioPlayerEven
             binding.btnRecord.backgroundTintList =
                 ContextCompat.getColorStateList(
                     AppObjectController.joshApplication,
-                    R.color.button_primary_color
+                    R.color.button_color
                 )
 
         } else {
@@ -372,14 +361,14 @@ class RecordPractiseFragment private constructor() : Fragment(), AudioPlayerEven
             binding.audioPlayer.onPause()
             binding.btnRecord.backgroundTintList = ContextCompat.getColorStateList(
                 AppObjectController.joshApplication,
-                R.color.button_primary_color
+                R.color.button_color
             )
             viewModel.isRecordingRunning = false
             viewModel.stopRecording(false)
         } else {
             binding.btnRecord.backgroundTintList = ContextCompat.getColorStateList(
                 AppObjectController.joshApplication,
-                R.color.recording_9D
+                R.color.wrong_answer
             )
             viewModel.startRecord(object :
                 OnAudioRecordListener {

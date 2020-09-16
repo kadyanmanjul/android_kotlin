@@ -37,20 +37,20 @@
             tools:listitem="@layout/match_the_following_recyclerview_item_row" />
 
     <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/see_answer"
-            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Bold"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/_12sdp"
-            android:clickable="true"
-            android:focusable="true"
-            android:text="@string/see_answer"
-            android:textColor="@color/button_primary_color"
-            android:visibility="gone"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/table_b_choices" />
+        android:id="@+id/see_answer"
+        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Bold"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_12sdp"
+        android:clickable="true"
+        android:focusable="true"
+        android:text="@string/see_answer"
+        android:textColor="@color/button_color"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/table_b_choices" />
 
     <com.google.android.material.textview.MaterialTextView
             android:id="@+id/reset_answer"

@@ -90,7 +90,7 @@
                         android:layout_height="@dimen/_36sdp"
                         android:layout_gravity="center"
                         android:indeterminate="true"
-                        android:indeterminateTint="@color/button_primary_color"
+                        android:indeterminateTint="@color/button_color"
                         android:visibility="invisible"
                         tools:visibility="visible" />
 

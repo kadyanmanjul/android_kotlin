@@ -20,20 +20,20 @@
             android:fitsSystemWindows="true">
 
         <com.google.android.material.appbar.AppBarLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/colorPrimaryDark"
-                android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorPrimary"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
             <com.google.android.material.appbar.MaterialToolbar
-                    android:id="@+id/toolbar"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:contentInsetStart="0dp"
-                    android:contentInsetLeft="0dp"
-                    android:contentInsetEnd="0dp"
-                    android:contentInsetRight="0dp"
-                    android:minHeight="?attr/actionBarSize"
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:contentInsetStart="0dp"
+                android:contentInsetLeft="0dp"
+                android:contentInsetEnd="0dp"
+                android:contentInsetRight="0dp"
+                android:minHeight="?attr/actionBarSize"
                     app:contentInsetEnd="0dp"
                     app:contentInsetLeft="0dp"
                     app:contentInsetRight="0dp"
@@ -97,23 +97,23 @@
             </com.google.android.material.appbar.MaterialToolbar>
 
             <com.google.android.material.tabs.TabLayout
-                    android:id="@+id/tab_layout"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/_4sdp"
-                    android:layout_marginEnd="@dimen/_4sdp"
-                    android:background="@color/colorPrimaryDark"
-                    android:clipToPadding="false"
-                    android:tabStripEnabled="true"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/toolbar"
-                    app:tabGravity="fill"
-                    app:tabIndicatorColor="@color/white"
-                    app:tabIndicatorFullWidth="true"
-                    app:tabIndicatorHeight="@dimen/_2sdp"
-                    app:tabMinWidth="@dimen/_78sdp"
-                    app:tabMode="scrollable"
+                android:id="@+id/tab_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_4sdp"
+                android:layout_marginEnd="@dimen/_4sdp"
+                android:background="@color/colorPrimary"
+                android:clipToPadding="false"
+                android:tabStripEnabled="true"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/toolbar"
+                app:tabGravity="fill"
+                app:tabIndicatorColor="@color/white"
+                app:tabIndicatorFullWidth="true"
+                app:tabIndicatorHeight="@dimen/_2sdp"
+                app:tabMinWidth="@dimen/_78sdp"
+                app:tabMode="scrollable"
                     app:tabPaddingEnd="@dimen/_8sdp"
                     app:tabPaddingStart="@dimen/_8sdp"
                     app:tabSelectedTextColor="@color/white"
@@ -134,19 +134,19 @@
                 tools:listitem="@layout/course_explorer_view_holder" />
 
         <com.pnikosis.materialishprogress.ProgressWheel
-                android:id="@+id/progress_bar"
-                android:layout_width="@dimen/_82sdp"
-                android:layout_height="@dimen/_82sdp"
-                android:layout_centerInParent="true"
-                android:layout_gravity="center"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                wheel:matProg_barColor="@color/button_primary_color"
-                wheel:matProg_fillRadius="true"
-                wheel:matProg_linearProgress="false"
-                wheel:matProg_progressIndeterminate="true" />
+            android:id="@+id/progress_bar"
+            android:layout_width="@dimen/_82sdp"
+            android:layout_height="@dimen/_82sdp"
+            android:layout_centerInParent="true"
+            android:layout_gravity="center"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            wheel:matProg_barColor="@color/button_color"
+            wheel:matProg_fillRadius="true"
+            wheel:matProg_linearProgress="false"
+            wheel:matProg_progressIndeterminate="true" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>

@@ -80,7 +80,7 @@ class TestItemViewHolder(
                     attempt_status.supportBackgroundTintList =
                         ResourcesCompat.getColorStateList(
                             AppObjectController.joshApplication.resources,
-                            R.color.red,
+                            R.color.wrong_answer,
                             null
                         )
                 }

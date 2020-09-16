@@ -1,45 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/tag_view"
-        android:layout_width="match_parent"
+    android:layout_width="match_parent"
     android:layout_height="@dimen/tag_height"
     android:layout_gravity="top|center"
     android:layout_marginTop="@dimen/_1sdp"
     android:layout_marginBottom="@dimen/_4sdp"
+    android:background="@color/pdf_bg_color"
     android:clickable="true"
     android:duplicateParentState="true"
     android:focusable="true"
     android:focusableInTouchMode="true"
     android:foreground="?android:attr/selectableItemBackground"
     android:visibility="gone"
-    app:cardBackgroundColor="#F5F5F5"
     tools:visibility="visible">
 
     <View
         android:layout_width="@dimen/_4sdp"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        android:background="@color/colorPrimaryDark"
+        android:background="@color/button_color"
         android:duplicateParentState="true" />
 
     <RelativeLayout
         android:id="@+id/sub_rl"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="center"
-            android:layout_marginStart="@dimen/_6sdp">
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:layout_marginStart="@dimen/_6sdp">
 
         <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
-                android:id="@+id/tv_sender_name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_gravity="center|start"
-                android:layout_marginTop="@dimen/_4sdp"
-                android:layout_marginEnd="@dimen/_8sdp"
-                android:layout_toStartOf="@id/iv_detail_last"
+            android:id="@+id/tv_sender_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_gravity="center|start"
+            android:layout_marginTop="@dimen/_4sdp"
+            android:layout_marginEnd="@dimen/_8sdp"
+            android:layout_toStartOf="@id/iv_detail_last"
             android:clickable="false"
             android:ellipsize="end"
             android:focusable="false"
@@ -49,16 +48,16 @@
             android:paddingBottom="@dimen/_3sdp"
             android:textAlignment="center"
             android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Bold"
-            android:textColor="@color/colorPrimaryDark"
+            android:textColor="@color/button_color"
             android:visibility="visible"
             tools:text="Vedant Maheshwari" />
 
         <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/tv_detail_last"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/tv_sender_name"
-                android:layout_alignParentStart="true"
+            android:id="@+id/tv_detail_last"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tv_sender_name"
+            android:layout_alignParentStart="true"
             android:layout_gravity="center|start"
             android:layout_marginEnd="@dimen/_8sdp"
             android:clickable="false"
@@ -70,7 +69,7 @@
             android:maxLines="2"
             android:textAlignment="center"
             android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
-            android:textColor="@color/emoji_icon_color"
+            android:textColor="@color/gray_82"
             tools:text="Practice #1" />
 
         <androidx.appcompat.widget.AppCompatImageView

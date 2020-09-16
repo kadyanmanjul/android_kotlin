@@ -60,19 +60,19 @@
                     tools:visibility="visible" />
 
             <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/iv_tick_first_user"
-                    android:layout_width="@dimen/_18sdp"
-                    android:layout_height="@dimen/_18sdp"
-                    android:background="@drawable/circle"
-                    android:backgroundTint="@color/button_primary_color"
-                    android:gravity="center_vertical|start"
-                    android:padding="@dimen/_4sdp"
-                    android:src="@drawable/ic_check"
-                    android:visibility="gone"
-                    app:layout_constraintBottom_toBottomOf="@+id/iv_first_user"
-                    app:layout_constraintEnd_toEndOf="@+id/iv_first_user"
-                    app:tint="@color/white"
-                    tools:visibility="visible" />
+                android:id="@+id/iv_tick_first_user"
+                android:layout_width="@dimen/_18sdp"
+                android:layout_height="@dimen/_18sdp"
+                android:background="@drawable/circle"
+                android:backgroundTint="@color/button_color"
+                android:gravity="center_vertical|start"
+                android:padding="@dimen/_4sdp"
+                android:src="@drawable/ic_check"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="@+id/iv_first_user"
+                app:layout_constraintEnd_toEndOf="@+id/iv_first_user"
+                app:tint="@color/white"
+                tools:visibility="visible" />
 
 
             <androidx.appcompat.widget.AppCompatTextView
@@ -106,19 +106,19 @@
                     tools:visibility="visible" />
 
             <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/iv_tick_second_user"
-                    android:layout_width="@dimen/_18sdp"
-                    android:layout_height="@dimen/_18sdp"
-                    android:background="@drawable/circle"
-                    android:backgroundTint="@color/button_primary_color"
-                    android:gravity="center_vertical|start"
-                    android:padding="@dimen/_4sdp"
-                    android:src="@drawable/ic_check"
-                    android:tint="@color/white"
-                    android:visibility="gone"
-                    app:layout_constraintBottom_toBottomOf="@+id/iv_second_user"
-                    app:layout_constraintEnd_toEndOf="@+id/iv_second_user"
-                    tools:visibility="visible" />
+                android:id="@+id/iv_tick_second_user"
+                android:layout_width="@dimen/_18sdp"
+                android:layout_height="@dimen/_18sdp"
+                android:background="@drawable/circle"
+                android:backgroundTint="@color/button_color"
+                android:gravity="center_vertical|start"
+                android:padding="@dimen/_4sdp"
+                android:src="@drawable/ic_check"
+                android:tint="@color/white"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="@+id/iv_second_user"
+                app:layout_constraintEnd_toEndOf="@+id/iv_second_user"
+                tools:visibility="visible" />
 
 
             <androidx.appcompat.widget.AppCompatTextView

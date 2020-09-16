@@ -8,15 +8,15 @@
         android:layout_marginVertical="@dimen/_20sdp">
 
     <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/header"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H5"
-            android:textColor="@color/font_color"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:text="Reviews and rating" />
+        android:id="@+id/header"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H5"
+        android:textColor="@color/black"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Reviews and rating" />
 
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -39,23 +39,23 @@
                 app:layout_constraintWidth_percent="0.45" />
 
         <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/course_rating"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:drawableEnd="@drawable/ic_baseline_star_big"
-                android:drawablePadding="@dimen/_4sdp"
-                android:gravity="center"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H2"
-                android:textColor="@color/font_color"
-                app:drawableTint="@color/font_color"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="@+id/emptyView"
-                app:layout_constraintStart_toStartOf="@+id/emptyView"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintWidth_default="percent"
-                app:layout_constraintWidth_percent="0.5"
-                tools:text="4.7" />
+            android:id="@+id/course_rating"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:drawableEnd="@drawable/ic_baseline_star_big"
+            android:drawablePadding="@dimen/_4sdp"
+            android:gravity="center"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H2"
+            android:textColor="@color/black"
+            app:drawableTint="@color/black"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/emptyView"
+            app:layout_constraintStart_toStartOf="@+id/emptyView"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_default="percent"
+            app:layout_constraintWidth_percent="0.5"
+            tools:text="4.7" />
 
         <com.mindorks.placeholderview.PlaceHolderView
                 android:id="@+id/rating_rv"

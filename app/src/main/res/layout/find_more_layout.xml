@@ -23,7 +23,7 @@
         android:layout_gravity="center"
         android:layout_marginTop="@dimen/_16sdp"
         android:background="@drawable/round_rectangle"
-        android:backgroundTint="@color/button_primary_color"
+        android:backgroundTint="@color/button_color"
         android:gravity="center"
         android:paddingStart="@dimen/_30sdp"
         android:paddingTop="@dimen/_10sdp"

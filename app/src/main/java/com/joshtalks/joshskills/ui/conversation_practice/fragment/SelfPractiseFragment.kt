@@ -12,20 +12,13 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.exoplayer2.Player.DISCONTINUITY_REASON_PERIOD_TRANSITION
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.ALPHA_MAX
-import com.joshtalks.joshskills.core.ALPHA_MIN
-import com.joshtalks.joshskills.core.PractiseUser
-import com.joshtalks.joshskills.core.Utils
-import com.joshtalks.joshskills.core.ViewTypeForPractiseUser
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.custom_ui.SmoothLinearLayoutManager
 import com.joshtalks.joshskills.core.custom_ui.decorator.LayoutMarginDecoration
 import com.joshtalks.joshskills.core.custom_ui.exo_audio_player.AudioModel
 import com.joshtalks.joshskills.core.custom_ui.exo_audio_player.AudioPlayerEventListener
-import com.joshtalks.joshskills.core.setImage
-import com.joshtalks.joshskills.core.showToast
-import com.joshtalks.joshskills.core.textColorSet
 import com.joshtalks.joshskills.databinding.SelfPractiseLayoutBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.ViewPagerDisableEventBus
@@ -34,8 +27,7 @@ import com.joshtalks.joshskills.repository.server.conversation_practice.ListenMo
 import com.joshtalks.joshskills.ui.conversation_practice.ConversationPracticeViewModel
 import com.joshtalks.joshskills.ui.conversation_practice.adapter.AudioPractiseAdapter
 import jp.wasabeef.recyclerview.animators.SlideInUpAnimator
-import java.util.ArrayList
-import java.util.LinkedList
+import java.util.*
 
 class SelfPractiseFragment private constructor() : Fragment(), AudioPlayerEventListener {
     private lateinit var conversationPractiseModel: ConversationPractiseModel
@@ -241,10 +233,10 @@ class SelfPractiseFragment private constructor() : Fragment(), AudioPlayerEventL
         } else {
             if (viewModel.practiseWho == PractiseUser.FIRST) {
                 binding.tvFirstUser.text = getString(R.string.me)
-                binding.tvFirstUser.textColorSet(R.color.button_primary_color)
+                binding.tvFirstUser.textColorSet(R.color.button_color)
             } else {
                 binding.tvSecondUser.text = getString(R.string.me)
-                binding.tvSecondUser.textColorSet(R.color.button_primary_color)
+                binding.tvSecondUser.textColorSet(R.color.button_color)
             }
         }
     }

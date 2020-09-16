@@ -97,7 +97,7 @@ class FillInTheBlankQuestionAdapter(
             divider.setBackgroundColor(
                 ContextCompat.getColor(
                     AppObjectController.joshApplication,
-                    R.color.button_primary_color
+                    R.color.button_color
                 )
             )
             setColor()
@@ -175,7 +175,7 @@ class FillInTheBlankQuestionAdapter(
             divider.setBackgroundColor(
                 ContextCompat.getColor(
                     AppObjectController.joshApplication,
-                    R.color.button_primary_color
+                    R.color.button_color
                 )
             )
         }

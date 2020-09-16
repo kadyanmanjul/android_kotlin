@@ -44,16 +44,16 @@
                         android:visibility="visible" />
 
                 <com.pnikosis.materialishprogress.ProgressWheel
-                        android:id="@+id/progress_dialog"
-                        android:layout_width="@dimen/_36sdp"
-                        android:layout_height="@dimen/_36sdp"
-                        android:layout_gravity="center"
-                        android:visibility="visible"
-                        wheel:matProg_barColor="@color/button_primary_color"
-                        wheel:matProg_fillRadius="false"
-                        wheel:matProg_progressIndeterminate="true"
-                        wheel:matProg_rimColor="#22000000"
-                        wheel:matProg_rimWidth="@dimen/_3sdp" />
+                    android:id="@+id/progress_dialog"
+                    android:layout_width="@dimen/_36sdp"
+                    android:layout_height="@dimen/_36sdp"
+                    android:layout_gravity="center"
+                    android:visibility="visible"
+                    wheel:matProg_barColor="@color/button_color"
+                    wheel:matProg_fillRadius="false"
+                    wheel:matProg_progressIndeterminate="true"
+                    wheel:matProg_rimColor="#22000000"
+                    wheel:matProg_rimWidth="@dimen/_3sdp" />
 
                 <androidx.appcompat.widget.AppCompatImageView
                         android:id="@+id/iv_cancel_download"
@@ -113,14 +113,14 @@
         </FrameLayout>
 
         <SeekBar
-                android:id="@+id/seek"
+            android:id="@+id/seek"
 
-                android:layout_width="fill_parent"
-                android:layout_height="@dimen/_16sdp"
-                android:layout_centerInParent="true"
-                android:layout_gravity="center"
-                android:layout_toEndOf="@+id/medid_fl"
-                android:tint="@color/button_primary_color" />
+            android:layout_width="fill_parent"
+            android:layout_height="@dimen/_16sdp"
+            android:layout_centerInParent="true"
+            android:layout_gravity="center"
+            android:layout_toEndOf="@+id/medid_fl"
+            android:tint="@color/button_color" />
 
         <TextView
                 android:id="@+id/timestamp"

@@ -36,20 +36,20 @@
             tools:text="Learn the secrets to become a dynamic personality and impress your peers - in the office, college and everywhere else. India’s highest rated Personality Development course is here!" />
 
     <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
-            android:id="@+id/text_read_more"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="start"
-            android:layout_marginTop="@dimen/_8sdp"
-            android:gravity="center_vertical|start"
-            android:maxLines="1"
-            android:text="@string/read_more"
-            android:textAppearance="@style/TextAppearance.JoshTypography.Link_Normal"
-            android:textColor="@color/button_primary_color"
-            android:visibility="visible"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/description"
-            app:layout_constraintWidth_default="percent" />
+        android:id="@+id/text_read_more"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="start"
+        android:layout_marginTop="@dimen/_8sdp"
+        android:gravity="center_vertical|start"
+        android:maxLines="1"
+        android:text="@string/read_more"
+        android:textAppearance="@style/TextAppearance.JoshTypography.Link_Normal"
+        android:textColor="@color/button_color"
+        android:visibility="visible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/description"
+        app:layout_constraintWidth_default="percent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

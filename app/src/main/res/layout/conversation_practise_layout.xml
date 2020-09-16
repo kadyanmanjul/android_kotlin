@@ -63,7 +63,7 @@
                     android:paddingEnd="@dimen/_4sdp"
                     android:text="@string/practice"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6"
-                    android:textColor="@color/button_primary_color"
+                    android:textColor="@color/button_color"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"

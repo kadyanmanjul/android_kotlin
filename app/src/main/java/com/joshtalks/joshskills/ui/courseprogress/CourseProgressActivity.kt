@@ -36,20 +36,13 @@ import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.CERTIFICATE_GENERATE
-import com.joshtalks.joshskills.core.CoreJoshActivity
-import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.custom_ui.AnimationView
 import com.joshtalks.joshskills.core.custom_ui.TextDrawable
-import com.joshtalks.joshskills.core.getUserNameInShort
 import com.joshtalks.joshskills.core.interfaces.OnDismissClaimCertificateDialog
 import com.joshtalks.joshskills.core.interfaces.OnDismissDialog
-import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.ActivityCourseProgressBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
@@ -168,7 +161,7 @@ class CourseProgressActivity : CoreJoshActivity(), OnDismissDialog,
                 .endConfig()
                 .buildRound(
                     getUserNameInShort(),
-                    ContextCompat.getColor(applicationContext, R.color.button_primary_color)
+                    ContextCompat.getColor(applicationContext, R.color.button_color)
                 )
             binding.userImage.background = drawable
             binding.userImage.setImageDrawable(drawable)
@@ -272,7 +265,7 @@ class CourseProgressActivity : CoreJoshActivity(), OnDismissDialog,
                             ForegroundColorSpan(
                                 ContextCompat.getColor(
                                     applicationContext,
-                                    R.color.font_color
+                                    R.color.black
                                 )
                             ), 19, endPos, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
                         )
@@ -284,7 +277,7 @@ class CourseProgressActivity : CoreJoshActivity(), OnDismissDialog,
                             binding.claimCertificateBtn.backgroundTintList = ColorStateList.valueOf(
                                 ContextCompat.getColor(
                                     applicationContext,
-                                    R.color.button_primary_color
+                                    R.color.button_color
                                 )
                             )
                         }

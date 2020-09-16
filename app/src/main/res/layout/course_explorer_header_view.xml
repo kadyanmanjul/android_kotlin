@@ -30,21 +30,21 @@
                 tools:background="@drawable/place_holder_explore" />
 
         <com.google.android.material.button.MaterialButton
-                android:id="@+id/buy_now_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="end|bottom"
-                android:layout_marginEnd="@dimen/_8sdp"
-                android:backgroundTint="@color/button_primary_color"
-                android:gravity="center"
-                android:paddingTop="@dimen/_6sdp"
-                android:paddingBottom="@dimen/_6sdp"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
-                android:text="@string/show_details"
-                android:textAllCaps="false"
-                android:textColor="@color/white"
-                android:visibility="gone"
-                tools:visibility="visible" />
+            android:id="@+id/buy_now_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|bottom"
+            android:layout_marginEnd="@dimen/_8sdp"
+            android:backgroundTint="@color/button_color"
+            android:gravity="center"
+            android:paddingTop="@dimen/_6sdp"
+            android:paddingBottom="@dimen/_6sdp"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
+            android:text="@string/show_details"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:visibility="gone"
+            tools:visibility="visible" />
 
     </androidx.cardview.widget.CardView>
 </layout>

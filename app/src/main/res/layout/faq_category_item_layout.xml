@@ -1,33 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:id="@+id/root_view"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:clickable="true"
-        android:focusable="true"
-        app:cardBackgroundColor="@color/faq_f1"
-        app:cardCornerRadius="@dimen/_8sdp"
-        app:cardElevation="@dimen/_2sdp"
-        app:cardUseCompatPadding="false"
-        app:contentPaddingBottom="@dimen/_18sdp"
-        app:contentPaddingLeft="@dimen/_4sdp"
-        app:contentPaddingRight="@dimen/_4sdp"
-        app:contentPaddingTop="@dimen/_18sdp"
-        app:strokeColor="@color/faq_f1"
-        app:strokeWidth="@dimen/_2sdp">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root_view"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:clickable="true"
+    android:focusable="true"
+    app:cardBackgroundColor="@color/light_blue"
+    app:cardCornerRadius="@dimen/_8sdp"
+    app:cardElevation="@dimen/_2sdp"
+    app:cardUseCompatPadding="false"
+    app:contentPaddingBottom="@dimen/_18sdp"
+    app:contentPaddingLeft="@dimen/_4sdp"
+    app:contentPaddingRight="@dimen/_4sdp"
+    app:contentPaddingTop="@dimen/_18sdp"
+    app:strokeColor="@color/light_blue"
+    app:strokeWidth="@dimen/_2sdp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center">
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center">
 
         <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/iv_category_icon"
-                android:layout_width="@dimen/_18sdp"
-                android:layout_height="@dimen/_18sdp"
+            android:id="@+id/iv_category_icon"
+            android:layout_width="@dimen/_18sdp"
+            android:layout_height="@dimen/_18sdp"
                 android:layout_gravity="center"
                 android:adjustViewBounds="true"
                 android:scaleType="fitCenter"

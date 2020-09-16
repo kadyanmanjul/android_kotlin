@@ -11,8 +11,8 @@
         <clip>
             <shape android:shape="line">
                 <stroke
-                        android:width="@dimen/seek_bar_thickness"
-                        android:color="@color/button_primary_color" />
+                    android:width="@dimen/seek_bar_thickness"
+                    android:color="@color/button_color" />
             </shape>
         </clip>
     </item>

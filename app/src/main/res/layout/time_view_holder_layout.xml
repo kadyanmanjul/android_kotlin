@@ -16,7 +16,7 @@
         android:clipToPadding="false"
         android:dividerHeight="0.0px"
         android:elevation="@dimen/_4sdp"
-        app:cardBackgroundColor="#D6EAF5"
+        app:cardBackgroundColor="@color/light_blue"
         app:cardCornerRadius="@dimen/_4sdp"
         app:cardElevation="0dp"
         app:contentPaddingBottom="@dimen/_4sdp"
@@ -30,8 +30,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:gravity="center"
-            android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
-            android:textColor="@color/time_color"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal"
+            android:textColor="@color/black"
             tools:text="Yesterday" />
 
     </androidx.cardview.widget.CardView>

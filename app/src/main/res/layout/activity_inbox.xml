@@ -106,7 +106,7 @@
         android:layout_width="@dimen/_82sdp"
         android:layout_height="@dimen/_82sdp"
         android:layout_gravity="center"
-        wheel:matProg_barColor="@color/button_primary_color"
+        wheel:matProg_barColor="@color/button_color"
         wheel:matProg_fillRadius="true"
         wheel:matProg_linearProgress="false"
         wheel:matProg_progressIndeterminate="true" />

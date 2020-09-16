@@ -8,22 +8,22 @@
         tools:ignore="MissingPrefix">
 
     <FrameLayout
-            android:id="@+id/frameLayout"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/circle2"
-            android:backgroundTint="@color/button_primary_color"
-            android:padding="@dimen/_2sdp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+        android:id="@+id/frameLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/circle2"
+        android:backgroundTint="@color/button_color"
+        android:padding="@dimen/_2sdp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/image_circle"
-                android:layout_width="@dimen/_56sdp"
-                android:layout_height="@dimen/_56sdp"
-                app:civ_border_color="@color/white"
-                app:civ_border_width="@dimen/_2sdp"
+            android:id="@+id/image_circle"
+            android:layout_width="@dimen/_56sdp"
+            android:layout_height="@dimen/_56sdp"
+            app:civ_border_color="@color/white"
+            app:civ_border_width="@dimen/_2sdp"
                 app:layout_constraintCircleRadius="122dp" />
     </FrameLayout>
 

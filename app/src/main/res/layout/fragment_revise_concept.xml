@@ -64,20 +64,20 @@
         </com.google.android.material.appbar.AppBarLayout>
 
         <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/heading"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4_Semi_Bold"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/_12sdp"
-                android:layout_marginTop="@dimen/_11sdp"
-                android:gravity="start|center"
-                android:textColor="@color/font_color"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/toolbar"
-                tool:text="Heading" />
+            android:id="@+id/heading"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4_Semi_Bold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/_12sdp"
+            android:layout_marginTop="@dimen/_11sdp"
+            android:gravity="start|center"
+            android:textColor="@color/black"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/toolbar"
+            tool:text="Heading" />
 
         <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/thumbnail_image"
@@ -140,18 +140,18 @@
                 app:layout_constraintVertical_bias="0">
 
             <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
-                    android:id="@+id/description"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Regular"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="@dimen/_12sdp"
-                    android:gravity="start|center"
-                    android:textColor="@color/font_color"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/video"
-                    tool:text="@string/flash_call_verify_permission_message" />
+                android:id="@+id/description"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Regular"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/_12sdp"
+                android:gravity="start|center"
+                android:textColor="@color/black"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/video"
+                tool:text="@string/flash_call_verify_permission_message" />
 
         </ScrollView>
 

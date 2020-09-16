@@ -9,17 +9,17 @@
     <com.google.android.material.textview.MaterialTextView
             android:id="@+id/text_view"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:drawableStart="@drawable/ic_check"
-            android:drawablePadding="@dimen/_16sdp"
-            android:drawableTint="@android:color/transparent"
-            android:gravity="center_vertical|start"
-            android:paddingStart="@dimen/_12sdp"
-            android:paddingTop="@dimen/_10sdp"
-            android:paddingBottom="@dimen/_10sdp"
-            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Semi_Bold"
-            android:textColor="@color/font_color"
-            app:drawableTint="@color/transparent" />
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:drawableStart="@drawable/ic_check"
+        android:drawablePadding="@dimen/_16sdp"
+        android:drawableTint="@android:color/transparent"
+        android:gravity="center_vertical|start"
+        android:paddingStart="@dimen/_12sdp"
+        android:paddingTop="@dimen/_10sdp"
+        android:paddingBottom="@dimen/_10sdp"
+        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Semi_Bold"
+        android:textColor="@color/black"
+        app:drawableTint="@color/transparent" />
 
 </FrameLayout>

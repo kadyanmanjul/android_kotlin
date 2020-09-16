@@ -146,7 +146,7 @@ class QuizPractiseFragment private constructor() : Fragment(), OnChoiceClickList
         binding.btnSubmit.isClickable = true
         binding.btnSubmit.backgroundTintList = ContextCompat.getColorStateList(
             AppObjectController.joshApplication,
-            R.color.button_primary_color
+            R.color.button_color
         )
     }
 

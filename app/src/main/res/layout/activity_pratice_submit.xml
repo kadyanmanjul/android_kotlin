@@ -45,12 +45,12 @@
                         card_view:cardUseCompatPadding="false">
 
                     <androidx.appcompat.widget.AppCompatTextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:gravity="start|center"
-                            android:text="@string/today_practise"
-                            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Semi_Bold"
-                            android:textColor="@color/font_color" />
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="start|center"
+                        android:text="@string/today_practise"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Semi_Bold"
+                        android:textColor="@color/black" />
 
                     <LinearLayout
                             android:layout_width="match_parent"
@@ -61,14 +61,14 @@
                             android:paddingBottom="@dimen/_8sdp">
 
                         <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
-                                android:id="@+id/info_tv"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="@dimen/_8sdp"
-                                android:gravity="start|center"
-                                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
-                                android:textColor="@color/font_color"
-                                android:visibility="gone" />
+                            android:id="@+id/info_tv"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/_8sdp"
+                            android:gravity="start|center"
+                            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+                            android:textColor="@color/black"
+                            android:visibility="gone" />
 
 
                         <com.joshtalks.joshskills.core.custom_ui.JoshVideoPlayer
@@ -91,20 +91,20 @@
                                 android:visibility="gone">
 
                             <me.zhanghai.android.materialplaypausedrawable.MaterialPlayPauseButton
-                                    android:id="@+id/btn_play_info"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_alignParentStart="true"
-                                    android:layout_centerInParent="true"
-                                    android:layout_gravity="center"
-                                    android:background="@drawable/play_pause_button_background"
-                                    android:backgroundTint="@color/button_primary_color"
-                                    android:contentDescription="@string/play_button_description"
-                                    android:elevation="4dp"
-                                    android:onClick="@{()->handler.playPracticeAudio()}"
-                                    android:padding="@dimen/_4sdp"
-                                    android:theme="?actionBarTheme"
-                                    android:tint="?colorControlNormal" />
+                                android:id="@+id/btn_play_info"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentStart="true"
+                                android:layout_centerInParent="true"
+                                android:layout_gravity="center"
+                                android:background="@drawable/play_pause_button_background"
+                                android:backgroundTint="@color/button_color"
+                                android:contentDescription="@string/play_button_description"
+                                android:elevation="4dp"
+                                android:onClick="@{()->handler.playPracticeAudio()}"
+                                android:padding="@dimen/_4sdp"
+                                android:theme="?actionBarTheme"
+                                android:tint="?colorControlNormal" />
 
 
                             <SeekBar
@@ -148,13 +148,13 @@
                                     android:visibility="gone" />
 
                             <ProgressBar
-                                    android:id="@+id/progress_bar_image_view"
-                                    android:layout_width="@dimen/_24sdp"
-                                    android:layout_height="@dimen/_24sdp"
-                                    android:layout_gravity="center"
-                                    android:indeterminate="true"
-                                    android:indeterminateTint="@color/button_primary_color"
-                                    android:visibility="gone" />
+                                android:id="@+id/progress_bar_image_view"
+                                android:layout_width="@dimen/_24sdp"
+                                android:layout_height="@dimen/_24sdp"
+                                android:layout_gravity="center"
+                                android:indeterminate="true"
+                                android:indeterminateTint="@color/button_color"
+                                android:visibility="gone" />
 
                         </FrameLayout>
 
@@ -178,12 +178,12 @@
 
 
                     <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
-                            android:id="@+id/info_tv_2"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:gravity="start|center"
-                            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
-                            android:textColor="@color/font_color" />
+                        android:id="@+id/info_tv_2"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="start|center"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+                        android:textColor="@color/black" />
 
                 </com.google.android.material.card.MaterialCardView>
 
@@ -202,14 +202,14 @@
                         card_view:cardUseCompatPadding="false">
 
                     <androidx.appcompat.widget.AppCompatTextView
-                            android:id="@+id/practise_input_header"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:gravity="start|center"
-                            android:text="@string/your_answer"
-                            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
-                            android:textColor="@color/font_color"
-                            android:visibility="visible" />
+                        android:id="@+id/practise_input_header"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="start|center"
+                        android:text="@string/your_answer"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
+                        android:textColor="@color/black"
+                        android:visibility="visible" />
 
                     <LinearLayout
                             android:layout_width="match_parent"
@@ -224,36 +224,36 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="@dimen/_16sdp"
                                 android:autoSizeMaxTextSize="@dimen/font_16"
-                                android:background="@drawable/rect_with_bound"
-                                android:gravity="start|top"
-                                android:hint="@string/type_your_answer_hint"
-                                android:imeOptions="actionDone"
-                                android:inputType="textCapSentences|textMultiLine"
-                                android:lines="8"
-                                android:maxLength="500"
-                                android:maxLines="8"
-                                android:padding="@dimen/_4sdp"
-                                android:singleLine="false"
-                                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
-                                android:textColor="@color/font_color"
-                                android:textColorHint="@color/emoji_bg_color"
-                                android:textCursorDrawable="@drawable/cursor_drawable"
-                                android:visibility="gone" />
+                            android:background="@drawable/rect_with_bound"
+                            android:gravity="start|top"
+                            android:hint="@string/type_your_answer_hint"
+                            android:imeOptions="actionDone"
+                            android:inputType="textCapSentences|textMultiLine"
+                            android:lines="8"
+                            android:maxLength="500"
+                            android:maxLines="8"
+                            android:padding="@dimen/_4sdp"
+                            android:singleLine="false"
+                            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+                            android:textColor="@color/black"
+                            android:textColorHint="@color/emoji_bg_color"
+                            android:textCursorDrawable="@drawable/cursor_drawable"
+                            android:visibility="gone" />
 
 
                         <androidx.appcompat.widget.AppCompatImageView
-                                android:id="@+id/upload_practise_view"
-                                android:layout_width="@dimen/_52sdp"
-                                android:layout_height="@dimen/_52sdp"
-                                android:layout_gravity="center"
-                                android:layout_marginTop="@dimen/_16sdp"
-                                android:adjustViewBounds="true"
-                                android:background="@drawable/recv_bg_mic"
-                                android:backgroundTint="@color/button_primary_color"
-                                android:scaleType="centerInside"
-                                android:src="@drawable/ic_rec_mic_big"
-                                android:tint="@color/white"
-                                android:visibility="gone" />
+                            android:id="@+id/upload_practise_view"
+                            android:layout_width="@dimen/_52sdp"
+                            android:layout_height="@dimen/_52sdp"
+                            android:layout_gravity="center"
+                            android:layout_marginTop="@dimen/_16sdp"
+                            android:adjustViewBounds="true"
+                            android:background="@drawable/recv_bg_mic"
+                            android:backgroundTint="@color/button_color"
+                            android:scaleType="centerInside"
+                            android:src="@drawable/ic_rec_mic_big"
+                            android:tint="@color/white"
+                            android:visibility="gone" />
 
                         <androidx.appcompat.widget.AppCompatTextView
                                 android:id="@+id/audio_practise_hint"
@@ -307,13 +307,13 @@
                         card_view:cardUseCompatPadding="false">
 
                     <androidx.appcompat.widget.AppCompatTextView
-                            android:id="@+id/your_sub_answer_tv"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:gravity="start|center"
-                            android:text="@string/your_answer"
-                            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Semi_Bold"
-                            android:textColor="@color/font_color" />
+                        android:id="@+id/your_sub_answer_tv"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="start|center"
+                        android:text="@string/your_answer"
+                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Semi_Bold"
+                        android:textColor="@color/black" />
 
                     <LinearLayout
                             android:id="@+id/sub_practise_submit_layout"
@@ -340,21 +340,21 @@
                                 android:visibility="gone">
 
                             <me.zhanghai.android.materialplaypausedrawable.MaterialPlayPauseButton
-                                    android:id="@+id/submit_btn_play_info"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_alignParentStart="true"
-                                    android:layout_centerInParent="true"
-                                    android:layout_centerVertical="true"
-                                    android:layout_gravity="center"
-                                    android:background="@drawable/play_pause_button_background"
-                                    android:backgroundTint="@color/button_primary_color"
-                                    android:contentDescription="@string/play_button_description"
-                                    android:elevation="@dimen/_4sdp"
-                                    android:onClick="@{()->handler.playSubmitPracticeAudio()}"
-                                    android:padding="@dimen/_4sdp"
-                                    android:theme="?actionBarTheme"
-                                    android:tint="?colorControlNormal" />
+                                android:id="@+id/submit_btn_play_info"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentStart="true"
+                                android:layout_centerInParent="true"
+                                android:layout_centerVertical="true"
+                                android:layout_gravity="center"
+                                android:background="@drawable/play_pause_button_background"
+                                android:backgroundTint="@color/button_color"
+                                android:contentDescription="@string/play_button_description"
+                                android:elevation="@dimen/_4sdp"
+                                android:onClick="@{()->handler.playSubmitPracticeAudio()}"
+                                android:padding="@dimen/_4sdp"
+                                android:theme="?actionBarTheme"
+                                android:tint="?colorControlNormal" />
 
                             <SeekBar
                                     android:id="@+id/submit_practise_seekbar"
@@ -424,18 +424,18 @@
                                     android:src="@drawable/ic_attchement_upload" />
 
                             <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
-                                    android:id="@+id/file_info_attachment_tv"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_centerVertical="true"
-                                    android:layout_gravity="center"
-                                    android:layout_toStartOf="@id/iv_cancel2"
-                                    android:layout_toEndOf="@+id/attachment_placeholder"
-                                    android:ellipsize="end"
-                                    android:gravity="start|center"
-                                    android:maxLines="1"
-                                    android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
-                                    android:textColor="@color/font_color" />
+                                android:id="@+id/file_info_attachment_tv"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_centerVertical="true"
+                                android:layout_gravity="center"
+                                android:layout_toStartOf="@id/iv_cancel2"
+                                android:layout_toEndOf="@+id/attachment_placeholder"
+                                android:ellipsize="end"
+                                android:gravity="start|center"
+                                android:maxLines="1"
+                                android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
+                                android:textColor="@color/black" />
 
                             <androidx.appcompat.widget.AppCompatImageView
                                     android:id="@+id/iv_cancel2"
@@ -458,21 +458,21 @@
                                 android:id="@+id/et_submit_text"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:autoSizeMaxTextSize="@dimen/font_16"
-                                android:background="@drawable/round_rect_default"
-                                android:backgroundTint="#60e5e5e5"
-                                android:cursorVisible="false"
-                                android:enabled="false"
-                                android:focusable="false"
-                                android:gravity="start|top"
-                                android:imeOptions="actionDone"
-                                android:inputType="none"
-                                android:padding="@dimen/_4sdp"
-                                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
-                                android:textColor="@color/font_color"
-                                android:textCursorDrawable="@drawable/cursor_drawable"
-                                android:textSize="@dimen/font_15"
-                                android:visibility="gone" />
+                            android:autoSizeMaxTextSize="@dimen/font_16"
+                            android:background="@drawable/round_rect_default"
+                            android:backgroundTint="#60e5e5e5"
+                            android:cursorVisible="false"
+                            android:enabled="false"
+                            android:focusable="false"
+                            android:gravity="start|top"
+                            android:imeOptions="actionDone"
+                            android:inputType="none"
+                            android:padding="@dimen/_4sdp"
+                            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
+                            android:textColor="@color/black"
+                            android:textCursorDrawable="@drawable/cursor_drawable"
+                            android:textSize="@dimen/font_15"
+                            android:visibility="gone" />
 
                     </LinearLayout>
 
@@ -509,17 +509,17 @@
                     android:visibility="gone">
 
                 <com.pnikosis.materialishprogress.ProgressWheel
-                        android:id="@+id/progress_bar"
-                        android:layout_width="@dimen/_60sdp"
-                        android:layout_height="@dimen/_60sdp"
-                        android:layout_centerInParent="true"
-                        android:layout_gravity="center"
-                        wheel:matProg_barColor="@color/button_primary_color"
-                        wheel:matProg_fillRadius="true"
-                        wheel:matProg_linearProgress="false"
-                        wheel:matProg_progressIndeterminate="true"
-                        wheel:matProg_rimColor="#33128C7E"
-                        wheel:matProg_rimWidth="@dimen/_2sdp" />
+                    android:id="@+id/progress_bar"
+                    android:layout_width="@dimen/_60sdp"
+                    android:layout_height="@dimen/_60sdp"
+                    android:layout_centerInParent="true"
+                    android:layout_gravity="center"
+                    wheel:matProg_barColor="@color/button_color"
+                    wheel:matProg_fillRadius="true"
+                    wheel:matProg_linearProgress="false"
+                    wheel:matProg_progressIndeterminate="true"
+                    wheel:matProg_rimColor="#33128C7E"
+                    wheel:matProg_rimWidth="@dimen/_2sdp" />
 
                 <androidx.appcompat.widget.AppCompatTextView
                         android:layout_width="wrap_content"

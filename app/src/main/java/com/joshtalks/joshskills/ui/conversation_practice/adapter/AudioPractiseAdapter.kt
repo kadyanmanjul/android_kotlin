@@ -19,7 +19,7 @@ import org.jetbrains.anko.textColor
 class AudioPractiseAdapter(var items: MutableList<ListenModel> = arrayListOf()) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>(), Filterable {
     private var disableBG =
-        ContextCompat.getColorStateList(AppObjectController.joshApplication, R.color.text_f1f2)
+        ContextCompat.getColorStateList(AppObjectController.joshApplication, R.color.artboard_color)
     private var sentBG =
         ContextCompat.getColorStateList(AppObjectController.joshApplication, R.color.sent_bg_7a)
     private var receiveBG =
@@ -27,7 +27,7 @@ class AudioPractiseAdapter(var items: MutableList<ListenModel> = arrayListOf()) 
     private var standardBG =
         ContextCompat.getColorStateList(
             AppObjectController.joshApplication,
-            R.color.button_primary_color
+            R.color.button_color
         )
 
     fun addItem(list: ListenModel) {
@@ -112,7 +112,7 @@ class AudioPractiseAdapter(var items: MutableList<ListenModel> = arrayListOf()) 
                             text = "Me"
                             textColor = ContextCompat.getColor(
                                 AppObjectController.joshApplication,
-                                R.color.button_primary_color
+                                R.color.button_color
                             )
                         }
                     } else {
@@ -155,7 +155,7 @@ class AudioPractiseAdapter(var items: MutableList<ListenModel> = arrayListOf()) 
                             text = "Me"
                             textColor = ContextCompat.getColor(
                                 AppObjectController.joshApplication,
-                                R.color.button_primary_color
+                                R.color.button_color
                             )
                         }
                         statementTv.setTextColor(

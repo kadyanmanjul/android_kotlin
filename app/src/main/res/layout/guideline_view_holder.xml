@@ -8,15 +8,15 @@
         android:layout_marginVertical="@dimen/_20sdp">
 
     <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/header"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H5"
-            android:textColor="@color/font_color"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:text="Course Kaise Chalta Hai?" />
+        android:id="@+id/header"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H5"
+        android:textColor="@color/black"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Course Kaise Chalta Hai?" />
 
     <com.google.android.material.tabs.TabLayout
             android:id="@+id/tab_layout"
@@ -47,16 +47,16 @@
             app:layout_constraintTop_toBottomOf="@+id/tab_layout" />
 
     <com.tbuonomo.viewpagerdotsindicator.WormDotsIndicator
-            android:id="@+id/worm_dots_indicator"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:dotsColor="@color/font_color"
-            app:dotsCornerRadius="@dimen/_6sdp"
-            app:dotsSize="@dimen/_6sdp"
-            app:dotsSpacing="@dimen/_4sdp"
-            app:dotsStrokeColor="@color/font_color"
-            app:dotsStrokeWidth="@dimen/_1sdp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+        android:id="@+id/worm_dots_indicator"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:dotsColor="@color/black"
+        app:dotsCornerRadius="@dimen/_6sdp"
+        app:dotsSize="@dimen/_6sdp"
+        app:dotsSpacing="@dimen/_4sdp"
+        app:dotsStrokeColor="@color/black"
+        app:dotsStrokeWidth="@dimen/_1sdp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

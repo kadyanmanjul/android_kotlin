@@ -109,20 +109,20 @@
                     app:layout_constraintStart_toStartOf="parent" />
 
             <com.pnikosis.materialishprogress.ProgressWheel
-                    android:id="@+id/progress_bar"
-                    android:layout_width="@dimen/_82sdp"
-                    android:layout_height="@dimen/_82sdp"
-                    android:layout_gravity="center"
-                    android:visibility="gone"
-                    wheel:layout_constraintBottom_toBottomOf="parent"
-                    wheel:layout_constraintEnd_toEndOf="parent"
-                    wheel:layout_constraintStart_toStartOf="parent"
-                    wheel:layout_constraintTop_toTopOf="parent"
-                    wheel:matProg_barColor="@color/button_primary_color"
-                    wheel:matProg_fillRadius="true"
-                    wheel:matProg_linearProgress="false"
-                    wheel:matProg_progressIndeterminate="true"
-                    wheel:matProg_rimWidth="@dimen/_2sdp" />
+                android:id="@+id/progress_bar"
+                android:layout_width="@dimen/_82sdp"
+                android:layout_height="@dimen/_82sdp"
+                android:layout_gravity="center"
+                android:visibility="gone"
+                wheel:layout_constraintBottom_toBottomOf="parent"
+                wheel:layout_constraintEnd_toEndOf="parent"
+                wheel:layout_constraintStart_toStartOf="parent"
+                wheel:layout_constraintTop_toTopOf="parent"
+                wheel:matProg_barColor="@color/button_color"
+                wheel:matProg_fillRadius="true"
+                wheel:matProg_linearProgress="false"
+                wheel:matProg_progressIndeterminate="true"
+                wheel:matProg_rimWidth="@dimen/_2sdp" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

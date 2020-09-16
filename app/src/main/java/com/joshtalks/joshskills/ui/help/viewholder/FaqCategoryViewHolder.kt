@@ -106,7 +106,7 @@ class FaqCategoryViewHolder(
             )
             cardView.strokeColor = ResourcesCompat.getColor(
                 AppObjectController.joshApplication.resources,
-                R.color.button_primary_color,
+                R.color.button_color,
                 null
             )
         }

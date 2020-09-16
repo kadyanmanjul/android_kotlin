@@ -18,44 +18,44 @@
             app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
-                android:id="@+id/exo_play"
-                android:layout_width="@dimen/_24sdp"
-                android:layout_height="@dimen/_24sdp"
-                android:layout_gravity="center"
-                android:padding="@dimen/_4sdp"
-                android:src="@drawable/ic_play_24dp"
-                android:tint="@color/button_primary_color" />
+            android:id="@+id/exo_play"
+            android:layout_width="@dimen/_24sdp"
+            android:layout_height="@dimen/_24sdp"
+            android:layout_gravity="center"
+            android:padding="@dimen/_4sdp"
+            android:src="@drawable/ic_play_24dp"
+            android:tint="@color/button_color" />
 
         <ImageView
-                android:id="@+id/exo_pause"
-                android:layout_width="@dimen/_24sdp"
-                android:layout_height="@dimen/_24sdp"
-                android:layout_gravity="center"
-                android:padding="@dimen/_4sdp"
-                android:src="@drawable/ic_pause_24dp"
-                android:tint="@color/button_primary_color"
-                android:visibility="gone"
-                tools:visibility="visible" />
+            android:id="@+id/exo_pause"
+            android:layout_width="@dimen/_24sdp"
+            android:layout_height="@dimen/_24sdp"
+            android:layout_gravity="center"
+            android:padding="@dimen/_4sdp"
+            android:src="@drawable/ic_pause_24dp"
+            android:tint="@color/button_color"
+            android:visibility="gone"
+            tools:visibility="visible" />
     </FrameLayout>
 
     <com.google.android.exoplayer2.ui.DefaultTimeBar
-            android:id="@+id/exo_progress"
-            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/_8sdp"
-            android:progress="50"
-            android:progressDrawable="@drawable/seek_bar_draw"
-            app:bar_height="@dimen/_1sdp"
-            app:buffered_color="@android:color/white"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/barrier"
-            app:layout_constraintStart_toEndOf="@+id/play_pause_control"
-            app:layout_constraintTop_toTopOf="parent"
-            app:played_color="@color/button_primary_color"
-            app:scrubber_color="@color/button_primary_color"
-            app:scrubber_drawable="@drawable/seek_thumb"
-            app:unplayed_color="@color/text_90" />
+        android:id="@+id/exo_progress"
+        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/_8sdp"
+        android:progress="50"
+        android:progressDrawable="@drawable/seek_bar_draw"
+        app:bar_height="@dimen/_1sdp"
+        app:buffered_color="@android:color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/barrier"
+        app:layout_constraintStart_toEndOf="@+id/play_pause_control"
+        app:layout_constraintTop_toTopOf="parent"
+        app:played_color="@color/button_color"
+        app:scrubber_color="@color/button_color"
+        app:scrubber_drawable="@drawable/seek_thumb"
+        app:unplayed_color="@color/text_90" />
 
     <androidx.constraintlayout.widget.Barrier
             android:id="@+id/barrier"

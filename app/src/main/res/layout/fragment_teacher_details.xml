@@ -65,32 +65,32 @@
                 app:layout_constraintTop_toBottomOf="@+id/toolbar" />
 
         <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/textView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/_16sdp"
-                android:gravity="start|center"
-                android:text="@string/hi_i_am"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4_Semi_Bold"
-                android:textColor="@color/font_color"
-                app:layout_constraintBottom_toBottomOf="@+id/iv_profile_pic"
-                app:layout_constraintStart_toEndOf="@+id/iv_profile_pic"
-                app:layout_constraintTop_toTopOf="@+id/iv_profile_pic"
-                app:layout_constraintVertical_bias="0.3" />
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_16sdp"
+            android:gravity="start|center"
+            android:text="@string/hi_i_am"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4_Semi_Bold"
+            android:textColor="@color/black"
+            app:layout_constraintBottom_toBottomOf="@+id/iv_profile_pic"
+            app:layout_constraintStart_toEndOf="@+id/iv_profile_pic"
+            app:layout_constraintTop_toTopOf="@+id/iv_profile_pic"
+            app:layout_constraintVertical_bias="0.3" />
 
         <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/teacher_name"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:gravity="start"
-                android:paddingEnd="@dimen/_4sdp"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4"
-                android:textColor="@color/font_color"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="@+id/textView"
-                app:layout_constraintTop_toBottomOf="@+id/textView"
-                app:layout_constraintVertical_bias="0.6"
-                tools:text="Mohit Kumar" />
+            android:id="@+id/teacher_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="start"
+            android:paddingEnd="@dimen/_4sdp"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4"
+            android:textColor="@color/black"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/textView"
+            app:layout_constraintTop_toBottomOf="@+id/textView"
+            app:layout_constraintVertical_bias="0.6"
+            tools:text="Mohit Kumar" />
 
         <androidx.constraintlayout.widget.Barrier
                 android:id="@+id/barrier"

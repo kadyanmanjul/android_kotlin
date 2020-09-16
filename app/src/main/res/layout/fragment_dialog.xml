@@ -8,16 +8,16 @@
         android:padding="@dimen/_8sdp">
 
     <com.pnikosis.materialishprogress.ProgressWheel
-            android:id="@+id/progress_bar"
-            android:layout_width="@dimen/_54sdp"
-            android:layout_height="@dimen/_54sdp"
-            android:layout_gravity="center"
-            wheel:matProg_barColor="@color/button_primary_color"
-            wheel:matProg_fillRadius="true"
-            wheel:matProg_linearProgress="false"
-            wheel:matProg_progressIndeterminate="true"
-            wheel:matProg_rimColor="#00FFFFFF"
-            wheel:matProg_rimWidth="@dimen/_2sdp" />
+        android:id="@+id/progress_bar"
+        android:layout_width="@dimen/_54sdp"
+        android:layout_height="@dimen/_54sdp"
+        android:layout_gravity="center"
+        wheel:matProg_barColor="@color/button_color"
+        wheel:matProg_fillRadius="true"
+        wheel:matProg_linearProgress="false"
+        wheel:matProg_progressIndeterminate="true"
+        wheel:matProg_rimColor="#00FFFFFF"
+        wheel:matProg_rimWidth="@dimen/_2sdp" />
 
 
 </FrameLayout>

@@ -45,33 +45,33 @@
                         <androidx.appcompat.widget.AppCompatImageView
                                 android:id="@+id/iv_back"
                                 android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_alignParentStart="true"
-                                android:layout_centerVertical="true"
-                                android:clickable="true"
-                                android:focusable="true"
-                                android:foreground="?android:attr/selectableItemBackground"
-                                android:gravity="center_vertical|start"
-                                android:onClick="@{()->handler.onBackPressed()}"
-                                android:paddingTop="@dimen/_6sdp"
-                                android:paddingBottom="@dimen/_6sdp"
-                                android:tint="@color/font_color"
-                                app:srcCompat="@drawable/ic_arrow_back" />
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentStart="true"
+                            android:layout_centerVertical="true"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:foreground="?android:attr/selectableItemBackground"
+                            android:gravity="center_vertical|start"
+                            android:onClick="@{()->handler.onBackPressed()}"
+                            android:paddingTop="@dimen/_6sdp"
+                            android:paddingBottom="@dimen/_6sdp"
+                            android:tint="@color/black"
+                            app:srcCompat="@drawable/ic_arrow_back" />
 
 
                         <androidx.appcompat.widget.AppCompatTextView
-                                android:id="@+id/title_tv"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_centerVertical="true"
-                                android:layout_marginStart="@dimen/_6sdp"
-                                android:layout_toEndOf="@id/iv_back"
-                                android:ellipsize="marquee"
-                                android:gravity="start"
-                                android:singleLine="true"
-                                android:text="@string/course_overview_header"
-                                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4"
-                                android:textColor="@color/font_color" />
+                            android:id="@+id/title_tv"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:layout_marginStart="@dimen/_6sdp"
+                            android:layout_toEndOf="@id/iv_back"
+                            android:ellipsize="marquee"
+                            android:gravity="start"
+                            android:singleLine="true"
+                            android:text="@string/course_overview_header"
+                            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4"
+                            android:textColor="@color/black" />
                     </RelativeLayout>
 
                     <LinearLayout
@@ -268,19 +268,19 @@
                                     tools:visibility="visible">
 
                                 <androidx.appcompat.widget.AppCompatTextView
-                                        android:id="@+id/text_view_1"
-                                        android:layout_width="0dp"
-                                        android:layout_height="wrap_content"
-                                        android:gravity="center"
-                                        android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
-                                        android:textColor="@color/font_color"
-                                        android:textStyle="italic|bold"
-                                        app:layout_constraintEnd_toEndOf="parent"
-                                        app:layout_constraintStart_toStartOf="parent"
-                                        app:layout_constraintTop_toTopOf="parent"
-                                        app:layout_constraintWidth_default="percent"
-                                        app:layout_constraintWidth_percent="0.8"
-                                        tools:text="Sample test" />
+                                    android:id="@+id/text_view_1"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:gravity="center"
+                                    android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
+                                    android:textColor="@color/black"
+                                    android:textStyle="italic|bold"
+                                    app:layout_constraintEnd_toEndOf="parent"
+                                    app:layout_constraintStart_toStartOf="parent"
+                                    app:layout_constraintTop_toTopOf="parent"
+                                    app:layout_constraintWidth_default="percent"
+                                    app:layout_constraintWidth_percent="0.8"
+                                    tools:text="Sample test" />
 
                                 <ProgressBar
                                         android:id="@+id/course_progress_bar"
@@ -477,19 +477,19 @@
         </androidx.core.widget.NestedScrollView>
 
         <com.pnikosis.materialishprogress.ProgressWheel
-                android:id="@+id/progress_bar"
-                android:layout_width="@dimen/_82sdp"
-                android:layout_height="@dimen/_82sdp"
-                android:layout_gravity="center"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                wheel:matProg_barColor="@color/button_primary_color"
-                wheel:matProg_fillRadius="true"
-                wheel:matProg_linearProgress="false"
-                wheel:matProg_progressIndeterminate="true"
-                wheel:matProg_rimColor="@color/transparent"
-                wheel:matProg_rimWidth="@dimen/_4sdp" />
+            android:id="@+id/progress_bar"
+            android:layout_width="@dimen/_82sdp"
+            android:layout_height="@dimen/_82sdp"
+            android:layout_gravity="center"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            wheel:matProg_barColor="@color/button_color"
+            wheel:matProg_fillRadius="true"
+            wheel:matProg_linearProgress="false"
+            wheel:matProg_progressIndeterminate="true"
+            wheel:matProg_rimColor="@color/transparent"
+            wheel:matProg_rimWidth="@dimen/_4sdp" />
 
     </FrameLayout>
 </layout>

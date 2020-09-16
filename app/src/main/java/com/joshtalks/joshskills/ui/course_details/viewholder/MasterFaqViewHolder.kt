@@ -125,7 +125,7 @@ class MasterFaqViewHolder(
                 if (it.position == position) {
                     it.cardView.strokeColor = ResourcesCompat.getColor(
                         getAppContext().resources,
-                        R.color.button_primary_color,
+                        R.color.button_color,
                         null
                     )
                     TextViewCompat.setTextAppearance(

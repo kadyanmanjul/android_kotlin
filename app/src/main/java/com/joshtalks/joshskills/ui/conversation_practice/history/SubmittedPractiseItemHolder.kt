@@ -72,7 +72,7 @@ class SubmittedPractiseItemHolder(
         cardView.background.colorFilter = greyFilter
         ImageViewCompat.setImageTintList(
             imageView,
-            ColorStateList.valueOf(ContextCompat.getColor(context, R.color.button_primary_color))
+            ColorStateList.valueOf(ContextCompat.getColor(context, R.color.button_color))
         )
 
     }

@@ -111,38 +111,38 @@
                     tools:ignore="MissingConstraints" />
 
             <ImageView
-                    android:id="@+id/next"
-                    android:layout_width="@dimen/_32sdp"
-                    android:layout_height="@dimen/_32sdp"
-                    android:layout_margin="@dimen/_12sdp"
-                    android:background="@drawable/circle"
-                    android:backgroundTint="@color/button_primary_color"
-                    android:contentDescription="@string/back_button_desc"
-                    android:padding="@dimen/_6sdp"
-                    android:rotation="180"
-                    android:src="@drawable/ic_arrow_back"
-                    android:visibility="invisible"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.913"
-                    tools:visibility="visible" />
+                android:id="@+id/next"
+                android:layout_width="@dimen/_32sdp"
+                android:layout_height="@dimen/_32sdp"
+                android:layout_margin="@dimen/_12sdp"
+                android:background="@drawable/circle"
+                android:backgroundTint="@color/button_color"
+                android:contentDescription="@string/back_button_desc"
+                android:padding="@dimen/_6sdp"
+                android:rotation="180"
+                android:src="@drawable/ic_arrow_back"
+                android:visibility="invisible"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.913"
+                tools:visibility="visible" />
 
             <com.pnikosis.materialishprogress.ProgressWheel
-                    android:id="@+id/progress_bar_button"
-                    android:layout_width="@dimen/_32sdp"
-                    android:layout_height="@dimen/_32sdp"
-                    android:layout_margin="@dimen/_12sdp"
-                    android:visibility="invisible"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.913"
-                    tools:visibility="visible"
-                    wheel:matProg_barColor="@color/button_primary_color"
-                    wheel:matProg_fillRadius="true"
-                    wheel:matProg_linearProgress="false"
-                    wheel:matProg_progressIndeterminate="true"
-                    wheel:matProg_rimColor="#11128C7E"
-                    wheel:matProg_rimWidth="@dimen/_2sdp" />
+                android:id="@+id/progress_bar_button"
+                android:layout_width="@dimen/_32sdp"
+                android:layout_height="@dimen/_32sdp"
+                android:layout_margin="@dimen/_12sdp"
+                android:visibility="invisible"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.913"
+                tools:visibility="visible"
+                wheel:matProg_barColor="@color/button_color"
+                wheel:matProg_fillRadius="true"
+                wheel:matProg_linearProgress="false"
+                wheel:matProg_progressIndeterminate="true"
+                wheel:matProg_rimColor="#11128C7E"
+                wheel:matProg_rimWidth="@dimen/_2sdp" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
 </layout>

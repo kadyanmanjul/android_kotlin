@@ -8,16 +8,16 @@
         android:background="@color/transparent">
 
     <com.pnikosis.materialishprogress.ProgressWheel
-            android:id="@+id/progress_bar"
-            android:layout_width="@dimen/_72sdp"
-            android:layout_height="@dimen/_72sdp"
-            android:layout_centerInParent="true"
-            android:layout_gravity="center"
-            wheel:matProg_barColor="@color/button_primary_color"
-            wheel:matProg_fillRadius="true"
-            wheel:matProg_linearProgress="false"
-            wheel:matProg_progressIndeterminate="true"
-            wheel:matProg_rimWidth="@dimen/_2sdp" />
+        android:id="@+id/progress_bar"
+        android:layout_width="@dimen/_72sdp"
+        android:layout_height="@dimen/_72sdp"
+        android:layout_centerInParent="true"
+        android:layout_gravity="center"
+        wheel:matProg_barColor="@color/button_color"
+        wheel:matProg_fillRadius="true"
+        wheel:matProg_linearProgress="false"
+        wheel:matProg_progressIndeterminate="true"
+        wheel:matProg_rimWidth="@dimen/_2sdp" />
 
     <androidx.appcompat.widget.AppCompatTextView
             android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6_Normal"

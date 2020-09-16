@@ -10,19 +10,19 @@
         app:cardCornerRadius="@dimen/_12sdp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/_176sdp"
-            android:background="@drawable/round_rectangle_for_course_expo"
-            android:backgroundTint="@color/colorPrimaryDark">
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_176sdp"
+        android:background="@drawable/round_rectangle_for_course_expo"
+        android:backgroundTint="@color/colorPrimary">
 
         <ImageView
-                android:id="@+id/background_image_view"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:contentDescription="@string/attach_image"
-                android:scaleType="fitXY"
-                tools:layout_editor_absoluteX="0dp"
-                tools:layout_editor_absoluteY="0dp" />
+            android:id="@+id/background_image_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:contentDescription="@string/attach_image"
+            android:scaleType="fitXY"
+            tools:layout_editor_absoluteX="0dp"
+            tools:layout_editor_absoluteY="0dp" />
 
         <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
                 android:id="@+id/students_enrolled_nearby"

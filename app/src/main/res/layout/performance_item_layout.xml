@@ -40,17 +40,17 @@
             android:paddingStart="@dimen/_4sdp">
 
         <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/tv_practise_content"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="@dimen/_4sdp"
-                android:ellipsize="marquee"
-                android:fadingEdge="horizontal"
-                android:marqueeRepeatLimit="marquee_forever"
-                android:scrollHorizontally="true"
-                android:singleLine="true"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
-                android:textColor="@color/font_color" />
+            android:id="@+id/tv_practise_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/_4sdp"
+            android:ellipsize="marquee"
+            android:fadingEdge="horizontal"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:scrollHorizontally="true"
+            android:singleLine="true"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
+            android:textColor="@color/black" />
 
         <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tv_practise_status"

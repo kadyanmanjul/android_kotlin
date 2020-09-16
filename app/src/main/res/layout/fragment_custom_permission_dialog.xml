@@ -54,24 +54,24 @@
                 app:layout_constraintTop_toTopOf="@+id/view" />
 
         <com.google.android.material.button.MaterialButton
-                android:id="@+id/tv_select_address"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_marginHorizontal="@dimen/_54sdp"
-                android:layout_marginTop="@dimen/_40sdp"
-                android:backgroundTint="@color/button_primary_color"
-                android:gravity="center"
-                android:onClick="@{()->fragment.allow()}"
-                android:paddingTop="@dimen/_10sdp"
-                android:paddingBottom="@dimen/_10sdp"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Button"
-                android:text="@string/allow"
-                android:textColor="@color/white"
-                app:cornerRadius="@dimen/_20sdp"
-                app:layout_constraintEnd_toEndOf="@+id/view"
-                app:layout_constraintStart_toStartOf="@+id/view"
-                app:layout_constraintTop_toBottomOf="@+id/textView3" />
+            android:id="@+id/tv_select_address"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginHorizontal="@dimen/_54sdp"
+            android:layout_marginTop="@dimen/_40sdp"
+            android:backgroundTint="@color/button_color"
+            android:gravity="center"
+            android:onClick="@{()->fragment.allow()}"
+            android:paddingTop="@dimen/_10sdp"
+            android:paddingBottom="@dimen/_10sdp"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Button"
+            android:text="@string/allow"
+            android:textColor="@color/white"
+            app:cornerRadius="@dimen/_20sdp"
+            app:layout_constraintEnd_toEndOf="@+id/view"
+            app:layout_constraintStart_toStartOf="@+id/view"
+            app:layout_constraintTop_toBottomOf="@+id/textView3" />
 
         <TextView
                 android:layout_width="wrap_content"

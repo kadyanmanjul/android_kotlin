@@ -1,7 +1,6 @@
 package com.joshtalks.joshskills.ui.view_holders
 
 import android.annotation.SuppressLint
-import android.graphics.Color
 import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.Spanned
@@ -111,11 +110,16 @@ class PracticeViewHolder(activityRef: WeakReference<FragmentActivity>, message: 
                 subRootView.setCardBackgroundColor(
                     ContextCompat.getColor(
                         AppObjectController.joshApplication,
-                        R.color.sent_msg_background
+                        R.color.bg_light_green
                     )
                 )
                 sBuilder.setSpan(
-                    ForegroundColorSpan(Color.parseColor("#25d366")),
+                    ForegroundColorSpan(
+                        ContextCompat.getColor(
+                            AppObjectController.joshApplication,
+                            R.color.green
+                        )
+                    ),
                     8,
                     sBuilder.length,
                     Spannable.SPAN_EXCLUSIVE_EXCLUSIVE

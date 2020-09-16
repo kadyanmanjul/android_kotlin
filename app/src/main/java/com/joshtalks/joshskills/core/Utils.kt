@@ -436,7 +436,7 @@ object Utils {
             builder.setToolbarColor(
                 ContextCompat.getColor(
                     AppObjectController.joshApplication,
-                    R.color.colorPrimaryDark
+                    R.color.colorPrimary
                 )
             )
             builder.setShowTitle(true)

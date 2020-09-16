@@ -46,7 +46,7 @@
                 android:paddingHorizontal="@dimen/_12sdp"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6"
                 android:textColor="@color/button_color"
-                tools:text="@string/practice" />
+                tools:text="Assessment" />
         </androidx.cardview.widget.CardView>
 
         <com.google.android.material.button.MaterialButton
@@ -78,7 +78,7 @@
             app:layout_constraintWidth_default="percent"
             app:layout_constraintWidth_percent="0.75"
             app:rippleColor="@color/white"
-            tools:text="@string/retry_miss_call_verify" />
+            tools:text="Start Assessment" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

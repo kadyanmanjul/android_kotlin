@@ -54,16 +54,16 @@
                 app:layout_constraintTop_toTopOf="@+id/view" />
 
         <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/text_view_1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_48sdp"
-                android:text="@string/verification_failed"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4"
-                android:textColor="@color/font_color"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/view" />
+            android:id="@+id/text_view_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_48sdp"
+            android:text="@string/verification_failed"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4"
+            android:textColor="@color/black"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/view" />
 
 
         <com.google.android.material.button.MaterialButton

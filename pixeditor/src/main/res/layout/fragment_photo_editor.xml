@@ -168,9 +168,9 @@
     >
 
         <androidx.recyclerview.widget.RecyclerView
-                app:backgroundTint="@color/colorPrimaryDark"
                 android:id="@+id/filter_list_rv"
-                android:layout_width="match_parent"
+            app:backgroundTint="@color/colorPrimary"
+            android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_marginBottom="10dp"
