@@ -7,88 +7,142 @@
     android:layout_height="wrap_content"
     android:layout_marginTop="@dimen/_2sdp"
     android:layout_marginBottom="@dimen/_2sdp"
-    android:paddingStart="@dimen/_7sdp"
+    android:paddingStart="@dimen/_14sdp"
     android:paddingEnd="@dimen/_14sdp">
 
     <androidx.cardview.widget.CardView
         android:id="@+id/root_sub_view"
-        android:layout_width="wrap_content"
-        android:layout_height="@dimen/_160sdp"
+        android:layout_width="@dimen/_200sdp"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
         android:clickable="true"
+        android:divider="@android:color/transparent"
+        android:dividerHeight="0.0px"
+        android:elevation="@dimen/_4sdp"
         android:enabled="true"
         android:focusable="true"
         android:foreground="?android:attr/selectableItemBackground"
-        android:paddingBottom="@dimen/_4sdp"
+        app:cardBackgroundColor="@color/white"
         app:cardCornerRadius="@dimen/_4sdp"
         app:cardElevation="0dp"
-        tools:cardBackgroundColor="@color/white"
-        tools:cardPreventCornerOverlap="false">
+        app:cardPreventCornerOverlap="false"
+        app:contentPaddingBottom="@dimen/_4sdp"
+        app:contentPaddingLeft="@dimen/_4sdp"
+        app:contentPaddingRight="@dimen/_4sdp"
+        app:contentPaddingTop="@dimen/_4sdp"
+        tools:cardBackgroundColor="@color/white">
 
-        <LinearLayout
-            android:layout_width="@dimen/_200sdp"
-            android:layout_height="match_parent"
-            android:layout_marginTop="@dimen/_4sdp"
-            android:orientation="vertical"
-            android:paddingHorizontal="@dimen/_4sdp">
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/round_rect_default"
+            android:backgroundTint="#EFEFEF">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/image_view"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight=".25"
-                android:background="@drawable/round_rect_default"
-                android:backgroundTint="#EFEFEF">
+                android:layout_height="@dimen/_80sdp"
+                android:adjustViewBounds="true"
+                android:scaleType="fitXY"
+                android:src="@drawable/ic_pattern"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-                <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/image_view"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:adjustViewBounds="true"
-                    android:alpha="0.15"
-                    android:scaleType="fitXY"
-                    android:src="@drawable/ic_pattern" />
 
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/tv_title"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:gravity="center"
-                    android:paddingStart="@dimen/_4sdp"
-                    android:paddingEnd="@dimen/_4sdp"
-                    android:text="@string/practice"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6"
-                    android:textColor="@color/text_green_100"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    tools:targetApi="o" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_start"
-                style="@style/Widget.MaterialComponents.Button"
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_title"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginHorizontal="@dimen/_6sdp"
-                android:layout_marginVertical="@dimen/_2sdp"
-                android:layout_weight=".68"
-                android:backgroundTint="@color/dark_grey"
+                android:autoSizeMaxTextSize="@dimen/font_18"
                 android:gravity="center"
+                android:paddingStart="@dimen/_4sdp"
+                android:paddingEnd="@dimen/_4sdp"
+                android:text="@string/practice"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6"
+                android:textColor="@color/text_green_100"
+                app:layout_constraintBottom_toBottomOf="@+id/image_view"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/image_view" />
+
+            <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
+                android:id="@+id/status_tv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start"
+                android:background="@drawable/round_both_bottom_bg"
+                android:backgroundTint="@color/pdf_bg_color"
+                android:gravity="center_vertical|start"
+                android:paddingStart="@dimen/_8sdp"
+                android:paddingTop="@dimen/_4sdp"
+                android:paddingBottom="@dimen/_2sdp"
+                android:text="@string/status_with_colon"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+                android:textColor="@color/gray_82"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/image_view"
+                tools:text="Status: Pending" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/sub_title_tv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start"
+                android:background="@drawable/round_both_bottom_bg"
+                android:backgroundTint="@color/pdf_bg_color"
+                android:gravity="center_vertical|start"
+                android:paddingStart="@dimen/_8sdp"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
+                android:textColor="@color/gray_82"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/status_tv"
+                tools:text="Reading Practice" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/text_message_time"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:layout_marginEnd="@dimen/_2sdp"
+                android:background="@drawable/round_both_bottom_bg"
+                android:backgroundTint="@color/pdf_bg_color"
+                android:drawablePadding="@dimen/_4sdp"
+                android:gravity="end"
+                android:paddingStart="@dimen/_8sdp"
+                android:paddingBottom="@dimen/_4sdp"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal"
+                android:textColor="@color/gray_9E"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/sub_title_tv"
+                tools:text="6:15 AM" />
+
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/btn_start"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|center"
+                android:background="@color/white"
+                android:gravity="bottom|center"
+                android:paddingTop="@dimen/_6sdp"
+                android:paddingBottom="@dimen/_6sdp"
                 android:text="@string/start_practise"
                 android:textAllCaps="false"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Button"
-                android:translationZ="@dimen/_1sdp"
-                app:cornerRadius="@dimen/_36sdp"
-                app:icon="@drawable/ic_baseline_arrow_right"
-                app:iconGravity="end"
-                app:iconPadding="@dimen/_minus16sdp"
-                app:iconSize="@dimen/_24sdp"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Bold"
+                android:textColor="@color/green"
+                app:drawableTint="@color/white"
+                app:icon="@drawable/ef_ic_arrow_forward"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="@+id/constraintLayout"
-                app:layout_constraintStart_toStartOf="@+id/constraintLayout"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/text_message_time"
                 app:rippleColor="@color/white" />
-        </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.cardview.widget.CardView>
 

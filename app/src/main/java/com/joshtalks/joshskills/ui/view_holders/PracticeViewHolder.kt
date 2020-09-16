@@ -52,6 +52,9 @@ class PracticeViewHolder(
     @View(R.id.sub_title_tv)
     lateinit var subTitleTV: AppCompatTextView
 
+    @View(R.id.text_message_time)
+    lateinit var receivedMessageTime: AppCompatTextView
+
     @View(R.id.image_view)
     lateinit var imageView: AppCompatImageView
 
@@ -94,6 +97,9 @@ class PracticeViewHolder(
         )
         val layoutP = subRootView.layoutParams as FrameLayout.LayoutParams
         layoutP.width  = Utils.dpToPx(getAppContext(), 270f)
+
+        receivedMessageTime.text = Utils.messageTimeConversion(message.created)
+        updateTime(receivedMessageTime)
 
         message.question?.run {
             subTitleTV.text = this.title

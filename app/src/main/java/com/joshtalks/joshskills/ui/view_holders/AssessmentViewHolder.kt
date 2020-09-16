@@ -1,11 +1,12 @@
 package com.joshtalks.joshskills.ui.view_holders
 
-import android.util.Log
 import android.widget.FrameLayout
 import androidx.appcompat.widget.AppCompatTextView
+import androidx.cardview.widget.CardView
 import androidx.fragment.app.FragmentActivity
-import com.google.android.material.button.MaterialButton
+import com.google.android.material.textview.MaterialTextView
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
@@ -16,25 +17,25 @@ import com.mindorks.placeholderview.annotations.Resolve
 import com.mindorks.placeholderview.annotations.View
 import java.lang.ref.WeakReference
 
+
 @Layout(R.layout.assessment_item_layout)
-class AssessmentViewHolder(
-    activityRef: WeakReference<FragmentActivity>,
-    message: ChatModel,
-    previousMessage: ChatModel?
-) :
-    BaseChatViewHolder(activityRef, message, previousMessage) {
+class AssessmentViewHolder(activityRef: WeakReference<FragmentActivity>, message: ChatModel) :
+    BaseChatViewHolder(activityRef, message) {
 
     @View(R.id.btn_start)
-    lateinit var btnStart: MaterialButton
+    lateinit var btnStart: MaterialTextView
 
     @View(R.id.tv_title)
     lateinit var title: AppCompatTextView
+
+    @View(R.id.text_message_time)
+    lateinit var receivedMessageTime: AppCompatTextView
 
     @View(R.id.root_view_fl)
     lateinit var rootView: FrameLayout
 
     @View(R.id.root_sub_view)
-    lateinit var subRootView: FrameLayout
+    lateinit var subRootView: CardView
 
     lateinit var viewHolder: AssessmentViewHolder
 
@@ -46,7 +47,10 @@ class AssessmentViewHolder(
         if (message.chatId.isNotEmpty() && sId == message.chatId) {
             highlightedViewForSomeTime(rootView)
         }
-        val layoutP = subRootView.layoutParams as FrameLayout.LayoutParams
+
+        receivedMessageTime.text = Utils.messageTimeConversion(message.created)
+        updateTime(receivedMessageTime)
+
         message.question?.let { question ->
             question.title?.run {
                 title.text = this
@@ -65,20 +69,7 @@ class AssessmentViewHolder(
                     }
                 }
             }
-            Log.e("count",""+question.cPractiseCount)
-            if (question.cPractiseCount <= 0) {
-                layoutP.gravity = android.view.Gravity.START
-                rootView.setPadding(getLeftPaddingForReceiver(), 0, getRightPaddingForReceiver(), 0)
-                subRootView.setBackgroundResource(R.drawable.incoming_message_same_bg)
-            }else{
-                rootView.setPadding(getLeftPaddingForSender(), 0, getRightPaddingForSender(), 0)
-                layoutP.gravity = android.view.Gravity.END
-                subRootView.setBackgroundResource(R.drawable.outgoing_message_same_bg)
-            }
-            subRootView.layoutParams = layoutP
-
         }
-
     }
 
 

@@ -6,6 +6,7 @@ import androidx.appcompat.widget.AppCompatTextView
 import androidx.cardview.widget.CardView
 import androidx.fragment.app.FragmentActivity
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
 import com.joshtalks.joshskills.repository.local.eventbus.ConversationPractiseEventBus
@@ -23,6 +24,9 @@ class ConversationPractiseViewHolder(activityRef: WeakReference<FragmentActivity
     @View(R.id.image_view)
     lateinit var imageView: AppCompatImageView
 
+    @View(R.id.text_message_time)
+    lateinit var receivedMessageTime: AppCompatTextView
+
     @View(R.id.root_view_fl)
     lateinit var rootView: FrameLayout
 
@@ -36,6 +40,9 @@ class ConversationPractiseViewHolder(activityRef: WeakReference<FragmentActivity
     @Resolve
     override fun onViewInflated() {
         super.onViewInflated()
+
+        receivedMessageTime.text = Utils.messageTimeConversion(message.created)
+        updateTime(receivedMessageTime)
         message.question?.imageList?.getOrNull(0)?.imageUrl?.run {
             setBlurImageInImageView(imageView, this)
         }
