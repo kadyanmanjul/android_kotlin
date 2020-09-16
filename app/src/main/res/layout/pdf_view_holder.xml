@@ -26,7 +26,7 @@
 
             <FrameLayout
                 android:id="@+id/container_fl"
-                android:layout_width="wrap_content"
+                android:layout_width="@dimen/_194sdp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:background="@drawable/pdf_bg"
@@ -42,7 +42,6 @@
                     android:background="@drawable/video_placeholder"
                     android:clickable="false"
                     android:focusable="false"
-                    android:maxWidth="@dimen/_400sdp"
                     android:scaleType="centerCrop" />
 
                 <RelativeLayout

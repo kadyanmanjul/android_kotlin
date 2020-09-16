@@ -12,7 +12,7 @@
 
     <androidx.cardview.widget.CardView
         android:id="@+id/root_sub_view"
-        android:layout_width="@dimen/_216sdp"
+        android:layout_width="@dimen/_200sdp"
         android:layout_height="wrap_content"
         android:background="@color/white"
         android:clickable="true"
@@ -60,7 +60,7 @@
                 android:paddingEnd="@dimen/_4sdp"
                 android:text="@string/practice"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6"
-                android:textColor="@color/colorAccent"
+                android:textColor="@color/text_green_100"
                 app:layout_constraintBottom_toBottomOf="@+id/image_view"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

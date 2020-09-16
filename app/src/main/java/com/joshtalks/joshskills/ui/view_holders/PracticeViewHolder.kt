@@ -1,6 +1,7 @@
 package com.joshtalks.joshskills.ui.view_holders
 
 import android.annotation.SuppressLint
+import android.content.res.ColorStateList
 import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.Spanned
@@ -78,6 +79,21 @@ class PracticeViewHolder(activityRef: WeakReference<FragmentActivity>, message: 
         val sBuilder = SpannableStringBuilder().append("Status: ")
         practiceStatusTv.text = activityRef.get()?.getString(R.string.answer_not_submitted)
         tvSubmitAnswer.visibility = android.view.View.VISIBLE
+
+        imageView.backgroundTintList = null
+        practiceStatusTv.backgroundTintList = ColorStateList.valueOf(
+            ContextCompat.getColor(
+                AppObjectController.joshApplication,
+                R.color.pdf_bg_color
+            )
+        )
+        subTitleTV.backgroundTintList = ColorStateList.valueOf(
+            ContextCompat.getColor(
+                AppObjectController.joshApplication,
+                R.color.pdf_bg_color
+            )
+        )
+
         message.question?.run {
             this.practiceNo?.let {
                 titleTv.text = getAppContext().getString(R.string.practice).plus(" #$it")
@@ -124,6 +140,26 @@ class PracticeViewHolder(activityRef: WeakReference<FragmentActivity>, message: 
                     sBuilder.length,
                     Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
                 )
+
+                imageView.backgroundTintList = ColorStateList.valueOf(
+                    ContextCompat.getColor(
+                        AppObjectController.joshApplication,
+                        R.color.bg_green_80
+                    )
+                )
+                practiceStatusTv.backgroundTintList = ColorStateList.valueOf(
+                    ContextCompat.getColor(
+                        AppObjectController.joshApplication,
+                        R.color.bg_green_80
+                    )
+                )
+                subTitleTV.backgroundTintList = ColorStateList.valueOf(
+                    ContextCompat.getColor(
+                        AppObjectController.joshApplication,
+                        R.color.bg_green_80
+                    )
+                )
+
             }
         }
         sBuilder.setSpan(typefaceSpan, 8, sBuilder.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)

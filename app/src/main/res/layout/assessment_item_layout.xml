@@ -12,7 +12,7 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/root_sub_view"
-        android:layout_width="@dimen/_216sdp"
+        android:layout_width="wrap_content"
         android:layout_height="@dimen/_160sdp"
         android:background="@drawable/round_rect_default"
         android:clickable="true"
@@ -22,7 +22,7 @@
         android:padding="@dimen/_4sdp">
 
         <androidx.cardview.widget.CardView
-            android:layout_width="match_parent"
+            android:layout_width="@dimen/_194sdp"
             android:layout_height="@dimen/_110sdp"
             android:background="#F1F2F4"
             android:clickable="true"
@@ -45,7 +45,7 @@
                 android:gravity="center"
                 android:paddingHorizontal="@dimen/_12sdp"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6"
-                android:textColor="@color/button_color"
+                android:textColor="@color/text_green_100"
                 tools:text="Assessment" />
         </androidx.cardview.widget.CardView>
 
