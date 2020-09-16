@@ -4,7 +4,9 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
+import android.graphics.Rect
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
@@ -12,6 +14,8 @@ import android.widget.FrameLayout
 import android.widget.ImageView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.appcompat.widget.PopupMenu
+import androidx.core.widget.NestedScrollView
+import androidx.core.widget.TextViewCompat
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.ViewModelProvider
 import com.facebook.share.internal.ShareConstants.ACTION_TYPE
@@ -64,14 +68,18 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.activity_inbox.*
-import kotlinx.android.synthetic.main.find_more_layout.*
+import kotlinx.android.synthetic.main.activity_inbox.nested_scroll_view
+import kotlinx.android.synthetic.main.activity_inbox.progress_bar
+import kotlinx.android.synthetic.main.activity_inbox.recycler_view_inbox
+import kotlinx.android.synthetic.main.activity_inbox.subscriptionTipContainer
+import kotlinx.android.synthetic.main.activity_inbox.txtConvert
+import kotlinx.android.synthetic.main.activity_inbox.txtSubscriptionTip
+import kotlinx.android.synthetic.main.find_more_layout.find_more
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.jetbrains.anko.collections.forEachWithIndex
-import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Calendar
 
 const val REGISTER_INFO_CODE = 2001
 const val COURSE_EXPLORER_CODE = 2002
@@ -90,8 +98,8 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
     }
     private var compositeDisposable = CompositeDisposable()
     private var inAppUpdateManager: InAppUpdateManager? = null
-    private lateinit var findMoreLayout: FrameLayout
     private lateinit var reminderIv: ImageView
+    private lateinit var findMoreLayout: View
     private var offerInHint: Balloon? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -387,6 +395,33 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         }
     }
 
+    private fun setupForFindMoreCourseButton() {
+        CoroutineScope(Dispatchers.Default).launch {
+            val scrollBounds = Rect()
+            nested_scroll_view.getHitRect(scrollBounds)
+            isFindMoreButtonVisible(scrollBounds)
+            nested_scroll_view.setOnScrollChangeListener(NestedScrollView.OnScrollChangeListener { v, scrollX, scrollY, oldScrollX, oldScrollY ->
+                isFindMoreButtonVisible(scrollBounds)
+            })
+        }
+    }
+
+    private fun isFindMoreButtonVisible(scrollBounds: Rect) {
+        if (findMoreLayout.getLocalVisibleRect(scrollBounds)) {
+            if (!findMoreLayout.getLocalVisibleRect(scrollBounds)
+                || scrollBounds.height() < findMoreLayout.height
+            ) {
+                Log.e("inbox", "BTN APPEAR PARCIALY");
+                attachOfferHintView()
+            } else {
+                attachOfferHintView()
+                Log.e("inbox", "BTN APPEAR FULLY!!!");
+            }
+        } else {
+            offerInHint?.dismiss()
+            Log.e("inbox", "No");
+        }
+    }
 
     private fun locationFetch() {
         if (Mentor.getInstance().getLocality() == null) {
@@ -497,7 +532,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
             }
         progress_bar.visibility = View.GONE
         findMoreLayout.visibility = View.VISIBLE
-        attachOfferHintView()
+        setupForFindMoreCourseButton()
     }
 
 
@@ -667,7 +702,6 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
 
     override fun onInAppUpdateError(code: Int, error: Throwable?) {
         error?.printStackTrace()
-
     }
 
     override fun onInAppUpdateStatus(status: InAppUpdateStatus?) {
@@ -819,6 +853,10 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
                 .addUserDetails()
                 .push()
         }
+    }
+
+    private fun addTopHintViewForTrialEnd() {
+
     }
 
 }

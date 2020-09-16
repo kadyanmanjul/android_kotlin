@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent">
+
+    <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/balloon_arrow"
+            android:layout_width="@dimen/_16sdp"
+            android:layout_height="@dimen/_12sdp"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:scaleType="fitXY"
+            android:src="@drawable/arrow"
+            android:tint="@color/yellow" />
+
+    <RelativeLayout
+            android:id="@+id/balloon_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:paddingTop="@dimen/_8sdp"
+            android:paddingBottom="@dimen/_8sdp">
+
+
+        <FrameLayout
+                android:backgroundTint="@color/yellow"
+                android:background="@drawable/round_rectangle_for_course_expo"
+                android:paddingVertical="@dimen/_6sdp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+            <androidx.appcompat.widget.AppCompatTextView
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+                    android:id="@+id/balloon_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="center"
+                    android:paddingHorizontal="@dimen/_16sdp"
+                    android:textColor="@color/black"
+                    tools:text="fe fef e fe f e f e fe f e f e f e fef e f efe fe eff e fe f e ff ef e f" />
+        </FrameLayout>
+    </RelativeLayout>
+</RelativeLayout>

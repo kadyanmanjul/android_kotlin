@@ -51,6 +51,7 @@ import io.branch.referral.Branch
 import retrofit2.HttpException
 import java.util.Date
 import java.util.HashMap
+import com.joshtalks.joshskills.BuildConfig
 
 const val INSTALL_REFERRER_SYNC = "install_referrer_sync"
 const val CONVERSATION_ID = "conversation_id"
@@ -77,6 +78,7 @@ class AppRunRequiredTaskWorker(var context: Context, workerParams: WorkerParamet
             val npsEvent =
                 AppObjectController.getFirebaseRemoteConfig().getString("NPS_EVENT_LIST")
             NPSEventModel.setNPSList(npsEvent)
+            AppObjectController.firebaseAnalytics.setUserProperty("App Version",BuildConfig.VERSION_CODE.toString())
         }.addOnFailureListener { exception ->
             exception.printStackTrace()
         }

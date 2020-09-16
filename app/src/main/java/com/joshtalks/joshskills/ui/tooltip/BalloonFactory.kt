@@ -42,6 +42,7 @@ object BalloonFactory {
             .setTextSize(12f)
             .setArrowPosition(0.8f)
             .setCornerRadius(8f)
+            .setHeight()
             //.setAlpha(0.9f)
             .setSpace(8)
             .setBackgroundColorResource(R.color.white)
@@ -67,7 +68,7 @@ object BalloonFactory {
                 userName = User.getInstance().firstName.capitalize()
             }
         } catch (ex: NullPointerException) {
-
+            ex.printStackTrace()
         }
         val text = if (tipText.isNullOrBlank()) {
             val offerPercentage =

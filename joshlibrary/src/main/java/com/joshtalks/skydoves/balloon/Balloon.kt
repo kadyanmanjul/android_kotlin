@@ -71,7 +71,13 @@ class Balloon(
         val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         this.bodyView = inflater.inflate(R.layout.layout_balloon, null)
         val width = getMeasureWidth()
-        val params = RelativeLayout.LayoutParams(width, builder.height)
+        val height = if (builder.height == -1) {
+            getMeasureHeight()
+        } else {
+            builder.height
+        }
+        val params = RelativeLayout.LayoutParams(width, height)
+
         this.bodyView.layoutParams = params
         this.bodyWindow = PopupWindow(bodyView, width, builder.height)
         createByBuilder()
@@ -337,6 +343,7 @@ class Balloon(
             )
         }
     }
+
     /** shows the balloon on an anchor view as the top alignment. */
     fun showAlignTopWithException(anchor: View) {
         show(anchor) {
@@ -377,6 +384,7 @@ class Balloon(
         it.showAlignTop(anchor, xOff, yOff)
     }
 
+    fun getBodyView()= bodyView
     /** shows the balloon on an anchor view as the bottom alignment. */
     fun showAlignBottom(anchor: View) {
         show(anchor) {
@@ -387,10 +395,12 @@ class Balloon(
             )
         }
     }
+
     /** shows the balloon on an anchor view as the bottom alignment. */
     fun showAlignBottomException(anchor: View) {
         show(anchor) {
-            bodyWindow.showAsDropDown(anchor,
+            bodyWindow.showAsDropDown(
+                anchor,
                 (anchor.measuredWidth / 2),
                 12
             )
@@ -562,6 +572,11 @@ class Balloon(
         return builder.width - builder.space
     }
 
+    /** gets measured width size of the balloon. */
+    fun getMeasureHeight(): Int {
+        return (context.displaySize().x * builder.heightRatio - builder.space).toInt()
+    }
+
     /** gets a content view of the balloon popup window. */
     fun getContentView(): View {
         return bodyView.balloon_detail
@@ -579,91 +594,132 @@ class Balloon(
         @JvmField
         @Dp
         var width: Int = context.displaySize().x
+
         @JvmField
         @FloatRange(from = 0.0, to = 1.0)
         var widthRatio: Float = 0f
+
+        @JvmField
+        @FloatRange(from = 0.0, to = 1.0)
+        var heightRatio: Float = 0f
+
+
         @JvmField
         @Dp
         var height: Int = context.dp2Px(60)
+
         @JvmField
         @Dp
         var space: Int = 0
+
         @JvmField
         var arrowVisible: Boolean = true
+
         @JvmField
         @Dp
         var arrowSize: Int = context.dp2Px(15)
+
         @JvmField
         @FloatRange(from = 0.0, to = 1.0)
         var arrowPosition: Float = 0.5f
+
         @JvmField
         var arrowOrientation: ArrowOrientation = ArrowOrientation.BOTTOM
+
         @JvmField
         var arrowDrawable: Drawable? = null
+
         @JvmField
         @ColorInt
         var backgroundColor: Int = Color.BLACK
+
         @JvmField
         var backgroundDrawable: Drawable? = null
+
         @JvmField
         @Dp
         var cornerRadius: Float = context.dp2Px(5).toFloat()
+
         @JvmField
         var text: String = ""
+
         @JvmField
         @ColorInt
         var textColor: Int = Color.WHITE
+
         @JvmField
         @Sp
         var textSize: Float = 12f
+
         @JvmField
         var textTypeface: Int = Typeface.NORMAL
+
         @JvmField
         var textTypefaceObject: Typeface? = null
+
         @JvmField
         var textForm: TextForm? = null
+
         @JvmField
         var iconDrawable: Drawable? = null
+
         @JvmField
         @Dp
         var iconSize: Int = context.dp2Px(28)
+
         @JvmField
         @Dp
         var iconSpace: Int = context.dp2Px(8)
+
         @JvmField
         @ColorInt
         var iconColor: Int = Color.WHITE
+
         @JvmField
         var iconForm: IconForm? = null
+
         @JvmField
         @FloatRange(from = 0.0, to = 1.0)
         var alpha: Float = 1f
+
         @JvmField
         @LayoutRes
         var layout: Int = -1
+
         @JvmField
         var onBalloonClickListener: OnBalloonClickListener? = null
+
         @JvmField
         var onBalloonDismissListener: OnBalloonDismissListener? = null
+
         @JvmField
         var onBalloonOutsideTouchListener: OnBalloonOutsideTouchListener? = null
+
         @JvmField
         var dismissWhenTouchOutside: Boolean = false
+
         @JvmField
         var dismissWhenShowAgain: Boolean = false
+
         @JvmField
         var dismissWhenClicked: Boolean = false
+
         @JvmField
         var autoDismissDuration: Long = -1L
+
         @JvmField
         var lifecycleOwner: LifecycleOwner? = null
+
         @JvmField
         @StyleRes
         var balloonAnimationStyle: Int = -1
+
         @JvmField
         var balloonAnimation: BalloonAnimation = BalloonAnimation.FADE
+
         @JvmField
         var preferenceName: String? = null
+
         @JvmField
         var showTimes: Int = 1
 
@@ -675,8 +731,16 @@ class Balloon(
             @FloatRange(from = 0.0, to = 1.0) value: Float
         ): Builder = apply { this.widthRatio = value }
 
+        /** sets the width size by the display screen size ratio. */
+        fun setHeightRatio(
+            @FloatRange(from = 0.0, to = 1.0) value: Float
+        ): Builder = apply { this.heightRatio = value }
+
         /** sets the height size. */
         fun setHeight(@Dp value: Int): Builder = apply { this.height = context.dp2Px(value) }
+
+        /** sets the height size. */
+        fun setHeight(): Builder = apply { this.height = -1 }
 
         /** sets the side space between popup and display. */
         fun setSpace(@Dp value: Int): Builder = apply { this.space = context.dp2Px(value) }

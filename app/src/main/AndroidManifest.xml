@@ -70,13 +70,13 @@
             android:icon="@mipmap/ic_launcher"
             android:label="@string/app_name"
             android:largeHeap="true"
+            android:usesCleartextTraffic="true"
             android:persistent="true"
             android:requestLegacyExternalStorage="true"
             android:resizeableActivity="false"
             android:roundIcon="@mipmap/ic_launcher_round"
             android:supportsRtl="false"
             android:theme="@style/AppTheme"
-            android:usesCleartextTraffic="true"
             tools:ignore="AllowBackup,GoogleAppIndexingWarning,UnusedAttribute"
             tools:replace="android:allowBackup,android:supportsRtl">
 
@@ -107,6 +107,10 @@
         <meta-data
                 android:name="firebase_crashlytics_collection_enabled"
                 android:value="${enableCrashReporting}" />
+        <meta-data
+                android:name="google_analytics_automatic_screen_reporting_enabled"
+                android:value="true" />
+
         <meta-data
                 android:name="com.facebook.sdk.ApplicationId"
                 android:value="@string/facebook_app_id" />
