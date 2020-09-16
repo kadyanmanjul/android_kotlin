@@ -90,10 +90,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.jetbrains.anko.collections.forEachWithIndex
 import java.text.SimpleDateFormat
-import java.util.Calendar
 import java.util.Date
 import java.util.Locale
-import kotlin.math.roundToLong
 
 const val REGISTER_INFO_CODE = 2001
 const val COURSE_EXPLORER_CODE = 2002
@@ -772,25 +770,19 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
             if (it.is7DFTBought == false) {
                 PrefManager.put(IS_TRIAL_ENDED, false, false)
                 PrefManager.put(IS_TRIAL_STARTED, false, false)
-                PrefManager.put(REMAINING_TRIAL_DAYS, 0)
+                PrefManager.put(REMAINING_TRIAL_DAYS, -1)
             } else {
-                val expiryDate: Date? = sdf.parse(it.endDate)
                 val startDate: Date? = sdf.parse(it.startDate)
+                val currentDate: Date? = sdf.parse(it.today)
 
-                val calendar = Calendar.getInstance()
-                calendar.set(Calendar.HOUR_OF_DAY, 0)
-                calendar.set(Calendar.MINUTE, 0)
-
-                val currentDate = calendar.time
-
-                (it.is7DFTBought?.not() == true || currentDate.after(expiryDate) == true).let { result ->
+                (it.remainingDays < 0).let { trialExpired ->
                     PrefManager.put(
                         IS_TRIAL_ENDED,
-                        result,
+                        trialExpired,
                         false
                     )
 
-                    if (result)
+                    if (trialExpired)
                         logTrialEventExpired()
                 }
 
@@ -799,12 +791,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
                     (it.is7DFTBought ?: false && startDate?.before(currentDate) ?: false), false
                 )
 
-                val difference_In_Time = expiryDate?.time?.minus(currentDate.time)?.toDouble()
-
-                //it is exclusive of start and end date therefore add 1 to the result.
-                val difference_In_Days: Long =
-                    ((difference_In_Time?.div(1000 * 60 * 60 * 24))?.roundToLong()?.rem(365) ?: 0)
-                PrefManager.put(REMAINING_TRIAL_DAYS, difference_In_Days.toInt() + 1)
+                PrefManager.put(REMAINING_TRIAL_DAYS, it.remainingDays)
             }
         }
     }
@@ -817,24 +804,18 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
             if (it.isSubscriptionBought == false) {
                 PrefManager.put(IS_SUBSCRIPTION_ENDED, false, false)
                 PrefManager.put(IS_SUBSCRIPTION_STARTED, false, false)
-                PrefManager.put(REMAINING_SUBSCRIPTION_DAYS, 0, false)
+                PrefManager.put(REMAINING_SUBSCRIPTION_DAYS, -1, false)
             } else {
-                val expiryDate: Date? = sdf.parse(it.endDate)
                 val startDate: Date? = sdf.parse(it.startDate)
+                val currentDate = sdf.parse(it.today)
 
-                val calendar = Calendar.getInstance()
-                calendar.set(Calendar.HOUR_OF_DAY, 0)
-                calendar.set(Calendar.MINUTE, 0)
-
-                val currentDate = calendar.time
-
-                (it.isSubscriptionBought?.not() ?: true || currentDate.after(expiryDate)).let { result ->
+                (it.remainingDays < 0).let { subsEnded ->
                     PrefManager.put(
                         IS_SUBSCRIPTION_ENDED,
-                        result,
+                        subsEnded,
                         false
                     )
-                    if (result)
+                    if (subsEnded)
                         logSubscriptionExpired()
                 }
                 PrefManager.put(
@@ -842,13 +823,8 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
                     (it.isSubscriptionBought ?: false && startDate?.before(currentDate) ?: false),
                     false
                 )
-                val difference_In_Time = expiryDate?.time?.minus(currentDate.time)?.toDouble()
-
-                //it is exclusive of start and end date therefore add 1 to the result.
-                val difference_In_Days: Long =
-                    ((difference_In_Time?.div(1000 * 60 * 60 * 24))?.roundToLong()?.rem(365) ?: 0)
                 PrefManager.put(
-                    REMAINING_SUBSCRIPTION_DAYS, difference_In_Days.toInt() + 2,
+                    REMAINING_SUBSCRIPTION_DAYS, it.remainingDays,
                     false
                 )
             }

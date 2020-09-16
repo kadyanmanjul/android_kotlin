@@ -17,6 +17,8 @@ import com.joshtalks.joshskills.core.JoshApplication
 import com.joshtalks.joshskills.core.ONBOARDING_VERSION_KEY
 import com.joshtalks.joshskills.core.PAYMENT_MOBILE_NUMBER
 import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.REMAINING_SUBSCRIPTION_DAYS
+import com.joshtalks.joshskills.core.REMAINING_TRIAL_DAYS
 import com.joshtalks.joshskills.core.USER_UNIQUE_ID
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
@@ -340,7 +342,14 @@ class PaymentSummaryViewModel(application: Application) : AndroidViewModel(appli
                             IS_SUBSCRIPTION_STARTED,
                             this.subscriptionData.isSubscriptionBought ?: false
                         )
+                        PrefManager.put(
+                            REMAINING_SUBSCRIPTION_DAYS,
+                            this.subscriptionData.remainingDays
+                        )
+
                         PrefManager.put(IS_TRIAL_STARTED, this.freeTrialData.is7DFTBought ?: false)
+                        PrefManager.put(REMAINING_TRIAL_DAYS, this.freeTrialData.remainingDays)
+
                     }
                 }
             } catch (ex: Throwable) {

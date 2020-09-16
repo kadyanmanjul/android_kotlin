@@ -19,6 +19,8 @@ import com.joshtalks.joshskills.core.IS_TRIAL_STARTED
 import com.joshtalks.joshskills.core.JoshApplication
 import com.joshtalks.joshskills.core.ONBOARDING_VERSION_KEY
 import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.REMAINING_SUBSCRIPTION_DAYS
+import com.joshtalks.joshskills.core.REMAINING_TRIAL_DAYS
 import com.joshtalks.joshskills.core.RegistrationMethods
 import com.joshtalks.joshskills.core.SignUpStepStatus
 import com.joshtalks.joshskills.core.USER_UNIQUE_ID
@@ -441,7 +443,14 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
                             IS_SUBSCRIPTION_STARTED,
                             this.subscriptionData.isSubscriptionBought ?: false
                         )
+                        PrefManager.put(
+                            REMAINING_SUBSCRIPTION_DAYS,
+                            this.subscriptionData.remainingDays
+                        )
+
                         PrefManager.put(IS_TRIAL_STARTED, this.freeTrialData.is7DFTBought ?: false)
+                        PrefManager.put(REMAINING_TRIAL_DAYS, this.freeTrialData.remainingDays)
+
                     }
                 }
             } catch (ex: Throwable) {

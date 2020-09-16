@@ -25,7 +25,11 @@ data class FreeTrialData(
     var startDate: String? = null,
 
     @SerializedName("end_date")
-    var endDate: String? = null
+    var endDate: String? = null,
+    @SerializedName("remaining_days")
+    var remainingDays: Int,
+    @SerializedName("today")
+    var today: String
 ) {
 
     override fun toString(): String {
@@ -60,9 +64,12 @@ data class SubscriptionData(
     @SerializedName("start_date")
     var startDate: String? = null,
     @SerializedName("end_date")
-    var endDate: String? = null
+    var endDate: String? = null,
+    @SerializedName("remaining_days")
+    var remainingDays: Int,
+    @SerializedName("today")
+    var today: String
 ) {
-
     companion object {
         private const val SUBSCRIPTION_DATA_MAP_OBJECT = "subscription_map_object"
 
