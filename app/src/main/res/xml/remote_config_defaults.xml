@@ -331,4 +331,16 @@
         <key>NEW_ONBOARD_FLOW_TEXT_ON_ENROLLED</key>
         <value>Aap aapne interest ke courses me enroll hogaye hai. Yeh Courses 7 Days tak Completely FREE hai . Aap inke alawa bhi courses le sakte hai </value>
     </entry>
+    <entry>
+        <key>BB_TOOL_TIP_EXPIRY_TEXT</key>
+        <value>Trial ends in %s</value>
+    </entry>
+    <entry>
+        <key>BB_TOOL_TIP_BELOW_FIND_COURSE_TEXT</key>
+        <value>Agar aap in course ke alawa kuch aur bhi seekhna chahte hai to agle %s dino tak aap free mei unlimited courses unlock kar sakte hai</value>
+    </entry>
+    <entry>
+        <key>BB_TOOL_TIP_BELOW_FIND_COURSE_TEXT_FREE</key>
+        <value>Agar aap in course ke alawa kuch aur bhi seekhna chahte hai to aaj aur aap free mei unlimited courses unlock kar sakte hai.</value>
+    </entry>
 </defaultsMap>

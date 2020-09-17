@@ -46,6 +46,7 @@ import com.joshtalks.joshskills.repository.server.onboarding.ONBOARD_VERSIONS
 import com.joshtalks.joshskills.repository.server.onboarding.SubscriptionData
 import com.joshtalks.joshskills.ui.chat.ConversationActivity
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
+import com.joshtalks.joshskills.ui.inbox.extra.TopTrialTooltipView
 import com.joshtalks.joshskills.ui.newonboarding.OnBoardingActivityNew
 import com.joshtalks.joshskills.ui.payment.order_summary.PaymentSummaryActivity
 import com.joshtalks.joshskills.ui.referral.ReferralActivity
@@ -67,7 +68,10 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_inbox.*
+import kotlinx.android.synthetic.main.activity_inbox.expiry_tool_tip
 import kotlinx.android.synthetic.main.find_more_layout.*
+import kotlinx.android.synthetic.main.test_summay_header_item.view.*
+import kotlinx.android.synthetic.main.top_free_trial_expire_time_tooltip_view.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -108,6 +112,19 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         handelIntentAction()
     }
 
+    private fun showExpiryTimeToolTip(remainingTrialDays: Int) {
+        expiry_tool_tip.visibility = View.VISIBLE
+        if (remainingTrialDays > 0) {
+            expiry_tool_tip_text.text = String.format(
+                AppObjectController.getFirebaseRemoteConfig()
+                    .getString(FirebaseRemoteConfigKey.BB_TOOL_TIP_EXPIRY_TEXT),
+                "HH:MM:SS"
+            )
+        } else {
+            expiry_tool_tip_text.text = "Trial ends in ${remainingTrialDays} Days hh:mm:ss"
+        }
+    }
+
     private fun updateSubscriptionTipView(exploreType: ExploreCardType) {
         if (PrefManager.getBoolValue(IS_SUBSCRIPTION_STARTED).not()) {
             when (exploreType) {
@@ -115,33 +132,57 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
                     subscriptionTipContainer.visibility = View.VISIBLE
 
                     val remainingTrialDays = PrefManager.getIntValue(REMAINING_TRIAL_DAYS)
-                    txtSubscriptionTip.text = when {
+                    if(remainingTrialDays in 0..7)
+                    {
+                        showToolTipBelowFindMoreCourse(remainingTrialDays)
+                    }
+                    when {
+                        remainingTrialDays <= 0 -> {
+                            txtSubscriptionTip.text=AppObjectController.getFirebaseRemoteConfig()
+                                .getString(FirebaseRemoteConfigKey.SUBSCRIPTION_TRIAL_TIP_DAY7)
+                            showExpiryTimeToolTip(remainingTrialDays)
+                        }
 
-                        remainingTrialDays <= 0 -> AppObjectController.getFirebaseRemoteConfig()
-                            .getString(FirebaseRemoteConfigKey.SUBSCRIPTION_TRIAL_TIP_DAY7)
+                        remainingTrialDays == 1 -> {
+                            txtSubscriptionTip.text= AppObjectController.getFirebaseRemoteConfig()
+                                .getString(FirebaseRemoteConfigKey.SUBSCRIPTION_TRIAL_TIP_DAY6)
+                            showExpiryTimeToolTip(remainingTrialDays)
 
-                        remainingTrialDays == 1 -> AppObjectController.getFirebaseRemoteConfig()
-                            .getString(FirebaseRemoteConfigKey.SUBSCRIPTION_TRIAL_TIP_DAY6)
+                        }
 
-                        remainingTrialDays == 2 -> AppObjectController.getFirebaseRemoteConfig()
-                            .getString(FirebaseRemoteConfigKey.SUBSCRIPTION_TRIAL_TIP_DAY5)
+                        remainingTrialDays == 2 -> {
+                            txtSubscriptionTip.text=AppObjectController.getFirebaseRemoteConfig()
+                                .getString(FirebaseRemoteConfigKey.SUBSCRIPTION_TRIAL_TIP_DAY5)
+                            showExpiryTimeToolTip(remainingTrialDays)
 
-                        remainingTrialDays == 3 -> AppObjectController.getFirebaseRemoteConfig()
-                            .getString(FirebaseRemoteConfigKey.SUBSCRIPTION_TRIAL_TIP_DAY4)
+                        }
 
-                        remainingTrialDays == 4 -> AppObjectController.getFirebaseRemoteConfig()
-                            .getString(FirebaseRemoteConfigKey.SUBSCRIPTION_TRIAL_TIP_DAY3)
+                        remainingTrialDays == 3 -> {
+                            txtSubscriptionTip.text=AppObjectController.getFirebaseRemoteConfig()
+                                .getString(FirebaseRemoteConfigKey.SUBSCRIPTION_TRIAL_TIP_DAY4)
+                            showExpiryTimeToolTip(remainingTrialDays)
 
-                        remainingTrialDays == 5 -> AppObjectController.getFirebaseRemoteConfig()
-                            .getString(FirebaseRemoteConfigKey.SUBSCRIPTION_TRIAL_TIP_DAY2)
+                        }
 
-                        remainingTrialDays == 6 -> AppObjectController.getFirebaseRemoteConfig()
-                            .getString(FirebaseRemoteConfigKey.SUBSCRIPTION_TRIAL_TIP_DAY1)
+                        remainingTrialDays == 4 -> {
+                            txtSubscriptionTip.text=AppObjectController.getFirebaseRemoteConfig()
+                                .getString(FirebaseRemoteConfigKey.SUBSCRIPTION_TRIAL_TIP_DAY3)
+                        }
 
-                        remainingTrialDays > 6 -> AppObjectController.getFirebaseRemoteConfig()
-                            .getString(FirebaseRemoteConfigKey.SUBSCRIPTION_TRIAL_TIP_DAY0)
+                        remainingTrialDays == 5 -> {
+                            txtSubscriptionTip.text=AppObjectController.getFirebaseRemoteConfig()
+                                .getString(FirebaseRemoteConfigKey.SUBSCRIPTION_TRIAL_TIP_DAY2)
+                        }
 
-                        else -> EMPTY
+                        remainingTrialDays == 6 -> {
+                            txtSubscriptionTip.text=AppObjectController.getFirebaseRemoteConfig()
+                                .getString(FirebaseRemoteConfigKey.SUBSCRIPTION_TRIAL_TIP_DAY1)
+                        }
+
+                        remainingTrialDays > 6 -> {
+                            txtSubscriptionTip.text=AppObjectController.getFirebaseRemoteConfig()
+                                .getString(FirebaseRemoteConfigKey.SUBSCRIPTION_TRIAL_TIP_DAY0)
+                        }
                     }
                 }
 
@@ -173,6 +214,11 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
             subscriptionTipContainer.visibility = View.GONE
         }
 
+    }
+
+    private fun showToolTipBelowFindMoreCourse(remainingTrialDays: Int) {
+        continue_tip.visibility=View.VISIBLE
+        (continue_tip as TopTrialTooltipView).setText(remainingTrialDays)
     }
 
     private fun setCTAButtonText(exploreType: ExploreCardType) {

@@ -6,6 +6,8 @@ import android.view.View
 import android.widget.FrameLayout
 import androidx.appcompat.widget.AppCompatTextView
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
 
 class TopTrialTooltipView : FrameLayout {
 
@@ -17,7 +19,6 @@ class TopTrialTooltipView : FrameLayout {
 
     constructor(context: Context, attrs: AttributeSet) : super(context, attrs) {
         init()
-
     }
 
     constructor(context: Context, attrs: AttributeSet, defStyle: Int) : super(
@@ -26,13 +27,32 @@ class TopTrialTooltipView : FrameLayout {
         defStyle
     ) {
         init()
-
     }
 
     private fun init() {
         View.inflate(context, R.layout.top_trial_tooltip_view, this)
-        ballonTV=findViewById(R.id.balloon_text)
-        ballonTV.setText("Bade Bhaiya Tip: Agar aap in course ke alawa kuch aur bhi seekhna chahte hai to agle x dino tak aap free mei unlimited courses unlock kar sakte hai")
+        ballonTV = findViewById(R.id.balloon_text)
+        ballonTV.text =
+            String.format(
+                AppObjectController.getFirebaseRemoteConfig()
+                    .getString(FirebaseRemoteConfigKey.BB_TOOL_TIP_BELOW_FIND_COURSE_TEXT),
+                7
+            )
+    }
 
+    fun setText(remainingTrialDays: Int) {
+        if(remainingTrialDays in 0..1){
+            ballonTV.text =
+                AppObjectController.getFirebaseRemoteConfig()
+                    .getString(FirebaseRemoteConfigKey.BB_TOOL_TIP_BELOW_FIND_COURSE_TEXT_FREE)
+        }
+        else {
+            ballonTV.text =
+                String.format(
+                    AppObjectController.getFirebaseRemoteConfig()
+                        .getString(FirebaseRemoteConfigKey.BB_TOOL_TIP_BELOW_FIND_COURSE_TEXT),
+                    remainingTrialDays
+                )
+        }
     }
 }

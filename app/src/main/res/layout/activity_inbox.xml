@@ -1,108 +1,186 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
-        xmlns:wheel="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/content"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@android:color/white"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:wheel="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/content"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white"
 
-        tools:context="com.joshtalks.joshskills.ui.inbox.InboxActivity">
+    tools:context="com.joshtalks.joshskills.ui.inbox.InboxActivity">
 
     <com.google.android.material.appbar.AppBarLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
         <include
-                layout="@layout/inbox_toolbar"
-                app:popupTheme="@style/AppTheme.PopupOverlay" />
+            layout="@layout/inbox_toolbar"
+            app:popupTheme="@style/AppTheme.PopupOverlay" />
 
 
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.core.widget.NestedScrollView
-            android:id="@+id/nested_scroll_view"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="?attr/actionBarSize">
+        android:id="@+id/nested_scroll_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="?attr/actionBarSize">
 
         <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <include
+                layout="@layout/top_free_trial_expire_time_tooltip_view"
+                android:id="@+id/expiry_tool_tip"
+                android:visibility="gone"
+                app:popupTheme="@style/AppTheme.PopupOverlay"
+                tools:visibility="gone" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/subscriptionTipContainer"
-                    android:layout_width="match_parent"
+                android:id="@+id/subscriptionTipContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/_8sdp"
+                android:layout_marginTop="@dimen/_12sdp"
+                android:layout_marginBottom="@dimen/_4sdp"
+                android:background="@drawable/next_video_progress_drawable"
+                android:backgroundTint="#DCDCDC"
+                android:paddingHorizontal="@dimen/_10sdp"
+                android:paddingVertical="@dimen/_8sdp"
+                android:visibility="gone"
+                tools:visibility="visible">
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/txtSubscriptionTip"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="@dimen/_8sdp"
-                    android:layout_marginTop="@dimen/_12sdp"
-                    android:layout_marginBottom="@dimen/_4sdp"
-                    android:background="@drawable/next_video_progress_drawable"
-                    android:backgroundTint="#DCDCDC"
-                    android:paddingHorizontal="@dimen/_10sdp"
-                    android:paddingVertical="@dimen/_8sdp"
-                    android:visibility="gone"
-                    tools:visibility="visible">
+                    android:layout_gravity="start|center"
+                    android:layout_marginEnd="@dimen/_4sdp"
+                    android:gravity="start|center"
+                    android:text="@string/enjoy_free_trial"
+                    android:textAllCaps="false"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
+                    android:textColor="@color/black"
+                    app:layout_constraintBottom_toBottomOf="@id/txtConvert"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/txtConvert"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/txtConvert"
+                    app:rippleColor="@color/white" />
 
                 <com.google.android.material.textview.MaterialTextView
-                        android:id="@+id/txtSubscriptionTip"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="start|center"
-                        android:layout_marginEnd="@dimen/_4sdp"
-                        android:gravity="start|center"
-                        android:text="@string/enjoy_free_trial"
-                        android:textAllCaps="false"
-                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
-                        android:textColor="@color/black"
-                        app:layout_constraintBottom_toBottomOf="@id/txtConvert"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintEnd_toStartOf="@+id/txtConvert"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="@+id/txtConvert"
-                        app:rippleColor="@color/white" />
-
-                <com.google.android.material.textview.MaterialTextView
-                        android:id="@+id/txtConvert"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="end"
-                        android:foreground="?android:attr/selectableItemBackground"
-                        android:text="@string/convert"
-                        android:textAllCaps="false"
-                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Bold"
-                        android:textColor="@color/button_color"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
+                    android:id="@+id/txtConvert"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    android:text="@string/convert"
+                    android:textAllCaps="false"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Bold"
+                    android:textColor="@color/button_color"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <com.mindorks.placeholderview.PlaceHolderView
-                    android:id="@+id/recycler_view_inbox"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@android:color/white"
-                    android:paddingTop="@dimen/_5sdp"
-                    tools:itemCount="5"
-                    tools:listitem="@layout/inbox_row_layout" />
+                android:id="@+id/recycler_view_inbox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:color/white"
+                android:paddingTop="@dimen/_5sdp"
+                tools:itemCount="5"
+                tools:listitem="@layout/inbox_row_layout" />
 
             <include layout="@layout/find_more_layout" />
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
     <com.pnikosis.materialishprogress.ProgressWheel
-            android:id="@+id/progress_bar"
-            android:layout_width="@dimen/_82sdp"
-            android:layout_height="@dimen/_82sdp"
-            android:layout_gravity="center"
-            wheel:matProg_barColor="@color/button_primary_color"
-            wheel:matProg_fillRadius="true"
-            wheel:matProg_linearProgress="false"
-            wheel:matProg_progressIndeterminate="true" />
+        android:id="@+id/progress_bar"
+        android:layout_width="@dimen/_82sdp"
+        android:layout_height="@dimen/_82sdp"
+        android:layout_gravity="center"
+        wheel:matProg_barColor="@color/button_primary_color"
+        wheel:matProg_fillRadius="true"
+        wheel:matProg_linearProgress="false"
+        wheel:matProg_progressIndeterminate="true" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/transparent_2"
+        android:paddingVertical="?attr/actionBarSize"
+        android:visibility="gone"
+        tools:visibility="visible">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/subscriptionTipContainer2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/_8sdp"
+            android:layout_marginTop="@dimen/_12sdp"
+            android:layout_marginBottom="@dimen/_4sdp"
+            android:background="@drawable/next_video_progress_drawable"
+            android:backgroundTint="#DCDCDC"
+            android:paddingHorizontal="@dimen/_10sdp"
+            android:paddingVertical="@dimen/_8sdp"
+            android:visibility="gone"
+            tools:visibility="visible">
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/txtSubscriptionTip2"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start|center"
+                android:layout_marginEnd="@dimen/_4sdp"
+                android:gravity="start|center"
+                android:text="@string/enjoy_free_trial"
+                android:textAllCaps="false"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Semi_Bold"
+                android:textColor="@color/black"
+                app:layout_constraintBottom_toBottomOf="@id/txtConvert2"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/txtConvert2"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/txtConvert2"
+                app:rippleColor="@color/white" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/txtConvert2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:text="@string/convert"
+                android:textAllCaps="false"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Bold"
+                android:textColor="@color/button_color"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <com.joshtalks.joshskills.ui.inbox.extra.TopTrialTooltipView
+            android:id="@+id/continue_tip"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:layout_marginTop="@dimen/_6sdp"
+            android:visibility="visible"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/find_more"
+            app:layout_constraintWidth_default="percent"
+            app:layout_constraintWidth_percent="0.9" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
