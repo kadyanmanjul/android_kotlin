@@ -47,11 +47,11 @@ import com.joshtalks.joshskills.util.showAppropriateMsg
 import com.newrelic.agent.android.NewRelic
 import io.branch.referral.Branch
 import io.github.inflationx.viewpump.ViewPumpContextWrapper
+import java.lang.reflect.Type
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
-import java.lang.reflect.Type
 
 const val HELP_ACTIVITY_REQUEST_CODE = 9010
 
@@ -123,10 +123,9 @@ abstract class BaseActivity : AppCompatActivity() {
     fun getIntentForState(): Intent? {
         val intent: Intent? = when {
             User.getInstance().isVerified.not() -> {
-                if(PrefManager.getBoolValue(IS_GUEST_ENROLLED,false)){
+                if (PrefManager.getBoolValue(IS_GUEST_ENROLLED, false)) {
                     getInboxActivityIntent()
-                }
-                else {
+                } else {
                     Intent(this, OnBoardActivity::class.java)
                 }
             }
@@ -145,6 +144,7 @@ abstract class BaseActivity : AppCompatActivity() {
         return Intent(this, InboxActivity::class.java).apply {
             addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            putExtra(SHOW_OVERLAY, true)
         }
     }
 

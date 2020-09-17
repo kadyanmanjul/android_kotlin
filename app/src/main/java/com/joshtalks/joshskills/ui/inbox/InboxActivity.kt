@@ -36,6 +36,7 @@ import com.joshtalks.joshskills.core.IS_TRIAL_STARTED
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.REMAINING_SUBSCRIPTION_DAYS
 import com.joshtalks.joshskills.core.REMAINING_TRIAL_DAYS
+import com.joshtalks.joshskills.core.SHOW_OVERLAY
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
@@ -557,7 +558,9 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
                 if (exploreTypeStr.isNotBlank()) ExploreCardType.valueOf(exploreTypeStr) else ExploreCardType.NORMAL
             updateSubscriptionTipView(exploreType)
             setCTAButtonText(exploreType)
-            if (true && it.showTooltip3) {
+
+            val showOverlay = intent.getBooleanExtra(SHOW_OVERLAY, false)
+            if (showOverlay && it.showTooltip3) {
                 showOverlayToolTip(it.freeTrialData.remainingDays)
             }
 
@@ -581,7 +584,10 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
                 this, AppObjectController.getFirebaseRemoteConfig()
                     .getDouble(FirebaseRemoteConfigKey.SUBSCRIPTION_TEST_ID).toInt().toString()
             )
+        }
 
+        overlay_layout.setOnClickListener {
+            overlay_layout.visibility = View.GONE
         }
 
         viewModel.reminderApiCallStatusLiveData.observe(this, {
