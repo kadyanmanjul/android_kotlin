@@ -48,7 +48,7 @@
         app:layout_constraintTop_toBottomOf="@+id/continue_tip" />
 
     <com.joshtalks.joshskills.ui.inbox.extra.TopTrialTooltipView
-        android:id="@+id/continue_tip"
+        android:id="@+id/bb_tip_below_find_btn"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"

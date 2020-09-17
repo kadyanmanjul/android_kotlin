@@ -345,7 +345,7 @@
     </entry>
     <entry>
         <key>BB_TOOL_TIP_EXPIRY_TEXT</key>
-        <value>Trial ends in %s</value>
+        <value>Trial ends in </value>
     </entry>
     <entry>
         <key>BB_TOOL_TIP_BELOW_FIND_COURSE_TEXT</key>

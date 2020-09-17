@@ -6,6 +6,7 @@ import android.app.Activity
 import android.content.Intent
 import android.graphics.Rect
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.util.Log
 import android.view.View
 import android.view.animation.Animation
@@ -27,6 +28,7 @@ import com.joshtalks.joshskills.core.ApiCallStatus
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.COURSE_ID
 import com.joshtalks.joshskills.core.CoreJoshActivity
+import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.EXPLORE_TYPE
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
 import com.joshtalks.joshskills.core.IS_SUBSCRIPTION_ENDED
@@ -36,6 +38,7 @@ import com.joshtalks.joshskills.core.IS_TRIAL_STARTED
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.REMAINING_SUBSCRIPTION_DAYS
 import com.joshtalks.joshskills.core.REMAINING_TRIAL_DAYS
+import com.joshtalks.joshskills.core.SINGLE_SPACE
 import com.joshtalks.joshskills.core.SHOW_OVERLAY
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
@@ -67,7 +70,6 @@ import com.joshtalks.joshskills.ui.payment.order_summary.PaymentSummaryActivity
 import com.joshtalks.joshskills.ui.referral.ReferralActivity
 import com.joshtalks.joshskills.ui.reminder.reminder_listing.ReminderListActivity
 import com.joshtalks.joshskills.ui.reminder.set_reminder.ReminderActivity
-import com.joshtalks.joshskills.ui.tooltip.BalloonFactory
 import com.joshtalks.joshskills.ui.view_holders.InboxViewHolder
 import com.joshtalks.skydoves.balloon.Balloon
 import com.karumi.dexter.Dexter
@@ -77,12 +79,20 @@ import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.patloew.rxlocation.RxLocation
 import io.reactivex.CompletableObserver
-import io.reactivex.Maybe
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
+import kotlinx.android.synthetic.main.activity_course_details.continue_tip
 import kotlinx.android.synthetic.main.activity_inbox.expiry_tool_tip
+import kotlinx.android.synthetic.main.activity_inbox.nested_scroll_view
+import kotlinx.android.synthetic.main.activity_inbox.progress_bar
+import kotlinx.android.synthetic.main.activity_inbox.recycler_view_inbox
+import kotlinx.android.synthetic.main.activity_inbox.subscriptionTipContainer
+import kotlinx.android.synthetic.main.activity_inbox.txtConvert
+import kotlinx.android.synthetic.main.activity_inbox.txtSubscriptionTip
+import kotlinx.android.synthetic.main.find_more_layout.find_more
+import kotlinx.android.synthetic.main.top_free_trial_expire_time_tooltip_view.expiry_tool_tip_text
 import kotlinx.android.synthetic.main.activity_inbox.nested_scroll_view
 import kotlinx.android.synthetic.main.activity_inbox.overlay_layout
 import kotlinx.android.synthetic.main.activity_inbox.overlay_tip
@@ -93,7 +103,7 @@ import kotlinx.android.synthetic.main.activity_inbox.txtConvert
 import kotlinx.android.synthetic.main.activity_inbox.txtConvert2
 import kotlinx.android.synthetic.main.activity_inbox.txtSubscriptionTip
 import kotlinx.android.synthetic.main.activity_inbox.txtSubscriptionTip2
-import kotlinx.android.synthetic.main.find_more_layout.continue_tip
+import kotlinx.android.synthetic.main.find_more_layout.bb_tip_below_find_btn
 import kotlinx.android.synthetic.main.find_more_layout.find_more
 import kotlinx.android.synthetic.main.top_free_trial_expire_time_tooltip_view.expiry_tool_tip_text
 import kotlinx.coroutines.CoroutineScope
@@ -121,6 +131,10 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
     private lateinit var reminderIv: ImageView
     private lateinit var findMoreLayout: View
     private var offerInHint: Balloon? = null
+    lateinit var countdown_timer: CountDownTimer
+    var isRunning: Boolean = false
+    var time_in_milli_seconds = 0L
+    var expiryToolText: String = EMPTY
 
     override fun onCreate(savedInstanceState: Bundle?) {
         WorkManagerAdmin.requiredTaskInLandingPage()
@@ -138,26 +152,71 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
 
     private fun showExpiryTimeToolTip(remainingTrialDays: Int) {
         expiry_tool_tip.visibility = View.VISIBLE
-        if (remainingTrialDays > 0) {
-            expiry_tool_tip_text.text = String.format(
+        if (remainingTrialDays == 0) {
+            expiryToolText =
                 AppObjectController.getFirebaseRemoteConfig()
-                    .getString(FirebaseRemoteConfigKey.BB_TOOL_TIP_EXPIRY_TEXT),
-                "HH:MM:SS"
-            )
+                    .getString(FirebaseRemoteConfigKey.BB_TOOL_TIP_EXPIRY_TEXT)
+        } else if (remainingTrialDays == 1) {
+            expiryToolText =
+                AppObjectController.getFirebaseRemoteConfig()
+                    .getString(FirebaseRemoteConfigKey.BB_TOOL_TIP_EXPIRY_TEXT)
+                    .plus(" $remainingTrialDays Day")
         } else {
-            expiry_tool_tip_text.text = "Trial ends in ${remainingTrialDays} Days hh:mm:ss"
+            expiryToolText =
+                AppObjectController.getFirebaseRemoteConfig()
+                    .getString(FirebaseRemoteConfigKey.BB_TOOL_TIP_EXPIRY_TEXT)
+                    .plus(" $remainingTrialDays Days")
         }
+        startThreadForTextUpdate()
     }
 
-    private fun updateSubscriptionTipView(exploreType: ExploreCardType) {
+    private fun startThreadForTextUpdate() {
+        val freeTrialData = FreeTrialData.getMapObject()
+        time_in_milli_seconds = (1000 * 60)
+        freeTrialData?.let { data ->
+            time_in_milli_seconds = data.endDate?.minus(data.today) ?: (1000 * 60)
+        }
+        startTimer(time_in_milli_seconds)
+    }
+
+    private fun startTimer(time_in_seconds: Long) {
+        countdown_timer = object : CountDownTimer(time_in_seconds, 1000) {
+            override fun onFinish() {
+                expiry_tool_tip_text.text = "Free trial completed! "
+            }
+
+            override fun onTick(p0: Long) {
+                time_in_milli_seconds = p0
+                updateTextUI(time_in_milli_seconds)
+            }
+        }
+        countdown_timer.start()
+        isRunning = true
+    }
+
+    private fun updateTextUI(time_in_milli_seconds: Long) {
+        val hours = ((time_in_milli_seconds / 1000) / 60) / 24
+        val minute = (time_in_milli_seconds / 1000) / 60
+        val seconds = (time_in_milli_seconds / 1000) % 60
+        expiry_tool_tip_text.text = "${expiryToolText.plus(SINGLE_SPACE)}$hours:$minute:$seconds"
+    }
+
+    private fun updateSubscriptionTipView(
+        exploreType: ExploreCardType,
+        showTooltip1: Boolean,
+        showTooltip2: Boolean
+    ) {
         if (PrefManager.getBoolValue(IS_SUBSCRIPTION_STARTED).not()) {
             when (exploreType) {
                 ExploreCardType.FREETRIAL -> {
                     subscriptionTipContainer.visibility = View.VISIBLE
 
                     val remainingTrialDays = PrefManager.getIntValue(REMAINING_TRIAL_DAYS)
-                    if (remainingTrialDays in 0..7) {
+                    if ((remainingTrialDays in 0..7) && showTooltip1) {
                         showToolTipBelowFindMoreCourse(remainingTrialDays)
+                    }
+                    if ((remainingTrialDays in 0..4) && showTooltip2) {
+                        showExpiryTimeToolTip(remainingTrialDays)
                     }
                     when {
                         remainingTrialDays <= 0 -> {
@@ -265,8 +324,8 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
     }
 
     private fun showToolTipBelowFindMoreCourse(remainingTrialDays: Int) {
-        continue_tip.visibility = View.VISIBLE
-        (continue_tip as TopTrialTooltipView).setFindMoreCourseTipText(remainingTrialDays)
+        bb_tip_below_find_btn.visibility = View.VISIBLE
+        (bb_tip_below_find_btn as TopTrialTooltipView).setFindMoreCourseTipText(remainingTrialDays)
     }
 
     private fun setCTAButtonText(exploreType: ExploreCardType) {
@@ -556,7 +615,11 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
             val exploreTypeStr = PrefManager.getStringValue(EXPLORE_TYPE, false)
             val exploreType =
                 if (exploreTypeStr.isNotBlank()) ExploreCardType.valueOf(exploreTypeStr) else ExploreCardType.NORMAL
-            updateSubscriptionTipView(exploreType)
+            updateSubscriptionTipView(
+                exploreType,
+                it.showTooltip1,
+                it.showTooltip2
+            )
             setCTAButtonText(exploreType)
 
             val showOverlay = intent.getBooleanExtra(SHOW_OVERLAY, false)
@@ -824,47 +887,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
 
 
     private fun attachOfferHintView() {
-        compositeDisposable.add(
-            AppObjectController.appDatabase
-                .courseDao()
-                .isUserInOfferDays()
-                .concatMap {
-                    val (flag, remainDay) = Utils.isUserInDaysOld(it.courseCreatedDate)
-                    if (offerInHint == null) {
-                        getVersionData()?.let {
-                            when (it.version?.name) {
-                                ONBOARD_VERSIONS.ONBOARDING_V1 -> {
-                                    offerInHint =
-                                        BalloonFactory.offerIn7Days(
-                                            this,
-                                            this,
-                                            remainDay.toString()
-                                        )
-                                }
-                                else -> {
-                                    offerInHint =
-                                        BalloonFactory.offerIn7Days(
-                                            this,
-                                            this,
-                                            tipText = getVersionData()?.tooltipText!!
-                                        )
-                                }
-                            }
-                        }
-                        hideToolTip()
-                    }
-                    return@concatMap Maybe.just(flag)
-                }
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                    { value ->
-                        hideToolTip(value)
-                    },
-                    { error ->
-                        error.printStackTrace()
-                    }
-                ))
+
     }
 
     private fun hideToolTip(value: Boolean = true) {
@@ -934,6 +957,13 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
                     false
                 )
             }
+        }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        if (isRunning) {
+            countdown_timer.cancel()
         }
     }
 
