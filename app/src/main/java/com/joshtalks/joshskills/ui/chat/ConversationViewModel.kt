@@ -160,11 +160,15 @@ class ConversationViewModel(application: Application) :
                         appDatabase.chatDao()
                             .getPdfOfQuestion(questionId = question.questionId)
                 }
-                chat.question = question
                 if (this.parent_id.isNullOrEmpty().not()) {
                     chat.parentQuestionObject =
                         appDatabase.chatDao().getQuestionOnId(this.parent_id!!)
                 }
+                if (conversationPracticeId.isNullOrEmpty().not()) {
+                    question.cPractiseCount = AppObjectController.appDatabase.assessmentDao()
+                        .countOfAssessment(conversationPracticeId)
+                }
+                chat.question = question
             }
 
             if (chat.type == BASE_MESSAGE_TYPE.Q && question == null) {

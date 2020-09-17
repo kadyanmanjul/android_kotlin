@@ -13,13 +13,12 @@ import com.mindorks.placeholderview.annotations.Click
 import com.mindorks.placeholderview.annotations.Layout
 import com.mindorks.placeholderview.annotations.Resolve
 import com.mindorks.placeholderview.annotations.View
+import org.jetbrains.anko.backgroundResource
 import java.lang.ref.WeakReference
 
 @Layout(R.layout.conversation_practise_layout)
-class ConversationPractiseViewHolder(
-    activityRef: WeakReference<FragmentActivity>, message: ChatModel
-) :
-    BaseChatViewHolder(activityRef, message) {
+class ConversationPractiseViewHolder(activityRef: WeakReference<FragmentActivity>, message: ChatModel,previousMessage:ChatModel?) :
+    BaseChatViewHolder(activityRef, message,previousMessage) {
 
     @View(R.id.image_view)
     lateinit var imageView: AppCompatImageView
@@ -45,6 +44,8 @@ class ConversationPractiseViewHolder(
                 titleTv.text = "Conversation #$it"
             }
         }
+        subRootView.setBackgroundResource(getViewHolderBGResource(previousMessage?.sender,message.sender))
+
     }
 
     override fun getRoot(): FrameLayout {

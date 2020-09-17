@@ -40,8 +40,8 @@ import timber.log.Timber
 import java.lang.ref.WeakReference
 
 @Layout(R.layout.pdf_view_holder)
-class PdfViewHolder(activityRef: WeakReference<FragmentActivity>, message: ChatModel) :
-    BaseChatViewHolder(activityRef, message) {
+class PdfViewHolder(activityRef: WeakReference<FragmentActivity>, message: ChatModel,previousMessage:ChatModel?) :
+    BaseChatViewHolder(activityRef, message,previousMessage) {
 
     @View(R.id.root_view)
     lateinit var rootView: FrameLayout
@@ -177,7 +177,7 @@ class PdfViewHolder(activityRef: WeakReference<FragmentActivity>, message: ChatM
         }
 
         message.sender?.let {
-            updateView(it, rootView, rootSubView, messageView)
+            setViewHolderBG(previousMessage?.sender,it, rootView, rootSubView, messageView)
         }
 
         message.question?.run {

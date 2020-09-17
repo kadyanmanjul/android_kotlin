@@ -103,4 +103,8 @@ abstract class AssessmentDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     abstract suspend fun insertAssessmentIntro(assessmentIntro: AssessmentIntro)
 
+    @Transaction
+    @Query("SELECT  localId FROM assessments  WHERE remoteId = :assessmentId LIMIT 1;")
+    abstract fun countOfAssessment(assessmentId: String?="-1"): Int
+
 }

@@ -30,7 +30,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:gravity="center"
-            android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_Regular"
             android:textColor="@color/black"
             tools:text="Yesterday" />
 

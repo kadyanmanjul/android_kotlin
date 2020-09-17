@@ -18,11 +18,21 @@ import com.mindorks.placeholderview.annotations.View
 import java.lang.ref.WeakReference
 
 @Layout(R.layout.chat_text_message_holder)
-class TextViewHolder(activityRef: WeakReference<FragmentActivity>, message: ChatModel) :
-    BaseChatViewHolder(activityRef, message) {
+class TextViewHolder(
+    activityRef: WeakReference<FragmentActivity>,
+    message: ChatModel,
+    previousMessage: ChatModel?
+) :
+    BaseChatViewHolder(activityRef, message, previousMessage) {
+
+    @View(R.id.root_view)
+    lateinit var rootView: FrameLayout
 
     @View(R.id.root_sub_view)
     lateinit var rootSubView: FrameLayout
+
+    @View(R.id.message_view)
+    lateinit var messageView: ViewGroup
 
     @View(R.id.text_message_body)
     lateinit var messageBody: JoshTextView
@@ -33,13 +43,6 @@ class TextViewHolder(activityRef: WeakReference<FragmentActivity>, message: Chat
     @View(R.id.text_message_time)
     lateinit var text_message_time: AppCompatTextView
 
-    @View(R.id.root_view)
-    lateinit var rootView: FrameLayout
-
-    @View(R.id.message_view)
-    lateinit var messageView: ViewGroup
-
-
     lateinit var textViewHolder: TextViewHolder
 
     @Resolve
@@ -49,7 +52,7 @@ class TextViewHolder(activityRef: WeakReference<FragmentActivity>, message: Chat
         titleView.visibility = GONE
         textViewHolder = this
         message.sender?.let {
-            updateView(it, rootView, rootSubView, messageView)
+            setViewHolderBG(previousMessage?.sender, it, rootView, rootSubView, messageView)
         }
         message.parentQuestionObject?.run {
             addLinkToTagMessage(messageView, this, message.sender)

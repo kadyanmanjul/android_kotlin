@@ -31,27 +31,28 @@ object MessageBuilderFactory {
     fun getMessage(
         activityRef: WeakReference<FragmentActivity>,
         cMessageType: BASE_MESSAGE_TYPE,
-        message: BaseChatMessage
+        message: BaseChatMessage,
+        prevMessage:ChatModel?
     ): BaseChatViewHolder {
         when (cMessageType) {
             BASE_MESSAGE_TYPE.TX -> {
-                return TextViewHolder(activityRef, getTextChatModel(message))
+                return TextViewHolder(activityRef, getTextChatModel(message),prevMessage)
             }
             BASE_MESSAGE_TYPE.VI -> {
-                return VideoViewHolder(activityRef, getVideoChatModel(message))
+                return VideoViewHolder(activityRef, getVideoChatModel(message),prevMessage)
 
             }
             BASE_MESSAGE_TYPE.IM -> {
-                return ImageViewHolder(activityRef, getImageChatModel(message))
+                return ImageViewHolder(activityRef, getImageChatModel(message),prevMessage)
 
             }
             BASE_MESSAGE_TYPE.AU -> {
-                return AudioPlayerViewHolder(activityRef, getAudioChatModel(message))
+                return AudioPlayerViewHolder(activityRef, getAudioChatModel(message),prevMessage)
             }
             BASE_MESSAGE_TYPE.UNLOCK -> {
-                return UnlockNextClassViewHolder(activityRef, getUnlockChatModel(message))
+                return UnlockNextClassViewHolder(activityRef, getUnlockChatModel(message),prevMessage)
             }//add new
-            else -> return TextViewHolder(activityRef, ChatModel())
+            else -> return TextViewHolder(activityRef, ChatModel(),prevMessage)
         }
 
     }

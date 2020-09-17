@@ -96,12 +96,10 @@ class ConversationPracticeActivity : CoreJoshActivity() {
     }
 
     private fun initViewPagerTab() {
-        TabLayoutMediator(binding.tabLayout, binding.viewPager,
-            TabLayoutMediator.TabConfigurationStrategy { tab, position ->
-                tab.text = tabName[position]
+        TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
+            tab.text = tabName[position]
 
-            }
-        ).attach()
+        }.attach()
         binding.viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)

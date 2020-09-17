@@ -204,6 +204,7 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
     private var isNewChatViewAdd = true
     private var lastDay: Date = Date()
     private var chatModelLast: ChatModel? = null
+    private var lastMessage: ChatModel? = null
     private var internetAvailableFlag: Boolean = true
     private var flowFrom: String? = EMPTY
     private var unlockViewHolder: UnlockNextClassViewHolder? = null
@@ -731,7 +732,8 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
             val cell = MessageBuilderFactory.getMessage(
                 activityRef,
                 BASE_MESSAGE_TYPE.TX,
-                tChatMessage
+                tChatMessage,
+                getLastMessageObject()
             )
             conversationBinding.chatRv.addView(cell)
             scrollToEnd()
@@ -821,16 +823,17 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
                     ) {
                         conversationBinding.chatRv.addView(TimeViewHolder(key))
                         lastDay = key
+                        lastMessage = null
                     }
                     value.forEach { chatModel ->
                         if (chatModelLast != null && chatModelLast == chatModel && isNewChatViewAdd && chatModelLast!!.type != BASE_MESSAGE_TYPE.UNLOCK) {
-
                             isNewChatViewAdd = false
                             conversationBinding.chatRv.addView(NewMessageViewHolder("Aapki Nayi Classes"))
                             linearLayoutManager.scrollToPosition(conversationBinding.chatRv.viewResolverCount - 1)
                         }
                         getView(chatModel)?.let { cell ->
                             conversationBinding.chatRv.addView(cell)
+                            lastMessage = chatModel
                         }
                     }
                 }
@@ -931,8 +934,7 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
                     object : MultiplePermissionsListener {
                         override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
                             report?.areAllPermissionsGranted()?.let { flag ->
-                                if (flag) {
-                                    if (internetAvailableFlag.not()) {
+                                if (flag && internetAvailableFlag.not()) {
                                         showToast(getString(R.string.internet_not_available_msz))
                                         return@let
                                     }
@@ -946,14 +948,13 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
                                     conversationBinding.chatRv.refreshView(view)
                                     return
                                 }
-                                if (report.isAnyPermissionPermanentlyDenied) {
+                                report?.isAnyPermissionPermanentlyDenied?.let {
                                     PermissionUtils.permissionPermanentlyDeniedDialog(
                                         activityRef.get()!!
                                     )
                                     return
                                 }
                             }
-                        }
 
                         override fun onPermissionRationaleShouldBeShown(
                             permissions: MutableList<PermissionRequest>?,
@@ -1272,7 +1273,8 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
             MessageBuilderFactory.getMessage(
                 activityRef,
                 BASE_MESSAGE_TYPE.AU,
-                tAudioMessage
+                tAudioMessage,
+                getLastMessageObject()
             )
         conversationBinding.chatRv.addView(cell)
         scrollToEnd()
@@ -1293,7 +1295,8 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
                 MessageBuilderFactory.getMessage(
                     activityRef,
                     BASE_MESSAGE_TYPE.AU,
-                    tAudioMessage
+                    tAudioMessage,
+                    getLastMessageObject()
                 )
             conversationBinding.chatRv.addView(cell)
             scrollToEnd()
@@ -1338,24 +1341,24 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
         chatModel: ChatModel
     ): BaseCell? {
         return when (mszType) {
-            BASE_MESSAGE_TYPE.AU ->
-                AudioPlayerViewHolder(activityRef, chatModel)
-            BASE_MESSAGE_TYPE.IM ->
-                ImageViewHolder(activityRef, chatModel)
-            BASE_MESSAGE_TYPE.PD ->
-                PdfViewHolder(activityRef, chatModel)
-            BASE_MESSAGE_TYPE.VI ->
-                VideoViewHolder(activityRef, chatModel)
-            BASE_MESSAGE_TYPE.PR ->
-                PracticeViewHolder(activityRef, chatModel)
             BASE_MESSAGE_TYPE.TX ->
-                TextViewHolder(activityRef, chatModel)
+                TextViewHolder(activityRef, chatModel, lastMessage)
+            BASE_MESSAGE_TYPE.IM ->
+                ImageViewHolder(activityRef, chatModel, lastMessage)
+            BASE_MESSAGE_TYPE.AU ->
+                AudioPlayerViewHolder(activityRef, chatModel, lastMessage)
+            BASE_MESSAGE_TYPE.PD ->
+                PdfViewHolder(activityRef, chatModel, lastMessage)
+            BASE_MESSAGE_TYPE.VI ->
+                VideoViewHolder(activityRef, chatModel, lastMessage)
+            BASE_MESSAGE_TYPE.PR ->
+                PracticeViewHolder(activityRef, chatModel, lastMessage)
             BASE_MESSAGE_TYPE.QUIZ, BASE_MESSAGE_TYPE.TEST ->
-                AssessmentViewHolder(activityRef, chatModel)
+                AssessmentViewHolder(activityRef, chatModel, lastMessage)
             BASE_MESSAGE_TYPE.CP ->
-                ConversationPractiseViewHolder(activityRef, chatModel)
+                ConversationPractiseViewHolder(activityRef, chatModel, lastMessage)
             BASE_MESSAGE_TYPE.UNLOCK -> {
-                unlockViewHolder = UnlockNextClassViewHolder(activityRef, chatModel)
+                unlockViewHolder = UnlockNextClassViewHolder(activityRef, chatModel, lastMessage)
                 unlockViewHolder
             }
             BASE_MESSAGE_TYPE.P2P -> P2PViewHolder(activityRef, chatModel)
@@ -1462,7 +1465,8 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
             val cell = MessageBuilderFactory.getMessage(
                 activityRef,
                 BASE_MESSAGE_TYPE.UNLOCK,
-                tUnlockClassMessage
+                tUnlockClassMessage,
+                getLastMessageObject()
             )
             if (unlockViewHolder != null) {
                 conversationBinding.chatRv.removeView(unlockViewHolder)
@@ -1494,7 +1498,9 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
                 val cell = MessageBuilderFactory.getMessage(
                     activityRef,
                     BASE_MESSAGE_TYPE.UNLOCK,
-                    tUnlockClassMessage
+                    tUnlockClassMessage,
+                    getLastMessageObject()
+
                 )
                 CoroutineScope(Dispatchers.Main).launch {
                     if (unlockViewHolder != null) {
@@ -1597,7 +1603,8 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
         val cell = MessageBuilderFactory.getMessage(
             activityRef,
             BASE_MESSAGE_TYPE.IM,
-            tImageMessage
+            tImageMessage,
+            getLastMessageObject()
         )
         conversationBinding.chatRv.addView(
             cell
@@ -1617,7 +1624,8 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
         val cell = MessageBuilderFactory.getMessage(
             activityRef,
             BASE_MESSAGE_TYPE.VI,
-            tVideoMessage
+            tVideoMessage,
+            getLastMessageObject()
         )
         conversationBinding.chatRv.addView(
             cell
@@ -1952,6 +1960,18 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
             }
 
         }
+    }
+
+    private fun getLastMessageObject(): ChatModel? {
+        return try {
+            val chatModel: ChatModel? = (conversationBinding.chatRv.getViewResolverAtPosition(
+                conversationBinding.chatRv.viewResolverCount - 1
+            ) as BaseChatViewHolder).message
+            chatModel
+        } catch (ex: java.lang.Exception) {
+            null
+        }
+
     }
 
     override fun onProgressUpdate(progress: Long) {

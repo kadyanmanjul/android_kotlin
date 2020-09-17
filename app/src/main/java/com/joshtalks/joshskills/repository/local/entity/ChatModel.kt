@@ -51,7 +51,6 @@ data class ChatModel(
     @Expose
     var parentQuestionObject: Question? = null,
 
-
     @Embedded
     @SerializedName("sender")
     var sender: Sender? = Sender(),
@@ -221,7 +220,10 @@ data class Question(
     @SerializedName("conversation_practice_id") var conversationPracticeId: String? = null,
 
     @ColumnInfo(name = "temp_type")
-    @Expose var tempType: BASE_MESSAGE_TYPE? = type
+    @Expose var tempType: BASE_MESSAGE_TYPE? = type,
+
+    @Ignore
+    @Expose var cPractiseCount: Int = -1
 
 
 ) : Parcelable

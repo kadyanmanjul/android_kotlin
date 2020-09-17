@@ -234,7 +234,6 @@
     <string name="otp_verify_label">Apna OTP verify kare</string>
     <string name="otp_received_message" formatted="false">Enter the OTP you received on \n  %s </string>
     <string name="edit_number">Edit number</string>
-    <string name="truecaller_label">True Caller Se Jude </string>
     <string name="register">Register</string>
     <string name="your_name">Your Name</string>
     <string name="phone_number">Phone Number</string>

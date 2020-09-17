@@ -7,35 +7,29 @@
     android:layout_height="wrap_content"
     android:layout_marginTop="@dimen/_2sdp"
     android:layout_marginBottom="@dimen/_2sdp"
-    android:paddingStart="@dimen/_14sdp"
+    android:paddingStart="@dimen/_7sdp"
     android:paddingEnd="@dimen/_14sdp">
 
     <androidx.cardview.widget.CardView
         android:id="@+id/root_sub_view"
         android:layout_width="wrap_content"
         android:layout_height="@dimen/_160sdp"
-        android:background="@color/white"
         android:clickable="true"
-        android:divider="@android:color/transparent"
-        android:dividerHeight="0.0px"
-        android:elevation="@dimen/_4sdp"
         android:enabled="true"
         android:focusable="true"
         android:foreground="?android:attr/selectableItemBackground"
         android:paddingBottom="@dimen/_4sdp"
-        app:cardBackgroundColor="@color/white"
         app:cardCornerRadius="@dimen/_4sdp"
         app:cardElevation="0dp"
-        app:contentPaddingLeft="@dimen/_4sdp"
-        app:contentPaddingRight="@dimen/_4sdp"
-        app:contentPaddingTop="@dimen/_4sdp"
         tools:cardBackgroundColor="@color/white"
         tools:cardPreventCornerOverlap="false">
 
         <LinearLayout
             android:layout_width="@dimen/_200sdp"
             android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:layout_marginTop="@dimen/_4sdp"
+            android:orientation="vertical"
+            android:paddingHorizontal="@dimen/_4sdp">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"

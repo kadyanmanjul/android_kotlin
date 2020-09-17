@@ -1,7 +1,6 @@
 package com.joshtalks.joshskills.ui.view_holders
 
 
-import android.view.Gravity
 import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
@@ -49,16 +48,17 @@ import com.tonyodev.fetch2.Error
 import com.tonyodev.fetch2.FetchListener
 import com.tonyodev.fetch2core.DownloadBlock
 import io.reactivex.disposables.CompositeDisposable
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import java.lang.ref.WeakReference
 import java.util.Locale
 import kotlin.math.roundToInt
 
 @Layout(R.layout.audio_player_view)
-class AudioPlayerViewHolder(activityRef: WeakReference<FragmentActivity>, message: ChatModel) :
-    BaseChatViewHolder(activityRef, message) {
+class AudioPlayerViewHolder(
+    activityRef: WeakReference<FragmentActivity>,
+    message: ChatModel,
+    previousMessage: ChatModel?
+) :
+    BaseChatViewHolder(activityRef, message, previousMessage) {
 
     @View(R.id.audio_view)
     lateinit var audioView: RelativeLayout
@@ -66,9 +66,11 @@ class AudioPlayerViewHolder(activityRef: WeakReference<FragmentActivity>, messag
     @View(R.id.root_view)
     lateinit var rootView: FrameLayout
 
-
     @View(R.id.root_sub_view)
-    lateinit var rootSubView: RelativeLayout
+    lateinit var rootSubView: FrameLayout
+
+    @View(R.id.message_view)
+    lateinit var messageView: RelativeLayout
 
     @View(R.id.audio_view_sent)
     lateinit var audioViewSent: android.view.View
@@ -85,7 +87,6 @@ class AudioPlayerViewHolder(activityRef: WeakReference<FragmentActivity>, messag
     @View(R.id.start_download_iv)
     lateinit var startDownloadImageView: AppCompatImageView
 
-
     @View(R.id.progress_bar)
     lateinit var progressBar: ProgressBar
 
@@ -100,7 +101,6 @@ class AudioPlayerViewHolder(activityRef: WeakReference<FragmentActivity>, messag
 
     @View(R.id.seekBar)
     lateinit var seekBar: SeekBar
-
 
     @View(R.id.txtCurrentDuration)
     lateinit var txtCurrentDurationTV: AppCompatTextView
@@ -133,11 +133,10 @@ class AudioPlayerViewHolder(activityRef: WeakReference<FragmentActivity>, messag
             appAnalytics.addParam(AnalyticsEvent.AUDIO_DOWNLOAD_STATUS.NAME, "Completed")
                 .push()
             DownloadUtils.removeCallbackListener(download.tag)
-            CoroutineScope(Dispatchers.IO).launch {
-                DownloadUtils.updateDownloadStatus(download.file, download.extras).let {
-                    RxBus2.publish(DownloadCompletedEventBus(audioPlayerViewHolder, message))
-                }
+            DownloadUtils.updateDownloadStatus(download.file, download.extras) {
+                RxBus2.publish(DownloadCompletedEventBus(audioPlayerViewHolder, message))
             }
+
         }
 
         override fun onDeleted(download: Download) {
@@ -217,14 +216,14 @@ class AudioPlayerViewHolder(activityRef: WeakReference<FragmentActivity>, messag
             .addUserDetails()
 
         message.parentQuestionObject?.run {
-            val relativeParams = rootSubView.layoutParams as ViewGroup.MarginLayoutParams
+            val relativeParams = messageView.layoutParams as ViewGroup.MarginLayoutParams
             relativeParams.setMargins(
                 0,
                 getAppContext().resources.getDimension(R.dimen.tag_height).roundToInt(),
                 0,
                 0
             )
-            rootSubView.layoutParams = relativeParams
+            messageView.layoutParams = relativeParams
             addLinkToTagMessage(rootView, this, message.sender)
         }
         if (message.chatId.isNotEmpty() && sId == message.chatId) {
@@ -234,37 +233,11 @@ class AudioPlayerViewHolder(activityRef: WeakReference<FragmentActivity>, messag
 
         message.sender?.let {
             if (it.id.equals(getUserId(), ignoreCase = true)) {
-                val params = FrameLayout.LayoutParams(
-                    ViewGroup.LayoutParams.WRAP_CONTENT,
-                    ViewGroup.LayoutParams.WRAP_CONTENT
-                )
-                params.setMargins(
-                    Utils.dpToPx(getAppContext(), 80f),
-                    0,
-                    Utils.dpToPx(getAppContext(), 7f),
-                    0
-                )
-                params.gravity = Gravity.END
-                rootView.layoutParams = params
-                rootView.setBackgroundResource(R.drawable.balloon_outgoing_normal)
                 audioViewSent.visibility = android.view.View.VISIBLE
             } else {
-                val params = FrameLayout.LayoutParams(
-                    ViewGroup.LayoutParams.WRAP_CONTENT,
-                    ViewGroup.LayoutParams.WRAP_CONTENT
-                )
-                params.gravity = Gravity.START
-                params.setMargins(
-                    Utils.dpToPx(getAppContext(), 7f),
-                    0,
-                    Utils.dpToPx(getAppContext(), 80f),
-                    0
-                )
-                rootView.layoutParams = params
-                rootView.setBackgroundResource(R.drawable.balloon_incoming_normal)
                 audioViewReceived.visibility = android.view.View.VISIBLE
             }
-
+            setViewHolderBG(previousMessage?.sender,it, rootView, rootSubView, null)
         }
 
         seekBar.setOnSeekBarChangeListener(

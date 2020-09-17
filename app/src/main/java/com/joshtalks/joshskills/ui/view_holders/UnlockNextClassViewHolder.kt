@@ -17,9 +17,8 @@ import java.lang.ref.WeakReference
 
 
 @Layout(R.layout.unlock_class_item_layout)
-class UnlockNextClassViewHolder(activityRef: WeakReference<FragmentActivity>, message: ChatModel) :
-    BaseChatViewHolder(activityRef, message) {
-
+class UnlockNextClassViewHolder(activityRef: WeakReference<FragmentActivity>, message: ChatModel,previousMessage:ChatModel?) :
+    BaseChatViewHolder(activityRef, message,previousMessage) {
     @View(R.id.btn_start)
     lateinit var btnStart: MaterialButton
 

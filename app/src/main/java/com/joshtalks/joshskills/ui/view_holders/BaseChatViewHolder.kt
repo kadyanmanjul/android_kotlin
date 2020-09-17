@@ -32,74 +32,151 @@ import java.lang.ref.WeakReference
 
 abstract class BaseChatViewHolder(
     val activityRef: WeakReference<FragmentActivity>,
-    var message: ChatModel
+    var message: ChatModel, var previousMessage: ChatModel?
 ) : BaseCell() {
 
     companion object {
         var sId = EMPTY
     }
 
-    private val params = FrameLayout.LayoutParams(
-        ViewGroup.LayoutParams.WRAP_CONTENT,
-        ViewGroup.LayoutParams.WRAP_CONTENT
-    )
-
-
-    private fun getLeftPaddingForReceiver() = Utils.dpToPx(getAppContext(), 7f)
-    private fun getRightPaddingForReceiver() =
+    protected fun getLeftPaddingForReceiver() = Utils.dpToPx(getAppContext(), 7f)
+    protected fun getRightPaddingForReceiver() =
         Utils.dpToPx(getAppContext(), 80f)
 
-    private fun getMarginForReceiver() = Utils.dpToPx(getAppContext(), 0f)
-    private fun getLeftPaddingForSender() = Utils.dpToPx(getAppContext(), 80f)
-    private fun getRightPaddingForSender() = Utils.dpToPx(getAppContext(), 7f)
-    private fun getMarginForSender() = Utils.dpToPx(getAppContext(), 0f)
+    protected fun getMarginForReceiver() = Utils.dpToPx(getAppContext(), 0f)
+    protected fun getLeftPaddingForSender() = Utils.dpToPx(getAppContext(), 80f)
+    protected fun getRightPaddingForSender() = Utils.dpToPx(getAppContext(), 7f)
+    protected fun getMarginForSender() = Utils.dpToPx(getAppContext(), 0f)
 
 
-    fun updateView(
-        sender: Sender,
-        root_view: FrameLayout,
-        root_sub_view: FrameLayout,
-        message_view: ViewGroup
+    fun setViewHolderBG(
+        lSender: Sender?,
+        cSender: Sender,
+        rootView: FrameLayout,
+        rootsubView: FrameLayout,
+        messageView: ViewGroup?
     ) {
-        if (sender.id.equals(getUserId(), ignoreCase = true)) {
-
-            root_view.setPadding(getLeftPaddingForSender(), 0, getRightPaddingForSender(), 0)
-            val params = FrameLayout.LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT
-            )
-            params.gravity = Gravity.END
-            root_sub_view.layoutParams = params
-            // root_sub_view.setBackgroundResource(R.drawable.recived_message_selector)
-            root_sub_view.setBackgroundResource(R.drawable.balloon_outgoing_normal)
-
-
-            val paramsMessage = FrameLayout.LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT
-            )
-            paramsMessage.setMargins(0, 0, getMarginForSender(), 0)
-            message_view.layoutParams = paramsMessage
-
+        if (lSender == null) {
+            if (cSender.id.equals(getUserId(), ignoreCase = true)) {
+                setBgForOutgoingMessage(
+                    R.drawable.outgoing_message_normal_bg,
+                    rootView,
+                    rootsubView,
+                    messageView
+                )
+            } else {
+                setBgForIncomingMessage(
+                    R.drawable.incoming_message_normal_bg,
+                    rootView,
+                    rootsubView,
+                    messageView
+                )
+            }
         } else {
-
-            root_view.setPadding(getLeftPaddingForReceiver(), 0, getRightPaddingForReceiver(), 0)
-
-            val params = FrameLayout.LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT
-            )
-            params.gravity = Gravity.START
-            root_sub_view.layoutParams = params
-            root_sub_view.setBackgroundResource(R.drawable.balloon_incoming_normal)
-
-            val paramsMessage = FrameLayout.LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT
-            )
-            paramsMessage.setMargins(getMarginForReceiver(), 0, 0, 0)
-            message_view.layoutParams = paramsMessage
+            if (lSender.id == cSender.id || lSender.id == getUserId()) { // no balloon bg
+                if (cSender.id.equals(getUserId(), ignoreCase = true)) {
+                    setBgForOutgoingMessage(
+                        R.drawable.outgoing_message_same_bg,
+                        rootView,
+                        rootsubView,
+                        messageView
+                    )
+                } else {
+                    setBgForIncomingMessage(
+                        R.drawable.incoming_message_same_bg,
+                        rootView,
+                        rootsubView,
+                        messageView
+                    )
+                }
+            } else { // balloon bg
+                if (cSender.id.equals(getUserId(), ignoreCase = true)) {
+                    setBgForOutgoingMessage(
+                        R.drawable.outgoing_message_normal_bg,
+                        rootView,
+                        rootsubView,
+                        messageView
+                    )
+                } else {
+                    setBgForIncomingMessage(
+                        R.drawable.incoming_message_normal_bg,
+                        rootView,
+                        rootsubView,
+                        messageView
+                    )
+                }
+            }
         }
+    }
+
+    fun getViewHolderBGResource(lSender: Sender?, cSender: Sender?): Int {
+        if (cSender == null) {
+            return R.drawable.incoming_message_same_bg
+        }
+        if (lSender == null) {
+            return if (cSender.id.equals(getUserId(), ignoreCase = true)) {
+                R.drawable.outgoing_message_normal_bg
+            } else {
+                R.drawable.incoming_message_normal_bg
+            }
+        } else {
+            return if (lSender.id == cSender.id || lSender.id == getUserId()) { // no balloon bg
+                if (cSender.id.equals(getUserId(), ignoreCase = true)) {
+                    R.drawable.outgoing_message_same_bg
+                } else {
+                    R.drawable.incoming_message_same_bg
+                }
+            } else { // balloon bg
+                if (cSender.id.equals(getUserId(), ignoreCase = true)) {
+                    R.drawable.outgoing_message_normal_bg
+                } else {
+                    R.drawable.incoming_message_normal_bg
+                }
+            }
+        }
+    }
+
+    private fun setBgForOutgoingMessage(
+        resourceId: Int, rootView: FrameLayout,
+        rootSubView: FrameLayout,
+        messageView: ViewGroup?
+    ) {
+        rootView.setPadding(getLeftPaddingForSender(), 0, getRightPaddingForSender(), 0)
+        val params = FrameLayout.LayoutParams(
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
+        params.gravity = Gravity.END
+        rootSubView.layoutParams = params
+        rootSubView.setBackgroundResource(resourceId)
+        val paramsMessage = FrameLayout.LayoutParams(
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
+        paramsMessage.setMargins(0, 0, getMarginForSender(), 0)
+        messageView?.layoutParams = paramsMessage
+    }
+
+    private fun setBgForIncomingMessage(
+        resourceId: Int, rootView: FrameLayout,
+        rootSubView: FrameLayout,
+        messageView: ViewGroup?
+    ) {
+        rootView.setPadding(getLeftPaddingForReceiver(), 0, getRightPaddingForReceiver(), 0)
+
+        val params = FrameLayout.LayoutParams(
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
+        params.gravity = Gravity.START
+        rootSubView.layoutParams = params
+        rootSubView.setBackgroundResource(resourceId)
+        val paramsMessage = FrameLayout.LayoutParams(
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
+        paramsMessage.setMargins(getMarginForReceiver(), 0, 0, 0)
+        messageView?.layoutParams = paramsMessage
     }
 
 
@@ -154,8 +231,8 @@ abstract class BaseChatViewHolder(
         }
     }
 
-    fun addMessageAutoLink(text_message_body: JoshTextView) {
-        text_message_body.setAutoLinkOnClickListener { autoLinkMode, matchedText ->
+    fun addMessageAutoLink(textMessageBody: JoshTextView) {
+        textMessageBody.setAutoLinkOnClickListener { autoLinkMode, matchedText ->
             when (autoLinkMode) {
                 AutoLinkMode.MODE_PHONE -> Utils.call(getAppContext(), matchedText)
                 AutoLinkMode.MODE_URL -> activityRef.get()?.let { Utils.openUrl(matchedText, it) }
@@ -307,38 +384,3 @@ abstract class BaseChatViewHolder(
 
     abstract fun getRoot(): FrameLayout
 }
-
-
-/*
-fun updateView(rootView: RelativeLayout, sender: Sender) {
-    if (sender.id.equals(getUserId(), ignoreCase = true)) {
-        val params = FrameLayout.LayoutParams(
-            ViewGroup.LayoutParams.WRAP_CONTENT,
-            ViewGroup.LayoutParams.WRAP_CONTENT
-        )
-        params.setMargins(
-            Utils.dpToPx(getAppContext(), 80f),
-            0,
-            Utils.dpToPx(getAppContext(), 7f),
-            0
-        )
-        params.gravity = Gravity.END
-        rootView.layoutParams = params
-        rootView.setBackgroundResource(R.drawable.balloon_outgoing_normal)
-    } else {
-        val params = FrameLayout.LayoutParams(
-            ViewGroup.LayoutParams.WRAP_CONTENT,
-            ViewGroup.LayoutParams.WRAP_CONTENT
-        )
-        params.gravity = Gravity.START
-        params.setMargins(
-            Utils.dpToPx(getAppContext(), 7f),
-            0,
-            Utils.dpToPx(getAppContext(), 80f),
-            0
-        )
-        rootView.layoutParams = params
-        rootView.setBackgroundResource(R.drawable.balloon_incoming_normal)
-    }
-}
-*/

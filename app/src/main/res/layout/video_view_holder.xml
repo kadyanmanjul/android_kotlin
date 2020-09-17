@@ -155,6 +155,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="start"
                 android:gravity="center_vertical|start"
+                android:paddingVertical="@dimen/_4sdp"
                 android:paddingHorizontal="@dimen/_4sdp"
                 android:paddingBottom="@dimen/_4sdp"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"

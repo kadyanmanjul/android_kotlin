@@ -5,14 +5,11 @@
     <color name="colorAccent">#107BE5</color>
     <color name="status_bar_color">#0D63B9</color>
 
-    <color name="chat_bg">#F1F1F1</color>
-
     <color name="white">#FFFFFF</color>
 
     <color name="checkmark_blue">#34B7F1</color>
 
 
-    <color name="gray_3B">#3B404F</color>
     <color name="gray_53">#535664</color>
 
     <color name="button_activated">@color/colorAccent</color>
@@ -32,7 +29,6 @@
     <color name="seek_bar_background">#CCababab</color>
     <color name="seek_bar_secondary_progress">#3399CC</color>
     <color name="defaultContentColor">@android:color/black</color>
-    <color name="defaultBorderFlagColor">@android:color/transparent</color>
     <color name="pressed_bg">#64b7b7b7</color>
 
     <color name="color_success">#4CAF50</color>
@@ -42,10 +38,7 @@
     <color name="error_color">#D32525</color>
 
 
-    <color name="audio_card_color">#F7F7F7</color>
     <color name="controls_panel_stroke">#e6e6e6</color>
-    <color name="success_trans">#444CAF50</color>
-    <color name="time_color">#64777E</color>
 
     <color name="forground_bg">#AA34B7F1</color>
 
@@ -64,7 +57,6 @@
     <color name="highlight_btn_color">#2259B6</color>
     <color name="text_light_ac">#ACB2BE</color>
     <color name="text_color_10">#107BE5</color>
-    <color name="hint_new_color">#A3AAB8</color>
     <color name="text_90">#9098B1</color>
 
     <!-- ______________New App Colors_______________-->
@@ -86,7 +78,6 @@
     <color name="sent_bg_7a">#7AF3E0</color>
     <color name="received_bg_BC">#BCDCFD</color>
     <color name="grey_E8">#E8E8E8</color>
-    <color name="bg_light_green">#DCF8C6</color>
     <color name="bg_green_80">#DCF8C6</color>
     <color name="text_green_100">#128C7E</color>
     <color name="sent_msg_background">#E2FFC7</color>

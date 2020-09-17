@@ -8,29 +8,14 @@
     <dimen name="dp16">16dp</dimen>
 
 
-    <dimen name="font_10">10sp</dimen>
-    <dimen name="font_11">11sp</dimen>
     <dimen name="font_11_5">11.5sp</dimen>
     <dimen name="font_12">12sp</dimen>
-    <dimen name="font_12_5">12.5sp</dimen>
-    <dimen name="font_13">13sp</dimen>
     <dimen name="font_14">14sp</dimen>
     <dimen name="font_15">15sp</dimen>
     <dimen name="font_16">16sp</dimen>
-    <dimen name="font_17">17sp</dimen>
     <dimen name="font_18">18sp</dimen>
-    <dimen name="font_19">19sp</dimen>
     <dimen name="font_20">20sp</dimen>
-    <dimen name="font_22">22sp</dimen>
-    <dimen name="font_24">24sp</dimen>
-    <dimen name="font_32">32sp</dimen>
-    <dimen name="font_38">38sp</dimen>
-    <dimen name="font_42">42sp</dimen>
 
-
-    <dimen name="touch_default">32dp</dimen>
-    <dimen name="icon_with">65dp</dimen>
-    <dimen name="text_size">10sp</dimen>
 
     <!-- Font sizes -->
 
@@ -41,8 +26,6 @@
     <dimen name="seek_bar_thumb_size">12dp</dimen>
 
 
-    <dimen name="bottom_sheet_corner_radius">16dp</dimen>
-    <dimen name="notification_large_dim">256dp</dimen>
     <dimen name="tag_height">@dimen/_44sdp</dimen>
     <dimen name="rating_size">@dimen/_48sdp</dimen>
     <dimen name="score_rating_size">@dimen/_23sdp</dimen>
@@ -52,6 +35,5 @@
     <dimen name="roundedBottomSheetCornerRadiusLeftPadding">6dp</dimen>
     <dimen name="roundedBottomSheetCornerRadiusRightPadding">6dp</dimen>
     <dimen name="course_padding_dimen">@dimen/_12sdp</dimen>
-    <dimen name="play_pause_size">@dimen/_48sdp</dimen>
 
 </resources>

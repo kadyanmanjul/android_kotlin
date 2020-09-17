@@ -89,7 +89,7 @@ object DownloadUtils {
 
     }
 
-    fun updateDownloadStatus(filePath: String, extras: Extras) {
+    fun updateDownloadStatus(filePath: String, extras: Extras, callBack: (() -> Unit)? = null) {
         executor.execute {
 
             try {
@@ -134,6 +134,7 @@ object DownloadUtils {
                     chatModel.downloadedLocalPath = filePath
                 }
                 appDatabase.chatDao().updateChatMessageOnAnyThread(chatModel)
+                callBack?.invoke()
             } catch (ex: Exception) {
                 ex.printStackTrace()
             }
@@ -161,7 +162,7 @@ object DownloadUtils {
                     .load(imageUrl).submit().get()
 
                 val filePath = Utils.writeBitmapIntoFile(imageBitmap, destPath)
-                updateDownloadStatus(filePath, extras).let {
+                updateDownloadStatus(filePath, extras, null).let {
                     RxBus2.publish(DownloadCompletedEventBus(viewHolder, message))
                 }
             } catch (ex: Exception) {

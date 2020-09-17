@@ -13,8 +13,6 @@ import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
-import com.joshtalks.joshskills.core.io.AppDirectory
-import com.joshtalks.joshskills.core.service.DownloadUtils
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
 import com.joshtalks.joshskills.repository.local.entity.DOWNLOAD_STATUS
@@ -28,8 +26,8 @@ import com.pnikosis.materialishprogress.ProgressWheel
 import java.lang.ref.WeakReference
 
 @Layout(R.layout.image_view_holder)
-class ImageViewHolder(activityRef: WeakReference<FragmentActivity>, message: ChatModel) :
-    BaseChatViewHolder(activityRef, message) {
+class ImageViewHolder(activityRef: WeakReference<FragmentActivity>, message: ChatModel,previousMessage:ChatModel?) :
+    BaseChatViewHolder(activityRef, message,previousMessage) {
 
     @View(R.id.image_view)
     lateinit var imageView: AppCompatImageView
@@ -73,7 +71,7 @@ class ImageViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
         ivCancelDownload.visibility = GONE
         imageViewHolder = this
         message.sender?.let {
-            updateView(it, rootView, rootSubView, messageView)
+            setViewHolderBG(previousMessage?.sender,it, rootView, rootSubView, messageView)
         }
         message.parentQuestionObject?.run {
             addLinkToTagMessage(messageView, this, message.sender)
@@ -137,17 +135,6 @@ class ImageViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
     override fun getRoot(): FrameLayout {
         return rootView
     }
-
-    private fun download(url: String) {
-        DownloadUtils.downloadImage(
-            this,
-            message,
-            url,
-            AppDirectory.imageReceivedFile().absolutePath
-        )
-
-    }
-
 
     private fun fileNotDownloadView() {
         // downloadContainer.visibility = VISIBLE

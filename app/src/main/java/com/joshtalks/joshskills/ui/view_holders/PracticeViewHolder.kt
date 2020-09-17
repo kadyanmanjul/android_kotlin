@@ -30,8 +30,18 @@ import java.lang.ref.WeakReference
 
 
 @Layout(R.layout.practice_layout)
-class PracticeViewHolder(activityRef: WeakReference<FragmentActivity>, message: ChatModel) :
-    BaseChatViewHolder(activityRef, message) {
+class PracticeViewHolder(
+    activityRef: WeakReference<FragmentActivity>,
+    message: ChatModel,
+    previousMessage: ChatModel?
+) :
+    BaseChatViewHolder(activityRef, message, previousMessage) {
+
+    @View(R.id.root_view)
+    lateinit var rootView: FrameLayout
+
+    @View(R.id.root_sub_view)
+    lateinit var subRootView: CardView
 
     @View(R.id.tv_title)
     lateinit var titleTv: AppCompatTextView
@@ -45,18 +55,10 @@ class PracticeViewHolder(activityRef: WeakReference<FragmentActivity>, message: 
     @View(R.id.image_view)
     lateinit var imageView: AppCompatImageView
 
-    @View(R.id.root_view_fl)
-    lateinit var rootView: FrameLayout
-
-    @View(R.id.root_sub_view)
-    lateinit var subRootView: CardView
-
-
     @View(R.id.tv_submit_answer)
     lateinit var tvSubmitAnswer: MaterialTextView
 
     lateinit var viewHolder: PracticeViewHolder
-
 
     private val typefaceSpan =
         CalligraphyTypefaceSpan(
@@ -74,12 +76,9 @@ class PracticeViewHolder(activityRef: WeakReference<FragmentActivity>, message: 
         if (message.chatId.isNotEmpty() && sId == message.chatId) {
             highlightedViewForSomeTime(rootView)
         }
-        val layoutP = subRootView.layoutParams as FrameLayout.LayoutParams
-        subRootView.setCardBackgroundColor(ContextCompat.getColor(getAppContext(), R.color.white))
         val sBuilder = SpannableStringBuilder().append("Status: ")
         practiceStatusTv.text = activityRef.get()?.getString(R.string.answer_not_submitted)
         tvSubmitAnswer.visibility = android.view.View.VISIBLE
-
         imageView.backgroundTintList = null
         practiceStatusTv.backgroundTintList = ColorStateList.valueOf(
             ContextCompat.getColor(
@@ -93,42 +92,39 @@ class PracticeViewHolder(activityRef: WeakReference<FragmentActivity>, message: 
                 R.color.pdf_bg_color
             )
         )
+        val layoutP = subRootView.layoutParams as FrameLayout.LayoutParams
+        layoutP.width  = Utils.dpToPx(getAppContext(), 270f)
 
         message.question?.run {
+            subTitleTV.text = this.title
             this.practiceNo?.let {
                 titleTv.text = getAppContext().getString(R.string.practice).plus(" #$it")
             }
 
-            subTitleTV.text = this.title
 
             if (this.practiceEngagement.isNullOrEmpty()) {
                 sBuilder.append("Pending")
-                layoutP.height = FrameLayout.LayoutParams.WRAP_CONTENT
-                layoutP.width = Utils.dpToPx(getAppContext(), 260f)
                 layoutP.gravity = android.view.Gravity.START
                 setResourceInImageView(imageView, R.drawable.ic_pattern)
+                rootView.setPadding(getLeftPaddingForReceiver(), 0, getRightPaddingForReceiver(), 0)
                 subRootView.layoutParams = layoutP
+                subRootView.setBackgroundResource(R.drawable.incoming_message_same_bg)
 
             } else {
                 sBuilder.append("Submitted")
                 tvSubmitAnswer.visibility = android.view.View.GONE
                 subRootView.setContentPadding(
                     Utils.dpToPx(getAppContext(), 5f),
+                    Utils.dpToPx(getAppContext(), 8f),
                     Utils.dpToPx(getAppContext(), 5f),
-                    Utils.dpToPx(getAppContext(), 5f),
-                    Utils.dpToPx(getAppContext(), 5f)
+                    Utils.dpToPx(getAppContext(), 8f)
                 )
                 setResourceInImageView(imageView, R.drawable.ic_practise_submit_bg)
+                rootView.setPadding(getLeftPaddingForSender(), 0, getRightPaddingForSender(), 0)
                 layoutP.gravity = android.view.Gravity.END
-                layoutP.height = FrameLayout.LayoutParams.WRAP_CONTENT
-                layoutP.width = Utils.dpToPx(getAppContext(), 260f)
                 subRootView.layoutParams = layoutP
-                subRootView.setCardBackgroundColor(
-                    ContextCompat.getColor(
-                        AppObjectController.joshApplication,
-                        R.color.bg_light_green
-                    )
-                )
+                subRootView.setBackgroundResource(R.drawable.outgoing_message_same_bg)
+
                 sBuilder.setSpan(
                     ForegroundColorSpan(
                         ContextCompat.getColor(

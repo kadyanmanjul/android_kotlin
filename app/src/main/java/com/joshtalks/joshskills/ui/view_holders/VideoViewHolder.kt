@@ -48,8 +48,8 @@ import java.lang.ref.WeakReference
 
 
 @Layout(R.layout.video_view_holder)
-class VideoViewHolder(activityRef: WeakReference<FragmentActivity>, message: ChatModel) :
-    BaseChatViewHolder(activityRef, message) {
+class VideoViewHolder(activityRef: WeakReference<FragmentActivity>, message: ChatModel,previousMessage:ChatModel?) :
+    BaseChatViewHolder(activityRef, message,previousMessage) {
 
     @View(R.id.image_view)
     lateinit var imageView: AppCompatImageView
@@ -111,7 +111,7 @@ class VideoViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
         downloadContainer.visibility = INVISIBLE
         textMessageTime.text = Utils.messageTimeConversion(message.created)
         message.sender?.let {
-            updateView(it, rootView, rootSubView, messageView)
+            setViewHolderBG(previousMessage?.sender,it, rootView, rootSubView, messageView)
         }
         message.parentQuestionObject?.run {
             addLinkToTagMessage(messageView, this, message.sender)
