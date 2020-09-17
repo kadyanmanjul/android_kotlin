@@ -192,9 +192,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         val seconds = (time_in_milli_seconds / 1000) % 60
         var time = ""
         var formatter: NumberFormat = DecimalFormat("00")
-        if (hours > 0L) {
-            time = "${formatter.format(hours)}:"
-        }
+        time = "${formatter.format(hours)}:"
         time = "$time${formatter.format(minute)}:${formatter.format(seconds)}"
 
         expiry_tool_tip_text.text = "${expiryToolText.plus(SINGLE_SPACE)}$time"

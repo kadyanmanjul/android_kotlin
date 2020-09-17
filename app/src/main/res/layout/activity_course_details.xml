@@ -136,12 +136,14 @@
                 android:layout_marginTop="@dimen/_6sdp"
                 android:layout_marginBottom="@dimen/_minus8sdp"
                 android:elevation="2dp"
+                android:visibility="gone"
                 app:layout_constraintBottom_toTopOf="@+id/btn_start_course"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintWidth_default="percent"
-                app:layout_constraintWidth_percent="0.9" />
+                app:layout_constraintWidth_percent="0.9"
+                tools:visibility="visible" />
 
             <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
                 android:id="@+id/txt_extra_hint"
@@ -158,6 +160,11 @@
                 app:layout_constraintStart_toStartOf="parent"
                 tools:text="Save ₹ 1700 if you join today!"
                 tools:visibility="visible" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/grey" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"

@@ -181,10 +181,10 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
             if ((freeTrialData.endDate?.minus(
                     freeTrialData.today
                 ))?.div(24 * 60 * 60)
-                    ?.toInt() == 2 || (freeTrialData.endDate?.minus(freeTrialData.today))?.div(
+                    ?.toInt() == 3 || (freeTrialData.endDate?.minus(freeTrialData.today))?.div(
                     24 * 60 * 60
                 )
-                    ?.toInt() == 3
+                    ?.toInt() == 4
             ) {
                 val offerPercentage =
                     AppObjectController.getFirebaseRemoteConfig()
@@ -203,13 +203,9 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
 
                 binding.continueTip.setText(text)
                 binding.txtExtraHint.visibility = View.GONE
-            } else if ((freeTrialData.endDate?.minus(
-                    freeTrialData.today
-                ))?.div(24 * 60 * 60)
-                    ?.toInt() == 1 || (freeTrialData.endDate?.minus(freeTrialData.today))?.div(
-                    24 * 60 * 60
-                )
-                    ?.toInt() == 0
+            } else if ((freeTrialData.endDate?.minus(freeTrialData.today))?.div(24 * 60 * 60)
+                    ?.toInt() == 5 || (freeTrialData.endDate?.minus(freeTrialData.today))?.div(24 * 60 * 60)
+                    ?.toInt() == 6
             ) {
                 val text = AppObjectController.getFirebaseRemoteConfig()
                     .getString(FirebaseRemoteConfigKey.BUY_COURSE_LAST_DAY_OFFER_HINT)
@@ -776,12 +772,12 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
     }
 
     fun openWhatsapp() {
-        val intent = Intent(Intent.ACTION_VIEW)
-        intent.data = Uri.parse(intent.getStringExtra(WHATSAPP_URL))
-        intent.apply {
+        val whatsappIntent = Intent(Intent.ACTION_VIEW)
+        whatsappIntent.data = Uri.parse(intent.getStringExtra(WHATSAPP_URL))
+        whatsappIntent.apply {
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         }
-        startActivity(intent)
+        startActivity(whatsappIntent)
     }
 
     private fun updateButtonText(discountedPrice: Double) {
