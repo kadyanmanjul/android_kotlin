@@ -40,7 +40,6 @@ class ConversationPractiseViewHolder(activityRef: WeakReference<FragmentActivity
     @Resolve
     override fun onViewInflated() {
         super.onViewInflated()
-
         receivedMessageTime.text = Utils.messageTimeConversion(message.created)
         updateTime(receivedMessageTime)
         message.question?.imageList?.getOrNull(0)?.imageUrl?.run {
