@@ -38,9 +38,8 @@ import com.joshtalks.joshskills.core.IS_TRIAL_STARTED
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.REMAINING_SUBSCRIPTION_DAYS
 import com.joshtalks.joshskills.core.REMAINING_TRIAL_DAYS
-import com.joshtalks.joshskills.core.SINGLE_SPACE
 import com.joshtalks.joshskills.core.SHOW_OVERLAY
-import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.SINGLE_SPACE
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.inapp_update.Constants
@@ -83,16 +82,9 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.activity_course_details.continue_tip
+import java.text.DecimalFormat
+import java.text.NumberFormat
 import kotlinx.android.synthetic.main.activity_inbox.expiry_tool_tip
-import kotlinx.android.synthetic.main.activity_inbox.nested_scroll_view
-import kotlinx.android.synthetic.main.activity_inbox.progress_bar
-import kotlinx.android.synthetic.main.activity_inbox.recycler_view_inbox
-import kotlinx.android.synthetic.main.activity_inbox.subscriptionTipContainer
-import kotlinx.android.synthetic.main.activity_inbox.txtConvert
-import kotlinx.android.synthetic.main.activity_inbox.txtSubscriptionTip
-import kotlinx.android.synthetic.main.find_more_layout.find_more
-import kotlinx.android.synthetic.main.top_free_trial_expire_time_tooltip_view.expiry_tool_tip_text
 import kotlinx.android.synthetic.main.activity_inbox.nested_scroll_view
 import kotlinx.android.synthetic.main.activity_inbox.overlay_layout
 import kotlinx.android.synthetic.main.activity_inbox.overlay_tip
@@ -198,7 +190,14 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         val hours = ((time_in_milli_seconds / 1000) / 60) / 24
         val minute = (time_in_milli_seconds / 1000) / 60
         val seconds = (time_in_milli_seconds / 1000) % 60
-        expiry_tool_tip_text.text = "${expiryToolText.plus(SINGLE_SPACE)}$hours:$minute:$seconds"
+        var time = ""
+        var formatter: NumberFormat = DecimalFormat("00")
+        if (hours > 0L) {
+            time = "${formatter.format(hours)}:"
+        }
+        time = "$time${formatter.format(minute)}:${formatter.format(seconds)}"
+
+        expiry_tool_tip_text.text = "${expiryToolText.plus(SINGLE_SPACE)}$time"
     }
 
     private fun updateSubscriptionTipView(
