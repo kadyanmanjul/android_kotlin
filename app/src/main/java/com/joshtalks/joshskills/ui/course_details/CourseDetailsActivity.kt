@@ -91,6 +91,7 @@ import com.joshtalks.joshskills.ui.course_details.viewholder.StudentFeedbackView
 import com.joshtalks.joshskills.ui.course_details.viewholder.SyllabusViewHolder
 import com.joshtalks.joshskills.ui.course_details.viewholder.TeacherDetailsViewHolder
 import com.joshtalks.joshskills.ui.extra.ImageShowFragment
+import com.joshtalks.joshskills.ui.payment.WHATSAPP_URL_PAYMENT_FAILED
 import com.joshtalks.joshskills.ui.payment.order_summary.PaymentSummaryActivity
 import com.joshtalks.joshskills.ui.subscription.TRIAL_TEST_ID
 import com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity
@@ -255,7 +256,7 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
             transition.addTarget(binding.buyCourseLl)
             TransitionManager.beginDelayedTransition(binding.coordinator, transition)
             binding.buyCourseLl.visibility = View.VISIBLE
-            if (intent.hasExtra(WHATSAPP_URL) && intent.getStringExtra(WHATSAPP_URL).isNullOrEmpty()
+            if (intent.hasExtra(WHATSAPP_URL) && intent.getStringExtra(WHATSAPP_URL).isNullOrBlank()
                     .not()
             ) {
                 binding.linkToWhatsapp.visibility = View.VISIBLE
@@ -816,7 +817,7 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
             Intent(activity, CourseDetailsActivity::class.java).apply {
                 putExtra(KEY_TEST_ID, testId)
                 putExtra(IS_FROM_FREE_TRIAL, isFromFreeTrial)
-                if (whatsappUrl.isNullOrEmpty().not()) {
+                if (whatsappUrl.isNullOrBlank().not()) {
                     putExtra(WHATSAPP_URL, whatsappUrl)
                 }
                 if (startedFrom.isNotBlank())

@@ -40,6 +40,7 @@ import com.joshtalks.joshskills.core.REMAINING_SUBSCRIPTION_DAYS
 import com.joshtalks.joshskills.core.REMAINING_TRIAL_DAYS
 import com.joshtalks.joshskills.core.SHOW_OVERLAY
 import com.joshtalks.joshskills.core.SINGLE_SPACE
+import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.inapp_update.Constants
@@ -69,6 +70,7 @@ import com.joshtalks.joshskills.ui.payment.order_summary.PaymentSummaryActivity
 import com.joshtalks.joshskills.ui.referral.ReferralActivity
 import com.joshtalks.joshskills.ui.reminder.reminder_listing.ReminderListActivity
 import com.joshtalks.joshskills.ui.reminder.set_reminder.ReminderActivity
+import com.joshtalks.joshskills.ui.tooltip.BalloonFactory
 import com.joshtalks.joshskills.ui.view_holders.InboxViewHolder
 import com.joshtalks.skydoves.balloon.Balloon
 import com.karumi.dexter.Dexter
@@ -78,12 +80,14 @@ import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.patloew.rxlocation.RxLocation
 import io.reactivex.CompletableObserver
+import io.reactivex.Maybe
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import java.text.DecimalFormat
 import java.text.NumberFormat
+import java.util.concurrent.TimeUnit
 import kotlinx.android.synthetic.main.activity_inbox.expiry_tool_tip
 import kotlinx.android.synthetic.main.activity_inbox.nested_scroll_view
 import kotlinx.android.synthetic.main.activity_inbox.overlay_layout
@@ -144,21 +148,6 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
 
     private fun showExpiryTimeToolTip(remainingTrialDays: Int) {
         expiry_tool_tip.visibility = View.VISIBLE
-        if (remainingTrialDays == 0) {
-            expiryToolText =
-                AppObjectController.getFirebaseRemoteConfig()
-                    .getString(FirebaseRemoteConfigKey.BB_TOOL_TIP_EXPIRY_TEXT)
-        } else if (remainingTrialDays == 1) {
-            expiryToolText =
-                AppObjectController.getFirebaseRemoteConfig()
-                    .getString(FirebaseRemoteConfigKey.BB_TOOL_TIP_EXPIRY_TEXT)
-                    .plus(" $remainingTrialDays Day")
-        } else {
-            expiryToolText =
-                AppObjectController.getFirebaseRemoteConfig()
-                    .getString(FirebaseRemoteConfigKey.BB_TOOL_TIP_EXPIRY_TEXT)
-                    .plus(" $remainingTrialDays Days")
-        }
         startThreadForTextUpdate()
     }
 
@@ -166,7 +155,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         val freeTrialData = FreeTrialData.getMapObject()
         time_in_milli_seconds = (1000 * 60)
         freeTrialData?.let { data ->
-            time_in_milli_seconds = data.endDate?.minus(data.today) ?: (1000 * 60)
+            time_in_milli_seconds = data.endDate?.minus(data.today)?.times(1000) ?: (1000 * 60)
         }
         startTimer(time_in_milli_seconds)
     }
@@ -186,14 +175,30 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         isRunning = true
     }
 
-    private fun updateTextUI(time_in_milli_seconds: Long) {
-        val hours = ((time_in_milli_seconds / 1000) / 60) / 24
-        val minute = (time_in_milli_seconds / 1000) / 60
-        val seconds = (time_in_milli_seconds / 1000) % 60
-        var time = ""
-        var formatter: NumberFormat = DecimalFormat("00")
-        time = "${formatter.format(hours)}:"
-        time = "$time${formatter.format(minute)}:${formatter.format(seconds)}"
+    private fun updateTextUI(millis: Long) {
+            val days=TimeUnit.MILLISECONDS.toDays(time_in_milli_seconds).toInt()
+        if (days == 0) {
+            expiryToolText =
+                AppObjectController.getFirebaseRemoteConfig()
+                    .getString(FirebaseRemoteConfigKey.BB_TOOL_TIP_EXPIRY_TEXT)
+        } else if (days == 1) {
+            expiryToolText =
+                AppObjectController.getFirebaseRemoteConfig()
+                    .getString(FirebaseRemoteConfigKey.BB_TOOL_TIP_EXPIRY_TEXT)
+                    .plus(" ${days} Day")
+        } else {
+            expiryToolText =
+                AppObjectController.getFirebaseRemoteConfig()
+                    .getString(FirebaseRemoteConfigKey.BB_TOOL_TIP_EXPIRY_TEXT)
+                    .plus(" $days Days")
+        }
+
+        val time = String.format("%02d:%02d:%02d",
+            TimeUnit.MILLISECONDS.toHours(millis).rem(24),
+            TimeUnit.MILLISECONDS.toMinutes(millis) -
+                    TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(millis)), // The change is in this line
+            TimeUnit.MILLISECONDS.toSeconds(millis) -
+                    TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis)))
 
         expiry_tool_tip_text.text = "${expiryToolText.plus(SINGLE_SPACE)}$time"
     }
@@ -212,7 +217,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
                     if ((remainingTrialDays in 0..7) && showTooltip1) {
                         showToolTipBelowFindMoreCourse(remainingTrialDays)
                     }
-                    if ((remainingTrialDays in 0..4) && showTooltip2) {
+                    if ((remainingTrialDays in 0..4)) {
                         showExpiryTimeToolTip(remainingTrialDays)
                     }
                     when {
@@ -229,7 +234,6 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
                                 .getString(FirebaseRemoteConfigKey.SUBSCRIPTION_TRIAL_TIP_DAY6)
                             txtSubscriptionTip2.text = AppObjectController.getFirebaseRemoteConfig()
                                 .getString(FirebaseRemoteConfigKey.SUBSCRIPTION_TRIAL_TIP_DAY6)
-                            showExpiryTimeToolTip(remainingTrialDays)
 
                         }
 
@@ -238,7 +242,6 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
                                 .getString(FirebaseRemoteConfigKey.SUBSCRIPTION_TRIAL_TIP_DAY5)
                             txtSubscriptionTip2.text = AppObjectController.getFirebaseRemoteConfig()
                                 .getString(FirebaseRemoteConfigKey.SUBSCRIPTION_TRIAL_TIP_DAY5)
-                            showExpiryTimeToolTip(remainingTrialDays)
 
                         }
 
@@ -247,7 +250,6 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
                                 .getString(FirebaseRemoteConfigKey.SUBSCRIPTION_TRIAL_TIP_DAY4)
                             txtSubscriptionTip2.text = AppObjectController.getFirebaseRemoteConfig()
                                 .getString(FirebaseRemoteConfigKey.SUBSCRIPTION_TRIAL_TIP_DAY4)
-                            showExpiryTimeToolTip(remainingTrialDays)
 
                         }
 
@@ -884,7 +886,39 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
 
 
     private fun attachOfferHintView() {
-
+        compositeDisposable.add(
+            AppObjectController.appDatabase
+                .courseDao()
+                .isUserInOfferDays()
+                .concatMap {
+                    val (flag, remainDay) = Utils.isUserInDaysOld(it.courseCreatedDate)
+                    if (offerInHint == null) {
+                        getVersionData()?.let {
+                            when (it.version?.name) {
+                                ONBOARD_VERSIONS.ONBOARDING_V1 -> {
+                                    offerInHint =
+                                        BalloonFactory.offerIn7Days(
+                                            this,
+                                            this,
+                                            remainDay.toString()
+                                        )
+                                }
+                            }
+                        }
+                        hideToolTip()
+                    }
+                    return@concatMap Maybe.just(flag)
+                }
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                    { value ->
+                        hideToolTip(value)
+                    },
+                    { error ->
+                        error.printStackTrace()
+                    }
+                ))
     }
 
     private fun hideToolTip(value: Boolean = true) {
@@ -959,9 +993,6 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
 
     override fun onStop() {
         super.onStop()
-        if (isRunning) {
-            countdown_timer.cancel()
-        }
     }
 
     private fun logTrialEventExpired() {
