@@ -3,6 +3,7 @@ package com.joshtalks.joshskills.repository.server.onboarding
 import com.google.gson.annotations.SerializedName
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.PrefManager
+import java.util.*
 
 data class OnBoardingStatusResponse(
     @SerializedName("version")
@@ -28,14 +29,14 @@ data class FreeTrialData(
     var is7DFTBought: Boolean? = null,
 
     @SerializedName("start_date")
-    var startDate: String? = null,
+    var startDate: Date? = null,
 
     @SerializedName("end_date")
-    var endDate: String? = null,
+    var endDate: Date? = null,
     @SerializedName("remaining_days")
     var remainingDays: Int,
     @SerializedName("today")
-    var today: String
+    var today: Date
 ) {
 
     override fun toString(): String {
@@ -68,13 +69,13 @@ data class SubscriptionData(
     @SerializedName("is_subscription_bought")
     var isSubscriptionBought: Boolean? = null,
     @SerializedName("start_date")
-    var startDate: String? = null,
+    var startDate: Date? = null,
     @SerializedName("end_date")
-    var endDate: String? = null,
+    var endDate: Date? = null,
     @SerializedName("remaining_days")
     var remainingDays: Int,
     @SerializedName("today")
-    var today: String
+    var today: Date
 ) {
     companion object {
         private const val SUBSCRIPTION_DATA_MAP_OBJECT = "subscription_map_object"
