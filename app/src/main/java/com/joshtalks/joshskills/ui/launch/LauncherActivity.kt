@@ -12,7 +12,6 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
-import com.google.firebase.perf.metrics.AddTrace
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.CoreJoshActivity
@@ -29,7 +28,7 @@ import com.joshtalks.joshskills.ui.inbox.COURSE_EXPLORER_NEW
 import com.joshtalks.joshskills.ui.newonboarding.OnBoardingActivityNew
 import io.branch.referral.Branch
 import io.branch.referral.Defines
-import kotlinx.android.synthetic.main.activity_launcher.progress_bar
+import kotlinx.android.synthetic.main.activity_launcher.*
 import org.json.JSONObject
 import timber.log.Timber
 import java.io.File
@@ -180,7 +179,7 @@ class LauncherActivity : CoreJoshActivity(), CustomPermissionDialogInteractionLi
             this,
             testId.split("_")[1].toInt(),
             this@LauncherActivity.javaClass.simpleName,
-            arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
+            flags = arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
         )
     }
 

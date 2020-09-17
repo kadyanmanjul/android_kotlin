@@ -16,9 +16,7 @@ import android.text.TextWatcher
 import android.view.Gravity
 import android.view.MotionEvent
 import android.view.View
-import android.view.View.GONE
-import android.view.View.INVISIBLE
-import android.view.View.VISIBLE
+import android.view.View.*
 import android.view.WindowManager
 import android.widget.Toast
 import androidx.core.content.ContextCompat
@@ -47,21 +45,8 @@ import com.joshtalks.joshcamerax.JoshCameraActivity
 import com.joshtalks.joshcamerax.utils.ImageQuality
 import com.joshtalks.joshcamerax.utils.Options
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.CERTIFICATE_GENERATE
-import com.joshtalks.joshskills.core.CoreJoshActivity
-import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.IMAGE_REGEX
-import com.joshtalks.joshskills.core.IS_PRACTISE_PARTNER_VIEWED
-import com.joshtalks.joshskills.core.IS_SUBSCRIPTION_ENDED
-import com.joshtalks.joshskills.core.IS_SUBSCRIPTION_STARTED
-import com.joshtalks.joshskills.core.IS_TRIAL_ENDED
-import com.joshtalks.joshskills.core.MESSAGE_CHAT_SIZE_LIMIT
-import com.joshtalks.joshskills.core.PermissionUtils
-import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.Utils.getCurrentMediaVolume
-import com.joshtalks.joshskills.core.alphaAnimation
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.custom_ui.FullScreenProgressDialog
@@ -69,49 +54,21 @@ import com.joshtalks.joshskills.core.custom_ui.JoshSnackBar
 import com.joshtalks.joshskills.core.custom_ui.SnappingLinearLayoutManager
 import com.joshtalks.joshskills.core.custom_ui.decorator.LayoutMarginDecoration
 import com.joshtalks.joshskills.core.custom_ui.exo_audio_player.AudioPlayerEventListener
-import com.joshtalks.joshskills.core.interfaces.OnDismissWithDialog
 import com.joshtalks.joshskills.core.interfaces.OnDismissWithSuccess
 import com.joshtalks.joshskills.core.io.AppDirectory
 import com.joshtalks.joshskills.core.notification.HAS_COURSE_REPORT
 import com.joshtalks.joshskills.core.notification.QUESTION_ID
 import com.joshtalks.joshskills.core.playback.PlaybackInfoListener.State.PAUSED
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
-import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.ActivityConversationBinding
 import com.joshtalks.joshskills.messaging.MessageBuilderFactory
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.DatabaseUtils
-import com.joshtalks.joshskills.repository.local.entity.AudioType
-import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
-import com.joshtalks.joshskills.repository.local.entity.ChatModel
-import com.joshtalks.joshskills.repository.local.entity.DOWNLOAD_STATUS
-import com.joshtalks.joshskills.repository.local.entity.MESSAGE_STATUS
-import com.joshtalks.joshskills.repository.local.entity.NPSEventModel
-import com.joshtalks.joshskills.repository.local.entity.Question
-import com.joshtalks.joshskills.repository.local.eventbus.AssessmentStartEventBus
-import com.joshtalks.joshskills.repository.local.eventbus.AudioPlayEventBus
-import com.joshtalks.joshskills.repository.local.eventbus.ConversationPractiseEventBus
-import com.joshtalks.joshskills.repository.local.eventbus.DeleteMessageEventBus
-import com.joshtalks.joshskills.repository.local.eventbus.DownloadCompletedEventBus
-import com.joshtalks.joshskills.repository.local.eventbus.DownloadMediaEventBus
-import com.joshtalks.joshskills.repository.local.eventbus.GotoChatEventBus
-import com.joshtalks.joshskills.repository.local.eventbus.ImageShowEvent
-import com.joshtalks.joshskills.repository.local.eventbus.InternalSeekBarProgressEventBus
-import com.joshtalks.joshskills.repository.local.eventbus.MediaProgressEventBus
-import com.joshtalks.joshskills.repository.local.eventbus.MessageCompleteEventBus
-import com.joshtalks.joshskills.repository.local.eventbus.P2PStartEventBus
-import com.joshtalks.joshskills.repository.local.eventbus.PdfOpenEventBus
-import com.joshtalks.joshskills.repository.local.eventbus.PlayVideoEvent
-import com.joshtalks.joshskills.repository.local.eventbus.PractiseSubmitEventBus
-import com.joshtalks.joshskills.repository.local.eventbus.UnlockNextClassEventBus
-import com.joshtalks.joshskills.repository.local.eventbus.VideoDownloadedBus
+import com.joshtalks.joshskills.repository.local.entity.*
+import com.joshtalks.joshskills.repository.local.eventbus.*
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.local.model.NotificationAction
-import com.joshtalks.joshskills.repository.server.chat_message.TAudioMessage
-import com.joshtalks.joshskills.repository.server.chat_message.TChatMessage
-import com.joshtalks.joshskills.repository.server.chat_message.TImageMessage
-import com.joshtalks.joshskills.repository.server.chat_message.TUnlockClassMessage
-import com.joshtalks.joshskills.repository.server.chat_message.TVideoMessage
+import com.joshtalks.joshskills.repository.server.chat_message.*
 import com.joshtalks.joshskills.ui.assessment.AssessmentActivity
 import com.joshtalks.joshskills.ui.chat.extra.CallingFeatureShowcaseView
 import com.joshtalks.joshskills.ui.conversation_practice.ConversationPracticeActivity
@@ -126,20 +83,7 @@ import com.joshtalks.joshskills.ui.video_player.IS_BATCH_CHANGED
 import com.joshtalks.joshskills.ui.video_player.LAST_VIDEO_INTERVAL
 import com.joshtalks.joshskills.ui.video_player.NEXT_VIDEO_AVAILABLE
 import com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity
-import com.joshtalks.joshskills.ui.view_holders.AssessmentViewHolder
-import com.joshtalks.joshskills.ui.view_holders.AudioPlayerViewHolder
-import com.joshtalks.joshskills.ui.view_holders.BaseCell
-import com.joshtalks.joshskills.ui.view_holders.BaseChatViewHolder
-import com.joshtalks.joshskills.ui.view_holders.ConversationPractiseViewHolder
-import com.joshtalks.joshskills.ui.view_holders.ImageViewHolder
-import com.joshtalks.joshskills.ui.view_holders.NewMessageViewHolder
-import com.joshtalks.joshskills.ui.view_holders.P2PViewHolder
-import com.joshtalks.joshskills.ui.view_holders.PdfViewHolder
-import com.joshtalks.joshskills.ui.view_holders.PracticeViewHolder
-import com.joshtalks.joshskills.ui.view_holders.TextViewHolder
-import com.joshtalks.joshskills.ui.view_holders.TimeViewHolder
-import com.joshtalks.joshskills.ui.view_holders.UnlockNextClassViewHolder
-import com.joshtalks.joshskills.ui.view_holders.VideoViewHolder
+import com.joshtalks.joshskills.ui.view_holders.*
 import com.joshtalks.joshskills.ui.voip.SearchingUserActivity
 import com.joshtalks.joshskills.ui.voip.extra.PractisePartnerDialogFragment
 import com.joshtalks.joshskills.util.ExoAudioPlayer
@@ -152,9 +96,6 @@ import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.muddzdev.styleabletoast.StyleableToast
-import dm.audiostreamer.CurrentSessionCallback
-import dm.audiostreamer.MediaMetaData
-import de.hdodenhof.circleimageview.CircleImageView
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -162,10 +103,10 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.lang.ref.WeakReference
-import java.util.Date
-import java.util.Locale
-import java.util.Timer
-import java.util.TimerTask
+import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.collections.component1
+import kotlin.collections.component2
 import kotlin.concurrent.scheduleAtFixedRate
 
 const val CHAT_ROOM_OBJECT = "chat_room"
@@ -182,7 +123,7 @@ const val FOCUS_ON_CHAT_ID = "focus_on_chat_id"
 
 
 class ConversationActivity : CoreJoshActivity(), Player.EventListener,
-    ExoAudioPlayer.ProgressUpdateListener, AudioPlayerEventListener {
+    ExoAudioPlayer.ProgressUpdateListener, AudioPlayerEventListener, OnDismissWithSuccess {
 
     companion object {
         fun startConversionActivity(activity: Activity, inboxEntity: InboxEntity) {
@@ -1172,8 +1113,11 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({
                     if (PrefManager.hasKey(IS_PRACTISE_PARTNER_VIEWED)) {
-                        SearchingUserActivity.startUserForPractiseOnPhoneActivity(this, inboxEntity.courseId)
-                    }else{
+                        SearchingUserActivity.startUserForPractiseOnPhoneActivity(
+                            this,
+                            inboxEntity.courseId
+                        )
+                    } else {
                         PractisePartnerDialogFragment.newInstance()
                             .show(supportFragmentManager, "PractisePartnerDialogFragment")
                     }
@@ -1369,7 +1313,7 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
                 unlockViewHolder = UnlockNextClassViewHolder(activityRef, chatModel)
                 unlockViewHolder
             }
-            BASE_MESSAGE_TYPE.P2P-> P2PViewHolder(activityRef, chatModel)
+            BASE_MESSAGE_TYPE.P2P -> P2PViewHolder(activityRef, chatModel)
             else -> return null
         }
     }

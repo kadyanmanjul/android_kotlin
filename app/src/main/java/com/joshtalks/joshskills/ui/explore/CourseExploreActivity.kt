@@ -31,18 +31,7 @@ import kotlinx.coroutines.launch
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
-import kotlin.collections.List
-import kotlin.collections.Map
-import kotlin.collections.MutableList
-import kotlin.collections.MutableSet
-import kotlin.collections.find
-import kotlin.collections.groupBy
-import kotlin.collections.isNullOrEmpty
-import kotlin.collections.linkedSetOf
 import kotlin.collections.set
-import kotlin.collections.sortedBy
-import kotlin.collections.toMutableList
-import kotlin.collections.toSortedMap
 
 const val COURSE_EXPLORER_SCREEN_NAME = "Course Explorer"
 const val USER_COURSES = "user_courses"
@@ -273,9 +262,9 @@ class CourseExploreActivity : CoreJoshActivity() {
                     ExploreCardType.NORMAL -> {
                         courseExploreModel.id?.let { testId ->
                             CourseDetailsActivity.startCourseDetailsActivity(
-                                this,
-                                testId,
-                                this@CourseExploreActivity.javaClass.simpleName,
+                                activity = this,
+                                testId = testId,
+                                startedFrom = this@CourseExploreActivity.javaClass.simpleName,
                                 whatsappUrl = courseExploreModel.whatsappUrl
 
                             )
