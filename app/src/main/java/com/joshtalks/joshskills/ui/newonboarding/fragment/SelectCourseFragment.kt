@@ -34,6 +34,7 @@ import com.joshtalks.joshskills.repository.server.onboarding.ONBOARD_VERSIONS
 import com.joshtalks.joshskills.ui.course_details.CourseDetailsActivity
 import com.joshtalks.joshskills.ui.newonboarding.adapter.CourseSelectionViewPageAdapter
 import com.joshtalks.joshskills.ui.newonboarding.viewmodel.OnBoardViewModel
+import com.joshtalks.joshskills.ui.payment.order_summary.PaymentSummaryActivity
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import org.jetbrains.anko.textColor
@@ -142,9 +143,9 @@ class SelectCourseFragment : Fragment() {
                 .addParam("is_already-enrolled", PrefManager.getBoolValue(IS_GUEST_ENROLLED))
                 .addParam("version", version)
                 .push()
-            navigateToCourseDetailsScreen(
-                AppObjectController.getFirebaseRemoteConfig()
-                    .getDouble(FirebaseRemoteConfigKey.SUBSCRIPTION_TEST_ID).toInt()
+            PaymentSummaryActivity.startPaymentSummaryActivity(
+                requireActivity(), AppObjectController.getFirebaseRemoteConfig()
+                    .getDouble(FirebaseRemoteConfigKey.SUBSCRIPTION_TEST_ID).toInt().toString()
             )
         }
     }

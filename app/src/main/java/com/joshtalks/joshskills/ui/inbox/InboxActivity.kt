@@ -90,7 +90,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.jetbrains.anko.collections.forEachWithIndex
 import java.text.SimpleDateFormat
-import java.util.Date
 import java.util.Locale
 
 const val REGISTER_INFO_CODE = 2001
@@ -772,9 +771,6 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
                 PrefManager.put(IS_TRIAL_STARTED, false, false)
                 PrefManager.put(REMAINING_TRIAL_DAYS, -1)
             } else {
-                val startDate: Date? = sdf.parse(it.startDate)
-                val currentDate: Date? = sdf.parse(it.today)
-
                 (it.remainingDays < 0).let { trialExpired ->
                     PrefManager.put(
                         IS_TRIAL_ENDED,
@@ -788,7 +784,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
 
                 PrefManager.put(
                     IS_TRIAL_STARTED,
-                    (it.is7DFTBought ?: false && startDate?.before(currentDate) ?: false), false
+                    it.is7DFTBought ?: false, false
                 )
 
                 PrefManager.put(REMAINING_TRIAL_DAYS, it.remainingDays)
@@ -806,9 +802,6 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
                 PrefManager.put(IS_SUBSCRIPTION_STARTED, false, false)
                 PrefManager.put(REMAINING_SUBSCRIPTION_DAYS, -1, false)
             } else {
-                val startDate: Date? = sdf.parse(it.startDate)
-                val currentDate = sdf.parse(it.today)
-
                 (it.remainingDays < 0).let { subsEnded ->
                     PrefManager.put(
                         IS_SUBSCRIPTION_ENDED,
@@ -819,9 +812,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
                         logSubscriptionExpired()
                 }
                 PrefManager.put(
-                    IS_SUBSCRIPTION_STARTED,
-                    (it.isSubscriptionBought ?: false && startDate?.before(currentDate) ?: false),
-                    false
+                    IS_SUBSCRIPTION_STARTED, it.isSubscriptionBought ?: false, false
                 )
                 PrefManager.put(
                     REMAINING_SUBSCRIPTION_DAYS, it.remainingDays,
