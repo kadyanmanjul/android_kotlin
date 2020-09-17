@@ -40,19 +40,42 @@ class TopTrialTooltipView : FrameLayout {
             )
     }
 
-    fun setText(remainingTrialDays: Int) {
-        if(remainingTrialDays in 0..1){
-            ballonTV.text =
+    fun setText(text: String) {
+        ballonTV.text = text
+    }
+
+    fun setFindMoreCourseTipText(remainingTrialDays: Int) {
+        if (remainingTrialDays in 0..1) {
+            setText(
                 AppObjectController.getFirebaseRemoteConfig()
                     .getString(FirebaseRemoteConfigKey.BB_TOOL_TIP_BELOW_FIND_COURSE_TEXT_FREE)
-        }
-        else {
-            ballonTV.text =
+            )
+        } else {
+            setText(
                 String.format(
                     AppObjectController.getFirebaseRemoteConfig()
                         .getString(FirebaseRemoteConfigKey.BB_TOOL_TIP_BELOW_FIND_COURSE_TEXT),
                     remainingTrialDays
                 )
+            )
         }
     }
+
+    fun setInboxOverayTipText(remainingTrialDays: Int) {
+        if (remainingTrialDays in 0..1) {
+            setText(
+                AppObjectController.getFirebaseRemoteConfig()
+                    .getString(FirebaseRemoteConfigKey.INBOX_OVERLAY_TOOLTIP_D0_1)
+            )
+        } else if (remainingTrialDays in 2..3) {
+            setText(
+                String.format(
+                    AppObjectController.getFirebaseRemoteConfig()
+                        .getString(FirebaseRemoteConfigKey.INBOX_OVERLAY_TOOLTIP_D2_3),
+                    remainingTrialDays
+                )
+            )
+        }
+    }
+
 }

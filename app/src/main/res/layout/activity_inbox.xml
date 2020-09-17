@@ -112,6 +112,7 @@
         wheel:matProg_progressIndeterminate="true" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/overlay_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/transparent_2"
@@ -169,7 +170,7 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <com.joshtalks.joshskills.ui.inbox.extra.TopTrialTooltipView
-            android:id="@+id/continue_tip"
+            android:id="@+id/overlay_tip"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"

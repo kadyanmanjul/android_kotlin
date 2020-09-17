@@ -22,7 +22,21 @@ import com.google.android.material.snackbar.Snackbar
 import com.joshtalks.joshcamerax.utils.SharedPrefsManager
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.ARG_PLACEHOLDER_URL
+import com.joshtalks.joshskills.core.ApiCallStatus
+import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.COURSE_ID
+import com.joshtalks.joshskills.core.CoreJoshActivity
+import com.joshtalks.joshskills.core.EXPLORE_TYPE
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
+import com.joshtalks.joshskills.core.IS_SUBSCRIPTION_ENDED
+import com.joshtalks.joshskills.core.IS_SUBSCRIPTION_STARTED
+import com.joshtalks.joshskills.core.IS_TRIAL_ENDED
+import com.joshtalks.joshskills.core.IS_TRIAL_STARTED
+import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.REMAINING_SUBSCRIPTION_DAYS
+import com.joshtalks.joshskills.core.REMAINING_TRIAL_DAYS
+import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.inapp_update.Constants
@@ -67,11 +81,20 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.activity_inbox.*
 import kotlinx.android.synthetic.main.activity_inbox.expiry_tool_tip
-import kotlinx.android.synthetic.main.find_more_layout.*
-import kotlinx.android.synthetic.main.test_summay_header_item.view.*
-import kotlinx.android.synthetic.main.top_free_trial_expire_time_tooltip_view.*
+import kotlinx.android.synthetic.main.activity_inbox.nested_scroll_view
+import kotlinx.android.synthetic.main.activity_inbox.overlay_layout
+import kotlinx.android.synthetic.main.activity_inbox.overlay_tip
+import kotlinx.android.synthetic.main.activity_inbox.progress_bar
+import kotlinx.android.synthetic.main.activity_inbox.recycler_view_inbox
+import kotlinx.android.synthetic.main.activity_inbox.subscriptionTipContainer
+import kotlinx.android.synthetic.main.activity_inbox.txtConvert
+import kotlinx.android.synthetic.main.activity_inbox.txtConvert2
+import kotlinx.android.synthetic.main.activity_inbox.txtSubscriptionTip
+import kotlinx.android.synthetic.main.activity_inbox.txtSubscriptionTip2
+import kotlinx.android.synthetic.main.find_more_layout.continue_tip
+import kotlinx.android.synthetic.main.find_more_layout.find_more
+import kotlinx.android.synthetic.main.top_free_trial_expire_time_tooltip_view.expiry_tool_tip_text
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -132,55 +155,70 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
                     subscriptionTipContainer.visibility = View.VISIBLE
 
                     val remainingTrialDays = PrefManager.getIntValue(REMAINING_TRIAL_DAYS)
-                    if(remainingTrialDays in 0..7)
-                    {
+                    if (remainingTrialDays in 0..7) {
                         showToolTipBelowFindMoreCourse(remainingTrialDays)
                     }
                     when {
                         remainingTrialDays <= 0 -> {
-                            txtSubscriptionTip.text=AppObjectController.getFirebaseRemoteConfig()
+                            txtSubscriptionTip.text = AppObjectController.getFirebaseRemoteConfig()
+                                .getString(FirebaseRemoteConfigKey.SUBSCRIPTION_TRIAL_TIP_DAY7)
+                            txtSubscriptionTip2.text = AppObjectController.getFirebaseRemoteConfig()
                                 .getString(FirebaseRemoteConfigKey.SUBSCRIPTION_TRIAL_TIP_DAY7)
                             showExpiryTimeToolTip(remainingTrialDays)
                         }
 
                         remainingTrialDays == 1 -> {
-                            txtSubscriptionTip.text= AppObjectController.getFirebaseRemoteConfig()
+                            txtSubscriptionTip.text = AppObjectController.getFirebaseRemoteConfig()
+                                .getString(FirebaseRemoteConfigKey.SUBSCRIPTION_TRIAL_TIP_DAY6)
+                            txtSubscriptionTip2.text = AppObjectController.getFirebaseRemoteConfig()
                                 .getString(FirebaseRemoteConfigKey.SUBSCRIPTION_TRIAL_TIP_DAY6)
                             showExpiryTimeToolTip(remainingTrialDays)
 
                         }
 
                         remainingTrialDays == 2 -> {
-                            txtSubscriptionTip.text=AppObjectController.getFirebaseRemoteConfig()
+                            txtSubscriptionTip.text = AppObjectController.getFirebaseRemoteConfig()
+                                .getString(FirebaseRemoteConfigKey.SUBSCRIPTION_TRIAL_TIP_DAY5)
+                            txtSubscriptionTip2.text = AppObjectController.getFirebaseRemoteConfig()
                                 .getString(FirebaseRemoteConfigKey.SUBSCRIPTION_TRIAL_TIP_DAY5)
                             showExpiryTimeToolTip(remainingTrialDays)
 
                         }
 
                         remainingTrialDays == 3 -> {
-                            txtSubscriptionTip.text=AppObjectController.getFirebaseRemoteConfig()
+                            txtSubscriptionTip.text = AppObjectController.getFirebaseRemoteConfig()
+                                .getString(FirebaseRemoteConfigKey.SUBSCRIPTION_TRIAL_TIP_DAY4)
+                            txtSubscriptionTip2.text = AppObjectController.getFirebaseRemoteConfig()
                                 .getString(FirebaseRemoteConfigKey.SUBSCRIPTION_TRIAL_TIP_DAY4)
                             showExpiryTimeToolTip(remainingTrialDays)
 
                         }
 
                         remainingTrialDays == 4 -> {
-                            txtSubscriptionTip.text=AppObjectController.getFirebaseRemoteConfig()
+                            txtSubscriptionTip.text = AppObjectController.getFirebaseRemoteConfig()
+                                .getString(FirebaseRemoteConfigKey.SUBSCRIPTION_TRIAL_TIP_DAY3)
+                            txtSubscriptionTip2.text = AppObjectController.getFirebaseRemoteConfig()
                                 .getString(FirebaseRemoteConfigKey.SUBSCRIPTION_TRIAL_TIP_DAY3)
                         }
 
                         remainingTrialDays == 5 -> {
-                            txtSubscriptionTip.text=AppObjectController.getFirebaseRemoteConfig()
+                            txtSubscriptionTip.text = AppObjectController.getFirebaseRemoteConfig()
+                                .getString(FirebaseRemoteConfigKey.SUBSCRIPTION_TRIAL_TIP_DAY2)
+                            txtSubscriptionTip2.text = AppObjectController.getFirebaseRemoteConfig()
                                 .getString(FirebaseRemoteConfigKey.SUBSCRIPTION_TRIAL_TIP_DAY2)
                         }
 
                         remainingTrialDays == 6 -> {
-                            txtSubscriptionTip.text=AppObjectController.getFirebaseRemoteConfig()
+                            txtSubscriptionTip.text = AppObjectController.getFirebaseRemoteConfig()
+                                .getString(FirebaseRemoteConfigKey.SUBSCRIPTION_TRIAL_TIP_DAY1)
+                            txtSubscriptionTip2.text = AppObjectController.getFirebaseRemoteConfig()
                                 .getString(FirebaseRemoteConfigKey.SUBSCRIPTION_TRIAL_TIP_DAY1)
                         }
 
                         remainingTrialDays > 6 -> {
-                            txtSubscriptionTip.text=AppObjectController.getFirebaseRemoteConfig()
+                            txtSubscriptionTip.text = AppObjectController.getFirebaseRemoteConfig()
+                                .getString(FirebaseRemoteConfigKey.SUBSCRIPTION_TRIAL_TIP_DAY0)
+                            txtSubscriptionTip2.text = AppObjectController.getFirebaseRemoteConfig()
                                 .getString(FirebaseRemoteConfigKey.SUBSCRIPTION_TRIAL_TIP_DAY0)
                         }
                     }
@@ -196,6 +234,13 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
                             AppObjectController.getFirebaseRemoteConfig()
                                 .getString(FirebaseRemoteConfigKey.EXPLORE_TYPE_FFCOURSE_TIP)
                         }
+                        txtSubscriptionTip2.text = if (it.size > 1) {
+                            AppObjectController.getFirebaseRemoteConfig()
+                                .getString(FirebaseRemoteConfigKey.EXPLORE_TYPE_NORMAL_TIP)
+                        } else {
+                            AppObjectController.getFirebaseRemoteConfig()
+                                .getString(FirebaseRemoteConfigKey.EXPLORE_TYPE_FFCOURSE_TIP)
+                        }
                     }
                 }
 
@@ -203,6 +248,8 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
                     subscriptionTipContainer.visibility = View.VISIBLE
                     viewModel.registerCourseNetworkLiveData.value?.let {
                         txtSubscriptionTip.text = AppObjectController.getFirebaseRemoteConfig()
+                            .getString(FirebaseRemoteConfigKey.EXPLORE_TYPE_NORMAL_TIP)
+                        txtSubscriptionTip2.text = AppObjectController.getFirebaseRemoteConfig()
                             .getString(FirebaseRemoteConfigKey.EXPLORE_TYPE_NORMAL_TIP)
                     }.run {
                         subscriptionTipContainer.visibility = View.GONE
@@ -217,8 +264,8 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
     }
 
     private fun showToolTipBelowFindMoreCourse(remainingTrialDays: Int) {
-        continue_tip.visibility=View.VISIBLE
-        (continue_tip as TopTrialTooltipView).setText(remainingTrialDays)
+        continue_tip.visibility = View.VISIBLE
+        (continue_tip as TopTrialTooltipView).setFindMoreCourseTipText(remainingTrialDays)
     }
 
     private fun setCTAButtonText(exploreType: ExploreCardType) {
@@ -510,6 +557,9 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
                 if (exploreTypeStr.isNotBlank()) ExploreCardType.valueOf(exploreTypeStr) else ExploreCardType.NORMAL
             updateSubscriptionTipView(exploreType)
             setCTAButtonText(exploreType)
+            if (true && it.showTooltip3) {
+                showOverlayToolTip(it.freeTrialData.remainingDays)
+            }
 
         }
 
@@ -523,6 +573,15 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
                 this, AppObjectController.getFirebaseRemoteConfig()
                     .getDouble(FirebaseRemoteConfigKey.SUBSCRIPTION_TEST_ID).toInt().toString()
             )
+        }
+        txtConvert2.setOnClickListener {
+            overlay_layout.visibility = View.GONE
+            logEvent(AnalyticsEvent.CONVERT_CLICKED.name)
+            PaymentSummaryActivity.startPaymentSummaryActivity(
+                this, AppObjectController.getFirebaseRemoteConfig()
+                    .getDouble(FirebaseRemoteConfigKey.SUBSCRIPTION_TEST_ID).toInt().toString()
+            )
+
         }
 
         viewModel.reminderApiCallStatusLiveData.observe(this, {
@@ -890,8 +949,9 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         }
     }
 
-    private fun addTopHintViewForTrialEnd() {
-
+    private fun showOverlayToolTip(remainingTrialDays: Int) {
+        overlay_layout.visibility = View.VISIBLE
+        (overlay_tip as TopTrialTooltipView).setInboxOverayTipText(remainingTrialDays)
     }
 
 }

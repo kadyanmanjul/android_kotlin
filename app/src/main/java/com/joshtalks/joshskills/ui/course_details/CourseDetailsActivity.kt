@@ -202,6 +202,7 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
                 )
 
                 binding.continueTip.setText(text)
+                binding.txtExtraHint.visibility = View.GONE
             } else if ((freeTrialData.endDate?.minus(
                     freeTrialData.today
                 ))?.div(24 * 60 * 60)
@@ -214,7 +215,11 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
                     .getString(FirebaseRemoteConfigKey.BUY_COURSE_LAST_DAY_OFFER_HINT)
 
                 binding.continueTip.setText(text)
-            } else binding.continueTip.visibility = View.GONE
+                binding.txtExtraHint.visibility = View.GONE
+            } else {
+                binding.continueTip.visibility = View.GONE
+                binding.txtExtraHint.visibility = View.VISIBLE
+            }
         }
     }
 
@@ -268,7 +273,6 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
             binding.txtDiscountedPrice.text = data.paymentData.discountedAmount
             if (data.paymentData.discountText.isNullOrEmpty().not()) {
                 binding.txtExtraHint.text = data.paymentData.discountText
-                binding.txtExtraHint.visibility = View.VISIBLE
                 appAnalytics.addParam(
                     AnalyticsEvent.COURSE_PRICE.NAME,
                     data.paymentData.actualAmount
