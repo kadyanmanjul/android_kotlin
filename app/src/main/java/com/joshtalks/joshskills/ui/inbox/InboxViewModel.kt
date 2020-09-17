@@ -8,17 +8,7 @@ import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshcamerax.utils.SharedPrefsManager
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.ApiCallStatus
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.EXPLORE_TYPE
-import com.joshtalks.joshskills.core.INSTANCE_ID
-import com.joshtalks.joshskills.core.IS_SUBSCRIPTION_STARTED
-import com.joshtalks.joshskills.core.IS_TRIAL_STARTED
-import com.joshtalks.joshskills.core.JoshApplication
-import com.joshtalks.joshskills.core.ONBOARDING_VERSION_KEY
-import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.core.USER_UNIQUE_ID
-import com.joshtalks.joshskills.core.showToast
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.onboarding.FreeTrialData
@@ -147,12 +137,12 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
                                     )
                                 }
 
-                                }
-                            } else
-                                showToast(it.message)
-                            return@launch
-                        }
+                            }
+                        } else
+                            showToast(it.message)
+                        return@launch
                     }
+                }
             } catch (ex: Exception) {
                 ex.printStackTrace()
                 when (ex) {
@@ -213,6 +203,9 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
                             this.subscriptionData.isSubscriptionBought ?: false
                         )
                         PrefManager.put(IS_TRIAL_STARTED, this.freeTrialData.is7DFTBought ?: false)
+                        PrefManager.put(SHOW_COURSE_DETAIL_TOOLTIP, this.showTooltip4)
+                        PrefManager.put(SHOW_COURSE_DETAIL_TOOLTIP, this.showTooltip4)
+
                     }
                 }
             } catch (ex: Throwable) {

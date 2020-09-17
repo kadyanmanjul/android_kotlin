@@ -7,22 +7,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.gson.reflect.TypeToken
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.EXPLORE_TYPE
-import com.joshtalks.joshskills.core.INSTANCE_ID
-import com.joshtalks.joshskills.core.IS_SUBSCRIPTION_STARTED
-import com.joshtalks.joshskills.core.IS_TRIAL_STARTED
-import com.joshtalks.joshskills.core.JoshApplication
-import com.joshtalks.joshskills.core.ONBOARDING_VERSION_KEY
-import com.joshtalks.joshskills.core.PAYMENT_MOBILE_NUMBER
-import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.core.REMAINING_SUBSCRIPTION_DAYS
-import com.joshtalks.joshskills.core.REMAINING_TRIAL_DAYS
-import com.joshtalks.joshskills.core.USER_UNIQUE_ID
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
-import com.joshtalks.joshskills.core.analytics.BranchIOAnalytics
 import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
@@ -32,14 +19,13 @@ import com.joshtalks.joshskills.repository.server.PaymentSummaryResponse
 import com.joshtalks.joshskills.repository.server.onboarding.FreeTrialData
 import com.joshtalks.joshskills.repository.server.onboarding.VersionResponse
 import com.joshtalks.joshskills.util.showAppropriateMsg
-import io.branch.referral.util.BRANCH_STANDARD_EVENT
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 import retrofit2.Response
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
-import java.util.HashMap
+import java.util.*
 
 class PaymentSummaryViewModel(application: Application) : AndroidViewModel(application) {
     var context: JoshApplication = getApplication()
@@ -349,7 +335,7 @@ class PaymentSummaryViewModel(application: Application) : AndroidViewModel(appli
 
                         PrefManager.put(IS_TRIAL_STARTED, this.freeTrialData.is7DFTBought ?: false)
                         PrefManager.put(REMAINING_TRIAL_DAYS, this.freeTrialData.remainingDays)
-
+                        PrefManager.put(SHOW_COURSE_DETAIL_TOOLTIP, this.showTooltip4)
                     }
                 }
             } catch (ex: Throwable) {

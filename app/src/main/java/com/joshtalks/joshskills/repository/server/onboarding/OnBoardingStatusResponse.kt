@@ -9,10 +9,16 @@ data class OnBoardingStatusResponse(
     var version: Version,
     @SerializedName("explore_type")
     var exploreType: String,
-
+    @SerializedName("show_tooltip1")
+    var showTooltip1: Boolean,
+    @SerializedName("show_tooltip2")
+    var showTooltip2: Boolean,
+    @SerializedName("show_tooltip3")
+    var showTooltip3: Boolean,
+    @SerializedName("show_tooltip4")
+    var showTooltip4: Boolean,
     @SerializedName("subscription_data")
     var subscriptionData: SubscriptionData,
-
     @SerializedName("free_trial_data")
     var freeTrialData: FreeTrialData
 )
