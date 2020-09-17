@@ -45,6 +45,8 @@ import com.joshtalks.joshskills.core.IS_TRIAL_ENDED
 import com.joshtalks.joshskills.core.IS_TRIAL_STARTED
 import com.joshtalks.joshskills.core.PermissionUtils
 import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.REMAINING_TRIAL_DAYS
+import com.joshtalks.joshskills.core.SHOW_COURSE_DETAIL_TOOLTIP
 import com.joshtalks.joshskills.core.STARTED_FROM
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.VERSION
@@ -72,6 +74,8 @@ import com.joshtalks.joshskills.repository.server.course_detail.Reviews
 import com.joshtalks.joshskills.repository.server.course_detail.StudentFeedback
 import com.joshtalks.joshskills.repository.server.course_detail.SyllabusData
 import com.joshtalks.joshskills.repository.server.course_detail.TeacherDetails
+import com.joshtalks.joshskills.repository.server.onboarding.FreeTrialData
+import com.joshtalks.joshskills.repository.server.onboarding.SubscriptionData
 import com.joshtalks.joshskills.ui.course_details.extra.TeacherDetailsFragment
 import com.joshtalks.joshskills.ui.course_details.viewholder.AboutJoshViewHolder
 import com.joshtalks.joshskills.ui.course_details.viewholder.CourseDetailsBaseCell
@@ -91,6 +95,7 @@ import com.joshtalks.joshskills.ui.payment.order_summary.PaymentSummaryActivity
 import com.joshtalks.joshskills.ui.subscription.TRIAL_TEST_ID
 import com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity
 import com.joshtalks.joshskills.util.DividerItemDecoration
+import com.joshtalks.skydoves.balloon.OnBalloonClickListener
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
@@ -103,7 +108,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class CourseDetailsActivity : BaseActivity() {
+class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
 
     private lateinit var binding: ActivityCourseDetailsBinding
     private val viewModel by lazy { ViewModelProvider(this).get(CourseDetailsViewModel::class.java) }
@@ -163,7 +168,54 @@ class CourseDetailsActivity : BaseActivity() {
             .addParam("test_id", testId)
             .addParam(AnalyticsEvent.FLOW_FROM_PARAM.NAME, flowFrom)
         initView()
+        showTooltip()
         subscribeLiveData()
+    }
+
+    private fun showTooltip() {
+        val freeTrialData = FreeTrialData.getMapObject()
+        if (freeTrialData?.is7DFTBought == true && (SubscriptionData.getMapObject()?.isSubscriptionBought == true).not() && PrefManager.getBoolValue(
+                SHOW_COURSE_DETAIL_TOOLTIP
+            )
+        ) {
+            if ((freeTrialData.endDate?.minus(
+                    freeTrialData.today
+                ))?.div(24 * 60 * 60)
+                    ?.toInt() == 2 || (freeTrialData.endDate?.minus(freeTrialData.today))?.div(
+                    24 * 60 * 60
+                )
+                    ?.toInt() == 3
+            ) {
+                val offerPercentage =
+                    AppObjectController.getFirebaseRemoteConfig()
+                        .getString("COURSE_MAX_OFFER_PER")
+
+                val text = String.format(
+                    AppObjectController.getFirebaseRemoteConfig()
+                        .getString("BUY_COURSE_OFFER_HINT"),
+                    offerPercentage,
+                    "${
+                        PrefManager.getIntValue(
+                            REMAINING_TRIAL_DAYS
+                        )
+                    }"
+                )
+
+                binding.continueTip.setText(text)
+            } else if ((freeTrialData.endDate?.minus(
+                    freeTrialData.today
+                ))?.div(24 * 60 * 60)
+                    ?.toInt() == 1 || (freeTrialData.endDate?.minus(freeTrialData.today))?.div(
+                    24 * 60 * 60
+                )
+                    ?.toInt() == 0
+            ) {
+                val text = AppObjectController.getFirebaseRemoteConfig()
+                    .getString(FirebaseRemoteConfigKey.BUY_COURSE_LAST_DAY_OFFER_HINT)
+
+                binding.continueTip.setText(text)
+            } else binding.continueTip.visibility = View.GONE
+        }
     }
 
     private fun initView() {
@@ -202,7 +254,9 @@ class CourseDetailsActivity : BaseActivity() {
             transition.addTarget(binding.buyCourseLl)
             TransitionManager.beginDelayedTransition(binding.coordinator, transition)
             binding.buyCourseLl.visibility = View.VISIBLE
-            if (intent.hasExtra(WHATSAPP_URL)&& intent.getStringExtra(WHATSAPP_URL).isNullOrEmpty().not()) {
+            if (intent.hasExtra(WHATSAPP_URL) && intent.getStringExtra(WHATSAPP_URL).isNullOrEmpty()
+                    .not()
+            ) {
                 binding.linkToWhatsapp.visibility = View.VISIBLE
             }
         }
@@ -787,6 +841,10 @@ class CourseDetailsActivity : BaseActivity() {
                 this.addFlags(flag)
             }
         }
+    }
+
+    override fun onBalloonClick(view: View) {
+
     }
 
 

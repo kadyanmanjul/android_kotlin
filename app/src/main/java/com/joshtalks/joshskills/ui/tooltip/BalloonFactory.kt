@@ -115,24 +115,13 @@ object BalloonFactory {
 
     fun getCourseOfferBalloon(
         baseContext: Context,
-        remainDay: String,
+        message: String,
         lifecycleOwner: LifecycleOwner,
         onBalloonClickListener: OnBalloonClickListener
     ): Balloon {
-
-        val offerPercentage =
-            AppObjectController.getFirebaseRemoteConfig().getString("COURSE_MAX_OFFER_PER")
-
-
-        val text = String.format(
-            AppObjectController.getFirebaseRemoteConfig()
-                .getString("BUY_COURSE_OFFER_HINT"),
-            offerPercentage,
-            remainDay
-        )
         val typefaceSpan = TypefaceUtils.load(baseContext.assets, "fonts/OpenSans-SemiBold.ttf")
         val textForm: TextForm = TextForm.Builder(baseContext)
-            .setText(text)
+            .setText(message)
             .setTextColorResource(R.color.gray_53)
             .setTextSize(13f)
             .setTextTypeface(typefaceSpan)
@@ -144,12 +133,11 @@ object BalloonFactory {
             .setArrowVisible(true)
             .setWidthRatio(0.75f)
             .setArrowOrientation(ArrowOrientation.BOTTOM)
-            .setArrowVisible(true)
             .setHeight(70)
             .setArrowPosition(0.75f)
             .setCornerRadius(4f)
             .setSpace(8)
-            .setBackgroundColorResource(R.color.controls_panel_stroke)
+            .setBackgroundColorResource(R.color.yellow)
             .setOnBalloonClickListener(onBalloonClickListener)
             .setBalloonAnimation(BalloonAnimation.OVERSHOOT)
             .setLifecycleOwner(lifecycleOwner)

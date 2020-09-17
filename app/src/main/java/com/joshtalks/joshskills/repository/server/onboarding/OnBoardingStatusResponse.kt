@@ -3,7 +3,6 @@ package com.joshtalks.joshskills.repository.server.onboarding
 import com.google.gson.annotations.SerializedName
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.PrefManager
-import java.util.*
 
 data class OnBoardingStatusResponse(
     @SerializedName("version")
@@ -16,8 +15,8 @@ data class OnBoardingStatusResponse(
     var showTooltip2: Boolean,
     @SerializedName("show_tooltip3")
     var showTooltip3: Boolean,
-    @SerializedName("show_tooltip4")
-    var showTooltip4: Boolean,
+    @SerializedName("show_tooltip5")
+    var showTooltip5: Boolean,
     @SerializedName("subscription_data")
     var subscriptionData: SubscriptionData,
     @SerializedName("free_trial_data")
@@ -29,14 +28,14 @@ data class FreeTrialData(
     var is7DFTBought: Boolean? = null,
 
     @SerializedName("start_date")
-    var startDate: Date? = null,
+    var startDate: Long? = null,
 
-    @SerializedName("end_date")
-    var endDate: Date? = null,
     @SerializedName("remaining_days")
     var remainingDays: Int,
+    @SerializedName("end_date")
+    var endDate: Long? = null,
     @SerializedName("today")
-    var today: Date
+    var today: Long
 ) {
 
     override fun toString(): String {
@@ -69,13 +68,13 @@ data class SubscriptionData(
     @SerializedName("is_subscription_bought")
     var isSubscriptionBought: Boolean? = null,
     @SerializedName("start_date")
-    var startDate: Date? = null,
+    var startDate: Long? = null,
     @SerializedName("end_date")
-    var endDate: Date? = null,
+    var endDate: Long? = null,
     @SerializedName("remaining_days")
     var remainingDays: Int,
     @SerializedName("today")
-    var today: Date
+    var today: Long
 ) {
     companion object {
         private const val SUBSCRIPTION_DATA_MAP_OBJECT = "subscription_map_object"

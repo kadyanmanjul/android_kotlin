@@ -164,25 +164,40 @@
 
                 <com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
                         android:id="@+id/txt_discounted_price"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/_8sdp"
-                        android:paddingBottom="@dimen/_2sdp"
-                        android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6"
-                        android:textColor="@color/black"
-                        app:layout_constraintBottom_toBottomOf="@+id/btn_start_course"
-                        app:layout_constraintStart_toStartOf="parent"
-                        tools:text="$2999.0" />
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_8sdp"
+                    android:paddingBottom="@dimen/_2sdp"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H6"
+                    android:textColor="@color/black"
+                    app:layout_constraintBottom_toBottomOf="@+id/btn_start_course"
+                    app:layout_constraintStart_toStartOf="parent"
+                    tools:text="$2999.0" />
+
+
+                <com.joshtalks.joshskills.ui.course_details.extra.CourseDetailTooltipView
+                    android:id="@+id/continue_tip"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:layout_marginTop="@dimen/_6sdp"
+                    app:layout_constraintBottom_toTopOf="@+id/btn_start_course"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintWidth_default="percent"
+                    app:layout_constraintWidth_percent="0.9" />
+
 
                 <com.google.android.material.textview.MaterialTextView
-                        android:id="@+id/btn_start_course"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/round_rectangle_for_course_expo"
-                        android:backgroundTint="@color/button_color"
-                        android:gravity="center"
-                        android:onClick="@{()->handler.buyCourse()}"
-                        android:paddingVertical="@dimen/_8sdp"
+                    android:id="@+id/btn_start_course"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/round_rectangle_for_course_expo"
+                    android:backgroundTint="@color/button_color"
+                    android:gravity="center"
+                    android:onClick="@{()->handler.buyCourse()}"
+                    android:paddingVertical="@dimen/_8sdp"
                         android:text="@string/start_course"
                         android:textAllCaps="false"
                         android:textAppearance="@style/TextAppearance.JoshTypography.Button"
@@ -191,9 +206,9 @@
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintHorizontal_bias="1"
-                        app:layout_constraintStart_toEndOf="@+id/txt_discounted_price"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintWidth_default="percent"
+                    app:layout_constraintStart_toEndOf="@+id/txt_discounted_price"
+                    app:layout_constraintTop_toBottomOf="@id/continue_tip"
+                    app:layout_constraintWidth_default="percent"
                         app:layout_constraintWidth_percent="0.75" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>

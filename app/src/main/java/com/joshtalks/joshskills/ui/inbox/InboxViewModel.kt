@@ -221,7 +221,7 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
                             REMAINING_SUBSCRIPTION_DAYS,
                             this.subscriptionData.remainingDays
                         )
-                        PrefManager.put(SHOW_COURSE_DETAIL_TOOLTIP, this.showTooltip4)
+                        PrefManager.put(SHOW_COURSE_DETAIL_TOOLTIP, this.showTooltip5)
 
                     }
                 }

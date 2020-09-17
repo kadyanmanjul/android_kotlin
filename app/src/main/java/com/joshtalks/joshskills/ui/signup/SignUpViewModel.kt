@@ -9,7 +9,24 @@ import androidx.lifecycle.viewModelScope
 import com.google.android.gms.auth.api.phone.SmsRetriever
 import com.google.android.gms.tasks.Task
 import com.google.gson.reflect.TypeToken
-import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.API_TOKEN
+import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.EXPLORE_TYPE
+import com.joshtalks.joshskills.core.INSTANCE_ID
+import com.joshtalks.joshskills.core.IS_SUBSCRIPTION_STARTED
+import com.joshtalks.joshskills.core.IS_TRIAL_STARTED
+import com.joshtalks.joshskills.core.JoshApplication
+import com.joshtalks.joshskills.core.ONBOARDING_VERSION_KEY
+import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.REMAINING_SUBSCRIPTION_DAYS
+import com.joshtalks.joshskills.core.REMAINING_TRIAL_DAYS
+import com.joshtalks.joshskills.core.RegistrationMethods
+import com.joshtalks.joshskills.core.SHOW_COURSE_DETAIL_TOOLTIP
+import com.joshtalks.joshskills.core.SignUpStepStatus
+import com.joshtalks.joshskills.core.USER_UNIQUE_ID
+import com.joshtalks.joshskills.core.VerificationStatus
+import com.joshtalks.joshskills.core.VerificationVia
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
@@ -434,7 +451,7 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
 
                         PrefManager.put(IS_TRIAL_STARTED, this.freeTrialData.is7DFTBought ?: false)
                         PrefManager.put(REMAINING_TRIAL_DAYS, this.freeTrialData.remainingDays)
-                        PrefManager.put(SHOW_COURSE_DETAIL_TOOLTIP, this.showTooltip4)
+                        PrefManager.put(SHOW_COURSE_DETAIL_TOOLTIP, this.showTooltip5)
 
                     }
                 }

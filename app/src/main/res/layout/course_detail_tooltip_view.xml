@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@android:color/transparent">
+
+    <RelativeLayout
+        android:id="@+id/balloon_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:paddingTop="@dimen/_8sdp">
+
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/round_rectangle_for_course_expo"
+            android:backgroundTint="@color/yellow"
+            android:paddingVertical="@dimen/_6sdp">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/balloon_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:gravity="center"
+                android:paddingHorizontal="@dimen/_16sdp"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+                android:textColor="@color/black"
+                tools:text="Bade Bhaiya Tip: Get additional 50% off on final subscription price, last day for this offer!" />
+        </FrameLayout>
+    </RelativeLayout>
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/balloon_arrow"
+        android:layout_width="@dimen/_16sdp"
+        android:layout_height="@dimen/_12sdp"
+        android:layout_below="@+id/balloon_content"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="@dimen/_30sdp"
+        android:rotation="180"
+        android:scaleType="fitXY"
+        android:src="@drawable/arrow"
+        android:tint="@color/yellow" />
+</RelativeLayout>
