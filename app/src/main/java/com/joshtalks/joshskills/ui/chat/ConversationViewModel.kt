@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
@@ -34,6 +35,9 @@ import id.zelory.compressor.Compressor
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import java.io.File
+import java.util.*
+import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
@@ -44,10 +48,6 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import org.jetbrains.anko.collections.forEachWithIndex
-import java.io.File
-import java.util.ConcurrentModificationException
-import java.util.Date
-import java.util.concurrent.TimeUnit
 
 
 class ConversationViewModel(application: Application) :
@@ -164,9 +164,10 @@ class ConversationViewModel(application: Application) :
                     chat.parentQuestionObject =
                         appDatabase.chatDao().getQuestionOnId(this.parent_id!!)
                 }
-                if (conversationPracticeId.isNullOrEmpty().not()) {
-                    question.cPractiseCount = AppObjectController.appDatabase.assessmentDao()
-                        .countOfAssessment(conversationPracticeId)
+                Log.e("cId", questionId + "   " + assessmentId)
+                if (assessmentId != null) {
+                    question.vAssessmentCount = AppObjectController.appDatabase.assessmentDao()
+                        .countOfAssessment(assessmentId)
                 }
                 chat.question = question
             }

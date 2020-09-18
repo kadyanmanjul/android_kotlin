@@ -105,6 +105,6 @@ abstract class AssessmentDao {
 
     @Transaction
     @Query("SELECT  localId FROM assessments  WHERE remoteId = :assessmentId LIMIT 1;")
-    abstract fun countOfAssessment(assessmentId: String?="-1"): Int
+    abstract fun countOfAssessment(assessmentId: Int? = -1): Int
 
 }

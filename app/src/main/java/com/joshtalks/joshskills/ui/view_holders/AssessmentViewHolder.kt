@@ -1,12 +1,15 @@
 package com.joshtalks.joshskills.ui.view_holders
 
+import android.content.res.ColorStateList
 import android.util.Log
 import android.widget.FrameLayout
 import androidx.appcompat.widget.AppCompatTextView
-import androidx.cardview.widget.CardView
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import com.google.android.material.textview.MaterialTextView
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
@@ -26,6 +29,18 @@ class AssessmentViewHolder(
 ) :
     BaseChatViewHolder(activityRef, message, previousMessage) {
 
+    @View(R.id.root_view)
+    lateinit var rootView: FrameLayout
+
+    @View(R.id.root_sub_view)
+    lateinit var subRootView: FrameLayout
+
+    @View(R.id.message_view)
+    lateinit var messageView: ConstraintLayout
+
+    @View(R.id.status_tv)
+    lateinit var practiceStatusTv: AppCompatTextView
+
     @View(R.id.btn_start)
     lateinit var btnStart: MaterialTextView
 
@@ -35,12 +50,6 @@ class AssessmentViewHolder(
     @View(R.id.text_message_time)
     lateinit var receivedMessageTime: AppCompatTextView
 
-    @View(R.id.root_view_fl)
-    lateinit var rootView: FrameLayout
-
-    @View(R.id.root_sub_view)
-    lateinit var subRootView: CardView
-
     lateinit var viewHolder: AssessmentViewHolder
 
 
@@ -48,12 +57,11 @@ class AssessmentViewHolder(
     override fun onViewInflated() {
         super.onViewInflated()
         viewHolder = this
+        val layoutP = subRootView.layoutParams as FrameLayout.LayoutParams
+
         if (message.chatId.isNotEmpty() && sId == message.chatId) {
             highlightedViewForSomeTime(rootView)
         }
-
-        val layoutP = subRootView.layoutParams as FrameLayout.LayoutParams
-
         receivedMessageTime.text = Utils.messageTimeConversion(message.created)
         updateTime(receivedMessageTime)
 
@@ -75,17 +83,43 @@ class AssessmentViewHolder(
                     }
                 }
             }
-            Log.e("count", "" + question.cPractiseCount)
-            if (question.cPractiseCount <= 0) {
+            if (question.vAssessmentCount <= 0) {
                 layoutP.gravity = android.view.Gravity.START
+                subRootView.layoutParams = layoutP
                 rootView.setPadding(getLeftPaddingForReceiver(), 0, getRightPaddingForReceiver(), 0)
                 subRootView.setBackgroundResource(R.drawable.incoming_message_same_bg)
+                messageView.backgroundTintList = ColorStateList.valueOf(
+                    ContextCompat.getColor(
+                        getAppContext(),
+                        R.color.white
+                    )
+                )
+                practiceStatusTv.backgroundTintList = ColorStateList.valueOf(
+                    ContextCompat.getColor(
+                        AppObjectController.joshApplication,
+                        R.color.pdf_bg_color
+                    )
+                )
             } else {
-                rootView.setPadding(getLeftPaddingForSender(), 0, getRightPaddingForSender(), 0)
                 layoutP.gravity = android.view.Gravity.END
-                subRootView.setBackgroundResource(R.drawable.outgoing_message_same_bg)
+                subRootView.layoutParams = layoutP
+                rootView.setPadding(getLeftPaddingForSender(), 0, getRightPaddingForSender(), 0)
+                subRootView.setBackgroundResource(R.drawable.outgoing_message_normal_bg)
+                messageView.backgroundTintList = ColorStateList.valueOf(
+                    ContextCompat.getColor(
+                        getAppContext(),
+                        R.color.sent_msg_background
+                    )
+                )
+                practiceStatusTv.backgroundTintList = ColorStateList.valueOf(
+                    ContextCompat.getColor(
+                        AppObjectController.joshApplication,
+                        R.color.bg_green_80
+                    )
+                )
             }
-            subRootView.layoutParams = layoutP
+            Log.e("count", "" + question.vAssessmentCount)
+
 
         }
 
