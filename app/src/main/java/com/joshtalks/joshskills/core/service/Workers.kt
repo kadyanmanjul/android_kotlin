@@ -10,6 +10,7 @@ import com.google.android.gms.ads.MobileAds
 import com.google.android.gms.ads.identifier.AdvertisingIdClient
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.iid.FirebaseInstanceId
+import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.core.API_TOKEN
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.COUNTRY_ISO
@@ -23,6 +24,7 @@ import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.RATING_DETAILS_KEY
 import com.joshtalks.joshskills.core.RESTORE_ID
 import com.joshtalks.joshskills.core.SERVER_GID_ID
+import com.joshtalks.joshskills.core.SUBSCRIPTION_TEST_ID
 import com.joshtalks.joshskills.core.USER_UNIQUE_ID
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
@@ -48,11 +50,8 @@ import com.joshtalks.joshskills.repository.service.NetworkRequestHelper
 import com.joshtalks.joshskills.repository.service.SyncChatService
 import com.sinch.verification.PhoneNumberUtils
 import io.branch.referral.Branch
+import java.util.*
 import retrofit2.HttpException
-import java.util.Date
-import java.util.HashMap
-import com.joshtalks.joshskills.BuildConfig
-import com.joshtalks.joshskills.core.SUBSCRIPTION_TEST_ID
 
 const val INSTALL_REFERRER_SYNC = "install_referrer_sync"
 const val CONVERSATION_ID = "conversation_id"
@@ -167,10 +166,11 @@ class GetVersionAndFlowDataWorker(var context: Context, workerParams: WorkerPara
                 }
             }
 
+            return Result.success()
         } catch (ex: Throwable) {
             LogException.catchException(ex)
+            return Result.retry()
         }
-        return Result.success()
     }
 }
 

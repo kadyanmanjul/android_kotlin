@@ -5,6 +5,7 @@ import android.animation.ObjectAnimator
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
 import android.telephony.TelephonyManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
@@ -28,10 +29,10 @@ import com.joshtalks.joshskills.ui.inbox.COURSE_EXPLORER_NEW
 import com.joshtalks.joshskills.ui.newonboarding.OnBoardingActivityNew
 import io.branch.referral.Branch
 import io.branch.referral.Defines
-import kotlinx.android.synthetic.main.activity_launcher.*
+import java.io.File
+import kotlinx.android.synthetic.main.activity_launcher.progress_bar
 import org.json.JSONObject
 import timber.log.Timber
-import java.io.File
 
 
 class LauncherActivity : CoreJoshActivity(), CustomPermissionDialogInteractionListener {
@@ -118,7 +119,7 @@ class LauncherActivity : CoreJoshActivity(), CustomPermissionDialogInteractionLi
     }
 
     override fun navigateToNextScreen() {
-        AppObjectController.uiHandler.postDelayed({
+        Handler().postDelayed({
             val versionResponse = getVersionData()
 
             if (versionResponse == null) {
