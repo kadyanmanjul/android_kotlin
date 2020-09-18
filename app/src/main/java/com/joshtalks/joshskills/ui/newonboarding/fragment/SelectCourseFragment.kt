@@ -14,7 +14,16 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.tabs.TabLayoutMediator
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.ApiCallStatus
+import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.BaseActivity
+import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.IS_GUEST_ENROLLED
+import com.joshtalks.joshskills.core.IS_SUBSCRIPTION_STARTED
+import com.joshtalks.joshskills.core.IS_TRIAL_ENDED
+import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.SUBSCRIPTION_TEST_ID
+import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.databinding.FragmentCourseSelectionBinding
@@ -140,13 +149,18 @@ class SelectCourseFragment : Fragment() {
         }
     }
 
-    private fun navigateToCourseDetailsScreen(testId: Int, haveCourses: Boolean = false) {
+    private fun navigateToCourseDetailsScreen(
+        testId: Int,
+        haveCourses: Boolean = false,
+        whatsappLink: String? = null
+    ) {
         CourseDetailsActivity.startCourseDetailsActivity(
             activity = requireActivity(),
             testId = testId,
             startedFrom = requireActivity().javaClass.simpleName,
             flags = arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT),
-            isFromFreeTrial = haveCourses
+            isFromFreeTrial = haveCourses,
+            whatsappUrl = whatsappLink
         )
     }
 
@@ -285,7 +299,7 @@ class SelectCourseFragment : Fragment() {
                         )
                     ) {
                         it.id?.let { id ->
-                            navigateToCourseDetailsScreen(id, true)
+                            navigateToCourseDetailsScreen(id, true, it.whatsappLink)
                         }
                     } else {
                         var count = 0

@@ -131,7 +131,7 @@
             android:backgroundTint="#DCDCDC"
             android:paddingHorizontal="@dimen/_10sdp"
             android:paddingVertical="@dimen/_8sdp"
-            android:visibility="gone"
+            android:visibility="visible"
             app:layout_constraintTop_toTopOf="parent"
             tools:visibility="visible">
 

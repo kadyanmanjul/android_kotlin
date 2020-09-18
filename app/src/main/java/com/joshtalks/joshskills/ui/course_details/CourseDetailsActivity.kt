@@ -92,7 +92,6 @@ import com.joshtalks.joshskills.ui.course_details.viewholder.StudentFeedbackView
 import com.joshtalks.joshskills.ui.course_details.viewholder.SyllabusViewHolder
 import com.joshtalks.joshskills.ui.course_details.viewholder.TeacherDetailsViewHolder
 import com.joshtalks.joshskills.ui.extra.ImageShowFragment
-import com.joshtalks.joshskills.ui.payment.WHATSAPP_URL_PAYMENT_FAILED
 import com.joshtalks.joshskills.ui.payment.order_summary.PaymentSummaryActivity
 import com.joshtalks.joshskills.ui.subscription.TRIAL_TEST_ID
 import com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity
@@ -170,24 +169,25 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
             .addParam("test_id", testId)
             .addParam(AnalyticsEvent.FLOW_FROM_PARAM.NAME, flowFrom)
         initView()
-        showTooltip()
-        subscribeLiveData()
-    }
-
-    private fun showTooltip() {
+        val remainingTrialDays = PrefManager.getIntValue(REMAINING_TRIAL_DAYS)
         val freeTrialData = FreeTrialData.getMapObject()
-        if (freeTrialData?.is7DFTBought == true && (SubscriptionData.getMapObject()?.isSubscriptionBought == true).not() && PrefManager.getBoolValue(
+
+        if (freeTrialData?.is7DFTBought == true && (SubscriptionData.getMapObject()?.isSubscriptionBought == true).not() && remainingTrialDays in 0..7 && PrefManager.getBoolValue(
                 SHOW_COURSE_DETAIL_TOOLTIP
             )
         ) {
-            if ((freeTrialData.endDate?.minus(
-                    freeTrialData.today
-                ))?.div(24 * 60 * 60)
-                    ?.toInt() == 3 || (freeTrialData.endDate?.minus(freeTrialData.today))?.div(
-                    24 * 60 * 60
-                )
-                    ?.toInt() == 4
-            ) {
+            showTooltip(remainingTrialDays)
+        } else {
+            binding.txtExtraHint.visibility = View.VISIBLE
+            binding.continueTip.visibility = View.GONE
+        }
+        subscribeLiveData()
+    }
+
+    private fun showTooltip(remainingTrialDays: Int) {
+
+        when (remainingTrialDays) {
+            5, 6, 7 -> {
                 val offerPercentage =
                     AppObjectController.getFirebaseRemoteConfig()
                         .getString("COURSE_MAX_OFFER_PER")
@@ -199,22 +199,23 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
                     "${
                         PrefManager.getIntValue(
                             REMAINING_TRIAL_DAYS
-                        )
+                        ).minus(4)
                     }"
                 )
 
                 binding.continueTip.setText(text)
                 binding.txtExtraHint.visibility = View.GONE
-            } else if ((freeTrialData.endDate?.minus(freeTrialData.today))?.div(24 * 60 * 60)
-                    ?.toInt() == 5 || (freeTrialData.endDate?.minus(freeTrialData.today))?.div(24 * 60 * 60)
-                    ?.toInt() == 6
-            ) {
+                binding.continueTip.visibility = View.VISIBLE
+            }
+            3, 4 -> {
                 val text = AppObjectController.getFirebaseRemoteConfig()
                     .getString(FirebaseRemoteConfigKey.BUY_COURSE_LAST_DAY_OFFER_HINT)
 
                 binding.continueTip.setText(text)
                 binding.txtExtraHint.visibility = View.GONE
-            } else {
+                binding.continueTip.visibility = View.VISIBLE
+            }
+            else -> {
                 binding.continueTip.visibility = View.GONE
                 binding.txtExtraHint.visibility = View.VISIBLE
             }
@@ -224,7 +225,8 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
     private fun initView() {
         linearLayoutManager = SmoothLinearLayoutManager(this)
         linearLayoutManager.isSmoothScrollbarEnabled = true
-        binding.placeHolderView.builder.setHasFixedSize(true).setLayoutManager(linearLayoutManager)
+        binding.placeHolderView.builder.setHasFixedSize(true)
+            .setLayoutManager(linearLayoutManager)
         binding.placeHolderView.addOnScrollListener(object :
             RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
@@ -257,7 +259,8 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
             transition.addTarget(binding.buyCourseLl)
             TransitionManager.beginDelayedTransition(binding.coordinator, transition)
             binding.buyCourseLl.visibility = View.VISIBLE
-            if (intent.hasExtra(WHATSAPP_URL) && intent.getStringExtra(WHATSAPP_URL).isNullOrBlank()
+            if (intent.hasExtra(WHATSAPP_URL) && intent.getStringExtra(WHATSAPP_URL)
+                    .isNullOrBlank()
                     .not()
             ) {
                 binding.linkToWhatsapp.visibility = View.VISIBLE
@@ -311,7 +314,8 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
             binding.progressBar.visibility = View.GONE
             if (it == ApiCallStatus.FAILED) {
                 val imageUrl =
-                    AppObjectController.getFirebaseRemoteConfig().getString("ERROR_API_IMAGE_URL")
+                    AppObjectController.getFirebaseRemoteConfig()
+                        .getString("ERROR_API_IMAGE_URL")
                 val imageView = ImageView(this).apply {
                     adjustViewBounds = true
                     scaleType = ImageView.ScaleType.FIT_CENTER
@@ -560,7 +564,8 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
 
         compositeDisposable.add(RxBus2.listen(TeacherDetails::class.java).subscribe {
             logMeetMeAnalyticEvent(it.name)
-            TeacherDetailsFragment.newInstance(it).show(supportFragmentManager, "Teacher Details")
+            TeacherDetailsFragment.newInstance(it)
+                .show(supportFragmentManager, "Teacher Details")
         })
         compositeDisposable.add(
             RxBus2.listen(DownloadSyllabusEvent::class.java)
@@ -645,7 +650,8 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
                 && exploreTypeStr == ExploreCardType.FREETRIAL.name
             ) {
                 val isTrialStarted = PrefManager.getBoolValue(IS_TRIAL_STARTED, false)
-                val isSubscriptionStarted = PrefManager.getBoolValue(IS_SUBSCRIPTION_STARTED, false)
+                val isSubscriptionStarted =
+                    PrefManager.getBoolValue(IS_SUBSCRIPTION_STARTED, false)
                 val tempTestId = if (isTrialStarted && discountedPrice > 0.0) {
                     PrefManager.getIntValue(SUBSCRIPTION_TEST_ID)
                 } else if (isTrialStarted.not() && isSubscriptionStarted.not()) TRIAL_TEST_ID

@@ -54,9 +54,10 @@ class CourseSelectionAdapter(
                 binding.rootView.setOnClickListener {
                     RxBus2.publish(
                         CourseSelectedEventBus(
-                            courseExploreModel.isSelected,
-                            courseExploreModel.id,
-                            true
+                            flag = courseExploreModel.isSelected,
+                            id = courseExploreModel.id,
+                            whatsappLink = courseExploreModel.whatsappUrl,
+                            isAlreadyEnrolled = true
                         )
                     )
                 }
@@ -113,8 +114,9 @@ class CourseSelectionAdapter(
             notifyDataSetChanged()
             RxBus2.publish(
                 CourseSelectedEventBus(
-                    courseExploreModel.isSelected,
-                    courseExploreModel.id
+                    flag = courseExploreModel.isSelected,
+                    id = courseExploreModel.id,
+                    whatsappLink = courseExploreModel.whatsappUrl
                 )
             )
         }
