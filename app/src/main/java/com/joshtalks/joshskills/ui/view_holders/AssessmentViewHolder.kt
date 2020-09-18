@@ -1,7 +1,10 @@
 package com.joshtalks.joshskills.ui.view_holders
 
 import android.content.res.ColorStateList
+import android.text.SpannableStringBuilder
+import android.text.Spanned
 import android.widget.FrameLayout
+import android.widget.TextView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
@@ -18,6 +21,8 @@ import com.mindorks.placeholderview.annotations.Click
 import com.mindorks.placeholderview.annotations.Layout
 import com.mindorks.placeholderview.annotations.Resolve
 import com.mindorks.placeholderview.annotations.View
+import io.github.inflationx.calligraphy3.CalligraphyTypefaceSpan
+import io.github.inflationx.calligraphy3.TypefaceUtils
 import java.lang.ref.WeakReference
 
 @Layout(R.layout.assessment_item_layout)
@@ -51,11 +56,19 @@ class AssessmentViewHolder(
 
     lateinit var viewHolder: AssessmentViewHolder
 
+    private val typefaceSpan =
+        CalligraphyTypefaceSpan(
+            TypefaceUtils.load(
+                getAppContext().assets,
+                "fonts/OpenSans-Bold.ttf"
+            )
+        )
 
     @Resolve
     override fun onViewInflated() {
         super.onViewInflated()
         viewHolder = this
+        val sBuilder = SpannableStringBuilder().append("Status: ")
         val layoutP = subRootView.layoutParams as FrameLayout.LayoutParams
 
         if (message.chatId.isNotEmpty() && sId == message.chatId) {
@@ -83,6 +96,7 @@ class AssessmentViewHolder(
                 }
             }
             if (question.vAssessmentCount <= 0) {
+                sBuilder.append("Pending")
                 layoutP.gravity = android.view.Gravity.START
                 subRootView.layoutParams = layoutP
                 rootView.setPadding(getLeftPaddingForReceiver(), 0, getRightPaddingForReceiver(), 0)
@@ -100,6 +114,7 @@ class AssessmentViewHolder(
                     )
                 )
             } else {
+                sBuilder.append("Submitted")
                 layoutP.gravity = android.view.Gravity.END
                 subRootView.layoutParams = layoutP
                 rootView.setPadding(getLeftPaddingForSender(), 0, getRightPaddingForSender(), 0)
@@ -118,9 +133,9 @@ class AssessmentViewHolder(
                 )
             }
         }
-
+        sBuilder.setSpan(typefaceSpan, 8, sBuilder.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+        practiceStatusTv.setText(sBuilder, TextView.BufferType.SPANNABLE)
     }
-
 
     @Click(R.id.root_sub_view)
     fun onClickRootView() {
