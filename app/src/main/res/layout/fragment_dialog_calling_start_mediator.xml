@@ -24,8 +24,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/_24sdp"
                 android:background="@drawable/rounded_rectangle_attach"
-                android:backgroundTint="@color/button_primary_color"
-                android:paddingHorizontal="@dimen/_8sdp"
+            android:backgroundTint="@color/button_color"
+            android:paddingHorizontal="@dimen/_8sdp"
                 android:paddingVertical="@dimen/_12sdp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -72,9 +72,9 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_bias="0.4"
                 app:pulse_layout_PulseDuration="1000"
-                app:pulse_layout_PulseType="fill"
-                app:pulse_layout_RippleColor="@color/button_primary_color"
-                app:pulse_layout_RippleEndRadiusPercent="220"
+            app:pulse_layout_PulseType="fill"
+            app:pulse_layout_RippleColor="@color/button_color"
+            app:pulse_layout_RippleEndRadiusPercent="220"
                 app:pulse_layout_RippleStartRadiusPercent="5"
                 app:pulse_layout_ShowPreview="true">
 

@@ -137,8 +137,8 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    wheel:matProg_barColor="@color/button_primary_color"
-                    wheel:matProg_fillRadius="true"
+                wheel:matProg_barColor="@color/button_color"
+                wheel:matProg_fillRadius="true"
                     wheel:matProg_linearProgress="false"
                     wheel:matProg_progressIndeterminate="true" />
 

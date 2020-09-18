@@ -4,17 +4,14 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
-import android.graphics.Rect
 import android.os.Bundle
 import android.os.CountDownTimer
-import android.util.Log
 import android.view.View
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.appcompat.widget.PopupMenu
-import androidx.core.widget.NestedScrollView
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.ViewModelProvider
 import com.facebook.share.internal.ShareConstants.ACTION_TYPE
@@ -41,7 +38,6 @@ import com.joshtalks.joshskills.core.REMAINING_TRIAL_DAYS
 import com.joshtalks.joshskills.core.SHOW_OVERLAY
 import com.joshtalks.joshskills.core.SINGLE_SPACE
 import com.joshtalks.joshskills.core.SUBSCRIPTION_TEST_ID
-import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.inapp_update.Constants
@@ -71,9 +67,7 @@ import com.joshtalks.joshskills.ui.payment.order_summary.PaymentSummaryActivity
 import com.joshtalks.joshskills.ui.referral.ReferralActivity
 import com.joshtalks.joshskills.ui.reminder.reminder_listing.ReminderListActivity
 import com.joshtalks.joshskills.ui.reminder.set_reminder.ReminderActivity
-import com.joshtalks.joshskills.ui.tooltip.BalloonFactory
 import com.joshtalks.joshskills.ui.view_holders.InboxViewHolder
-import com.joshtalks.skydoves.balloon.Balloon
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
@@ -81,14 +75,12 @@ import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.patloew.rxlocation.RxLocation
 import io.reactivex.CompletableObserver
-import io.reactivex.Maybe
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import java.util.concurrent.TimeUnit
 import kotlinx.android.synthetic.main.activity_inbox.expiry_tool_tip
-import kotlinx.android.synthetic.main.activity_inbox.nested_scroll_view
 import kotlinx.android.synthetic.main.activity_inbox.overlay_layout
 import kotlinx.android.synthetic.main.activity_inbox.overlay_tip
 import kotlinx.android.synthetic.main.activity_inbox.progress_bar
@@ -125,7 +117,6 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
     private var inAppUpdateManager: InAppUpdateManager? = null
     private lateinit var reminderIv: ImageView
     private lateinit var findMoreLayout: View
-    private var offerInHint: Balloon? = null
     lateinit var countdown_timer: CountDownTimer
     var isRunning: Boolean = false
     var time_in_milli_seconds = 0L
@@ -542,34 +533,6 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         }
     }
 
-    private fun setupForFindMoreCourseButton() {
-        CoroutineScope(Dispatchers.Default).launch {
-            val scrollBounds = Rect()
-            nested_scroll_view.getHitRect(scrollBounds)
-            isFindMoreButtonVisible(scrollBounds)
-            nested_scroll_view.setOnScrollChangeListener(NestedScrollView.OnScrollChangeListener { v, scrollX, scrollY, oldScrollX, oldScrollY ->
-                isFindMoreButtonVisible(scrollBounds)
-            })
-        }
-    }
-
-    private fun isFindMoreButtonVisible(scrollBounds: Rect) {
-        if (findMoreLayout.getLocalVisibleRect(scrollBounds)) {
-            if (!findMoreLayout.getLocalVisibleRect(scrollBounds)
-                || scrollBounds.height() < findMoreLayout.height
-            ) {
-                Log.e("inbox", "BTN APPEAR PARCIALY")
-                attachOfferHintView()
-            } else {
-                attachOfferHintView()
-                Log.e("inbox", "BTN APPEAR FULLY!!!")
-            }
-        } else {
-            offerInHint?.dismiss()
-            Log.e("inbox", "No")
-        }
-    }
-
     private fun locationFetch() {
         if (Mentor.getInstance().getLocality() == null) {
             Dexter.withContext(this)
@@ -698,7 +661,6 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
             }
         progress_bar.visibility = View.GONE
         findMoreLayout.visibility = View.VISIBLE
-        setupForFindMoreCourseButton()
     }
 
 
@@ -885,56 +847,6 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         }
     }
 
-
-    private fun attachOfferHintView() {
-        compositeDisposable.add(
-            AppObjectController.appDatabase
-                .courseDao()
-                .isUserInOfferDays()
-                .concatMap {
-                    val (flag, remainDay) = Utils.isUserInDaysOld(it.courseCreatedDate)
-                    if (offerInHint == null) {
-                        getVersionData()?.let {
-                            when (it.version?.name) {
-                                ONBOARD_VERSIONS.ONBOARDING_V1 -> {
-                                    offerInHint =
-                                        BalloonFactory.offerIn7Days(
-                                            this,
-                                            this,
-                                            remainDay.toString()
-                                        )
-                                }
-                            }
-                        }
-                        hideToolTip()
-                    }
-                    return@concatMap Maybe.just(flag)
-                }
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                    { value ->
-                        hideToolTip(value)
-                    },
-                    { error ->
-                        error.printStackTrace()
-                    }
-                ))
-    }
-
-    private fun hideToolTip(value: Boolean = true) {
-        val exploreType = PrefManager.getStringValue(EXPLORE_TYPE, false)
-        if (exploreType.isBlank() || exploreType.contentEquals(ExploreCardType.NORMAL.name)) {
-            val root = findViewById<View>(R.id.find_more)
-            offerInHint?.run {
-                if (this.isShowing.not() && isFinishing.not() && value) {
-                    this.showAlignBottom(root)
-                    findViewById<View>(R.id.bottom_line).visibility = View.GONE
-                }
-            }
-        }
-    }
-
     private fun setTrialEndParam() {
         val freeTrialData = FreeTrialData.getMapObject()
         freeTrialData?.let {
@@ -990,10 +902,6 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
                 )
             }
         }
-    }
-
-    override fun onStop() {
-        super.onStop()
     }
 
     private fun logTrialEventExpired() {

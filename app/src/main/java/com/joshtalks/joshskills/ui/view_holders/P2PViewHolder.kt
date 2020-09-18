@@ -4,16 +4,13 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.FrameLayout
-import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.text.HtmlCompat
 import androidx.fragment.app.FragmentActivity
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.custom_ui.custom_textview.JoshTextView
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.ChatModel
-import com.joshtalks.joshskills.repository.local.eventbus.AssessmentStartEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.P2PStartEventBus
 import com.mindorks.placeholderview.annotations.Click
 import com.mindorks.placeholderview.annotations.Layout
@@ -22,8 +19,12 @@ import com.mindorks.placeholderview.annotations.View
 import java.lang.ref.WeakReference
 
 @Layout(R.layout.p2p_view_holdder_layout)
-class P2PViewHolder(activityRef: WeakReference<FragmentActivity>, message: ChatModel) :
-    BaseChatViewHolder(activityRef, message) {
+class P2PViewHolder(
+    activityRef: WeakReference<FragmentActivity>,
+    message: ChatModel,
+    previousMessage: ChatModel?
+) :
+    BaseChatViewHolder(activityRef, message, previousMessage) {
 
     @View(R.id.root_sub_view)
     lateinit var rootSubView: FrameLayout
@@ -50,7 +51,7 @@ class P2PViewHolder(activityRef: WeakReference<FragmentActivity>, message: ChatM
         titleView.visibility = GONE
         textViewHolder = this
         message.sender?.let {
-            updateView(it, rootView, rootSubView, messageView)
+            setViewHolderBG(previousMessage?.sender, it, rootView, rootSubView, messageView)
         }
         if (message.chatId.isNotEmpty() && sId == message.chatId) {
             highlightedViewForSomeTime(rootView)
@@ -81,6 +82,7 @@ class P2PViewHolder(activityRef: WeakReference<FragmentActivity>, message: ChatM
     override fun getRoot(): FrameLayout {
         return rootView
     }
+
     @Click(R.id.btn_start)
     fun onClickStartView() {
         RxBus2.publish(P2PStartEventBus())

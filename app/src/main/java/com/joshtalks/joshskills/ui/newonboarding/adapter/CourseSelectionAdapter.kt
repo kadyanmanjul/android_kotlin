@@ -91,7 +91,7 @@ class CourseSelectionAdapter(
                 binding.selectCourse.text = context.getString(R.string.select_course)
                 binding.alfa.visibility = View.GONE
                 setDrawableStart(null)
-                setBackgroundColor(R.color.button_primary_color)
+                setBackgroundColor(R.color.button_color)
             }
         }
 
@@ -100,7 +100,7 @@ class CourseSelectionAdapter(
                 binding.selectCourse.text = context.getString(R.string.select_course)
                 binding.alfa.visibility = View.GONE
                 setDrawableStart(null)
-                setBackgroundColor(R.color.button_primary_color)
+                setBackgroundColor(R.color.button_color)
                 courseExploreModel.isSelected = false
 
             } else {

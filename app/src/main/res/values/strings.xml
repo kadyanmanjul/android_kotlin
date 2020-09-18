@@ -340,7 +340,7 @@
     <string name="courses_in_other_languages">Courses in other languages:</string>
     <string name="select_character">Select your character first</string>
 
-    <string name="unlock_class_text">Unlock Next Class     </string>
+    <string name="unlock_class_text">Unlock Next Class</string>
     <string name="loading_new_classess">Loading new classes...</string>
     <string name="start_now">Start Now</string>
     <string name="get_started">Get Started</string>
@@ -409,5 +409,7 @@
 
     <string name="call_permission_message">To answer this call from %s , allow Josh Skills access to your microphone.</string>
     <string name="call_permission_permanent_message">To answer this call from %s , allow Josh Skills access to your microphone . Tap Settings > Permissions, and turn Microphone on .</string>
+
+    <string name="clear_all_media">Clear All Media</string>
 
 </resources>

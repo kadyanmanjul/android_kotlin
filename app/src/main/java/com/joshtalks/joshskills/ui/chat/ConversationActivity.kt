@@ -21,8 +21,6 @@ import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
 import android.view.WindowManager
 import android.widget.Toast
-import androidx.appcompat.widget.AppCompatImageView
-import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentActivity
@@ -41,7 +39,6 @@ import com.bumptech.glide.request.target.Target
 import com.facebook.share.internal.ShareConstants
 import com.github.pwittchen.reactivenetwork.library.rx2.ReactiveNetwork
 import com.google.android.exoplayer2.Player
-import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.greentoad.turtlebody.mediapicker.MediaPicker
@@ -55,6 +52,7 @@ import com.joshtalks.joshskills.core.CERTIFICATE_GENERATE
 import com.joshtalks.joshskills.core.CoreJoshActivity
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.IMAGE_REGEX
+import com.joshtalks.joshskills.core.IS_PRACTISE_PARTNER_VIEWED
 import com.joshtalks.joshskills.core.IS_SUBSCRIPTION_ENDED
 import com.joshtalks.joshskills.core.IS_SUBSCRIPTION_STARTED
 import com.joshtalks.joshskills.core.IS_TRIAL_ENDED
@@ -100,6 +98,7 @@ import com.joshtalks.joshskills.repository.local.eventbus.ImageShowEvent
 import com.joshtalks.joshskills.repository.local.eventbus.InternalSeekBarProgressEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.MediaProgressEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.MessageCompleteEventBus
+import com.joshtalks.joshskills.repository.local.eventbus.P2PStartEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.PdfOpenEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.PlayVideoEvent
 import com.joshtalks.joshskills.repository.local.eventbus.PractiseSubmitEventBus
@@ -126,6 +125,20 @@ import com.joshtalks.joshskills.ui.video_player.IS_BATCH_CHANGED
 import com.joshtalks.joshskills.ui.video_player.LAST_VIDEO_INTERVAL
 import com.joshtalks.joshskills.ui.video_player.NEXT_VIDEO_AVAILABLE
 import com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity
+import com.joshtalks.joshskills.ui.view_holders.AssessmentViewHolder
+import com.joshtalks.joshskills.ui.view_holders.AudioPlayerViewHolder
+import com.joshtalks.joshskills.ui.view_holders.BaseCell
+import com.joshtalks.joshskills.ui.view_holders.BaseChatViewHolder
+import com.joshtalks.joshskills.ui.view_holders.ConversationPractiseViewHolder
+import com.joshtalks.joshskills.ui.view_holders.ImageViewHolder
+import com.joshtalks.joshskills.ui.view_holders.NewMessageViewHolder
+import com.joshtalks.joshskills.ui.view_holders.P2PViewHolder
+import com.joshtalks.joshskills.ui.view_holders.PdfViewHolder
+import com.joshtalks.joshskills.ui.view_holders.PracticeViewHolder
+import com.joshtalks.joshskills.ui.view_holders.TextViewHolder
+import com.joshtalks.joshskills.ui.view_holders.TimeViewHolder
+import com.joshtalks.joshskills.ui.view_holders.UnlockNextClassViewHolder
+import com.joshtalks.joshskills.ui.view_holders.VideoViewHolder
 import com.joshtalks.joshskills.ui.voip.SearchingUserActivity
 import com.joshtalks.joshskills.ui.voip.extra.PractisePartnerDialogFragment
 import com.joshtalks.joshskills.util.ExoAudioPlayer
@@ -141,18 +154,15 @@ import com.muddzdev.styleabletoast.StyleableToast
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import java.lang.ref.WeakReference
-import java.util.Date
-import java.util.Locale
-import java.util.Timer
-import java.util.TimerTask
+import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.component1
 import kotlin.collections.component2
 import kotlin.concurrent.scheduleAtFixedRate
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 const val CHAT_ROOM_OBJECT = "chat_room"
 const val UPDATED_CHAT_ROOM_OBJECT = "updated_chat_room"
@@ -935,26 +945,26 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
                         override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
                             report?.areAllPermissionsGranted()?.let { flag ->
                                 if (flag && internetAvailableFlag.not()) {
-                                        showToast(getString(R.string.internet_not_available_msz))
-                                        return@let
-                                    }
-                                    val pos =
-                                        conversationBinding.chatRv.getViewResolverPosition(it.viewHolder)
-                                    val view: BaseChatViewHolder =
-                                        conversationBinding.chatRv.getViewResolverAtPosition(pos) as BaseChatViewHolder
-                                    val chatModel = it.chatModel
-                                    chatModel.downloadStatus = DOWNLOAD_STATUS.DOWNLOADING
-                                    view.message = it.chatModel
-                                    conversationBinding.chatRv.refreshView(view)
-                                    return
+                                    showToast(getString(R.string.internet_not_available_msz))
+                                    return@let
                                 }
-                                report?.isAnyPermissionPermanentlyDenied?.let {
-                                    PermissionUtils.permissionPermanentlyDeniedDialog(
-                                        activityRef.get()!!
-                                    )
-                                    return
-                                }
+                                val pos =
+                                    conversationBinding.chatRv.getViewResolverPosition(it.viewHolder)
+                                val view: BaseChatViewHolder =
+                                    conversationBinding.chatRv.getViewResolverAtPosition(pos) as BaseChatViewHolder
+                                val chatModel = it.chatModel
+                                chatModel.downloadStatus = DOWNLOAD_STATUS.DOWNLOADING
+                                view.message = it.chatModel
+                                conversationBinding.chatRv.refreshView(view)
+                                return
                             }
+                            report?.isAnyPermissionPermanentlyDenied?.let {
+                                PermissionUtils.permissionPermanentlyDeniedDialog(
+                                    activityRef.get()!!
+                                )
+                                return
+                            }
+                        }
 
                         override fun onPermissionRationaleShouldBeShown(
                             permissions: MutableList<PermissionRequest>?,
@@ -1361,11 +1371,10 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
                 unlockViewHolder = UnlockNextClassViewHolder(activityRef, chatModel, lastMessage)
                 unlockViewHolder
             }
-            BASE_MESSAGE_TYPE.P2P -> P2PViewHolder(activityRef, chatModel)
+            BASE_MESSAGE_TYPE.P2P -> P2PViewHolder(activityRef, chatModel, lastMessage)
             else -> return null
         }
     }
-
 
     override fun onActivityResult(
         requestCode: Int,

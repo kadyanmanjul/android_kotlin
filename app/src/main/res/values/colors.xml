@@ -9,7 +9,6 @@
 
     <color name="checkmark_blue">#34B7F1</color>
 
-
     <color name="gray_53">#535664</color>
 
     <color name="button_activated">@color/colorAccent</color>

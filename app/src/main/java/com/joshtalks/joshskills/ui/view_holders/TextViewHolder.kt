@@ -22,8 +22,7 @@ class TextViewHolder(
     activityRef: WeakReference<FragmentActivity>,
     message: ChatModel,
     previousMessage: ChatModel?
-) :
-    BaseChatViewHolder(activityRef, message, previousMessage) {
+) : BaseChatViewHolder(activityRef, message, previousMessage) {
 
     @View(R.id.root_view)
     lateinit var rootView: FrameLayout

@@ -1,5 +1,6 @@
 package com.joshtalks.joshskills.ui.view_holders
 
+import android.util.Log
 import android.widget.FrameLayout
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.cardview.widget.CardView
@@ -17,10 +18,13 @@ import com.mindorks.placeholderview.annotations.Resolve
 import com.mindorks.placeholderview.annotations.View
 import java.lang.ref.WeakReference
 
-
 @Layout(R.layout.assessment_item_layout)
-class AssessmentViewHolder(activityRef: WeakReference<FragmentActivity>, message: ChatModel) :
-    BaseChatViewHolder(activityRef, message) {
+class AssessmentViewHolder(
+    activityRef: WeakReference<FragmentActivity>,
+    message: ChatModel,
+    previousMessage: ChatModel?
+) :
+    BaseChatViewHolder(activityRef, message, previousMessage) {
 
     @View(R.id.btn_start)
     lateinit var btnStart: MaterialTextView
@@ -48,6 +52,8 @@ class AssessmentViewHolder(activityRef: WeakReference<FragmentActivity>, message
             highlightedViewForSomeTime(rootView)
         }
 
+        val layoutP = subRootView.layoutParams as FrameLayout.LayoutParams
+
         receivedMessageTime.text = Utils.messageTimeConversion(message.created)
         updateTime(receivedMessageTime)
 
@@ -69,7 +75,20 @@ class AssessmentViewHolder(activityRef: WeakReference<FragmentActivity>, message
                     }
                 }
             }
+            Log.e("count", "" + question.cPractiseCount)
+            if (question.cPractiseCount <= 0) {
+                layoutP.gravity = android.view.Gravity.START
+                rootView.setPadding(getLeftPaddingForReceiver(), 0, getRightPaddingForReceiver(), 0)
+                subRootView.setBackgroundResource(R.drawable.incoming_message_same_bg)
+            } else {
+                rootView.setPadding(getLeftPaddingForSender(), 0, getRightPaddingForSender(), 0)
+                layoutP.gravity = android.view.Gravity.END
+                subRootView.setBackgroundResource(R.drawable.outgoing_message_same_bg)
+            }
+            subRootView.layoutParams = layoutP
+
         }
+
     }
 
 
