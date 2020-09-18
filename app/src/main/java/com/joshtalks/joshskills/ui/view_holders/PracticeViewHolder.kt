@@ -10,7 +10,7 @@ import android.widget.FrameLayout
 import android.widget.TextView
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
-import androidx.cardview.widget.CardView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import com.google.android.material.textview.MaterialTextView
@@ -41,7 +41,7 @@ class PracticeViewHolder(
     lateinit var rootView: FrameLayout
 
     @View(R.id.root_sub_view)
-    lateinit var subRootView: CardView
+    lateinit var subRootView: FrameLayout
 
     @View(R.id.tv_title)
     lateinit var titleTv: AppCompatTextView
@@ -60,6 +60,9 @@ class PracticeViewHolder(
 
     @View(R.id.tv_submit_answer)
     lateinit var tvSubmitAnswer: MaterialTextView
+
+    @View(R.id.message_view)
+    lateinit var messageView: ConstraintLayout
 
     lateinit var viewHolder: PracticeViewHolder
 
@@ -96,7 +99,7 @@ class PracticeViewHolder(
             )
         )
         val layoutP = subRootView.layoutParams as FrameLayout.LayoutParams
-        layoutP.width  = Utils.dpToPx(getAppContext(), 270f)
+        //  layoutP.width  = Utils.dpToPx(getAppContext(), 270f)
 
         receivedMessageTime.text = Utils.messageTimeConversion(message.created)
         updateTime(receivedMessageTime)
@@ -115,22 +118,26 @@ class PracticeViewHolder(
                 rootView.setPadding(getLeftPaddingForReceiver(), 0, getRightPaddingForReceiver(), 0)
                 subRootView.layoutParams = layoutP
                 subRootView.setBackgroundResource(R.drawable.incoming_message_same_bg)
-
+                messageView.backgroundTintList = ColorStateList.valueOf(
+                    ContextCompat.getColor(
+                        getAppContext(),
+                        R.color.white
+                    )
+                )
             } else {
                 sBuilder.append("Submitted")
                 tvSubmitAnswer.visibility = android.view.View.GONE
-                subRootView.setContentPadding(
-                    Utils.dpToPx(getAppContext(), 5f),
-                    Utils.dpToPx(getAppContext(), 8f),
-                    Utils.dpToPx(getAppContext(), 5f),
-                    Utils.dpToPx(getAppContext(), 8f)
-                )
                 setResourceInImageView(imageView, R.drawable.ic_practise_submit_bg)
                 rootView.setPadding(getLeftPaddingForSender(), 0, getRightPaddingForSender(), 0)
                 layoutP.gravity = android.view.Gravity.END
                 subRootView.layoutParams = layoutP
                 subRootView.setBackgroundResource(R.drawable.outgoing_message_same_bg)
-
+                messageView.backgroundTintList = ColorStateList.valueOf(
+                    ContextCompat.getColor(
+                        getAppContext(),
+                        R.color.sent_msg_background
+                    )
+                )
                 sBuilder.setSpan(
                     ForegroundColorSpan(
                         ContextCompat.getColor(
@@ -143,12 +150,6 @@ class PracticeViewHolder(
                     Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
                 )
 
-                imageView.backgroundTintList = ColorStateList.valueOf(
-                    ContextCompat.getColor(
-                        AppObjectController.joshApplication,
-                        R.color.bg_green_80
-                    )
-                )
                 practiceStatusTv.backgroundTintList = ColorStateList.valueOf(
                     ContextCompat.getColor(
                         AppObjectController.joshApplication,
