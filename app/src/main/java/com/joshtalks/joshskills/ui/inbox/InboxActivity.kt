@@ -85,8 +85,6 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
-import java.text.DecimalFormat
-import java.text.NumberFormat
 import java.util.concurrent.TimeUnit
 import kotlinx.android.synthetic.main.activity_inbox.expiry_tool_tip
 import kotlinx.android.synthetic.main.activity_inbox.nested_scroll_view
@@ -146,7 +144,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         handelIntentAction()
     }
 
-    private fun showExpiryTimeToolTip(remainingTrialDays: Int) {
+    private fun showExpiryTimeToolTip() {
         expiry_tool_tip.visibility = View.VISIBLE
         startThreadForTextUpdate()
     }
@@ -163,7 +161,10 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
     private fun startTimer(time_in_seconds: Long) {
         countdown_timer = object : CountDownTimer(time_in_seconds, 1000) {
             override fun onFinish() {
-                expiry_tool_tip_text.text = "Free trial completed! "
+                if (PrefManager.getBoolValue(IS_SUBSCRIPTION_STARTED).not()) {
+                    PrefManager.put(IS_TRIAL_ENDED, true)
+                    expiry_tool_tip_text.text = "Free trial completed! "
+                }
             }
 
             override fun onTick(p0: Long) {
@@ -176,7 +177,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
     }
 
     private fun updateTextUI(millis: Long) {
-            val days=TimeUnit.MILLISECONDS.toDays(time_in_milli_seconds).toInt()
+        val days = TimeUnit.MILLISECONDS.toDays(time_in_milli_seconds).toInt()
         if (days == 0) {
             expiryToolText =
                 AppObjectController.getFirebaseRemoteConfig()
@@ -193,12 +194,14 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
                     .plus(" $days Days")
         }
 
-        val time = String.format("%02d:%02d:%02d",
+        val time = String.format(
+            "%02d:%02d:%02d",
             TimeUnit.MILLISECONDS.toHours(millis).rem(24),
             TimeUnit.MILLISECONDS.toMinutes(millis) -
                     TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(millis)), // The change is in this line
             TimeUnit.MILLISECONDS.toSeconds(millis) -
-                    TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis)))
+                    TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis))
+        )
 
         expiry_tool_tip_text.text = "${expiryToolText.plus(SINGLE_SPACE)}$time"
     }
@@ -214,11 +217,11 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
                     subscriptionTipContainer.visibility = View.VISIBLE
 
                     val remainingTrialDays = PrefManager.getIntValue(REMAINING_TRIAL_DAYS)
-                    if ((remainingTrialDays in 0..7) && showTooltip1) {
+                    if (remainingTrialDays in 0..7 && showTooltip1) {
                         showToolTipBelowFindMoreCourse(remainingTrialDays)
                     }
-                    if ((remainingTrialDays in 0..4)) {
-                        showExpiryTimeToolTip(remainingTrialDays)
+                    if (remainingTrialDays in 0..4 && showTooltip2) {
+                        showExpiryTimeToolTip()
                     }
                     when {
                         remainingTrialDays <= 0 -> {
@@ -226,7 +229,6 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
                                 .getString(FirebaseRemoteConfigKey.SUBSCRIPTION_TRIAL_TIP_DAY7)
                             txtSubscriptionTip2.text = AppObjectController.getFirebaseRemoteConfig()
                                 .getString(FirebaseRemoteConfigKey.SUBSCRIPTION_TRIAL_TIP_DAY7)
-                            showExpiryTimeToolTip(remainingTrialDays)
                         }
 
                         remainingTrialDays == 1 -> {
