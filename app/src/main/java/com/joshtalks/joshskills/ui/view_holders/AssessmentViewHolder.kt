@@ -1,8 +1,10 @@
 package com.joshtalks.joshskills.ui.view_holders
 
 import android.content.res.ColorStateList
+import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.Spanned
+import android.text.style.ForegroundColorSpan
 import android.widget.FrameLayout
 import android.widget.TextView
 import androidx.appcompat.widget.AppCompatTextView
@@ -130,6 +132,17 @@ class AssessmentViewHolder(
                         AppObjectController.joshApplication,
                         R.color.bg_green_80
                     )
+                )
+                sBuilder.setSpan(
+                    ForegroundColorSpan(
+                        ContextCompat.getColor(
+                            AppObjectController.joshApplication,
+                            R.color.green
+                        )
+                    ),
+                    8,
+                    sBuilder.length,
+                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
                 )
             }
         }
