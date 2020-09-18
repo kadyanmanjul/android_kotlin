@@ -45,7 +45,7 @@
         android:layout_marginTop="@dimen/_16sdp"
         android:background="@color/lighter_grey"
         android:orientation="horizontal"
-        app:layout_constraintTop_toBottomOf="@+id/continue_tip" />
+        app:layout_constraintTop_toBottomOf="@+id/bb_tip_below_find_btn" />
 
     <com.joshtalks.joshskills.ui.inbox.extra.TopTrialTooltipView
         android:id="@+id/bb_tip_below_find_btn"
