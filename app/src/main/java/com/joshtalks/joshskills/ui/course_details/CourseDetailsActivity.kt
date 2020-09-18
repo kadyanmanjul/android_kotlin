@@ -48,6 +48,7 @@ import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.REMAINING_TRIAL_DAYS
 import com.joshtalks.joshskills.core.SHOW_COURSE_DETAIL_TOOLTIP
 import com.joshtalks.joshskills.core.STARTED_FROM
+import com.joshtalks.joshskills.core.SUBSCRIPTION_TEST_ID
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.VERSION
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
@@ -623,13 +624,12 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
     }
 
     fun buyCourse() {
+        PrefManager.getBoolValue(IS_TRIAL_ENDED)
         if (isFromFreeTrial) {
             val isTrialEnded = PrefManager.getBoolValue(IS_TRIAL_ENDED, false)
-            if (isTrialEnded || testId == AppObjectController.getFirebaseRemoteConfig()
-                    .getDouble(FirebaseRemoteConfigKey.SUBSCRIPTION_TEST_ID).toInt()
+            if (isTrialEnded || testId == PrefManager.getIntValue(SUBSCRIPTION_TEST_ID)
             ) {
-                val tempTestId = AppObjectController.getFirebaseRemoteConfig()
-                    .getDouble(FirebaseRemoteConfigKey.SUBSCRIPTION_TEST_ID).toInt()
+                val tempTestId = PrefManager.getIntValue(SUBSCRIPTION_TEST_ID)
                 logStartCourseAnalyticEvent(tempTestId)
                 PaymentSummaryActivity.startPaymentSummaryActivity(
                     this,
@@ -647,8 +647,7 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
                 val isTrialStarted = PrefManager.getBoolValue(IS_TRIAL_STARTED, false)
                 val isSubscriptionStarted = PrefManager.getBoolValue(IS_SUBSCRIPTION_STARTED, false)
                 val tempTestId = if (isTrialStarted && discountedPrice > 0.0) {
-                    AppObjectController.getFirebaseRemoteConfig()
-                        .getDouble(FirebaseRemoteConfigKey.SUBSCRIPTION_TEST_ID).toInt()
+                    PrefManager.getIntValue(SUBSCRIPTION_TEST_ID)
                 } else if (isTrialStarted.not() && isSubscriptionStarted.not()) TRIAL_TEST_ID
                 else testId
                 logStartCourseAnalyticEvent(tempTestId)

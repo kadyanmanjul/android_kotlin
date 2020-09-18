@@ -20,6 +20,7 @@ import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.REMAINING_SUBSCRIPTION_DAYS
 import com.joshtalks.joshskills.core.REMAINING_TRIAL_DAYS
 import com.joshtalks.joshskills.core.SHOW_COURSE_DETAIL_TOOLTIP
+import com.joshtalks.joshskills.core.SUBSCRIPTION_TEST_ID
 import com.joshtalks.joshskills.core.USER_UNIQUE_ID
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
@@ -318,6 +319,7 @@ class PaymentSummaryViewModel(application: Application) : AndroidViewModel(appli
                 if (response.isSuccessful) {
                     response.body()?.run {
                         // Update Version Data in local
+                        PrefManager.put(SUBSCRIPTION_TEST_ID,this.SubscriptionTestId)
                         val versionData = AppObjectController.gsonMapper.fromJson<VersionResponse>(
                             PrefManager.getStringValue(ONBOARDING_VERSION_KEY),
                             object : TypeToken<VersionResponse>() {}.type

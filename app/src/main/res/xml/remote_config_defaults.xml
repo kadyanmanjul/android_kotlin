@@ -113,12 +113,6 @@
     </entry>
 
     <entry>
-        <key>SUBSCRIPTION_TEST_ID</key>
-        <value>122
-        </value>
-    </entry>
-
-    <entry>
         <key>FIND_MORE_COURSE_HINT_FIRST_TIME</key>
         <value>
             Hello %s, Agar aap es course ke sath kuch aur bhi seekhna chahte hain to pehle %s dino

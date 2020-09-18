@@ -135,8 +135,7 @@ class SelectCourseFragment : Fragment() {
                 .addParam("version", version)
                 .push()
             PaymentSummaryActivity.startPaymentSummaryActivity(
-                requireActivity(), AppObjectController.getFirebaseRemoteConfig()
-                    .getDouble(FirebaseRemoteConfigKey.SUBSCRIPTION_TEST_ID).toInt().toString()
+                requireActivity(), PrefManager.getIntValue(SUBSCRIPTION_TEST_ID).toString()
             )
         }
     }

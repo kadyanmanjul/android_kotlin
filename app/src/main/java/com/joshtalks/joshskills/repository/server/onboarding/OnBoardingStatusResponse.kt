@@ -20,7 +20,9 @@ data class OnBoardingStatusResponse(
     @SerializedName("subscription_data")
     var subscriptionData: SubscriptionData,
     @SerializedName("free_trial_data")
-    var freeTrialData: FreeTrialData
+    var freeTrialData: FreeTrialData,
+    @SerializedName("upgrade_test_id")
+    var SubscriptionTestId: Int=122
 )
 
 data class FreeTrialData(

@@ -40,6 +40,7 @@ import com.joshtalks.joshskills.core.REMAINING_SUBSCRIPTION_DAYS
 import com.joshtalks.joshskills.core.REMAINING_TRIAL_DAYS
 import com.joshtalks.joshskills.core.SHOW_OVERLAY
 import com.joshtalks.joshskills.core.SINGLE_SPACE
+import com.joshtalks.joshskills.core.SUBSCRIPTION_TEST_ID
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
@@ -637,16 +638,14 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         txtConvert.setOnClickListener {
             logEvent(AnalyticsEvent.CONVERT_CLICKED.name)
             PaymentSummaryActivity.startPaymentSummaryActivity(
-                this, AppObjectController.getFirebaseRemoteConfig()
-                    .getDouble(FirebaseRemoteConfigKey.SUBSCRIPTION_TEST_ID).toInt().toString()
+                this, PrefManager.getIntValue(SUBSCRIPTION_TEST_ID).toString()
             )
         }
         txtConvert2.setOnClickListener {
             overlay_layout.visibility = View.GONE
             logEvent(AnalyticsEvent.CONVERT_CLICKED.name)
             PaymentSummaryActivity.startPaymentSummaryActivity(
-                this, AppObjectController.getFirebaseRemoteConfig()
-                    .getDouble(FirebaseRemoteConfigKey.SUBSCRIPTION_TEST_ID).toInt().toString()
+                this, PrefManager.getIntValue(SUBSCRIPTION_TEST_ID).toString()
             )
         }
 

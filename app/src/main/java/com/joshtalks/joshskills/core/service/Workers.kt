@@ -52,6 +52,7 @@ import retrofit2.HttpException
 import java.util.Date
 import java.util.HashMap
 import com.joshtalks.joshskills.BuildConfig
+import com.joshtalks.joshskills.core.SUBSCRIPTION_TEST_ID
 
 const val INSTALL_REFERRER_SYNC = "install_referrer_sync"
 const val CONVERSATION_ID = "conversation_id"
@@ -71,6 +72,9 @@ class AppRunRequiredTaskWorker(var context: Context, workerParams: WorkerParamet
         if (PrefManager.getStringValue(COUNTRY_ISO).isEmpty()) {
             PrefManager.put(COUNTRY_ISO, PhoneNumberUtils.getDefaultCountryIso(context))
         }
+        if (PrefManager.getIntValue(SUBSCRIPTION_TEST_ID) == 0) {
+            PrefManager.put(SUBSCRIPTION_TEST_ID, 122)
+        }
 
         WorkManagerAdmin.readMessageUpdating()
         WorkManagerAdmin.deleteUnlockTypeQuestions()
@@ -78,7 +82,10 @@ class AppRunRequiredTaskWorker(var context: Context, workerParams: WorkerParamet
             val npsEvent =
                 AppObjectController.getFirebaseRemoteConfig().getString("NPS_EVENT_LIST")
             NPSEventModel.setNPSList(npsEvent)
-            AppObjectController.firebaseAnalytics.setUserProperty("App Version",BuildConfig.VERSION_CODE.toString())
+            AppObjectController.firebaseAnalytics.setUserProperty(
+                "App Version",
+                BuildConfig.VERSION_CODE.toString()
+            )
         }.addOnFailureListener { exception ->
             exception.printStackTrace()
         }

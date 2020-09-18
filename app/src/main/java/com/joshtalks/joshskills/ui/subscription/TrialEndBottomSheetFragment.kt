@@ -11,6 +11,7 @@ import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
 import com.joshtalks.joshskills.core.IS_SUBSCRIPTION_ENDED
 import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.SUBSCRIPTION_TEST_ID
 import com.joshtalks.joshskills.databinding.FragmentTrialEndBottomsheetBinding
 import com.joshtalks.joshskills.ui.payment.order_summary.PaymentSummaryActivity
 
@@ -67,8 +68,7 @@ class TrialEndBottomSheetFragment : BottomSheetDialogFragment() {
     fun unlockCourses() {
         PaymentSummaryActivity.startPaymentSummaryActivity(
             requireActivity(),
-            AppObjectController.getFirebaseRemoteConfig()
-                .getDouble(FirebaseRemoteConfigKey.SUBSCRIPTION_TEST_ID).toInt().toString()
+            PrefManager.getIntValue(SUBSCRIPTION_TEST_ID).toString()
         )
     }
 

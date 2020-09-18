@@ -110,9 +110,6 @@ class FirebaseRemoteConfigKey {
         const val SUBSCRIPTION_BB_TIP = "SUBSCRIPTION_BB_TIP"
         const val SUBSCRIPTION_BB_TEXT = "SUBSCRIPTION_BB_TEXT"
 
-        // subscription course test ID
-        const val SUBSCRIPTION_TEST_ID = "SUBSCRIPTION_TEST_ID"
-
         // Course Explore Screen
         const val FFCOURSE_CARD_CLICK_MSG = "FFCOURSE_CARD_CLICK_MSG"
 
