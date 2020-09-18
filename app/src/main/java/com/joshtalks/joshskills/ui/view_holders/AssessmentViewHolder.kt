@@ -1,7 +1,6 @@
 package com.joshtalks.joshskills.ui.view_holders
 
 import android.content.res.ColorStateList
-import android.util.Log
 import android.widget.FrameLayout
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -104,7 +103,7 @@ class AssessmentViewHolder(
                 layoutP.gravity = android.view.Gravity.END
                 subRootView.layoutParams = layoutP
                 rootView.setPadding(getLeftPaddingForSender(), 0, getRightPaddingForSender(), 0)
-                subRootView.setBackgroundResource(R.drawable.outgoing_message_normal_bg)
+                subRootView.setBackgroundResource(R.drawable.outgoing_message_same_bg)
                 messageView.backgroundTintList = ColorStateList.valueOf(
                     ContextCompat.getColor(
                         getAppContext(),
@@ -118,9 +117,6 @@ class AssessmentViewHolder(
                     )
                 )
             }
-            Log.e("count", "" + question.vAssessmentCount)
-
-
         }
 
     }
