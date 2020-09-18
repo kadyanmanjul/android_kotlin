@@ -355,13 +355,13 @@
     </entry>
     <entry>
         <key>INBOX_OVERLAY_TOOLTIP_D0_1</key>
-        <value>Bade Bhaiya Tip: Please yaad rakhna ki agar aap subscription lena chahe to pehle 3
+        <value>Bade Bhaiya Tip: Please yaad rakhna ki agar aap subscription lena chahe to pehle %s
             dino tak aapke paas price pe 50% off hai.
         </value>
     </entry>
     <entry>
         <key>INBOX_OVERLAY_TOOLTIP_D2_3</key>
-        <value>Bade Bhaiya Tip: Please yaad rakhna ki agar aap subscription lena chahe to pehle 3
+        <value>Bade Bhaiya Tip: Please yaad rakhna ki agar aap subscription lena chahe to pehle %s
             dino tak aapke paas price pe 50% off hai.
         </value>
     </entry>

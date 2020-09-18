@@ -144,13 +144,10 @@ class SelectCourseFragment : Fragment() {
                 .addParam("version", version)
                 .push()
 
-            CourseDetailsActivity.startCourseDetailsActivity(
-                activity = requireActivity(),
-                testId = PrefManager.getIntValue(SUBSCRIPTION_TEST_ID),
-                startedFrom = TAG,
-                flags = arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT),
-                isFromFreeTrial = false,
-                whatsappUrl = null
+            navigateToCourseDetailsScreen(
+                PrefManager.getIntValue(SUBSCRIPTION_TEST_ID),
+                false,
+                null
             )
         }
     }

@@ -218,7 +218,7 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
                 binding.continueTip.setText(text)
                 binding.txtExtraHint.visibility = View.GONE
             }
-            else {
+            else -> {
                 binding.continueTip.visibility = View.GONE
                 binding.txtExtraHint.visibility = View.VISIBLE
             }
