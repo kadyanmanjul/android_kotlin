@@ -1,9 +1,9 @@
 package com.joshtalks.joshskills.ui.view_holders
 
+import android.util.Log
 import android.widget.FrameLayout
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
-import androidx.cardview.widget.CardView
 import androidx.fragment.app.FragmentActivity
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.Utils
@@ -14,7 +14,6 @@ import com.mindorks.placeholderview.annotations.Click
 import com.mindorks.placeholderview.annotations.Layout
 import com.mindorks.placeholderview.annotations.Resolve
 import com.mindorks.placeholderview.annotations.View
-import org.jetbrains.anko.backgroundResource
 import java.lang.ref.WeakReference
 
 @Layout(R.layout.conversation_practise_layout)
@@ -31,7 +30,7 @@ class ConversationPractiseViewHolder(activityRef: WeakReference<FragmentActivity
     lateinit var rootView: FrameLayout
 
     @View(R.id.root_sub_view)
-    lateinit var subRootView: CardView
+    lateinit var subRootView: FrameLayout
 
     @View(R.id.tv_title)
     lateinit var titleTv: AppCompatTextView
@@ -50,8 +49,8 @@ class ConversationPractiseViewHolder(activityRef: WeakReference<FragmentActivity
                 titleTv.text = "Conversation #$it"
             }
         }
-        subRootView.setBackgroundResource(getViewHolderBGResource(previousMessage?.sender,message.sender))
 
+        subRootView.setBackgroundResource(getViewHolderBGResource(previousMessage?.sender,message.sender))
     }
 
     override fun getRoot(): FrameLayout {
