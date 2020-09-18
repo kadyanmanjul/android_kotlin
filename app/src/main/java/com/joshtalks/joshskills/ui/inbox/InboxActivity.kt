@@ -587,7 +587,10 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
             )
             setCTAButtonText(exploreType)
 
-            val showOverlay = intent.getBooleanExtra(SHOW_OVERLAY, false)
+            val showOverlay = intent.getBooleanExtra(
+                SHOW_OVERLAY,
+                false
+            ) && it.subscriptionData.isSubscriptionBought?.not() ?: false
             if (showOverlay && it.showTooltip3) {
                 showOverlayToolTip(it.freeTrialData.remainingDays)
             }
