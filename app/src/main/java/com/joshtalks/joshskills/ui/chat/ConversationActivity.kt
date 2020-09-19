@@ -55,10 +55,10 @@ import com.joshtalks.joshskills.core.IMAGE_REGEX
 import com.joshtalks.joshskills.core.IS_PRACTISE_PARTNER_VIEWED
 import com.joshtalks.joshskills.core.IS_SUBSCRIPTION_ENDED
 import com.joshtalks.joshskills.core.IS_SUBSCRIPTION_STARTED
-import com.joshtalks.joshskills.core.IS_TRIAL_ENDED
 import com.joshtalks.joshskills.core.MESSAGE_CHAT_SIZE_LIMIT
 import com.joshtalks.joshskills.core.PermissionUtils
 import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.REMAINING_TRIAL_DAYS
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.Utils.getCurrentMediaVolume
 import com.joshtalks.joshskills.core.alphaAnimation
@@ -1692,10 +1692,10 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
 
     override fun onResume() {
         super.onResume()
-        val isTrialEnded = PrefManager.getBoolValue(IS_TRIAL_ENDED, false)
+        val remainingDays = PrefManager.getIntValue(REMAINING_TRIAL_DAYS, false)
         val isSubscriptionEnded = PrefManager.getBoolValue(IS_SUBSCRIPTION_ENDED, false)
         val isSubscriptionStarted = PrefManager.getBoolValue(IS_SUBSCRIPTION_STARTED, false)
-        if (isTrialEnded && isSubscriptionStarted.not()) {
+        if (remainingDays < 0 && isSubscriptionStarted.not()) {
             showTrialEndFragment()
         } else if (isSubscriptionStarted && isSubscriptionEnded) {
             showTrialEndFragment()

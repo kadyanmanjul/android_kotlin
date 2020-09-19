@@ -172,7 +172,7 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
         val remainingTrialDays = PrefManager.getIntValue(REMAINING_TRIAL_DAYS)
         val freeTrialData = FreeTrialData.getMapObject()
 
-        if (testId == PrefManager.getIntValue(SUBSCRIPTION_TEST_ID)
+        if ((testId == PrefManager.getIntValue(SUBSCRIPTION_TEST_ID) || testId == 122)
             && freeTrialData?.is7DFTBought == true
             && (SubscriptionData.getMapObject()?.isSubscriptionBought == true).not()
             && remainingTrialDays in 0..7

@@ -69,11 +69,8 @@ class TopTrialTooltipView : FrameLayout {
             )
         } else if (remainingTrialDays in 2..3) {
             setText(
-                String.format(
-                    AppObjectController.getFirebaseRemoteConfig()
-                        .getString(FirebaseRemoteConfigKey.INBOX_OVERLAY_TOOLTIP_D2_3),
-                    remainingTrialDays
-                )
+                AppObjectController.getFirebaseRemoteConfig()
+                    .getString(FirebaseRemoteConfigKey.INBOX_OVERLAY_TOOLTIP_D2_3)
             )
         }
     }
