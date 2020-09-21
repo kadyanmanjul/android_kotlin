@@ -22,6 +22,7 @@ import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.LogException
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
+import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.onboarding.ONBOARD_VERSIONS
 import com.joshtalks.joshskills.ui.course_details.CourseDetailsActivity
 import com.joshtalks.joshskills.ui.extra.CustomPermissionDialogInteractionListener
@@ -132,7 +133,7 @@ class LauncherActivity : CoreJoshActivity(), CustomPermissionDialogInteractionLi
                         this@LauncherActivity.finish()
                     }
                     ONBOARD_VERSIONS.ONBOARDING_V2, ONBOARD_VERSIONS.ONBOARDING_V3, ONBOARD_VERSIONS.ONBOARDING_V4 -> {
-                        if (PrefManager.getBoolValue(IS_GUEST_ENROLLED, false)) {
+                        if (PrefManager.getBoolValue(IS_GUEST_ENROLLED, false)||User.getInstance().isVerified) {
                             val intent = getIntentForState()
                             startActivity(intent)
                             this@LauncherActivity.finish()

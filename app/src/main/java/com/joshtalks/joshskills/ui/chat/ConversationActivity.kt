@@ -51,6 +51,7 @@ import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.CERTIFICATE_GENERATE
 import com.joshtalks.joshskills.core.CoreJoshActivity
 import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.EXPLORE_TYPE
 import com.joshtalks.joshskills.core.IMAGE_REGEX
 import com.joshtalks.joshskills.core.IS_PRACTISE_PARTNER_VIEWED
 import com.joshtalks.joshskills.core.IS_SUBSCRIPTION_ENDED
@@ -105,6 +106,7 @@ import com.joshtalks.joshskills.repository.local.eventbus.PractiseSubmitEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.UnlockNextClassEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.VideoDownloadedBus
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
+import com.joshtalks.joshskills.repository.local.model.ExploreCardType
 import com.joshtalks.joshskills.repository.local.model.NotificationAction
 import com.joshtalks.joshskills.repository.server.chat_message.TAudioMessage
 import com.joshtalks.joshskills.repository.server.chat_message.TChatMessage
@@ -1692,13 +1694,26 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
 
     override fun onResume() {
         super.onResume()
-        val remainingDays = PrefManager.getIntValue(REMAINING_TRIAL_DAYS, false)
-        val isSubscriptionEnded = PrefManager.getBoolValue(IS_SUBSCRIPTION_ENDED, false)
-        val isSubscriptionStarted = PrefManager.getBoolValue(IS_SUBSCRIPTION_STARTED, false)
-        if (remainingDays < 0 && isSubscriptionStarted.not()) {
-            showTrialEndFragment()
-        } else if (isSubscriptionStarted && isSubscriptionEnded) {
-            showTrialEndFragment()
+        val exploreTypeStr = PrefManager.getStringValue(EXPLORE_TYPE, false)
+        if (exploreTypeStr.isNotBlank()) {
+            when (ExploreCardType.valueOf(exploreTypeStr)) {
+                ExploreCardType.FREETRIAL -> {
+                    val remainingDays = PrefManager.getIntValue(REMAINING_TRIAL_DAYS, false)
+                    val isSubscriptionEnded = PrefManager.getBoolValue(IS_SUBSCRIPTION_ENDED, false)
+                    val isSubscriptionStarted =
+                        PrefManager.getBoolValue(IS_SUBSCRIPTION_STARTED, false)
+                    if (remainingDays < 0 && isSubscriptionStarted.not()) {
+                        showTrialEndFragment()
+                    } else if (isSubscriptionStarted && isSubscriptionEnded) {
+                        showTrialEndFragment()
+                    }
+                }
+                else -> {
+                    conversationBinding.chatRv.refresh()
+                    subscribeRXBus()
+                    observeNetwork()
+                }
+            }
         } else {
             conversationBinding.chatRv.refresh()
             subscribeRXBus()
