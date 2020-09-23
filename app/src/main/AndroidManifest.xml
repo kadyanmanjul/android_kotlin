@@ -356,23 +356,35 @@
                 android:theme="@style/AppNoBarTheme"
                 android:windowSoftInputMode="stateHidden|adjustResize" />
         <activity
-                android:name=".ui.reminder.reminder_listing.ReminderListActivity"
-                android:launchMode="singleTask"
-                android:screenOrientation="portrait"
-                android:theme="@style/AppNoBarTheme"
-                android:windowSoftInputMode="stateHidden|adjustResize" />
+            android:name=".ui.reminder.reminder_listing.ReminderListActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppNoBarTheme"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
 
         <activity
-                android:name=".ui.newonboarding.OnBoardingActivityNew"
-                android:launchMode="singleTask"
-                android:screenOrientation="portrait"
-                android:theme="@style/AppNoBarTheme"
-                android:windowSoftInputMode="stateHidden|adjustResize" />
+            android:name=".ui.newonboarding.OnBoardingActivityNew"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppNoBarTheme"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
+
+        <activity
+            android:name=".ui.voip.SearchingUserActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppNoBarTheme" />
+
+        <activity
+            android:name=".ui.settings.SettingsActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppNoBarTheme" />
 
         <service
-                android:name=".core.service.video_download.VideoDownloadService"
-                android:enabled="true"
-                android:exported="false">
+            android:name=".core.service.video_download.VideoDownloadService"
+            android:enabled="true"
+            android:exported="false">
             <intent-filter>
                 <action android:name="com.google.android.exoplayer.downloadService.action.RESTART" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -487,12 +499,6 @@
                 android:screenOrientation="portrait"
                 android:theme="@style/AppNoBarTheme"
                 android:windowSoftInputMode="stateHidden|adjustResize" />
-
-        <activity
-                android:name=".ui.voip.SearchingUserActivity"
-                android:launchMode="singleTop"
-                android:screenOrientation="portrait"
-                android:theme="@style/AppNoBarTheme" />
 
         <service
                 android:name="com.google.android.exoplayer2.scheduler.PlatformScheduler$PlatformSchedulerService"

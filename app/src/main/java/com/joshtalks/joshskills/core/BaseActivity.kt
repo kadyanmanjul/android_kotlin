@@ -43,16 +43,17 @@ import com.joshtalks.joshskills.ui.help.HelpActivity
 import com.joshtalks.joshskills.ui.inbox.IS_FROM_NEW_ONBOARDING
 import com.joshtalks.joshskills.ui.inbox.InboxActivity
 import com.joshtalks.joshskills.ui.nps.NetPromoterScoreFragment
+import com.joshtalks.joshskills.ui.signup.FLOW_FROM
 import com.joshtalks.joshskills.ui.signup.OnBoardActivity
 import com.joshtalks.joshskills.ui.signup.SignUpActivity
 import com.newrelic.agent.android.NewRelic
 import io.branch.referral.Branch
 import io.github.inflationx.viewpump.ViewPumpContextWrapper
-import java.lang.reflect.Type
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import java.lang.reflect.Type
 
 const val HELP_ACTIVITY_REQUEST_CODE = 9010
 
@@ -367,6 +368,26 @@ abstract class BaseActivity : AppCompatActivity() {
             return !PrefManager.getBoolValue(IS_GUEST_ENROLLED)
         } else {
             return true
+        }
+    }
+
+    fun logout() {
+        AppAnalytics.create(AnalyticsEvent.LOGOUT_CLICKED.NAME)
+            .addUserDetails()
+            .addParam(AnalyticsEvent.USER_LOGGED_OUT.NAME, true).push()
+        val intent =
+            Intent(
+                AppObjectController.joshApplication,
+                SignUpActivity::class.java
+            )
+        intent.apply {
+            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            putExtra(FLOW_FROM, "CourseExploreActivity")
+        }
+        CoroutineScope(Dispatchers.IO).launch {
+            PrefManager.clearUser()
+            AppObjectController.joshApplication.startActivity(intent)
         }
     }
 }

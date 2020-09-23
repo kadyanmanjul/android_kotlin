@@ -411,6 +411,16 @@
     <string name="call_permission_permanent_message">To answer this call from %s , allow Josh Skills access to your microphone . Tap Settings > Permissions, and turn Microphone on .</string>
 
     <string name="clear_all_media">Clear All Media</string>
+    <string name="download_quality">Download Quality</string>
+    <string name="select_language">Select Language</string>
+    <string name="personal_information">Personal Information</string>
+    <string name="app_settings">App Settings</string>
+    <string name="clear_all_downloads">Clear All Downloads</string>
+    <string name="sign_out">Sign out</string>
+    <string name="notifications">Notifications</string>
+    <string name="language">Language</string>
+    <string name="english">English</string>
+    <string name="_360p">360p</string>
     <string name="select_course_heading_btn">Mein ye cheeze achieve karna chahta hoon</string>
     <string name="start_course_free">Start my Courses For Free</string>
     <string name="buy_pass">Buy All Course Access Pass</string>

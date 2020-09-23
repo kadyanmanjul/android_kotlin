@@ -71,6 +71,7 @@ import com.joshtalks.joshskills.ui.payment.order_summary.PaymentSummaryActivity
 import com.joshtalks.joshskills.ui.referral.ReferralActivity
 import com.joshtalks.joshskills.ui.reminder.reminder_listing.ReminderListActivity
 import com.joshtalks.joshskills.ui.reminder.set_reminder.ReminderActivity
+import com.joshtalks.joshskills.ui.settings.SettingsActivity
 import com.joshtalks.joshskills.ui.view_holders.InboxViewHolder
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
@@ -104,6 +105,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.jetbrains.anko.collections.forEachWithIndex
+import java.util.concurrent.TimeUnit
 
 const val REGISTER_INFO_CODE = 2001
 const val COURSE_EXPLORER_CODE = 2002
@@ -494,10 +496,16 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
                 R.id.menu_help -> {
                     openHelpActivity()
                 }
+                R.id.menu_settings ->
+                    openSettingActivity()
             }
             return@setOnMenuItemClickListener false
         }
         popupMenu.show()
+    }
+
+    private fun openSettingActivity() {
+        startActivity(SettingsActivity.getIntent(this))
     }
 
     private fun workInBackground() {
