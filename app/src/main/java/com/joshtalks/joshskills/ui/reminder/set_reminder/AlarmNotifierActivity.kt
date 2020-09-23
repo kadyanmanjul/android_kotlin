@@ -21,7 +21,7 @@ import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.ui.launch.LauncherActivity
 import com.joshtalks.joshskills.util.RingtoneManager
 import java.text.SimpleDateFormat
-import java.util.Date
+import java.util.*
 
 
 class AlarmNotifierActivity : AppCompatActivity(),

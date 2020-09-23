@@ -11,6 +11,7 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.SELECTED_LANGUAGE
 import com.joshtalks.joshskills.databinding.FragmentSelectLanguageBinding
+import com.joshtalks.joshskills.ui.settings.SettingsActivity
 import com.joshtalks.joshskills.ui.settings.adapter.ACTION_LANGUAGE
 import com.joshtalks.joshskills.ui.settings.adapter.StringAdapter
 
@@ -45,7 +46,7 @@ class LanguageFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        requireActivity().title = getString(R.string.select_language)
+        (requireActivity() as SettingsActivity).setTitle(getString(R.string.select_language))
     }
 
     fun onItemClick(item: String, position: Int): Unit {

@@ -13,8 +13,9 @@ import androidx.work.workDataOf
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
-import com.joshtalks.joshskills.core.memory.RemoveMediaWorker
+import com.joshtalks.joshskills.core.memory.MemoryManagementWorker
 import com.joshtalks.joshskills.databinding.FragmentSettingsBinding
+import com.joshtalks.joshskills.ui.settings.SettingsActivity
 
 class SettingsFragment : Fragment() {
 
@@ -55,29 +56,51 @@ class SettingsFragment : Fragment() {
         binding.notificationSwitch.setOnCheckedChangeListener { compoundButton: CompoundButton, b: Boolean ->
             PrefManager.put(NOTIFICATION_DISABLED, b)
         }
+
+        sheetBehaviour.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
+            override fun onStateChanged(bottomSheet: View, newState: Int) {
+                if (newState == BottomSheetBehavior.STATE_COLLAPSED)
+                    binding.blackShadowIv.visibility = View.GONE
+                else
+                    binding.blackShadowIv.visibility = View.VISIBLE
+            }
+
+            override fun onSlide(bottomSheet: View, slideOffset: Float) {
+            }
+
+        }
+        )
         binding.notificationSwitch.isChecked = PrefManager.getBoolValue(NOTIFICATION_DISABLED)
         return binding.root
     }
 
     override fun onResume() {
         super.onResume()
-        requireActivity().title = getString(R.string.app_settings)
+        (requireActivity() as SettingsActivity).setTitle(getString(R.string.app_settings))
     }
 
     fun showClearDownloadsView() {
-        binding.blackShadowIv.visibility = View.VISIBLE
         sheetBehaviour.state = BottomSheetBehavior.STATE_EXPANDED
+        binding.clearBtn.text = getString(R.string.clear_all_downloads)
+        binding.clearDownloadsBottomTv.text = "All your downloaded media and files will be deleted."
     }
 
     fun clearDownloads() {
-        val data = workDataOf("conversation_id" to EMPTY, "time_delete" to false)
-        val workRequest = OneTimeWorkRequestBuilder<RemoveMediaWorker>()
+        val data =
+            workDataOf(MemoryManagementWorker.CLEANUP_TYPE to MemoryManagementWorker.CLEANUP_TYPE_FORCE)
+        val workRequest = OneTimeWorkRequestBuilder<MemoryManagementWorker>().addTag("cleanup")
             .setInputData(data)
             .build()
         WorkManager.getInstance(AppObjectController.joshApplication).enqueue(workRequest)
 
-        binding.blackShadowIv.visibility = View.GONE
         sheetBehaviour.state = BottomSheetBehavior.STATE_COLLAPSED
+    }
+
+    fun actionConfirmed() {
+        if (binding.clearBtn.text.equals(getString(R.string.sign_out)))
+            signout()
+        else
+            clearDownloads()
     }
 
     fun openSelectQualityFragment() {
@@ -95,6 +118,17 @@ class SettingsFragment : Fragment() {
     }
 
     fun signout() {
+        showSignoutBottomView()
         (requireActivity() as BaseActivity).logout()
+    }
+
+    fun showSignoutBottomView() {
+        sheetBehaviour.state = BottomSheetBehavior.STATE_EXPANDED
+        binding.clearBtn.text = getString(R.string.sign_out)
+        binding.clearDownloadsBottomTv.text = "Are you sure you want to signout"
+    }
+
+    fun hideBottomView() {
+        sheetBehaviour.state = BottomSheetBehavior.STATE_COLLAPSED
     }
 }

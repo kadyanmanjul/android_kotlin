@@ -143,8 +143,13 @@ class RemoveMediaWorker(var context: Context, var workerParams: WorkerParameters
 }
 
 
-class MemoryManagementWorker(var context: Context, workerParams: WorkerParameters) :
+class MemoryManagementWorker(var context: Context, var workerParams: WorkerParameters) :
     CoroutineWorker(context, workerParams) {
+
+    companion object {
+        val CLEANUP_TYPE = "cleanup_type"
+        val CLEANUP_TYPE_FORCE = "force_clean"
+    }
 
     override suspend fun doWork(): Result {
         try {
@@ -176,7 +181,9 @@ class MemoryManagementWorker(var context: Context, workerParams: WorkerParameter
                             + "  totalUsedInKB = " + totalUsedInMB
                 )
 
-            if (totalUsedInMB >= limit) {
+
+
+            if (totalUsedInMB >= limit || workerParams.inputData.getString(CLEANUP_TYPE) == CLEANUP_TYPE_FORCE) {
                 removeOldMedia()
                 cacheClearOfGlide()
             } else {
