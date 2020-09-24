@@ -112,15 +112,17 @@ class AssessmentButtonView : FrameLayout {
         }
 
         nextBtn.setOnClickListener {
-            RxBus2.publish(
-                AssessmentButtonClickEvent(
-                    assessmentType!!,
-                    assessmentQuestion!!.question.remoteId,
-                    assessmentQuestion!!.question.isAttempted,
-                    true,
-                    AssessmentButtonClick.NEXT
+            assessmentType?.let {
+                RxBus2.publish(
+                    AssessmentButtonClickEvent(
+                        assessmentType!!,
+                        assessmentQuestion!!.question.remoteId,
+                        assessmentQuestion!!.question.isAttempted,
+                        true,
+                        AssessmentButtonClick.NEXT
+                    )
                 )
-            )
+            }
         }
 
         compositeDisposable.add(
@@ -144,15 +146,17 @@ class AssessmentButtonView : FrameLayout {
                 })
 
         backBtn.setOnClickListener {
-            RxBus2.publish(
-                AssessmentButtonClickEvent(
-                    assessmentType!!,
-                    assessmentQuestion!!.question.remoteId,
-                    assessmentQuestion!!.question.isAttempted,
-                    true,
-                    AssessmentButtonClick.BACK_TO_SUMMARY
+            assessmentType?.let {
+                RxBus2.publish(
+                    AssessmentButtonClickEvent(
+                        assessmentType!!,
+                        assessmentQuestion!!.question.remoteId,
+                        assessmentQuestion!!.question.isAttempted,
+                        true,
+                        AssessmentButtonClick.BACK_TO_SUMMARY
+                    )
                 )
-            )
+            }
         }
 
     }
@@ -220,7 +224,9 @@ class AssessmentButtonView : FrameLayout {
                 showSubmitButtonContainer()
             }
         }
-        setColor(assessmentType!!, isAnswereCorrect())
+        assessmentType?.let {
+            setColor(it, isAnswereCorrect())
+        }
     }
 
     private fun isAnswereCorrect(): Boolean {
