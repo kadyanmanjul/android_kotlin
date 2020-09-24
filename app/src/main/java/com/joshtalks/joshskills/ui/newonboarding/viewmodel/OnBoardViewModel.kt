@@ -12,6 +12,8 @@ import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.USER_UNIQUE_ID
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.CourseExploreModel
+import com.joshtalks.joshskills.repository.server.onboarding.CourseEnrolledRequest
+import com.joshtalks.joshskills.repository.server.onboarding.CourseEnrolledResponse
 import com.joshtalks.joshskills.repository.server.onboarding.EnrollMentorWithTagIdRequest
 import com.joshtalks.joshskills.repository.server.onboarding.EnrollMentorWithTestIdRequest
 import com.joshtalks.joshskills.util.showAppropriateMsg
@@ -25,6 +27,8 @@ class OnBoardViewModel(application: Application) :
     private val jobs = arrayListOf<Job>()
     val apiCallStatusLiveData: MutableLiveData<ApiCallStatus> = MutableLiveData()
     val courseListLiveData: MutableLiveData<List<CourseExploreModel>> = MutableLiveData()
+    val courseEnrolledDetailLiveData: MutableLiveData<CourseEnrolledResponse> = MutableLiveData()
+    val isEnrolled: MutableLiveData<Boolean> = MutableLiveData(false)
 
     fun getCourseList() = courseListLiveData.value
 
@@ -44,6 +48,7 @@ class OnBoardViewModel(application: Application) :
                     if (response.isSuccessful) {
                         // bottom Sheet Dialog
                         PrefManager.put(IS_GUEST_ENROLLED, value = true)
+                        isEnrolled.postValue(true)
                         apiCallStatusLiveData.postValue(ApiCallStatus.SUCCESS)
                         return@launch
                     }
@@ -108,6 +113,32 @@ class OnBoardViewModel(application: Application) :
 
                 if (response.isNullOrEmpty().not()) {
                     courseListLiveData.postValue(response)
+                }
+
+            } catch (ex: Throwable) {
+                ex.showAppropriateMsg()
+                apiCallStatusLiveData.postValue(ApiCallStatus.FAILED)
+            }
+            apiCallStatusLiveData.postValue(ApiCallStatus.FAILED)
+        }
+    }
+
+    fun getEnrolledCoursesDetails(headingIds: List<Int>) {
+        jobs += viewModelScope.launch(Dispatchers.IO) {
+            try {
+                apiCallStatusLiveData.postValue(ApiCallStatus.START)
+                val request = CourseEnrolledRequest(
+                    Mentor.getInstance().getId(),
+                    PrefManager.getStringValue(USER_UNIQUE_ID),
+                    headingIds
+                )
+                val response =
+                    AppObjectController.commonNetworkService.getCourseEnrolledDetails(request)
+
+                if (response.isSuccessful) {
+                    response.body()?.let {
+                        courseEnrolledDetailLiveData.postValue(it)
+                    }
                 }
 
             } catch (ex: Throwable) {

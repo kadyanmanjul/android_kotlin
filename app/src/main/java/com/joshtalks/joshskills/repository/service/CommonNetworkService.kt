@@ -20,11 +20,14 @@ import com.joshtalks.joshskills.repository.server.course_detail.CourseDetailsRes
 import com.joshtalks.joshskills.repository.server.feedback.FeedbackStatusResponse
 import com.joshtalks.joshskills.repository.server.feedback.RatingDetails
 import com.joshtalks.joshskills.repository.server.feedback.UserFeedbackRequest
+import com.joshtalks.joshskills.repository.server.onboarding.CourseEnrolledRequest
+import com.joshtalks.joshskills.repository.server.onboarding.CourseEnrolledResponse
 import com.joshtalks.joshskills.repository.server.onboarding.VersionResponse
 import com.joshtalks.joshskills.repository.server.reminder.DeleteReminderRequest
 import com.joshtalks.joshskills.repository.server.reminder.ReminderRequest
 import com.joshtalks.joshskills.repository.server.reminder.ReminderResponse
 import com.joshtalks.joshskills.repository.server.voip.VoipCallDetailModel
+import java.util.*
 import kotlinx.coroutines.Deferred
 import retrofit2.Response
 import retrofit2.http.Body
@@ -36,7 +39,6 @@ import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Query
 import retrofit2.http.QueryMap
-import java.util.HashMap
 
 @JvmSuppressWildcards
 interface CommonNetworkService {
@@ -104,6 +106,11 @@ interface CommonNetworkService {
     suspend fun getCourseDetails(
         @QueryMap params: Map<String, String>
     ): Response<CourseDetailsResponseV2>
+
+    @POST("$DIR/course/course_heading/")
+    suspend fun getCourseEnrolledDetails(
+        @Body params: CourseEnrolledRequest
+    ): Response<CourseEnrolledResponse>
 
 
     @GET("$DIR/conversation-practice/{id}/")
