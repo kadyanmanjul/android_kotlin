@@ -5,7 +5,6 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
@@ -47,7 +46,6 @@ import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
-import org.jetbrains.anko.collections.forEachWithIndex
 
 
 class ConversationViewModel(application: Application) :
@@ -143,7 +141,7 @@ class ConversationViewModel(application: Application) :
         if (listOfChat.isNotEmpty()) {
             lastChatTime = listOfChat.last().created
         }
-        listOfChat.forEachWithIndex { _, chat ->
+        listOfChat.forEach { chat ->
             val question: Question? = appDatabase.chatDao().getQuestion(chat.chatId)
             question?.run {
                 when (this.material_type) {
@@ -164,7 +162,6 @@ class ConversationViewModel(application: Application) :
                     chat.parentQuestionObject =
                         appDatabase.chatDao().getQuestionOnId(this.parent_id!!)
                 }
-                Log.e("cId", questionId + "   " + assessmentId)
                 if (assessmentId != null) {
                     question.vAssessmentCount = AppObjectController.appDatabase.assessmentDao()
                         .countOfAssessment(assessmentId)
@@ -173,7 +170,7 @@ class ConversationViewModel(application: Application) :
             }
 
             if (chat.type == BASE_MESSAGE_TYPE.Q && question == null) {
-                return@forEachWithIndex
+                return@forEach
             }
 
             chatReturn.add(chat)
@@ -353,7 +350,7 @@ class ConversationViewModel(application: Application) :
         if (listOfChat.isNotEmpty()) {
             lastChatTime = listOfChat.last().created
         }
-        listOfChat.forEachWithIndex { _, chat ->
+        listOfChat.forEach { chat ->
             val question: Question? = appDatabase.chatDao().getQuestion(chat.chatId)
             question?.run {
                 when (this.material_type) {
@@ -378,7 +375,7 @@ class ConversationViewModel(application: Application) :
             }
 
             if (chat.type == BASE_MESSAGE_TYPE.Q && question == null) {
-                return@forEachWithIndex
+                return@forEach
             }
 
             chatReturn.add(chat)

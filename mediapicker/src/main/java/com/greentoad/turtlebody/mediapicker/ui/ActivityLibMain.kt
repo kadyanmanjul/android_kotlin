@@ -11,8 +11,6 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.TextView
 import androidx.fragment.app.Fragment
-import com.fxn.pixeditor.EditOptions
-import com.fxn.pixeditor.PixEditor
 import com.greentoad.turtlebody.mediapicker.MediaPicker
 import com.greentoad.turtlebody.mediapicker.R
 import com.greentoad.turtlebody.mediapicker.core.FileHelper
@@ -30,8 +28,6 @@ import com.greentoad.turtlebody.mediapicker.ui.component.media.video.VideoListFr
 import com.greentoad.turtlebody.mediapicker.util.UtilMime
 import com.joshtalks.joshcamerax.JoshCameraActivity.Companion.IMAGE_RESULTS
 import com.joshtalks.joshcamerax.VideoTrimmerActivity
-import org.jetbrains.anko.find
-import org.jetbrains.anko.info
 import java.io.File
 import java.io.IOException
 import java.io.Serializable
@@ -62,11 +58,11 @@ class ActivityLibMain : ActivityBase() {
 
         initToolbar(
             R.drawable.tb_media_picker_ic_arrow_back_black_24dp,
-            find(R.id.activity_lib_main_toolbar)
+            findViewById(R.id.activity_lib_main_toolbar)
         )
 
         toolbarTitle = "Select Folder"
-        vToolbarCounter = find<TextView>(R.id.activity_lib_main_toolbar_txt_count)
+        vToolbarCounter = findViewById(R.id.activity_lib_main_toolbar_txt_count)
 
         if (intent.extras != null) {
             mMediaPickerConfig =
@@ -120,22 +116,18 @@ class ActivityLibMain : ActivityBase() {
         if (intent != null) {
             if (intent.data != null) {
                 val uri = intent.data
-                info { "handleFileData: $uri" }
                 if (FileHelper.isFileExist(this, uri))
                     uriList.add(uri)
             } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
                 if (intent.clipData != null) {
                     val clipData = intent.clipData
-                    info { "handleFileData: Multiple files with ClipData" }
                     for (i in 0 until clipData!!.itemCount) {
                         val item = clipData.getItemAt(i)
-                        info { "Item [" + i + "]: " + item.uri.toString() }
                         if (FileHelper.isFileExist(this, item.uri)) {
                             //important as many time android return duplicate uri when selecting multiple media files
                             if (!uriList.contains(item.uri)) {
                                 uriList.add(item.uri)
-                            } else
-                                info { "duplicate uri found" }
+                            }
                         } else
                             isMissing = true
                     }
@@ -310,13 +302,12 @@ class ActivityLibMain : ActivityBase() {
 
 
     fun processImage(path: String) {
-        val list = java.util.ArrayList<String>()
+        /*val list = java.util.ArrayList<String>()
         list.add(path)
         val editoptions = EditOptions.init()
         editoptions.requestCode = IMAGE_SELECT
         editoptions.selectedlist = list
-        PixEditor.start(this, editoptions)
-
+        PixEditor.start(this, editoptions)*/
     }
 
 
@@ -343,7 +334,6 @@ class ActivityLibMain : ActivityBase() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (resultCode == Activity.RESULT_OK && requestCode == MEDIA_REQ_CODE) {
-            info { "data: ${data?.data}" }
             handleFileData(data)
         } else if (data != null && resultCode == Activity.RESULT_OK) {
             val uriList: ArrayList<Uri> = arrayListOf()

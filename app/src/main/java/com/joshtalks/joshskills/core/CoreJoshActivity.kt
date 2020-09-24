@@ -15,12 +15,13 @@ import com.joshtalks.joshskills.ui.practise.PRACTISE_OBJECT
 import com.joshtalks.joshskills.ui.referral.PromotionDialogFragment
 import com.joshtalks.joshskills.ui.video_player.VIDEO_OBJECT
 import com.joshtalks.joshskills.ui.video_player.VIDEO_WATCH_TIME
+import java.util.concurrent.TimeUnit
 import kotlinx.android.synthetic.main.base_toolbar.iv_help
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.util.concurrent.TimeUnit
+
 
 abstract class CoreJoshActivity : BaseActivity() {
     protected var currentAudio: String? = null

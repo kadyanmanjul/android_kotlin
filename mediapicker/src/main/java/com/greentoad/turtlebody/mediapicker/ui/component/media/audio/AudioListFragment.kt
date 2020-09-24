@@ -15,14 +15,11 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.annotations.NonNull
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.tb_media_picker_frame_progress.*
-import kotlinx.android.synthetic.main.tb_media_picker_file_fragment.*
-import org.jetbrains.anko.info
 import java.io.File
+import kotlinx.android.synthetic.main.tb_media_picker_file_fragment.file_fragment_btn_done
+import kotlinx.android.synthetic.main.tb_media_picker_file_fragment.file_fragment_recycler_view
+import kotlinx.android.synthetic.main.tb_media_picker_frame_progress.frame_progress
 
-/**
- * Created by niraj on 12-04-2019.
- */
 class AudioListFragment : MediaListFragment(), AudioAdapter.OnAudioClickListener {
 
 
@@ -55,7 +52,6 @@ class AudioListFragment : MediaListFragment(), AudioAdapter.OnAudioClickListener
     override fun onRestoreState(savedInstanceState: Bundle?, args: Bundle?) {
         arguments?.let {
             mFolderPath = it.getString(B_ARG_FOLDER_PATH, "")
-            info { "folderPath: $mFolderPath" }
         }
     }
 
@@ -63,8 +59,7 @@ class AudioListFragment : MediaListFragment(), AudioAdapter.OnAudioClickListener
     override fun getAllUris() {
         if (mSelectedAudioModelList.isNotEmpty()) {
             for (i in mSelectedAudioModelList) {
-                info { "audio path: ${i.filePath}" }
-                mUriList.add(FileManager.getContentUri(context!!, File(i.filePath)))
+                mUriList.add(FileManager.getContentUri(requireContext(), File(i.filePath)))
             }
             (activity as ActivityLibMain).sendBackData(mUriList)
         }
@@ -75,14 +70,14 @@ class AudioListFragment : MediaListFragment(), AudioAdapter.OnAudioClickListener
         try {
             if (!mMediaPickerConfig.mAllowMultiSelection) {
                 if (mMediaPickerConfig.mShowConfirmationDialog) {
-                    val simpleAlert = AlertDialog.Builder(context!!)
+                    val simpleAlert = AlertDialog.Builder(requireContext())
                     simpleAlert.setMessage("Are you sure to select ${pData.name}")
                         .setCancelable(false)
                         .setPositiveButton("OK") { dialog, which ->
                             (activity as ActivityLibMain).sendBackData(
                                 arrayListOf(
                                     FileManager.getContentUri(
-                                        context!!,
+                                        requireContext(),
                                         File(pData.filePath)
                                     )
                                 )
@@ -94,7 +89,7 @@ class AudioListFragment : MediaListFragment(), AudioAdapter.OnAudioClickListener
                     (activity as ActivityLibMain).sendBackData(
                         arrayListOf(
                             FileManager.getContentUri(
-                                context!!,
+                                requireContext(),
                                 File(pData.filePath)
                             )
                         )
@@ -140,15 +135,12 @@ class AudioListFragment : MediaListFragment(), AudioAdapter.OnAudioClickListener
     private fun fetchAudioFiles() {
         val fileItems = Single.fromCallable<Boolean> {
             mAudioModelList.clear()
-            val tempArray = FileManager.getAudioFilesInFolder(context!!, mFolderPath)
+            val tempArray = FileManager.getAudioFilesInFolder(requireContext(), mFolderPath)
 
             //include only valid files
             for (i in tempArray) {
                 if (i.size > 0) {
                     mAudioModelList.add(i)
-                    info { "size: ${i.size}" }
-                    info { "mimetype: ${i.mimeType}" }
-                    //info { "size: ${File(i.filePath).length()}" }
                 }
             }
             true
@@ -168,7 +160,6 @@ class AudioListFragment : MediaListFragment(), AudioAdapter.OnAudioClickListener
 
                 override fun onError(@NonNull e: Throwable) {
                     frame_progress.visibility = View.GONE
-                    info { "error: ${e.message}" }
                 }
             })
     }

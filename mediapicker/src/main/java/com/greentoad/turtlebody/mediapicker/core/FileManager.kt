@@ -3,7 +3,7 @@ package com.greentoad.turtlebody.mediapicker.core
 import android.content.Context
 import android.database.Cursor
 import android.net.Uri
-import android.os.StrictMode
+import android.util.Log
 import androidx.core.content.FileProvider.getUriForFile
 import com.greentoad.turtlebody.mediapicker.MediaPicker
 import com.greentoad.turtlebody.mediapicker.ui.component.folder.audio.AudioFolder
@@ -12,8 +12,6 @@ import com.greentoad.turtlebody.mediapicker.ui.component.media.audio.AudioModel
 import com.greentoad.turtlebody.mediapicker.ui.component.media.audiovideo.DefaultModel
 import com.greentoad.turtlebody.mediapicker.ui.component.media.image.ImageModel
 import com.greentoad.turtlebody.mediapicker.ui.component.media.video.VideoModel
-import org.jetbrains.anko.AnkoLogger
-import org.jetbrains.anko.info
 import java.io.File
 import java.util.*
 
@@ -21,7 +19,7 @@ import java.util.*
 private const val MEDIA_PATTERN = "([^\\s]+(\\.(?i)(jpg|png|gif|bmp|mp4|MP4)|WEBP|webp|JPEG|PNG|Jpeg)$)"
 private val regex = Regex(pattern = MEDIA_PATTERN)
 
-object FileManager : AnkoLogger {
+object FileManager {
 
     fun fetchImageAndVideoFolders(context: Context): ArrayList<ImageVideoFolder> {
         val folders = ArrayList<ImageVideoFolder>()
@@ -311,7 +309,7 @@ object FileManager : AnkoLogger {
         val cursor: Cursor? = CursorHelper.getAudioFilesInFolderCursor(context, folderPath)
 
         cursor?.let {
-            info { "audio query size: " + cursor.count }
+            Log.e("infgo", "audio query size: " + cursor.count)
             val columnIndexAudioId = it.getColumnIndexOrThrow(projection[0])
             val columnIndexAudioTitle = it.getColumnIndexOrThrow(projection[1])
             val columnIndexAudioName = it.getColumnIndexOrThrow(projection[2])
@@ -342,7 +340,6 @@ object FileManager : AnkoLogger {
             }
             cursor.close()
         }
-        info { "audioFiles: $fileItems" }
         return fileItems
     }
 
@@ -385,8 +382,6 @@ object FileManager : AnkoLogger {
 
     fun getContentUri(context: Context, newFile: File): Uri {
         val SHARED_PROVIDER_AUTHORITY = context.packageName + ".greentoad.turtlebody.mediaprovider"
-
-        info { "id: $SHARED_PROVIDER_AUTHORITY" }
         try{
             return getUriForFile(context, SHARED_PROVIDER_AUTHORITY, newFile)
 

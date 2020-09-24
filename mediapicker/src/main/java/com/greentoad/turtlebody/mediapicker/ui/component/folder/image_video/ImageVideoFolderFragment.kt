@@ -8,19 +8,18 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import com.greentoad.turtlebody.mediapicker.MediaPicker
+import com.greentoad.turtlebody.mediapicker.R
+import com.greentoad.turtlebody.mediapicker.core.FileManager
 import com.greentoad.turtlebody.mediapicker.ui.ActivityLibMain
 import com.greentoad.turtlebody.mediapicker.ui.base.FragmentBase
-import com.greentoad.turtlebody.mediapicker.core.FileManager
-import com.greentoad.turtlebody.mediapicker.R
 import io.reactivex.Single
 import io.reactivex.SingleObserver
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.annotations.NonNull
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.tb_media_picker_folder_fragment.*
-import kotlinx.android.synthetic.main.tb_media_picker_frame_progress.*
-import org.jetbrains.anko.info
+import kotlinx.android.synthetic.main.tb_media_picker_folder_fragment.folder_fragment_recycler_view
+import kotlinx.android.synthetic.main.tb_media_picker_frame_progress.frame_progress
 
 
 class ImageVideoFolderFragment : FragmentBase() {
@@ -64,7 +63,6 @@ class ImageVideoFolderFragment : FragmentBase() {
         mImageVideoFolderAdapter.setListener(object :
             ImageVideoFolderAdapter.OnFolderClickListener {
             override fun onFolderClick(pData: ImageVideoFolder) {
-                info { "fileId: ${pData.id}" }
                 (activity as ActivityLibMain).startMediaListFragment(pData.id, 0)
             }
         })
@@ -80,7 +78,7 @@ class ImageVideoFolderFragment : FragmentBase() {
         val bucket: Single<ArrayList<ImageVideoFolder>> =
             Single.fromCallable<ArrayList<ImageVideoFolder>> {
                 FileManager.fetchVideoFolders(
-                    context!!
+                    requireContext()
                 )
             }
         bucket.subscribeOn(Schedulers.io())
@@ -101,30 +99,8 @@ class ImageVideoFolderFragment : FragmentBase() {
                 override fun onError(@NonNull e: Throwable) {
                     frame_progress?.visibility = View.GONE
                     e.printStackTrace()
-                    info { "error: ${e.message}" }
                 }
             })
-
-
-        /*bucketFetch
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(object : SingleObserver<ArrayList<ImageVideoFolder>> {
-
-                override fun onSubscribe(@NonNull d: Disposable) {
-                    frame_progress.visibility = View.VISIBLE
-                }
-
-                override fun onSuccess(@NonNull imageVideoFolders: ArrayList<ImageVideoFolder>) {
-
-                }
-
-                override fun onError(@NonNull e: Throwable) {
-                    frame_progress.visibility = View.GONE
-                    e.printStackTrace()
-                    info { "error: ${e.message}" }
-                }
-            })*/
     }
 
 }

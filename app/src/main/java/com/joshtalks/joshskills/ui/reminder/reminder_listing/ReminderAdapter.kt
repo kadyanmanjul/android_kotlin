@@ -15,7 +15,6 @@ import com.google.android.material.textview.MaterialTextView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.repository.server.reminder.ReminderResponse
 import com.joshtalks.joshskills.util.ReminderUtil
-import org.jetbrains.anko.textColor
 import java.text.DecimalFormat
 import java.text.NumberFormat
 
@@ -62,12 +61,12 @@ class ReminderAdapter(
         holder.statusSw.setOnCheckedChangeListener(null)
         if (reminderItem.status == ReminderUtil.Companion.ReminderStatus.ACTIVE.name) {
             holder.statusSw.isChecked = true
-            holder.timeTv.textColor = Color.parseColor("#172344")
-            holder.amPmTv.textColor = Color.parseColor("#172344")
+            holder.timeTv.setTextColor(Color.parseColor("#172344"))
+            holder.amPmTv.setTextColor(Color.parseColor("#172344"))
         } else {
             holder.statusSw.isChecked = false
-            holder.timeTv.textColor = Color.parseColor("#9098B1")
-            holder.amPmTv.textColor = Color.parseColor("#9098B1")
+            holder.timeTv.setTextColor(Color.parseColor("#9098B1"))
+            holder.amPmTv.setTextColor(Color.parseColor("#9098B1"))
 
         }
         holder.statusSw.setOnCheckedChangeListener { _, isChecked ->

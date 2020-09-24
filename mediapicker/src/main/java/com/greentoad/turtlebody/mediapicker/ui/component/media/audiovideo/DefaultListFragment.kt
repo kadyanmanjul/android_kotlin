@@ -5,8 +5,8 @@ import android.view.View
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
-import com.greentoad.turtlebody.mediapicker.ui.ActivityLibMain
 import com.greentoad.turtlebody.mediapicker.core.FileManager
+import com.greentoad.turtlebody.mediapicker.ui.ActivityLibMain
 import com.greentoad.turtlebody.mediapicker.ui.common.MediaListFragment
 import com.greentoad.turtlebody.mediapicker.ui.component.folder.image_video.ImageVideoFolder
 import io.reactivex.Single
@@ -15,11 +15,11 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.annotations.NonNull
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.tb_media_picker_frame_progress.*
-import kotlinx.android.synthetic.main.tb_media_picker_file_fragment.*
-import org.jetbrains.anko.info
 import java.io.File
 import java.util.*
+import kotlinx.android.synthetic.main.tb_media_picker_file_fragment.file_fragment_btn_done
+import kotlinx.android.synthetic.main.tb_media_picker_file_fragment.file_fragment_recycler_view
+import kotlinx.android.synthetic.main.tb_media_picker_frame_progress.frame_progress
 
 /**
  * Created by niraj on 12-04-2019.
@@ -52,7 +52,6 @@ class DefaultListFragment : MediaListFragment(), DefaultAdapter.OnMediaSelectCli
     override fun onRestoreState(savedInstanceState: Bundle?, args: Bundle?) {
         arguments?.let {
             mFolderId = it.getString(ImageVideoFolder.FOLDER_ID, "")
-            info { "fileId: $mFolderId" }
         }
     }
 
@@ -60,8 +59,7 @@ class DefaultListFragment : MediaListFragment(), DefaultAdapter.OnMediaSelectCli
     override fun getAllUris() {
         if (mSelectedImageModelList.isNotEmpty()) {
             for (i in mSelectedImageModelList) {
-                info { "audio path: ${i.filePath}" }
-                mUriList.add(FileManager.getContentUri(context!!, File(i.filePath)))
+                mUriList.add(FileManager.getContentUri(requireContext(), File(i.filePath)))
             }
             (activity as ActivityLibMain).sendBackData(mUriList)
         }
@@ -71,14 +69,14 @@ class DefaultListFragment : MediaListFragment(), DefaultAdapter.OnMediaSelectCli
     override fun onSelectMedia(pData: DefaultModel) {
         if (!mMediaPickerConfig.mAllowMultiSelection) {
             if (mMediaPickerConfig.mShowConfirmationDialog) {
-                val simpleAlert = AlertDialog.Builder(context!!)
+                val simpleAlert = AlertDialog.Builder(requireContext())
                 simpleAlert.setMessage("Are you sure to select ${pData.name}")
                     .setCancelable(false)
                     .setPositiveButton("OK") { dialog, which ->
                         (activity as ActivityLibMain).sendBackData(
                             arrayListOf(
                                 FileManager.getContentUri(
-                                    context!!,
+                                    requireContext(),
                                     File(pData.filePath)
                                 )
                             )
@@ -91,8 +89,9 @@ class DefaultListFragment : MediaListFragment(), DefaultAdapter.OnMediaSelectCli
                 if (pData.fileType.toLowerCase(Locale.getDefault()) == "video/mp4") {
                     (activity as ActivityLibMain).processVideo(
                         FileManager.getContentUri(
-                            context!!,
-                            File(pData.filePath)),pData.filePath
+                            requireContext(),
+                            File(pData.filePath)
+                        ), pData.filePath
                     )
                 } else {
                     (activity as ActivityLibMain).processImage(pData.filePath)
@@ -136,11 +135,10 @@ class DefaultListFragment : MediaListFragment(), DefaultAdapter.OnMediaSelectCli
     private fun fetchImageFiles() {
         val fileItems = Single.fromCallable<Boolean> {
             mImageModelList.clear()
-            val tempArray = FileManager.getImageVideoFilesInFolder(context!!, mFolderId)
+            val tempArray = FileManager.getImageVideoFilesInFolder(requireContext(), mFolderId)
 
             //include only valid files
             for (i in tempArray) {
-                info { "size: ${i.size}" }
                 if (i.size > 0) {
                     mImageModelList.add(i)
                 }
@@ -167,12 +165,7 @@ class DefaultListFragment : MediaListFragment(), DefaultAdapter.OnMediaSelectCli
                     if (frame_progress!=null) {
                         frame_progress.visibility = View.GONE
                     }
-                    info { "error: ${e.message}" }
                 }
             })
     }
-
-
-
-
 }

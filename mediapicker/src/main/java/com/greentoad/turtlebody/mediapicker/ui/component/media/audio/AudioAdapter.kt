@@ -7,21 +7,19 @@ import android.webkit.MimeTypeMap
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.greentoad.turtlebody.mediapicker.R
-import kotlinx.android.synthetic.main.tb_media_picker_item_audio.view.*
-import org.jetbrains.anko.AnkoLogger
+import kotlinx.android.synthetic.main.tb_media_picker_item_audio.view.item_audio_checkbox
+import kotlinx.android.synthetic.main.tb_media_picker_item_audio.view.item_audio_mimetype_icon
+import kotlinx.android.synthetic.main.tb_media_picker_item_audio.view.item_audio_name
+import kotlinx.android.synthetic.main.tb_media_picker_item_audio.view.item_audio_size
 
-
-/**
- * Created by WANGSUN on 26-Mar-19.
- */
-class AudioAdapter: RecyclerView.Adapter<AudioAdapter.AudioVewHolder>(), AnkoLogger {
+class AudioAdapter : RecyclerView.Adapter<AudioAdapter.AudioVewHolder>() {
     private var mData: MutableList<AudioModel> = arrayListOf()
     private var mOnAudioClickListener: OnAudioClickListener? = null
     var mShowCheckBox: Boolean = false
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AudioVewHolder {
         val view = LayoutInflater.from(parent.context)
-                .inflate(R.layout.tb_media_picker_item_audio, parent, false)
+            .inflate(R.layout.tb_media_picker_item_audio, parent, false)
         return AudioVewHolder(view)
     }
 

@@ -1,3 +1,4 @@
+/*
 package com.joshtalks.joshskills.core.custom_ui.recorder;
 
 import android.util.Log;
@@ -16,10 +17,17 @@ import java.nio.channels.Channels;
 import java.nio.channels.WritableByteChannel;
 import java.util.List;
 
+*/
 /**
  * @author Nikolai Doronin {@literal <lassana.nd@gmail.com>}
+ * @param mainFileName    The first file path.
+ * @param anotherFileName The second file path.
+ * @return true if the operation was made successfully.
  * @since 8/25/13
- */
+ * <p>
+ * Appends mp4 audios/videos: {@code anotherFileName} to {@code mainFileName}.
+ *//*
+
 public final class Mp4ParserWrapper {
 
     public static final String TAG = "Mp4ParserWrapper";
@@ -29,13 +37,15 @@ public final class Mp4ParserWrapper {
     private Mp4ParserWrapper() {
     }
 
-    /**
-     * Appends mp4 audios/videos: {@code anotherFileName} to {@code mainFileName}.
-     *
-     * @param mainFileName    The first file path.
-     * @param anotherFileName The second file path.
-     * @return true if the operation was made successfully.
-     */
+    */
+/**
+ * Appends mp4 audios/videos: {@code anotherFileName} to {@code mainFileName}.
+ *
+ * @param mainFileName    The first file path.
+ * @param anotherFileName The second file path.
+ * @return true if the operation was made successfully.
+ *//*
+
     public static boolean append(String mainFileName, String anotherFileName) {
         try {
             File targetFile = new File(mainFileName);
@@ -107,3 +117,4 @@ public final class Mp4ParserWrapper {
     }
 
 }
+*/

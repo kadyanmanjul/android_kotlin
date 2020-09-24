@@ -5,7 +5,6 @@ import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import com.greentoad.turtlebody.mediapicker.core.MediaConstants
@@ -21,8 +20,6 @@ import io.reactivex.Observable
 import io.reactivex.ObservableEmitter
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import org.jetbrains.anko.AnkoLogger
-import org.jetbrains.anko.info
 import java.lang.ref.WeakReference
 
 
@@ -44,7 +41,8 @@ class MediaPicker {
         const val AUDIO = 503
     }
 
-    class MediaPickerImpl(activity: FragmentActivity, private var mFileType: Int) : PickerFragment.OnPickerListener, AnkoLogger {
+    class MediaPickerImpl(activity: FragmentActivity, private var mFileType: Int) :
+        PickerFragment.OnPickerListener {
         private lateinit var mEmitter: ObservableEmitter<ArrayList<Uri>>
         private var mActivity: WeakReference<FragmentActivity> = WeakReference(activity)
         private var mConfigMedia: MediaPickerConfig = MediaPickerConfig()
@@ -114,15 +112,11 @@ class MediaPicker {
                             .withListener(object : PermissionListener {
                                 override fun onPermissionGranted(response: PermissionGrantedResponse) {
                                     startFragment()
-                                    info { "accepted" }
                                 }
                                 override fun onPermissionDenied(response: PermissionDeniedResponse) {
-                                    Toast.makeText(it, "Need permission to do this task.", Toast.LENGTH_SHORT).show()
-                                    info { "denied" }
                                 }
                                 override fun onPermissionRationaleShouldBeShown(permission: PermissionRequest, token: PermissionToken) {
                                     token.continuePermissionRequest()
-                                    info { "rational" }
                                 }
                             }).check()
                 }
@@ -137,7 +131,6 @@ class MediaPicker {
 
             val fragment = PickerFragment()
             fragment.arguments = bundle
-            info { "imagePicker mFileType: $mFileType" }
             fragment.setListener(this)
             mActivity.get()?.supportFragmentManager?.beginTransaction()?.add(fragment, PickerFragment::class.java.simpleName)?.commit()
         }
@@ -151,7 +144,7 @@ class MediaPicker {
     /* ********************************************************************************************
      *                                          Fragment
      */
-    class PickerFragment : Fragment(), AnkoLogger {
+    class PickerFragment : Fragment() {
         override fun onActivityCreated(savedInstanceState: Bundle?) {
             super.onActivityCreated(savedInstanceState)
 

@@ -15,7 +15,6 @@ import com.joshtalks.joshskills.databinding.FragmentFaqDetailBinding
 import com.joshtalks.joshskills.repository.server.FAQ
 import kotlinx.android.synthetic.main.fragment_faq_detail.no_btn
 import kotlinx.android.synthetic.main.fragment_faq_detail.yes_btn
-import org.jetbrains.anko.textColor
 
 class FaqDetailsFragment : Fragment() {
     private lateinit var binding: FragmentFaqDetailBinding
@@ -58,11 +57,11 @@ class FaqDetailsFragment : Fragment() {
         if (isAnswerHelpful) {
             yes_btn.backgroundTintList =
                 ContextCompat.getColorStateList(requireActivity(), R.color.button_color)
-            yes_btn.textColor = ContextCompat.getColor(requireActivity(), R.color.white)
+            yes_btn.setTextColor(ContextCompat.getColor(requireActivity(), R.color.white))
         } else {
             no_btn.backgroundTintList =
                 ContextCompat.getColorStateList(requireActivity(), R.color.button_color)
-            no_btn.textColor = ContextCompat.getColor(requireActivity(), R.color.white)
+            no_btn.setTextColor(ContextCompat.getColor(requireActivity(), R.color.white))
         }
         yes_btn.isEnabled = false
         no_btn.isEnabled = false

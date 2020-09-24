@@ -45,8 +45,22 @@ import com.joshtalks.joshcamerax.JoshCameraActivity
 import com.joshtalks.joshcamerax.utils.ImageQuality
 import com.joshtalks.joshcamerax.utils.Options
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.CERTIFICATE_GENERATE
+import com.joshtalks.joshskills.core.CoreJoshActivity
+import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.EXPLORE_TYPE
+import com.joshtalks.joshskills.core.IS_PRACTISE_PARTNER_VIEWED
+import com.joshtalks.joshskills.core.IS_SUBSCRIPTION_ENDED
+import com.joshtalks.joshskills.core.IS_SUBSCRIPTION_STARTED
+import com.joshtalks.joshskills.core.MESSAGE_CHAT_SIZE_LIMIT
+import com.joshtalks.joshskills.core.PermissionUtils
+import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.REMAINING_TRIAL_DAYS
+import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.Utils.getCurrentMediaVolume
+import com.joshtalks.joshskills.core.alphaAnimation
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.custom_ui.FullScreenProgressDialog
@@ -84,7 +98,20 @@ import com.joshtalks.joshskills.ui.video_player.IS_BATCH_CHANGED
 import com.joshtalks.joshskills.ui.video_player.LAST_VIDEO_INTERVAL
 import com.joshtalks.joshskills.ui.video_player.NEXT_VIDEO_AVAILABLE
 import com.joshtalks.joshskills.ui.video_player.VideoPlayerActivity
-import com.joshtalks.joshskills.ui.view_holders.*
+import com.joshtalks.joshskills.ui.view_holders.AssessmentViewHolder
+import com.joshtalks.joshskills.ui.view_holders.AudioPlayerViewHolder
+import com.joshtalks.joshskills.ui.view_holders.BaseCell
+import com.joshtalks.joshskills.ui.view_holders.BaseChatViewHolder
+import com.joshtalks.joshskills.ui.view_holders.ConversationPractiseViewHolder
+import com.joshtalks.joshskills.ui.view_holders.ImageViewHolder
+import com.joshtalks.joshskills.ui.view_holders.NewMessageViewHolder
+import com.joshtalks.joshskills.ui.view_holders.P2PViewHolder
+import com.joshtalks.joshskills.ui.view_holders.PdfViewHolder
+import com.joshtalks.joshskills.ui.view_holders.PracticeViewHolder
+import com.joshtalks.joshskills.ui.view_holders.TextViewHolder
+import com.joshtalks.joshskills.ui.view_holders.TimeViewHolder
+import com.joshtalks.joshskills.ui.view_holders.UnlockNextClassViewHolder
+import com.joshtalks.joshskills.ui.view_holders.VideoViewHolder
 import com.joshtalks.joshskills.ui.voip.SearchingUserActivity
 import com.joshtalks.joshskills.ui.voip.extra.PractisePartnerDialogFragment
 import com.joshtalks.joshskills.util.ExoAudioPlayer
@@ -626,34 +653,6 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
             uploadImageByUser()
 
         }
-        findViewById<View>(R.id.ll_gallery).setOnClickListener {
-            uploadAttachment()
-            PermissionUtils.storageReadAndWritePermission(this,
-                object : MultiplePermissionsListener {
-                    override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
-                        report?.areAllPermissionsGranted()?.let { flag ->
-                            if (flag) {
-                                bottomAttachmentViewFromGallery()
-                                return
-
-                            }
-                            if (report.isAnyPermissionPermanentlyDenied) {
-                                PermissionUtils.permissionPermanentlyDeniedDialog(
-                                    activityRef.get()!!
-                                )
-                                return
-                            }
-                        }
-                    }
-
-                    override fun onPermissionRationaleShouldBeShown(
-                        permissions: MutableList<PermissionRequest>?,
-                        token: PermissionToken?
-                    ) {
-                        token?.continuePermissionRequest()
-                    }
-                })
-        }
         conversationBinding.scrollToEndButton.setOnClickListener {
             scrollToEnd()
         }
@@ -700,38 +699,6 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
         }
         conversationBinding.chatEdit.setText(EMPTY)
     }
-
-    @SuppressLint("CheckResult")
-    private fun bottomAttachmentViewFromGallery() {
-        AppAnalytics.create(AnalyticsEvent.CAMERA_SELECTED.NAME).push()
-        uploadAttachment()
-
-        val pickerConfig = MediaPickerConfig()
-            .setUriPermanentAccess(true)
-            .setAllowMultiSelection(false)
-            .setScreenOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
-        MediaPicker.with(this, MediaPicker.MediaTypes.IMAGE)
-            .setConfig(pickerConfig)
-            .setFileMissingListener(object :
-                MediaPicker.MediaPickerImpl.OnMediaListener {
-                override fun onMissingFileWarning() {
-                }
-            })
-            .onResult()
-            .subscribe({
-                it?.let {
-                    it[0].path?.let { path ->
-                        if (IMAGE_REGEX.matches(path)) {
-                            addUserImageInView(path)
-                        } else {
-                            addUserVideoInView(path)
-                        }
-                    }
-                }
-            }, {
-            })
-    }
-
 
     @SuppressLint("CheckResult")
     private fun bottomAudioAttachment() {

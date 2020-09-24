@@ -89,6 +89,7 @@ class AppRunRequiredTaskWorker(var context: Context, workerParams: WorkerParamet
                 "App Version",
                 BuildConfig.VERSION_CODE.toString()
             )
+
         }.addOnFailureListener { exception ->
             exception.printStackTrace()
         }

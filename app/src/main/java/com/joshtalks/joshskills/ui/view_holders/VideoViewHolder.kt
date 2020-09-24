@@ -48,8 +48,12 @@ import java.lang.ref.WeakReference
 
 
 @Layout(R.layout.video_view_holder)
-class VideoViewHolder(activityRef: WeakReference<FragmentActivity>, message: ChatModel,previousMessage:ChatModel?) :
-    BaseChatViewHolder(activityRef, message,previousMessage) {
+class VideoViewHolder(
+    activityRef: WeakReference<FragmentActivity>,
+    message: ChatModel,
+    previousMessage: ChatModel?
+) :
+    BaseChatViewHolder(activityRef, message, previousMessage) {
 
     @View(R.id.image_view)
     lateinit var imageView: AppCompatImageView
@@ -111,7 +115,7 @@ class VideoViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
         downloadContainer.visibility = INVISIBLE
         textMessageTime.text = Utils.messageTimeConversion(message.created)
         message.sender?.let {
-            setViewHolderBG(previousMessage?.sender,it, rootView, rootSubView, messageView)
+            setViewHolderBG(previousMessage?.sender, it, rootView, rootSubView, messageView)
         }
         message.parentQuestionObject?.run {
             addLinkToTagMessage(messageView, this, message.sender)
@@ -239,10 +243,7 @@ class VideoViewHolder(activityRef: WeakReference<FragmentActivity>, message: Cha
             Uri.parse(url),
             VideoDownloadController.getInstance().buildRenderersFactory(true)
         )
-        //TODO
-        // appAnalytics.addParam()
         appAnalytics.addParam(AnalyticsEvent.VIDEO_DOWNLOAD_STATUS.NAME, "Downloading")
-        //AppAnalytics.create(AnalyticsEvent.VIDEO_DOWNLOAD.NAME).push()
     }
 
 

@@ -1,10 +1,5 @@
 package com.greentoad.turtlebody.mediapicker.ui.component.folder.image_video
 
-import com.greentoad.turtlebody.mediapicker.MediaPicker
-
-/**
- * Created by WANGSUN on 26-Mar-19.
- */
 data class ImageVideoFolder(var id: String = "",
                             var name: String = "",
                             var coverImageFilePath: String = "",

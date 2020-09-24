@@ -37,7 +37,6 @@ import com.joshtalks.joshskills.ui.newonboarding.adapter.CourseSelectionViewPage
 import com.joshtalks.joshskills.ui.newonboarding.viewmodel.OnBoardViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
-import org.jetbrains.anko.textColor
 
 class SelectCourseFragment : Fragment() {
 
@@ -242,10 +241,19 @@ class SelectCourseFragment : Fragment() {
         binding.courses.text = string
         if (VersionResponse.getInstance().hasVersion()) {
             if (count == 0) {
-                binding.courses.textColor =
-                    ContextCompat.getColor(requireActivity(), R.color.light_grey)
+                binding.courses.setTextColor(
+                    ContextCompat.getColor(
+                        requireActivity(),
+                        R.color.light_grey
+                    )
+                )
             } else {
-                binding.courses.textColor = ContextCompat.getColor(requireActivity(), R.color.black)
+                binding.courses.setTextColor(
+                    ContextCompat.getColor(
+                        requireActivity(),
+                        R.color.black
+                    )
+                )
             }
             if (count >= 1) {
                 enabledSubmitButton()

@@ -47,7 +47,6 @@ class LauncherActivity : CoreJoshActivity(), CustomPermissionDialogInteractionLi
         WorkManagerAdmin.appStartWorker()
         logAppLaunchEvent(getNetworkOperatorName())
         AppObjectController.initialiseFreshChat()
-
     }
 
     private fun animatedProgressBar() {

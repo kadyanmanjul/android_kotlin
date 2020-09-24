@@ -7,12 +7,9 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.Toolbar
-import androidx.core.content.ContextCompat
-import com.greentoad.turtlebody.mediapicker.R
-import org.jetbrains.anko.AnkoLogger
 
 
-abstract class ActivityBase : AppCompatActivity(), AnkoLogger {
+abstract class ActivityBase : AppCompatActivity() {
     init {
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true)
     }

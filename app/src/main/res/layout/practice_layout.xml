@@ -106,7 +106,6 @@
                 android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Bold"
                 android:textColor="@color/green"
                 app:drawableTint="@color/white"
-                app:icon="@drawable/ef_ic_arrow_forward"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

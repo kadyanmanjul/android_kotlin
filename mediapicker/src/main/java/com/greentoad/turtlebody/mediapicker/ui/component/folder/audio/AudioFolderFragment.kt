@@ -18,9 +18,8 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.annotations.NonNull
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.tb_media_picker_folder_fragment.*
-import kotlinx.android.synthetic.main.tb_media_picker_frame_progress.*
-import org.jetbrains.anko.info
+import kotlinx.android.synthetic.main.tb_media_picker_folder_fragment.folder_fragment_recycler_view
+import kotlinx.android.synthetic.main.tb_media_picker_frame_progress.frame_progress
 
 
 class AudioFolderFragment : FragmentBase() {
@@ -57,7 +56,6 @@ class AudioFolderFragment : FragmentBase() {
     private fun initAdapter() {
         mAudioFolderAdapter.setListener(object : AudioFolderAdapter.OnAudioFolderClickListener {
             override fun onFolderClick(pData: AudioFolder) {
-                info { "folderPath: ${pData.path}" }
                 (activity as ActivityLibMain).startMediaListFragment(pData.path, MediaPicker.MediaTypes.AUDIO)
             }
         })
@@ -69,28 +67,27 @@ class AudioFolderFragment : FragmentBase() {
 
 
     private fun fetchAudioFolders() {
-        val bucketFetch = Single.fromCallable<ArrayList<AudioFolder>> {
-            FileManager.fetchAudioFolderList(context!!) }
+        val bucketFetch = Single.fromCallable {
+            FileManager.fetchAudioFolderList(requireContext())
+        }
         bucketFetch
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(object : SingleObserver<ArrayList<AudioFolder>> {
-                    override fun onSubscribe(@NonNull d: Disposable) {
-                        frame_progress.visibility = View.VISIBLE
-                    }
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(object : SingleObserver<ArrayList<AudioFolder>> {
+                override fun onSubscribe(@NonNull d: Disposable) {
+                    frame_progress.visibility = View.VISIBLE
+                }
 
-                    override fun onSuccess(@NonNull audioFolders: ArrayList<AudioFolder>) {
-                        mAudioFolderList = audioFolders
-                        info { "folders: $audioFolders" }
-                        mAudioFolderAdapter.setData(mAudioFolderList)
-                        frame_progress.visibility = View.GONE
-                    }
+                override fun onSuccess(@NonNull audioFolders: ArrayList<AudioFolder>) {
+                    mAudioFolderList = audioFolders
+                    mAudioFolderAdapter.setData(mAudioFolderList)
+                    frame_progress.visibility = View.GONE
+                }
 
-                    override fun onError(@NonNull e: Throwable) {
-                        frame_progress.visibility = View.GONE
-                        e.printStackTrace()
-                        info { "error: ${e.message}" }
-                    }
-                })
+                override fun onError(@NonNull e: Throwable) {
+                    frame_progress.visibility = View.GONE
+                    e.printStackTrace()
+                }
+            })
     }
 }
