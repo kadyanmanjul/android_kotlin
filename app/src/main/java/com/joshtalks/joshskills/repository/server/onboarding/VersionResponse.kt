@@ -38,7 +38,19 @@ data class VersionResponse(
 
     @SerializedName("course_categories")
     @Expose
-    var courseCategories: List<CourseCategory>? = null
+    var courseCategories: List<CourseCategory>? = null,
+
+    @SerializedName("course_headings")
+    @Expose
+    var course_headings: List<CourseHeading>? = null,
+
+    @SerializedName("v5_title")
+    @Expose
+    var v5Title: String? = null,
+
+    @SerializedName("v5_description")
+    @Expose
+    var v5Description: String? = null,
 )
 
 data class CourseInterestTag(
@@ -53,6 +65,22 @@ data class CourseInterestTag(
     @SerializedName("name")
     @Expose
     var name: String? = null
+)
+
+data class CourseHeading(
+    @SerializedName("id")
+    @Expose
+    var id: Int? = null,
+
+    @SerializedName("sort_order")
+    @Expose
+    var sortOrder: Int? = null,
+
+    @SerializedName("name")
+    @Expose
+    var name: String? = null,
+
+    var isSelected: Boolean = false
 )
 
 data class Content(
@@ -91,6 +119,7 @@ enum class ONBOARD_VERSIONS(val type: String) {
     ONBOARDING_V1("ONBOARDING_V1"),
     ONBOARDING_V2("ONBOARDING_V2"),
     ONBOARDING_V3("ONBOARDING_V3"),
-    ONBOARDING_V4("ONBOARDING_V4")
+    ONBOARDING_V4("ONBOARDING_V4"),
+    ONBOARDING_V5("ONBOARDING_V5"),
 }
 
