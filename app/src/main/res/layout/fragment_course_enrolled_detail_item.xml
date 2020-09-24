@@ -48,6 +48,7 @@
                     android:textAlignment="center"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
                     android:textColor="@color/black"
+                    android:lineSpacingMultiplier="1"
                     tools:text="India ke one of the most successful leaders Ankur Warikoo apko sekhayenge apni Personality ko better kaise banaye. Start kare India ka Best Personality Development Course" />
 
                 <View
@@ -63,7 +64,7 @@
                     android:layout_height="wrap_content"
                     android:letterSpacing="0.001"
                     android:textAlignment="center"
-                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H7_Semi_Bold"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H7"
                     android:textColor="@color/black"
                     tools:text="Confident &amp; Smart Personality" />
 

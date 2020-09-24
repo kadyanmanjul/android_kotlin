@@ -4,10 +4,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.custom_ui.decorator.LayoutMarginDecoration
@@ -57,12 +59,19 @@ class SelectCourseHeadingFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding =
-            DataBindingUtil.inflate(inflater, R.layout.fragment_select_course_heading, container, false)
+            DataBindingUtil.inflate(
+                inflater,
+                R.layout.fragment_select_course_heading,
+                container,
+                false
+            )
         binding.handler = this
         return binding.root
     }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        disableBtn()
         initRV()
         initView()
     }
@@ -123,11 +132,34 @@ class SelectCourseHeadingFragment : Fragment() {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe {
-                    if (it.isSelected){
+                    if (it.isSelected) {
                         headingIds.remove(it.id)
-                    }else {
+                    } else {
                         headingIds.add(it.id)
                     }
+                    if (headingIds.size > 0) {
+                        enableBtn()
+                    } else {
+                        disableBtn()
+                    }
                 })
+    }
+
+    private fun enableBtn() {
+        binding.getDetailBtn.isEnabled = true
+        binding.getDetailBtn.isClickable = true
+        binding.getDetailBtn.backgroundTintList = ContextCompat.getColorStateList(
+            AppObjectController.joshApplication,
+            R.color.button_color
+        )
+    }
+
+    private fun disableBtn() {
+        binding.getDetailBtn.isEnabled = false
+        binding.getDetailBtn.isClickable = false
+        binding.getDetailBtn.backgroundTintList = ContextCompat.getColorStateList(
+            AppObjectController.joshApplication,
+            R.color.light_grey
+        )
     }
 }

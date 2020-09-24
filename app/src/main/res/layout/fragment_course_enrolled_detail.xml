@@ -54,6 +54,7 @@
         <androidx.viewpager2.widget.ViewPager2
             android:id="@+id/view_pager_text"
             android:layout_width="match_parent"
+            android:layout_marginTop="@dimen/_8ssp"
             android:layout_height="wrap_content"
             app:layout_constraintBottom_toTopOf="@+id/worm_dots_indicator"
             app:layout_constraintEnd_toEndOf="parent"
@@ -72,6 +73,7 @@
             app:dotsSpacing="@dimen/_4sdp"
             app:dotsStrokeColor="@color/black"
             app:dotsStrokeWidth="@dimen/_1sdp"
+            android:layout_marginBottom="@dimen/_8ssp"
             app:layout_constraintBottom_toTopOf="@+id/btn_start"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
