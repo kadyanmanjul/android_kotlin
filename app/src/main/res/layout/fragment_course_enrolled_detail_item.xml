@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="MissingPrefix">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/image"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_165sdp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:src="@drawable/josh_skill" />
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/white"
+            android:translationY="@dimen/_minus32sdp"
+            app:cardBackgroundColor="#E2E4E9"
+            app:cardCornerRadius="@dimen/_6sdp"
+            app:cardElevation="@dimen/_2sdp"
+            app:contentPaddingBottom="@dimen/_8sdp"
+            app:contentPaddingLeft="@dimen/_16sdp"
+            app:contentPaddingRight="@dimen/_16sdp"
+            app:contentPaddingTop="@dimen/_12sdp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/image"
+            app:layout_constraintWidth_default="percent"
+            app:layout_constraintWidth_percent="0.84">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/detail"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textAlignment="center"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+                    android:textColor="@color/black"
+                    tools:text="India ke one of the most successful leaders Ankur Warikoo apko sekhayenge apni Personality ko better kaise banaye. Start kare India ka Best Personality Development Course" />
+
+                <View
+                    android:layout_width="@dimen/_44sdp"
+                    android:layout_height="@dimen/_1sdp"
+                    android:layout_marginVertical="@dimen/_12ssp"
+                    android:background="@color/black"
+                    android:gravity="start" />
+
+                <TextView
+                    android:id="@+id/category"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:letterSpacing="0.001"
+                    android:textAlignment="center"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H7_Semi_Bold"
+                    android:textColor="@color/black"
+                    tools:text="Confident &amp; Smart Personality" />
+
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="handler"
+            type="com.joshtalks.joshskills.ui.newonboarding.fragment.CourseEnrolledDetailFragment" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/help_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/_14ssp"
+            android:src="@drawable/ic_help_outline"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/desc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="@dimen/_12sdp"
+            android:textAlignment="center"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Bold"
+            android:letterSpacing="0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/help_btn"
+            tools:text="Zabardast, aapke selected options ke basis pe " />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="@dimen/_12sdp"
+            android:textAlignment="center"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4"
+            android:letterSpacing="0"
+            android:lineSpacingMultiplier="0.8"
+            android:textColor="@color/black"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/desc"
+            tools:text="Josh ne aapke liye neeche diye gaye courses suggest kiye hai" />
+
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/view_pager_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/title"
+            app:layout_constraintVertical_chainStyle="packed" />
+
+        <com.tbuonomo.viewpagerdotsindicator.WormDotsIndicator
+            android:id="@+id/worm_dots_indicator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_10sdp"
+            app:dotsColor="@color/black"
+            app:dotsCornerRadius="@dimen/_6sdp"
+            app:dotsSize="@dimen/_6sdp"
+            app:dotsSpacing="@dimen/_4sdp"
+            app:dotsStrokeColor="@color/black"
+            app:dotsStrokeWidth="@dimen/_1sdp"
+            app:layout_constraintBottom_toTopOf="@+id/btn_start"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/view_pager_text" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_start"
+            style="@style/Widget.MaterialComponents.Button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/button_color"
+            android:clickable="true"
+            android:focusable="true"
+            android:maxLines="1"
+            android:paddingHorizontal="@dimen/_22sdp"
+            android:paddingVertical="@dimen/_12sdp"
+            android:text="@string/start_free_course"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Button"
+            android:textColor="@color/white"
+            android:textSize="@dimen/font_16"
+            app:cornerRadius="@dimen/_22sdp"
+            app:layout_constraintBottom_toTopOf="@id/btn_buy"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintWidth_default="percent"
+            app:layout_constraintWidth_percent="0.8"
+            app:rippleColor="@color/white" />
+
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/btn_buy"
+            style="@style/Widget.MaterialComponents.Button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/button_color"
+            android:clickable="true"
+            android:focusable="true"
+            android:maxLines="1"
+            android:paddingHorizontal="@dimen/_22sdp"
+            android:paddingVertical="@dimen/_12sdp"
+            android:text="@string/buy_pass"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Button"
+            android:textColor="@color/colorPrimary"
+            android:textSize="@dimen/font_16"
+            app:cornerRadius="@dimen/_22sdp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintWidth_default="percent"
+            app:layout_constraintWidth_percent="0.8"
+            app:rippleColor="@color/white" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
