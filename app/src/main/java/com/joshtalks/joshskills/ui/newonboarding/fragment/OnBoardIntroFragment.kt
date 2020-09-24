@@ -113,7 +113,13 @@ class OnBoardIntroFragment : Fragment() {
                         SelectInterestFragment.newInstance(),
                         SelectInterestFragment.TAG
                     )
-
+                }
+                ONBOARD_VERSIONS.ONBOARDING_V5 -> {
+                    replaceFragment(
+                        R.id.onboarding_container,
+                        SelectCourseHeadingFragment.newInstance(),
+                        SelectCourseHeadingFragment.TAG
+                    )
                 }
             }
         }

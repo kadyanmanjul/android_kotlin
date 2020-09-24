@@ -132,7 +132,7 @@ class LauncherActivity : CoreJoshActivity(), CustomPermissionDialogInteractionLi
                         startActivity(intent)
                         this@LauncherActivity.finish()
                     }
-                    ONBOARD_VERSIONS.ONBOARDING_V2, ONBOARD_VERSIONS.ONBOARDING_V3, ONBOARD_VERSIONS.ONBOARDING_V4 -> {
+                    ONBOARD_VERSIONS.ONBOARDING_V2, ONBOARD_VERSIONS.ONBOARDING_V3, ONBOARD_VERSIONS.ONBOARDING_V4,ONBOARD_VERSIONS.ONBOARDING_V5 -> {
                         if (PrefManager.getBoolValue(IS_GUEST_ENROLLED, false)||User.getInstance().isVerified) {
                             val intent = getIntentForState()
                             startActivity(intent)
@@ -181,7 +181,8 @@ class LauncherActivity : CoreJoshActivity(), CustomPermissionDialogInteractionLi
             this,
             testId.split("_")[1].toInt(),
             this@LauncherActivity.javaClass.simpleName,
-            flags = arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
+            flags = arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT),
+            buySubscription = false
         )
     }
 

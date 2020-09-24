@@ -18,7 +18,7 @@ import com.joshtalks.joshskills.repository.server.CourseExploreModel
 
 class CourseSelectionAdapter(
     private var courseList: List<CourseExploreModel>,
-    private var isSecondFlow: Boolean
+    private var hideButtons: Boolean
 ) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private val context = AppObjectController.joshApplication
@@ -48,7 +48,7 @@ class CourseSelectionAdapter(
     inner class CourseSelectViewHolder(val binding: CourseSelectionViewHolderBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(courseExploreModel: CourseExploreModel, position: Int) {
-            if (isSecondFlow) {
+            if (hideButtons) {
                 binding.selectCourse.visibility = View.GONE
                 binding.alfa.visibility = View.GONE
                 binding.rootView.setOnClickListener {

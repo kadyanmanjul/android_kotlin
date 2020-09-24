@@ -117,6 +117,7 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
     private var compositeDisposable = CompositeDisposable()
     private var testId: Int = 0
     private var isFromFreeTrial: Boolean = false
+    private var buySubscription: Boolean = false
     private var flowFrom: String? = null
     private var downloadID: Long = -1
     private val appAnalytics by lazy { AppAnalytics.create(AnalyticsEvent.COURSE_OVERVIEW.NAME) }
@@ -151,6 +152,7 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
         binding.handler = this
         testId = intent.getIntExtra(KEY_TEST_ID, 0)
         isFromFreeTrial = intent.getBooleanExtra(IS_FROM_FREE_TRIAL, false)
+        buySubscription = intent.getBooleanExtra(BUY_SUBSCRIPTION, false)
         if (intent.hasExtra(STARTED_FROM)) {
             flowFrom = intent.getStringExtra(STARTED_FROM)
         }
@@ -633,7 +635,14 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
 
     fun buyCourse() {
         PrefManager.getBoolValue(IS_TRIAL_ENDED)
-        if (isFromFreeTrial) {
+        if(buySubscription){
+            val tempTestId = PrefManager.getIntValue(SUBSCRIPTION_TEST_ID)
+            logStartCourseAnalyticEvent(tempTestId)
+            PaymentSummaryActivity.startPaymentSummaryActivity(
+                this,
+                PrefManager.getIntValue(SUBSCRIPTION_TEST_ID).toString()
+            )
+        }else if (isFromFreeTrial) {
             val isTrialEnded = PrefManager.getBoolValue(IS_TRIAL_ENDED, false)
             if (isTrialEnded || testId == PrefManager.getIntValue(SUBSCRIPTION_TEST_ID)
             ) {
@@ -813,6 +822,7 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
         const val KEY_TEST_ID = "test-id"
         const val WHATSAPP_URL = "whatsapp-url"
         const val IS_FROM_FREE_TRIAL = "is_from_free_trial"
+        const val BUY_SUBSCRIPTION = "buy_subscription"
 
         fun startCourseDetailsActivity(
             activity: Activity,
@@ -820,11 +830,13 @@ class CourseDetailsActivity : BaseActivity(), OnBalloonClickListener {
             whatsappUrl: String? = null,
             startedFrom: String = EMPTY,
             flags: Array<Int> = arrayOf(),
-            isFromFreeTrial: Boolean = false
+            isFromFreeTrial: Boolean = false,
+            buySubscription: Boolean
         ) {
             Intent(activity, CourseDetailsActivity::class.java).apply {
                 putExtra(KEY_TEST_ID, testId)
                 putExtra(IS_FROM_FREE_TRIAL, isFromFreeTrial)
+                putExtra(BUY_SUBSCRIPTION, buySubscription)
                 if (whatsappUrl.isNullOrBlank().not()) {
                     putExtra(WHATSAPP_URL, whatsappUrl)
                 }

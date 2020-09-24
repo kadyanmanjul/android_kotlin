@@ -6,6 +6,8 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.os.CountDownTimer
+import android.text.SpannableString
+import android.text.style.UnderlineSpan
 import android.view.View
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
@@ -81,11 +83,14 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import java.util.concurrent.TimeUnit
 import kotlinx.android.synthetic.main.activity_inbox.expiry_tool_tip
+import kotlinx.android.synthetic.main.activity_inbox.hint_text
+import kotlinx.android.synthetic.main.activity_inbox.new_user_layout
 import kotlinx.android.synthetic.main.activity_inbox.overlay_layout
 import kotlinx.android.synthetic.main.activity_inbox.overlay_tip
 import kotlinx.android.synthetic.main.activity_inbox.progress_bar
 import kotlinx.android.synthetic.main.activity_inbox.recycler_view_inbox
 import kotlinx.android.synthetic.main.activity_inbox.subscriptionTipContainer
+import kotlinx.android.synthetic.main.activity_inbox.text_btn
 import kotlinx.android.synthetic.main.activity_inbox.txtConvert
 import kotlinx.android.synthetic.main.activity_inbox.txtConvert2
 import kotlinx.android.synthetic.main.activity_inbox.txtSubscriptionTip
@@ -107,6 +112,7 @@ const val REQ_CODE_VERSION_UPDATE = 530
 const val USER_DETAILS_CODE = 1001
 const val TRIAL_COURSE_ID = "76"
 const val SUBSCRIPTION_COURSE_ID = "60"
+const val IS_FROM_NEW_ONBOARDING = "is_from_new_on_boarding_flow"
 
 class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.InAppUpdateHandler {
 
@@ -119,6 +125,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
     private lateinit var findMoreLayout: View
     lateinit var countdown_timer: CountDownTimer
     var isRunning: Boolean = false
+    var isFromOnBoarding: Boolean = false
     var time_in_milli_seconds = 0L
     var expiryToolText: String = EMPTY
 
@@ -134,6 +141,28 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         checkAppUpdate()
         workInBackground()
         handelIntentAction()
+        initNewUserTip()
+    }
+
+    private fun initNewUserTip() {
+        if (isFromOnBoarding) {
+            val boolean = AppObjectController.getFirebaseRemoteConfig()
+                .getBoolean(FirebaseRemoteConfigKey.SHOW_BB_TOOL_TIP_FIRST_TIME)
+            if (boolean) {
+                new_user_layout.visibility = View.VISIBLE
+                hint_text.text = AppObjectController.getFirebaseRemoteConfig()
+                    .getString(FirebaseRemoteConfigKey.BB_TOOL_TIP_FIRST_TIME_TEXT)
+                val content = SpannableString(
+                    AppObjectController.getFirebaseRemoteConfig()
+                        .getString(FirebaseRemoteConfigKey.BB_TOOL_TIP_FIRST_TIME_BTN_TEXT)
+                )
+                content.setSpan(UnderlineSpan(), 0, content.length, 0);
+                text_btn.text = content
+                new_user_layout.setOnClickListener {
+                    new_user_layout.visibility = View.GONE
+                }
+            }
+        }
     }
 
     private fun showExpiryTimeToolTip() {
@@ -360,7 +389,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
                             RxBus2.publish(ExploreCourseEventBus())
                         }
                     }
-                    ONBOARD_VERSIONS.ONBOARDING_V2, ONBOARD_VERSIONS.ONBOARDING_V4, ONBOARD_VERSIONS.ONBOARDING_V3 -> {
+                    ONBOARD_VERSIONS.ONBOARDING_V2, ONBOARD_VERSIONS.ONBOARDING_V4, ONBOARD_VERSIONS.ONBOARDING_V3,ONBOARD_VERSIONS.ONBOARDING_V5 -> {
                         find_more.text = getString(R.string.add_more_courses)
                         find_more.setOnClickListener {
                             AppAnalytics.create(AnalyticsEvent.ADD_MORE_COURSE_CLICKED.NAME)
@@ -531,6 +560,9 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
                 }
             }
         }
+        if (intent != null && intent.hasExtra(IS_FROM_NEW_ONBOARDING)) {
+            isFromOnBoarding = intent.getBooleanExtra(IS_FROM_NEW_ONBOARDING, false)
+        }
     }
 
     private fun locationFetch() {
@@ -699,7 +731,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
                 ONBOARD_VERSIONS.ONBOARDING_V1 -> {
                     openCourseExplorer()
                 }
-                ONBOARD_VERSIONS.ONBOARDING_V2, ONBOARD_VERSIONS.ONBOARDING_V3, ONBOARD_VERSIONS.ONBOARDING_V4 -> {
+                ONBOARD_VERSIONS.ONBOARDING_V2, ONBOARD_VERSIONS.ONBOARDING_V3, ONBOARD_VERSIONS.ONBOARDING_V4,ONBOARD_VERSIONS.ONBOARDING_V5 -> {
                     openCourseSelectionExplorer()
                 }
                 else -> {
@@ -724,8 +756,8 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         )
     }
 
-    private fun openCourseSelectionExplorer(boolean: Boolean = false) {
-        OnBoardingActivityNew.startOnBoardingActivity(this, COURSE_EXPLORER_NEW, true, boolean)
+    private fun openCourseSelectionExplorer(alreadyHaveCourses: Boolean = false) {
+        OnBoardingActivityNew.startOnBoardingActivity(this, COURSE_EXPLORER_NEW, true, alreadyHaveCourses)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

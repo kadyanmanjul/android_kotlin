@@ -18,6 +18,7 @@ import com.joshtalks.joshskills.core.custom_ui.decorator.LayoutMarginDecoration
 import com.joshtalks.joshskills.databinding.FragmentViewpagerCourseSelectionBinding
 import com.joshtalks.joshskills.repository.server.CourseExploreModel
 import com.joshtalks.joshskills.repository.server.onboarding.ONBOARD_VERSIONS
+import com.joshtalks.joshskills.repository.server.onboarding.VersionResponse
 import com.joshtalks.joshskills.ui.newonboarding.adapter.CourseSelectionAdapter
 import jp.wasabeef.recyclerview.animators.SlideInUpAnimator
 
@@ -71,19 +72,21 @@ class CourseSelectionViewPagerFragment : Fragment() {
         binding.recyclerView.addItemDecoration(
             LayoutMarginDecoration(Utils.dpToPx(requireContext(), 6f))
         )
-        var isSecondFlow = false
+        var hideButtons = false
         (requireActivity() as BaseActivity).getVersionData()?.let {
-            if (it.version!!.name == ONBOARD_VERSIONS.ONBOARDING_V3 ||
-                PrefManager.getBoolValue(IS_TRIAL_ENDED, false) ||
-                PrefManager.getBoolValue(IS_SUBSCRIPTION_STARTED)
-            ) {
-                isSecondFlow = true
-            }
+            hideButtons = hideButtons(it)
         }
-        adapter = CourseSelectionAdapter(courseList, isSecondFlow)
+        adapter = CourseSelectionAdapter(courseList, hideButtons)
         binding.recyclerView.adapter = adapter
 
     }
+
+    private fun hideButtons(versionResponse: VersionResponse): Boolean =
+        versionResponse.version!!.name == ONBOARD_VERSIONS.ONBOARDING_V3 ||
+                versionResponse.version!!.name == ONBOARD_VERSIONS.ONBOARDING_V5 ||
+                PrefManager.getBoolValue(IS_TRIAL_ENDED, false) ||
+                PrefManager.getBoolValue(IS_SUBSCRIPTION_STARTED)
+
 
     companion object {
         private const val ARG_COURSE_LIST_OBJ = "course-select-list-obj"

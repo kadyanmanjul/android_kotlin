@@ -9,6 +9,7 @@ import com.joshtalks.joshskills.core.CoreJoshActivity
 import com.joshtalks.joshskills.repository.server.onboarding.ONBOARD_VERSIONS
 import com.joshtalks.joshskills.ui.newonboarding.fragment.OnBoardIntroFragment
 import com.joshtalks.joshskills.ui.newonboarding.fragment.SelectCourseFragment
+import com.joshtalks.joshskills.ui.newonboarding.fragment.SelectCourseHeadingFragment
 import com.joshtalks.joshskills.ui.newonboarding.fragment.SelectInterestFragment
 import com.joshtalks.joshskills.ui.newonboarding.viewmodel.OnBoardViewModel
 
@@ -64,7 +65,7 @@ class OnBoardingActivityNew : CoreJoshActivity() {
                 if (haveCourses) {
                     replaceFragment(
                         R.id.onboarding_container,
-                        SelectCourseFragment.newInstance(haveCourses),
+                        SelectCourseFragment.newInstance(true),
                         SelectCourseFragment.TAG
                     )
                 } else {
@@ -90,6 +91,24 @@ class OnBoardingActivityNew : CoreJoshActivity() {
                     )
                 }
             }
+            ONBOARD_VERSIONS.ONBOARDING_V5 -> {
+                if (haveCourses) {
+                    replaceFragment(
+                        R.id.onboarding_container,
+                        SelectCourseFragment.newInstance(true),
+                        SelectCourseFragment.TAG
+                    )
+                } else {
+                    replaceFragment(
+                        R.id.onboarding_container,
+                        SelectCourseHeadingFragment.newInstance(),
+                        SelectCourseHeadingFragment.TAG
+                    )
+                }
+            }
+            else ->{
+                this.finish()
+            }
         }
     }
 
@@ -100,5 +119,16 @@ class OnBoardingActivityNew : CoreJoshActivity() {
             OnBoardIntroFragment.TAG
         )
         viewModel = ViewModelProvider(this).get(OnBoardViewModel::class.java)
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        val count = supportFragmentManager.backStackEntryCount
+        if (count == 0) {
+            super.onBackPressed()
+            //additional code
+        } else {
+            supportFragmentManager.popBackStack()
+        }
     }
 }

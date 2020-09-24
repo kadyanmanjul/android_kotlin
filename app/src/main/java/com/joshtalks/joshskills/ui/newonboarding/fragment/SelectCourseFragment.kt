@@ -124,7 +124,7 @@ class SelectCourseFragment : Fragment() {
                 when (response) {
                     ApiCallStatus.SUCCESS -> {
                         binding.progressBar.visibility = View.GONE
-                        showMoveToInboxScreen()
+                        MoveToInboxScreen()
                     }
                     ApiCallStatus.START -> {
                         binding.progressBar.visibility = View.VISIBLE
@@ -160,14 +160,15 @@ class SelectCourseFragment : Fragment() {
         CourseDetailsActivity.startCourseDetailsActivity(
             activity = requireActivity(),
             testId = testId,
+            whatsappUrl = whatsappLink,
             startedFrom = TAG,
             flags = arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT),
             isFromFreeTrial = haveCourses,
-            whatsappUrl = whatsappLink
+            buySubscription = false
         )
     }
 
-    private fun showMoveToInboxScreen() {
+    private fun MoveToInboxScreen() {
         startActivity((activity as BaseActivity).getInboxActivityIntent())
         requireActivity().finish()
     }
@@ -204,12 +205,7 @@ class SelectCourseFragment : Fragment() {
         if (PrefManager.getBoolValue(IS_GUEST_ENROLLED, false)) {
             binding.titleTv.text = getString(R.string.explorer_courses)
 
-            if (PrefManager.getBoolValue(
-                    IS_TRIAL_ENDED,
-                    false
-                ) || (requireActivity() as BaseActivity).getVersionData()?.version?.name == ONBOARD_VERSIONS.ONBOARDING_V3 ||
-                PrefManager.getBoolValue(IS_SUBSCRIPTION_STARTED)
-            ) {
+            if (hideContainer()) {
                 binding.startTrialContainer.visibility = View.GONE
 
             } else {
@@ -232,6 +228,11 @@ class SelectCourseFragment : Fragment() {
             return@setOnMenuItemClickListener true
         }
     }
+
+    private fun hideContainer(): Boolean = PrefManager.getBoolValue(IS_TRIAL_ENDED, false) ||
+            (requireActivity() as BaseActivity).getVersionData()?.version?.name == ONBOARD_VERSIONS.ONBOARDING_V3 ||
+            (requireActivity() as BaseActivity).getVersionData()?.version?.name == ONBOARD_VERSIONS.ONBOARDING_V5 ||
+            PrefManager.getBoolValue(IS_SUBSCRIPTION_STARTED)
 
     private fun setSelectedCourse(count: Int) {
         val string = SpannableStringBuilder(

@@ -39,6 +39,7 @@ import com.joshtalks.joshskills.ui.courseprogress.CourseProgressActivity
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
 import com.joshtalks.joshskills.ui.extra.CustomPermissionDialogFragment
 import com.joshtalks.joshskills.ui.help.HelpActivity
+import com.joshtalks.joshskills.ui.inbox.IS_FROM_NEW_ONBOARDING
 import com.joshtalks.joshskills.ui.inbox.InboxActivity
 import com.joshtalks.joshskills.ui.nps.NetPromoterScoreFragment
 import com.joshtalks.joshskills.ui.signup.OnBoardActivity
@@ -140,11 +141,12 @@ abstract class BaseActivity : AppCompatActivity() {
         }
     }
 
-    fun getInboxActivityIntent(): Intent {
+    fun getInboxActivityIntent(isFromOnBoardingFlow: Boolean=false): Intent {
         return Intent(this, InboxActivity::class.java).apply {
             addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             putExtra(SHOW_OVERLAY, true)
+            putExtra(IS_FROM_NEW_ONBOARDING, isFromOnBoardingFlow)
         }
     }
 
