@@ -39,7 +39,7 @@ class SuccessfulEnrolledBottomSheet : BottomSheetDialogFragment() {
     }
 
     fun onStartLearningClicked() {
-        startActivity((activity as BaseActivity).getInboxActivityIntent())
+        startActivity((requireActivity() as BaseActivity).getInboxActivityIntent())
         requireActivity().finish()
     }
 
