@@ -30,6 +30,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/_12sdp"
             android:textAlignment="center"
+            android:layout_marginTop="@dimen/_12ssp"
             android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H3"
             android:letterSpacing="0"
             android:textColor="@color/black"

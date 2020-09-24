@@ -8,6 +8,7 @@ import androidx.core.content.res.ResourcesCompat
 import com.google.android.material.card.MaterialCardView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.textColorSet
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.CourseHeadingSelectedEvent
 import com.joshtalks.joshskills.repository.server.onboarding.CourseHeading
@@ -15,6 +16,7 @@ import com.mindorks.placeholderview.annotations.Click
 import com.mindorks.placeholderview.annotations.Layout
 import com.mindorks.placeholderview.annotations.Resolve
 import com.mindorks.placeholderview.annotations.View
+import org.jetbrains.anko.textColor
 
 @Layout(R.layout.course_heading_item)
 class CourseHeadingViewHolder(
@@ -72,6 +74,7 @@ class CourseHeadingViewHolder(
                 R.color.colorPrimary
             )
         )
+        question.textColorSet(R.color.white)
         tick.setImageDrawable(drawableSelected)
     }
 
@@ -83,6 +86,7 @@ class CourseHeadingViewHolder(
                 R.color.pdf_bg_color
             )
         )
+        question.textColorSet(R.color.black)
         tick.setImageDrawable(drawableUnselected)
     }
 }

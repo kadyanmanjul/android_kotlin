@@ -29,6 +29,7 @@
             android:layout_height="wrap_content"
             android:paddingHorizontal="@dimen/_12sdp"
             android:textAlignment="center"
+            android:layout_marginTop="@dimen/_12ssp"
             android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Bold"
             android:letterSpacing="0"
             app:layout_constraintStart_toStartOf="parent"
@@ -53,6 +54,7 @@
         <androidx.viewpager2.widget.ViewPager2
             android:id="@+id/view_pager_text"
             android:layout_width="match_parent"
+            android:layout_marginTop="@dimen/_24ssp"
             android:layout_height="wrap_content"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
