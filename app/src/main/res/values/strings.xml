@@ -411,5 +411,10 @@
     <string name="call_permission_permanent_message">To answer this call from %s , allow Josh Skills access to your microphone . Tap Settings > Permissions, and turn Microphone on .</string>
 
     <string name="clear_all_media">Clear All Media</string>
+    <string name="select_course_heading_btn">Mein ye cheeze achieve karna chahta hoon</string>
+    <string name="start_course_free">Start my Courses For Free</string>
+    <string name="buy_pass">Buy All Course Access Pass</string>
+
+    <string name="hint_text_btn"><u>Ok got it </u></string>
 
 </resources>
