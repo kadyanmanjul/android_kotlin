@@ -7,10 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
 import androidx.recyclerview.widget.RecyclerView
 import com.github.vipulasri.timelineview.TimelineView
-import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.loadJSONFromAsset
 import com.joshtalks.joshskills.core.setImage
 import com.joshtalks.joshskills.databinding.ConversationPracticeTimelineItemBinding
 import com.joshtalks.joshskills.repository.local.model.PractiseFlowOptionModel
@@ -22,7 +19,6 @@ import kotlinx.android.synthetic.main.fragment_conversation_practice_ntro.image_
 import kotlinx.android.synthetic.main.fragment_conversation_practice_ntro.recycler_view
 import kotlinx.android.synthetic.main.fragment_conversation_practice_ntro.text_header
 import kotlinx.android.synthetic.main.fragment_conversation_practice_ntro.text_sub_header
-import java.lang.reflect.Type
 
 
 class ConversationPracticeIntro private constructor() : DialogFragment() {
@@ -81,12 +77,8 @@ class ConversationPracticeIntro private constructor() : DialogFragment() {
 
         text_header.text = conversationPractiseModel.title
         text_sub_header.text = conversationPractiseModel.subTitle
-
-        val typeToken: Type = object : TypeToken<List<PractiseFlowOptionModel>>() {}.type
-        val obj = AppObjectController.gsonMapperForLocal.fromJson<List<PractiseFlowOptionModel>>(
-            loadJSONFromAsset("practise_flow_details.json"), typeToken
-        )
-        recycler_view.adapter = ConversationPracticeTimelineAdapter(obj)
+        recycler_view.adapter =
+            ConversationPracticeTimelineAdapter(PractiseFlowOptionModel.getPractiseFlowDetails())
         continue_btn.setOnClickListener {
             dismissAllowingStateLoss()
         }
