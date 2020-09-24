@@ -264,8 +264,9 @@ class CourseExploreActivity : CoreJoshActivity() {
                             CourseDetailsActivity.startCourseDetailsActivity(
                                 activity = this,
                                 testId = testId,
+                                whatsappUrl = courseExploreModel.whatsappUrl,
                                 startedFrom = this@CourseExploreActivity.javaClass.simpleName,
-                                whatsappUrl = courseExploreModel.whatsappUrl
+                                buySubscription = false
 
                             )
                         }
