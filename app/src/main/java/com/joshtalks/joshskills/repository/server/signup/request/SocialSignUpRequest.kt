@@ -71,6 +71,8 @@ class SocialSignUpRequest private constructor(
         fun mobile(mobile: String) = apply { this.mobile = mobile }
         fun otp(otp: String) = apply { this.otp = otp }
         fun countryCode(countryCode: String) = apply { this.countryCode = countryCode }
+        fun dateOfBirth(dateOfBirth: String) = apply { this.dateOfBirth = dateOfBirth }
+        fun gender(gender: String) = apply { this.gender = gender }
         fun build() =
             SocialSignUpRequest(
                 instanceId,
