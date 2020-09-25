@@ -149,3 +149,14 @@ class FirebaseRemoteConfigKey {
 
     }
 }
+
+
+sealed class AchievementLevel()
+
+data class Level1(val action: String = "level_1", val watchTime: Int = 10,val levelPosition:Int=1) : AchievementLevel()
+data class Level2(val action: String = "level_2", val watchTime: Int = 20,val levelPosition:Int=2) : AchievementLevel()
+data class Level3(val action: String = "level_3", val watchTime: Int = 30,val levelPosition:Int=3) : AchievementLevel()
+data class Level4(val action: String = "level_4", val watchTime: Int = 40,val levelPosition:Int=4) : AchievementLevel()
+data class Level5(val action: String = "level_5", val watchTime: Int = 50,val levelPosition:Int=5) : AchievementLevel()
+data class Level6(val action: String = "level_6", val watchTime: Int = 60,val levelPosition:Int=6) : AchievementLevel()
+data class Level7(val action: String = "level_7", val watchTime: Int = 70,val levelPosition:Int=7) : AchievementLevel()

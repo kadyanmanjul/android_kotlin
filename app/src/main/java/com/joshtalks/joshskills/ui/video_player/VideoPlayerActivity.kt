@@ -18,6 +18,7 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.core.CountUpTimer
+import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
@@ -115,6 +116,7 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
     private var videoList: List<VideoType> = emptyList()
     private var maxInterval: Int = -1
     private var interval = -1
+    private var courseId: Int = -1
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -132,6 +134,9 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
         if (intent.hasExtra(VIDEO_OBJECT)) {
             chatObject = intent.getParcelableExtra(VIDEO_OBJECT) as ChatModel
             chatObject?.run {
+                question?.let { question ->
+                    courseId = question.course_id
+                }
                 videoId = this.question?.videoList?.getOrNull(0)?.id
                 feedbackEngagementStatus(this.question)
                 DatabaseUtils.updateLastUsedModification(this.chatId)
@@ -473,7 +478,8 @@ class VideoPlayerActivity : BaseActivity(), VideoPlayerEventListener, UsbEventLi
                     VideoEngage(
                         videoViewGraphList.toList(),
                         this.toInt(),
-                        countUpTimer.time.toLong()
+                        countUpTimer.time.toLong(),
+                        courseID = courseId,
                     )
                 )
             }

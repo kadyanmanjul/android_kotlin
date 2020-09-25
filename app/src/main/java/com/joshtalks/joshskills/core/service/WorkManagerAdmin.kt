@@ -75,9 +75,9 @@ object WorkManagerAdmin {
             ).enqueue()
     }
 
-    fun installReferrerWorker() {
+    fun syncEngageVideoTask() {
         WorkManager.getInstance(AppObjectController.joshApplication)
-            .enqueue(OneTimeWorkRequestBuilder<JoshTalksInstallWorker>().build())
+            .enqueue(OneTimeWorkRequestBuilder<SyncEngageVideo>().build())
     }
 
     fun deviceIdGenerateWorker() {

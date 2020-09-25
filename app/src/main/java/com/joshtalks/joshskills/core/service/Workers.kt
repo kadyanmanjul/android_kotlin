@@ -463,7 +463,7 @@ class SyncEngageVideo(context: Context, workerParams: WorkerParameters) :
                 } catch (ex: Exception) {
                 }
             }
-            AppObjectController.appDatabase.videoEngageDao().deleteVideos(syncEngageVideoList)
+            AppObjectController.appDatabase.videoEngageDao().updateVideoSyncStatus(syncEngageVideoList)
         }
 
         return Result.success()

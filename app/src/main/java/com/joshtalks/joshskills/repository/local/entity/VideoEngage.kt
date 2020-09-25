@@ -29,22 +29,27 @@ data class VideoEngage(
     val videoId: Int = 0,
 
     @SerializedName("watch_time")
-    var watchTime: Long = 0
+    var watchTime: Long = 0,
 
-
-) : Parcelable {
+    ) : Parcelable {
     @PrimaryKey(autoGenerate = true)
     @Expose
     var id: Long = 0
-
 
     @SerializedName("mentor_id")
     var mentorId: String? = null
 
     @SerializedName("gaid_id")
     var gID: String? = null
-}
 
+    @Expose
+    @ColumnInfo(name = "course_id")
+    var courseID: Int = -1
+
+    @Expose
+    @ColumnInfo(name = "is_sync")
+    var isSync: Boolean = false
+}
 
 @Dao
 interface VideoEngageDao {
@@ -52,11 +57,19 @@ interface VideoEngageDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertVideoEngage(videoEngage: VideoEngage)
 
-    @Query(value = "SELECT * from video_watch_table ")
+    @Query(value = "SELECT * from video_watch_table where is_sync=0")
     suspend fun getAllUnSyncVideo(): List<VideoEngage>
 
-    @Query("delete from video_watch_table where id in (:idList)")
-    suspend fun deleteVideos(idList: List<Long>)
+    @Query(value = "SELECT SUM(watchTime) as abcd from video_watch_table GROUP BY course_id")
+    suspend fun getWatchTime() : List<VideoEngageEntity>
 
+    @Query("UPDATE video_watch_table SET is_sync =1 where id in (:idList)")
+    suspend fun updateVideoSyncStatus(idList: List<Long>)
 
 }
+
+@Parcelize
+data class VideoEngageEntity constructor(
+    @ColumnInfo(name = "course_id")
+    var courseId: Int? = -1
+) : Parcelable

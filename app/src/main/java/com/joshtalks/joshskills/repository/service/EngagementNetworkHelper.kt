@@ -5,6 +5,7 @@ import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.USER_UNIQUE_ID
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
+import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.repository.local.entity.VideoEngage
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.NotificationObject
@@ -29,9 +30,9 @@ object EngagementNetworkHelper {
                 if (Mentor.getInstance().hasId()) {
                     videoEngage.mentorId = Mentor.getInstance().getId()
                 }
-                AppObjectController.chatNetworkService.engageVideoApiV2(videoEngage)
-            } catch (ex: Exception) {
                 AppObjectController.appDatabase.videoEngageDao().insertVideoEngage(videoEngage)
+                WorkManagerAdmin.syncEngageVideoTask()
+            } catch (ex: Exception) {
                 ex.printStackTrace()
             }
         }
