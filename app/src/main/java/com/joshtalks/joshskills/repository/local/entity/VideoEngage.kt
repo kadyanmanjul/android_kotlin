@@ -30,8 +30,12 @@ data class VideoEngage(
 
     @SerializedName("watch_time")
     var watchTime: Long = 0,
+    @Expose
+    @ColumnInfo(name = "course_id")
+    var courseID: Int = -1
 
-    ) : Parcelable {
+
+) : Parcelable {
     @PrimaryKey(autoGenerate = true)
     @Expose
     var id: Long = 0
@@ -42,9 +46,6 @@ data class VideoEngage(
     @SerializedName("gaid_id")
     var gID: String? = null
 
-    @Expose
-    @ColumnInfo(name = "course_id")
-    var courseID: Int = -1
 
     @Expose
     @ColumnInfo(name = "is_sync")
@@ -60,16 +61,20 @@ interface VideoEngageDao {
     @Query(value = "SELECT * from video_watch_table where is_sync=0")
     suspend fun getAllUnSyncVideo(): List<VideoEngage>
 
-    @Query(value = "SELECT SUM(watchTime) as abcd from video_watch_table GROUP BY course_id")
-    suspend fun getWatchTime() : List<VideoEngageEntity>
+    // @Query("SELECT sum(watchTime) from video_watch_table ")
+    @Query("SELECT SUM(watchTime) as total,course_id FROM video_watch_table GROUP BY course_id ORDER BY total DESC LIMIT 1;")
+    suspend fun getWatchTime(): VideoEngageEntity
 
     @Query("UPDATE video_watch_table SET is_sync =1 where id in (:idList)")
     suspend fun updateVideoSyncStatus(idList: List<Long>)
-
 }
 
 @Parcelize
 data class VideoEngageEntity constructor(
+    @ColumnInfo(name = "total")
+    var total: Int? = -1,
     @ColumnInfo(name = "course_id")
-    var courseId: Int? = -1
-) : Parcelable
+    var courseId: Int? = -1,
+
+
+    ) : Parcelable
