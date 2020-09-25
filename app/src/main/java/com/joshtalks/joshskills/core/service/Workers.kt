@@ -19,7 +19,6 @@ import com.joshtalks.joshskills.core.EXPLORE_TYPE
 import com.joshtalks.joshskills.core.INSTANCE_ID
 import com.joshtalks.joshskills.core.InstallReferralUtil
 import com.joshtalks.joshskills.core.LOGIN_ON
-import com.joshtalks.joshskills.core.ONBOARDING_VERSION_KEY
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.RATING_DETAILS_KEY
 import com.joshtalks.joshskills.core.RESTORE_ID
@@ -45,6 +44,7 @@ import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.ActiveUserRequest
 import com.joshtalks.joshskills.repository.server.MessageStatusRequest
 import com.joshtalks.joshskills.repository.server.UpdateDeviceRequest
+import com.joshtalks.joshskills.repository.server.onboarding.VersionResponse
 import com.joshtalks.joshskills.repository.server.signup.LoginResponse
 import com.joshtalks.joshskills.repository.service.NetworkRequestHelper
 import com.joshtalks.joshskills.repository.service.SyncChatService
@@ -142,10 +142,8 @@ class GetVersionAndFlowDataWorker(var context: Context, workerParams: WorkerPara
 
     override suspend fun doWork(): Result {
         try {
-            if (PrefManager.hasKey(INSTANCE_ID, false) && PrefManager.hasKey(
-                    ONBOARDING_VERSION_KEY,
-                    false
-                ).not()
+            if (PrefManager.hasKey(INSTANCE_ID, false) &&
+                VersionResponse.getInstance().hasVersion().not()
             ) {
                 val instanceId = PrefManager.getStringValue(INSTANCE_ID)
                 val res =
@@ -158,10 +156,7 @@ class GetVersionAndFlowDataWorker(var context: Context, workerParams: WorkerPara
                             it.courseCategories?.sortedBy { category -> category.sortOrder }
                         it.courseInterestTags = sortedInterest
                         it.courseCategories = sortedCategories
-                        PrefManager.put(
-                            ONBOARDING_VERSION_KEY,
-                            AppObjectController.gsonMapper.toJson(it)
-                        )
+                        VersionResponse.update(it)
                     }
                 }
             }

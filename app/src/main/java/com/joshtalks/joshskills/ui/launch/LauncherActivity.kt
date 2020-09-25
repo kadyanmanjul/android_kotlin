@@ -24,6 +24,7 @@ import com.joshtalks.joshskills.core.analytics.LogException
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.onboarding.ONBOARD_VERSIONS
+import com.joshtalks.joshskills.repository.server.onboarding.VersionResponse
 import com.joshtalks.joshskills.ui.course_details.CourseDetailsActivity
 import com.joshtalks.joshskills.ui.extra.CustomPermissionDialogInteractionListener
 import com.joshtalks.joshskills.ui.inbox.COURSE_EXPLORER_NEW
@@ -121,9 +122,9 @@ class LauncherActivity : CoreJoshActivity(), CustomPermissionDialogInteractionLi
 
     override fun navigateToNextScreen() {
         Handler().postDelayed({
-            val versionResponse = getVersionData()
+            val versionResponse = VersionResponse.getInstance()
 
-            if (versionResponse == null) {
+            if (versionResponse.version == null) {
                 navigateToNextScreen()
             } else {
                 when (versionResponse.version!!.name) {

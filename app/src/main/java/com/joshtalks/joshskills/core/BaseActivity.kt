@@ -365,21 +365,4 @@ abstract class BaseActivity : AppCompatActivity() {
             return true
         }
     }
-
-    fun getVersionData(): VersionResponse? {
-        versionResponse?.let {
-            return it
-        }
-        try {
-            versionResponse = AppObjectController.gsonMapper.fromJson(
-                PrefManager.getStringValue(ONBOARDING_VERSION_KEY),
-                versionResponseTypeToken
-            )
-            return versionResponse
-
-        } catch (ex: Throwable) {
-            ex.showAppropriateMsg()
-        }
-        return null
-    }
 }

@@ -31,6 +31,7 @@ import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.eventbus.CourseSelectedEventBus
 import com.joshtalks.joshskills.repository.server.CourseExploreModel
 import com.joshtalks.joshskills.repository.server.onboarding.ONBOARD_VERSIONS
+import com.joshtalks.joshskills.repository.server.onboarding.VersionResponse
 import com.joshtalks.joshskills.ui.course_details.CourseDetailsActivity
 import com.joshtalks.joshskills.ui.newonboarding.adapter.CourseSelectionViewPageAdapter
 import com.joshtalks.joshskills.ui.newonboarding.viewmodel.OnBoardViewModel
@@ -73,7 +74,7 @@ class SelectCourseFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         version =
-            (requireActivity() as BaseActivity).getVersionData()?.version?.name?.type.toString()
+            VersionResponse.getInstance().version?.name?.type.toString()
         initView()
         subscribeObservers()
     }
@@ -99,7 +100,7 @@ class SelectCourseFragment : Fragment() {
             }
             val courseMapByCategoryName: HashMap<String, ArrayList<CourseExploreModel>> = HashMap()
 
-            (requireActivity() as BaseActivity).getVersionData()?.courseCategories?.forEach {
+            VersionResponse.getInstance().courseCategories?.forEach {
                 categoryList.keys.forEach innerLoop@{ category_id ->
                     if (it.id == category_id) {
                         courseMapByCategoryName[it.name!!] = categoryList[category_id]!!
@@ -230,8 +231,8 @@ class SelectCourseFragment : Fragment() {
     }
 
     private fun hideContainer(): Boolean = PrefManager.getBoolValue(IS_TRIAL_ENDED, false) ||
-            (requireActivity() as BaseActivity).getVersionData()?.version?.name == ONBOARD_VERSIONS.ONBOARDING_V3 ||
-            (requireActivity() as BaseActivity).getVersionData()?.version?.name == ONBOARD_VERSIONS.ONBOARDING_V5 ||
+            VersionResponse.getInstance().version?.name == ONBOARD_VERSIONS.ONBOARDING_V3 ||
+            VersionResponse.getInstance().version?.name == ONBOARD_VERSIONS.ONBOARDING_V5 ||
             PrefManager.getBoolValue(IS_SUBSCRIPTION_STARTED)
 
     private fun setSelectedCourse(count: Int) {
@@ -242,7 +243,7 @@ class SelectCourseFragment : Fragment() {
             )
         )
         binding.courses.text = string
-        (requireActivity() as BaseActivity).getVersionData()?.let {
+        if (VersionResponse.getInstance().hasVersion()) {
             if (count == 0) {
                 binding.courses.textColor =
                     ContextCompat.getColor(requireActivity(), R.color.light_grey)

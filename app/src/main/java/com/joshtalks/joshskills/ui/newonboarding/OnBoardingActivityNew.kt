@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.CoreJoshActivity
 import com.joshtalks.joshskills.repository.server.onboarding.ONBOARD_VERSIONS
+import com.joshtalks.joshskills.repository.server.onboarding.VersionResponse
 import com.joshtalks.joshskills.ui.newonboarding.fragment.OnBoardIntroFragment
 import com.joshtalks.joshskills.ui.newonboarding.fragment.SelectCourseFragment
 import com.joshtalks.joshskills.ui.newonboarding.fragment.SelectCourseHeadingFragment
@@ -50,7 +51,7 @@ class OnBoardingActivityNew : CoreJoshActivity() {
     }
 
     private fun openCoursesFragment(haveCourses: Boolean) {
-        when (getVersionData()?.version!!.name) {
+        when (VersionResponse.getInstance().version!!.name) {
             ONBOARD_VERSIONS.ONBOARDING_V1 -> {
                 this.finish()
             }

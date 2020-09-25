@@ -61,6 +61,7 @@ import com.joshtalks.joshskills.repository.server.UpdateUserLocality
 import com.joshtalks.joshskills.repository.server.onboarding.FreeTrialData
 import com.joshtalks.joshskills.repository.server.onboarding.ONBOARD_VERSIONS
 import com.joshtalks.joshskills.repository.server.onboarding.SubscriptionData
+import com.joshtalks.joshskills.repository.server.onboarding.VersionResponse
 import com.joshtalks.joshskills.ui.chat.ConversationActivity
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
 import com.joshtalks.joshskills.ui.inbox.extra.TopTrialTooltipView
@@ -378,8 +379,8 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         titleView.text = getString(R.string.inbox_header)
         findMoreLayout = findViewById(R.id.parent_layout)
         if (isGuestUser()) {
-            getVersionData()?.let {
-                when (it.version!!.name) {
+            if(VersionResponse.getInstance().hasVersion()) {
+                when (VersionResponse.getInstance().version!!.name) {
                     ONBOARD_VERSIONS.ONBOARDING_V1 -> {
                         find_more.setOnClickListener {
                             AppAnalytics.create(AnalyticsEvent.FIND_MORE_COURSE_CLICKED.NAME)
@@ -726,8 +727,8 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
     }
 
     private fun openNewOnBoardFlow() {
-        getVersionData()?.let {
-            when (it.version?.name) {
+        if(VersionResponse.getInstance().hasVersion()) {
+            when (VersionResponse.getInstance().version?.name) {
                 ONBOARD_VERSIONS.ONBOARDING_V1 -> {
                     openCourseExplorer()
                 }

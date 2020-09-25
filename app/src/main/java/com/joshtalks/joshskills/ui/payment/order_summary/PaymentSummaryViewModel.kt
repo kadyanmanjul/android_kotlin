@@ -14,7 +14,6 @@ import com.joshtalks.joshskills.core.INSTANCE_ID
 import com.joshtalks.joshskills.core.IS_SUBSCRIPTION_STARTED
 import com.joshtalks.joshskills.core.IS_TRIAL_STARTED
 import com.joshtalks.joshskills.core.JoshApplication
-import com.joshtalks.joshskills.core.ONBOARDING_VERSION_KEY
 import com.joshtalks.joshskills.core.PAYMENT_MOBILE_NUMBER
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.REMAINING_SUBSCRIPTION_DAYS
@@ -320,19 +319,11 @@ class PaymentSummaryViewModel(application: Application) : AndroidViewModel(appli
                     response.body()?.run {
                         // Update Version Data in local
                         PrefManager.put(SUBSCRIPTION_TEST_ID,this.SubscriptionTestId)
-                        val versionData = AppObjectController.gsonMapper.fromJson<VersionResponse>(
-                            PrefManager.getStringValue(ONBOARDING_VERSION_KEY),
-                            object : TypeToken<VersionResponse>() {}.type
-                        )
-                        versionData?.version?.let {
+                        val versionData = VersionResponse.getInstance()
+                        versionData.version?.let {
                             it.name = this.version.name
                             it.id = this.version.id
-                        }
-                        versionData?.let {
-                            PrefManager.put(
-                                ONBOARDING_VERSION_KEY,
-                                AppObjectController.gsonMapper.toJson(versionData)
-                            )
+                            VersionResponse.update(versionData)
                         }
 
                         // save Free trial data

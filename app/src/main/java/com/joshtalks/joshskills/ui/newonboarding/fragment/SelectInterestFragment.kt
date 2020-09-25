@@ -11,12 +11,14 @@ import com.google.android.material.chip.Chip
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.ApiCallStatus
 import com.joshtalks.joshskills.core.BaseActivity
+import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.IS_GUEST_ENROLLED
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.FragmentSelectInterestBinding
+import com.joshtalks.joshskills.repository.server.onboarding.VersionResponse
 import com.joshtalks.joshskills.ui.newonboarding.viewmodel.OnBoardViewModel
 import kotlinx.android.synthetic.main.base_toolbar.view.iv_help
 import kotlinx.android.synthetic.main.base_toolbar.view.text_message_title
@@ -44,10 +46,8 @@ class SelectInterestFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewmodel = ViewModelProvider(requireActivity()).get(OnBoardViewModel::class.java)
-        maxSelection =
-            (requireActivity() as BaseActivity).getVersionData()?.maximumNumberOfInterests!!
-        minSelection =
-            (requireActivity() as BaseActivity).getVersionData()?.minimumNumberOfInterests!!
+        maxSelection = VersionResponse.getInstance().maximumNumberOfInterests ?: 5
+        minSelection = VersionResponse.getInstance().minimumNumberOfInterests ?: 1
     }
 
     override fun onCreateView(
@@ -58,11 +58,10 @@ class SelectInterestFragment : Fragment() {
         binding =
             DataBindingUtil.inflate(inflater, R.layout.fragment_select_interest, container, false)
         binding.handler = this
-        binding.interestDescriptionTv.text =
-            (requireActivity() as BaseActivity).getVersionData()?.interestText
+        binding.interestDescriptionTv.text = VersionResponse.getInstance().interestText?: EMPTY
 
         binding.toolbar.iv_help.setOnClickListener { (requireActivity() as BaseActivity).openHelpActivity() }
-
+        if(VersionResponse.getInstance().hasVersion())
         populateInterests()
         return binding.root
     }
@@ -81,8 +80,8 @@ class SelectInterestFragment : Fragment() {
         AppAnalytics.create(AnalyticsEvent.NEW_ONBOARDING_ENROLLED_WITH_INTERESTS.NAME)
             .addBasicParam()
             .addUserDetails()
-            .addParam("With number of tag",interestSet.size)
-            .addParam("is_already-enrolled",PrefManager.getBoolValue(IS_GUEST_ENROLLED))
+            .addParam("With number of tag", interestSet.size)
+            .addParam("is_already-enrolled", PrefManager.getBoolValue(IS_GUEST_ENROLLED))
             .push()
         viewmodel.enrollMentorAgainstTags(interestSet.toList())
     }
@@ -99,7 +98,7 @@ class SelectInterestFragment : Fragment() {
 
 
     private fun populateInterests() {
-        (requireActivity() as BaseActivity).getVersionData()?.courseInterestTags?.forEach {
+        VersionResponse.getInstance().courseInterestTags?.forEach {
             val chip = LayoutInflater.from(context)
                 .inflate(R.layout.interest_chip_item, null, false) as Chip
             chip.text = it.name

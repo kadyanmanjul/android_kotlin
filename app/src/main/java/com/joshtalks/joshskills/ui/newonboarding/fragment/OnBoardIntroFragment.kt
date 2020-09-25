@@ -16,6 +16,7 @@ import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.databinding.FragmentOnBoardIntroBinding
 import com.joshtalks.joshskills.repository.server.onboarding.ONBOARD_VERSIONS
+import com.joshtalks.joshskills.repository.server.onboarding.VersionResponse
 import com.joshtalks.joshskills.ui.newonboarding.adapter.OnBoardingIntroTextAdapter
 import com.joshtalks.joshskills.ui.newonboarding.viewmodel.OnBoardViewModel
 import com.joshtalks.joshskills.ui.signup.FLOW_FROM
@@ -50,18 +51,18 @@ class OnBoardIntroFragment : Fragment() {
     }
 
     private fun initView() {
-        (requireActivity() as BaseActivity).getVersionData()?.let { versionData ->
+        if(VersionResponse.getInstance().hasVersion()) {
             // Set buttonText
-            if (versionData.version!!.name == ONBOARD_VERSIONS.ONBOARDING_V2)
+            if (VersionResponse.getInstance().version!!.name == ONBOARD_VERSIONS.ONBOARDING_V2)
                 binding.startBtn.text = getString(R.string.start_your_7_day_trial)
             else
                 binding.startBtn.text = getString(R.string.get_started)
 
             //Set Cover Image
-            Utils.setImage(binding.scrollingIv, versionData.image)
+            Utils.setImage(binding.scrollingIv, VersionResponse.getInstance().image)
             startImageScrolling()
             //Set up text viewpager
-            versionData.content?.let {
+            VersionResponse.getInstance().content?.let {
                 binding.viewPagerText.adapter = OnBoardingIntroTextAdapter(
                     requireActivity().supportFragmentManager,
                     it
@@ -95,27 +96,27 @@ class OnBoardIntroFragment : Fragment() {
     }
 
     private fun moveToNextScreen() {
-        (requireActivity() as BaseActivity).apply {
-            when (getVersionData()?.version!!.name) {
+        if(VersionResponse.getInstance().hasVersion()) {
+            when (VersionResponse.getInstance().version!!.name) {
                 ONBOARD_VERSIONS.ONBOARDING_V1 -> {
-                    return@apply
+                    return
                 }
                 ONBOARD_VERSIONS.ONBOARDING_V2 -> {
-                    replaceFragment(
+                    (requireActivity() as BaseActivity).replaceFragment(
                         R.id.onboarding_container,
                         SelectCourseFragment.newInstance(),
                         SelectCourseFragment.TAG
                     )
                 }
                 ONBOARD_VERSIONS.ONBOARDING_V3, ONBOARD_VERSIONS.ONBOARDING_V4 -> {
-                    replaceFragment(
+                    (requireActivity() as BaseActivity).replaceFragment(
                         R.id.onboarding_container,
                         SelectInterestFragment.newInstance(),
                         SelectInterestFragment.TAG
                     )
                 }
                 ONBOARD_VERSIONS.ONBOARDING_V5 -> {
-                    replaceFragment(
+                    (requireActivity() as BaseActivity).replaceFragment(
                         R.id.onboarding_container,
                         SelectCourseHeadingFragment.newInstance(),
                         SelectCourseHeadingFragment.TAG

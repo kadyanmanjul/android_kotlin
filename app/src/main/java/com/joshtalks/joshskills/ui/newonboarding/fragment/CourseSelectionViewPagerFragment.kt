@@ -73,8 +73,8 @@ class CourseSelectionViewPagerFragment : Fragment() {
             LayoutMarginDecoration(Utils.dpToPx(requireContext(), 6f))
         )
         var hideButtons = false
-        (requireActivity() as BaseActivity).getVersionData()?.let {
-            hideButtons = hideButtons(it)
+        if(VersionResponse.getInstance().hasVersion()){
+            hideButtons = hideButtons(VersionResponse.getInstance())
         }
         adapter = CourseSelectionAdapter(courseList, hideButtons)
         binding.recyclerView.adapter = adapter
