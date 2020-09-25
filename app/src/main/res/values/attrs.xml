@@ -232,6 +232,13 @@
         <attr name="pulse_layout_RippleEndRadiusPercent" format="float" />
         <attr name="pulse_layout_PulseInterpolator" format="reference" />
     </declare-styleable>
-
+    <declare-styleable name="SubsamplingScaleImageView">
+        <attr name="src" format="reference" />
+        <attr name="assetName" format="string" />
+        <attr name="panEnabled" format="boolean" />
+        <attr name="zoomEnabled" format="boolean" />
+        <attr name="quickScaleEnabled" format="boolean" />
+        <attr name="tileBackgroundColor" format="color" />
+    </declare-styleable>
 
 </resources>
