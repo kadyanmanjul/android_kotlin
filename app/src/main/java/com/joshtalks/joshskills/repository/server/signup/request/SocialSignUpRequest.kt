@@ -30,7 +30,11 @@ class SocialSignUpRequest private constructor(
     @SerializedName("country_code")
     var countryCode: String?,
     @SerializedName("otp")
-    val otp: String?
+    val otp: String?,
+    @SerializedName("date_of_birth")
+    var dateOfBirth: String?,
+    @SerializedName("gender")
+    var gender: String?
 ) {
     data class Builder(
         var mentorId: String,
@@ -48,6 +52,8 @@ class SocialSignUpRequest private constructor(
         var mobile: String? = null
         var otp: String? = null
         var countryCode: String? = null
+        var dateOfBirth: String? = null
+        var gender: String? = null
 
         fun instanceId(instanceId: String) = apply { this.instanceId = instanceId }
         fun mentorId(mentorId: String) = apply { this.mentorId = mentorId }
@@ -60,6 +66,8 @@ class SocialSignUpRequest private constructor(
         fun payload(payload: String) = apply { this.payload = payload }
         fun signature(signature: String) = apply { this.signature = signature }
         fun signatureAlgo(signatureAlgo: String) = apply { this.signatureAlgo = signatureAlgo }
+        fun dateOfBirth(dateOfBirth: String) = apply { this.dateOfBirth = dateOfBirth }
+        fun gender(gender: String) = apply { this.gender = gender }
         fun mobile(mobile: String) = apply { this.mobile = mobile }
         fun otp(otp: String) = apply { this.otp = otp }
         fun countryCode(countryCode: String) = apply { this.countryCode = countryCode }
@@ -75,7 +83,9 @@ class SocialSignUpRequest private constructor(
                 socialId,
                 payload,
                 signature,
-                signatureAlgo, mobile, countryCode, otp
+                signatureAlgo, mobile, countryCode, otp,
+                dateOfBirth,
+                gender
             )
     }
 }

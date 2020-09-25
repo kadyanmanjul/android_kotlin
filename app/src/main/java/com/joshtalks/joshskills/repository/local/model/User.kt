@@ -41,7 +41,7 @@ open class User {
     @SerializedName("user_type")
     var userType: String = EMPTY
 
-    @SerializedName("source")
+    @SerializedName("created_source")
     var source: String = EMPTY
 
     @SerializedName("is_verified")

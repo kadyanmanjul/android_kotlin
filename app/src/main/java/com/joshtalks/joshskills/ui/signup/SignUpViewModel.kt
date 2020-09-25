@@ -283,7 +283,7 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
         if (user.phoneNumber.isNotEmpty() && user.firstName.isEmpty()) {
             return _signUpStatus.postValue(SignUpStepStatus.ProfileInCompleted)
         }
-        if (user.firstName.isEmpty()) {
+        if (user.firstName.isEmpty() || user.dateOfBirth.isNullOrEmpty() || user.gender.isEmpty()) {
             return _signUpStatus.postValue(SignUpStepStatus.ProfileInCompleted)
         }
         _signUpStatus.postValue(SignUpStepStatus.SignUpCompleted)

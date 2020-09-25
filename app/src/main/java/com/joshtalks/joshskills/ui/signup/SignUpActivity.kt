@@ -258,6 +258,8 @@ class SignUpActivity : BaseActivity() {
                 ).payload(trueProfile.payload)
                     .signatureAlgo(trueProfile.signatureAlgorithm)
                     .signature(trueProfile.signature)
+                    .name(trueProfile.firstName)
+                    .gender(trueProfile.gender)
                     .build()
                 viewModel.verifyUser(requestObj)
                 //}
@@ -369,16 +371,6 @@ class SignUpActivity : BaseActivity() {
                 if (jsonObject.has("email")) {
                     email = jsonObject.getString("email")
                 }
-
-                /*  if (getVersionData()?.version?.name == ONBOARD_VERSIONS.ONBOARDING_V1 || isGuestUser().not()) {
-                      viewModel.signUpUsingSocial(
-                          LoginViaStatus.FACEBOOK,
-                          id,
-                          name,
-                          email,
-                          getFBProfilePicture(id)
-                      )
-                  } else {*/
                     val requestObj = SocialSignUpRequest.Builder(
                         Mentor.getInstance().getId(),
                         PrefManager.getStringValue(INSTANCE_ID, false),
@@ -424,15 +416,6 @@ class SignUpActivity : BaseActivity() {
     ) {
         if (accountUser != null) {
 
-            /* if (getVersionData()?.version?.name == ONBOARD_VERSIONS.ONBOARDING_V1 || isGuestUser().not()) {
-                 viewModel.signUpUsingSocial(
-                     LoginViaStatus.GMAIL,
-                     accountUser.uid,
-                     accountUser.displayName,
-                     accountUser.email,
-                     accountUser.photoUrl?.toString()
-                 )
-             } else {*/
                 val requestObj = SocialSignUpRequest.Builder(
                     Mentor.getInstance().getId(),
                     PrefManager.getStringValue(INSTANCE_ID, false),
