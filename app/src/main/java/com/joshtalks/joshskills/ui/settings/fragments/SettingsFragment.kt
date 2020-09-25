@@ -1,5 +1,6 @@
 package com.joshtalks.joshskills.ui.settings.fragments
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -15,7 +16,10 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.memory.MemoryManagementWorker
 import com.joshtalks.joshskills.databinding.FragmentSettingsBinding
+import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.ui.settings.SettingsActivity
+import com.joshtalks.joshskills.ui.signup.FLOW_FROM
+import com.joshtalks.joshskills.ui.signup.SignUpActivity
 
 class SettingsFragment : Fragment() {
 
@@ -24,7 +28,7 @@ class SettingsFragment : Fragment() {
     lateinit var sheetBehaviour: BottomSheetBehavior<*>
 
     companion object {
-        val TAG = "SettingsFragment"
+        const val TAG = "SettingsFragment"
     }
 
     override fun onCreateView(
@@ -47,7 +51,7 @@ class SettingsFragment : Fragment() {
             selectedLanguage = "English"
         }
         if (selectedQuality.isEmpty()) {
-            selectedQuality = "360p"
+            selectedQuality = resources.getStringArray(R.array.resolutions).get(2) ?: "Low"
         }
 
         binding.languageTv.text = selectedLanguage
@@ -79,12 +83,6 @@ class SettingsFragment : Fragment() {
         (requireActivity() as SettingsActivity).setTitle(getString(R.string.app_settings))
     }
 
-    fun showClearDownloadsView() {
-        sheetBehaviour.state = BottomSheetBehavior.STATE_EXPANDED
-        binding.clearBtn.text = getString(R.string.clear_all_downloads)
-        binding.clearDownloadsBottomTv.text = "All your downloaded media and files will be deleted."
-    }
-
     fun clearDownloads() {
         val data =
             workDataOf(MemoryManagementWorker.CLEANUP_TYPE to MemoryManagementWorker.CLEANUP_TYPE_FORCE)
@@ -97,10 +95,25 @@ class SettingsFragment : Fragment() {
     }
 
     fun actionConfirmed() {
-        if (binding.clearBtn.text.equals(getString(R.string.sign_out)))
-            signout()
-        else
-            clearDownloads()
+        when {
+            binding.clearBtn.text.equals(getString(R.string.sign_out)) -> {
+                signout()
+            }
+            binding.clearBtn.text.equals(getString(R.string.login_signup)) -> {
+                openLoginScreen()
+            }
+            else -> clearDownloads()
+        }
+    }
+
+    private fun openLoginScreen() {
+        val intent = Intent(requireActivity(), SignUpActivity::class.java).apply {
+            putExtra(FLOW_FROM, "Settings Screen")
+            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
+        startActivity(intent)
+        requireActivity().finish()
     }
 
     fun openSelectQualityFragment() {
@@ -118,21 +131,37 @@ class SettingsFragment : Fragment() {
     }
 
     fun openPersonalInfoFragment() {
-        (requireActivity() as BaseActivity).replaceFragment(
-            R.id.settings_container, PersonalInfoFragment(), PersonalInfoFragment.TAG,
-            TAG
-        )
+        if (User.getInstance().isVerified) {
+            (requireActivity() as BaseActivity).replaceFragment(
+                R.id.settings_container, PersonalInfoFragment(), PersonalInfoFragment.TAG,
+                TAG
+            )
+        } else {
+            showLoginPopup()
+        }
     }
 
-    fun signout() {
+    private fun signout() {
         showSignoutBottomView()
         (requireActivity() as BaseActivity).logout()
     }
 
     fun showSignoutBottomView() {
-        sheetBehaviour.state = BottomSheetBehavior.STATE_EXPANDED
         binding.clearBtn.text = getString(R.string.sign_out)
         binding.clearDownloadsBottomTv.text = "Are you sure you want to signout"
+        sheetBehaviour.state = BottomSheetBehavior.STATE_EXPANDED
+    }
+
+    fun showClearDownloadsView() {
+        binding.clearBtn.text = getString(R.string.clear_all_downloads)
+        binding.clearDownloadsBottomTv.text = "All your downloaded media and files will be deleted."
+        sheetBehaviour.state = BottomSheetBehavior.STATE_EXPANDED
+    }
+
+    private fun showLoginPopup() {
+        binding.clearBtn.text = getString(R.string.login_signup)
+        binding.clearDownloadsBottomTv.text = "You are not logged in."
+        sheetBehaviour.state = BottomSheetBehavior.STATE_EXPANDED
     }
 
     fun hideBottomView() {

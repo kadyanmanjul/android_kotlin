@@ -77,6 +77,7 @@ import java.net.InetSocketAddress
 import java.net.Socket
 import java.net.URL
 import java.nio.charset.Charset
+import java.text.DateFormat
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 import java.util.*
@@ -767,6 +768,14 @@ object Utils {
                 .into(imageView)
         }
     }
+
+    fun formatDate(inputDate: String, inputFormat: String, outputFormat: String): String {
+        val inputFormat: DateFormat = SimpleDateFormat(inputFormat)
+        val outputFormat: DateFormat = SimpleDateFormat(outputFormat)
+        val inputDateStr = inputDate
+        val date: Date = inputFormat.parse(inputDateStr)
+        return outputFormat.format(date)
+    }
 }
 
 fun milliSecondsToSeconds(time: Long): Long {
@@ -880,8 +889,7 @@ fun getCountryIsoCode(number: String, countryRegion: String): String {
 }
 
 fun loadJSONFromAsset(fileName: String): String? {
-    var json: String? = null
-    json = try {
+    return try {
         val `is`: InputStream = AppObjectController.joshApplication.assets.open(fileName)
         val size: Int = `is`.available()
         val buffer = ByteArray(size)
@@ -894,7 +902,6 @@ fun loadJSONFromAsset(fileName: String): String? {
         ex.printStackTrace()
         return null
     }
-    return json
 }
 
 fun ImageView.setImage(url: String, context: Context = AppObjectController.joshApplication) {

@@ -179,57 +179,58 @@ class DownloadTracker internal constructor(
                     return
                 }
                 val listOfVideoQualityTrack = ArrayList<VideoQualityTrack>()
-                if (mappedTrackInfo != null) {
-                    val trackGroups = mappedTrackInfo.getTrackGroups(0)[0]
-                    for (x in 0 until trackGroups.length) {
-                        val currentQuality = "" + trackGroups.getFormat(x).height + "p"
-                        listOfVideoQualityTrack.add(
-                            VideoQualityTrack(
-                                x,
-                                trackGroups.getFormat(x).height,
-                                currentQuality, false
-                            )
+                val trackGroups = mappedTrackInfo.getTrackGroups(0)[0]
+                for (x in 0 until trackGroups.length) {
+                    val currentQuality = "" + trackGroups.getFormat(x).height + "p"
+                    listOfVideoQualityTrack.add(
+                        VideoQualityTrack(
+                            x,
+                            trackGroups.getFormat(x).height,
+                            currentQuality, false
                         )
-                    }
-                    var qualityIndex =
-                        context.resources.getStringArray(R.array.resolutions).size - 1 - listOf(
-                            *context.resources.getStringArray(
-                                R.array.resolutions
-                            )
+                    )
+                }
+                var qualityIndex =
+                    context.resources.getStringArray(R.array.resolutions).size - 1 - listOf(
+                        *context.resources.getStringArray(
+                            R.array.resolutions
                         )
-                            .indexOf(
-                                getStringValue(SELECTED_QUALITY, false)
-                            )
+                    )
+                        .indexOf(
+                            getStringValue(SELECTED_QUALITY, false)
+                        )
 
-                    val trackSelectionFactory: TrackSelection.Factory =
-                        AdaptiveTrackSelection.Factory()
-                    val trackSelector = DefaultTrackSelector(context, trackSelectionFactory)
-                    trackSelector.parameters.buildUpon()
-                        .setForceLowestBitrate(true)
-                        .setForceHighestSupportedBitrate(false)
-                        .setAllowAudioMixedChannelCountAdaptiveness(true)
-                        .setAllowAudioMixedMimeTypeAdaptiveness(true)
-                        .setAllowAudioMixedSampleRateAdaptiveness(true)
-                        .build()
-                    val parametersBuilder = trackSelector.buildUponParameters()
-                    // parametersBuilder?.setRendererDisabled(0, false)
-                    val trackGroupsList = mappedTrackInfo.getTrackGroups(0)
-                    listOfVideoQualityTrack.sortBy { it.quality }
+                val trackSelectionFactory: TrackSelection.Factory =
+                    AdaptiveTrackSelection.Factory()
+                val trackSelector = DefaultTrackSelector(context, trackSelectionFactory)
+                trackSelector.parameters.buildUpon()
+                    .setForceLowestBitrate(true)
+                    .setForceHighestSupportedBitrate(false)
+                    .setAllowAudioMixedChannelCountAdaptiveness(true)
+                    .setAllowAudioMixedMimeTypeAdaptiveness(true)
+                    .setAllowAudioMixedSampleRateAdaptiveness(true)
+                    .build()
+                val parametersBuilder = trackSelector.buildUponParameters()
+                // parametersBuilder?.setRendererDisabled(0, false)
+                val trackGroupsList = mappedTrackInfo.getTrackGroups(0)
+                listOfVideoQualityTrack.sortBy { it.quality }
 
 //                    while (trackGroupsList.length <= qualityIndex) --qualityIndex
 
-                    val selectionOverride = SelectionOverride(0, qualityIndex)
+                if (trackGroupsList[0].length <= qualityIndex)
+                    qualityIndex = trackGroupsList[0].length - 1
 
-                    parametersBuilder.setSelectionOverride(0, trackGroupsList, selectionOverride)
-                    trackSelector.parameters = parametersBuilder.build()
-                    downloadHelper.clearTrackSelections(0)
-                    downloadHelper.addTrackSelectionForSingleRenderer(
-                        0,
-                        0,
-                        parametersBuilder.build(),
-                        Arrays.asList(selectionOverride)
-                    )
-                }
+                val selectionOverride = SelectionOverride(0, qualityIndex)
+
+                parametersBuilder.setSelectionOverride(0, trackGroupsList, selectionOverride)
+                trackSelector.parameters = parametersBuilder.build()
+                downloadHelper.clearTrackSelections(0)
+                downloadHelper.addTrackSelectionForSingleRenderer(
+                    0,
+                    0,
+                    parametersBuilder.build(),
+                    Arrays.asList(selectionOverride)
+                )
                 /*for (int periodIndex = 0; periodIndex < downloadHelper.getPeriodCount(); periodIndex++) {
                     downloadHelper.clearTrackSelections(periodIndex);
                     for (int i = 0; i < mappedTrackInfo.getRendererCount(); i++) {

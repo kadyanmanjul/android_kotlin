@@ -7,7 +7,9 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.GENDER
 import com.joshtalks.joshskills.core.RegistrationMethods
+import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.databinding.FragmentPersonalInfoBinding
 import com.joshtalks.joshskills.repository.local.eventbus.CreatedSource
 import com.joshtalks.joshskills.repository.local.model.Mentor
@@ -35,20 +37,30 @@ class PersonalInfoFragment : Fragment() {
     private fun populateData() {
         val user = Mentor.getInstance().getUser()
         binding.nameTv.text = user?.firstName
-        binding.dobTv.text = user?.dateOfBirth
-        binding.genderTv.text = user?.gender
+
+        user?.dateOfBirth?.let {
+            binding.dobTv.text = Utils.formatDate(it, "yyyy-MM-dd", "dd/MM/yyyy")
+        }
+        when (user?.gender ?: "") {
+            GENDER.MALE.gValue ->
+                binding.genderTv.text = getString(R.string.male)
+            GENDER.FEMALE.gValue ->
+                binding.genderTv.text = getString(R.string.female)
+            GENDER.OTHER.gValue ->
+                binding.genderTv.text = getString(R.string.other)
+        }
         when (user?.source) {
             CreatedSource.FB.name -> {
-                binding.loginTypeTv.text = RegistrationMethods.FACEBOOK.name
+                binding.loginTypeTv.text = RegistrationMethods.FACEBOOK.type
             }
             CreatedSource.GML.name -> {
-                binding.loginTypeTv.text = RegistrationMethods.GOOGLE.name
+                binding.loginTypeTv.text = RegistrationMethods.GOOGLE.type
             }
             CreatedSource.OTP.name -> {
-                binding.loginTypeTv.text = RegistrationMethods.MOBILE_NUMBER.name
+                binding.loginTypeTv.text = RegistrationMethods.MOBILE_NUMBER.type
             }
             CreatedSource.TC.name -> {
-                binding.loginTypeTv.text = RegistrationMethods.TRUE_CALLER.name
+                binding.loginTypeTv.text = RegistrationMethods.TRUE_CALLER.type
             }
         }
     }
