@@ -15,14 +15,7 @@ import android.os.Build
 import android.os.Handler
 import android.util.AttributeSet
 import android.util.Pair
-import android.view.LayoutInflater
-import android.view.MotionEvent
-import android.view.Surface
-import android.view.TextureView
-import android.view.View
-import android.view.ViewGroup
-import android.view.Window
-import android.view.WindowManager
+import android.view.*
 import android.view.animation.DecelerateInterpolator
 import android.widget.ProgressBar
 import androidx.appcompat.widget.AppCompatImageView
@@ -40,42 +33,27 @@ import com.afollestad.materialdialogs.LayoutMode
 import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.bottomsheets.BottomSheet
 import com.afollestad.materialdialogs.customview.customView
-import com.google.android.exoplayer2.C
-import com.google.android.exoplayer2.DefaultLoadControl
+import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.DefaultLoadControl.DEFAULT_VIDEO_BUFFER_SIZE
-import com.google.android.exoplayer2.DefaultRenderersFactory
-import com.google.android.exoplayer2.ExoPlaybackException
-import com.google.android.exoplayer2.ExoPlayer
-import com.google.android.exoplayer2.PlaybackParameters
-import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.Player.STATE_BUFFERING
 import com.google.android.exoplayer2.Player.STATE_IDLE
-import com.google.android.exoplayer2.RenderersFactory
-import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.audio.AudioAttributes
 import com.google.android.exoplayer2.source.TrackGroupArray
-import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection
-import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
+import com.google.android.exoplayer2.trackselection.*
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector.ParametersBuilder
-import com.google.android.exoplayer2.trackselection.MappingTrackSelector
-import com.google.android.exoplayer2.trackselection.TrackSelection
-import com.google.android.exoplayer2.trackselection.TrackSelectionArray
-import com.google.android.exoplayer2.ui.AspectRatioFrameLayout
-import com.google.android.exoplayer2.ui.DefaultTimeBar
-import com.google.android.exoplayer2.ui.PlayerControlView
-import com.google.android.exoplayer2.ui.PlayerView
-import com.google.android.exoplayer2.ui.TimeBar
+import com.google.android.exoplayer2.ui.*
 import com.google.android.exoplayer2.ui.TimeBar.OnScrubListener
 import com.google.android.exoplayer2.upstream.DefaultAllocator
 import com.google.android.exoplayer2.util.ErrorMessageProvider
 import com.google.android.material.textview.MaterialTextView
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.SELECTED_QUALITY
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.service.video_download.VideoDownloadController
 import com.mikhaellopez.circularprogressbar.CircularProgressBar
-import java.util.Formatter
-import java.util.Locale
+import java.util.*
 import java.util.concurrent.TimeUnit
 
 class BitVideoPlayer : PlayerView, LifecycleObserver, PlayerControlView.VisibilityListener,
@@ -89,6 +67,7 @@ class BitVideoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibili
         defStyleAttr
     )
 
+    private var videoTrackAdapter: VideoTrackAdapter? = null
     private var uri: Uri? = null
     private var lastPosition: Long = 0
     private var player: SimpleExoPlayer? = null
@@ -795,7 +774,7 @@ class BitVideoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibili
             val layoutManager = LinearLayoutManager(context)
             recyclerView.layoutManager = layoutManager
             recyclerView.setHasFixedSize(false)
-            recyclerView.adapter = VideoTrackAdapter(lisOfVideoQualityTrack,
+            videoTrackAdapter = VideoTrackAdapter(lisOfVideoQualityTrack,
                 object : VideoTrackAdapter.OnSelectQualityListener {
                     override fun onSelect(videoQualityTrack: VideoQualityTrack) {
                         bottomSheet.onDismiss()
@@ -803,6 +782,8 @@ class BitVideoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibili
                         onSelectTrack(videoQualityTrack)
                     }
                 })
+
+            recyclerView.adapter = videoTrackAdapter
         }
     }
 
@@ -976,17 +957,26 @@ class BitVideoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibili
             try {
                 audioLanguage = trackSelections[1]?.selectedFormat?.language ?: ""
                 val oldTrack = currentMappedTrackInfoPosition
+
                 //trackSelections[0]?.selectedFormat.width
                 currentMappedTrackInfoPosition =
                     trackSelections.get(0)?.getIndexInTrackGroup(0) ?: 0
-                if (lisOfVideoQualityTrack.isNullOrEmpty() || oldTrack != currentMappedTrackInfoPosition) {
+
+                if (lisOfVideoQualityTrack.isNullOrEmpty().not()) {
+                    lisOfVideoQualityTrack[oldTrack].isSelected = false
+                    lisOfVideoQualityTrack[currentMappedTrackInfoPosition].isSelected = true
+                    videoTrackAdapter?.notifyDataSetChanged()
+                }
+
+                if (lisOfVideoQualityTrack.isNullOrEmpty()/* || oldTrack != currentMappedTrackInfoPosition*/) {
+                    println("playWhenReady setting quality")
                     lisOfVideoQualityTrack.clear()
                     val mappedTrackInfo: MappingTrackSelector.MappedTrackInfo? =
                         trackSelector?.currentMappedTrackInfo
 
                     if (mappedTrackInfo != null) {
                         val trackGroups =
-                            trackSelector!!.currentMappedTrackInfo!!.getTrackGroups(0)[0] //render index important
+                            mappedTrackInfo.getTrackGroups(0)[0] //render index important
                         for (x in 0 until trackGroups.length) {
                             val currentQuality = "" + trackGroups.getFormat(x).height + "p"
                             lisOfVideoQualityTrack.add(
@@ -997,8 +987,46 @@ class BitVideoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibili
                                 )
                             )
                         }
+
+                        lisOfVideoQualityTrack.sortBy { it.quality }
+
+                        when (PrefManager.getStringValue(SELECTED_QUALITY)) {
+                            resources.getStringArray(R.array.resolutions)[2] -> {
+                                println("playWhenReady = 0")
+                                currentMappedTrackInfoPosition = 0
+                                onSelectTrack(lisOfVideoQualityTrack[0].apply {
+                                    isSelected = true
+                                    videoQualityP = this.title
+                                })
+                            }
+                            resources.getStringArray(R.array.resolutions)[1] -> {
+                                println("playWhenReady = 1")
+                                if (lisOfVideoQualityTrack.size > 1) {
+                                    currentMappedTrackInfoPosition = 1
+                                    onSelectTrack(lisOfVideoQualityTrack[1].apply {
+                                        isSelected = true
+                                        videoQualityP = this.title
+                                    })
+                                } else {
+                                    onSelectTrack(lisOfVideoQualityTrack[0].apply {
+                                        isSelected = true
+                                        videoQualityP = this.title
+                                    })
+                                    currentMappedTrackInfoPosition = 1
+                                }
+                            }
+                            else -> {
+                                println("playWhenReady = 2")
+                                onSelectTrack(lisOfVideoQualityTrack[lisOfVideoQualityTrack.size - 1].apply {
+                                    isSelected = true
+                                    videoQualityP = this.title
+                                })
+                                currentMappedTrackInfoPosition = lisOfVideoQualityTrack.size - 1
+                            }
+
+                        }
                     }
-                    lisOfVideoQualityTrack.sortBy { it.quality }
+
                 }
                 if (videoQualityP.isEmpty()) {
                     videoQualityP = lisOfVideoQualityTrack[0].title
@@ -1217,7 +1245,7 @@ data class VideoQualityTrack(
     val id: Int,
     val quality: Int,
     val title: String,
-    val isSelected: Boolean
+    var isSelected: Boolean
 )
 
 class VideoTrackAdapter(

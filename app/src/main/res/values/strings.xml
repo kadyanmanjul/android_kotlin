@@ -420,6 +420,8 @@
     <string name="notifications">Notifications</string>
     <string name="language">Language</string>
     <string name="english">English</string>
+    <string name="low">Low</string>
+    <string name="login_type">Login Type</string>
     <string name="_360p">360p</string>
     <string name="select_course_heading_btn">Mein ye cheeze achieve karna chahta hoon</string>
     <string name="start_course_free">Start my Courses For Free</string>

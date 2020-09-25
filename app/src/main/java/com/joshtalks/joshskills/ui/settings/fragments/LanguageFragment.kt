@@ -22,10 +22,7 @@ class LanguageFragment : Fragment() {
         val TAG = "LanguageFragment"
     }
 
-    override fun
-
-
-            onCreateView(
+    override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?

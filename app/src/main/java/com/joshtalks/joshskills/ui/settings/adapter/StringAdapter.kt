@@ -1,9 +1,11 @@
 package com.joshtalks.joshskills.ui.settings.adapter
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.SELECTED_LANGUAGE
 import com.joshtalks.joshskills.core.SELECTED_QUALITY
@@ -19,16 +21,24 @@ class StringAdapter(
 ) :
     RecyclerView.Adapter<StringAdapter.StringViewHolder>() {
 
+    var context: Context? = null
     var selectedItem: String
 
     init {
-        selectedItem = if (actionType == ACTION_LANGUAGE) {
-            PrefManager.getStringValue(SELECTED_LANGUAGE)
-        } else
-            PrefManager.getStringValue(SELECTED_QUALITY)
+        if (actionType == ACTION_LANGUAGE) {
+            selectedItem = PrefManager.getStringValue(SELECTED_LANGUAGE)
+            if (selectedItem.isEmpty())
+                selectedItem = "English"
+        } else {
+            selectedItem = PrefManager.getStringValue(SELECTED_QUALITY)
+            if (selectedItem.isEmpty())
+                selectedItem =
+                    context?.resources?.getStringArray(R.array.resolutions)?.get(2) ?: "Low"
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): StringViewHolder {
+        context = parent.context
         val inflater = LayoutInflater.from(parent.context)
         val binding = StringAdapterItemBinding.inflate(inflater, parent, false)
         return StringViewHolder(binding)

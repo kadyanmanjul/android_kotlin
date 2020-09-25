@@ -117,6 +117,13 @@ class SettingsFragment : Fragment() {
         )
     }
 
+    fun openPersonalInfoFragment() {
+        (requireActivity() as BaseActivity).replaceFragment(
+            R.id.settings_container, PersonalInfoFragment(), PersonalInfoFragment.TAG,
+            TAG
+        )
+    }
+
     fun signout() {
         showSignoutBottomView()
         (requireActivity() as BaseActivity).logout()

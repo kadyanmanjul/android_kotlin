@@ -12,9 +12,9 @@
     </string-array>
 
     <string-array name="resolutions">
-        <item>720p</item>
-        <item>480p</item>
-        <item>360p</item>
+        <item>High</item>
+        <item>Medium</item>
+        <item>Low</item>
     </string-array>
 
 </resources>
