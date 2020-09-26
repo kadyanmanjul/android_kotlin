@@ -379,7 +379,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         titleView.text = getString(R.string.inbox_header)
         findMoreLayout = findViewById(R.id.parent_layout)
         if (isGuestUser()) {
-            if(VersionResponse.getInstance().hasVersion()) {
+            if (VersionResponse.getInstance().hasVersion()) {
                 when (VersionResponse.getInstance().version!!.name) {
                     ONBOARD_VERSIONS.ONBOARDING_V1 -> {
                         find_more.setOnClickListener {
@@ -390,13 +390,16 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
                             RxBus2.publish(ExploreCourseEventBus())
                         }
                     }
-                    ONBOARD_VERSIONS.ONBOARDING_V2, ONBOARD_VERSIONS.ONBOARDING_V4, ONBOARD_VERSIONS.ONBOARDING_V3,ONBOARD_VERSIONS.ONBOARDING_V5 -> {
+                    ONBOARD_VERSIONS.ONBOARDING_V2, ONBOARD_VERSIONS.ONBOARDING_V4, ONBOARD_VERSIONS.ONBOARDING_V3, ONBOARD_VERSIONS.ONBOARDING_V5 -> {
                         find_more.text = getString(R.string.add_more_courses)
                         find_more.setOnClickListener {
                             AppAnalytics.create(AnalyticsEvent.ADD_MORE_COURSE_CLICKED.NAME)
                                 .addBasicParam()
                                 .addUserDetails()
-                                .addParam("version", VersionResponse.getInstance().version?.name.toString())
+                                .addParam(
+                                    "version",
+                                    VersionResponse.getInstance().version?.name.toString()
+                                )
                                 .push()
                             if (PrefManager.getBoolValue(IS_SUBSCRIPTION_STARTED) && PrefManager.getBoolValue(
                                     IS_SUBSCRIPTION_ENDED
@@ -625,7 +628,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
                 SHOW_OVERLAY,
                 false
             ) && it.subscriptionData.isSubscriptionBought?.not() ?: false
-            if (showOverlay && it.showTooltip3) {
+            if (showOverlay && it.showTooltip3 && it.freeTrialData.remainingDays in 0..3) {
                 showOverlayToolTip(it.freeTrialData.remainingDays)
             } else {
                 overlay_layout.visibility = View.GONE
@@ -730,12 +733,12 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
     }
 
     private fun openNewOnBoardFlow() {
-        if(VersionResponse.getInstance().hasVersion()) {
+        if (VersionResponse.getInstance().hasVersion()) {
             when (VersionResponse.getInstance().version?.name) {
                 ONBOARD_VERSIONS.ONBOARDING_V1 -> {
                     openCourseExplorer()
                 }
-                ONBOARD_VERSIONS.ONBOARDING_V2, ONBOARD_VERSIONS.ONBOARDING_V3, ONBOARD_VERSIONS.ONBOARDING_V4,ONBOARD_VERSIONS.ONBOARDING_V5 -> {
+                ONBOARD_VERSIONS.ONBOARDING_V2, ONBOARD_VERSIONS.ONBOARDING_V3, ONBOARD_VERSIONS.ONBOARDING_V4, ONBOARD_VERSIONS.ONBOARDING_V5 -> {
                     openCourseSelectionExplorer()
                 }
                 else -> {
@@ -761,7 +764,12 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
     }
 
     private fun openCourseSelectionExplorer(alreadyHaveCourses: Boolean = false) {
-        OnBoardingActivityNew.startOnBoardingActivity(this, COURSE_EXPLORER_NEW, true, alreadyHaveCourses)
+        OnBoardingActivityNew.startOnBoardingActivity(
+            this,
+            COURSE_EXPLORER_NEW,
+            true,
+            alreadyHaveCourses
+        )
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
