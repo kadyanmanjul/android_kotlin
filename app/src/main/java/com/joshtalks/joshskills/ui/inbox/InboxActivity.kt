@@ -628,7 +628,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
                 SHOW_OVERLAY,
                 false
             ) && it.subscriptionData.isSubscriptionBought?.not() ?: false
-            if (showOverlay && it.showTooltip3 && it.freeTrialData.remainingDays in 0..3) {
+            if (showOverlay && it.showTooltip3 && it.freeTrialData.remainingDays in 4..7) {
                 showOverlayToolTip(it.freeTrialData.remainingDays)
             } else {
                 overlay_layout.visibility = View.GONE
@@ -971,7 +971,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
 
     private fun showOverlayToolTip(remainingTrialDays: Int) {
         overlay_layout.visibility = View.VISIBLE
-        (overlay_tip as TopTrialTooltipView).setInboxOverayTipText(remainingTrialDays)
+        (overlay_tip as TopTrialTooltipView).setInboxOverayTipText(7.minus(remainingTrialDays))
     }
 
 }
