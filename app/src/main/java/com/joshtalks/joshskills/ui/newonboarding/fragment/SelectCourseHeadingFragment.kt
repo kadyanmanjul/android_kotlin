@@ -12,6 +12,8 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
+import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.custom_ui.decorator.LayoutMarginDecoration
 import com.joshtalks.joshskills.databinding.FragmentSelectCourseHeadingBinding
 import com.joshtalks.joshskills.messaging.RxBus2
@@ -91,6 +93,12 @@ class SelectCourseHeadingFragment : Fragment() {
         }
         binding.getDetailBtn.setOnClickListener {
             if (headingIds.size > 0) {
+                AppAnalytics.create(AnalyticsEvent.MEIN_YE_CHEEZ_ACHIEVE_CLICKED.NAME)
+                    .addBasicParam()
+                    .addUserDetails()
+                    .addParam("version", VersionResponse.getInstance().version?.name.toString())
+                    .addParam("no of courses enrolling",headingIds.size)
+                    .push()
                 (requireActivity() as BaseActivity).replaceFragment(
                     R.id.onboarding_container,
                     CourseEnrolledDetailFragment.newInstance(headingIds),

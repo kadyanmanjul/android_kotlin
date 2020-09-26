@@ -14,8 +14,11 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.SUBSCRIPTION_TEST_ID
+import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
+import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.databinding.FragmentCourseEnrolledDetailBinding
 import com.joshtalks.joshskills.repository.server.onboarding.CourseContent
+import com.joshtalks.joshskills.repository.server.onboarding.VersionResponse
 import com.joshtalks.joshskills.ui.course_details.CourseDetailsActivity
 import com.joshtalks.joshskills.ui.newonboarding.adapter.CourseEnrolledDetailAdapter
 import com.joshtalks.joshskills.ui.newonboarding.viewmodel.OnBoardViewModel
@@ -81,10 +84,16 @@ class CourseEnrolledDetailFragment : Fragment() {
         binding.viewPagerText.orientation = ViewPager2.ORIENTATION_HORIZONTAL
         binding.viewPagerText.isUserInputEnabled = true
         adapter = CourseEnrolledDetailAdapter()
-        binding.viewPagerText.adapter=adapter
+        binding.viewPagerText.adapter = adapter
         binding.wormDotsIndicator.setViewPager2(binding.viewPagerText)
 
         binding.btnBuy.setOnClickListener {
+            AppAnalytics.create(AnalyticsEvent.NEW_ONBOARDING_V5_BUY_ACCESS_PASS.NAME)
+                .addBasicParam()
+                .addUserDetails()
+                .addParam("version", VersionResponse.getInstance().version?.name.toString())
+                .addParam("no of courses enrolling", headingIds.size)
+                .push()
             navigateToCourseDetailsScreen(
                 PrefManager.getIntValue(SUBSCRIPTION_TEST_ID),
                 false,
@@ -92,6 +101,12 @@ class CourseEnrolledDetailFragment : Fragment() {
             )
         }
         binding.btnStart.setOnClickListener {
+            AppAnalytics.create(AnalyticsEvent.NEW_ONBOARDING_V5_START_COURSE_FREE.NAME)
+                .addBasicParam()
+                .addUserDetails()
+                .addParam("version", VersionResponse.getInstance().version?.name.toString())
+                .addParam("no of courses enrolling", headingIds.size)
+                .push()
             viewModel.courseEnrolledDetailLiveData.value?.testIds?.let { testIds ->
                 viewModel.enrollMentorAgainstTest(
                     testIds
@@ -115,7 +130,7 @@ class CourseEnrolledDetailFragment : Fragment() {
             flags = arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT),
             isFromFreeTrial = haveCourses,
             whatsappUrl = whatsappLink,
-            buySubscription=true
+            buySubscription = true
         )
     }
 
@@ -123,7 +138,6 @@ class CourseEnrolledDetailFragment : Fragment() {
         startActivity((requireActivity() as BaseActivity).getInboxActivityIntent(true))
         requireActivity().finish()
     }
-
 
 
     companion object {

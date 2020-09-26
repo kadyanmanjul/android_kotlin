@@ -396,6 +396,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
                             AppAnalytics.create(AnalyticsEvent.ADD_MORE_COURSE_CLICKED.NAME)
                                 .addBasicParam()
                                 .addUserDetails()
+                                .addParam("version", VersionResponse.getInstance().version?.name.toString())
                                 .push()
                             if (PrefManager.getBoolValue(IS_SUBSCRIPTION_STARTED) && PrefManager.getBoolValue(
                                     IS_SUBSCRIPTION_ENDED

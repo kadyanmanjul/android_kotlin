@@ -80,6 +80,7 @@ class SelectInterestFragment : Fragment() {
         AppAnalytics.create(AnalyticsEvent.NEW_ONBOARDING_ENROLLED_WITH_INTERESTS.NAME)
             .addBasicParam()
             .addUserDetails()
+            .addParam("version", VersionResponse.getInstance().version?.name.toString())
             .addParam("With number of tag", interestSet.size)
             .addParam("is_already-enrolled", PrefManager.getBoolValue(IS_GUEST_ENROLLED))
             .push()

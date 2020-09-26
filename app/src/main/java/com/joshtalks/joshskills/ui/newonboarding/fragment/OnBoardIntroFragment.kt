@@ -75,6 +75,7 @@ class OnBoardIntroFragment : Fragment() {
             AppAnalytics.create(AnalyticsEvent.NEW_ONBOARDING_GET_STARTED.NAME)
                 .addBasicParam()
                 .addUserDetails()
+                .addParam("version", VersionResponse.getInstance().version?.name.toString())
                 .push()
             moveToNextScreen()
         }
@@ -84,6 +85,7 @@ class OnBoardIntroFragment : Fragment() {
                 AppAnalytics.create(AnalyticsEvent.NEW_ONBOARDING_ALREADY_USER.NAME)
                     .addBasicParam()
                     .addUserDetails()
+                    .addParam("version", VersionResponse.getInstance().version?.name.toString())
                     .push()
 
                 val intent = Intent(requireActivity(), SignUpActivity::class.java).apply {

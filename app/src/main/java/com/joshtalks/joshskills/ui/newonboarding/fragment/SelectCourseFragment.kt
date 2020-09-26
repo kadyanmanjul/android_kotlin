@@ -44,7 +44,6 @@ class SelectCourseFragment : Fragment() {
     private val TAG = "SelectCourseFragment"
     private lateinit var binding: FragmentCourseSelectionBinding
     private var haveCourses = false
-    private var version = EMPTY
     private var tabName: MutableList<String> = ArrayList()
     private lateinit var viewModel: OnBoardViewModel
     private var compositeDisposable = CompositeDisposable()
@@ -73,8 +72,6 @@ class SelectCourseFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        version =
-            VersionResponse.getInstance().version?.name?.type.toString()
         initView()
         subscribeObservers()
     }
@@ -142,7 +139,7 @@ class SelectCourseFragment : Fragment() {
                 .addBasicParam()
                 .addUserDetails()
                 .addParam("is_already-enrolled", PrefManager.getBoolValue(IS_GUEST_ENROLLED))
-                .addParam("version", version)
+                .addParam("version", VersionResponse.getInstance().version?.name.toString())
                 .push()
 
             navigateToCourseDetailsScreen(
@@ -283,7 +280,7 @@ class SelectCourseFragment : Fragment() {
             .addUserDetails()
             .addParam("With no of course", testIds.size)
             .addParam("is_already-enrolled", PrefManager.getBoolValue(IS_GUEST_ENROLLED))
-            .addParam("version", version)
+            .addParam("version", VersionResponse.getInstance().version?.name.toString())
             .push()
 
         viewModel.enrollMentorAgainstTest(testIds)
