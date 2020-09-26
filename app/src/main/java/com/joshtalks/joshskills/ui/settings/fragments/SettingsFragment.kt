@@ -57,6 +57,10 @@ class SettingsFragment : Fragment() {
         binding.languageTv.text = selectedLanguage
         binding.downloadQualityTv.text = selectedQuality
 
+        if (User.getInstance().isVerified.not()) {
+            binding.signOutTv.visibility = View.GONE
+        }
+
         binding.notificationSwitch.setOnCheckedChangeListener { compoundButton: CompoundButton, b: Boolean ->
             PrefManager.put(NOTIFICATION_DISABLED, b)
         }
