@@ -157,7 +157,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
                     AppObjectController.getFirebaseRemoteConfig()
                         .getString(FirebaseRemoteConfigKey.BB_TOOL_TIP_FIRST_TIME_BTN_TEXT)
                 )
-                content.setSpan(UnderlineSpan(), 0, content.length, 0);
+                content.setSpan(UnderlineSpan(), 0, content.length, 0)
                 text_btn.text = content
                 new_user_layout.setOnClickListener {
                     new_user_layout.visibility = View.GONE
@@ -627,6 +627,8 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
             ) && it.subscriptionData.isSubscriptionBought?.not() ?: false
             if (showOverlay && it.showTooltip3) {
                 showOverlayToolTip(it.freeTrialData.remainingDays)
+            } else {
+                overlay_layout.visibility = View.GONE
             }
 
         }
