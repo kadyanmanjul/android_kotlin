@@ -115,7 +115,7 @@
         android:id="@+id/overlay_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/transparent_2"
+        android:background="@color/transparent_black_alfa_80"
         android:paddingVertical="?attr/actionBarSize"
         android:visibility="gone"
         tools:visibility="gone">
