@@ -70,14 +70,16 @@ object WorkManagerAdmin {
                     OneTimeWorkRequestBuilder<UserActiveWorker>().build(),
                     OneTimeWorkRequestBuilder<ReferralCodeRefreshWorker>().build(),
                     OneTimeWorkRequestBuilder<SyncEngageVideo>().build(),
-                    OneTimeWorkRequestBuilder<FeedbackRatingWorker>().build()
+                    OneTimeWorkRequestBuilder<FeedbackRatingWorker>().build(),
+                    OneTimeWorkRequestBuilder<LogAchievementLevelEventWorker>().build()
                 )
             ).enqueue()
     }
 
     fun syncEngageVideoTask() {
         WorkManager.getInstance(AppObjectController.joshApplication)
-            .enqueue(OneTimeWorkRequestBuilder<SyncEngageVideo>().build())
+            .beginWith(OneTimeWorkRequestBuilder<SyncEngageVideo>().build())
+            .then(OneTimeWorkRequestBuilder<LogAchievementLevelEventWorker>().build()).enqueue()
     }
 
     fun deviceIdGenerateWorker() {

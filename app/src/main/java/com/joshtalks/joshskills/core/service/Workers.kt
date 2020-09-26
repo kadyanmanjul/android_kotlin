@@ -19,6 +19,8 @@ import com.joshtalks.joshskills.core.EXPLORE_TYPE
 import com.joshtalks.joshskills.core.INSTANCE_ID
 import com.joshtalks.joshskills.core.InstallReferralUtil
 import com.joshtalks.joshskills.core.LOGIN_ON
+import com.joshtalks.joshskills.core.Level1
+import com.joshtalks.joshskills.core.Level2
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.RATING_DETAILS_KEY
 import com.joshtalks.joshskills.core.RESTORE_ID
@@ -28,6 +30,7 @@ import com.joshtalks.joshskills.core.USER_UNIQUE_ID
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.LogException
+import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
 import com.joshtalks.joshskills.core.notification.FCM_TOKEN
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.NPSEvent
@@ -51,6 +54,7 @@ import com.joshtalks.joshskills.repository.service.SyncChatService
 import com.sinch.verification.PhoneNumberUtils
 import io.branch.referral.Branch
 import java.util.*
+import java.util.concurrent.TimeUnit
 import retrofit2.HttpException
 
 const val INSTALL_REFERRER_SYNC = "install_referrer_sync"
@@ -463,7 +467,8 @@ class SyncEngageVideo(context: Context, workerParams: WorkerParameters) :
                 } catch (ex: Exception) {
                 }
             }
-            AppObjectController.appDatabase.videoEngageDao().updateVideoSyncStatus(syncEngageVideoList)
+            AppObjectController.appDatabase.videoEngageDao()
+                .updateVideoSyncStatus(syncEngageVideoList)
         }
 
         return Result.success()
@@ -694,6 +699,26 @@ class DeleteUnlockTypeQuestion(context: Context, workerParams: WorkerParameters)
                         }
                     }
                 }
+            }
+        } catch (ex: Throwable) {
+            LogException.catchException(ex)
+        }
+        return Result.success()
+    }
+}
+
+class LogAchievementLevelEventWorker(context: Context, workerParams: WorkerParameters) :
+    CoroutineWorker(context, workerParams) {
+    override suspend fun doWork(): Result {
+        try {
+            val videoEngageEntity =
+                AppObjectController.appDatabase.videoEngageDao().getWatchTime()
+            videoEngageEntity?.totalTime?.run {
+                val time = TimeUnit.MILLISECONDS.toMinutes(this).div(10).toInt()
+                if (time > 7 || time == 0) {
+                    return Result.success()
+                }
+                MarketingAnalytics.logAchievementLevelEvent(time)
             }
         } catch (ex: Throwable) {
             LogException.catchException(ex)

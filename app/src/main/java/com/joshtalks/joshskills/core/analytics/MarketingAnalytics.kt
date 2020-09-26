@@ -7,15 +7,15 @@ import com.facebook.appevents.AppEventsLogger
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.JoshSkillExecutors
 import com.joshtalks.joshskills.core.RegistrationMethods
+import com.joshtalks.joshskills.repository.server.CourseExploreModel
+import com.joshtalks.joshskills.repository.server.OrderDetailResponse
+import io.branch.indexing.BranchUniversalObject
 import io.branch.referral.util.BRANCH_STANDARD_EVENT
 import io.branch.referral.util.BranchContentSchema
 import io.branch.referral.util.BranchEvent
 import io.branch.referral.util.ContentMetadata
 import io.branch.referral.util.CurrencyType
-import com.joshtalks.joshskills.repository.server.CourseExploreModel
-import com.joshtalks.joshskills.repository.server.OrderDetailResponse
-import io.branch.indexing.BranchUniversalObject
-import io.branch.referral.util.*
+
 
 object MarketingAnalytics {
 
@@ -138,4 +138,25 @@ object MarketingAnalytics {
         }
     }
 
+    fun logAchievementLevelEvent(achievementLevel: Int) {
+        JoshSkillExecutors.BOUNDED.submit {
+            val context = AppObjectController.joshApplication
+
+            val params = Bundle()
+            params.putString(AppEventsConstants.EVENT_PARAM_LEVEL, achievementLevel.toString())
+            val facebookEventLogger = AppEventsLogger.newLogger(context)
+            facebookEventLogger.logEvent(AppEventsConstants.EVENT_NAME_ACHIEVED_LEVEL, params)
+
+            BranchEvent(BRANCH_STANDARD_EVENT.ACHIEVE_LEVEL)
+                .setCustomerEventAlias("achieve_level")
+                .addCustomDataProperty("level", achievementLevel.toString())
+                .logEvent(context)
+
+            AppAnalytics.create(BRANCH_STANDARD_EVENT.ACHIEVE_LEVEL.name)
+                .addBasicParam()
+                .addUserDetails()
+                .addParam("achieve_level", achievementLevel)
+                .push()
+        }
+    }
 }

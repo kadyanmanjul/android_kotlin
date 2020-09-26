@@ -62,8 +62,8 @@ interface VideoEngageDao {
     suspend fun getAllUnSyncVideo(): List<VideoEngage>
 
     // @Query("SELECT sum(watchTime) from video_watch_table ")
-    @Query("SELECT SUM(watchTime) as total,course_id FROM video_watch_table GROUP BY course_id ORDER BY total DESC LIMIT 1;")
-    suspend fun getWatchTime(): VideoEngageEntity
+    @Query("SELECT SUM(watchTime) as total_time,course_id FROM video_watch_table GROUP BY course_id ORDER BY total_time DESC LIMIT 1;")
+    suspend fun getWatchTime(): VideoEngageEntity?
 
     @Query("UPDATE video_watch_table SET is_sync =1 where id in (:idList)")
     suspend fun updateVideoSyncStatus(idList: List<Long>)
@@ -71,8 +71,8 @@ interface VideoEngageDao {
 
 @Parcelize
 data class VideoEngageEntity constructor(
-    @ColumnInfo(name = "total")
-    var total: Int? = -1,
+    @ColumnInfo(name = "total_time")
+    var totalTime: Long? = -1,
     @ColumnInfo(name = "course_id")
     var courseId: Int? = -1,
 
