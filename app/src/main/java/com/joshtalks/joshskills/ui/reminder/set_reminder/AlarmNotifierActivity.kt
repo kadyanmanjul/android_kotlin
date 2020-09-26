@@ -16,6 +16,8 @@ import com.google.android.material.textview.MaterialTextView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
+import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
+import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.ui.launch.LauncherActivity
 import com.joshtalks.joshskills.util.RingtoneManager
 import java.text.SimpleDateFormat
@@ -79,10 +81,18 @@ class AlarmNotifierActivity : AppCompatActivity(),
         when (v.id) {
             R.id.dismiss_bt -> {
                 startActivity(Intent(this, ReminderActivity::class.java))
+                AppAnalytics.create(AnalyticsEvent.DISMISS_REMINDER_CLICKED.NAME)
+                    .addBasicParam()
+                    .addUserDetails()
+                    .push()
                 finish()
             }
             R.id.start_course_bt -> {
                 v.setOnLongClickListener { false }
+                AppAnalytics.create(AnalyticsEvent.START_REMINDER_CLICKED.NAME)
+                    .addBasicParam()
+                    .addUserDetails()
+                    .push()
                 finish()
             }
         }

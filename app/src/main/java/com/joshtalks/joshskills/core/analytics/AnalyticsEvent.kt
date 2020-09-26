@@ -431,7 +431,8 @@ enum class AnalyticsEvent(val NAME: String) {
     GO_TO_COURSE_CLICKED("Go_to_course clicked"),
     DELETE_REMINDER_CLICKED("delete_reminder_clicked"),
     UPDATE_REMINDER_CLICKED("update_reminder_clicked"),
-
+    DISMISS_REMINDER_CLICKED("dismiss_reminder_clicked"),
+    START_REMINDER_CLICKED("start_reminder_clicked"),
 
     //Voip
     OPEN_CALL_SEARCH_SCREEN_VOIP("open search for call screen v3"),

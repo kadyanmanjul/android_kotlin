@@ -381,7 +381,6 @@ class SignUpActivity : BaseActivity() {
                         .photoUrl(getFBProfilePicture(id))
                         .socialId(id).build()
                     viewModel.verifyUser(requestObj)
-                //}
             } catch (ex: Exception) {
                 LogException.catchException(ex)
             }
@@ -426,7 +425,6 @@ class SignUpActivity : BaseActivity() {
                     .photoUrl(accountUser.photoUrl?.toString())
                     .socialId(accountUser.uid).build()
                 viewModel.verifyUser(requestObj)
-            // }
         } else {
             showToast(getString(R.string.generic_message_for_error))
         }
