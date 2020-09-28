@@ -18,10 +18,10 @@ import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
 import com.joshtalks.joshskills.repository.local.AppDatabase
 import com.joshtalks.joshskills.util.ReminderUtil
+import java.util.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.util.Calendar
 
 class AlarmReceiver : BroadcastReceiver() {
     override fun onReceive(
@@ -167,16 +167,16 @@ class AlarmReceiver : BroadcastReceiver() {
         mAudioPlayer?.playRingtone()
 
         val vibrator = context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
-        val pattern = longArrayOf(1000, 1000, 1000, 1000, 1000, 1000)
+        val pattern = longArrayOf(1000, 1000, 1000)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             vibrator.vibrate(
                 VibrationEffect.createWaveform(
-                    pattern, 5
+                    pattern, 0
                 )
             )
         } else {
             //deprecated in API 26
-            vibrator.vibrate(pattern, 5)
+            vibrator.vibrate(pattern, 0)
         }
     }
 }

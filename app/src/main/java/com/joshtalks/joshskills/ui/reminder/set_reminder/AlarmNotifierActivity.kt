@@ -51,7 +51,7 @@ class AlarmNotifierActivity : AppCompatActivity(),
             .getString(FirebaseRemoteConfigKey.REMINDER_NOTIFIER_SCREEN_DESCRIPTION)
 
         val dt = Date(System.currentTimeMillis())
-        val sdf = SimpleDateFormat("hh:mm aa")
+        val sdf = SimpleDateFormat("hh:mm aa", Locale.getDefault())
         val time1: String = sdf.format(dt)
         val timeparts = time1.split(" ")
         timeTv.text = timeparts[0]
@@ -63,16 +63,16 @@ class AlarmNotifierActivity : AppCompatActivity(),
         mAudioPlayer?.playRingtone()
 
         vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
-        val pattern = longArrayOf(1000, 1000, 1000, 1000, 1000, 1000)
+        val pattern = longArrayOf(1000, 1000)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             vibrator.vibrate(
                 VibrationEffect.createWaveform(
-                    pattern, 5
+                    pattern, 0
                 )
             )
         } else {
             //deprecated in API 26
-            vibrator.vibrate(pattern, 5)
+            vibrator.vibrate(pattern, 0)
         }
 
     }
@@ -80,6 +80,8 @@ class AlarmNotifierActivity : AppCompatActivity(),
     override fun onClick(v: View) {
         when (v.id) {
             R.id.dismiss_bt -> {
+                mAudioPlayer?.stopRingtone()
+                vibrator.cancel()
                 startActivity(Intent(this, ReminderActivity::class.java))
                 AppAnalytics.create(AnalyticsEvent.DISMISS_REMINDER_CLICKED.NAME)
                     .addBasicParam()
@@ -88,6 +90,8 @@ class AlarmNotifierActivity : AppCompatActivity(),
                 finish()
             }
             R.id.start_course_bt -> {
+                mAudioPlayer?.stopRingtone()
+                vibrator.cancel()
                 v.setOnLongClickListener { false }
                 AppAnalytics.create(AnalyticsEvent.START_REMINDER_CLICKED.NAME)
                     .addBasicParam()
@@ -143,8 +147,8 @@ class AlarmNotifierActivity : AppCompatActivity(),
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onStop() {
+        super.onStop()
         val notificationManager: NotificationManager =
             getSystemService(NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.cancel(AlarmReceiver.NOTIFICATION_ID)
