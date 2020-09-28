@@ -78,7 +78,7 @@ class SettingsFragment : Fragment() {
 
         }
         )
-        binding.notificationSwitch.isChecked = PrefManager.getBoolValue(NOTIFICATION_DISABLED)
+        binding.notificationSwitch.isChecked = PrefManager.getBoolValue(NOTIFICATION_DISABLED).not()
         return binding.root
     }
 
@@ -113,8 +113,6 @@ class SettingsFragment : Fragment() {
     private fun openLoginScreen() {
         val intent = Intent(requireActivity(), SignUpActivity::class.java).apply {
             putExtra(FLOW_FROM, "Settings Screen")
-            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
-            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         }
         startActivity(intent)
         requireActivity().finish()
@@ -152,19 +150,22 @@ class SettingsFragment : Fragment() {
 
     fun showSignoutBottomView() {
         binding.clearBtn.text = getString(R.string.sign_out)
-        binding.clearDownloadsBottomTv.text = "Are you sure you want to signout"
+        binding.clearDownloadsBottomTv.text = AppObjectController.getFirebaseRemoteConfig()
+            .getString(FirebaseRemoteConfigKey.SETTINGS_LOGOUT_CONFIRMATION)
         sheetBehaviour.state = BottomSheetBehavior.STATE_EXPANDED
     }
 
     fun showClearDownloadsView() {
         binding.clearBtn.text = getString(R.string.clear_all_downloads)
-        binding.clearDownloadsBottomTv.text = "All your downloaded media and files will be deleted."
+        binding.clearDownloadsBottomTv.text = AppObjectController.getFirebaseRemoteConfig()
+            .getString(FirebaseRemoteConfigKey.SETTINGS_CLEAR_DATA_CONFIRMATION)
         sheetBehaviour.state = BottomSheetBehavior.STATE_EXPANDED
     }
 
     private fun showLoginPopup() {
         binding.clearBtn.text = getString(R.string.login_signup)
-        binding.clearDownloadsBottomTv.text = "You are not logged in."
+        binding.clearDownloadsBottomTv.text = AppObjectController.getFirebaseRemoteConfig()
+            .getString(FirebaseRemoteConfigKey.SETTINGS_SIGN_IN_PROMPT)
         sheetBehaviour.state = BottomSheetBehavior.STATE_EXPANDED
     }
 

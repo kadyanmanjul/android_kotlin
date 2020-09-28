@@ -54,9 +54,8 @@ class Mentor {
     }
 
     fun logout() {
-        Mentor().update()
         instance = null
-        User().update()
+        Mentor().update()
     }
 
     fun update() {
@@ -70,7 +69,6 @@ class Mentor {
     }
 
     fun reset() {
-        User().update()
         instance = null
     }
 

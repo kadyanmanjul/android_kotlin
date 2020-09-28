@@ -370,4 +370,19 @@
         <key>SHOW_BB_TOOL_TIP_FIRST_TIME</key>
         <value>true</value>
     </entry>
+    <entry>
+        <key>SETTINGS_LOGOUT_CONFIRMATION</key>
+        <value>Are you sure you want to logout?
+        </value>
+    </entry>
+    <entry>
+        <key>SETTINGS_SIGN_IN_PROMPT</key>
+        <value>You need to sign in or register to access this section.
+        </value>
+    </entry>
+    <entry>
+        <key>SETTINGS_CLEAR_DATA_CONFIRMATION</key>
+        <value>All your downloaded files will be deleted.
+        </value>
+    </entry>
 </defaultsMap>

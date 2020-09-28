@@ -202,7 +202,7 @@ private fun updateFromLoginResponse(loginResponse: LoginResponse) {
     user.userId = loginResponse.userId
     user.isVerified = false
     user.token = loginResponse.token
-    User.update(user.toString())
+    User.update(user)
     PrefManager.put(API_TOKEN, loginResponse.token)
     Mentor.getInstance()
         .setId(loginResponse.mentorId)

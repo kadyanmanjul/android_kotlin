@@ -770,6 +770,8 @@ object Utils {
     }
 
     fun formatDate(inputDate: String, inputFormat: String, outputFormat: String): String {
+        if (inputDate.isEmpty())
+            return ""
         val inputFormat: DateFormat = SimpleDateFormat(inputFormat)
         val outputFormat: DateFormat = SimpleDateFormat(outputFormat)
         val inputDateStr = inputDate

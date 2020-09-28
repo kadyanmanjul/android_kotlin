@@ -241,7 +241,7 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
         user.isVerified = true
         user.token = loginResponse.token
         user.source = loginResponse.createdSource!!
-        User.update(user.toString())
+        User.update(user)
         PrefManager.put(API_TOKEN, loginResponse.token)
         Mentor.getInstance()
             .setId(loginResponse.mentorId)
@@ -265,7 +265,7 @@ class SignUpViewModel(application: Application) : AndroidViewModel(application) 
                         Mentor.getInstance().updateFromResponse(this)
                         this.getUser()?.let {
                             it.isVerified = true
-                            User.update(it.toString())
+                            User.update(it)
                         }
                         AppAnalytics.updateUser()
                         analyzeUserProfile()

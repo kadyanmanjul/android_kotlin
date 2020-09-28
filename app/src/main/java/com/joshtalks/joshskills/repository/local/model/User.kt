@@ -3,9 +3,6 @@ package com.joshtalks.joshskills.repository.local.model
 import com.google.gson.annotations.SerializedName
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.PrefManager
-
-const val USER_PERSISTANT_KEY = "user"
 
 open class User {
     @SerializedName("mobile")
@@ -47,10 +44,6 @@ open class User {
     @SerializedName("is_verified")
     var isVerified: Boolean = false
 
-    fun update() {
-        PrefManager.put(USER_PERSISTANT_KEY, toString())
-    }
-
     override fun toString(): String {
         return AppObjectController.gsonMapper.toJson(this)
     }
@@ -58,11 +51,7 @@ open class User {
 
     fun updateFromResponse(user: User) {
         user.token = getInstance().token
-        user.phoneNumber = user.phoneNumber
-        user.dateOfBirth = user.dateOfBirth
-        user.gender = user.gender
-        user.firstName = user.firstName
-        update(user.toString())
+        update(user)
     }
 
     companion object {
@@ -70,16 +59,14 @@ open class User {
         @JvmStatic
         fun getInstance(): User {
             return try {
-                AppObjectController.gsonMapper.fromJson(
-                    PrefManager.getStringValue(USER_PERSISTANT_KEY), User::class.java
-                )
+                Mentor.getInstance().getUser() ?: User()
             } catch (ex: Exception) {
                 return User()
             }
         }
 
-        fun update(value: String) {
-            PrefManager.put(USER_PERSISTANT_KEY, value)
+        fun update(user: User) {
+            Mentor.getInstance().updateUser(user).update()
         }
     }
 
