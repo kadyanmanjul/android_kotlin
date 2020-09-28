@@ -86,9 +86,13 @@ object PrefManager {
         else prefManagerCommon.getBoolean(key, false)
     }
 
-    fun getStringValue(key: String, isConsistent: Boolean = false): String {
+    fun getStringValue(
+        key: String,
+        isConsistent: Boolean = false,
+        defaultValue: String = EMPTY
+    ): String {
         return if (isConsistent) prefManagerConsistent.getString(key, EMPTY) ?: EMPTY
-        else prefManagerCommon.getString(key, EMPTY) ?: EMPTY
+        else prefManagerCommon.getString(key, defaultValue) ?: EMPTY
     }
 
     fun getIntValue(key: String, isConsistent: Boolean = false): Int {

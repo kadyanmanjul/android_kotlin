@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
+
 import com.clevertap.android.sdk.CleverTapAPI;
 import com.flurry.android.Constants;
 import com.flurry.android.FlurryAgent;
@@ -16,6 +17,9 @@ import com.joshtalks.joshskills.core.PrefManager;
 import com.joshtalks.joshskills.repository.local.model.InstallReferrerModel;
 import com.joshtalks.joshskills.repository.local.model.Mentor;
 import com.joshtalks.joshskills.repository.local.model.User;
+
+import org.jetbrains.annotations.NotNull;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -26,11 +30,12 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
-import org.jetbrains.annotations.NotNull;
+
 import timber.log.Timber;
 
 import static com.joshtalks.joshskills.core.PrefManagerKt.INSTANCE_ID;
 import static com.joshtalks.joshskills.core.PrefManagerKt.USER_UNIQUE_ID;
+import static com.joshtalks.joshskills.core.StaticConstantKt.EMPTY;
 import static com.joshtalks.joshskills.core.UtilsKt.getPhoneNumber;
 
 public class AppAnalytics {
@@ -141,7 +146,7 @@ public class AppAnalytics {
     private static void updateFlurryUser() {
         Timber.tag("Flurry").d("updateFlurryUser() called");
         User user = User.getInstance();
-        FlurryAgent.setUserId(PrefManager.INSTANCE.getStringValue(INSTANCE_ID, false));
+        FlurryAgent.setUserId(PrefManager.INSTANCE.getStringValue(INSTANCE_ID, false, EMPTY));
         FlurryAgent.setVersionName(BuildConfig.VERSION_NAME);
         FlurryAgent.setAge(getAge(user.getDateOfBirth()));
         FlurryAgent.setGender((user.getGender().equals("M") ? Constants.MALE : Constants.FEMALE));
@@ -158,7 +163,7 @@ public class AppAnalytics {
         try {
             User user = User.getInstance();
             Mentor mentor = Mentor.getInstance();
-            String gaid = PrefManager.INSTANCE.getStringValue(USER_UNIQUE_ID, false);
+            String gaid = PrefManager.INSTANCE.getStringValue(USER_UNIQUE_ID, false, EMPTY);
 
             firebaseAnalytics.setUserId(gaid);
             firebaseAnalytics.setUserProperty("gaid", gaid);
@@ -257,8 +262,8 @@ public class AppAnalytics {
 
     public AppAnalytics addUserDetails() {
         try {
-            if (PrefManager.INSTANCE != null && !PrefManager.INSTANCE.getStringValue(USER_UNIQUE_ID, false).isEmpty())
-                parameters.put(AnalyticsEvent.USER_GAID.getNAME(), PrefManager.INSTANCE.getStringValue(USER_UNIQUE_ID, false));
+            if (PrefManager.INSTANCE != null && !PrefManager.INSTANCE.getStringValue(USER_UNIQUE_ID, false, EMPTY).isEmpty())
+                parameters.put(AnalyticsEvent.USER_GAID.getNAME(), PrefManager.INSTANCE.getStringValue(USER_UNIQUE_ID, false, EMPTY));
             if (Mentor.getInstance().hasId())
                 parameters.put(AnalyticsEvent.USER_MENTOR_ID.getNAME(), Mentor.getInstance().getId());
             if (!User.getInstance().getFirstName().isEmpty())
@@ -267,8 +272,8 @@ public class AppAnalytics {
                 parameters.put(AnalyticsEvent.USER_EMAIL.getNAME(), User.getInstance().getEmail());
             if (!User.getInstance().getPhoneNumber().isEmpty())
                 parameters.put(AnalyticsEvent.USER_PHONE_NUMBER.getNAME(), User.getInstance().getPhoneNumber());
-            if (PrefManager.INSTANCE != null && !PrefManager.INSTANCE.getStringValue(INSTANCE_ID, false).isEmpty())
-                parameters.put(AnalyticsEvent.INSTANCE_ID.getNAME(), PrefManager.INSTANCE.getStringValue(INSTANCE_ID, false));
+            if (PrefManager.INSTANCE != null && !PrefManager.INSTANCE.getStringValue(INSTANCE_ID, false, EMPTY).isEmpty())
+                parameters.put(AnalyticsEvent.INSTANCE_ID.getNAME(), PrefManager.INSTANCE.getStringValue(INSTANCE_ID, false, EMPTY));
         } catch (Exception ignored) {
         }
         return this;

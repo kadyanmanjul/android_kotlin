@@ -990,17 +990,21 @@ class BitVideoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibili
 
                         lisOfVideoQualityTrack.sortBy { it.quality }
 
-                        when (PrefManager.getStringValue(SELECTED_QUALITY)) {
-                            resources.getStringArray(R.array.resolutions)[2] -> {
-                                println("playWhenReady = 0")
+                        val supportedResolutions =
+                            context.resources.getStringArray(R.array.resolutions)
+                        when (PrefManager.getStringValue(
+                            SELECTED_QUALITY,
+                            false,
+                            supportedResolutions[supportedResolutions.size - 1]
+                        )) {
+                            supportedResolutions[2] -> {
                                 currentMappedTrackInfoPosition = 0
                                 onSelectTrack(lisOfVideoQualityTrack[0].apply {
                                     isSelected = true
                                     videoQualityP = this.title
                                 })
                             }
-                            resources.getStringArray(R.array.resolutions)[1] -> {
-                                println("playWhenReady = 1")
+                            supportedResolutions[1] -> {
                                 if (lisOfVideoQualityTrack.size > 1) {
                                     currentMappedTrackInfoPosition = 1
                                     onSelectTrack(lisOfVideoQualityTrack[1].apply {
@@ -1016,7 +1020,6 @@ class BitVideoPlayer : PlayerView, LifecycleObserver, PlayerControlView.Visibili
                                 }
                             }
                             else -> {
-                                println("playWhenReady = 2")
                                 onSelectTrack(lisOfVideoQualityTrack[lisOfVideoQualityTrack.size - 1].apply {
                                     isSelected = true
                                     videoQualityP = this.title

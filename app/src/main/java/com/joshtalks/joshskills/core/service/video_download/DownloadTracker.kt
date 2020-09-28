@@ -190,14 +190,17 @@ class DownloadTracker internal constructor(
                         )
                     )
                 }
+                val resolutions = context.resources.getStringArray(R.array.resolutions)
                 var qualityIndex =
-                    context.resources.getStringArray(R.array.resolutions).size - 1 - listOf(
-                        *context.resources.getStringArray(
-                            R.array.resolutions
-                        )
+                    resolutions.size - 1 - listOf(
+                        *resolutions
                     )
                         .indexOf(
-                            getStringValue(SELECTED_QUALITY, false)
+                            getStringValue(
+                                SELECTED_QUALITY,
+                                false,
+                                resolutions[resolutions.size - 1]
+                            )
                         )
 
                 val trackSelectionFactory: TrackSelection.Factory =
