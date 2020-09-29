@@ -33,11 +33,11 @@ import com.tonyodev.fetch2.Download
 import com.tonyodev.fetch2.Error
 import com.tonyodev.fetch2.FetchListener
 import com.tonyodev.fetch2core.DownloadBlock
+import java.lang.ref.WeakReference
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import java.lang.ref.WeakReference
 
 @Layout(R.layout.pdf_view_holder)
 class PdfViewHolder(activityRef: WeakReference<FragmentActivity>, message: ChatModel,previousMessage:ChatModel?) :
@@ -190,7 +190,7 @@ class PdfViewHolder(activityRef: WeakReference<FragmentActivity>, message: ChatM
                         tvPdfInfo.text = it.pathSegments[it.pathSegments.size - 1].split(".")[0]
                     }
                     Utils.fileUrl(pdfObj.thumbnail, pdfObj.thumbnail)?.run {
-                        setImageInImageView(imageView, this)
+                        setDefaultImageView(imageView, this)
                     }
 
                     if (message.downloadStatus == DOWNLOAD_STATUS.DOWNLOADING) {
@@ -235,7 +235,7 @@ class PdfViewHolder(activityRef: WeakReference<FragmentActivity>, message: ChatM
         ivCancelDownload.visibility = android.view.View.VISIBLE
     }
 
-    @Click(R.id.container_fl)
+    @Click(R.id.image_view)
     fun onClickPdfContainer() {
         if (PermissionUtils.isStoragePermissionEnabled(activityRef.get()!!).not()) {
             PermissionUtils.storageReadAndWritePermission(
@@ -272,7 +272,6 @@ class PdfViewHolder(activityRef: WeakReference<FragmentActivity>, message: ChatM
         }
         openPdf()
     }
-
     private fun openPdf() {
         message.question?.pdfList?.getOrNull(0)?.let { pdfObj ->
             if (pdfObj.url.isBlank()) {

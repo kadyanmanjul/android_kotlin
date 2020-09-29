@@ -17,114 +17,103 @@
 
         <LinearLayout
             android:id="@+id/message_view"
-            android:layout_width="wrap_content"
+            android:layout_width="@dimen/_220sdp"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="@dimen/_3sdp">
+            android:background="@drawable/pdf_bg"
+            android:orientation="vertical">
 
             <include layout="@layout/tag_practise_layout" />
 
-            <FrameLayout
-                android:id="@+id/container_fl"
-                android:layout_width="@dimen/_194sdp"
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/image_view"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:background="@drawable/pdf_bg"
-                android:clickable="true"
-                android:focusable="true">
+                android:layout_gravity="start"
+                android:adjustViewBounds="true"
+                android:background="@drawable/video_placeholder"
+                android:clickable="false"
+                android:focusable="false"
+                android:scaleType="fitXY" />
 
-                <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/image_view"
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:background="@color/pdf_bg_color"
+                android:orientation="horizontal"
+                android:paddingTop="@dimen/_8sdp"
+                android:paddingBottom="@dimen/_8sdp">
+
+                <TextView
+                    android:id="@+id/tv_pdf_info"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="start"
-                    android:adjustViewBounds="true"
-                    android:background="@drawable/video_placeholder"
-                    android:clickable="false"
-                    android:focusable="false"
-                    android:scaleType="centerCrop" />
+                    android:layout_alignParentStart="true"
+                    android:layout_gravity="start|center"
+                    android:layout_marginLeft="@dimen/_10sdp"
+                    android:layout_marginRight="@dimen/_10sdp"
+                    android:drawableStart="@drawable/ic_pdf"
+                    android:drawablePadding="@dimen/_4sdp"
+                    android:ellipsize="marquee"
+                    android:gravity="start|center"
+                    android:maxLength="16"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+                    android:textColor="@color/black"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    tools:text="Pdf No. 1" />
 
-                <RelativeLayout
-                    android:layout_width="match_parent"
+                <FrameLayout
+                    android:id="@+id/download_container"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="bottom"
-                    android:background="@color/pdf_bg_color"
-                    android:orientation="horizontal"
-                    android:paddingTop="@dimen/_8sdp"
-                    android:paddingBottom="@dimen/_8sdp">
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginEnd="@dimen/_10sdp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:visibility="visible">
 
-                    <TextView
-                        android:id="@+id/tv_pdf_info"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentStart="true"
-                        android:layout_gravity="start|center"
-                        android:layout_marginLeft="@dimen/_10sdp"
-                        android:layout_marginRight="@dimen/_10sdp"
-                        android:drawableStart="@drawable/ic_pdf"
-                        android:drawablePadding="@dimen/_4sdp"
-                        android:ellipsize="marquee"
-                        android:gravity="start|center"
-                        android:maxLength="16"
-                        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
-                        android:textColor="@color/black"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        tools:text="Pdf No. 1" />
-
-                    <FrameLayout
-                        android:id="@+id/download_container"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentEnd="true"
-                        android:layout_marginEnd="@dimen/_10sdp"
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/iv_start_download"
+                        android:layout_width="@dimen/_24sdp"
+                        android:layout_height="@dimen/_24sdp"
+                        android:layout_gravity="end|center"
+                        android:background="@drawable/circle_pdf_bg"
                         android:clickable="true"
                         android:focusable="true"
-                        android:visibility="visible">
-
-                        <androidx.appcompat.widget.AppCompatImageView
-                            android:id="@+id/iv_start_download"
-                            android:layout_width="@dimen/_24sdp"
-                            android:layout_height="@dimen/_24sdp"
-                            android:layout_gravity="end|center"
-                            android:background="@drawable/circle_pdf_bg"
-                            android:clickable="true"
-                            android:focusable="true"
-                            android:padding="@dimen/_5sdp"
-                            android:src="@drawable/ic_download"
-                            android:tint="#7A7A7A"
-                            android:visibility="visible" />
+                        android:padding="@dimen/_5sdp"
+                        android:src="@drawable/ic_download"
+                        android:tint="#7A7A7A"
+                        android:visibility="visible" />
 
 
-                        <com.pnikosis.materialishprogress.ProgressWheel
-                            android:id="@+id/progress_dialog"
-                            android:layout_width="@dimen/_28sdp"
-                            android:layout_height="@dimen/_28sdp"
-                            android:layout_gravity="center_vertical|end"
-                            android:visibility="gone"
-                            app:matProg_barWidth="@dimen/_2sdp"
-                            tools:visibility="gone"
-                            wheel:matProg_barColor="#878A91"
-                            wheel:matProg_fillRadius="true"
-                            wheel:matProg_progressIndeterminate="true" />
+                    <com.pnikosis.materialishprogress.ProgressWheel
+                        android:id="@+id/progress_dialog"
+                        android:layout_width="@dimen/_28sdp"
+                        android:layout_height="@dimen/_28sdp"
+                        android:layout_gravity="center_vertical|end"
+                        android:visibility="gone"
+                        app:matProg_barWidth="@dimen/_2sdp"
+                        tools:visibility="gone"
+                        wheel:matProg_barColor="#878A91"
+                        wheel:matProg_fillRadius="true"
+                        wheel:matProg_progressIndeterminate="true" />
 
-                        <androidx.appcompat.widget.AppCompatImageView
-                            android:id="@+id/iv_cancel_download"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_vertical|end"
-                            android:clickable="true"
-                            android:focusable="true"
-                            android:padding="@dimen/_5sdp"
-                            android:src="@drawable/ic_cross"
-                            android:tint="#878A91"
-                            android:visibility="gone"
-                            tools:visibility="gone" />
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/iv_cancel_download"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical|end"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:padding="@dimen/_5sdp"
+                        android:src="@drawable/ic_cross"
+                        android:tint="#878A91"
+                        android:visibility="gone"
+                        tools:visibility="gone" />
 
-                    </FrameLayout>
-                </RelativeLayout>
-
-            </FrameLayout>
+                </FrameLayout>
+            </RelativeLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"

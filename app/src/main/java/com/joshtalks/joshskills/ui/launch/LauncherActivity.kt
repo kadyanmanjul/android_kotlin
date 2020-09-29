@@ -15,6 +15,7 @@ import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.CLEAR_CACHE
 import com.joshtalks.joshskills.core.CoreJoshActivity
 import com.joshtalks.joshskills.core.IS_GUEST_ENROLLED
 import com.joshtalks.joshskills.core.PrefManager
@@ -47,6 +48,7 @@ class LauncherActivity : CoreJoshActivity(), CustomPermissionDialogInteractionLi
         WorkManagerAdmin.appStartWorker()
         logAppLaunchEvent(getNetworkOperatorName())
         AppObjectController.initialiseFreshChat()
+        clearGlideCache()
     }
 
     private fun animatedProgressBar() {
@@ -55,6 +57,14 @@ class LauncherActivity : CoreJoshActivity(), CustomPermissionDialogInteractionLi
         )
         backgroundColorAnimator.duration = 300
         backgroundColorAnimator.start()
+    }
+
+    private fun clearGlideCache() {
+        if (PrefManager.hasKey(CLEAR_CACHE).not()) {
+            Glide.get(applicationContext).clearMemory()
+            Glide.get(applicationContext).clearDiskCache()
+            PrefManager.put(CLEAR_CACHE, true)
+        }
     }
 
     private fun handleIntent() {
