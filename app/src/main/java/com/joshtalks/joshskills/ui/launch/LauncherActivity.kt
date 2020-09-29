@@ -18,6 +18,7 @@ import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.CLEAR_CACHE
 import com.joshtalks.joshskills.core.CoreJoshActivity
 import com.joshtalks.joshskills.core.IS_GUEST_ENROLLED
+import com.joshtalks.joshskills.core.JoshSkillExecutors
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
@@ -62,7 +63,9 @@ class LauncherActivity : CoreJoshActivity(), CustomPermissionDialogInteractionLi
     private fun clearGlideCache() {
         if (PrefManager.hasKey(CLEAR_CACHE).not()) {
             Glide.get(applicationContext).clearMemory()
-            Glide.get(applicationContext).clearDiskCache()
+            JoshSkillExecutors.BOUNDED.execute {
+                Glide.get(applicationContext).clearDiskCache()
+            }
             PrefManager.put(CLEAR_CACHE, true)
         }
     }

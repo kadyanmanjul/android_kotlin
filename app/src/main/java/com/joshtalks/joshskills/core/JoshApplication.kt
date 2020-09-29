@@ -11,9 +11,9 @@ import androidx.lifecycle.OnLifecycleEvent
 import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.multidex.MultiDexApplication
-import com.akexorcist.localizationactivity.core.LocalizationApplicationDelegate
 import com.freshchat.consumer.sdk.Freshchat
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
+import com.yariksoffice.lingver.Lingver
 import io.github.inflationx.viewpump.ViewPumpContextWrapper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -24,24 +24,23 @@ var TAG = "JoshSkill"
 
 class JoshApplication : MultiDexApplication(), LifecycleObserver,
     ComponentCallbacks2/*, Configuration.Provider*/ {
-    private val localizationDelegate = LocalizationApplicationDelegate()
 
     companion object {
         @JvmStatic
         var isAppVisible = false
     }
-
     override fun attachBaseContext(base: Context) {
-        localizationDelegate.setDefaultLanguage(base, "en")
+        super.attachBaseContext(base)
         base.let { ViewPumpContextWrapper.wrap(it) }
-        super.attachBaseContext(localizationDelegate.attachBaseContext(base))
     }
 
     override fun onCreate() {
         super.onCreate()
+        Lingver.init(this, "en")
         ProcessLifecycleOwner.get().lifecycle.addObserver(this)
         AppObjectController.init(this)
         registerBroadcastReceiver()
+        Lingver.getInstance().setLocale(this, "hi")
     }
 
     private fun registerBroadcastReceiver() {
