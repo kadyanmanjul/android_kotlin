@@ -476,8 +476,6 @@ class AppObjectController {
 
         private fun initUXCam() {
             UXCam.setAutomaticScreenNameTagging(true)
-            //     UXCam.allowShortBreakForAnotherApp(true)
-            //   UXCam.allowShortBreakForAnotherApp(180000)
         }
 
         private fun getOkHttpDownloader(): OkHttpDownloader {

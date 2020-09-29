@@ -29,7 +29,6 @@
         android:paddingTop="@dimen/_10sdp"
         android:paddingEnd="@dimen/_30sdp"
         android:paddingBottom="@dimen/_10sdp"
-        android:text="@string/find_more_courses"
         android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Bold"
         android:textColor="@color/white"
         app:layout_constraintEnd_toEndOf="parent"

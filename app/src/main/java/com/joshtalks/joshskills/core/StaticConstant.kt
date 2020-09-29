@@ -141,6 +141,7 @@ class FirebaseRemoteConfigKey {
             "BB_TOOL_TIP_BELOW_FIND_COURSE_TEXT_FREE"
         const val INBOX_OVERLAY_TOOLTIP_D0_1 = "INBOX_OVERLAY_TOOLTIP_D0_1"
         const val INBOX_OVERLAY_TOOLTIP_D2_3 = "INBOX_OVERLAY_TOOLTIP_D2_3"
+        const val BUY_COURSE_LABEL = "buy_course_label"
 
         //Settings
         const val SETTINGS_LOGOUT_CONFIRMATION = "SETTINGS_LOGOUT_CONFIRMATION"
