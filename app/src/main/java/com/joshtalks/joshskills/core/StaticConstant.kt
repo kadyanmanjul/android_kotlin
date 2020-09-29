@@ -156,6 +156,8 @@ class FirebaseRemoteConfigKey {
         const val SHOW_BB_TOOL_TIP_FIRST_TIME = "SHOW_BB_TOOL_TIP_FIRST_TIME"
 
 
+        const val UX_CAM_FEATURE_ENABLE = "UX_CAM_FEATURE_ENABLE"
+
     }
 }
 

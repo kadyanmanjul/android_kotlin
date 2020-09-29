@@ -61,10 +61,18 @@ import com.tonyodev.fetch2.HttpUrlConnectionDownloader
 import com.tonyodev.fetch2.NetworkType
 import com.tonyodev.fetch2core.Downloader
 import com.tonyodev.fetch2okhttp.OkHttpDownloader
+import com.uxcam.UXCam
 import io.branch.referral.Branch
 import io.github.inflationx.calligraphy3.CalligraphyConfig
 import io.github.inflationx.calligraphy3.CalligraphyInterceptor
 import io.github.inflationx.viewpump.ViewPump
+import java.io.File
+import java.lang.reflect.Modifier
+import java.lang.reflect.Type
+import java.net.URL
+import java.text.DateFormat
+import java.util.*
+import java.util.concurrent.TimeUnit
 import jp.wasabeef.glide.transformations.CropTransformation
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation
 import okhttp3.CertificatePinner
@@ -80,14 +88,6 @@ import retrofit2.HttpException
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import timber.log.Timber
-import java.io.File
-import java.lang.reflect.Modifier
-import java.lang.reflect.Type
-import java.net.URL
-import java.text.DateFormat
-import java.util.Collections
-import java.util.Date
-import java.util.concurrent.TimeUnit
 
 const val KEY_AUTHORIZATION = "Authorization"
 const val KEY_APP_VERSION_CODE = "app-version-code"
@@ -299,6 +299,7 @@ class AppObjectController {
             ActivityLifecycleCallback.register(joshApplication)
             AppEventsLogger.activateApp(joshApplication)
             initSinchClient()
+            initUXCam()
         }
 
 
@@ -471,6 +472,12 @@ class AppObjectController {
             sinchClient?.startListeningOnActiveConnection()
             sinchClient?.setSupportActiveConnectionInBackground(true)
             return sinchClient
+        }
+
+        private fun initUXCam() {
+            UXCam.setAutomaticScreenNameTagging(true)
+            //     UXCam.allowShortBreakForAnotherApp(true)
+            //   UXCam.allowShortBreakForAnotherApp(180000)
         }
 
         private fun getOkHttpDownloader(): OkHttpDownloader {

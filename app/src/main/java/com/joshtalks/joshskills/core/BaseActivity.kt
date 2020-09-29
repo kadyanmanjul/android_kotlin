@@ -18,6 +18,7 @@ import com.android.installreferrer.api.InstallReferrerClient
 import com.flurry.android.FlurryAgent
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.gson.reflect.TypeToken
+import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
@@ -47,6 +48,7 @@ import com.joshtalks.joshskills.ui.signup.FLOW_FROM
 import com.joshtalks.joshskills.ui.signup.OnBoardActivity
 import com.joshtalks.joshskills.ui.signup.SignUpActivity
 import com.newrelic.agent.android.NewRelic
+import com.uxcam.UXCam
 import io.branch.referral.Branch
 import io.github.inflationx.viewpump.ViewPumpContextWrapper
 import kotlinx.coroutines.CoroutineScope
@@ -92,6 +94,11 @@ abstract class BaseActivity : AppCompatActivity() {
             initIdentifierForTools()
             InstallReferralUtil.installReferrer(applicationContext)
         }
+        if (AppObjectController.getFirebaseRemoteConfig()
+                .getBoolean(FirebaseRemoteConfigKey.UX_CAM_FEATURE_ENABLE)
+        ) {
+            UXCam.startWithKey(BuildConfig.WX_CAM_KEY)
+        }
     }
 
     private fun initIdentifierForTools() {
@@ -100,6 +107,8 @@ abstract class BaseActivity : AppCompatActivity() {
             initNewRelic()
             initFlurry()
         }
+        UXCam.setUserIdentity(PrefManager.getStringValue(USER_UNIQUE_ID))
+        // UXCam.setUserProperty(String propertyName , String value)
     }
 
     fun openHelpActivity() {

@@ -14,7 +14,9 @@ buildscript {
         }
         maven { url 'http://developer.huawei.com/repo/' }
         mavenCentral()
-
+        maven{
+            url 'https://sdk.uxcam.com/android/'
+        }
 
     }
     dependencies {
@@ -48,7 +50,9 @@ allprojects {
         }
         maven { url 'http://developer.huawei.com/repo/' }
         mavenCentral()
-
+        maven{
+            url 'https://sdk.uxcam.com/android/'
+        }
     }
 }
 

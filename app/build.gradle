@@ -30,6 +30,7 @@ android {
         buildConfigField "String", "SINCH_API_KEY", "\"86f34ed9-cdcf-497c-af80-3f352170164f\""
         buildConfigField "String", "SINCH_API_SECRET", "\"0A42yytE7kqLGwYOGGidng==\""
         buildConfigField "String", "SINCH_SERVER", "\"clientapi.sinch.com\""
+        buildConfigField "String", "WX_CAM_KEY", "\"300rqcct068ggy3\""
 
         javaCompileOptions {
             annotationProcessorOptions {
@@ -318,5 +319,6 @@ dependencies {
     androidTestImplementation 'androidx.test:runner:1.3.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
     implementation "com.github.YarikSOffice:lingver:1.3.0"
+    implementation 'com.uxcam:uxcam:3.3.1@aar'
 
 }

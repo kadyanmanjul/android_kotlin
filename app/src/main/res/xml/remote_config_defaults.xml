@@ -401,4 +401,8 @@
             phone ki settings mein jaayenge aur wahan se aap on karenge.
         </value>
     </entry>
+    <entry>
+        <key>UX_CAM_FEATURE_ENABLE</key>
+        <value>true</value>
+    </entry>
 </defaultsMap>

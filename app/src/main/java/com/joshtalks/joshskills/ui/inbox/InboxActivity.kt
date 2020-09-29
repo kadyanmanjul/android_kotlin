@@ -980,5 +980,4 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         overlay_layout.visibility = View.VISIBLE
         (overlay_tip as TopTrialTooltipView).setInboxOverayTipText(7.minus(remainingTrialDays))
     }
-
 }
