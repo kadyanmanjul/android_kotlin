@@ -48,6 +48,7 @@ import com.joshtalks.joshskills.ui.signup.FLOW_FROM
 import com.joshtalks.joshskills.ui.signup.OnBoardActivity
 import com.joshtalks.joshskills.ui.signup.SignUpActivity
 import com.newrelic.agent.android.NewRelic
+import com.uxcam.OnVerificationListener
 import com.uxcam.UXCam
 import io.branch.referral.Branch
 import io.github.inflationx.viewpump.ViewPumpContextWrapper
@@ -56,6 +57,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import java.lang.reflect.Type
+import timber.log.Timber
 
 const val HELP_ACTIVITY_REQUEST_CODE = 9010
 
@@ -109,6 +111,17 @@ abstract class BaseActivity : AppCompatActivity() {
         }
         UXCam.setUserIdentity(PrefManager.getStringValue(USER_UNIQUE_ID))
         // UXCam.setUserProperty(String propertyName , String value)
+
+        UXCam.addVerificationListener(object : OnVerificationListener {
+            override fun onVerificationSuccess() {
+                FirebaseCrashlytics.getInstance()
+                    .setCustomKey("UXCam_Recording_Link", UXCam.urlForCurrentSession())
+            }
+
+            override fun onVerificationFailed(errorMessage: String) {
+                Timber.e(errorMessage)
+            }
+        })
     }
 
     fun openHelpActivity() {
