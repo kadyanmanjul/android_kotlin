@@ -45,6 +45,7 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
     val reminderApiCallStatusLiveData: MutableLiveData<ApiCallStatus> = MutableLiveData()
     val totalRemindersLiveData: MutableLiveData<Int> = MutableLiveData()
     val onBoardingLiveData: MutableLiveData<OnBoardingStatusResponse> = MutableLiveData()
+    val overAllWatchTime: MutableLiveData<Long> = MutableLiveData()
 
     fun getRegisterCourses() {
         viewModelScope.launch(Dispatchers.IO) {
@@ -222,6 +223,15 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
             } catch (ex: Throwable) {
                 ex.showAppropriateMsg()
             }
+        }
+    }
+
+    fun getTotalWatchTime() {
+        viewModelScope.launch {
+            overAllWatchTime.postValue(
+                AppObjectController.appDatabase.videoEngageDao().getOverallWatchTime()
+            )
+            return@launch
         }
     }
 

@@ -418,4 +418,9 @@
         <key>UX_CAM_FEATURE_ENABLE</key>
         <value>true</value>
     </entry>
+    <entry>
+        <key>MINIMUM_TIME_TO_SHOW_REVIEW</key>
+        <value>30
+        </value>
+    </entry>
 </defaultsMap>

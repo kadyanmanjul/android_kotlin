@@ -19,6 +19,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.facebook.share.internal.ShareConstants.ACTION_TYPE
 import com.google.android.gms.location.LocationRequest
 import com.google.android.material.snackbar.Snackbar
+import com.google.android.play.core.review.ReviewManagerFactory
 import com.joshtalks.joshcamerax.utils.SharedPrefsManager
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
@@ -345,6 +346,25 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         }
     }
 
+    private fun showInAppReview() {
+        val manager = ReviewManagerFactory.create(this)
+        val request = manager.requestReviewFlow()
+        request.addOnCompleteListener { request ->
+            if (request.isSuccessful) {
+                // We got the ReviewInfo object
+                val reviewInfo = request.result
+                val flow = manager.launchReviewFlow(this@InboxActivity, reviewInfo)
+                flow.addOnCompleteListener { result ->
+
+                    println("result = [${result.isSuccessful}]")
+                    result.exception?.printStackTrace()
+                }
+            } else {
+                // There was some problem, continue regardless of the result.
+            }
+        }
+    }
+
     private fun setToolbar() {
         val titleView = findViewById<AppCompatTextView>(R.id.text_message_title)
         titleView.text = getString(R.string.inbox_header)
@@ -645,6 +665,15 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         viewModel.totalRemindersLiveData.observe(this) {
             openReminderCallback(it)
         }
+
+        viewModel.overAllWatchTime.observe(this, {
+
+            if (it % AppObjectController.getFirebaseRemoteConfig()
+                    .getLong(FirebaseRemoteConfigKey.MINIMUM_TIME_TO_SHOW_REVIEW) == 0L
+            ) {
+                showInAppReview()
+            }
+        })
     }
 
     private fun logEvent(eventName: String) {
