@@ -24,6 +24,7 @@
 -optimizationpasses 5
 -repackageclasses
 
+-keepnames class com.joshtalks.* { *; }
 
 # Keeping views
 -keep public class * extends android.view.View {
@@ -180,3 +181,7 @@
 
 # For com.github.barteksc:android-pdf-viewer
 -keep class com.shockwave.**
+
+# For UXCam
+-keep class com.uxcam.** { *; }
+-dontwarn com.uxcam.**
