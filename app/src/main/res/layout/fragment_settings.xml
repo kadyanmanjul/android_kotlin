@@ -151,7 +151,7 @@
                 android:background="@color/white"
                 android:paddingHorizontal="@dimen/_10sdp"
                 android:paddingBottom="@dimen/_12sdp"
-                android:text="Note: Apki notification off hai"
+                tools:text="Note: Apki notification off hai"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
