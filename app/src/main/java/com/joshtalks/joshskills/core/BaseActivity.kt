@@ -328,9 +328,10 @@ abstract class BaseActivity : AppCompatActivity() {
         }
     }
 
-    protected fun shouldRequireCustomPermission(): Boolean {
+    fun shouldRequireCustomPermission(): Boolean {
+        val oemIntent = PowerManagers.getIntentForOEM(this)
         val performedAction = PrefManager.getStringValue(CUSTOM_PERMISSION_ACTION_KEY)
-        return performedAction == EMPTY
+        return oemIntent != null && performedAction == EMPTY
     }
 
     fun isUserProfileComplete(): Boolean {

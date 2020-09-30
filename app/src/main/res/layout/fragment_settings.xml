@@ -28,8 +28,8 @@
                 android:drawableEnd="@drawable/ic_arrow_right"
                 android:drawablePadding="@dimen/_8sdp"
                 android:gravity="center_vertical"
-                android:paddingVertical="@dimen/_12sdp"
                 android:onClick="@{()->handler.openPersonalInfoFragment()}"
+                android:paddingVertical="@dimen/_12sdp"
                 android:paddingStart="@dimen/_8sdp"
                 android:paddingEnd="@dimen/_8sdp"
                 android:text="@string/personal_information"
@@ -68,7 +68,7 @@
                     android:id="@+id/language_tv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/rounded_primary_bg_8dp"
+                    android:background="@drawable/rounded_primary_bg_2dp"
                     android:gravity="center_vertical"
                     android:paddingHorizontal="@dimen/_4sdp"
                     android:paddingVertical="@dimen/_2sdp"
@@ -91,16 +91,17 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/notification_rl"
+                android:id="@+id/notification_root"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_4sdp"
+                android:layout_height="wrap_content"
                 android:background="@color/white"
+                android:onClick="@{()->handler.showNotificationSettingPopup()}"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/language_rl">
 
-                <com.google.android.material.textview.MaterialTextView
+                <TextView
                     android:id="@+id/notification_tag_tv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -113,20 +114,48 @@
                     android:paddingEnd="@dimen/_8sdp"
                     android:text="@string/notifications"
                     android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
-                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
-                <com.google.android.material.switchmaterial.SwitchMaterial
-                    android:id="@+id/notification_switch"
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/notification_status_tv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:checked="true"
+                    android:background="@drawable/rounded_grey_bg_2dp"
+                    android:gravity="center_vertical"
+                    android:paddingHorizontal="@dimen/_4sdp"
+                    android:paddingVertical="@dimen/_2sdp"
+                    android:text="@string/off"
+                    android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal_SemiBold"
+                    android:textColor="@color/white"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/notification_tag_tv"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <ImageView
+                    android:id="@+id/notification_right_iv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@string/selection_arrow"
                     android:paddingHorizontal="@dimen/_8sdp"
-                    android:paddingVertical="0dp"
+                    android:src="@drawable/ic_arrow_right"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
             </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/notification_discription"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:paddingHorizontal="@dimen/_10sdp"
+                android:paddingBottom="@dimen/_12sdp"
+                android:text="Note: Apki notification off hai"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Caption_Normal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/notification_root" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/download_quality_rl"
@@ -137,7 +166,7 @@
                 android:onClick="@{()->handler.openSelectQualityFragment()}"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/notification_rl">
+                app:layout_constraintTop_toBottomOf="@+id/notification_discription">
 
                 <TextView
                     android:id="@+id/download_quality_tag_tv"
@@ -159,7 +188,7 @@
                     android:id="@+id/download_quality_tv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/rounded_primary_bg_8dp"
+                    android:background="@drawable/rounded_primary_bg_2dp"
                     android:gravity="center_vertical"
                     android:paddingHorizontal="@dimen/_4sdp"
                     android:paddingVertical="@dimen/_2sdp"
@@ -241,9 +270,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:contentDescription="@string/back_button_desc"
+                android:onClick="@{()->handler.hideBottomView()}"
                 android:padding="@dimen/_8sdp"
                 android:src="@drawable/ic_cross"
-                android:onClick="@{()->handler.hideBottomView()}"
                 android:tint="@color/black"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -252,9 +281,9 @@
                 android:id="@+id/clear_downloads_bottom_tv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingHorizontal="@dimen/_8sdp"
                 android:layout_marginVertical="@dimen/_8sdp"
                 android:gravity="center"
+                android:paddingHorizontal="@dimen/_8sdp"
                 android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Semi_Bold"
                 app:layout_constraintBottom_toTopOf="@+id/clear_btn"
                 app:layout_constraintEnd_toEndOf="parent"

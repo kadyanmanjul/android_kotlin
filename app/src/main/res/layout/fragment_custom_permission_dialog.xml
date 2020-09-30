@@ -1,57 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
         <variable
-                name="fragment"
-                type="com.joshtalks.joshskills.ui.extra.CustomPermissionDialogFragment" />
+            name="fragment"
+            type="com.joshtalks.joshskills.ui.extra.CustomPermissionDialogFragment" />
 
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@android:color/transparent"
-            tools:background="@color/black">
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/transparent"
+        tools:background="@color/black">
 
         <View
-                android:id="@+id/view"
-                android:layout_width="0dp"
-                android:layout_height="@dimen/_250sdp"
-                android:background="@drawable/rectangle_top_rounded"
-                android:orientation="vertical"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
+            android:id="@+id/view"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/_250sdp"
+            android:background="@drawable/rectangle_top_rounded"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
 
         <ImageButton
-                android:layout_width="@dimen/_24sdp"
-                android:layout_height="@dimen/_24sdp"
-                android:layout_marginTop="@dimen/_22sdp"
-                android:layout_marginEnd="@dimen/_22sdp"
-                android:background="@drawable/ic_cross"
-                android:backgroundTint="@color/black"
-                android:contentDescription="@string/cancel_button"
-                android:onClick="@{()->fragment.cancel()}"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/view" />
+            android:layout_width="@dimen/_24sdp"
+            android:layout_height="@dimen/_24sdp"
+            android:layout_marginTop="@dimen/_22sdp"
+            android:layout_marginEnd="@dimen/_22sdp"
+            android:background="@drawable/ic_cross"
+            android:backgroundTint="@color/black"
+            android:contentDescription="@string/cancel_button"
+            android:onClick="@{()->fragment.cancel()}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/view" />
 
         <TextView
-                android:id="@+id/textView3"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/_16sdp"
-                android:layout_marginTop="@dimen/_60sdp"
-                android:text="@string/permission_dialog_description"
-                android:textColor="@color/black"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Regular"
-                app:layout_constraintEnd_toEndOf="@+id/view"
-                app:layout_constraintStart_toStartOf="@+id/view"
-                app:layout_constraintTop_toTopOf="@+id/view" />
+            android:id="@+id/textView3"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/_16sdp"
+            android:layout_marginTop="@dimen/_60sdp"
+            android:text="@string/permission_dialog_description"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Regular"
+            android:textColor="@color/black"
+            app:layout_constraintEnd_toEndOf="@+id/view"
+            app:layout_constraintStart_toStartOf="@+id/view"
+            app:layout_constraintTop_toTopOf="@+id/view" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/tv_select_address"
@@ -65,8 +65,8 @@
             android:onClick="@{()->fragment.allow()}"
             android:paddingTop="@dimen/_10sdp"
             android:paddingBottom="@dimen/_10sdp"
-            android:textAppearance="@style/TextAppearance.JoshTypography.Button"
             android:text="@string/allow"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Button"
             android:textColor="@color/white"
             app:cornerRadius="@dimen/_20sdp"
             app:layout_constraintEnd_toEndOf="@+id/view"
@@ -74,17 +74,18 @@
             app:layout_constraintTop_toBottomOf="@+id/textView3" />
 
         <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_14sdp"
-                android:clickable="true"
-                android:focusable="true"
-                android:onClick="@{() -> fragment.doNotAskAgain()}"
-                android:text="@string/do_not_ask_again"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tv_select_address" />
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_14sdp"
+            android:clickable="true"
+            android:focusable="true"
+            android:onClick="@{() -> fragment.doNotAskAgain()}"
+            android:text="@string/do_not_ask_again"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Small_Regular"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_select_address" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

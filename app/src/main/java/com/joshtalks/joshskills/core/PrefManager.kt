@@ -39,7 +39,6 @@ const val IS_PRACTISE_PARTNER_VIEWED = "joshskills_practise_partner_viewed"
 const val SHOW_COURSE_DETAIL_TOOLTIP = "show_course_detail_tooltip"
 const val SELECTED_LANGUAGE = "selected_language"
 const val SELECTED_QUALITY = "selected_quality"
-const val NOTIFICATION_DISABLED = "notifications_disabled"
 
 
 object PrefManager {

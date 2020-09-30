@@ -514,9 +514,6 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
             WorkManagerAdmin.determineNPAEvent()
         }
         when {
-            shouldRequireCustomPermission() -> {
-                checkForOemNotifications()
-            }
             NPSEventModel.getCurrentNPA() != null -> {
                 showNetPromoterScoreDialog()
             }

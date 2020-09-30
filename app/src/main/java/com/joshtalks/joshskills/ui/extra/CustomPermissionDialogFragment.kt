@@ -9,9 +9,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentManager
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.CUSTOM_PERMISSION_ACTION_KEY
-import com.joshtalks.joshskills.core.PermissionAction
-import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.databinding.FragmentCustomPermissionDialogBinding
@@ -57,6 +55,8 @@ class CustomPermissionDialogFragment : BottomSheetDialogFragment() {
         )
         binding.lifecycleOwner = this
         binding.fragment = this
+        binding.textView3.text = AppObjectController.getFirebaseRemoteConfig()
+            .getString(FirebaseRemoteConfigKey.NOTIFICATION_SETTING_DESCRIPTION)
         return binding.root
     }
 

@@ -385,4 +385,20 @@
         <value>All your downloaded files will be deleted.
         </value>
     </entry>
+    <entry>
+        <key>NOTIFICATION_DESCRIPTION_DISABLED</key>
+        <value>Note : Aapki notifications Off hai. Permananent on karne ke liye yahan click kare.
+        </value>
+    </entry>
+    <entry>
+        <key>NOTIFICATION_DESCRIPTION_ENABLED</key>
+        <value>Aapki notifications on hai. Aapko rozana time par class milti rahengi.
+        </value>
+    </entry>
+    <entry>
+        <key>NOTIFICATION_SETTING_DESCRIPTION</key>
+        <value>Rojana class time par paane ke liye abhi notification on kare. Allow karne pe aap
+            phone ki settings mein jaayenge aur wahan se aap on karenge.
+        </value>
+    </entry>
 </defaultsMap>

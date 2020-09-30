@@ -5,7 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.CompoundButton
+import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.work.OneTimeWorkRequestBuilder
@@ -61,10 +61,6 @@ class SettingsFragment : Fragment() {
             binding.signOutTv.visibility = View.GONE
         }
 
-        binding.notificationSwitch.setOnCheckedChangeListener { compoundButton: CompoundButton, b: Boolean ->
-            PrefManager.put(NOTIFICATION_DISABLED, b)
-        }
-
         sheetBehaviour.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
             override fun onStateChanged(bottomSheet: View, newState: Int) {
                 if (newState == BottomSheetBehavior.STATE_COLLAPSED)
@@ -78,7 +74,23 @@ class SettingsFragment : Fragment() {
 
         }
         )
-        binding.notificationSwitch.isChecked = PrefManager.getBoolValue(NOTIFICATION_DISABLED).not()
+
+        if ((requireActivity() as BaseActivity).shouldRequireCustomPermission()) {
+            binding.notificationStatusTv.setText(R.string.off)
+            binding.notificationDiscription.text = AppObjectController.getFirebaseRemoteConfig()
+                .getString(FirebaseRemoteConfigKey.NOTIFICATION_DESCRIPTION_DISABLED)
+            binding.notificationStatusTv.background =
+                ContextCompat.getDrawable(requireContext(), R.drawable.rounded_grey_bg_2dp)
+        } else {
+            binding.notificationRightIv.visibility = View.GONE
+            binding.notificationStatusTv.setText(R.string.on)
+            binding.notificationDiscription.text = AppObjectController.getFirebaseRemoteConfig()
+                .getString(FirebaseRemoteConfigKey.NOTIFICATION_DESCRIPTION_ENABLED)
+            binding.notificationStatusTv.background =
+                ContextCompat.getDrawable(requireContext(), R.drawable.rounded_primary_bg_2dp)
+        }
+
+
         return binding.root
     }
 
@@ -99,11 +111,11 @@ class SettingsFragment : Fragment() {
     }
 
     fun actionConfirmed() {
-        when {
-            binding.clearBtn.text.equals(getString(R.string.sign_out)) -> {
+        when (binding.clearBtn.text) {
+            getString(R.string.sign_out) -> {
                 signout()
             }
-            binding.clearBtn.text.equals(getString(R.string.login_signup)) -> {
+            getString(R.string.login_signup) -> {
                 openLoginScreen()
             }
             else -> clearDownloads()
@@ -167,6 +179,10 @@ class SettingsFragment : Fragment() {
         binding.clearDownloadsBottomTv.text = AppObjectController.getFirebaseRemoteConfig()
             .getString(FirebaseRemoteConfigKey.SETTINGS_SIGN_IN_PROMPT)
         sheetBehaviour.state = BottomSheetBehavior.STATE_EXPANDED
+    }
+
+    fun showNotificationSettingPopup() {
+        (requireActivity() as BaseActivity).checkForOemNotifications()
     }
 
     fun hideBottomView() {
