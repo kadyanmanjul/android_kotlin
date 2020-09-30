@@ -32,8 +32,6 @@ class CourseDetailTooltipView : FrameLayout {
     private fun init() {
         View.inflate(context, R.layout.course_detail_tooltip_view, this)
         ballonTV = findViewById(R.id.balloon_text)
-        //setText("Bade Bhaiya Tip: Agar aap in course ke alawa kuch aur bhi seekhna chahte hai to agle x dino tak aap free mei unlimited courses unlock kar sakte hai")
-
     }
 
     fun setText(text: String) {

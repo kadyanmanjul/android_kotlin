@@ -384,7 +384,7 @@
     <string name="alarms_deleted">Alarms Deleted</string>
     <string name="start_learning_now">Start Learning Now</string>
     <string name="resend">Resend</string>
-    <string name="hint_name_field">e.g.mohit arora</string>
+    <string name="hint_name_field">e.g. Mohit Arora</string>
     <string name="hint_email_field">e.g. abc@xyz.com</string>
     <string name="hint_date_field">e.g. 01 Jan 1990</string>
     <string name="total_interests_selected">Total interests selected</string>
