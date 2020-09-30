@@ -23,7 +23,26 @@ import com.google.android.play.core.review.ReviewManagerFactory
 import com.joshtalks.joshcamerax.utils.SharedPrefsManager
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.ARG_PLACEHOLDER_URL
+import com.joshtalks.joshskills.core.ApiCallStatus
+import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.COURSE_ID
+import com.joshtalks.joshskills.core.CoreJoshActivity
+import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.EXPLORE_TYPE
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.MINIMUM_TIME_TO_SHOW_REVIEW
+import com.joshtalks.joshskills.core.IN_APP_REVIEW_COUNT
+import com.joshtalks.joshskills.core.IS_SUBSCRIPTION_ENDED
+import com.joshtalks.joshskills.core.IS_SUBSCRIPTION_STARTED
+import com.joshtalks.joshskills.core.IS_TRIAL_ENDED
+import com.joshtalks.joshskills.core.IS_TRIAL_STARTED
+import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.REMAINING_SUBSCRIPTION_DAYS
+import com.joshtalks.joshskills.core.REMAINING_TRIAL_DAYS
+import com.joshtalks.joshskills.core.SHOW_OVERLAY
+import com.joshtalks.joshskills.core.SINGLE_SPACE
+import com.joshtalks.joshskills.core.SUBSCRIPTION_TEST_ID
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.inapp_update.Constants
@@ -68,9 +87,20 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.activity_inbox.*
-import kotlinx.android.synthetic.main.find_more_layout.*
-import kotlinx.android.synthetic.main.top_free_trial_expire_time_tooltip_view.*
+import java.util.concurrent.TimeUnit
+import kotlinx.android.synthetic.main.activity_inbox.expiry_tool_tip
+import kotlinx.android.synthetic.main.activity_inbox.overlay_layout
+import kotlinx.android.synthetic.main.activity_inbox.overlay_tip
+import kotlinx.android.synthetic.main.activity_inbox.progress_bar
+import kotlinx.android.synthetic.main.activity_inbox.recycler_view_inbox
+import kotlinx.android.synthetic.main.activity_inbox.subscriptionTipContainer
+import kotlinx.android.synthetic.main.activity_inbox.txtConvert
+import kotlinx.android.synthetic.main.activity_inbox.txtConvert2
+import kotlinx.android.synthetic.main.activity_inbox.txtSubscriptionTip
+import kotlinx.android.synthetic.main.activity_inbox.txtSubscriptionTip2
+import kotlinx.android.synthetic.main.find_more_layout.bb_tip_below_find_btn
+import kotlinx.android.synthetic.main.find_more_layout.find_more
+import kotlinx.android.synthetic.main.top_free_trial_expire_time_tooltip_view.expiry_tool_tip_text
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -667,11 +697,22 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         }
 
         viewModel.overAllWatchTime.observe(this, {
-
-            if (it % AppObjectController.getFirebaseRemoteConfig()
-                    .getLong(FirebaseRemoteConfigKey.MINIMUM_TIME_TO_SHOW_REVIEW) == 0L
-            ) {
-                showInAppReview()
+            var reviewCount = PrefManager.getIntValue(IN_APP_REVIEW_COUNT)
+            val reviewFrequency =
+                AppObjectController.getFirebaseRemoteConfig().getLong(MINIMUM_TIME_TO_SHOW_REVIEW)
+            when (reviewCount) {
+                0 -> if (it > reviewFrequency) {
+                    showInAppReview()
+                    PrefManager.put(IN_APP_REVIEW_COUNT, ++reviewCount)
+                }
+                1 -> if (it > reviewFrequency * 2) {
+                    PrefManager.put(IN_APP_REVIEW_COUNT, ++reviewCount)
+                    showInAppReview()
+                }
+                2 -> if (it > reviewFrequency * 3) {
+                    PrefManager.put(IN_APP_REVIEW_COUNT, ++reviewCount)
+                    showInAppReview()
+                }
             }
         })
     }
