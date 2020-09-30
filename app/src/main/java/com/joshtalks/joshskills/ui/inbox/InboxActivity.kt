@@ -55,6 +55,7 @@ import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.local.model.ExploreCardType
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.NotificationAction
+import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.ProfileResponse
 import com.joshtalks.joshskills.repository.server.SearchLocality
 import com.joshtalks.joshskills.repository.server.UpdateUserLocality
@@ -632,6 +633,10 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
                 showOverlayToolTip(it.freeTrialData.remainingDays)
             } else {
                 overlay_layout.visibility = View.GONE
+            }
+
+            if (User.getInstance().isVerified.not() && it?.subscriptionData?.isSubscriptionBought ?: false) {
+                showSignUpDialog()
             }
 
         }

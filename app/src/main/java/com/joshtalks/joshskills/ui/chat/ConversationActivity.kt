@@ -1706,7 +1706,8 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
                         showTrialEndFragment()
                     } else if (isSubscriptionStarted && isSubscriptionEnded) {
                         showTrialEndFragment()
-                    } else{
+                    } else {
+                        conversationBinding.chatRv.refresh()
                         subscribeRXBus()
                         observeNetwork()
                     }

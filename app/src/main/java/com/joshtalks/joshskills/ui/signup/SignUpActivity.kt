@@ -31,7 +31,6 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.API_TOKEN
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.AppSignatureHelper
 import com.joshtalks.joshskills.core.BaseActivity
@@ -55,6 +54,7 @@ import com.joshtalks.joshskills.repository.local.eventbus.CreatedSource
 import com.joshtalks.joshskills.repository.local.eventbus.LoginViaEventBus
 import com.joshtalks.joshskills.repository.local.eventbus.LoginViaStatus
 import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.signup.request.SocialSignUpRequest
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import com.karumi.dexter.Dexter
@@ -85,7 +85,7 @@ import io.michaelrocks.libphonenumber.android.Phonenumber
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import java.util.Locale
+import java.util.*
 
 private const val GOOGLE_SIGN_UP_REQUEST_CODE = 9001
 const val FLOW_FROM = "Flow"
@@ -103,7 +103,6 @@ class SignUpActivity : BaseActivity() {
     var verification: Verification? = null
     private var sinchConfig: Config? = null
     private lateinit var auth: FirebaseAuth
-
 
     init {
         sinchConfig = SinchVerification.config()
@@ -133,10 +132,10 @@ class SignUpActivity : BaseActivity() {
         addViewModelObserver()
         initLoginFeatures()
         setupTrueCaller()
-        if (PrefManager.getStringValue(API_TOKEN).isEmpty() || isGuestUser()) {
-            openSignUpOptionsFragment()
-        } else {
+        if (User.getInstance().isVerified && isUserProfileComplete()) {
             openProfileDetailFragment()
+        } else {
+            openSignUpOptionsFragment()
         }
         window?.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
     }
@@ -371,16 +370,16 @@ class SignUpActivity : BaseActivity() {
                 if (jsonObject.has("email")) {
                     email = jsonObject.getString("email")
                 }
-                    val requestObj = SocialSignUpRequest.Builder(
-                        Mentor.getInstance().getId(),
-                        PrefManager.getStringValue(INSTANCE_ID, false),
-                        CreatedSource.FB.name,
-                        Mentor.getInstance().getUserId()
-                    ).name(name)
-                        .email(email)
-                        .photoUrl(getFBProfilePicture(id))
-                        .socialId(id).build()
-                    viewModel.verifyUser(requestObj)
+                val requestObj = SocialSignUpRequest.Builder(
+                    Mentor.getInstance().getId(),
+                    PrefManager.getStringValue(INSTANCE_ID, false),
+                    CreatedSource.FB.name,
+                    Mentor.getInstance().getUserId()
+                ).name(name)
+                    .email(email)
+                    .photoUrl(getFBProfilePicture(id))
+                    .socialId(id).build()
+                viewModel.verifyUser(requestObj)
             } catch (ex: Exception) {
                 LogException.catchException(ex)
             }
@@ -415,16 +414,16 @@ class SignUpActivity : BaseActivity() {
     ) {
         if (accountUser != null) {
 
-                val requestObj = SocialSignUpRequest.Builder(
-                    Mentor.getInstance().getId(),
-                    PrefManager.getStringValue(INSTANCE_ID, false),
-                    CreatedSource.GML.name,
-                    Mentor.getInstance().getUserId()
-                ).name(accountUser.displayName)
-                    .email(accountUser.email)
-                    .photoUrl(accountUser.photoUrl?.toString())
-                    .socialId(accountUser.uid).build()
-                viewModel.verifyUser(requestObj)
+            val requestObj = SocialSignUpRequest.Builder(
+                Mentor.getInstance().getId(),
+                PrefManager.getStringValue(INSTANCE_ID, false),
+                CreatedSource.GML.name,
+                Mentor.getInstance().getUserId()
+            ).name(accountUser.displayName)
+                .email(accountUser.email)
+                .photoUrl(accountUser.photoUrl?.toString())
+                .socialId(accountUser.uid).build()
+            viewModel.verifyUser(requestObj)
         } else {
             showToast(getString(R.string.generic_message_for_error))
         }

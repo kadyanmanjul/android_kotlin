@@ -38,13 +38,13 @@ import com.joshtalks.joshskills.ui.course_details.CourseDetailsActivity
 import com.joshtalks.joshskills.ui.courseprogress.CourseProgressActivity
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
 import com.joshtalks.joshskills.ui.extra.CustomPermissionDialogFragment
+import com.joshtalks.joshskills.ui.extra.SignUpPermissionDialogFragment
 import com.joshtalks.joshskills.ui.help.HelpActivity
 import com.joshtalks.joshskills.ui.inbox.IS_FROM_NEW_ONBOARDING
 import com.joshtalks.joshskills.ui.inbox.InboxActivity
 import com.joshtalks.joshskills.ui.nps.NetPromoterScoreFragment
 import com.joshtalks.joshskills.ui.signup.OnBoardActivity
 import com.joshtalks.joshskills.ui.signup.SignUpActivity
-import com.joshtalks.joshskills.util.showAppropriateMsg
 import com.newrelic.agent.android.NewRelic
 import io.branch.referral.Branch
 import io.github.inflationx.viewpump.ViewPumpContextWrapper
@@ -141,7 +141,7 @@ abstract class BaseActivity : AppCompatActivity() {
         }
     }
 
-    fun getInboxActivityIntent(isFromOnBoardingFlow: Boolean=false): Intent {
+    fun getInboxActivityIntent(isFromOnBoardingFlow: Boolean = false): Intent {
         return Intent(this, InboxActivity::class.java).apply {
             addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
@@ -313,6 +313,10 @@ abstract class BaseActivity : AppCompatActivity() {
         bottomSheetFragment.show(supportFragmentManager, bottomSheetFragment.tag)
     }
 
+    fun showSignUpDialog() {
+        SignUpPermissionDialogFragment.showDialog(supportFragmentManager)
+    }
+
     fun checkForOemNotifications() {
         val oemIntent = PowerManagers.getIntentForOEM(this)
         if (oemIntent != null && shouldRequireCustomPermission()) {
@@ -328,7 +332,7 @@ abstract class BaseActivity : AppCompatActivity() {
         return performedAction == EMPTY
     }
 
-    private fun isUserProfileComplete(): Boolean {
+    fun isUserProfileComplete(): Boolean {
         try {
             val user = User.getInstance()
             if (user.phoneNumber.isNotEmpty() && user.firstName.isEmpty()) {
