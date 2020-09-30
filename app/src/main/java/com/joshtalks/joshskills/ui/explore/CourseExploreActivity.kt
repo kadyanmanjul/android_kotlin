@@ -8,7 +8,14 @@ import androidx.databinding.DataBindingUtil
 import com.afollestad.materialdialogs.MaterialDialog
 import com.google.android.material.tabs.TabLayoutMediator
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.CoreJoshActivity
+import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.EXPLORE_TYPE
+import com.joshtalks.joshskills.core.INSTANCE_ID
+import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.SERVER_GID_ID
+import com.joshtalks.joshskills.core.USER_UNIQUE_ID
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
@@ -16,7 +23,12 @@ import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.databinding.ActivityCourseExploreBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
-import com.joshtalks.joshskills.repository.local.model.*
+import com.joshtalks.joshskills.repository.local.model.ExploreCardType
+import com.joshtalks.joshskills.repository.local.model.InstallReferrerModel
+import com.joshtalks.joshskills.repository.local.model.Mentor
+import com.joshtalks.joshskills.repository.local.model.RequestRegisterGAId
+import com.joshtalks.joshskills.repository.local.model.ScreenEngagementModel
+import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.CourseExploreModel
 import com.joshtalks.joshskills.ui.course_details.CourseDetailsActivity
 import com.joshtalks.joshskills.ui.inbox.PAYMENT_FOR_COURSE_CODE
@@ -25,13 +37,13 @@ import com.joshtalks.joshskills.ui.signup.SignUpActivity
 import com.joshtalks.joshskills.ui.subscription.StartSubscriptionActivity
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import io.reactivex.disposables.CompositeDisposable
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 import kotlin.collections.set
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 const val COURSE_EXPLORER_SCREEN_NAME = "Course Explorer"
 const val USER_COURSES = "user_courses"
@@ -93,40 +105,40 @@ class CourseExploreActivity : CoreJoshActivity() {
 
     private fun initView() {
         courseExploreBinding.titleTv.text = getString(R.string.explorer_courses)
-        if (Mentor.getInstance().hasId()) {
+        if (User.getInstance().isVerified) {
             courseExploreBinding.toolbar.inflateMenu(R.menu.logout_menu)
-        }
-        courseExploreBinding.toolbar.setOnMenuItemClickListener {
-            if (it?.itemId == R.id.menu_logout) {
-                MaterialDialog(this@CourseExploreActivity).show {
-                    message(R.string.logout_message)
-                    positiveButton(R.string.ok) {
-                        AppAnalytics.create(AnalyticsEvent.LOGOUT_CLICKED.NAME)
-                            .addUserDetails()
-                            .addParam(AnalyticsEvent.USER_LOGGED_OUT.NAME, true).push()
-                        val intent =
-                            Intent(
-                                AppObjectController.joshApplication,
-                                SignUpActivity::class.java
-                            )
-                        intent.apply {
-                            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                            putExtra(FLOW_FROM, "CourseExploreActivity")
+            courseExploreBinding.toolbar.setOnMenuItemClickListener {
+                if (it?.itemId == R.id.menu_logout) {
+                    MaterialDialog(this@CourseExploreActivity).show {
+                        message(R.string.logout_message)
+                        positiveButton(R.string.ok) {
+                            AppAnalytics.create(AnalyticsEvent.LOGOUT_CLICKED.NAME)
+                                .addUserDetails()
+                                .addParam(AnalyticsEvent.USER_LOGGED_OUT.NAME, true).push()
+                            val intent =
+                                Intent(
+                                    AppObjectController.joshApplication,
+                                    SignUpActivity::class.java
+                                )
+                            intent.apply {
+                                addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                                putExtra(FLOW_FROM, "CourseExploreActivity")
+                            }
+                            CoroutineScope(Dispatchers.IO).launch {
+                                PrefManager.clearUser()
+                                AppObjectController.joshApplication.startActivity(intent)
+                            }
                         }
-                        CoroutineScope(Dispatchers.IO).launch {
-                            PrefManager.clearUser()
-                            AppObjectController.joshApplication.startActivity(intent)
+                        negativeButton(R.string.cancel) {
+                            AppAnalytics.create(AnalyticsEvent.LOGOUT_CLICKED.NAME)
+                                .addUserDetails()
+                                .addParam(AnalyticsEvent.USER_LOGGED_OUT.NAME, false).push()
                         }
-                    }
-                    negativeButton(R.string.cancel) {
-                        AppAnalytics.create(AnalyticsEvent.LOGOUT_CLICKED.NAME)
-                            .addUserDetails()
-                            .addParam(AnalyticsEvent.USER_LOGGED_OUT.NAME, false).push()
                     }
                 }
+                return@setOnMenuItemClickListener true
             }
-            return@setOnMenuItemClickListener true
         }
     }
 
