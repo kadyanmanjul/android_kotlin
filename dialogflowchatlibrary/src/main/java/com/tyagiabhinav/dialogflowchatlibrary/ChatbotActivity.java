@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.Toast;
@@ -18,6 +17,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 
+import com.google.android.material.button.MaterialButton;
 import com.google.api.gax.core.FixedCredentialsProvider;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.auth.oauth2.ServiceAccountCredentials;
@@ -61,8 +61,8 @@ public class ChatbotActivity extends AppCompatActivity implements ChatbotCallbac
     private static final int SPEECH_INPUT = 10070;
     //UI
     private LinearLayout chatLayout;
-    private Button btnAction1;
-    private Button btnAction2;
+    private MaterialButton btnAction1;
+    private MaterialButton btnAction2;
 
     //Variables
     private SessionsClient sessionsClient;

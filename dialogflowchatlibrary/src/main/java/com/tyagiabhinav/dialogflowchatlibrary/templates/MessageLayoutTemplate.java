@@ -148,6 +148,9 @@ public abstract class MessageLayoutTemplate extends FrameLayout {
 
         if (!isOnlyTextResponse()) {
             richMessageContainer.setVisibility(View.VISIBLE);
+            if (tv.getText().toString().isEmpty()) {
+                tv.setVisibility(View.GONE);
+            }
             populateRichMessageContainer();
         } else {
             richMessageContainer.setVisibility(View.GONE);
@@ -365,8 +368,8 @@ public abstract class MessageLayoutTemplate extends FrameLayout {
         } else {
             checkBox.setText(Html.fromHtml(text));
         }
-        checkBox.setTextSize(21.0f);
-        checkBox.setPadding(8, 18, 8, 8);
+        checkBox.setTextSize(18.0f);
+        checkBox.setPadding(8, 8, 8, 8);
 
         viewsToDisable.add(checkBox);
         return checkBox;

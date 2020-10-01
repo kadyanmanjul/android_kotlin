@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/chat_bg"
     app:theme="@style/Theme.Default">
 
     <LinearLayout
@@ -11,26 +12,48 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:background="?attr/chatBGnText"
-        android:gravity="bottom|center_vertical"
+        android:gravity="bottom|center"
         android:orientation="vertical"
         android:paddingStart="8dp"
         android:paddingTop="8dp"
         android:paddingEnd="8dp"
         android:paddingBottom="9dp">
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnAction1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@drawable/chat_btn_enabled_solid"
+            android:backgroundTint="@color/chatPrimary"
+            android:gravity="center"
+            android:paddingHorizontal="8dp"
+            android:paddingVertical="8dp"
+            android:text="@string/app_name"
+            android:textAllCaps="false"
+            android:textColor="#ffffff"
             android:visibility="gone"
+            app:backgroundTint="@color/chatPrimary"
+            app:cornerRadius="32dp"
+            app:rippleColor="#ffffff"
             tools:visibility="visible" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnAction2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/chat_btn_enabled_solid"
+            android:backgroundTint="@color/chatPrimary"
+            android:gravity="center"
+            android:paddingHorizontal="8dp"
+            android:paddingVertical="8dp"
+            android:text="@string/app_name"
+            android:textAllCaps="false"
+            android:textColor="#ffffff"
             android:visibility="gone"
+            app:backgroundTint="@color/chatPrimary"
+            app:cornerRadius="32dp"
+            app:rippleColor="#ffffff"
             tools:visibility="visible" />
 
     </LinearLayout>
