@@ -9,6 +9,8 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.SELECTED_LANGUAGE
 import com.joshtalks.joshskills.core.SELECTED_QUALITY
+import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
+import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.databinding.StringAdapterItemBinding
 
 const val ACTION_LANGUAGE = "language"
@@ -64,6 +66,18 @@ class StringAdapter(
 
             binding.root.setOnClickListener {
                 selectedItem = item
+
+                val eventName = if (actionType == ACTION_LANGUAGE)
+                    AnalyticsEvent.SELECT_LANGUAGE_CHANGED.name
+                else
+                    AnalyticsEvent.VIDEO_QUALITY_CHANGED.name
+
+                AppAnalytics.create(eventName)
+                    .addBasicParam()
+                    .addUserDetails()
+                    .addParam("selected_value", selectedItem)
+                    .push()
+
                 onItemClick(item, position)
                 notifyDataSetChanged()
             }

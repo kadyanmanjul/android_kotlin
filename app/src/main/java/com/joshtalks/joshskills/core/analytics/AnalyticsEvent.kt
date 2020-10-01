@@ -451,4 +451,12 @@ enum class AnalyticsEvent(val NAME: String) {
     DISCONNECT_CALL_VOIP("disconnect call v3"),
     ANSWER_CALL_VOIP("answer call v3"),
 
+    //Settings
+    PERSONAL_PROFILE_CLICKED("personal profile clicked"),
+    SELECT_LANGUAGE_CHANGED("language changed"),
+    NOTIFICATION_SETTING_CLICK("notification setting clicked"),
+    VIDEO_QUALITY_CHANGED("select video quality"),
+    CLEAR_ALL_DOWNLOADS("clear all downloads"),
+    SIGN_OUT("sign out"),
+
 }

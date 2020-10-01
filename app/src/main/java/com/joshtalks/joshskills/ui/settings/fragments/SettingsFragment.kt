@@ -14,6 +14,8 @@ import androidx.work.workDataOf
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
+import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.memory.MemoryManagementWorker
 import com.joshtalks.joshskills.databinding.FragmentSettingsBinding
 import com.joshtalks.joshskills.repository.local.model.User
@@ -100,6 +102,7 @@ class SettingsFragment : Fragment() {
     }
 
     fun clearDownloads() {
+        logEvent(AnalyticsEvent.CLEAR_ALL_DOWNLOADS.name)
         val data =
             workDataOf(MemoryManagementWorker.CLEANUP_TYPE to MemoryManagementWorker.CLEANUP_TYPE_FORCE)
         val workRequest = OneTimeWorkRequestBuilder<MemoryManagementWorker>().addTag("cleanup")
@@ -145,6 +148,7 @@ class SettingsFragment : Fragment() {
     }
 
     fun openPersonalInfoFragment() {
+        logEvent(AnalyticsEvent.PERSONAL_PROFILE_CLICKED.name)
         if (User.getInstance().isVerified) {
             (requireActivity() as BaseActivity).replaceFragment(
                 R.id.settings_container, PersonalInfoFragment(), PersonalInfoFragment.TAG,
@@ -187,5 +191,12 @@ class SettingsFragment : Fragment() {
 
     fun hideBottomView() {
         sheetBehaviour.state = BottomSheetBehavior.STATE_COLLAPSED
+    }
+
+    private fun logEvent(eventName: String) {
+        AppAnalytics.create(eventName)
+            .addBasicParam()
+            .addUserDetails()
+            .push()
     }
 }
