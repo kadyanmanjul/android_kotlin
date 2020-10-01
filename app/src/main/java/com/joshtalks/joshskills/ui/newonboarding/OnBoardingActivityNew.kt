@@ -3,11 +3,14 @@ package com.joshtalks.joshskills.ui.newonboarding
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.ApiCallStatus
 import com.joshtalks.joshskills.core.CoreJoshActivity
 import com.joshtalks.joshskills.repository.server.onboarding.ONBOARD_VERSIONS
 import com.joshtalks.joshskills.repository.server.onboarding.VersionResponse
+import com.joshtalks.joshskills.ui.inbox.InboxActivity
 import com.joshtalks.joshskills.ui.newonboarding.fragment.OnBoardIntroFragment
 import com.joshtalks.joshskills.ui.newonboarding.fragment.SelectCourseFragment
 import com.joshtalks.joshskills.ui.newonboarding.fragment.SelectCourseHeadingFragment
@@ -44,6 +47,8 @@ class OnBoardingActivityNew : CoreJoshActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_onboarding_new)
+        viewModel = ViewModelProvider(this).get(OnBoardViewModel::class.java)
+
         val haveCourses = intent.getBooleanExtra(HAVE_COURSES, false)
         if (intent.hasExtra(FLOW_FROM_INBOX)) {
             if (intent.getBooleanExtra(FLOW_FROM_INBOX, false)) {
@@ -53,6 +58,16 @@ class OnBoardingActivityNew : CoreJoshActivity() {
             }
         } else openOnBoardingIntroFragment()
 
+        addObserver()
+
+    }
+
+    private fun addObserver() {
+        viewModel.courseRegistrationStatus.observe(this, Observer {
+            if (it == ApiCallStatus.SUCCESS) {
+                startActivity(Intent(this, InboxActivity::class.java))
+            }
+        })
     }
 
     private fun openCoursesFragment(haveCourses: Boolean) {
@@ -127,7 +142,6 @@ class OnBoardingActivityNew : CoreJoshActivity() {
             OnBoardIntroFragment.newInstance(),
             OnBoardIntroFragment.TAG
         )
-        viewModel = ViewModelProvider(this).get(OnBoardViewModel::class.java)
     }
 
     override fun onBackPressed() {
@@ -148,9 +162,9 @@ class OnBoardingActivityNew : CoreJoshActivity() {
 
         ChatbotSettings.getInstance().chatbot = Chatbot.ChatbotBuilder()
             .setDoAutoWelcome(true)
-            //              .setChatBotAvatar(getDrawable(R.drawable.avatarBot)) // provide avatar for your bot if default is not required
-            //              .setChatUserAvatar(getDrawable(R.drawable.avatarUser)) // provide avatar for your the user if default is not required
-            //              .setShowMic(true) // False by Default, True if you want to use Voice input from the user to chat
+            //  .setChatBotAvatar(getDrawable(R.drawable.avatarBot)) // provide avatar for your bot if default is not required
+            //  .setChatUserAvatar(getDrawable(R.drawable.avatarUser)) // provide avatar for your the user if default is not required
+            //  .setShowMic(true) // False by Default, True if you want to use Voice input from the user to chat
             .build()
         val intent = Intent(this, ChatbotActivity::class.java)
         val bundle = Bundle()
@@ -160,12 +174,12 @@ class OnBoardingActivityNew : CoreJoshActivity() {
         // intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         // intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
         intent.putExtras(bundle)
-        startActivityForResult(intent, 1342)
+        startActivityForResult(intent, 1342, bundle)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == 1342 && resultCode == RESULT_OK && data != null) {
+        if (resultCode == 1343 && data != null) {
             if (data.hasExtra("result")) {
                 val courseIds = data.getIntegerArrayListExtra("result")
                 if (courseIds.isNotEmpty()) {

@@ -26,21 +26,23 @@ class OnBoardViewModel(application: Application) :
     AndroidViewModel(application) {
     private val jobs = arrayListOf<Job>()
     val apiCallStatusLiveData: MutableLiveData<ApiCallStatus> = MutableLiveData()
+    val courseRegistrationStatus: MutableLiveData<ApiCallStatus> = MutableLiveData()
     val courseListLiveData: MutableLiveData<List<CourseExploreModel>> = MutableLiveData()
     val courseEnrolledDetailLiveData: MutableLiveData<CourseEnrolledResponse> = MutableLiveData()
     val isEnrolled: MutableLiveData<Boolean> = MutableLiveData(false)
 
     fun getCourseList() = courseListLiveData.value
 
-    fun enrollMentorAgainstTest(testIds: List<Int>) {
+    fun enrollMentorAgainstTest(courseIds: List<Int>) {
         jobs += viewModelScope.launch(Dispatchers.IO) {
             try {
                 apiCallStatusLiveData.postValue(ApiCallStatus.START)
+                courseRegistrationStatus.postValue(ApiCallStatus.START)
                 if (Mentor.getInstance().getId().isNotEmpty()) {
                     val data = EnrollMentorWithTestIdRequest(
                         PrefManager.getStringValue(USER_UNIQUE_ID),
                         Mentor.getInstance().getId(),
-                        testIds
+                        course_ids = courseIds
                     )
                     val response =
                         AppObjectController.signUpNetworkService.enrollMentorWithTestIds(data)
@@ -50,6 +52,7 @@ class OnBoardViewModel(application: Application) :
                         PrefManager.put(IS_GUEST_ENROLLED, value = true)
                         isEnrolled.postValue(true)
                         apiCallStatusLiveData.postValue(ApiCallStatus.SUCCESS)
+                        courseRegistrationStatus.postValue(ApiCallStatus.SUCCESS)
                         return@launch
                     }
 
@@ -59,6 +62,7 @@ class OnBoardViewModel(application: Application) :
                 ex.showAppropriateMsg()
             }
             apiCallStatusLiveData.postValue(ApiCallStatus.FAILED)
+            courseRegistrationStatus.postValue(ApiCallStatus.FAILED)
         }
     }
 

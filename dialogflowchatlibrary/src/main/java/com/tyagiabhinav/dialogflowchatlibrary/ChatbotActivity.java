@@ -1,6 +1,5 @@
 package com.tyagiabhinav.dialogflowchatlibrary;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -385,11 +384,17 @@ public class ChatbotActivity extends AppCompatActivity implements ChatbotCallbac
         ArrayList<Integer> courseIds = getCourseIds();
         Intent returnIntent = new Intent();
         returnIntent.putIntegerArrayListExtra("result", courseIds);
-        setResult(Activity.RESULT_OK, returnIntent);
-        finishActivity(1342);
+        setResult(1343, returnIntent);
+        removeCourseIds();
+        finish();
     }
 
     private ArrayList<Integer> getCourseIds() {
         return SharedPrefsManager.Companion.newInstance(getApplicationContext()).getArrayList(COURSE_TEST_IDS, "");
     }
+
+    private void removeCourseIds() {
+        SharedPrefsManager.Companion.newInstance(getApplicationContext()).putArrayList(COURSE_TEST_IDS, new ArrayList<>());
+    }
+
 }
