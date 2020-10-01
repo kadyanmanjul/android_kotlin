@@ -6,4 +6,11 @@
     <string name="facebook_app_id">503297633840171</string>
     <string name="ads_id">ca-app-pub-6081280554747332~5345328239</string>
     <string name="fb_login_protocol_scheme">fb503297633840171</string>
+    <string name="asset_statements">
+    [{
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target" : { "namespace": "android_app", "package_name": "com.joshtalks.joshskills",
+    "sha256_cert_fingerprints": ["D4:DA:77:94:F6:7C:38:20:26:83:CC:F8:D5:93:97:EB:8E:E4:09:59:E8:D1:FD:A3:66:CC:64:0D:AA:FD:FD:23"] }
+    }]
+    </string>
 </resources>

@@ -11,12 +11,22 @@ import android.util.DisplayMetrics
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.Observer
+import androidx.lifecycle.OnLifecycleEvent
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import com.android.installreferrer.api.InstallReferrerClient
 import com.flurry.android.FlurryAgent
 import com.google.firebase.crashlytics.FirebaseCrashlytics
+import com.google.firebase.inappmessaging.FirebaseInAppMessaging
+import com.google.firebase.inappmessaging.FirebaseInAppMessagingClickListener
+import com.google.firebase.inappmessaging.FirebaseInAppMessagingImpressionListener
+import com.google.firebase.inappmessaging.ktx.inAppMessaging
+import com.google.firebase.inappmessaging.model.Action
+import com.google.firebase.inappmessaging.model.InAppMessage
+import com.google.firebase.ktx.Firebase
 import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
@@ -34,6 +44,7 @@ import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.local.model.nps.NPSQuestionModel
 import com.joshtalks.joshskills.repository.server.onboarding.VersionResponse
 import com.joshtalks.joshskills.repository.service.EngagementNetworkHelper
+import com.joshtalks.joshskills.ui.assessment.AssessmentActivity
 import com.joshtalks.joshskills.ui.chat.ConversationActivity
 import com.joshtalks.joshskills.ui.course_details.CourseDetailsActivity
 import com.joshtalks.joshskills.ui.courseprogress.CourseProgressActivity
@@ -41,17 +52,24 @@ import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
 import com.joshtalks.joshskills.ui.extra.CustomPermissionDialogFragment
 import com.joshtalks.joshskills.ui.extra.SignUpPermissionDialogFragment
 import com.joshtalks.joshskills.ui.help.HelpActivity
+import com.joshtalks.joshskills.ui.inbox.COURSE_EXPLORER_CODE
 import com.joshtalks.joshskills.ui.inbox.IS_FROM_NEW_ONBOARDING
 import com.joshtalks.joshskills.ui.inbox.InboxActivity
 import com.joshtalks.joshskills.ui.nps.NetPromoterScoreFragment
+import com.joshtalks.joshskills.ui.payment.order_summary.PaymentSummaryActivity
+import com.joshtalks.joshskills.ui.referral.ReferralActivity
 import com.joshtalks.joshskills.ui.signup.FLOW_FROM
 import com.joshtalks.joshskills.ui.signup.OnBoardActivity
 import com.joshtalks.joshskills.ui.signup.SignUpActivity
+import com.joshtalks.joshskills.ui.voip.SearchingUserActivity
+import com.joshtalks.joshskills.util.showAppropriateMsg
 import com.newrelic.agent.android.NewRelic
 import com.uxcam.OnVerificationListener
 import com.uxcam.UXCam
 import io.branch.referral.Branch
 import io.github.inflationx.viewpump.ViewPumpContextWrapper
+import java.lang.reflect.Type
+import java.util.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -61,7 +79,8 @@ import timber.log.Timber
 
 const val HELP_ACTIVITY_REQUEST_CODE = 9010
 
-abstract class BaseActivity : AppCompatActivity() {
+abstract class BaseActivity : AppCompatActivity(), LifecycleObserver,
+    FirebaseInAppMessagingImpressionListener, FirebaseInAppMessagingClickListener {
 
     private lateinit var referrerClient: InstallReferrerClient
     private val versionResponseTypeToken: Type = object : TypeToken<VersionResponse>() {}.type
@@ -77,7 +96,8 @@ abstract class BaseActivity : AppCompatActivity() {
         CourseDetails,
         Onboard,
         Signup,
-        Empty
+        Empty,
+        DeepLink
     }
 
     override fun attachBaseContext(newBase: Context?) {
@@ -86,6 +106,7 @@ abstract class BaseActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        lifecycle.addObserver(this)
         window.statusBarColor = ContextCompat.getColor(applicationContext, R.color.status_bar_color)
         val displayMetrics = DisplayMetrics()
         windowManager.defaultDisplay.getMetrics(displayMetrics)
@@ -413,4 +434,99 @@ abstract class BaseActivity : AppCompatActivity() {
             AppObjectController.joshApplication.startActivity(intent)
         }
     }
+
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
+    fun addInAppMessagingListener() {
+        FirebaseInAppMessaging.getInstance().isAutomaticDataCollectionEnabled = true
+        Firebase.inAppMessaging.addImpressionListener(this)
+        Firebase.inAppMessaging.addClickListener(this)
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
+    fun removeInAppMessagingListener() {
+        FirebaseInAppMessaging.getInstance().removeImpressionListener(this)
+        FirebaseInAppMessaging.getInstance().removeClickListener(this)
+    }
+
+    override fun impressionDetected(p0: InAppMessage) {
+    }
+
+    override fun messageClicked(inAppMessage: InAppMessage, action: Action) {
+        JoshSkillExecutors.BOUNDED.execute {
+            Uri.parse(action.actionUrl).host?.trim()?.toLowerCase(Locale.getDefault()).run {
+                when {
+                    this == getString(R.string.conversation_open_dlink) -> {
+                        val courseId = inAppMessage.data?.getOrElse("data", { EMPTY }) ?: EMPTY
+                        AppObjectController.appDatabase.courseDao().getCourseAccordingId(courseId)
+                            ?.let {
+                                ConversationActivity.startConversionActivity(this@BaseActivity, it)
+                            }
+                    }
+                    this == getString(R.string.setting_dlink) -> {
+
+                    }
+                    this == getString(R.string.referral_open_dlink) -> {
+                        ReferralActivity.startReferralActivity(this@BaseActivity)
+                    }
+                    this == getString(R.string.reminder_open_dlink) -> {
+
+                    }
+                    this == getString(R.string.video_open_dlink) -> {
+
+                    }
+                    this == getString(R.string.assessment_dlink) -> {
+                        val id = inAppMessage.data?.getOrElse("data", { EMPTY }) ?: EMPTY
+                        if (id.isNotEmpty()) {
+                            AssessmentActivity.startAssessmentActivity(
+                                this@BaseActivity,
+                                id.toInt()
+                            )
+                        }
+                    }
+                    this == getString(R.string.landing_page_dlink) -> {
+                        val id = inAppMessage.data?.getOrElse("data", { EMPTY }) ?: EMPTY
+                        if (id.isNotEmpty()) {
+                            CourseDetailsActivity.startCourseDetailsActivity(
+                                this@BaseActivity, id.toInt(),
+                                flags = arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
+                            )
+                        }
+                    }
+                    this == getString(R.string.payment_summary_dlink) -> {
+                        val id = inAppMessage.data?.getOrElse("data", { EMPTY }) ?: EMPTY
+                        if (id.isNotEmpty()) {
+                            PaymentSummaryActivity.startPaymentSummaryActivity(
+                                this@BaseActivity, id
+                            )
+                        }
+                    }
+                    this == getString(R.string.calling_dlink) -> {
+                        val id = inAppMessage.data?.getOrElse("data", { EMPTY }) ?: EMPTY
+                        if (id.isNotEmpty()) {
+                            SearchingUserActivity.startUserForPractiseOnPhoneActivity(
+                                this@BaseActivity, id
+                            )
+                        }
+                    }
+                    this == getString(R.string.url_dlink) -> {
+                        val url = inAppMessage.data?.getOrElse("data", { EMPTY }) ?: EMPTY
+                        if (url.isNotEmpty()) {
+                            Utils.openUrl(url, this@BaseActivity)
+                        }
+                    }
+                    this == getString(R.string.course_explore_dlink) -> {
+                        CourseExploreActivity.startCourseExploreActivity(
+                            this@BaseActivity, COURSE_EXPLORER_CODE, state = ActivityEnum.DeepLink
+                        )
+                    }
+                    else -> {
+                        return@execute
+                    }
+                }
+            }
+        }
+
+    }
+
 }

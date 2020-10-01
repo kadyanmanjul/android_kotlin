@@ -12,7 +12,7 @@ import com.google.gson.annotations.SerializedName
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import io.reactivex.Maybe
 import java.io.Serializable
-import java.util.Date
+import java.util.*
 
 @Entity(tableName = "course")
 data class Course(
@@ -83,5 +83,9 @@ interface CourseDao {
 
     @Query(value = "select conversation_id from course")
     fun getAllConversationId(): List<String>
+
+    @SuppressWarnings(RoomWarnings.CURSOR_MISMATCH)
+    @Query(value = "select * from course where courseId= :courseId AND is_deleted=0  LIMIT 1")
+    fun getCourseAccordingId(courseId: String): InboxEntity?
 
 }

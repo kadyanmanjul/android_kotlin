@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "359106841538-tu3m2b6ju05h00ravfs5cjsshlsmmtlc.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.joshtalks.joshskills",
+            "certificate_hash": "a69074a46e5c0705f523c0358685114a6f7b3d30"
+          }
+        },
+        {
           "client_id": "359106841538-b9g8vrstg5aj9eldrg1it15estpdgjsl.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -28,7 +36,7 @@
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "359106841538-b9g8vrstg5aj9eldrg1it15estpdgjsl.apps.googleusercontent.com",
+              "client_id": "359106841538-sgat76s483tqk2937v31b58s7r4aautm.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

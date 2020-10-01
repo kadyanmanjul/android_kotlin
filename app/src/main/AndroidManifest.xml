@@ -503,9 +503,15 @@
         <activity
                 android:name=".ui.voip.SearchingUserActivity"
                 android:launchMode="singleTop"
-                android:screenOrientation="portrait"
-                android:theme="@style/AppNoBarTheme" />
+            android:screenOrientation="portrait"
+            android:theme="@style/AppNoBarTheme" />
 
+        <service
+            android:name=".ui.voip.WebRtcService"
+            android:enabled="true"
+            android:exported="true"
+            android:foregroundServiceType="phoneCall"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
       <service
           android:name=".ui.voip.WebRtcService"
           android:enabled="true"
@@ -523,6 +529,22 @@
                 android:foregroundServiceType="phoneCall"
                 android:permission="android.permission.BIND_JOB_SERVICE" />
 
+
+        <activity android:name=".ui.deeplink.DeeplinkAnalyzeActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="@string/course_explore_dlink"
+                    android:scheme="joshskills" />
+                <data
+                    android:host="@string/setting_dlink"
+                    android:scheme="joshskills" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>

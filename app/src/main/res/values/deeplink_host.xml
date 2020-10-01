@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="conversation_open_dlink">conversation</string>
+    <string name="setting_dlink">setting</string>
+    <string name="referral_open_dlink">referral</string>
+    <string name="reminder_open_dlink">reminder</string>
+    <string name="video_open_dlink">video</string>
+    <string name="practise_dlink">practise</string>
+    <string name="landing_page_dlink">landing_page</string>
+    <string name="payment_summary_dlink">payment_summary</string>
+    <string name="calling_dlink">calling</string>
+    <string name="url_dlink">url</string>
+    <string name="course_explore_dlink">course_explore</string>
+    <string name="assessment_dlink">assessment</string>
+</resources>

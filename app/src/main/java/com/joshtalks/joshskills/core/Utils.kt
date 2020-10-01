@@ -12,7 +12,13 @@ import android.content.Intent
 import android.content.Intent.ACTION_VIEW
 import android.content.pm.PackageManager
 import android.content.res.Resources
-import android.graphics.*
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.Canvas
+import android.graphics.Paint
+import android.graphics.PorterDuff
+import android.graphics.PorterDuffXfermode
+import android.graphics.Rect
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.PictureDrawable
 import android.graphics.drawable.VectorDrawable
@@ -69,10 +75,11 @@ import io.michaelrocks.libphonenumber.android.PhoneNumberUtil
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import jp.wasabeef.glide.transformations.RoundedCornersTransformation
-import okhttp3.RequestBody
-import okhttp3.RequestBody.Companion.toRequestBody
-import java.io.*
+import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
+import java.io.InputStream
+import java.io.OutputStream
 import java.net.InetSocketAddress
 import java.net.Socket
 import java.net.URL
@@ -82,9 +89,12 @@ import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
+import jp.wasabeef.glide.transformations.RoundedCornersTransformation
 import kotlin.math.ceil
 import kotlin.math.pow
 import kotlin.math.roundToInt
+import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 
 
 private val CHAT_TIME_FORMATTER = SimpleDateFormat("hh:mm aa")
@@ -317,7 +327,7 @@ object Utils {
             } else {
                 intent.data = Uri.parse(url.trim())
             }
-            AppObjectController.joshApplication.startActivity(intent)
+            activity.startActivity(intent)
         } catch (ex: Exception) {
             ex.printStackTrace()
         }

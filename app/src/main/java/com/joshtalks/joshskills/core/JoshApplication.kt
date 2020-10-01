@@ -40,7 +40,11 @@ class JoshApplication : MultiDexApplication(), LifecycleObserver,
         ProcessLifecycleOwner.get().lifecycle.addObserver(this)
         AppObjectController.init(this)
         registerBroadcastReceiver()
+/*
         Lingver.getInstance().setLocale(this, "hi")
+        recreate()
+*/
+
     }
 
     private fun registerBroadcastReceiver() {
