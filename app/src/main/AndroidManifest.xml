@@ -81,84 +81,84 @@
         tools:replace="android:allowBackup,android:supportsRtl">
 
         <meta-data
-            android:name="CLEVERTAP_ACCOUNT_ID"
-            android:value="844-6K5-865Z" />
+                android:name="CLEVERTAP_ACCOUNT_ID"
+                android:value="844-6K5-865Z" />
         <meta-data
-            android:name="CLEVERTAP_TOKEN"
-            android:value="536-44b" />
+                android:name="CLEVERTAP_TOKEN"
+                android:value="536-44b" />
         <meta-data
-            android:name="CLEVERTAP_USE_GOOGLE_AD_ID"
-            android:value="1" />
+                android:name="CLEVERTAP_USE_GOOGLE_AD_ID"
+                android:value="1" />
         <meta-data
-            android:name="com.google.android.geo.API_KEY"
-            android:value="@string/google_places_api_key" />
+                android:name="com.google.android.geo.API_KEY"
+                android:value="@string/google_places_api_key" />
         <meta-data
-            android:name="com.google.firebase.messaging.default_notification_icon"
-            android:resource="@drawable/ic_status_bar_notification" />
+                android:name="com.google.firebase.messaging.default_notification_icon"
+                android:resource="@drawable/ic_status_bar_notification" />
         <meta-data
-            android:name="com.google.firebase.messaging.default_notification_channel_id"
-            android:value="id-1" />
+                android:name="com.google.firebase.messaging.default_notification_channel_id"
+                android:value="id-1" />
         <meta-data
-            android:name="com.google.firebase.messaging.default_notification_color"
-            android:resource="@color/colorAccent" />
+                android:name="com.google.firebase.messaging.default_notification_color"
+                android:resource="@color/colorAccent" />
         <meta-data
-            android:name="firebase_performance_logcat_enabled"
-            android:value="true" />
+                android:name="firebase_performance_logcat_enabled"
+                android:value="true" />
         <meta-data
-            android:name="firebase_crashlytics_collection_enabled"
-            android:value="${enableCrashReporting}" />
+                android:name="firebase_crashlytics_collection_enabled"
+                android:value="${enableCrashReporting}" />
         <meta-data
-            android:name="google_analytics_automatic_screen_reporting_enabled"
-            android:value="true" />
+                android:name="google_analytics_automatic_screen_reporting_enabled"
+                android:value="true" />
 
         <meta-data
-            android:name="com.facebook.sdk.ApplicationId"
-            android:value="@string/facebook_app_id" />
+                android:name="com.facebook.sdk.ApplicationId"
+                android:value="@string/facebook_app_id" />
         <meta-data
-            android:name="com.facebook.accountkit.ApplicationName"
-            android:value="@string/app_name" />
+                android:name="com.facebook.accountkit.ApplicationName"
+                android:value="@string/app_name" />
         <meta-data
-            android:name="com.facebook.accountkit.ClientToken"
-            android:value="@string/ACCOUNT_KIT_CLIENT_TOKEN" />
+                android:name="com.facebook.accountkit.ClientToken"
+                android:value="@string/ACCOUNT_KIT_CLIENT_TOKEN" />
         <meta-data
-            android:name="com.facebook.sdk.AutoLogAppEventsEnabled"
-            android:value="false" />
+                android:name="com.facebook.sdk.AutoLogAppEventsEnabled"
+                android:value="false" />
         <!-- <meta-data
                  android:name="com.facebook.sdk.AutoInitEnabled"
                  android:value="false" />-->
         <meta-data
-            android:name="com.facebook.sdk.AdvertiserIDCollectionEnabled"
-            android:value="true" />
+                android:name="com.facebook.sdk.AdvertiserIDCollectionEnabled"
+                android:value="true" />
         <meta-data
-            android:name="com.google.android.gms.ads.AD_MANAGER_APP"
-            android:value="true" />
+                android:name="com.google.android.gms.ads.AD_MANAGER_APP"
+                android:value="true" />
         <meta-data
-            android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="@string/ads_id" />
+                android:name="com.google.android.gms.ads.APPLICATION_ID"
+                android:value="@string/ads_id" />
         <meta-data
-            android:name="io.branch.sdk.BranchKey"
-            android:value="@string/branch_id" />
+                android:name="io.branch.sdk.BranchKey"
+                android:value="@string/branch_id" />
         <meta-data
-            android:name="io.branch.sdk.TestMode"
-            android:value="@bool/branch_test" />
+                android:name="io.branch.sdk.TestMode"
+                android:value="@bool/branch_test" />
         <meta-data
-            android:name="com.truecaller.android.sdk.PartnerKey"
-            android:value="@string/truecaller_key" />
+                android:name="com.truecaller.android.sdk.PartnerKey"
+                android:value="@string/truecaller_key" />
 
         <meta-data
-            android:name="CLEVERTAP_BACKGROUND_SYNC"
-            android:value="1" />
-
-        <activity
-            android:name=".ui.help.HelpActivity"
-            android:launchMode="singleTask"
-            android:theme="@style/AppNoBarTheme" />
+                android:name="CLEVERTAP_BACKGROUND_SYNC"
+                android:value="1" />
 
         <activity
-            android:name=".ui.launch.LauncherActivity"
-            android:launchMode="singleTask"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppNoBarTheme">
+                android:name=".ui.help.HelpActivity"
+                android:launchMode="singleTask"
+                android:theme="@style/AppNoBarTheme" />
+
+        <activity
+                android:name=".ui.launch.LauncherActivity"
+                android:launchMode="singleTask"
+                android:screenOrientation="portrait"
+                android:theme="@style/AppNoBarTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -173,48 +173,48 @@
                 <data android:scheme="joshskills" />
                 <data android:scheme="joshskills://" />
                 <data
-                    android:host="joshskills.test-app.link"
-                    android:scheme="https" />
+                        android:host="joshskills.test-app.link"
+                        android:scheme="https" />
                 <data
-                    android:host="joshskills-alternate.test-app.link"
-                    android:scheme="https" />
+                        android:host="joshskills-alternate.test-app.link"
+                        android:scheme="https" />
                 <data
-                    android:host="joshskills.app.link"
-                    android:scheme="https" />
+                        android:host="joshskills.app.link"
+                        android:scheme="https" />
                 <data
-                    android:host="joshskills-alternate.app.link"
-                    android:scheme="https" />
+                        android:host="joshskills-alternate.app.link"
+                        android:scheme="https" />
                 <data
-                    android:host="joshskills.app.com"
-                    android:scheme="https" />
+                        android:host="joshskills.app.com"
+                        android:scheme="https" />
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.inbox.InboxActivity"
-            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize"
-            android:launchMode="singleTask"
-            android:theme="@style/AppNoBarTheme" />
+                android:name=".ui.inbox.InboxActivity"
+                android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize"
+                android:launchMode="singleTask"
+                android:theme="@style/AppNoBarTheme" />
 
         <activity
-            android:name=".ui.payment.order_summary.PaymentSummaryActivity"
-            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize"
-            android:launchMode="singleTask"
-            android:theme="@style/AppNoBarTheme" />
+                android:name=".ui.payment.order_summary.PaymentSummaryActivity"
+                android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize"
+                android:launchMode="singleTask"
+                android:theme="@style/AppNoBarTheme" />
         <activity
-            android:name=".ui.startcourse.StartCourseActivity"
-            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize"
-            android:launchMode="singleTask"
-            android:theme="@style/AppNoBarTheme" />
+                android:name=".ui.startcourse.StartCourseActivity"
+                android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize"
+                android:launchMode="singleTask"
+                android:theme="@style/AppNoBarTheme" />
 
         <activity
-            android:name=".ui.chat.ConversationActivity"
-            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize"
-            android:launchMode="singleTop"
-            android:parentActivityName=".ui.inbox.InboxActivity"
-            android:theme="@style/AppNoBarTheme">
+                android:name=".ui.chat.ConversationActivity"
+                android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize"
+                android:launchMode="singleTop"
+                android:parentActivityName=".ui.inbox.InboxActivity"
+                android:theme="@style/AppNoBarTheme">
             <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ui.inbox.InboxActivity" />
+                    android:name="android.support.PARENT_ACTIVITY"
+                    android:value=".ui.inbox.InboxActivity" />
 
             <intent-filter>
                 <action android:name="android.intent.category.DEFAULT" />
@@ -222,47 +222,47 @@
         </activity>
 
         <activity
-            android:name=".ui.signup.OnBoardActivity"
-            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize"
-            android:launchMode="singleTask"
-            android:theme="@style/AppNoBarTheme" />
+                android:name=".ui.signup.OnBoardActivity"
+                android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize"
+                android:launchMode="singleTask"
+                android:theme="@style/AppNoBarTheme" />
 
         <activity
-            android:name=".ui.video_player.VideoPlayerActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
-            android:launchMode="singleTask"
-            android:theme="@style/VideoPlayerTheme" />
+                android:name=".ui.video_player.VideoPlayerActivity"
+                android:configChanges="keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
+                android:launchMode="singleTask"
+                android:theme="@style/VideoPlayerTheme" />
 
         <activity
-            android:name=".ui.pdfviewer.PdfViewerActivity"
-            android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize"
-            android:launchMode="singleTask"
-            android:theme="@style/AppNoBarTheme"
-            android:windowSoftInputMode="stateHidden" />
+                android:name=".ui.pdfviewer.PdfViewerActivity"
+                android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize"
+                android:launchMode="singleTask"
+                android:theme="@style/AppNoBarTheme"
+                android:windowSoftInputMode="stateHidden" />
 
         <activity
-            android:name=".ui.explore.CourseExploreActivity"
-            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize"
-            android:launchMode="singleTask"
-            android:parentActivityName=".ui.inbox.InboxActivity"
-            android:theme="@style/AppNoBarTheme" />
+                android:name=".ui.explore.CourseExploreActivity"
+                android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize"
+                android:launchMode="singleTask"
+                android:parentActivityName=".ui.inbox.InboxActivity"
+                android:theme="@style/AppNoBarTheme" />
 
         <activity
-            android:name=".ui.practise.PractiseSubmitActivity"
-            android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize"
-            android:launchMode="singleTask"
-            android:parentActivityName=".ui.inbox.InboxActivity"
-            android:theme="@style/AppNoBarTheme" />
+                android:name=".ui.practise.PractiseSubmitActivity"
+                android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize"
+                android:launchMode="singleTask"
+                android:parentActivityName=".ui.inbox.InboxActivity"
+                android:theme="@style/AppNoBarTheme" />
 
         <activity
-            android:name=".ui.referral.ReferralActivity"
-            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize"
-            android:launchMode="singleTask"
-            android:parentActivityName=".ui.inbox.InboxActivity"
-            android:theme="@style/AppNoBarTheme">
+                android:name=".ui.referral.ReferralActivity"
+                android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize"
+                android:launchMode="singleTask"
+                android:parentActivityName=".ui.inbox.InboxActivity"
+                android:theme="@style/AppNoBarTheme">
             <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ui.inbox.InboxActivity" />
+                    android:name="android.support.PARENT_ACTIVITY"
+                    android:value=".ui.inbox.InboxActivity" />
 
             <intent-filter>
                 <action android:name="android.intent.category.DEFAULT" />
@@ -270,27 +270,27 @@
         </activity>
 
         <activity
-            android:name=".ui.courseprogress.CourseProgressActivity"
-            android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize"
-            android:launchMode="singleTask"
-            android:theme="@style/AppNoBarTheme"
-            android:windowSoftInputMode="stateAlwaysHidden" />
+                android:name=".ui.courseprogress.CourseProgressActivity"
+                android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize"
+                android:launchMode="singleTask"
+                android:theme="@style/AppNoBarTheme"
+                android:windowSoftInputMode="stateAlwaysHidden" />
 
         <activity
-            android:name=".ui.subscription.StartSubscriptionActivity"
-            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize"
-            android:launchMode="singleTask"
-            android:theme="@style/AppNoBarTheme"
-            android:windowSoftInputMode="stateAlwaysHidden" />
+                android:name=".ui.subscription.StartSubscriptionActivity"
+                android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize"
+                android:launchMode="singleTask"
+                android:theme="@style/AppNoBarTheme"
+                android:windowSoftInputMode="stateAlwaysHidden" />
 
         <activity
-            android:name="com.facebook.FacebookActivity"
-            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
-            android:label="@string/app_name" />
+                android:name="com.facebook.FacebookActivity"
+                android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+                android:label="@string/app_name" />
 
         <activity
-            android:name="com.facebook.CustomTabActivity"
-            android:exported="true">
+                android:name="com.facebook.CustomTabActivity"
+                android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
@@ -302,68 +302,75 @@
         </activity>
 
         <activity
-            android:name=".ui.signup.SignUpActivity"
-            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize"
-            android:launchMode="singleTask"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppNoBarTheme"
-            android:windowSoftInputMode="adjustResize" />
+                android:name=".ui.signup.SignUpActivity"
+                android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize"
+                android:launchMode="singleTask"
+                android:screenOrientation="portrait"
+                android:theme="@style/AppNoBarTheme"
+                android:windowSoftInputMode="adjustResize" />
 
         <activity
-            android:name=".ui.course_details.CourseDetailsActivity"
-            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize"
-            android:launchMode="singleTask"
-            android:parentActivityName=".ui.explore.CourseExploreActivity"
-            android:theme="@style/AppNoBarTheme">
+                android:name=".ui.course_details.CourseDetailsActivity"
+                android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize"
+                android:launchMode="singleTask"
+                android:parentActivityName=".ui.explore.CourseExploreActivity"
+                android:theme="@style/AppNoBarTheme">
             <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".ui.explore.CourseExploreActivity" />
+                    android:name="android.support.PARENT_ACTIVITY"
+                    android:value=".ui.explore.CourseExploreActivity" />
         </activity>
 
         <activity
-            android:name=".ui.conversation_practice.ConversationPracticeActivity"
-            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppNoBarTheme"
-            android:windowSoftInputMode="adjustResize" />
+                android:name=".ui.conversation_practice.ConversationPracticeActivity"
+                android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize"
+                android:launchMode="singleTop"
+                android:screenOrientation="portrait"
+                android:theme="@style/AppNoBarTheme"
+                android:windowSoftInputMode="adjustResize" />
 
         <activity
-            android:name=".ui.conversation_practice.history.SubmittedPractiseActivity"
-            android:launchMode="singleTask"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppNoBarTheme"
-            android:windowSoftInputMode="stateHidden|adjustResize" />
+                android:name=".ui.conversation_practice.history.SubmittedPractiseActivity"
+                android:launchMode="singleTask"
+                android:screenOrientation="portrait"
+                android:theme="@style/AppNoBarTheme"
+                android:windowSoftInputMode="stateHidden|adjustResize" />
 
 
         <activity
-            android:name=".ui.assessment.AssessmentActivity"
-            android:launchMode="singleTask"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppNoBarTheme"
-            android:windowSoftInputMode="stateHidden|adjustResize" />
+                android:name=".ui.assessment.AssessmentActivity"
+                android:launchMode="singleTask"
+                android:screenOrientation="portrait"
+                android:theme="@style/AppNoBarTheme"
+                android:windowSoftInputMode="stateHidden|adjustResize" />
         <activity
-            android:name=".ui.reminder.set_reminder.ReminderActivity"
-            android:launchMode="singleTask"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppNoBarTheme"
-            android:windowSoftInputMode="stateHidden|adjustResize" />
+                android:name=".ui.reminder.set_reminder.ReminderActivity"
+                android:launchMode="singleTask"
+                android:screenOrientation="portrait"
+                android:theme="@style/AppNoBarTheme"
+                android:windowSoftInputMode="stateHidden|adjustResize" />
         <activity
-            android:name=".ui.reminder.set_reminder.AlarmNotifierActivity"
-            android:autoRemoveFromRecents="true"
-            android:launchMode="singleTask"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppNoBarTheme"
-            android:windowSoftInputMode="stateHidden|adjustResize" />
+                android:name=".ui.reminder.set_reminder.AlarmNotifierActivity"
+                android:autoRemoveFromRecents="true"
+                android:launchMode="singleTask"
+                android:screenOrientation="portrait"
+                android:theme="@style/AppNoBarTheme"
+                android:windowSoftInputMode="stateHidden|adjustResize" />
         <activity
-            android:name=".ui.reminder.reminder_listing.ReminderListActivity"
-            android:launchMode="singleTask"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppNoBarTheme"
-            android:windowSoftInputMode="stateHidden|adjustResize" />
+                android:name=".ui.reminder.reminder_listing.ReminderListActivity"
+                android:launchMode="singleTask"
+                android:screenOrientation="portrait"
+                android:theme="@style/AppNoBarTheme"
+                android:windowSoftInputMode="stateHidden|adjustResize" />
 
         <activity
-            android:name=".ui.newonboarding.OnBoardingActivityNew"
+                android:name=".ui.newonboarding.OnBoardingActivityNew"
+                android:launchMode="singleTask"
+                android:screenOrientation="portrait"
+                android:theme="@style/AppNoBarTheme"
+                android:windowSoftInputMode="stateHidden|adjustResize" />
+
+        <activity
+            android:name="com.tyagiabhinav.dialogflowchatlibrary.ChatbotActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/AppNoBarTheme"
@@ -382,140 +389,140 @@
             android:theme="@style/AppNoBarTheme" />
 
         <service
-            android:name=".core.service.video_download.VideoDownloadService"
-            android:enabled="true"
-            android:exported="false">
+                android:name=".core.service.video_download.VideoDownloadService"
+                android:enabled="true"
+                android:exported="false">
             <intent-filter>
                 <action android:name="com.google.android.exoplayer.downloadService.action.RESTART" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </service>
         <service
-            android:name="com.google.android.exoplayer2.scheduler.PlatformScheduler$PlatformSchedulerService"
-            android:exported="true"
-            android:permission="android.permission.BIND_JOB_SERVICE" />
+                android:name="com.google.android.exoplayer2.scheduler.PlatformScheduler$PlatformSchedulerService"
+                android:exported="true"
+                android:permission="android.permission.BIND_JOB_SERVICE" />
         <service
-            android:name=".core.notification.FirebaseNotificationService"
-            android:enabled="true"
-            android:exported="true"
-            android:permission="android.permission.BIND_JOB_SERVICE"
-            tools:ignore="ExportedService">
+                android:name=".core.notification.FirebaseNotificationService"
+                android:enabled="true"
+                android:exported="true"
+                android:permission="android.permission.BIND_JOB_SERVICE"
+                tools:ignore="ExportedService">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
 
         <service
-            android:name=".core.chrome.KeepAliveService"
-            android:exported="true"
-            tools:ignore="ExportedService" />
+                android:name=".core.chrome.KeepAliveService"
+                android:exported="true"
+                tools:ignore="ExportedService" />
 
         <service
-            android:name="com.clevertap.android.sdk.CTBackgroundIntentService"
-            android:exported="false">
+                android:name="com.clevertap.android.sdk.CTBackgroundIntentService"
+                android:exported="false">
             <intent-filter>
                 <action android:name="com.clevertap.BG_EVENT" />
             </intent-filter>
         </service>
 
         <service
-            android:name="com.clevertap.android.sdk.CTBackgroundJobService"
-            android:exported="false"
-            android:permission="android.permission.BIND_JOB_SERVICE" />
+                android:name="com.clevertap.android.sdk.CTBackgroundJobService"
+                android:exported="false"
+                android:permission="android.permission.BIND_JOB_SERVICE" />
 
 
         <receiver
-            android:name=".core.chrome.BrowserActionsReceiver"
-            android:exported="true"
-            tools:ignore="ExportedReceiver" />
+                android:name=".core.chrome.BrowserActionsReceiver"
+                android:exported="true"
+                tools:ignore="ExportedReceiver" />
         <receiver
-            android:name=".core.service.SMSReadBroadcastReceiver"
-            android:exported="true"
-            tools:ignore="ExportedReceiver">
+                android:name=".core.service.SMSReadBroadcastReceiver"
+                android:exported="true"
+                tools:ignore="ExportedReceiver">
             <intent-filter>
                 <action android:name="com.google.android.gms.auth.api.phone.SMS_RETRIEVED" />
             </intent-filter>
         </receiver>
         <receiver
-            android:name=".core.analytics.JoshTalksInstallListener"
-            android:exported="true"
-            tools:ignore="ExportedReceiver,ExportedService">
+                android:name=".core.analytics.JoshTalksInstallListener"
+                android:exported="true"
+                tools:ignore="ExportedReceiver,ExportedService">
             <intent-filter>
                 <action android:name="com.android.vending.INSTALL_REFERRER" />
             </intent-filter>
         </receiver>
 
         <receiver
-            android:name=".core.analytics.DismissNotifEventReceiver"
-            android:exported="false" />
+                android:name=".core.analytics.DismissNotifEventReceiver"
+                android:exported="false" />
         <receiver
-            android:name=".ui.reminder.set_reminder.AlarmNotifDismissReceiver"
-            android:exported="false" />
+                android:name=".ui.reminder.set_reminder.AlarmNotifDismissReceiver"
+                android:exported="false" />
 
         <receiver
-            android:name=".ui.reminder.set_reminder.AlarmReceiver"
-            android:enabled="true"
-            android:exported="true">
+                android:name=".ui.reminder.set_reminder.AlarmReceiver"
+                android:enabled="true"
+                android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
 
         <provider
-            android:name=".repository.service.GenericFileProvider"
-            android:authorities="com.joshtalks.joshskills.provider"
-            android:exported="false"
-            android:grantUriPermissions="true">
+                android:name=".repository.service.GenericFileProvider"
+                android:authorities="com.joshtalks.joshskills.provider"
+                android:exported="false"
+                android:grantUriPermissions="true">
             <meta-data
-                android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/provider_paths" />
+                    android:name="android.support.FILE_PROVIDER_PATHS"
+                    android:resource="@xml/provider_paths" />
         </provider>
 
         <provider
-            android:name="androidx.startup.InitializationProvider"
-            android:authorities="${applicationId}.androidx-startup"
-            android:exported="false"
-            tools:node="merge">
+                android:name="androidx.startup.InitializationProvider"
+                android:authorities="${applicationId}.androidx-startup"
+                android:exported="false"
+                tools:node="merge">
 
             <!-- Automatically run MyInitializer at app startup -->
 
             <meta-data
-                android:name="com.joshtalks.joshskills.core.speedx.JoshWorkManagerInitializer"
-                android:value="androidx.startup" />
+                    android:name="com.joshtalks.joshskills.core.speedx.JoshWorkManagerInitializer"
+                    android:value="androidx.startup" />
             <meta-data
-                android:name="com.joshtalks.joshskills.core.speedx.JoshAppInitializer"
-                android:value="androidx.startup" />
+                    android:name="com.joshtalks.joshskills.core.speedx.JoshAppInitializer"
+                    android:value="androidx.startup" />
         </provider>
 
         <provider
-            android:name="androidx.work.impl.WorkManagerInitializer"
-            android:authorities="${applicationId}.workmanager-init"
-            android:enabled="false"
-            android:exported="false" />
+                android:name="androidx.work.impl.WorkManagerInitializer"
+                android:authorities="${applicationId}.workmanager-init"
+                android:enabled="false"
+                android:exported="false" />
 
         <activity
-            android:name=".ui.voip.WebRtcActivity"
-            android:launchMode="singleTask"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppNoBarTheme"
-            android:windowSoftInputMode="stateHidden|adjustResize" />
+                android:name=".ui.voip.WebRtcActivity"
+                android:launchMode="singleTask"
+                android:screenOrientation="portrait"
+                android:theme="@style/AppNoBarTheme"
+                android:windowSoftInputMode="stateHidden|adjustResize" />
+
+        <activity
+                android:name=".ui.voip.SearchingUserActivity"
+                android:launchMode="singleTop"
+                android:screenOrientation="portrait"
+                android:theme="@style/AppNoBarTheme" />
 
         <service
-            android:name=".ui.voip.WebRtcService"
-            android:enabled="true"
-            android:exported="true"
-            android:foregroundServiceType="phoneCall"
-            android:permission="android.permission.BIND_JOB_SERVICE" />
+                android:name="com.google.android.exoplayer2.scheduler.PlatformScheduler$PlatformSchedulerService"
+                android:exported="true"
+                android:permission="android.permission.BIND_JOB_SERVICE" />
         <service
-            android:name="com.google.android.exoplayer2.scheduler.PlatformScheduler$PlatformSchedulerService"
-            android:exported="true"
-            android:permission="android.permission.BIND_JOB_SERVICE" />
-        <service
-            android:name=".ui.voip.WebRtcService"
-            android:enabled="true"
-            android:exported="true"
-            android:foregroundServiceType="phoneCall"
-            android:permission="android.permission.BIND_JOB_SERVICE" />
+                android:name=".ui.voip.WebRtcService"
+                android:enabled="true"
+                android:exported="true"
+                android:foregroundServiceType="phoneCall"
+                android:permission="android.permission.BIND_JOB_SERVICE" />
 
 
         <activity android:name=".ui.deeplink.DeeplinkAnalyzeActivity">

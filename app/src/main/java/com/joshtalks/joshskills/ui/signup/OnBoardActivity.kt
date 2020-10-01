@@ -73,6 +73,7 @@ class OnBoardActivity : CoreJoshActivity() {
         startActivity(Intent(applicationContext, CourseExploreActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
         })
+
     }
 
     fun openReferralDialogue() {
@@ -101,4 +102,5 @@ class OnBoardActivity : CoreJoshActivity() {
         super.onBackPressed()
         this@OnBoardActivity.finish()
     }
+
 }

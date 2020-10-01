@@ -31,7 +31,6 @@ import com.google.gson.JsonDeserializer
 import com.google.gson.JsonElement
 import com.google.gson.JsonParseException
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
-import com.jakewharton.threetenabp.AndroidThreeTen
 import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.analytics.LogException
@@ -71,7 +70,8 @@ import java.lang.reflect.Modifier
 import java.lang.reflect.Type
 import java.net.URL
 import java.text.DateFormat
-import java.util.*
+import java.util.Collections
+import java.util.Date
 import java.util.concurrent.TimeUnit
 import jp.wasabeef.glide.transformations.CropTransformation
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation
@@ -565,7 +565,6 @@ class AppObjectController {
 
 
                 DateTimeUtils.setTimeZone("UTC")
-                AndroidThreeTen.init(context)
                 videoDownloadTracker = VideoDownloadController.getInstance().downloadTracker
                 multiTransformation = MultiTransformation(
                     CropTransformation(

@@ -13,6 +13,11 @@ import com.joshtalks.joshskills.ui.newonboarding.fragment.SelectCourseFragment
 import com.joshtalks.joshskills.ui.newonboarding.fragment.SelectCourseHeadingFragment
 import com.joshtalks.joshskills.ui.newonboarding.fragment.SelectInterestFragment
 import com.joshtalks.joshskills.ui.newonboarding.viewmodel.OnBoardViewModel
+import com.tyagiabhinav.dialogflowchatlibrary.Chatbot
+import com.tyagiabhinav.dialogflowchatlibrary.ChatbotActivity
+import com.tyagiabhinav.dialogflowchatlibrary.ChatbotSettings
+import com.tyagiabhinav.dialogflowchatlibrary.DialogflowCredentials
+import java.util.UUID
 
 class OnBoardingActivityNew : CoreJoshActivity() {
 
@@ -107,6 +112,9 @@ class OnBoardingActivityNew : CoreJoshActivity() {
                     )
                 }
             }
+            ONBOARD_VERSIONS.ONBOARDING_V6 -> {
+                openChatbot()
+            }
             else ->{
                 this.finish()
             }
@@ -130,6 +138,40 @@ class OnBoardingActivityNew : CoreJoshActivity() {
             //additional code
         } else {
             supportFragmentManager.popBackStack()
+        }
+    }
+
+    fun openChatbot() {
+        // provide your Dialogflow's Google Credential JSON saved under RAW folder in resources
+        DialogflowCredentials.getInstance()
+            .setInputStream(resources.openRawResource(R.raw.test_agent_credentials))
+
+        ChatbotSettings.getInstance().chatbot = Chatbot.ChatbotBuilder()
+            .setDoAutoWelcome(true)
+            //              .setChatBotAvatar(getDrawable(R.drawable.avatarBot)) // provide avatar for your bot if default is not required
+            //              .setChatUserAvatar(getDrawable(R.drawable.avatarUser)) // provide avatar for your the user if default is not required
+            //              .setShowMic(true) // False by Default, True if you want to use Voice input from the user to chat
+            .build()
+        val intent = Intent(this, ChatbotActivity::class.java)
+        val bundle = Bundle()
+
+        // provide a UUID for your session with the Dialogflow agent
+        bundle.putString(ChatbotActivity.SESSION_ID, UUID.randomUUID().toString())
+        // intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        // intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
+        intent.putExtras(bundle)
+        startActivityForResult(intent, 1342)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == 1342 && resultCode == RESULT_OK && data != null) {
+            if (data.hasExtra("result")) {
+                val courseIds = data.getIntegerArrayListExtra("result")
+                if (courseIds.isNotEmpty()) {
+                    viewModel.enrollMentorAgainstTest(courseIds.toList())
+                }
+            }
         }
     }
 }
