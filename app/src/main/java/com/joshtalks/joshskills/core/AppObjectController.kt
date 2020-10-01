@@ -93,6 +93,8 @@ const val KEY_AUTHORIZATION = "Authorization"
 const val KEY_APP_VERSION_CODE = "app-version-code"
 const val KEY_APP_VERSION_NAME = "app-version-name"
 const val KEY_APP_USER_AGENT = "HTTP_USER_AGENT"
+const val KEY_APP_ACCEPT_LANGUAGE = "Accept-Language"
+
 private const val JOSH_SKILLS_CACHE = "joshskills-cache"
 private const val READ_TIMEOUT = 30L
 private const val WRITE_TIMEOUT = 30L
@@ -620,6 +622,8 @@ class HeaderInterceptor : Interceptor {
                 KEY_APP_USER_AGENT,
                 "APP_" + BuildConfig.VERSION_NAME + "_" + BuildConfig.VERSION_CODE.toString()
             )
+            .addHeader(KEY_APP_ACCEPT_LANGUAGE, PrefManager.getStringValue(USER_LOCALE))
+
 
         return chain.proceed(newRequest.build())
     }

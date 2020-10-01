@@ -40,6 +40,7 @@ const val SHOW_COURSE_DETAIL_TOOLTIP = "show_course_detail_tooltip"
 const val SELECTED_LANGUAGE = "selected_language"
 const val SELECTED_QUALITY = "selected_quality"
 const val CLEAR_CACHE = "is_clear_cache"
+const val USER_LOCALE = "user_locale"
 
 
 object PrefManager {

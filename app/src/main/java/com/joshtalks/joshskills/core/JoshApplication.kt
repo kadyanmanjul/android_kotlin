@@ -29,6 +29,7 @@ class JoshApplication : MultiDexApplication(), LifecycleObserver,
         @JvmStatic
         var isAppVisible = false
     }
+
     override fun attachBaseContext(base: Context) {
         super.attachBaseContext(base)
         base.let { ViewPumpContextWrapper.wrap(it) }
@@ -36,7 +37,10 @@ class JoshApplication : MultiDexApplication(), LifecycleObserver,
 
     override fun onCreate() {
         super.onCreate()
-        Lingver.init(this, "en")
+        if (PrefManager.getStringValue(USER_LOCALE).isEmpty()) {
+            PrefManager.put(USER_LOCALE, "en")
+        }
+        Lingver.init(this, PrefManager.getStringValue(USER_LOCALE))
         ProcessLifecycleOwner.get().lifecycle.addObserver(this)
         AppObjectController.init(this)
         registerBroadcastReceiver()
@@ -44,7 +48,6 @@ class JoshApplication : MultiDexApplication(), LifecycleObserver,
         Lingver.getInstance().setLocale(this, "hi")
         recreate()
 */
-
     }
 
     private fun registerBroadcastReceiver() {

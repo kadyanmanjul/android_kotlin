@@ -517,7 +517,10 @@ abstract class BaseActivity : AppCompatActivity(), LifecycleObserver,
                     }
                     this == getString(R.string.course_explore_dlink) -> {
                         CourseExploreActivity.startCourseExploreActivity(
-                            this@BaseActivity, COURSE_EXPLORER_CODE, state = ActivityEnum.DeepLink
+                            this@BaseActivity,
+                            COURSE_EXPLORER_CODE,
+                            null,
+                            state = ActivityEnum.DeepLink
                         )
                     }
                     else -> {
