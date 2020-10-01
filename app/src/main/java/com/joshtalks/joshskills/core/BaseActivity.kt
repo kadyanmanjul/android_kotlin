@@ -62,20 +62,18 @@ import com.joshtalks.joshskills.ui.signup.FLOW_FROM
 import com.joshtalks.joshskills.ui.signup.OnBoardActivity
 import com.joshtalks.joshskills.ui.signup.SignUpActivity
 import com.joshtalks.joshskills.ui.voip.SearchingUserActivity
-import com.joshtalks.joshskills.util.showAppropriateMsg
 import com.newrelic.agent.android.NewRelic
 import com.uxcam.OnVerificationListener
 import com.uxcam.UXCam
 import io.branch.referral.Branch
 import io.github.inflationx.viewpump.ViewPumpContextWrapper
-import java.lang.reflect.Type
-import java.util.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
-import java.lang.reflect.Type
 import timber.log.Timber
+import java.lang.reflect.Type
+import java.util.*
 
 const val HELP_ACTIVITY_REQUEST_CODE = 9010
 
@@ -489,7 +487,7 @@ abstract class BaseActivity : AppCompatActivity(), LifecycleObserver,
                         if (id.isNotEmpty()) {
                             CourseDetailsActivity.startCourseDetailsActivity(
                                 this@BaseActivity, id.toInt(),
-                                flags = arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
+                                flags = arrayOf(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT),
                             )
                         }
                     }

@@ -16,7 +16,6 @@ import com.mindorks.placeholderview.annotations.Click
 import com.mindorks.placeholderview.annotations.Layout
 import com.mindorks.placeholderview.annotations.Resolve
 import com.mindorks.placeholderview.annotations.View
-import org.jetbrains.anko.textColor
 
 @Layout(R.layout.course_heading_item)
 class CourseHeadingViewHolder(
