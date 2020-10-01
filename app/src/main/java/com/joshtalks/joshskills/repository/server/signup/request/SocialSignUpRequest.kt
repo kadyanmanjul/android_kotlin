@@ -66,8 +66,6 @@ class SocialSignUpRequest private constructor(
         fun payload(payload: String) = apply { this.payload = payload }
         fun signature(signature: String) = apply { this.signature = signature }
         fun signatureAlgo(signatureAlgo: String) = apply { this.signatureAlgo = signatureAlgo }
-        fun dateOfBirth(dateOfBirth: String) = apply { this.dateOfBirth = dateOfBirth }
-        fun gender(gender: String) = apply { this.gender = gender }
         fun mobile(mobile: String) = apply { this.mobile = mobile }
         fun otp(otp: String) = apply { this.otp = otp }
         fun countryCode(countryCode: String) = apply { this.countryCode = countryCode }
