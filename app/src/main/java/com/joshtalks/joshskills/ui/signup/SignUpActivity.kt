@@ -38,6 +38,7 @@ import com.joshtalks.joshskills.core.INSTANCE_ID
 import com.joshtalks.joshskills.core.PermissionUtils
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.SignUpStepStatus
+import com.joshtalks.joshskills.core.USER_LOCALE
 import com.joshtalks.joshskills.core.VerificationService
 import com.joshtalks.joshskills.core.VerificationStatus
 import com.joshtalks.joshskills.core.VerificationVia
@@ -245,6 +246,10 @@ class SignUpActivity : BaseActivity() {
                 }
             }
 
+            override fun onVerificationRequired(p0: TrueError?) {
+
+            }
+
             override fun onSuccessProfileShared(trueProfile: TrueProfile) {
                 /*if (getVersionData()?.version?.name == ONBOARD_VERSIONS.ONBOARDING_V1 || isGuestUser().not())
                     viewModel.verifyUserViaTrueCaller(trueProfile)
@@ -264,8 +269,6 @@ class SignUpActivity : BaseActivity() {
                 //}
             }
 
-            override fun onVerificationRequired() {
-            }
         })
             .consentMode(TruecallerSdkScope.CONSENT_MODE_POPUP)
             .consentTitleOption(TruecallerSdkScope.SDK_CONSENT_TITLE_VERIFY)
@@ -274,7 +277,7 @@ class SignUpActivity : BaseActivity() {
             .build()
         TruecallerSDK.init(trueScope)
         if (TruecallerSDK.getInstance().isUsable) {
-            val locale = Locale("en")
+            val locale = Locale(PrefManager.getStringValue(USER_LOCALE))
             TruecallerSDK.getInstance().setLocale(locale)
         }
     }
