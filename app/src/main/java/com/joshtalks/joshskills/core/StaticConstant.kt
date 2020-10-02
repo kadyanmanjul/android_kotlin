@@ -150,6 +150,7 @@ class FirebaseRemoteConfigKey {
         const val NOTIFICATION_DESCRIPTION_DISABLED = "NOTIFICATION_DESCRIPTION_DISABLED"
         const val NOTIFICATION_DESCRIPTION_ENABLED = "NOTIFICATION_DESCRIPTION_ENABLED"
         const val NOTIFICATION_SETTING_DESCRIPTION = "NOTIFICATION_SETTING_DESCRIPTION"
+        const val LANGUAGES_SUPPORTED = "LANGUAGES_SUPPORTED"
 
 
         const val BB_TOOL_TIP_FIRST_TIME_TEXT = "BB_TOOL_TIP_FIRST_TIME_TEXT"
@@ -163,7 +164,7 @@ class FirebaseRemoteConfigKey {
 }
 
 
-sealed class AchievementLevel()
+sealed class AchievementLevel
 
 data class Level1(val action: String = "level_1", val watchTime: Int = 10,val levelPosition:Int=1) : AchievementLevel()
 data class Level2(val action: String = "level_2", val watchTime: Int = 20,val levelPosition:Int=2) : AchievementLevel()

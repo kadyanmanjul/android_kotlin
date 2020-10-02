@@ -12,7 +12,6 @@ import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.SELECTED_QUALITY
 import com.joshtalks.joshskills.databinding.FragmentSelectLanguageBinding
 import com.joshtalks.joshskills.ui.settings.SettingsActivity
-import com.joshtalks.joshskills.ui.settings.adapter.ACTION_QUALITY
 import com.joshtalks.joshskills.ui.settings.adapter.StringAdapter
 
 class SelectResolutionFragment : Fragment() {
@@ -34,7 +33,6 @@ class SelectResolutionFragment : Fragment() {
         binding.languageRv.layoutManager = layoutManager
         val adapter =
             StringAdapter(
-                ACTION_QUALITY,
                 resources.getStringArray(R.array.resolutions),
                 this::onItemClick
             )

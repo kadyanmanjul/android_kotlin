@@ -12,6 +12,7 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.workDataOf
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.gson.Gson
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
@@ -19,9 +20,12 @@ import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.memory.MemoryManagementWorker
 import com.joshtalks.joshskills.databinding.FragmentSettingsBinding
 import com.joshtalks.joshskills.repository.local.model.User
+import com.joshtalks.joshskills.repository.server.LanguageItem
 import com.joshtalks.joshskills.ui.settings.SettingsActivity
 import com.joshtalks.joshskills.ui.signup.FLOW_FROM
 import com.joshtalks.joshskills.ui.signup.SignUpActivity
+import com.sinch.gson.reflect.TypeToken
+import java.lang.reflect.Type
 
 class SettingsFragment : Fragment() {
 
@@ -50,13 +54,26 @@ class SettingsFragment : Fragment() {
         var selectedQuality = PrefManager.getStringValue(SELECTED_QUALITY)
 
         if (selectedLanguage.isEmpty()) {
-            selectedLanguage = "English"
+            selectedLanguage = "en"
         }
         if (selectedQuality.isEmpty()) {
             selectedQuality = resources.getStringArray(R.array.resolutions).get(2) ?: "Low"
         }
 
-        binding.languageTv.text = selectedLanguage
+        val listType: Type = object : TypeToken<List<LanguageItem>>() {}.type
+        val languageList: List<LanguageItem> = Gson().fromJson(
+            AppObjectController.getFirebaseRemoteConfig().getString(
+                FirebaseRemoteConfigKey.LANGUAGES_SUPPORTED
+            ), listType
+        )
+
+        languageList.forEach {
+            if (it.code == selectedLanguage) {
+                binding.languageTv.text = it.name
+                return@forEach
+            }
+        }
+
         binding.downloadQualityTv.text = selectedQuality
 
         if (User.getInstance().isVerified.not()) {

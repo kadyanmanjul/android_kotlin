@@ -19,13 +19,13 @@
             android:layout_height="match_parent"
             android:background="@color/artboard_color">
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/personal_info_tv"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:background="@color/white"
-                android:drawableStart="@drawable/ic_person"
-                android:drawableEnd="@drawable/ic_arrow_right"
+                app:drawableEndCompat="@drawable/ic_arrow_right"
+                app:drawableStartCompat="@drawable/ic_person"
                 android:drawablePadding="@dimen/_8sdp"
                 android:gravity="center_vertical"
                 android:onClick="@{()->handler.openPersonalInfoFragment()}"
@@ -48,12 +48,12 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/personal_info_tv">
 
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/language_tag_tv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="@color/white"
-                    android:drawableStart="@drawable/ic_language"
+                    app:drawableStartCompat="@drawable/ic_language"
                     android:drawablePadding="@dimen/_8sdp"
                     android:gravity="center_vertical"
                     android:paddingVertical="@dimen/_12sdp"
@@ -79,12 +79,12 @@
                     app:layout_constraintStart_toEndOf="@+id/language_tag_tv"
                     app:layout_constraintTop_toTopOf="parent" />
 
-                <ImageView
+                <androidx.appcompat.widget.AppCompatImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:contentDescription="@string/selection_arrow"
                     android:paddingHorizontal="@dimen/_8sdp"
-                    android:src="@drawable/ic_arrow_right"
+                    app:srcCompat="@drawable/ic_arrow_right"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -101,12 +101,12 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/language_rl">
 
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/notification_tag_tv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="@color/white"
-                    android:drawableStart="@drawable/ic_notifications"
+                    app:drawableStartCompat="@drawable/ic_notifications"
                     android:drawablePadding="@dimen/_8sdp"
                     android:gravity="center_vertical"
                     android:paddingVertical="@dimen/_12sdp"
@@ -132,13 +132,13 @@
                     app:layout_constraintStart_toEndOf="@+id/notification_tag_tv"
                     app:layout_constraintTop_toTopOf="parent" />
 
-                <ImageView
+                <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/notification_right_iv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:contentDescription="@string/selection_arrow"
                     android:paddingHorizontal="@dimen/_8sdp"
-                    android:src="@drawable/ic_arrow_right"
+                    app:srcCompat="@drawable/ic_arrow_right"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -168,12 +168,12 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/notification_discription">
 
-                <TextView
+                <com.google.android.material.textview.MaterialTextView
                     android:id="@+id/download_quality_tag_tv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="@color/white"
-                    android:drawableStart="@drawable/ic_download_quality"
+                    app:drawableStartCompat="@drawable/ic_download_quality"
                     android:drawablePadding="@dimen/_8sdp"
                     android:gravity="center_vertical"
                     android:paddingVertical="@dimen/_12sdp"
@@ -199,12 +199,12 @@
                     app:layout_constraintStart_toEndOf="@+id/download_quality_tag_tv"
                     app:layout_constraintTop_toTopOf="parent" />
 
-                <ImageView
+                <androidx.appcompat.widget.AppCompatImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:contentDescription="@string/selection_arrow"
                     android:paddingEnd="@dimen/_8sdp"
-                    android:src="@drawable/ic_arrow_right"
+                    app:srcCompat="@drawable/ic_arrow_right"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
@@ -216,7 +216,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:background="@color/white"
-                android:drawableStart="@drawable/ic_delete"
+                app:drawableStartCompat="@drawable/ic_delete"
                 android:drawablePadding="@dimen/_8sdp"
                 android:gravity="center_vertical"
                 android:onClick="@{()->handler.showClearDownloadsView()}"
@@ -235,7 +235,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/_4sdp"
                 android:background="@color/white"
-                android:drawableStart="@drawable/ic_signout"
+                app:drawableStartCompat="@drawable/ic_signout"
                 android:drawablePadding="@dimen/_8sdp"
                 android:gravity="center_vertical"
                 android:onClick="@{()->handler.showSignoutBottomView()}"

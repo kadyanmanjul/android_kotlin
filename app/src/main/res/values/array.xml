@@ -6,11 +6,6 @@
         <item>Apne Partner ki respect karein aur abusive language na use karein </item>
     </string-array>
 
-    <string-array name="languages">
-        <item>Hindi</item>
-        <item>English</item>
-    </string-array>
-
     <string-array name="resolutions">
         <item>High</item>
         <item>Medium</item>

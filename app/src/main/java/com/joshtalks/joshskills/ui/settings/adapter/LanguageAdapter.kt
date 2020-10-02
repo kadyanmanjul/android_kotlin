@@ -5,37 +5,39 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.core.SELECTED_QUALITY
+import com.joshtalks.joshskills.core.SELECTED_LANGUAGE
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.databinding.StringAdapterItemBinding
+import com.joshtalks.joshskills.repository.server.LanguageItem
 
-class StringAdapter(
-    val itemList: Array<String>,
-    private var onItemClick: (item: String, position: Int) -> Unit
+class LanguageAdapter(
+    val itemList: List<LanguageItem>,
+    private var onItemClick: (item: LanguageItem, position: Int) -> Unit
 ) :
-    RecyclerView.Adapter<StringAdapter.StringViewHolder>() {
+    RecyclerView.Adapter<LanguageAdapter.LanguageViewHolder>() {
 
     var context: Context? = null
     var selectedItem: String
 
     init {
-        selectedItem = PrefManager.getStringValue(SELECTED_QUALITY)
+        selectedItem = PrefManager.getStringValue(SELECTED_LANGUAGE)
         if (selectedItem.isEmpty())
-            selectedItem = context?.resources?.getStringArray(R.array.resolutions)?.get(2) ?: "Low"
-
+            selectedItem = "en"
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): StringViewHolder {
+    override fun onCreateViewHolder(
+        parent: ViewGroup,
+        viewType: Int
+    ): LanguageAdapter.LanguageViewHolder {
         context = parent.context
         val inflater = LayoutInflater.from(parent.context)
         val binding = StringAdapterItemBinding.inflate(inflater, parent, false)
-        return StringViewHolder(binding)
+        return LanguageViewHolder(binding)
     }
 
-    override fun onBindViewHolder(holder: StringViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: LanguageViewHolder, position: Int) {
         holder.bind(itemList[position], position)
     }
 
@@ -43,20 +45,20 @@ class StringAdapter(
         return itemList.size
     }
 
-    inner class StringViewHolder(val binding: StringAdapterItemBinding) :
+    inner class LanguageViewHolder(val binding: StringAdapterItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(item: String, position: Int) {
-            binding.itemNameTv.text = item
+        fun bind(item: LanguageItem, position: Int) {
+            binding.itemNameTv.text = item.name
 
-            if (selectedItem == item) {
+            if (selectedItem == item.code) {
                 binding.tickIv.visibility = View.VISIBLE
             } else
                 binding.tickIv.visibility = View.GONE
 
             binding.root.setOnClickListener {
-                selectedItem = item
+                selectedItem = item.code
 
-                AppAnalytics.create(AnalyticsEvent.VIDEO_QUALITY_CHANGED.name)
+                AppAnalytics.create(AnalyticsEvent.SELECT_LANGUAGE_CHANGED.name)
                     .addBasicParam()
                     .addUserDetails()
                     .addParam("selected_value", selectedItem)

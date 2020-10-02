@@ -402,6 +402,19 @@
         </value>
     </entry>
     <entry>
+        <key>LANGUAGES_SUPPORTED</key>
+        <value>[{
+            "code": "en",
+            "name": "English"
+            },
+            {
+            "code": "hi",
+            "name": "Hindi"
+            }
+            ]
+        </value>
+    </entry>
+    <entry>
         <key>UX_CAM_FEATURE_ENABLE</key>
         <value>true</value>
     </entry>
