@@ -1,19 +1,12 @@
 package com.joshtalks.joshskills.core.service
 
-import androidx.work.Constraints
-import androidx.work.ExistingPeriodicWorkPolicy
-import androidx.work.NetworkType
-import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.PeriodicWorkRequest
-import androidx.work.PeriodicWorkRequestBuilder
-import androidx.work.WorkManager
-import androidx.work.workDataOf
+import androidx.work.*
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.memory.MemoryManagementWorker
 import com.joshtalks.joshskills.core.memory.RemoveMediaWorker
 import com.joshtalks.joshskills.repository.local.entity.NPSEvent
-import java.util.UUID
+import java.util.*
 import java.util.concurrent.TimeUnit
 
 object WorkManagerAdmin {
@@ -148,6 +141,16 @@ object WorkManagerAdmin {
         WorkManager.getInstance(AppObjectController.joshApplication).enqueue(workRequest)
         return workRequest.id
     }
+
+    fun getLanguageChangeWorker(language: String): UUID {
+        val data = workDataOf(LANGUAGE_CODE to language)
+        val workRequest = OneTimeWorkRequestBuilder<LanguageChangeWorker>()
+            .setInputData(data)
+            .build()
+        WorkManager.getInstance(AppObjectController.joshApplication).enqueue(workRequest)
+        return workRequest.id
+    }
+
 
     fun determineNPAEvent(
         event: NPSEvent = NPSEvent.STANDARD_TIME_EVENT,

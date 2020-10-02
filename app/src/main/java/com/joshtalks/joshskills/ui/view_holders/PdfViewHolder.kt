@@ -33,11 +33,11 @@ import com.tonyodev.fetch2.Download
 import com.tonyodev.fetch2.Error
 import com.tonyodev.fetch2.FetchListener
 import com.tonyodev.fetch2core.DownloadBlock
-import java.lang.ref.WeakReference
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import java.lang.ref.WeakReference
 
 @Layout(R.layout.pdf_view_holder)
 class PdfViewHolder(activityRef: WeakReference<FragmentActivity>, message: ChatModel,previousMessage:ChatModel?) :
@@ -165,6 +165,7 @@ class PdfViewHolder(activityRef: WeakReference<FragmentActivity>, message: ChatM
     @Resolve
     override fun onViewInflated() {
         super.onViewInflated()
+        messageView.findViewById<ViewGroup>(R.id.tag_view).visibility = android.view.View.GONE
         pdfViewHolder = this
         receivedMessageTime.text = Utils.messageTimeConversion(message.created)
         updateTime(receivedMessageTime)

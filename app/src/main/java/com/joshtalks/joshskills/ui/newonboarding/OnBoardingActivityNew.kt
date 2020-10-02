@@ -52,7 +52,7 @@ class OnBoardingActivityNew : CoreJoshActivity() {
 
     private fun openCoursesFragment(haveCourses: Boolean) {
         when (VersionResponse.getInstance().version!!.name) {
-            ONBOARD_VERSIONS.ONBOARDING_V1 -> {
+            ONBOARD_VERSIONS.ONBOARDING_V1, ONBOARD_VERSIONS.ONBOARDING_V7 -> {
                 this.finish()
             }
             ONBOARD_VERSIONS.ONBOARDING_V2 -> {

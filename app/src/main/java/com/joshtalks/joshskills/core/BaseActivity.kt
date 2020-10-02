@@ -7,9 +7,15 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
+import android.text.SpannableStringBuilder
 import android.util.DisplayMetrics
+import android.view.View
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.ContextCompat
+import androidx.core.text.color
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
@@ -17,6 +23,9 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.OnLifecycleEvent
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
+import com.afollestad.materialdialogs.MaterialDialog
+import com.afollestad.materialdialogs.customview.customView
+import com.afollestad.materialdialogs.customview.getCustomView
 import com.android.installreferrer.api.InstallReferrerClient
 import com.flurry.android.FlurryAgent
 import com.google.firebase.crashlytics.FirebaseCrashlytics
@@ -58,6 +67,8 @@ import com.joshtalks.joshskills.ui.inbox.InboxActivity
 import com.joshtalks.joshskills.ui.nps.NetPromoterScoreFragment
 import com.joshtalks.joshskills.ui.payment.order_summary.PaymentSummaryActivity
 import com.joshtalks.joshskills.ui.referral.ReferralActivity
+import com.joshtalks.joshskills.ui.reminder.set_reminder.ReminderActivity
+import com.joshtalks.joshskills.ui.settings.SettingsActivity
 import com.joshtalks.joshskills.ui.signup.FLOW_FROM
 import com.joshtalks.joshskills.ui.signup.OnBoardActivity
 import com.joshtalks.joshskills.ui.signup.SignUpActivity
@@ -97,6 +108,15 @@ abstract class BaseActivity : AppCompatActivity(), LifecycleObserver,
         Empty,
         DeepLink
     }
+
+    var openSettingActivity: ActivityResultLauncher<Intent> = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            recreate()
+        }
+    }
+
 
     override fun attachBaseContext(newBase: Context?) {
         super.attachBaseContext(newBase?.let { ViewPumpContextWrapper.wrap(it) })
@@ -462,13 +482,13 @@ abstract class BaseActivity : AppCompatActivity(), LifecycleObserver,
                             }
                     }
                     this == getString(R.string.setting_dlink) -> {
-
+                        openSettingActivity.launch(SettingsActivity.getIntent(this@BaseActivity))
                     }
                     this == getString(R.string.referral_open_dlink) -> {
                         ReferralActivity.startReferralActivity(this@BaseActivity)
                     }
                     this == getString(R.string.reminder_open_dlink) -> {
-
+                        startActivity(Intent(this@BaseActivity, ReminderActivity::class.java))
                     }
                     this == getString(R.string.video_open_dlink) -> {
 
@@ -527,7 +547,36 @@ abstract class BaseActivity : AppCompatActivity(), LifecycleObserver,
                 }
             }
         }
-
     }
+
+    protected fun openLanguageChooserDialog() {
+        val dialog = MaterialDialog(this)
+            .customView(R.layout.language_select_layout, scrollable = true)
+        val customView = dialog.getCustomView()
+        val tColor = ContextCompat.getColor(this, R.color.colorAccent)
+
+        val text = SpannableStringBuilder()
+            .append("Pick your ")
+            .color(tColor) { append("Language") }
+        customView.findViewById<AppCompatTextView>(R.id.title).text = text
+        customView.findViewById<View>(R.id.tv_hindi).setOnClickListener {
+            val observer = Observer<WorkInfo> { workInfo ->
+                if (workInfo != null && workInfo.state == WorkInfo.State.SUCCEEDED) {
+                    recreate()
+                    WorkManager.getInstance(applicationContext)
+                        .getWorkInfoByIdLiveData(WorkManagerAdmin.getLanguageChangeWorker("hi"))
+                        .removeObservers(this)
+                }
+
+            }
+            WorkManager.getInstance(applicationContext)
+                .getWorkInfoByIdLiveData(WorkManagerAdmin.getLanguageChangeWorker("hi"))
+                .observe(this, observer)
+
+            dialog.dismiss()
+        }
+        dialog.show()
+    }
+
 
 }

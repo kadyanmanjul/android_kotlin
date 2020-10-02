@@ -15,12 +15,12 @@ import com.joshtalks.joshskills.ui.practise.PRACTISE_OBJECT
 import com.joshtalks.joshskills.ui.referral.PromotionDialogFragment
 import com.joshtalks.joshskills.ui.video_player.VIDEO_OBJECT
 import com.joshtalks.joshskills.ui.video_player.VIDEO_WATCH_TIME
-import java.util.concurrent.TimeUnit
-import kotlinx.android.synthetic.main.base_toolbar.iv_help
+import kotlinx.android.synthetic.main.base_toolbar.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.util.concurrent.TimeUnit
 
 
 abstract class CoreJoshActivity : BaseActivity() {
@@ -56,7 +56,7 @@ abstract class CoreJoshActivity : BaseActivity() {
         this.intent = null
     }
 
-    protected fun openFeedbackFragment(feedbackTypes: FeedbackTypes, questionId: String) {
+    private fun openFeedbackFragment(feedbackTypes: FeedbackTypes, questionId: String) {
         val fragmentTransaction = supportFragmentManager.beginTransaction()
         val prev = supportFragmentManager.findFragmentByTag("feedback_fragment_dialog")
         if (prev != null) {
@@ -125,5 +125,4 @@ abstract class CoreJoshActivity : BaseActivity() {
     private fun showFeedback(feedbackTypes: FeedbackTypes, questionId: String) {
         openFeedbackFragment(feedbackTypes, questionId)
     }
-
 }

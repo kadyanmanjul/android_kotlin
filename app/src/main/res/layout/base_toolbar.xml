@@ -54,20 +54,20 @@
                 tools:visibility="visible" />
 
         <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/text_message_title"
-                android:layout_width="match_parent"
+            android:id="@+id/text_message_title"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_centerVertical="true"
             android:layout_marginHorizontal="@dimen/_8sdp"
-                android:layout_marginVertical="@dimen/_4sdp"
-                android:layout_toStartOf="@id/iv_help"
-                android:layout_toEndOf="@id/image_view_logo"
+            android:layout_marginVertical="@dimen/_4sdp"
+            android:layout_toStartOf="@id/iv_help"
+            android:layout_toEndOf="@id/image_view_logo"
             android:foreground="?android:attr/selectableItemBackground"
             android:gravity="start|center"
             android:singleLine="true"
             android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Semi_Bold"
             android:textColor="@color/white"
-                tools:text="Spoken English Course" />
+            tools:text="Spoken English Course" />
 
         <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/ic_notification_dot"

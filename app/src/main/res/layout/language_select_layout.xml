@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/_96sdp"
+    android:layout_gravity="center">
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/title"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:gravity="center"
+        android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4_Semi_Bold"
+        android:textColor="@color/black"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Spoken English Course" />
+
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tv_hindi"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginHorizontal="@dimen/_16sdp"
+        android:layout_marginTop="@dimen/_16sdp"
+        android:background="@drawable/round_rect_default"
+        android:backgroundTint="#e8f0fe"
+        android:gravity="center"
+        android:text="हिंदी"
+        android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4_Semi_Bold"
+        android:textColor="#185abc"
+        android:textSize="@dimen/_20ssp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/title"
+        app:layout_constraintWidth_default="percent"
+        app:layout_constraintWidth_percent="0.42" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tv_english"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginHorizontal="@dimen/_16sdp"
+        android:layout_marginTop="@dimen/_16sdp"
+        android:background="@drawable/round_rect_default"
+        android:backgroundTint="#e6f4ea"
+        android:gravity="center"
+        android:text="Hinglish"
+        android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4_Semi_Bold"
+        android:textColor="#137333"
+        android:textSize="@dimen/_20ssp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/title"
+        app:layout_constraintWidth_default="percent"
+        app:layout_constraintWidth_percent="0.42" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

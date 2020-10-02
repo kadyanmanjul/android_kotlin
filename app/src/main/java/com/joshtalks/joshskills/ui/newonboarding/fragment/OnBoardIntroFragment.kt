@@ -98,9 +98,9 @@ class OnBoardIntroFragment : Fragment() {
     }
 
     private fun moveToNextScreen() {
-        if(VersionResponse.getInstance().hasVersion()) {
+        if (VersionResponse.getInstance().hasVersion()) {
             when (VersionResponse.getInstance().version!!.name) {
-                ONBOARD_VERSIONS.ONBOARDING_V1 -> {
+                ONBOARD_VERSIONS.ONBOARDING_V1, ONBOARD_VERSIONS.ONBOARDING_V7 -> {
                     return
                 }
                 ONBOARD_VERSIONS.ONBOARDING_V2 -> {
