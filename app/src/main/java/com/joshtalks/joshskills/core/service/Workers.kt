@@ -2,32 +2,15 @@ package com.joshtalks.joshskills.core.service
 
 import android.content.Context
 import android.text.format.DateUtils
-import androidx.work.CoroutineWorker
-import androidx.work.Worker
-import androidx.work.WorkerParameters
-import androidx.work.workDataOf
+import androidx.concurrent.futures.CallbackToFutureAdapter
+import androidx.work.*
 import com.google.android.gms.ads.MobileAds
 import com.google.android.gms.ads.identifier.AdvertisingIdClient
 import com.google.android.gms.tasks.OnCompleteListener
+import com.google.common.util.concurrent.ListenableFuture
 import com.google.firebase.iid.FirebaseInstanceId
 import com.joshtalks.joshskills.BuildConfig
-import com.joshtalks.joshskills.core.API_TOKEN
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.COUNTRY_ISO
-import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.EXPLORE_TYPE
-import com.joshtalks.joshskills.core.INSTANCE_ID
-import com.joshtalks.joshskills.core.InstallReferralUtil
-import com.joshtalks.joshskills.core.LOGIN_ON
-import com.joshtalks.joshskills.core.Level1
-import com.joshtalks.joshskills.core.Level2
-import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.core.RATING_DETAILS_KEY
-import com.joshtalks.joshskills.core.RESTORE_ID
-import com.joshtalks.joshskills.core.SERVER_GID_ID
-import com.joshtalks.joshskills.core.SUBSCRIPTION_TEST_ID
-import com.joshtalks.joshskills.core.USER_UNIQUE_ID
-import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.LogException
 import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
@@ -36,14 +19,7 @@ import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.NPSEvent
 import com.joshtalks.joshskills.repository.local.entity.NPSEventModel
 import com.joshtalks.joshskills.repository.local.eventbus.NPSEventGenerateEventBus
-import com.joshtalks.joshskills.repository.local.model.DeviceDetailsResponse
-import com.joshtalks.joshskills.repository.local.model.ExploreCardType
-import com.joshtalks.joshskills.repository.local.model.FCMResponse
-import com.joshtalks.joshskills.repository.local.model.GaIDMentorModel
-import com.joshtalks.joshskills.repository.local.model.InstallReferrerModel
-import com.joshtalks.joshskills.repository.local.model.Mentor
-import com.joshtalks.joshskills.repository.local.model.RequestRegisterGAId
-import com.joshtalks.joshskills.repository.local.model.User
+import com.joshtalks.joshskills.repository.local.model.*
 import com.joshtalks.joshskills.repository.server.ActiveUserRequest
 import com.joshtalks.joshskills.repository.server.MessageStatusRequest
 import com.joshtalks.joshskills.repository.server.UpdateDeviceRequest
@@ -52,14 +28,17 @@ import com.joshtalks.joshskills.repository.server.signup.LoginResponse
 import com.joshtalks.joshskills.repository.service.NetworkRequestHelper
 import com.joshtalks.joshskills.repository.service.SyncChatService
 import com.sinch.verification.PhoneNumberUtils
+import com.yariksoffice.lingver.Lingver
 import io.branch.referral.Branch
+import retrofit2.HttpException
 import java.util.*
 import java.util.concurrent.TimeUnit
-import retrofit2.HttpException
+
 
 const val INSTALL_REFERRER_SYNC = "install_referrer_sync"
 const val CONVERSATION_ID = "conversation_id"
 const val IS_ACTIVE = "is_active"
+const val LANGUAGE_CODE = "language_code"
 
 
 class AppRunRequiredTaskWorker(var context: Context, workerParams: WorkerParameters) :
@@ -742,6 +721,23 @@ class IsUserActiveWorker(context: Context, private var workerParams: WorkerParam
             ex.printStackTrace()
         }
         return Result.success()
+    }
+}
+
+class LanguageChangeWorker(var context: Context, private var workerParams: WorkerParameters) :
+    ListenableWorker(context, workerParams) {
+    override fun startWork(): ListenableFuture<Result> {
+        return CallbackToFutureAdapter.getFuture { completer ->
+            val language = workerParams.inputData.getString(LANGUAGE_CODE) ?: "en"
+            Lingver.getInstance().setLocale(context, language)
+            AppObjectController.getFirebaseRemoteConfig().reset()
+            AppObjectController.getFirebaseRemoteConfig().fetchAndActivate()
+                .addOnSuccessListener {
+                    completer.set(Result.success())
+                }.addOnFailureListener {
+                    completer.setCancelled()
+                }
+        }
     }
 }
 

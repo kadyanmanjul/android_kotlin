@@ -14,12 +14,7 @@ import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.CLEAR_CACHE
-import com.joshtalks.joshskills.core.CoreJoshActivity
-import com.joshtalks.joshskills.core.IS_GUEST_ENROLLED
-import com.joshtalks.joshskills.core.JoshSkillExecutors
-import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.LogException
@@ -33,10 +28,10 @@ import com.joshtalks.joshskills.ui.inbox.COURSE_EXPLORER_NEW
 import com.joshtalks.joshskills.ui.newonboarding.OnBoardingActivityNew
 import io.branch.referral.Branch
 import io.branch.referral.Defines
-import java.io.File
-import kotlinx.android.synthetic.main.activity_launcher.progress_bar
+import kotlinx.android.synthetic.main.activity_launcher.*
 import org.json.JSONObject
 import timber.log.Timber
+import java.io.File
 
 
 class LauncherActivity : CoreJoshActivity(), CustomPermissionDialogInteractionListener {
@@ -140,13 +135,17 @@ class LauncherActivity : CoreJoshActivity(), CustomPermissionDialogInteractionLi
                 navigateToNextScreen()
             } else {
                 when (versionResponse.version!!.name) {
-                    ONBOARD_VERSIONS.ONBOARDING_V1 -> {
+                    ONBOARD_VERSIONS.ONBOARDING_V1, ONBOARD_VERSIONS.ONBOARDING_V7 -> {
                         val intent = getIntentForState()
                         startActivity(intent)
                         this@LauncherActivity.finish()
                     }
-                    ONBOARD_VERSIONS.ONBOARDING_V2, ONBOARD_VERSIONS.ONBOARDING_V3, ONBOARD_VERSIONS.ONBOARDING_V4,ONBOARD_VERSIONS.ONBOARDING_V5 -> {
-                        if (PrefManager.getBoolValue(IS_GUEST_ENROLLED, false)||User.getInstance().isVerified) {
+                    ONBOARD_VERSIONS.ONBOARDING_V2, ONBOARD_VERSIONS.ONBOARDING_V3, ONBOARD_VERSIONS.ONBOARDING_V4, ONBOARD_VERSIONS.ONBOARDING_V5 -> {
+                        if (PrefManager.getBoolValue(
+                                IS_GUEST_ENROLLED,
+                                false
+                            ) || User.getInstance().isVerified
+                        ) {
                             val intent = getIntentForState()
                             startActivity(intent)
                             this@LauncherActivity.finish()

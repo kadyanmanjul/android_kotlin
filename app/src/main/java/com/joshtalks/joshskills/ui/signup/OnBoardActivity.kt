@@ -13,14 +13,13 @@ import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.databinding.ActivityOnboardBinding
+import com.joshtalks.joshskills.repository.server.onboarding.ONBOARD_VERSIONS
+import com.joshtalks.joshskills.repository.server.onboarding.VersionResponse
 import com.joshtalks.joshskills.ui.explore.CourseExploreActivity
 import com.joshtalks.joshskills.ui.referral.EnterReferralCodeFragment
 
-
 class OnBoardActivity : CoreJoshActivity() {
     private lateinit var layout: ActivityOnboardBinding
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         supportActionBar?.hide()
@@ -32,6 +31,11 @@ class OnBoardActivity : CoreJoshActivity() {
         layout.lifecycleOwner = this
         if (PrefManager.getStringValue(REFERRED_REFERRAL_CODE).isBlank())
             layout.haveAReferralCode.visibility = View.VISIBLE
+        VersionResponse.getInstance().version?.name?.let {
+            if (it == ONBOARD_VERSIONS.ONBOARDING_V7) {
+                openLanguageChooserDialog()
+            }
+        }
     }
 
     fun signUp() {
@@ -65,7 +69,6 @@ class OnBoardActivity : CoreJoshActivity() {
     }
 
     fun openReferralDialogue() {
-
         val bottomSheetFragment = EnterReferralCodeFragment.newInstance()
         bottomSheetFragment.show(supportFragmentManager, bottomSheetFragment.tag)
     }

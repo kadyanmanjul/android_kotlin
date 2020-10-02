@@ -47,6 +47,7 @@ class TextViewHolder(
     @Resolve
     override fun onViewInflated() {
         super.onViewInflated()
+        messageView.findViewById<ViewGroup>(R.id.tag_view).visibility = GONE
         titleView.text = EMPTY
         titleView.visibility = GONE
         textViewHolder = this
