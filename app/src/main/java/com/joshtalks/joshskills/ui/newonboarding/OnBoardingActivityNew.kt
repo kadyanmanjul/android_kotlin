@@ -3,6 +3,8 @@ package com.joshtalks.joshskills.ui.newonboarding
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
+import android.widget.FrameLayout
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.R
@@ -21,10 +23,14 @@ import com.tyagiabhinav.dialogflowchatlibrary.ChatbotActivity
 import com.tyagiabhinav.dialogflowchatlibrary.ChatbotSettings
 import com.tyagiabhinav.dialogflowchatlibrary.DialogflowCredentials
 import java.util.UUID
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class OnBoardingActivityNew : CoreJoshActivity() {
 
     lateinit var viewModel: OnBoardViewModel
+    lateinit var progressLayout: FrameLayout
 
     companion object {
         const val FLOW_FROM_INBOX = "FLOW_FROM_INBOX"
@@ -48,6 +54,7 @@ class OnBoardingActivityNew : CoreJoshActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_onboarding_new)
         viewModel = ViewModelProvider(this).get(OnBoardViewModel::class.java)
+        progressLayout= findViewById<FrameLayout>(R.id.progressLayout)
 
         val haveCourses = intent.getBooleanExtra(HAVE_COURSES, false)
         if (intent.hasExtra(FLOW_FROM_INBOX)) {
@@ -65,7 +72,12 @@ class OnBoardingActivityNew : CoreJoshActivity() {
     private fun addObserver() {
         viewModel.courseRegistrationStatus.observe(this, Observer {
             if (it == ApiCallStatus.SUCCESS) {
+                progressLayout.visibility= View.GONE
                 startActivity((this as BaseActivity).getInboxActivityIntent(true))
+            } else if(it == ApiCallStatus.FAILED){
+                progressLayout.visibility= View.GONE
+            }else {
+                progressLayout.visibility= View.VISIBLE
             }
         })
     }
@@ -191,7 +203,11 @@ class OnBoardingActivityNew : CoreJoshActivity() {
             if (data.hasExtra("result")) {
                 val courseIds = data.getIntegerArrayListExtra("result")
                 if (courseIds.isNotEmpty()) {
-                    viewModel.enrollMentorAgainstTest(courseIds.toList())
+                    CoroutineScope(Dispatchers.Main).launch {
+                        supportFragmentManager.popBackStack()
+                        progressLayout.visibility=View.VISIBLE
+                        viewModel.enrollMentorAgainstTest(courseIds.toList())
+                    }
                 }
             }
         }
