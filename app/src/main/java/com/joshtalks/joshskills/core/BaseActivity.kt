@@ -7,15 +7,11 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
-import android.text.SpannableStringBuilder
 import android.util.DisplayMetrics
-import android.view.View
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.ContextCompat
-import androidx.core.text.color
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
@@ -23,9 +19,6 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.OnLifecycleEvent
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
-import com.afollestad.materialdialogs.MaterialDialog
-import com.afollestad.materialdialogs.customview.customView
-import com.afollestad.materialdialogs.customview.getCustomView
 import com.android.installreferrer.api.InstallReferrerClient
 import com.flurry.android.FlurryAgent
 import com.google.firebase.crashlytics.FirebaseCrashlytics
@@ -549,33 +542,19 @@ abstract class BaseActivity : AppCompatActivity(), LifecycleObserver,
         }
     }
 
-    protected fun openLanguageChooserDialog() {
-        val dialog = MaterialDialog(this)
-            .customView(R.layout.language_select_layout, scrollable = true)
-        val customView = dialog.getCustomView()
-        val tColor = ContextCompat.getColor(this, R.color.colorAccent)
-
-        val text = SpannableStringBuilder()
-            .append("Pick your ")
-            .color(tColor) { append("Language") }
-        customView.findViewById<AppCompatTextView>(R.id.title).text = text
-        customView.findViewById<View>(R.id.tv_hindi).setOnClickListener {
-            val observer = Observer<WorkInfo> { workInfo ->
-                if (workInfo != null && workInfo.state == WorkInfo.State.SUCCEEDED) {
-                    recreate()
-                    WorkManager.getInstance(applicationContext)
-                        .getWorkInfoByIdLiveData(WorkManagerAdmin.getLanguageChangeWorker("hi"))
-                        .removeObservers(this)
-                }
-
+    protected fun requestWorkerForChangeLanguage(lCode: String) {
+        val observer = Observer<WorkInfo> { workInfo ->
+            if (workInfo != null && workInfo.state == WorkInfo.State.SUCCEEDED) {
+                recreate()
+                WorkManager.getInstance(applicationContext)
+                    .getWorkInfoByIdLiveData(WorkManagerAdmin.getLanguageChangeWorker(lCode))
+                    .removeObservers(this)
             }
-            WorkManager.getInstance(applicationContext)
-                .getWorkInfoByIdLiveData(WorkManagerAdmin.getLanguageChangeWorker("hi"))
-                .observe(this, observer)
 
-            dialog.dismiss()
         }
-        dialog.show()
+        WorkManager.getInstance(applicationContext)
+            .getWorkInfoByIdLiveData(WorkManagerAdmin.getLanguageChangeWorker(lCode))
+            .observe(this, observer)
     }
 
 
