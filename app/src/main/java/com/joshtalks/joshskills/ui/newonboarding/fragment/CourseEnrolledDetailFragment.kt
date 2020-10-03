@@ -87,6 +87,18 @@ class CourseEnrolledDetailFragment : Fragment() {
         binding.viewPagerText.adapter = adapter
         binding.wormDotsIndicator.setViewPager2(binding.viewPagerText)
 
+        binding.viewPagerText.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+            // override desired callback functions
+            override fun onPageScrolled(
+                position: Int,
+                positionOffset: Float,
+                positionOffsetPixels: Int
+            ) {
+                super.onPageScrolled(position, positionOffset, positionOffsetPixels)
+                logEventOnPageScrolled(position)
+            }
+        })
+
         binding.btnBuy.setOnClickListener {
             AppAnalytics.create(AnalyticsEvent.NEW_ONBOARDING_V5_BUY_ACCESS_PASS.NAME)
                 .addBasicParam()
@@ -116,6 +128,16 @@ class CourseEnrolledDetailFragment : Fragment() {
         binding.helpBtn.setOnClickListener {
             (requireActivity() as BaseActivity).openHelpActivity()
         }
+    }
+
+    private fun logEventOnPageScrolled(position :Int) {
+        AppAnalytics.create(AnalyticsEvent.NEW_ONBOARDING_ALREADY_USER.name)
+            .addBasicParam()
+            .addUserDetails()
+            .addParam("version", VersionResponse.getInstance().version?.name.toString())
+            .addParam("no of courses enrolling", headingIds.size)
+            .addParam("page position",position)
+            .push()
     }
 
     private fun navigateToCourseDetailsScreen(
