@@ -2,8 +2,15 @@ package com.joshtalks.joshskills.ui.signup
 
 import android.content.Intent
 import android.os.Bundle
+import android.text.SpannableStringBuilder
 import android.view.View
+import androidx.appcompat.widget.AppCompatTextView
+import androidx.core.content.ContextCompat
+import androidx.core.text.color
 import androidx.databinding.DataBindingUtil
+import com.afollestad.materialdialogs.MaterialDialog
+import com.afollestad.materialdialogs.customview.customView
+import com.afollestad.materialdialogs.customview.getCustomView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.CoreJoshActivity
 import com.joshtalks.joshskills.core.EXPLORE_TYPE
@@ -71,6 +78,23 @@ class OnBoardActivity : CoreJoshActivity() {
     fun openReferralDialogue() {
         val bottomSheetFragment = EnterReferralCodeFragment.newInstance()
         bottomSheetFragment.show(supportFragmentManager, bottomSheetFragment.tag)
+    }
+
+    private fun openLanguageChooserDialog() {
+        val dialog = MaterialDialog(this)
+            .customView(R.layout.language_select_layout, scrollable = true)
+        val customView = dialog.getCustomView()
+        val tColor = ContextCompat.getColor(this, R.color.colorAccent)
+
+        val text = SpannableStringBuilder()
+            .append("Pick your ")
+            .color(tColor) { append("Language") }
+        customView.findViewById<AppCompatTextView>(R.id.title).text = text
+        customView.findViewById<View>(R.id.tv_hindi).setOnClickListener {
+            requestWorkerForChangeLanguage("hi")
+            dialog.dismiss()
+        }
+        dialog.show()
     }
 
     override fun onBackPressed() {
