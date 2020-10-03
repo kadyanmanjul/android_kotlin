@@ -7,10 +7,10 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.ApiCallStatus
+import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.core.CoreJoshActivity
 import com.joshtalks.joshskills.repository.server.onboarding.ONBOARD_VERSIONS
 import com.joshtalks.joshskills.repository.server.onboarding.VersionResponse
-import com.joshtalks.joshskills.ui.inbox.InboxActivity
 import com.joshtalks.joshskills.ui.newonboarding.fragment.OnBoardIntroFragment
 import com.joshtalks.joshskills.ui.newonboarding.fragment.SelectCourseFragment
 import com.joshtalks.joshskills.ui.newonboarding.fragment.SelectCourseHeadingFragment
@@ -65,7 +65,7 @@ class OnBoardingActivityNew : CoreJoshActivity() {
     private fun addObserver() {
         viewModel.courseRegistrationStatus.observe(this, Observer {
             if (it == ApiCallStatus.SUCCESS) {
-                startActivity(Intent(this, InboxActivity::class.java))
+                startActivity((this as BaseActivity).getInboxActivityIntent(true))
             }
         })
     }
@@ -128,7 +128,15 @@ class OnBoardingActivityNew : CoreJoshActivity() {
                 }
             }
             ONBOARD_VERSIONS.ONBOARDING_V6 -> {
-                openChatbot()
+                if (haveCourses) {
+                    replaceFragment(
+                        R.id.onboarding_container,
+                        SelectCourseFragment.newInstance(true),
+                        SelectCourseFragment.TAG
+                    )
+                } else {
+                    openChatbot()
+                }
             }
             else ->{
                 this.finish()

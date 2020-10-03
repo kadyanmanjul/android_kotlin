@@ -17,7 +17,6 @@ import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.ApiCallStatus
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.BaseActivity
-import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.IS_GUEST_ENROLLED
 import com.joshtalks.joshskills.core.IS_SUBSCRIPTION_STARTED
 import com.joshtalks.joshskills.core.IS_TRIAL_ENDED
@@ -229,6 +228,7 @@ class SelectCourseFragment : Fragment() {
     private fun hideContainer(): Boolean = PrefManager.getBoolValue(IS_TRIAL_ENDED, false) ||
             VersionResponse.getInstance().version?.name == ONBOARD_VERSIONS.ONBOARDING_V3 ||
             VersionResponse.getInstance().version?.name == ONBOARD_VERSIONS.ONBOARDING_V5 ||
+            VersionResponse.getInstance().version?.name == ONBOARD_VERSIONS.ONBOARDING_V6 ||
             PrefManager.getBoolValue(IS_SUBSCRIPTION_STARTED)
 
     private fun setSelectedCourse(count: Int) {

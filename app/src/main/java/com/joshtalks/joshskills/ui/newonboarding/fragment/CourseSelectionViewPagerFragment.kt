@@ -8,7 +8,6 @@ import android.view.animation.OvershootInterpolator
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.core.IS_SUBSCRIPTION_STARTED
 import com.joshtalks.joshskills.core.IS_TRIAL_ENDED
 import com.joshtalks.joshskills.core.PrefManager
@@ -84,6 +83,7 @@ class CourseSelectionViewPagerFragment : Fragment() {
     private fun hideButtons(versionResponse: VersionResponse): Boolean =
         versionResponse.version!!.name == ONBOARD_VERSIONS.ONBOARDING_V3 ||
                 versionResponse.version!!.name == ONBOARD_VERSIONS.ONBOARDING_V5 ||
+                versionResponse.version!!.name == ONBOARD_VERSIONS.ONBOARDING_V6 ||
                 PrefManager.getBoolValue(IS_TRIAL_ENDED, false) ||
                 PrefManager.getBoolValue(IS_SUBSCRIPTION_STARTED)
 
