@@ -235,8 +235,8 @@ dependencies {
     implementation 'com.google.firebase:firebase-config:19.2.0'
     implementation 'com.google.firebase:firebase-dynamic-links-ktx:19.1.0'
     implementation 'com.google.firebase:firebase-auth:19.4.0'
-    implementation 'com.google.firebase:firebase-inappmessaging-ktx:19.1.1'
-    implementation 'com.google.firebase:firebase-inappmessaging-display-ktx:19.1.1'
+ //   implementation 'com.google.firebase:firebase-inappmessaging-ktx:19.1.1'
+   // implementation 'com.google.firebase:firebase-inappmessaging-display-ktx:19.1.1'
 
     implementation 'com.huawei.hms:ads-identifier:3.4.28.305' // ads identifier for Huawei devices
     implementation 'com.google.android.gms:play-services-ads:19.4.0'
