@@ -370,6 +370,12 @@
             android:windowSoftInputMode="stateHidden|adjustResize" />
 
         <activity
+            android:name="com.tyagiabhinav.dialogflowchatlibrary.ChatbotActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppNoBarTheme"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
+
+        <activity
             android:name=".ui.voip.SearchingUserActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
@@ -500,12 +506,12 @@
             android:theme="@style/AppNoBarTheme"
             android:windowSoftInputMode="stateHidden|adjustResize" />
 
-        <service
-            android:name=".ui.voip.WebRtcService"
-            android:enabled="true"
-            android:exported="true"
-            android:foregroundServiceType="phoneCall"
-            android:permission="android.permission.BIND_JOB_SERVICE" />
+        <activity
+            android:name=".ui.voip.SearchingUserActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppNoBarTheme" />
+
         <service
             android:name="com.google.android.exoplayer2.scheduler.PlatformScheduler$PlatformSchedulerService"
             android:exported="true"

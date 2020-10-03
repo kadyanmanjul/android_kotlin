@@ -87,13 +87,26 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.activity_inbox.*
-import kotlinx.android.synthetic.main.find_more_layout.*
-import kotlinx.android.synthetic.main.top_free_trial_expire_time_tooltip_view.*
+import java.util.concurrent.TimeUnit
+import kotlinx.android.synthetic.main.activity_inbox.expiry_tool_tip
+import kotlinx.android.synthetic.main.activity_inbox.hint_text
+import kotlinx.android.synthetic.main.activity_inbox.new_user_layout
+import kotlinx.android.synthetic.main.activity_inbox.overlay_layout
+import kotlinx.android.synthetic.main.activity_inbox.overlay_tip
+import kotlinx.android.synthetic.main.activity_inbox.progress_bar
+import kotlinx.android.synthetic.main.activity_inbox.recycler_view_inbox
+import kotlinx.android.synthetic.main.activity_inbox.subscriptionTipContainer
+import kotlinx.android.synthetic.main.activity_inbox.text_btn
+import kotlinx.android.synthetic.main.activity_inbox.txtConvert
+import kotlinx.android.synthetic.main.activity_inbox.txtConvert2
+import kotlinx.android.synthetic.main.activity_inbox.txtSubscriptionTip
+import kotlinx.android.synthetic.main.activity_inbox.txtSubscriptionTip2
+import kotlinx.android.synthetic.main.find_more_layout.bb_tip_below_find_btn
+import kotlinx.android.synthetic.main.find_more_layout.find_more
+import kotlinx.android.synthetic.main.top_free_trial_expire_time_tooltip_view.expiry_tool_tip_text
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.util.concurrent.TimeUnit
 
 const val REGISTER_INFO_CODE = 2001
 const val COURSE_EXPLORER_CODE = 2002
@@ -402,8 +415,8 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
                             RxBus2.publish(ExploreCourseEventBus())
                         }
                     }
-                    ONBOARD_VERSIONS.ONBOARDING_V2, ONBOARD_VERSIONS.ONBOARDING_V4, ONBOARD_VERSIONS.ONBOARDING_V3, ONBOARD_VERSIONS.ONBOARDING_V5 -> {
-                        //   find_more.text = getString(R.string.add_more_courses)
+                    ONBOARD_VERSIONS.ONBOARDING_V2, ONBOARD_VERSIONS.ONBOARDING_V4, ONBOARD_VERSIONS.ONBOARDING_V3, ONBOARD_VERSIONS.ONBOARDING_V5, ONBOARD_VERSIONS.ONBOARDING_V6 -> {
+                        find_more.text = getString(R.string.add_more_courses)
                         find_more.setOnClickListener {
                             AppAnalytics.create(AnalyticsEvent.ADD_MORE_COURSE_CLICKED.NAME)
                                 .addBasicParam()
@@ -778,7 +791,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
                 ONBOARD_VERSIONS.ONBOARDING_V1, ONBOARD_VERSIONS.ONBOARDING_V7 -> {
                     openCourseExplorer()
                 }
-                ONBOARD_VERSIONS.ONBOARDING_V2, ONBOARD_VERSIONS.ONBOARDING_V3, ONBOARD_VERSIONS.ONBOARDING_V4, ONBOARD_VERSIONS.ONBOARDING_V5 -> {
+                ONBOARD_VERSIONS.ONBOARDING_V2, ONBOARD_VERSIONS.ONBOARDING_V3, ONBOARD_VERSIONS.ONBOARDING_V4, ONBOARD_VERSIONS.ONBOARDING_V5, ONBOARD_VERSIONS.ONBOARDING_V6 -> {
                     openCourseSelectionExplorer()
                 }
                 else -> {

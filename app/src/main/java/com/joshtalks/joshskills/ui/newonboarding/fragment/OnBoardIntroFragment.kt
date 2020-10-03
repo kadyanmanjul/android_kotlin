@@ -23,6 +23,11 @@ import com.joshtalks.joshskills.ui.newonboarding.adapter.OnBoardingIntroTextAdap
 import com.joshtalks.joshskills.ui.newonboarding.viewholder.CarouselImageViewHolder
 import com.joshtalks.joshskills.ui.signup.FLOW_FROM
 import com.joshtalks.joshskills.ui.signup.SignUpActivity
+import com.tyagiabhinav.dialogflowchatlibrary.Chatbot
+import com.tyagiabhinav.dialogflowchatlibrary.ChatbotActivity
+import com.tyagiabhinav.dialogflowchatlibrary.ChatbotSettings
+import com.tyagiabhinav.dialogflowchatlibrary.DialogflowCredentials
+import java.util.UUID
 
 class OnBoardIntroFragment : Fragment() {
     var handler: Handler? = null
@@ -138,6 +143,9 @@ class OnBoardIntroFragment : Fragment() {
                         SelectCourseHeadingFragment.TAG
                     )
                 }
+                ONBOARD_VERSIONS.ONBOARDING_V6 -> {
+                    openChatbot()
+                }
             }
         }
     }
@@ -185,4 +193,27 @@ class OnBoardIntroFragment : Fragment() {
         super.onDestroy()
         handler?.removeCallbacksAndMessages(null)
     }
+
+    fun openChatbot() {
+        // provide your Dialogflow's Google Credential JSON saved under RAW folder in resources
+        DialogflowCredentials.getInstance()
+            .setInputStream(resources.openRawResource(R.raw.test_agent_credentials))
+
+        ChatbotSettings.getInstance().chatbot = Chatbot.ChatbotBuilder()
+            .setDoAutoWelcome(true)
+            //  .setChatBotAvatar(getDrawable(R.drawable.avatarBot)) // provide avatar for your bot if default is not required
+            //  .setChatUserAvatar(getDrawable(R.drawable.avatarUser)) // provide avatar for your the user if default is not required
+            //  .setShowMic(true) // False by Default, True if you want to use Voice input from the user to chat
+            .build()
+        val intent = Intent(requireActivity(), ChatbotActivity::class.java)
+        val bundle = Bundle()
+
+        // provide a UUID for your session with the Dialogflow agent
+        bundle.putString(ChatbotActivity.SESSION_ID, UUID.randomUUID().toString())
+        // intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        // intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
+        intent.putExtras(bundle)
+        startActivityForResult(intent, 1342, bundle)
+    }
+
 }

@@ -33,10 +33,10 @@ import com.joshtalks.joshskills.ui.inbox.COURSE_EXPLORER_NEW
 import com.joshtalks.joshskills.ui.newonboarding.OnBoardingActivityNew
 import io.branch.referral.Branch
 import io.branch.referral.Defines
-import kotlinx.android.synthetic.main.activity_launcher.*
+import java.io.File
+import kotlinx.android.synthetic.main.activity_launcher.progress_bar
 import org.json.JSONObject
 import timber.log.Timber
-import java.io.File
 
 
 class LauncherActivity : CoreJoshActivity(), CustomPermissionDialogInteractionListener {
@@ -145,7 +145,7 @@ class LauncherActivity : CoreJoshActivity(), CustomPermissionDialogInteractionLi
                         startActivity(intent)
                         this@LauncherActivity.finish()
                     }
-                    ONBOARD_VERSIONS.ONBOARDING_V2, ONBOARD_VERSIONS.ONBOARDING_V3, ONBOARD_VERSIONS.ONBOARDING_V4, ONBOARD_VERSIONS.ONBOARDING_V5 -> {
+                    ONBOARD_VERSIONS.ONBOARDING_V2, ONBOARD_VERSIONS.ONBOARDING_V3, ONBOARD_VERSIONS.ONBOARDING_V4, ONBOARD_VERSIONS.ONBOARDING_V5, ONBOARD_VERSIONS.ONBOARDING_V6 -> {
                         if (PrefManager.getBoolValue(
                                 IS_GUEST_ENROLLED,
                                 false

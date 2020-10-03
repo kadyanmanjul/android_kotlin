@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="userAvatarBG">#666666</color>
+    <color name="chatPrimary">#107BE5</color>
+    <color name="chatPrimaryFocus">#107BE5</color>
+    <color name="chatPrimaryPressed">#0D63B9</color>
+    <color name="chatPrimaryDisabled">#107BE5</color>
+    <color name="chatBGnText">#FFFFFF</color>
+    <color name="chatSecondary">#FFFFFF</color>
+    <color name="chatSecondaryFocus">#F1F1F1</color>
+    <color name="chatSecondaryPressed">#E9E9E9</color>
+    <color name="chatSecondaryDisabled">#66FFFFFF</color>
+    <color name="botBGBubbleStroke">#FFFFFC</color>
+    <color name="botBGBubble">#FFFFFC</color>
+    <color name="userBGBubbleStroke">#E2FFC7</color>
+    <color name="userBGBubble">#E2FFC7</color>
+    <color name="checkbox">@color/chatPrimary</color>
+    <color name="statusBarColor">@color/chatPrimaryPressed</color>
+    <color name="selectorBGColor">@color/chatPrimary</color>
+
+</resources>

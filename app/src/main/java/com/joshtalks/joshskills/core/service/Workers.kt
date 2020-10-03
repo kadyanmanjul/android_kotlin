@@ -27,6 +27,21 @@ import com.joshtalks.joshskills.core.RATING_DETAILS_KEY
 import com.joshtalks.joshskills.core.RESTORE_ID
 import com.joshtalks.joshskills.core.SERVER_GID_ID
 import com.joshtalks.joshskills.core.SUBSCRIPTION_TEST_ID
+import com.joshtalks.joshskills.core.USER_UNIQUE_ID
+import com.joshtalks.joshskills.core.Utils
+import com.joshtalks.joshskills.core.API_TOKEN
+import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.COUNTRY_ISO
+import com.joshtalks.joshskills.core.EMPTY
+import com.joshtalks.joshskills.core.EXPLORE_TYPE
+import com.joshtalks.joshskills.core.INSTANCE_ID
+import com.joshtalks.joshskills.core.InstallReferralUtil
+import com.joshtalks.joshskills.core.LOGIN_ON
+import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.RATING_DETAILS_KEY
+import com.joshtalks.joshskills.core.RESTORE_ID
+import com.joshtalks.joshskills.core.SERVER_GID_ID
+import com.joshtalks.joshskills.core.SUBSCRIPTION_TEST_ID
 import com.joshtalks.joshskills.core.USER_LOCALE
 import com.joshtalks.joshskills.core.USER_UNIQUE_ID
 import com.joshtalks.joshskills.core.Utils
@@ -56,9 +71,10 @@ import com.joshtalks.joshskills.repository.service.SyncChatService
 import com.sinch.verification.PhoneNumberUtils
 import com.yariksoffice.lingver.Lingver
 import io.branch.referral.Branch
-import retrofit2.HttpException
-import java.util.*
+import java.util.Date
+import java.util.HashMap
 import java.util.concurrent.TimeUnit
+import retrofit2.HttpException
 
 
 const val INSTALL_REFERRER_SYNC = "install_referrer_sync"

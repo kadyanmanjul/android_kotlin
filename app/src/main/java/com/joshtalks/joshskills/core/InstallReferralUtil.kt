@@ -10,12 +10,8 @@ import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.repository.local.model.InstallReferrerModel
 import io.branch.referral.PrefHelper
-import org.threeten.bp.Instant
-import org.threeten.bp.ZoneOffset
-import org.threeten.bp.ZonedDateTime
 import java.net.URLDecoder
 import java.util.Date
-import java.util.HashMap
 
 object InstallReferralUtil {
 
@@ -81,14 +77,14 @@ object InstallReferralUtil {
                                             installReferrerModel.utmSource
                                         )
                                     }
-                                    if (response.installBeginTimestampSeconds > 0) {
-                                        val instant =
-                                            Instant.ofEpochSecond(response.installBeginTimestampSeconds)
-                                        val time = ZonedDateTime.ofInstant(instant, ZoneOffset.UTC)
-
-                                        installReferrerModel.installOn =
-                                            (time.toEpochSecond())
-                                    }
+//                                    if (response.installBeginTimestampSeconds > 0) {
+//                                        val instant =
+//                                            Instant.ofEpochSecond(response.installBeginTimestampSeconds)
+//                                        val time = ZonedDateTime.ofInstant(instant, ZoneOffset.UTC)
+//
+//                                        installReferrerModel.installOn =
+//                                            (time.toEpochSecond())
+//                                    }
                                     if (installReferrerModel.installOn == 0L) {
                                         installReferrerModel.installOn = (Date().time / 1000)
                                     }
