@@ -7,18 +7,15 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.gson.Gson
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
+import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.core.SELECTED_LANGUAGE
+import com.joshtalks.joshskills.core.USER_LOCALE
 import com.joshtalks.joshskills.databinding.FragmentSelectLanguageBinding
 import com.joshtalks.joshskills.repository.server.LanguageItem
 import com.joshtalks.joshskills.ui.settings.SettingsActivity
 import com.joshtalks.joshskills.ui.settings.adapter.LanguageAdapter
-import com.sinch.gson.reflect.TypeToken
-import java.lang.reflect.Type
 
 class LanguageFragment : Fragment() {
     lateinit var binding: FragmentSelectLanguageBinding
@@ -38,12 +35,7 @@ class LanguageFragment : Fragment() {
         val layoutManager = LinearLayoutManager(requireContext())
         binding.languageRv.layoutManager = layoutManager
 
-        val listType: Type = object : TypeToken<List<LanguageItem>>() {}.type
-        val languageList: List<LanguageItem> = Gson().fromJson(
-            AppObjectController.getFirebaseRemoteConfig().getString(
-                FirebaseRemoteConfigKey.LANGUAGES_SUPPORTED
-            ), listType
-        )
+        val languageList: List<LanguageItem> = LanguageItem.getLanguageList()
         val adapter = LanguageAdapter(
             languageList,
             this::onItemClick
@@ -57,8 +49,14 @@ class LanguageFragment : Fragment() {
         (requireActivity() as SettingsActivity).setTitle(getString(R.string.select_language))
     }
 
-    private fun onItemClick(item: LanguageItem, position: Int) {
-        PrefManager.put(SELECTED_LANGUAGE, item.code)
+    private fun onItemClick(item: LanguageItem) {
+        val locale = PrefManager.getStringValue(USER_LOCALE)
+        if (locale == item.code) {
+            return
+        }
+        (requireActivity() as BaseActivity).requestWorkerForChangeLanguage(item.code, callback = {
+            AppObjectController.isSettingUpdate = true
+        })
     }
 
 }

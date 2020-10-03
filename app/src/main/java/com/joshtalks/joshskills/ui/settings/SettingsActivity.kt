@@ -8,6 +8,7 @@ import android.widget.TextView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.ui.settings.fragments.SettingsFragment
+import kotlinx.android.synthetic.main.base_toolbar.*
 
 class SettingsActivity : BaseActivity() {
 
@@ -15,15 +16,12 @@ class SettingsActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
-
         titleView = findViewById(R.id.text_message_title)
-        findViewById<View>(R.id.iv_help).visibility = View.GONE
-        findViewById<View>(R.id.iv_back).visibility = View.VISIBLE
-
-        findViewById<View>(R.id.iv_back).setOnClickListener {
+        iv_help.visibility = View.GONE
+        iv_back.visibility = View.VISIBLE
+        iv_back.setOnClickListener {
             onBackPressed()
         }
-
         replaceFragment(R.id.settings_container, SettingsFragment(), SettingsFragment.TAG)
     }
 

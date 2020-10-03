@@ -1,37 +1,34 @@
 package com.joshtalks.joshskills.ui.newonboarding.fragment
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.view.LayoutInflater
+import android.view.MotionEvent.ACTION_DOWN
+import android.view.MotionEvent.ACTION_UP
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import com.bekawestberg.loopinglayout.library.LoopingLayoutManager
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.BaseActivity
-import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.databinding.FragmentOnBoardIntroBinding
 import com.joshtalks.joshskills.repository.server.onboarding.ONBOARD_VERSIONS
 import com.joshtalks.joshskills.repository.server.onboarding.VersionResponse
 import com.joshtalks.joshskills.ui.newonboarding.adapter.OnBoardingIntroTextAdapter
-import com.joshtalks.joshskills.ui.newonboarding.viewmodel.OnBoardViewModel
+import com.joshtalks.joshskills.ui.newonboarding.viewholder.CarouselImageViewHolder
 import com.joshtalks.joshskills.ui.signup.FLOW_FROM
 import com.joshtalks.joshskills.ui.signup.SignUpActivity
 
 class OnBoardIntroFragment : Fragment() {
     var handler: Handler? = null
-    var scrollingPosition = 0
     var width: Int = 0
+    private var delay = 100L
     lateinit var binding: FragmentOnBoardIntroBinding
-    private val viewModel: OnBoardViewModel by lazy {
-        ViewModelProvider(requireActivity()).get(
-            OnBoardViewModel::class.java
-        )
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -45,13 +42,32 @@ class OnBoardIntroFragment : Fragment() {
         return binding.root
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initView()
+        VersionResponse.getInstance().image?.run {
+            val mLayoutManager =
+                LoopingLayoutManager(requireContext(), LoopingLayoutManager.HORIZONTAL, false)
+            binding.recyclerView.builder
+                .setHasFixedSize(true)
+                .setLayoutManager(mLayoutManager)
+            binding.recyclerView.addView(CarouselImageViewHolder(this))
+            startImageScrolling()
+            binding.recyclerView.setOnTouchListener { v, event ->
+                if (event.action == ACTION_DOWN) {
+                    handler?.removeCallbacksAndMessages(null)
+                } else if (event.action == ACTION_UP) {
+                    startImageScrolling()
+                }
+                return@setOnTouchListener false
+            }
+
+        }
     }
 
     private fun initView() {
-        if(VersionResponse.getInstance().hasVersion()) {
+        if (VersionResponse.getInstance().hasVersion()) {
             // Set buttonText
             if (VersionResponse.getInstance().version!!.name == ONBOARD_VERSIONS.ONBOARDING_V2)
                 binding.startBtn.text = getString(R.string.start_your_7_day_trial)
@@ -59,8 +75,6 @@ class OnBoardIntroFragment : Fragment() {
                 binding.startBtn.text = getString(R.string.get_started)
 
             //Set Cover Image
-            Utils.setImage(binding.scrollingIv, VersionResponse.getInstance().image)
-            startImageScrolling()
             //Set up text viewpager
             VersionResponse.getInstance().content?.let {
                 binding.viewPagerText.adapter = OnBoardingIntroTextAdapter(
@@ -130,7 +144,13 @@ class OnBoardIntroFragment : Fragment() {
 
     private fun startImageScrolling() {
         handler = Handler()
-        handler?.postDelayed({ /* Create an Intent that will start the MainActivity. */
+        handler?.postDelayed(object : Runnable {
+            override fun run() {
+                binding.recyclerView.smoothScrollBy(20, 0)
+                handler?.postDelayed(this, delay)
+            }
+        }, delay)
+        /* handler?.postDelayed({ *//* Create an Intent that will start the MainActivity. *//*
             if (width == 0) {
                 width = binding.scrollingIv.width
             } else {
@@ -150,7 +170,7 @@ class OnBoardIntroFragment : Fragment() {
                 }
             }
             startImageScrolling()
-        }, 20)
+        }, 20)*/
     }
 
     companion object {

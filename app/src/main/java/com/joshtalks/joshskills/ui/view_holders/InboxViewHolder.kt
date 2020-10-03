@@ -40,8 +40,7 @@ import com.mindorks.placeholderview.annotations.View
 import jp.wasabeef.glide.transformations.CropTransformation
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation
 import timber.log.Timber
-import java.util.Date
-import java.util.Locale
+import java.util.*
 
 @Layout(R.layout.inbox_row_layout)
 class InboxViewHolder(
@@ -108,10 +107,8 @@ class InboxViewHolder(
                 0
             )
         }
-        if ((totalItem - 1) == indexPos && AppObjectController.getFirebaseRemoteConfig().getBoolean(
-                "course_explore_flag"
-            )
-        ) {
+
+        if ((totalItem - 1) == indexPos) {
             hLine.visibility = android.view.View.GONE
         }
         if (progressBarStatus) {

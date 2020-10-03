@@ -12,9 +12,13 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.workDataOf
 import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.google.gson.Gson
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.*
+import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.BaseActivity
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
+import com.joshtalks.joshskills.core.PrefManager
+import com.joshtalks.joshskills.core.SELECTED_QUALITY
+import com.joshtalks.joshskills.core.USER_LOCALE
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.memory.MemoryManagementWorker
@@ -24,8 +28,6 @@ import com.joshtalks.joshskills.repository.server.LanguageItem
 import com.joshtalks.joshskills.ui.settings.SettingsActivity
 import com.joshtalks.joshskills.ui.signup.FLOW_FROM
 import com.joshtalks.joshskills.ui.signup.SignUpActivity
-import com.sinch.gson.reflect.TypeToken
-import java.lang.reflect.Type
 
 class SettingsFragment : Fragment() {
 
@@ -50,7 +52,7 @@ class SettingsFragment : Fragment() {
 
         sheetBehaviour = BottomSheetBehavior.from(binding.clarDownloadsBottomSheet)
 
-        var selectedLanguage = PrefManager.getStringValue(SELECTED_LANGUAGE)
+        var selectedLanguage = PrefManager.getStringValue(USER_LOCALE)
         var selectedQuality = PrefManager.getStringValue(SELECTED_QUALITY)
 
         if (selectedLanguage.isEmpty()) {
@@ -59,14 +61,7 @@ class SettingsFragment : Fragment() {
         if (selectedQuality.isEmpty()) {
             selectedQuality = resources.getStringArray(R.array.resolutions).get(2) ?: "Low"
         }
-
-        val listType: Type = object : TypeToken<List<LanguageItem>>() {}.type
-        val languageList: List<LanguageItem> = Gson().fromJson(
-            AppObjectController.getFirebaseRemoteConfig().getString(
-                FirebaseRemoteConfigKey.LANGUAGES_SUPPORTED
-            ), listType
-        )
-
+        val languageList: List<LanguageItem> = LanguageItem.getLanguageList()
         languageList.forEach {
             if (it.code == selectedLanguage) {
                 binding.languageTv.text = it.name

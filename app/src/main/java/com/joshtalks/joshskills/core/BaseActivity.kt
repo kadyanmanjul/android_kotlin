@@ -105,8 +105,8 @@ abstract class BaseActivity : AppCompatActivity(), LifecycleObserver,
     var openSettingActivity: ActivityResultLauncher<Intent> = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
-        if (result.resultCode == Activity.RESULT_OK) {
-            recreate()
+        if (AppObjectController.isSettingUpdate) {
+            reCreateActivity()
         }
     }
 
@@ -285,7 +285,7 @@ abstract class BaseActivity : AppCompatActivity(), LifecycleObserver,
         if (question != null && question.needFeedback == null) {
             WorkManager.getInstance(applicationContext)
                 .getWorkInfoByIdLiveData(WorkManagerAdmin.getQuestionFeedback(question.questionId))
-                .observe(this, Observer {
+                .observe(this, {
                 })
         }
     }
@@ -542,20 +542,31 @@ abstract class BaseActivity : AppCompatActivity(), LifecycleObserver,
         }
     }
 
-    protected fun requestWorkerForChangeLanguage(lCode: String) {
+    fun requestWorkerForChangeLanguage(
+        lCode: String,
+        callback: (() -> Unit)? = null,
+        canCreateActivity: Boolean = true
+    ) {
         val observer = Observer<WorkInfo> { workInfo ->
             if (workInfo != null && workInfo.state == WorkInfo.State.SUCCEEDED) {
-                recreate()
                 WorkManager.getInstance(applicationContext)
                     .getWorkInfoByIdLiveData(WorkManagerAdmin.getLanguageChangeWorker(lCode))
                     .removeObservers(this)
+                callback?.invoke()
+                if (canCreateActivity) {
+                    reCreateActivity()
+                }
             }
-
         }
         WorkManager.getInstance(applicationContext)
             .getWorkInfoByIdLiveData(WorkManagerAdmin.getLanguageChangeWorker(lCode))
             .observe(this, observer)
     }
 
-
+    private fun reCreateActivity() {
+        finish()
+        overridePendingTransition(0, 0)
+        startActivity(intent)
+        overridePendingTransition(0, 0)
+    }
 }

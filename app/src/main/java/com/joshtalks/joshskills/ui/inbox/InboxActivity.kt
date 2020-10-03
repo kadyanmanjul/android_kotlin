@@ -125,6 +125,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         WorkManagerAdmin.requiredTaskInLandingPage()
         AppAnalytics.create(AnalyticsEvent.INBOX_SCREEN.NAME).push()
         super.onCreate(savedInstanceState)
+        AppObjectController.isSettingUpdate = false
         lifecycle.addObserver(this)
         setContentView(R.layout.activity_inbox)
         setToolbar()
@@ -402,7 +403,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
                         }
                     }
                     ONBOARD_VERSIONS.ONBOARDING_V2, ONBOARD_VERSIONS.ONBOARDING_V4, ONBOARD_VERSIONS.ONBOARDING_V3, ONBOARD_VERSIONS.ONBOARDING_V5 -> {
-                        find_more.text = getString(R.string.add_more_courses)
+                        //   find_more.text = getString(R.string.add_more_courses)
                         find_more.setOnClickListener {
                             AppAnalytics.create(AnalyticsEvent.ADD_MORE_COURSE_CLICKED.NAME)
                                 .addBasicParam()
@@ -513,7 +514,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
     }
 
     private fun openSettingActivity() {
-        startActivity(SettingsActivity.getIntent(this))
+        openSettingActivity.launch(SettingsActivity.getIntent(this))
     }
 
     private fun workInBackground() {

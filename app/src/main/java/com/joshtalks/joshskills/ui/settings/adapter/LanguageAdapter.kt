@@ -6,7 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.core.SELECTED_LANGUAGE
+import com.joshtalks.joshskills.core.USER_LOCALE
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.databinding.StringAdapterItemBinding
@@ -14,7 +14,7 @@ import com.joshtalks.joshskills.repository.server.LanguageItem
 
 class LanguageAdapter(
     val itemList: List<LanguageItem>,
-    private var onItemClick: (item: LanguageItem, position: Int) -> Unit
+    private var onItemClick: (item: LanguageItem) -> Unit
 ) :
     RecyclerView.Adapter<LanguageAdapter.LanguageViewHolder>() {
 
@@ -22,7 +22,7 @@ class LanguageAdapter(
     var selectedItem: String
 
     init {
-        selectedItem = PrefManager.getStringValue(SELECTED_LANGUAGE)
+        selectedItem = PrefManager.getStringValue(USER_LOCALE)
         if (selectedItem.isEmpty())
             selectedItem = "en"
     }
@@ -57,14 +57,13 @@ class LanguageAdapter(
 
             binding.root.setOnClickListener {
                 selectedItem = item.code
-
                 AppAnalytics.create(AnalyticsEvent.SELECT_LANGUAGE_CHANGED.name)
                     .addBasicParam()
                     .addUserDetails()
                     .addParam("selected_value", selectedItem)
                     .push()
 
-                onItemClick(item, position)
+                onItemClick(item)
                 notifyDataSetChanged()
             }
         }

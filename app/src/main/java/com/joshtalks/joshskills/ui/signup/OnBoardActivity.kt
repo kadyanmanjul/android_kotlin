@@ -12,6 +12,7 @@ import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.customview.customView
 import com.afollestad.materialdialogs.customview.getCustomView
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.CoreJoshActivity
 import com.joshtalks.joshskills.core.EXPLORE_TYPE
 import com.joshtalks.joshskills.core.PrefManager
@@ -39,7 +40,7 @@ class OnBoardActivity : CoreJoshActivity() {
         if (PrefManager.getStringValue(REFERRED_REFERRAL_CODE).isBlank())
             layout.haveAReferralCode.visibility = View.VISIBLE
         VersionResponse.getInstance().version?.name?.let {
-            if (it == ONBOARD_VERSIONS.ONBOARDING_V7) {
+            if (it == ONBOARD_VERSIONS.ONBOARDING_V7 && AppObjectController.isSettingUpdate.not()) {
                 openLanguageChooserDialog()
             }
         }
