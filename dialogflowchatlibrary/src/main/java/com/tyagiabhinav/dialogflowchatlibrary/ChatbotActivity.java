@@ -109,7 +109,6 @@ public class ChatbotActivity extends AppCompatActivity implements ChatbotCallbac
             public void onClick(View view) {
                 Log.d(TAG, "Send click");
                 if (btnAction1.getTag() == "EndOfFlow") {
-                    Toast.makeText(ChatbotActivity.this, "Call Api and Move to Inbox", Toast.LENGTH_SHORT).show();
                     returnToActivity();
                 } else {
                     String msg = btnAction1.getText().toString();

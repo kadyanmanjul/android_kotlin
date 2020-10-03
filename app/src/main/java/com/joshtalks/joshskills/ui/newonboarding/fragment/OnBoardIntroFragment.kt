@@ -11,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import com.bekawestberg.loopinglayout.library.LoopingLayoutManager
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.BaseActivity
@@ -21,6 +22,7 @@ import com.joshtalks.joshskills.repository.server.onboarding.ONBOARD_VERSIONS
 import com.joshtalks.joshskills.repository.server.onboarding.VersionResponse
 import com.joshtalks.joshskills.ui.newonboarding.adapter.OnBoardingIntroTextAdapter
 import com.joshtalks.joshskills.ui.newonboarding.viewholder.CarouselImageViewHolder
+import com.joshtalks.joshskills.ui.newonboarding.viewmodel.OnBoardViewModel
 import com.joshtalks.joshskills.ui.signup.FLOW_FROM
 import com.joshtalks.joshskills.ui.signup.SignUpActivity
 import com.tyagiabhinav.dialogflowchatlibrary.Chatbot
@@ -31,6 +33,7 @@ import java.util.UUID
 
 class OnBoardIntroFragment : Fragment() {
     var handler: Handler? = null
+    lateinit var viewModel: OnBoardViewModel
     var width: Int = 0
     private var delay = 100L
     lateinit var binding: FragmentOnBoardIntroBinding
@@ -50,6 +53,7 @@ class OnBoardIntroFragment : Fragment() {
     @SuppressLint("ClickableViewAccessibility")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        viewModel = ViewModelProvider(requireActivity()).get(OnBoardViewModel::class.java)
         initView()
         VersionResponse.getInstance().image?.run {
             val mLayoutManager =
