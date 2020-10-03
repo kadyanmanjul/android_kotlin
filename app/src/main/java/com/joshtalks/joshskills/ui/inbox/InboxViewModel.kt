@@ -90,6 +90,20 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
+    fun logInboxEngageEvent() {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                AppObjectController.signUpNetworkService.logInboxEngageEvent(
+                    mapOf(
+                        "mentor" to Mentor.getInstance().getId()
+                    )
+                )
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+            }
+        }
+    }
+
     private fun getAllRegisterCourseMinimalFromDB() = viewModelScope.launch {
         try {
             registerCourseMinimalLiveData.postValue(
@@ -192,7 +206,7 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
                     response.body()?.run {
                         onBoardingLiveData.postValue(this)
                         // Update Version Data in local
-                        PrefManager.put(SUBSCRIPTION_TEST_ID,this.SubscriptionTestId)
+                        PrefManager.put(SUBSCRIPTION_TEST_ID, this.SubscriptionTestId)
 
                         val versionData = VersionResponse.getInstance()
                         versionData.version?.let {
@@ -233,5 +247,4 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
             return@launch
         }
     }
-
 }

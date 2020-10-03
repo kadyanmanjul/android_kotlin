@@ -16,6 +16,7 @@ import androidx.appcompat.widget.AppCompatTextView
 import androidx.appcompat.widget.PopupMenu
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.observe
 import com.facebook.share.internal.ShareConstants.ACTION_TYPE
 import com.google.android.gms.location.LocationRequest
 import com.google.android.material.snackbar.Snackbar
@@ -167,6 +168,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
                 text_btn.text = content
                 new_user_layout.setOnClickListener {
                     new_user_layout.visibility = View.GONE
+                    viewModel.logInboxEngageEvent()
                 }
             }
         }
