@@ -14,6 +14,7 @@
         android:layout_marginTop="4dp"
         android:padding="16dp"
         android:text="abcdefgh"
+        android:textColor="@android:color/tab_indicator_text"
         android:textSize="16sp" />
 
     <FrameLayout

@@ -368,7 +368,8 @@ public abstract class MessageLayoutTemplate extends FrameLayout {
         } else {
             checkBox.setText(Html.fromHtml(text));
         }
-        checkBox.setTextSize(18.0f);
+        checkBox.setTextSize(16.0f);
+        checkBox.setTextColor(ContextCompat.getColor(context, android.R.color.tab_indicator_text));
         checkBox.setPadding(8, 8, 8, 8);
 
         viewsToDisable.add(checkBox);

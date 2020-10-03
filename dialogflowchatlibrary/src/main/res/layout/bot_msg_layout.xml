@@ -5,6 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="8dp"
+    android:paddingStart="0dp"
+    android:paddingEnd="80dp"
     android:theme="@style/Theme.Default"
     app:theme="@style/Theme.Default">
 
@@ -15,7 +17,8 @@
         android:layout_alignParentStart="true"
         android:layout_marginStart="4dp"
         android:layout_marginTop="8dp"
-        android:src="@drawable/chat_bot_avatar" />
+        android:src="@drawable/chat_bot_avatar"
+        android:visibility="gone" />
 
     <LinearLayout
         android:id="@+id/botMsgLayout"
@@ -27,7 +30,7 @@
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="4dp"
         android:layout_toEndOf="@+id/botIcon"
-        android:background="@drawable/bot_bg_bubble"
+        android:background="@drawable/incoming_message_normal_bg"
         android:gravity="start|center_vertical"
         android:orientation="vertical">
 
@@ -48,7 +51,6 @@
             android:id="@+id/chatMsg"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
             android:padding="16dp"
             android:textSize="16sp"
             tools:text="Message" />
