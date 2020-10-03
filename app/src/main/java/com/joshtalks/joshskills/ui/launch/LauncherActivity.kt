@@ -35,7 +35,6 @@ import java.io.File
 import kotlinx.android.synthetic.main.activity_launcher.progress_bar
 import org.json.JSONObject
 import timber.log.Timber
-import java.io.File
 
 
 class LauncherActivity : CoreJoshActivity(), CustomPermissionDialogInteractionListener {
