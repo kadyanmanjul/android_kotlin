@@ -131,7 +131,7 @@ class CourseEnrolledDetailFragment : Fragment() {
     }
 
     private fun logEventOnPageScrolled(position :Int) {
-        AppAnalytics.create(AnalyticsEvent.NEW_ONBOARDING_ALREADY_USER.name)
+        AppAnalytics.create(AnalyticsEvent.COURSE_SUGGEST_SCROLL.name)
             .addBasicParam()
             .addUserDetails()
             .addParam("version", VersionResponse.getInstance().version?.name.toString())

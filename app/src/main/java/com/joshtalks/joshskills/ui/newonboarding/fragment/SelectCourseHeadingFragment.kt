@@ -8,6 +8,7 @@ import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.RecyclerView
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.BaseActivity
@@ -97,7 +98,7 @@ class SelectCourseHeadingFragment : Fragment() {
                     .addBasicParam()
                     .addUserDetails()
                     .addParam("version", VersionResponse.getInstance().version?.name.toString())
-                    .addParam("no of courses enrolling",headingIds.size)
+                    .addParam("no of courses enrolling", headingIds.size)
                     .push()
                 (requireActivity() as BaseActivity).replaceFragment(
                     R.id.onboarding_container,
@@ -123,7 +124,20 @@ class SelectCourseHeadingFragment : Fragment() {
                 )
             )
         )
+        binding.recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+               logOnScrollEvent()
+            }
+        })
+    }
 
+    private fun logOnScrollEvent() {
+        AppAnalytics.create(AnalyticsEvent.ACHIEVE_SCREEN_SCROLL.NAME)
+            .addBasicParam()
+            .addUserDetails()
+            .addParam("version", VersionResponse.getInstance().version?.name.toString())
+            .addParam("no of courses selected", headingIds.size)
+            .push()
     }
 
     override fun onResume() {

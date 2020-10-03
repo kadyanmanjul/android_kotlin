@@ -425,6 +425,8 @@ enum class AnalyticsEvent(val NAME: String) {
     NEW_ONBOARDING_V5_START_COURSE_FREE("new_onboard v5 start for free clicked V3"),
     NEW_ONBOARDING_V5_BUY_ACCESS_PASS("new_onboard buy access pass clicked V3"),
     MEIN_YE_CHEEZ_ACHIEVE_CLICKED("mein ye cheez achieve clicked V3"),
+    ACHIEVE_SCREEN_SCROLL("achieve_screen_scroll V3"),
+    COURSE_SUGGEST_SCROLL("course_suggest_scroll V3"),
 
     //REMINDER
     REMINDER_BELL_CLICKED("reminder_bell_clicked"),
