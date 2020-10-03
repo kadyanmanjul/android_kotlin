@@ -12,10 +12,7 @@ import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.USER_UNIQUE_ID
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.server.CourseExploreModel
-import com.joshtalks.joshskills.repository.server.onboarding.CourseEnrolledRequest
-import com.joshtalks.joshskills.repository.server.onboarding.CourseEnrolledResponse
-import com.joshtalks.joshskills.repository.server.onboarding.EnrollMentorWithTagIdRequest
-import com.joshtalks.joshskills.repository.server.onboarding.EnrollMentorWithTestIdRequest
+import com.joshtalks.joshskills.repository.server.onboarding.*
 import com.joshtalks.joshskills.util.showAppropriateMsg
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -86,6 +83,24 @@ class OnBoardViewModel(application: Application) :
                         // bottom Sheet Dialog
                     }
 
+                }
+
+            } catch (ex: Throwable) {
+                ex.showAppropriateMsg()
+            }
+            apiCallStatusLiveData.postValue(ApiCallStatus.FAILED)
+        }
+    }
+
+    fun logGetStartedEvent() {
+        jobs += viewModelScope.launch(Dispatchers.IO) {
+            try {
+                if (Mentor.getInstance().getId().isNotEmpty()) {
+                    val data = LogGetStartedEventRequest(
+                        VersionResponse.getInstance().version?.id ?: -1,
+                        Mentor.getInstance().getId(),
+                    )
+                    AppObjectController.signUpNetworkService.logGetStartedEvent(data)
                 }
 
             } catch (ex: Throwable) {

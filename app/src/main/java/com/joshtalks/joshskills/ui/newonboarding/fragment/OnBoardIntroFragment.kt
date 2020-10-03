@@ -96,6 +96,7 @@ class OnBoardIntroFragment : Fragment() {
                 .addUserDetails()
                 .addParam("version", VersionResponse.getInstance().version?.name.toString())
                 .push()
+            viewModel.logGetStartedEvent()
             moveToNextScreen()
         }
 

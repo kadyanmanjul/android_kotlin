@@ -123,6 +123,7 @@ class SelectCourseHeadingFragment : Fragment() {
                 )
             )
         )
+
     }
 
     override fun onResume() {

@@ -21,6 +21,7 @@ import com.joshtalks.joshskills.repository.server.UpdateDeviceRequest
 import com.joshtalks.joshskills.repository.server.UpdateUserLocality
 import com.joshtalks.joshskills.repository.server.onboarding.EnrollMentorWithTagIdRequest
 import com.joshtalks.joshskills.repository.server.onboarding.EnrollMentorWithTestIdRequest
+import com.joshtalks.joshskills.repository.server.onboarding.LogGetStartedEventRequest
 import com.joshtalks.joshskills.repository.server.onboarding.OnBoardingStatusResponse
 import com.joshtalks.joshskills.repository.server.signup.LoginResponse
 import com.joshtalks.joshskills.repository.server.signup.RequestSocialSignUp
@@ -153,6 +154,12 @@ interface SignUpNetworkService {
 
     @POST("$DIR/mentor/enroll_mentor_tags/")
     suspend fun enrollMentorWithTagIds(@Body params: EnrollMentorWithTagIdRequest): Response<Any>
+
+    @POST("$DIR/version/get_started/")
+    suspend fun logGetStartedEvent(@Body params: LogGetStartedEventRequest): Response<Any>
+
+    @POST("$DIR/engage/inbox/")
+    suspend fun logInboxEngageEvent(@Body params:  Map<String, String>): Response<Any>
 
     @POST("$DIR/mentor/last-active")
     suspend fun activeUser(@Body params: ActiveUserRequest): Response<Any>
