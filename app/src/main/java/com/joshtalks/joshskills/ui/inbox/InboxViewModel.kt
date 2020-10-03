@@ -5,7 +5,6 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.crashlytics.FirebaseCrashlytics
-import com.google.gson.reflect.TypeToken
 import com.joshtalks.joshcamerax.utils.SharedPrefsManager
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.ApiCallStatus
@@ -29,12 +28,12 @@ import com.joshtalks.joshskills.repository.server.onboarding.OnBoardingStatusRes
 import com.joshtalks.joshskills.repository.server.onboarding.VersionResponse
 import com.joshtalks.joshskills.util.ReminderUtil
 import com.joshtalks.joshskills.util.showAppropriateMsg
-import java.net.SocketTimeoutException
-import java.net.UnknownHostException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
+import java.net.SocketTimeoutException
+import java.net.UnknownHostException
 
 class InboxViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -229,7 +228,7 @@ class InboxViewModel(application: Application) : AndroidViewModel(application) {
     fun getTotalWatchTime() {
         viewModelScope.launch {
             overAllWatchTime.postValue(
-                AppObjectController.appDatabase.videoEngageDao().getOverallWatchTime()
+                AppObjectController.appDatabase.videoEngageDao().getOverallWatchTime() ?: 0
             )
             return@launch
         }

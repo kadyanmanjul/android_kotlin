@@ -65,6 +65,9 @@ interface VideoEngageDao {
     @Query("SELECT SUM(watchTime) as total_time,course_id FROM video_watch_table GROUP BY course_id ORDER BY total_time DESC LIMIT 1;")
     suspend fun getWatchTime(): VideoEngageEntity?
 
+    @Query("SELECT SUM(watchTime) as total_time FROM video_watch_table")
+    suspend fun getOverallWatchTime(): Long?
+
     @Query("UPDATE video_watch_table SET is_sync =1 where id in (:idList)")
     suspend fun updateVideoSyncStatus(idList: List<Long>)
 }

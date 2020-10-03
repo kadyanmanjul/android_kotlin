@@ -23,8 +23,7 @@ import com.joshtalks.joshskills.util.ReminderUtil
 import java.text.DecimalFormat
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
-import java.util.Calendar
-import java.util.Date
+import java.util.*
 
 
 class ReminderActivity : CoreJoshActivity() {
@@ -67,6 +66,7 @@ class ReminderActivity : CoreJoshActivity() {
             onBackPressed()
         }
 
+        showBottomSheet()
         binding.reminderMsgTv.text = AppObjectController.getFirebaseRemoteConfig()
             .getString(SET_REMINDER_DESCRIPTION)
 

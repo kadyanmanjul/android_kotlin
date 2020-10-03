@@ -87,20 +87,9 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
-import java.util.concurrent.TimeUnit
-import kotlinx.android.synthetic.main.activity_inbox.expiry_tool_tip
-import kotlinx.android.synthetic.main.activity_inbox.overlay_layout
-import kotlinx.android.synthetic.main.activity_inbox.overlay_tip
-import kotlinx.android.synthetic.main.activity_inbox.progress_bar
-import kotlinx.android.synthetic.main.activity_inbox.recycler_view_inbox
-import kotlinx.android.synthetic.main.activity_inbox.subscriptionTipContainer
-import kotlinx.android.synthetic.main.activity_inbox.txtConvert
-import kotlinx.android.synthetic.main.activity_inbox.txtConvert2
-import kotlinx.android.synthetic.main.activity_inbox.txtSubscriptionTip
-import kotlinx.android.synthetic.main.activity_inbox.txtSubscriptionTip2
-import kotlinx.android.synthetic.main.find_more_layout.bb_tip_below_find_btn
-import kotlinx.android.synthetic.main.find_more_layout.find_more
-import kotlinx.android.synthetic.main.top_free_trial_expire_time_tooltip_view.expiry_tool_tip_text
+import kotlinx.android.synthetic.main.activity_inbox.*
+import kotlinx.android.synthetic.main.find_more_layout.*
+import kotlinx.android.synthetic.main.top_free_trial_expire_time_tooltip_view.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -145,6 +134,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
         workInBackground()
         handelIntentAction()
         initNewUserTip()
+        viewModel.getTotalWatchTime()
     }
 
     private fun initNewUserTip() {
@@ -552,7 +542,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
             AppObjectController.getFirebaseRemoteConfig().getLong("force_upgrade_after_version")
         val forceUpdateFlag =
             AppObjectController.getFirebaseRemoteConfig().getBoolean("update_force")
-        val currentAppVersion = BuildConfig.VERSION_CODE
+        val currentAppVersion = com.joshtalks.joshskills.BuildConfig.VERSION_CODE
         var updateMode = Constants.UpdateMode.FLEXIBLE
 
         if (currentAppVersion <= forceUpdateMinVersion && forceUpdateFlag) {
@@ -698,6 +688,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
 
         viewModel.overAllWatchTime.observe(this, {
             var reviewCount = PrefManager.getIntValue(IN_APP_REVIEW_COUNT)
+            showInAppReview()
             val reviewFrequency =
                 AppObjectController.getFirebaseRemoteConfig().getLong(MINIMUM_TIME_TO_SHOW_REVIEW)
             when (reviewCount) {
