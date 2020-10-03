@@ -66,7 +66,6 @@ class ReminderActivity : CoreJoshActivity() {
             onBackPressed()
         }
 
-        showBottomSheet()
         binding.reminderMsgTv.text = AppObjectController.getFirebaseRemoteConfig()
             .getString(SET_REMINDER_DESCRIPTION)
 

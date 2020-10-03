@@ -1,6 +1,8 @@
 package com.joshtalks.joshskills.ui.settings.fragments
 
+import android.content.ActivityNotFoundException
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -205,10 +207,34 @@ class SettingsFragment : Fragment() {
         sheetBehaviour.state = BottomSheetBehavior.STATE_COLLAPSED
     }
 
+    fun onRateUsClicked() {
+        val uri: Uri =
+            Uri.parse("market://details?id=${AppObjectController.joshApplication.packageName}")
+        val goToMarket = Intent(Intent.ACTION_VIEW, uri)
+        goToMarket.addFlags(
+            Intent.FLAG_ACTIVITY_NO_HISTORY or
+                    Intent.FLAG_ACTIVITY_NEW_DOCUMENT or
+                    Intent.FLAG_ACTIVITY_MULTIPLE_TASK
+        )
+        try {
+            startActivity(goToMarket)
+        } catch (e: ActivityNotFoundException) {
+            startActivity(
+                Intent(
+                    Intent.ACTION_VIEW,
+                    Uri.parse("http://play.google.com/store/apps/details?id=${AppObjectController.joshApplication.packageName}")
+                )
+            )
+        }
+
+        logEvent(AnalyticsEvent.RATE_US_CLICKED.name)
+    }
+
     private fun logEvent(eventName: String) {
         AppAnalytics.create(eventName)
             .addBasicParam()
             .addUserDetails()
             .push()
     }
+
 }

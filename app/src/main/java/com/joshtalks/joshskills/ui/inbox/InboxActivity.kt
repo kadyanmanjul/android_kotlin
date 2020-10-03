@@ -253,6 +253,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
                     if (remainingTrialDays in 0..4 && showTooltip2) {
                         showExpiryTimeToolTip()
                     }
+                    txtSubscriptionTip.isSelected = true
                     when {
                         remainingTrialDays <= 0 -> {
                             txtSubscriptionTip.text = AppObjectController.getFirebaseRemoteConfig()
@@ -395,8 +396,6 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
                     println("result = [${result.isSuccessful}]")
                     result.exception?.printStackTrace()
                 }
-            } else {
-                // There was some problem, continue regardless of the result.
             }
         }
     }
@@ -704,7 +703,6 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
 
         viewModel.overAllWatchTime.observe(this, {
             var reviewCount = PrefManager.getIntValue(IN_APP_REVIEW_COUNT)
-            showInAppReview()
             val reviewFrequency =
                 AppObjectController.getFirebaseRemoteConfig().getLong(MINIMUM_TIME_TO_SHOW_REVIEW)
             when (reviewCount) {

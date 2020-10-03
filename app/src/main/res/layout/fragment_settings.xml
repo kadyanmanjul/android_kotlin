@@ -230,6 +230,25 @@
                 app:layout_constraintTop_toBottomOf="@+id/download_quality_rl" />
 
             <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/rate_us_tv"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_4sdp"
+                android:background="@color/white"
+                android:drawablePadding="@dimen/_8sdp"
+                android:gravity="center_vertical"
+                android:onClick="@{()->handler.onRateUsClicked()}"
+                android:paddingVertical="@dimen/_12sdp"
+                android:paddingStart="@dimen/_8sdp"
+                android:paddingEnd="@dimen/_8sdp"
+                android:text="@string/rate_us"
+                android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
+                app:drawableStartCompat="@drawable/ic_rate_us"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/clear_downloads_tv" />
+
+            <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/sign_out_tv"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -246,7 +265,7 @@
                 android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/clear_downloads_tv" />
+                app:layout_constraintTop_toBottomOf="@+id/rate_us_tv" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <ImageView

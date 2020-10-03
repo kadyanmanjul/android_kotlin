@@ -457,5 +457,6 @@ enum class AnalyticsEvent(val NAME: String) {
     VIDEO_QUALITY_CHANGED("select video quality"),
     CLEAR_ALL_DOWNLOADS("clear all downloads"),
     SIGN_OUT("sign out"),
+    RATE_US_CLICKED("rate us"),
 
 }
