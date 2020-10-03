@@ -187,7 +187,7 @@ class InboxActivity : CoreJoshActivity(), LifecycleObserver, InAppUpdateManager.
             override fun onFinish() {
                 if (PrefManager.getBoolValue(IS_SUBSCRIPTION_STARTED).not()) {
                     PrefManager.put(IS_TRIAL_ENDED, true)
-                    expiry_tool_tip_text.text = "Free trial completed! "
+                    expiry_tool_tip_text.text = getString(R.string.free_trial_completed)
                 }
             }
 

@@ -430,5 +430,6 @@
     <string name="buy_pass">Buy All Course Access Pass</string>
 
     <string name="hint_text_btn"><u>Ok got it </u></string>
+    <string name="free_trial_completed">\"Free trial completed! \"</string>
 
 </resources>
