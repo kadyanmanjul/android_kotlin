@@ -85,6 +85,7 @@ class CourseEnrolledDetailFragment : Fragment() {
         binding.viewPagerText.isUserInputEnabled = true
         adapter = CourseEnrolledDetailAdapter()
         binding.viewPagerText.adapter = adapter
+        binding.viewPagerText.offscreenPageLimit = 10
         binding.wormDotsIndicator.setViewPager2(binding.viewPagerText)
 
         binding.viewPagerText.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
