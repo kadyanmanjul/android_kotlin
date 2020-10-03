@@ -2,11 +2,12 @@ package com.joshtalks.joshskills.core.service
 
 import android.content.Context
 import android.text.format.DateUtils
+import androidx.concurrent.futures.CallbackToFutureAdapter
 import androidx.work.CoroutineWorker
+import androidx.work.ListenableWorker
 import androidx.work.Worker
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
-import androidx.concurrent.futures.CallbackToFutureAdapter
 import com.google.android.gms.ads.MobileAds
 import com.google.android.gms.ads.identifier.AdvertisingIdClient
 import com.google.android.gms.tasks.OnCompleteListener
@@ -21,7 +22,6 @@ import com.joshtalks.joshskills.core.EXPLORE_TYPE
 import com.joshtalks.joshskills.core.INSTANCE_ID
 import com.joshtalks.joshskills.core.InstallReferralUtil
 import com.joshtalks.joshskills.core.LOGIN_ON
-import com.joshtalks.joshskills.core.ONBOARDING_VERSION_KEY
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.RATING_DETAILS_KEY
 import com.joshtalks.joshskills.core.RESTORE_ID
@@ -49,7 +49,6 @@ import com.joshtalks.joshskills.repository.server.ActiveUserRequest
 import com.joshtalks.joshskills.repository.server.MessageStatusRequest
 import com.joshtalks.joshskills.repository.server.UpdateDeviceRequest
 import com.joshtalks.joshskills.repository.server.onboarding.VersionResponse
-import com.joshtalks.joshskills.repository.server.onboarding.ONBOARD_VERSIONS
 import com.joshtalks.joshskills.repository.server.signup.LoginResponse
 import com.joshtalks.joshskills.repository.service.NetworkRequestHelper
 import com.joshtalks.joshskills.repository.service.SyncChatService
@@ -58,8 +57,8 @@ import com.yariksoffice.lingver.Lingver
 import io.branch.referral.Branch
 import java.util.Date
 import java.util.HashMap
-import retrofit2.HttpException
 import java.util.concurrent.TimeUnit
+import retrofit2.HttpException
 
 
 const val INSTALL_REFERRER_SYNC = "install_referrer_sync"
