@@ -21,7 +21,7 @@
         <View
             android:id="@+id/view"
             android:layout_width="0dp"
-            android:layout_height="@dimen/_250sdp"
+            android:layout_height="@dimen/_200sdp"
             android:background="@drawable/rectangle_top_rounded"
             android:orientation="vertical"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -29,17 +29,17 @@
             app:layout_constraintStart_toStartOf="parent" />
 
         <TextView
-            android:id="@+id/textView3"
+            android:id="@+id/desc"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/_16sdp"
             android:layout_marginTop="@dimen/_60sdp"
-            android:text="Apne courses to account se link kre taki aap kabhi bhi apna data nhi kho payege"
             android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Medium_Regular"
             android:textColor="@color/black"
             app:layout_constraintEnd_toEndOf="@+id/view"
             app:layout_constraintStart_toStartOf="@+id/view"
-            app:layout_constraintTop_toTopOf="@+id/view" />
+            app:layout_constraintTop_toTopOf="@+id/view"
+            tools:text="Text" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/tv_select_address"
@@ -59,7 +59,7 @@
             app:cornerRadius="@dimen/_20sdp"
             app:layout_constraintEnd_toEndOf="@+id/view"
             app:layout_constraintStart_toStartOf="@+id/view"
-            app:layout_constraintTop_toBottomOf="@+id/textView3" />
+            app:layout_constraintTop_toBottomOf="@+id/desc" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

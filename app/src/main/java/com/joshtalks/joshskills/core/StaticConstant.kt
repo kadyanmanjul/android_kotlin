@@ -157,6 +157,9 @@ class FirebaseRemoteConfigKey {
         const val BB_TOOL_TIP_FIRST_TIME_BTN_TEXT = "BB_TOOL_TIP_FIRST_TIME_BTN_TEXT"
         const val SHOW_BB_TOOL_TIP_FIRST_TIME = "SHOW_BB_TOOL_TIP_FIRST_TIME"
 
+        //signin dialod desccriptiom
+        const val SIGNIN_DIALOG_DESCRIPTION = "SIGNIN_DIALOG_DESCRIPTION"
+
 
         const val UX_CAM_FEATURE_ENABLE = "UX_CAM_FEATURE_ENABLE"
 

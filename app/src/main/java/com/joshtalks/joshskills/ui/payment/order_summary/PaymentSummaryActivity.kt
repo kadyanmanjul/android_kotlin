@@ -37,37 +37,26 @@ import com.google.android.gms.auth.api.credentials.HintRequest
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.AppObjectController
-import com.joshtalks.joshskills.core.CoreJoshActivity
-import com.joshtalks.joshskills.core.EMPTY
-import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
+import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.CTA_PAYMENT_SUMMARY
 import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey.Companion.PAYMENT_SUMMARY_CTA_LABEL_FREE
-import com.joshtalks.joshskills.core.INSTANCE_ID
-import com.joshtalks.joshskills.core.JoshSkillExecutors
-import com.joshtalks.joshskills.core.PAYMENT_MOBILE_NUMBER
-import com.joshtalks.joshskills.core.PrefManager
-import com.joshtalks.joshskills.core.RC_HINT
-import com.joshtalks.joshskills.core.REFERRED_REFERRAL_CODE
-import com.joshtalks.joshskills.core.SINGLE_SPACE
-import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.BranchIOAnalytics
 import com.joshtalks.joshskills.core.analytics.LogException
 import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
-import com.joshtalks.joshskills.core.getPhoneNumber
-import com.joshtalks.joshskills.core.isValidFullNumber
-import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.ActivityPaymentSummaryBinding
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.NPSEvent
 import com.joshtalks.joshskills.repository.local.entity.NPSEventModel
 import com.joshtalks.joshskills.repository.local.eventbus.PromoCodeSubmitEventBus
+import com.joshtalks.joshskills.repository.local.model.ExploreCardType
 import com.joshtalks.joshskills.repository.local.model.Mentor
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.OrderDetailResponse
 import com.joshtalks.joshskills.repository.server.PaymentSummaryResponse
+import com.joshtalks.joshskills.repository.server.onboarding.ONBOARD_VERSIONS
+import com.joshtalks.joshskills.repository.server.onboarding.VersionResponse
 import com.joshtalks.joshskills.ui.extra.setOnSingleClickListener
 import com.joshtalks.joshskills.ui.payment.ChatNPayDialogFragment
 import com.joshtalks.joshskills.ui.payment.PaymentFailedDialogFragment
@@ -704,6 +693,16 @@ class PaymentSummaryActivity : CoreJoshActivity(),
         appAnalytics.addParam(AnalyticsEvent.COUNTRY_ISO_CODE.NAME, defaultRegion)
 
         when {
+            hidePhoneNumber() -> {
+                if (viewModel.getCourseDiscountedAmount() < 1) {
+                    viewModel.createFreeOrder(
+                        viewModel.getPaymentTestId(),
+                        getPhoneNumber()
+                    )
+                } else {
+                    viewModel.getOrderDetails(viewModel.getPaymentTestId(), getPhoneNumber())
+                }
+            }
             getPhoneNumber().isBlank() -> {
                 when {
                     binding.mobileEt.text.isNullOrEmpty() -> {
@@ -744,6 +743,13 @@ class PaymentSummaryActivity : CoreJoshActivity(),
             )
             else -> viewModel.getOrderDetails(viewModel.getPaymentTestId(), getPhoneNumber())
         }
+    }
+
+    private fun hidePhoneNumber(): Boolean {
+        val exploreTypeStr = PrefManager.getStringValue(EXPLORE_TYPE, false)
+        return VersionResponse.getInstance().hasVersion() &&
+                VersionResponse.getInstance().version?.name == ONBOARD_VERSIONS.ONBOARDING_V1 &&
+                ExploreCardType.valueOf(exploreTypeStr) == ExploreCardType.FREETRIAL
     }
 
     fun clearText() {

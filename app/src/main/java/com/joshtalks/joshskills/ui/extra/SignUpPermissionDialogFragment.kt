@@ -9,6 +9,8 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentManager
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.joshtalks.joshskills.R
+import com.joshtalks.joshskills.core.AppObjectController
+import com.joshtalks.joshskills.core.FirebaseRemoteConfigKey
 import com.joshtalks.joshskills.databinding.FragmentSignupPermissionDialogBinding
 import com.joshtalks.joshskills.ui.signup.FLOW_FROM
 import com.joshtalks.joshskills.ui.signup.SignUpActivity
@@ -18,7 +20,7 @@ class SignUpPermissionDialogFragment : BottomSheetDialogFragment() {
     private lateinit var binding: FragmentSignupPermissionDialogBinding
 
     companion object {
-        const val TAG="SignUpPermissionDialogFragment"
+        const val TAG = "SignUpPermissionDialogFragment"
         fun newInstance(): SignUpPermissionDialogFragment {
             return SignUpPermissionDialogFragment()
         }
@@ -50,6 +52,12 @@ class SignUpPermissionDialogFragment : BottomSheetDialogFragment() {
         binding.lifecycleOwner = this
         binding.fragment = this
         return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        binding.desc.text = AppObjectController.getFirebaseRemoteConfig()
+            .getString(FirebaseRemoteConfigKey.SIGNIN_DIALOG_DESCRIPTION)
     }
 
     fun allow() {

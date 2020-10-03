@@ -419,6 +419,10 @@
         <value>true</value>
     </entry>
     <entry>
+        <key>SIGNIN_DIALOG_DESCRIPTION</key>
+        <value>Apne subscription ko use karne ke liye sabse pehle apna registration complete kijiye  </value>
+    </entry>
+    <entry>
         <key>MINIMUM_TIME_TO_SHOW_REVIEW</key>
         <value>30
         </value>
