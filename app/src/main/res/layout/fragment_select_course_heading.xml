@@ -60,8 +60,6 @@
             android:layout_marginVertical="@dimen/_8sdp"
             app:layout_constraintBottom_toTopOf="@id/getDetailBtn"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHeight_default="percent"
-            app:layout_constraintHeight_percent="0.55"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/desc">
 
@@ -82,6 +80,7 @@
             android:clickable="true"
             android:focusable="true"
             android:maxLines="1"
+            android:layout_marginHorizontal="@dimen/_2sdp"
             android:paddingHorizontal="@dimen/_16sdp"
             android:paddingVertical="@dimen/_12sdp"
             android:text="@string/select_course_heading_btn"
