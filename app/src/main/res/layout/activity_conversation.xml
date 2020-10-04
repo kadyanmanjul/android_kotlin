@@ -18,7 +18,6 @@
         android:id="@+id/root_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/chat_bg"
         android:orientation="vertical">
 
             <com.google.android.material.appbar.MaterialToolbar
