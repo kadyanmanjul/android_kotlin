@@ -693,16 +693,6 @@ class PaymentSummaryActivity : CoreJoshActivity(),
         appAnalytics.addParam(AnalyticsEvent.COUNTRY_ISO_CODE.NAME, defaultRegion)
 
         when {
-            hidePhoneNumber() -> {
-                if (viewModel.getCourseDiscountedAmount() < 1) {
-                    viewModel.createFreeOrder(
-                        viewModel.getPaymentTestId(),
-                        getPhoneNumber()
-                    )
-                } else {
-                    viewModel.getOrderDetails(viewModel.getPaymentTestId(), getPhoneNumber())
-                }
-            }
             getPhoneNumber().isBlank() -> {
                 when {
                     binding.mobileEt.text.isNullOrEmpty() -> {
@@ -743,13 +733,6 @@ class PaymentSummaryActivity : CoreJoshActivity(),
             )
             else -> viewModel.getOrderDetails(viewModel.getPaymentTestId(), getPhoneNumber())
         }
-    }
-
-    private fun hidePhoneNumber(): Boolean {
-        val exploreTypeStr = PrefManager.getStringValue(EXPLORE_TYPE, false)
-        return VersionResponse.getInstance().hasVersion() &&
-                VersionResponse.getInstance().version?.name == ONBOARD_VERSIONS.ONBOARDING_V1 &&
-                ExploreCardType.valueOf(exploreTypeStr) == ExploreCardType.FREETRIAL
     }
 
     fun clearText() {
