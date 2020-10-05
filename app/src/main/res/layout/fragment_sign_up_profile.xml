@@ -49,7 +49,7 @@
                     android:gravity="start"
                     android:hint="@string/hint_name_field"
                     android:imeOptions="actionNext"
-                    android:inputType="textPersonName"
+                    android:inputType="textCapWords"
                     android:lines="1"
                     android:maxLength="24"
                     android:maxLines="1"
