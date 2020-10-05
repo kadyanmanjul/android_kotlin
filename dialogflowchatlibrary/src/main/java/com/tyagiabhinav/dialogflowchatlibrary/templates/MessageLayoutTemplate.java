@@ -11,6 +11,7 @@ import android.text.Html;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -254,10 +255,11 @@ public abstract class MessageLayoutTemplate extends FrameLayout {
                 break;
         }
 
-        LinearLayout.LayoutParams btnParam = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT, 1.0f);
+        LinearLayout.LayoutParams btnParam = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         btnParam.setMargins(16, 12, 16, 12);
+        btnParam.gravity = Gravity.CENTER;
         final Button btn = new Button(getContext());
-        btn.setPadding(36, 16, 36, 16);
+        btn.setPadding(16, 12, 16, 12);
         btn.setText(text);
         btn.setMaxLines(2);
         btn.setTextSize(textSize);
@@ -369,7 +371,7 @@ public abstract class MessageLayoutTemplate extends FrameLayout {
             checkBox.setText(Html.fromHtml(text));
         }
         checkBox.setTextSize(16.0f);
-        checkBox.setTextColor(ContextCompat.getColor(context, android.R.color.tab_indicator_text));
+        checkBox.setTextColor(ContextCompat.getColor(context, R.color.black));
         checkBox.setPadding(8, 8, 8, 8);
 
         viewsToDisable.add(checkBox);

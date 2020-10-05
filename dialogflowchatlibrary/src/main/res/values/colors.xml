@@ -18,5 +18,6 @@
     <color name="checkbox">@color/chatPrimary</color>
     <color name="statusBarColor">@color/chatPrimaryPressed</color>
     <color name="selectorBGColor">@color/chatPrimary</color>
+    <color name="black">#172344</color>
 
 </resources>

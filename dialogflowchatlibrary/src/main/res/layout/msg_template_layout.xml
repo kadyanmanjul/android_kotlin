@@ -11,10 +11,9 @@
         android:id="@+id/chatMsg"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        android:padding="16dp"
+        android:padding="8dp"
         android:text="abcdefgh"
-        android:textColor="@android:color/tab_indicator_text"
+        android:textColor="@color/black"
         android:textSize="16sp" />
 
     <FrameLayout
