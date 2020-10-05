@@ -246,12 +246,12 @@ public abstract class MessageLayoutTemplate extends FrameLayout {
             case "m":
             case "M":
             case "medium":
-                textSize = 14.0f;
+                textSize = 12.0f;
                 break;
             case "l":
             case "L":
             case "large":
-                textSize = 18.0f;
+                textSize = 16.0f;
                 break;
         }
 
@@ -259,6 +259,8 @@ public abstract class MessageLayoutTemplate extends FrameLayout {
         btnParam.setMargins(16, 12, 16, 12);
         btnParam.gravity = Gravity.CENTER;
         final Button btn = new Button(getContext());
+        btn.setGravity(Gravity.CENTER);
+        btn.setAllCaps(false);
         btn.setPadding(16, 12, 16, 12);
         btn.setText(text);
         btn.setMaxLines(2);
@@ -276,6 +278,7 @@ public abstract class MessageLayoutTemplate extends FrameLayout {
         btn.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
+                ReturnMessage returnMsg = null;
                 switch (buttonType) {
                     case "button":
                         Log.d(TAG, "onClick button: " + text);
@@ -297,6 +300,7 @@ public abstract class MessageLayoutTemplate extends FrameLayout {
 
                             }
                             ReturnMessage msg = msgBuilder.build();
+                            returnMsg = msg;
                             callback.OnUserClickAction(msg);
                         }
                         break;
@@ -352,7 +356,16 @@ public abstract class MessageLayoutTemplate extends FrameLayout {
                                 .show();
                         break;
                 }
-                disableAllViews();
+                if (returnMsg != null
+                        && returnMsg.getParam() != null
+                        && returnMsg.getParam().getFieldsCount() > 0
+                        && returnMsg.getParam().getFieldsMap().containsKey("template")
+                        && returnMsg.getParam().getFieldsMap().get("template").getStringValue().equals("checkbox")
+                        && returnMsg.getParam().getFieldsMap().containsKey("selectedItems")
+                        && returnMsg.getParam().getFieldsMap().get("selectedItems").getListValue().getValuesList().size() > 0
+                ) {
+                    disableAllViews();
+                }
             }
         });
         setViewsToDisable(btn);
