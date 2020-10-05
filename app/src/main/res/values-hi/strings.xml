@@ -12,7 +12,6 @@
     <string name="not_now">अभी नहीं</string>
     <string name="settings">सेटिंग्स</string>
     <string name="header_congratulation">बधाई हो</string>
-    <string name="edit">एडिट करें</string>
     <string name="name">नाम</string>
     <string name="email">ईमेल</string>
     <string name="gallery">गैलरी</string>
@@ -38,11 +37,9 @@
     <string name="update_message">अभी एक अपडेट डाउनलोड किया गया।</string>
     <string name="update_download_success_message">अभी एक अपडेट डाउनलोड किया गया।</string>
     <string name="slide_to_cancel">रद्द करने के लिए स्लाइड करें</string>
-    <string name="explore">कोर्स देखें</string>
     <string name="explore_new">कोर्स देखें</string>
     <string name="explorer_courses">कोर्स ढूंढें</string>
     <string name="start_course">कोर्स शुरू करें</string>
-    <string name="explorer_course">कोर्स ढूंढें</string>
     <string name="paid">पेमेंट किया गया</string>
     <string name="transaction_status">आपके लेनदेन की स्थिति:</string>
     <string name="course_payment_label">कोर्स का पेमेंट</string>
@@ -74,13 +71,12 @@
     <string name="time_ago_full_days">%1$d दिन पहले</string>
     <string name="time_ago_full_month">%1$d महीने पहले</string>
     <string name="time_ago_full_months">%1$d महीने पहले</string>
-    <string name="mobile_number">मोबाइल नंबर</string>
     <string name="email_address">ईमेल पता</string>
     <string name="attach_image">फोटो जोड़ें</string>
     <string name="amount">अमाउंट</string>
     <string name="status">स्थिति</string>
     <string name="practice">प्रैक्टिस</string>
-    <string name="complaint_message">हम तक पहुंचने के लिए धन्यवाद। आपका अनुरोध टिकट नंबर के प्रतिकूल दर्ज किया गया है। हमारी टीम 24-72 घंटों के बीच आपसे संपर्क करेगी।</string>
+    <string name="complaint_message">हम तक पहुंचने के लिए धन्यवाद। आपका अनुरोध टिकट नंबर के प्रतिकूल दर्ज किया गया है। हमारी टीम 24–72 घंटों के बीच आपसे संपर्क करेगी।</string>
     <string name="payment_process_success">आपकी पेमेंट सफलतापूर्वक हो गयी है!</string>
     <string name="status_with_colon">स्थिति :</string>
     <string name="submit_answer">उत्तर सबमिट करें</string>
@@ -97,13 +93,11 @@
     <string name="paise_kamao">पैसे कमाओ</string>
     <string name="copy_code">रेफ़रल कोड को क्लिपबोर्ड पर कॉपी किया गया</string>
     <string name="complete_payment">पेमेंट पूर्ण करें</string>
-    <string name="oops">ऊप्स</string>
     <string name="bill_detail_header">बिल की जानकारी</string>
     <string name="total_amount">कुल अमाउंट</string>
     <string name="network_type">नेटवर्क का प्रकार</string>
     <string name="answer_not_submitted">जवाब सबमिट नहीं किए गए</string>
     <string name="answer_submitted">प्रैक्टिस सफलतापूर्वक सबमिट की गयी</string>
-    <string name="bade_bhaiya_tips">बड़े भैया टिप!</string>
     <string name="use_tip">टिप का उपयोग करें</string>
     <string name="record_answer_label">अपना जवाब रिकॉर्ड करें</string>
     <string name="type_answer_label">अपना जवाब टाइप करें</string>
@@ -193,7 +187,6 @@
     <string name="male">"पुरुष "</string>
     <string name="female">"महिला "</string>
     <string name="other">"अन्य "</string>
-    <string name="give_50_get_50">"50 दें, 50 पाएँ "</string>
     <string name="have_a_referral_code">आपके पास रेफरल कोड है?</string>
     <string name="enter_referral_code">रेफरल कोड दर्ज करें</string>
     <string name="wrong_coupon">कूपन कोड गलत है</string>
@@ -345,4 +338,28 @@
     <string name="hint_email_field">उदाहरण abc@xyz.com</string>
     <string name="hint_date_field">उदाहरण 01 जनवरी 1990</string>
     <string name="interest_count">(%1$d/%2$d)</string>
+    <string name="select_language">भाषा चयन</string>
+    <string name="personal_information">व्यक्तिगत जानकारी</string>
+    <string name="app_settings">एप्लिकेशन सेटिंग</string>
+    <string name="clear_all_downloads">सभी डाउनलोड साफ़ करें</string>
+    <string name="sign_out">"लॉग आउट "</string>
+    <string name="notifications">"नोटिफिकेशन्स "</string>
+    <string name="language">भाषा</string>
+    <string name="english">अंग्रेज़ी</string>
+    <string name="low">कम</string>
+    <string name="login_type">लॉगिन प्रकार</string>
+    <string name="on">ऑन</string>
+    <string name="off">ऑफ</string>
+    <string name="select_course_heading_btn">"में ये चीज़े प्राप्त करना चाहता हूँ "</string>
+    <string name="start_course_free">मुफ्त के लिए मेरे पाठ्यक्रम शुरू करो</string>
+    <string name="buy_pass">सभी कोर्स एक्सेस पास खरीदें</string>
+    <string name="hint_text_btn"><u>सभी कोर्स एक्सेस पास खरीदें </u></string>
+    <string name="free_trial_completed">नि: शुल्क परीक्षण पूरा!</string>
+    <string name="rate_us">हमें रेटिंग दें</string>
+    <string name="short_seconds">सेकंड</string>
+    <string name="time_ago_yesterday_at">कल %1$s</string>
+    <string name="usb_disconnect_title">युएसबी डिस्कनेक्ट करें</string>
+    <string name="selection_arrow">चयन तीर</string>
+    <string name="download_quality">डाउनलोड क्वालिटी</string>
+
 </resources>

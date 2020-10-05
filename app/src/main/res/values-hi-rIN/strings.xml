@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="short_seconds">सेकंड</string>
-    <string name="time_ago_yesterday_at">कल %1$s</string>
-    <string name="usb_disconnect_title">युएसबी डिस्कनेक्ट करें</string>
-    <string name="selection_arrow">चयन तीर</string>
-</resources>

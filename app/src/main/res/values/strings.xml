@@ -274,8 +274,6 @@
     <string name="selected">Selected</string>
     <string name="course_selected">%s Courses</string>
     <string name="coupon_applied_free_course">Coupon Applied! You got this course\nfor free. Register Now</string>
-
-    <string name="freshchat_file_provider_authority">com.joshtalks.joshskills.provider</string>
     <string name="help_answer">Was this answer helpful?</string>
     <string name="go_home_text">Go home</string>
     <string name="faq_title">FAQ</string>
@@ -368,7 +366,6 @@
     <string name="delete_media_title">Clear Course Media</string>
     <string name="delete_media_message">Are you sure you want to delete all media from this course?</string>
     <string name="referral">Referral</string>
-    <string name="reminder_note">Note : Lorem ipsum dolor sit amet, consectetur adipiscing elit Vitae pellentesque</string>
     <string name="reminders">Reminders</string>
     <string name="set_reminder">Set Reminder</string>
     <string name="add_reminder">Add Reminder</string>
@@ -424,7 +421,6 @@
     <string name="other">Other</string>
     <string name="on">On</string>
     <string name="off">Off</string>
-    <string name="_360p">360p</string>
     <string name="select_course_heading_btn">Mein ye cheeze achieve karna chahta hoon</string>
     <string name="start_course_free">Start my Courses For Free</string>
     <string name="buy_pass">Buy All Course Access Pass</string>
