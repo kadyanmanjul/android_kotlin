@@ -81,12 +81,14 @@ public class ChatbotActivity extends AppCompatActivity implements ChatbotCallbac
         Toolbar toolbar = ChatbotSettings.getInstance().getAppToolbar();
         if (toolbar == null) {
             toolbar = findViewById(R.id.toolbar);
+            toolbar.setTitle("Josh Skills");
             ChatbotSettings.getInstance().setAppToolbar(toolbar);
         }
 
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
+            actionBar.setTitle("Josh Skills");
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setHomeButtonEnabled(true);
