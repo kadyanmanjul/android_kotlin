@@ -75,3 +75,4 @@ Fabric.properties
 
 .DS_Store
 /.idea/gradle.xml
+/.idea
