@@ -759,6 +759,7 @@ class LanguageChangeWorker(var context: Context, private var workerParams: Worke
             //PrefManager.put(USER_LOCALE, language)
             context.changeLocale(language)
             AppObjectController.isSettingUpdate = true
+            AppObjectController.getFirebaseRemoteConfig().reset()
             AppObjectController.getFirebaseRemoteConfig().fetch(0)
             AppObjectController.getFirebaseRemoteConfig()
                 .fetchAndActivate()

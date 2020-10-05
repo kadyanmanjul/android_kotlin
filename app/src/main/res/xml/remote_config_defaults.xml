@@ -11,14 +11,12 @@
     </entry>
     <entry>
         <key>helpline_number</key>
-        <value>7428797127</value>
+        <value>08634503202</value>
     </entry>
-
     <entry>
         <key>update_force</key>
         <value>false</value>
     </entry>
-
     <entry>
         <key>helpline_start_time</key>
         <value>10:00:00</value>
@@ -27,19 +25,17 @@
         <key>helpline_end_time</key>
         <value>18:00:00</value>
     </entry>
-
     <entry>
         <key>buy_course_label</key>
-        <value>Buy Course</value>
+        <value>Buy Course Now</value>
     </entry>
-
     <entry>
         <key>terms_condition_url</key>
         <value>https://www.joshtalks.com/privacy-policy/</value>
     </entry>
     <entry>
         <key>utm_source_filter</key>
-        <value></value>
+        <value>["Whatsappusers"]</value>
     </entry>
     <entry>
         <key>REFERRAL_EARN_AMOUNT</key>
@@ -57,7 +53,6 @@
         <key>referral_screen_page</key>
         <value>version_1</value>
     </entry>
-
     <entry>
         <key>CERTIFICATE_URL</key>
         <value>https://s3.ap-south-1.amazonaws.com/www.static.skills.com/Icons/Certificate.jpg
@@ -81,7 +76,7 @@
     </entry>
     <entry>
         <key>SUPPORTED_COUNTRY_LIST</key>
-        <value></value>
+        <value>IN,BD</value>
     </entry>
     <entry>
         <key>COURSE_MAX_OFFER_PER</key>
@@ -99,19 +94,16 @@
         <key>CTA_PAYMENT_SUMMARY_FREE</key>
         <value>Get this course for free</value>
     </entry>
-
     <entry>
         <key>SUBSCRIPTION_BB_TIP</key>
         <value>Woohoo!</value>
     </entry>
-
     <entry>
         <key>SUBSCRIPTION_BB_TEXT</key>
         <value>1 year Subscription pack added!
             You saved more then 3400 rupees
         </value>
     </entry>
-
     <entry>
         <key>FIND_MORE_COURSE_HINT_FIRST_TIME</key>
         <value>
@@ -431,6 +423,60 @@
     <entry>
         <key>LANGUAGES_SUPPORTED</key>
         <value>[{ "code": "en", "name": "English"},{"code": "hi","name": "Hindi"} ]</value>
+    </entry>
+
+    <entry>
+        <key>course_explore_flag</key>
+        <value>true</value>
+    </entry>
+
+    <entry>
+        <key>course_show_by_browser</key>
+        <value>true</value>
+    </entry>
+
+    <entry>
+        <key>REFERRAL_SHARE_TEXT</key>
+        <value>Mai Bharat 🇮🇳 ke best teachers se Spoken English aur Personality Development seekh
+            raha hu. Mere saath seekhna abhi shuru karo 💪. Ye lo meri taraf se tumhe ₹** OFF: Use
+            my code ****. Download the app by clicking on the link
+        </value>
+    </entry>
+
+    <entry>
+        <key>NPS_EVENT_LIST</key>
+        <value>
+            [{"id":1,"event":"PAYMENT_SUCCESS","event_name":"nps_course_payment","filter_by":"EVENT","day":-99,"enable":true},{"id":2,"event":"PAYMENT_FAILED","event_name":"nps_course_payment_failed","filter_by":"EVENT","day":-99,"enable":true},{"id":3,"event":"PRACTICE_COMPLETED","event_name":"nps_first_practise","filter_by":"DAY","day":3,"enable":true},{"id":4,"event":"FIRST_CLASS","event_name":"nps_first_class","filter_by":"DAY","day":0,"enable":true},{"id":5,"event":"STANDARD_TIME_EVENT","event_name":"nps_overall_course_7_days","filter_by":"DAY","day":7,"enable":true},{"id":6,"event":"PRACTICE_COMPLETED","event_name":"nps_first_practise","filter_by":"DAY","day":7,"enable":true},{"id":7,"event":"PRACTICE_COMPLETED","event_name":"nps_first_practise","filter_by":"DAY","day":5,"enable":true}]
+        </value>
+    </entry>
+
+    <entry>
+        <key>referral_text_video</key>
+        <value>"https://www.youtube.com/watch?v=CMZohcIMQfc \n Mai Bharat 🇮🇳 ke best teachers se
+            Spoken English aur Personality Development seekh raha hu. Mere saath seekhna abhi shuru
+            karo 💪. Ye lo meri taraf se tumhe ₹50 OFF: Use my code 6756D. Download the app by
+            clicking on the link \n https://joshskill.page.link/U7fE"
+        </value>
+    </entry>
+
+    <entry>
+        <key>help_options</key>
+        <value>{"title":"Student Help Center","support_message":"Our Student Help Center Agents is
+            available from 9:30 AM to 6:30 PM. We apologize for the
+            inconvenience.","options":[{"id":1,"name":"Call
+            HelpLine","action":"CALL","url":"https://s3.ap-south-1.amazonaws.com/www.static.skills.com/Icons/Phone.svg","action_data":"+918634503202"},{"id":2,"name":"Chat
+            with
+            agent","action":"HELPCHAT","url":"https://s3.ap-south-1.amazonaws.com/www.static.skills.com/Icons/chat_bubble.svg","action_data":"********"},{"id":3,"name":"FAQ","action":"FAQ","url":"https://s3.ap-south-1.amazonaws.com/www.static.skills.com/Icons/QuestionMark.svg","action_data":"********"}]}
+        </value>
+    </entry>
+
+
+    <entry>
+        <key>practise_flow_steps</key>
+        <value>[{ "header": "Listen", "sub_header": "Pehle baat ko suno" }, { "header": "Quiz",
+            "sub_header": "Sawaal ke jawaab do" }, { "header": "Practice", "sub_header": "Baat karne
+            ki koshish karo" }, { "header": "Record", "sub_header": "Final baat submit karo" } ]
+        </value>
     </entry>
 
 
