@@ -96,12 +96,13 @@
     </entry>
     <entry>
         <key>SUBSCRIPTION_BB_TIP</key>
-        <value>Woohoo!</value>
+        <value>
+            <u>Woohoo!</u>
+        </value>
     </entry>
     <entry>
         <key>SUBSCRIPTION_BB_TEXT</key>
-        <value>1 year Subscription pack added!
-            You saved more then 3400 rupees
+        <value>👉 <b>1 year Subscription pack added!</b> You saved more then 3400 rupees 🎈
         </value>
     </entry>
     <entry>
@@ -179,7 +180,7 @@
     <entry>
         <key>TRAIL_END_SCREEN_MESSAGE</key>
         <value>
-            Your 1 year subscription has ended! Access all your courses now 👇
+            Your 7 day trial has ended! Access all your courses now 👇
         </value>
     </entry>
     <entry>
@@ -198,27 +199,27 @@
     </entry>
     <entry>
         <key>START_TRAIL_TITLE</key>
-        <value>Enroll in any course &amp; learn for free</value>
+        <value>👉 India ka pehla Subscription with 👈</value>
     </entry>
     <entry>
         <key>START_TRAIL_HEADING</key>
-        <value>First 7 Days Free</value>
+        <value>Unlimited Learning</value>
     </entry>
     <entry>
         <key>START_TRAIL_FEATURE1</key>
-        <value>Unlock the full Josh experience</value>
+        <value>Ye pass aapko ALL COURSE ACCESS dega for 7 days - Completely Free!</value>
     </entry>
     <entry>
         <key>START_TRAIL_FEATURE2</key>
-        <value>Never get bored with over 600 classes</value>
+        <value>7 dino ke liye aap ALL COURSES unlimited access kar sakte hai.</value>
     </entry>
     <entry>
         <key>START_TRAIL_FEATURE3</key>
-        <value>Stay motivated with quizzes &amp; tests</value>
+        <value>After 7 days, upgrade to yearly subscription &amp; continue learning!</value>
     </entry>
     <entry>
         <key>START_SUBSCRIPTION_TITLE</key>
-        <value>India ka pehla subscription with</value>
+        <value>👉 India ka pehla Subscription with 👈</value>
     </entry>
     <entry>
         <key>START_SUBSCRIPTION_HEADING</key>
@@ -226,15 +227,15 @@
     </entry>
     <entry>
         <key>START_SUBSCRIPTION_FEATURE1</key>
-        <value>ye pass aapko saare courses ka access dega for 7 days - completely free</value>
+        <value>Ye pass aapko ALL COURSE ACCESS dega for 7 days - Completely Free!</value>
     </entry>
     <entry>
         <key>START_SUBSCRIPTION_FEATURE2</key>
-        <value>7 dino ke liye aap app ke saare courses unlimited access kar sakte hai</value>
+        <value>7 dino ke liye aap ALL COURSES unlimited access kar sakte hai.</value>
     </entry>
     <entry>
         <key>START_SUBSCRIPTION_FEATURE3</key>
-        <value>Agar accha lage toh aap 7 days ke baad upgrade kar sakte hai for just 599!</value>
+        <value>After 7 days, upgrade to yearly subscription &amp; continue learning!</value>
     </entry>
     <entry>
         <key>FFCOURSE_CARD_CLICK_MSG</key>
@@ -251,21 +252,21 @@
 
     <entry>
         <key>SET_REMINDER_DESCRIPTION</key>
-        <value>Note : Lorem ipsum dolor sit amet, consectetur adipiscing elit Vitae pellentesque
-        </value>
+        <value>Note : Set a Reminder and Never Miss Your Class</value>
     </entry>
     <entry>
         <key>REMINDERS_SCREEN_DESCRIPTION</key>
-        <value>Note : Lorem ipsum dolor sit amet, consectetur adipiscing elit Vitae pellentesque
+        <value>Note : Students with 5 Reminders have higher probability of completing a course
         </value>
     </entry>
     <entry>
         <key>REMINDER_NOTIFIER_SCREEN_DESCRIPTION</key>
-        <value>Lorem ipsum dolor sit amet, consecte tur adipiscing elit.</value>
+        <value>Aaj nahi kiya , Toh kabhi nahi kiya</value>
     </entry>
     <entry>
         <key>REMINDER_BOTTOM_POPUP_DESCRIPTION</key>
-        <value>Sit amet, consectetur Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam hendrerit
+        <value>Aapka Reminder Set ho gya hai. Your phone will vibrate on your set time. Keep
+            learning!!
         </value>
     </entry>
     <entry>
@@ -289,6 +290,10 @@
         <value>Find More Courses</value>
     </entry>
     <entry>
+        <key>INBOX_SCREEN_CTA_TEXT_SUBSCRIPTION</key>
+        <value>Find More Courses</value>
+    </entry>
+    <entry>
         <key>INBOX_SCREEN_CTA_TEXT_ONBOARD_FLOW</key>
         <value>Add More Courses</value>
     </entry>
@@ -296,6 +301,7 @@
         <key>PAYMENT_SUMMARY_CTA_LABEL_FREE</key>
         <value>Start for Free</value>
     </entry>
+
     <entry>
         <key>MAXIMUM_STORAGE_IN_MB</key>
         <value>1024</value>
@@ -479,5 +485,24 @@
         </value>
     </entry>
 
+    <entry>
+        <key>ERROR_API_IMAGE_URL</key>
+        <value>
+            https://s3.ap-south-1.amazonaws.com/www.static.skills.com/Course+Information/under+construction.png
+        </value>
+    </entry>
+
+    <entry>
+        <key>SUBSCRIPTION_COURSE_IDS</key>
+        <value>60</value>
+    </entry>
+    <entry>
+        <key>INBOX_SCREEN_COURSE_PROGRESS_ENABLE</key>
+        <value>false</value>
+    </entry>
+    <entry>
+        <key>SUBSCRIPTION_TEST_ID</key>
+        <value>122</value>
+    </entry>
 
 </defaultsMap>
