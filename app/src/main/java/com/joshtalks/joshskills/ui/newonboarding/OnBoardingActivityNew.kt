@@ -54,7 +54,7 @@ class OnBoardingActivityNew : CoreJoshActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_onboarding_new)
         viewModel = ViewModelProvider(this).get(OnBoardViewModel::class.java)
-        progressLayout= findViewById<FrameLayout>(R.id.progressLayout)
+        progressLayout= findViewById<FrameLayout>(R.id.progress_layout)
 
         val haveCourses = intent.getBooleanExtra(HAVE_COURSES, false)
         if (intent.hasExtra(FLOW_FROM_INBOX)) {
