@@ -756,23 +756,34 @@ class LanguageChangeWorker(var context: Context, private var workerParams: Worke
             val language = workerParams.inputData.getString(LANGUAGE_CODE) ?: "en"
             val defaultLanguage = PrefManager.getStringValue(USER_LOCALE)
             Lingver.getInstance().setLocale(context, language)
-            PrefManager.put(USER_LOCALE, language)
+            //PrefManager.put(USER_LOCALE, language)
             context.changeLocale(language)
             AppObjectController.isSettingUpdate = true
-            AppObjectController.getFirebaseRemoteConfig().reset()
+            AppObjectController.getFirebaseRemoteConfig().fetch(0)
             AppObjectController.getFirebaseRemoteConfig()
                 .fetchAndActivate()
-                .addOnCompleteListener {
-                    PrefManager.put(USER_LOCALE, language)
-                    PrefManager.put(USER_LOCALE_UPDATED, true)
-                    completer.set(Result.success())
-                }.addOnFailureListener {
+                .addOnSuccessListener {
+                    if (it) {
+                        PrefManager.put(USER_LOCALE, language)
+                        PrefManager.put(USER_LOCALE_UPDATED, true)
+                        completer.set(Result.success())
+                    } else {
+                        onErrorToFetch(defaultLanguage)
+                        completer.set(Result.retry())
+                    }
+                }
+                .addOnFailureListener {
                     it.printStackTrace()
-                    AppObjectController.isSettingUpdate = false
-                    Lingver.getInstance().setLocale(context, defaultLanguage)
+                    onErrorToFetch(defaultLanguage)
                     completer.setCancelled()
                 }
         }
+    }
+
+    private fun onErrorToFetch(defaultLanguage: String) {
+        PrefManager.put(USER_LOCALE, defaultLanguage)
+        AppObjectController.isSettingUpdate = false
+        Lingver.getInstance().setLocale(context, defaultLanguage)
     }
 }
 

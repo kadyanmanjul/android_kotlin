@@ -564,6 +564,9 @@ abstract class BaseActivity : AppCompatActivity(), LifecycleObserver/*,
     }
 
     private fun reCreateActivity() {
-        recreate()
+        finish()
+        overridePendingTransition(0, 0)
+        startActivity(intent)
+        overridePendingTransition(0, 0)
     }
 }

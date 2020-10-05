@@ -23,8 +23,6 @@ class LanguageAdapter(
 
     init {
         selectedItem = PrefManager.getStringValue(USER_LOCALE)
-        if (selectedItem.isEmpty())
-            selectedItem = "en"
     }
 
     override fun onCreateViewHolder(
@@ -49,7 +47,6 @@ class LanguageAdapter(
         RecyclerView.ViewHolder(binding.root) {
         fun bind(item: LanguageItem, position: Int) {
             binding.itemNameTv.text = item.name
-
             if (selectedItem == item.code) {
                 binding.tickIv.visibility = View.VISIBLE
             } else
@@ -62,7 +59,7 @@ class LanguageAdapter(
                     .addUserDetails()
                     .addParam("selected_value", selectedItem)
                     .push()
-
+                binding.progressBar.visibility = View.VISIBLE
                 onItemClick(item)
                 notifyDataSetChanged()
             }

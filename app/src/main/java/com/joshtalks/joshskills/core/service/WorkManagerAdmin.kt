@@ -1,12 +1,20 @@
 package com.joshtalks.joshskills.core.service
 
-import androidx.work.*
+import androidx.work.BackoffPolicy
+import androidx.work.Constraints
+import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.NetworkType
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.PeriodicWorkRequest
+import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.WorkManager
+import androidx.work.workDataOf
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.EMPTY
 import com.joshtalks.joshskills.core.memory.MemoryManagementWorker
 import com.joshtalks.joshskills.core.memory.RemoveMediaWorker
 import com.joshtalks.joshskills.repository.local.entity.NPSEvent
-import java.util.*
+import java.util.UUID
 import java.util.concurrent.TimeUnit
 
 object WorkManagerAdmin {
@@ -144,8 +152,13 @@ object WorkManagerAdmin {
 
     fun getLanguageChangeWorker(language: String): UUID {
         val data = workDataOf(LANGUAGE_CODE to language)
+        val constraints = Constraints.Builder()
+            .setRequiredNetworkType(NetworkType.CONNECTED)
+            .build()
         val workRequest = OneTimeWorkRequestBuilder<LanguageChangeWorker>()
             .setInputData(data)
+            .setConstraints(constraints)
+            .setBackoffCriteria(BackoffPolicy.EXPONENTIAL, 11, TimeUnit.SECONDS)
             .build()
         WorkManager.getInstance(AppObjectController.joshApplication).enqueue(workRequest)
         return workRequest.id
