@@ -11,6 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:gravity="center"
+        android:textSize="@dimen/_15ssp"
         android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4_Semi_Bold"
         android:textColor="@color/black"
         app:layout_constraintTop_toTopOf="parent"
@@ -20,7 +21,7 @@
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tv_hindi"
         android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_height="@dimen/_48sdp"
         android:layout_marginHorizontal="@dimen/_16sdp"
         android:layout_marginTop="@dimen/_16sdp"
         android:background="@drawable/round_rect_default"
@@ -39,7 +40,7 @@
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tv_english"
         android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_height="@dimen/_48sdp"
         android:layout_marginHorizontal="@dimen/_16sdp"
         android:layout_marginTop="@dimen/_16sdp"
         android:background="@drawable/round_rect_default"

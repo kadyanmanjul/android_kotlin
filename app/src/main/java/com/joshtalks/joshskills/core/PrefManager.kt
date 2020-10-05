@@ -41,6 +41,7 @@ const val IN_APP_REVIEW_COUNT = "in_app_review_count"
 const val SELECTED_QUALITY = "selected_quality"
 const val CLEAR_CACHE = "is_clear_cache"
 const val USER_LOCALE = "user_locale"
+const val USER_LOCALE_UPDATED = "user_locale_update"
 
 
 object PrefManager {

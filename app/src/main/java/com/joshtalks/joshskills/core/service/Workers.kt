@@ -28,11 +28,13 @@ import com.joshtalks.joshskills.core.RESTORE_ID
 import com.joshtalks.joshskills.core.SERVER_GID_ID
 import com.joshtalks.joshskills.core.SUBSCRIPTION_TEST_ID
 import com.joshtalks.joshskills.core.USER_LOCALE
+import com.joshtalks.joshskills.core.USER_LOCALE_UPDATED
 import com.joshtalks.joshskills.core.USER_UNIQUE_ID
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.analytics.LogException
 import com.joshtalks.joshskills.core.analytics.MarketingAnalytics
+import com.joshtalks.joshskills.core.changeLocale
 import com.joshtalks.joshskills.core.notification.FCM_TOKEN
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.entity.NPSEvent
@@ -49,6 +51,7 @@ import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.ActiveUserRequest
 import com.joshtalks.joshskills.repository.server.MessageStatusRequest
 import com.joshtalks.joshskills.repository.server.UpdateDeviceRequest
+import com.joshtalks.joshskills.repository.server.onboarding.ONBOARD_VERSIONS
 import com.joshtalks.joshskills.repository.server.onboarding.VersionResponse
 import com.joshtalks.joshskills.repository.server.signup.LoginResponse
 import com.joshtalks.joshskills.repository.service.NetworkRequestHelper
@@ -75,6 +78,7 @@ class AppRunRequiredTaskWorker(var context: Context, workerParams: WorkerParamet
         AppObjectController.facebookEventLogger.flush()
         AppObjectController.firebaseAnalytics.resetAnalyticsData()
         AppObjectController.getFetchObject().awaitFinish()
+        AppObjectController.isSettingUpdate = false
         if (PrefManager.getStringValue(API_TOKEN).isEmpty()) {
             PrefManager.put(API_TOKEN, User.getInstance().token)
         }
@@ -165,6 +169,7 @@ class GetVersionAndFlowDataWorker(var context: Context, workerParams: WorkerPara
                     res.courseCategories?.sortedBy { category -> category.sortOrder }
                 res.courseInterestTags = sortedInterest
                 res.courseCategories = sortedCategories
+                res.version?.name = ONBOARD_VERSIONS.ONBOARDING_V7
                 VersionResponse.update(res)
             }
         } catch (ex: Throwable) {
@@ -752,12 +757,14 @@ class LanguageChangeWorker(var context: Context, private var workerParams: Worke
         return CallbackToFutureAdapter.getFuture { completer ->
             val language = workerParams.inputData.getString(LANGUAGE_CODE) ?: "en"
             Lingver.getInstance().setLocale(context, language)
-            PrefManager.put(USER_LOCALE, language)
+            context.changeLocale(language)
+            AppObjectController.isSettingUpdate = true
             AppObjectController.getFirebaseRemoteConfig().reset()
-            AppObjectController.getFirebaseRemoteConfig().fetchAndActivate()
+            AppObjectController.getFirebaseRemoteConfig()
+                .fetchAndActivate()
                 .addOnCompleteListener {
-                }
-                .addOnSuccessListener {
+                    PrefManager.put(USER_LOCALE, language)
+                    PrefManager.put(USER_LOCALE_UPDATED, true)
                     completer.set(Result.success())
                 }.addOnFailureListener {
                     completer.setCancelled()

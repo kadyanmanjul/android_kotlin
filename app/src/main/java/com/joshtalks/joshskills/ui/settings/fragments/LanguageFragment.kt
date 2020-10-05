@@ -8,7 +8,6 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.joshtalks.joshskills.R
-import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.BaseActivity
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.USER_LOCALE
@@ -55,7 +54,6 @@ class LanguageFragment : Fragment() {
             return
         }
         (requireActivity() as BaseActivity).requestWorkerForChangeLanguage(item.code, callback = {
-            AppObjectController.isSettingUpdate = true
         })
     }
 

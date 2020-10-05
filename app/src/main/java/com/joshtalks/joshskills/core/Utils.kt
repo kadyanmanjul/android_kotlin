@@ -11,6 +11,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.Intent.ACTION_VIEW
 import android.content.pm.PackageManager
+import android.content.res.Configuration
 import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -87,7 +88,9 @@ import java.nio.charset.Charset
 import java.text.DateFormat
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Calendar
+import java.util.Date
+import java.util.Locale
 import java.util.concurrent.TimeUnit
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation
 import kotlin.math.ceil
@@ -993,5 +996,20 @@ fun ImageView.setVectorImage(
         })
         .into(this)
 }
+
+
+fun Context.changeLocale(language: String) {
+    val config: Configuration = resources.configuration
+    val locale = Locale(language)
+    Locale.setDefault(locale)
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+        config.setLocale(locale)
+    } else {
+        config.locale = locale
+    }
+    createConfigurationContext(config)
+    resources.updateConfiguration(config, resources.displayMetrics)
+}
+
 
 

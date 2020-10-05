@@ -551,9 +551,6 @@ abstract class BaseActivity : AppCompatActivity(), LifecycleObserver/*,
     ) {
         val observer = Observer<WorkInfo> { workInfo ->
             if (workInfo != null && workInfo.state == WorkInfo.State.SUCCEEDED) {
-                WorkManager.getInstance(applicationContext)
-                    .getWorkInfoByIdLiveData(WorkManagerAdmin.getLanguageChangeWorker(lCode))
-                    .removeObservers(this)
                 callback?.invoke()
                 if (canCreateActivity) {
                     reCreateActivity()
@@ -566,9 +563,6 @@ abstract class BaseActivity : AppCompatActivity(), LifecycleObserver/*,
     }
 
     private fun reCreateActivity() {
-        finish()
-        overridePendingTransition(0, 0)
-        startActivity(intent)
-        overridePendingTransition(0, 0)
+        recreate()
     }
 }

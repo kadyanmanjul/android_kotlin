@@ -17,6 +17,7 @@ import com.joshtalks.joshskills.core.CoreJoshActivity
 import com.joshtalks.joshskills.core.EXPLORE_TYPE
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.REFERRED_REFERRAL_CODE
+import com.joshtalks.joshskills.core.USER_LOCALE_UPDATED
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
@@ -40,7 +41,10 @@ class OnBoardActivity : CoreJoshActivity() {
         if (PrefManager.getStringValue(REFERRED_REFERRAL_CODE).isBlank())
             layout.haveAReferralCode.visibility = View.VISIBLE
         VersionResponse.getInstance().version?.name?.let {
-            if (it == ONBOARD_VERSIONS.ONBOARDING_V7 && AppObjectController.isSettingUpdate.not()) {
+            if (it == ONBOARD_VERSIONS.ONBOARDING_V7 && AppObjectController.isSettingUpdate.not() && PrefManager.getBoolValue(
+                    USER_LOCALE_UPDATED
+                ).not()
+            ) {
                 openLanguageChooserDialog()
             }
         }
@@ -94,6 +98,10 @@ class OnBoardActivity : CoreJoshActivity() {
         customView.findViewById<AppCompatTextView>(R.id.title).text = text
         customView.findViewById<View>(R.id.tv_hindi).setOnClickListener {
             requestWorkerForChangeLanguage("hi")
+            dialog.dismiss()
+        }
+        customView.findViewById<View>(R.id.tv_english).setOnClickListener {
+            requestWorkerForChangeLanguage("en")
             dialog.dismiss()
         }
         dialog.show()
