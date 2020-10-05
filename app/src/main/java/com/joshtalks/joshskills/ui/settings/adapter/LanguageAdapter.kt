@@ -18,6 +18,7 @@ class LanguageAdapter(
 ) :
     RecyclerView.Adapter<LanguageAdapter.LanguageViewHolder>() {
 
+    var inProgress = false
     var context: Context? = null
     var selectedItem: String
 
@@ -47,21 +48,24 @@ class LanguageAdapter(
         RecyclerView.ViewHolder(binding.root) {
         fun bind(item: LanguageItem, position: Int) {
             binding.itemNameTv.text = item.name
-            if (selectedItem == item.code) {
+            if (selectedItem == item.code && !inProgress) {
                 binding.tickIv.visibility = View.VISIBLE
             } else
                 binding.tickIv.visibility = View.GONE
 
             binding.root.setOnClickListener {
-                selectedItem = item.code
-                AppAnalytics.create(AnalyticsEvent.SELECT_LANGUAGE_CHANGED.name)
-                    .addBasicParam()
-                    .addUserDetails()
-                    .addParam("selected_value", selectedItem)
-                    .push()
-                binding.progressBar.visibility = View.VISIBLE
-                onItemClick(item)
-                notifyDataSetChanged()
+                if (!inProgress) {
+                    selectedItem = item.code
+                    AppAnalytics.create(AnalyticsEvent.SELECT_LANGUAGE_CHANGED.name)
+                        .addBasicParam()
+                        .addUserDetails()
+                        .addParam("selected_value", selectedItem)
+                        .push()
+                    binding.progressBar.visibility = View.VISIBLE
+                    onItemClick(item)
+                    notifyDataSetChanged()
+                    inProgress = true
+                }
             }
         }
     }
