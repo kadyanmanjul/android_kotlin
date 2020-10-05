@@ -11,6 +11,7 @@ import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.MultiTransformation
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
+import com.bumptech.glide.load.resource.bitmap.GranularRoundedCorners
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
@@ -241,6 +242,13 @@ abstract class BaseCell {
     }
 
     fun setDefaultImageView(iv: ImageView, url: String) {
+        val multi = MultiTransformation(
+            GranularRoundedCorners(
+                Utils.dpToPx(ROUND_CORNER).toFloat(),
+                Utils.dpToPx(ROUND_CORNER).toFloat(),
+                0F, 0F
+            )
+        )
         Glide.with(getAppContext())
             .load(url)
             .override(Target.SIZE_ORIGINAL)
@@ -248,6 +256,7 @@ abstract class BaseCell {
                 WebpDrawable::class.java,
                 WebpDrawableTransformation(CircleCrop())
             )
+            .apply(RequestOptions.bitmapTransform(multi))
             .into(iv)
     }
 

@@ -11,17 +11,17 @@
 
     <FrameLayout
         android:id="@+id/root_sub_view"
-        android:layout_width="wrap_content"
+        android:layout_width="@dimen/_220sdp"
         android:layout_height="wrap_content"
         android:layout_gravity="start">
 
         <LinearLayout
+            android:layout_width="wrap_content"
             android:id="@+id/message_view"
-            android:layout_width="@dimen/_220sdp"
-            android:layout_height="wrap_content"
             android:background="@drawable/pdf_bg"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/_3sdp"
             android:orientation="vertical">
-
             <include layout="@layout/tag_practise_layout" />
 
             <androidx.appcompat.widget.AppCompatImageView

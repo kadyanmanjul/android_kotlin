@@ -33,15 +33,16 @@ import com.tonyodev.fetch2.Download
 import com.tonyodev.fetch2.Error
 import com.tonyodev.fetch2.FetchListener
 import com.tonyodev.fetch2core.DownloadBlock
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import timber.log.Timber
 import java.lang.ref.WeakReference
+import timber.log.Timber
 
 @Layout(R.layout.pdf_view_holder)
-class PdfViewHolder(activityRef: WeakReference<FragmentActivity>, message: ChatModel,previousMessage:ChatModel?) :
-    BaseChatViewHolder(activityRef, message,previousMessage) {
+class PdfViewHolder(
+    activityRef: WeakReference<FragmentActivity>,
+    message: ChatModel,
+    previousMessage: ChatModel?
+) :
+    BaseChatViewHolder(activityRef, message, previousMessage) {
 
     @View(R.id.root_view)
     lateinit var rootView: FrameLayout
@@ -96,13 +97,9 @@ class PdfViewHolder(activityRef: WeakReference<FragmentActivity>, message: ChatM
                 eta = 500
             appAnalytics?.addParam(AnalyticsEvent.TIME_TAKEN_DOWNLOAD.NAME, eta)
             appAnalytics?.addParam(AnalyticsEvent.PDF_DOWNLOAD_STATUS.NAME, "Completed")?.push()
-            CoroutineScope(Dispatchers.IO).launch {
-                DownloadUtils.updateDownloadStatus(download.file, download.extras).let {
-                    RxBus2.publish(DownloadCompletedEventBus(pdfViewHolder, message))
-                }
+            DownloadUtils.updateDownloadStatus(download.file, download.extras).let {
+                RxBus2.publish(DownloadCompletedEventBus(pdfViewHolder, message))
             }
-
-
         }
 
         override fun onDeleted(download: Download) {
@@ -178,7 +175,7 @@ class PdfViewHolder(activityRef: WeakReference<FragmentActivity>, message: ChatM
         }
 
         message.sender?.let {
-            setViewHolderBG(previousMessage?.sender,it, rootView, rootSubView, messageView)
+            setViewHolderBG(previousMessage?.sender, it, rootView, rootSubView, messageView)
         }
 
         message.question?.run {
@@ -273,6 +270,7 @@ class PdfViewHolder(activityRef: WeakReference<FragmentActivity>, message: ChatM
         }
         openPdf()
     }
+
     private fun openPdf() {
         message.question?.pdfList?.getOrNull(0)?.let { pdfObj ->
             if (pdfObj.url.isBlank()) {

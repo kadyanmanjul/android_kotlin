@@ -38,14 +38,18 @@ import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
-import com.mindorks.placeholderview.annotations.*
+import com.mindorks.placeholderview.annotations.Click
+import com.mindorks.placeholderview.annotations.Layout
+import com.mindorks.placeholderview.annotations.Recycle
+import com.mindorks.placeholderview.annotations.Resolve
+import com.mindorks.placeholderview.annotations.View
 import com.tonyodev.fetch2.Download
 import com.tonyodev.fetch2.Error
 import com.tonyodev.fetch2.FetchListener
 import com.tonyodev.fetch2core.DownloadBlock
 import io.reactivex.disposables.CompositeDisposable
 import java.lang.ref.WeakReference
-import java.util.*
+import java.util.Locale
 import kotlin.math.roundToInt
 
 @Layout(R.layout.audio_player_view)
@@ -205,7 +209,7 @@ class AudioPlayerViewHolder(
         startDownloadImageView.visibility = android.view.View.INVISIBLE
         btnPlayImageView.visibility = android.view.View.INVISIBLE
         btnPauseImageView.visibility = android.view.View.INVISIBLE
-        messageView.findViewById<ViewGroup>(R.id.tag_view).visibility = android.view.View.GONE
+        rootSubView.findViewById<ViewGroup>(R.id.tag_view).visibility = android.view.View.GONE
 
         seekBar.isEnabled = false
         seekBar.progress = message.playProgress
