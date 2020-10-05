@@ -51,7 +51,6 @@ import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.ActiveUserRequest
 import com.joshtalks.joshskills.repository.server.MessageStatusRequest
 import com.joshtalks.joshskills.repository.server.UpdateDeviceRequest
-import com.joshtalks.joshskills.repository.server.onboarding.ONBOARD_VERSIONS
 import com.joshtalks.joshskills.repository.server.onboarding.VersionResponse
 import com.joshtalks.joshskills.repository.server.signup.LoginResponse
 import com.joshtalks.joshskills.repository.service.NetworkRequestHelper
@@ -169,7 +168,6 @@ class GetVersionAndFlowDataWorker(var context: Context, workerParams: WorkerPara
                     res.courseCategories?.sortedBy { category -> category.sortOrder }
                 res.courseInterestTags = sortedInterest
                 res.courseCategories = sortedCategories
-                res.version?.name = ONBOARD_VERSIONS.ONBOARDING_V7
                 VersionResponse.update(res)
             }
         } catch (ex: Throwable) {
