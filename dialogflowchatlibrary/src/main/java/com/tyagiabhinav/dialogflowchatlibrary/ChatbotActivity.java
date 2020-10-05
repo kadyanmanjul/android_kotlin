@@ -11,9 +11,7 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.Toast;
 
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 
 import com.google.android.material.button.MaterialButton;
@@ -78,22 +76,6 @@ public class ChatbotActivity extends AppCompatActivity implements ChatbotCallbac
 
         getWindow().setStatusBarColor(ContextCompat.getColor(this, R.color.statusBarColor));
 
-        Toolbar toolbar = ChatbotSettings.getInstance().getAppToolbar();
-        if (toolbar == null) {
-            toolbar = findViewById(R.id.toolbar);
-            toolbar.setTitle("Josh Skills");
-            ChatbotSettings.getInstance().setAppToolbar(toolbar);
-        }
-
-        setSupportActionBar(toolbar);
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setTitle("Josh Skills");
-            actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setHomeButtonEnabled(true);
-        }
-
         final ScrollView scrollview = findViewById(R.id.chatScrollView);
         scrollview.post(new Runnable() {
             @Override
@@ -105,6 +87,13 @@ public class ChatbotActivity extends AppCompatActivity implements ChatbotCallbac
         chatLayout = findViewById(R.id.chatLayout);
         btnAction1 = findViewById(R.id.btnAction1);
         btnAction2 = findViewById(R.id.btnAction2);
+
+        findViewById(R.id.chat_back_iv).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
 
         btnAction1.setOnClickListener(new View.OnClickListener() {
             @Override

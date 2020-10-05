@@ -4,8 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#E1F3FB"
-    app:theme="@style/Theme.Default">
+    android:background="#E1F3FB">
 
     <LinearLayout
         android:id="@+id/inputLayout"
@@ -62,8 +61,8 @@
         android:id="@+id/chatScrollView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/appbar_layout"
         android:layout_above="@+id/inputLayout"
-        android:layout_below="@+id/toolbar"
         android:fillViewport="true">
 
         <LinearLayout
@@ -76,13 +75,12 @@
     </ScrollView>
 
     <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appbar_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+        android:layout_alignParentTop="true">
 
-        <include
-            layout="@layout/base_toolbar"
-            app:popupTheme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
+        <include layout="@layout/chatbot_toolbar" />
 
 
     </com.google.android.material.appbar.AppBarLayout>
