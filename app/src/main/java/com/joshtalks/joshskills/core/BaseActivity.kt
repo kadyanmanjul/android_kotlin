@@ -549,6 +549,7 @@ abstract class BaseActivity : AppCompatActivity(), LifecycleObserver/*,
         callback: (() -> Unit)? = null,
         canCreateActivity: Boolean = true
     ) {
+        val uuid = WorkManagerAdmin.getLanguageChangeWorker(lCode)
         val observer = Observer<WorkInfo> { workInfo ->
             if (workInfo != null && workInfo.state == WorkInfo.State.SUCCEEDED) {
                 callback?.invoke()
@@ -558,7 +559,7 @@ abstract class BaseActivity : AppCompatActivity(), LifecycleObserver/*,
             }
         }
         WorkManager.getInstance(applicationContext)
-            .getWorkInfoByIdLiveData(WorkManagerAdmin.getLanguageChangeWorker(lCode))
+            .getWorkInfoByIdLiveData(uuid)
             .observe(this, observer)
     }
 
