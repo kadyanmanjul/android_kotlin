@@ -14,6 +14,7 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.workDataOf
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.joshtalks.joshskills.BuildConfig
 import com.joshtalks.joshskills.R
 import com.joshtalks.joshskills.core.AppObjectController
 import com.joshtalks.joshskills.core.BaseActivity
@@ -24,6 +25,7 @@ import com.joshtalks.joshskills.core.USER_LOCALE
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
 import com.joshtalks.joshskills.core.memory.MemoryManagementWorker
+import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.FragmentSettingsBinding
 import com.joshtalks.joshskills.repository.local.model.User
 import com.joshtalks.joshskills.repository.server.LanguageItem
@@ -135,7 +137,14 @@ class SettingsFragment : Fragment() {
             getString(R.string.login_signup) -> {
                 openLoginScreen()
             }
-            else -> clearDownloads()
+            getString(R.string.clear_all_downloads) -> {
+                clearDownloads()
+            }
+            else -> {
+                if (BuildConfig.DEBUG) {
+                    showToast("Action didn't match with any condition")
+                }
+            }
         }
     }
 
