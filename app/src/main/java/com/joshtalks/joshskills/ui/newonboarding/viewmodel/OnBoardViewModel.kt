@@ -30,17 +30,26 @@ class OnBoardViewModel(application: Application) :
 
     fun getCourseList() = courseListLiveData.value
 
-    fun enrollMentorAgainstTest(courseIds: List<Int>) {
+    fun enrollMentorAgainstTest(courseIds: List<Int>, isTestidsAvailable: Boolean = true) {
         jobs += viewModelScope.launch(Dispatchers.IO) {
             try {
                 apiCallStatusLiveData.postValue(ApiCallStatus.START)
                 courseRegistrationStatus.postValue(ApiCallStatus.START)
                 if (Mentor.getInstance().getId().isNotEmpty()) {
-                    val data = EnrollMentorWithTestIdRequest(
-                        PrefManager.getStringValue(USER_UNIQUE_ID),
-                        Mentor.getInstance().getId(),
-                        course_ids = courseIds
-                    )
+                    val data: EnrollMentorWithTestIdRequest
+                    if (isTestidsAvailable) {
+                        data = EnrollMentorWithTestIdRequest(
+                            PrefManager.getStringValue(USER_UNIQUE_ID),
+                            Mentor.getInstance().getId(),
+                            test_ids = courseIds
+                        )
+                    } else {
+                        data = EnrollMentorWithTestIdRequest(
+                            PrefManager.getStringValue(USER_UNIQUE_ID),
+                            Mentor.getInstance().getId(),
+                            course_ids = courseIds
+                        )
+                    }
                     val response =
                         AppObjectController.signUpNetworkService.enrollMentorWithTestIds(data)
 

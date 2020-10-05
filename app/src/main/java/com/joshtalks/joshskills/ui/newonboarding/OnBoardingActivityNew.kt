@@ -205,8 +205,12 @@ class OnBoardingActivityNew : CoreJoshActivity() {
                 if (courseIds.isNotEmpty()) {
                     CoroutineScope(Dispatchers.Main).launch {
                         supportFragmentManager.popBackStack()
-                        progressLayout.visibility=View.VISIBLE
-                        viewModel.enrollMentorAgainstTest(courseIds.toList())
+                        VersionResponse.getInstance().version?.run {
+                            if(name!==ONBOARD_VERSIONS.ONBOARDING_V6){
+                                progressLayout.visibility=View.VISIBLE
+                            }
+                        }
+                        viewModel.enrollMentorAgainstTest(courseIds.toList(),false)
                     }
                 }
             }
