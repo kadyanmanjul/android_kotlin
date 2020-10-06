@@ -67,13 +67,13 @@ class SignUpOptionsFragment : BaseSignUpFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setupVerificationSystem("IN")
+        val defaultRegion: String = PhoneNumberUtils.getDefaultCountryIso(requireContext())
+        setupVerificationSystem(defaultRegion)
         if (Utils.isTrueCallerAppExist()) {
             binding.btnTruecallerLogin.visibility = View.VISIBLE
         }
-
-        binding.countryCodePicker.setAutoDetectedCountry(true)
-        binding.countryCodePicker.setDetectCountryWithAreaCode(true)
+        binding.countryCodePicker.setAutoDetectedCountry(false)
+        binding.countryCodePicker.setDetectCountryWithAreaCode(false)
         binding.countryCodePicker.setOnCountryChangeListener {
             prefix = binding.countryCodePicker.selectedCountryCodeWithPlus
             setupVerificationSystem(binding.countryCodePicker.selectedCountryNameCode)
@@ -83,7 +83,6 @@ class SignUpOptionsFragment : BaseSignUpFragment() {
         if (supportedCountryList.isNotEmpty()) {
             binding.countryCodePicker.setCustomMasterCountries(supportedCountryList)
         }
-        val defaultRegion: String = PhoneNumberUtils.getDefaultCountryIso(requireContext())
         prefix = binding.countryCodePicker.getCountryCodeByName(defaultRegion)
         bindProgressButton(binding.btnLogin)
         viewModel.verificationStatus.observe(viewLifecycleOwner, Observer {
