@@ -63,6 +63,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/appbar_layout"
         android:layout_above="@+id/inputLayout"
+        android:paddingTop="8dp"
         android:fillViewport="true">
 
         <LinearLayout

@@ -16,6 +16,17 @@
         android:textColor="@color/black"
         android:textSize="16sp" />
 
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/time_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:layout_marginEnd="8dp"
+        android:drawablePadding="4dp"
+        android:paddingBottom="4dp"
+        android:text="22:44pm"
+        app:drawableEndCompat="@drawable/ic_blue_double_tik" />
+
     <FrameLayout
         android:id="@+id/richMessageContainer"
         android:layout_width="wrap_content"

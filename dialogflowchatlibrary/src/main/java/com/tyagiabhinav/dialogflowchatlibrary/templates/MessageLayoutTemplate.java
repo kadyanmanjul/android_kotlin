@@ -36,8 +36,12 @@ import com.tyagiabhinav.dialogflowchatlibrary.templateutil.Constants;
 import com.tyagiabhinav.dialogflowchatlibrary.templateutil.OnClickCallback;
 import com.tyagiabhinav.dialogflowchatlibrary.templateutil.ReturnMessage;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public abstract class MessageLayoutTemplate extends FrameLayout {
@@ -67,13 +71,22 @@ public abstract class MessageLayoutTemplate extends FrameLayout {
 
         LayoutInflater inflater = LayoutInflater.from(context);
         theme = context.getTheme();
+
+        layout = (LinearLayout) inflater.inflate(R.layout.msg_template_layout, null);
+        TextView timeTv;
+        DateFormat dateFormat = new SimpleDateFormat("hh:mm a", Locale.getDefault());
+
         switch (type) {
+
             case Constants.BOT:
                 msgLayout = (RelativeLayout) inflater.inflate(R.layout.bot_msg, null);
                 Drawable chatBotAvatar = ChatbotSettings.getInstance().getChatBotAvatar();
                 if (chatBotAvatar != null) {
                     ((ImageView) msgLayout.findViewById(R.id.botIcon)).setImageDrawable(chatBotAvatar);
                 }
+                timeTv = layout.findViewById(R.id.time_tv);
+                timeTv.setCompoundDrawables(null, null, null, null);
+                timeTv.setText(dateFormat.format(new Date()).toLowerCase());
                 break;
             case Constants.USER:
                 msgLayout = (RelativeLayout) inflater.inflate(R.layout.user_msg, null);
@@ -81,12 +94,13 @@ public abstract class MessageLayoutTemplate extends FrameLayout {
                 if (chatUserAvatar != null) {
                     ((ImageView) msgLayout.findViewById(R.id.userIcon)).setImageDrawable(chatUserAvatar);
                 }
+                timeTv = layout.findViewById(R.id.time_tv);
+                timeTv.setText(dateFormat.format(new Date()).toLowerCase());
                 break;
         }
 
         templateLinearLayout = msgLayout.findViewById(R.id.msgLinearLayout);
 
-        layout = (LinearLayout) inflater.inflate(R.layout.msg_template_layout, null);
         layout.setFocusableInTouchMode(true);
         tv = layout.findViewById(R.id.chatMsg);
         richMessageContainer = layout.findViewById(R.id.richMessageContainer);
