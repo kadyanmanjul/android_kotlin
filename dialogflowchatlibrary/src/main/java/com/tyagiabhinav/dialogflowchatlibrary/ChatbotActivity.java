@@ -163,9 +163,7 @@ public class ChatbotActivity extends AppCompatActivity implements ChatbotCallbac
         if (eventName != null && !eventName.trim().isEmpty()) {
             if (param != null && param.getFieldsCount() > 0) {
                 Log.e("param123", param.toString());
-                if (param.getFieldsMap().containsKey("template")
-                        && param.getFieldsMap().get("template").getStringValue().equals("checkbox")
-                        && param.getFieldsMap().containsKey("selectedItems")
+                if (param.getFieldsMap().containsKey("selectedItems")
                         && param.getFieldsMap().get("selectedItems").getListValue().getValuesList().size() > 0) {
                     EventInput eventInput = EventInput.newBuilder().setName(eventName).setLanguageCode("en-US").setParameters(param).build();
                     send(eventInput, msg.getActionText());

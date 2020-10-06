@@ -389,8 +389,6 @@ public abstract class MessageLayoutTemplate extends FrameLayout {
                 if (returnMsg != null
                         && returnMsg.getParam() != null
                         && returnMsg.getParam().getFieldsCount() > 0
-                        && returnMsg.getParam().getFieldsMap().containsKey("template")
-                        && returnMsg.getParam().getFieldsMap().get("template").getStringValue().equals("checkbox")
                         && returnMsg.getParam().getFieldsMap().containsKey("selectedItems")
                         && returnMsg.getParam().getFieldsMap().get("selectedItems").getListValue().getValuesList().size() > 0
                 ) {
