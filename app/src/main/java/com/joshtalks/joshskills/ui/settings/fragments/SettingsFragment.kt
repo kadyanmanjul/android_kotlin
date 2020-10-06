@@ -133,12 +133,21 @@ class SettingsFragment : Fragment() {
         when (binding.clearBtn.text) {
             getString(R.string.sign_out) -> {
                 signout()
+                if (BuildConfig.DEBUG) {
+                    showToast("Signing out")
+                }
             }
             getString(R.string.login_signup) -> {
                 openLoginScreen()
+                if (BuildConfig.DEBUG) {
+                    showToast("Signing in")
+                }
             }
             getString(R.string.clear_all_downloads) -> {
                 clearDownloads()
+                if (BuildConfig.DEBUG) {
+                    showToast("Downloads cleared")
+                }
             }
             else -> {
                 if (BuildConfig.DEBUG) {
