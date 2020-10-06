@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="ACCOUNT_KIT_CLIENT_TOKEN">975ff03d751b57fb66b8675ee570f915</string>
-    <string name="google_places_api_key">AIzaSyC_KjBhV_22E3S29sF0NU55bKIaqtrajwU</string>
-    <string name="facebook_app_id">503297633840171</string>
-    <string name="ads_id">ca-app-pub-6081280554747332~5345328239</string>
-    <string name="fb_login_protocol_scheme">fb503297633840171</string>
-    <string name="asset_statements">
+    <string name="ACCOUNT_KIT_CLIENT_TOKEN" translatable="false">975ff03d751b57fb66b8675ee570f915</string>
+    <string name="google_places_api_key" translatable="false">AIzaSyC_KjBhV_22E3S29sF0NU55bKIaqtrajwU</string>
+    <string name="facebook_app_id" translatable="false">503297633840171</string>
+    <string name="ads_id" translatable="false">ca-app-pub-6081280554747332~5345328239</string>
+    <string name="fb_login_protocol_scheme" translatable="false">fb503297633840171</string>
+    <string name="asset_statements" translatable="false">
     [{
     "relation": ["delegate_permission/common.handle_all_urls"],
     "target" : { "namespace": "android_app", "package_name": "com.joshtalks.joshskills",
     "sha256_cert_fingerprints": ["D4:DA:77:94:F6:7C:38:20:26:83:CC:F8:D5:93:97:EB:8E:E4:09:59:E8:D1:FD:A3:66:CC:64:0D:AA:FD:FD:23"] }
     }]
     </string>
-    <string name="freshchat_file_provider_authority">com.joshtalks.joshskills.provider</string>
-    <string name="_360p">360p</string>
+    <string name="freshchat_file_provider_authority" translatable="false">com.joshtalks.joshskills.provider</string>
+    <string name="_360p" translatable="false">360p</string>
 </resources>

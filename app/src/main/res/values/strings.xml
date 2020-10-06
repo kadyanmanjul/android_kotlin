@@ -336,7 +336,7 @@
     <string name="select_character">Select your character first</string>
 
     <string name="unlock_class_text">Unlock Next Class</string>
-    <string name="loading_new_classess">Loading new classes...</string>
+    <string name="loading_new_classess">Loading new classes…</string>
     <string name="start_now">Start Now</string>
     <string name="get_started">Get Started</string>
     <string name="already_a_subscriber">Already a subscriber?</string>
@@ -425,8 +425,18 @@
     <string name="start_course_free">Start my Courses For Free</string>
     <string name="buy_pass">Buy All Course Access Pass</string>
 
-    <string name="hint_text_btn"><u>Ok got it </u></string>
+    <string name="hint_text_btn"><u>OK got it </u></string>
     <string name="free_trial_completed">\"Free trial completed! \"</string>
     <string name="rate_us">Rate Us</string>
+    <string name="pending">Pending</string>
+    <string name="submitted">Submitted</string>
+    <string name="call_ended">Call Ended</string>
+    <string name="connecting">Connecting</string>
+    <string name="ringing">Ringing</string>
+    <string name="voice_call">Voice call</string>
+    <string name="practise_tip_1">English mei baat karne ki practice karo students ke saath</string>
+    <string name="practise_tip_2">Kariye Unlimited Practice, but only in English</string>
+    <string name="practise_tip_3">Apne Partner ki respect karein aur abusive language na use karein</string>
+    <string name="select_country">Select country</string>
 
 </resources>

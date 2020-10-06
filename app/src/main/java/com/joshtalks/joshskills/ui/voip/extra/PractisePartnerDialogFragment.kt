@@ -15,7 +15,6 @@ import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.Utils
 import com.joshtalks.joshskills.core.custom_ui.decorator.LayoutMarginDecoration
 import com.joshtalks.joshskills.core.interfaces.OnDismissWithSuccess
-import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.PractisePartnerLayoutBinding
 import com.mindorks.placeholderview.annotations.Layout
 import com.mindorks.placeholderview.annotations.Resolve
@@ -85,7 +84,6 @@ class PractisePartnerDialogFragment : DialogFragment() {
 
     fun startPractise() {
         if (binding.checkBox.isChecked.not()) {
-            showToast("Need message")
             return
         }
         PrefManager.put(IS_PRACTISE_PARTNER_VIEWED, true)

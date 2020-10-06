@@ -134,7 +134,6 @@ class WebRtcActivity : BaseActivity(), CallListener {
                     binding.userLocation.text = locality
                     binding.topicTextview.text = topic
                     initCall(mentorId)
-                    // initCall("3b268cc8-0e9b-4d10-92d3-14407aeb2274")
                 }
             } else {//You are receiver
                 binding.groupForIncoming.visibility = View.VISIBLE
@@ -341,7 +340,7 @@ class WebRtcActivity : BaseActivity(), CallListener {
         call = null
         binding.callTime.stop()
         binding.callTime.visibility = View.GONE
-        binding.callStatus.text = "Call Ended"
+        binding.callStatus.text = getString(R.string.call_ended)
         binding.callStatus.visibility = View.VISIBLE
         AppObjectController.uiHandler.postDelayed({
             onBackPressed()
@@ -354,7 +353,7 @@ class WebRtcActivity : BaseActivity(), CallListener {
             AudioPlayer.getInstance().stopProgressTone()
         }
         SoundPoolManager.getInstance(applicationContext).stopRinging()
-        binding.callStatus.text = "Connecting"
+        binding.callStatus.text = getString(R.string.connecting)
         AppObjectController.uiHandler.postDelayed({
             binding.callStatus.visibility = View.GONE
             binding.callTime.visibility = View.VISIBLE
@@ -368,9 +367,9 @@ class WebRtcActivity : BaseActivity(), CallListener {
         volumeControlStream = AudioManager.STREAM_VOICE_CALL
         if (CallDirection.OUTGOING == progressingCall.direction) {
             AudioPlayer.getInstance().playProgressTone()
-            binding.callStatus.text = "Ringing"
+            binding.callStatus.text = getString(R.string.ringing)
         } else {
-            binding.callStatus.text = "Voice call"
+            binding.callStatus.text = getString(R.string.voice_call)
         }
         Timber.tag(TAG).e("onCallProgressing")
 

@@ -18,8 +18,8 @@
                 android:layout_margin="10dp"
                 android:layout_toStartOf="@+id/img_dismiss"
                 android:layout_toLeftOf="@+id/img_dismiss"
-                android:text="Select country"
-                android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4"
+            android:text="@string/select_country"
+            android:textAppearance="@style/TextAppearance.JoshTypography.Heading_H4"
                 android:textColor="@android:color/secondary_text_light" />
 
         <ImageView
@@ -47,9 +47,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_toStartOf="@+id/img_clear_query"
-                android:layout_toLeftOf="@+id/img_clear_query"
-                android:hint="enter  countryrr"
-                android:imeOptions="actionSearch"
+            android:layout_toLeftOf="@+id/img_clear_query"
+            android:hint="enter country"
+            android:imeOptions="actionSearch"
                 android:inputType="textNoSuggestions"
                 android:singleLine="true"
                 android:textColor="@android:color/primary_text_light_nodisable" />

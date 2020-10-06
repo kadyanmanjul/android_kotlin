@@ -112,7 +112,7 @@ class PracticeViewHolder(
 
 
             if (this.practiceEngagement.isNullOrEmpty()) {
-                sBuilder.append("Pending")
+                sBuilder.append(getAppContext().getString(R.string.pending))
                 layoutP.gravity = android.view.Gravity.START
                 setResourceInImageView(imageView, R.drawable.ic_pattern)
                 rootView.setPadding(getLeftPaddingForReceiver(), 0, getRightPaddingForReceiver(), 0)
@@ -125,7 +125,7 @@ class PracticeViewHolder(
                     )
                 )
             } else {
-                sBuilder.append("Submitted")
+                sBuilder.append(getAppContext().getString(R.string.submitted))
                 tvSubmitAnswer.visibility = android.view.View.GONE
                 setResourceInImageView(imageView, R.drawable.ic_practise_submit_bg)
                 rootView.setPadding(getLeftPaddingForSender(), 0, getRightPaddingForSender(), 0)

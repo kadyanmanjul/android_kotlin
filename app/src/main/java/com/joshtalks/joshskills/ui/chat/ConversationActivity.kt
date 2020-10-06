@@ -2,7 +2,6 @@ package com.joshtalks.joshskills.ui.chat
 
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.app.PendingIntent
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.graphics.Color
@@ -16,7 +15,9 @@ import android.text.TextWatcher
 import android.view.Gravity
 import android.view.MotionEvent
 import android.view.View
-import android.view.View.*
+import android.view.View.GONE
+import android.view.View.INVISIBLE
+import android.view.View.VISIBLE
 import android.view.WindowManager
 import android.widget.Toast
 import androidx.core.content.ContextCompat
@@ -58,7 +59,6 @@ import com.joshtalks.joshskills.core.PermissionUtils
 import com.joshtalks.joshskills.core.PrefManager
 import com.joshtalks.joshskills.core.REMAINING_TRIAL_DAYS
 import com.joshtalks.joshskills.core.Utils
-import com.joshtalks.joshskills.core.*
 import com.joshtalks.joshskills.core.Utils.getCurrentMediaVolume
 import com.joshtalks.joshskills.core.alphaAnimation
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
@@ -74,16 +74,43 @@ import com.joshtalks.joshskills.core.notification.HAS_COURSE_REPORT
 import com.joshtalks.joshskills.core.notification.QUESTION_ID
 import com.joshtalks.joshskills.core.playback.PlaybackInfoListener.State.PAUSED
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
+import com.joshtalks.joshskills.core.showToast
 import com.joshtalks.joshskills.databinding.ActivityConversationBinding
 import com.joshtalks.joshskills.messaging.MessageBuilderFactory
 import com.joshtalks.joshskills.messaging.RxBus2
 import com.joshtalks.joshskills.repository.local.DatabaseUtils
-import com.joshtalks.joshskills.repository.local.entity.*
-import com.joshtalks.joshskills.repository.local.eventbus.*
+import com.joshtalks.joshskills.repository.local.entity.AudioType
+import com.joshtalks.joshskills.repository.local.entity.BASE_MESSAGE_TYPE
+import com.joshtalks.joshskills.repository.local.entity.ChatModel
+import com.joshtalks.joshskills.repository.local.entity.DOWNLOAD_STATUS
+import com.joshtalks.joshskills.repository.local.entity.MESSAGE_STATUS
+import com.joshtalks.joshskills.repository.local.entity.NPSEventModel
+import com.joshtalks.joshskills.repository.local.entity.Question
+import com.joshtalks.joshskills.repository.local.eventbus.AssessmentStartEventBus
+import com.joshtalks.joshskills.repository.local.eventbus.AudioPlayEventBus
+import com.joshtalks.joshskills.repository.local.eventbus.ConversationPractiseEventBus
+import com.joshtalks.joshskills.repository.local.eventbus.DeleteMessageEventBus
+import com.joshtalks.joshskills.repository.local.eventbus.DownloadCompletedEventBus
+import com.joshtalks.joshskills.repository.local.eventbus.DownloadMediaEventBus
+import com.joshtalks.joshskills.repository.local.eventbus.GotoChatEventBus
+import com.joshtalks.joshskills.repository.local.eventbus.ImageShowEvent
+import com.joshtalks.joshskills.repository.local.eventbus.InternalSeekBarProgressEventBus
+import com.joshtalks.joshskills.repository.local.eventbus.MediaProgressEventBus
+import com.joshtalks.joshskills.repository.local.eventbus.MessageCompleteEventBus
+import com.joshtalks.joshskills.repository.local.eventbus.P2PStartEventBus
+import com.joshtalks.joshskills.repository.local.eventbus.PdfOpenEventBus
+import com.joshtalks.joshskills.repository.local.eventbus.PlayVideoEvent
+import com.joshtalks.joshskills.repository.local.eventbus.PractiseSubmitEventBus
+import com.joshtalks.joshskills.repository.local.eventbus.UnlockNextClassEventBus
+import com.joshtalks.joshskills.repository.local.eventbus.VideoDownloadedBus
 import com.joshtalks.joshskills.repository.local.minimalentity.InboxEntity
 import com.joshtalks.joshskills.repository.local.model.ExploreCardType
 import com.joshtalks.joshskills.repository.local.model.NotificationAction
-import com.joshtalks.joshskills.repository.server.chat_message.*
+import com.joshtalks.joshskills.repository.server.chat_message.TAudioMessage
+import com.joshtalks.joshskills.repository.server.chat_message.TChatMessage
+import com.joshtalks.joshskills.repository.server.chat_message.TImageMessage
+import com.joshtalks.joshskills.repository.server.chat_message.TUnlockClassMessage
+import com.joshtalks.joshskills.repository.server.chat_message.TVideoMessage
 import com.joshtalks.joshskills.ui.assessment.AssessmentActivity
 import com.joshtalks.joshskills.ui.chat.extra.CallingFeatureShowcaseView
 import com.joshtalks.joshskills.ui.conversation_practice.ConversationPracticeActivity
@@ -127,15 +154,17 @@ import com.muddzdev.styleabletoast.StyleableToast
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import java.lang.ref.WeakReference
-import java.util.*
-import kotlin.collections.ArrayList
+import java.util.Date
+import java.util.Locale
+import java.util.Timer
+import java.util.TimerTask
 import kotlin.collections.component1
 import kotlin.collections.component2
 import kotlin.concurrent.scheduleAtFixedRate
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 const val CHAT_ROOM_OBJECT = "chat_room"
 const val UPDATED_CHAT_ROOM_OBJECT = "updated_chat_room"
@@ -410,7 +439,7 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
             .setDuration(JoshSnackBar.LENGTH_INDEFINITE)
             .setTextSize(14f)
             .setTextColor(ContextCompat.getColor(application, R.color.gray_79))
-            .setText("Internet not available!")
+            .setText(getString(R.string.internet_not_available_msz))
             .setMaxLines(1)
             .setActionTextColor(ContextCompat.getColor(application, R.color.action_color))
             .setActionTextSize(12f)
@@ -1094,10 +1123,7 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
                     it.printStackTrace()
                 })
         )
-
-
     }
-
 
     private fun setCurrentItemPosition(chatId: String) {
         val currentChatid = chatId.toLowerCase(Locale.getDefault())
@@ -1753,14 +1779,6 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
 
     fun isAudioPlaying(): Boolean {
         return audioPlayerManager?.isPlaying()!!
-    }
-
-    private fun getNotificationPendingIntent(): PendingIntent {
-        val intent = Intent(applicationContext, ConversationActivity::class.java)
-        intent.putExtra(CHAT_ROOM_OBJECT, inboxEntity)
-        intent.action = "openplayer"
-        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK
-        return PendingIntent.getActivity(applicationContext, 0, intent, 0)
     }
 
     private fun setPlayProgress(progress: Int) {

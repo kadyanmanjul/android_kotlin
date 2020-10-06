@@ -7,33 +7,31 @@
         android:layout_weight="1">
 
     <View
-            android:id="@+id/vView"
-            android:layout_width="@dimen/_8sdp"
-            android:layout_height="0dp"
-            android:layout_marginVertical="@dimen/_8sdp"
-            android:background="@drawable/next_video_progress_drawable"
-            android:backgroundTint="@color/white"
-            app:layout_constraintBottom_toBottomOf="@id/text_view"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/text_view"
-            tools:backgroundTint="@color/button_primary_color" />
+        android:id="@+id/vView"
+        android:layout_width="@dimen/_8sdp"
+        android:layout_height="0dp"
+        android:layout_marginVertical="@dimen/_8sdp"
+        android:background="@drawable/next_video_progress_drawable"
+        android:backgroundTint="@color/white"
+        app:layout_constraintBottom_toBottomOf="@id/text_view"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/text_view" />
 
     <com.google.android.material.textview.MaterialTextView
             android:id="@+id/text_view"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_gravity="start|center"
-            android:layout_marginStart="@dimen/_28sdp"
-            android:layout_marginEnd="@dimen/_16sdp"
-            android:gravity="start|center"
-            android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
-            android:textColor="@color/white"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@id/vView"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:text="@string/start_practise"
-            tools:textColor="@color/button_primary_color" />
+        android:layout_gravity="start|center"
+        android:layout_marginStart="@dimen/_28sdp"
+        android:layout_marginEnd="@dimen/_16sdp"
+        android:gravity="start|center"
+        android:textAppearance="@style/TextAppearance.JoshTypography.Body_Text_Normal_Regular"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@id/vView"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="@string/start_practise" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

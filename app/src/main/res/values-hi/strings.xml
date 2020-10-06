@@ -361,5 +361,16 @@
     <string name="usb_disconnect_title">युएसबी डिस्कनेक्ट करें</string>
     <string name="selection_arrow">चयन तीर</string>
     <string name="download_quality">डाउनलोड क्वालिटी</string>
+    <string name="pending">विचाराधीन</string>
+    <string name="submitted">निवेदित</string>
+    <string name="call_ended">"कॉल समाप्त "</string>
+    <string name="connecting">जोड़ने</string>
+    <string name="ringing">रिंगिंग</string>
+    <string name="voice_call">वॉइस कॉल </string>
+    <string name="practise_tip_1">अंग्रेज़ी में बात करने की प्रैक्टिस करो स्टूडेंट्स के साथ</string>
+    <string name="practise_tip_2">करिये अनलिमिटेड प्रैक्टिस लेकिन सिर्फ अंग्रेज़ी में</string>
+    <string name="practise_tip_3">अपने पार्टनर का आदर करें तथा कृप्या गलत भाषा का उपयोग ना करे </string>
+    <string name="select_country">देश चुनिए</string>
+
 
 </resources>

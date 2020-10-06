@@ -71,10 +71,10 @@
             android:scrollbars="none">
 
         <LinearLayout
-                android:id="@+id/ll_practise"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:gravity="end|center"
-                android:orientation="horizontal"></LinearLayout>
+            android:id="@+id/ll_practise"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="end|center"
+            android:orientation="horizontal" />
     </HorizontalScrollView>
 </LinearLayout>
