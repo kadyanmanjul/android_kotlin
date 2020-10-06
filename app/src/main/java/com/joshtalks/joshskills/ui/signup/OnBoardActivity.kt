@@ -20,6 +20,7 @@ import com.joshtalks.joshskills.core.REFERRED_REFERRAL_CODE
 import com.joshtalks.joshskills.core.USER_LOCALE_UPDATED
 import com.joshtalks.joshskills.core.analytics.AnalyticsEvent
 import com.joshtalks.joshskills.core.analytics.AppAnalytics
+import com.joshtalks.joshskills.core.custom_ui.FullScreenProgressDialog
 import com.joshtalks.joshskills.core.service.WorkManagerAdmin
 import com.joshtalks.joshskills.databinding.ActivityOnboardBinding
 import com.joshtalks.joshskills.repository.server.onboarding.ONBOARD_VERSIONS
@@ -97,14 +98,23 @@ class OnBoardActivity : CoreJoshActivity() {
             .color(tColor) { append("Language") }
         customView.findViewById<AppCompatTextView>(R.id.title).text = text
         customView.findViewById<View>(R.id.tv_hindi).setOnClickListener {
-            requestWorkerForChangeLanguage("hi")
-            dialog.dismiss()
+            requestForChangeLocale("hi", dialog)
         }
         customView.findViewById<View>(R.id.tv_english).setOnClickListener {
-            requestWorkerForChangeLanguage("en")
-            dialog.dismiss()
+            requestForChangeLocale("en", dialog)
         }
         dialog.show()
+    }
+
+    private fun requestForChangeLocale(language: String, dialog: MaterialDialog) {
+        FullScreenProgressDialog.showProgressBar(this)
+        requestWorkerForChangeLanguage(language, successCallback = {
+            dialog.dismiss()
+            FullScreenProgressDialog.hideProgressBar(this)
+        }, errorCallback = {
+            FullScreenProgressDialog.hideProgressBar(this)
+        })
+
     }
 
     override fun onBackPressed() {

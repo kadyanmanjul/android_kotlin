@@ -158,7 +158,7 @@ object WorkManagerAdmin {
         val workRequest = OneTimeWorkRequestBuilder<LanguageChangeWorker>()
             .setInputData(data)
             .setConstraints(constraints)
-            .setBackoffCriteria(BackoffPolicy.EXPONENTIAL, 11, TimeUnit.SECONDS)
+            .setBackoffCriteria(BackoffPolicy.LINEAR, 11, TimeUnit.SECONDS)
             .build()
         WorkManager.getInstance(AppObjectController.joshApplication).enqueue(workRequest)
         return workRequest.id

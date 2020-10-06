@@ -753,10 +753,13 @@ class LanguageChangeWorker(var context: Context, private var workerParams: Worke
     ListenableWorker(context, workerParams) {
     override fun startWork(): ListenableFuture<Result> {
         return CallbackToFutureAdapter.getFuture { completer ->
+            if (runAttemptCount > 2) {
+                completer.set(Result.failure())
+            }
+
             val language = workerParams.inputData.getString(LANGUAGE_CODE) ?: "en"
             val defaultLanguage = PrefManager.getStringValue(USER_LOCALE)
             Lingver.getInstance().setLocale(context, language)
-            //PrefManager.put(USER_LOCALE, language)
             context.changeLocale(language)
             AppObjectController.isSettingUpdate = true
             AppObjectController.getFirebaseRemoteConfig().reset()

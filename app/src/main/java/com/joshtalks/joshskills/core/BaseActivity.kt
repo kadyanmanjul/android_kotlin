@@ -546,15 +546,20 @@ abstract class BaseActivity : AppCompatActivity(), LifecycleObserver/*,
 
     fun requestWorkerForChangeLanguage(
         lCode: String,
-        callback: (() -> Unit)? = null,
+        successCallback: (() -> Unit)? = null,
+        errorCallback: (() -> Unit)? = null,
         canCreateActivity: Boolean = true
     ) {
         val uuid = WorkManagerAdmin.getLanguageChangeWorker(lCode)
         val observer = Observer<WorkInfo> { workInfo ->
-            if (workInfo != null && workInfo.state == WorkInfo.State.SUCCEEDED) {
-                callback?.invoke()
-                if (canCreateActivity) {
-                    reCreateActivity()
+            workInfo?.run {
+                if (WorkInfo.State.SUCCEEDED == state) {
+                    successCallback?.invoke()
+                    if (canCreateActivity) {
+                        reCreateActivity()
+                    }
+                } else if (WorkInfo.State.FAILED == state) {
+                    errorCallback?.invoke()
                 }
             }
         }

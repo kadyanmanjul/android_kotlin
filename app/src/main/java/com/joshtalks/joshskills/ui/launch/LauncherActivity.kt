@@ -140,7 +140,7 @@ class LauncherActivity : CoreJoshActivity(), CustomPermissionDialogInteractionLi
                 navigateToNextScreen()
             } else {
                 when (versionResponse.version!!.name) {
-                    ONBOARD_VERSIONS.ONBOARDING_V1, ONBOARD_VERSIONS.ONBOARDING_V7, ONBOARD_VERSIONS.ONBOARDING_V8 -> {
+                    ONBOARD_VERSIONS.ONBOARDING_V1, ONBOARD_VERSIONS.ONBOARDING_V7 -> {
                         val intent = getIntentForState()
                         startActivity(intent)
                         this@LauncherActivity.finish()
@@ -189,12 +189,15 @@ class LauncherActivity : CoreJoshActivity(), CustomPermissionDialogInteractionLi
                         }
                     }
                     ONBOARD_VERSIONS.ONBOARDING_V8 -> {
-                        requestWorkerForChangeLanguage("hi", canCreateActivity = false, callback = {
-                            AppObjectController.isSettingUpdate = true
-                            val intent = getIntentForState()
-                            startActivity(intent)
-                            this@LauncherActivity.finish()
-                        })
+                        requestWorkerForChangeLanguage(
+                            "hi",
+                            canCreateActivity = false,
+                            successCallback = {
+                                AppObjectController.isSettingUpdate = true
+                                val intent = getIntentForState()
+                                startActivity(intent)
+                                this@LauncherActivity.finish()
+                            })
                     }
                 }
             }

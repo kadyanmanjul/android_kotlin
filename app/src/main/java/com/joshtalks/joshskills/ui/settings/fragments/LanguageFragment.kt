@@ -53,8 +53,7 @@ class LanguageFragment : Fragment() {
         if (locale == item.code) {
             return
         }
-        (requireActivity() as BaseActivity).requestWorkerForChangeLanguage(item.code, callback = {
-        })
+        (requireActivity() as BaseActivity).requestWorkerForChangeLanguage(item.code)
     }
 
 }
