@@ -140,7 +140,7 @@ class LauncherActivity : CoreJoshActivity(), CustomPermissionDialogInteractionLi
                 navigateToNextScreen()
             } else {
                 when (versionResponse.version!!.name) {
-                    ONBOARD_VERSIONS.ONBOARDING_V1, ONBOARD_VERSIONS.ONBOARDING_V7 -> {
+                    ONBOARD_VERSIONS.ONBOARDING_V1, ONBOARD_VERSIONS.ONBOARDING_V7, ONBOARD_VERSIONS.ONBOARDING_V8 -> {
                         val intent = getIntentForState()
                         startActivity(intent)
                         this@LauncherActivity.finish()
