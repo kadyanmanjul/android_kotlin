@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    xmlns:tools="http://schemas.android.com/tools"
     android:theme="@style/Theme.Default"
     app:theme="@style/Theme.Default">
 
@@ -11,10 +12,25 @@
         android:id="@+id/chatMsg"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="8dp"
+        android:paddingStart="8dp"
+        android:paddingTop="8dp"
+        android:paddingEnd="8dp"
+        android:paddingBottom="4dp"
         android:text="abcdefgh"
         android:textColor="@color/black"
         android:textSize="16sp" />
+
+    <FrameLayout
+        android:id="@+id/richMessageContainer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:paddingStart="4dp"
+        android:paddingTop="4dp"
+        android:paddingEnd="4dp"
+        android:visibility="invisible">
+
+    </FrameLayout>
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/time_tv"
@@ -25,19 +41,8 @@
         android:drawablePadding="4dp"
         android:paddingBottom="4dp"
         android:text="22:44pm"
-        app:drawableEndCompat="@drawable/ic_blue_double_tik" />
-
-    <FrameLayout
-        android:id="@+id/richMessageContainer"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        android:paddingStart="4dp"
-        android:paddingTop="4dp"
-        android:paddingEnd="4dp"
-        android:paddingBottom="4dp"
-        android:visibility="invisible">
-
-    </FrameLayout>
-
+        android:textSize="12sp"
+        android:visibility="gone"
+        app:drawableEndCompat="@drawable/ic_blue_double_tik"
+        tools:visibility="visible" />
 </LinearLayout>

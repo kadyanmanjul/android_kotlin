@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.res.Resources.Theme;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Handler;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
@@ -50,13 +51,12 @@ public abstract class MessageLayoutTemplate extends FrameLayout {
 
     public Context context;
     public Theme theme;
+    TextView timeTv;
     private RelativeLayout msgLayout;
     private LinearLayout templateLinearLayout;
     private LinearLayout layout;
-
     private TextView tv;
     private FrameLayout richMessageContainer;
-
     private Map<String, Value> messageTemplate;
     private DetectIntentResponse response;
     private OnClickCallback callback;
@@ -73,7 +73,9 @@ public abstract class MessageLayoutTemplate extends FrameLayout {
         theme = context.getTheme();
 
         layout = (LinearLayout) inflater.inflate(R.layout.msg_template_layout, null);
-        TextView timeTv;
+
+        layout.setFocusableInTouchMode(true);
+        tv = layout.findViewById(R.id.chatMsg);
         DateFormat dateFormat = new SimpleDateFormat("hh:mm a", Locale.getDefault());
 
         switch (type) {
@@ -85,6 +87,7 @@ public abstract class MessageLayoutTemplate extends FrameLayout {
                     ((ImageView) msgLayout.findViewById(R.id.botIcon)).setImageDrawable(chatBotAvatar);
                 }
                 timeTv = layout.findViewById(R.id.time_tv);
+
                 timeTv.setCompoundDrawables(null, null, null, null);
                 timeTv.setText(dateFormat.format(new Date()).toLowerCase());
                 break;
@@ -95,14 +98,13 @@ public abstract class MessageLayoutTemplate extends FrameLayout {
                     ((ImageView) msgLayout.findViewById(R.id.userIcon)).setImageDrawable(chatUserAvatar);
                 }
                 timeTv = layout.findViewById(R.id.time_tv);
+                timeTv.setVisibility(VISIBLE);
                 timeTv.setText(dateFormat.format(new Date()).toLowerCase());
                 break;
         }
 
         templateLinearLayout = msgLayout.findViewById(R.id.msgLinearLayout);
 
-        layout.setFocusableInTouchMode(true);
-        tv = layout.findViewById(R.id.chatMsg);
         richMessageContainer = layout.findViewById(R.id.richMessageContainer);
 
         this.context = context;
@@ -115,6 +117,17 @@ public abstract class MessageLayoutTemplate extends FrameLayout {
 
         templateLinearLayout.addView(populateTextView(msg));
         return msgLayout;
+    }
+
+    private void showDelayed(View view) {
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (view != null)
+                    view.setVisibility(VISIBLE);
+            }
+        }, 500);
+
     }
 
     public final RelativeLayout showMessage(DetectIntentResponse response) {
@@ -160,6 +173,9 @@ public abstract class MessageLayoutTemplate extends FrameLayout {
         } else {
             tv.setText(Html.fromHtml(message));
         }
+
+        if (!tv.getText().toString().equals("....."))
+            timeTv.setVisibility(VISIBLE);
 
         if (!isOnlyTextResponse()) {
             richMessageContainer.setVisibility(View.VISIBLE);
@@ -270,7 +286,7 @@ public abstract class MessageLayoutTemplate extends FrameLayout {
         }
 
         LinearLayout.LayoutParams btnParam = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        btnParam.setMargins(16, 12, 16, 12);
+        btnParam.setMargins(16, 12, 16, 4);
         btnParam.gravity = Gravity.CENTER;
         final Button btn = new Button(getContext());
         btn.setGravity(Gravity.CENTER);
