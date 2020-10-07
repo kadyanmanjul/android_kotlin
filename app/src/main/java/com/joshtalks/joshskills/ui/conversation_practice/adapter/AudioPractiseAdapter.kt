@@ -112,7 +112,7 @@ class AudioPractiseAdapter(var items: MutableList<ListenModel> = arrayListOf()) 
                             )
                         )
                         name.apply {
-                            text = "Me"
+                            text = context.getString(R.string.me)
                             setTextColor(
                                 ContextCompat.getColor(
                                     AppObjectController.joshApplication,
@@ -161,7 +161,7 @@ class AudioPractiseAdapter(var items: MutableList<ListenModel> = arrayListOf()) 
                     if (listenModel.hasPractising) {
                         tvContainer.backgroundTintList = standardBG
                         name.apply {
-                            text = "Me"
+                            text = context.getString(R.string.me)
                             setTextColor(
                                 ContextCompat.getColor(
                                     AppObjectController.joshApplication,

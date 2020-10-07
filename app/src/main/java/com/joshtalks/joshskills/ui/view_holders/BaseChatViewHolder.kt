@@ -287,7 +287,7 @@ abstract class BaseChatViewHolder(
                             0,
                             0
                         )
-                        text?.append("Photo ")
+                        text?.append(getAppContext().getString(R.string.photo))
                         imageUrl = linkObj.imageList?.getOrNull(0)?.imageUrl
                     }
                     BASE_MESSAGE_TYPE.AU -> {
@@ -299,7 +299,7 @@ abstract class BaseChatViewHolder(
                         )
                         val duration =
                             PlayerUtil.toTimeSongString(linkObj.audioList?.getOrNull(0)?.duration)
-                        text?.append("Voice Message ")
+                        text?.append(getAppContext().getString(R.string.voice_message))
                         if (duration.isNullOrEmpty().not()) {
                             text?.append("($duration)")
                         }
@@ -314,7 +314,7 @@ abstract class BaseChatViewHolder(
                         imageUrl = linkObj.videoList?.getOrNull(0)?.video_image_url
                         val duration =
                             PlayerUtil.toTimeSongString(linkObj.videoList?.getOrNull(0)?.duration)
-                        text?.append("Video ")
+                        text?.append(getAppContext().getString(R.string.video))
                         if (duration.isNullOrEmpty().not()) {
                             text?.append("($duration)")
                         }

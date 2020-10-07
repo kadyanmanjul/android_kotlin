@@ -377,7 +377,17 @@
     <string name="no_result_found">कोई परिणाम नहीं मिला</string>
     <string name="correct_answer_label">आपका उत्तर सही है</string>
     <string name="wrong_answer_label">आपका जवाब गलत है</string>
-    <string name="english_practise_hint">साथी के साथ लाइव कॉल पर अंग्रेजी का अभ्यास करें.</string>
+    <string name="english_practise_hint">साथी के साथ लाइव कॉल पर अंग्रेजी का अभ्यास करें</string>
+    <string name="photo">तस्वीर</string>
+    <string name="voice_message">ध्वनि संदेश</string>
+    <string name="video">वीडियो</string>
+    <string name="conversation">वीडियो %1$s</string>
+    <string name="unlock_class_demo">अब के लिए कक्षा डेमो अनलॉक करें</string>
+    <string name="refferal_desc1"><![CDATA[\<br/>हर उस दोस्त के लिए <br/> अपने खाते में <u>₹%1$s</u> कमाएँ जो पाठ्यक्रम में शामिल होता है]]></string>
+    <string name="referral_desc2"><![CDATA[\आपके मित्र को भी उनके पहले कोर्स पर <br/> ₹%1$s छूट मिलती है]]></string>
+    <string name="earn_upto">₹10,000 तक कमाएं</string>
+    <string name="no_conditions_apply">कोई शर्तें लागू नहीं</string>
+    <string name="ex_referralcode">eg. L3ARN</string>
 
 
 </resources>

@@ -1409,7 +1409,7 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
         lastVideoStartingDate?.let { date ->
             showProgressBar()
             val tUnlockClassMessage =
-                TUnlockClassMessage("Unlock Class Demo For now")
+                TUnlockClassMessage(getString(R.string.unlock_class_demo))
             val cell = MessageBuilderFactory.getMessage(
                 activityRef,
                 BASE_MESSAGE_TYPE.UNLOCK,
@@ -1442,7 +1442,7 @@ class ConversationActivity : CoreJoshActivity(), Player.EventListener,
                     .getMaxIntervalForVideo(inboxEntity.conversation_id)
             if (checkInDbForLastVideo(maxInterval, interval, isNextVideoAvailable)) {
                 val tUnlockClassMessage =
-                    TUnlockClassMessage("Unlock Class Demo For now")
+                    TUnlockClassMessage(getString(R.string.unlock_class_demo))
                 val cell = MessageBuilderFactory.getMessage(
                     activityRef,
                     BASE_MESSAGE_TYPE.UNLOCK,

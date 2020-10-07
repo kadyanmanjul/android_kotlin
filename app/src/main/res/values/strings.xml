@@ -446,5 +446,14 @@
     <string name="correct_answer_label">Your answer is Correct</string>
     <string name="wrong_answer_label">Your answer is Wrong</string>
     <string name="english_practise_hint">Practice English on live call with partner</string>
+    <string name="photo">Photo</string>
+    <string name="voice_message">Voice Message</string>
+    <string name="video">Video</string>
+    <string name="conversation">Video %1$s</string>
+    <string name="unlock_class_demo">Unlock Class Demo For now</string>
+    <string name="refferal_desc1"><![CDATA[\Earn <strong><u>₹%1$s</u></strong> in your account <br/>for every friend who <br/> joins a course!\]]></string>
+    <string name="referral_desc2"><![CDATA[\Your friend also gets <br/> <strong>₹%1$s OFF</strong> on their first course\]]></string>
+    <string name="earn_upto">\Earn upto ₹10,000 \</string>
+    <string name="no_conditions_apply">No Conditions Apply</string>
 
 </resources>

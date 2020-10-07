@@ -155,21 +155,21 @@ class ReferralActivity : BaseActivity() {
             activityReferralBinding.tvHeader.text =
                 getString(R.string.referral_header, refAmount, refAmount)
             activityReferralBinding.textView1.text = HtmlCompat.fromHtml(
-                "Earn <strong><u>₹$refAmount</u></strong> in your account <br/>for every friend who <br/> joins a course!",
+                getString(R.string.refferal_desc1, refAmount),
                 HtmlCompat.FROM_HTML_MODE_LEGACY
             )
             activityReferralBinding.textView2.text = HtmlCompat.fromHtml(
-                "Your friend also gets <br/> <strong>₹$refAmount OFF</strong> on their first course",
+                getString(R.string.referral_desc2, refAmount),
                 HtmlCompat.FROM_HTML_MODE_LEGACY
             )
         } else if (referralScreenVersion == "version_2") {
-            activityReferralBinding.tvHeader.text = "Earn upto ₹10,000 "
+            activityReferralBinding.tvHeader.text = getString(R.string.earn_upto)
             activityReferralBinding.textView1.text = HtmlCompat.fromHtml(
-                "Earn <strong><u>₹$refAmount</u></strong> in your account <br/>for every friend who <br/> joins a course!",
+                getString(R.string.refferal_desc1, refAmount),
                 HtmlCompat.FROM_HTML_MODE_LEGACY
             )
             activityReferralBinding.textView2.text = HtmlCompat.fromHtml(
-                "No Conditions Apply",
+                getString(R.string.no_conditions_apply),
                 HtmlCompat.FROM_HTML_MODE_LEGACY
             )
         }

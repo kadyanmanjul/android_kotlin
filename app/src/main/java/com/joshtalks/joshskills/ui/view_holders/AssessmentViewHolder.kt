@@ -98,7 +98,7 @@ class AssessmentViewHolder(
                 }
             }
             if (question.vAssessmentCount <= 0) {
-                sBuilder.append("Pending")
+                sBuilder.append(getAppContext().getString(R.string.pending))
                 layoutP.gravity = android.view.Gravity.START
                 subRootView.layoutParams = layoutP
                 rootView.setPadding(getLeftPaddingForReceiver(), 0, getRightPaddingForReceiver(), 0)
@@ -116,7 +116,7 @@ class AssessmentViewHolder(
                     )
                 )
             } else {
-                sBuilder.append("Submitted")
+                sBuilder.append(getAppContext().getString(R.string.submitted))
                 layoutP.gravity = android.view.Gravity.END
                 subRootView.layoutParams = layoutP
                 rootView.setPadding(getLeftPaddingForSender(), 0, getRightPaddingForSender(), 0)

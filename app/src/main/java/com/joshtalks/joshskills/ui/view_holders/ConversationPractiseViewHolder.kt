@@ -1,6 +1,5 @@
 package com.joshtalks.joshskills.ui.view_holders
 
-import android.util.Log
 import android.widget.FrameLayout
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
@@ -46,7 +45,7 @@ class ConversationPractiseViewHolder(activityRef: WeakReference<FragmentActivity
         }
         message.question?.run {
             this.conversationPracticeId?.let {
-                titleTv.text = "Conversation #$it"
+                titleTv.text = getAppContext().getString(R.string.conversation, "#$it")
             }
         }
 
